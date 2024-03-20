@@ -328,6 +328,34 @@
 	mkdir -p /etc/govway/https/fruizioni/
 	cp https/override/fruizioni/fruizione_HttpsOverrideJvmConfigSoggetto1.properties  /etc/govway/https/fruizioni/
 
+- Per i test via proxy forward:
+
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('govway-proxy-enable','true');
+
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettori-govway-erogazioni-proxy','http://127.0.0.1:8080/TestService/echo?existsHttpHeaders=govway-api-address&replyHttpHeader=govway-api-address&replyPrefixHttpHeader=test-');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettori-govway-erogazioni-proxy-header','govway-api-address');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettori-govway-erogazioni-proxy-header-base64','true');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettori-govway-fruizioni-proxy','http://127.0.0.1:8080/TestService/echo?existsQueryParameters=govway_api_address&replyQueryParameter=govway_api_address&replyPrefixQueryParameter=test_');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettori-govway-fruizioni-proxy-query','govway_api_address');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettori-govway-fruizioni-proxy-query-base64','true');
+
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy','http://127.0.0.1:8080/TestService/echo?destFile=/tmp/response.json&destFileContentType=application/json');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-header','govway-api-address');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-header-base64','true');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-token-dynamic-discovery-TestForwardProxyDynamicDiscovery','true');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-token-jwt-validation-TestForwardProxyValidazioneJwt','true');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-token-introspection-TestForwardProxyIntrospection','true');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-token-userinfo-TestForwardProxyUserInfo','true');
+
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-token-retrieve-TestForwardProxyNegoziazione','true');
+
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-attribute-authority-TestForwardProxyAA','true');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-attribute-authority-response-jwt-validation-TestForwardProxyAARispostaJwt','true');
+
+
+
+
+
 Per eseguire i test:
 	ant run_test
 
@@ -470,6 +498,9 @@ Di seguito vengono descritti i test del package 'connettori':
 
 - 'tls', verifica la funzionalità tls
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.tls
+
+- 'forward_proxy', verifica la funzionalità di forward proxy
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.forward_proxy
 
 Di seguito vengono descritti i test del package 'token':
 

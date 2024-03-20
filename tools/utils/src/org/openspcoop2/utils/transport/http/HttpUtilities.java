@@ -28,6 +28,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.Key;
@@ -36,6 +38,7 @@ import java.security.Provider;
 import java.security.cert.CertStore;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -690,29 +693,84 @@ public class HttpUtilities {
 	
 	/* ********* HTTP INVOKE ************ */
 
+	// getHTTPResponse (no options)
+	
 	public static byte[] requestHTTPFile(String path) throws UtilsException{
-		return requestHTTPFile(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null);
+		return requestHTTPFile(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null, 
+				(HttpOptions[]) null);
 	}
 	public static byte[] requestHTTPFile(String path,int readTimeout,int connectTimeout) throws UtilsException{
-		return requestHTTPFile(path, readTimeout, connectTimeout, null, null);
+		return requestHTTPFile(path, readTimeout, connectTimeout, null, null, 
+				(HttpOptions[]) null);
 	}
 	public static byte[] requestHTTPFile(String path,String username,String password) throws UtilsException{
-		return requestHTTPFile(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password);
+		return requestHTTPFile(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password, 
+				(HttpOptions[]) null);
 	}	
 	public static byte[] requestHTTPFile(String path,int readTimeout,int connectTimeout,String username,String password) throws UtilsException{
-		HttpResponse res = getHTTPResponse(path, readTimeout, connectTimeout, username, password);
+		HttpResponse res = getHTTPResponse(path, readTimeout, connectTimeout, username, password, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static HttpResponse getHTTPResponse(String path) throws UtilsException{
-		return getHTTPResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null);
+		return getHTTPResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPResponse(String path,int readTimeout,int connectTimeout) throws UtilsException{
-		return getHTTPResponse(path, readTimeout, connectTimeout, null, null);
+		return getHTTPResponse(path, readTimeout, connectTimeout, null, null, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPResponse(String path,String username,String password) throws UtilsException{
-		return getHTTPResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password);
-	}	
+		return getHTTPResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password, 
+				(HttpOptions[]) null);
+	}
+	
 	public static HttpResponse getHTTPResponse(String path,int readTimeout,int connectTimeout,String username,String password) throws UtilsException{
+		return getHTTPResponse(path, readTimeout, connectTimeout, username, password, 
+				(HttpOptions[]) null);
+	}
+	
+	
+	// getHTTPResponse (options)
+	
+	public static byte[] requestHTTPFile(String path,
+			HttpOptions ... options) throws UtilsException{
+		return requestHTTPFile(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				options);
+	}
+	public static byte[] requestHTTPFile(String path,int readTimeout,int connectTimeout,
+			HttpOptions ... options) throws UtilsException{
+		return requestHTTPFile(path, readTimeout, connectTimeout, null, null,
+				options);
+	}
+	public static byte[] requestHTTPFile(String path,String username,String password,
+			HttpOptions ... options) throws UtilsException{
+		return requestHTTPFile(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				options);
+	}	
+	public static byte[] requestHTTPFile(String path,int readTimeout,int connectTimeout,String username,String password,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPResponse(path, readTimeout, connectTimeout, username, password,
+				options);
+		return res.getContent();
+	}
+	public static HttpResponse getHTTPResponse(String path,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				options);
+	}
+	public static HttpResponse getHTTPResponse(String path,int readTimeout,int connectTimeout,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPResponse(path, readTimeout, connectTimeout, null, null,
+				options);
+	}
+	public static HttpResponse getHTTPResponse(String path,String username,String password,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				options);
+	}	
+	public static HttpResponse getHTTPResponse(String path,int readTimeout,int connectTimeout,String username,String password,
+			HttpOptions ... options) throws UtilsException{
 		
 		HttpRequest httpRequest = new HttpRequest();
 		httpRequest.setUrl(path);
@@ -721,6 +779,12 @@ public class HttpUtilities {
 		httpRequest.setUsername(username);
 		httpRequest.setPassword(password);
 		httpRequest.setMethod(HttpRequestMethod.GET);
+		
+		if(options!=null && options.length>0) {
+			for (HttpOptions httpOptions : options) {
+				httpOptions.fill(httpRequest);
+			}
+		}
 		
 		HttpResponse response = null;
 		try{
@@ -737,11 +801,17 @@ public class HttpUtilities {
 	}
 	
 	
+	
+	
+	
+	// getHTTPSResponse (no options)
+	
 	public static byte[] requestHTTPSFile(String path,
 			String trustStore, String trustStorePassword, String trustStoreType) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
 				trustStore, trustStorePassword, trustStoreType,
-				null, null);
+				null, null, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,
@@ -749,7 +819,8 @@ public class HttpUtilities {
 			String crlPath) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
 				trustStore, trustStorePassword, trustStoreType,
-				crlPath, null);
+				crlPath, null, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,
@@ -757,7 +828,8 @@ public class HttpUtilities {
 			IOCSPValidator ocspValidator) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
 				trustStore, trustStorePassword, trustStoreType,
-				null, ocspValidator);
+				null, ocspValidator, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,
@@ -765,7 +837,8 @@ public class HttpUtilities {
 			String crlPath, IOCSPValidator ocspValidator) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
 				trustStore, trustStorePassword, trustStoreType,
-				crlPath, ocspValidator);
+				crlPath, ocspValidator, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	
@@ -773,7 +846,8 @@ public class HttpUtilities {
 			String trustStore, String trustStorePassword, String trustStoreType) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
 				trustStore, trustStorePassword, trustStoreType,
-				null, null);
+				null, null, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,
@@ -781,7 +855,8 @@ public class HttpUtilities {
 			String crlPath) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
 				trustStore, trustStorePassword, trustStoreType,
-				crlPath, null);
+				crlPath, null, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,
@@ -789,7 +864,8 @@ public class HttpUtilities {
 			IOCSPValidator ocspValidator) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
 				trustStore, trustStorePassword, trustStoreType,
-				null, ocspValidator);
+				null, ocspValidator, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,
@@ -797,7 +873,8 @@ public class HttpUtilities {
 			String crlPath, IOCSPValidator ocspValidator) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
 				trustStore, trustStorePassword, trustStoreType,
-				crlPath, ocspValidator);
+				crlPath, ocspValidator, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	
@@ -805,7 +882,8 @@ public class HttpUtilities {
 			String trustStore, String trustStorePassword, String trustStoreType) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
 				trustStore, trustStorePassword, trustStoreType,
-				null, null);
+				null, null, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,String username,String password,
@@ -813,7 +891,8 @@ public class HttpUtilities {
 			String crlPath) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
 				trustStore, trustStorePassword, trustStoreType,
-				crlPath, null);
+				crlPath, null, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}	
 	public static byte[] requestHTTPSFile(String path,String username,String password,
@@ -821,7 +900,8 @@ public class HttpUtilities {
 			IOCSPValidator ocspValidator) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
 				trustStore, trustStorePassword, trustStoreType,
-				null, ocspValidator);
+				null, ocspValidator, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}	
 	public static byte[] requestHTTPSFile(String path,String username,String password,
@@ -829,7 +909,8 @@ public class HttpUtilities {
 			String crlPath, IOCSPValidator ocspValidator) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
 				trustStore, trustStorePassword, trustStoreType,
-				crlPath, ocspValidator);
+				crlPath, ocspValidator, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}	
 	
@@ -837,7 +918,8 @@ public class HttpUtilities {
 			String trustStore, String trustStorePassword, String trustStoreType) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, username, password,
 				trustStore, trustStorePassword, trustStoreType,
-				null, null);
+				null, null, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,String username,String password,
@@ -845,7 +927,8 @@ public class HttpUtilities {
 			String crlPath) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, username, password,
 				trustStore, trustStorePassword, trustStoreType,
-				crlPath, null);
+				crlPath, null, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,String username,String password,
@@ -853,7 +936,8 @@ public class HttpUtilities {
 			IOCSPValidator ocspValidator) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, username, password,
 				trustStore, trustStorePassword, trustStoreType,
-				null, ocspValidator);
+				null, ocspValidator, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,String username,String password,
@@ -861,7 +945,8 @@ public class HttpUtilities {
 			String crlPath, IOCSPValidator ocspValidator) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, username, password,
 				trustStore, trustStorePassword, trustStoreType,
-				null, ocspValidator);
+				null, ocspValidator, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	
@@ -869,109 +954,431 @@ public class HttpUtilities {
 			String trustStore, String trustStorePassword, String trustStoreType) throws UtilsException{
 		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
 				trustStore, trustStorePassword, trustStoreType,
-				null, null);
+				null, null, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,
 			String trustStore, String trustStorePassword, String trustStoreType,
 			String crlPath) throws UtilsException{
 		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
 				trustStore, trustStorePassword, trustStoreType,
-				crlPath, null);
+				crlPath, null, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,
 			String trustStore, String trustStorePassword, String trustStoreType,
 			IOCSPValidator ocspValidator) throws UtilsException{
 		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
 				trustStore, trustStorePassword, trustStoreType,
-				null, ocspValidator);
+				null, ocspValidator, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,
 			String trustStore, String trustStorePassword, String trustStoreType,
 			String crlPath, IOCSPValidator ocspValidator) throws UtilsException{
 		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
 				trustStore, trustStorePassword, trustStoreType,
-				crlPath, ocspValidator);
+				crlPath, ocspValidator, 
+				(HttpOptions[]) null);
 	}
 	
 	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,
 			String trustStore, String trustStorePassword, String trustStoreType) throws UtilsException{
 		return getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
 				trustStore, trustStorePassword, trustStoreType,
-				null, null);
+				null, null, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,
 			String trustStore, String trustStorePassword, String trustStoreType,
 			String crlPath) throws UtilsException{
 		return getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
 				trustStore, trustStorePassword, trustStoreType,
-				crlPath, null);
+				crlPath, null, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,
 			String trustStore, String trustStorePassword, String trustStoreType,
 			IOCSPValidator ocspValidator) throws UtilsException{
 		return getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
 				trustStore, trustStorePassword, trustStoreType,
-				null, ocspValidator);
+				null, ocspValidator, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,
 			String trustStore, String trustStorePassword, String trustStoreType,
 			String crlPath, IOCSPValidator ocspValidator) throws UtilsException{
 		return getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
 				trustStore, trustStorePassword, trustStoreType,
-				crlPath, ocspValidator);
+				crlPath, ocspValidator, 
+				(HttpOptions[]) null);
 	}
 	
 	public static HttpResponse getHTTPSResponse(String path,String username,String password,
 			String trustStore, String trustStorePassword, String trustStoreType) throws UtilsException{
 		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
 				trustStore, trustStorePassword, trustStoreType,
-				null, null);
+				null, null, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,String username,String password,
 			String trustStore, String trustStorePassword, String trustStoreType,
 			String crlPath) throws UtilsException{
 		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
 				trustStore, trustStorePassword, trustStoreType,
-				crlPath, null);
+				crlPath, null, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,String username,String password,
 			String trustStore, String trustStorePassword, String trustStoreType,
 			IOCSPValidator ocspValidator) throws UtilsException{
 		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
 				trustStore, trustStorePassword, trustStoreType,
-				null, ocspValidator);
+				null, ocspValidator, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,String username,String password,
 			String trustStore, String trustStorePassword, String trustStoreType,
 			String crlPath, IOCSPValidator ocspValidator) throws UtilsException{
 		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
 				trustStore, trustStorePassword, trustStoreType,
-				crlPath, ocspValidator);
+				crlPath, ocspValidator, 
+				(HttpOptions[]) null);
 	}
 	
 	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,String username,String password,
 			String trustStore, String trustStorePassword, String trustStoreType) throws UtilsException{
 		return getHTTPSResponse(path,readTimeout,connectTimeout,username,password,
 				trustStore, trustStorePassword, trustStoreType,
-				null, null);
+				null, null, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,String username,String password,
 			String trustStore, String trustStorePassword, String trustStoreType,
 			String crlPath) throws UtilsException{
 		return getHTTPSResponse(path,readTimeout,connectTimeout,username,password,
 				trustStore, trustStorePassword, trustStoreType,
-				crlPath, null);
+				crlPath, null, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,String username,String password,
 			String trustStore, String trustStorePassword, String trustStoreType,
 			IOCSPValidator ocspValidator) throws UtilsException{
 		return getHTTPSResponse(path,readTimeout,connectTimeout,username,password,
 				trustStore, trustStorePassword, trustStoreType,
-				null, ocspValidator);
+				null, ocspValidator, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,String username,String password,
 			String trustStore, String trustStorePassword, String trustStoreType,
 			String crlPath, IOCSPValidator ocspValidator) throws UtilsException{
+		return getHTTPSResponse(path,readTimeout,connectTimeout,username,password,
+				trustStore, trustStorePassword, trustStoreType,
+				crlPath, ocspValidator, 
+				(HttpOptions[]) null);
+	}
+	
+	
+	// getHTTPSResponse (options)
+	
+	public static byte[] requestHTTPSFile(String path,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, trustStorePassword, trustStoreType,
+				null, null,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			String crlPath,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, trustStorePassword, trustStoreType,
+				crlPath, null,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, trustStorePassword, trustStoreType,
+				null, ocspValidator,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			String crlPath, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, trustStorePassword, trustStoreType,
+				crlPath, ocspValidator,
+				options);
+		return res.getContent();
+	}
+	
+	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
+				trustStore, trustStorePassword, trustStoreType,
+				null, null,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			String crlPath,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
+				trustStore, trustStorePassword, trustStoreType,
+				crlPath, null,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
+				trustStore, trustStorePassword, trustStoreType,
+				null, ocspValidator,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			String crlPath, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
+				trustStore, trustStorePassword, trustStoreType,
+				crlPath, ocspValidator,
+				options);
+		return res.getContent();
+	}
+	
+	public static byte[] requestHTTPSFile(String path,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, trustStorePassword, trustStoreType,
+				null, null,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			String crlPath,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, trustStorePassword, trustStoreType,
+				crlPath, null,
+				options);
+		return res.getContent();
+	}	
+	public static byte[] requestHTTPSFile(String path,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, trustStorePassword, trustStoreType,
+				null, ocspValidator,
+				options);
+		return res.getContent();
+	}	
+	public static byte[] requestHTTPSFile(String path,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			String crlPath, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, trustStorePassword, trustStoreType,
+				crlPath, ocspValidator,
+				options);
+		return res.getContent();
+	}	
+	
+	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, username, password,
+				trustStore, trustStorePassword, trustStoreType,
+				null, null,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			String crlPath,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, username, password,
+				trustStore, trustStorePassword, trustStoreType,
+				crlPath, null,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, username, password,
+				trustStore, trustStorePassword, trustStoreType,
+				null, ocspValidator,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			String crlPath, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, username, password,
+				trustStore, trustStorePassword, trustStoreType,
+				null, ocspValidator,
+				options);
+		return res.getContent();
+	}
+	
+	public static HttpResponse getHTTPSResponse(String path,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, trustStorePassword, trustStoreType,
+				null, null,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			String crlPath,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, trustStorePassword, trustStoreType,
+				crlPath, null,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, trustStorePassword, trustStoreType,
+				null, ocspValidator,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			String crlPath, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, trustStorePassword, trustStoreType,
+				crlPath, ocspValidator,
+				options);
+	}
+	
+	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
+				trustStore, trustStorePassword, trustStoreType,
+				null, null,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			String crlPath,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
+				trustStore, trustStorePassword, trustStoreType,
+				crlPath, null,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
+				trustStore, trustStorePassword, trustStoreType,
+				null, ocspValidator,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			String crlPath, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
+				trustStore, trustStorePassword, trustStoreType,
+				crlPath, ocspValidator,
+				options);
+	}
+	
+	public static HttpResponse getHTTPSResponse(String path,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, trustStorePassword, trustStoreType,
+				null, null,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			String crlPath,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, trustStorePassword, trustStoreType,
+				crlPath, null,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, trustStorePassword, trustStoreType,
+				null, ocspValidator,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			String crlPath, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, trustStorePassword, trustStoreType,
+				crlPath, ocspValidator,
+				options);
+	}
+	
+	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path,readTimeout,connectTimeout,username,password,
+				trustStore, trustStorePassword, trustStoreType,
+				null, null,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			String crlPath,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path,readTimeout,connectTimeout,username,password,
+				trustStore, trustStorePassword, trustStoreType,
+				crlPath, null,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path,readTimeout,connectTimeout,username,password,
+				trustStore, trustStorePassword, trustStoreType,
+				null, ocspValidator,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			String crlPath, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
 		
 		HttpRequest httpRequest = new HttpRequest();
 		httpRequest.setUrl(path);
@@ -987,6 +1394,12 @@ public class HttpUtilities {
 		httpRequest.setCrlPath(crlPath);
 		httpRequest.setOcspValidator(ocspValidator);
 		
+		if(options!=null && options.length>0) {
+			for (HttpOptions httpOptions : options) {
+				httpOptions.fill(httpRequest);
+			}
+		}
+		
 		HttpResponse response = null;
 		try{
 			response = httpInvoke(httpRequest);
@@ -1002,186 +1415,472 @@ public class HttpUtilities {
 	}
 	
 	
+	
+	// getHTTPSResponse (no options)
+	
 	public static byte[] requestHTTPSFile(String path,
 			KeyStore trustStore) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
-				trustStore, null, null);
+				trustStore, null, null, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,
 			KeyStore trustStore, CertStore crlStore) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
-				trustStore, crlStore, null);
+				trustStore, crlStore, null, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,
 			KeyStore trustStore, IOCSPValidator ocspValidator) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
-				trustStore, null, ocspValidator);
+				trustStore, null, ocspValidator, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,
 			KeyStore trustStore, CertStore crlStore, IOCSPValidator ocspValidator) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
-				trustStore, crlStore, ocspValidator);
+				trustStore, crlStore, ocspValidator, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	
 	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,
 			KeyStore trustStore) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
-				trustStore, null, null);
+				trustStore, null, null, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,
 			KeyStore trustStore, CertStore crlStore) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
-				trustStore, crlStore, null);
+				trustStore, crlStore, null, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,
 			KeyStore trustStore, IOCSPValidator ocspValidator) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
-				trustStore, null, ocspValidator);
+				trustStore, null, ocspValidator, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,
 			KeyStore trustStore, CertStore crlStore, IOCSPValidator ocspValidator) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
-				trustStore, crlStore, ocspValidator);
+				trustStore, crlStore, ocspValidator, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	
 	public static byte[] requestHTTPSFile(String path,String username,String password,
 			KeyStore trustStore) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
-				trustStore, null, null);
+				trustStore, null, null, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,String username,String password,
 			KeyStore trustStore, CertStore crlStore) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
-				trustStore, crlStore, null);
+				trustStore, crlStore, null, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,String username,String password,
 			KeyStore trustStore, IOCSPValidator ocspValidator) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
-				trustStore, null, ocspValidator);
+				trustStore, null, ocspValidator, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,String username,String password,
 			KeyStore trustStore, CertStore crlStore, IOCSPValidator ocspValidator) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
-				trustStore, crlStore, ocspValidator);
+				trustStore, crlStore, ocspValidator, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	
 	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,String username,String password,
 			KeyStore trustStore) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, username, password,
-				trustStore, null, null);
+				trustStore, null, null, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,String username,String password,
 			KeyStore trustStore, CertStore crlStore) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, username, password,
-				trustStore, crlStore, null);
+				trustStore, crlStore, null, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,String username,String password,
 			KeyStore trustStore, IOCSPValidator ocspValidator) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, username, password,
-				trustStore, null, ocspValidator);
+				trustStore, null, ocspValidator, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,String username,String password,
 			KeyStore trustStore, CertStore crlStore, IOCSPValidator ocspValidator) throws UtilsException{
 		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, username, password,
-				trustStore, crlStore, ocspValidator);
+				trustStore, crlStore, ocspValidator, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	
 	public static HttpResponse getHTTPSResponse(String path,
 			KeyStore trustStore) throws UtilsException{
 		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
-				trustStore, null, null);
+				trustStore, null, null, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,
 			KeyStore trustStore, CertStore crlStore) throws UtilsException{
 		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
-				trustStore, crlStore, null);
+				trustStore, crlStore, null, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,
 			KeyStore trustStore, IOCSPValidator ocspValidator) throws UtilsException{
 		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
-				trustStore, null, ocspValidator);
+				trustStore, null, ocspValidator, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,
 			KeyStore trustStore, CertStore crlStore, IOCSPValidator ocspValidator) throws UtilsException{
 		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
-				trustStore, crlStore, ocspValidator);
+				trustStore, crlStore, ocspValidator, 
+				(HttpOptions[]) null);
 	}
 	
 	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,
 			KeyStore trustStore) throws UtilsException{
 		return getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
-				trustStore, null, null);
+				trustStore, null, null, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,
 			KeyStore trustStore, CertStore crlStore) throws UtilsException{
 		return getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
-				trustStore, crlStore, null);
+				trustStore, crlStore, null, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,
 			KeyStore trustStore, IOCSPValidator ocspValidator) throws UtilsException{
 		return getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
-				trustStore, null, ocspValidator);
+				trustStore, null, ocspValidator, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,
 			KeyStore trustStore, CertStore crlStore, IOCSPValidator ocspValidator) throws UtilsException{
 		return getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
-				trustStore, crlStore, ocspValidator);
+				trustStore, crlStore, ocspValidator, 
+				(HttpOptions[]) null);
 	}
 	
 	public static HttpResponse getHTTPSResponse(String path,String username,String password,
 			KeyStore trustStore) throws UtilsException{
 		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
-				trustStore, null, null);
+				trustStore, null, null, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,String username,String password,
 			KeyStore trustStore, CertStore crlStore) throws UtilsException{
 		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
-				trustStore, crlStore, null);
+				trustStore, crlStore, null, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,String username,String password,
 			KeyStore trustStore, IOCSPValidator ocspValidator) throws UtilsException{
 		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
-				trustStore, null, ocspValidator);
+				trustStore, null, ocspValidator, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,String username,String password,
 			KeyStore trustStore, CertStore crlStore, IOCSPValidator ocspValidator) throws UtilsException{
 		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
-				trustStore, crlStore, ocspValidator);
+				trustStore, crlStore, ocspValidator, 
+				(HttpOptions[]) null);
 	}
 	
 	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,String username,String password,
 			KeyStore trustStore) throws UtilsException{
 		return getHTTPSResponse(path,readTimeout,connectTimeout,username,password,
-				trustStore, null, null);
+				trustStore, null, null, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,String username,String password,
 			KeyStore trustStore, CertStore crlStore) throws UtilsException{
 		return getHTTPSResponse(path,readTimeout,connectTimeout,username,password,
-				trustStore, crlStore, null);
+				trustStore, crlStore, null, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,String username,String password,
 			KeyStore trustStore, IOCSPValidator ocspValidator) throws UtilsException{
 		return getHTTPSResponse(path,readTimeout,connectTimeout,username,password,
-				trustStore, null, ocspValidator);
+				trustStore, null, ocspValidator, 
+				(HttpOptions[]) null);
 	}
 	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,String username,String password,
 			KeyStore trustStore, CertStore crlStore, IOCSPValidator ocspValidator) throws UtilsException{
+		return getHTTPSResponse(path,readTimeout,connectTimeout,username,password,
+				trustStore, crlStore, ocspValidator, 
+				(HttpOptions[]) null);
+	}
+	
+	
+	// getHTTPSResponse (options)
+	
+	public static byte[] requestHTTPSFile(String path,
+			KeyStore trustStore,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, null, null,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,
+			KeyStore trustStore, CertStore crlStore,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, crlStore, null,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,
+			KeyStore trustStore, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, null, ocspValidator,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,
+			KeyStore trustStore, CertStore crlStore, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, crlStore, ocspValidator,
+				options);
+		return res.getContent();
+	}
+	
+	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,
+			KeyStore trustStore,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
+				trustStore, null, null,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,
+			KeyStore trustStore, CertStore crlStore,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
+				trustStore, crlStore, null,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,
+			KeyStore trustStore, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
+				trustStore, null, ocspValidator,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,
+			KeyStore trustStore, CertStore crlStore, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
+				trustStore, crlStore, ocspValidator,
+				options);
+		return res.getContent();
+	}
+	
+	public static byte[] requestHTTPSFile(String path,String username,String password,
+			KeyStore trustStore,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, null, null,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,String username,String password,
+			KeyStore trustStore, CertStore crlStore,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, crlStore, null,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,String username,String password,
+			KeyStore trustStore, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, null, ocspValidator,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,String username,String password,
+			KeyStore trustStore, CertStore crlStore, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, crlStore, ocspValidator,
+				options);
+		return res.getContent();
+	}
+	
+	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,String username,String password,
+			KeyStore trustStore,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, username, password,
+				trustStore, null, null,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,String username,String password,
+			KeyStore trustStore, CertStore crlStore,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, username, password,
+				trustStore, crlStore, null,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,String username,String password,
+			KeyStore trustStore, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, username, password,
+				trustStore, null, ocspValidator,
+				options);
+		return res.getContent();
+	}
+	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,String username,String password,
+			KeyStore trustStore, CertStore crlStore, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, username, password,
+				trustStore, crlStore, ocspValidator,
+				options);
+		return res.getContent();
+	}
+	
+	public static HttpResponse getHTTPSResponse(String path,
+			KeyStore trustStore,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, null, null,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,
+			KeyStore trustStore, CertStore crlStore,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, crlStore, null,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,
+			KeyStore trustStore, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, null, ocspValidator,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,
+			KeyStore trustStore, CertStore crlStore, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, crlStore, ocspValidator,
+				options);
+	}
+	
+	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,
+			KeyStore trustStore,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
+				trustStore, null, null,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,
+			KeyStore trustStore, CertStore crlStore,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
+				trustStore, crlStore, null,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,
+			KeyStore trustStore, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
+				trustStore, null, ocspValidator,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,
+			KeyStore trustStore, CertStore crlStore, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
+				trustStore, crlStore, ocspValidator,
+				options);
+	}
+	
+	public static HttpResponse getHTTPSResponse(String path,String username,String password,
+			KeyStore trustStore,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, null, null,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,String username,String password,
+			KeyStore trustStore, CertStore crlStore,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, crlStore, null,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,String username,String password,
+			KeyStore trustStore, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, null, ocspValidator,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,String username,String password,
+			KeyStore trustStore, CertStore crlStore, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, crlStore, ocspValidator,
+				options);
+	}
+	
+	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,String username,String password,
+			KeyStore trustStore,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path,readTimeout,connectTimeout,username,password,
+				trustStore, null, null,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,String username,String password,
+			KeyStore trustStore, CertStore crlStore,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path,readTimeout,connectTimeout,username,password,
+				trustStore, crlStore, null,
+				options);
+	}
+	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,String username,String password,
+			KeyStore trustStore, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse(path,readTimeout,connectTimeout,username,password,
+				trustStore, null, ocspValidator,
+				options);
+	}
+		
+	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,String username,String password,
+			KeyStore trustStore, CertStore crlStore, IOCSPValidator ocspValidator,
+			HttpOptions ... options) throws UtilsException{
 		
 		HttpRequest httpRequest = new HttpRequest();
 		httpRequest.setUrl(path);
@@ -1195,6 +1894,12 @@ public class HttpUtilities {
 		httpRequest.setCrlStore(crlStore);
 		httpRequest.setOcspValidator(ocspValidator);
 		
+		if(options!=null && options.length>0) {
+			for (HttpOptions httpOptions : options) {
+				httpOptions.fill(httpRequest);
+			}
+		}
+		
 		HttpResponse response = null;
 		try{
 			response = httpInvoke(httpRequest);
@@ -1212,36 +1917,97 @@ public class HttpUtilities {
 	
 	
 	
+	// getHTTPSResponse_trustAllCerts (no options)
+	
 	public static byte[] requestHTTPSFile_trustAllCerts(String path) throws UtilsException{
-		return requestHTTPSFile_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null);
+		return requestHTTPSFile_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null, 
+				(HttpOptions[]) null);
 	}
 	
 	public static byte[] requestHTTPSFile_trustAllCerts(String path,int readTimeout,int connectTimeout) throws UtilsException{
-		return requestHTTPSFile_trustAllCerts(path, readTimeout, connectTimeout, null, null);
+		return requestHTTPSFile_trustAllCerts(path, readTimeout, connectTimeout, null, null, 
+				(HttpOptions[]) null);
 	}
 	
 	public static byte[] requestHTTPSFile_trustAllCerts(String path,String username,String password) throws UtilsException{
-		return requestHTTPSFile_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password);
+		return requestHTTPSFile_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password, 
+				(HttpOptions[]) null);
 	}
 
 	public static byte[] requestHTTPSFile_trustAllCerts(String path,int readTimeout,int connectTimeout,String username,String password) throws UtilsException{
-		HttpResponse res = getHTTPSResponse_trustAllCerts(path, readTimeout, connectTimeout, username, password);
+		HttpResponse res = getHTTPSResponse_trustAllCerts(path, readTimeout, connectTimeout, username, password, 
+				(HttpOptions[]) null);
 		return res.getContent();
 	}
 	
 	public static HttpResponse getHTTPSResponse_trustAllCerts(String path) throws UtilsException{
-		return getHTTPSResponse_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null);
+		return getHTTPSResponse_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null, 
+				(HttpOptions[]) null);
 	}
 	
 	public static HttpResponse getHTTPSResponse_trustAllCerts(String path,int readTimeout,int connectTimeout) throws UtilsException{
-		return getHTTPSResponse_trustAllCerts(path, readTimeout, connectTimeout, null, null);
+		return getHTTPSResponse_trustAllCerts(path, readTimeout, connectTimeout, null, null, 
+				(HttpOptions[]) null);
 	}
 	
 	public static HttpResponse getHTTPSResponse_trustAllCerts(String path,String username,String password) throws UtilsException{
-		return getHTTPSResponse_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password);
+		return getHTTPSResponse_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password, 
+				(HttpOptions[]) null);
 	}	
 	
 	public static HttpResponse getHTTPSResponse_trustAllCerts(String path,int readTimeout,int connectTimeout,String username,String password) throws UtilsException{
+		return getHTTPSResponse_trustAllCerts(path, readTimeout, connectTimeout, username, password, 
+				(HttpOptions[]) null);
+	}
+	
+	
+	// getHTTPSResponse_trustAllCerts (options)
+	
+	public static byte[] requestHTTPSFile_trustAllCerts(String path,
+			HttpOptions ... options) throws UtilsException{
+		return requestHTTPSFile_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				options);
+	}
+	
+	public static byte[] requestHTTPSFile_trustAllCerts(String path,int readTimeout,int connectTimeout,
+			HttpOptions ... options) throws UtilsException{
+		return requestHTTPSFile_trustAllCerts(path, readTimeout, connectTimeout, null, null,
+				options);
+	}
+	
+	public static byte[] requestHTTPSFile_trustAllCerts(String path,String username,String password,
+			HttpOptions ... options) throws UtilsException{
+		return requestHTTPSFile_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				options);
+	}
+
+	public static byte[] requestHTTPSFile_trustAllCerts(String path,int readTimeout,int connectTimeout,String username,String password,
+			HttpOptions ... options) throws UtilsException{
+		HttpResponse res = getHTTPSResponse_trustAllCerts(path, readTimeout, connectTimeout, username, password,
+				options);
+		return res.getContent();
+	}
+	
+	public static HttpResponse getHTTPSResponse_trustAllCerts(String path,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				options);
+	}
+	
+	public static HttpResponse getHTTPSResponse_trustAllCerts(String path,int readTimeout,int connectTimeout,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse_trustAllCerts(path, readTimeout, connectTimeout, null, null,
+				options);
+	}
+	
+	public static HttpResponse getHTTPSResponse_trustAllCerts(String path,String username,String password,
+			HttpOptions ... options) throws UtilsException{
+		return getHTTPSResponse_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				options);
+	}	
+	
+	public static HttpResponse getHTTPSResponse_trustAllCerts(String path,int readTimeout,int connectTimeout,String username,String password,
+			HttpOptions ... options) throws UtilsException{
 		
 		HttpRequest httpRequest = new HttpRequest();
 		httpRequest.setUrl(path);
@@ -1252,6 +2018,12 @@ public class HttpUtilities {
 		httpRequest.setMethod(HttpRequestMethod.GET);
 		
 		httpRequest.setTrustAllCerts(true);
+		
+		if(options!=null && options.length>0) {
+			for (HttpOptions httpOptions : options) {
+				httpOptions.fill(httpRequest);
+			}
+		}
 		
 		HttpResponse response = null;
 		try{
@@ -1526,8 +2298,49 @@ public class HttpUtilities {
 			if(request.getUrl()==null){
 				throw new UtilsException("Url required");
 			}
-			URL url = new URL(request.getUrl());
-			URLConnection connection = url.openConnection();
+			String connectionUrl = request.getUrl();
+			if(request.getForwardProxyEndpoint()!=null && request.getForwardProxyConfig()!=null) {
+				Map<String, List<String>> parameters = new HashMap<>();
+				if(request.getForwardProxyConfig().getQuery()!=null) {
+					if(request.getForwardProxyConfig().isQueryBase64()) {
+						String base64Location = Base64Utilities.encodeAsString(connectionUrl.getBytes());
+						TransportUtils.addParameter(parameters,request.getForwardProxyConfig().getQuery(), base64Location);
+					}
+					else {
+						TransportUtils.addParameter(parameters,request.getForwardProxyConfig().getQuery(), connectionUrl);
+					}
+				}
+				else if(request.getForwardProxyConfig().getHeader()!=null) {
+					if(request.getForwardProxyConfig().isHeaderBase64()) {
+						String base64Location = Base64Utilities.encodeAsString(connectionUrl.getBytes());
+						request.addHeader(request.getForwardProxyConfig().getHeader(), base64Location);
+					}
+					else {
+						request.addHeader(request.getForwardProxyConfig().getHeader(), connectionUrl);
+					}
+				}
+				boolean encodeBaseLocation = true; // la base location può contenere dei parametri
+				connectionUrl = TransportUtils.buildUrlWithParameters(parameters, request.getForwardProxyEndpoint(), encodeBaseLocation, LoggerWrapperFactory.getLogger(HttpUtilities.class));
+			}
+			URL url = new URL(connectionUrl);
+			URLConnection connection = null;
+			if(request.getProxyType()==null){
+				connection = url.openConnection();
+			}
+			else {
+				if(request.getProxyHostname()==null) {
+					throw new UtilsException("Proxy require a hostname");
+				}
+				Proxy proxy = new Proxy(request.getProxyType(), new InetSocketAddress(request.getProxyHostname(), request.getProxyPort()));
+				connection = url.openConnection(proxy);
+				
+				// Proxy Authentication BASIC
+				if(request.getProxyUsername()!=null && request.getProxyPassword()!=null){
+					String authentication = request.getProxyUsername() + ":" + request.getProxyPassword();
+					authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + Base64Utilities.encodeAsString(authentication.getBytes());
+					request.addHeader(HttpConstants.PROXY_AUTHORIZATION,authentication);
+				}
+			}
 			HttpURLConnection httpConn = (HttpURLConnection) connection;
 			if(sslContext!=null) {
 				
@@ -1681,11 +2494,15 @@ public class HttpUtilities {
 			try{
 				if(is!=null)
 					is.close();
-			}catch(Exception eis){}
+			}catch(Exception eis){
+				// ignore
+			}
 			try{
 				if(outResponse!=null)
 					outResponse.close();
-			}catch(Exception eis){}
+			}catch(Exception eis){
+				// ignore
+			}
 			throw new UtilsException(e.getMessage(),e);
 		}
 		finally{
@@ -1693,7 +2510,9 @@ public class HttpUtilities {
 				if(finKeyStore!=null){
 					finKeyStore.close();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				if(finTrustStore!=null){
 					finTrustStore.close();
@@ -1711,16 +2530,44 @@ public class HttpUtilities {
 	
 	/* ********* CHECK ************ */
 	
+	// check (no options)
+	
 	public static void check(String path) throws UtilsException,HttpUtilsException{
-		check(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null);
+		check(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null, 
+				(HttpOptions[]) null);
 	}
 	public static void check(String path,int readTimeout,int connectTimeout) throws UtilsException,HttpUtilsException{
-		check(path, readTimeout, connectTimeout, null, null);
+		check(path, readTimeout, connectTimeout, null, null, 
+				(HttpOptions[]) null);
 	}
 	public static void check(String path,String username,String password) throws UtilsException,HttpUtilsException{
-		check(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password);
-	}	
+		check(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password, 
+				(HttpOptions[]) null);
+	}
 	public static void check(String path,int readTimeout,int connectTimeout,String username,String password) throws UtilsException,HttpUtilsException{
+		check(path, readTimeout, connectTimeout, username, password, 
+				(HttpOptions[]) null);
+	}
+	
+	// check (options)
+	
+	public static void check(String path,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
+		check(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				options);
+	}
+	public static void check(String path,int readTimeout,int connectTimeout,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
+		check(path, readTimeout, connectTimeout, null, null,
+				options);
+	}
+	public static void check(String path,String username,String password,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
+		check(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				options);
+	}	
+	public static void check(String path,int readTimeout,int connectTimeout,String username,String password,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
 		
 		HttpRequest httpRequest = new HttpRequest();
 		httpRequest.setUrl(path);
@@ -1730,62 +2577,155 @@ public class HttpUtilities {
 		httpRequest.setPassword(password);
 		httpRequest.setMethod(HttpRequestMethod.GET);
 		
+		if(options!=null && options.length>0) {
+			for (HttpOptions httpOptions : options) {
+				httpOptions.fill(httpRequest);
+			}
+		}
+		
 		check(httpRequest);
 		
 	}
 	
 	
+	
+	
+	// checkHTTPS (no options)
+	
 	public static void checkHTTPS(String path,
 			String trustStore, String trustStorePassword, String trustStoreType) throws UtilsException,HttpUtilsException{
 		checkHTTPS(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
 				trustStore, trustStorePassword, trustStoreType,
-				null);
+				null, 
+				(HttpOptions[]) null);
 	}
 	public static void checkHTTPS(String path,
 			String trustStore, String trustStorePassword, String trustStoreType,
 			String crlPath) throws UtilsException,HttpUtilsException{
 		checkHTTPS(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
 				trustStore, trustStorePassword, trustStoreType,
-				crlPath);
+				crlPath, 
+				(HttpOptions[]) null);
 	}
 	
 	public static void checkHTTPS(String path,int readTimeout,int connectTimeout,
 			String trustStore, String trustStorePassword, String trustStoreType) throws UtilsException,HttpUtilsException{
 		checkHTTPS(path, readTimeout, connectTimeout, null, null,
 				trustStore, trustStorePassword, trustStoreType,
-				null);
+				null, 
+				(HttpOptions[]) null);
 	}
 	public static void checkHTTPS(String path,int readTimeout,int connectTimeout,
 			String trustStore, String trustStorePassword, String trustStoreType,
 			String crlPath) throws UtilsException,HttpUtilsException{
 		checkHTTPS(path, readTimeout, connectTimeout, null, null,
 				trustStore, trustStorePassword, trustStoreType,
-				crlPath);
+				crlPath, 
+				(HttpOptions[]) null);
 	}
 	
 	public static void checkHTTPS(String path,String username,String password,
 			String trustStore, String trustStorePassword, String trustStoreType) throws UtilsException,HttpUtilsException{
 		checkHTTPS(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
 				trustStore, trustStorePassword, trustStoreType,
-				null);
+				null, 
+				(HttpOptions[]) null);
 	}
 	public static void checkHTTPS(String path,String username,String password,
 			String trustStore, String trustStorePassword, String trustStoreType,
 			String crlPath) throws UtilsException,HttpUtilsException{
 		checkHTTPS(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
 				trustStore, trustStorePassword, trustStoreType,
-				crlPath);
+				crlPath, 
+				(HttpOptions[]) null);
 	}
 	
 	public static void checkHTTPS(String path,int readTimeout,int connectTimeout,String username,String password,
 			String trustStore, String trustStorePassword, String trustStoreType) throws UtilsException,HttpUtilsException{
 		checkHTTPS(path,readTimeout,connectTimeout,username,password,
 				trustStore, trustStorePassword, trustStoreType,
-				null);
+				null, 
+				(HttpOptions[]) null);
 	}
+	
 	public static void checkHTTPS(String path,int readTimeout,int connectTimeout,String username,String password,
 			String trustStore, String trustStorePassword, String trustStoreType,
 			String crlPath) throws UtilsException,HttpUtilsException{
+		checkHTTPS(path,readTimeout,connectTimeout,username,password,
+				trustStore, trustStorePassword, trustStoreType,
+				crlPath, 
+				(HttpOptions[]) null);
+	}
+	
+	
+	// checkHTTPS (options)
+	
+	public static void checkHTTPS(String path,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
+		checkHTTPS(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, trustStorePassword, trustStoreType,
+				null,
+				options);
+	}
+	public static void checkHTTPS(String path,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			String crlPath,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
+		checkHTTPS(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, trustStorePassword, trustStoreType,
+				crlPath,
+				options);
+	}
+	
+	public static void checkHTTPS(String path,int readTimeout,int connectTimeout,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
+		checkHTTPS(path, readTimeout, connectTimeout, null, null,
+				trustStore, trustStorePassword, trustStoreType,
+				null,
+				options);
+	}
+	public static void checkHTTPS(String path,int readTimeout,int connectTimeout,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			String crlPath,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
+		checkHTTPS(path, readTimeout, connectTimeout, null, null,
+				trustStore, trustStorePassword, trustStoreType,
+				crlPath,
+				options);
+	}
+	
+	public static void checkHTTPS(String path,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
+		checkHTTPS(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, trustStorePassword, trustStoreType,
+				null,
+				options);
+	}
+	public static void checkHTTPS(String path,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			String crlPath,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
+		checkHTTPS(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, trustStorePassword, trustStoreType,
+				crlPath,
+				options);
+	}
+	
+	public static void checkHTTPS(String path,int readTimeout,int connectTimeout,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
+		checkHTTPS(path,readTimeout,connectTimeout,username,password,
+				trustStore, trustStorePassword, trustStoreType,
+				null,
+				options);
+	}
+	public static void checkHTTPS(String path,int readTimeout,int connectTimeout,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType,
+			String crlPath,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
 		
 		HttpRequest httpRequest = new HttpRequest();
 		httpRequest.setUrl(path);
@@ -1800,52 +2740,135 @@ public class HttpUtilities {
 		httpRequest.setTrustStoreType(trustStoreType);
 		httpRequest.setCrlPath(crlPath);
 		
+		if(options!=null && options.length>0) {
+			for (HttpOptions httpOptions : options) {
+				httpOptions.fill(httpRequest);
+			}
+		}
+		
 		check(httpRequest);
 		
 	}
 	
-		
+	
+	
+	
+	
+	// checkHTTPS (no options)
 	
 	public static void checkHTTPS(String path,
 			KeyStore trustStore) throws UtilsException,HttpUtilsException{
 		checkHTTPS(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
-				trustStore, null);
+				trustStore, null, 
+				(HttpOptions[]) null);
 	}
 	public static void checkHTTPS(String path,
 			KeyStore trustStore, CertStore crlStore) throws UtilsException,HttpUtilsException{
 		checkHTTPS(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
-				trustStore, crlStore);
+				trustStore, crlStore, 
+				(HttpOptions[]) null);
 	}
 	
 	public static void checkHTTPS(String path,int readTimeout,int connectTimeout,
 			KeyStore trustStore) throws UtilsException,HttpUtilsException{
 		checkHTTPS(path, readTimeout, connectTimeout, null, null,
-				trustStore, null);
+				trustStore, null, 
+				(HttpOptions[]) null);
 	}
 	public static void checkHTTPS(String path,int readTimeout,int connectTimeout,
 			KeyStore trustStore, CertStore crlStore) throws UtilsException,HttpUtilsException{
 		checkHTTPS(path, readTimeout, connectTimeout, null, null,
-				trustStore, crlStore);
+				trustStore, crlStore, 
+				(HttpOptions[]) null);
 	}
 	
 	public static void checkHTTPS(String path,String username,String password,
 			KeyStore trustStore) throws UtilsException,HttpUtilsException{
 		checkHTTPS(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
-				trustStore, null);
+				trustStore, null, 
+				(HttpOptions[]) null);
 	}
 	public static void checkHTTPS(String path,String username,String password,
 			KeyStore trustStore, CertStore crlStore) throws UtilsException,HttpUtilsException{
 		checkHTTPS(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
-				trustStore, crlStore);
+				trustStore, crlStore, 
+				(HttpOptions[]) null);
 	}	
 	
 	public static void checkHTTPS(String path,int readTimeout,int connectTimeout,String username,String password,
 			KeyStore trustStore) throws UtilsException,HttpUtilsException{
 		checkHTTPS(path,readTimeout,connectTimeout,username,password,
-				trustStore, null);
+				trustStore, null, 
+				(HttpOptions[]) null);
 	}
+	
 	public static void checkHTTPS(String path,int readTimeout,int connectTimeout,String username,String password,
 			KeyStore trustStore, CertStore crlStore) throws UtilsException,HttpUtilsException{
+		checkHTTPS(path,readTimeout,connectTimeout,username,password,
+				trustStore, crlStore, 
+				(HttpOptions[]) null);
+	}
+	
+	
+	
+	// checkHTTPS (options)
+	
+	public static void checkHTTPS(String path,
+			KeyStore trustStore,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
+		checkHTTPS(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, null,
+				options);
+	}
+	public static void checkHTTPS(String path,
+			KeyStore trustStore, CertStore crlStore,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
+		checkHTTPS(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, crlStore,
+				options);
+	}
+	
+	public static void checkHTTPS(String path,int readTimeout,int connectTimeout,
+			KeyStore trustStore,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
+		checkHTTPS(path, readTimeout, connectTimeout, null, null,
+				trustStore, null,
+				options);
+	}
+	public static void checkHTTPS(String path,int readTimeout,int connectTimeout,
+			KeyStore trustStore, CertStore crlStore,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
+		checkHTTPS(path, readTimeout, connectTimeout, null, null,
+				trustStore, crlStore,
+				options);
+	}
+	
+	public static void checkHTTPS(String path,String username,String password,
+			KeyStore trustStore,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
+		checkHTTPS(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, null,
+				options);
+	}
+	public static void checkHTTPS(String path,String username,String password,
+			KeyStore trustStore, CertStore crlStore,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
+		checkHTTPS(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, crlStore,
+				options);
+	}	
+	
+	public static void checkHTTPS(String path,int readTimeout,int connectTimeout,String username,String password,
+			KeyStore trustStore,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
+		checkHTTPS(path,readTimeout,connectTimeout,username,password,
+				trustStore, null,
+				options);
+	}
+	
+	public static void checkHTTPS(String path,int readTimeout,int connectTimeout,String username,String password,
+			KeyStore trustStore, CertStore crlStore,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
 		
 		HttpRequest httpRequest = new HttpRequest();
 		httpRequest.setUrl(path);
@@ -1858,20 +2881,56 @@ public class HttpUtilities {
 		httpRequest.setTrustStore(trustStore);
 		httpRequest.setCrlStore(crlStore);
 		
+		if(options!=null && options.length>0) {
+			for (HttpOptions httpOptions : options) {
+				httpOptions.fill(httpRequest);
+			}
+		}
+		
 		check(httpRequest);
 		
 	}
 	
+	
+	
+	// checkHTTPS_trustAllCerts (no options)
+	
 	public static void checkHTTPS_trustAllCerts(String path) throws UtilsException, HttpUtilsException{
-		checkHTTPS_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null);
+		checkHTTPS_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null, 
+				(HttpOptions[]) null);
 	}
 	public static void checkHTTPS_trustAllCerts(String path,int readTimeout,int connectTimeout) throws UtilsException, HttpUtilsException{
-		checkHTTPS_trustAllCerts(path, readTimeout, connectTimeout, null, null);
+		checkHTTPS_trustAllCerts(path, readTimeout, connectTimeout, null, null, 
+				(HttpOptions[]) null);
 	}
 	public static void checkHTTPS_trustAllCerts(String path,String username,String password) throws UtilsException, HttpUtilsException{
-		checkHTTPS_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password);
+		checkHTTPS_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password, 
+				(HttpOptions[]) null);
 	}	
 	public static void checkHTTPS_trustAllCerts(String path,int readTimeout,int connectTimeout,String username,String password) throws UtilsException,HttpUtilsException{
+		checkHTTPS_trustAllCerts(path, readTimeout, connectTimeout, username, password, 
+				(HttpOptions[]) null);
+	}
+	
+	// checkHTTPS_trustAllCerts (options)
+	
+	public static void checkHTTPS_trustAllCerts(String path,
+			HttpOptions ... options) throws UtilsException, HttpUtilsException{
+		checkHTTPS_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				options);
+	}
+	public static void checkHTTPS_trustAllCerts(String path,int readTimeout,int connectTimeout,
+			HttpOptions ... options) throws UtilsException, HttpUtilsException{
+		checkHTTPS_trustAllCerts(path, readTimeout, connectTimeout, null, null,
+				options);
+	}
+	public static void checkHTTPS_trustAllCerts(String path,String username,String password,
+			HttpOptions ... options) throws UtilsException, HttpUtilsException{
+		checkHTTPS_trustAllCerts(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				options);
+	}	
+	public static void checkHTTPS_trustAllCerts(String path,int readTimeout,int connectTimeout,String username,String password,
+			HttpOptions ... options) throws UtilsException,HttpUtilsException{
 		HttpRequest httpRequest = new HttpRequest();
 		httpRequest.setUrl(path);
 		httpRequest.setReadTimeout(readTimeout);
@@ -1881,6 +2940,12 @@ public class HttpUtilities {
 		httpRequest.setMethod(HttpRequestMethod.GET);
 		
 		httpRequest.setTrustAllCerts(true);
+		
+		if(options!=null && options.length>0) {
+			for (HttpOptions httpOptions : options) {
+				httpOptions.fill(httpRequest);
+			}
+		}
 		
 		check(httpRequest);
 		

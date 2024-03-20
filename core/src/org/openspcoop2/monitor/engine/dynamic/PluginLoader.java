@@ -20,6 +20,7 @@
 
 package org.openspcoop2.monitor.engine.dynamic;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
@@ -42,6 +43,7 @@ public class PluginLoader implements IPluginLoader {
 	private Logger log;
 	
 	public PluginLoader() {
+		// nop
 	}
 	
 	@Override
@@ -79,49 +81,49 @@ public class PluginLoader implements IPluginLoader {
 	// UTILITY
 	
 	@Override
-	public Class<?> getDynamicClass(String className, TipoPlugin tipoPlugin, String tipo) throws Exception {
+	public Class<?> getDynamicClass(String className, TipoPlugin tipoPlugin, String tipo) throws CoreException {
 		return getDynamicClass(className, tipoPlugin.getValue(), tipo);
 	}
 	@Override
-	public Class<?> getDynamicClass(String className, String tipoPlugin, String tipo) throws Exception {
+	public Class<?> getDynamicClass(String className, String tipoPlugin, String tipo) throws CoreException {
 		if(className==null) {
-			throw new Exception("Class not found ("+getObjectName(tipoPlugin)+" type '"+tipo+"')");
+			throw new CoreException("Class not found ("+getObjectName(tipoPlugin)+" type '"+tipo+"')");
 		}
 		Class<?> c = null;
 		if(this.isPluginManagerEnabled()) {
 			if(this.pluginManager==null) {
-				throw new Exception("Plugin manager not initialized");
+				throw new CoreException("Plugin manager not initialized");
 			}
 			try {
 				c = this.pluginManager.findClass(this.log, tipoPlugin, className);
 			}catch(Exception e) {
-				throw new Exception("Class '"+className+"' not found in registry ("+getObjectName(tipoPlugin)+" type '"+tipo+"'): "+e.getMessage(),e);
+				throw new CoreException("Class '"+className+"' not found in registry ("+getObjectName(tipoPlugin)+" type '"+tipo+"'): "+e.getMessage(),e);
 			}
 		}
 		else {
 			try {
 				c = Class.forName(className);
 			}catch(Exception e) {
-				throw new Exception("Class '"+className+"' not found in classpath: "+e.getMessage(),e);
+				throw new CoreException("Class '"+className+"' not found in classpath: "+e.getMessage(),e);
 			}	
 		}
 		if(c==null) {
-			throw new Exception("Class '"+className+"' not found in registry ("+getObjectName(tipoPlugin)+" type '"+tipo+"')");
+			throw new CoreException("Class '"+className+"' not found in registry ("+getObjectName(tipoPlugin)+" type '"+tipo+"')");
 		}
 		return c;
 	}
 	
 	@Override
-	public <T> T newInstance(Class<T> c, TipoPlugin tipoPlugin, String tipo) throws Exception{
+	public <T> T newInstance(Class<T> c, TipoPlugin tipoPlugin, String tipo) throws CoreException{
 		return newInstance(c, tipoPlugin.getValue(), tipo);
 	}
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> T newInstance(Class<T> c, String tipoPlugin, String tipo) throws Exception{
+	public <T> T newInstance(Class<T> c, String tipoPlugin, String tipo) throws CoreException{
 		try {
 			return (T) this.loader.newInstance(c);
 		}catch(Throwable e) {
-			throw new Exception("Class '"+c.getClass().getName()+"' new instance error ("+getObjectName(tipoPlugin)+" type '"+tipo+"'): "+e.getMessage(),e);
+			throw new CoreException("Class '"+c.getClass().getName()+"' new instance error ("+getObjectName(tipoPlugin)+" type '"+tipo+"'): "+e.getMessage(),e);
 		}
 	}
 	
@@ -131,7 +133,7 @@ public class PluginLoader implements IPluginLoader {
 		return newInstance(c, customTipoClasse, tipo);
 	}
 	
-	protected String getObjectName(String tipoPluginParam) throws Exception {
+	protected String getObjectName(String tipoPluginParam) throws CoreException {
 		
 		TipoPlugin tipoPlugin = TipoPlugin.toEnumConstant(tipoPluginParam);
 		
@@ -166,6 +168,8 @@ public class PluginLoader implements IPluginLoader {
 			return "search library";
 		case STATISTICA:
 			return "stats library";
+		case TOKEN_DYNAMIC_DISCOVERY:
+			return "token dynamic discovery";
 		case TOKEN_VALIDAZIONE:
 			return "token validation policy";
 		case TOKEN_NEGOZIAZIONE:
@@ -173,7 +177,7 @@ public class PluginLoader implements IPluginLoader {
 		case ATTRIBUTE_AUTHORITY:
 			return "attribute authority";
 		}
-		throw new Exception("?? Type '"+tipoPlugin+"' unsupported ??");
+		throw new CoreException("?? Type '"+tipoPlugin+"' unsupported ??");
 	}
 	
 }

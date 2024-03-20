@@ -55,6 +55,7 @@ public class Costanti {
 	public static final MapKey<String> PDD_CONTEXT_TOKEN_MESSAGE_ERROR_BODY_EMPTY = Map.newMapKey("PDD_CONTEXT_TOKEN_MESSAGE_ERROR_BODY_EMPTY");
 	public static final MapKey<String> PDD_CONTEXT_TOKEN_MESSAGE_ERROR_GENERIC_MESSAGE = Map.newMapKey("PDD_CONTEXT_TOKEN_MESSAGE_ERROR_GENERIC_MESSAGE");
 	public static final MapKey<String> PDD_CONTEXT_TOKEN_POSIZIONE = Map.newMapKey("TOKEN_POSIZIONE");
+	public static final MapKey<String> PDD_CONTEXT_TOKEN_ESITO_DYNAMIC_DISCOVERY = Map.newMapKey("TOKEN_ESITO_DYNAMIC_DISCOVERY");
 	public static final MapKey<String> PDD_CONTEXT_TOKEN_ESITO_VALIDAZIONE = Map.newMapKey("TOKEN_ESITO_VALIDAZIONE");
 	public static final MapKey<String> PDD_CONTEXT_TOKEN_ESITO_INTROSPECTION = Map.newMapKey("TOKEN_ESITO_INTROSPECTION");
 	public static final MapKey<String> PDD_CONTEXT_TOKEN_ESITO_USER_INFO = Map.newMapKey("TOKEN_ESITO_USER_INFO");
@@ -83,7 +84,8 @@ public class Costanti {
 	
 	
 	// Token Parser id
-	
+
+	public static final String DYNAMIC_DISCOVERY_PARSER_COLLECTION_ID = "dynamicDiscoveryParserPropRefId";
 	public static final String VALIDAZIONE_JWT_TOKEN_PARSER_COLLECTION_ID = "validazioneJwtTokenParserPropRefId";
 	public static final String INTROSPECTION_TOKEN_PARSER_COLLECTION_ID = "introspectionTokenParserPropRefId";
 	public static final String USERINFO_TOKEN_PARSER_COLLECTION_ID = "userInfoTokenParserPropRefId";
@@ -148,6 +150,16 @@ public class Costanti {
 	
 	public static final String POLICY_STATO_ABILITATO = "true";
 	public static final String POLICY_STATO_DISABILITATO = "false";
+	
+	public static final String POLICY_DISCOVERY_STATO = "policy.token.discovery";
+	public static final String POLICY_DISCOVERY_CLAIMS_PARSER_TYPE = CostantiConfigurazione.POLICY_DYNAMIC_DISCOVERY_CLAIMS_PARSER_TYPE; 
+	public static final String POLICY_DISCOVERY_CLAIMS_PARSER_TYPE_CUSTOM = CostantiConfigurazione.POLICY_DYNAMIC_DISCOVERY_CLAIMS_PARSER_TYPE_CUSTOM; 
+	public static final String POLICY_DISCOVERY_CLAIMS_PARSER_CLASS_NAME = CostantiConfigurazione.POLICY_DYNAMIC_DISCOVERY_CLAIMS_PARSER_CLASS_NAME; 
+	public static final String POLICY_DISCOVERY_CLAIMS_PARSER_PLUGIN_TYPE = CostantiConfigurazione.POLICY_DYNAMIC_DISCOVERY_CLAIMS_PARSER_PLUGIN_TYPE; 	
+	public static final String POLICY_DISCOVERY_URL = "policy.discovery.endpoint.url";
+	public static final String POLICY_DISCOVERY_JWK_CUSTOM = "policy.discovery.jwk";
+	public static final String POLICY_DISCOVERY_INTROSPECTION_CUSTOM = "policy.discovery.introspection";
+	public static final String POLICY_DISCOVERY_USERINFO_CUSTOM = "policy.discovery.userInfo";
 	
 	public static final String POLICY_ENDPOINT_HTTPS_STATO = "policy.endpoint.https.stato";
 	public static final String POLICY_ENDPOINT_PROXY_STATO = "policy.endpoint.proxy.stato";
@@ -551,10 +563,12 @@ public class Costanti {
 	public static final String ID_TOKEN_FORWARD_JWE_KEYSTORE_PASSWORD = "tokenForwardInfoRaccolteModeJWEContentKeystorePassword";
 	public static final String ID_TOKEN_FORWARD_JWE_KEYSTORE_PASSWORD_PRIVATE_KEY = "tokenForwardInfoRaccolteModeJWEContentKeystorePrivateKeyPassword";
 	
+	public static final String ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CLASSNAME = "discoveryParserCustom";
 	public static final String ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CLASSNAME = "validazioneJwtParserCustom";
 	public static final String ID_INTROSPECTION_CUSTOM_PARSER_PLUGIN_CLASSNAME = "introspectionParserCustom";
 	public static final String ID_USER_INFO_CUSTOM_PARSER_PLUGIN_CLASSNAME = "userInfoParserCustom";
 	
+	public static final String ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CHOICE = "discoveryParserCustomPluginChoice";
 	public static final String ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CHOICE = "validazioneJwtParserCustomPluginChoice";
 	public static final String ID_INTROSPECTION_CUSTOM_PARSER_PLUGIN_CHOICE = "introspectionParserCustomPluginChoice";
 	public static final String ID_USER_INFO_CUSTOM_PARSER_PLUGIN_CHOICE = "userInfoParserCustomPluginChoice";

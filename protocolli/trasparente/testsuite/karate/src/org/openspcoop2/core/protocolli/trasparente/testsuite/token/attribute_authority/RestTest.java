@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +36,7 @@ import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -135,12 +137,41 @@ public class RestTest extends ConfigLoader {
 	
 	
 	// *** singleAA: autorizzazione per contenuti (AA JWS Bearer con validazione tramite jwks 'kid') ***
+	
 	@Test
 	public void erogazione_singleAA_authzContenuti_jwksKID() throws Exception {
 		AAHeaderMap map = new AAHeaderMap();
 		map.applicativo="ApplicativoSoggettoInternoTestFruitore1";
 		_test(TipoServizio.EROGAZIONE, "contenuti_singleAA_jwksKID",
 				"singleAA_authzContenuti_jwksKID", null, map);
+	}
+	
+	
+	
+	
+	// *** singleAA: autorizzazione per contenuti (AA JWS Bearer con validazione tramite jwks 'kid') con url dinamica ***
+	
+	public static final String DYNAMIC_HEADER_LOCATION = "govway-testsuite-keystore-location";
+	
+	@Test
+	public void erogazione_singleAA_authzContenuti_jwksKID_dynamic() throws Exception {
+		
+		File f = File.createTempFile("dynamicKeystore", ".jwks");
+		try {
+			byte [] content = FileSystemUtilities.readBytesFromFile("/etc/govway/keys/jose_truststore_example.jwks");
+			FileSystemUtilities.writeFile(f, content);
+			
+			AAHeaderMap map = new AAHeaderMap();
+			map.applicativo="ApplicativoSoggettoInternoTestFruitore1";
+			
+			map.httpHeaders.put(DYNAMIC_HEADER_LOCATION, f.getAbsolutePath());
+			
+			_test(TipoServizio.EROGAZIONE, "contenuti_singleAA_jwksKID_dynamic",
+					"singleAA_authzContenuti_jwksKID", null, map);
+			
+		}finally {
+			FileSystemUtilities.deleteFile(f);
+		}
 	}
 	
 	

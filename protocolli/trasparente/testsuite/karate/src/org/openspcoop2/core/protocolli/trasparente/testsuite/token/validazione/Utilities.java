@@ -31,6 +31,7 @@ import java.util.Map;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
@@ -62,14 +63,26 @@ public class Utilities extends ConfigLoader {
 		return mapExpectedTokenInfo;
 	}
 	
+	
 	public static HttpResponse _test(Logger logCore, String api, String operazione,
+			Map<String, String> headers, Map<String, String> queryParameters, String msgError,
+			CredenzialiMittenteVerifier credenzialiMittente, List<String> mapExpectedTokenInfo) throws Exception {
+		return _test(logCore, TipoServizio.EROGAZIONE, api, operazione,
+				headers, queryParameters, msgError,
+				credenzialiMittente,mapExpectedTokenInfo);
+	}
+	public static HttpResponse _test(Logger logCore, TipoServizio tipoServizio, String api, String operazione,
 			Map<String, String> headers, Map<String, String> queryParameters, String msgError,
 			CredenzialiMittenteVerifier credenzialiMittente, List<String> mapExpectedTokenInfo) throws Exception {
 		
 		String contentType = HttpConstants.CONTENT_TYPE_JSON;
 		byte[]content = Bodies.getJson(Bodies.SMALL_SIZE).getBytes();
 		
-		String url = System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+api+"/v1/"+operazione;
+		String apiInvoke = "SoggettoInternoTest/"+api+"/v1";
+		String url = tipoServizio == TipoServizio.EROGAZIONE
+				? System.getProperty("govway_base_path") + "/"+apiInvoke+"/"+operazione
+				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/"+apiInvoke+"/"+operazione;
+		
 		if(queryParameters!=null && !queryParameters.isEmpty()) {
 			for (String key : queryParameters.keySet()) {
 				url+= url.contains("?") ? "&" : "?";
@@ -105,7 +118,15 @@ public class Utilities extends ConfigLoader {
 		assertNotNull(idTransazione);
 		
 		long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
-		if(msgError!=null) {
+		if(msgError!=null &&
+				"warningOnly".equals(operazione) &&
+				(		ValidazioneJWTDynamicDiscoveryTest.validazione.equals(api) ||
+						IntrospectionDynamicDiscoveryTest.validazione.equals(api) ||
+						UserInfoDynamicDiscoveryTest.validazione.equals(api))) {
+			esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK_PRESENZA_ANOMALIE);
+			verifyOk(response, 200, contentType);
+		}
+		else if(msgError!=null) {
 			
 			int code = -1;
 			String error = null;
@@ -119,7 +140,7 @@ public class Utilities extends ConfigLoader {
 					msg = "Required token scopes not found";
 				}
 			}
-			else if(msgError.contains("Il mittente non è autorizzato ad invocare il servizio gw/TestValidazioneToken-")){
+			else if(msgError.contains("Il mittente non è autorizzato ad invocare il servizio gw/TestValidazioneToken-") || msgError.contains("Il servizio applicativo Anonimo non risulta autorizzato a fruire del servizio richiesto")){
 				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
 				code = 403;
 				if(msgError.contains("Role ") || msgError.contains("roles")) {
@@ -174,6 +195,16 @@ public class Utilities extends ConfigLoader {
 				msg = "Unauthorized request content";
 			}
 			else if(msgError.contains("Validazione del token, tramite il servizio di Introspection") &&  msgError.contains("fallita: Token non valido")) {
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_TOKEN);
+				code = 401;
+				error = "TokenAuthenticationFailed";
+				msg = "Invalid token";
+			}
+			else if(msgError!=null && 
+					(ValidazioneJWTKeystoreDinamicoTest.validazione.equals(api) || 
+							ValidazioneJWTDynamicDiscoveryTest.validazione.equals(api) ||
+							IntrospectionDynamicDiscoveryTest.validazione.equals(api) ||
+							UserInfoDynamicDiscoveryTest.validazione.equals(api))) {
 				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_TOKEN);
 				code = 401;
 				error = "TokenAuthenticationFailed";

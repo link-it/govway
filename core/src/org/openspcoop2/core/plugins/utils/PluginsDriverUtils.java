@@ -243,6 +243,7 @@ public class PluginsDriverUtils {
 				case RICERCA:
 				case STATISTICA:
 				case TRANSAZIONE:
+				case TOKEN_DYNAMIC_DISCOVERY:
 				case TOKEN_VALIDAZIONE:
 				case TOKEN_NEGOZIAZIONE:
 				case ATTRIBUTE_AUTHORITY:

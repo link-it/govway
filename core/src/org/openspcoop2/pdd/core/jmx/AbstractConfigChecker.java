@@ -377,63 +377,83 @@ public abstract class AbstractConfigChecker {
 	
 	
 	public void checkTokenPolicyValidazione(StringBuilder sbDetailsError, StringBuilder sbDetailsWarning,
-			boolean httpsIntrospection, boolean httpsUserInfo, boolean validazioneJwt, boolean forwardToJwt,
+			boolean httpsDynamicDiscovery, boolean httpsValidazioneJWT, boolean httpsIntrospection, boolean httpsUserInfo, 
+			boolean validazioneJwt, boolean forwardToJwt,
 			GenericProperties gp,
 			int sogliaWarningGiorni) throws Exception {
 		
-		StringBuilder _sbError = new StringBuilder();
+		StringBuilder sbError = new StringBuilder();
 		
-		StringBuilder _sbWarningIntrospection = new StringBuilder();
-		StringBuilder _sbWarningUserInfo = new StringBuilder();
-		StringBuilder _sbWarningValidazioneJwt = new StringBuilder();
-		StringBuilder _sbWarningForwardToJwt = new StringBuilder();
+		StringBuilder sbWarningDynamicDiscovery = new StringBuilder();
+		StringBuilder sbWarningValidazioneJwtHttps = new StringBuilder();
+		StringBuilder sbWarningIntrospection = new StringBuilder();
+		StringBuilder sbWarningUserInfo = new StringBuilder();
+		StringBuilder sbWarningValidazioneJwt = new StringBuilder();
+		StringBuilder sbWarningForwardToJwt = new StringBuilder();
 		
-		if(httpsIntrospection) {
-			checkCertificateGenericProperties(_sbError, _sbWarningIntrospection, 
+		if(httpsDynamicDiscovery) {
+			checkCertificateGenericProperties(sbError, sbWarningDynamicDiscovery, 
+					sogliaWarningGiorni,
+					getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsTokenPolicyValidazione(), 
+					gp.getNome(), ConnettoreCheck.POLICY_TIPO_ENDPOINT_DYNAMIC_DISCOVERY);
+		}
+		if(sbError.length()<=0 &&
+			httpsValidazioneJWT) {
+			checkCertificateGenericProperties(sbError, sbWarningValidazioneJwtHttps, 
+					sogliaWarningGiorni,
+					getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsTokenPolicyValidazione(), 
+					gp.getNome(), ConnettoreCheck.POLICY_TIPO_ENDPOINT_VALIDAZIONE_JWT);
+		}
+		if(sbError.length()<=0 &&
+			httpsIntrospection) {
+			checkCertificateGenericProperties(sbError, sbWarningIntrospection, 
 					sogliaWarningGiorni,
 					getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsTokenPolicyValidazione(), 
 					gp.getNome(), ConnettoreCheck.POLICY_TIPO_ENDPOINT_INTROSPECTION);
 		}
-		if(_sbError.length()<=0) {
-			if(httpsUserInfo) {
-				checkCertificateGenericProperties(_sbError, _sbWarningUserInfo, 
-						sogliaWarningGiorni,
-						getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsTokenPolicyValidazione(), 
-						gp.getNome(), ConnettoreCheck.POLICY_TIPO_ENDPOINT_USERINFO);
-			}
+		if(sbError.length()<=0 &&
+			httpsUserInfo) {
+			checkCertificateGenericProperties(sbError, sbWarningUserInfo, 
+					sogliaWarningGiorni,
+					getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsTokenPolicyValidazione(), 
+					gp.getNome(), ConnettoreCheck.POLICY_TIPO_ENDPOINT_USERINFO);
 		}
-		if(_sbError.length()<=0) {
-			if(validazioneJwt) {
-				checkCertificateGenericProperties(_sbError, _sbWarningValidazioneJwt, 
-						sogliaWarningGiorni,
-						getJmxResourceNomeMetodoCheckCertificatiValidazioneJwtTokenPolicyValidazione(),
-						gp.getNome());
-			}
+		if(sbError.length()<=0 &&
+			validazioneJwt) {
+			checkCertificateGenericProperties(sbError, sbWarningValidazioneJwt, 
+					sogliaWarningGiorni,
+					getJmxResourceNomeMetodoCheckCertificatiValidazioneJwtTokenPolicyValidazione(),
+					gp.getNome());
 		}
-		if(_sbError.length()<=0) {
-			if(forwardToJwt) {
-				checkCertificateGenericProperties(_sbError, _sbWarningForwardToJwt, 
-						sogliaWarningGiorni,
-						getJmxResourceNomeMetodoCheckCertificatiForwardToJwtTokenPolicyValidazione(),
-						gp.getNome());
-			}
+		if(sbError.length()<=0 &&
+			forwardToJwt) {
+			checkCertificateGenericProperties(sbError, sbWarningForwardToJwt, 
+					sogliaWarningGiorni,
+					getJmxResourceNomeMetodoCheckCertificatiForwardToJwtTokenPolicyValidazione(),
+					gp.getNome());
 		}
 		
-		if(_sbError.length()>0) {
-			sbDetailsError.append(_sbError.toString());
+		if(sbError.length()>0) {
+			sbDetailsError.append(sbError.toString());
 		}
 		else {
-			if(_sbWarningIntrospection.length()>0) {
-				sbDetailsWarning.append(_sbWarningIntrospection.toString());
+			if(sbWarningDynamicDiscovery.length()>0) {
+				sbDetailsWarning.append(sbWarningDynamicDiscovery.toString());
 			}
-			else if(_sbWarningUserInfo.length()>0) {
-				sbDetailsWarning.append(_sbWarningUserInfo.toString());
+			else if(sbWarningValidazioneJwtHttps.length()>0) {
+				sbDetailsWarning.append(sbWarningValidazioneJwtHttps.toString());
 			}
-			else if(_sbWarningValidazioneJwt.length()>0) {
-				sbDetailsWarning.append(_sbWarningValidazioneJwt.toString());
+			else if(sbWarningIntrospection.length()>0) {
+				sbDetailsWarning.append(sbWarningIntrospection.toString());
 			}
-			else if(_sbWarningForwardToJwt.length()>0) {
-				sbDetailsWarning.append(_sbWarningForwardToJwt.toString());
+			else if(sbWarningUserInfo.length()>0) {
+				sbDetailsWarning.append(sbWarningUserInfo.toString());
+			}
+			else if(sbWarningValidazioneJwt.length()>0) {
+				sbDetailsWarning.append(sbWarningValidazioneJwt.toString());
+			}
+			else if(sbWarningForwardToJwt.length()>0) {
+				sbDetailsWarning.append(sbWarningForwardToJwt.toString());
 			}
 		}
 		

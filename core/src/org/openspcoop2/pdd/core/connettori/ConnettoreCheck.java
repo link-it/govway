@@ -185,17 +185,42 @@ public class ConnettoreCheck {
 		
 	}
 	
+	public static final String POLICY_TIPO_ENDPOINT_DYNAMIC_DISCOVERY = "DynamicDiscovery";
+	public static final String POLICY_TIPO_ENDPOINT_VALIDAZIONE_JWT = "ValidazioneJWT";
 	public static final String POLICY_TIPO_ENDPOINT_INTROSPECTION = "Introspection";
 	public static final String POLICY_TIPO_ENDPOINT_USERINFO = "UserInfo";
 	public static List<Connettore> convertTokenPolicyValidazioneToConnettore(GenericProperties gp, Logger log) throws ConnettoreException{
 		try {
+			if(log!=null) {
+				// nop
+			}
+			
+			List<Connettore> lNull = null;
+			
 			GestioneToken gestione = new GestioneToken();
+			gestione.setValidazione(StatoFunzionalitaConWarning.ABILITATO);
 			gestione.setIntrospection(StatoFunzionalitaConWarning.ABILITATO);
 			gestione.setUserInfo(StatoFunzionalitaConWarning.ABILITATO);
 			PolicyGestioneToken policy = TokenUtilities.convertTo(gp, gestione);
 			
+			Connettore connettoreDynamicDiscovery = null;
+			Connettore connettoreValidazioneJWT = null;
 			Connettore connettoreIntrospection = null;
 			Connettore connettoreUserInfo = null;
+			
+			String dynamicDiscoveryEndpoint = policy.getDynamicDiscoveryEndpoint();
+			if(StringUtils.isNotEmpty(dynamicDiscoveryEndpoint)) {
+				connettoreDynamicDiscovery = new Connettore();
+				addProperty(connettoreDynamicDiscovery, POLICY_TIPO_ENDPOINT, POLICY_TIPO_ENDPOINT_DYNAMIC_DISCOVERY);
+				addProperty(connettoreDynamicDiscovery, CostantiConnettori.CONNETTORE_LOCATION, dynamicDiscoveryEndpoint);
+			}
+			
+			String validazioneJWTEndpoint = policy.isValidazioneJWTLocationHttp() ? policy.getValidazioneJWTLocation() : null;
+			if(StringUtils.isNotEmpty(validazioneJWTEndpoint)) {
+				connettoreValidazioneJWT = new Connettore();
+				addProperty(connettoreValidazioneJWT, POLICY_TIPO_ENDPOINT, POLICY_TIPO_ENDPOINT_VALIDAZIONE_JWT);
+				addProperty(connettoreValidazioneJWT, CostantiConnettori.CONNETTORE_LOCATION, validazioneJWTEndpoint);
+			}
 			
 			String introspectionEndpoint = policy.getIntrospectionEndpoint();
 			if(StringUtils.isNotEmpty(introspectionEndpoint)) {
@@ -227,8 +252,28 @@ public class ConnettoreCheck {
 				}
 			}
 			
-			if(connettoreIntrospection!=null || connettoreUserInfo!=null) {
+			if(connettoreDynamicDiscovery!=null || connettoreValidazioneJWT!=null || connettoreIntrospection!=null || connettoreUserInfo!=null) {
 				
+				if(connettoreDynamicDiscovery!=null) {
+					Map<String,String> mapProperties = connettoreDynamicDiscovery.getProperties();
+									
+					Properties endpointConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_CONFIG);
+					if(endpointConfig!=null && !endpointConfig.isEmpty()) {
+						putAll(endpointConfig, mapProperties);
+					}
+					
+					connettoreDynamicDiscovery.setProperties(mapProperties);
+				}
+				if(connettoreValidazioneJWT!=null) {
+					Map<String,String> mapProperties = connettoreValidazioneJWT.getProperties();
+									
+					Properties endpointConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_CONFIG);
+					if(endpointConfig!=null && !endpointConfig.isEmpty()) {
+						putAll(endpointConfig, mapProperties);
+					}
+					
+					connettoreValidazioneJWT.setProperties(mapProperties);
+				}
 				if(connettoreIntrospection!=null) {
 					Map<String,String> mapProperties = connettoreIntrospection.getProperties();
 									
@@ -253,6 +298,20 @@ public class ConnettoreCheck {
 				boolean https = policy.isEndpointHttps();
 				if(https) {
 					Properties sslConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CONFIG);
+					
+					if(connettoreDynamicDiscovery!=null) {
+						Map<String,String> mapProperties = connettoreDynamicDiscovery.getProperties();
+						putAll(sslConfig, mapProperties);
+																		
+						connettoreDynamicDiscovery.setProperties(mapProperties);
+					}
+					
+					if(connettoreValidazioneJWT!=null) {
+						Map<String,String> mapProperties = connettoreValidazioneJWT.getProperties();
+						putAll(sslConfig, mapProperties);
+																		
+						connettoreValidazioneJWT.setProperties(mapProperties);
+					}
 					
 					if(connettoreIntrospection!=null) {
 						Map<String,String> mapProperties = connettoreIntrospection.getProperties();
@@ -281,7 +340,15 @@ public class ConnettoreCheck {
 					}
 				}
 				
-				List<Connettore> l = new ArrayList<Connettore>();
+				List<Connettore> l = new ArrayList<>();
+				if(connettoreDynamicDiscovery!=null) {
+					connettoreDynamicDiscovery.setTipo(https ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome());
+					l.add(connettoreDynamicDiscovery);
+				}
+				if(connettoreValidazioneJWT!=null) {
+					connettoreValidazioneJWT.setTipo(https ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome());
+					l.add(connettoreValidazioneJWT);
+				}
 				if(connettoreIntrospection!=null) {
 					connettoreIntrospection.setTipo(https ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome());
 					l.add(connettoreIntrospection);
@@ -293,9 +360,9 @@ public class ConnettoreCheck {
 				return l;
 			}
 			
-			return null;
+			return lNull;
 			
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new ConnettoreException(t.getMessage(),t);
 		}
 	}
@@ -340,12 +407,10 @@ public class ConnettoreCheck {
 					connettore.setProperties(mapProperties);
 				}
 				
-				List<Connettore> l = new ArrayList<Connettore>();
-				if(connettore!=null) {
-					connettore.setTipo(https ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome());
-					l.add(connettore);
-				}
-
+				connettore.setTipo(https ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome());
+				
+				List<Connettore> l = new ArrayList<>();
+				l.add(connettore);
 				return l;
 			}
 			
@@ -360,6 +425,7 @@ public class ConnettoreCheck {
 			PolicyAttributeAuthority policy = AttributeAuthorityUtilities.convertTo(gp);
 			
 			Connettore connettore = null;
+			Connettore connettoreJwtResponse = null;
 			
 			String endpoint = policy.getEndpoint();
 			if(StringUtils.isNotEmpty(endpoint)) {
@@ -396,16 +462,52 @@ public class ConnettoreCheck {
 					connettore.setProperties(mapProperties);
 				}
 				
-				List<Connettore> l = new ArrayList<Connettore>();
-				if(connettore!=null) {
-					connettore.setTipo(https ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome());
-					l.add(connettore);
-				}
-
-				return l;
+				connettore.setTipo(https ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome());
 			}
 			
-			return null;
+			String endpointJwtResponse = null;
+			if(policy.isResponseJws() && policy.isResponseJwsLocationHttp()) {
+				endpointJwtResponse = policy.getResponseJwsLocation();
+			}
+			if(StringUtils.isNotEmpty(endpointJwtResponse)) {
+				connettoreJwtResponse = new Connettore();
+				//addProperty(connettoreJwtResponse, POLICY_TIPO_ENDPOINT, "Negoziazione"); // solo 1 tipo
+				addProperty(connettoreJwtResponse, CostantiConnettori.CONNETTORE_LOCATION, endpointJwtResponse);
+								
+				Map<String,String> mapProperties = connettoreJwtResponse.getProperties();
+								
+				Properties endpointConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_CONFIG);
+				if(endpointConfig!=null && !endpointConfig.isEmpty()) {
+					putAll(endpointConfig, mapProperties);
+				}
+
+				boolean https = policy.isEndpointHttps();
+				if(https) {
+					Properties sslConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CONFIG);
+					putAll(sslConfig, mapProperties);
+																
+					connettoreJwtResponse.setProperties(mapProperties);
+				}
+				
+				connettoreJwtResponse.setTipo(https ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome());
+			}
+				
+			if(connettore!=null && connettoreJwtResponse!=null) {
+				addProperty(connettore, POLICY_TIPO_ENDPOINT, "Endpoint");
+				addProperty(connettoreJwtResponse, POLICY_TIPO_ENDPOINT, "Risposta - TrustStore");
+			}
+			
+			List<Connettore> l = null;
+			if(connettore!=null || connettoreJwtResponse!=null) {
+				l = new ArrayList<>();
+				if(connettore!=null) {
+					l.add(connettore);
+				}
+				if(connettoreJwtResponse!=null) {
+					l.add(connettoreJwtResponse);
+				}
+			}
+			return l;
 			
 		}catch(Throwable t) {
 			throw new ConnettoreException(t.getMessage(),t);
@@ -416,6 +518,12 @@ public class ConnettoreCheck {
 	}
 	public static void checkTokenPolicyValidazione(String nome, String tipoConnettore, Logger log) throws ConnettoreException{
 		checkPolicy(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, nome, log, tipoConnettore);
+	}
+	public static void checkTokenPolicyValidazioneDynamicDiscovery(String nome, Logger log) throws ConnettoreException{
+		checkPolicy(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, nome, log, POLICY_TIPO_ENDPOINT_DYNAMIC_DISCOVERY);
+	}
+	public static void checkTokenPolicyValidazioneValidazioneJWT(String nome, Logger log) throws ConnettoreException{
+		checkPolicy(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, nome, log, POLICY_TIPO_ENDPOINT_VALIDAZIONE_JWT);
 	}
 	public static void checkTokenPolicyValidazioneIntrospection(String nome, Logger log) throws ConnettoreException{
 		checkPolicy(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, nome, log, POLICY_TIPO_ENDPOINT_INTROSPECTION);
@@ -727,7 +835,7 @@ public class ConnettoreCheck {
 			try{
 				proxyPort = Integer.parseInt(proxyPortTmp);
 			}catch(Exception e){
-				throw new Exception( "Proprieta' '"+CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT+"' non corretta: "+ConnettoreBase._readExceptionMessageFromException(e));
+				throw new Exception( "Proprieta' '"+CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT+"' non corretta: "+ConnettoreBase.readConnectionExceptionMessageFromException(e));
 			}
 			
 			
@@ -753,7 +861,7 @@ public class ConnettoreCheck {
 			try{
 				debug = Boolean.valueOf(debugString);
 			}catch(Exception e){
-				throw new Exception( "Proprieta' '"+CostantiConnettori.CONNETTORE_DEBUG+"' non corretta ("+debugString+"): "+ConnettoreBase._readExceptionMessageFromException(e));
+				throw new Exception( "Proprieta' '"+CostantiConnettori.CONNETTORE_DEBUG+"' non corretta ("+debugString+"): "+ConnettoreBase.readConnectionExceptionMessageFromException(e));
 			}
 		}
 		
@@ -933,7 +1041,7 @@ public class ConnettoreCheck {
 				log.debug("Connessione effettuata con successo");
 		}
 		catch(Exception e) {
-			String msgException = ConnettoreBase._readExceptionMessageFromException(e);
+			String msgException = ConnettoreBase.readConnectionExceptionMessageFromException(e);
 			throw new Exception(msgException, e);
 		}
 		finally {
@@ -1082,6 +1190,12 @@ public class ConnettoreCheck {
 	}
 	public static String getCertificatiTokenPolicyValidazione(String nome, String tipoConnettore, Logger log) throws ConnettoreException{
 		return getCertificatiPolicy(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, nome, log, tipoConnettore);
+	}
+	public static String getCertificatiTokenPolicyValidazioneDynamicDiscovery(String nome, Logger log) throws ConnettoreException{
+		return getCertificatiPolicy(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, nome, log, POLICY_TIPO_ENDPOINT_DYNAMIC_DISCOVERY);
+	}
+	public static String getCertificatiTokenPolicyValidazioneJwt(String nome, Logger log) throws ConnettoreException{
+		return getCertificatiPolicy(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, nome, log, POLICY_TIPO_ENDPOINT_VALIDAZIONE_JWT);
 	}
 	public static String getCertificatiTokenPolicyValidazioneIntrospection(String nome, Logger log) throws ConnettoreException{
 		return getCertificatiPolicy(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, nome, log, POLICY_TIPO_ENDPOINT_INTROSPECTION);

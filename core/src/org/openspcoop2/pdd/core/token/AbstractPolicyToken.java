@@ -25,9 +25,6 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Properties;
 
-import org.openspcoop2.core.mvc.properties.provider.ProviderException;
-import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
-
 /**     
  * AbstractPolicyToken
  *
@@ -44,7 +41,7 @@ public class AbstractPolicyToken implements Serializable {
 	
 	protected String name;
 	protected String descrizione;
-	protected Map<String, Properties> properties;
+	protected transient Map<String, Properties> properties;
 	protected Properties defaultProperties;
 	
 	public String getName() {
@@ -62,12 +59,12 @@ public class AbstractPolicyToken implements Serializable {
 	public Map<String, Properties> getProperties() {
 		return this.properties;
 	}
-	public void setProperties(Map<String, Properties> properties) throws ProviderException, ProviderValidationException {
+	public void setProperties(Map<String, Properties> properties) {
 		this.properties = properties;
 		this.defaultProperties = this.getDefaultProperties();
 	}
-	private Properties getDefaultProperties() throws ProviderException, ProviderValidationException {
+	private Properties getDefaultProperties() {
 		return TokenUtilities.getDefaultProperties(this.properties);
 	}
-	
+		
 }

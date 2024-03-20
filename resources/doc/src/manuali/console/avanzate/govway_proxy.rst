@@ -39,10 +39,13 @@ Una volta abilitata la funzionalità la configurazione è attuabile tramite le s
 
 È inoltre configurabile l'indicazione (true/false) se la funzionalità proxy deve essere attivata anche verso gli endpoint registrati nelle token policy e nelle attribute authority, tramite le seguenti proprietà:
 
+- govway-proxy-token-dynamic-discovery: servizio 'dynamic-discovery' definito in una :ref:`tokenValidazionePolicy`;
+- govway-proxy-token-jwt-validation: location dei certificati da utilizzare per la 'validazione jwt' di un token in una :ref:`tokenValidazionePolicy`;
 - govway-proxy-token-introspection: servizio 'introspection' definito in una :ref:`tokenValidazionePolicy`;
 - govway-proxy-token-userinfo: servizio 'user-info' definito in una :ref:`tokenValidazionePolicy`;
 - govway-proxy-token-retrieve: :ref:`tokenNegoziazionePolicy`;
-- govway-proxy-attribute-authority: :ref:`aa` da cui vengono recuperati gli attributi.
+- govway-proxy-attribute-authority: :ref:`aa` da cui vengono recuperati gli attributi;
+- govway-proxy-attribute-authority-response-jwt-validation: location dei certificati da utilizzare per la 'validazione jwt' della risposta in una :ref:`aa`.
 
 .. note::
       La configurazione dei parametri che riguardano l'header http o il parametro della url non sono obbligatori e se non presenti viene utilizzata la configurazione di default (header http 'GovWay-APIAddress' non codificato in base64) ridefinibile nel file di configurazione locale '/etc/govway/govway_local.properties' tramite una configurazione come quella riportata di seguito (assumendo sia /etc/govway la directory di configurazione indicata in fase di installazione). Analogo discorso vale per l'attivazione della funzionalità proxy verso gli endpoint registrati nelle token policy e nelle attribute authority, la quale è per default disabilitata.
@@ -67,10 +70,13 @@ Una volta abilitata la funzionalità la configurazione è attuabile tramite le s
       org.openspcoop2.pdd.connettori.govwayProxy.urlParameter.base64=false
       #
       # Default configuration (Token e Attributes)
+      org.openspcoop2.pdd.connettori.govwayProxy.tokenDynamicDiscovery.enable=false
+      org.openspcoop2.pdd.connettori.govwayProxy.tokenJwtValidation.enable=false
       org.openspcoop2.pdd.connettori.govwayProxy.tokenIntrospection.enable=false
       org.openspcoop2.pdd.connettori.govwayProxy.tokenUserInfo.enable=false
       org.openspcoop2.pdd.connettori.govwayProxy.tokenRetrieve.enable=false
       org.openspcoop2.pdd.connettori.govwayProxy.attributeAuthority.enable=false
+      org.openspcoop2.pdd.connettori.govwayProxy.attributeAuthority.responseJwtValidation.enable=false
       # ================================================
 
 .. note::

@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
@@ -63,12 +61,9 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPS;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.controllo_traffico.PolicyTimeoutConfig;
-import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
-import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.pdd.core.token.parser.ClaimsNegoziazione;
 import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
-import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -95,7 +90,6 @@ import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
-import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -413,41 +407,8 @@ public class GestoreTokenNegoziazioneUtilities {
 	
 	static Map<String, Object> buildDynamicNegoziazioneTokenMap(Busta busta, 
 			RequestInfo requestInfo, PdDContext pddContext, Logger log) {
-	
-		Map<String, Object> dynamicMap = new HashMap<>();
-		
-		Map<String, List<String>> pTrasporto = null;
-		String urlInvocazione = null;
-		Map<String, List<String>> pQuery = null;
-		Map<String, List<String>> pForm = null;
-		if(requestInfo!=null && requestInfo.getProtocolContext()!=null) {
-			pTrasporto = requestInfo.getProtocolContext().getHeaders();
-			urlInvocazione = requestInfo.getProtocolContext().getUrlInvocazione_formBased();
-			pQuery = requestInfo.getProtocolContext().getParameters();
-			if(requestInfo.getProtocolContext() instanceof HttpServletTransportRequestContext) {
-				HttpServletTransportRequestContext httpServletContext = requestInfo.getProtocolContext();
-				HttpServletRequest httpServletRequest = httpServletContext.getHttpServletRequest();
-				if(httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
-					FormUrlEncodedHttpServletRequest formServlet = (FormUrlEncodedHttpServletRequest) httpServletRequest;
-					if(formServlet.getFormUrlEncodedParametersValues()!=null &&
-							!formServlet.getFormUrlEncodedParametersValues().isEmpty()) {
-						pForm = formServlet.getFormUrlEncodedParametersValues();
-					}
-				}
-			}
-		}
-				
-		ErrorHandler errorHandler = new ErrorHandler();
-		DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
-				null,
-				null, 
-				busta, 
-				pTrasporto, 
-				pQuery,
-				pForm,
-				errorHandler);
-		
-		return dynamicMap;
+		return TokenUtilities.buildDynamicMap(busta, 
+				requestInfo, pddContext, log);
 	}
 	
 	private static HttpResponse http(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken,

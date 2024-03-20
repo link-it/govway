@@ -17000,8 +17000,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						sb.append(ConfigurazioneCostanti.MESSAGE_METADATI_SEPARATORE);
 						sb.append(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_TOKEN_POLICY_FORWARD, labelForward));
 						
-						if(!policyGestioneToken.isIntrospection() && !policyGestioneToken.isUserInfo()) {
-							verificaConnettivita = false;
+						if(!policyGestioneToken.isDynamicDiscovery() && !policyGestioneToken.isIntrospection() && !policyGestioneToken.isUserInfo()) {
+							if(policyGestioneToken.isValidazioneJWT()) {
+								verificaConnettivita = policyGestioneToken.isValidazioneJWTLocationHttp();
+							}
+							else {
+								verificaConnettivita = false;
+							}
 						}
 						
 					}catch(Exception t) {

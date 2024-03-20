@@ -62,6 +62,8 @@ public enum TipoPlugin implements IEnumeration , Serializable , Cloneable {
 	BEHAVIOUR ("BEHAVIOUR"),
 	@javax.xml.bind.annotation.XmlEnumValue("RATE_LIMITING")
 	RATE_LIMITING ("RATE_LIMITING"),
+	@javax.xml.bind.annotation.XmlEnumValue("TOKEN_DYNAMIC_DISCOVERY")
+	TOKEN_DYNAMIC_DISCOVERY ("TOKEN_DYNAMIC_DISCOVERY"),
 	@javax.xml.bind.annotation.XmlEnumValue("TOKEN_VALIDAZIONE")
 	TOKEN_VALIDAZIONE ("TOKEN_VALIDAZIONE"),
 	@javax.xml.bind.annotation.XmlEnumValue("TOKEN_NEGOZIAZIONE")

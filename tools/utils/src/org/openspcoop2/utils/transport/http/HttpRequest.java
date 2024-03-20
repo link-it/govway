@@ -20,6 +20,7 @@
 
 package org.openspcoop2.utils.transport.http;
 
+import java.net.Proxy;
 import java.security.KeyStore;
 import java.security.cert.CertStore;
 
@@ -71,6 +72,15 @@ public class HttpRequest extends AbstractHttp {
 	// throttling send bytes every ms
 	private Integer throttlingSendMs;
 	private Integer throttlingSendByte;
+	
+	private String forwardProxyEndpoint;
+	private HttpForwardProxyConfig forwardProxyConfig;
+	
+	private Proxy.Type proxyType = null;
+	private String proxyHostname = null;
+	private int proxyPort;
+	private String proxyUsername;
+	private String proxyPassword;
 	
 	private boolean disconnect = true;
 	
@@ -296,5 +306,61 @@ public class HttpRequest extends AbstractHttp {
 
 	public void setKeyPassword(String keyPassword) {
 		this.keyPassword = keyPassword;
+	}
+	
+	public String getForwardProxyEndpoint() {
+		return this.forwardProxyEndpoint;
+	}
+
+	public void setForwardProxyEndpoint(String forwardProxyEndpoint) {
+		this.forwardProxyEndpoint = forwardProxyEndpoint;
+	}
+	
+	public HttpForwardProxyConfig getForwardProxyConfig() {
+		return this.forwardProxyConfig;
+	}
+
+	public void setForwardProxyConfig(HttpForwardProxyConfig forwardProxyConfig) {
+		this.forwardProxyConfig = forwardProxyConfig;
+	}
+	
+	public Proxy.Type getProxyType() {
+		return this.proxyType;
+	}
+
+	public void setProxyType(Proxy.Type proxyType) {
+		this.proxyType = proxyType;
+	}
+
+	public String getProxyHostname() {
+		return this.proxyHostname;
+	}
+
+	public void setProxyHostname(String proxyHostname) {
+		this.proxyHostname = proxyHostname;
+	}
+
+	public int getProxyPort() {
+		return this.proxyPort;
+	}
+
+	public void setProxyPort(int proxyPort) {
+		this.proxyPort = proxyPort;
+	}
+
+	public String getProxyUsername() {
+		return this.proxyUsername;
+	}
+
+	public void setProxyUsername(String proxyUsername) {
+		this.proxyUsername = proxyUsername;
+	}
+
+	public String getProxyPassword() {
+		return this.proxyPassword;
+	}
+
+	public void setProxyPassword(String proxyPassword) {
+		this.proxyPassword = proxyPassword;
 	}
 }

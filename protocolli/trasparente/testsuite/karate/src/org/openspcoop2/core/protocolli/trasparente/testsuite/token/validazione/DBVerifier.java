@@ -228,4 +228,15 @@ public class DBVerifier {
 		log().info(query);
 		return dbUtils().readRow(query);
 	}
+	
+	public static void checkDiagnostic(String idTransazione, String diagnostico) {
+		
+		String msg = "IdTransazione: "+idTransazione;
+		
+		String query = "select count(*) from msgdiagnostici where id_transazione = ? and messaggio LIKE '%"+diagnostico.replaceAll("'", "''")+"%'";
+		log().info(query);
+		
+		int count = dbUtils().readValue(query, Integer.class, idTransazione);
+		assertTrue(msg+" Cerco dettaglio '"+diagnostico+"'; count trovati: "+count+"", (count>0));
+	}
 }

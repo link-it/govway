@@ -1,3 +1,10 @@
+2024-03-20  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1715
+	È adesso possibile definire una token policy di validazione tramite una "well-know-url" come descritto nella specifica 'https://swagger.io/docs/specification/authentication/openid-connect-discovery'.
+	Inoltre è stata aggiunta la possibilità di definire il keystore contenente le chiavi necessarie ad effettuare una 'validazione jwt' del token anche indicando un endpoint.
+
 2024-03-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

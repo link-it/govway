@@ -581,19 +581,26 @@ public class DBOggettiInUsoUtils_plugins {
 				risultato.close();
 				stmt.close();
 			}
-			else if("TOKEN_VALIDAZIONE".equals(tipoPlugin)
+			else if("TOKEN_DYNAMIC_DISCOVERY".equals(tipoPlugin)
+					||
+				"TOKEN_VALIDAZIONE".equals(tipoPlugin)
 				||
 				"TOKEN_NEGOZIAZIONE".equals(tipoPlugin)
 				||
 				"ATTRIBUTE_AUTHORITY".equals(tipoPlugin) ) {
 				
+				boolean tokenDynamicDiscovery = "TOKEN_DYNAMIC_DISCOVERY".equals(tipoPlugin);
 				boolean tokenValidazione = "TOKEN_VALIDAZIONE".equals(tipoPlugin);
 				boolean tokenNegoziazione = "TOKEN_NEGOZIAZIONE".equals(tipoPlugin);
 				boolean attributeAuthority = "ATTRIBUTE_AUTHORITY".equals(tipoPlugin);
 				
 				ErrorsHandlerCostant constants = null;
 				String tipologia = null;
-				if(tokenValidazione) {
+				if(tokenDynamicDiscovery) {
+					constants = ErrorsHandlerCostant.TOKEN_DYNAMIC_DISCOVERY_PA;
+					tipologia = CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION;
+				}
+				else if(tokenValidazione) {
 					constants = ErrorsHandlerCostant.TOKEN_PA;
 					tipologia = CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION;
 				}
@@ -606,10 +613,10 @@ public class DBOggettiInUsoUtils_plugins {
 					tipologia = CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY;
 				}
 								
-				List<String> gp_list = whereIsInUso.get(constants);
-				if (gp_list == null) {
-					gp_list = new ArrayList<>();
-					whereIsInUso.put(constants, gp_list);
+				List<String> gpList = whereIsInUso.get(constants);
+				if (gpList == null) {
+					gpList = new ArrayList<>();
+					whereIsInUso.put(constants, gpList);
 				}	
 				
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
@@ -620,17 +627,15 @@ public class DBOggettiInUsoUtils_plugins {
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addWhereCondition("gps.id=gp.id_props");
 				sqlQueryObject.addWhereCondition("gps.tipologia=?");
+				String campoGpNome = "gp.nome=?";
+				String campoGpValore = "gp.valore";
 				if(tokenValidazione) {
-					sqlQueryObject.addWhereCondition(false, "gp.nome=?", "gp.nome=?", "gp.nome=?");
-					sqlQueryObject.addWhereLikeCondition("gp.valore", tipo, false, false, false);
+					sqlQueryObject.addWhereCondition(false, campoGpNome, campoGpNome, campoGpNome);
+					sqlQueryObject.addWhereLikeCondition(campoGpValore, tipo, false, false, false);
 				}
-				else if(tokenNegoziazione) {
-					sqlQueryObject.addWhereCondition("gp.nome=?");
-					sqlQueryObject.addWhereLikeCondition("gp.valore", tipo, false, false, false);
-				}
-				else if(attributeAuthority) {
-					sqlQueryObject.addWhereCondition("gp.nome=?");
-					sqlQueryObject.addWhereLikeCondition("gp.valore", tipo, false, false, false);
+				else if(tokenDynamicDiscovery || tokenNegoziazione || attributeAuthority) {
+					sqlQueryObject.addWhereCondition(campoGpNome);
+					sqlQueryObject.addWhereLikeCondition(campoGpValore, tipo, false, false, false);
 				}
 				
 				queryString = sqlQueryObject.createSQLQuery();
@@ -642,6 +647,9 @@ public class DBOggettiInUsoUtils_plugins {
 					utils.setParameter(stmt, index++, CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_PLUGIN_TYPE, String.class);
 					utils.setParameter(stmt, index++, CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_PLUGIN_TYPE, String.class);
 					utils.setParameter(stmt, index++, CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_PLUGIN_TYPE, String.class);
+				}
+				else if(tokenDynamicDiscovery) {
+					utils.setParameter(stmt, index++, CostantiConfigurazione.POLICY_DYNAMIC_DISCOVERY_CLAIMS_PARSER_PLUGIN_TYPE, String.class);
 				}
 				else if(tokenNegoziazione) {
 					utils.setParameter(stmt, index++, CostantiConfigurazione.POLICY_RETRIEVE_TOKEN_PARSER_PLUGIN_TYPE, String.class);
@@ -655,7 +663,7 @@ public class DBOggettiInUsoUtils_plugins {
 					String nome = risultato.getString("nomeGP");
 					
 					String labelMessaggio = DBOggettiInUsoUtils.formatGenericProperties(tipologia, nome);
-					gp_list.add(labelMessaggio);
+					gpList.add(labelMessaggio);
 	
 					isInUso = true;
 				}
@@ -676,14 +684,19 @@ public class DBOggettiInUsoUtils_plugins {
 
 	protected static String toString(String className, String label, String tipoPlugin, String tipo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator){
 		
+		if(className!=null && tipoPlugin!=null && tipo!=null) {
+			// nop
+		}
+		
 		StringBuilder bf = new StringBuilder();
 	
 		bf.append(label);
 		
 		Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
-		String msg = "Plugin '" +bf.toString() +"' non eliminabile perch&egrave; :"+separator;
-		if(prefix==false){
-			msg = "";
+		StringBuilder msg = new StringBuilder();
+		msg.append("Plugin '" +bf.toString() +"' non eliminabile perch&egrave; :"+separator);
+		if(!prefix){
+			msg = new StringBuilder();
 		}
 		String separatorCategorie = "";
 		if(whereIsInUso.size()>1) {
@@ -692,214 +705,219 @@ public class DBOggettiInUsoUtils_plugins {
 		for (ErrorsHandlerCostant key : keys) {
 			List<String> messages = whereIsInUso.get(key);
 
-			if ( messages!=null && messages.size() > 0) {
-				msg += separatorCategorie;
+			if ( messages!=null && !messages.isEmpty()) {
+				msg.append(separatorCategorie);
 			}
 			
 			switch (key) {
 			
 			case CONNETTORE_MAPPING_PD:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzata nel connettore per le Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzata nel connettore per le Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case CONNETTORE_PD:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Porte Outbound (Connettore): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato nelle Porte Outbound (Connettore): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case CONNETTORE_MAPPING_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nel connettore per le Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato nel connettore per le Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case CONNETTORE_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Porte Inbound (Connettore): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato nelle Porte Inbound (Connettore): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			
 			case AUTENTICAZIONE_MAPPING_PD:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato come processo di autenticazione nel Controllo degli Accessi delle Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato come processo di autenticazione nel Controllo degli Accessi delle Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case AUTENTICAZIONE_PD:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Porte Outbound (Controllo degli Accessi - Autenticazione): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato nelle Porte Outbound (Controllo degli Accessi - Autenticazione): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case AUTENTICAZIONE_MAPPING_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato come processo di autenticazione nel Controllo degli Accessi delle Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato come processo di autenticazione nel Controllo degli Accessi delle Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case AUTENTICAZIONE_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Porte Inbound (Controllo degli Accessi - Autenticazione): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato nelle Porte Inbound (Controllo degli Accessi - Autenticazione): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 				
 			case AUTORIZZAZIONE_MAPPING_PD:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato come processo di autorizzazione nel Controllo degli Accessi delle Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato come processo di autorizzazione nel Controllo degli Accessi delle Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case AUTORIZZAZIONE_PD:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Porte Outbound (Controllo degli Accessi - Autorizzazione): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato nelle Porte Outbound (Controllo degli Accessi - Autorizzazione): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case AUTORIZZAZIONE_MAPPING_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato come processo di autorizzazione nel Controllo degli Accessi delle Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato come processo di autorizzazione nel Controllo degli Accessi delle Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case AUTORIZZAZIONE_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Porte Inbound (Controllo degli Accessi - Autorizzazione): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato nelle Porte Inbound (Controllo degli Accessi - Autorizzazione): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 				
 			case AUTORIZZAZIONE_CONTENUTI_MAPPING_PD:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato come processo di autorizzazione dei contenuti nel Controllo degli Accessi delle Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato come processo di autorizzazione dei contenuti nel Controllo degli Accessi delle Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case AUTORIZZAZIONE_CONTENUTI_PD:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Porte Outbound (Controllo degli Accessi - Autorizzazione dei Contenuti): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato nelle Porte Outbound (Controllo degli Accessi - Autorizzazione dei Contenuti): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case AUTORIZZAZIONE_CONTENUTI_MAPPING_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato come processo di autorizzazione dei contenuti nel Controllo degli Accessi delle Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato come processo di autorizzazione dei contenuti nel Controllo degli Accessi delle Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case AUTORIZZAZIONE_CONTENUTI_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Porte Inbound (Controllo degli Accessi - Autorizzazione dei Contenuti): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato nelle Porte Inbound (Controllo degli Accessi - Autorizzazione dei Contenuti): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 				
 			case CONTROLLO_TRAFFICO:
-				if ( messages!=null && messages.size() > 0 ) {
-					msg += "utilizzato in Policy di Rate Limiting: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty() ) {
+					msg.append("utilizzato in Policy di Rate Limiting: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 				
 			case INTEGRAZIONE_MAPPING_PD:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato per generare i metadati di integrazione nelle Opzioni Avanzate delle Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato per generare i metadati di integrazione nelle Opzioni Avanzate delle Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case INTEGRAZIONE_PD:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Porte Outbound (Opzioni Avanzate - Metadata di Integrazione): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato nelle Porte Outbound (Opzioni Avanzate - Metadata di Integrazione): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case INTEGRAZIONE_MAPPING_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato per generare i metadati di integrazione nelle Opzioni Avanzate delle Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato per generare i metadati di integrazione nelle Opzioni Avanzate delle Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case INTEGRAZIONE_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Porte Inbound (Opzioni Avanzate - Metadata di Integrazione): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato nelle Porte Inbound (Opzioni Avanzate - Metadata di Integrazione): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 				
 			case BEHAVIOUR_MAPPING_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nella configurazione dei connettori multipli come consegna personalizzata delle Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato nella configurazione dei connettori multipli come consegna personalizzata delle Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case BEHAVIOUR_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Porte Inbound (Connettori Multipli - Consegna Personalizzata): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato nelle Porte Inbound (Connettori Multipli - Consegna Personalizzata): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 				
 			case ALLARMI_MAPPING_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato negli Allarmi delle Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato negli Allarmi delle Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case ALLARMI_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Porte Inbound (Allarmi): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato nelle Porte Inbound (Allarmi): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case ALLARMI_MAPPING_PD:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato negli Allarmi delle Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato negli Allarmi delle Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case ALLARMI_PD:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Porte Outbound (Allarmi): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato nelle Porte Outbound (Allarmi): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case ALLARMI:
-				if ( messages!=null && messages.size() > 0 ) {
-					msg += "utilizzato negli Allarmi definiti nella configurazione generale: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty() ) {
+					msg.append("utilizzato negli Allarmi definiti nella configurazione generale: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case MESSAGE_HANDLER_MAPPING_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nei Message Handlers delle Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato nei Message Handlers delle Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case MESSAGE_HANDLER_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Porte Inbound (Message Handlers): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato nelle Porte Inbound (Message Handlers): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case MESSAGE_HANDLER:
-				if ( messages!=null && messages.size() > 0 ) {
-					msg += "utilizzato nei Message Handlers: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty() ) {
+					msg.append("utilizzato nei Message Handlers: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case MESSAGE_HANDLER_MAPPING_PD:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nei Message Handlers delle Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato nei Message Handlers delle Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case MESSAGE_HANDLER_PD:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Porte Outbound (Message Handlers): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msg.append("utilizzato nelle Porte Outbound (Message Handlers): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case SERVICE_HANDLER:
-				if ( messages!=null && messages.size() > 0 ) {
-					msg += "utilizzato nei Service Handlers: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty() ) {
+					msg.append("utilizzato nei Service Handlers: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 				
+			case TOKEN_DYNAMIC_DISCOVERY_PA:
+				if ( messages!=null && !messages.isEmpty() ) {
+					msg.append("utilizzato nelle Token Policy di Validazione: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
+				}
+				break;	
 			case TOKEN_PA:
-				if ( messages!=null && messages.size() > 0 ) {
-					msg += "utilizzato nelle Token Policy di Validazione: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty() ) {
+					msg.append("utilizzato nelle Token Policy di Validazione: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;	
 			case TOKEN_NEGOZIAZIONE_PA:
-				if ( messages!=null && messages.size() > 0 ) {
-					msg += "utilizzato nelle Token Policy di Negoziazione: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty() ) {
+					msg.append("utilizzato nelle Token Policy di Negoziazione: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;	
 			case ATTRIBUTE_AUTHORITY_PA:
-				if ( messages!=null && messages.size() > 0 ) {
-					msg += "utilizzato negli Attribute Authority: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty() ) {
+					msg.append("utilizzato negli Attribute Authority: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;	
 				
 			default:
-				msg += "utilizzato in oggetto non codificato ("+key+")"+separator;
+				msg.append("utilizzato in oggetto non codificato ("+key+")"+separator);
 				break;
 			}
 
 		}// chiudo for
 
-		return msg;
+		return msg.toString();
 	}
 
 	private static String formatMessageHandlerFromTipologia(String tipologia) {
@@ -915,9 +933,8 @@ public class DBOggettiInUsoUtils_plugins {
 	}
 	
 	private static String formatServiceHandlerFromTipologia(String tipologia) {
-//		String tipologiaWS = tipologia.substring(0, tipologia.indexOf(CostantiDB.HANDLER_REQUEST_SUFFIX));
-		String template = "Fase [{0}]";
-		return MessageFormat.format(template, tipologia);
+/**		String tipologiaWS = tipologia.substring(0, tipologia.indexOf(CostantiDB.HANDLER_REQUEST_SUFFIX));*/
+		return MessageFormat.format("Fase [{0}]", tipologia);
 		
 	}
 	

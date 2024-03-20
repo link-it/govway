@@ -245,7 +245,7 @@ public class ConfigurazioneTracciamento {
 	}
 	private void initFileTraceInternalConfig() throws DriverConfigurazioneException, CoreException {
 		if(this.configurazioneFileTrace!=null && this.configurazioneFileTrace.getConfig()!=null && StringUtils.isNotEmpty(this.configurazioneFileTrace.getConfig())) {
-			this.fileTraceConfig = ConfigurazioneTracciamento.toFileTraceConfig(this.configurazioneFileTrace.getConfig(), this.op2Properties.getRootDirectory());
+			this.fileTraceConfig = ConfigurazioneTracciamento.toFileTraceConfig(this.configurazioneFileTrace.getConfig(), this.op2Properties.getRootDirectory(),true);
 			this.fileTraceConfigGlobal = this.op2Properties.isTransazioniFileTraceEnabled() && 
 					this.op2Properties.getTransazioniFileTraceConfig().getAbsolutePath().equals(this.fileTraceConfig.getAbsolutePath());
 		}
@@ -374,21 +374,23 @@ public class ConfigurazioneTracciamento {
 		return this.fileTraceConfigDumpOut!=null && StatoFunzionalita.ABILITATO.equals(this.fileTraceConfigDumpOut.getStato()) && 
 				StatoFunzionalita.ABILITATO.equals(this.fileTraceConfigDumpOut.getHeader());
 	}
-	public static File toFileTraceConfig(String name, String rootDir) throws CoreException {
+	public static File toFileTraceConfig(String name, String rootDir, boolean check) throws CoreException {
 		File getTransazioniFileTraceConfig = new File(name);
 		if(!getTransazioniFileTraceConfig.exists() &&
 			rootDir!=null && !"".equals(rootDir)) {
 			getTransazioniFileTraceConfig = new File(rootDir, name);
 		}
 		
-		if(!getTransazioniFileTraceConfig.exists()) {
-			throw ConfigurazioneTracciamentoUtils.newCoreExceptionNotExists(getTransazioniFileTraceConfig, false);
-		}
-		if(getTransazioniFileTraceConfig.isDirectory()) {
-			throw ConfigurazioneTracciamentoUtils.newCoreExceptionNotFile(getTransazioniFileTraceConfig, false);
-		}
-		if(!getTransazioniFileTraceConfig.canRead()) {
-			throw ConfigurazioneTracciamentoUtils.newCoreExceptionCannotRead(getTransazioniFileTraceConfig, false);
+		if(check) {
+			if(!getTransazioniFileTraceConfig.exists()) {
+				throw ConfigurazioneTracciamentoUtils.newCoreExceptionNotExists(getTransazioniFileTraceConfig, false);
+			}
+			if(getTransazioniFileTraceConfig.isDirectory()) {
+				throw ConfigurazioneTracciamentoUtils.newCoreExceptionNotFile(getTransazioniFileTraceConfig, false);
+			}
+			if(!getTransazioniFileTraceConfig.canRead()) {
+				throw ConfigurazioneTracciamentoUtils.newCoreExceptionCannotRead(getTransazioniFileTraceConfig, false);
+			}
 		}
 		return getTransazioniFileTraceConfig;
 	}

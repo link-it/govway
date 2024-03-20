@@ -661,6 +661,10 @@ public class CostantiPdD {
     public static final String KEY_TOKEN = "@TOKEN@";
     /** Costante che identifica le informazioni sul token */
     public static final String KEY_TOKEN_INFO = "@TOKEN_INFO@";
+    /** Costante che identifica le informazioni sul token */
+    public static final String KEY_DYNAMIC_DISCOVERY_INFO = "@DYNAMIC_DISCOVERY_INFO@";
+    /** Costante che identifica l'endpoint del servizio di dynamic discovery */
+    public static final String KEY_TOKEN_ENDPOINT_SERVIZIO_DYNAMIC_DISCOVERY = "@TOKEN_ENDPOINT_SERVIZIO_DYNAMIC_DISCOVERY@";
     /** Costante che identifica l'endpoint del servizio di introspection */
     public static final String KEY_TOKEN_ENDPOINT_SERVIZIO_INTROSPECTION = "@TOKEN_ENDPOINT_SERVIZIO_INTROSPECTION@";
     /** Costante che identifica l'endpoint del servizio di userInfo */

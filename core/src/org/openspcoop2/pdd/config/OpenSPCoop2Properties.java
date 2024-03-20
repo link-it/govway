@@ -2158,11 +2158,15 @@ public class OpenSPCoop2Properties {
 			this.getCachingResponseHeaderCacheKey();
 			
 			// Gestione Token
+			this.isGestioneTokenDynamicDiscoveryDebug();
 			this.isGestioneTokenIntrospectionDebug();
 			this.isGestioneTokenUserInfoDebug();
+			this.getGestioneTokenDynamicDiscoveryLockPermits();
 			this.getGestioneTokenValidazioneJWTLockPermits();
 			this.getGestioneTokenIntrospectionLockPermits();
 			this.getGestioneTokenUserInfoLockPermits();
+			this.isGestioneTokenDynamicDiscoveryKeyCacheUseToken();
+			this.isGestioneTokenDynamicDiscoveryUseCacheConfig();
 			this.getGestioneTokenIatTimeCheckMilliseconds();
 			this.getGestioneTokenIatTimeCheckFutureToleranceMilliseconds();
 			this.isGestioneTokenExpTimeCheck();
@@ -22610,6 +22614,31 @@ public class OpenSPCoop2Properties {
 	
 	/* ------------- Gestione Token ---------------------*/
 	
+	private Boolean isGestioneTokenDynamicDiscoveryDebug = null;
+	public boolean isGestioneTokenDynamicDiscoveryDebug(){
+
+		String pName = "org.openspcoop2.pdd.gestioneToken.dynamicDiscovery.debug";
+		if(this.isGestioneTokenDynamicDiscoveryDebug==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneTokenDynamicDiscoveryDebug = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isGestioneTokenDynamicDiscoveryDebug = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isGestioneTokenDynamicDiscoveryDebug = false;
+			}
+		}
+
+		return this.isGestioneTokenDynamicDiscoveryDebug;
+	}
+	
 	private Boolean isGestioneTokenIntrospectionDebug = null;
 	public boolean isGestioneTokenIntrospectionDebug(){
 
@@ -22658,6 +22687,35 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.isGestioneTokenUserInfoDebug;
+	}
+	
+	private Boolean getGestioneTokenDynamicDiscoveryLockPermitsRead = null;
+	private Integer getGestioneTokenDynamicDiscoveryLockPermits = null;
+	public Integer getGestioneTokenDynamicDiscoveryLockPermits() {
+
+		String pName = "org.openspcoop2.pdd.gestioneToken.dynamicDiscovery.lock.permits";
+		if(this.getGestioneTokenDynamicDiscoveryLockPermitsRead==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					int permits = Integer.parseInt(value); 
+					if(permits>1) {
+						// altrimenti è un normale semaphore binario
+						this.getGestioneTokenDynamicDiscoveryLockPermits = permits;
+					}
+				}
+				
+				
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+			
+			this.getGestioneTokenDynamicDiscoveryLockPermitsRead = true;
+		}
+
+		return this.getGestioneTokenDynamicDiscoveryLockPermits;
 	}
 	
 	private Boolean getGestioneTokenValidazioneJWTLockPermitsRead = null;
@@ -22745,6 +22803,56 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.getGestioneTokenUserInfoLockPermits;
+	}
+	
+	private Boolean isGestioneTokenDynamicDiscoveryKeyCacheUseToken = null;
+	public boolean isGestioneTokenDynamicDiscoveryKeyCacheUseToken(){
+
+		String pName = "org.openspcoop2.pdd.gestioneToken.dynamicDiscovery.keyCache.useToken";
+		if(this.isGestioneTokenDynamicDiscoveryKeyCacheUseToken==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneTokenDynamicDiscoveryKeyCacheUseToken = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isGestioneTokenDynamicDiscoveryKeyCacheUseToken = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isGestioneTokenDynamicDiscoveryKeyCacheUseToken = false;
+			}
+		}
+
+		return this.isGestioneTokenDynamicDiscoveryKeyCacheUseToken;
+	}
+	
+	private Boolean isGestioneTokenDynamicDiscoveryUseCacheConfig = null;
+	public boolean isGestioneTokenDynamicDiscoveryUseCacheConfig(){
+
+		String pName = "org.openspcoop2.pdd.gestioneToken.dynamicDiscovery.useCacheConfig";
+		if(this.isGestioneTokenDynamicDiscoveryUseCacheConfig==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneTokenDynamicDiscoveryUseCacheConfig = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.isGestioneTokenDynamicDiscoveryUseCacheConfig = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
+				this.isGestioneTokenDynamicDiscoveryUseCacheConfig = true;
+			}
+		}
+
+		return this.isGestioneTokenDynamicDiscoveryUseCacheConfig;
 	}
 	
 	private Boolean getGestioneTokenIatTimeCheckMillisecondsRead = null;
@@ -24443,6 +24551,56 @@ public class OpenSPCoop2Properties {
 		return this.isForwardProxyQueryParameterBase64;
 	}
 	
+	private Boolean isForwardProxyTokenDynamicDiscoveryEnabled = null;
+	private boolean isForwardProxyTokenDynamicDiscoveryEnabled(){
+
+		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.tokenDynamicDiscovery.enable";
+		if(this.isForwardProxyTokenDynamicDiscoveryEnabled==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isForwardProxyTokenDynamicDiscoveryEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName,ForwardProxy.DEFAULT_GOVWAY_PROXY_TOKEN_DYNAMIC_DISCOVERY));
+					this.isForwardProxyTokenDynamicDiscoveryEnabled = ForwardProxy.DEFAULT_GOVWAY_PROXY_TOKEN_DYNAMIC_DISCOVERY;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName,e,ForwardProxy.DEFAULT_GOVWAY_PROXY_TOKEN_DYNAMIC_DISCOVERY),e);
+				this.isForwardProxyTokenDynamicDiscoveryEnabled = ForwardProxy.DEFAULT_GOVWAY_PROXY_TOKEN_DYNAMIC_DISCOVERY;
+			}
+		}
+
+		return this.isForwardProxyTokenDynamicDiscoveryEnabled;
+	}
+	
+	private Boolean isForwardProxyTokenValidazioneJwtEnabled = null;
+	private boolean isForwardProxyTokenValidazioneJwtEnabled(){
+
+		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.tokenJwtValidation.enable";
+		if(this.isForwardProxyTokenValidazioneJwtEnabled==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isForwardProxyTokenValidazioneJwtEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName,ForwardProxy.DEFAULT_GOVWAY_PROXY_TOKEN_VALIDAZIONE_JWT));
+					this.isForwardProxyTokenValidazioneJwtEnabled = ForwardProxy.DEFAULT_GOVWAY_PROXY_TOKEN_VALIDAZIONE_JWT;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName,e,ForwardProxy.DEFAULT_GOVWAY_PROXY_TOKEN_VALIDAZIONE_JWT),e);
+				this.isForwardProxyTokenValidazioneJwtEnabled = ForwardProxy.DEFAULT_GOVWAY_PROXY_TOKEN_VALIDAZIONE_JWT;
+			}
+		}
+
+		return this.isForwardProxyTokenValidazioneJwtEnabled;
+	}
+	
 	private Boolean isForwardProxyTokenIntrospectionEnabled = null;
 	private boolean isForwardProxyTokenIntrospectionEnabled(){
 
@@ -24543,6 +24701,31 @@ public class OpenSPCoop2Properties {
 		return this.isForwardProxyAttributeAuthorityEnabled;
 	}
 	
+	private Boolean isForwardProxyAttributeAuthorityResponseJwtValidationEnabled = null;
+	private boolean isForwardProxyAttributeAuthorityResponseJwtValidationEnabled(){
+
+		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.attributeAuthority.responseJwtValidation.enable";
+		if(this.isForwardProxyAttributeAuthorityResponseJwtValidationEnabled==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isForwardProxyAttributeAuthorityResponseJwtValidationEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName,ForwardProxy.DEFAULT_GOVWAY_PROXY_ATTRIBUTE_AUTHORITY_RESPONSE_JWT_VALIDATION));
+					this.isForwardProxyAttributeAuthorityResponseJwtValidationEnabled = ForwardProxy.DEFAULT_GOVWAY_PROXY_ATTRIBUTE_AUTHORITY_RESPONSE_JWT_VALIDATION;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName,e,ForwardProxy.DEFAULT_GOVWAY_PROXY_ATTRIBUTE_AUTHORITY_RESPONSE_JWT_VALIDATION),e);
+				this.isForwardProxyAttributeAuthorityResponseJwtValidationEnabled = ForwardProxy.DEFAULT_GOVWAY_PROXY_ATTRIBUTE_AUTHORITY_RESPONSE_JWT_VALIDATION;
+			}
+		}
+
+		return this.isForwardProxyAttributeAuthorityResponseJwtValidationEnabled;
+	}
+	
 	public ForwardProxyConfigurazione getForwardProxyConfigurazioneDefault() {
 		ForwardProxyConfigurazione config = new ForwardProxyConfigurazione();
 		if(this.isForwardProxyHeaderEnable()) {
@@ -24558,10 +24741,13 @@ public class OpenSPCoop2Properties {
 	
 	public ForwardProxyConfigurazioneToken getForwardProxyConfigurazioneTokenDefault() {
 		ForwardProxyConfigurazioneToken config = new ForwardProxyConfigurazioneToken();
+		config.setTokenDynamicDiscoveryEnabled(this.isForwardProxyTokenDynamicDiscoveryEnabled());
+		config.setTokenJwtValidationEnabled(this.isForwardProxyTokenValidazioneJwtEnabled());
 		config.setTokenIntrospectionEnabled(this.isForwardProxyTokenIntrospectionEnabled());
 		config.setTokenUserInfoEnabled(this.isForwardProxyTokenUserInfoEnabled());
 		config.setTokenRetrieveEnabled(this.isForwardProxyTokenRetrieveEnabled());
 		config.setAttributeAuthorityEnabled(this.isForwardProxyAttributeAuthorityEnabled());
+		config.setAttributeAuthorityResponseJwtValidationEnabled(this.isForwardProxyAttributeAuthorityResponseJwtValidationEnabled());
 		return config;
 	}
 
@@ -27678,7 +27864,7 @@ public class OpenSPCoop2Properties {
 				}
 				name = name.trim();
 				
-				this.getTransazioniFileTraceConfig = ConfigurazioneTracciamento.toFileTraceConfig(name, this.getRootDirectory());
+				this.getTransazioniFileTraceConfig = ConfigurazioneTracciamento.toFileTraceConfig(name, this.getRootDirectory(), false);
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);

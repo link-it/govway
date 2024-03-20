@@ -3764,7 +3764,7 @@ public class RegistroServiziReader {
 				}
 				else {
 					if(keystoreParams.getStore()!=null) {
-						check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(keystoreParams.getStore(), keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+						check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(CostantiLabel.STORE_CARICATO_BASEDATI, keystoreParams.getStore(), keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
 								sogliaWarningGiorni, 
 								false, //addCertificateDetails, 
 								separator, newLine,
