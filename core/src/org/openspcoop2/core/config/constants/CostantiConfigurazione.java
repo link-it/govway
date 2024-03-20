@@ -380,7 +380,11 @@ public class CostantiConfigurazione {
 	
 	public static final String PARAM_POLICY_ID = "aPluginPolicyId";
 	public static final String POLICY_ID_NON_DEFINITA = "-";
-	
+
+	public static final String POLICY_DYNAMIC_DISCOVERY_CLAIMS_PARSER_TYPE = "policy.discovery.claimsParser";
+	public static final String POLICY_DYNAMIC_DISCOVERY_CLAIMS_PARSER_TYPE_CUSTOM = "CUSTOM";
+	public static final String POLICY_DYNAMIC_DISCOVERY_CLAIMS_PARSER_CLASS_NAME = "policy.discovery.claimsParser.className";
+	public static final String POLICY_DYNAMIC_DISCOVERY_CLAIMS_PARSER_PLUGIN_TYPE = "policy.discovery.claimsParser.pluginType";
 	
 	public static final String POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE = "policy.validazioneJWT.claimsParser";
 	public static final String POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE_CUSTOM = "CUSTOM";

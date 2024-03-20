@@ -9154,7 +9154,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(autenticazioneOpzionale != null && ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale))
 			return CostantiControlStation.DEFAULT_VALUE_ABILITATO;
 		
-		if(attributeAuthority!=null && attributeAuthority.size()>0) {
+		if(attributeAuthority!=null && !attributeAuthority.isEmpty()) {
 			return CostantiControlStation.DEFAULT_VALUE_ABILITATO;
 		}
 		
@@ -9289,14 +9289,12 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		
 		// attribute authority
-		if(attributeAuthority!=null && attributeAuthority.size()>0) {
+		if(attributeAuthority!=null && !attributeAuthority.isEmpty()) {
 			StringBuilder bf = new StringBuilder();
 			StringBuilder bfToolTip = new StringBuilder();
 			bf.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
 			bfToolTip.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
-			if(!CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN.equals(autorizzazioneContenuti)) {
-				bfToolTip.append(": ").append(attributeAuthority.toString());
-			}
+			bfToolTip.append(": ").append(attributeAuthority.toString());
 			de.addStatus(bfToolTip.toString(), bf.toString(), CheckboxStatusType.CONFIG_ENABLE);
 		}
 		
@@ -22482,6 +22480,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			case RICERCA:
 			case STATISTICA:
 			case TRANSAZIONE:
+			case TOKEN_DYNAMIC_DISCOVERY:
 			case TOKEN_VALIDAZIONE:
 			case TOKEN_NEGOZIAZIONE:
 			case ATTRIBUTE_AUTHORITY:

@@ -143,7 +143,8 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 				}
 				if(bean!=null) {
 					Properties signatureProperties = bean.getProperties();
-					JOSEUtils.injectKeystore(requestInfo, signatureProperties, messageSecurityContext.getLog()); // serve per leggere il keystore dalla cache
+					boolean throwError = true;
+    				JOSEUtils.injectKeystore(requestInfo, signatureProperties, messageSecurityContext.getLog(), throwError); // serve per leggere il keystore dalla cache
 					JwtHeaders jwtHeaders = JOSEUtils.getJwtHeaders(messageSecurityContext.getOutgoingProperties(), messageParam); // la configurazione per kid, jwk e x5c viene configurata via properties
 					jsonSignature = new JsonSignature(signatureProperties, jwtHeaders, jwsOptions);	
 				}
@@ -259,7 +260,8 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 				}
 				if(bean!=null) {
 					Properties encryptionProperties = bean.getProperties();
-					JOSEUtils.injectKeystore(requestInfo, encryptionProperties, messageSecurityContext.getLog()); // serve per leggere il keystore dalla cache
+					boolean throwError = true;
+    				JOSEUtils.injectKeystore(requestInfo, encryptionProperties, messageSecurityContext.getLog(), throwError); // serve per leggere il keystore dalla cache
 					JwtHeaders jwtHeaders = JOSEUtils.getJwtHeaders(messageSecurityContext.getOutgoingProperties(), messageParam); // la configurazione per kid, jwk e x5c viene configurata via properties
 					jsonEncrypt = new JsonEncrypt(encryptionProperties, jwtHeaders, jweOptions); 
 				}

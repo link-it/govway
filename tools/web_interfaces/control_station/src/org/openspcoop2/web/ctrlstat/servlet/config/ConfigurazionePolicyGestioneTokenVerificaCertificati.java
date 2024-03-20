@@ -54,6 +54,7 @@ import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.web.ctrlstat.core.CertificateChecker;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -114,7 +115,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 			// Prendo la lista di aliases
 			List<String> aliases = confCore.getJmxPdDAliases();
 			if(aliases==null || aliases.isEmpty()){
-				throw new Exception("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
+				throw new ControlStationCoreException("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
 			}
 			
 			GenericProperties genericProperties = confCore.getGenericProperties(Long.parseLong(id));
@@ -171,6 +172,8 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 				negoziazione = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN.equals(genericProperties.getTipologia());
 			}
 			
+			boolean httpsDynamicDiscovery = false;
+			boolean httpsValidazioneJWT = false;
 			boolean httpsIntrospection = false;
 			boolean httpsUserInfo = false;
 			boolean validazioneJwt = false;
@@ -211,21 +214,29 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 						gestioneToken.setValidazione(StatoFunzionalitaConWarning.ABILITATO);
 						gestioneToken.setForward(StatoFunzionalita.ABILITATO);
 						PolicyGestioneToken policyGestioneToken = TokenUtilities.convertTo(genericProperties, gestioneToken);
-						if(policyGestioneToken.isIntrospection()) {
-							httpsIntrospection = policyGestioneToken.isEndpointHttps();
+						if(policyGestioneToken.isDynamicDiscovery()) {
+							httpsDynamicDiscovery = policyGestioneToken.isEndpointHttps();
 						}
-						if(policyGestioneToken.isUserInfo()) {
-							httpsUserInfo = policyGestioneToken.isEndpointHttps();
-						}
-						if(policyGestioneToken.isValidazioneJWT()) {
-							String tokenType = policyGestioneToken.getTipoToken();
-							KeystoreParams keystoreParams = null;
-							if(org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_TYPE_JWS.equals(tokenType) || 
-									org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_TYPE_JWE.equals(tokenType)) {
-				    			keystoreParams = TokenUtilities.getValidazioneJwtKeystoreParams(policyGestioneToken);
-				    		}
-							if(keystoreParams!=null) {
-								validazioneJwt = true;
+						if(!policyGestioneToken.isDynamicDiscovery()) {
+							if(policyGestioneToken.isValidazioneJWT() && policyGestioneToken.isValidazioneJWTLocationHttp()) {
+								httpsValidazioneJWT = policyGestioneToken.isEndpointHttps();
+							}
+							if(policyGestioneToken.isIntrospection()) {
+								httpsIntrospection = policyGestioneToken.isEndpointHttps();
+							}
+							if(policyGestioneToken.isUserInfo()) {
+								httpsUserInfo = policyGestioneToken.isEndpointHttps();
+							}
+							if(policyGestioneToken.isValidazioneJWT()) {
+								String tokenType = policyGestioneToken.getTipoToken();
+								KeystoreParams keystoreParams = null;
+								if(org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_TYPE_JWS.equals(tokenType) || 
+										org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_TYPE_JWE.equals(tokenType)) {
+					    			keystoreParams = TokenUtilities.getValidazioneJwtKeystoreParams(policyGestioneToken);
+					    		}
+								if(keystoreParams!=null) {
+									validazioneJwt = true;
+								}
 							}
 						}
 						if(policyGestioneToken.isForwardToken() && policyGestioneToken.isForwardTokenInformazioniRaccolte()) {
@@ -240,7 +251,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 								forwardToJwt = true;
 							}
 						}	
-						verificaCertificatiPossibile = httpsIntrospection || httpsUserInfo || validazioneJwt || forwardToJwt;
+						verificaCertificatiPossibile = httpsDynamicDiscovery || httpsValidazioneJWT || httpsIntrospection || httpsUserInfo || validazioneJwt || forwardToJwt;
 					}
 					else if(negoziazione) {
 						PolicyNegoziazioneToken policy = TokenUtilities.convertTo(genericProperties);
@@ -449,7 +460,8 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 						}
 						else if(validazione) {
 							certificateChecker.checkTokenPolicyValidazione(sbDetailsError, sbDetailsWarningPolicy,
-								httpsIntrospection, httpsUserInfo, validazioneJwt, forwardToJwt,
+								httpsDynamicDiscovery, httpsValidazioneJWT, httpsIntrospection, httpsUserInfo, 
+								validazioneJwt, forwardToJwt,
 								genericProperties,
 								sogliaWarningGiorni);
 						}

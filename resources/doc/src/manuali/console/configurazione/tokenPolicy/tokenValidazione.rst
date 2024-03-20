@@ -12,7 +12,7 @@ govwayConsole. Per creare una nuova policy si utilizza il pulsante
 illustrato in :numref:`tokenPolicyFig`.
 
 
-   .. figure:: ../../_figure_console/TokenPolicy-generale.png
+.. figure:: ../../_figure_console/TokenPolicy-generale.png
     :scale: 100%
     :align: center
     :name: tokenPolicyFig
@@ -29,7 +29,40 @@ Inizialmente si inseriscono i dati identificativi:
 
 Al passo successivo si inseriscono le Informazioni Generali. Nella
 sezione *Token* si specifica il tipo di token accettato e il metodo di
-passaggio:
+passaggio.
+
+-  *Tipo*: specifica il tipo di token che il gateway attende di
+   ricevere. I valori possibili sono:
+
+   -  *JWS*: un JSON Web Token di tipo "Signed".
+
+   -  *JWE*: un JSON Web Token di tipo "Encrypt".
+
+   -  *Opaco*: un generico token di tipo non specificato.
+
+-  *Discovery Document URL*: consente di abilitare la modalità dinamica `OpenID Connect Discovery <https://swagger.io/docs/specification/authentication/openid-connect-discovery/>`_ per recuperare gli endpoint di accesso ai servizi di Introspection, UserInfo e il recupero delle chiavi per una validazione Jwt da una "well-know-url". Se abilitato (:numref:`tokenPolicyDynamic1Fig`) le opzioni configurabili sono le seguenti:
+
+   -  *Tipo*: indica il formato atteso del payload contenuto nella risposta json:
+
+         - 'OpenID Connect Discovery': claims definiti in `OpenID Connect Discovery <https://swagger.io/docs/specification/authentication/openid-connect-discovery/>`_ ;
+
+         - 'Personalizzato': consente di definire un mapping puntuale tra il nome di un claim e l’informazione che GovWay cerca di estrarre dalla risposta (:numref:`tokenPolicyDynamicCustomFig`);
+
+         - 'Plugin': consente di indicare il nome di una classe che implementa una logica di parsing personalizzata (deve implementare l’interfaccia "org.openspcoop2.pdd.core.token.parser.IDynamicDiscoveryParser").
+
+  .. figure:: ../../_figure_console/TokenPolicyDynamic.png
+    :scale: 100%
+    :align: center
+    :name: tokenPolicyDynamic1Fig
+
+    Opzioni 'Dynamic Discovery' di una Token Policy 
+
+  .. figure:: ../../_figure_console/TokenPolicyDynamicCustom.png
+    :scale: 100%
+    :align: center
+    :name: tokenPolicyDynamicCustomFig
+
+    Opzioni 'Dynamic Discovery' personalizzata di una Token Policy 
 
 -  *Posizione*: indica la modalità di passaggio del token da parte
    dell'applicativo richiedente. I valori possibili sono:
@@ -80,14 +113,17 @@ passaggio:
       parametro deve essere fornito nel campo *Nome Parametro URL*, che
       appare di seguito.
 
--  *Tipo*: specifica il tipo di token che il gateway attende di
-   ricevere. I valori possibili sono:
 
-   -  *JWS*: un JSON Web Token di tipo "Signed".
+Nella sezione *Endpoint Token* si specificano eventuali opzioni di accesso agli endpoint:
 
-   -  *JWE*: un JSON Web Token di tipo "Encrypt".
+-  *Connection Timeout*: Tempo massimo in millisecondi di attesa per stabilire una connessione;
 
-   -  *Opaco*: un generico token di tipo non specificato.
+-  *Read Timeout*: Tempo massimo in millisecondi di attesa per la ricezione di una risposta dal server;
+
+-  *Https*: Parametri di configurazione nel caso in cui il server richieda un accesso Https;
+
+-  *Proxy*: Parametri di configurazione nel caso in cui sia richiesto l’uso di un proxy per l’accesso.
+
 
 Nella sezione *Elaborazione Token* si specificano le azioni che si
 possono compiere durante la fase di elaborazione del token ricevuto. Le

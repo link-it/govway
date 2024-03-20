@@ -30,16 +30,32 @@ public class PolicyTimeoutConfig {
 
 	private String policyNegoziazione;
 	
+	private String policyValidazioneDynamicDiscovery;
+	private String policyValidazioneJwt;
 	private String policyValidazioneIntrospection;
 	private String policyValidazioneUserInfo;
 	
 	private String attributeAuthority;
+	private String attributeAuthorityResponseJwt;
 	
 	public String getPolicyNegoziazione() {
 		return this.policyNegoziazione;
 	}
 	public void setPolicyNegoziazione(String policyNegoziazione) {
 		this.policyNegoziazione = policyNegoziazione;
+	}
+	
+	public String getPolicyValidazioneDynamicDiscovery() {
+		return this.policyValidazioneDynamicDiscovery;
+	}
+	public void setPolicyValidazioneDynamicDiscovery(String policyValidazioneDynamicDiscovery) {
+		this.policyValidazioneDynamicDiscovery = policyValidazioneDynamicDiscovery;
+	}
+	public String getPolicyValidazioneJwt() {
+		return this.policyValidazioneJwt;
+	}
+	public void setPolicyValidazioneJwt(String policyValidazioneJwt) {
+		this.policyValidazioneJwt = policyValidazioneJwt;
 	}
 	public String getPolicyValidazioneIntrospection() {
 		return this.policyValidazioneIntrospection;
@@ -59,5 +75,11 @@ public class PolicyTimeoutConfig {
 	}
 	public void setAttributeAuthority(String attributeAuthority) {
 		this.attributeAuthority = attributeAuthority;
+	}
+	public String getAttributeAuthorityResponseJwt() {
+		return this.attributeAuthorityResponseJwt;
+	}
+	public void setAttributeAuthorityResponseJwt(String attributeAuthorityResponseJwt) {
+		this.attributeAuthorityResponseJwt = attributeAuthorityResponseJwt;
 	}
 }

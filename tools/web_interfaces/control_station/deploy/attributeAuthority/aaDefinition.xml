@@ -742,7 +742,7 @@
 			<item type="select" name="aaJWSTruststoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<property name="rs.security.keystore.type" properties="signatureVerifyPropRefId" />
 			</item>
-			<item type="textarea" name="aaJWSTruststoreFile" label="File" required="true">
+			<item type="textarea" name="aaJWSTruststoreFile" label="Location" required="true">
 				<property name="rs.security.keystore.file" properties="signatureVerifyPropRefId" />
 			</item>
 			<item type="hidden" name="aaJWSTruststorePublicKeyAlgorithm" value="RSA">

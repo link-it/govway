@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.commons.Filtri;
@@ -38,6 +40,10 @@ import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.id.IDGenericProperties;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mvc.properties.Item;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
 import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
@@ -48,11 +54,23 @@ import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
 import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.plugins.utils.PluginsDriverUtils;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.ForwardProxy;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
+import org.openspcoop2.pdd.core.token.attribute_authority.PolicyAttributeAuthority;
+import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
+import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
+import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.security.message.jose.JOSECostanti;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.KeystoreType;
+import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
+import org.slf4j.Logger;
 
 /**     
  * TokenUtilities
@@ -67,6 +85,9 @@ public class TokenUtilities {
 
 	public static Properties getDefaultProperties(Map<String, Properties> mapProperties) {
 		return MultiPropertiesUtilities.getDefaultProperties(mapProperties);
+	}
+	public static Properties getDynamicDiscoveryClaimsMappingProperties(Map<String, Properties> mapProperties) {
+		return mapProperties.get(Costanti.DYNAMIC_DISCOVERY_PARSER_COLLECTION_ID);
 	}
 	public static Properties getValidazioneJwtClaimsMappingProperties(Map<String, Properties> mapProperties) {
 		return mapProperties.get(Costanti.VALIDAZIONE_JWT_TOKEN_PARSER_COLLECTION_ID);
@@ -111,6 +132,17 @@ public class TokenUtilities {
 			throw new ProviderException(e.getMessage(),e);
 		}
 		return multiProperties;
+	}
+
+	public static boolean isDynamicDiscoveryEnabled(Map<String, Properties> mapProperties) {
+		return isDynamicDiscoveryEnabled(getDefaultProperties(mapProperties));
+	}
+	public static boolean isDynamicDiscoveryEnabled(Properties pDefault) {
+		return isEnabled(pDefault, Costanti.POLICY_DISCOVERY_STATO);
+	}
+	public static boolean isDynamicDiscoveryEnabled(GenericProperties gp) throws ProviderException {
+		Map<String, Properties> multiProperties = getMultiProperties(gp);
+		return isDynamicDiscoveryEnabled(multiProperties);
 	}
 	
 	public static boolean isValidazioneEnabled(Map<String, Properties> mapProperties) {
@@ -270,6 +302,8 @@ public class TokenUtilities {
 		
 		policy.setTokenOpzionale(false);
 		
+		policy.setDynamicDiscovery(false);
+		
 		policy.setValidazioneJWT(false);
 		policy.setValidazioneJWTWarningOnly(false);
 		
@@ -292,6 +326,9 @@ public class TokenUtilities {
 		if(gestioneToken.getTokenOpzionale()!=null) {
 			policy.setTokenOpzionale(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(gestioneToken.getTokenOpzionale()));
 		}
+		
+		boolean dynamicDiscoveryEnabledDaPolicy = isDynamicDiscoveryEnabled(multiProperties);
+		policy.setDynamicDiscovery(dynamicDiscoveryEnabledDaPolicy);
 		
 		boolean validazioneEnabledDaPolicy = isValidazioneEnabled(multiProperties);
 		if(validazioneEnabledDaPolicy &&
@@ -789,5 +826,304 @@ public class TokenUtilities {
 			jtiClaimReceived = informazioniTokenNormalizzate.getJti();
 		}
 		return jtiClaimReceived;
+	}
+	
+	
+	
+	
+	public static Map<String, Object> buildDynamicMap(Busta busta, 
+			RequestInfo requestInfo, Context pddContext, Logger log) {
+	
+		Map<String, Object> dynamicMap = new HashMap<>();
+		
+		Map<String, List<String>> pTrasporto = null;
+		String urlInvocazione = null;
+		Map<String, List<String>> pQuery = null;
+		Map<String, List<String>> pForm = null;
+		if(requestInfo!=null && requestInfo.getProtocolContext()!=null) {
+			pTrasporto = requestInfo.getProtocolContext().getHeaders();
+			urlInvocazione = requestInfo.getProtocolContext().getUrlInvocazione_formBased();
+			pQuery = requestInfo.getProtocolContext().getParameters();
+			if(requestInfo.getProtocolContext() instanceof HttpServletTransportRequestContext) {
+				HttpServletTransportRequestContext httpServletContext = requestInfo.getProtocolContext();
+				HttpServletRequest httpServletRequest = httpServletContext.getHttpServletRequest();
+				if(httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
+					FormUrlEncodedHttpServletRequest formServlet = (FormUrlEncodedHttpServletRequest) httpServletRequest;
+					if(formServlet.getFormUrlEncodedParametersValues()!=null &&
+							!formServlet.getFormUrlEncodedParametersValues().isEmpty()) {
+						pForm = formServlet.getFormUrlEncodedParametersValues();
+					}
+				}
+			}
+		}
+				
+		ErrorHandler errorHandler = new ErrorHandler();
+		DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
+				null,
+				null, 
+				busta, 
+				pTrasporto, 
+				pQuery,
+				pForm,
+				errorHandler);
+		
+		return dynamicMap;
+	}
+	public static String convertDynamicPropertyValue(String v, String nome, Map<String, Object> dynamicMap, Context context) throws TokenException {
+		if(v!=null && !"".equals(v) && dynamicMap!=null) {
+			try {
+				v = DynamicUtils.convertDynamicPropertyValue(nome+".gwt", v, dynamicMap, context);
+			}catch(Exception e) {
+				throw new TokenException(e.getMessage(),e);
+			}
+		}
+		return v;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static void injectJOSEConfig(Properties p, AbstractPolicyToken policyToken, DynamicDiscovery dynamicDiscovery,
+			Busta busta, IDSoggetto idDominio, IDServizio idServizio,
+			Context context, Logger log,
+			RequestInfo requestInfo, IState state, boolean delegata) throws TokenException {
+		
+		Map<String, Object> dynamicMap = TokenUtilities.buildDynamicMap(busta, requestInfo, context, log);
+		
+		if(policyToken instanceof PolicyGestioneToken) {
+			injectJOSEConfigDynamicDiscovery(p, (PolicyGestioneToken)policyToken, dynamicDiscovery,
+					dynamicMap, context);
+		}
+		injectJOSEConfigKeystore(p,  
+				dynamicMap, context);
+		injectJOSEConfigSsl(p, policyToken, 
+				dynamicMap, context);
+		injectJOSEConfigTimeout(p, policyToken, 
+				dynamicMap, context);
+		injectJOSEConfigProxy(p, policyToken, 
+				dynamicMap, context);
+		injectJOSEConfigForwardProxy(p, policyToken, 
+				idDominio, idServizio,
+				requestInfo, state, delegata);
+	}
+	private static void injectJOSEConfigDynamicDiscovery(Properties p, PolicyGestioneToken policyGestioneToken, DynamicDiscovery dynamicDiscovery,
+			Map<String, Object> dynamicMap, Context context) throws TokenException {
+		if(policyGestioneToken.isDynamicDiscovery()) {
+			GestoreTokenValidazioneUtilities.check(dynamicDiscovery);
+			String endpoint = dynamicDiscovery.getJwksUri();
+			endpoint = convertDynamicPropertyValue(endpoint, "endpoint", dynamicMap, context);
+			if(endpoint==null || StringUtils.isEmpty(endpoint)) {
+				throw new TokenException("DynamicDiscovery.jwkUri undefined");
+			}
+			p.put(RSSecurityConstants.RSSEC_KEY_STORE_FILE, endpoint);
+		}
+	}
+	private static void injectJOSEConfigKeystore(Properties p, 
+			Map<String, Object> dynamicMap, Context context) throws TokenException {
+		
+		String file = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+		if(file!=null && !"".equals(file)) {
+			file = convertDynamicPropertyValue(file, "file", dynamicMap, context);
+			p.put(RSSecurityConstants.RSSEC_KEY_STORE_FILE, file);
+		}
+		
+		String alias = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS);
+		if(alias!=null && !"".equals(alias)) {
+			alias = convertDynamicPropertyValue(alias, "alias", dynamicMap, context);
+			p.put(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS, alias);
+		}
+		
+		String pwd = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_PSWD);
+		if(pwd!=null && !"".equals(pwd)) {
+			pwd = convertDynamicPropertyValue(pwd, "pwd", dynamicMap, context);
+			p.put(RSSecurityConstants.RSSEC_KEY_STORE_PSWD, pwd);
+		}
+		
+		String type = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
+		if(type!=null && !"".equals(type)) {
+			type = convertDynamicPropertyValue(type, "type", dynamicMap, context);
+			p.put(RSSecurityConstants.RSSEC_KEY_STORE_TYPE, type);
+		}
+		
+	}
+	public static void injectJOSEConfigSsl(Properties p, AbstractPolicyToken policyToken,
+			Map<String, Object> dynamicMap, Context context) throws TokenException {
+		boolean https = false;
+		if(policyToken instanceof PolicyGestioneToken) {
+			https = ((PolicyGestioneToken)policyToken).isEndpointHttps();
+		}
+		else if(policyToken instanceof PolicyAttributeAuthority) {
+			try {
+				https = ((PolicyAttributeAuthority)policyToken).isEndpointHttps();
+			}catch(Exception e) {
+				throw new TokenException(e.getMessage(),e);
+			}
+		}
+		if(https) {
+			Properties sslConfig = policyToken.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CONFIG);
+			if(sslConfig!=null) {
+				injectJOSEConfigSsl(p, sslConfig,
+						dynamicMap, context);
+			}
+		}
+	}
+	private static void injectJOSEConfigSsl(Properties p, Properties sslConfig,
+			Map<String, Object> dynamicMap, Context context) throws TokenException {
+		String trustAll = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS);
+		if(trustAll!=null && StringUtils.isNotEmpty(trustAll) && "true".equalsIgnoreCase(trustAll)) {
+			p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_TRUSTALL, trustAll);
+		}
+		else {
+			injectJOSEConfigSslTrustStore(p, sslConfig,
+					dynamicMap, context);
+		}
+		
+		String hostnameVerifier = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER);
+		if(hostnameVerifier!=null && StringUtils.isNotEmpty(hostnameVerifier)) {
+			p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_HOSTNAME_VERIFIER, hostnameVerifier);
+		}
+	}
+	private static void injectJOSEConfigSslTrustStore(Properties p, Properties sslConfig,
+			Map<String, Object> dynamicMap, Context context) throws TokenException {
+		String trustLocation = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
+		if(trustLocation!=null && StringUtils.isNotEmpty(trustLocation)) {
+			trustLocation = convertDynamicPropertyValue(trustLocation, "trustLocation", dynamicMap, context);
+			p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_FILE, trustLocation);
+			
+			String trustType = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_TYPE);
+			if(trustType!=null && StringUtils.isNotEmpty(trustType)) {
+				trustType = convertDynamicPropertyValue(trustType, "trustType", dynamicMap, context);
+				p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_TYPE, trustType);
+			}
+			
+			String trustPassword = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+			if(trustPassword!=null && StringUtils.isNotEmpty(trustPassword)) {
+				trustPassword = convertDynamicPropertyValue(trustPassword, "trustPassword", dynamicMap, context);
+				p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_PASSWORD, trustPassword);
+			}
+			
+			String trustCrl = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+			if(trustCrl!=null && StringUtils.isNotEmpty(trustCrl)) {
+				trustCrl = convertDynamicPropertyValue(trustCrl, "trustCrl", dynamicMap, context);
+				p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_CRL, trustCrl);
+			}
+		}
+	}
+	private static void injectJOSEConfigTimeout(Properties p, AbstractPolicyToken policyToken,
+			Map<String, Object> dynamicMap, Context context) throws TokenException {
+		Properties endpointConfig = policyToken.getProperties().get(Costanti.POLICY_ENDPOINT_CONFIG);
+		if(endpointConfig!=null && endpointConfig.containsKey(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)) {
+			String connectionTimeout = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT);
+			if(connectionTimeout!=null && StringUtils.isNotEmpty(connectionTimeout)) {
+				connectionTimeout = convertDynamicPropertyValue(connectionTimeout, "connectionTimeout", dynamicMap, context);
+			}
+			
+			String readTimeout = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT);
+			if(readTimeout!=null && StringUtils.isNotEmpty(readTimeout)) {
+				readTimeout = convertDynamicPropertyValue(readTimeout, "readTimeout", dynamicMap, context);
+			}
+		
+			p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_CONNECTION_TIMEOUT, connectionTimeout);
+			p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_READ_TIMEOUT, readTimeout);
+		}
+	}
+	private static void injectJOSEConfigProxy(Properties p, AbstractPolicyToken policyToken,
+			Map<String, Object> dynamicMap, Context context) throws TokenException {
+		Properties endpointConfig = policyToken.getProperties().get(Costanti.POLICY_ENDPOINT_CONFIG);
+		if(endpointConfig!=null && endpointConfig.containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME)) {
+			String hostProxy = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME);
+			if(hostProxy!=null && StringUtils.isNotEmpty(hostProxy)) {
+				hostProxy = convertDynamicPropertyValue(hostProxy, "hostProxy", dynamicMap, context);
+			}
+			
+			String portProxy = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT);
+			if(portProxy!=null && StringUtils.isNotEmpty(portProxy)) {
+				portProxy = convertDynamicPropertyValue(portProxy, "portProxy", dynamicMap, context);
+			}
+		
+			p.put(JOSECostanti.ID_PROXY_HOSTNAME, hostProxy);
+			p.put(JOSECostanti.ID_PROXY_PORT, portProxy);
+			
+			injectJOSEConfigProxyCredentials(p, endpointConfig,
+					dynamicMap, context);
+		}
+	}
+	private static void injectJOSEConfigProxyCredentials(Properties p, Properties endpointConfig,
+			Map<String, Object> dynamicMap, Context context) throws TokenException {
+		String usernameProxy = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_USERNAME);
+		String passwordProxy = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD);
+		if(usernameProxy!=null && StringUtils.isNotEmpty(usernameProxy)) {
+			usernameProxy = convertDynamicPropertyValue(usernameProxy, "usernameProxy", dynamicMap, context);
+			p.put(JOSECostanti.ID_PROXY_USERNAME, usernameProxy);
+			
+			if(passwordProxy!=null && StringUtils.isNotEmpty(passwordProxy)) {
+				passwordProxy = convertDynamicPropertyValue(passwordProxy, "passwordProxy", dynamicMap, context);
+			}
+			if(passwordProxy!=null) {
+				p.put(JOSECostanti.ID_PROXY_PASSWORD, passwordProxy);
+			}
+		}
+	}
+	private static void injectJOSEConfigForwardProxy(Properties p, AbstractPolicyToken policyToken,
+			IDSoggetto idDominio, IDServizio idServizio,
+			RequestInfo requestInfo, IState state, boolean delegata) throws TokenException {
+
+		ForwardProxy forwardProxy = getForwardProxy(policyToken,
+				requestInfo, state, delegata,
+				idDominio, idServizio);
+		if(forwardProxy!=null && forwardProxy.isEnabled() && forwardProxy.getConfigToken()!=null) {
+			boolean enabled = false;
+			if(policyToken instanceof PolicyGestioneToken) {
+				enabled = forwardProxy.getConfigToken().isTokenJwtValidationEnabled();
+			}
+			else if(policyToken instanceof PolicyAttributeAuthority) {
+				enabled = forwardProxy.getConfigToken().isAttributeAuthorityResponseJwtValidationEnabled();
+			}
+			if(enabled) {
+				p.put(JOSECostanti.ID_FORWARD_PROXY_ENDPOINT, forwardProxy.getUrl());
+				if(forwardProxy.getConfig()!=null) {
+					if(forwardProxy.getConfig().getHeader()!=null) {
+						p.put(JOSECostanti.ID_FORWARD_PROXY_HEADER, forwardProxy.getConfig().getHeader());
+						p.put(JOSECostanti.ID_FORWARD_PROXY_HEADER_BASE64, forwardProxy.getConfig().isHeaderBase64()+"");
+					}
+					else if(forwardProxy.getConfig().getQuery()!=null) {
+						p.put(JOSECostanti.ID_FORWARD_PROXY_QUERY, forwardProxy.getConfig().getQuery());
+						p.put(JOSECostanti.ID_FORWARD_PROXY_QUERY_BASE64, forwardProxy.getConfig().isQueryBase64()+"");
+					}
+				}
+			}
+		}
+	}
+	
+	
+	
+	
+	public static ForwardProxy getForwardProxy(AbstractPolicyToken policyToken,
+			RequestInfo requestInfo, IState state, boolean delegata,
+			IDSoggetto idDominio, IDServizio idServizio) throws TokenException{
+		ForwardProxy forwardProxy = null;
+		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+		if(configurazionePdDManager.isForwardProxyEnabled(requestInfo)) {
+			try {
+				IDGenericProperties policy = new IDGenericProperties();
+				policy.setTipologia(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION);
+				policy.setNome(policyToken.getName());
+				if(delegata) {
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigFruizione(idDominio, idServizio, policy, requestInfo);
+				}
+				else {
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigErogazione(idDominio, idServizio, policy, requestInfo);
+				}
+			}catch(Exception e) {
+				throw new TokenException(GestoreToken.getMessageErroreGovWayProxy(e),e);
+			}
+		}
+		return forwardProxy;
 	}
 }

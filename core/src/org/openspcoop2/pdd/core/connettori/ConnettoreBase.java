@@ -1148,9 +1148,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     }
         
     protected String readExceptionMessageFromException(Throwable e) {
-    	return _readExceptionMessageFromException(e);
+    	return readConnectionExceptionMessageFromException(e);
     }
-    protected static String _readExceptionMessageFromException(Throwable e) {
+    public static String readConnectionExceptionMessageFromException(Throwable e) {
     	
     	// In questo metodo è possibile gestire meglio la casistica dei messaggi di errore ritornati.
     	

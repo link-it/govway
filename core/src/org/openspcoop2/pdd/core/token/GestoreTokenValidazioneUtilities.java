@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,16 +38,12 @@ import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
-import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
-import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.mvc.properties.provider.ProviderException;
-import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -54,7 +51,6 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.rest.OpenSPCoop2Message_binary_impl;
 import org.openspcoop2.message.utils.WWWAuthenticateErrorCode;
 import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
-import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.PDNDResolver;
@@ -65,12 +61,19 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPS;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.controllo_traffico.PolicyTimeoutConfig;
+import org.openspcoop2.pdd.core.dynamic.DynamicException;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.token.pa.DatiInvocazionePortaApplicativa;
+import org.openspcoop2.pdd.core.token.pa.EsitoDynamicDiscoveryPortaApplicativa;
 import org.openspcoop2.pdd.core.token.pa.EsitoGestioneTokenPortaApplicativa;
 import org.openspcoop2.pdd.core.token.parser.Claims;
+import org.openspcoop2.pdd.core.token.parser.IDynamicDiscoveryParser;
 import org.openspcoop2.pdd.core.token.parser.ITokenParser;
 import org.openspcoop2.pdd.core.token.pd.DatiInvocazionePortaDelegata;
+import org.openspcoop2.pdd.core.token.pd.EsitoDynamicDiscoveryPortaDelegata;
 import org.openspcoop2.pdd.core.token.pd.EsitoGestioneTokenPortaDelegata;
+import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
@@ -83,7 +86,6 @@ import org.openspcoop2.security.keystore.CRLCertstore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.keystore.cache.GestoreOCSPResource;
 import org.openspcoop2.security.keystore.cache.GestoreOCSPValidator;
-import org.openspcoop2.security.message.jose.JOSEUtils;
 import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.CertificateInfo;
@@ -123,10 +125,124 @@ public class GestoreTokenValidazioneUtilities {
 
 	private GestoreTokenValidazioneUtilities() {}
 	
+	private static final String PREFIX_ERROR_CONNESSIONE = "(Errore di Connessione) ";
+	
+	
+	
+	// ********* [VALIDAZIONE-TOKEN] DYNAMIC DISCOVERY ****************** */
+		
+	static EsitoDynamicDiscovery dynamicDiscoveryEngine(Logger log, AbstractDatiInvocazione datiInvocazione, 
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			String token, boolean portaDelegata,
+			Busta busta, IDSoggetto idDominio, IDServizio idServizio) {
+		
+		
+		EsitoDynamicDiscovery esitoGestioneToken = null;
+		if(portaDelegata) {
+			esitoGestioneToken = new EsitoDynamicDiscoveryPortaDelegata();
+		}
+		else {
+			esitoGestioneToken = new EsitoDynamicDiscoveryPortaApplicativa();
+		}
+		
+		esitoGestioneToken.setTokenInternalError();
+		esitoGestioneToken.setToken(token);
+		
+		try{
+			PolicyGestioneToken policyGestioneToken = datiInvocazione.getPolicyGestioneToken();
+    		
+    		String detailsError = null;
+    		DynamicDiscovery dd = null;
+    		Exception eProcess = null;
+			
+			IDynamicDiscoveryParser ddParser = policyGestioneToken.getDynamicDiscoveryParser();
+			
+			PortaApplicativa pa = null;
+			PortaDelegata pd = null;
+			if(datiInvocazione instanceof DatiInvocazionePortaApplicativa) {
+				pa = ((DatiInvocazionePortaApplicativa)datiInvocazione).getPa();
+			}
+			else if(datiInvocazione instanceof DatiInvocazionePortaDelegata) {
+				pd = ((DatiInvocazionePortaDelegata)datiInvocazione).getPd();
+			}
+			
+			HttpResponse httpResponse = null;
+			Integer httpResponseCode = null;
+			byte[] risposta = null;
+			try {
+				httpResponse = GestoreTokenValidazioneUtilities.http(log, policyGestioneToken, HTTP_TYPE.DYNAMIC_DISCOVERY, 
+						null, token,
+						pddContext, protocolFactory,
+						datiInvocazione.getState(), portaDelegata, datiInvocazione.getIdModulo(), pa, pd,
+						idDominio, idServizio,
+						busta, datiInvocazione.getRequestInfo());
+				risposta = httpResponse.getContent();
+				httpResponseCode = httpResponse.getResultHTTPOperation();
+			}catch(Exception e) {
+				detailsError = PREFIX_ERROR_CONNESSIONE+ e.getMessage();
+				eProcess = e;
+			}
+			
+			if(detailsError==null) {
+				try {
+					dd = new DynamicDiscovery(httpResponseCode, policyGestioneToken.getDynamicDiscoveryType(), new String(risposta),ddParser);
+				}catch(Exception e) {
+					detailsError = "Risposta del servizio 'Dynamic Discovery' non valida: "+e.getMessage();
+					eProcess = e;
+				}
+			}
+    		  		
+    		if(dd!=null && dd.isValid()) {
+    			esitoGestioneToken.setTokenValido();
+    			esitoGestioneToken.setDynamicDiscovery(dd);
+    			esitoGestioneToken.setNoCache(false);
+			}
+    		else {
+    			esitoGestioneToken.setTokenValidazioneFallita();
+    			esitoGestioneToken.setNoCache(!policyGestioneToken.isIntrospectionSaveErrorInCache());
+    			esitoGestioneToken.setEccezioneProcessamento(eProcess);
+    			if(detailsError!=null) {
+    				esitoGestioneToken.setDetails(detailsError);	
+				}
+				else {
+					esitoGestioneToken.setDetails(GestoreToken.TOKEN_NON_VALIDO);	
+				}
+    			
+    			// comunque lo aggiungo per essere consultabile nei casi di errore se una connessione http è terminata
+    			if(OpenSPCoop2Properties.getInstance().isGestioneTokenSaveSourceTokenInfo() && httpResponseCode!=null) {
+    				dd = new DynamicDiscovery(esitoGestioneToken.getDetails(), httpResponseCode, risposta, policyGestioneToken.getDynamicDiscoveryType());
+    				esitoGestioneToken.setDynamicDiscovery(dd);
+    			}
+    			
+    			if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
+    				esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+	    					policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoGestioneToken.getDetails()));   			
+    			}
+    			else {
+    				esitoGestioneToken.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+	    					policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoGestioneToken.getDetails()));
+    			} 	
+    		}
+    		
+		}catch(Exception e){
+			esitoGestioneToken.setTokenInternalError();
+			esitoGestioneToken.setDetails(e.getMessage());
+			esitoGestioneToken.setEccezioneProcessamento(e);
+    	}
+		
+		return esitoGestioneToken;
+	}
+	
+	
+	
+	
+	
 	
 	// ********* [VALIDAZIONE-TOKEN] VALIDAZIONE JWT TOKEN ****************** */
 	
-	static EsitoGestioneToken validazioneJWTTokenEngine(Logger log, AbstractDatiInvocazione datiInvocazione, EsitoPresenzaToken esitoPresenzaToken, String token, boolean portaDelegata, PdDContext pddContext) {
+	static EsitoGestioneToken validazioneJWTTokenEngine(Logger log, AbstractDatiInvocazione datiInvocazione, EsitoPresenzaToken esitoPresenzaToken, DynamicDiscovery dynamicDiscovery, 
+			String token, boolean portaDelegata, PdDContext pddContext,
+			Busta busta, IDSoggetto idDominio, IDServizio idServizio) {
 		EsitoGestioneToken esitoGestioneToken = null;
 		if(portaDelegata) {
 			esitoGestioneToken = new EsitoGestioneTokenPortaDelegata();
@@ -153,7 +269,9 @@ public class GestoreTokenValidazioneUtilities {
     			// JWS Compact   			
     			JsonVerifySignature jsonCompactVerify = null;
     			try {
-    				jsonCompactVerify = getJsonVerifySignatureJWS(log, datiInvocazione, policyGestioneToken);
+    				jsonCompactVerify = getJsonVerifySignatureJWS(log, pddContext, datiInvocazione, policyGestioneToken, dynamicDiscovery, 
+    						busta, idDominio, idServizio,
+    						portaDelegata);
     				
     				if(jsonCompactVerify.verify(token)) {
     					informazioniToken = new InformazioniToken(SorgenteInformazioniToken.JWT,jsonCompactVerify.getDecodedPayload(),tokenParser);
@@ -195,10 +313,9 @@ public class GestoreTokenValidazioneUtilities {
     			// JWE Compact
     			JsonDecrypt jsonDecrypt = null;
     			try {
-    				JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
-    				Properties p = policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID);
-    				JOSEUtils.injectKeystore(datiInvocazione.getRequestInfo(), p, log); // serve per leggere il keystore dalla cache
-    				jsonDecrypt = new JsonDecrypt(p, options);
+    				jsonDecrypt = getJsonDecrypt(log, pddContext, datiInvocazione, policyGestioneToken, dynamicDiscovery,
+    						busta, idDominio, idServizio,
+    						portaDelegata);
     				jsonDecrypt.decrypt(token);
     				informazioniToken = new InformazioniToken(SorgenteInformazioniToken.JWT,jsonDecrypt.getDecodedPayload(),tokenParser);
     			}catch(Exception e) {
@@ -249,13 +366,34 @@ public class GestoreTokenValidazioneUtilities {
 		
 		return esitoGestioneToken;
 	}
-	private static JsonVerifySignature getJsonVerifySignatureJWS(Logger log, AbstractDatiInvocazione datiInvocazione, PolicyGestioneToken policyGestioneToken) throws TokenException, UtilsException, SecurityException {
+	
+	private static JsonVerifySignature getJsonVerifySignatureJWS(Logger log, Context context, AbstractDatiInvocazione datiInvocazione, PolicyGestioneToken policyGestioneToken, DynamicDiscovery dynamicDiscovery,
+			Busta busta, IDSoggetto idDominio, IDServizio idServizio,
+			boolean portaDelegata) throws TokenException, UtilsException, SecurityException {
 		// JWS Compact   			
 		JsonVerifySignature jsonCompactVerify = null;
 
 		JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
 		Properties p = policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID);
-		JOSEUtils.injectKeystore(datiInvocazione.getRequestInfo(), p, log); // serve per leggere il keystore dalla cache
+		TokenUtilities.injectJOSEConfig(p, policyGestioneToken, dynamicDiscovery,  
+				busta, idDominio, idServizio,
+				context, log,
+				datiInvocazione.getRequestInfo(), datiInvocazione.getState(), portaDelegata);
+		
+		// serve per leggere il keystore dalla cache
+		TokenKeystoreInjectUtilities inject = new TokenKeystoreInjectUtilities(log, datiInvocazione.getRequestInfo() ,
+				datiInvocazione.getRequestInfo()!=null ? datiInvocazione.getRequestInfo().getProtocolFactory() : null, 
+				context, datiInvocazione.getState());
+		if(datiInvocazione instanceof DatiInvocazionePortaApplicativa) {
+			DatiInvocazionePortaApplicativa dati = (DatiInvocazionePortaApplicativa) datiInvocazione;
+			inject.initTokenPolicyValidazioneJwt(policyGestioneToken.getName(), portaDelegata, dati.getPd(), dati.getPa(), p);
+		}
+		else {
+			DatiInvocazionePortaDelegata dati = (DatiInvocazionePortaDelegata) datiInvocazione;
+			inject.initTokenPolicyValidazioneJwt(policyGestioneToken.getName(), portaDelegata, dati.getPd(), null, p);
+		}
+		inject.inject(p);
+		
 		
 		String aliasMode = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS+".mode"); 
 		if(aliasMode!=null && 
@@ -364,15 +502,46 @@ public class GestoreTokenValidazioneUtilities {
 		return jsonCompactVerify;
 	}
 	
+	private static JsonDecrypt getJsonDecrypt(Logger log, Context context, AbstractDatiInvocazione datiInvocazione, PolicyGestioneToken policyGestioneToken, DynamicDiscovery dynamicDiscovery,
+			Busta busta, IDSoggetto idDominio, IDServizio idServizio,
+			boolean portaDelegata) throws TokenException, UtilsException, SecurityException {
+		JsonDecrypt jsonDecrypt = null;
+		JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
+		Properties p = policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID);
+		TokenUtilities.injectJOSEConfig(p, policyGestioneToken, dynamicDiscovery,  
+				busta, idDominio, idServizio,
+				context, log,
+				datiInvocazione.getRequestInfo(), datiInvocazione.getState(), portaDelegata);
+		
+		// serve per leggere il keystore dalla cache
+		TokenKeystoreInjectUtilities inject = new TokenKeystoreInjectUtilities(log, datiInvocazione.getRequestInfo() ,
+				datiInvocazione.getRequestInfo()!=null ? datiInvocazione.getRequestInfo().getProtocolFactory() : null, 
+				context, datiInvocazione.getState());
+		if(datiInvocazione instanceof DatiInvocazionePortaApplicativa) {
+			DatiInvocazionePortaApplicativa dati = (DatiInvocazionePortaApplicativa) datiInvocazione;
+			inject.initTokenPolicyValidazioneJwt(policyGestioneToken.getName(), portaDelegata, dati.getPd(), dati.getPa(), p);
+		}
+		else {
+			DatiInvocazionePortaDelegata dati = (DatiInvocazionePortaDelegata) datiInvocazione;
+			inject.initTokenPolicyValidazioneJwt(policyGestioneToken.getName(), portaDelegata, dati.getPd(), null, p);
+		}
+		inject.inject(p);
+		
+		jsonDecrypt = new JsonDecrypt(p, options);
+				
+		return jsonDecrypt;
+	}
+	
 	
 	
 	
 	// ********* [VALIDAZIONE-TOKEN] INTROSPECTION TOKEN ****************** */
 	
-	static EsitoGestioneToken introspectionTokenEngine(Logger log, AbstractDatiInvocazione datiInvocazione, 
+	static EsitoGestioneToken introspectionTokenEngine(Logger log, AbstractDatiInvocazione datiInvocazione,  
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			DynamicDiscovery dynamicDiscovery, 
 			String token, boolean portaDelegata,
-			IDSoggetto idDominio, IDServizio idServizio) {
+			Busta busta, IDSoggetto idDominio, IDServizio idServizio) {
 		EsitoGestioneToken esitoGestioneToken = null;
 		if(portaDelegata) {
 			esitoGestioneToken = new EsitoGestioneTokenPortaDelegata();
@@ -406,15 +575,16 @@ public class GestoreTokenValidazioneUtilities {
 			Integer httpResponseCode = null;
 			byte[] risposta = null;
 			try {
-				httpResponse = GestoreTokenValidazioneUtilities.http(log, policyGestioneToken, GestoreTokenValidazioneUtilities.INTROSPECTION, token,
+				httpResponse = GestoreTokenValidazioneUtilities.http(log, policyGestioneToken, HTTP_TYPE.INTROSPECTION, 
+						dynamicDiscovery, token,
 						pddContext, protocolFactory,
 						datiInvocazione.getState(), portaDelegata, datiInvocazione.getIdModulo(), pa, pd,
 						idDominio, idServizio,
-						datiInvocazione.getRequestInfo());
+						busta, datiInvocazione.getRequestInfo());
 				risposta = httpResponse.getContent();
 				httpResponseCode = httpResponse.getResultHTTPOperation();
 			}catch(Exception e) {
-				detailsError = "(Errore di Connessione) "+ e.getMessage();
+				detailsError = PREFIX_ERROR_CONNESSIONE+ e.getMessage();
 				eProcess = e;
 			}
 			
@@ -475,8 +645,9 @@ public class GestoreTokenValidazioneUtilities {
 	
 	static EsitoGestioneToken userInfoTokenEngine(Logger log, AbstractDatiInvocazione datiInvocazione, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			DynamicDiscovery dynamicDiscovery, 
 			String token, boolean portaDelegata,
-			IDSoggetto idDominio, IDServizio idServizio) {
+			Busta busta, IDSoggetto idDominio, IDServizio idServizio) {
 		EsitoGestioneToken esitoGestioneToken = null;
 		if(portaDelegata) {
 			esitoGestioneToken = new EsitoGestioneTokenPortaDelegata();
@@ -510,15 +681,16 @@ public class GestoreTokenValidazioneUtilities {
 			Integer httpResponseCode = null;
 			byte[] risposta = null;
 			try {
-				httpResponse = http(log, policyGestioneToken, USER_INFO, token,
+				httpResponse = http(log, policyGestioneToken, HTTP_TYPE.USER_INFO, 
+						dynamicDiscovery, token,
 						pddContext, protocolFactory,
 						datiInvocazione.getState(), portaDelegata, datiInvocazione.getIdModulo(), pa, pd,
 						idDominio, idServizio,
-						datiInvocazione.getRequestInfo());
+						busta, datiInvocazione.getRequestInfo());
 				risposta = httpResponse.getContent();
 				httpResponseCode = httpResponse.getResultHTTPOperation();
 			}catch(Exception e) {
-				detailsError = "(Errore di Connessione) "+ e.getMessage();
+				detailsError = PREFIX_ERROR_CONNESSIONE+ e.getMessage();
 				eProcess = e;
 			}
 			
@@ -697,7 +869,7 @@ public class GestoreTokenValidazioneUtilities {
 			String forwardInforRaccolteMode, Properties jwtSecurity, boolean encodeBase64,
 			boolean forwardValidazioneJWT, String forwardValidazioneJWTMode, String forwardValidazioneJWTName,
 			boolean forwardIntrospection, String forwardIntrospectionMode, String forwardIntrospectionName,
-			boolean forwardUserInfo, String forwardUserInfoMode, String forwardUserInfoName) throws Exception {
+			boolean forwardUserInfo, String forwardUserInfoMode, String forwardUserInfoName) throws CoreException, UtilsException {
 		
 		if(informazioniTokenNormalizzate==null) {
 			return; // può succedere nei casi warning only, significa che non vi sono token validi
@@ -1220,7 +1392,7 @@ public class GestoreTokenValidazioneUtilities {
 		return !checkNow.before(exp);
 	}
 	
-	static void validazioneInformazioniToken(EsitoGestioneToken esitoGestioneToken, PolicyGestioneToken policyGestioneToken, boolean saveErrorInCache) throws Exception {
+	static void validazioneInformazioniToken(EsitoGestioneToken esitoGestioneToken, PolicyGestioneToken policyGestioneToken, boolean saveErrorInCache) throws TokenException, CoreException {
 		
 		Date now = DateManager.getDate();
 		
@@ -1377,7 +1549,7 @@ public class GestoreTokenValidazioneUtilities {
 		
 	}
 	
-	static void validazioneInformazioniTokenHeader(String jsonHeader, PolicyGestioneToken policyGestioneToken) throws TokenException, ProviderException, ProviderValidationException {
+	static void validazioneInformazioniTokenHeader(String jsonHeader, PolicyGestioneToken policyGestioneToken) throws TokenException {
 		
 		if(policyGestioneToken.isValidazioneJWTHeader()) {
 			
@@ -1446,76 +1618,134 @@ public class GestoreTokenValidazioneUtilities {
     	return bf.toString();
     }
 	
-	static final boolean INTROSPECTION = true;
-	static final boolean USER_INFO = false;
-	static HttpResponse http(Logger log, PolicyGestioneToken policyGestioneToken, boolean introspection, String token,
+	static HttpResponse http(Logger log, PolicyGestioneToken policyGestioneToken, HTTP_TYPE httpType, 
+			DynamicDiscovery dynamicDiscovery, String token,
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory, 
 			IState state, boolean delegata, String idModulo, PortaApplicativa pa, PortaDelegata pd,
 			IDSoggetto idDominio, IDServizio idServizio,
-			RequestInfo requestInfo) throws Exception {
+			Busta busta, RequestInfo requestInfo) throws Exception {
 		
 		// *** Raccola Parametri ***
 		
+		Map<String, Object> dynamicMap = TokenUtilities.buildDynamicMap(busta, requestInfo, pddContext, log);
+		
 		String endpoint = null;
 		String prefixConnettore = null;
-		if(introspection) {
-			endpoint = policyGestioneToken.getIntrospectionEndpoint();
-			prefixConnettore = "[EndpointIntrospection: "+endpoint+"] ";
-		}else {
-			endpoint = policyGestioneToken.getUserInfoEndpoint();
-			prefixConnettore = "[EndpointUserInfo: "+endpoint+"] ";
+		boolean introspectionService = false;
+		boolean userInfoService = false;
+		switch (httpType) {
+		case DYNAMIC_DISCOVERY:
+			endpoint = policyGestioneToken.getDynamicDiscoveryEndpoint();
+			if(endpoint!=null && !"".equals(endpoint)) {
+				endpoint = DynamicUtils.convertDynamicPropertyValue("endpoint.gwt", endpoint, dynamicMap, pddContext);	
+			}
+			prefixConnettore = "[EndpointDynamicDiscovery: "+endpoint+"] ";
+			break;
+		case INTROSPECTION:
+			if(policyGestioneToken.isDynamicDiscovery()) {
+				check(dynamicDiscovery);
+				endpoint = dynamicDiscovery.getIntrospectionEndpoint();
+				if(endpoint!=null && !"".equals(endpoint)) {
+					endpoint = DynamicUtils.convertDynamicPropertyValue("endpoint.gwt", endpoint, dynamicMap, pddContext);	
+				}
+				if(endpoint==null || StringUtils.isEmpty(endpoint)) {
+					throw new TokenException("DynamicDiscovery.introspectionEndpoint undefined");
+				}
+			}
+			else {
+				endpoint = policyGestioneToken.getIntrospectionEndpoint();
+			}
+			prefixConnettore = "[EndpointIntrospection: "+endpoint+"] ";	
+			introspectionService = true;
+			break;
+		case USER_INFO:
+			if(policyGestioneToken.isDynamicDiscovery()) {
+				check(dynamicDiscovery);
+				endpoint = dynamicDiscovery.getUserinfoEndpoint();
+				if(endpoint!=null && !"".equals(endpoint)) {
+					endpoint = DynamicUtils.convertDynamicPropertyValue("endpoint.gwt", endpoint, dynamicMap, pddContext);	
+				}
+				if(endpoint==null || StringUtils.isEmpty(endpoint)) {
+					throw new TokenException("DynamicDiscovery.userinfoEndpoint undefined");
+				}
+			}
+			else {
+				endpoint = policyGestioneToken.getUserInfoEndpoint();
+			}
+			prefixConnettore = "[EndpointUserInfo: "+endpoint+"] ";		
+			userInfoService = true;
+			break;
 		}
 		
 		TipoTokenRequest tipoTokenRequest = null;
 		String positionTokenName = null;
-		if(introspection) {
-			tipoTokenRequest = policyGestioneToken.getIntrospectionTipoTokenRequest();
-		}else {
-			tipoTokenRequest = policyGestioneToken.getUserInfoTipoTokenRequest();
+		if(introspectionService) {
+			tipoTokenRequest = policyGestioneToken.getIntrospectionTipoTokenRequest();	
 		}
-		switch (tipoTokenRequest) {
-		case authorization:
-			break;
-		case header:
-			if(introspection) {
-				positionTokenName = policyGestioneToken.getIntrospectionTipoTokenRequestHeaderName();
-			}else {
-				positionTokenName = policyGestioneToken.getUserInfoTipoTokenRequestHeaderName();
+		else if(userInfoService) {
+			tipoTokenRequest = policyGestioneToken.getUserInfoTipoTokenRequest();		
+		}
+		if(tipoTokenRequest!=null) {
+			switch (tipoTokenRequest) {
+			case authorization:
+				break;
+			case header:
+				if(introspectionService) {
+					positionTokenName = policyGestioneToken.getIntrospectionTipoTokenRequestHeaderName();
+				}else {
+					positionTokenName = policyGestioneToken.getUserInfoTipoTokenRequestHeaderName();
+				}
+				break;
+			case url:
+				if(introspectionService) {
+					positionTokenName = policyGestioneToken.getIntrospectionTipoTokenRequestUrlPropertyName();
+				}else {
+					positionTokenName = policyGestioneToken.getUserInfoTipoTokenRequestUrlPropertyName();
+				}
+				break;
+			case form:
+				if(introspectionService) {
+					positionTokenName = policyGestioneToken.getIntrospectionTipoTokenRequestFormPropertyName();
+				}else {
+					positionTokenName = policyGestioneToken.getUserInfoTipoTokenRequestFormPropertyName();
+				}
+				break;
 			}
-			break;
-		case url:
-			if(introspection) {
-				positionTokenName = policyGestioneToken.getIntrospectionTipoTokenRequestUrlPropertyName();
-			}else {
-				positionTokenName = policyGestioneToken.getUserInfoTipoTokenRequestUrlPropertyName();
-			}
-			break;
-		case form:
-			if(introspection) {
-				positionTokenName = policyGestioneToken.getIntrospectionTipoTokenRequestFormPropertyName();
-			}else {
-				positionTokenName = policyGestioneToken.getUserInfoTipoTokenRequestFormPropertyName();
-			}
-			break;
+		}
+		if(positionTokenName!=null && !"".equals(positionTokenName)) {
+			positionTokenName = DynamicUtils.convertDynamicPropertyValue("positionTokenName.gwt", positionTokenName, dynamicMap, pddContext);	
 		}
 		
 		String contentType = null;
-		if(introspection) {
-			contentType = policyGestioneToken.getIntrospectionContentType();
-		}else {
-			contentType = policyGestioneToken.getUserInfoContentType();
+		if(introspectionService || userInfoService) {
+			if(introspectionService) {
+				contentType = policyGestioneToken.getIntrospectionContentType();
+			}else {
+				contentType = policyGestioneToken.getUserInfoContentType();
+			}
+		}
+		if(contentType!=null && !"".equals(contentType)) {
+			contentType = DynamicUtils.convertDynamicPropertyValue("contentType.gwt", contentType, dynamicMap, pddContext);	
 		}
 		
 		HttpRequestMethod httpMethod = null;
-		if(introspection) {
+		switch (httpType) {
+		case DYNAMIC_DISCOVERY:
+			httpMethod = HttpRequestMethod.GET;
+			break;
+		case INTROSPECTION:
 			httpMethod = policyGestioneToken.getIntrospectionHttpMethod();
-		}else {
+			break;
+		case USER_INFO:
 			httpMethod = policyGestioneToken.getUserInfoHttpMethod();
+			break;
 		}
+		
 		
 		
 		// Nell'endpoint config ci finisce i timeout e la configurazione proxy
 		Properties endpointConfig = policyGestioneToken.getProperties().get(Costanti.POLICY_ENDPOINT_CONFIG);
+		resolveDynamicProperyValues(endpointConfig, dynamicMap, pddContext);
 		if(endpointConfig.containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME)) {
 			String hostProxy = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME);
 			String portProxy = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT);
@@ -1528,26 +1758,32 @@ public class GestoreTokenValidazioneUtilities {
 		Properties sslClientConfig = null;
 		if(https) {
 			sslConfig = policyGestioneToken.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CONFIG);
-			if(introspection) {
-				httpsClient = policyGestioneToken.isIntrospectionHttpsAuthentication();
-			}else {
-				httpsClient = policyGestioneToken.isUserInfoHttpsAuthentication();
+			resolveDynamicProperyValues(sslConfig, dynamicMap, pddContext);
+			if(introspectionService || userInfoService) {
+				if(introspectionService) {
+					httpsClient = policyGestioneToken.isIntrospectionHttpsAuthentication();
+				}else {
+					httpsClient = policyGestioneToken.isUserInfoHttpsAuthentication();
+				}
 			}
 			if(httpsClient) {
 				sslClientConfig = policyGestioneToken.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
+				resolveDynamicProperyValues(sslClientConfig, dynamicMap, pddContext);
 			}
 		}
 		
 		boolean basic = false;
 		String username = null;
 		String password = null;
-		if(introspection) {
-			basic = policyGestioneToken.isIntrospectionBasicAuthentication();
-		}else {
-			basic = policyGestioneToken.isUserInfoBasicAuthentication();
+		if(introspectionService || userInfoService) {
+			if(introspectionService) {
+				basic = policyGestioneToken.isIntrospectionBasicAuthentication();
+			}else {
+				basic = policyGestioneToken.isUserInfoBasicAuthentication();
+			}
 		}
 		if(basic) {
-			if(introspection) {
+			if(introspectionService) {
 				username = policyGestioneToken.getIntrospectionBasicAuthenticationUsername();
 				password = policyGestioneToken.getIntrospectionBasicAuthenticationPassword();
 			}
@@ -1555,21 +1791,32 @@ public class GestoreTokenValidazioneUtilities {
 				username = policyGestioneToken.getUserInfoBasicAuthenticationUsername();
 				password = policyGestioneToken.getUserInfoBasicAuthenticationPassword();
 			}
+			if(username!=null && !"".equals(username)) {
+				username = DynamicUtils.convertDynamicPropertyValue("username.gwt", username, dynamicMap, pddContext);	
+			}
+			if(password!=null && !"".equals(password)) {
+				password = DynamicUtils.convertDynamicPropertyValue("password.gwt", password, dynamicMap, pddContext);	
+			}
 		}
 		
 		boolean bearer = false;
 		String bearerToken = null;
-		if(introspection) {
-			bearer = policyGestioneToken.isIntrospectionBearerAuthentication();
-		}else {
-			bearer = policyGestioneToken.isUserInfoBearerAuthentication();
+		if(introspectionService || userInfoService) {
+			if(introspectionService) {
+				bearer = policyGestioneToken.isIntrospectionBearerAuthentication();
+			}else {
+				bearer = policyGestioneToken.isUserInfoBearerAuthentication();
+			}
 		}
 		if(bearer) {
-			if(introspection) {
+			if(introspectionService) {
 				bearerToken = policyGestioneToken.getIntrospectionBeareAuthenticationToken();
 			}
 			else {
 				bearerToken = policyGestioneToken.getUserInfoBeareAuthenticationToken();
+			}
+			if(bearerToken!=null && !"".equals(bearerToken)) {
+				bearerToken = DynamicUtils.convertDynamicPropertyValue("bearerToken.gwt", bearerToken, dynamicMap, pddContext);	
 			}
 		}
 		
@@ -1590,39 +1837,38 @@ public class GestoreTokenValidazioneUtilities {
 		connettoreMsg.setIdModulo(idModulo);
 		connettoreMsg.setState(state);
 		PolicyTimeoutConfig policyConfig = new PolicyTimeoutConfig();
-		if(introspection) {
+		switch (httpType) {
+		case DYNAMIC_DISCOVERY:
+			policyConfig.setPolicyValidazioneDynamicDiscovery(policyGestioneToken.getName());	
+			break;
+		case INTROSPECTION:
 			policyConfig.setPolicyValidazioneIntrospection(policyGestioneToken.getName());
-		}
-		else {
+			break;
+		case USER_INFO:
 			policyConfig.setPolicyValidazioneUserInfo(policyGestioneToken.getName());
+			break;
 		}
 		connettoreMsg.setPolicyTimeoutConfig(policyConfig);
 		
-		ForwardProxy forwardProxy = null;
-		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
-		if(configurazionePdDManager.isForwardProxyEnabled(requestInfo)) {
-			try {
-				IDGenericProperties policy = new IDGenericProperties();
-				policy.setTipologia(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION);
-				policy.setNome(policyGestioneToken.getName());
-				if(delegata) {
-					forwardProxy = configurazionePdDManager.getForwardProxyConfigFruizione(idDominio, idServizio, policy, requestInfo);
-				}
-				else {
-					forwardProxy = configurazionePdDManager.getForwardProxyConfigErogazione(idDominio, idServizio, policy, requestInfo);
-				}
-			}catch(Exception e) {
-				throw new TokenException(GestoreToken.getMessageErroreGovWayProxy(e),e);
+		ForwardProxy forwardProxy = TokenUtilities.getForwardProxy(policyGestioneToken,
+				requestInfo, state, delegata,
+				idDominio, idServizio);
+		if(forwardProxy!=null && forwardProxy.isEnabled() && forwardProxy.getConfigToken()!=null) {
+			boolean enabled = false;
+			switch (httpType) {
+			case DYNAMIC_DISCOVERY:
+				enabled = forwardProxy.getConfigToken().isTokenDynamicDiscoveryEnabled();
+				break;
+			case INTROSPECTION:
+				enabled = forwardProxy.getConfigToken().isTokenIntrospectionEnabled();
+				break;
+			case USER_INFO:
+				enabled = forwardProxy.getConfigToken().isTokenUserInfoEnabled();
+				break;
 			}
-		}
-		if(forwardProxy!=null && forwardProxy.isEnabled() && forwardProxy.getConfigToken()!=null &&
-				(
-					(introspection && forwardProxy.getConfigToken().isTokenIntrospectionEnabled())
-					|| 
-					(!introspection && forwardProxy.getConfigToken().isTokenUserInfoEnabled()) 
-				)
-			){
-			connettoreMsg.setForwardProxy(forwardProxy);
+			if(enabled) {
+				connettoreMsg.setForwardProxy(forwardProxy);
+			}
 		}
 		
 		connettore.setForceDisable_proxyPassReverse(true);
@@ -1640,11 +1886,16 @@ public class GestoreTokenValidazioneUtilities {
 		connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION, endpoint);
 		boolean debug = false;
 		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-		if(introspection) {
+		switch (httpType) {
+		case DYNAMIC_DISCOVERY:
+			debug = properties.isGestioneTokenDynamicDiscoveryDebug();
+			break;
+		case INTROSPECTION:
 			debug = properties.isGestioneTokenIntrospectionDebug();	
-		}
-		else {
+			break;
+		case USER_INFO:
 			debug = properties.isGestioneTokenUserInfoDebug();
+			break;
 		}
 		if(debug) {
 			connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_DEBUG, true+"");
@@ -1661,7 +1912,9 @@ public class GestoreTokenValidazioneUtilities {
 		byte[] content = null;
 		
 		TransportRequestContext transportRequestContext = new TransportRequestContext(log);
-		transportRequestContext.setRequestType(httpMethod.name());
+		if(httpMethod!=null) {
+			transportRequestContext.setRequestType(httpMethod.name());
+		}
 		transportRequestContext.setHeaders(new HashMap<>());
 		if(bearer) {
 			String authorizationHeader = HttpConstants.AUTHORIZATION_PREFIX_BEARER+bearerToken;
@@ -1670,24 +1923,26 @@ public class GestoreTokenValidazioneUtilities {
 		if(contentType!=null) {
 			TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.CONTENT_TYPE, contentType);
 		}
-		switch (tipoTokenRequest) {
-		case authorization:
-			transportRequestContext.removeHeader(HttpConstants.AUTHORIZATION);
-			String authorizationHeader = HttpConstants.AUTHORIZATION_PREFIX_BEARER+token;
-			TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.AUTHORIZATION, authorizationHeader);
-			break;
-		case header:
-			TransportUtils.setHeader(transportRequestContext.getHeaders(),positionTokenName, token);
-			break;
-		case url:
-			transportRequestContext.setParameters(new HashMap<>());
-			TransportUtils.setParameter(transportRequestContext.getParameters(),positionTokenName, token);
-			break;
-		case form:
-			transportRequestContext.removeHeader(HttpConstants.CONTENT_TYPE);
-			TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_X_WWW_FORM_URLENCODED);
-			content = (positionTokenName+"="+token).getBytes();
-			break;
+		if(tipoTokenRequest!=null) {
+			switch (tipoTokenRequest) {
+			case authorization:
+				transportRequestContext.removeHeader(HttpConstants.AUTHORIZATION);
+				String authorizationHeader = HttpConstants.AUTHORIZATION_PREFIX_BEARER+token;
+				TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.AUTHORIZATION, authorizationHeader);
+				break;
+			case header:
+				TransportUtils.setHeader(transportRequestContext.getHeaders(),positionTokenName, token);
+				break;
+			case url:
+				transportRequestContext.setParameters(new HashMap<>());
+				TransportUtils.setParameter(transportRequestContext.getParameters(),positionTokenName, token);
+				break;
+			case form:
+				transportRequestContext.removeHeader(HttpConstants.CONTENT_TYPE);
+				TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_X_WWW_FORM_URLENCODED);
+				content = (positionTokenName+"="+token).getBytes();
+				break;
+			}
 		}
 		
 		OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createMessage(MessageType.BINARY, transportRequestContext, content);
@@ -1751,5 +2006,38 @@ public class GestoreTokenValidazioneUtilities {
 		
 		
 	}
+	
+	private static void resolveDynamicProperyValues(Properties p,
+			Map<String, Object> dynamicMap, Context context) throws DynamicException {
+		if(p!=null && !p.isEmpty()) {
+			Enumeration<?> oKey = p.keys();
+			while (oKey.hasMoreElements()) {
+				Object object = oKey.nextElement();
+				if(object instanceof String) {
+					String key = (String) object;
+					String value = p.getProperty(key);
+					if(value!=null && !"".equals(value) && value.contains("{") && value.contains("}")) {
+						value = DynamicUtils.convertDynamicPropertyValue(key+".gwt", value, dynamicMap, context);
+						p.put(key, value);
+					}			
+				}
+			}
+		}
+	}
+
+	static void check(DynamicDiscovery dynamicDiscovery) throws TokenException {
+		if(dynamicDiscovery==null) {
+			throw new TokenException("DynamicDiscovery information not found");
+		}
+		if(!dynamicDiscovery.isValid()) {
+			throw new TokenException("DynamicDiscovery failed");
+		}
+	}
+	
+}
+
+enum HTTP_TYPE {
+	
+	DYNAMIC_DISCOVERY, INTROSPECTION, USER_INFO
 	
 }

@@ -30,69 +30,12 @@ import java.io.Serializable;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ForwardProxyConfigurazione implements Serializable {
+public class ForwardProxyConfigurazione extends org.openspcoop2.utils.transport.http.HttpForwardProxyConfig implements Serializable {
 
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	protected String header;
-	protected boolean headerBase64;
-	protected String query;
-	protected boolean queryBase64;
-	
-	public ForwardProxyConfigurazione() {
-	}
-	
-	@Override
-	public String toString(){
-		StringBuilder sb = new StringBuilder();
-		if(this.header!=null) {
-			sb.append("header: ").append(this.header);
-			sb.append("\n").append("header-base64: ").append(this.headerBase64);
-		}
-		if(this.query!=null) {
-			if(sb.length()>0) {
-				sb.append("\n");
-			}
-			sb.append("query: ").append(this.query);
-			sb.append("\n").append("query-base64: ").append(this.queryBase64);
-		}
-		return sb.toString();
-	}	
-	
-	public String getHeader() {
-		return this.header;
-	}
-
-	public void setHeader(String header) {
-		this.header = header;
-	}
-
-	public boolean isHeaderBase64() {
-		return this.headerBase64;
-	}
-
-	public void setHeaderBase64(boolean headerBase64) {
-		this.headerBase64 = headerBase64;
-	}
-
-	public String getQuery() {
-		return this.query;
-	}
-
-	public void setQuery(String query) {
-		this.query = query;
-	}
-
-	public boolean isQueryBase64() {
-		return this.queryBase64;
-	}
-
-	public void setQueryBase64(boolean queryBase64) {
-		this.queryBase64 = queryBase64;
-	}
 	
 }

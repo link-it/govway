@@ -1290,6 +1290,21 @@ public class ClassNameProperties {
 	public String[] getRateLimiting() throws Exception{
 		return this.getTipiGestiti("org.openspcoop2.pdd.controlloTraffico.rateLimiting.");
 	}
+
+	
+	
+	/**
+	 * Ritorna una classe 'IDynamicDiscoveryParser' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getTokenDynamicDiscovery(String nome){
+		return this.getValue("org.openspcoop2.pdd.token.dynamicDiscovery.", nome);
+	}
+	public String[] getTokenDynamicDiscovery() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.token.dynamicDiscovery.");
+	}
+	
 	
 	
 	

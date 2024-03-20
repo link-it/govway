@@ -143,14 +143,22 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 							new ReadTimeoutContextParam(this.requestInfo, this.getProtocolFactory(), this.getPddContext(), this.state)) : 
 						ReadTimeoutConfigurationUtils.buildSogliaResponseTimeout(timeout, true, this.getProtocolFactory());
 		}
-		boolean saveInContext = (this.policyTimeoutConfig!=null && this.policyTimeoutConfig.getAttributeAuthority()!=null) ? false : true;
+		boolean saveInContext = !(this.policyTimeoutConfig!=null && 
+									(this.policyTimeoutConfig.getAttributeAuthority()!=null || this.policyTimeoutConfig.getAttributeAuthorityResponseJwt()!=null)
+								);
 		return new TimeoutNotifier(this.getPddContext(), this.getProtocolFactory(), 
 				soglia, type, this.logger.getLogger(), saveInContext);
 	}
 	
+	public static boolean isReadTimeoutException(Exception e, String message){
+		return "Read timed out".equals(message) && (e instanceof java.net.SocketTimeoutException);
+	}
+	public static boolean containsReadTimeoutException(Exception e, String message){
+		return message!=null && message.contains("Read timed out") && (e instanceof java.net.SocketTimeoutException || Utilities.existsInnerException(e, java.net.SocketTimeoutException.class));
+	}
     protected void processReadTimeoutException(int timeout, boolean configurazioneGlobale, Exception e, String message) {
     	try {
-	    	if(timeout>0 && "Read timed out".equals(message) && (e instanceof java.net.SocketTimeoutException)) {
+	    	if(timeout>0 && isReadTimeoutException(e, message)) {
 	      		TimeoutNotifier notifier = getTimeoutNotifier(timeout, configurazioneGlobale, TimeoutNotifierType.WAIT_RESPONSE);
 	    		notifier.notify(timeout);
 	    	}
@@ -161,9 +169,15 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
     	}
     }
     
+    public static boolean isConnectionTimeoutException(Exception e, String message){
+		return "connect timed out".equals(message) && (e instanceof java.net.SocketTimeoutException);
+	}
+    public static boolean containsConnectionTimeoutException(Exception e, String message){
+		return message!=null && message.contains("connect timed out") && (e instanceof java.net.SocketTimeoutException || Utilities.existsInnerException(e, java.net.SocketTimeoutException.class));
+	}
     protected void processConnectionTimeoutException(int timeout, boolean configurazioneGlobale, Exception e, String message) {
     	try {
-	    	if(timeout>0 && "connect timed out".equals(message) && (e instanceof java.net.SocketTimeoutException)) {
+	    	if(timeout>0 && isConnectionTimeoutException(e, message)) {
 	      		TimeoutNotifier notifier = getTimeoutNotifier(timeout, configurazioneGlobale, TimeoutNotifierType.CONNECTION);
 	    		notifier.notify(timeout);
 	    	}

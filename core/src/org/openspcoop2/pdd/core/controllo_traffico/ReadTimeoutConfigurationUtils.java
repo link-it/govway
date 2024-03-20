@@ -61,17 +61,23 @@ public class ReadTimeoutConfigurationUtils {
 	public static final String CONFIG_GRUPPO = "Gruppo: ";
 	public static final String CONFIG_CONNETTORE = "Connettore: ";
 	public static final String CONFIG_POLICY_NEGOZIAZIONE = "Token Policy Negoziazione: ";
+	public static final String CONFIG_POLICY_VALIDAZIONE_DYNAMIC_DISCOVERY = "Token Policy Dynamic Discovery: ";
+	public static final String CONFIG_POLICY_VALIDAZIONE_JWT = "Token Policy Validazione JWT: ";
 	public static final String CONFIG_POLICY_VALIDAZIONE_INTROSPECTION = "Token Policy Introspection: ";
 	public static final String CONFIG_POLICY_VALIDAZIONE_USER_INFO = "Token Policy UserInfo: ";
 	public static final String CONFIG_ATTRIBUTE_AUTHORITY = "Attribute Authority: ";
+	public static final String CONFIG_ATTRIBUTE_AUTHORITY_VALIDAZIONE_RISPOSTA_JWT = "Attribute Authority - Risposta JWT: ";
 	public static final String CONFIG_NOME_PORTA_INBOUND_PROPERTY = "Porta Inbound: ";
 	public static final String CONFIG_NOME_PORTA_OUTBOUND_PROPERTY = "Porta Outbound: ";
 	public static final String CONFIG_NOME_PORTA_PROPERTY = "Porta: ";
 
 	public static final String ID_POLICY_NEGOZIAZIONE = "tokenRetrieve:";
+	public static final String ID_POLICY_VALIDAZIONE_DYNAMIC_DISCOVERY = "tokenDynamicDiscovery:";
+	public static final String ID_POLICY_VALIDAZIONE_JWT = "tokenJwtValidation:";
 	public static final String ID_POLICY_VALIDAZIONE_INTROSPECTION = "tokenIntrospection:";
 	public static final String ID_POLICY_VALIDAZIONE_USER_INFO = "tokenUserInfo:";
 	public static final String ID_ATTRIBUTE_AUTHORITY = "attributeAuthority:";
+	public static final String ID_ATTRIBUTE_AUTHORITY_VALIDAZIONE_RISPOSTA_JWT = "attributeAuthorityResponseJwtValidation:";
 	
 	public static PolicyDati convertToPolicyDati(String configurazione) throws IDException {
 		PolicyDati dati = new PolicyDati();
@@ -102,10 +108,17 @@ public class ReadTimeoutConfigurationUtils {
 			}
 			dati.setGruppo(parse(tmp, CONFIG_GRUPPO));
 			dati.setConnettore(parse(tmp, CONFIG_CONNETTORE));
+			
 			dati.setTokenPolicyNegoziazione(parse(tmp, CONFIG_POLICY_NEGOZIAZIONE));
+			
+			dati.setTokenPolicyValidazioneDynamicDiscovery(parse(tmp, CONFIG_POLICY_VALIDAZIONE_DYNAMIC_DISCOVERY));
+			dati.setTokenPolicyValidazioneJwt(parse(tmp, CONFIG_POLICY_VALIDAZIONE_JWT));
 			dati.setTokenPolicyValidazioneIntrospection(parse(tmp, CONFIG_POLICY_VALIDAZIONE_INTROSPECTION));
 			dati.setTokenPolicyValidazioneUserInfo(parse(tmp, CONFIG_POLICY_VALIDAZIONE_USER_INFO));
+			
 			dati.setAttributeAuthority(parse(tmp, CONFIG_ATTRIBUTE_AUTHORITY));
+			dati.setAttributeAuthorityResponseJwt(parse(tmp, CONFIG_ATTRIBUTE_AUTHORITY_VALIDAZIONE_RISPOSTA_JWT));
+			
 			dati.setNomePorta(parse(tmp, CONFIG_NOME_PORTA_INBOUND_PROPERTY));
 			if(dati.getNomePorta()==null) {
 				dati.setNomePorta(parse(tmp, CONFIG_NOME_PORTA_OUTBOUND_PROPERTY));
@@ -204,6 +217,12 @@ public class ReadTimeoutConfigurationUtils {
 		if(dati.getTokenPolicyNegoziazione()!=null) {
 			l.add(CONFIG_POLICY_NEGOZIAZIONE+dati.getTokenPolicyNegoziazione());
 		}
+		if(dati.getTokenPolicyValidazioneDynamicDiscovery()!=null) {
+			l.add(CONFIG_POLICY_VALIDAZIONE_DYNAMIC_DISCOVERY+dati.getTokenPolicyValidazioneDynamicDiscovery());
+		}
+		if(dati.getTokenPolicyValidazioneJwt()!=null) {
+			l.add(CONFIG_POLICY_VALIDAZIONE_JWT+dati.getTokenPolicyValidazioneJwt());
+		}
 		if(dati.getTokenPolicyValidazioneIntrospection()!=null) {
 			l.add(CONFIG_POLICY_VALIDAZIONE_INTROSPECTION+dati.getTokenPolicyValidazioneIntrospection());
 		}
@@ -212,6 +231,9 @@ public class ReadTimeoutConfigurationUtils {
 		}
 		if(dati.getAttributeAuthority()!=null) {
 			l.add(CONFIG_ATTRIBUTE_AUTHORITY+dati.getAttributeAuthority());
+		}
+		if(dati.getAttributeAuthorityResponseJwt()!=null) {
+			l.add(CONFIG_ATTRIBUTE_AUTHORITY_VALIDAZIONE_RISPOSTA_JWT+dati.getAttributeAuthorityResponseJwt());
 		}
 		addConfigurazioneEventoNomePorta(dati, l);
 	}
@@ -397,26 +419,60 @@ public class ReadTimeoutConfigurationUtils {
 		}
 	}
 	private static void addPolicyInfoTokenPolicyValidazione(StringBuilder sb, PolicyTimeoutConfig policyConfig, PolicyDati policyDati) {
-		if(policyConfig!=null) {
-			if(policyConfig.getPolicyValidazioneIntrospection()!=null) {
-				sb.append(" (").append(ID_POLICY_VALIDAZIONE_INTROSPECTION).append(" '").append(policyConfig.getPolicyValidazioneIntrospection()).append("')");
-				if(policyDati!=null) {
-					policyDati.setTokenPolicyValidazioneIntrospection(policyConfig.getPolicyValidazioneIntrospection());
-				}
+		addPolicyInfoTokenPolicyValidazioneDynamicDiscovery(sb, policyConfig, policyDati);
+		addPolicyInfoTokenPolicyValidazioneJwt(sb, policyConfig, policyDati);
+		addPolicyInfoTokenPolicyValidazioneIntrospection(sb, policyConfig, policyDati);
+		addPolicyInfoTokenPolicyValidazioneUserInfo(sb, policyConfig, policyDati);
+	}
+	private static void addPolicyInfoTokenPolicyValidazioneDynamicDiscovery(StringBuilder sb, PolicyTimeoutConfig policyConfig, PolicyDati policyDati) {
+		if(policyConfig!=null && policyConfig.getPolicyValidazioneDynamicDiscovery()!=null) {
+			sb.append(" (").append(ID_POLICY_VALIDAZIONE_DYNAMIC_DISCOVERY).append(" '").append(policyConfig.getPolicyValidazioneDynamicDiscovery()).append("')");
+			if(policyDati!=null) {
+				policyDati.setTokenPolicyValidazioneDynamicDiscovery(policyConfig.getPolicyValidazioneDynamicDiscovery());
 			}
-			if(policyConfig.getPolicyValidazioneUserInfo()!=null) {
-				sb.append(" (").append(ID_POLICY_VALIDAZIONE_USER_INFO).append(" '").append(policyConfig.getPolicyValidazioneUserInfo()).append("')");
-				if(policyDati!=null) {
-					policyDati.setTokenPolicyValidazioneUserInfo(policyConfig.getPolicyValidazioneUserInfo());
-				}
+		}
+	}
+	private static void addPolicyInfoTokenPolicyValidazioneJwt(StringBuilder sb, PolicyTimeoutConfig policyConfig, PolicyDati policyDati) {
+		if(policyConfig!=null && policyConfig.getPolicyValidazioneJwt()!=null) {
+			sb.append(" (").append(ID_POLICY_VALIDAZIONE_JWT).append(" '").append(policyConfig.getPolicyValidazioneJwt()).append("')");
+			if(policyDati!=null) {
+				policyDati.setTokenPolicyValidazioneJwt(policyConfig.getPolicyValidazioneJwt());
+			}
+		}
+	}
+	private static void addPolicyInfoTokenPolicyValidazioneIntrospection(StringBuilder sb, PolicyTimeoutConfig policyConfig, PolicyDati policyDati) {
+		if(policyConfig!=null && policyConfig.getPolicyValidazioneIntrospection()!=null) {
+			sb.append(" (").append(ID_POLICY_VALIDAZIONE_INTROSPECTION).append(" '").append(policyConfig.getPolicyValidazioneIntrospection()).append("')");
+			if(policyDati!=null) {
+				policyDati.setTokenPolicyValidazioneIntrospection(policyConfig.getPolicyValidazioneIntrospection());
+			}
+		}
+	}
+	private static void addPolicyInfoTokenPolicyValidazioneUserInfo(StringBuilder sb, PolicyTimeoutConfig policyConfig, PolicyDati policyDati) {
+		if(policyConfig!=null && policyConfig.getPolicyValidazioneUserInfo()!=null) {
+			sb.append(" (").append(ID_POLICY_VALIDAZIONE_USER_INFO).append(" '").append(policyConfig.getPolicyValidazioneUserInfo()).append("')");
+			if(policyDati!=null) {
+				policyDati.setTokenPolicyValidazioneUserInfo(policyConfig.getPolicyValidazioneUserInfo());
 			}
 		}
 	}
 	private static void addPolicyInfoAttributeAuthority(StringBuilder sb, PolicyTimeoutConfig policyConfig, PolicyDati policyDati) {
+		addPolicyInfoAttributeAuthorityEndpoint(sb, policyConfig, policyDati);
+		addPolicyInfoAttributeAuthorityValidazioneJwtResponse(sb, policyConfig, policyDati);
+	}
+	private static void addPolicyInfoAttributeAuthorityEndpoint(StringBuilder sb, PolicyTimeoutConfig policyConfig, PolicyDati policyDati) {
 		if(policyConfig!=null && policyConfig.getAttributeAuthority()!=null) {
 			sb.append(" (").append(ID_ATTRIBUTE_AUTHORITY).append(" '").append(policyConfig.getAttributeAuthority()).append("')");
 			if(policyDati!=null) {
 				policyDati.setAttributeAuthority(policyConfig.getAttributeAuthority());
+			}
+		}
+	}
+	private static void addPolicyInfoAttributeAuthorityValidazioneJwtResponse(StringBuilder sb, PolicyTimeoutConfig policyConfig, PolicyDati policyDati) {
+		if(policyConfig!=null && policyConfig.getAttributeAuthorityResponseJwt()!=null) {
+			sb.append(" (").append(ID_ATTRIBUTE_AUTHORITY_VALIDAZIONE_RISPOSTA_JWT).append(" '").append(policyConfig.getAttributeAuthorityResponseJwt()).append("')");
+			if(policyDati!=null) {
+				policyDati.setAttributeAuthorityResponseJwt(policyConfig.getAttributeAuthorityResponseJwt());
 			}
 		}
 	}

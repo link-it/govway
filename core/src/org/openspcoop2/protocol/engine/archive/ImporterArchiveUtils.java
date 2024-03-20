@@ -4042,6 +4042,27 @@ public class ImporterArchiveUtils {
 					}
 				}
 				
+				// ulteriore per token dynamic discovery
+				tokenName.clear();
+				if(tokenValidazione) {
+					tokenName.add(CostantiConfigurazione.POLICY_DYNAMIC_DISCOVERY_CLAIMS_PARSER_PLUGIN_TYPE);
+					tipoPlugin = TipoPlugin.TOKEN_DYNAMIC_DISCOVERY;
+				}
+				if(!tokenName.isEmpty()) {
+					if(archiveGenericProperties!=null && archiveGenericProperties.getPolicy()!=null && archiveGenericProperties.getPolicy().sizePropertyList()>0) {
+						for (int i = 0; i < archiveGenericProperties.getPolicy().sizePropertyList(); i++) {
+							Property p = archiveGenericProperties.getPolicy().getProperty(i);
+							if(tokenName.contains(p.getNome())) {
+								String gpName = p.getValore();
+								if(gpName!=null && StringUtils.isNotEmpty(gpName) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(gpName)) {
+									if(this.importerEngine.existsPluginClasse(tipoPlugin.getValue(), gpName) == false ){
+										throw new Exception("Plugin '"+tipoPlugin.getValue()+"' ["+p.getValore()+"] non esistente nel registro");
+									}	
+								}
+							}
+						}
+					}
+				}
 			}
 			
 			

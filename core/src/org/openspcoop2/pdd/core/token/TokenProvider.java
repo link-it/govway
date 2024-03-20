@@ -96,8 +96,13 @@ public class TokenProvider implements IProvider {
 			throw new ProviderValidationException("Almeno una modalità di elaborazione del token deve essere selezionata");
 		}
 		
+		boolean dynamicDiscovery = TokenUtilities.isDynamicDiscoveryEnabled(pDefault);
+		if(dynamicDiscovery) {
+			validateDynamicDiscovery(mapProperties, pDefault, validazione, introspection, userInfo);
+		}
+		
 		if(validazione) {
-			validateValidazioneJWT(mapProperties, pDefault, tokenType);
+			validateValidazioneJWT(mapProperties, pDefault, tokenType, dynamicDiscovery);
 		}
 		
 		boolean endpointSSL = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_ENDPOINT_HTTPS_STATO);
@@ -106,11 +111,11 @@ public class TokenProvider implements IProvider {
 		}
 		
 		if(introspection) {
-			validateIntrospection(mapProperties, pDefault);
+			validateIntrospection(mapProperties, pDefault, dynamicDiscovery);
 		}
 		
 		if(userInfo) {
-			validateUserInfo(mapProperties, pDefault);
+			validateUserInfo(mapProperties, pDefault, dynamicDiscovery);
 		}
 				
 		if(forward) {
@@ -163,17 +168,59 @@ public class TokenProvider implements IProvider {
 		
 		return tokenType;
 	}
-	private void validateValidazioneJWT(Map<String, Properties> mapProperties, Properties pDefault, String tokenType) throws ProviderValidationException {
+	private void validateDynamicDiscovery(Map<String, Properties> mapProperties, Properties pDefault, 
+			boolean validazione, boolean introspection, boolean userInfo) throws ProviderValidationException {
+		
+		String url = pDefault.getProperty(Costanti.POLICY_DISCOVERY_URL);
+		InputValidationUtils.validateTextAreaInput(url, "Discovery Document - URL");
+		try{
+			org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url);
+		}catch(Exception e){
+			throw new ProviderValidationException("La URL fornita per il servizio 'Discovery Document' non è valida: "+e.getMessage());
+		}
+		
+		String dType = pDefault.getProperty(Costanti.POLICY_DISCOVERY_CLAIMS_PARSER_TYPE);
+		if(dType==null) {
+			throw new ProviderValidationException("Discovery Document URL- non è stata indicato il tipo");
+		}
+		TipologiaClaims tc = null;
+		try {
+			tc = TipologiaClaims.valueOf(dType);
+		}catch(Exception e) {
+			throw new ProviderValidationException("Discovery Document URL- tipo non valido");
+		}
+		if(TipologiaClaims.MAPPING.equals(tc)) {
+			
+			Properties p = mapProperties.get(Costanti.DYNAMIC_DISCOVERY_PARSER_COLLECTION_ID);
+			if(p==null || p.size()<=0) {
+				throw new ProviderValidationException("Non è stata fornita una configurazione per effettuare il parser personalizzato per il servizio di discovery document");
+			}
+			
+			if(validazione) {
+				String custom = p.getProperty(Costanti.POLICY_DISCOVERY_JWK_CUSTOM);
+				InputValidationUtils.validateTextAreaInput(custom, "Discovery Document URL - JWK Set");
+			}
+			if(introspection) {
+				String custom = p.getProperty(Costanti.POLICY_DISCOVERY_INTROSPECTION_CUSTOM);
+				InputValidationUtils.validateTextAreaInput(custom, "Discovery Document URL - Introspection");
+			}
+			if(userInfo) {
+				String custom = p.getProperty(Costanti.POLICY_DISCOVERY_USERINFO_CUSTOM);
+				InputValidationUtils.validateTextAreaInput(custom, "Discovery Document URL - UserInfo");
+			}
+		}
+	}
+	private void validateValidazioneJWT(Map<String, Properties> mapProperties, Properties pDefault, String tokenType, boolean dynamicDiscovery) throws ProviderValidationException {
 		if(!Costanti.POLICY_TOKEN_TYPE_JWS.equals(tokenType) &&
 				!Costanti.POLICY_TOKEN_TYPE_JWE.equals(tokenType)) {
 			throw new ProviderValidationException("Il tipo di token indicato '"+tokenType+"' non è utilizzabile con una validazione JWT");
 		}
 		
 		if(Costanti.POLICY_TOKEN_TYPE_JWS.equals(tokenType)) {
-			validateValidazioneJws(mapProperties, pDefault);
+			validateValidazioneJws(mapProperties, pDefault, dynamicDiscovery);
 		}
 		else { /**if(Costanti.POLICY_TOKEN_TYPE_JWE.equals(tokenType)) {*/
-			validateValidazioneJwe(mapProperties);
+			validateValidazioneJwe(mapProperties, dynamicDiscovery);
 		}
 		
 		String parserType = pDefault.getProperty(Costanti.POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE);
@@ -193,7 +240,7 @@ public class TokenProvider implements IProvider {
 			validateValidazioneJwtCustomParser(pDefault);
 		}
 	}
-	private void validateValidazioneJws(Map<String, Properties> mapProperties, Properties pDefault) throws ProviderValidationException {
+	private void validateValidazioneJws(Map<String, Properties> mapProperties, Properties pDefault, boolean dynamicDiscovery) throws ProviderValidationException {
 		Properties p = mapProperties.get(Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID);
 		if(p==null || p.size()<=0) {
 			throw new ProviderValidationException("Non è stata fornita una configurazione per effettuare la validazione JWS");
@@ -201,8 +248,10 @@ public class TokenProvider implements IProvider {
 		
 		if(!p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE) && !p.containsKey(JoseConstants.RSSEC_KEY_STORE_JWKSET)) {
 			// altrimenti è stato fatto inject del keystore
-			String file = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
-			InputValidationUtils.validateTextAreaInput(file, "Validazione JWT - TrustStore - File");
+			if(!dynamicDiscovery) {
+				String file = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+				InputValidationUtils.validateTextAreaInput(file, "Validazione JWT - TrustStore - Location");
+			}
 			
 			String crl = pDefault.getProperty(SecurityConstants.SIGNATURE_CRL);
 			if(crl!=null && StringUtils.isNotEmpty(crl)) {
@@ -210,7 +259,7 @@ public class TokenProvider implements IProvider {
 			}
 		}
 	}
-	private void validateValidazioneJwe(Map<String, Properties> mapProperties) throws ProviderValidationException {
+	private void validateValidazioneJwe(Map<String, Properties> mapProperties, boolean dynamicDiscovery) throws ProviderValidationException {
 		Properties p = mapProperties.get(Costanti.POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID);
 		if(p==null || p.size()<=0) {
 			throw new ProviderValidationException("Non è stata fornita una configurazione per effettuare la validazione JWE");
@@ -218,8 +267,10 @@ public class TokenProvider implements IProvider {
 		
 		if(!p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE) && !p.containsKey(JoseConstants.RSSEC_KEY_STORE_JWKSET)) {
 			// altrimenti è stato fatto inject del keystore
-			String file = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
-			InputValidationUtils.validateTextAreaInput(file, "Validazione JWT - KeyStore - File");
+			if(!dynamicDiscovery) {
+				String file = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+				InputValidationUtils.validateTextAreaInput(file, "Validazione JWT - KeyStore - Location");
+			}
 		}
 	}
 	private void validateValidazioneJwtCustomParser(Properties pDefault) throws ProviderValidationException {
@@ -269,14 +320,17 @@ public class TokenProvider implements IProvider {
 			}
 		}
 	}
-	private void validateIntrospection(Map<String, Properties> mapProperties, Properties pDefault) throws ProviderValidationException, ProviderException {
-		String url = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_URL);
-		InputValidationUtils.validateTextAreaInput(url, "Token Introspection - URL");
-		try{
-			org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url);
-		}catch(Exception e){
-			throw new ProviderValidationException("La URL fornita per il servizio 'Introspection' non è valida: "+e.getMessage());
-		}	
+	private void validateIntrospection(Map<String, Properties> mapProperties, Properties pDefault, boolean dynamicDiscovery) throws ProviderValidationException, ProviderException {
+		
+		if(!dynamicDiscovery) {
+			String url = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_URL);
+			InputValidationUtils.validateTextAreaInput(url, "Token Introspection - URL");
+			try{
+				org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url);
+			}catch(Exception e){
+				throw new ProviderValidationException("La URL fornita per il servizio 'Introspection' non è valida: "+e.getMessage());
+			}
+		}
 		
 		TipoTokenRequest tipoTokenRequestEnum = validateIntrospectionTipoToken(pDefault);
 		
@@ -466,14 +520,17 @@ public class TokenProvider implements IProvider {
 		}
 	}
 	
-	private void validateUserInfo(Map<String, Properties> mapProperties, Properties pDefault) throws ProviderValidationException, ProviderException {
-		String url = pDefault.getProperty(Costanti.POLICY_USER_INFO_URL);
-		InputValidationUtils.validateTextAreaInput(url, "OIDC - UserInfo - URL");
-		try{
-			org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(pDefault.getProperty(Costanti.POLICY_USER_INFO_URL));
-		}catch(Exception e){
-			throw new ProviderValidationException("La URL fornita per il servizio 'OIDC UserInfo' non è valida: "+e.getMessage());
-		}	
+	private void validateUserInfo(Map<String, Properties> mapProperties, Properties pDefault, boolean dynamicDiscovery) throws ProviderValidationException, ProviderException {
+		
+		if(!dynamicDiscovery) {
+			String url = pDefault.getProperty(Costanti.POLICY_USER_INFO_URL);
+			InputValidationUtils.validateTextAreaInput(url, "OIDC - UserInfo - URL");
+			try{
+				org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(pDefault.getProperty(Costanti.POLICY_USER_INFO_URL));
+			}catch(Exception e){
+				throw new ProviderValidationException("La URL fornita per il servizio 'OIDC UserInfo' non è valida: "+e.getMessage());
+			}
+		}
 		
 		TipoTokenRequest tipoTokenRequestEnum = validateUserInfoTipoToken(pDefault);
 		
@@ -926,6 +983,9 @@ public class TokenProvider implements IProvider {
 		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_OCSP_POLICY.equals(id)) {
 			return this.ocspProvider.getValues();
 		}
+		else if(Costanti.ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)) {
+			return TokenUtilities.getTokenPluginValues(externalResources, TipoPlugin.TOKEN_DYNAMIC_DISCOVERY);
+		}
 		else if(Costanti.ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)
 				||
 				Costanti.ID_INTROSPECTION_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)
@@ -1003,6 +1063,9 @@ public class TokenProvider implements IProvider {
 		}
 		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_OCSP_POLICY.equals(id)) {
 			return this.ocspProvider.getLabels();
+		}
+		else if(Costanti.ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)) {
+			return TokenUtilities.getTokenPluginLabels(externalResources, TipoPlugin.TOKEN_DYNAMIC_DISCOVERY);
 		}
 		else if(Costanti.ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)
 				||
@@ -1173,6 +1236,10 @@ public class TokenProvider implements IProvider {
 				item.setType(ItemType.HIDDEN);
 			}
 		}
+		else if(Costanti.ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CHOICE.equals(item.getName())
+			) {
+			return TokenUtilities.dynamicUpdateTokenPluginChoice(externalResources, TipoPlugin.TOKEN_DYNAMIC_DISCOVERY, item, actualValue);
+		}
 		else if(Costanti.ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CHOICE.equals(item.getName())
 				||
 				Costanti.ID_INTROSPECTION_CUSTOM_PARSER_PLUGIN_CHOICE.equals(item.getName())
@@ -1180,6 +1247,10 @@ public class TokenProvider implements IProvider {
 				Costanti.ID_USER_INFO_CUSTOM_PARSER_PLUGIN_CHOICE.equals(item.getName())
 			) {
 			return TokenUtilities.dynamicUpdateTokenPluginChoice(externalResources, TipoPlugin.TOKEN_VALIDAZIONE, item, actualValue);
+		}
+		if(Costanti.ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(item.getName())
+			) {
+			return dynamicUpdateTokenDynamicDiscoveryPluginClassName(items, mapNameValue, item, actualValue, externalResources);
 		}
 		if(Costanti.ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(item.getName()) ||
 				Costanti.ID_INTROSPECTION_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(item.getName()) ||
@@ -1243,6 +1314,12 @@ public class TokenProvider implements IProvider {
 		}
 		
 		return AbstractSecurityProvider.processStoreKeyPassword(type, items, mapNameValue, item, actualValue);
+	}
+	private String dynamicUpdateTokenDynamicDiscoveryPluginClassName(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue, ExternalResources externalResources) {
+		String idChoice = Costanti.ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CHOICE;
+		return TokenUtilities.dynamicUpdateTokenPluginClassName(externalResources, TipoPlugin.TOKEN_DYNAMIC_DISCOVERY, 
+				items, mapNameValue, item, 
+				idChoice, actualValue);		
 	}
 	private String dynamicUpdateTokenPluginClassName(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue, ExternalResources externalResources) {
 		String idChoice = null;

@@ -354,13 +354,16 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	private List<SorgenteInformazioniToken> sourceTypes = null;
 	private Map<SorgenteInformazioniToken,String> sourcesTokenInfo = null;
 	
+	// DynamicDiscovery (ulteriore informazione valorizzata con la funzionalità specifica)
+	private DynamicDiscovery dynamicDiscovery;
+	
 	// Attributes Authority (ulteriore informazione valorizzata con la funzionalità specifica)
 	private InformazioniAttributi aa;
 	
 	// InformazioniNegoziazioneToken (ulteriore informazione valorizzata con la funzionalità specifica)
 	private InformazioniNegoziazioneToken retrievedToken;
 		
-	// InformazioniPDND
+	// InformazioniPDND (ulteriore informazione valorizzata con la funzionalità specifica)
 	private Map<String,Serializable> pdnd = null;
 	
 	public TipoInformazioni getType() {
@@ -518,6 +521,13 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	}
 	public void setSourceTypes(List<SorgenteInformazioniToken> sourceTypes) {
 		this.sourceTypes = sourceTypes;
+	}
+	
+	public DynamicDiscovery getDynamicDiscovery() {
+		return this.dynamicDiscovery;
+	}
+	public void setDynamicDiscovery(DynamicDiscovery dynamicDiscovery) {
+		this.dynamicDiscovery = dynamicDiscovery;
 	}
 	
 	public InformazioniAttributi getAa() {

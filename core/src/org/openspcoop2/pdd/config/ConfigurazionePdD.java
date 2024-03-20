@@ -144,6 +144,10 @@ public class ConfigurazionePdD  {
 	 * - configurazione
 	 */
 	private Cache cache = null;
+	public Cache getCache() {
+		return this.cache;
+	}
+
 	private IDriverConfigurazioneGet driverConfigurazionePdD;
 
 	private boolean useConnectionPdD = false;

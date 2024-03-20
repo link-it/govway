@@ -393,6 +393,7 @@ public class CertificateUtils {
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws UtilsException{
+		
 		boolean hsm = HSMUtils.isKeystoreHSM(type);
 		byte [] keystoreBytes = null;
 		if(!hsm) {
@@ -450,12 +451,23 @@ public class CertificateUtils {
 				addCertificateDetails, separator, newLine,
 				log);
 	}
-	public static CertificateCheck checkTrustStore(byte[] trustStore, String type, String password, String trustStoreCrls, String ocspPolicy,
+	public static CertificateCheck checkTrustStore(String trustStorePath, byte[] trustStore, String type, String password, String trustStoreCrls, String ocspPolicy,
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws UtilsException{
 		return checkStore(false, null, null, trustStoreCrls, ocspPolicy,
-				CostantiLabel.STORE_CARICATO_BASEDATI, trustStore, type, password, 
+				trustStorePath!=null ? trustStorePath : CostantiLabel.STORE_CARICATO_BASEDATI, trustStore, type, password, 
+				sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				log);
+	}
+	public static CertificateCheck checkTrustStore(String trustStorePath, byte[] trustStore, String type, String password, String trustStoreCrls, String ocspPolicy,
+			String alias,
+			int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws UtilsException{
+		return checkStore(false, alias, null, trustStoreCrls, ocspPolicy,
+				trustStorePath!=null ? trustStorePath : CostantiLabel.STORE_CARICATO_BASEDATI, trustStore, type, password, 
 				sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
 				log);
@@ -521,12 +533,12 @@ public class CertificateUtils {
 				addCertificateDetails, separator, newLine,
 				log);
 	}
-	public static CertificateCheck checkKeyStore(byte[] keyStore, String type, String password, String aliasKey, String passwordKey,
+	public static CertificateCheck checkKeyStore(String keyStorePath, byte[] keyStore, String type, String password, String aliasKey, String passwordKey,
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws UtilsException{
 		return checkStore(true, aliasKey, passwordKey, null, null,
-				CostantiLabel.STORE_CARICATO_BASEDATI, keyStore, type, password, 
+				keyStorePath!=null ? keyStorePath : CostantiLabel.STORE_CARICATO_BASEDATI, keyStore, type, password, 
 				sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
 				log);
@@ -916,6 +928,19 @@ public class CertificateUtils {
 	
 	
 	
+	public static CertificateCheck checkKeyPair(String privateKeyPath, byte[] privateKey, 
+			String publicKeyPath, byte[] publicKey, String passwordKey, String algorithm,
+			boolean addCertificateDetails, String separator) throws UtilsException{
+		
+		String storeDetails = null;
+		if(addCertificateDetails) {
+			storeDetails = toStringKeyPair(privateKeyPath, publicKeyPath, separator);
+		}
+		
+		return checkKeyPairEngine(true,
+				storeDetails, privateKey, publicKey, passwordKey, algorithm,
+				addCertificateDetails);
+	}
 	public static CertificateCheck checkKeyPair(boolean classpathSupported, String privateKey, String publicKey, String passwordKey, String algorithm,
 			boolean addCertificateDetails, String separator) throws UtilsException{
 		return checkKeyPairEngine(true,
@@ -943,7 +968,18 @@ public class CertificateUtils {
 		return sb.toString();
 	}
 	
-	
+	public static CertificateCheck checkPublicKey(String publicKeyPath, byte[] publicKey, String algorithm,
+			boolean addCertificateDetails, String separator) throws UtilsException{
+		
+		String storeDetails = null;
+		if(addCertificateDetails) {
+			storeDetails = toStringPublicKey(publicKeyPath, separator);
+		}
+		
+		return checkKeyPairEngine(false,
+				storeDetails, null, publicKey, null, algorithm,
+				addCertificateDetails);
+	}
 	public static CertificateCheck checkPublicKey(boolean classpathSupported, String publicKey, String algorithm,
 			boolean addCertificateDetails, String separator) throws UtilsException{
 		return checkKeyPairEngine(false,
@@ -1151,11 +1187,35 @@ public class CertificateUtils {
 				classpathSupported, jwksPath, keyAlias,
 				addCertificateDetails, separator, newLine);
 	}
+	public static CertificateCheck checkKeystoreJWKs(String jwksPath, String jwks, String keyAlias, 
+			boolean addCertificateDetails, String separator, String newLine) throws UtilsException{
+		
+		String storeDetails = null;
+		if(addCertificateDetails) {
+			storeDetails = toStringJWKs(true, jwksPath, keyAlias,
+					separator, newLine);
+		}
+		
+		return checkJWKsEngine(false, 
+				storeDetails, jwks, keyAlias);
+	}
 	public static CertificateCheck checkTruststoreJWKs(boolean classpathSupported, String jwksPath, String keyAlias, 
 			boolean addCertificateDetails, String separator, String newLine) throws UtilsException{
 		return checkJWKsEngine(false,
 				classpathSupported, jwksPath, keyAlias,
 				addCertificateDetails, separator, newLine);
+	}
+	public static CertificateCheck checkTruststoreJWKs(String jwksPath, String jwks, String keyAlias, 
+			boolean addCertificateDetails, String separator, String newLine) throws UtilsException{
+		
+		String storeDetails = null;
+		if(addCertificateDetails) {
+			storeDetails = toStringJWKs(false, jwksPath, keyAlias,
+					separator, newLine);
+		}
+		
+		return checkJWKsEngine(false, 
+				storeDetails, jwks, keyAlias);
 	}
 	private static CertificateCheck checkJWKsEngine(boolean keystore,
 			boolean classpathSupported, String jwksPath, String keyAlias, 
@@ -1242,7 +1302,7 @@ public class CertificateUtils {
 		return esito;
 	}
 	private static CertificateCheck checkJWKsEngineKeyAlias(String keyAlias, com.nimbusds.jose.jwk.JWKSet set, boolean keystore, String storeDetails) {
-		if(keyAlias!=null && StringUtils.isNotEmpty(keyAlias)) {
+		if(keyAlias!=null && StringUtils.isNotEmpty(keyAlias) && !"*".equals(keyAlias)) {
 			try {
 				com.nimbusds.jose.jwk.JWK jwk = set.getKeyByKeyId(keyAlias);
 				if(jwk==null) {
