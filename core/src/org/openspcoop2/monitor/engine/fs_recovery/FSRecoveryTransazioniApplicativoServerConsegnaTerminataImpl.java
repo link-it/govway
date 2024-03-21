@@ -135,7 +135,7 @@ public class FSRecoveryTransazioniApplicativoServerConsegnaTerminataImpl extends
 					consegnaInErrore = true;
 				}
 				
-				TransactionServerUtils.safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, connection, 
+				TransactionServerUtils.safeAggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, connection, 
 						this.daoFactoryServiceManagerProperties.getDatabaseType(), this.log,
 						this.daoFactory,this.daoFactoryLogger,this.daoFactoryServiceManagerProperties,
 						this.debug,

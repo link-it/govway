@@ -1,3 +1,8 @@
+2024-03-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Nella funzionalità di consegna asincrona in alcuni casi limite, con connettori con consegna in errore, non veniva correttamente aggiornato lo stato della transazione.
+
 2024-03-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]
