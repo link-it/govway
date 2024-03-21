@@ -995,7 +995,7 @@ public class GestoreConsegnaMultipla {
 		}
 		
 		if(esitiLetti) {
-			return TransactionServerUtils.safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, 
+			return TransactionServerUtils.safeAggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, 
 					this.tipoDatabase, this.log,
 					daoF,logFactory,smp,
 					this.debug,
