@@ -1,6 +1,18 @@
 2024-03-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2024-22257: aggiornata libreria 'org.springframework.security:*' alla versione 5.8.11
+	- CVE-2024-28752: aggiornata libreria 'org.apache.cxf:*' alla versione 3.6.3
+                          aggiornata libreria 'org.ow2.asm:asm' alla versione 9.6
+                          aggiornata libreria 'org.codehaus.woodstox:stax2-api' alla versione 4.2.2
+                          aggiornata libreria 'com.fasterxml.woodstox:woodstox-core' alla versione 6.6.0
+                          aggiornata libreria 'org.apache.ws.xmlschema:xmlschema-core' alla versione 2.3.1
+                          aggiornata libreria 'org.springframework:*' alla versione 5.3.3
+
+2024-03-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
 	Nella funzionalità di consegna asincrona in alcuni casi limite, con connettori con consegna in errore, non veniva correttamente aggiornato lo stato della transazione.
 
 2024-03-20  Andrea Poli <apoli@link.it>
