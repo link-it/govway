@@ -188,7 +188,7 @@
 				<include name="cxf-core-*.jar" />
 				<include name="cxf-rt-*.jar" />
 				<include name="jakarta.ws.rs-api-2.1.6.jar" />
-				<include name="woodstox-core-6.5.1.jar" />
+				<include name="woodstox-core-6.6.0.jar" />
 				<include name="${geronimo_jaxws_spec_jar}" />
 				<include name="${stax2-api_jar}" />
 			</lib>

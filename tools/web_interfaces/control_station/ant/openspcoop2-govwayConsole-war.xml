@@ -275,9 +275,9 @@
 			<then>
 				<var name="govwayConsoleRemota_security_neethi" value="neethi-3.2.0.jar" />
 				<var name="govwayConsoleRemota_httpcore" value="*.jar" />
-				<var name="govwayConsoleRemota_cxf_xmlschema-core" value="xmlschema-core-2.3.0.jar" />
-				<var name="govwayConsoleRemota_cxf_woodstox-core-asl" value="woodstox-core-6.5.1.jar" />
-				<var name="govwayConsoleRemota_cxf_stax2-api" value="stax2-api-4.2.1.jar" />
+				<var name="govwayConsoleRemota_cxf_xmlschema-core" value="xmlschema-core-2.3.1.jar" />
+				<var name="govwayConsoleRemota_cxf_woodstox-core-asl" value="woodstox-core-6.6.0.jar" />
+				<var name="govwayConsoleRemota_cxf_stax2-api" value="stax2-api-4.2.2.jar" />
 				<if>
 					<matches string="${as}" pattern="wildfly.*"/>
 					<then>

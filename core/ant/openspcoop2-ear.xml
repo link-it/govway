@@ -28,9 +28,9 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.11.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-lang-2.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.9.0.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-3.6.1-gov4j-1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-3.6.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-3.6.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-3.6.3-gov4j-1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-3.6.3.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-3.6.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-api-2.3.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-core-2.3.0.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-impl-2.3.7.jar"/>
@@ -61,20 +61,20 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/saaj-impl-1.5.3-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/stax-ex-1.8.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/mimepull-1.9.14.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aop-5.3.32.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aspects-5.3.32.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-beans-5.3.32.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-5.3.32.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-support-5.3.32.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-core-5.3.32.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-expression-5.3.32.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-tx-5.3.32.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-web-5.3.32.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-5.8.7.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aop-5.3.33.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aspects-5.3.33.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-beans-5.3.33.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-5.3.33.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-support-5.3.33.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-core-5.3.33.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-expression-5.3.33.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-tx-5.3.33.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-web-5.3.33.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-5.8.11.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/uddi4j-2.0.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xalan-2.7.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xml-resolver-1.2.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlschema-core-2.3.0.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlschema-core-2.3.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlsec-2.3.4-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cryptacular-1.2.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jasypt-1.9.3.jar"/>
@@ -86,7 +86,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-dom-2.4.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-policy-stax-2.4.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-stax-2.4.1.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-6.5.1.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-6.6.0.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/joda-time-2.12.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/guava-32.1.1-jre.jar"/>	
 		<var name="manifest.classpath.3parti" value="${tmp}" />

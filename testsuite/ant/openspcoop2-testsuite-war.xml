@@ -160,8 +160,8 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/spring">
-				<include name="spring-web-5.3.32.jar"/>
-				<include name="spring-core-5.3.32.jar"/>
+				<include name="spring-web-5.3.33.jar"/>
+				<include name="spring-core-5.3.33.jar"/>
 			</lib>
 			<lib dir="${required_lib}/jax">
 				<include name="${jaxb_jar}" />
