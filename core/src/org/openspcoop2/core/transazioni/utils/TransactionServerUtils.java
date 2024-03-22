@@ -116,6 +116,10 @@ public class TransactionServerUtils {
 	public static boolean save(ITransazioneApplicativoServerService transazioneService, TransazioneApplicativoServer serverInfoParam, boolean update, boolean throwNotFoundIfNotExists, boolean recover,
 			boolean useSelectForUpdate, List<String> timeDetails) throws CoreException, ServiceException, NotImplementedException, NotFoundException, MultipleResultException {
 		
+		if(recover) {
+			// nop
+		}
+		
 		String idTransazione = serverInfoParam.getIdTransazione();
 		if(idTransazione==null) {
 			throw new CoreException("IdTransazione non esistente nel contesto");
@@ -419,6 +423,8 @@ public class TransactionServerUtils {
 					gestioneSerializableDBAttesaAttiva, gestioneSerializableDBCheckInterval,
 					timeDetails);
 		}catch(Throwable e){
+			/**System.out.println("["+transazioneApplicativoServer.getConnettoreNome()+"] ["+transazioneApplicativoServer.getIdTransazione()+"] ERRORE AGGIORNAMENTO: "+e.getMessage());
+			e.printStackTrace(System.out);*/
 			String msg = "Errore durante l'aggiornamento delle transazione relativamente all'informazione del server: " + e.getLocalizedMessage();
 			logCore.error("[id:"+transazioneApplicativoServer.getIdTransazione()+"][sa:"+transazioneApplicativoServer.getServizioApplicativoErogatore()+"]["+transazioneApplicativoServer.getConnettoreNome()+"] "+msg,e);
 			return false;
@@ -573,7 +579,7 @@ public class TransactionServerUtils {
 				// secondo test: finestra di 1 ora
 				// terzo test: senza finestra temporale
 				
-				/**System.out.println("INTERVALLO '"+i+"'");*/
+				/**System.out.println("["+transazioneApplicativoServer.getConnettoreNome()+"] ["+transazioneApplicativoServer.getIdTransazione()+"] INTERVALLO '"+i+"'");*/
 				
 				Timestamp leftValue = null;
 				Timestamp rightValue = null;
@@ -612,16 +618,22 @@ public class TransactionServerUtils {
 				if(row>0) {
 					break;
 				}
-				else if(consegnaInErroreRilevatoEsitoTransazioneConsegnaInCoda &&
+				else if(consegnaInErroreRilevatoEsitoTransazioneConsegnaInCoda) {
+					/**System.out.println("["+transazioneApplicativoServer.getConnettoreNome()+"] ["+transazioneApplicativoServer.getIdTransazione()+"] existsTransazioneIniziataGestioneConsegnaAsincrona ...");*/
 					// in questo caso si sta cercando di aggiornare l'esito:
 					//   UPDATE transazioni SET esito = 48 WHERE ( .... ) ( esito=38 )
 					// ma se una transazione in parallelo l'ha già modificato si ottiene un row=0 che faceva ritornare false questo metodo, faceva scaturire la registrazione su file e poi l'aggiornamenti di avvenuta consegna che non era corretta.
-					existsTransazioneIniziataGestioneConsegnaAsincrona(transazioneApplicativoServer, connectionDB,
+					transazioneGiaModificata = existsTransazioneIniziataGestioneConsegnaAsincrona(transazioneApplicativoServer, connectionDB,
 							tipoDatabase, logCore,
 							esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, 
-							leftValue, rightValue)) {
-						transazioneGiaModificata = true;
-						/**System.out.println("existsTransazioneIniziataGestioneConsegnaAsincrona FIX");*/
+							leftValue, rightValue);
+					if(transazioneGiaModificata) {
+						/**System.out.println("["+transazioneApplicativoServer.getConnettoreNome()+"] ["+transazioneApplicativoServer.getIdTransazione()+"] existsTransazioneIniziataGestioneConsegnaAsincrona FIX");*/
+						break;
+					}
+					/**else {
+						System.out.println("["+transazioneApplicativoServer.getConnettoreNome()+"] ["+transazioneApplicativoServer.getIdTransazione()+"] existsTransazioneIniziataGestioneConsegnaAsincrona NO");
+					}*/
 				}
 				
 			}
@@ -630,9 +642,11 @@ public class TransactionServerUtils {
 				String msgError = "[id:"+transazioneApplicativoServer.getIdTransazione()+"][sa:"+transazioneApplicativoServer.getServizioApplicativoErogatore()+"]["+transazioneApplicativoServer.getConnettoreNome()+"] 'aggiornaInformazioneConsegnaTerminata' non riuscta. Tutti gli intervalli di update non hanno comportato un aggiornamento della transazione";
 				logFactory.error(msgError);
 				logCore.error(msgError);
+				/**System.out.println("["+transazioneApplicativoServer.getConnettoreNome()+"] ["+transazioneApplicativoServer.getIdTransazione()+"] INTERVALLO '"+i+"' FINITO OK FALSE ========================================");*/
 				return false;
 			}
 			else {
+				/**System.out.println("["+transazioneApplicativoServer.getConnettoreNome()+"] ["+transazioneApplicativoServer.getIdTransazione()+"] INTERVALLO '"+i+"' FINITO TRUE");*/
 				return true;
 			}
 		}
@@ -699,11 +713,11 @@ public class TransactionServerUtils {
 							leftValue, rightValue);
 
 					updateEffettuato = true;
-					/**System.out.println("OK ("+transazioneApplicativoServer.getConnettoreNome()+") row:"+row);*/
+					/**System.out.println("["+transazioneApplicativoServer.getConnettoreNome()+"] ["+transazioneApplicativoServer.getIdTransazione()+"] OK row:"+row);*/
 
 				} catch(Throwable e) {
 					lastT = e;
-					/**System.out.println("Serializable error ("+transazioneApplicativoServer.getConnettoreNome()+") (row:"+row+" updateEffettuato:"+updateEffettuato+"):"+e.getMessage());*/
+					/**System.out.println("Serializable error ("+transazioneApplicativoServer.getConnettoreNome()+")  ["+transazioneApplicativoServer.getIdTransazione()+"] (row:"+row+" updateEffettuato:"+updateEffettuato+"):"+e.getMessage());*/
 				}
 
 				if(!updateEffettuato){
@@ -1021,7 +1035,7 @@ public class TransactionServerUtils {
 			}
 			
 			/**String comandoSql = DBUtils.formatSQLString(queryCommand, params.toArray());
-			System.out.println("Count: "+count+" (app:"+transazioneApplicativoServer.getConnettoreNome()+" id:"+transazioneApplicativoServer.getIdTransazione()+") sql:"+comandoSql);*/
+			System.out.println("existsTransazioneIniziataGestioneConsegnaAsincrona Count: "+count+" (app:"+transazioneApplicativoServer.getConnettoreNome()+" id:"+transazioneApplicativoServer.getIdTransazione()+") sql:"+comandoSql);*/
 			
 			rs.close();
 			rs = null;
