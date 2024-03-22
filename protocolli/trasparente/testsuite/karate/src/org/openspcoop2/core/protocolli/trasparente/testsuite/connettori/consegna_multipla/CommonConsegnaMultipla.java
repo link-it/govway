@@ -434,6 +434,8 @@ public class CommonConsegnaMultipla {
 		int index = 0;
 		Integer count = null;
 		
+		StringBuilder sb = null;
+		
 		while(index<tentativi) {
 			
 			String query = "select count(*) from transazioni where id=? and esito = ? and consegne_multiple = ?";
@@ -447,19 +449,27 @@ public class CommonConsegnaMultipla {
 				String query2 = "select esito, esito_sincrono, consegne_multiple from transazioni where id = ?";
 				List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione);
 				int row = 0;
+				
+				sb = new StringBuilder();
+				sb.append(query2);
+				sb.append(" id:").append(id_transazione);
+				
 				for (Map<String, Object> map : letto) {
 					if(map!=null && !map.isEmpty()) {
 						for (Map.Entry<String,Object> entry : map.entrySet()) {
 							if(entry!=null) {
 								ConfigLoader.getLoggerCore().error("Entry["+row+"] key["+entry.getKey()+"]=["+entry.getValue()+"]");
+								sb.append(" entry[").append(row).append("]:key["+entry.getKey()+"]:value["+entry.getValue()+"]");
 							}
 							else {
 								ConfigLoader.getLoggerCore().error("Entry["+row+"] null");
+								sb.append(" entry[").append(row).append("]:null");
 							}
 						}
 					}
 					else {
 						ConfigLoader.getLoggerCore().error("Entry["+row+"] empty");
+						sb.append(" entry[").append(row).append("]:empty");
 					}
 					row++;
 				}
@@ -473,7 +483,7 @@ public class CommonConsegnaMultipla {
 			
 		}
 		
-		assertEquals(Integer.valueOf(1), count);
+		assertEquals(sb!=null ? sb.toString(): "id:"+id_transazione,Integer.valueOf(1), count);
 		
 	}
 

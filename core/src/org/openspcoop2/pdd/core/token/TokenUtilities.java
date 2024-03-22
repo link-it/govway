@@ -1029,8 +1029,12 @@ public class TokenUtilities {
 				readTimeout = convertDynamicPropertyValue(readTimeout, "readTimeout", dynamicMap, context);
 			}
 		
-			p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_CONNECTION_TIMEOUT, connectionTimeout);
-			p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_READ_TIMEOUT, readTimeout);
+			if(connectionTimeout!=null) {
+				p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_CONNECTION_TIMEOUT, connectionTimeout);
+			}
+			if(readTimeout!=null) {
+				p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_READ_TIMEOUT, readTimeout);
+			}
 		}
 	}
 	private static void injectJOSEConfigProxy(Properties p, AbstractPolicyToken policyToken,
@@ -1047,8 +1051,12 @@ public class TokenUtilities {
 				portProxy = convertDynamicPropertyValue(portProxy, "portProxy", dynamicMap, context);
 			}
 		
-			p.put(JOSECostanti.ID_PROXY_HOSTNAME, hostProxy);
-			p.put(JOSECostanti.ID_PROXY_PORT, portProxy);
+			if(hostProxy!=null) {
+				p.put(JOSECostanti.ID_PROXY_HOSTNAME, hostProxy);
+			}
+			if(portProxy!=null) {
+				p.put(JOSECostanti.ID_PROXY_PORT, portProxy);
+			}
 			
 			injectJOSEConfigProxyCredentials(p, endpointConfig,
 					dynamicMap, context);

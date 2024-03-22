@@ -3,7 +3,7 @@
 Security Tests
 ~~~~~~~~~~~~~~~~
 
-All'interno degli oltre 13.000 test descritti nella sezione :ref:`releaseProcessGovWay_dynamicAnalysis_ci` risiedono test dedicati alla sicurezza che vengono descritti nei paragrafi seguenti.
+All'interno dei test descritti nella sezione :ref:`releaseProcessGovWay_dynamicAnalysis_ci` risiedono test dedicati alla sicurezza che vengono descritti nei paragrafi seguenti.
 
 Ulteriori test mirati agli aspetti di sicurezza vengono effettuati utilizzando il tool `OWASP ZAP Proxy <https://www.zaproxy.org/>`_ descritto nella sezione :ref:`releaseProcessGovWay_dynamicAnalysis_zap`.
 
