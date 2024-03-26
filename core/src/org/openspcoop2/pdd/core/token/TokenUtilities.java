@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.commons.Filtri;
@@ -56,10 +54,8 @@ import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.plugins.utils.PluginsDriverUtils;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ForwardProxy;
-import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
-import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
+import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.pdd.core.token.attribute_authority.PolicyAttributeAuthority;
-import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -69,7 +65,6 @@ import org.openspcoop2.security.message.jose.JOSECostanti;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.KeystoreType;
-import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 import org.slf4j.Logger;
 
 /**     
@@ -833,51 +828,10 @@ public class TokenUtilities {
 	
 	public static Map<String, Object> buildDynamicMap(Busta busta, 
 			RequestInfo requestInfo, Context pddContext, Logger log) {
-	
-		Map<String, Object> dynamicMap = new HashMap<>();
-		
-		Map<String, List<String>> pTrasporto = null;
-		String urlInvocazione = null;
-		Map<String, List<String>> pQuery = null;
-		Map<String, List<String>> pForm = null;
-		if(requestInfo!=null && requestInfo.getProtocolContext()!=null) {
-			pTrasporto = requestInfo.getProtocolContext().getHeaders();
-			urlInvocazione = requestInfo.getProtocolContext().getUrlInvocazione_formBased();
-			pQuery = requestInfo.getProtocolContext().getParameters();
-			if(requestInfo.getProtocolContext() instanceof HttpServletTransportRequestContext) {
-				HttpServletTransportRequestContext httpServletContext = requestInfo.getProtocolContext();
-				HttpServletRequest httpServletRequest = httpServletContext.getHttpServletRequest();
-				if(httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
-					FormUrlEncodedHttpServletRequest formServlet = (FormUrlEncodedHttpServletRequest) httpServletRequest;
-					if(formServlet.getFormUrlEncodedParametersValues()!=null &&
-							!formServlet.getFormUrlEncodedParametersValues().isEmpty()) {
-						pForm = formServlet.getFormUrlEncodedParametersValues();
-					}
-				}
-			}
-		}
-				
-		ErrorHandler errorHandler = new ErrorHandler();
-		DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
-				null,
-				null, 
-				busta, 
-				pTrasporto, 
-				pQuery,
-				pForm,
-				errorHandler);
-		
-		return dynamicMap;
+		return DynamicMapBuilderUtils.buildDynamicMap(busta, requestInfo, pddContext, log);
 	}
 	public static String convertDynamicPropertyValue(String v, String nome, Map<String, Object> dynamicMap, Context context) throws TokenException {
-		if(v!=null && !"".equals(v) && dynamicMap!=null) {
-			try {
-				v = DynamicUtils.convertDynamicPropertyValue(nome+".gwt", v, dynamicMap, context);
-			}catch(Exception e) {
-				throw new TokenException(e.getMessage(),e);
-			}
-		}
-		return v;
+		return DynamicMapBuilderUtils.convertDynamicPropertyValue(v, nome, dynamicMap, context);
 	}
 	
 	

@@ -18,51 +18,43 @@
  *
  */
 
-
-package org.openspcoop2.protocol.sdk;
+package org.openspcoop2.utils.certificate.byok;
 
 import java.io.Serializable;
 
-import org.openspcoop2.utils.Map;
-import org.openspcoop2.utils.MapKey;
-
 /**
- * Context
- *
+ * BYOKConfigParameter
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Context extends org.openspcoop2.utils.Map<Object> implements Serializable {
-	
+public class BYOKConfigParameter implements Serializable {
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -2577197242840238762L;
+	private static final long serialVersionUID = -3572589461109860459L;
+		
+	private String id;
 	
+	private String name;
+	private String label;
 	
-	// STATIC
-	
-	  /**
-	    * @deprecated (user method MapKey)
-	    */
-	@Deprecated
-	public static String getValue(String key,Context pddContext){
-		if(key==null) {
-			return null;
-		}
-		return getValue(Map.newMapKey(key), pddContext);
-	}
-	public static String getValue(MapKey<String> key,Context pddContext){
-		String value = null;
-		if(pddContext!=null){
-			Object o = pddContext.getObject(key);
-			if(o instanceof String){
-				value = (String) o;
-			}
-		}
-		return value;
+	public BYOKConfigParameter(String id, String name, String label) {
+		this.id = id;
+		this.name = name;
+		this.label = label;
 	}
 	
+	public String getId() {
+		return this.id;
+	}
+	
+	public String getName() {
+		return this.name;
+	}
+	public String getLabel() {
+		return this.label;
+	}
 }

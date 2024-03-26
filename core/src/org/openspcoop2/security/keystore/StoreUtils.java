@@ -25,7 +25,12 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.byok.BYOKEncryptionMode;
+import org.openspcoop2.utils.certificate.byok.BYOKInstance;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
+import org.slf4j.Logger;
 
 /**
  * StoreUtils
@@ -90,7 +95,7 @@ public class StoreUtils {
 				}
 			}
 			
-			if(propStore==null && !fExists) {
+			if(propStore==null && !fStore.exists()) {
 				try(InputStream isStore = StoreUtils.class.getResourceAsStream("/"+path)){
 					if(isStore!=null){
 						propStore = new Properties();
@@ -108,5 +113,25 @@ public class StoreUtils {
 		
 		return propStore;
 		
+	}
+	
+	public static byte[] unwrapBYOK(byte[] archive, BYOKRequestParams requestParams) throws SecurityException {
+		if(requestParams!=null) {
+			Logger log = LoggerWrapperFactory.getLogger(StoreUtils.class);
+			BYOKInstance instance = null;
+			try {
+				if(requestParams.getConfig()!=null && BYOKEncryptionMode.LOCAL.equals(requestParams.getConfig().getEncryptionMode())) {
+					instance = BYOKInstance.newLocalInstance(log, requestParams, archive);
+				}
+				else {
+					instance = BYOKInstance.newRemoteInstance(log, requestParams, archive);
+				}
+			}catch(Exception e){
+				throw new SecurityException(e.getMessage(),e);
+			}
+			BYOKStore store = new BYOKStore(instance.getKeyCache(), instance);
+			return store.getStoreBytes();
+		}
+		return archive;
 	}
 }

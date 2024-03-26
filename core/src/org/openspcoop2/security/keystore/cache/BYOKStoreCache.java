@@ -21,31 +21,29 @@
 package org.openspcoop2.security.keystore.cache;
 
 import org.openspcoop2.security.SecurityException;
-import org.openspcoop2.security.keystore.MultiKeystore;
-import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
+import org.openspcoop2.security.keystore.BYOKStore;
+import org.openspcoop2.utils.certificate.byok.BYOKInstance;
 
 /**
- * MultiKeystoreCache
+ * BYOKStoreCache
  *
  * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class MultiKeystoreCache extends AbstractKeystoreCache<MultiKeystore> {
+public class BYOKStoreCache extends AbstractKeystoreCache<BYOKStore> {
 
 	@Override
-	public MultiKeystore createKeystore(String key, Object... params)
-			throws SecurityException {
-		String propertyFilePath = key;
-		if(params==null || params.length<=0){
-			return new MultiKeystore(propertyFilePath);
+	public BYOKStore createKeystore(String key, Object... params) throws SecurityException{
+		if(params==null){
+			throw new SecurityException("Params is null");
 		}
 		if(params.length==1){
-			if( ! (params[0] instanceof BYOKRequestParams) ){
-				throw new SecurityException("Param[0] must be BYOKRequestParams");
+			if( ! (params[0] instanceof BYOKInstance)){
+				throw new SecurityException("Param[0] must be BYOKInstance");
 			}
-			BYOKRequestParams requestParams = (BYOKRequestParams) params[0];
-			return new MultiKeystore(propertyFilePath,requestParams);
+			BYOKInstance instance = (BYOKInstance) params[0];
+			return new BYOKStore(key, instance);
 		}
 		else{
 			throw new SecurityException("Params [lenght:"+params.length+"] not supported");
@@ -54,6 +52,6 @@ public class MultiKeystoreCache extends AbstractKeystoreCache<MultiKeystore> {
 
 	@Override
 	public String getPrefixKey() {
-		return "MultiKeystore ";
+		return "BYOKStore ";
 	}
 }

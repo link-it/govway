@@ -184,6 +184,7 @@ public class RequestConfig implements java.io.Serializable {
 	private Map<String, Serializable> remoteStore = null;
 	private Map<String, Serializable> remoteStoreClientInfo = null;
 	private Map<String, Serializable> httpStore = null;
+	private Map<String, Serializable> byokStore = null;
 	private Map<String, Serializable> crlCertstore = null;
 	private Map<String, Serializable> sslSocketFactory = null;
 	private Map<String, Serializable> sslConfigProps = null;
@@ -443,6 +444,9 @@ public class RequestConfig implements java.io.Serializable {
 		}
 		if(source.httpStore!=null) {
 			this.httpStore = source.httpStore;
+		}
+		if(source.byokStore!=null) {
+			this.byokStore = source.byokStore;
 		}
 		if(source.crlCertstore!=null) {
 			this.crlCertstore = source.crlCertstore;
@@ -1484,6 +1488,31 @@ public class RequestConfig implements java.io.Serializable {
 			return null;
 		}
 		return this.httpStore.get(key);
+	}
+	
+	public void addBYOKStore(String key, Serializable byokStore, String idTransazione) {
+		 
+		
+		if(this.semaphoreStore==null) {
+			// serializzazione da transient
+			initSemaphoreStore();
+		}
+		
+		this.semaphoreStore.acquireThrowRuntime("addBYOKStore", idTransazione);
+		try {
+			if(this.byokStore==null) {
+				this.byokStore = new HashMap<>(3);
+			}
+			this.byokStore.put(key, byokStore);
+		}finally {
+			this.semaphoreStore.release("addBYOKStore", idTransazione);
+		}
+	}
+	public Serializable getBYOKStore(String key) {
+		if(this.byokStore==null) {
+			return null;
+		}
+		return this.byokStore.get(key);
 	}
 	
 	public void addCRLCertstore(String key, Serializable crlCertstore, String idTransazione) {

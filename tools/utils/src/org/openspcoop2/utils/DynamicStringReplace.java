@@ -223,14 +223,24 @@ public class DynamicStringReplace {
 			boolean checkPossibleStart = false;
 			if(startWithDollaro) {
 				if(ch == '$' || ch == '?') {
-					if(ch == '?') {
-						required=false;
-					}
-					checkPossibleStart = true;
+					// verifico che il prossimo carattere non sia un ulteriore carattere speciale
+					boolean analize = true;
 					if(i+1 < messaggioWithPlaceHolder.length()) {
-						i++;
-						chDollaro = ch;
-						ch = messaggioWithPlaceHolder.charAt(i);
+						char chNext = messaggioWithPlaceHolder.charAt(i+1);
+						if(chNext == '$' || chNext == '?') {
+							analize = false;
+						}
+					}
+					if(analize) {
+						if(ch == '?') {
+							required=false;
+						}
+						checkPossibleStart = true;
+						if(i+1 < messaggioWithPlaceHolder.length()) {
+							i++;
+							chDollaro = ch;
+							ch = messaggioWithPlaceHolder.charAt(i);
+						}
 					}
 				}
 			}

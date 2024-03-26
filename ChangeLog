@@ -1,3 +1,10 @@
+2024-03-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, Utils]
+	Aggiunta funzionalità OP-1701
+	Introdotta funzionalità 'Bring Your Own Key (BYOK)' nelle utility.
+	Aggiunta possibilità di utilizzare funzionalità di 'unwrap' della chiave per la cifratura dei dati registrati tramite 'FileTrace'
+
 2024-03-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

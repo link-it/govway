@@ -27,6 +27,7 @@ import java.security.cert.Certificate;
 import java.util.Properties;
 
 import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 
 /**
@@ -61,25 +62,52 @@ public class MerlinKeystore implements Serializable {
 	}
 	
 	public MerlinKeystore(String propertyFilePath) throws SecurityException{
-		this.initMerlinKeystoreEngine(propertyFilePath, null, false);
+		this.initMerlinKeystoreEngine(propertyFilePath, null, false,
+				null);
+	}
+	public MerlinKeystore(String propertyFilePath, 
+			BYOKRequestParams requestParams) throws SecurityException{
+		this.initMerlinKeystoreEngine(propertyFilePath, null, false, 
+				requestParams);
 	}
 	public MerlinKeystore(String propertyFilePath,String passwordPrivateKey) throws SecurityException{
-		this.initMerlinKeystoreEngine(propertyFilePath, passwordPrivateKey, true);
+		this.initMerlinKeystoreEngine(propertyFilePath, passwordPrivateKey, true,
+				null);
 	}
-	private void initMerlinKeystoreEngine(String propertyFilePath,String passwordPrivateKey, boolean privatePasswordRequired) throws SecurityException{
+	public MerlinKeystore(String propertyFilePath,String passwordPrivateKey, 
+			BYOKRequestParams requestParams) throws SecurityException{
+		this.initMerlinKeystoreEngine(propertyFilePath, passwordPrivateKey, true,
+				requestParams);
+	}
+	private void initMerlinKeystoreEngine(String propertyFilePath,String passwordPrivateKey, boolean privatePasswordRequired, 
+			BYOKRequestParams requestParams) throws SecurityException{
 		
 		Properties propStore = StoreUtils.readProperties("PropertyFilePath", propertyFilePath);
-		this.initMerlinKeystoreEngine(propStore,passwordPrivateKey, privatePasswordRequired);
+		this.initMerlinKeystoreEngine(propStore,passwordPrivateKey, privatePasswordRequired,
+				requestParams);
 				
 	}
 	
 	public MerlinKeystore(Properties propStore) throws SecurityException{
-		this.initMerlinKeystoreEngine(propStore,null, false);
+		this.initMerlinKeystoreEngine(propStore,null, false,
+				null);
+	}
+	public MerlinKeystore(Properties propStore,
+			BYOKRequestParams requestParams) throws SecurityException{
+		this.initMerlinKeystoreEngine(propStore,null, false,
+				requestParams);
 	}
 	public MerlinKeystore(Properties propStore,String passwordPrivateKey) throws SecurityException{
-		this.initMerlinKeystoreEngine(propStore,passwordPrivateKey, true);
+		this.initMerlinKeystoreEngine(propStore,passwordPrivateKey, true,
+				null);
 	}
-	private void initMerlinKeystoreEngine(Properties propStore,String passwordPrivateKey, boolean privatePasswordRequired) throws SecurityException{
+	public MerlinKeystore(Properties propStore,String passwordPrivateKey,
+			BYOKRequestParams requestParams) throws SecurityException{
+		this.initMerlinKeystoreEngine(propStore,passwordPrivateKey, true,
+				requestParams);
+	}
+	private void initMerlinKeystoreEngine(Properties propStore,String passwordPrivateKey, boolean privatePasswordRequired,
+			BYOKRequestParams requestParams) throws SecurityException{
 		
 		try{
 			if(propStore==null){
@@ -96,8 +124,9 @@ public class MerlinKeystore implements Serializable {
 			this.pathStore = propStore.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_PATH);
 			
 			this.passwordStore = propStore.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD);
-			
-			init(passwordPrivateKey, privatePasswordRequired);
+						
+			init(passwordPrivateKey, privatePasswordRequired,
+					requestParams);
 			
 		}catch(Exception e){
 			throw new SecurityException(e.getMessage(),e);
@@ -106,38 +135,67 @@ public class MerlinKeystore implements Serializable {
 	}
 		
 	public MerlinKeystore(String pathStore,String tipoStore,String passwordStore) throws SecurityException{
-		initMerlinKeystoreEngine(pathStore,tipoStore,passwordStore,null, false);
+		initMerlinKeystoreEngine(pathStore,tipoStore,passwordStore,null, false,
+				null);
+	}
+	public MerlinKeystore(String pathStore,String tipoStore,String passwordStore,
+			BYOKRequestParams requestParams) throws SecurityException{
+		initMerlinKeystoreEngine(pathStore,tipoStore,passwordStore,null, false,
+				requestParams);
 	}
 	public MerlinKeystore(String pathStore,String tipoStore,String passwordStore,String passwordPrivateKey) throws SecurityException{
-		initMerlinKeystoreEngine(pathStore,tipoStore,passwordStore,passwordPrivateKey, true);
+		initMerlinKeystoreEngine(pathStore,tipoStore,passwordStore,passwordPrivateKey, true,
+				null);
 	}
-	public void initMerlinKeystoreEngine(String pathStore,String tipoStore,String passwordStore,String passwordPrivateKey, boolean privatePasswordRequired) throws SecurityException{
+	public MerlinKeystore(String pathStore,String tipoStore,String passwordStore,String passwordPrivateKey,
+			BYOKRequestParams requestParams) throws SecurityException{
+		initMerlinKeystoreEngine(pathStore,tipoStore,passwordStore,passwordPrivateKey, true,
+				requestParams);
+	}
+	public void initMerlinKeystoreEngine(String pathStore,String tipoStore,String passwordStore,String passwordPrivateKey, boolean privatePasswordRequired,
+			BYOKRequestParams requestParams) throws SecurityException{
 			
 		this.pathStore = pathStore;
 		this.tipoStore = tipoStore;
 		this.passwordStore = passwordStore;
 		
-		init(passwordPrivateKey, privatePasswordRequired);
+		init(passwordPrivateKey, privatePasswordRequired,
+				requestParams);
 		
 	}
 	
 	public MerlinKeystore(byte[]bytesKeystore,String tipoStore,String passwordStore) throws SecurityException{
-		initMerlinKeystoreEngine(bytesKeystore,tipoStore,passwordStore,null, false);
+		initMerlinKeystoreEngine(bytesKeystore,tipoStore,passwordStore,null, false,
+				null);
+	}
+	public MerlinKeystore(byte[]bytesKeystore,String tipoStore,String passwordStore,
+			BYOKRequestParams requestParams) throws SecurityException{
+		initMerlinKeystoreEngine(bytesKeystore,tipoStore,passwordStore,null, false,
+				requestParams);
 	}
 	public MerlinKeystore(byte[]bytesKeystore,String tipoStore,String passwordStore,String passwordPrivateKey) throws SecurityException{
-		initMerlinKeystoreEngine(bytesKeystore,tipoStore,passwordStore,passwordPrivateKey, true);
+		initMerlinKeystoreEngine(bytesKeystore,tipoStore,passwordStore,passwordPrivateKey, true,
+				null);
 	}
-	public void initMerlinKeystoreEngine(byte[]bytesKeystore,String tipoStore,String passwordStore,String passwordPrivateKey, boolean privatePasswordRequired) throws SecurityException{
+	public MerlinKeystore(byte[]bytesKeystore,String tipoStore,String passwordStore,String passwordPrivateKey,
+			BYOKRequestParams requestParams) throws SecurityException{
+		initMerlinKeystoreEngine(bytesKeystore,tipoStore,passwordStore,passwordPrivateKey, true,
+				requestParams);
+	}
+	public void initMerlinKeystoreEngine(byte[]bytesKeystore,String tipoStore,String passwordStore,String passwordPrivateKey, boolean privatePasswordRequired,
+			BYOKRequestParams requestParams) throws SecurityException{
 			
 		this.ksBytes = bytesKeystore;
 		this.tipoStore = tipoStore;
 		this.passwordStore = passwordStore;
 		
-		init(passwordPrivateKey, privatePasswordRequired);
+		init(passwordPrivateKey, privatePasswordRequired,
+				requestParams);
 		
 	}
 	
-	private void init(String passwordPrivateKey, boolean privatePasswordRequired) throws SecurityException{
+	private void init(String passwordPrivateKey, boolean privatePasswordRequired,
+			BYOKRequestParams requestParams) throws SecurityException{
 		try{
 			if(this.tipoStore==null){
 				throw new SecurityException("Tipo dello Store non indicato");
@@ -152,15 +210,7 @@ public class MerlinKeystore implements Serializable {
 			}
 			
 			if(!this.hsm) {
-
-				if(this.ksBytes==null && this.pathStore==null){
-					throw new SecurityException("Path per lo Store non indicato");
-				}
-	
-				if(this.ksBytes==null) {
-					this.ksBytes = StoreUtils.readContent("Path", this.pathStore);
-				}
-	
+				initKsBytes(requestParams);
 			}
 			
 			this.initKS();
@@ -180,6 +230,21 @@ public class MerlinKeystore implements Serializable {
 		}
 	}
 	
+	private void initKsBytes(BYOKRequestParams requestParams) throws SecurityException {
+		
+		if(this.ksBytes==null && this.pathStore==null){
+			throw new SecurityException("Path per lo Store non indicato");
+		}
+
+		if(this.ksBytes==null) {
+			this.ksBytes = StoreUtils.readContent("Path", this.pathStore);
+		}
+		
+		if(requestParams!=null) {
+			this.ksBytes = StoreUtils.unwrapBYOK(this.ksBytes, requestParams);
+		}
+	}
+	
 	public boolean isHsm() {
 		return this.hsm;
 	}
@@ -196,6 +261,7 @@ public class MerlinKeystore implements Serializable {
 					this.ks = HSMManager.getInstance().getKeystore(this.tipoStore);
 				}
 				else {
+										
 					this.ks = new org.openspcoop2.utils.certificate.KeyStore(this.ksBytes, this.tipoStore, this.passwordStore);
 					
 					// non utilizzabile in hsm, si ottiene errore: java.lang.UnsupportedOperationException: trusted certificates may only be set by token initialization application
