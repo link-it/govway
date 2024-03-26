@@ -29,7 +29,7 @@ import org.openspcoop2.security.keystore.MerlinTruststore;
 import org.openspcoop2.utils.transport.http.HttpOptions;
 
 /**
- * MerlinTruststoreCache
+ * HttpStoreCache
  *
  * @author Andrea Poli (apoli@link.it)
  * @author $Author$

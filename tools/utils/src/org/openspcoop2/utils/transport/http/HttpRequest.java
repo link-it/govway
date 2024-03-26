@@ -55,6 +55,7 @@ public class HttpRequest extends AbstractHttp {
 	private CertStore crlStore;
 	private String crlPath;
 	
+	private String ocspPolicy;
 	private IOCSPValidator ocspValidator;
 	
 	private KeyStore keyStore;
@@ -204,6 +205,14 @@ public class HttpRequest extends AbstractHttp {
 		this.crlPath = crlPath;
 	}
 
+	public String getOcspPolicy() {
+		return this.ocspPolicy;
+	}
+
+	public void setOcspPolicy(String ocspPolicy) {
+		this.ocspPolicy = ocspPolicy;
+	}
+	
 	public IOCSPValidator getOcspValidator() {
 		return this.ocspValidator;
 	}

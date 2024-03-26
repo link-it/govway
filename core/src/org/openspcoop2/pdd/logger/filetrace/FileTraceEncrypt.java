@@ -21,11 +21,16 @@
 package org.openspcoop2.pdd.logger.filetrace;
 
 import java.security.Key;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.apache.cxf.rs.security.jose.jwk.JwkUtils;
+import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
+import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.JWKSetStore;
@@ -40,6 +45,9 @@ import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.certificate.KeyUtils;
 import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.SymmetricKeyUtils;
+import org.openspcoop2.utils.certificate.byok.BYOKConfig;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.HexBinaryUtilities;
 import org.openspcoop2.utils.security.Encrypt;
@@ -49,6 +57,7 @@ import org.openspcoop2.utils.security.JWEOptions;
 import org.openspcoop2.utils.security.JsonEncrypt;
 import org.openspcoop2.utils.security.JsonUtils;
 import org.openspcoop2.utils.security.JwtHeaders;
+import org.slf4j.Logger;
 
 import com.nimbusds.jose.jwk.KeyUse;
 
@@ -61,10 +70,16 @@ import com.nimbusds.jose.jwk.KeyUse;
  */
 public class FileTraceEncrypt {
 
+	private Logger log;
 	private RequestInfo requestInfo;
+	private Context context;
+	private Busta busta;
 	
-	public FileTraceEncrypt(RequestInfo requestInfo) {
+	public FileTraceEncrypt(Logger log, RequestInfo requestInfo, Context context, Busta busta) {
+		this.log = log;
 		this.requestInfo = requestInfo;
+		this.context = context;
+		this.busta = busta;
 	}
 	
 	private static final String JAVA_SEPARATOR = ".";
@@ -123,11 +138,38 @@ public class FileTraceEncrypt {
 		
 	}
 	
+	private BYOKRequestParams getBYOKRequestParams(FileTraceEncryptConfig config) throws UtilsException {
+		BYOKRequestParams req = null;
+		if(config!=null && config.getKsmId()!=null) {
+			BYOKManager manager = BYOKManager.getInstance();
+			if(manager==null) {
+				throw new UtilsException("BYOKManager not initialized");
+			}
+			BYOKConfig bconfig = manager.getKSMConfigByType(config.getKsmId());
+			if(bconfig==null) {
+				throw new UtilsException("BYOK configuration for ksm id '"+config.getKsmId()+"' not found");
+			}
+			req = new BYOKRequestParams();
+			req.setConfig(bconfig);
+			
+			Map<String, String> inputMap = new HashMap<>();
+			if(config.getKsmInput()!=null && !config.getKsmInput().isEmpty()) {
+				inputMap.putAll(config.getKsmInput());
+			}
+			req.setInputMap(inputMap);
+			
+			Map<String,Object> dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(this.busta, this.requestInfo, this.context, this.log);
+			req.setDynamicMap(dynamicMap);
+		}
+		return req;
+	}
+	
 	private void readKeystore(FileTraceEncryptKey fileTraceEncryptKey, FileTraceEncryptConfig config) throws UtilsException, SecurityException {
 		String type = KeystoreType.PKCS11.equals(config.getKeystoreType()) ? config.getKeystoreHsmType() : config.getKeystoreType().getNome();
 		MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(this.requestInfo,
 				config.getKeystorePath(), type, 
-				config.getKeystorePassword());
+				config.getKeystorePassword(),
+				getBYOKRequestParams(config));
 		if(merlinKs==null || merlinKs.getKeyStore()==null) {
 			throw new UtilsException(getKeystoreError(config));
 		}
@@ -144,7 +186,8 @@ public class FileTraceEncrypt {
 		/**}*/
 	}
 	private void readJwk(FileTraceEncryptKey fileTraceEncryptKey, FileTraceEncryptConfig config) throws UtilsException, SecurityException {
-		JWKSetStore jwtStore = GestoreKeystoreCache.getJwkSetStore(this.requestInfo, config.getKeystorePath());
+		JWKSetStore jwtStore = GestoreKeystoreCache.getJwkSetStore(this.requestInfo, config.getKeystorePath(),
+				getBYOKRequestParams(config));
 		if(jwtStore==null || jwtStore.getJwkSet()==null) {
 			throw new UtilsException(getKeystoreError(config));
 		}
@@ -210,7 +253,8 @@ public class FileTraceEncrypt {
 	}
 	private void readSecretKey(FileTraceEncryptKey fileTraceEncryptKey, FileTraceEncryptConfig config) throws UtilsException, SecurityException {
 		String algo = config.isJoseEngine() ? SymmetricKeyUtils.ALGO_AES : config.getKeyAlgorithm();
-		SecretKeyStore secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, config.getKeyPath(), algo);
+		SecretKeyStore secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, config.getKeyPath(), algo,
+				getBYOKRequestParams(config));
 		if(secretKeyStore==null) {
 			throw new UtilsException(getKeyError(config));
 		}

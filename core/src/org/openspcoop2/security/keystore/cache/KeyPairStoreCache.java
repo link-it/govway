@@ -22,6 +22,7 @@ package org.openspcoop2.security.keystore.cache;
 
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.KeyPairStore;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 
 /**
  * KeyPairStoreCache
@@ -42,6 +43,14 @@ public class KeyPairStoreCache extends AbstractKeystoreCache<KeyPairStore> {
 			return createFromPath(key, params);
 		}
 		else if(params.length==4){
+			if(params[0] instanceof String) {
+				return createFromPath(key, params);
+			}
+			else {
+				return createFromByteArray(params);
+			}
+		}
+		else if(params.length==5){
 			return createFromByteArray(params);
 		}
 		else{
@@ -60,7 +69,16 @@ public class KeyPairStoreCache extends AbstractKeystoreCache<KeyPairStore> {
 			String pathPublicKey = (String) params[0];
 			String privateKeyPassword = (String) params[1];
 			String algorithm = (String) params[2];
-			return new KeyPairStore(pathPrivateKey, pathPublicKey, privateKeyPassword, algorithm);
+			if(params.length==4){
+				if( ! (params[3] instanceof BYOKRequestParams) ){
+					throw new SecurityException("Param[3] must be BYOKRequestParams");
+				}
+				BYOKRequestParams requestParams = (BYOKRequestParams) params[3];
+				return new KeyPairStore(pathPrivateKey, pathPublicKey, privateKeyPassword, algorithm, requestParams);
+			}
+			else {
+				return new KeyPairStore(pathPrivateKey, pathPublicKey, privateKeyPassword, algorithm);
+			}
 		}
 		else {
 			throw new SecurityException("Param[0] must be String (pathPublicKey)");
@@ -81,7 +99,16 @@ public class KeyPairStoreCache extends AbstractKeystoreCache<KeyPairStore> {
 			byte [] publicKey = (byte[]) params[1];
 			String privateKeyPassword = (String) params[2];
 			String algorithm = (String) params[3];
-			return new KeyPairStore(privateKey, publicKey, privateKeyPassword, algorithm);
+			if(params.length==5){
+				if( ! (params[4] instanceof BYOKRequestParams) ){
+					throw new SecurityException("Param[4] must be BYOKRequestParams");
+				}
+				BYOKRequestParams requestParams = (BYOKRequestParams) params[3];
+				return new KeyPairStore(privateKey, publicKey, privateKeyPassword, algorithm, requestParams);
+			}
+			else {
+				return new KeyPairStore(privateKey, publicKey, privateKeyPassword, algorithm);
+			}
 		}
 		else {
 			throw new SecurityException("Param[0] must be byte[] (privateKey)");

@@ -879,11 +879,14 @@ public class OpenSPCoop2Properties {
 			
 			this.getHSMConfig();
 			this.isHSMConfigRequired();
-			this.isHSMConfig_uniqueProviderInstance();
+			this.isHSMConfigUniqueProviderInstance();
 			
 			this.getOCSPConfig();
 			this.isOCSPConfigRequired();
 			this.isOCSPConfigLoadDefault();
+			
+			this.getBYOKConfig();
+			this.isBYOKConfigRequired();
 			
 			this.getHttpUserAgent();
 			this.getHttpServer();
@@ -9920,27 +9923,27 @@ public class OpenSPCoop2Properties {
 		return this.isHSMConfigRequired;
 	}
 	
-	private Boolean isHSMConfig_uniqueProviderInstance= null;
-	public boolean isHSMConfig_uniqueProviderInstance(){
-		if(this.isHSMConfig_uniqueProviderInstance==null){
+	private Boolean isHSMConfigUniqueProviderInstance= null;
+	public boolean isHSMConfigUniqueProviderInstance(){
+		if(this.isHSMConfigUniqueProviderInstance==null){
 			String pName = "org.openspcoop2.pdd.hsm.uniqueProviderInstance";
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
-					this.isHSMConfig_uniqueProviderInstance = Boolean.parseBoolean(value);
+					this.isHSMConfigUniqueProviderInstance = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isHSMConfig_uniqueProviderInstance = true;
+					this.isHSMConfigUniqueProviderInstance = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logError(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isHSMConfig_uniqueProviderInstance = true;
+				this.isHSMConfigUniqueProviderInstance = true;
 			}
 		}
-		return this.isHSMConfig_uniqueProviderInstance;
+		return this.isHSMConfigUniqueProviderInstance;
 	}
 	
 
@@ -10014,6 +10017,58 @@ public class OpenSPCoop2Properties {
 		}
 		return this.isOCSPConfigLoadDefault;
 	}
+	
+	
+	
+	
+	
+	/* ********  BYOK  ******** */
+	
+	private String getBYOKConfig = null;
+	public String getBYOKConfig(){
+		if(this.getBYOKConfig==null){
+			String pName = "org.openspcoop2.pdd.byok.config";
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					if(!"".equals(value)) {
+						this.getBYOKConfig = value;
+					}
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, non verrà abilitato l'engine BYOK errore:"+e.getMessage(),e);
+				this.getBYOKConfig = null;
+			}
+		}
+		return this.getBYOKConfig;
+	}
+	
+	private Boolean isBYOKConfigRequired= null;
+	public boolean isBYOKConfigRequired(){
+		if(this.isBYOKConfigRequired==null){
+			String pName = "org.openspcoop2.pdd.byok.required";
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					this.isBYOKConfigRequired = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isBYOKConfigRequired = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isBYOKConfigRequired = false;
+			}
+		}
+		return this.isBYOKConfigRequired;
+	}
+	
+	
 	
 	
 

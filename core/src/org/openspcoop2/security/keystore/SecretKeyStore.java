@@ -26,6 +26,7 @@ import javax.crypto.SecretKey;
 
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.utils.certificate.SymmetricKeyUtils;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 
 /**
  * SecretKeyStore
@@ -56,22 +57,32 @@ public class SecretKeyStore implements Serializable {
 	}
 	
 	public SecretKeyStore(String secretKeyPath, String algorithm) throws SecurityException{
+		this(secretKeyPath, algorithm, null);
+	}
+	public SecretKeyStore(String secretKeyPath, String algorithm, BYOKRequestParams requestParams) throws SecurityException{
 	
 		this.secretKeyPath = secretKeyPath;
 				
 		this.algorithm = algorithm==null ? SymmetricKeyUtils.ALGO_AES : algorithm;
 		
 		this.secretKeyContent = StoreUtils.readContent("SecretKey", this.secretKeyPath);
+		
+		this.secretKeyContent = StoreUtils.unwrapBYOK(this.secretKeyContent, requestParams);
 			
 	}
 	
 	public SecretKeyStore(byte[] secretKey, String algorithm) throws SecurityException{
+		this(secretKey, algorithm, null);
+	}
+	public SecretKeyStore(byte[] secretKey, String algorithm, BYOKRequestParams requestParams) throws SecurityException{
 
 		try{			
 			if(secretKey==null){
 				throw new SecurityException("Store publicKey non indicato");
 			}
 			this.secretKeyContent = secretKey;
+			
+			this.secretKeyContent = StoreUtils.unwrapBYOK(this.secretKeyContent, requestParams);
 
 			this.algorithm = algorithm==null ? SymmetricKeyUtils.ALGO_AES : algorithm;
 			

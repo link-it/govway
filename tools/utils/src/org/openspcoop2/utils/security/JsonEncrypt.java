@@ -234,8 +234,23 @@ public class JsonEncrypt {
 			throw JsonUtils.convert(this.options.getSerialization(), JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
 		}
 	}
+	public String encrypt(byte[] json) throws UtilsException{
+		try {
+			switch(this.options.getSerialization()) {
+				case JSON: return encryptJson(json);
+				case COMPACT: return encryptCompact(json);
+				default: throw new UtilsException("Unsupported serialization '"+this.options.getSerialization()+"'");
+			}
+		}
+		catch(Exception t) {
+			throw JsonUtils.convert(this.options.getSerialization(), JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
+		}
+	}
 
 	private String encryptCompact(String jsonString) throws Exception {	
+		return encryptCompact(jsonString.getBytes());
+	}
+	private String encryptCompact(byte[] json) throws Exception {	
 		JweHeaders headersBuild = null;
 		if(this.keyAlgorithm!=null) {
 			headersBuild = new JweHeaders(this.keyAlgorithm,this.contentAlgorithm,this.options.isDeflate());
@@ -244,11 +259,14 @@ public class JsonEncrypt {
 			headersBuild = new JweHeaders(this.contentAlgorithm,this.options.isDeflate());
 		}
 		fillJwtHeaders(headersBuild, this.keyAlgorithm);
-		return this.provider.encrypt(jsonString.getBytes(), headersBuild);
+		return this.provider.encrypt(json, headersBuild);
 	}
 
 
 	private String encryptJson(String jsonString) throws Exception {
+		return encryptJson(jsonString.getBytes()); 
+	}
+	private String encryptJson(byte[] json) throws Exception {
 		
 		JweHeaders sharedUnprotectedHeaders = null;
 		if(this.keyAlgorithm!=null) {
@@ -262,10 +280,10 @@ public class JsonEncrypt {
 		JweJsonProducer producer = null;
 		if(sharedUnprotectedHeaders!=null) {
 			protectedHeaders.removeProperty("alg"); // e' in sharedUnprotectedHeaders
-			producer = new JweJsonProducer(protectedHeaders, sharedUnprotectedHeaders, jsonString.getBytes());
+			producer = new JweJsonProducer(protectedHeaders, sharedUnprotectedHeaders, json);
 		}
 		else {
-			producer = new JweJsonProducer(protectedHeaders, jsonString.getBytes());
+			producer = new JweJsonProducer(protectedHeaders, json);
 		}
 		
 		return producer.encryptWith(this.provider);

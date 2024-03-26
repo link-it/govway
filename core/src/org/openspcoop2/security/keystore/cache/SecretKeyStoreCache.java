@@ -22,6 +22,7 @@ package org.openspcoop2.security.keystore.cache;
 
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.SecretKeyStore;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 
 /**
  * SecretKeyStoreCache
@@ -42,6 +43,14 @@ public class SecretKeyStoreCache extends AbstractKeystoreCache<SecretKeyStore> {
 			return createFromPath(key, params);
 		}
 		else if(params.length==2){
+			if(params[0] instanceof String) {
+				return createFromPath(key, params);
+			}
+			else {
+				return createFromByteArray(params);
+			}
+		}
+		else if(params.length==3){
 			return createFromByteArray(params);
 		}
 		else{
@@ -52,7 +61,16 @@ public class SecretKeyStoreCache extends AbstractKeystoreCache<SecretKeyStore> {
 		if(params[0] instanceof String) {
 			String pathSecretKey = key;
 			String algorithm = (String) params[0];
-			return new SecretKeyStore(pathSecretKey, algorithm);
+			if(params.length==2){
+				if( ! (params[1] instanceof BYOKRequestParams) ){
+					throw new SecurityException("Param[1] must be BYOKRequestParams");
+				}
+				BYOKRequestParams requestParams = (BYOKRequestParams) params[1];
+				return new SecretKeyStore(pathSecretKey, algorithm, requestParams);
+			}
+			else {
+				return new SecretKeyStore(pathSecretKey, algorithm);
+			}
 		}
 		else {
 			throw new SecurityException("Param[0] must be String (algorithm)");
@@ -65,7 +83,16 @@ public class SecretKeyStoreCache extends AbstractKeystoreCache<SecretKeyStore> {
 			}
 			byte [] secretKey = (byte[]) params[0];
 			String algorithm = (String) params[1];
-			return new SecretKeyStore(secretKey, algorithm);
+			if(params.length==3){
+				if( ! (params[2] instanceof BYOKRequestParams) ){
+					throw new SecurityException("Param[2] must be BYOKRequestParams");
+				}
+				BYOKRequestParams requestParams = (BYOKRequestParams) params[2];
+				return new SecretKeyStore(secretKey, algorithm, requestParams);
+			}
+			else {
+				return new SecretKeyStore(secretKey, algorithm);
+			}
 		}
 		else {
 			throw new SecurityException("Param[0] must be byte[] (secretKey)");

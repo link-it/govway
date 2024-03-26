@@ -22,6 +22,7 @@ package org.openspcoop2.security.keystore.cache;
 
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.JWKSetStore;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 
 /**
  * JWKSetStoreCache
@@ -42,11 +43,28 @@ public class JWKSetStoreCache extends AbstractKeystoreCache<JWKSetStore> {
 			return new JWKSetStore(path);
 		}
 		else if(params.length==1){
+			if( ! (params[0] instanceof byte[]) && ! (params[0] instanceof BYOKRequestParams) ){
+				throw new SecurityException("Param[0] must be byte[] (store) or BYOKRequestParams");
+			}
+			if((params[0] instanceof byte[])) {
+				byte [] store = (byte[]) params[0];
+				return new JWKSetStore(store);
+			}
+			else {
+				BYOKRequestParams requestParams = (BYOKRequestParams) params[0];
+				return new JWKSetStore(path, requestParams);
+			}
+		}
+		else if(params.length==2){
 			if( ! (params[0] instanceof byte[]) ){
 				throw new SecurityException("Param[0] must be byte[] (store)");
 			}
+			if( ! (params[1] instanceof BYOKRequestParams) ){
+				throw new SecurityException("Param[1] must be BYOKRequestParams");
+			}
 			byte [] store = (byte[]) params[0];
-			return new JWKSetStore(store);
+			BYOKRequestParams requestParams = (BYOKRequestParams) params[1];
+			return new JWKSetStore(store, requestParams);
 		}
 		else{
 			throw new SecurityException("Params [lenght:"+params.length+"] not supported");
