@@ -69,6 +69,7 @@ import org.openspcoop2.pdd.core.token.parser.TipologiaClaimsNegoziazione;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceConfig;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceManager;
+import org.openspcoop2.pdd.logger.transazioni.TransazioneUtilities;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.ChannelSecurityToken;
@@ -845,6 +846,8 @@ public class FileTraceTest {
 				context,
 				null,
 				faseTracciamento);
+		
+		Busta busta = TransazioneUtilities.convertToBusta(transazioneDTO);
 						
 		if(log4j) {
 			
@@ -857,7 +860,7 @@ public class FileTraceTest {
 			 * */
 			
 			System.out.println("Iterazione master ...");
-			manager.invoke(tipoPdD, context, requestInfo, faseTracciamento);	
+			manager.invoke(tipoPdD, context, requestInfo, busta, faseTracciamento);	
 			Utilities.sleep(500);
 			System.out.println("Iterazione master ok");
 			
@@ -884,7 +887,7 @@ public class FileTraceTest {
 			int numeroInvocazioni = 2;
 			for (int i = 0; i < numeroInvocazioni; i++) {
 				System.out.println("Iterazione "+(i+1)+"/"+numeroInvocazioni+" ...");
-				manager.invoke(tipoPdD, context, requestInfo, faseTracciamento);	
+				manager.invoke(tipoPdD, context, requestInfo, busta, faseTracciamento);	
 				Utilities.sleep(500);
 				System.out.println("Iterazione "+(i+1)+"/"+numeroInvocazioni+" ok");
 			}
@@ -906,7 +909,7 @@ public class FileTraceTest {
 		else {
 		
 			Map<String, String> outputMap = new HashMap<>();
-			manager.invoke(tipoPdD, context, requestInfo, faseTracciamento, outputMap);
+			manager.invoke(tipoPdD, context, requestInfo, busta, faseTracciamento, outputMap);
 			
 			int res = outputMap.size();
 			System.out.println("Terminato con "+res+" risultati");

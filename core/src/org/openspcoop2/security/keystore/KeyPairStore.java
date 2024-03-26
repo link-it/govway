@@ -29,6 +29,7 @@ import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.utils.certificate.JWKPrivateKeyConverter;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyUtils;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 
 /**
  * KeyPairStore
@@ -67,6 +68,9 @@ public class KeyPairStore implements Serializable {
 	}
 	
 	public KeyPairStore(String privateKeyPath, String publicKeyPath, String privateKeyPassword, String algorithm) throws SecurityException{
+		this(privateKeyPath, publicKeyPath, privateKeyPassword, algorithm, null);
+	}
+	public KeyPairStore(String privateKeyPath, String publicKeyPath, String privateKeyPassword, String algorithm, BYOKRequestParams requestParams) throws SecurityException{
 
 		this.privateKeyPath = privateKeyPath;
 		this.publicKeyPath = publicKeyPath;
@@ -75,17 +79,23 @@ public class KeyPairStore implements Serializable {
 		this.algorithm = algorithm==null ? KeyUtils.ALGO_RSA : algorithm;
 		
 		this.privateKeyContent = StoreUtils.readContent("PrivateKey", this.privateKeyPath);
+		this.privateKeyContent = StoreUtils.unwrapBYOK(this.privateKeyContent, requestParams);
+		
 		this.publicKeyContent = StoreUtils.readContent("PublicKey", this.publicKeyPath);
 		
 	}
 	
 	public KeyPairStore(byte[] privateKey, byte[] publicKey, String privateKeyPassword, String algorithm) throws SecurityException{
+		this(privateKey, publicKey, privateKeyPassword, algorithm, null);
+	}
+	public KeyPairStore(byte[] privateKey, byte[] publicKey, String privateKeyPassword, String algorithm, BYOKRequestParams requestParams) throws SecurityException{
 
 		try{
 			if(privateKey==null){
 				throw new SecurityException("Store privateKey non indicato");
 			}
 			this.privateKeyContent = privateKey;
+			this.privateKeyContent = StoreUtils.unwrapBYOK(this.privateKeyContent, requestParams);
 			
 			if(publicKey==null){
 				throw new SecurityException("Store publicKey non indicato");

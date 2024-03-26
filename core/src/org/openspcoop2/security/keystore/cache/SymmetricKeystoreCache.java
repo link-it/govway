@@ -22,6 +22,7 @@ package org.openspcoop2.security.keystore.cache;
 
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.SymmetricKeystore;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 
 /**
  * SymmetricKeystoreCache
@@ -49,6 +50,22 @@ public class SymmetricKeystoreCache extends AbstractKeystoreCache<SymmetricKeyst
 			String keyValue = key;
 			String algoritmo = (String) params[1];
 			return new SymmetricKeystore(alias,keyValue,algoritmo);
+		}
+		else if(params.length==3){
+			if( ! (params[0] instanceof String) ){
+				throw new SecurityException("Param[0] must be String (alias)");
+			}
+			if( ! (params[1] instanceof String) ){
+				throw new SecurityException("Param[1] must be String (algoritmo)");
+			}
+			if( ! (params[2] instanceof BYOKRequestParams) ){
+				throw new SecurityException("Param[2] must be BYOKRequestParams");
+			}
+			String alias = (String) params[0];
+			String keyValue = key;
+			String algoritmo = (String) params[1];
+			BYOKRequestParams requestParams = (BYOKRequestParams) params[2];
+			return new SymmetricKeystore(alias,keyValue,algoritmo,requestParams);
 		}
 		else{
 			throw new SecurityException("Params [lenght:"+params.length+"] not supported");

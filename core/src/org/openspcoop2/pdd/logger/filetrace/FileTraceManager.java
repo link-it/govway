@@ -35,6 +35,7 @@ import org.openspcoop2.pdd.core.token.InformazioniNegoziazioneToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -228,10 +229,10 @@ public class FileTraceManager {
 
 	}
 	
-	public void invoke(TipoPdD tipoPdD, Context context, RequestInfo requestInfo, FaseTracciamento faseTracciamento) throws UtilsException {
-		this.invoke(tipoPdD, context, requestInfo, faseTracciamento, null);
+	public void invoke(TipoPdD tipoPdD, Context context, RequestInfo requestInfo, Busta busta, FaseTracciamento faseTracciamento) throws UtilsException {
+		this.invoke(tipoPdD, context, requestInfo, busta, faseTracciamento, null);
 	}
-	public void invoke(TipoPdD tipoPdD, Context context, RequestInfo requestInfo, FaseTracciamento faseTracciamento, Map<String, String> outputMap) throws UtilsException {
+	public void invoke(TipoPdD tipoPdD, Context context, RequestInfo requestInfo, Busta busta, FaseTracciamento faseTracciamento, Map<String, String> outputMap) throws UtilsException {
 		List<String> topic = null;
 		Map<String, Topic> topicMap = null;
 		switch (tipoPdD) {
@@ -261,7 +262,9 @@ public class FileTraceManager {
 				}*/
 			}
 			
-			invoke(topicInvoke, requestInfo, outputMap);
+			invoke(topicInvoke, 
+					requestInfo, context, busta,
+					outputMap);
 		}
 	}
 	
@@ -322,10 +325,12 @@ public class FileTraceManager {
 		return true;
 	}
 	
-	private void invoke(List<Topic> topicInvoke, RequestInfo requestInfo, Map<String, String> outputMap) throws UtilsException {
+	private void invoke(List<Topic> topicInvoke, 
+			RequestInfo requestInfo, Context context, Busta busta,
+			Map<String, String> outputMap) throws UtilsException {
 		if(topicInvoke!=null && !topicInvoke.isEmpty()) {
 			
-			this.resolveProperties(requestInfo);
+			this.resolveProperties(requestInfo, context, busta);
 			
 			for (Topic topicConfig : topicInvoke) {
 				String value = this.resolve(topicConfig.getFormat());
@@ -355,12 +360,12 @@ public class FileTraceManager {
 		}
 	}
 		
-	private void resolveProperties(RequestInfo requestInfo) throws UtilsException {
+	private void resolveProperties(RequestInfo requestInfo, Context context, Busta busta) throws UtilsException {
 		
 		Map<String, String> propertiesEncryptionModes = this.config.getPropertiesEncryptionMode();
 		FileTraceEncrypt encrypt = null;
 		if(!propertiesEncryptionModes.isEmpty()) {
-			encrypt = new FileTraceEncrypt(requestInfo);
+			encrypt = new FileTraceEncrypt(this.log, requestInfo, context, busta);
 		}
 		
 		List<String> properties = this.config.getPropertiesSortKeys();

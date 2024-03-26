@@ -2026,4 +2026,34 @@ public class TransazioneUtilities {
 		return timeStart;
 	}
 	
+	
+	
+	public static Busta convertToBusta(Transazione transazioneDTO) {
+		Busta busta = new Busta(transazioneDTO.getProtocollo());
+		
+		busta.setTipoMittente(transazioneDTO.getTipoSoggettoFruitore());
+		busta.setMittente(transazioneDTO.getNomeSoggettoFruitore());
+		busta.setIdentificativoPortaMittente(transazioneDTO.getIdportaSoggettoFruitore());
+		busta.setIndirizzoMittente(transazioneDTO.getIndirizzoSoggettoFruitore());
+		
+		busta.setTipoDestinatario(transazioneDTO.getTipoSoggettoErogatore());
+		busta.setDestinatario(transazioneDTO.getNomeSoggettoErogatore());
+		busta.setIdentificativoPortaDestinatario(transazioneDTO.getIdportaSoggettoErogatore());
+		busta.setIndirizzoDestinatario(transazioneDTO.getIndirizzoSoggettoErogatore());
+		
+		busta.setTipoServizio(transazioneDTO.getTipoServizio());
+		busta.setServizio(transazioneDTO.getNomeServizio());
+		busta.setVersioneServizio(transazioneDTO.getVersioneServizio());
+		busta.setAzione(transazioneDTO.getAzione());
+		
+		busta.setID(transazioneDTO.getIdMessaggioRichiesta());
+		busta.setRiferimentoMessaggio(transazioneDTO.getIdMessaggioRisposta());
+		
+		busta.setCollaborazione(transazioneDTO.getIdCollaborazione());
+		
+		busta.setServizioApplicativoFruitore(transazioneDTO.getServizioApplicativoFruitore());
+		busta.setServizioApplicativoErogatore(transazioneDTO.getServizioApplicativoErogatore());
+		
+		return busta;
+	}
 }

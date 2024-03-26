@@ -1698,7 +1698,9 @@ public class TracciamentoManager {
 				throw new CoreException("Test Manually Exception generated (fileTrace) in phase '"+this.fase+"'");
 			}
 			
-			fileTraceManager.invoke(info.getTipoPorta(), info.getContext(), requestInfo, this.fase);
+			fileTraceManager.invoke(info.getTipoPorta(), 
+					info.getContext(), requestInfo, TransazioneUtilities.convertToBusta(transazioneDTO),
+					this.fase);
 						
 		}catch (Throwable e) {
 			String error = "["+idTransazione+"] File trace fallito: "+e.getMessage();

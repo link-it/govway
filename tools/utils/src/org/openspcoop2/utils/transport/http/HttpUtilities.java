@@ -55,6 +55,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
@@ -68,7 +69,9 @@ import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.random.RandomGenerator;
 import org.openspcoop2.utils.regexp.RegExpUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.slf4j.Logger;
 
 
 /**
@@ -2270,12 +2273,19 @@ public class HttpUtilities {
 					trustManagerFactory.init(params);
 					tm = trustManagerFactory.getTrustManagers();
 				}
-				
-				if(request.getOcspValidator()!=null) {
-					tm = OCSPTrustManager.wrap(tm, request.getOcspValidator());
-					ocspTrustManager = OCSPTrustManager.read(tm);
-					request.getOcspValidator().setOCSPTrustManager(ocspTrustManager);
+
+				IOCSPValidator ocspValidator = request.getOcspValidator();
+				if(truststore!=null && ocspValidator==null && request.getOcspPolicy()!=null && StringUtils.isNotEmpty(request.getOcspPolicy())) {
+					Logger log = LoggerWrapperFactory.getLogger(HttpUtilities.class);
+					IOCSPValidatorBuilder builder = (IOCSPValidatorBuilder) new Loader().newInstance("org.openspcoop2.utils.certificate.ocsp.OCSPValidatorBuilderImpl");
+					ocspValidator = builder.newInstance(log, truststore, request.getCrlPath(), request.getOcspPolicy());
 				}
+				if(ocspValidator!=null) {
+					tm = OCSPTrustManager.wrap(tm, ocspValidator);
+					ocspTrustManager = OCSPTrustManager.read(tm);
+					ocspValidator.setOCSPTrustManager(ocspTrustManager);
+				}
+
 				
 				sslContext = SSLContext.getInstance(SSLUtilities.getSafeDefaultProtocol()); // ritorna l'ultima versione disponibile
 				
@@ -2352,11 +2362,18 @@ public class HttpUtilities {
 				}
 			}
 
-			if(request.getContentType()!=null){
-				httpConn.setRequestProperty(HttpConstants.CONTENT_TYPE,request.getContentType());
+			String contentType = request.getContentType();
+			if(contentType!=null){
+				httpConn.setRequestProperty(HttpConstants.CONTENT_TYPE,contentType);
 			}
 			else if(request.getContent()!=null){
-				throw new UtilsException("Content require a Content Type");
+				String ct = request.getHeaderFirstValue(HttpConstants.CONTENT_TYPE);
+				if(ct==null || StringUtils.isEmpty(ct)) {
+					throw new UtilsException("Content require a Content Type");
+				}
+				else {
+					contentType = ct; // negli header verra impostato sotto
+				}
 			}
 			
 			httpConn.setConnectTimeout(request.getConnectTimeout());
@@ -2401,9 +2418,9 @@ public class HttpUtilities {
 			if(sendThrottling) {
 				httpConn.setChunkedStreamingMode(0);
 			}
-			setStream(httpConn, request.getMethod(), request.getContentType());
+			setStream(httpConn, request.getMethod(), contentType);
 
-			HttpBodyParameters httpContent = new  HttpBodyParameters(request.getMethod(), request.getContentType());
+			HttpBodyParameters httpContent = new  HttpBodyParameters(request.getMethod(), contentType);
 			// Spedizione byte
 			if(httpContent.isDoOutput() && request.getContent() != null){
 				OutputStream out = httpConn.getOutputStream();

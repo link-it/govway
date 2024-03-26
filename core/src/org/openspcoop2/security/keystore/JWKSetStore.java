@@ -24,6 +24,7 @@ import java.io.Serializable;
 
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.utils.certificate.JWKSet;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 import org.openspcoop2.utils.resources.Charset;
 
 /**
@@ -44,7 +45,7 @@ public class JWKSetStore implements Serializable {
 	private String jwkSetContent;
 
 	private transient JWKSet jwkSet;
-
+	
 	@Override
 	public String toString() {
 		StringBuilder bf = new StringBuilder();
@@ -53,10 +54,18 @@ public class JWKSetStore implements Serializable {
 	}
 	
 	public JWKSetStore(String path) throws SecurityException{
+		this(path, null);
+	}
+	public JWKSetStore(String path, BYOKRequestParams requestParams) throws SecurityException{
 
 		this.jwkSetPath = path;
 						
 		byte [] archive = StoreUtils.readContent("FilePath", this.jwkSetPath);
+		try {
+			archive = readBytes(archive, requestParams);
+		}catch(Exception e){
+			throw new SecurityException(e.getMessage(),e);
+		}
 		try {
 			this.jwkSetContent = new String(archive, Charset.UTF_8.getValue());
 		}catch(Exception e){
@@ -66,12 +75,16 @@ public class JWKSetStore implements Serializable {
 	}
 	
 	public JWKSetStore(byte[] archive) throws SecurityException{
+		this(archive, null);
+	}
+	public JWKSetStore(byte[] archiveParam, BYOKRequestParams requestParams) throws SecurityException{
 
 		try{
-			if(archive==null){
+			if(archiveParam==null){
 				throw new SecurityException("Store non indicato");
 			}
 			
+			byte [] archive = readBytes(archiveParam, requestParams);
 			this.jwkSetContent = new String(archive, Charset.UTF_8.getValue());
 			
 		}catch(Exception e){
@@ -80,6 +93,13 @@ public class JWKSetStore implements Serializable {
 		
 	}
 
+	private byte[] readBytes(byte[] archive, BYOKRequestParams requestParams) throws SecurityException {
+		if(requestParams!=null) {
+			return StoreUtils.unwrapBYOK(archive, requestParams);
+		}
+		return archive;
+	}
+	
 	public String getJwkSetPath() {
 		return this.jwkSetPath;
 	}
@@ -98,4 +118,5 @@ public class JWKSetStore implements Serializable {
 			this.jwkSet = new JWKSet(this.jwkSetContent);
 		}
 	}
+	
 }

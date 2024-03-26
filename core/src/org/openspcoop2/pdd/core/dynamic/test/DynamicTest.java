@@ -582,6 +582,32 @@ public class DynamicTest {
 		}
 		
 		
+		expr = "VALORE_INIZIALE_STATICO_"+prefix + "{context:TEST1}"+"_VALORE_FINALE_STATICO";
+		DynamicUtils.validate("testPddContext", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testPddContext", expr, dynamicMap, pddContext);
+		System.out.println("testPddContext: "+value+"\n\n");
+		expected = "VALORE_INIZIALE_STATICO_"+"VALORE DI ESEMPIO"+"_VALORE_FINALE_STATICO";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = "VALORE_INIZIALE_STATICO_?"+prefix + "{context:TEST1}"+"_VALORE_FINALE_STATICO?";
+		DynamicUtils.validate("testPddContext", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testPddContext", expr, dynamicMap, pddContext);
+		System.out.println("testPddContext: "+value+"\n\n");
+		expected = "VALORE_INIZIALE_STATICO_?"+"VALORE DI ESEMPIO"+"_VALORE_FINALE_STATICO?";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = "VALORE_INIZIALE_STATICO_$"+prefixOptional + "{context:TEST1}"+"_VALORE_FINALE_STATICO$?$";
+		DynamicUtils.validate("testPddContext", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testPddContext", expr, dynamicMap, pddContext);
+		System.out.println("testPddContext: "+value+"\n\n");
+		expected = "VALORE_INIZIALE_STATICO_$"+"VALORE DI ESEMPIO"+"_VALORE_FINALE_STATICO$?$";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
 		
 		expr = prefix + "{header:Header1}";
 		DynamicUtils.validate("testHeader", expr, addPrefixError);
