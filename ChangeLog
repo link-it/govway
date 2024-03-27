@@ -1,3 +1,12 @@
+2024-03-27  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Risolto Bug OP-1717
+	I file relativi ai profili di interoperabilità (es. modipa_local.properties) presenti nella configurazione esterna (es. /etc/govway) 
+	non venivano configurati correttamente dall'installer se erano presenti archivi patch al suo interno.
+	Gli archivi patch relativi ai profili di interoperabilità (es. openspcoop2_modipa-protocol-<version>.jar) non venivanon configurati nel file di proprietà interno (es. modipa.properties) 
+	per contenere la proprietà relativa alla directory di configurazione esterna indicata nell'installer (es. 'org.openspcoop2.protocol.modipa.confDirectory=/etc/govway').
+
 2024-03-26  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, Utils]
