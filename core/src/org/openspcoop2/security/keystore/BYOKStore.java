@@ -69,10 +69,10 @@ public class BYOKStore implements Serializable {
 			if(instance.getHttpRequest()!=null) {
 				HttpResponse httpResponse = HttpUtilities.httpInvoke(instance.getHttpRequest());
 				if(httpResponse==null || httpResponse.getContent()==null) {
-					throw new SecurityException("Store '"+this.config.getLabel()+"' unavailable");
+					throw new SecurityException("Store '"+this.config.getLabel()+"' (endpoint:"+instance.getHttpRequest().getUrl()+") unavailable");
 				}
 				if(httpResponse.getResultHTTPOperation()!=200) {
-					throw new SecurityException("Retrieve store '"+this.config.getLabel()+"' failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
+					throw new SecurityException("Retrieve store '"+this.config.getLabel()+"' (endpoint:"+instance.getHttpRequest().getUrl()+") failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
 				}
 				this.storeBytes = httpResponse.getContent();
 			}

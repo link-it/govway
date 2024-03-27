@@ -426,6 +426,71 @@ Esempi:
 		<basename property="patchLibAddJar" file="${patchLibAdd}"/>
 		<dirname property="patchLibAddJar.dirname" file="${patchLibAdd}"/>
 		<echo message="addOrReplace '${patchLibAddJar}'"/>
+
+		<delete dir="${build}/patchProtocolPropertiesAdjunct" includeemptydirs="true" verbose="true" />
+		<mkdir dir="${build}/patchProtocolPropertiesAdjunct"/>
+		<var name="pathDirContenenteJar" value="${patchLibAddJar.dirname}" />
+		<if>
+			<matches string="${patchLibAddJar}" pattern="openspcoop2_trasparente-protocol.+.jar"/>
+			<then>
+				<var name="pathDirContenenteJar" value="${build}/patchProtocolPropertiesAdjunct" />
+				<antcall target="-patch-setup-workDir-protocollo">
+					<param name="pathDirContenenteJar" value="${pathDirContenenteJar}"/>
+					<param name="patchProtocolName" value="trasparente"/>
+					<param name="patchLibAddJar.dirname" value="${patchLibAddJar.dirname}"/>
+					<param name="patchLibAddJar" value="${patchLibAddJar}"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<matches string="${patchLibAddJar}" pattern="openspcoop2_modipa-protocol.+.jar"/>
+			<then>
+				<var name="pathDirContenenteJar" value="${build}/patchProtocolPropertiesAdjunct" />
+				<antcall target="-patch-setup-workDir-protocollo">
+					<param name="pathDirContenenteJar" value="${pathDirContenenteJar}"/>
+					<param name="patchProtocolName" value="modipa"/>
+					<param name="patchLibAddJar.dirname" value="${patchLibAddJar.dirname}"/>
+					<param name="patchLibAddJar" value="${patchLibAddJar}"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<matches string="${patchLibAddJar}" pattern="openspcoop2_spcoop-protocol.+.jar"/>
+			<then>
+				<var name="pathDirContenenteJar" value="${build}/patchProtocolPropertiesAdjunct" />
+				<antcall target="-patch-setup-workDir-protocollo">
+					<param name="pathDirContenenteJar" value="${pathDirContenenteJar}"/>
+					<param name="patchProtocolName" value="spcoop"/>
+					<param name="patchLibAddJar.dirname" value="${patchLibAddJar.dirname}"/>
+					<param name="patchLibAddJar" value="${patchLibAddJar}"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<matches string="${patchLibAddJar}" pattern="openspcoop2_as4-protocol.+.jar"/>
+			<then>
+				<var name="pathDirContenenteJar" value="${build}/patchProtocolPropertiesAdjunct" />
+				<antcall target="-patch-setup-workDir-protocollo">
+					<param name="pathDirContenenteJar" value="${pathDirContenenteJar}"/>
+					<param name="patchProtocolName" value="as4"/>
+					<param name="patchLibAddJar.dirname" value="${patchLibAddJar.dirname}"/>
+					<param name="patchLibAddJar" value="${patchLibAddJar}"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<matches string="${patchLibAddJar}" pattern="openspcoop2_sdi-protocol.+.jar"/>
+			<then>
+				<var name="pathDirContenenteJar" value="${build}/patchProtocolPropertiesAdjunct" />
+				<antcall target="-patch-setup-workDir-protocollo">
+					<param name="pathDirContenenteJar" value="${pathDirContenenteJar}"/>
+					<param name="patchProtocolName" value="sdi"/>
+					<param name="patchLibAddJar.dirname" value="${patchLibAddJar.dirname}"/>
+					<param name="patchLibAddJar" value="${patchLibAddJar}"/>
+				</antcall>
+			</then>
+		</if>
+
 		<if>
 			<matches string="${patchLibAddJar}" pattern="openspcoop2_.+_RELEASE.jar"/>
 			<then>
@@ -433,7 +498,7 @@ Esempi:
 					<equals arg1="${patchTmpArchiveType}" arg2="ear"/>
 					<then>
 						<copy todir="${patchTmpArchive}/lib" overwrite="true">
-							<fileset dir="${patchLibAddJar.dirname}">
+							<fileset dir="${pathDirContenenteJar}">
 							    	<include name="${patchLibAddJar}"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -441,7 +506,7 @@ Esempi:
 					</then>
 					<else>
 						<copy todir="${patchTmpArchive}/WEB-INF/lib" overwrite="true">
-							<fileset dir="${patchLibAddJar.dirname}">
+							<fileset dir="${pathDirContenenteJar}">
 				                                <include name="${patchLibAddJar}"/>
 				                        </fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -454,14 +519,14 @@ Esempi:
 					<equals arg1="${patchTmpArchiveType}" arg2="ear"/>
 					<then>
 						<copy todir="${patchTmpArchive}/lib" overwrite="true">
-							<fileset dir="${patchLibAddJar.dirname}">
+							<fileset dir="${pathDirContenenteJar}">
 							    	<include name="${patchLibAddJar}"/>
 							</fileset>
 						</copy>
 					</then>
 					<else>
 						<copy todir="${patchTmpArchive}/WEB-INF/lib" overwrite="true">
-							<fileset dir="${patchLibAddJar.dirname}">
+							<fileset dir="${pathDirContenenteJar}">
 				                                <include name="${patchLibAddJar}"/>
 				                        </fileset>
 						</copy>
@@ -469,6 +534,31 @@ Esempi:
 				</if>
 			</else>
 		</if>
+	</target>
+
+	<target name="-patch-setup-workDir-protocollo">
+
+		<echo message="Impostazione confDirectory in patch archive jar '${patchLibAddJar}' (sourceDir:${patchLibAddJar.dirname})" />
+
+		<delete dir="${pathDirContenenteJar}/${patchProtocolName}" includeemptydirs="true" verbose="true" />	
+		<unzip src="${patchLibAddJar.dirname}/${patchLibAddJar}" dest="${pathDirContenenteJar}/${patchProtocolName}"/>
+
+		<concat destfile="${pathDirContenenteJar}/${patchProtocolName}/${patchProtocolName}.properties" append="yes" >
+
+# ----- Personalizzazione Setup GovWay (confDirectory) -------------
+		</concat>
+
+		<replace file="${pathDirContenenteJar}/${patchProtocolName}/${patchProtocolName}.properties" token="/etc/govway" value="${work_dir}"/>
+
+		<antcall target="set_property">
+			<param name="file" value="${pathDirContenenteJar}/${patchProtocolName}/${patchProtocolName}.properties"/>
+			<param name="token" value="org.openspcoop2.protocol.${patchProtocolName}.confDirectory"/>
+			<param name="value" value="${work_dir}"/>
+		</antcall>
+
+		<delete file="${pathDirContenenteJar}/${patchLibAddJar}"/>
+		<jar destfile="${pathDirContenenteJar}/${patchLibAddJar}" basedir="${pathDirContenenteJar}/${patchProtocolName}"/>
+		<delete dir="${pathDirContenenteJar}/${patchProtocolName}"/>
 	</target>
 
 	<target name="-patch-lib-remove">
