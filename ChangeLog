@@ -1,3 +1,12 @@
+2024-04-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1719
+	(https://github.com/link-it/govway/issues/160)
+	Utilizzando una architettura con database distinti per configurazione e runtime si otteneva un errore non bloccante riportato nei log del database, ad esempio su postgresql:
+	"ERROR:  relation "db_info_console" does not exist at character 15
+	 STATEMENT:  select * from db_info_console order by id DESC"
+
 2024-03-27  Andrea Poli <apoli@link.it>
 
 	* [InstallerVersioneBinaria]
