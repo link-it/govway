@@ -26,7 +26,9 @@ import java.security.Security;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -52,6 +54,7 @@ import javax.management.MBeanOperationInfo;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ReflectionException;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -70,6 +73,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.manifest.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
@@ -317,161 +321,138 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		// VERSIONE_PDD
 		MBeanOperationInfo versionePddOp = new MBeanOperationInfo(VERSIONE_PDD,"Visualizza la versione di GovWay",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 		
 		// VERSIONE_BASE_DATI
 		MBeanOperationInfo versioneBaseDatiOp = new MBeanOperationInfo(VERSIONE_BASE_DATI,"Visualizza la versione della base dati",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 		
 		// VERSIONE_JAVA
 		MBeanOperationInfo versioneJavaOp = new MBeanOperationInfo(VERSIONE_JAVA,"Visualizza la versione di Java",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 		
 		// VENDOR_JAVA
 		MBeanOperationInfo vendorJavaOp = new MBeanOperationInfo(VENDOR_JAVA,"Visualizza le informazioni sul vendor di Java",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 		
 		// TIPO_DATABASE
 		MBeanOperationInfo versioneTipoDatabaseOp = new MBeanOperationInfo(TIPO_DATABASE,"Visualizza il tipo di Database",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 		
 		// INFORMAZIONI_DATABASE
 		MBeanOperationInfo informazioniDatabaseOp = new MBeanOperationInfo(INFORMAZIONI_DATABASE,"Visualizza le informazioni sul Database",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 		
 		// INFORMAZIONI_SSL
 		MBeanOperationInfo informazioniSSLOp = new MBeanOperationInfo(INFORMAZIONI_SSL,"Visualizza le informazioni sulle connessioni SSL",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 		
 		// INFORMAZIONI_COMPLETE_SSL
 		MBeanOperationInfo informazioniCompleteSSLOp = new MBeanOperationInfo(INFORMAZIONI_COMPLETE_SSL,"Visualizza le informazioni complete di algoritmi sulle connessioni SSL",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 		
 		// INFORMAZIONI_CRYPTOGRAPHY_KEY_LENGTH
 		MBeanOperationInfo informazioniCRYPTOOp = new MBeanOperationInfo(INFORMAZIONI_CRYPTOGRAPHY_KEY_LENGTH,"Visualizza le informazioni sulla lunghezza delle chiavi di cifratura",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 		
 		// INFORMAZIONI_CHARSET
 		MBeanOperationInfo informazioniCHARSETOp = new MBeanOperationInfo(INFORMAZIONI_CHARSET,"Visualizza le informazioni sul Charset",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 		
 		// INFORMAZIONI_INTERNAZIONALIZZAZIONE
 		MBeanOperationInfo informazioniINTERNAZIONALIZZAZIONEOp = new MBeanOperationInfo(INFORMAZIONI_INTERNAZIONALIZZAZIONE,"Visualizza le informazioni sull'internazionalizzazione",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 		
 		// INFORMAZIONI_COMPLETE_INTERNAZIONALIZZAZIONE
 		MBeanOperationInfo informazioniCompleteINTERNAZIONALIZZAZIONEOp = new MBeanOperationInfo(INFORMAZIONI_COMPLETE_INTERNAZIONALIZZAZIONE,"Visualizza le informazioni complete sull'internazionalizzazione",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 		
 		// INFORMAZIONI_TIMEZONE
 		MBeanOperationInfo informazioniTIMEZONEOp = new MBeanOperationInfo(INFORMAZIONI_TIMEZONE,"Visualizza le informazioni sul TimeZone",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 		
 		// INFORMAZIONI_COMPLETE_TIMEZONE
 		MBeanOperationInfo informazioniCompleteTIMEZONEOp = new MBeanOperationInfo(INFORMAZIONI_COMPLETE_TIMEZONE,"Visualizza le informazioni complete sul TimeZone",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 		
 		// INFORMAZIONI_PROPRIETA_JAVA_NETWORKING
 		MBeanOperationInfo informazioniProprietaJavaNetworkingOp = new MBeanOperationInfo(INFORMAZIONI_PROPRIETA_JAVA_NETWORKING,"Visualizza le proprietà java riguardanti il networking",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 		
 		// INFORMAZIONI_COMPLETE_PROPRIETA_JAVA_NETWORKING
 		MBeanOperationInfo informazioniCompleteProprietaJavaNetworkingOp = new MBeanOperationInfo(INFORMAZIONI_COMPLETE_PROPRIETA_JAVA_NETWORKING,"Visualizza tutte le proprietà java riguardanti il networking",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 		
 		// INFORMAZIONI_PROPRIETA_JAVA_ALTRO
 		MBeanOperationInfo informazioniProprietaJavaAltroOp = new MBeanOperationInfo(INFORMAZIONI_PROPRIETA_JAVA_ALTRO,"Visualizza le proprietà java escluse quelle riguardanti il networking",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 		
 		// INFORMAZIONI_PROPRIETA_SISTEMA
 		MBeanOperationInfo informazioniProprietaSistemaOp = new MBeanOperationInfo(INFORMAZIONI_PROPRIETA_SISTEMA,"Visualizza le proprietà di sistema",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 
 		// MESSAGE_FACTORY
 		MBeanOperationInfo messageFactoryOp = new MBeanOperationInfo(MESSAGE_FACTORY,"Visualizza la MessageFactory utilizzata dal prodotto",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 		
 		// DIRECTORY_CONFIGURAZIONE
 		MBeanOperationInfo confDirectoryOp = new MBeanOperationInfo(DIRECTORY_CONFIGURAZIONE,"Visualizza la directory di configurazione",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 				
 		// PROTOCOLS
 		MBeanOperationInfo protocolsOp = new MBeanOperationInfo(PROTOCOLS,"Visualizza i protocolli installati",
 						null,
-						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 
 		// FILE_TRACE_CONFIG
 		MBeanOperationInfo fileTraceConfigOp = new MBeanOperationInfo(FILE_TRACE_CONFIG,"Visualizza il path della configurazione del FileTrace",
 				null,
-				//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 				String.class.getName(),
 				MBeanOperationInfo.ACTION);
 		
 		// FILE_TRACE_UPDATE
 		MBeanOperationInfo fileTraceUpdateOp = new MBeanOperationInfo(FILE_TRACE_UPDATE,"Aggiorna la configurazione del FileTrace",
 				null,
-				//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 				String.class.getName(),
 				MBeanOperationInfo.ACTION);
 		
@@ -512,9 +493,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 
 	public String getVersionePdD(){
 		try{
-			String versione = OpenSPCoop2Properties.getVersionePdD(this.openspcoopProperties);
-			return versione;
-		}catch(Throwable e){
+			return OpenSPCoop2Properties.getVersionePdD(this.openspcoopProperties);
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -522,9 +502,10 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 
 	public String getVersioneBaseDati(){
 		try{
-			VersioneBaseDatiChecker versioneBaseDatiChecker = new VersioneBaseDatiChecker(this.openspcoopProperties);
+			boolean isNodoRun = true;
+			VersioneBaseDatiChecker versioneBaseDatiChecker = new VersioneBaseDatiChecker(this.openspcoopProperties, isNodoRun);
 			return Utilities.execute(5, versioneBaseDatiChecker);
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -536,9 +517,9 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			if(v!=null && !"".equals(v)){
 				return v;
 			}
-			throw new Exception("Versione di Java non disponibile");
+			throw new CoreException("Versione di Java non disponibile");
 
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -569,9 +550,9 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				return name;
 			}
 			
-			throw new Exception("Vendor Java non disponibile");
+			throw new CoreException("Vendor Java non disponibile");
 
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -582,9 +563,9 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			if(this.openspcoopProperties!=null){
 				return this.openspcoopProperties.getDatabaseType();
 			}
-			throw new Exception("Tipo di Database non disponibile");
+			throw new CoreException("Tipo di Database non disponibile");
 
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -594,33 +575,37 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		try{
 			InformazioniDatabaseChecker versioneBaseDatiChecker = new InformazioniDatabaseChecker(this.openspcoopProperties);
 			return Utilities.execute(5, versioneBaseDatiChecker);
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
 	
 	public Map<String, String> getInformazioniAltriDatabase(){
+		Map<String, String> map = null;
 		try{
 			if(DataSourceFactory.sizeDatasources()>0) {
 				List<String> jndiNames = DataSourceFactory.getJndiNameDatasources();
 				if(jndiNames!=null && !jndiNames.isEmpty()) {
-					Map<String, String> map = new HashMap<>();
+					map = new HashMap<>();
 					for (String jndiName : jndiNames) {
-						try{
-							map.put(jndiName, DataSourceFactory.getInstance(jndiName).getInformazioniDatabase());
-						}catch(Throwable e){
-							this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
-							map.put(jndiName, JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage());
-						}
+						addInformazioniAltriDatabase(map, jndiName);
 					}
 					return map;
 				}
 			}
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 		}
-		return null;
+		return map;
+	}
+	private void addInformazioniAltriDatabase(Map<String, String> map, String jndiName){
+		try{
+			map.put(jndiName, DataSourceFactory.getInstance(jndiName).getInformazioniDatabase());
+		}catch(Exception e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			map.put(jndiName, JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage());
+		}
 	}
 	
 	public String getInformazioniSSL(boolean cipherSuites, boolean providerInfo, boolean hsmInfo, boolean ocspInfo){
@@ -633,28 +618,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				bf.append("SupportedCipherSuites: "+SSLUtilities.getSSLSupportedCipherSuites());
 				bf.append("\n");
 			}
-			List<String> p = SSLUtilities.getSSLSupportedProtocols();
-			if(p!=null && p.size()>0){
-				for (String protocol : p) {
-					if(cipherSuites){
-						bf.append("\n");
-					}
-					printSSLInfo(protocol, bf, cipherSuites);
-				}
-				// Per retrocompatibilità verifico anche alias SSL e TLS in modo da sapere come si comportano se sono stati associati a delle configurazioni
-				if(p.contains(SSLConstants.PROTOCOL_TLS)==false){
-					if(cipherSuites){
-						bf.append("\n");
-					}
-					printSSLInfo(SSLConstants.PROTOCOL_TLS, bf, cipherSuites);
-				}
-				if(p.contains(SSLConstants.PROTOCOL_SSL)==false){
-					if(cipherSuites){
-						bf.append("\n");
-					}
-					printSSLInfo(SSLConstants.PROTOCOL_SSL, bf, cipherSuites);
-				}
-			}
+			addInformazioniSSL(bf, cipherSuites);
 
 			if(providerInfo){
 				bf.append("\n");
@@ -692,14 +656,41 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			}
 			
 			if(bf.length()<=0){
-				throw new Exception("Non sono disponibili informazioni sul contesto SSL");
+				throw new CoreException("Non sono disponibili informazioni sul contesto SSL");
 			}else{
 				return bf.toString();
 			}
 
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	private void addInformazioniSSL(StringBuilder bf, boolean cipherSuites) throws UtilsException {
+		List<String> p = SSLUtilities.getSSLSupportedProtocols();
+		if(p!=null && !p.isEmpty()){
+			for (String protocol : p) {
+				if(cipherSuites){
+					bf.append("\n");
+				}
+				printSSLInfo(protocol, bf, cipherSuites);
+			}
+			// Per retrocompatibilità verifico anche alias SSL e TLS in modo da sapere come si comportano se sono stati associati a delle configurazioni
+			addInformazioniSSL(p, bf, cipherSuites);
+		}
+	}
+	private void addInformazioniSSL(List<String> p, StringBuilder bf, boolean cipherSuites) {
+		if(!p.contains(SSLConstants.PROTOCOL_TLS)){
+			if(cipherSuites){
+				bf.append("\n");
+			}
+			printSSLInfo(SSLConstants.PROTOCOL_TLS, bf, cipherSuites);
+		}
+		if(!p.contains(SSLConstants.PROTOCOL_SSL)){
+			if(cipherSuites){
+				bf.append("\n");
+			}
+			printSSLInfo(SSLConstants.PROTOCOL_SSL, bf, cipherSuites);
 		}
 	}
 	private void printSSLInfo(String protocol,StringBuilder bf,boolean cipherSuites){
@@ -744,28 +735,31 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		try{
 			StringBuilder bf = new StringBuilder();
 			Set<?> algorithms = Security.getAlgorithms("Cipher");
-			if(algorithms!=null && algorithms.size()>0){
+			if(algorithms!=null && !algorithms.isEmpty()){
 				Iterator<?> it = algorithms.iterator();
 				while (it.hasNext()) {
 					String algorithm = (String) it.next();
 					bf.append(algorithm).append(": ");
-					try{
-						bf.append(Cipher.getMaxAllowedKeyLength(algorithm));
-						bf.append(" bit");
-					}catch(Throwable e){
-						bf.append(e.getMessage());
-					}
+					addInformazioniCryptographyKeyLength(bf, algorithm);
 					bf.append("\n");
 				}
 			}
 			if(bf.length()<=0){
-				throw new Exception("Non sono disponibili informazioni sulla lunghezza delle chiavi di cifratura");
+				throw new CoreException("Non sono disponibili informazioni sulla lunghezza delle chiavi di cifratura");
 			}else{
 				return bf.toString();
 			}
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	private void addInformazioniCryptographyKeyLength(StringBuilder bf, String algorithm){
+		try{
+			bf.append(Cipher.getMaxAllowedKeyLength(algorithm));
+			bf.append(" bit");
+		}catch(Exception e){
+			bf.append(e.getMessage());
 		}
 	}
 	
@@ -778,11 +772,11 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			bf.append("java.nio.charset.Charset: ").append(CharsetUtilities.getDefaultCharsetByCharset()).append("\n");
 			
 			if(bf.length()<=0){
-				throw new Exception("Non sono disponibili informazioni sul charset");
+				throw new CoreException("Non sono disponibili informazioni sul charset");
 			}else{
 				return bf.toString();
 			}
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -802,33 +796,36 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			}
 
 			if(all){
-				java.util.Locale [] l = java.util.Locale.getAvailableLocales();
-				if(l!=null){
-					List<String> ll = new ArrayList<>();
-					Map<String,java.util.Locale> llMap = new HashMap<String,java.util.Locale>();
-					for (int i = 0; i < l.length; i++) {
-						ll.add(l[i].getDisplayName());
-						llMap.put(l[i].getDisplayName(), l[i]);
-					}
-					Collections.sort(ll);
-					for (String name : ll) {
-						java.util.Locale locale = llMap.get(name);
-						if(bf.length()>0){
-							bf.append("\n");
-						}
-						Utilities.toString(locale, bf, "\n");
-					}
-				}
+				addInformazioniInternazionalizzazione(bf);
 			}
 			
 			if(bf.length()<=0){
-				throw new Exception("Non sono disponibili informazioni sulla internazionalizzazione");
+				throw new CoreException("Non sono disponibili informazioni sulla internazionalizzazione");
 			}else{
 				return bf.toString();
 			}
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	private void addInformazioniInternazionalizzazione(StringBuilder bf){
+		java.util.Locale [] l = java.util.Locale.getAvailableLocales();
+		if(l!=null){
+			List<String> ll = new ArrayList<>();
+			Map<String,java.util.Locale> llMap = new HashMap<>();
+			for (int i = 0; i < l.length; i++) {
+				ll.add(l[i].getDisplayName());
+				llMap.put(l[i].getDisplayName(), l[i]);
+			}
+			Collections.sort(ll);
+			for (String name : ll) {
+				java.util.Locale locale = llMap.get(name);
+				if(bf.length()>0){
+					bf.append("\n");
+				}
+				Utilities.toString(locale, bf, "\n");
+			}
 		}
 	}
 	
@@ -846,20 +843,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			}
 			
 			if(all){
-				String [] ids = java.util.TimeZone.getAvailableIDs();
-				if(ids!=null){
-					List<String> ll = new ArrayList<>();
-					for (int i = 0; i < ids.length; i++) {
-						ll.add(ids[i]);
-					}
-					Collections.sort(ll);
-					for (String id : ll) {
-						if(bf.length()>0){
-							bf.append("\n");
-						}
-						Utilities.toString(java.util.TimeZone.getTimeZone(id), bf, all);
-					}
-				}
+				addInformazioniTimeZone(bf, all);
 			}
 			
 			if(bf.length()>0){
@@ -868,13 +852,29 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			bf.append("DateTimeFormatter: "+DateUtils.getDEFAULT_DATA_ENGINE_TYPE());
 			
 			if(bf.length()<=0){
-				throw new Exception("Non sono disponibili informazioni sulla internazionalizzazione");
+				throw new CoreException("Non sono disponibili informazioni sulla internazionalizzazione");
 			}else{
 				return bf.toString();
 			}
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	private void addInformazioniTimeZone(StringBuilder bf, boolean all){
+		String [] ids = java.util.TimeZone.getAvailableIDs();
+		if(ids!=null){
+			List<String> ll = new ArrayList<>();
+			if(ids.length>0) {
+				ll.addAll(Arrays.asList(ids));
+			}
+			Collections.sort(ll);
+			for (String id : ll) {
+				if(bf.length()>0){
+					bf.append("\n");
+				}
+				Utilities.toString(java.util.TimeZone.getTimeZone(id), bf, all);
+			}
 		}
 	}
 	
@@ -915,39 +915,11 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			}
 			
 			Properties p = System.getProperties();
-			Iterator<Object> keys = p.keySet().iterator();
 			List<String> ll = new ArrayList<>();
-			while (keys.hasNext()) {
-				Object o = keys.next();
-				if(!(o instanceof String)) {
-					continue;
-				}
-				String key = (String) o;
-				if(!includeNetwork && !includeNotNetwork) {
-					throw new Exception("Invocazione errata, almeno un parametro deve essere abilitato");
-				}
-				else if(includeNetwork && !includeNotNetwork) {
-					if(this.isNetworkProperties(allNetwork, key)) {
-						if(includePassword || !isPasswordProperty(key)) {
-							ll.add(key);
-						}
-					}
-				}
-				else if(includeNotNetwork && !includeNetwork) {
-					if(!this.isNetworkProperties(true, key)) {
-						if(includePassword || !isPasswordProperty(key)) {
-							ll.add(key);
-						}
-					}
-				}
-				else {
-					if(includePassword || !isPasswordProperty(key)) {
-						ll.add(key);
-					}
-				}
-			}
+			addInformazioniProprietaJava(allNetwork, includeNetwork, includeNotNetwork, includePassword,
+					p, ll);
 			Collections.sort(ll);
-			if(ll.size()>0) {
+			if(!ll.isEmpty()) {
 				bf.append("\n"); // Separo security manager
 			}
 			for (String key : ll) {
@@ -958,13 +930,57 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			}
 			
 			if(bf.length()<=0){
-				throw new Exception("Non sono disponibili proprietà java");
+				throw new CoreException("Non sono disponibili proprietà java");
 			}else{
 				return bf.toString();
 			}
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	private void addInformazioniProprietaJava(boolean allNetwork, boolean includeNetwork, boolean includeNotNetwork, boolean includePassword,
+			Properties p, List<String> ll) throws CoreException{
+		Iterator<Object> keys = p.keySet().iterator();
+		while (keys.hasNext()) {
+			Object o = keys.next();
+			if(!(o instanceof String)) {
+				continue;
+			}
+			String key = (String) o;
+			addInformazioniProprietaJava(allNetwork, includeNetwork, includeNotNetwork, includePassword,
+					ll, key);
+		}
+	}
+	private void addInformazioniProprietaJava(boolean allNetwork, boolean includeNetwork, boolean includeNotNetwork, boolean includePassword,
+			List<String> ll, String key) throws CoreException{
+		if(!includeNetwork && !includeNotNetwork) {
+			throw new CoreException("Invocazione errata, almeno un parametro deve essere abilitato");
+		}
+		else if(includeNetwork && !includeNotNetwork) {
+			if(this.isNetworkProperties(allNetwork, key)&&
+				(includePassword || !isPasswordProperty(key)) 
+				){
+				ll.add(key);
+			}
+		}
+		else if(
+				// includeNotNetwork && sempre true 
+				!includeNetwork) {
+			addInformazioniProprietaJavaIncludeNotNetwork(ll, key);
+		}
+		else {
+			if(includePassword || !isPasswordProperty(key)) {
+				ll.add(key);
+			}
+		}
+	}
+	private void addInformazioniProprietaJavaIncludeNotNetwork(List<String> ll, String key) {
+		if( 
+				(!this.isNetworkProperties(true, key)) &&
+				(includePassword || !isPasswordProperty(key)) 
+			){
+			ll.add(key);
 		}
 	}
 	
@@ -983,11 +999,11 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			Iterator<String> keys = map.keySet().iterator();
 			List<String> ll = new ArrayList<>();
 			while (keys.hasNext()) {
-				String key = (String) keys.next();
+				String key = keys.next();
 				ll.add(key);
 			}
 			Collections.sort(ll);
-			if(ll.size()>0) {
+			if(!ll.isEmpty()) {
 				bf.append("\n"); // Separo security manager
 			}
 			for (String key : ll) {
@@ -998,11 +1014,11 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			}
 			
 			if(bf.length()<=0){
-				throw new Exception("Non sono disponibili proprietà di sistema");
+				throw new CoreException("Non sono disponibili proprietà di sistema");
 			}else{
 				return bf.toString();
 			}
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -1016,7 +1032,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			String docOp2 = factory.getDocumentBuilderFactoryClass();
 			String docSaaj = SOAPDocumentImpl.newInstanceDocumentBuilderFactory().getClass().getName();
 			sb.append("DocumentBuilderFactory:").append(docSaaj).append(" ");
-			if(docSaaj.equals(docOp2)==false) {
+			if(!docSaaj.equals(docOp2)) {
 				sb.append("OpenSPCoop2DocumentBuilderFactory:").append(docOp2).append(" ");
 					
 			}
@@ -1024,14 +1040,14 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			String saxOp2 = factory.getSAXParserFactoryClass();
 			String saxSaaj = SOAPDocumentImpl.newInstanceSAXParserFactory().getClass().getName();
 			sb.append("SAXParserFactory:").append(saxSaaj).append(" ");
-			if(saxSaaj.equals(saxOp2)==false) {
+			if(!saxSaaj.equals(saxOp2)) {
 				sb.append("OpenSPCoop2SAXParserFactory:").append(saxOp2).append(" ");
 					
 			}
 			
 			return sb.toString();
 			
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -1061,8 +1077,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				
 				return bf.toString();
 			}
-			throw new Exception("Directory di Configurazione non disponibile");
-		}catch(Throwable e){
+			throw new CoreException("Directory di Configurazione non disponibile");
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -1072,35 +1088,40 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		try{
 			MapReader<String, IProtocolFactory<?>> prots = ProtocolFactoryManager.getInstance().getProtocolFactories();
 			if(prots.size()<=0){
-				throw new Exception("No protocol installed");
+				throw new CoreException("No protocol installed");
 			}
 			else{
 				StringBuilder bfProtocols = new StringBuilder();
-				Enumeration<String> keys = prots.keys();
-				while (keys.hasMoreElements()) {
-					String key = (String) keys.nextElement();
-					IProtocolFactory<?> pf = prots.get(key);
-					if(pf.getManifest().getWeb().getEmptyContext()!=null && pf.getManifest().getWeb().getEmptyContext().isEnabled()){
-						if(bfProtocols.length()>0){
-							bfProtocols.append("\n");
-						}
-						bfProtocols.append("\"\" (protocol:"+key+")");
-					}
-					if(pf.getManifest().getWeb().sizeContextList()>0){
-						for (Context context : pf.getManifest().getWeb().getContextList()) {
-							if(bfProtocols.length()>0){
-								bfProtocols.append("\n");
-							}
-							bfProtocols.append(context.getName()+" (protocol:"+key+")");
-						}
-					}
-				}
-				String enabledProtocols = bfProtocols.toString();
-				return enabledProtocols;
+				addPluginProtocols(prots, bfProtocols);
+				return bfProtocols.toString();
 			}
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	private void addPluginProtocols(MapReader<String, IProtocolFactory<?>> prots, StringBuilder bfProtocols){
+		Enumeration<String> keys = prots.keys();
+		while (keys.hasMoreElements()) {
+			String key = keys.nextElement();
+			IProtocolFactory<?> pf = prots.get(key);
+			addPluginProtocols(key, pf, bfProtocols);
+		}
+	}
+	private void addPluginProtocols(String key, IProtocolFactory<?> pf, StringBuilder bfProtocols){
+		if(pf.getManifest().getWeb().getEmptyContext()!=null && pf.getManifest().getWeb().getEmptyContext().isEnabled()){
+			if(bfProtocols.length()>0){
+				bfProtocols.append("\n");
+			}
+			bfProtocols.append("\"\" (protocol:"+key+")");
+		}
+		if(pf.getManifest().getWeb().sizeContextList()>0){
+			for (Context context : pf.getManifest().getWeb().getContextList()) {
+				if(bfProtocols.length()>0){
+					bfProtocols.append("\n");
+				}
+				bfProtocols.append(context.getName()+" (protocol:"+key+")");
+			}
 		}
 	}
 
@@ -1118,52 +1139,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			}
 			Collections.sort(ids, Collections.reverseOrder());
 			for (String name : ids) {
-				for (GenericProperties gp : installerProperties) {
-					if(gp.getNome().equals(name)) {
-						if(bf.length()>0) {
-							bf.append("\n");
-						}
-						bf.append(gp.getDescrizione());
-						bf.append("\n");
-						
-						List<String> idParams = new ArrayList<>();
-						for (Property p : gp.getPropertyList()) {
-							idParams.add(p.getNome());
-						}
-						Collections.sort(idParams);
-						for (String idP : idParams) {
-							for (Property p : gp.getPropertyList()) {
-								if(p.getNome().equals(idP)) {
-									
-									if(p.getNome().endsWith("-000:sezione")) {
-										bf.append(p.getValore());
-										bf.append("\n");
-									}
-									else {
-										bf.append("\t");
-										String [] split = p.getNome().split(":");
-										if(split!=null && split.length==3) {
-											bf.append(split[1]);
-											bf.append(" (");
-											bf.append(split[2]);
-											bf.append(") = ");
-										}
-										else {
-											bf.append(p.getNome());
-											bf.append(" = ");
-										}
-										bf.append(p.getValore());
-										bf.append("\n");
-									}
-									
-									break;
-								}
-							}
-						}
-												
-						break;
-					}
-				}
+				addInformazioniInstallazioneProperty(installerProperties, name, bf);
 			}
 			
 			if(bf.length()>0) {
@@ -1175,18 +1151,74 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			
 		}catch(DriverConfigurazioneNotFound notFound) {
 			return "Informazioni non presenti";
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 		
+	}
+	private void addInformazioniInstallazioneProperty(List<GenericProperties> installerProperties, String name, StringBuilder bf) {
+		for (GenericProperties gp : installerProperties) {
+			if(gp.getNome().equals(name)) {
+				addInformazioniInstallazioneProperty(gp, bf);
+				break;
+			}
+		}
+	}
+	private void addInformazioniInstallazioneProperty(GenericProperties gp, StringBuilder bf) {
+		if(bf.length()>0) {
+			bf.append("\n");
+		}
+		bf.append(gp.getDescrizione());
+		bf.append("\n");
+		
+		List<String> idParams = new ArrayList<>();
+		for (Property p : gp.getPropertyList()) {
+			idParams.add(p.getNome());
+		}
+		Collections.sort(idParams);
+		for (String idP : idParams) {
+			for (Property p : gp.getPropertyList()) {
+				if(addInformazioniInstallazioneProperty(p, idP, bf)) {
+					break;
+				}
+			}
+		}
+	}
+	private boolean addInformazioniInstallazioneProperty(Property p, String idP, StringBuilder bf) {
+		if(p.getNome().equals(idP)) {
+			
+			if(p.getNome().endsWith("-000:sezione")) {
+				bf.append(p.getValore());
+				bf.append("\n");
+			}
+			else {
+				bf.append("\t");
+				String [] split = p.getNome().split(":");
+				if(split!=null && split.length==3) {
+					bf.append(split[1]);
+					bf.append(" (");
+					bf.append(split[2]);
+					bf.append(") = ");
+				}
+				else {
+					bf.append(p.getNome());
+					bf.append(" = ");
+				}
+				bf.append(p.getValore());
+				bf.append("\n");
+			}
+			
+			return true;
+		}
+		return false;
 	}
 	
 	public String getFileTrace(){
 		try {
 			FileTraceGovWayState state = this.openspcoopProperties.getFileTraceGovWayState();
 			return state.toString();
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -1199,9 +1231,9 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
 			}
 			else {
-				throw new Exception("Funzionalità 'FileTrace' disabilitata");
+				throw new CoreException("Funzionalità 'FileTrace' disabilitata");
 			}
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -1211,76 +1243,70 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 class VersioneBaseDatiChecker implements Callable<String>{
 
 	private OpenSPCoop2Properties openspcoopProperties;
-	public VersioneBaseDatiChecker(OpenSPCoop2Properties openspcoopProperties) {
+	private boolean isNodoRun;
+	public VersioneBaseDatiChecker(OpenSPCoop2Properties openspcoopProperties, boolean isNodoRun) {
 		this.openspcoopProperties = openspcoopProperties;
+		this.isNodoRun = isNodoRun;
 	}
 	
 	@Override
 	public String call() throws Exception {
 		
-		if(DBManager.isInitialized()==false){
-			throw new Exception("Inizializzazione DBManager non effettuata");
+		if(!DBManager.isInitialized()){
+			throw new CoreException("Inizializzazione DBManager non effettuata");
 		}
 		DBManager dbManager = DBManager.getInstance();
 		Resource resource = null;
 		IDSoggetto dominio = this.openspcoopProperties.getIdentitaPortaDefaultWithoutProtocol();
 		String modulo = this.getClass().getName();
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
 		try{
 			resource = dbManager.getResource(dominio, modulo, null);
 			Connection c = (Connection) resource.getResource();
-			String sql = "select * from "+CostantiDB.DB_INFO_CONSOLE +" order by id DESC";
+			
 			StringBuilder bf = new StringBuilder();
+			checkTable(c, bf);
+
+			if(bf.length()<=0){
+				throw new CoreException("BaseDati non possiede informazioni sul versionamento");
+			}else{
+				return bf.toString();
+			}
+
+		}finally{
+			try{
+				dbManager.releaseResource(dominio, modulo, resource);
+			}catch(Exception eClose){
+				// close
+			}
+		}
+		
+	}
+	
+	private void checkTable(Connection c, StringBuilder bf) throws UtilsMultiException, SQLException {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try{
+			String table1 = this.isNodoRun ? CostantiDB.DB_INFO : CostantiDB.DB_INFO_CONSOLE;
+			String sql = "select * from "+table1 +" order by id DESC";
 			pstmt = c.prepareStatement(sql);
 			try {
 				rs = pstmt.executeQuery();
 				while (rs.next()) {
-					int major_version = rs.getInt("major_version");
-					int minor_version = rs.getInt("minor_version");
+					int majorVersion = rs.getInt("major_version");
+					int minorVersion = rs.getInt("minor_version");
 					String details = rs.getString("notes");
 					if(bf.length()>0){
 						bf.append("\n");
 					}
-					bf.append("["+major_version+"."+minor_version+"] "+details);
+					bf.append("["+majorVersion+"."+minorVersion+"] "+details);
 				}
 			}catch(Throwable t) {
 				
-				try{
-					if(rs!=null)
-						rs.close();
-				}catch(Exception eClose){
-					// close
-				}
-				try{
-					if(pstmt!=null)
-						pstmt.close();
-				}catch(Exception eClose){
-					// close
-				}
+				JDBCUtilities.closeResources(rs, pstmt);
+				rs=null;
+				pstmt=null;
 				
-				sql = "select * from "+CostantiDB.DB_INFO +" order by id DESC";
-				pstmt = c.prepareStatement(sql);
-				rs = pstmt.executeQuery();
-				try {
-					while (rs.next()) {
-						int major_version = rs.getInt("major_version");
-						int minor_version = rs.getInt("minor_version");
-						String details = rs.getString("notes");
-						if(bf.length()>0){
-							bf.append("\n");
-						}
-						bf.append("["+major_version+"."+minor_version+"] "+details);
-					}
-				}catch(Throwable tInternal) {
-					throw new UtilsMultiException(t,tInternal);
-				}
-			}
-
-			if(bf.length()<=0){
-				throw new Exception("BaseDati non possiede informazioni sul versionamento");
-			}else{
-				return bf.toString();
+				checkTable2(c, bf, t);
 			}
 
 		}finally{
@@ -1296,14 +1322,32 @@ class VersioneBaseDatiChecker implements Callable<String>{
 			}catch(Exception eClose){
 				// close
 			}
-			try{
-				if(dbManager!=null)
-					dbManager.releaseResource(dominio, modulo, resource);
-			}catch(Exception eClose){
-				// close
-			}
 		}
-		
+	}
+	private void checkTable2(Connection c, StringBuilder bf, Throwable t) throws UtilsMultiException, SQLException {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try{
+			String table2 = this.isNodoRun ? CostantiDB.DB_INFO_CONSOLE : CostantiDB.DB_INFO;
+			String sql = "select * from "+table2 +" order by id DESC";
+			pstmt = c.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			try {
+				while (rs.next()) {
+					int majorVersion = rs.getInt("major_version");
+					int minorVersion = rs.getInt("minor_version");
+					String details = rs.getString("notes");
+					if(bf.length()>0){
+						bf.append("\n");
+					}
+					bf.append("["+majorVersion+"."+minorVersion+"] "+details);
+				}
+			}catch(Throwable tInternal) {
+				throw new UtilsMultiException(t,tInternal);
+			}
+		}finally{
+			JDBCUtilities.closeResources(rs, pstmt);
+		}
 	}
 	
 }
@@ -1317,13 +1361,13 @@ class InformazioniDatabaseChecker implements Callable<String>{
 	
 	@Override
 	public String call() throws Exception {
-		if(DBManager.isInitialized()==false){
-			throw new Exception("Inizializzazione DBManager non effettuata");
+		if(!DBManager.isInitialized()){
+			throw new CoreException("Inizializzazione DBManager non effettuata");
 		}
 		DBManager dbManager = DBManager.getInstance();
 		Resource resource = null;
 		if(this.openspcoopProperties==null) {
-			throw new Exception("Inizializzazione OpenSPCoop2Properties non effettuata");
+			throw new CoreException("Inizializzazione OpenSPCoop2Properties non effettuata");
 		}
 		IDSoggetto dominio = this.openspcoopProperties.getIdentitaPortaDefaultWithoutProtocol();
 		String modulo = this.getClass().getName();
@@ -1333,7 +1377,7 @@ class InformazioniDatabaseChecker implements Callable<String>{
 			bf.append("TipoDatabase: "+this.openspcoopProperties.getDatabaseType());
 		}
 		else{
-			throw new Exception("Tipo di Database non disponibile");
+			throw new CoreException("Tipo di Database non disponibile");
 		}
 
 		try{
@@ -1343,15 +1387,14 @@ class InformazioniDatabaseChecker implements Callable<String>{
 			JDBCUtilities.addInformazioniDatabaseFromMetaData(c, bf);
 			
 			if(bf.length()<=0){
-				throw new Exception("Non sono disponibili informazioni sul database");
+				throw new CoreException("Non sono disponibili informazioni sul database");
 			}else{
 				return bf.toString();
 			}
 
 		}finally{
 			try{
-				if(dbManager!=null)
-					dbManager.releaseResource(dominio, modulo, resource);
+				dbManager.releaseResource(dominio, modulo, resource);
 			}catch(Exception eClose){
 				// close
 			}
