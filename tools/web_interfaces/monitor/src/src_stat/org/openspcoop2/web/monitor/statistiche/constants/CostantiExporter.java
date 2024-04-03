@@ -258,6 +258,7 @@ public class CostantiExporter {
 	public static final NumeroDimensioni DIMENSIONI_VISUALIZZATE_DEFAULT = NumeroDimensioni.DIMENSIONI_2;
 	public static final String DIMENSIONI_VISUALIZZATE_2 = NumeroDimensioni.DIMENSIONI_2.getValue();
 	public static final String DIMENSIONI_VISUALIZZATE_3 = NumeroDimensioni.DIMENSIONI_3.getValue();
+	public static final String DIMENSIONI_VISUALIZZATE_3_CUSTOM = NumeroDimensioni.DIMENSIONI_3_CUSTOM.getValue();
 	
 	public static final String CLAIM = "claim";
 	public static final String CLAIM_SUBJECT = "subject";

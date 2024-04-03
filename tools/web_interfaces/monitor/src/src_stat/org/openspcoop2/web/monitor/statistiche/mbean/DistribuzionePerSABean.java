@@ -153,6 +153,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			
 			switch (numeroDimensioni) {
 				case DIMENSIONI_3:
+				case DIMENSIONI_3_CUSTOM:
 					StatisticType statisticType = StatsUtils.checkStatisticType((StatsSearchForm) this.search, false);
 					grafico = JsonStatsUtils.getJsonHeatmapChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), this.getSlice(), statisticType, this.isVisualizzaTotaleNelleCelleGraficoHeatmap(), DynamicPdDBean.log);
 					break;
@@ -468,12 +469,14 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			String identificazione = this.search.getIdentificazione();
 			String tokenClaim = this.search.getTokenClaim();
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
+			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, 
+					((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(),    
 					tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, identificazione, tokenClaim, false); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, 
+					((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(), 
 					tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(),tipoRiconoscimento, identificazione, tokenClaim);
 
@@ -572,12 +575,14 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			String identificazione = this.search.getIdentificazione();
 			String tokenClaim = this.search.getTokenClaim();
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
+			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, 
+					((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(), 
 					tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, identificazione, tokenClaim, false); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, 
+					((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(),  
 					tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(),tipoRiconoscimento, identificazione, tokenClaim);
 
@@ -676,12 +681,14 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			String identificazione = this.search.getIdentificazione();
 			String tokenClaim = this.search.getTokenClaim();
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
+			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, 
+					((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(),  
 					tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, identificazione, tokenClaim, true); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, 
+					((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(), 
 					tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(),tipoRiconoscimento, identificazione, tokenClaim);
 

@@ -31,9 +31,17 @@ import org.openspcoop2.generic_project.beans.IEnumeration;
  * @version $Rev$, $Date$
  *
  */
-public enum NumeroDimensioni implements IEnumeration , Serializable , Cloneable{
+public enum DimensioneCustom implements IEnumeration , Serializable , Cloneable{
 
-	DIMENSIONI_2 ("2d"), DIMENSIONI_3 ("3d"), DIMENSIONI_3_CUSTOM ("3d-custom");
+	TAG ("tag"), API ("api"), IMPLEMENTAZIONE_API ("apiImplementation"), OPERAZIONE ("operation"),
+	SOGGETTO_LOCALE ("localOrganization"), SOGGETTO_REMOTO ("remoteOrganization"),
+	SOGGETTO_FRUITORE ("clientOrganization"), SOGGETTO_EROGATORE ("providerOrganization"),
+	TOKEN_ISSUER ("tokenIssuer"), TOKEN_CLIENT_ID ("tokenClientId"), TOKEN_SUBJECT ("tokenSubject"), 
+	TOKEN_USERNAME ("tokenUsername"), TOKEN_EMAIL ("tokenEMail"), TOKEN_PDND_ORGANIZATION ("tokenPdndOrganization"),
+	PRINCIPAL ("principal"),
+	APPLICATIVO_TRASPORTO("client"), APPLICATIVO_TOKEN ("tokenClient"),
+	INDIRIZZO_IP("ipAddress"),
+	ESITO("result");
 
 	/** Value */
 	private String value;
@@ -44,7 +52,7 @@ public enum NumeroDimensioni implements IEnumeration , Serializable , Cloneable{
 	}
 
 	/** Official Constructor */
-	NumeroDimensioni(String value)
+	DimensioneCustom(String value)
 	{
 		this.value = value;
 	}
@@ -64,7 +72,7 @@ public enum NumeroDimensioni implements IEnumeration , Serializable , Cloneable{
 	public static String[] toArray(){
 		String[] res = new String[values().length];
 		int i=0;
-		for (NumeroDimensioni tmp : values()) {
+		for (DimensioneCustom tmp : values()) {
 			res[i]=tmp.getValue();
 			i++;
 		}
@@ -73,7 +81,7 @@ public enum NumeroDimensioni implements IEnumeration , Serializable , Cloneable{
 	public static String[] toStringArray(){
 		String[] res = new String[values().length];
 		int i=0;
-		for (NumeroDimensioni tmp : values()) {
+		for (DimensioneCustom tmp : values()) {
 			res[i]=tmp.toString();
 			i++;
 		}
@@ -82,7 +90,7 @@ public enum NumeroDimensioni implements IEnumeration , Serializable , Cloneable{
 	public static String[] toEnumNameArray(){
 		String[] res = new String[values().length];
 		int i=0;
-		for (NumeroDimensioni tmp : values()) {
+		for (DimensioneCustom tmp : values()) {
 			res[i]=tmp.name();
 			i++;
 		}
@@ -93,9 +101,9 @@ public enum NumeroDimensioni implements IEnumeration , Serializable , Cloneable{
 		return toEnumConstant(value)!=null;
 	}
 
-	public static NumeroDimensioni toEnumConstant(String value){
-		NumeroDimensioni res = null;
-		for (NumeroDimensioni tmp : values()) {
+	public static DimensioneCustom toEnumConstant(String value){
+		DimensioneCustom res = null;
+		for (DimensioneCustom tmp : values()) {
 			if(tmp.getValue().equals(value)){
 				res = tmp;
 				break;
@@ -105,8 +113,8 @@ public enum NumeroDimensioni implements IEnumeration , Serializable , Cloneable{
 	}
 
 	public static IEnumeration toEnumConstantFromString(String value){
-		NumeroDimensioni res = null;
-		for (NumeroDimensioni tmp : values()) {
+		DimensioneCustom res = null;
+		for (DimensioneCustom tmp : values()) {
 			if(tmp.toString().equals(value)){
 				res = tmp;
 				break;

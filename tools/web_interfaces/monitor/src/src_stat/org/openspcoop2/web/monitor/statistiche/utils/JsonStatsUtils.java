@@ -47,6 +47,7 @@ import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione3D;
+import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione3DCustom;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
 import org.slf4j.Logger;
@@ -646,7 +647,12 @@ public class JsonStatsUtils {
 
 				remove.add(res);
 				
-				/**System.out.println("KEY ["+key+"] sizeList:"+remove.size()+" value["+res.getSomma()+"] data["+org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(((ResDistribuzione3D)res).getData())+"] dataFormattata["+((ResDistribuzione3D)res).getDataFormattata()+"]");*/
+				/**if(res instanceof ResDistribuzione3D) {
+					System.out.println("KEY ["+key+"] sizeList:"+remove.size()+" value["+res.getSomma()+"] data["+org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(((ResDistribuzione3D)res).getData())+"] dataFormattata["+((ResDistribuzione3D)res).getDataFormattata()+"]");
+				}
+				else {
+					System.out.println("KEY ["+key+"] sizeList:"+remove.size()+" value["+res.getSomma()+"] data["+org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(((ResDistribuzione3DCustom)res).getDatoCustom())+"]");
+				}*/
 				
 				elementiPerCategoria.put(key, remove);
 
@@ -687,43 +693,49 @@ public class JsonStatsUtils {
 			// una volta che ho la lista degli elementi da visualizzare gia' calcolata, comprensiva dell'eventuale elemento 'altri' si tratta solo di creare i rettangoli json
 			for (int z = 0 ; z <list.size() ; z++) {
 				// le  entries sono tutte di tipo 3D
-				ResDistribuzione3D entry = (ResDistribuzione3D) list.get(z);
+				ResDistribuzione entry = list.get(z);
 				JSONObject rectangle = new JSONObject();
 
 				Number sum = entry.getSomma();
-
+				
 				String r = entry.getRisultato();
-				Date rDate =  entry.getData();
+				
 				String dateS = null;
-
-				Calendar c = Calendar.getInstance();
-				c.setTime(rDate);
-
-				StringBuilder sb = new StringBuilder();
-				if (StatisticType.ORARIA.equals(tempo)) {
-					sdf_last.applyPattern(CostantiGrafici.PATTERN_HH);
-					c.add(Calendar.HOUR, 1);
-					sb.append(sdf.format(rDate) + "-").append( sdf_last.format(c.getTime()));
-				} else if (StatisticType.SETTIMANALE.equals(tempo)) {
-					// settimanale
-					sdf.applyPattern(CostantiGrafici.PATTERN_DD_MM_YY);
-					sdf_last.applyPattern(CostantiGrafici.PATTERN_DD_MM_YY);
-
-					c.add(Calendar.WEEK_OF_MONTH, 1);
-					c.add(Calendar.DAY_OF_WEEK, -1);
-
-					sb.append(sdf.format(rDate) + "-").append( sdf_last.format(c.getTime()));
-
-				} else if (StatisticType.MENSILE.equals(tempo)) {
-					// mensile
-					sdf.applyPattern(CostantiGrafici.PATTERN_MMM_YY);
-					sb.append(sdf.format(rDate));
-
-				} else {
-					// giornaliero
-					sb.append(sdf.format(rDate));
+				if(entry instanceof ResDistribuzione3D) {
+					Date rDate =  ((ResDistribuzione3D)entry).getData();
+	
+					Calendar c = Calendar.getInstance();
+					c.setTime(rDate);
+	
+					StringBuilder sb = new StringBuilder();
+					if (StatisticType.ORARIA.equals(tempo)) {
+						sdf_last.applyPattern(CostantiGrafici.PATTERN_HH);
+						c.add(Calendar.HOUR, 1);
+						sb.append(sdf.format(rDate) + "-").append( sdf_last.format(c.getTime()));
+					} else if (StatisticType.SETTIMANALE.equals(tempo)) {
+						// settimanale
+						sdf.applyPattern(CostantiGrafici.PATTERN_DD_MM_YY);
+						sdf_last.applyPattern(CostantiGrafici.PATTERN_DD_MM_YY);
+	
+						c.add(Calendar.WEEK_OF_MONTH, 1);
+						c.add(Calendar.DAY_OF_WEEK, -1);
+	
+						sb.append(sdf.format(rDate) + "-").append( sdf_last.format(c.getTime()));
+	
+					} else if (StatisticType.MENSILE.equals(tempo)) {
+						// mensile
+						sdf.applyPattern(CostantiGrafici.PATTERN_MMM_YY);
+						sb.append(sdf.format(rDate));
+	
+					} else {
+						// giornaliero
+						sb.append(sdf.format(rDate));
+					}
+					dateS = sb.toString();
 				}
-				dateS = sb.toString();
+				else if(entry instanceof ResDistribuzione3DCustom) {
+					dateS = ((ResDistribuzione3DCustom)entry).getDatoCustom();
+				}
 
 				// Iterazione 1 memorizzo la label della barra
 				if(r.length() > maxLenghtLabel)
@@ -855,38 +867,60 @@ public class JsonStatsUtils {
 		Set<String> existingXValues = new HashSet<>();
 		Map<String,String> existingXValuesOriginalKey = new HashMap<>();
 
-		Set<Date> existingYValues = new HashSet<>();
+		Set<Date> existingYDateValues = new HashSet<>();
+		Set<String> existingYCustomValues = new HashSet<>();
+		boolean customValues = false;
 
 		Map<String,TreeMap<String, String>> mapParentMaps = new HashMap<>();
 		
 		for (ResDistribuzione res : origList) {
-			ResDistribuzione3D resDistribuzione3D = (ResDistribuzione3D) res;
+			ResDistribuzione resDistribuzione = res;
 			// salvo il dato nella lista destinazione
-			destList.add(resDistribuzione3D);
+			destList.add(resDistribuzione);
 
 			// colleziono le X esistenti
-			String key = buildKeyJsonHeatmapChartDistribuzione(resDistribuzione3D);
+			String key = buildKeyJsonHeatmapChartDistribuzione(resDistribuzione);
 			existingXValues.add(key);
-			existingXValuesOriginalKey.put(key, resDistribuzione3D.getRisultato());
+			existingXValuesOriginalKey.put(key, resDistribuzione.getRisultato());
 			
 			// colleziono le parentmap
-			mapParentMaps.put(key, resDistribuzione3D.getParentMap());
+			mapParentMaps.put(key, resDistribuzione.getParentMap());
 
 			// colleziono le Y esistenti
-			existingYValues.add(resDistribuzione3D.getData());
+			if(resDistribuzione instanceof ResDistribuzione3D) {
+				existingYDateValues.add(((ResDistribuzione3D)resDistribuzione).getData());
+			}
+			else if(resDistribuzione instanceof ResDistribuzione3DCustom) {
+				customValues = true;
+				existingYCustomValues.add(((ResDistribuzione3DCustom)resDistribuzione).getDatoCustom());
+			}
 		}
 
 		// Genera e aggiungi le triple mancanti
 		List<ResDistribuzione> missingTriples = new ArrayList<>();
 		for (String x : existingXValues) {
-			for(Date y : existingYValues) {
-				// Aggiungi una tripla solo se non esiste già una tripla con la stessa x e y
-				if (!containsTriple(destList, x, y)) {
-					String originalKey = existingXValuesOriginalKey.get(x);
-					ResDistribuzione3D resDistribuzione3D = new ResDistribuzione3D(originalKey, y, 0);
-					// copio informazioni parentMap per costruzione tooltip
-					resDistribuzione3D.getParentMap().putAll(mapParentMaps.get(x));
-					missingTriples.add(resDistribuzione3D);
+			if(customValues) {
+				for(String y : existingYCustomValues) {
+					// Aggiungi una tripla solo se non esiste già una tripla con la stessa x e y
+					if (!containsTriple(destList, x, y)) {
+						String originalKey = existingXValuesOriginalKey.get(x);
+						ResDistribuzione3DCustom resDistribuzione3D = new ResDistribuzione3DCustom(originalKey, y, 0);
+						// copio informazioni parentMap per costruzione tooltip
+						resDistribuzione3D.getParentMap().putAll(mapParentMaps.get(x));
+						missingTriples.add(resDistribuzione3D);
+					}
+				}
+			}
+			else {
+				for(Date y : existingYDateValues) {
+					// Aggiungi una tripla solo se non esiste già una tripla con la stessa x e y
+					if (!containsTriple(destList, x, y)) {
+						String originalKey = existingXValuesOriginalKey.get(x);
+						ResDistribuzione3D resDistribuzione3D = new ResDistribuzione3D(originalKey, y, 0);
+						// copio informazioni parentMap per costruzione tooltip
+						resDistribuzione3D.getParentMap().putAll(mapParentMaps.get(x));
+						missingTriples.add(resDistribuzione3D);
+					}
 				}
 			}
 		}
@@ -894,9 +928,17 @@ public class JsonStatsUtils {
 		// aggiungo tutti i risultati mancanti
 		destList.addAll(missingTriples);
 
-		long xYsize = ((long)existingXValues.size()) * ((long)existingYValues.size());
+		long existingYValues = 0;
+		if(customValues) {
+			existingYValues = existingYCustomValues.size();
+		}
+		else {
+			existingYValues = existingYDateValues.size();
+		}
+		long xYsize = (existingXValues.size()) * (existingYValues);
 		if(destList.size()!=xYsize) {
-			log.error("generaElementiMancanti destListSize:"+destList.size()+" xYsize:"+xYsize+" existingXValues:"+existingXValues+" existingYValues:"+existingYValues+"");
+			String msg = "generaElementiMancanti destListSize:"+destList.size()+" xYsize:"+xYsize+" existingXValues:"+existingXValues+" existingYValues:"+existingYValues+"";
+			log.error(msg);
 		}
 		
 		return destList;
@@ -907,6 +949,17 @@ public class JsonStatsUtils {
 			ResDistribuzione3D resDistribuzione3D = (ResDistribuzione3D) res;
 			String key = buildKeyJsonHeatmapChartDistribuzione(resDistribuzione3D);
 			if (key.equals(x) && resDistribuzione3D.getData().equals(y)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private static boolean containsTriple(List<ResDistribuzione> valuesList, String x, String y) {
+		for (ResDistribuzione res : valuesList) {
+			ResDistribuzione3DCustom resDistribuzione3D = (ResDistribuzione3DCustom) res;
+			String key = buildKeyJsonHeatmapChartDistribuzione(resDistribuzione3D);
+			if (key.equals(x) && resDistribuzione3D.getDatoCustom().equals(y)) {
 				return true;
 			}
 		}
@@ -975,8 +1028,8 @@ public class JsonStatsUtils {
 			} else {
 				// a questo punto faccio il ciclo per posizione perche' le colonne da unificare hanno la stessa data nella stessa posizione.
 				for (int i = 0; i < colonnaAltri.size(); i++) {
-					ResDistribuzione3D resDistribuzioneColonnaAltri = (ResDistribuzione3D) colonnaAltri.get(i);
-					ResDistribuzione3D resDistribuzioneDaAccorpare = (ResDistribuzione3D) categoriaDaAccorpare.get(i);
+					ResDistribuzione resDistribuzioneColonnaAltri = colonnaAltri.get(i);
+					ResDistribuzione resDistribuzioneDaAccorpare = categoriaDaAccorpare.get(i);
 					
 					// per occupazione banda e latenza si deve fare la media, in questa fase calcolo la somma che divido per il numero di categorie che accorpo
 					resDistribuzioneColonnaAltri.setSomma(StatsUtils.sum(search, resDistribuzioneDaAccorpare.getSomma(), resDistribuzioneColonnaAltri.getSomma()));
@@ -988,7 +1041,7 @@ public class JsonStatsUtils {
 		// in caso di latenza o occupazione band c'e' da fare la media di valori
 		if(occupazioneBanda || tempoMedio) {
 			for (int i = 0; i < colonnaAltri.size(); i++) {
-				ResDistribuzione3D resDistribuzioneColonnaAltri = (ResDistribuzione3D) colonnaAltri.get(i);
+				ResDistribuzione resDistribuzioneColonnaAltri = colonnaAltri.get(i);
 				resDistribuzioneColonnaAltri.setSomma(StatsUtils.avg(search, resDistribuzioneColonnaAltri.getSomma(), categorieDaAccorpareComeAltri.size()));
 			}
 		}
@@ -1034,11 +1087,20 @@ public class JsonStatsUtils {
 		Collections.sort(list, new Comparator<ResDistribuzione>() {
 			@Override
 			public int compare(ResDistribuzione entry1, ResDistribuzione entry2) {
-				Date date1 = ((ResDistribuzione3D)entry1).getData();
-				Date date2 = ((ResDistribuzione3D)entry2).getData();
-				
-				 // Ordina in ordine crescente
-		        return date1.compareTo(date2);
+				if(entry1 instanceof ResDistribuzione3D) {
+					Date date1 = ((ResDistribuzione3D)entry1).getData();
+					Date date2 = ((ResDistribuzione3D)entry2).getData();
+					
+					 // Ordina in ordine crescente
+			        return date1.compareTo(date2);
+				}
+				else {
+					String date1 = ((ResDistribuzione3DCustom)entry1).getDatoCustom();
+					String date2 = ((ResDistribuzione3DCustom)entry2).getDatoCustom();
+					
+					 // Ordina in ordine crescente
+			        return date1.compareTo(date2);
+				}
 			}
 		});
 	}

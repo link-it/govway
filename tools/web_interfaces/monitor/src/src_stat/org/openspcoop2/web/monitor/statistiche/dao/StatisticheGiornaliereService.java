@@ -41,9 +41,13 @@ import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.statistiche.StatisticaGiornaliera;
 import org.openspcoop2.core.statistiche.StatisticaMensile;
@@ -61,6 +65,7 @@ import org.openspcoop2.core.statistiche.model.StatisticaModel;
 import org.openspcoop2.core.statistiche.utils.StatisticheUtils;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
+import org.openspcoop2.core.transazioni.utils.credenziali.AbstractCredenzialeList;
 import org.openspcoop2.core.transazioni.utils.credenziali.AbstractSearchCredenziale;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeClientAddress;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchApi;
@@ -83,6 +88,7 @@ import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
 import org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
+import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
@@ -107,6 +113,7 @@ import org.openspcoop2.protocol.sdk.PDNDTokenInfo;
 import org.openspcoop2.protocol.sdk.PDNDTokenInfoDetails;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
@@ -123,12 +130,14 @@ import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione3D;
+import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione3DCustom;
 import org.openspcoop2.web.monitor.core.datamodel.ResLive;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.report.CostantiReport;
 import org.openspcoop2.web.monitor.core.thread.ThreadExecutorManager;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
+import org.openspcoop2.web.monitor.statistiche.bean.DimensioneCustom;
 import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 import org.openspcoop2.web.monitor.statistiche.bean.StatistichePersonalizzateSearchForm;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
@@ -173,6 +182,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private static Date FALSA_UNION_DEFAULT_VALUE_TIMESTAMP = null; 
 	
 	private static final String ALIAS_FIELD_DATA_3D = "data3d";
+	private static final String ALIAS_FIELD_DATA_3D_CUSTOM = "c3d_";
 	
 	static {
 		try {
@@ -515,7 +525,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	public StatisticType checkStatisticType(StatsSearchForm form) {
 		
 		boolean onlyForCount = true;
-		boolean distribuzione3d = form.getNumeroDimensioni()!=null && NumeroDimensioni.DIMENSIONI_3.equals(form.getNumeroDimensioni());
+		boolean distribuzione3d = form.getNumeroDimensioni()!=null && 
+				(NumeroDimensioni.DIMENSIONI_3.equals(form.getNumeroDimensioni()) || NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(form.getNumeroDimensioni()));
 		if(distribuzione3d) {
 			onlyForCount = false;
 		}
@@ -2749,6 +2760,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
 				expr.addGroupBy(model.DATA);
 			}
+			else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				impostaGroupByFiltro3dCustom(expr, model, this.distribErroriSearch, this.distribErroriSearch.getNumeroDimensioniCustom());
+			}
 			
 			expr.addGroupBy(model.ESITO);
 
@@ -2814,6 +2828,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				SortOrder s = 	this.distribErroriSearch.getSortOrder() != null ? 	this.distribErroriSearch.getSortOrder() : SortOrder.ASC;
 				gByExpr.sortOrder(s).addOrder(model.DATA);
 			}
+			else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribErroriSearch.getSortOrder() != null ? 	this.distribErroriSearch.getSortOrder() : SortOrder.ASC;
+				impostaSortOrder3dCustom(gByExpr, model, this.distribErroriSearch, this.distribErroriSearch.getNumeroDimensioniCustom(), s);
+			}
 			
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.ESITO);
 
@@ -2834,13 +2852,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			UnionExpression unionExpr = new UnionExpression(gByExpr);
 			
+			List<String> aliases3dCustom = new ArrayList<>();
+			
 			// select field data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
 				unionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
 			}
+			else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				impostaSelectField3dCustom(unionExpr, model, this.distribErroriSearch, this.distribErroriSearch.getNumeroDimensioniCustom(), aliases3dCustom);
+			}
 			String aliasFieldEsito = "esito";
 			
-			unionExpr.addSelectField(model.ESITO,		aliasFieldEsito);
+			unionExpr.addSelectField(model.ESITO, aliasFieldEsito);
 
 			// Espressione finta per usare l'ordinamento
 			IExpression fakeExpr = this.dao.newExpression();
@@ -2849,6 +2872,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
 				unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
 						model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+			}
+			else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				impostaSelectField3dCustomFake(unionExprFake, model, this.distribErroriSearch, this.distribErroriSearch.getNumeroDimensioniCustom(), aliases3dCustom);
 			}
 			unionExprFake.addSelectField(new ConstantField(aliasFieldEsito, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_INT,
 					model.ESITO.getFieldType()), aliasFieldEsito);
@@ -2859,10 +2885,20 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
 				union.addField(ALIAS_FIELD_DATA_3D);
 			}
+			else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					union.addField(a3dCustom);
+				}
+			}
 			union.addField(aliasFieldEsito);
 			// group by field data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
 				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			}
+			else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					union.addGroupBy(a3dCustom);
+				}
 			}
 			union.addGroupBy(aliasFieldEsito);
 			
@@ -2870,6 +2906,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
 				SortOrder s = 	this.distribErroriSearch.getSortOrder() != null ? 	this.distribErroriSearch.getSortOrder() : SortOrder.ASC;
 				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
+			}
+			else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					SortOrder s = 	this.distribErroriSearch.getSortOrder() != null ? 	this.distribErroriSearch.getSortOrder() : SortOrder.ASC;
+					union.addOrderBy(a3dCustom, s);
+				}
 			}
 
 			TipoVisualizzazione tipoVisualizzazione = this.distribErroriSearch.getTipoVisualizzazione();
@@ -3042,7 +3084,30 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
 						((ResDistribuzione3D)r).setData(data);
 						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
-					} else {
+					} 
+					else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3DCustom();
+
+						StringBuilder resFailure = new StringBuilder();
+						try {
+							BooleanNullable bSkip = BooleanNullable.NULL();
+							String customData = getCustomData(row, this.distribErroriSearch.getNumeroDimensioniCustom(), this.distribErroriSearch, resFailure, bSkip);
+							if(bSkip!=null && bSkip.getValue()!=null && bSkip.getValue().booleanValue()) {
+								continue;
+							}
+							if(customData==null) {
+								if(resFailure.length()<=0) {
+									resFailure.append("-?-");
+								}
+								throw new CoreException("Informazione personalizzata non presente");
+							}
+							((ResDistribuzione3DCustom)r).setDatoCustom(customData);
+						}catch(Exception t) {
+							((ResDistribuzione3DCustom)r).setDatoCustom("Esito '"+esito+"' - "+resFailure.toString());
+							StatisticheGiornaliereService.logError("Traduzione esito("+esito+") '"+resFailure.toString()+"' non riuscita: "+t.getMessage(), t);
+						}
+					} 
+					else {
 						r = new ResDistribuzione();
 					}
 					
@@ -7741,26 +7806,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						}
 						else if(	this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
 							
-							String tipoCredenziale = "-";
-							if(sbTipoCredenziale.length()>0 && sbTipoCredenziale.toString().contains("_")) {
-								String [] tmp = sbTipoCredenziale.toString().split("_");
-								if(tmp!=null && tmp.length>1 && tmp[1]!=null && StringUtils.isNotEmpty(tmp[1])) {
-									tipoCredenziale = tmp[1];
-								}
-							}
-							if(TipoAutenticazione.SSL.getValue().equals(tipoCredenziale)) {
-								tipoCredenziale = TipoAutenticazione.SSL.getLabel(); 
-							}
-							else if(TipoAutenticazione.BASIC.getValue().equals(tipoCredenziale)) {
-								tipoCredenziale = TipoAutenticazione.BASIC.getLabel(); 
-							}
-							else if(TipoAutenticazione.APIKEY.getValue().equals(tipoCredenziale)) {
-								tipoCredenziale = TipoAutenticazione.APIKEY.getLabel(); 
-							}
-							else if(TipoAutenticazione.PRINCIPAL.getValue().equals(tipoCredenziale)) {
-								tipoCredenziale = TipoAutenticazione.PRINCIPAL.getLabel(); 
-							}
-							
+							String tipoCredenziale = convertToTipoCredenziale(sbTipoCredenziale.toString());
 							r.getParentMap().put("0", tipoCredenziale);
 							
 						}
@@ -7824,6 +7870,28 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			throw new ServiceException(e);
 		}
 		return new ArrayList<>();
+	}
+	private String convertToTipoCredenziale(String tipo) {
+		String tipoCredenziale = "-";
+		if(tipo.length()>0 && tipo.contains("_")) {
+			String [] tmp = tipo.split("_");
+			if(tmp!=null && tmp.length>1 && tmp[1]!=null && StringUtils.isNotEmpty(tmp[1])) {
+				tipoCredenziale = tmp[1];
+			}
+		}
+		if(TipoAutenticazione.SSL.getValue().equals(tipoCredenziale)) {
+			tipoCredenziale = TipoAutenticazione.SSL.getLabel(); 
+		}
+		else if(TipoAutenticazione.BASIC.getValue().equals(tipoCredenziale)) {
+			tipoCredenziale = TipoAutenticazione.BASIC.getLabel(); 
+		}
+		else if(TipoAutenticazione.APIKEY.getValue().equals(tipoCredenziale)) {
+			tipoCredenziale = TipoAutenticazione.APIKEY.getLabel(); 
+		}
+		else if(TipoAutenticazione.PRINCIPAL.getValue().equals(tipoCredenziale)) {
+			tipoCredenziale = TipoAutenticazione.PRINCIPAL.getLabel(); 
+		}
+		return tipoCredenziale;
 	}
 
 	private IExpression createDistribuzioneServizioApplicativoExpression(IServiceSearchWithoutId<?> dao, StatisticaModel model, boolean isCount,
@@ -9928,25 +9996,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						}
 						
 						String credenziale = credenzialeMittente!=null ? credenzialeMittente.getCredenziale() : null;
-						if(credenziale!=null) {
-							StringBuilder bf = new StringBuilder();
-							if(CredenzialeClientAddress.isSocketAddressDBValue(credenziale)) {
-								bf.append(CredenzialeClientAddress.convertSocketDBValueToOriginal(credenziale));
-								if(CredenzialeClientAddress.isTransportAddressDBValue(credenziale)) {
-									bf.append(" (X-Forwarded-For: ");
-									bf.append(CredenzialeClientAddress.convertTransportDBValueToOriginal(credenziale));
-									bf.append(")");
-								}
-								
-							}
-							else if(CredenzialeClientAddress.isTransportAddressDBValue(credenziale)) {
-								bf.append(CredenzialeClientAddress.convertTransportDBValueToOriginal(credenziale));
-							}
-							return bf.toString(); 
-						}
-						else {
-							return risultato;
-						}
+						return getLabelCredenzialeFieldGroupByIndirizzoIp(credenziale, risultato);
 					}
 				} 
 				else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
@@ -9992,6 +10042,28 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		
 		return risultato;
 		 
+	}
+	
+	private String getLabelCredenzialeFieldGroupByIndirizzoIp(String credenziale, String risultato) {
+		if(credenziale!=null) {
+			StringBuilder bf = new StringBuilder();
+			if(CredenzialeClientAddress.isSocketAddressDBValue(credenziale)) {
+				bf.append(CredenzialeClientAddress.convertSocketDBValueToOriginal(credenziale));
+				if(CredenzialeClientAddress.isTransportAddressDBValue(credenziale)) {
+					bf.append(" (X-Forwarded-For: ");
+					bf.append(CredenzialeClientAddress.convertTransportDBValueToOriginal(credenziale));
+					bf.append(")");
+				}
+				
+			}
+			else if(CredenzialeClientAddress.isTransportAddressDBValue(credenziale)) {
+				bf.append(CredenzialeClientAddress.convertTransportDBValueToOriginal(credenziale));
+			}
+			return bf.length()>0 ? bf.toString() : risultato; 
+		}
+		else {
+			return risultato;
+		}
 	}
 	
 	private void addListaCredenzialiMittente(IExpression filter, List<CredenzialeMittente> listaCredenzialiMittente, StatisticaModel model) throws ExpressionNotImplementedException, ExpressionException {
@@ -10075,5 +10147,922 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 		}
 		return ignoreSetMittente;
+	}
+	
+	private static final String MESSAGE_3D_CUSTOM_INFORMAZIONE_NON_INDICATA = "Informazione personalizzata non indicata";
+	
+	private void impostaGroupByFiltro3dCustom(IExpression filter, StatisticaModel model, StatsSearchForm form, DimensioneCustom dc)
+			throws ExpressionNotImplementedException, ExpressionException {
+		
+		if(dc!=null) {
+			switch (dc) {
+			case TAG:{
+				filter.notEquals(model.GRUPPI, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				filter.addGroupBy(model.GRUPPI);
+				break;
+			}
+			case API:{
+				filter.notEquals(model.URI_API, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				filter.addGroupBy(model.URI_API);
+				break;
+			}
+			case IMPLEMENTAZIONE_API:{
+				impostaGroupByFiltro3dCustomImplementazioneApi(filter, model);
+				break;
+			}
+			case OPERAZIONE:{
+				filter.notEquals(model.AZIONE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				filter.addGroupBy(model.AZIONE);
+				break;
+			}
+			case SOGGETTO_LOCALE:{
+				impostaGroupByFiltro3dCustomSoggettoLocale(filter, model, form);
+				break;
+			}
+			case SOGGETTO_REMOTO:{
+				impostaGroupByFiltro3dCustomSoggettoRemoto(filter, model, form);
+				break;
+			}
+			case SOGGETTO_FRUITORE:{
+				impostaGroupByFiltro3dCustomSoggettoFruitore(filter, model);
+				break;
+			}
+			case SOGGETTO_EROGATORE:{
+				impostaGroupByFiltro3dCustomSoggettoErogatore(filter, model);
+				break;
+			}
+			case TOKEN_CLIENT_ID:
+			case TOKEN_PDND_ORGANIZATION:
+			case APPLICATIVO_TOKEN:{
+				filter.notEquals(model.TOKEN_CLIENT_ID, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				filter.addGroupBy(model.TOKEN_CLIENT_ID);
+				break;
+			}
+			case TOKEN_ISSUER:{
+				filter.notEquals(model.TOKEN_ISSUER, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				filter.addGroupBy(model.TOKEN_ISSUER);
+				break;
+			}
+			case TOKEN_SUBJECT:{
+				filter.notEquals(model.TOKEN_SUBJECT, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				filter.addGroupBy(model.TOKEN_SUBJECT);
+				break;
+			}
+			case TOKEN_USERNAME:{
+				filter.notEquals(model.TOKEN_USERNAME, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				filter.addGroupBy(model.TOKEN_USERNAME);
+				break;
+			}
+			case TOKEN_EMAIL:{
+				filter.notEquals(model.TOKEN_MAIL, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				filter.addGroupBy(model.TOKEN_MAIL);
+				break;
+			}
+			case APPLICATIVO_TRASPORTO:{
+				filter.notEquals(model.SERVIZIO_APPLICATIVO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				filter.addGroupBy(model.SERVIZIO_APPLICATIVO);
+				filter.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				filter.addGroupBy(model.TIPO_MITTENTE);
+				filter.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				filter.addGroupBy(model.MITTENTE);
+				break;
+			}
+			case INDIRIZZO_IP:{
+				filter.notEquals(model.CLIENT_ADDRESS, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				filter.addGroupBy(model.CLIENT_ADDRESS);
+				break;
+			}
+			case PRINCIPAL:{
+				filter.notEquals(model.TRASPORTO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				filter.addGroupBy(model.TRASPORTO_MITTENTE);
+				break;
+			}
+			case ESITO:{
+				filter.notEquals(model.ESITO, Costanti.INFORMAZIONE_VERSIONE_NON_DISPONIBILE);
+				filter.addGroupBy(model.ESITO);
+				break;
+			}
+			}
+		}
+		else {
+			throw new ExpressionException(MESSAGE_3D_CUSTOM_INFORMAZIONE_NON_INDICATA);
+		}
+	}
+	private void impostaGroupByFiltro3dCustomImplementazioneApi(IExpression filter, StatisticaModel model)
+			throws ExpressionNotImplementedException, ExpressionException {
+		filter.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		filter.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		filter.notEquals(model.TIPO_SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		filter.notEquals(model.SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		filter.notEquals(model.VERSIONE_SERVIZIO, Costanti.INFORMAZIONE_VERSIONE_NON_DISPONIBILE);
+		filter.addGroupBy(model.TIPO_DESTINATARIO);
+		filter.addGroupBy(model.DESTINATARIO);
+		filter.addGroupBy(model.TIPO_SERVIZIO);
+		filter.addGroupBy(model.SERVIZIO);
+		filter.addGroupBy(model.VERSIONE_SERVIZIO);
+	}
+	private void impostaGroupByFiltro3dCustomSoggettoLocale(IExpression filter, StatisticaModel model, StatsSearchForm form)
+			throws ExpressionNotImplementedException, ExpressionException {
+		if(TipologiaRicerca.ingresso.equals(form.getTipologiaRicercaEnum())){
+			filter.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+			filter.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+			filter.addGroupBy(model.TIPO_DESTINATARIO);
+			filter.addGroupBy(model.DESTINATARIO);
+		}
+		else if(TipologiaRicerca.uscita.equals(form.getTipologiaRicercaEnum())){
+			filter.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+			filter.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+			filter.addGroupBy(model.TIPO_MITTENTE);
+			filter.addGroupBy(model.MITTENTE);
+		}
+	}
+	private void impostaGroupByFiltro3dCustomSoggettoRemoto(IExpression filter, StatisticaModel model, StatsSearchForm form)
+			throws ExpressionNotImplementedException, ExpressionException {
+		if(TipologiaRicerca.ingresso.equals(form.getTipologiaRicercaEnum())){
+			filter.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+			filter.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+			filter.addGroupBy(model.TIPO_MITTENTE);
+			filter.addGroupBy(model.MITTENTE);
+		}
+		else if(TipologiaRicerca.uscita.equals(form.getTipologiaRicercaEnum())){
+			filter.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+			filter.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+			filter.addGroupBy(model.TIPO_DESTINATARIO);
+			filter.addGroupBy(model.DESTINATARIO);
+		}
+	}
+	private void impostaGroupByFiltro3dCustomSoggettoFruitore(IExpression filter, StatisticaModel model)
+			throws ExpressionNotImplementedException, ExpressionException {
+		filter.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		filter.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		filter.addGroupBy(model.TIPO_MITTENTE);
+		filter.addGroupBy(model.MITTENTE);
+	}
+	private void impostaGroupByFiltro3dCustomSoggettoErogatore(IExpression filter, StatisticaModel model)
+			throws ExpressionNotImplementedException, ExpressionException {
+		filter.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		filter.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		filter.addGroupBy(model.TIPO_DESTINATARIO);
+		filter.addGroupBy(model.DESTINATARIO);
+	}
+	
+	private void impostaSortOrder3dCustom(IExpression filter, StatisticaModel model, StatsSearchForm form, DimensioneCustom dc, SortOrder s)
+			throws ExpressionNotImplementedException, ExpressionException {
+		
+		if(dc!=null) {
+			filter.sortOrder(s);
+			switch (dc) {
+			case TAG:
+				filter.addOrder(model.GRUPPI);
+				break;
+			case API:
+				filter.addOrder(model.URI_API);
+				break;
+			case IMPLEMENTAZIONE_API:
+				filter.addOrder(model.TIPO_DESTINATARIO);
+				filter.addOrder(model.DESTINATARIO);
+				filter.addOrder(model.TIPO_SERVIZIO);
+				filter.addOrder(model.SERVIZIO);
+				filter.addOrder(model.VERSIONE_SERVIZIO);
+				break;
+			case OPERAZIONE:
+				filter.addOrder(model.AZIONE);
+				break;
+			case SOGGETTO_LOCALE:
+				if(TipologiaRicerca.ingresso.equals(form.getTipologiaRicercaEnum())){
+					filter.addOrder(model.TIPO_DESTINATARIO);
+					filter.addOrder(model.DESTINATARIO);
+				}
+				else {
+					filter.addOrder(model.TIPO_MITTENTE);
+					filter.addOrder(model.MITTENTE);
+				}
+				break;
+			case SOGGETTO_REMOTO:
+				if(TipologiaRicerca.ingresso.equals(form.getTipologiaRicercaEnum())){
+					filter.addOrder(model.TIPO_MITTENTE);
+					filter.addOrder(model.MITTENTE);
+				}
+				else {
+					filter.addOrder(model.TIPO_DESTINATARIO);
+					filter.addOrder(model.DESTINATARIO);
+				}
+				break;
+			case SOGGETTO_FRUITORE:
+				filter.addOrder(model.TIPO_MITTENTE);
+				filter.addOrder(model.MITTENTE);
+				break;
+			case SOGGETTO_EROGATORE:
+				filter.addOrder(model.TIPO_DESTINATARIO);
+				filter.addOrder(model.DESTINATARIO);
+				break;
+			case TOKEN_CLIENT_ID:
+			case TOKEN_PDND_ORGANIZATION:
+			case APPLICATIVO_TOKEN:{
+				filter.addOrder(model.TOKEN_CLIENT_ID);
+				break;
+			}
+			case TOKEN_ISSUER:{
+				filter.addOrder(model.TOKEN_ISSUER);
+				break;
+			}
+			case TOKEN_SUBJECT:{
+				filter.addOrder(model.TOKEN_SUBJECT);
+				break;
+			}
+			case TOKEN_USERNAME:{
+				filter.addOrder(model.TOKEN_USERNAME);
+				break;
+			}
+			case TOKEN_EMAIL:{
+				filter.addOrder(model.TOKEN_MAIL);
+				break;
+			}
+			case APPLICATIVO_TRASPORTO:{
+				filter.addOrder(model.SERVIZIO_APPLICATIVO);
+				filter.addOrder(model.TIPO_MITTENTE);
+				filter.addOrder(model.MITTENTE);
+				break;
+			}
+			case INDIRIZZO_IP:{
+				filter.addOrder(model.CLIENT_ADDRESS);
+				break;
+			}
+			case PRINCIPAL:{
+				filter.addOrder(model.TRASPORTO_MITTENTE);
+				break;
+			}
+			case ESITO:{
+				filter.addOrder(model.ESITO);
+				break;
+			}
+			}
+		}
+		else {
+			throw new ExpressionException(MESSAGE_3D_CUSTOM_INFORMAZIONE_NON_INDICATA);
+		}
+		
+	}
+	
+	private void impostaSelectField3dCustom(UnionExpression expr, StatisticaModel model, StatsSearchForm form, DimensioneCustom dc, List<String> aliases)
+			throws ExpressionException {
+
+		if(dc!=null) {
+			switch (dc) {
+			case TAG:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"tag";
+				expr.addSelectField(model.GRUPPI, a);
+				addAlias(aliases, a);
+				break;
+			}
+			case API:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"api";
+				expr.addSelectField(model.URI_API, a);
+				addAlias(aliases, a);
+				break;
+			}
+			case IMPLEMENTAZIONE_API:{
+				impostaSelectField3dCustomApiImplementation(expr, model, aliases);
+				break;
+			}
+			case OPERAZIONE:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"op";
+				expr.addSelectField(model.AZIONE, a);
+				addAlias(aliases, a);
+				break;
+			}
+			case SOGGETTO_LOCALE:{
+				impostaSelectField3dCustomSoggettoLocale(expr, model, form, aliases);
+				break;
+			}
+			case SOGGETTO_REMOTO:{
+				impostaSelectField3dCustomSoggettoRemoto(expr, model, form, aliases);
+				break;
+			}
+			case SOGGETTO_FRUITORE:{
+				impostaSelectField3dCustomSoggettoFruitore(expr, model, aliases);
+				break;
+			}
+			case SOGGETTO_EROGATORE:{
+				impostaSelectField3dCustomSoggettoErogatore(expr, model, aliases);
+				break;
+			}
+			case TOKEN_CLIENT_ID:
+			case TOKEN_PDND_ORGANIZATION:
+			case APPLICATIVO_TOKEN:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"tc";
+				expr.addSelectField(model.TOKEN_CLIENT_ID, a);
+				addAlias(aliases, a);
+				break;
+			}
+			case TOKEN_ISSUER:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"ti";
+				expr.addSelectField(model.TOKEN_ISSUER, a);
+				addAlias(aliases, a);
+				break;
+			}
+			case TOKEN_SUBJECT:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"ts";
+				expr.addSelectField(model.TOKEN_SUBJECT, a);
+				addAlias(aliases, a);
+				break;
+			}
+			case TOKEN_USERNAME:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"tu";
+				expr.addSelectField(model.TOKEN_USERNAME, a);
+				addAlias(aliases, a);
+				break;
+			}
+			case TOKEN_EMAIL:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"te";
+				expr.addSelectField(model.TOKEN_MAIL, a);
+				addAlias(aliases, a);
+				break;
+			}
+			case APPLICATIVO_TRASPORTO:{
+				impostaSelectField3dCustomServizioApplicativoTrasporto(expr, model, aliases);
+				break;
+			}
+			case PRINCIPAL:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"p";
+				expr.addSelectField(model.TRASPORTO_MITTENTE, a);
+				addAlias(aliases, a);
+				break;
+			}
+			case INDIRIZZO_IP:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"ip";
+				expr.addSelectField(model.CLIENT_ADDRESS, a);
+				addAlias(aliases, a);
+				break;
+			}
+			case ESITO:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"e";
+				expr.addSelectField(model.ESITO, a);
+				addAlias(aliases, a);
+				break;
+			}
+			}
+		}
+		else {
+			throw new ExpressionException(MESSAGE_3D_CUSTOM_INFORMAZIONE_NON_INDICATA);
+		}
+		
+	}
+	private void impostaSelectField3dCustomApiImplementation(UnionExpression expr, StatisticaModel model, List<String> aliases)
+			throws ExpressionException {
+		String aTD = ALIAS_FIELD_DATA_3D_CUSTOM+"td";
+		expr.addSelectField(model.TIPO_DESTINATARIO, aTD);
+		addAlias(aliases, aTD);
+		
+		String aD = ALIAS_FIELD_DATA_3D_CUSTOM+"d";
+		expr.addSelectField(model.DESTINATARIO, aD);
+		addAlias(aliases, aD);
+		
+		String aTS = ALIAS_FIELD_DATA_3D_CUSTOM+"ts";
+		expr.addSelectField(model.TIPO_SERVIZIO, aTS);
+		addAlias(aliases, aTS);
+		
+		String aS = ALIAS_FIELD_DATA_3D_CUSTOM+"s";
+		expr.addSelectField(model.SERVIZIO, aS);
+		addAlias(aliases, aS);
+		
+		String aVS = ALIAS_FIELD_DATA_3D_CUSTOM+"vs";
+		expr.addSelectField(model.VERSIONE_SERVIZIO, aVS);
+		addAlias(aliases, aVS);
+	}
+	private void impostaSelectField3dCustomSoggettoLocale(UnionExpression expr, StatisticaModel model, StatsSearchForm form, List<String> aliases)
+			throws ExpressionException {
+		String aT = ALIAS_FIELD_DATA_3D_CUSTOM+"tipo";
+		String aN = ALIAS_FIELD_DATA_3D_CUSTOM+"nome";
+		if(TipologiaRicerca.ingresso.equals(form.getTipologiaRicercaEnum())){
+			expr.addSelectField(model.TIPO_DESTINATARIO, aT);
+			expr.addSelectField(model.DESTINATARIO, aN);
+		}
+		else {
+			expr.addSelectField(model.TIPO_MITTENTE, aT);
+			expr.addSelectField(model.MITTENTE, aN);
+		}
+		addAlias(aliases, aT);
+		addAlias(aliases, aN);
+	}
+	private void impostaSelectField3dCustomSoggettoRemoto(UnionExpression expr, StatisticaModel model, StatsSearchForm form, List<String> aliases)
+			throws ExpressionException {
+		String aT = ALIAS_FIELD_DATA_3D_CUSTOM+"tipo";
+		String aN = ALIAS_FIELD_DATA_3D_CUSTOM+"nome";
+		if(TipologiaRicerca.ingresso.equals(form.getTipologiaRicercaEnum())){
+			expr.addSelectField(model.TIPO_MITTENTE, aT);
+			expr.addSelectField(model.MITTENTE, aN);
+		}
+		else {
+			expr.addSelectField(model.TIPO_DESTINATARIO, aT);
+			expr.addSelectField(model.DESTINATARIO, aN);
+		}
+		addAlias(aliases, aT);
+		addAlias(aliases, aN);
+	}
+	private void impostaSelectField3dCustomSoggettoFruitore(UnionExpression expr, StatisticaModel model, List<String> aliases)
+			throws ExpressionException {
+		String aT = ALIAS_FIELD_DATA_3D_CUSTOM+"tipo";
+		String aN = ALIAS_FIELD_DATA_3D_CUSTOM+"nome";
+		expr.addSelectField(model.TIPO_MITTENTE, aT);
+		expr.addSelectField(model.MITTENTE, aN);
+		addAlias(aliases, aT);
+		addAlias(aliases, aN);
+	}
+	private void impostaSelectField3dCustomSoggettoErogatore(UnionExpression expr, StatisticaModel model, List<String> aliases)
+			throws ExpressionException {
+		String aT = ALIAS_FIELD_DATA_3D_CUSTOM+"tipo";
+		String aN = ALIAS_FIELD_DATA_3D_CUSTOM+"nome";
+		expr.addSelectField(model.TIPO_DESTINATARIO, aT);
+		expr.addSelectField(model.DESTINATARIO, aN);
+		addAlias(aliases, aT);
+		addAlias(aliases, aN);
+	}
+	private void impostaSelectField3dCustomServizioApplicativoTrasporto(UnionExpression expr, StatisticaModel model, List<String> aliases)
+			throws ExpressionException {
+		String aSA = ALIAS_FIELD_DATA_3D_CUSTOM+"sa";
+		String aT = ALIAS_FIELD_DATA_3D_CUSTOM+"tipo";
+		String aN = ALIAS_FIELD_DATA_3D_CUSTOM+"nome";
+		expr.addSelectField(model.SERVIZIO_APPLICATIVO, aSA);
+		expr.addSelectField(model.TIPO_MITTENTE, aT);
+		expr.addSelectField(model.MITTENTE, aN);
+		addAlias(aliases, aSA);
+		addAlias(aliases, aT);
+		addAlias(aliases, aN);
+	}
+	
+	private void impostaSelectField3dCustomFake(UnionExpression expr, StatisticaModel model, StatsSearchForm form, DimensioneCustom dc, List<String> aliases)
+			throws ExpressionException {
+
+		if(dc!=null) {
+			switch (dc) {
+			case TAG:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"tag";
+				expr.addSelectField(new ConstantField(a, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+						model.GRUPPI.getFieldType()), a);
+				addAlias(aliases, a);
+				break;
+			}
+			case API:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"api";
+				expr.addSelectField(new ConstantField(a, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+						model.URI_API.getFieldType()), a);
+				addAlias(aliases, a);
+				break;
+			}
+			case IMPLEMENTAZIONE_API:{
+				impostaSelectField3dCustomFakeApiImplementation(expr, model, aliases);				
+				break;
+			}
+			case OPERAZIONE:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"op";
+				expr.addSelectField(new ConstantField(a, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+						model.AZIONE.getFieldType()), a);
+				addAlias(aliases, a);
+				break;
+			}
+			case SOGGETTO_LOCALE:{
+				impostaSelectField3dCustomFakeSoggettoLocale(expr, model, form, aliases);		
+				break;
+			}
+			case SOGGETTO_REMOTO:{
+				impostaSelectField3dCustomFakeSoggettoRemoto(expr, model, form, aliases);		
+				break;
+			}
+			case SOGGETTO_FRUITORE:{
+				impostaSelectField3dCustomFakeSoggettoFruitore(expr, model, aliases);		
+				break;
+			}
+			case SOGGETTO_EROGATORE:{
+				impostaSelectField3dCustomFakeSoggettoErogatore(expr, model, aliases);		
+				break;
+			}
+			case TOKEN_CLIENT_ID:
+			case TOKEN_PDND_ORGANIZATION:
+			case APPLICATIVO_TOKEN:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"tc";
+				expr.addSelectField(new ConstantField(a, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+						model.TOKEN_CLIENT_ID.getFieldType()), a);
+				addAlias(aliases, a);
+				break;
+			}
+			case TOKEN_ISSUER:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"ti";
+				expr.addSelectField(new ConstantField(a, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+						model.TOKEN_ISSUER.getFieldType()), a);
+				addAlias(aliases, a);
+				break;
+			}
+			case TOKEN_SUBJECT:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"ts";
+				expr.addSelectField(new ConstantField(a, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+						model.TOKEN_SUBJECT.getFieldType()), a);
+				addAlias(aliases, a);
+				break;
+			}
+			case TOKEN_USERNAME:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"tu";
+				expr.addSelectField(new ConstantField(a, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+						model.TOKEN_USERNAME.getFieldType()), a);
+				addAlias(aliases, a);
+				break;
+			}
+			case TOKEN_EMAIL:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"te";
+				expr.addSelectField(new ConstantField(a, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+						model.TOKEN_MAIL.getFieldType()), a);
+				addAlias(aliases, a);
+				break;
+			}
+			case APPLICATIVO_TRASPORTO:{
+				impostaSelectField3dCustomFakeServizioApplicativoTrasporto(expr, model, aliases);
+				break;
+			}
+			case PRINCIPAL:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"p";
+				expr.addSelectField(new ConstantField(a, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+						model.TRASPORTO_MITTENTE.getFieldType()), a);
+				addAlias(aliases, a);
+				break;
+			}
+			case INDIRIZZO_IP:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"ip";
+				expr.addSelectField(new ConstantField(a, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+						model.CLIENT_ADDRESS.getFieldType()), a);
+				addAlias(aliases, a);
+				break;
+			}
+			case ESITO:{
+				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"e";
+				expr.addSelectField(new ConstantField(a, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_INT,
+						model.ESITO.getFieldType()), a);
+				addAlias(aliases, a);
+				break;
+			}
+			}
+		}
+		else {
+			throw new ExpressionException(MESSAGE_3D_CUSTOM_INFORMAZIONE_NON_INDICATA);
+		}
+		
+	}
+	private void impostaSelectField3dCustomFakeApiImplementation(UnionExpression expr, StatisticaModel model, List<String> aliases)
+			throws ExpressionException {
+		String aTD = ALIAS_FIELD_DATA_3D_CUSTOM+"td";
+		expr.addSelectField(new ConstantField(aTD, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+				model.TIPO_DESTINATARIO.getFieldType()), aTD);
+		addAlias(aliases, aTD);
+		
+		String aD = ALIAS_FIELD_DATA_3D_CUSTOM+"d";
+		expr.addSelectField(new ConstantField(aD, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+				model.DESTINATARIO.getFieldType()), aD);
+		addAlias(aliases, aD);
+		
+		String aTS = ALIAS_FIELD_DATA_3D_CUSTOM+"ts";
+		expr.addSelectField(new ConstantField(aTS, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+				model.TIPO_SERVIZIO.getFieldType()), aTS);
+		addAlias(aliases, aTS);
+		
+		String aS = ALIAS_FIELD_DATA_3D_CUSTOM+"s";
+		expr.addSelectField(new ConstantField(aS, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+				model.SERVIZIO.getFieldType()), aS);
+		addAlias(aliases, aS);
+		
+		String aVS = ALIAS_FIELD_DATA_3D_CUSTOM+"vs";
+		expr.addSelectField(new ConstantField(aVS, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_VERSIONE,
+				model.VERSIONE_SERVIZIO.getFieldType()), aVS);
+		addAlias(aliases, aVS);
+	}
+	private void impostaSelectField3dCustomFakeSoggettoLocale(UnionExpression expr, StatisticaModel model, StatsSearchForm form, List<String> aliases)
+			throws ExpressionException {
+		String aT = ALIAS_FIELD_DATA_3D_CUSTOM+"tipo";
+		String aN = ALIAS_FIELD_DATA_3D_CUSTOM+"nome";
+		if(TipologiaRicerca.ingresso.equals(form.getTipologiaRicercaEnum())){
+			expr.addSelectField(new ConstantField(aT, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+					model.TIPO_DESTINATARIO.getFieldType()), aT);
+			expr.addSelectField(new ConstantField(aN, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+					model.DESTINATARIO.getFieldType()), aN);
+		}
+		else {
+			expr.addSelectField(new ConstantField(aT, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+					model.TIPO_MITTENTE.getFieldType()), aT);
+			expr.addSelectField(new ConstantField(aN, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+					model.MITTENTE.getFieldType()), aN);
+		}
+		addAlias(aliases, aT);
+		addAlias(aliases, aN);
+	}
+	private void impostaSelectField3dCustomFakeSoggettoRemoto(UnionExpression expr, StatisticaModel model, StatsSearchForm form, List<String> aliases)
+			throws ExpressionException {
+		String aT = ALIAS_FIELD_DATA_3D_CUSTOM+"tipo";
+		String aN = ALIAS_FIELD_DATA_3D_CUSTOM+"nome";
+		if(TipologiaRicerca.ingresso.equals(form.getTipologiaRicercaEnum())){
+			expr.addSelectField(new ConstantField(aT, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+					model.TIPO_MITTENTE.getFieldType()), aT);
+			expr.addSelectField(new ConstantField(aN, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+					model.MITTENTE.getFieldType()), aN);
+		}
+		else {
+			expr.addSelectField(new ConstantField(aT, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+					model.TIPO_DESTINATARIO.getFieldType()), aT);
+			expr.addSelectField(new ConstantField(aN, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+					model.DESTINATARIO.getFieldType()), aN);
+		}
+		addAlias(aliases, aT);
+		addAlias(aliases, aN);
+	}
+	private void impostaSelectField3dCustomFakeSoggettoFruitore(UnionExpression expr, StatisticaModel model, List<String> aliases)
+			throws ExpressionException {
+		String aT = ALIAS_FIELD_DATA_3D_CUSTOM+"tipo";
+		String aN = ALIAS_FIELD_DATA_3D_CUSTOM+"nome";
+		expr.addSelectField(new ConstantField(aT, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+				model.TIPO_MITTENTE.getFieldType()), aT);
+		expr.addSelectField(new ConstantField(aN, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+				model.MITTENTE.getFieldType()), aN);
+		addAlias(aliases, aT);
+		addAlias(aliases, aN);
+	}
+	private void impostaSelectField3dCustomFakeSoggettoErogatore(UnionExpression expr, StatisticaModel model, List<String> aliases)
+			throws ExpressionException {
+		String aT = ALIAS_FIELD_DATA_3D_CUSTOM+"tipo";
+		String aN = ALIAS_FIELD_DATA_3D_CUSTOM+"nome";
+		expr.addSelectField(new ConstantField(aT, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+				model.TIPO_DESTINATARIO.getFieldType()), aT);
+		expr.addSelectField(new ConstantField(aN, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+				model.DESTINATARIO.getFieldType()), aN);
+		addAlias(aliases, aT);
+		addAlias(aliases, aN);
+	}
+	private void impostaSelectField3dCustomFakeServizioApplicativoTrasporto(UnionExpression expr, StatisticaModel model, List<String> aliases)
+			throws ExpressionException {
+		String aSA = ALIAS_FIELD_DATA_3D_CUSTOM+"sa";
+		String aT = ALIAS_FIELD_DATA_3D_CUSTOM+"tipo";
+		String aN = ALIAS_FIELD_DATA_3D_CUSTOM+"nome";
+		expr.addSelectField(new ConstantField(aSA, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+				model.SERVIZIO_APPLICATIVO.getFieldType()), aSA);
+		expr.addSelectField(new ConstantField(aT, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+				model.TIPO_MITTENTE.getFieldType()), aT);
+		expr.addSelectField(new ConstantField(aN, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
+				model.MITTENTE.getFieldType()), aN);
+		addAlias(aliases, aSA);
+		addAlias(aliases, aT);
+		addAlias(aliases, aN);
+	}
+	
+	private void addAlias(List<String> aliases, String a) {
+		if(!aliases.contains(a)) {
+			aliases.add(a);
+		}
+	}
+	
+	private String getCustomData(Map<String, Object> row, DimensioneCustom dc, StatsSearchForm form, StringBuilder res, BooleanNullable bSkip) throws NumberFormatException, ServiceException, MultipleResultException, NotFoundException, NotImplementedException, DriverRegistroServiziException, ProtocolException, ExpressionException, CoreException {
+		if(dc!=null) {
+			switch (dc) {
+			case TAG:{
+				return getCustomDataCredenzialeNormalize(row, res, "tag");
+			}
+			case API:{
+				return getCustomDataApi(row, form, res);
+			}
+			case IMPLEMENTAZIONE_API:{
+				return getCustomDataApiImplementation(row, res);
+			}
+			case OPERAZIONE:{
+				return getCustomData(row, res, "op");
+			}
+			case SOGGETTO_LOCALE:
+			case SOGGETTO_REMOTO:
+			case SOGGETTO_FRUITORE:
+			case SOGGETTO_EROGATORE:
+			{
+				return getCustomDataSoggetto(row, res);
+			}
+			case TOKEN_CLIENT_ID:{
+				return getCustomDataCredenzialeTokenClient(row, res, "tc", false, bSkip);
+			}
+			case APPLICATIVO_TOKEN:{
+				return getCustomDataCredenzialeTokenClient(row, res, "tc", true, bSkip);
+			}
+			case TOKEN_PDND_ORGANIZATION:{
+				return getCustomDataCredenzialeTokenPDNDOrganization(row, res, "tc", bSkip);
+			}
+			case TOKEN_ISSUER:{
+				return getCustomDataCredenziale(row, res, "ti");
+			}
+			case TOKEN_SUBJECT:{
+				return getCustomDataCredenziale(row, res, "ts");
+			}
+			case TOKEN_USERNAME:{
+				return getCustomDataCredenziale(row, res, "tu");
+			}
+			case TOKEN_EMAIL:{
+				return getCustomDataCredenziale(row, res, "te");
+			}
+			case APPLICATIVO_TRASPORTO:{
+				return getCustomDataApplicativoTrasporto(row, res);
+			}
+			case PRINCIPAL:{
+				return getCustomDataCredenzialePrincipal(row, res, "p");
+			}
+			case INDIRIZZO_IP:{
+				return getCustomDataCredenzialeIndirizzoIp(row, res, "ip");
+			}
+			case ESITO:{
+				return getCustomDataEsito(row, res, form, "e");
+			}
+			}
+		}
+		else {
+			throw new ExpressionException(MESSAGE_3D_CUSTOM_INFORMAZIONE_NON_INDICATA);
+		}
+		return null;
+	}
+	private String getCustomData(Map<String, Object> row, StringBuilder res, String alias) throws NumberFormatException {
+		Object oRisultato = row.get(ALIAS_FIELD_DATA_3D_CUSTOM+alias);
+		res.append(oRisultato);
+		if(oRisultato instanceof String) {
+			return (String) oRisultato;
+		}
+		return null;
+	}
+	private String getCustomDataCredenziale(Map<String, Object> row, StringBuilder res, String alias) throws NumberFormatException, ServiceException, MultipleResultException, NotFoundException, NotImplementedException {
+		Object oRisultato = row.get(ALIAS_FIELD_DATA_3D_CUSTOM+alias);
+		res.append(oRisultato);
+		String v = getCustomDataCredenzialeMittente(oRisultato);
+		if(v!=null && StringUtils.isNotEmpty(v)) {
+			return v;
+		}
+		if(oRisultato instanceof String) {
+			return (String) oRisultato;
+		}
+		return null;
+	}
+	private String getCustomDataCredenzialeNormalize(Map<String, Object> row, StringBuilder res, String alias) throws NumberFormatException, ServiceException, MultipleResultException, NotFoundException, NotImplementedException {
+		Object oRisultato = row.get(ALIAS_FIELD_DATA_3D_CUSTOM+alias);
+		res.append(oRisultato);
+		String tagValue = getCustomDataCredenzialeMittente(oRisultato);
+		if(tagValue!=null && StringUtils.isNotEmpty(tagValue)) {
+			String s = AbstractCredenzialeList.normalize(tagValue);
+			if(s!=null) {
+				return s;
+			}
+			
+		}
+		if(oRisultato instanceof String) {
+			return (String) oRisultato;
+		}
+		return null;
+	}
+	private String getCustomDataCredenzialeTokenClient(Map<String, Object> row, StringBuilder res, String alias, boolean applicativo, BooleanNullable bSkip) throws CoreException, NumberFormatException, ServiceException, MultipleResultException, NotFoundException, NotImplementedException, ProtocolException {
+		Object oRisultato = row.get(ALIAS_FIELD_DATA_3D_CUSTOM+alias);
+		res.append(oRisultato);
+		String rValue = getCustomDataCredenzialeMittente(oRisultato);
+		if(rValue!=null && StringUtils.isNotEmpty(rValue)) {
+			if(applicativo) {
+				IDServizioApplicativo idApplicativo = CredenzialeTokenClient.convertApplicationDBValueToOriginal(rValue);
+				if(idApplicativo!=null) {
+					return NamingUtils.getLabelServizioApplicativo(idApplicativo);
+				}
+				else {
+					bSkip.setValue(true);
+				}
+			}
+			else {
+				return CredenzialeTokenClient.convertClientIdDBValueToOriginal(rValue);
+			}
+			
+		}
+		if(applicativo) {
+			bSkip.setValue(true);
+		}
+		if(oRisultato instanceof String) {
+			return (String) oRisultato;
+		}
+		return null;
+	}
+	private String getCustomDataCredenzialeTokenPDNDOrganization(Map<String, Object> row, StringBuilder res, String alias, BooleanNullable bSkip) throws NumberFormatException, ServiceException, NotFoundException, NotImplementedException {
+		Object oRisultato = row.get(ALIAS_FIELD_DATA_3D_CUSTOM+alias);
+		res.append(oRisultato);
+		if(oRisultato instanceof String) {
+			String risultato = (String) oRisultato;
+			String organizzazione = null;
+			try {
+				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, StatisticheGiornaliereService.log);
+				CredenzialeMittente credenzialeMittentePDNDOrganization = mBeanUtilsService.getCredenzialeMittenteByReferenceFromCache(TipoCredenzialeMittente.PDND_ORGANIZATION_NAME,Long.parseLong(risultato));
+				if(credenzialeMittentePDNDOrganization!=null) {
+					organizzazione = credenzialeMittentePDNDOrganization.getCredenziale();
+				}
+			}catch(Exception tApp) {
+				StatisticheGiornaliereService.logError(tApp.getMessage(), tApp);
+			}
+			if(organizzazione==null) {
+				bSkip.setValue(true);
+			}
+			else {
+				return organizzazione;
+			}
+		}
+		bSkip.setValue(true);
+		return null;
+	}
+	private String getCustomDataApplicativoTrasporto(Map<String, Object> row, StringBuilder res) throws ProtocolException {
+		IDServizioApplicativo idSA = new IDServizioApplicativo();
+		idSA.setNome((String)row.get(ALIAS_FIELD_DATA_3D_CUSTOM+"sa"));
+		idSA.setIdSoggettoProprietario(new IDSoggetto((String)row.get(ALIAS_FIELD_DATA_3D_CUSTOM+"tipo"), (String)row.get(ALIAS_FIELD_DATA_3D_CUSTOM+"nome")));
+		res.append(idSA.toFormatString());
+		return NamingUtils.getLabelServizioApplicativo(idSA);
+	}
+	private String getCustomDataCredenzialePrincipal(Map<String, Object> row, StringBuilder res, String alias) throws NumberFormatException, ServiceException, MultipleResultException, NotFoundException, NotImplementedException {
+		Object oRisultato = row.get(ALIAS_FIELD_DATA_3D_CUSTOM+alias);
+		res.append(oRisultato);
+		if(oRisultato instanceof String) {
+			MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, StatisticheGiornaliereService.log);
+			String risultato = (String)oRisultato;
+			CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(risultato));
+			
+			if(credenzialeMittente!=null) {
+				String tipoCredenziale = convertToTipoCredenziale(credenzialeMittente.getTipo());
+				return "["+tipoCredenziale+"] "+credenzialeMittente.getCredenziale();
+			}
+		
+			return risultato;
+		}
+		return null;
+	}
+	private String getCustomDataCredenzialeIndirizzoIp(Map<String, Object> row, StringBuilder res, String alias) throws NumberFormatException, ServiceException, MultipleResultException, NotFoundException, NotImplementedException {
+		Object oRisultato = row.get(ALIAS_FIELD_DATA_3D_CUSTOM+alias);
+		res.append(oRisultato);
+		String v = getCustomDataCredenzialeMittente(oRisultato);
+		if(oRisultato instanceof String && v!=null && StringUtils.isNotEmpty(v)) {
+			return getLabelCredenzialeFieldGroupByIndirizzoIp(v, (String) oRisultato);
+		}
+		if(oRisultato instanceof String) {
+			return (String) oRisultato;
+		}
+		return null;
+	}
+	private String getCustomDataApi(Map<String, Object> row, StatsSearchForm form, StringBuilder res) throws ProtocolException, NumberFormatException, ServiceException, MultipleResultException, NotFoundException, NotImplementedException {
+		Object oRisultato = row.get(ALIAS_FIELD_DATA_3D_CUSTOM+"api");
+		res.append(oRisultato);
+		
+		String s = getCustomDataCredenzialeMittente(oRisultato);
+		if(s!=null && StringUtils.isNotEmpty(s)) {
+			IDAccordo idAccordo = getIDAccordoFromUriSafe(s);
+			if(idAccordo!=null) {
+				return NamingUtils.getLabelAccordoServizioParteComune(form.getProtocollo(), idAccordo);
+			}
+		}
+		return s;
+	}
+	private String getCustomDataApiImplementation(Map<String, Object> row, StringBuilder res) throws ProtocolException, DriverRegistroServiziException {
+		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues((String)row.get(ALIAS_FIELD_DATA_3D_CUSTOM+"td"), (String)row.get(ALIAS_FIELD_DATA_3D_CUSTOM+"d"),
+				(String)row.get(ALIAS_FIELD_DATA_3D_CUSTOM+"ts"), (String)row.get(ALIAS_FIELD_DATA_3D_CUSTOM+"s"),
+				(Integer)row.get(ALIAS_FIELD_DATA_3D_CUSTOM+"vs")); 	
+		res.append(idServizio.toString());
+		return NamingUtils.getLabelAccordoServizioParteSpecifica(idServizio);
+	}
+	private String getCustomDataSoggetto(Map<String, Object> row, StringBuilder res) throws ProtocolException {
+		IDSoggetto idSoggetto = new IDSoggetto((String)row.get(ALIAS_FIELD_DATA_3D_CUSTOM+"tipo"), (String)row.get(ALIAS_FIELD_DATA_3D_CUSTOM+"nome"));
+		res.append(idSoggetto.toString());
+		return NamingUtils.getLabelSoggetto(idSoggetto);
+	}
+	private String getCustomDataCredenzialeMittente(Object oRisultato) throws NumberFormatException, ServiceException, MultipleResultException, NotFoundException, NotImplementedException {
+		if(oRisultato instanceof String) {
+			MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, StatisticheGiornaliereService.log);
+			String risultato = (String)oRisultato;
+			CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(risultato));
+			return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
+		}
+		return null;
+	}
+	private IDAccordo getIDAccordoFromUriSafe(String s) {
+		if(s!=null) {
+			try {
+				return IDAccordoFactory.getInstance().getIDAccordoFromUri(s);
+			}catch(Exception e) {
+				// ignore
+			}
+		}
+		return null;
+	}
+	private String getCustomDataEsito(Map<String, Object> row, StringBuilder res, StatsSearchForm form, String alias) throws NumberFormatException, ServiceException, ProtocolException {
+		
+		EsitiProperties esitiProperties = null;
+		try {
+			esitiProperties = EsitiProperties.getInstanceFromProtocolName(StatisticheGiornaliereService.log, form.getProtocollo());
+		}catch(Exception t) {
+			StatisticheGiornaliereService.logError("EsitiProperties reader non disponibile: "+t.getMessage(), t);
+		}
+		if(esitiProperties==null) {
+			throw new ServiceException("EsitiProperties unavailable");
+		}
+		
+		Object oRisultato = row.get(ALIAS_FIELD_DATA_3D_CUSTOM+alias);
+		res.append(oRisultato);
+		if(oRisultato instanceof String) {
+			int esito = Integer.parseInt((String)oRisultato);
+			return esitiProperties.getEsitoLabel(esito);
+		}
+		return null;
 	}
 }
