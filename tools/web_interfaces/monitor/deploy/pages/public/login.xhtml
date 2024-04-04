@@ -17,6 +17,15 @@
 				#crumbs {display: none;	}	
 				#submitBtn { margin-left: 20px; }				
 			</style>
+			<script type="text/javascript" nonce="#{_csp_random_nonce}">
+					//<![CDATA[
+					   jQuery(document).ready(visualizzaComandoMostraPassword);
+					   
+					   function visualizzaComandoMostraPassword(){
+						   aggiungiComandoMostraPassword('password');
+					   }
+					 //]]>
+			</script>
 			
 			<h:form prependId="false">
 				<input type="hidden" id="_csrfLogin" name="_csrf" value="#{loginBean.csrf}"/>

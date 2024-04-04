@@ -907,12 +907,14 @@ for (int i = 0; i < dati.size(); i++) {
 		                    				DataElementPassword dePwd = de.getPassword();
 		                    				boolean visualizzaPasswordChiaro = dePwd.isVisualizzaPasswordChiaro();
 		                    				boolean bottoneGeneraPassword = dePwd.isVisualizzaBottoneGeneraPassword();
+		                    				boolean visualizzaIconaMostraPassword = dePwd.isVisualizzaIconaMostraPassword();
 		                    				
 		                    				String dePwdType = visualizzaPasswordChiaro ? "text" : "password";
 		                    				String dePwdNoEdit = visualizzaPasswordChiaro ? de.getValue() : "********";
 		                    				if(bottoneGeneraPassword){
 		                    					classInput = Costanti.INPUT_PWD_CHIARO_CSS_CLASS;
 		                    				}
+		                    				String idPwd = "pwd_" + i;
 		                    				%>
 		                        			<div class="prop">
 		                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" ><%=deLabel %></label>
@@ -920,8 +922,40 @@ for (int i = 0; i < dati.size(); i++) {
 							          			if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 													%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%=dePwdNoEdit %></span></div><%
 							   					} else {
-													%><input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" value="<%= de.getValue()  %>">
-						     					<% 
+							   						String idPwdEye = "pwd_" + i + "_eye";
+							   						String idPwdEyeSpan = "pwd_" + i + "_eye_span";
+													%><input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= de.getValue()  %>">
+													<%
+							          				if (!bottoneGeneraPassword && visualizzaIconaMostraPassword) {
+								          				%>
+								          					<span id="<%=idPwdEyeSpan %>" class="span-password-eye">
+														  		<i id="<%=idPwdEye %>" class="material-icons md-24">visibility</i>
+														  	</span>
+															<script type="text/javascript" nonce="<%= randomNonce %>">
+																$(document).ready(function(){
+																	$('#<%=idPwdEye %>').click(function() {
+																		
+																		// toggle the type attribute
+																		var x = document.getElementById("<%=idPwd %>");
+																		  if (x.type === "password") {
+																		    x.type = "text";
+																		  } else {
+																		    x.type = "password";
+																		  }
+		
+																		  // toggle the eye slash icon
+																	    const eyeIcon = $('#<%=idPwdEye %>');
+																	    if (x.type === 'password') {
+																	        eyeIcon.text('visibility');
+																	    } else {
+																	        eyeIcon.text('visibility_off');
+																	    }
+																	    
+																	});
+																});
+															</script>
+							     					<% 
+								   					}
 									      		if(deInfo != null || bottoneGeneraPassword){
 									      			String idDivIconInfo = "divIconInfo_"+i;
 									      			String idIconInfo = "iconInfo_"+i; 

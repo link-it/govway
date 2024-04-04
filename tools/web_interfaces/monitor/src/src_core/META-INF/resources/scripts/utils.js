@@ -22,3 +22,38 @@ function getIEVersion() {
 
 	return -1;
 }
+
+function aggiungiComandoMostraPassword(inputPasswordId){
+	
+	 // Estrai gli elementi dal DOM
+    const passwordInput = document.getElementById(inputPasswordId);
+    const spanId = inputPasswordId + '_eye_span';
+    const iconId = inputPasswordId + '_eye';
+    const jQueryIconId = '#' + iconId;
+    
+    const iconVisibility = 'visibility';
+    const iconVisibilityOff = 'visibility_off';
+
+    // Crea lo span che conterrà l'icona dell'occhio
+    const span = document.createElement("span");
+    span.id = spanId;
+    span.className = "span-password-eye";
+    passwordInput.parentNode.insertBefore(span, passwordInput.nextSibling);
+//    passwordInput.parentNode.appendChild(span);
+
+    // Crea l'icona dell'occhio
+    const eyeIcon = document.createElement("i");
+    eyeIcon.id = iconId;
+    eyeIcon.className = "material-icons md-24";
+    eyeIcon.textContent = iconVisibility;
+    span.appendChild(eyeIcon);
+
+    // Gestisci il clic sull'icona dell'occhio
+    jQuery(jQueryIconId).click(function() {
+      // toggle the type attribute
+      passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+
+      // toggle the eye slash icon
+      jQuery(this).text(passwordInput.type === 'password' ? iconVisibility : iconVisibilityOff);
+    });
+}

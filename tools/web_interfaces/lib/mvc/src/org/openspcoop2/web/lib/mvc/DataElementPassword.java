@@ -44,6 +44,7 @@ public class DataElementPassword implements Serializable {
 	private int numeroSample = 20;
 	private String labelButtonGeneraPw = Costanti.LABEL_MONITOR_BUTTON_GENERA;
 	private String tooltipButtonGeneraPw = Costanti.TOOLTIP_MONITOR_BUTTON_GENERA_PWD;
+	private boolean visualizzaIconaMostraPassword = true;
 	
 	public DataElementPassword() {
 		this.visualizzaBottoneGeneraPassword = false;
@@ -52,6 +53,7 @@ public class DataElementPassword implements Serializable {
 		this.numeroSample = 20;
 		this.labelButtonGeneraPw = Costanti.LABEL_MONITOR_BUTTON_GENERA;
 		this.tooltipButtonGeneraPw = Costanti.TOOLTIP_MONITOR_BUTTON_GENERA_PWD;
+		this.setVisualizzaIconaMostraPassword(true);
 	}
 
 	public boolean isVisualizzaBottoneGeneraPassword() {
@@ -99,5 +101,13 @@ public class DataElementPassword implements Serializable {
 
 	public void setTooltipButtonGeneraPassword(String tooltipButtonGeneraPw) {
 		this.tooltipButtonGeneraPw = tooltipButtonGeneraPw;
+	}
+
+	public boolean isVisualizzaIconaMostraPassword() {
+		return this.visualizzaIconaMostraPassword;
+	}
+
+	public void setVisualizzaIconaMostraPassword(boolean visualizzaIconaMostraPassword) {
+		this.visualizzaIconaMostraPassword = visualizzaIconaMostraPassword;
 	}
 }

@@ -573,3 +573,10 @@ input[type="submit"]:hover, input[type="button"]:hover, .buttonrow a:hover, .but
 .width-416 {
 	width: 416px;
 }
+
+.span-password-eye {
+	margin-left: -32px;
+    cursor: pointer;
+    vertical-align: bottom;
+    color: ${p.note.color};
+}
