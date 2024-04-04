@@ -118,6 +118,8 @@ public class BYOKManager {
 	private List<String> unwrapLabels = new ArrayList<>();
 	private List<String> wrapTypes = new ArrayList<>();
 	private List<String> wrapLabels = new ArrayList<>();
+
+	private HashMap<String, BYOKSecurityConfig> securityMapIDtoConfig = new HashMap<>();
 	
 	private BYOKManager(File f, boolean throwNotExists, Logger log) throws UtilsException {
 		String prefixFile = "File '"+f.getAbsolutePath()+"'";
@@ -147,9 +149,10 @@ public class BYOKManager {
 	private void init(Properties p, Logger log) throws UtilsException {
 		
 		List<String> idKeystore = new ArrayList<>();
+		List<String> securityKeystore = new ArrayList<>();
 		
 		if(p!=null && !p.isEmpty()) {
-			init(p, idKeystore);
+			init(p, idKeystore, securityKeystore);
 		}
 		
 		if(!idKeystore.isEmpty()) {
@@ -160,31 +163,49 @@ public class BYOKManager {
 		else {
 			log.warn("La configurazione fornita per KSM non contiene alcun keystore");
 		}
+		
+		if(!securityKeystore.isEmpty()) {
+			for (String idK : securityKeystore) {
+				initSecurity(p, log, idK);		
+			}
+		}
+		else {
+			log.warn("La configurazione fornita per KSM non contiene alcun security manager");
+		}
 	}
-	private void init(Properties p, List<String> idKeystore) {
+	private void init(Properties p, List<String> idKeystore, List<String> securityKeystore) {
 		Enumeration<?> enKeys = p.keys();
 		while (enKeys.hasMoreElements()) {
 			Object object = enKeys.nextElement();
 			if(object instanceof String) {
 				String key = (String) object;
-				init(key, idKeystore);	
+				init(key, idKeystore, securityKeystore);	
 			}
 		}
 	}
-	private void init(String key, List<String> idKeystore) {
-		if(key.startsWith(BYOKCostanti.PROPERTY_PREFIX) && key.length()>(BYOKCostanti.PROPERTY_PREFIX.length())) {
-			String tmp = key.substring(BYOKCostanti.PROPERTY_PREFIX.length());
+	private void init(String key, List<String> idKeystore, List<String> securityKeystore) {
+		boolean isIdKeystore = initEngine(key, idKeystore, BYOKCostanti.PROPERTY_PREFIX);
+		if(!isIdKeystore) {
+			initEngine(key, securityKeystore, BYOKCostanti.SECURITY_PROPERTY_PREFIX);
+		}
+	}
+	private boolean initEngine(String key, List<String> list, String prefix) {
+		if(key.startsWith(prefix) && key.length()>(prefix.length())) {
+			String tmp = key.substring(prefix.length());
 			if(tmp!=null && tmp.contains(".")) {
 				int indeoOf = tmp.indexOf(".");
 				if(indeoOf>0) {
 					String idK = tmp.substring(0,indeoOf);
-					if(!idKeystore.contains(idK)) {
-						idKeystore.add(idK);
+					if(!list.contains(idK)) {
+						list.add(idK);
 					}
 				}
 			}
+			return true;
 		}
+		return false;
 	}
+	
 	private void init(Properties p, Logger log, String idK) throws UtilsException {
 		String prefix = BYOKCostanti.PROPERTY_PREFIX + idK + ".";
 		Properties pKeystore = Utilities.readProperties(prefix, p);
@@ -228,6 +249,16 @@ public class BYOKManager {
 		
 		this.ksmKeystoreMapIDtoConfig.put(idK, ksmKeystore);
 		String d = "KSM "+idK+" registrato (type:"+ksmKeystore.getType()+") label:"+ksmKeystore.getLabel()+"";
+		log.info(d);	
+	}
+	
+	private void initSecurity(Properties p, Logger log, String idK) throws UtilsException {
+		String prefix = BYOKCostanti.SECURITY_PROPERTY_PREFIX + idK + ".";
+		Properties pKeystore = Utilities.readProperties(prefix, p);
+		BYOKSecurityConfig securityConfig = new BYOKSecurityConfig(idK, pKeystore, log);
+				
+		this.securityMapIDtoConfig.put(idK, securityConfig);
+		String d = "Security manager "+idK+" registrato";
 		log.info(d);	
 	}
 	

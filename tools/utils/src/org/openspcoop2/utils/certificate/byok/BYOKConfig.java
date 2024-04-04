@@ -176,7 +176,7 @@ public class BYOKConfig implements Serializable {
 	
 	
 	public String getPrefixForLog() {
-		return "[HSM '"+this.getId()+"' type:"+this.type+" label:"+this.label+"] ";
+		return "[KSM '"+this.getId()+"' type:"+this.type+" label:"+this.label+"] ";
 	}
 
 	

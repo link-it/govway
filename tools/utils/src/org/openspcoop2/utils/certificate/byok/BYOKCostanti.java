@@ -31,6 +31,15 @@ public class BYOKCostanti {
 	
 	private BYOKCostanti() {}
 
+	public static final String SECURITY_PROPERTY_PREFIX = "security.";
+	
+	public static final String SECURITY_PROPERTY_SUFFIX_WRAP = ".ksm.wrap";
+	public static final String SECURITY_PROPERTY_SUFFIX_UNWRAP = ".ksm.unwrap";
+	
+	public static final String SECURITY_PROPERTY_SUFFIX_INPUT = ".ksm.param.";
+	
+	
+	
 	public static final String PROPERTY_PREFIX = "ksm.";
 	
 	public static final String PROPERTY_SUFFIX_LABEL = "label";
