@@ -1,0 +1,300 @@
+<project name="GovWayMonitorMondipaTestSuite">
+
+	<description>
+        	File di Script per la compilazione dell'interfaccia api rs per il Monitoraggio
+    	</description>
+
+	<import file="./local_env.xml" />
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<path id="karate_testsuite" >
+                <fileset dir="../../../tools/rs/config/server/testsuite/librerieJava11/testsuite_karate/" >
+			<include name="*.jar"/>
+                </fileset>
+		<fileset dir="${required_lib}/testsuite" >
+			<include name="hamcrest-core-1.3.jar"/>
+			<include name="junit-4.13.2.jar"/>
+			<include name="karate-*.jar"/>
+			<include name="picocli-4.2.0.jar"/>
+			<include name="logback-*.jar"/>
+			<!-- <include name="spring-jdbc-*.jar"/> -->
+		</fileset>
+		<fileset dir="${dir_jdbc}" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/commons" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/httpcore" >
+	  	    	<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/log" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/json" >
+			<include name="*.jar"/>
+		</fileset>
+		<!--<fileset dir="${required_lib}/spring" >
+			<include name="*.jar"/>
+		</fileset>-->
+                <fileset dir="${required_lib}/shared" >
+                        <include name="snakeyaml-2.1-gov4j-1.jar"/>
+			<include name="joda-time-2.12.5.jar"/>
+                </fileset>
+                <fileset dir="${required_lib}/cxf" >
+                        <include name="asm-9.6.jar"/>
+                </fileset>
+                <fileset dir="${openspcoop2.dist}" >
+                        <include name="*.jar"/>
+                </fileset>
+	</path> 
+
+	<property name="src_testsuite" location="src" />
+	<property name="build_testsuite" location="build" />
+	<property name="dist_testsuite" location="dist" />
+
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean">
+		<delete dir="${build_testsuite}"/>
+		<delete dir="log"/>
+		<delete dir="target"/>
+	</target>
+	<target name="init">
+		<mkdir dir="${build_testsuite}"/>
+	</target>
+
+	<!-- Compilazione del Client -->
+	<target name="build" depends="clean,init" description="compila" >
+		<!-- Compile the java code  -->
+		<javac includeantruntime="false" destdir="${build_testsuite}" debug="${debug}">
+			<src path="${src_testsuite}"/>
+			<classpath>
+				<path refid="karate_testsuite"/>
+			</classpath>
+		</javac>
+		<copy todir="${build_testsuite}">
+			<fileset dir="${src_testsuite}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+		<jar jarfile="${dist_testsuite}/govway_modi_testsuite_handlers.jar">
+			<zipfileset dir="${build_testsuite}">
+				<include name="org/openspcoop2/core/protocolli/modipa/testsuite/handler/*"/>
+			</zipfileset>
+		</jar>
+	</target>
+
+	<!-- Esecuzione dei test -->
+
+	<target name="delete_config">
+		<echo message="Eliminazione configurazione in corso ..." />
+		<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
+			<arg value="false" />
+		        <classpath>
+		                <path refid="karate_testsuite" />
+		                <pathelement path="${build_testsuite}"/>
+		        </classpath>
+		</java>
+		<echo message="Eliminazione configurazione effettuata" />
+	</target>
+
+	<target name="load_config">
+		<echo message="Caricamento configurazione in corso (delete) ..." />
+		<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
+			<arg value="false" />
+		        <classpath>
+		                <path refid="karate_testsuite" />
+		                <pathelement path="${build_testsuite}"/>
+		        </classpath>
+		</java>
+		<echo message="Caricamento configurazione in corso (create) ..." />
+		<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
+			<arg value="true" />
+		        <classpath>
+		                <path refid="karate_testsuite" />
+		                <pathelement path="${build_testsuite}"/>
+		        </classpath>
+		</java>
+		<echo message="Caricamento configurazione completata" />
+	</target>
+
+	<target name="run_test">
+
+		<delete dir="${output}"/>
+		<mkdir dir="${output}"/>
+
+		<var name="loadEnabled" value="true"/>
+		<if>
+			<not>
+				<equals arg1="${load}" arg2="$${load}"/>
+			</not>
+			<then>
+				<var name="loadEnabled" value="${load}"/>
+			</then>
+		</if>
+		<var name="deleteEnabled" value="true"/>
+		<if>
+			<not>
+				<equals arg1="${delete}" arg2="$${delete}"/>
+			</not>
+			<then>
+				<var name="deleteEnabled" value="${delete}"/>
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${loadEnabled}" arg2="true"/>
+			<then>
+				<echo message="Caricamento configurazione in corso (delete) ..." />
+				<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
+					<arg value="false" />
+				        <classpath>
+				                <path refid="karate_testsuite" />
+				                <pathelement path="${build_testsuite}"/>
+				        </classpath>
+				</java>
+				<echo message="Caricamento configurazione in corso (create) ..." />
+				<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
+					<arg value="true" />
+				        <classpath>
+				                <path refid="karate_testsuite" />
+				                <pathelement path="${build_testsuite}"/>
+				        </classpath>
+				</java>
+				<echo message="Caricamento configurazione completata" />
+			</then>
+		</if>
+
+		<var name="karateparams" value=""/>
+		<if>
+			<not>
+				<equals arg1="${karate.options}" arg2="$${karate.options}"/>
+			</not>
+			<then>
+				<var name="karateparams" value="-Dkarate.options=${build_testsuite}/${karate.options}"/>
+			</then>
+		</if>
+
+                <fileset dir="${src_testsuite}" id="absoluteTestClassNames">
+                        <include name="**/*Test.java"/>
+                </fileset>
+		<pathconvert property="testClassNames" refid="absoluteTestClassNames" pathsep=",">
+			<chainedmapper>
+				<flattenmapper/>
+				<globmapper from="*.java" to="*" casesensitive="no"/>
+			</chainedmapper>
+		</pathconvert>
+
+		<var name="karatetest" value="${testClassNames}"/>
+		<if>
+			<not>
+				<equals arg1="${test}" arg2="$${test}"/>
+			</not>
+			<then>
+				<var name="karatetest" value="${test}"/>
+			</then>
+		</if>
+		<echo message="Esecuzione delle seguenti classi di test: ${karatetest}"/>
+
+		<for list="${karatetest}" param="karateTipoTest">
+			<sequential>
+				<mkdir dir="${output}/@{karateTipoTest}"/>
+				<if>
+					<equals arg1="${karateparams}" arg2=""/>
+					<then>
+						<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}">
+
+							<!-- Per non far comparire il Warning: Nashorn engine is planned to be removed from a future JDK release -->
+							<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
+
+							<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
+							     (file:.../lib/json/accessors-smart-2.5.0.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
+							<!-- Modificato da deny a permit per non far comparire il messaggio (sono test): 
+								Caused by: java.lang.IllegalAccessError: class Log4jHotPatch (in unnamed module @0x7a356a0d) 
+									cannot access class jdk.internal.org.objectweb.asm.Opcodes (in module java.base) 
+									because module java.base does not export jdk.internal.org.objectweb.asm to unnamed module @0x7a356a0d
+									at Log4jHotPatch.asmVersion(Log4jHotPatch.java:71)
+							-->
+							<jvmarg value="-Djdk.module.illegalAccess=permit"/>
+
+							<classpath refid="karate_testsuite" />
+							<classpath location="${build_testsuite}" />
+
+							<formatter type="plain"/>			
+							<formatter type="xml" />
+
+							<batchtest fork="yes" todir="${output}/@{karateTipoTest}">
+								<fileset dir="${src_testsuite}">
+									<include name="**/@{karateTipoTest}.java" />
+								</fileset>
+							</batchtest>
+				
+						 </junit>
+					</then>
+					<else>
+						<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}">
+
+							<jvmarg value="${karateparams}"/>
+
+							<!-- Per non far comparire il Warning: Nashorn engine is planned to be removed from a future JDK release -->
+							<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
+
+							<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
+							     (file:.../lib/json/accessors-smart-2.5.0.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
+							<!-- Modificato da deny a permit per non far comparire il messaggio (sono test): 
+								Caused by: java.lang.IllegalAccessError: class Log4jHotPatch (in unnamed module @0x7a356a0d) 
+									cannot access class jdk.internal.org.objectweb.asm.Opcodes (in module java.base) 
+									because module java.base does not export jdk.internal.org.objectweb.asm to unnamed module @0x7a356a0d
+									at Log4jHotPatch.asmVersion(Log4jHotPatch.java:71)
+							-->
+							<jvmarg value="-Djdk.module.illegalAccess=permit"/>
+
+							<classpath refid="karate_testsuite" />
+							<classpath location="${build_testsuite}" />
+
+							<formatter type="plain"/>			
+							<formatter type="xml" />
+
+							<batchtest fork="yes" todir="${output}/@{karateTipoTest}">
+								<fileset dir="${src_testsuite}">
+									<include name="**/@{karateTipoTest}.java" />
+								</fileset>
+							</batchtest>
+				
+						 </junit>				
+					</else>
+				</if>
+			</sequential>
+		</for>
+
+                <if>
+			<equals arg1="${deleteEnabled}" arg2="true"/>
+			<then>
+				<echo message="Eliminazione configurazione in corso ..." />
+				<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
+					<arg value="false" />
+				        <classpath>
+				                <path refid="karate_testsuite" />
+				                <pathelement path="${build_testsuite}"/>
+				        </classpath>
+				</java>
+				<echo message="Eliminazione configurazione effettuata" />
+			</then>
+		</if>
+
+		<junitreport todir="${output}">
+			<fileset dir="${output}">
+				<include name="**/TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${output}\html\" />
+		</junitreport>
+
+	</target>
+
+</project>
