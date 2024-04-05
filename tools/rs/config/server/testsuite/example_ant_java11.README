@@ -1,0 +1,1 @@
+ant -f build_java11.xml run_test -Dkarate.options="org/openspcoop2/core/config/rs/testsuite/applicativi/create.feature --tags=Create204"

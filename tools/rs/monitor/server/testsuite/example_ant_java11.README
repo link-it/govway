@@ -1,0 +1,2 @@
+cp karate-config-gw34.js build/karate-config.js
+ant -f build_java11.xml run_test -Dkarate.options="org/openspcoop2/core/monitor/rs/testsuite/transazioni/ricerca-transazioni.feature --tags=FiltroApi"
