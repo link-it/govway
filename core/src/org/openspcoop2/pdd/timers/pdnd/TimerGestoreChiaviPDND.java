@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -46,6 +46,7 @@ public class TimerGestoreChiaviPDND extends BaseThread{
 
 	public static final String ID_MODULO = "TimerGestoreChiaviPDND";
 	
+	static final String CONNESSIONE_NON_DISPONIBILE = "Connessione al database della configurazione non disponibile";
 	
 	/** Logger utilizzato per debug. */
 	private Logger logTimer = null;

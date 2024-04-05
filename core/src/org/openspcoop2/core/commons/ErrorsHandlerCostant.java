@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -104,6 +104,10 @@ public enum ErrorsHandlerCostant {
 	TOKEN_NEGOZIAZIONE_MAPPING_PD,
 	TOKEN_NEGOZIAZIONE_PA,
 	TOKEN_NEGOZIAZIONE_MAPPING_PA,
+	TOKEN_DYNAMIC_DISCOVERY_PD,
+	TOKEN_DYNAMIC_DISCOVERY_MAPPING_PD,
+	TOKEN_DYNAMIC_DISCOVERY_PA,
+	TOKEN_DYNAMIC_DISCOVERY_MAPPING_PA,
 	ATTRIBUTE_AUTHORITY_PD,
 	ATTRIBUTE_AUTHORITY_MAPPING_PD,
 	ATTRIBUTE_AUTHORITY_PA,

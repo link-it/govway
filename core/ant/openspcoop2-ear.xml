@@ -28,9 +28,9 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs3-core-3.1-gov4j-2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-lang-2.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.9.0.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-4.0.2-gov4j-1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-4.0.2.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-4.0.2.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-4.0.4-gov4j-1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-4.0.4.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-4.0.4.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jakarta.ws.rs-api-3.1.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.2.0.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-core-4.3.0.jar"/>
@@ -56,19 +56,19 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/saaj-impl-3.0.2-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/stax-ex-2.1.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/mimepull-1.10.0.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aop-6.0.11.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aspects-6.0.11.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-beans-6.0.11.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-6.0.11.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-support-6.0.11.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-core-6.0.11.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-expression-6.0.11.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-tx-6.0.11.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-web-6.0.11.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-6.1.4.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aop-6.1.5.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aspects-6.1.5.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-beans-6.1.5.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-6.1.5.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-support-6.1.5.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-core-6.1.5.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-expression-6.1.5.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-tx-6.1.5.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-web-6.1.5.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-6.2.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xalan-2.7.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xml-resolver-1.2.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlschema-core-2.3.0.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlschema-core-2.3.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlsec-3.0.3-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cryptacular-1.2.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jasypt-1.9.3.jar"/>
@@ -80,7 +80,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-dom-3.0.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-policy-stax-3.0.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-stax-3.0.1.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-6.5.1.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-6.6.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/joda-time-2.12.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/guava-32.1.2-jre.jar"/>	
 		<var name="manifest.classpath.3parti" value="${tmp}" />
@@ -673,7 +673,7 @@
 				<include name="commons-beanutils-1.9.4.jar"/>
 				<include name="${commons_logging_jar}"/>
 				<include name="commons-lang3-3.13.0.jar"/>
-				<include name="commons-compress-1.23.0.jar"/>
+				<include name="commons-compress-1.26.0.jar"/>
 				<include name="commons-fileupload2-*.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/security">
@@ -685,7 +685,7 @@
 				<include name="cryptacular-1.2.5.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 				<include name="herasaf-xacml-core-3.0.2.jar"/>
-				<include name="nimbus-jose-jwt-9.31.jar"/>
+				<include name="nimbus-jose-jwt-9.37.3.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/wss4j">
 				<include name="*.jar"/>

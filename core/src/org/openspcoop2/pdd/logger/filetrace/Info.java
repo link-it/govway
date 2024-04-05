@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -21,9 +21,11 @@ package org.openspcoop2.pdd.logger.filetrace;
 
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -35,6 +37,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.transazioni.constants.TipoAPI;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTokenClient;
+import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.core.token.InformazioniNegoziazioneToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
@@ -46,6 +49,8 @@ import org.openspcoop2.pdd.logger.info.InfoEsitoTransazioneFormatUtils;
 import org.openspcoop2.pdd.logger.info.InfoMittenteFormatUtils;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.PDNDTokenInfo;
+import org.openspcoop2.protocol.sdk.PDNDTokenInfoDetails;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
@@ -79,15 +84,26 @@ public class Info {
 	private InformazioniNegoziazioneToken informazioniNegoziazioneToken;
 	private SecurityToken securityToken;
 	
+	private FaseTracciamento trackingPhase;
+	
 	private Traccia tracciaRichiesta;
 	private Traccia tracciaRisposta;
 	
 	private List<MsgDiagnostico> msgDiagnostici;
 	
 	private Messaggio richiestaIngresso;
+	private List<String> headerRichiestaIngressoConsumati = new ArrayList<>();
+	
 	private Messaggio richiestaUscita;
+	private Map<String, List<String>> headerRichiestaUscita;
+	private List<String> headerRichiestaUscitaConsumati = new ArrayList<>();
+	
 	private Messaggio rispostaIngresso;
+	private List<String> headerRispostaIngressoConsumati = new ArrayList<>();
+	
 	private Messaggio rispostaUscita;
+	private Map<String, List<String>> headerRispostaUscita;
+	private List<String> headerRispostaUscitaConsumati = new ArrayList<>();
 	
 	private InfoConfigurazione infoConfigurazione;
 	
@@ -121,10 +137,13 @@ public class Info {
 			SecurityToken securityToken,
 			Traccia tracciaRichiesta, Traccia tracciaRisposta,
 			List<MsgDiagnostico> msgDiagnostici,
-			Messaggio richiestaIngresso, Messaggio richiestaUscita,
-			Messaggio rispostaIngresso, Messaggio rispostaUscita,
+			Messaggio richiestaIngresso, 
+			Messaggio richiestaUscita, Map<String, List<String>> headerRichiestaUscita,
+			Messaggio rispostaIngresso, 
+			Messaggio rispostaUscita, Map<String, List<String>> headerRispostaUscita,
 			InfoConfigurazione infoConfigurazione,
 			FileTraceConfig config,
+			FaseTracciamento trackingPhase,
 			boolean base64) throws ProtocolException {
 		this.log = log;
 		this.protocolFactory = protocolFactory;
@@ -140,8 +159,10 @@ public class Info {
 		this.msgDiagnostici = msgDiagnostici;
 		this.richiestaIngresso = richiestaIngresso;
 		this.richiestaUscita = richiestaUscita;
+		this.headerRichiestaUscita = headerRichiestaUscita;
 		this.rispostaIngresso = rispostaIngresso;
 		this.rispostaUscita = rispostaUscita;
+		this.headerRispostaUscita = headerRispostaUscita;
 		this.infoConfigurazione = infoConfigurazione;
 		this.escape = config.getEscape();
 		this.headersSeparator = config.getHeadersSeparator();
@@ -151,7 +172,12 @@ public class Info {
 		this.headerMultiValueSeparator = config.getHeaderMultiValueSeparator();
 		this.headerWhiteList = config.getHeaderWhiteList();
 		this.headerBlackList = config.getHeaderBlackList();
+		this.trackingPhase = trackingPhase;
 		this.base64 = base64;
+	}
+	
+	private String getErrorSuffix(Exception t) {
+		return " failed: "+t.getMessage();
 	}
 		
 	
@@ -235,6 +261,8 @@ public class Info {
 	
 	// esito
 	
+	private static final String CONVERSIONE_ESITO_FALLITA = "Conversione esito fallita: ";
+	
 	public String getResultClass() {
 		return getResultClass(null);
 	}
@@ -252,48 +280,33 @@ public class Info {
 			else {
 				return correctValue(ResultClass.KO.name(),defaultValue);
 			}
-		}catch(Throwable e) {
-			this.log.error("Conversione esito fallita: "+e.getMessage(),e);
+		}catch(Exception e) {
+			this.log.error(CONVERSIONE_ESITO_FALLITA+e.getMessage(),e);
 			return correctValue(null, defaultValue);
 		}
 	}
 	
 	public boolean isResultClassOk() {
 		try {
-			if(InfoEsitoTransazioneFormatUtils.isEsitoOk(this.log, this.transazione.getEsito(), this.esitiProperties)) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}catch(Throwable e) {
-			this.log.error("Conversione esito fallita: "+e.getMessage(),e);
+			return InfoEsitoTransazioneFormatUtils.isEsitoOk(this.log, this.transazione.getEsito(), this.esitiProperties);
+		}catch(Exception e) {
+			this.log.error(CONVERSIONE_ESITO_FALLITA+e.getMessage(),e);
 			return false;
 		}
 	}
 	public boolean isResultClassFault() {
 		try {
-			if(InfoEsitoTransazioneFormatUtils.isEsitoFaultApplicativo(this.log, this.transazione.getEsito(), this.esitiProperties)) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}catch(Throwable e) {
-			this.log.error("Conversione esito fallita: "+e.getMessage(),e);
+			return InfoEsitoTransazioneFormatUtils.isEsitoFaultApplicativo(this.log, this.transazione.getEsito(), this.esitiProperties);
+		}catch(Exception e) {
+			this.log.error(CONVERSIONE_ESITO_FALLITA+e.getMessage(),e);
 			return false;
 		}
 	}
 	public boolean isResultClassKo() {
 		try {
-			if(InfoEsitoTransazioneFormatUtils.isEsitoKo(this.log, this.transazione.getEsito(), this.esitiProperties)) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}catch(Throwable e) {
-			this.log.error("Conversione esito fallita: "+e.getMessage(),e);
+			return InfoEsitoTransazioneFormatUtils.isEsitoKo(this.log, this.transazione.getEsito(), this.esitiProperties);
+		}catch(Exception e) {
+			this.log.error(CONVERSIONE_ESITO_FALLITA+e.getMessage(),e);
 			return false;
 		}
 	}
@@ -310,8 +323,8 @@ public class Info {
 	public String getResult(String defaultValue) {
 		try {
 			return correctValue(this.esitiProperties.getEsitoName(this.transazione.getEsito()),defaultValue);
-		}catch(Throwable e) {
-			this.log.error("Conversione esito fallita: "+e.getMessage(),e);
+		}catch(Exception e) {
+			this.log.error(CONVERSIONE_ESITO_FALLITA+e.getMessage(),e);
 			return correctValue(null, defaultValue);
 		}
 	}
@@ -321,8 +334,8 @@ public class Info {
 	public String getResultDescription(String defaultValue) {
 		try {
 			return correctValue(this.esitiProperties.getEsitoDescription(this.transazione.getEsito()),defaultValue);
-		}catch(Throwable e) {
-			this.log.error("Conversione esito fallita: "+e.getMessage(),e);
+		}catch(Exception e) {
+			this.log.error(CONVERSIONE_ESITO_FALLITA+e.getMessage(),e);
 			return correctValue(null, defaultValue);
 		}
 	}
@@ -332,8 +345,8 @@ public class Info {
 	public String getResultLabel(String defaultValue) {
 		try {
 			return correctValue(this.esitiProperties.getEsitoLabel(this.transazione.getEsito()),defaultValue);
-		}catch(Throwable e) {
-			this.log.error("Conversione esito fallita: "+e.getMessage(),e);
+		}catch(Exception e) {
+			this.log.error(CONVERSIONE_ESITO_FALLITA+e.getMessage(),e);
 			return correctValue(null, defaultValue);
 		}
 	}
@@ -343,8 +356,8 @@ public class Info {
 	public String getResultLabelSyntetic(String defaultValue) {
 		try {
 			return correctValue(this.esitiProperties.getEsitoLabelSyntetic(this.transazione.getEsito()),defaultValue);
-		}catch(Throwable e) {
-			this.log.error("Conversione esito fallita: "+e.getMessage(),e);
+		}catch(Exception e) {
+			this.log.error(CONVERSIONE_ESITO_FALLITA+e.getMessage(),e);
 			return correctValue(null, defaultValue);
 		}
 	}
@@ -358,8 +371,8 @@ public class Info {
 	public String getSyncResult(String defaultValue) {
 		try {
 			return correctValue(this.esitiProperties.getEsitoName(this.transazione.getEsitoSincrono()),defaultValue);
-		}catch(Throwable e) {
-			this.log.error("Conversione esito fallita: "+e.getMessage(),e);
+		}catch(Exception e) {
+			this.log.error(CONVERSIONE_ESITO_FALLITA+e.getMessage(),e);
 			return correctValue(null, defaultValue);
 		}
 	}
@@ -369,8 +382,8 @@ public class Info {
 	public String getSyncResultDescription(String defaultValue) {
 		try {
 			return correctValue(this.esitiProperties.getEsitoDescription(this.transazione.getEsitoSincrono()),defaultValue);
-		}catch(Throwable e) {
-			this.log.error("Conversione esito fallita: "+e.getMessage(),e);
+		}catch(Exception e) {
+			this.log.error(CONVERSIONE_ESITO_FALLITA+e.getMessage(),e);
 			return correctValue(null, defaultValue);
 		}
 	}
@@ -380,8 +393,8 @@ public class Info {
 	public String getSyncResultLabel(String defaultValue) {
 		try {
 			return correctValue(this.esitiProperties.getEsitoLabel(this.transazione.getEsitoSincrono()),defaultValue);
-		}catch(Throwable e) {
-			this.log.error("Conversione esito fallita: "+e.getMessage(),e);
+		}catch(Exception e) {
+			this.log.error(CONVERSIONE_ESITO_FALLITA+e.getMessage(),e);
 			return correctValue(null, defaultValue);
 		}
 	}
@@ -391,8 +404,8 @@ public class Info {
 	public String getSyncResultLabelSyntetic(String defaultValue) {
 		try {
 			return correctValue(this.esitiProperties.getEsitoLabelSyntetic(this.transazione.getEsitoSincrono()),defaultValue);
-		}catch(Throwable e) {
-			this.log.error("Conversione esito fallita: "+e.getMessage(),e);
+		}catch(Exception e) {
+			this.log.error(CONVERSIONE_ESITO_FALLITA+e.getMessage(),e);
 			return correctValue(null, defaultValue);
 		}
 	}
@@ -419,10 +432,10 @@ public class Info {
 		try {
 			String codiceRisposta = this.transazione.getCodiceRispostaIngresso();
 			if(codiceRisposta!=null && !"".equals(codiceRisposta)) {
-				int status = Integer.valueOf(codiceRisposta);
+				int status = Integer.parseInt(codiceRisposta);
 				reason = HttpUtilities.getHttpReason(status);
 			}
-		}catch(Throwable e) {
+		}catch(Exception e) {
 			this.log.error("Conversione http reason: "+e.getMessage(),e);
 			return correctValue(null, defaultValue);
 		}
@@ -444,17 +457,17 @@ public class Info {
 		try {
 			String codiceRisposta = this.transazione.getCodiceRispostaUscita();
 			if(codiceRisposta!=null && !"".equals(codiceRisposta)) {
-				int status = Integer.valueOf(codiceRisposta);
+				int status = Integer.parseInt(codiceRisposta);
 				reason = HttpUtilities.getHttpReason(status);
 			}
-		}catch(Throwable e) {
+		}catch(Exception e) {
 			this.log.error("Conversione http reason: "+e.getMessage(),e);
 			return correctValue(null, defaultValue);
 		}
 		return correctValue(reason, defaultValue);
 	}
 	
-	private DatiEsitoTransazione _convertToDatiEsitoTransazione() {
+	private DatiEsitoTransazione convertToDatiEsitoTransazioneEngine() {
 		
 		boolean oldValueBase64 = this.base64;
 		DatiEsitoTransazione datiEsitoTransazione = null;
@@ -466,11 +479,11 @@ public class Info {
 			datiEsitoTransazione.setEsito(this.getResultAsInt());
 			datiEsitoTransazione.setProtocollo(this.protocolFactory);
 			
-			datiEsitoTransazione.setFaultIntegrazione(this._getFaultIntegrazione(null));
-			datiEsitoTransazione.setFormatoFaultIntegrazione(this._getFormatoFaultIntegrazione(null));
+			datiEsitoTransazione.setFaultIntegrazione(this.getFaultIntegrazioneEngine(null));
+			datiEsitoTransazione.setFormatoFaultIntegrazione(this.getFormatoFaultIntegrazioneEngine(null));
 			
-			datiEsitoTransazione.setFaultCooperazione(this._getFaultCooperazione(null));
-			datiEsitoTransazione.setFormatoFaultCooperazione(this._getFormatoFaultCooperazione(null));
+			datiEsitoTransazione.setFaultCooperazione(this.getFaultCooperazioneEngine(null));
+			datiEsitoTransazione.setFormatoFaultCooperazione(this.getFormatoFaultCooperazioneEngine(null));
 					
 			datiEsitoTransazione.setPddRuolo(this.transazione.getPddRuolo());
 		}finally {
@@ -485,43 +498,42 @@ public class Info {
 		return getErrorDetail(null);
 	}
 	public java.lang.String getErrorDetail(String defaultValue) {
-		DatiEsitoTransazione datiEsitoTransazione = _convertToDatiEsitoTransazione();
+		DatiEsitoTransazione datiEsitoTransazione = convertToDatiEsitoTransazioneEngine();
 		String dettaglioErroreResult = InfoEsitoTransazioneFormatUtils.getDettaglioErrore(this.log, datiEsitoTransazione, this.msgDiagnostici);
 		return correctValue(dettaglioErroreResult, defaultValue);
 	}
 	
 	public java.lang.String getDiagnostics() {
-		return _getDiagnostics(false, "\n", DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ,null);
+		return getDiagnosticsEngine(false, "\n", DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ,null);
 	}
 	public java.lang.String getDiagnostics(String separator) {
-		return _getDiagnostics(false, separator, DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ,null);
+		return getDiagnosticsEngine(false, separator, DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ,null);
 	}
 	public java.lang.String getDiagnostics(String separator, String format) {
-		return _getDiagnostics(false, separator, format, null);
+		return getDiagnosticsEngine(false, separator, format, null);
 	}
 	public java.lang.String getDiagnostics(String separator, String format, String timeZone) {
-		return _getDiagnostics(false, separator, format, timeZone);
+		return getDiagnosticsEngine(false, separator, format, timeZone);
 	}
 	public java.lang.String getErrorDiagnostics() {
-		return _getDiagnostics(true, "\n", DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ,null);
+		return getDiagnosticsEngine(true, "\n", DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ,null);
 	}
 	public java.lang.String getErrorDiagnostics(String separator) {
-		return _getDiagnostics(true, separator, DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ,null);
+		return getDiagnosticsEngine(true, separator, DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ,null);
 	}
 	public java.lang.String getErrorDiagnostics(String separator, String format) {
-		return _getDiagnostics(true, separator, format, null);
+		return getDiagnosticsEngine(true, separator, format, null);
 	}
 	public java.lang.String getErrorDiagnostics(String separator, String format, String timeZone) {
-		return _getDiagnostics(true, separator, format, timeZone);
+		return getDiagnosticsEngine(true, separator, format, timeZone);
 	}
-	private java.lang.String _getDiagnostics(boolean onlyErrors, String separator, String format, String timeZone) {
+	private java.lang.String getDiagnosticsEngine(boolean onlyErrors, String separator, String format, String timeZone) {
 		StringBuilder sb = new StringBuilder();
 		if(this.msgDiagnostici!=null && !this.msgDiagnostici.isEmpty()) {
 			for (MsgDiagnostico msgDiagnostico : this.msgDiagnostici) {
-				if(onlyErrors) {
-					if(!(msgDiagnostico.getSeverita()<=LogLevels.SEVERITA_ERROR_INTEGRATION)) {
-						continue;
-					}
+				if(onlyErrors &&
+					msgDiagnostico.getSeverita()>LogLevels.SEVERITA_ERROR_INTEGRATION) {
+					continue;
 				}
 				
 				if(sb.length()>0) {
@@ -944,7 +956,7 @@ public class Info {
 		return getElapsedTime(null);
 	}
 	public long getElapsedTime(String defaultValue) {
-		return this.correctLong(_getLatenzaTotale(), defaultValue);
+		return this.correctLong(getLatenzaTotaleEngine(), defaultValue);
 	}
 	public long getElapsedTimeS() {
 		return getElapsedTimeS(null);
@@ -970,7 +982,7 @@ public class Info {
 	public long getElapsedTimeNs(String defaultValue) {
 		return getElapsedTime(defaultValue) * 1000 * 1000;
 	}
-	private Long _getLatenzaTotale() {
+	private Long getLatenzaTotaleEngine() {
 		Long l = null;
 		if(this.transazione.getDataUscitaRisposta() != null && this.transazione.getDataIngressoRichiesta() != null){
 			l = this.transazione.getDataUscitaRisposta().getTime() - this.transazione.getDataIngressoRichiesta().getTime();
@@ -982,7 +994,7 @@ public class Info {
 		return getApiElapsedTime(null);
 	}
 	public long getApiElapsedTime(String defaultValue) {
-		return this.correctLong(_getLatenzaServizio(), defaultValue);
+		return this.correctLong(getLatenzaServizioEngine(), defaultValue);
 	}
 	public long getApiElapsedTimeS() {
 		return getApiElapsedTimeS(null);
@@ -1008,7 +1020,7 @@ public class Info {
 	public long getApiElapsedTimeNs(String defaultValue) {
 		return getApiElapsedTime(defaultValue) * 1000 * 1000;
 	}
-	private Long _getLatenzaServizio() {
+	private Long getLatenzaServizioEngine() {
 		Long l = null;
 		if(this.transazione.getDataUscitaRichiesta() != null && this.transazione.getDataIngressoRisposta() != null){
 			l = this.transazione.getDataIngressoRisposta().getTime() - this.transazione.getDataUscitaRichiesta().getTime();
@@ -1020,7 +1032,7 @@ public class Info {
 		return getGatewayLatency(null);
 	}
 	public long getGatewayLatency(String defaultValue) {
-		return this.correctLong(_getLatenzaPorta(), defaultValue);
+		return this.correctLong(getLatenzaPortaEngine(), defaultValue);
 	}
 	public long getGatewayLatencyS() {
 		return getGatewayLatencyS(null);
@@ -1046,11 +1058,11 @@ public class Info {
 	public long getGatewayLatencyNs(String defaultValue) {
 		return getGatewayLatency(defaultValue) * 1000 * 1000;
 	}
-	private Long _getLatenzaPorta() {
+	private Long getLatenzaPortaEngine() {
 		Long l = null;
-		Long latTotale = this._getLatenzaTotale();
+		Long latTotale = this.getLatenzaTotaleEngine();
 		if(latTotale != null && latTotale>=0) {
-			Long latServizio = this._getLatenzaServizio();
+			Long latServizio = this.getLatenzaServizioEngine();
 			if(latServizio != null && latServizio>=0) {
 				l = latTotale.longValue() - latServizio.longValue();
 			}else { 
@@ -1090,7 +1102,9 @@ public class Info {
 		if(StringUtils.isNotEmpty(this.getOrganization())) {
 			try {
 				nome = NamingUtils.getLabelSoggetto(this.getProfile(), this.getOrganizationType(), this.getOrganization());
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// ignore
+			}
 		}
 		return correctValue(nome, defaultValue);
 	}
@@ -1100,11 +1114,10 @@ public class Info {
 	public java.lang.String getRole(String defaultValue) {
 		String s = null;
 		if(this.transazione.getPddRuolo()!=null) {
-			switch (this.transazione.getPddRuolo()) {
-			case DELEGATA:
+			if(org.openspcoop2.core.transazioni.constants.PddRuolo.DELEGATA.equals(this.transazione.getPddRuolo())) {
 				s = "fruizione";
-				break;
-			default:
+			}
+			else {
 				s = "erogazione";
 			}
 		}
@@ -1134,7 +1147,9 @@ public class Info {
 		if(StringUtils.isNotEmpty(this.getSender())) {
 			try {
 				nome = NamingUtils.getLabelSoggetto(this.getProfile(), this.getSenderType(), this.getSender());
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// ignore
+			}
 		}
 		return correctValue(nome, defaultValue);
 	}
@@ -1201,7 +1216,9 @@ public class Info {
 		if(StringUtils.isNotEmpty(this.getProvider())) {
 			try {
 				nome = NamingUtils.getLabelSoggetto(this.getProfile(), this.getProviderType(), this.getProvider());
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// ignore
+			}
 		}
 		return correctValue(nome, defaultValue);
 	}
@@ -1295,13 +1312,21 @@ public class Info {
 		try {
 			String parteComune = this.transazione.getUriAccordoServizio();
 			if(parteComune!=null && !"".equals(parteComune)) {
-				try {
-					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(parteComune);
-					p = NamingUtils.getLabelAccordoServizioParteComune(idAccordo);
-				}catch(Throwable t) {}
+				p = getApiInterfaceIdEngine(parteComune);
 			}
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			// ignore
+		}
 		return correctValue(p, defaultValue);
+	}
+	private String getApiInterfaceIdEngine(String parteComune) {
+		try {
+			IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(parteComune);
+			return NamingUtils.getLabelAccordoServizioParteComune(idAccordo);
+		}catch(Exception t) {
+			// ignore
+		}
+		return null;
 	}
 	
 	public java.lang.String getApiType() {
@@ -1333,7 +1358,9 @@ public class Info {
 		if(StringUtils.isNotEmpty(this.getApi())) {
 			try {
 				nome = NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(this.getProfile(), this.getApiType(), this.getApi(), this.getApiVersion());
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// ignore
+			}
 		}
 		return correctValue(nome, defaultValue);
 	}
@@ -1486,11 +1513,13 @@ public class Info {
 		String tipo = this.credenzialiMittente!=null && this.credenzialiMittente.getTrasporto()!=null ? this.credenzialiMittente.getTrasporto().getTipo() : null;
 		if(tipo!=null && tipo.contains("_")) {
 			try {
-				String solo_tipo_auth = tipo.substring(tipo.indexOf("_")+1, tipo.length());
-				if(solo_tipo_auth!=null) {
-					tipo = solo_tipo_auth;
+				String soloTipoAuth = tipo.substring(tipo.indexOf("_")+1, tipo.length());
+				if(soloTipoAuth!=null) {
+					tipo = soloTipoAuth;
 				}
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// ignore
+			}
 		}
 		return correctValue(tipo, defaultValue);
 	}
@@ -1507,10 +1536,9 @@ public class Info {
 	}
 	public java.lang.String getClientCertificateSubjectDN(String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getChannel()!=null && this.securityToken.getChannel().getCertificate()!=null) {
-			if(this.securityToken.getChannel().getCertificate().getSubject()!=null) {
-				v = this.securityToken.getChannel().getCertificate().getSubject().toString();
-			}
+		if(this.securityToken!=null && this.securityToken.getChannel()!=null && this.securityToken.getChannel().getCertificate()!=null &&
+			this.securityToken.getChannel().getCertificate().getSubject()!=null) {
+			v = this.securityToken.getChannel().getCertificate().getSubject().toString();
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -1520,10 +1548,9 @@ public class Info {
 	}
 	public java.lang.String getClientCertificateSubjectCN(String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getChannel()!=null && this.securityToken.getChannel().getCertificate()!=null) {
-			if(this.securityToken.getChannel().getCertificate().getSubject()!=null) {
-				v = this.securityToken.getChannel().getCertificate().getSubject().getCN();
-			}
+		if(this.securityToken!=null && this.securityToken.getChannel()!=null && this.securityToken.getChannel().getCertificate()!=null &&
+			this.securityToken.getChannel().getCertificate().getSubject()!=null) {
+			v = this.securityToken.getChannel().getCertificate().getSubject().getCN();
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -1533,10 +1560,9 @@ public class Info {
 	}
 	public java.lang.String getClientCertificateSubjectDNInfo(String oid, String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getChannel()!=null && this.securityToken.getChannel().getCertificate()!=null) {
-			if(this.securityToken.getChannel().getCertificate().getSubject()!=null) {
-				v = this.securityToken.getChannel().getCertificate().getSubject().getInfo(oid);
-			}
+		if(this.securityToken!=null && this.securityToken.getChannel()!=null && this.securityToken.getChannel().getCertificate()!=null &&
+			this.securityToken.getChannel().getCertificate().getSubject()!=null) {
+			v = this.securityToken.getChannel().getCertificate().getSubject().getInfo(oid);
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -1546,10 +1572,9 @@ public class Info {
 	}
 	public java.lang.String getClientCertificateIssuerDN(String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getChannel()!=null && this.securityToken.getChannel().getCertificate()!=null) {
-			if(this.securityToken.getChannel().getCertificate().getIssuer()!=null) {
-				v = this.securityToken.getChannel().getCertificate().getIssuer().toString();
-			}
+		if(this.securityToken!=null && this.securityToken.getChannel()!=null && this.securityToken.getChannel().getCertificate()!=null &&
+			this.securityToken.getChannel().getCertificate().getIssuer()!=null) {
+			v = this.securityToken.getChannel().getCertificate().getIssuer().toString();
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -1559,10 +1584,9 @@ public class Info {
 	}
 	public java.lang.String getClientCertificateIssuerCN(String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getChannel()!=null && this.securityToken.getChannel().getCertificate()!=null) {
-			if(this.securityToken.getChannel().getCertificate().getIssuer()!=null) {
-				v = this.securityToken.getChannel().getCertificate().getIssuer().getCN();
-			}
+		if(this.securityToken!=null && this.securityToken.getChannel()!=null && this.securityToken.getChannel().getCertificate()!=null &&
+			this.securityToken.getChannel().getCertificate().getIssuer()!=null) {
+			v = this.securityToken.getChannel().getCertificate().getIssuer().getCN();
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -1572,10 +1596,9 @@ public class Info {
 	}
 	public java.lang.String getClientCertificateIssuerDNInfo(String oid, String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getChannel()!=null && this.securityToken.getChannel().getCertificate()!=null) {
-			if(this.securityToken.getChannel().getCertificate().getIssuer()!=null) {
-				v = this.securityToken.getChannel().getCertificate().getIssuer().getInfo(oid);
-			}
+		if(this.securityToken!=null && this.securityToken.getChannel()!=null && this.securityToken.getChannel().getCertificate()!=null &&
+			this.securityToken.getChannel().getCertificate().getIssuer()!=null) {
+			v = this.securityToken.getChannel().getCertificate().getIssuer().getInfo(oid);
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -1591,36 +1614,36 @@ public class Info {
 		return getTokenIssuer(null);
 	}
 	public java.lang.String getTokenIssuer(String defaultValue) {
-		return correctValue(this.credenzialiMittente!=null && this.credenzialiMittente.getToken_issuer()!=null ? this.credenzialiMittente.getToken_issuer().getCredenziale() : null, defaultValue);
+		return correctValue(this.credenzialiMittente!=null && this.credenzialiMittente.getTokenIssuer()!=null ? this.credenzialiMittente.getTokenIssuer().getCredenziale() : null, defaultValue);
 	}
 	
 	public java.lang.String getTokenSubject() {
 		return getTokenSubject(null);
 	}
 	public java.lang.String getTokenSubject(String defaultValue) {
-		return correctValue(this.credenzialiMittente!=null && this.credenzialiMittente.getToken_subject()!=null ? this.credenzialiMittente.getToken_subject().getCredenziale() : null, defaultValue);
+		return correctValue(this.credenzialiMittente!=null && this.credenzialiMittente.getTokenSubject()!=null ? this.credenzialiMittente.getTokenSubject().getCredenziale() : null, defaultValue);
 	}
 	
 	public java.lang.String getTokenClientId() {
 		return getTokenClientId(null);
 	}
 	public java.lang.String getTokenClientId(String defaultValue) {
-		return correctValue(this.credenzialiMittente!=null && this.credenzialiMittente.getToken_clientId()!=null ? CredenzialeTokenClient.convertClientIdDBValueToOriginal(this.credenzialiMittente.getToken_clientId().getCredenziale()) : null, defaultValue);
+		return correctValue(this.credenzialiMittente!=null && this.credenzialiMittente.getTokenClientId()!=null ? CredenzialeTokenClient.convertClientIdDBValueToOriginal(this.credenzialiMittente.getTokenClientId().getCredenziale()) : null, defaultValue);
 	}
 	
 	private IDServizioApplicativo tokenClientApplication;
-	private Boolean tokenClientApplication_read;
-	private void _initTokenClientApplication() {
+	private Boolean tokenClientApplicationRead;
+	private void initTokenClientApplicationEngine() {
 		try {
-			this.tokenClientApplication = this.credenzialiMittente!=null && this.credenzialiMittente.getToken_clientId()!=null ? CredenzialeTokenClient.convertApplicationDBValueToOriginal(this.credenzialiMittente.getToken_clientId().getCredenziale()) : null;
-		}catch(Throwable t) {
-			this.log.error("_initTokenClientApplication() failed: "+t.getMessage(),t);
+			this.tokenClientApplication = this.credenzialiMittente!=null && this.credenzialiMittente.getTokenClientId()!=null ? CredenzialeTokenClient.convertApplicationDBValueToOriginal(this.credenzialiMittente.getTokenClientId().getCredenziale()) : null;
+		}catch(Exception t) {
+			this.log.error("_initTokenClientApplication()"+getErrorSuffix(t),t);
 		}
-		this.tokenClientApplication_read=true;
+		this.tokenClientApplicationRead=true;
 	}
-	private IDServizioApplicativo _getTokenClientApplication() {
-		if(this.tokenClientApplication_read==null) {
-			_initTokenClientApplication();
+	private IDServizioApplicativo getTokenClientApplicationEngine() {
+		if(this.tokenClientApplicationRead==null) {
+			initTokenClientApplicationEngine();
 		}
 		return this.tokenClientApplication;
 	}
@@ -1629,7 +1652,7 @@ public class Info {
 		return getTokenClientApplication(null);
 	}
 	public java.lang.String getTokenClientApplication(String defaultValue) {
-		IDServizioApplicativo idSA = _getTokenClientApplication();
+		IDServizioApplicativo idSA = getTokenClientApplicationEngine();
 		return correctValue(idSA!=null ? idSA.getNome() : null, defaultValue);
 	}
 	
@@ -1665,14 +1688,14 @@ public class Info {
 		return getTokenClientOrganizationType(null);
 	}
 	public java.lang.String getTokenClientOrganizationType(String defaultValue) {
-		IDServizioApplicativo idSA = _getTokenClientApplication();
+		IDServizioApplicativo idSA = getTokenClientApplicationEngine();
 		return correctValue(idSA!=null ? idSA.getIdSoggettoProprietario().getTipo() : null, defaultValue);
 	}
 	public java.lang.String getTokenClientOrganization() {
 		return getTokenClientOrganization(null);
 	}
 	public java.lang.String getTokenClientOrganization(String defaultValue) {
-		IDServizioApplicativo idSA = _getTokenClientApplication();
+		IDServizioApplicativo idSA = getTokenClientApplicationEngine();
 		return correctValue(idSA!=null ? idSA.getIdSoggettoProprietario().getNome() : null, defaultValue);
 	}
 	public java.lang.String getTokenClientOrganizationId() {
@@ -1683,7 +1706,9 @@ public class Info {
 		if(StringUtils.isNotEmpty(this.getTokenClientOrganization())) {
 			try {
 				nome = NamingUtils.getLabelSoggetto(this.getProfile(), this.getTokenClientOrganizationType(), this.getTokenClientOrganization());
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// ignore
+			}
 		}
 		return correctValue(nome, defaultValue);
 	}
@@ -1720,14 +1745,14 @@ public class Info {
 		return getTokenUsername(null);
 	}
 	public java.lang.String getTokenUsername(String defaultValue) {
-		return correctValue(this.credenzialiMittente!=null && this.credenzialiMittente.getToken_username()!=null ? this.credenzialiMittente.getToken_username().getCredenziale() : null, defaultValue);
+		return correctValue(this.credenzialiMittente!=null && this.credenzialiMittente.getTokenUsername()!=null ? this.credenzialiMittente.getTokenUsername().getCredenziale() : null, defaultValue);
 	}
 	
 	public java.lang.String getTokenMail() {
 		return getTokenMail(null);
 	}
 	public java.lang.String getTokenMail(String defaultValue) {
-		return correctValue(this.credenzialiMittente!=null && this.credenzialiMittente.getToken_eMail()!=null ? this.credenzialiMittente.getToken_eMail().getCredenziale() : null, defaultValue);
+		return correctValue(this.credenzialiMittente!=null && this.credenzialiMittente.getTokenEMail()!=null ? this.credenzialiMittente.getTokenEMail().getCredenziale() : null, defaultValue);
 	}
 	
 	public java.lang.String getTokenClaim(String tokenClaim) {
@@ -1789,8 +1814,8 @@ public class Info {
 		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null) {
 			try {
 				v = this.securityToken.getAccessToken().getHeaderClaim(tokenClaim);
-			}catch(Throwable t) {
-				this.log.error("getTokenHeaderClaim("+tokenClaim+") failed: "+t.getMessage(),t);
+			}catch(Exception t) {
+				this.log.error("getTokenHeaderClaim("+tokenClaim+")"+getErrorSuffix(t),t);
 			}
 		}
 		return correctValue(v, defaultValue);
@@ -1805,8 +1830,8 @@ public class Info {
 			try {
 				Map<String, String> map = this.securityToken.getAccessToken().getHeaderClaims();
 				v = formatTokenClaims(map, claimSeparator, nameValueSeparator);
-			}catch(Throwable t) {
-				this.log.error("getTokenHeaderClaims("+claimSeparator+","+nameValueSeparator+") failed: "+t.getMessage(),t);
+			}catch(Exception t) {
+				this.log.error("getTokenHeaderClaims("+claimSeparator+","+nameValueSeparator+")"+getErrorSuffix(t),t);
 			}
 		}
 		return correctValue(v, defaultValue);
@@ -1842,8 +1867,8 @@ public class Info {
 		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null) {
 			try {
 				v = this.securityToken.getAccessToken().getPayloadClaim(tokenClaim);
-			}catch(Throwable t) {
-				this.log.error("getTokenPayloadClaim("+tokenClaim+") failed: "+t.getMessage(),t);
+			}catch(Exception t) {
+				this.log.error("getTokenPayloadClaim("+tokenClaim+")"+getErrorSuffix(t),t);
 			}
 		}
 		return correctValue(v, defaultValue);
@@ -1858,8 +1883,8 @@ public class Info {
 			try {
 				Map<String, String> map = this.securityToken.getAccessToken().getPayloadClaims();
 				v = formatTokenClaims(map, claimSeparator, nameValueSeparator);
-			}catch(Throwable t) {
-				this.log.error("getTokenPayloadClaims("+claimSeparator+","+nameValueSeparator+") failed: "+t.getMessage(),t);
+			}catch(Exception t) {
+				this.log.error("getTokenPayloadClaims("+claimSeparator+","+nameValueSeparator+")"+getErrorSuffix(t),t);
 			}
 		}
 		return correctValue(v, defaultValue);
@@ -1870,10 +1895,9 @@ public class Info {
 	}
 	public java.lang.String getTokenCertificateSubjectDN(String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null && this.securityToken.getAccessToken().getCertificate()!=null) {
-			if(this.securityToken.getAccessToken().getCertificate().getSubject()!=null) {
-				v = this.securityToken.getAccessToken().getCertificate().getSubject().toString();
-			}
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null && this.securityToken.getAccessToken().getCertificate()!=null &&
+			this.securityToken.getAccessToken().getCertificate().getSubject()!=null) {
+			v = this.securityToken.getAccessToken().getCertificate().getSubject().toString();
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -1883,10 +1907,9 @@ public class Info {
 	}
 	public java.lang.String getTokenCertificateSubjectCN(String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null && this.securityToken.getAccessToken().getCertificate()!=null) {
-			if(this.securityToken.getAccessToken().getCertificate().getSubject()!=null) {
-				v = this.securityToken.getAccessToken().getCertificate().getSubject().getCN();
-			}
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null && this.securityToken.getAccessToken().getCertificate()!=null &&
+			this.securityToken.getAccessToken().getCertificate().getSubject()!=null) {
+			v = this.securityToken.getAccessToken().getCertificate().getSubject().getCN();
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -1896,10 +1919,9 @@ public class Info {
 	}
 	public java.lang.String getTokenCertificateSubjectDNInfo(String oid, String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null && this.securityToken.getAccessToken().getCertificate()!=null) {
-			if(this.securityToken.getAccessToken().getCertificate().getSubject()!=null) {
-				v = this.securityToken.getAccessToken().getCertificate().getSubject().getInfo(oid);
-			}
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null && this.securityToken.getAccessToken().getCertificate()!=null &&
+			this.securityToken.getAccessToken().getCertificate().getSubject()!=null) {
+			v = this.securityToken.getAccessToken().getCertificate().getSubject().getInfo(oid);
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -1909,10 +1931,9 @@ public class Info {
 	}
 	public java.lang.String getTokenCertificateIssuerDN(String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null && this.securityToken.getAccessToken().getCertificate()!=null) {
-			if(this.securityToken.getAccessToken().getCertificate().getIssuer()!=null) {
-				v = this.securityToken.getAccessToken().getCertificate().getIssuer().toString();
-			}
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null && this.securityToken.getAccessToken().getCertificate()!=null &&
+			this.securityToken.getAccessToken().getCertificate().getIssuer()!=null) {
+			v = this.securityToken.getAccessToken().getCertificate().getIssuer().toString();
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -1922,10 +1943,9 @@ public class Info {
 	}
 	public java.lang.String getTokenCertificateIssuerCN(String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null && this.securityToken.getAccessToken().getCertificate()!=null) {
-			if(this.securityToken.getAccessToken().getCertificate().getIssuer()!=null) {
-				v = this.securityToken.getAccessToken().getCertificate().getIssuer().getCN();
-			}
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null && this.securityToken.getAccessToken().getCertificate()!=null &&
+			this.securityToken.getAccessToken().getCertificate().getIssuer()!=null) {
+			v = this.securityToken.getAccessToken().getCertificate().getIssuer().getCN();
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -1935,14 +1955,207 @@ public class Info {
 	}
 	public java.lang.String getTokenCertificateIssuerDNInfo(String oid, String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null && this.securityToken.getAccessToken().getCertificate()!=null) {
-			if(this.securityToken.getAccessToken().getCertificate().getIssuer()!=null) {
-				v = this.securityToken.getAccessToken().getCertificate().getIssuer().getInfo(oid);
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null && this.securityToken.getAccessToken().getCertificate()!=null &&
+			this.securityToken.getAccessToken().getCertificate().getIssuer()!=null) {
+			v = this.securityToken.getAccessToken().getCertificate().getIssuer().getInfo(oid);
+		}
+		return correctValue(v, defaultValue);
+	}
+		
+	
+	
+	
+	public java.lang.String getPdndClientJson() {
+		return getPdndClientJson(null);
+	}
+	public java.lang.String getPdndClientJson(String defaultValue) {
+		return correctValue(getPdndClientJsonEngine(), defaultValue);
+	}
+	private String getPdndClientJsonEngine() {
+		if(this.credenzialiMittente!=null && this.credenzialiMittente.getTokenPdndClientJson()!=null && this.credenzialiMittente.getTokenPdndClientJson().getCredenziale()!=null) {
+			return this.credenzialiMittente.getTokenPdndClientJson().getCredenziale();
+		}
+		else if(this.securityToken!=null && this.securityToken.getPdnd()!=null && this.securityToken.getPdnd().getClientJson()!=null) {
+			return this.securityToken.getPdnd().getClientJson();
+		}
+		return null;
+	}
+	
+	public java.lang.String getPdndOrganizationJson() {
+		return getPdndOrganizationJson(null);
+	}
+	public java.lang.String getPdndOrganizationJson(String defaultValue) {
+		return correctValue(getPdndOrganizationJsonEngine(), defaultValue);
+	}
+	private String getPdndOrganizationJsonEngine() {
+		if(this.credenzialiMittente!=null && this.credenzialiMittente.getTokenPdndOrganizationJson()!=null && this.credenzialiMittente.getTokenPdndOrganizationJson().getCredenziale()!=null) {
+			return this.credenzialiMittente.getTokenPdndOrganizationJson().getCredenziale();
+		}
+		else if(this.securityToken!=null && this.securityToken.getPdnd()!=null && this.securityToken.getPdnd().getOrganizationJson()!=null) {
+			return this.securityToken.getPdnd().getOrganizationJson();
+		}
+		return null;
+	}
+	
+	public java.lang.String getPdndOrganizationName() {
+		return getPdndOrganizationName(null);
+	}
+	public java.lang.String getPdndOrganizationName(String defaultValue) {
+		String v = this.credenzialiMittente!=null && this.credenzialiMittente.getTokenPdndOrganizationName()!=null ? this.credenzialiMittente.getTokenPdndOrganizationName().getCredenziale() : null;
+		if(v==null) {
+			try {
+				v = this.securityToken!=null && this.securityToken.getPdnd()!=null ? this.securityToken.getPdnd().getOrganizationName() : null;
+			}catch(Exception e) {
+				// ignore
+			}
+		}
+		if(v==null) {
+			PDNDTokenInfo info = this.getPDNDTokenOrganizationInfo();
+			try {
+				if(info!=null) {
+					v = info.getOrganizationName(this.log);
+				}
+			}catch(Exception e) {
+				// ignore
 			}
 		}
 		return correctValue(v, defaultValue);
 	}
 	
+	public java.lang.String getPdndOrganizationId() {
+		return getPdndOrganizationId(null);
+	}
+	public java.lang.String getPdndOrganizationId(String defaultValue) {
+		PDNDTokenInfo info = this.getPDNDTokenOrganizationInfo();
+		String v = null;
+		try {
+			if(info!=null) {
+				v = info.getOrganizationId(this.log);
+			}
+		}catch(Exception e) {
+			// ignore
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getPdndOrganizationCategory() {
+		return getPdndOrganizationCategory(null);
+	}
+	public java.lang.String getPdndOrganizationCategory(String defaultValue) {
+		PDNDTokenInfo info = this.getPDNDTokenOrganizationInfo();
+		String v = null;
+		try {
+			if(info!=null) {
+				v = info.getOrganizationCategory(this.log);
+			}
+		}catch(Exception e) {
+			// ignore
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getPdndOrganizationExternalOrigin() {
+		return getPdndOrganizationExternalOrigin(null);
+	}
+	public java.lang.String getPdndOrganizationExternalOrigin(String defaultValue) {
+		PDNDTokenInfo info = this.getPDNDTokenOrganizationInfo();
+		String v = null;
+		try {
+			if(info!=null) {
+				v = info.getOrganizationExternalOrigin(this.log);
+			}
+		}catch(Exception e) {
+			// ignore
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getPdndOrganizationExternalId() {
+		return getPdndOrganizationExternalId(null);
+	}
+	public java.lang.String getPdndOrganizationExternalId(String defaultValue) {
+		PDNDTokenInfo info = this.getPDNDTokenOrganizationInfo();
+		String v = null;
+		try {
+			if(info!=null) {
+				v = info.getOrganizationExternalId(this.log);
+			}
+		}catch(Exception e) {
+			// ignore
+		}
+		return correctValue(v, defaultValue);
+	}
+		
+	private PDNDTokenInfo pdndTokenOrganizationInfo = null;
+	private PDNDTokenInfo getPDNDTokenOrganizationInfo() {
+		if(this.pdndTokenOrganizationInfo==null) {
+			initPDNDTokenOrganizationInfo();
+		}
+		return this.pdndTokenOrganizationInfo;
+	}
+	private synchronized void initPDNDTokenOrganizationInfo() {
+		if(this.pdndTokenOrganizationInfo==null) {
+			this.pdndTokenOrganizationInfo=new PDNDTokenInfo();
+			String organizationJson = getPdndOrganizationJsonEngine();
+			if(organizationJson!=null) {
+				PDNDTokenInfoDetails id = new PDNDTokenInfoDetails();
+				id.setDetails(organizationJson);
+				this.pdndTokenOrganizationInfo.setOrganization(id);
+			}
+		}
+	}
+	
+	
+	public java.lang.String getPdndClientId() {
+		return getPdndClientId(null);
+	}
+	public java.lang.String getPdndClientId(String defaultValue) {
+		PDNDTokenInfo info = this.getPDNDTokenClientInfo();
+		String v = null;
+		try {
+			if(info!=null) {
+				v = info.getClientId(this.log);
+			}
+		}catch(Exception e) {
+			// ignore
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getPdndClientConsumerId() {
+		return getPdndClientConsumerId(null);
+	}
+	public java.lang.String getPdndClientConsumerId(String defaultValue) {
+		PDNDTokenInfo info = this.getPDNDTokenClientInfo();
+		String v = null;
+		try {
+			if(info!=null) {
+				v = info.getClientConsumerId(this.log);
+			}
+		}catch(Exception e) {
+			// ignore
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	private PDNDTokenInfo pdndTokenClientInfo = null;
+	private PDNDTokenInfo getPDNDTokenClientInfo() {
+		if(this.pdndTokenClientInfo==null) {
+			initPDNDTokenClientInfo();
+		}
+		return this.pdndTokenClientInfo;
+	}
+	private synchronized void initPDNDTokenClientInfo() {
+		if(this.pdndTokenClientInfo==null) {
+			this.pdndTokenClientInfo=new PDNDTokenInfo();
+			String clientJson = getPdndClientJsonEngine();
+			if(clientJson!=null) {
+				PDNDTokenInfoDetails id = new PDNDTokenInfoDetails();
+				id.setDetails(clientJson);
+				this.pdndTokenClientInfo.setClient(id);
+			}
+		}
+	}
 	
 	public java.lang.String getAttribute(String attributeName) {
 		return getAttribute(attributeName, null);
@@ -1973,27 +2186,31 @@ public class Info {
 	public java.lang.String getAttributeByAA(String attributeAuthorityName, String attributeName, String defaultValue) {
 		String v = null;
 		if(attributeAuthorityName!=null && attributeName!=null) {
-			if(this.informazioniAttributi!=null && 
-					this.informazioniAttributi.isMultipleAttributeAuthorities()!=null && 
-					this.informazioniAttributi.isMultipleAttributeAuthorities().getValue()!=null && 
-					this.informazioniAttributi.isMultipleAttributeAuthorities().getValue() &&
-					this.informazioniAttributi.getAttributes()!=null && 
-					this.informazioniAttributi.getAttributes().containsKey(attributeAuthorityName)) {
-				Object o = this.informazioniAttributi.getAttributes().get(attributeAuthorityName);
-				if(o instanceof Map) {
-					@SuppressWarnings("unchecked")
-					Map<String, Object> map = (Map<String, Object>) o;
-					if(map.containsKey(attributeName)) {
-						Object valueAttributeObject = map.get(attributeName);
-						if(valueAttributeObject!=null) {
-							List<String> lClaimValues = TokenUtilities.getClaimValues(valueAttributeObject);
-							v = TokenUtilities.getClaimValuesAsString(lClaimValues);
-						}
+			v = getAttributeByAAEngine(attributeAuthorityName, attributeName);
+		}	
+		return correctValue(v, defaultValue);
+	}
+	private java.lang.String getAttributeByAAEngine(String attributeAuthorityName, String attributeName) {
+		if(this.informazioniAttributi!=null && 
+				this.informazioniAttributi.isMultipleAttributeAuthorities()!=null && 
+				this.informazioniAttributi.isMultipleAttributeAuthorities().getValue()!=null && 
+				this.informazioniAttributi.isMultipleAttributeAuthorities().getValue().booleanValue() &&
+				this.informazioniAttributi.getAttributes()!=null && 
+				this.informazioniAttributi.getAttributes().containsKey(attributeAuthorityName)) {
+			Object o = this.informazioniAttributi.getAttributes().get(attributeAuthorityName);
+			if(o instanceof Map) {
+				@SuppressWarnings("unchecked")
+				Map<String, Object> map = (Map<String, Object>) o;
+				if(map.containsKey(attributeName)) {
+					Object valueAttributeObject = map.get(attributeName);
+					if(valueAttributeObject!=null) {
+						List<String> lClaimValues = TokenUtilities.getClaimValues(valueAttributeObject);
+						return TokenUtilities.getClaimValuesAsString(lClaimValues);
 					}
 				}
 			}
-		}	
-		return correctValue(v, defaultValue);
+		}
+		return null;
 	}
 	
 	public java.lang.String getRetrievedAccessToken() {
@@ -2128,7 +2345,7 @@ public class Info {
 		return getClientIP(defaultValue);
 	}
 
-	private DatiMittente _convertToDatiMittente() {
+	private DatiMittente convertToDatiMittenteEngine() {
 		
 		DatiMittente datiMittente = new DatiMittente();
 		
@@ -2141,6 +2358,8 @@ public class Info {
 		datiMittente.setTokenClientTipoSoggettoFruitore(getTokenClientOrganizationType());
 		datiMittente.setTokenClientNomeSoggettoFruitore(getTokenClientOrganization());
 		datiMittente.setTokenClientSoggettoFruitore(getTokenClientOrganizationId());
+		
+		datiMittente.setPdndOrganizationName(getPdndOrganizationName());
 		
 		datiMittente.setTipoTrasportoMittente(getPrincipalAuthType());
 		datiMittente.setTrasportoMittente(getPrincipal());
@@ -2164,7 +2383,7 @@ public class Info {
 		return getRequester(null);
 	}
 	public java.lang.String getRequester(String defaultValue) {
-		DatiMittente datiMittente = this._convertToDatiMittente();
+		DatiMittente datiMittente = this.convertToDatiMittenteEngine();
 		return correctValue(InfoMittenteFormatUtils.getRichiedente(datiMittente), defaultValue);
 	}
 	
@@ -2172,7 +2391,7 @@ public class Info {
 		return getIpRequester(null);
 	}
 	public java.lang.String getIpRequester(String defaultValue) {
-		DatiMittente datiMittente = this._convertToDatiMittente();
+		DatiMittente datiMittente = this.convertToDatiMittenteEngine();
 		return correctValue(InfoMittenteFormatUtils.getIpRichiedente(datiMittente), defaultValue);
 	}
 	
@@ -2243,9 +2462,9 @@ public class Info {
 		if(this.transazione.getPddRuolo()!=null) {
 			switch (this.transazione.getPddRuolo()) {
 			case DELEGATA:
-				return _getFaultCooperazione(defaultValue);
+				return getFaultCooperazioneEngine(defaultValue);
 			case APPLICATIVA:
-				return _getFaultIntegrazione(defaultValue);
+				return getFaultIntegrazioneEngine(defaultValue);
 			default:
 				break;
 			}
@@ -2260,9 +2479,9 @@ public class Info {
 		if(this.transazione.getPddRuolo()!=null) {
 			switch (this.transazione.getPddRuolo()) {
 			case DELEGATA:
-				return _getFaultIntegrazione(defaultValue);
+				return getFaultIntegrazioneEngine(defaultValue);
 			case APPLICATIVA:
-				return _getFaultCooperazione(defaultValue);
+				return getFaultCooperazioneEngine(defaultValue);
 			default:
 				break;
 			}
@@ -2270,16 +2489,16 @@ public class Info {
 		return correctValue(null, defaultValue);
 	}
 	
-	private java.lang.String _getFaultIntegrazione(String defaultValue) {
+	private java.lang.String getFaultIntegrazioneEngine(String defaultValue) {
 		return correctValue(this.transazione.getFaultIntegrazione(), defaultValue);
 	}
-	private java.lang.String _getFormatoFaultIntegrazione(String defaultValue) {
+	private java.lang.String getFormatoFaultIntegrazioneEngine(String defaultValue) {
 		return correctValue(this.transazione.getFormatoFaultIntegrazione(), defaultValue);
 	}
-	private java.lang.String _getFaultCooperazione(String defaultValue) {
+	private java.lang.String getFaultCooperazioneEngine(String defaultValue) {
 		return correctValue(this.transazione.getFaultCooperazione(), defaultValue);
 	}
-	private java.lang.String _getFormatoFaultCooperazione(String defaultValue) {
+	private java.lang.String getFormatoFaultCooperazioneEngine(String defaultValue) {
 		return correctValue(this.transazione.getFormatoFaultCooperazione(), defaultValue);
 	}
 	
@@ -2302,10 +2521,9 @@ public class Info {
 	}
 	public java.lang.String getInRequestContent(String defaultValue) {
 		byte[] c = null;
-		if(this.richiestaIngresso!=null) {
-			if(this.richiestaIngresso.getBody()!=null && this.richiestaIngresso.getBody().size()>0) {
-				c = this.richiestaIngresso.getBody().toByteArray();
-			}
+		if(this.richiestaIngresso!=null &&
+			this.richiestaIngresso.getBody()!=null && this.richiestaIngresso.getBody().size()>0) {
+			c = this.richiestaIngresso.getBody().toByteArray();
 		}
 		return correctByteArray(c, defaultValue);
 	}
@@ -2315,10 +2533,9 @@ public class Info {
 	}
 	public int getInRequestSize(String defaultValue) {
 		byte[] c = null;
-		if(this.richiestaIngresso!=null) {
-			if(this.richiestaIngresso.getBody()!=null && this.richiestaIngresso.getBody().size()>0) {
-				c = this.richiestaIngresso.getBody().toByteArray();
-			}
+		if(this.richiestaIngresso!=null &&
+			this.richiestaIngresso.getBody()!=null && this.richiestaIngresso.getBody().size()>0) {
+			c = this.richiestaIngresso.getBody().toByteArray();
 		}
 		int size = 0;
 		if(c!=null) {
@@ -2331,13 +2548,25 @@ public class Info {
 	}
 	
 	public java.lang.String getInRequestHeader(String name) {
-		return getInRequestHeader(name, this.headerMultiValueSeparator);
+		return getInRequestHeader(name, this.headerMultiValueSeparator, false);
 	}
 	public java.lang.String getInRequestHeader(String name, String multiValueSeparator) {
+		return getInRequestHeader(name, multiValueSeparator, false);
+	}
+	public java.lang.String removeInRequestHeader(String name) {
+		return getInRequestHeader(name, this.headerMultiValueSeparator, true);
+	}
+	public java.lang.String removeInRequestHeader(String name, String multiValueSeparator) {
+		return getInRequestHeader(name, multiValueSeparator, true);
+	}
+	private java.lang.String getInRequestHeader(String name, String multiValueSeparator, boolean consume) {
 		String s = null;
 		if(this.richiestaIngresso!=null && this.richiestaIngresso.getHeaders()!=null) {
 			List<String> values = TransportUtils.getRawObject(this.richiestaIngresso.getHeaders(), name);
 			s = this.format(values, multiValueSeparator);
+		}
+		if(consume) {
+			this.headerRichiestaIngressoConsumati.add(name);
 		}
 		return correctValue(s, null);
 	}
@@ -2348,18 +2577,20 @@ public class Info {
 	public java.lang.String getInRequestHeaders(String defaultValue) {
 		return getInRequestHeaders(defaultValue, null, null, null, null);
 	}
-	public java.lang.String getInRequestHeaders(String hdrsSeparatpr, String hdrSeparator, String hdrPrefix, String hdrSuffix) {
-		return getInRequestHeaders(null, hdrsSeparatpr, hdrSeparator, hdrPrefix, hdrSuffix);
+	public java.lang.String getInRequestHeaders(String hdrsSeparator, String hdrSeparator, String hdrPrefix, String hdrSuffix) {
+		return getInRequestHeaders(null, hdrsSeparator, hdrSeparator, hdrPrefix, hdrSuffix);
 	}
-	public java.lang.String getInRequestHeaders(String defaultValue, String hdrsSeparatpr, String hdrSeparator, String hdrPrefix, String hdrSuffix) {
+	public java.lang.String getInRequestHeaders(String defaultValue, String hdrsSeparator, String hdrSeparator, String hdrPrefix, String hdrSuffix) {
 		if(this.richiestaIngresso!=null) {
-			return formatHeaders(this.richiestaIngresso.getHeaders(), defaultValue, hdrsSeparatpr, hdrSeparator, hdrPrefix, hdrSuffix);
+			return formatHeaders(filterHeaders(this.richiestaIngresso.getHeaders(), this.headerRichiestaIngressoConsumati), defaultValue, 
+					new HeaderFormat(hdrsSeparator, hdrSeparator, hdrPrefix, hdrSuffix));
 		}
 		else {
 			String s = null;
 			return correctValue(s, defaultValue);
 		}
 	}
+	
 	
 	
 	
@@ -2373,6 +2604,9 @@ public class Info {
 		if(this.richiestaUscita!=null) {
 			s = this.richiestaUscita.getContentType();
 		}
+		else if(this.headerRichiestaUscita!=null && !this.headerRichiestaUscita.isEmpty()) {
+			s = TransportUtils.getFirstValue(this.headerRichiestaUscita, HttpConstants.CONTENT_TYPE);
+		}
 		return correctValue(s, defaultValue);
 	}
 	
@@ -2381,10 +2615,9 @@ public class Info {
 	}
 	public java.lang.String getOutRequestContent(String defaultValue) {
 		byte[] c = null;
-		if(this.richiestaUscita!=null) {
-			if(this.richiestaUscita.getBody()!=null && this.richiestaUscita.getBody().size()>0) {
-				c = this.richiestaUscita.getBody().toByteArray();
-			}
+		if(this.richiestaUscita!=null &&
+			this.richiestaUscita.getBody()!=null && this.richiestaUscita.getBody().size()>0) {
+			c = this.richiestaUscita.getBody().toByteArray();
 		}
 		return correctByteArray(c, defaultValue);
 	}
@@ -2394,10 +2627,9 @@ public class Info {
 	}
 	public int getOutRequestSize(String defaultValue) {
 		byte[] c = null;
-		if(this.richiestaUscita!=null) {
-			if(this.richiestaUscita.getBody()!=null && this.richiestaUscita.getBody().size()>0) {
-				c = this.richiestaUscita.getBody().toByteArray();
-			}
+		if(this.richiestaUscita!=null &&
+			this.richiestaUscita.getBody()!=null && this.richiestaUscita.getBody().size()>0) {
+			c = this.richiestaUscita.getBody().toByteArray();
 		}
 		int size = 0;
 		if(c!=null) {
@@ -2410,13 +2642,29 @@ public class Info {
 	}
 
 	public java.lang.String getOutRequestHeader(String name) {
-		return getOutRequestHeader(name, this.headerMultiValueSeparator);
+		return getOutRequestHeader(name, this.headerMultiValueSeparator, false);
 	}
 	public java.lang.String getOutRequestHeader(String name, String multiValueSeparator) {
+		return getOutRequestHeader(name, multiValueSeparator, false);
+	}
+	public java.lang.String removeOutRequestHeader(String name) {
+		return getOutRequestHeader(name, this.headerMultiValueSeparator, true);
+	}
+	public java.lang.String removeOutRequestHeader(String name, String multiValueSeparator) {
+		return getOutRequestHeader(name, multiValueSeparator, true);
+	}
+	private java.lang.String getOutRequestHeader(String name, String multiValueSeparator, boolean consume) {
 		String s = null;
 		if(this.richiestaUscita!=null && this.richiestaUscita.getHeaders()!=null) {
 			List<String> values = TransportUtils.getRawObject(this.richiestaUscita.getHeaders(), name);
 			s = this.format(values, multiValueSeparator);
+		}
+		else if(this.headerRichiestaUscita!=null && !this.headerRichiestaUscita.isEmpty()) {
+			List<String> values = TransportUtils.getRawObject(this.headerRichiestaUscita, name);
+			s = this.format(values, multiValueSeparator);
+		}
+		if(consume) {
+			this.headerRichiestaUscitaConsumati.add(name);
 		}
 		return correctValue(s, null);
 	}
@@ -2427,12 +2675,17 @@ public class Info {
 	public java.lang.String getOutRequestHeaders(String defaultValue) {
 		return getOutRequestHeaders(defaultValue, null, null, null, null);
 	}
-	public java.lang.String getOutRequestHeaders(String hdrsSeparatpr, String hdrSeparator, String hdrPrefix, String hdrSuffix) {
-		return getOutRequestHeaders(null, hdrsSeparatpr, hdrSeparator, hdrPrefix, hdrSuffix);
+	public java.lang.String getOutRequestHeaders(String hdrsSeparator, String hdrSeparator, String hdrPrefix, String hdrSuffix) {
+		return getOutRequestHeaders(null, hdrsSeparator, hdrSeparator, hdrPrefix, hdrSuffix);
 	}
-	public java.lang.String getOutRequestHeaders(String defaultValue, String hdrsSeparatpr, String hdrSeparator, String hdrPrefix, String hdrSuffix) {
+	public java.lang.String getOutRequestHeaders(String defaultValue, String hdrsSeparator, String hdrSeparator, String hdrPrefix, String hdrSuffix) {
 		if(this.richiestaUscita!=null) {
-			return formatHeaders(this.richiestaUscita.getHeaders(), defaultValue, hdrsSeparatpr, hdrSeparator, hdrPrefix, hdrSuffix);
+			return formatHeaders(filterHeaders(this.richiestaUscita.getHeaders(),this.headerRichiestaUscitaConsumati), defaultValue, 
+					new HeaderFormat(hdrsSeparator, hdrSeparator, hdrPrefix, hdrSuffix));
+		}
+		else if(this.headerRichiestaUscita!=null && !this.headerRichiestaUscita.isEmpty()) {
+			return formatHeaders(filterHeaders(this.headerRichiestaUscita,this.headerRichiestaUscitaConsumati), defaultValue, 
+					new HeaderFormat(hdrsSeparator, hdrSeparator, hdrPrefix, hdrSuffix));
 		}
 		else {
 			String s = null;
@@ -2459,10 +2712,9 @@ public class Info {
 	}
 	public java.lang.String getInResponseContent(String defaultValue) {
 		byte[] c = null;
-		if(this.rispostaIngresso!=null) {
-			if(this.rispostaIngresso.getBody()!=null && this.rispostaIngresso.getBody().size()>0) {
-				c = this.rispostaIngresso.getBody().toByteArray();
-			}
+		if(this.rispostaIngresso!=null &&
+			this.rispostaIngresso.getBody()!=null && this.rispostaIngresso.getBody().size()>0) {
+			c = this.rispostaIngresso.getBody().toByteArray();
 		}
 		return correctByteArray(c, defaultValue);
 	}
@@ -2472,10 +2724,9 @@ public class Info {
 	}
 	public int getInResponseSize(String defaultValue) {
 		byte[] c = null;
-		if(this.rispostaIngresso!=null) {
-			if(this.rispostaIngresso.getBody()!=null && this.rispostaIngresso.getBody().size()>0) {
-				c = this.rispostaIngresso.getBody().toByteArray();
-			}
+		if(this.rispostaIngresso!=null &&
+			this.rispostaIngresso.getBody()!=null && this.rispostaIngresso.getBody().size()>0) {
+			c = this.rispostaIngresso.getBody().toByteArray();
 		}
 		int size = 0;
 		if(c!=null) {
@@ -2488,13 +2739,25 @@ public class Info {
 	}
 	
 	public java.lang.String getInResponseHeader(String name) {
-		return getInResponseHeader(name, this.headerMultiValueSeparator);
+		return getInResponseHeader(name, this.headerMultiValueSeparator, false);
 	}
 	public java.lang.String getInResponseHeader(String name, String multiValueSeparator) {
+		return getInResponseHeader(name, multiValueSeparator, false);
+	}
+	public java.lang.String removeInResponseHeader(String name) {
+		return getInResponseHeader(name, this.headerMultiValueSeparator, true);
+	}
+	public java.lang.String removeInResponseHeader(String name, String multiValueSeparator) {
+		return getInResponseHeader(name, multiValueSeparator, true);
+	}
+	private java.lang.String getInResponseHeader(String name, String multiValueSeparator, boolean consume) {
 		String s = null;
 		if(this.rispostaIngresso!=null && this.rispostaIngresso.getHeaders()!=null) {
 			List<String> values = TransportUtils.getRawObject(this.rispostaIngresso.getHeaders(), name);
 			s = this.format(values, multiValueSeparator);
+		}
+		if(consume) {
+			this.headerRispostaIngressoConsumati.add(name);
 		}
 		return correctValue(s, null);
 	}
@@ -2505,12 +2768,13 @@ public class Info {
 	public java.lang.String getInResponseHeaders(String defaultValue) {
 		return getInResponseHeaders(defaultValue, null, null, null, null);
 	}
-	public java.lang.String getInResponseHeaders(String hdrsSeparatpr, String hdrSeparator, String hdrPrefix, String hdrSuffix) {
-		return getInResponseHeaders(null, hdrsSeparatpr, hdrSeparator, hdrPrefix, hdrSuffix);
+	public java.lang.String getInResponseHeaders(String hdrsSeparator, String hdrSeparator, String hdrPrefix, String hdrSuffix) {
+		return getInResponseHeaders(null, hdrsSeparator, hdrSeparator, hdrPrefix, hdrSuffix);
 	}
-	public java.lang.String getInResponseHeaders(String defaultValue, String hdrsSeparatpr, String hdrSeparator, String hdrPrefix, String hdrSuffix) {
+	public java.lang.String getInResponseHeaders(String defaultValue, String hdrsSeparator, String hdrSeparator, String hdrPrefix, String hdrSuffix) {
 		if(this.rispostaIngresso!=null) {
-			return formatHeaders(this.rispostaIngresso.getHeaders(), defaultValue, hdrsSeparatpr, hdrSeparator, hdrPrefix, hdrSuffix);
+			return formatHeaders(filterHeaders(this.rispostaIngresso.getHeaders(),this.headerRispostaIngressoConsumati), defaultValue, 
+					new HeaderFormat(hdrsSeparator, hdrSeparator, hdrPrefix, hdrSuffix));
 		}
 		else {
 			String s = null;
@@ -2529,6 +2793,9 @@ public class Info {
 		if(this.rispostaUscita!=null) {
 			s = this.rispostaUscita.getContentType();
 		}
+		else if(this.headerRispostaUscita!=null && !this.headerRispostaUscita.isEmpty()) {
+			s = TransportUtils.getFirstValue(this.headerRispostaUscita, HttpConstants.CONTENT_TYPE);
+		}
 		return correctValue(s, defaultValue);
 	}
 	
@@ -2537,10 +2804,9 @@ public class Info {
 	}
 	public java.lang.String getOutResponseContent(String defaultValue) {
 		byte[] c = null;
-		if(this.rispostaUscita!=null) {
-			if(this.rispostaUscita.getBody()!=null && this.rispostaUscita.getBody().size()>0) {
-				c = this.rispostaUscita.getBody().toByteArray();
-			}
+		if(this.rispostaUscita!=null &&
+			this.rispostaUscita.getBody()!=null && this.rispostaUscita.getBody().size()>0) {
+			c = this.rispostaUscita.getBody().toByteArray();
 		}
 		return correctByteArray(c, defaultValue);
 	}
@@ -2550,10 +2816,9 @@ public class Info {
 	}
 	public int getOutResponseSize(String defaultValue) {
 		byte[] c = null;
-		if(this.rispostaUscita!=null) {
-			if(this.rispostaUscita.getBody()!=null && this.rispostaUscita.getBody().size()>0) {
-				c = this.rispostaUscita.getBody().toByteArray();
-			}
+		if(this.rispostaUscita!=null &&
+			this.rispostaUscita.getBody()!=null && this.rispostaUscita.getBody().size()>0) {
+			c = this.rispostaUscita.getBody().toByteArray();
 		}
 		int size = 0;
 		if(c!=null) {
@@ -2566,13 +2831,29 @@ public class Info {
 	}
 	
 	public java.lang.String getOutResponseHeader(String name) {
-		return getOutResponseHeader(name, this.headerMultiValueSeparator);
+		return getOutResponseHeader(name, this.headerMultiValueSeparator, false);
 	}
 	public java.lang.String getOutResponseHeader(String name, String multiValueSeparator) {
+		return getOutResponseHeader(name, multiValueSeparator, false);
+	}
+	public java.lang.String removeOutResponseHeader(String name) {
+		return getOutResponseHeader(name, this.headerMultiValueSeparator, true);
+	}
+	public java.lang.String removeOutResponseHeader(String name, String multiValueSeparator) {
+		return getOutResponseHeader(name, multiValueSeparator, true);
+	}
+	private java.lang.String getOutResponseHeader(String name, String multiValueSeparator, boolean consume) {
 		String s = null;
 		if(this.rispostaUscita!=null && this.rispostaUscita.getHeaders()!=null) {
 			List<String> values = TransportUtils.getRawObject(this.rispostaUscita.getHeaders(), name);
 			s = this.format(values, multiValueSeparator);
+		}
+		else if(this.headerRispostaUscita!=null && !this.headerRispostaUscita.isEmpty()) {
+			List<String> values = TransportUtils.getRawObject(this.headerRispostaUscita, name);
+			s = this.format(values, multiValueSeparator);
+		}
+		if(consume) {
+			this.headerRispostaUscitaConsumati.add(name);
 		}
 		return correctValue(s, null);
 	}
@@ -2583,12 +2864,17 @@ public class Info {
 	public java.lang.String getOutResponseHeaders(String defaultValue) {
 		return getOutResponseHeaders(defaultValue, null, null, null, null);
 	}
-	public java.lang.String getOutResponseHeaders(String hdrsSeparatpr, String hdrSeparator, String hdrPrefix, String hdrSuffix) {
-		return getOutResponseHeaders(null, hdrsSeparatpr, hdrSeparator, hdrPrefix, hdrSuffix);
+	public java.lang.String getOutResponseHeaders(String hdrsSeparator, String hdrSeparator, String hdrPrefix, String hdrSuffix) {
+		return getOutResponseHeaders(null, hdrsSeparator, hdrSeparator, hdrPrefix, hdrSuffix);
 	}
-	public java.lang.String getOutResponseHeaders(String defaultValue, String hdrsSeparatpr, String hdrSeparator, String hdrPrefix, String hdrSuffix) {
+	public java.lang.String getOutResponseHeaders(String defaultValue, String hdrsSeparator, String hdrSeparator, String hdrPrefix, String hdrSuffix) {
 		if(this.rispostaUscita!=null) {
-			return formatHeaders(this.rispostaUscita.getHeaders(), defaultValue, hdrsSeparatpr, hdrSeparator, hdrPrefix, hdrSuffix);
+			return formatHeaders(filterHeaders(this.rispostaUscita.getHeaders(),this.headerRispostaUscitaConsumati), defaultValue, 
+					new HeaderFormat(hdrsSeparator, hdrSeparator, hdrPrefix, hdrSuffix));
+		}
+		else if(this.headerRispostaUscita!=null && !this.headerRispostaUscita.isEmpty()) {
+			return formatHeaders(filterHeaders(this.headerRispostaUscita,this.headerRispostaUscitaConsumati), defaultValue, 
+					new HeaderFormat(hdrsSeparator, hdrSeparator, hdrPrefix, hdrSuffix));
 		}
 		else {
 			String s = null;
@@ -2599,7 +2885,7 @@ public class Info {
 	
 	// traccia
 	
-	private java.lang.String _getPropertiesKeys(String [] p, String separator, String defaultValue){
+	private java.lang.String getPropertiesKeysEngine(String [] p, String separator, String defaultValue){
 		String v = null;
 		if(p!=null && p.length>0) {
 			StringBuilder sb = new StringBuilder();
@@ -2613,7 +2899,7 @@ public class Info {
 		}
 		return correctValue(v,defaultValue);
 	}
-	private java.lang.String _getProperties(String [] pNames, String [] pValues, String propertySeparator, String valueSeparator, String defaultValue){
+	private java.lang.String getPropertiesEngine(String [] pNames, String [] pValues, String propertySeparator, String valueSeparator, String defaultValue){
 		String v = null;
 		if(pNames!=null && pNames.length>0) {
 			StringBuilder sb = new StringBuilder();
@@ -2649,7 +2935,7 @@ public class Info {
 	}
 	public java.lang.String getRequestPropertiesKeys(String separator, String defaultValue){
 		String [] p = this.tracciaRichiesta.getPropertiesNames();
-		return _getPropertiesKeys(p, separator, defaultValue);
+		return getPropertiesKeysEngine(p, separator, defaultValue);
 	}
 	public java.lang.String getRequestProperties(){
 		return getRequestProperties(null);
@@ -2663,7 +2949,7 @@ public class Info {
 	public java.lang.String getRequestProperties(String propertySeparator, String valueSeparator, String defaultValue){
 		String [] pNames = this.tracciaRichiesta.getPropertiesNames();
 		String [] pValues = this.tracciaRichiesta.getPropertiesValues();
-		return _getProperties(pNames, pValues, propertySeparator, valueSeparator, defaultValue);
+		return getPropertiesEngine(pNames, pValues, propertySeparator, valueSeparator, defaultValue);
 	}
 	
 	public java.lang.String getResponseProperty(String name) {
@@ -2683,8 +2969,8 @@ public class Info {
 		return getResponsePropertiesKeys(InfoConfigurazione.KEYS_SEPARATOR,defaultValue);
 	}
 	public java.lang.String getResponsePropertiesKeys(String separator, String defaultValue){
-		String [] p = this.tracciaRichiesta.getPropertiesNames();
-		return _getPropertiesKeys(p, separator, defaultValue);
+		String [] p = this.tracciaRisposta.getPropertiesNames();
+		return getPropertiesKeysEngine(p, separator, defaultValue);
 	}
 	public java.lang.String getResponseProperties(){
 		return getResponseProperties(null);
@@ -2696,9 +2982,9 @@ public class Info {
 		return getResponseProperties(propertySeparator, valueSeparator, null);
 	}
 	public java.lang.String getResponseProperties(String propertySeparator, String valueSeparator, String defaultValue){
-		String [] pNames = this.tracciaRichiesta.getPropertiesNames();
-		String [] pValues = this.tracciaRichiesta.getPropertiesValues();
-		return _getProperties(pNames, pValues, propertySeparator, valueSeparator, defaultValue);
+		String [] pNames = this.tracciaRisposta.getPropertiesNames();
+		String [] pValues = this.tracciaRisposta.getPropertiesValues();
+		return getPropertiesEngine(pNames, pValues, propertySeparator, valueSeparator, defaultValue);
 	}
 	
 	
@@ -2745,8 +3031,8 @@ public class Info {
 		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null) {
 			try {
 				v = this.securityToken.getAuthorization().getHeaderClaim(tokenClaim);
-			}catch(Throwable t) {
-				this.log.error("getTokenModIAuthorizationHeaderClaim("+tokenClaim+") failed: "+t.getMessage(),t);
+			}catch(Exception t) {
+				this.log.error("getTokenModIAuthorizationHeaderClaim("+tokenClaim+")"+getErrorSuffix(t),t);
 			}
 		}
 		return correctValue(v, defaultValue);
@@ -2761,8 +3047,8 @@ public class Info {
 			try {
 				Map<String, String> map = this.securityToken.getAuthorization().getHeaderClaims();
 				v = formatTokenClaims(map, claimSeparator, nameValueSeparator);
-			}catch(Throwable t) {
-				this.log.error("getTokenModIAuthorizationHeaderClaims("+claimSeparator+","+nameValueSeparator+") failed: "+t.getMessage(),t);
+			}catch(Exception t) {
+				this.log.error("getTokenModIAuthorizationHeaderClaims("+claimSeparator+","+nameValueSeparator+")"+getErrorSuffix(t),t);
 			}
 		}
 		return correctValue(v, defaultValue);
@@ -2798,8 +3084,8 @@ public class Info {
 		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null) {
 			try {
 				v = this.securityToken.getAuthorization().getPayloadClaim(tokenClaim);
-			}catch(Throwable t) {
-				this.log.error("getTokenModIAuthorizationPayloadClaim("+tokenClaim+") failed: "+t.getMessage(),t);
+			}catch(Exception t) {
+				this.log.error("getTokenModIAuthorizationPayloadClaim("+tokenClaim+")"+getErrorSuffix(t),t);
 			}
 		}
 		return correctValue(v, defaultValue);
@@ -2814,8 +3100,8 @@ public class Info {
 			try {
 				Map<String, String> map = this.securityToken.getAuthorization().getPayloadClaims();
 				v = formatTokenClaims(map, claimSeparator, nameValueSeparator);
-			}catch(Throwable t) {
-				this.log.error("getTokenModIAuthorizationPayloadClaims("+claimSeparator+","+nameValueSeparator+") failed: "+t.getMessage(),t);
+			}catch(Exception t) {
+				this.log.error("getTokenModIAuthorizationPayloadClaims("+claimSeparator+","+nameValueSeparator+")"+getErrorSuffix(t),t);
 			}
 		}
 		return correctValue(v, defaultValue);
@@ -2826,10 +3112,9 @@ public class Info {
 	}
 	public java.lang.String getTokenModIAuthorizationCertificateSubjectDN(String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null && this.securityToken.getAuthorization().getCertificate()!=null) {
-			if(this.securityToken.getAuthorization().getCertificate().getSubject()!=null) {
-				v = this.securityToken.getAuthorization().getCertificate().getSubject().toString();
-			}
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null && this.securityToken.getAuthorization().getCertificate()!=null &&
+			this.securityToken.getAuthorization().getCertificate().getSubject()!=null) {
+			v = this.securityToken.getAuthorization().getCertificate().getSubject().toString();
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -2839,10 +3124,9 @@ public class Info {
 	}
 	public java.lang.String getTokenModIAuthorizationCertificateSubjectCN(String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null && this.securityToken.getAuthorization().getCertificate()!=null) {
-			if(this.securityToken.getAuthorization().getCertificate().getSubject()!=null) {
-				v = this.securityToken.getAuthorization().getCertificate().getSubject().getCN();
-			}
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null && this.securityToken.getAuthorization().getCertificate()!=null &&
+			this.securityToken.getAuthorization().getCertificate().getSubject()!=null) {
+			v = this.securityToken.getAuthorization().getCertificate().getSubject().getCN();
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -2852,10 +3136,9 @@ public class Info {
 	}
 	public java.lang.String getTokenModIAuthorizationCertificateSubjectDNInfo(String oid, String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null && this.securityToken.getAuthorization().getCertificate()!=null) {
-			if(this.securityToken.getAuthorization().getCertificate().getSubject()!=null) {
-				v = this.securityToken.getAuthorization().getCertificate().getSubject().getInfo(oid);
-			}
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null && this.securityToken.getAuthorization().getCertificate()!=null &&
+			this.securityToken.getAuthorization().getCertificate().getSubject()!=null) {
+			v = this.securityToken.getAuthorization().getCertificate().getSubject().getInfo(oid);
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -2865,10 +3148,9 @@ public class Info {
 	}
 	public java.lang.String getTokenModIAuthorizationCertificateIssuerDN(String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null && this.securityToken.getAuthorization().getCertificate()!=null) {
-			if(this.securityToken.getAuthorization().getCertificate().getIssuer()!=null) {
-				v = this.securityToken.getAuthorization().getCertificate().getIssuer().toString();
-			}
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null && this.securityToken.getAuthorization().getCertificate()!=null &&
+			this.securityToken.getAuthorization().getCertificate().getIssuer()!=null) {
+			v = this.securityToken.getAuthorization().getCertificate().getIssuer().toString();
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -2878,10 +3160,9 @@ public class Info {
 	}
 	public java.lang.String getTokenModIAuthorizationCertificateIssuerCN(String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null && this.securityToken.getAuthorization().getCertificate()!=null) {
-			if(this.securityToken.getAuthorization().getCertificate().getIssuer()!=null) {
-				v = this.securityToken.getAuthorization().getCertificate().getIssuer().getCN();
-			}
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null && this.securityToken.getAuthorization().getCertificate()!=null &&
+			this.securityToken.getAuthorization().getCertificate().getIssuer()!=null) {
+			v = this.securityToken.getAuthorization().getCertificate().getIssuer().getCN();
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -2891,10 +3172,9 @@ public class Info {
 	}
 	public java.lang.String getTokenModIAuthorizationCertificateIssuerDNInfo(String oid, String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null && this.securityToken.getAuthorization().getCertificate()!=null) {
-			if(this.securityToken.getAuthorization().getCertificate().getIssuer()!=null) {
-				v = this.securityToken.getAuthorization().getCertificate().getIssuer().getInfo(oid);
-			}
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null && this.securityToken.getAuthorization().getCertificate()!=null &&
+			this.securityToken.getAuthorization().getCertificate().getIssuer()!=null) {
+			v = this.securityToken.getAuthorization().getCertificate().getIssuer().getInfo(oid);
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -2944,8 +3224,8 @@ public class Info {
 		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null) {
 			try {
 				v = this.securityToken.getIntegrity().getHeaderClaim(tokenClaim);
-			}catch(Throwable t) {
-				this.log.error("getTokenModIIntegrityHeaderClaim("+tokenClaim+") failed: "+t.getMessage(),t);
+			}catch(Exception t) {
+				this.log.error("getTokenModIIntegrityHeaderClaim("+tokenClaim+")"+getErrorSuffix(t),t);
 			}
 		}
 		return correctValue(v, defaultValue);
@@ -2960,8 +3240,8 @@ public class Info {
 			try {
 				Map<String, String> map = this.securityToken.getIntegrity().getHeaderClaims();
 				v = formatTokenClaims(map, claimSeparator, nameValueSeparator);
-			}catch(Throwable t) {
-				this.log.error("getTokenModIIntegrityHeaderClaims("+claimSeparator+","+nameValueSeparator+") failed: "+t.getMessage(),t);
+			}catch(Exception t) {
+				this.log.error("getTokenModIIntegrityHeaderClaims("+claimSeparator+","+nameValueSeparator+")"+getErrorSuffix(t),t);
 			}
 		}
 		return correctValue(v, defaultValue);
@@ -2997,8 +3277,8 @@ public class Info {
 		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null) {
 			try {
 				v = this.securityToken.getIntegrity().getPayloadClaim(tokenClaim);
-			}catch(Throwable t) {
-				this.log.error("getTokenModIIntegrityPayloadClaim("+tokenClaim+") failed: "+t.getMessage(),t);
+			}catch(Exception t) {
+				this.log.error("getTokenModIIntegrityPayloadClaim("+tokenClaim+")"+getErrorSuffix(t),t);
 			}
 		}
 		return correctValue(v, defaultValue);
@@ -3013,8 +3293,8 @@ public class Info {
 			try {
 				Map<String, String> map = this.securityToken.getIntegrity().getPayloadClaims();
 				v = formatTokenClaims(map, claimSeparator, nameValueSeparator);
-			}catch(Throwable t) {
-				this.log.error("getTokenModIIntegrityPayloadClaims("+claimSeparator+","+nameValueSeparator+") failed: "+t.getMessage(),t);
+			}catch(Exception t) {
+				this.log.error("getTokenModIIntegrityPayloadClaims("+claimSeparator+","+nameValueSeparator+")"+getErrorSuffix(t),t);
 			}
 		}
 		return correctValue(v, defaultValue);
@@ -3025,10 +3305,9 @@ public class Info {
 	}
 	public java.lang.String getTokenModIIntegrityCertificateSubjectDN(String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null && this.securityToken.getIntegrity().getCertificate()!=null) {
-			if(this.securityToken.getIntegrity().getCertificate().getSubject()!=null) {
-				v = this.securityToken.getIntegrity().getCertificate().getSubject().toString();
-			}
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null && this.securityToken.getIntegrity().getCertificate()!=null &&
+			this.securityToken.getIntegrity().getCertificate().getSubject()!=null) {
+			v = this.securityToken.getIntegrity().getCertificate().getSubject().toString();
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -3038,10 +3317,9 @@ public class Info {
 	}
 	public java.lang.String getTokenModIIntegrityCertificateSubjectCN(String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null && this.securityToken.getIntegrity().getCertificate()!=null) {
-			if(this.securityToken.getIntegrity().getCertificate().getSubject()!=null) {
-				v = this.securityToken.getIntegrity().getCertificate().getSubject().getCN();
-			}
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null && this.securityToken.getIntegrity().getCertificate()!=null &&
+			this.securityToken.getIntegrity().getCertificate().getSubject()!=null) {
+			v = this.securityToken.getIntegrity().getCertificate().getSubject().getCN();
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -3051,10 +3329,9 @@ public class Info {
 	}
 	public java.lang.String getTokenModIIntegrityCertificateSubjectDNInfo(String oid, String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null && this.securityToken.getIntegrity().getCertificate()!=null) {
-			if(this.securityToken.getIntegrity().getCertificate().getSubject()!=null) {
-				v = this.securityToken.getIntegrity().getCertificate().getSubject().getInfo(oid);
-			}
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null && this.securityToken.getIntegrity().getCertificate()!=null &&
+			this.securityToken.getIntegrity().getCertificate().getSubject()!=null) {
+			v = this.securityToken.getIntegrity().getCertificate().getSubject().getInfo(oid);
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -3064,10 +3341,9 @@ public class Info {
 	}
 	public java.lang.String getTokenModIIntegrityCertificateIssuerDN(String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null && this.securityToken.getIntegrity().getCertificate()!=null) {
-			if(this.securityToken.getIntegrity().getCertificate().getIssuer()!=null) {
-				v = this.securityToken.getIntegrity().getCertificate().getIssuer().toString();
-			}
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null && this.securityToken.getIntegrity().getCertificate()!=null &&
+			this.securityToken.getIntegrity().getCertificate().getIssuer()!=null) {
+			v = this.securityToken.getIntegrity().getCertificate().getIssuer().toString();
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -3077,10 +3353,9 @@ public class Info {
 	}
 	public java.lang.String getTokenModIIntegrityCertificateIssuerCN(String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null && this.securityToken.getIntegrity().getCertificate()!=null) {
-			if(this.securityToken.getIntegrity().getCertificate().getIssuer()!=null) {
-				v = this.securityToken.getIntegrity().getCertificate().getIssuer().getCN();
-			}
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null && this.securityToken.getIntegrity().getCertificate()!=null &&
+			this.securityToken.getIntegrity().getCertificate().getIssuer()!=null) {
+			v = this.securityToken.getIntegrity().getCertificate().getIssuer().getCN();
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -3090,10 +3365,202 @@ public class Info {
 	}
 	public java.lang.String getTokenModIIntegrityCertificateIssuerDNInfo(String oid, String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null && this.securityToken.getIntegrity().getCertificate()!=null) {
-			if(this.securityToken.getIntegrity().getCertificate().getIssuer()!=null) {
-				v = this.securityToken.getIntegrity().getCertificate().getIssuer().getInfo(oid);
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null && this.securityToken.getIntegrity().getCertificate()!=null &&
+			this.securityToken.getIntegrity().getCertificate().getIssuer()!=null) {
+			v = this.securityToken.getIntegrity().getCertificate().getIssuer().getInfo(oid);
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	
+	
+	// modi (Audit)
+	
+	public java.lang.String getTokenModIAuditRaw() {
+		return getTokenModIAuditRaw(null);
+	}
+	public java.lang.String getTokenModIAuditRaw(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAudit()!=null) {
+			v = this.securityToken.getAudit().getToken();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuditHeaderRaw() {
+		return getTokenModIAuditHeaderRaw(null);
+	}
+	public java.lang.String getTokenModIAuditHeaderRaw(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAudit()!=null) {
+			v = this.securityToken.getAudit().getHeader();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuditDecodedHeader() {
+		return getTokenModIAuditDecodedHeader(null);
+	}
+	public java.lang.String getTokenModIAuditDecodedHeader(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAudit()!=null) {
+			v = this.securityToken.getAudit().getDecodedHeader();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuditHeaderClaim(String tokenClaim) {
+		return getTokenModIAuditHeaderClaim(tokenClaim, null);
+	}
+	public java.lang.String getTokenModIAuditHeaderClaim(String tokenClaim, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAudit()!=null) {
+			try {
+				v = this.securityToken.getAudit().getHeaderClaim(tokenClaim);
+			}catch(Exception t) {
+				this.log.error("getTokenModIAuditHeaderClaim("+tokenClaim+")"+getErrorSuffix(t),t);
 			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuditHeaderClaims() {
+		return getTokenModIAuditHeaderClaims(",", "=", null);
+	}
+	public java.lang.String getTokenModIAuditHeaderClaims(String claimSeparator, String nameValueSeparator, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAudit()!=null) {
+			try {
+				Map<String, String> map = this.securityToken.getAudit().getHeaderClaims();
+				v = formatTokenClaims(map, claimSeparator, nameValueSeparator);
+			}catch(Exception t) {
+				this.log.error("getTokenModIAuditHeaderClaims("+claimSeparator+","+nameValueSeparator+")"+getErrorSuffix(t),t);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuditPayloadRaw() {
+		return getTokenModIAuditPayloadRaw(null);
+	}
+	public java.lang.String getTokenModIAuditPayloadRaw(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAudit()!=null) {
+			v = this.securityToken.getAudit().getPayload();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuditDecodedPayload() {
+		return getTokenModIAuditDecodedPayload(null);
+	}
+	public java.lang.String getTokenModIAuditDecodedPayload(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAudit()!=null) {
+			v = this.securityToken.getAudit().getDecodedPayload();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuditPayloadClaim(String tokenClaim) {
+		return getTokenModIAuditPayloadClaim(tokenClaim, null);
+	}
+	public java.lang.String getTokenModIAuditPayloadClaim(String tokenClaim, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAudit()!=null) {
+			try {
+				v = this.securityToken.getAudit().getPayloadClaim(tokenClaim);
+			}catch(Exception t) {
+				this.log.error("getTokenModIAuditPayloadClaim("+tokenClaim+")"+getErrorSuffix(t),t);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuditPayloadClaims() {
+		return getTokenModIAuditPayloadClaims(",", "=", null);
+	}
+	public java.lang.String getTokenModIAuditPayloadClaims(String claimSeparator, String nameValueSeparator, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAudit()!=null) {
+			try {
+				Map<String, String> map = this.securityToken.getAudit().getPayloadClaims();
+				v = formatTokenClaims(map, claimSeparator, nameValueSeparator);
+			}catch(Exception t) {
+				this.log.error("getTokenModIAuditPayloadClaims("+claimSeparator+","+nameValueSeparator+")"+getErrorSuffix(t),t);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuditCertificateSubjectDN() {
+		return getTokenModIAuditCertificateSubjectDN(null);
+	}
+	public java.lang.String getTokenModIAuditCertificateSubjectDN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAudit()!=null && this.securityToken.getAudit().getCertificate()!=null &&
+			this.securityToken.getAudit().getCertificate().getSubject()!=null) {
+			v = this.securityToken.getAudit().getCertificate().getSubject().toString();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuditCertificateSubjectCN() {
+		return getTokenModIAuditCertificateSubjectCN(null);
+	}
+	public java.lang.String getTokenModIAuditCertificateSubjectCN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAudit()!=null && this.securityToken.getAudit().getCertificate()!=null &&
+			this.securityToken.getAudit().getCertificate().getSubject()!=null) {
+			v = this.securityToken.getAudit().getCertificate().getSubject().getCN();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuditCertificateSubjectDNInfo(String oid) {
+		return getTokenModIAuditCertificateSubjectDNInfo(oid, null);
+	}
+	public java.lang.String getTokenModIAuditCertificateSubjectDNInfo(String oid, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAudit()!=null && this.securityToken.getAudit().getCertificate()!=null &&
+			this.securityToken.getAudit().getCertificate().getSubject()!=null) {
+			v = this.securityToken.getAudit().getCertificate().getSubject().getInfo(oid);
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuditCertificateIssuerDN() {
+		return getTokenModIAuditCertificateIssuerDN(null);
+	}
+	public java.lang.String getTokenModIAuditCertificateIssuerDN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAudit()!=null && this.securityToken.getAudit().getCertificate()!=null &&
+			this.securityToken.getAudit().getCertificate().getIssuer()!=null) {
+			v = this.securityToken.getAudit().getCertificate().getIssuer().toString();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuditCertificateIssuerCN() {
+		return getTokenModIAuditCertificateIssuerCN(null);
+	}
+	public java.lang.String getTokenModIAuditCertificateIssuerCN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAudit()!=null && this.securityToken.getAudit().getCertificate()!=null &&
+			this.securityToken.getAudit().getCertificate().getIssuer()!=null) {
+			v = this.securityToken.getAudit().getCertificate().getIssuer().getCN();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuditCertificateIssuerDNInfo(String oid) {
+		return getTokenModIAuditCertificateIssuerDNInfo(oid, null);
+	}
+	public java.lang.String getTokenModIAuditCertificateIssuerDNInfo(String oid, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAudit()!=null && this.securityToken.getAudit().getCertificate()!=null &&
+			this.securityToken.getAudit().getCertificate().getIssuer()!=null) {
+			v = this.securityToken.getAudit().getCertificate().getIssuer().getInfo(oid);
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -3111,8 +3578,8 @@ public class Info {
 			try {
 				XMLUtils xmlUtils = XMLUtils.getInstance();
 				v = xmlUtils.toString(this.securityToken.getEnvelope().getToken(),true);
-			}catch(Throwable t) {
-				this.log.error("getTokenModISoapRaw failed: "+t.getMessage(),t);
+			}catch(Exception t) {
+				this.log.error("getTokenModISoapRaw"+getErrorSuffix(t),t);
 			}
 		}
 		return correctValue(v, defaultValue);
@@ -3123,10 +3590,9 @@ public class Info {
 	}
 	public java.lang.String getTokenModISoapCertificateSubjectDN(String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getEnvelope()!=null && this.securityToken.getEnvelope().getCertificate()!=null) {
-			if(this.securityToken.getEnvelope().getCertificate().getSubject()!=null) {
-				v = this.securityToken.getEnvelope().getCertificate().getSubject().toString();
-			}
+		if(this.securityToken!=null && this.securityToken.getEnvelope()!=null && this.securityToken.getEnvelope().getCertificate()!=null &&
+			this.securityToken.getEnvelope().getCertificate().getSubject()!=null) {
+			v = this.securityToken.getEnvelope().getCertificate().getSubject().toString();
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -3136,10 +3602,9 @@ public class Info {
 	}
 	public java.lang.String getTokenModISoapCertificateSubjectCN(String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getEnvelope()!=null && this.securityToken.getEnvelope().getCertificate()!=null) {
-			if(this.securityToken.getEnvelope().getCertificate().getSubject()!=null) {
-				v = this.securityToken.getEnvelope().getCertificate().getSubject().getCN();
-			}
+		if(this.securityToken!=null && this.securityToken.getEnvelope()!=null && this.securityToken.getEnvelope().getCertificate()!=null &&
+			this.securityToken.getEnvelope().getCertificate().getSubject()!=null) {
+			v = this.securityToken.getEnvelope().getCertificate().getSubject().getCN();
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -3149,10 +3614,9 @@ public class Info {
 	}
 	public java.lang.String getTokenModISoapCertificateSubjectDNInfo(String oid, String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getEnvelope()!=null && this.securityToken.getEnvelope().getCertificate()!=null) {
-			if(this.securityToken.getEnvelope().getCertificate().getSubject()!=null) {
-				v = this.securityToken.getEnvelope().getCertificate().getSubject().getInfo(oid);
-			}
+		if(this.securityToken!=null && this.securityToken.getEnvelope()!=null && this.securityToken.getEnvelope().getCertificate()!=null &&
+			this.securityToken.getEnvelope().getCertificate().getSubject()!=null) {
+			v = this.securityToken.getEnvelope().getCertificate().getSubject().getInfo(oid);
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -3162,10 +3626,9 @@ public class Info {
 	}
 	public java.lang.String getTokenModISoapCertificateIssuerDN(String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getEnvelope()!=null && this.securityToken.getEnvelope().getCertificate()!=null) {
-			if(this.securityToken.getEnvelope().getCertificate().getIssuer()!=null) {
-				v = this.securityToken.getEnvelope().getCertificate().getIssuer().toString();
-			}
+		if(this.securityToken!=null && this.securityToken.getEnvelope()!=null && this.securityToken.getEnvelope().getCertificate()!=null &&
+			this.securityToken.getEnvelope().getCertificate().getIssuer()!=null) {
+			v = this.securityToken.getEnvelope().getCertificate().getIssuer().toString();
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -3175,10 +3638,9 @@ public class Info {
 	}
 	public java.lang.String getTokenModISoapCertificateIssuerCN(String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getEnvelope()!=null && this.securityToken.getEnvelope().getCertificate()!=null) {
-			if(this.securityToken.getEnvelope().getCertificate().getIssuer()!=null) {
-				v = this.securityToken.getEnvelope().getCertificate().getIssuer().getCN();
-			}
+		if(this.securityToken!=null && this.securityToken.getEnvelope()!=null && this.securityToken.getEnvelope().getCertificate()!=null &&
+			this.securityToken.getEnvelope().getCertificate().getIssuer()!=null) {
+			v = this.securityToken.getEnvelope().getCertificate().getIssuer().getCN();
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -3188,10 +3650,9 @@ public class Info {
 	}
 	public java.lang.String getTokenModISoapCertificateIssuerDNInfo(String oid, String defaultValue) {
 		String v = null;
-		if(this.securityToken!=null && this.securityToken.getEnvelope()!=null && this.securityToken.getEnvelope().getCertificate()!=null) {
-			if(this.securityToken.getEnvelope().getCertificate().getIssuer()!=null) {
-				v = this.securityToken.getEnvelope().getCertificate().getIssuer().getInfo(oid);
-			}
+		if(this.securityToken!=null && this.securityToken.getEnvelope()!=null && this.securityToken.getEnvelope().getCertificate()!=null &&
+			this.securityToken.getEnvelope().getCertificate().getIssuer()!=null) {
+			v = this.securityToken.getEnvelope().getCertificate().getIssuer().getInfo(oid);
 		}
 		return correctValue(v, defaultValue);
 	}
@@ -3206,7 +3667,7 @@ public class Info {
 	public java.lang.String getHostAddress(String defaultValue) {
 		try {
 	    	return InetAddress.getLocalHost().getHostAddress();
-	    }catch(Throwable e) {
+	    }catch(Exception e) {
 	    	this.log.error("local ip: "+e.getMessage(),e);
 			return correctValue(null, defaultValue);
 		}
@@ -3218,7 +3679,7 @@ public class Info {
 	public java.lang.String getHostName(String defaultValue) {
 		try {
 	    	return InetAddress.getLocalHost().getHostName();
-	    }catch(Throwable e) {
+	    }catch(Exception e) {
 	    	this.log.error("local hostname: "+e.getMessage(),e);
 			return correctValue(null, defaultValue);
 		}
@@ -3250,18 +3711,18 @@ public class Info {
 	// properties
 	
 	public java.lang.String getProperty(String name) throws CoreException {
-		return _getProperty(name, null, true);
+		return getPropertyEngine(name, null, true);
 	}
 	public java.lang.String getProperty(String name, String defaultValue) throws CoreException {
-		return _getProperty(name, defaultValue, false);
+		return getPropertyEngine(name, defaultValue, false);
 	}
-	private java.lang.String _getProperty(String name, String defaultValue, boolean required) throws CoreException {
+	private java.lang.String getPropertyEngine(String name, String defaultValue, boolean required) throws CoreException {
 		String s = this.properties!=null ? this.properties.get(name) : null;
 		if(s==null && required) {
 			throw new CoreException("Property '"+name+"' not found");
 		}
-		boolean escape = true;
-		return correctValue(s, defaultValue, !escape);
+		boolean escapeV = true;
+		return correctValue(s, defaultValue, !escapeV);
 	}
 	protected void addProperty(String name, String value) {
 		this.properties.put(name, value);
@@ -3324,6 +3785,13 @@ public class Info {
 		return correctValue(this.infoConfigurazione.getContextPropertiesAsString(propertySeparator,valueSeparator),defaultValue);
 	}
 	
+	
+	// Tracking Phase
+	
+	public String getTrackingPhase() {
+		return this.trackingPhase!=null ? this.trackingPhase.name() : "-";
+	}
+	
 
 	// UTILITY
 	
@@ -3340,27 +3808,30 @@ public class Info {
 			if(!found) {
 				return v;
 			}
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < v.length(); i++) {
-				String charAtI = v.charAt(i)+"";
-				boolean foundSpecialChar = false;
-				for (String specialChar : specialCharacters) {
-					if(charAtI.equals(specialChar)) {
-						String escapeChar = this.escape.get(specialChar);
-						sb.append(escapeChar);
-						foundSpecialChar = true;
-						break;
-					}
-				}
-				if(!foundSpecialChar) {
-					sb.append(charAtI);
-				}
-			}
-			return sb.toString();
+			return escapeEngine(v, specialCharacters);
 		}
 		else {
 			return v;
 		}
+	}
+	private String escapeEngine(String v, Set<String> specialCharacters) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < v.length(); i++) {
+			String charAtI = v.charAt(i)+"";
+			boolean foundSpecialChar = false;
+			for (String specialChar : specialCharacters) {
+				if(charAtI.equals(specialChar)) {
+					String escapeChar = this.escape.get(specialChar);
+					sb.append(escapeChar);
+					foundSpecialChar = true;
+					break;
+				}
+			}
+			if(!foundSpecialChar) {
+				sb.append(charAtI);
+			}
+		}
+		return sb.toString();
 	}
 	
 	private String correctValue(String v, String defaultValueParam) {
@@ -3370,16 +3841,16 @@ public class Info {
 		return correctValue(v, defaultValueParam, escape, true);
 	}
 	private String correctValue(String v, String defaultValueParam, boolean escape, boolean useBase64option) {
-		String defaultValue = this.defaultValue;
+		String defaultValueTmp = this.defaultValue;
 		if(defaultValueParam!=null) {
-			defaultValue = defaultValueParam;
+			defaultValueTmp = defaultValueParam;
 		}
 		String res = null;
 		if(escape && !this.base64) { // se codifico in base64 l'escape non serve
-			res = v!=null ? this.escape(v) : defaultValue;
+			res = v!=null ? this.escape(v) : defaultValueTmp;
 		}
 		else {
-			res = v!=null ? v : defaultValue;
+			res = v!=null ? v : defaultValueTmp;
 		}
 		if(useBase64option && this.base64 && res!=null && res.length()>0) {
 			return Base64Utilities.encodeAsString(res.getBytes());
@@ -3413,21 +3884,20 @@ public class Info {
 		return v;
 	}
 	
-	@SuppressWarnings("unused")
 	private long correctLong(Long v, String defaultValueParam) {
-		long defaultValue = this.defaultLongValue;
+		long defaultValueTmp = this.defaultLongValue;
 		if(defaultValueParam!=null) {
-			defaultValue = Long.valueOf(defaultValueParam);
+			defaultValueTmp = Long.valueOf(defaultValueParam);
 		}
-		return v!=null && v>=0 ? v : defaultValue;
+		return v!=null && v>=0 ? v : defaultValueTmp;
 	}
 	
 	private int correctInteger(Integer v, String defaultValueParam) {
-		int defaultValue = this.defaultIntegerValue;
+		int defaultValueTmp = this.defaultIntegerValue;
 		if(defaultValueParam!=null) {
-			defaultValue = Integer.valueOf(defaultValueParam);
+			defaultValueTmp = Integer.valueOf(defaultValueParam);
 		}
-		return v!=null && v>=0 ? v : defaultValue;
+		return v!=null && v>=0 ? v : defaultValueTmp;
 	}
 	
 	private String correctByteArray(byte[] v, String defaultValueParam) {
@@ -3440,14 +3910,14 @@ public class Info {
 				s = new String(v);
 			}
 		}
-		String defaultValue = this.defaultValue;
+		String defaultValueTmp = this.defaultValue;
 		if(defaultValueParam!=null) {
-			defaultValue = defaultValueParam;
+			defaultValueTmp = defaultValueParam;
 		}
-		return s!=null ? this.escape(s) : defaultValue;
+		return s!=null ? this.escape(s) : defaultValueTmp;
 	}
 	
-	private String formatHeaders( Map<String, List<String>>  mapParam, String defaultValueParam, String hdrsSeparatpr, String hdrSeparator, String hdrPrefix, String hdrSuffix) {
+	private String formatHeaders( Map<String, List<String>>  mapParam, String defaultValueParam, HeaderFormat headerFormat) {
 		
 		Map<String, List<String>>  map = null;
 		if(mapParam!=null && !mapParam.isEmpty()) {
@@ -3462,27 +3932,53 @@ public class Info {
 			}
 		}
 		
+		return formatHeadersEngine(map, defaultValueParam, headerFormat);
+	}
+	private Map<String, List<String>> filterHeaders(boolean white, List<String> filterList, Map<String, List<String>> sourceHeaders) {
+		Map<String, List<String>> map = null;
+		if(filterList!=null && !filterList.isEmpty()) {
+			map = new HashMap<>();
+			filterHeaders(map, white, filterList, sourceHeaders);
+		}
+		return map;
+	}
+	private void filterHeaders(Map<String, List<String>> map, boolean white, List<String> filterList, Map<String, List<String>> sourceHeaders){
+		for (Map.Entry<String,List<String>> entry : sourceHeaders.entrySet()) {
+			
+			String hdr = entry.getKey();
+			
+			boolean find = false;
+			for (String filterHdr : filterList) {
+				if(filterHdr.equalsIgnoreCase(hdr)) {
+					find = true;
+					break;
+				}
+			}
+			if(white) {
+				if(find) {
+					map.put(hdr, sourceHeaders.get(hdr));
+				}
+			}
+			else {
+				if(!find) {
+					map.put(hdr, sourceHeaders.get(hdr));
+				}
+			}
+		}
+	}
+	private String formatHeadersEngine(Map<String, List<String>>  map, String defaultValueParam, HeaderFormat headerFormat) {
 		if(map!=null && !map.isEmpty()) {
 			StringBuilder sb = new StringBuilder();
-			for (String hdr : map.keySet()) {
+			for (Map.Entry<String,List<String>> entry : map.entrySet()) {
+				
+				String hdr = entry.getKey();
 				
 				if(HttpConstants.RETURN_CODE.equals(hdr)) {
 					continue;
 				}
 				
-				List<String> hdrValues = map.get(hdr);
-				if(hdrValues!=null && !hdrValues.isEmpty()) {
-					for (String hdrValue : hdrValues) {
-						if(sb.length()>0) {
-							sb.append(hdrsSeparatpr==null ? this.headersSeparator : hdrsSeparatpr);
-						}
-						sb.append(hdrPrefix==null ? this.headerPrefix : hdrPrefix);
-						sb.append(this.correctValue(hdr, defaultValueParam, true, false));
-						sb.append(hdrSeparator==null ? this.headerSeparator : hdrSeparator);
-						sb.append(this.correctValue(hdrValue, defaultValueParam, true, false));
-						sb.append(hdrSuffix == null ? this.headerSuffix: hdrSuffix);		
-					}
-				}
+				formatHeadersEngine(sb, map, hdr, 
+						defaultValueParam, headerFormat);
 				
 			}
 			String res = sb.toString();
@@ -3495,32 +3991,30 @@ public class Info {
 		}
 		return correctValue(null, defaultValueParam);
 	}
-	private Map<String, List<String>> filterHeaders(boolean white, List<String> filterList, Map<String, List<String>> sourceHeaders) {
-		Map<String, List<String>> map = null;
-		if(filterList!=null && !filterList.isEmpty()) {
-			map = new HashMap<>();
-			for (String hdr : sourceHeaders.keySet()) {
-				boolean find = false;
-				for (String filterHdr : filterList) {
-					if(filterHdr.toLowerCase().equals(hdr.toLowerCase())) {
-						find = true;
-						break;
-					}
-				}
-				if(white) {
-					if(find) {
-						map.put(hdr, sourceHeaders.get(hdr));
-					}
-				}
-				else {
-					if(!find) {
-						map.put(hdr, sourceHeaders.get(hdr));
-					}
-				}
+	private void formatHeadersEngine(StringBuilder sb, Map<String, List<String>>  map, String hdr, 
+			String defaultValueParam, HeaderFormat headerFormat) {
+		List<String> hdrValues = map.get(hdr);
+		if(hdrValues!=null && !hdrValues.isEmpty()) {
+			for (String hdrValue : hdrValues) {
+				formatHeadersEngine(sb, hdr, 
+						defaultValueParam, headerFormat,
+						hdrValue);
 			}
 		}
-		return map;
 	}
+	private void formatHeadersEngine(StringBuilder sb, String hdr, 
+			String defaultValueParam, HeaderFormat headerFormat,
+			String hdrValue) {
+		if(sb.length()>0) {
+			sb.append(headerFormat.hdrsSeparator==null ? this.headersSeparator : headerFormat.hdrsSeparator);
+		}
+		sb.append(headerFormat.hdrPrefix==null ? this.headerPrefix : headerFormat.hdrPrefix);
+		sb.append(this.correctValue(hdr, defaultValueParam, true, false));
+		sb.append(headerFormat.hdrSeparator==null ? this.headerSeparator : headerFormat.hdrSeparator);
+		sb.append(this.correctValue(hdrValue, defaultValueParam, true, false));
+		sb.append(headerFormat.hdrSuffix == null ? this.headerSuffix: headerFormat.hdrSuffix);		
+	}
+
 	
 	private String format(List<String> values, String separator) {
 		String s = null;
@@ -3541,7 +4035,8 @@ public class Info {
 		String s = null;
 		if(map!=null && !map.isEmpty()) {
 			StringBuilder sb = new StringBuilder();
-			for (String key : map.keySet()) {
+			for (Map.Entry<String,String> entry : map.entrySet()) {
+				String key = entry.getKey();
 				String value = map.get(key);
 				if(sb.length()>0) {
 					sb.append(claimSeparator);
@@ -3553,5 +4048,30 @@ public class Info {
 			s = sb.toString();
 		}
 		return s;
+	}
+	
+	private Map<String, List<String>> filterHeaders(Map<String, List<String>> header, List<String> headerConsumati) {
+		
+		if(headerConsumati==null || headerConsumati.isEmpty()) {
+			return header;
+		}
+		
+		Map<String, List<String>> newMap = null;
+		if(header!=null) {
+			newMap = new HashMap<>();
+			for (Entry<String, List<String>> entry : header.entrySet()) {
+				boolean exists = false;
+				for (String h : headerConsumati) {
+					if(h.equalsIgnoreCase(entry.getKey())) {
+						exists=true;
+						break;
+					}
+				}
+				if(!exists) {
+					newMap.put(entry.getKey(), entry.getValue());
+				}
+			}
+		}
+		return newMap;
 	}
 }

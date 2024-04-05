@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -2032,9 +2032,10 @@ public class DBUtils {
 			String filtroMessageSecurityStato,
 			String filtroMTOMStato,
 			String filtroTrasformazione,
+			String filtroConfigurazioneTransazioni,
 			String filtroCorrelazioneApplicativa,
 			String filtroConfigurazioneDumpTipo,
-			String filtroCORS, String filtroCORS_origin) throws Exception {
+			String filtroCORS, String filtroCORSOrigin) throws Exception {
 		_setFiltriConfigurazione(sqlQueryObject, tipoDB,
 				filtroStatoAPIImpl,
 				filtroAutenticazioneTokenPolicy,
@@ -2045,9 +2046,10 @@ public class DBUtils {
 				filtroMessageSecurityStato,
 				filtroMTOMStato,
 				filtroTrasformazione,
+				filtroConfigurazioneTransazioni,
 				filtroCorrelazioneApplicativa,
 				filtroConfigurazioneDumpTipo,
-				filtroCORS, filtroCORS_origin, 
+				filtroCORS, filtroCORSOrigin, 
 				true);
 	}
 	public static void setFiltriConfigurazioneFruizione(ISQLQueryObject sqlQueryObject, String tipoDB,
@@ -2060,9 +2062,10 @@ public class DBUtils {
 			String filtroMessageSecurityStato,
 			String filtroMTOMStato,
 			String filtroTrasformazione,
+			String filtroConfigurazioneTransazioni,
 			String filtroCorrelazioneApplicativa,
 			String filtroConfigurazioneDumpTipo,
-			String filtroCORS, String filtroCORS_origin) throws Exception {
+			String filtroCORS, String filtroCORSOrigin) throws Exception {
 		_setFiltriConfigurazione(sqlQueryObject, tipoDB,
 				filtroStatoAPIImpl,
 				filtroAutenticazioneTokenPolicy,
@@ -2073,9 +2076,10 @@ public class DBUtils {
 				filtroMessageSecurityStato,
 				filtroMTOMStato,
 				filtroTrasformazione,
+				filtroConfigurazioneTransazioni,
 				filtroCorrelazioneApplicativa,
 				filtroConfigurazioneDumpTipo,
-				filtroCORS, filtroCORS_origin,
+				filtroCORS, filtroCORSOrigin,
 				false);
 	}
 	public static void _setFiltriConfigurazione(ISQLQueryObject sqlQueryObject, String tipoDB,
@@ -2088,31 +2092,32 @@ public class DBUtils {
 			String filtroMessageSecurityStato,
 			String filtroMTOMStato,
 			String filtroTrasformazione,
+			String filtroConfigurazioneTransazioni,
 			String filtroCorrelazioneApplicativa,
 			String filtroConfigurazioneDumpTipo,
-			String filtroCORS, String filtroCORS_origin,
+			String filtroCORS, String filtroCORSOrigin,
 			boolean erogazioni) throws Exception {
 
-		String aliasCONFIG_PORTA = "conf_p";
-		String aliasCONFIG_MAPPING = "conf_m";
+		String aliasCONFIGPORTA = "conf_p";
+		String aliasCONFIGMAPPING = "conf_m";
 		
 		ISQLQueryObject sql = SQLObjectFactory.createSQLQueryObject(tipoDB);
 		if(erogazioni) {
-			sql.addFromTable(CostantiDB.PORTE_APPLICATIVE, aliasCONFIG_PORTA);
-			sql.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA, aliasCONFIG_MAPPING);
+			sql.addFromTable(CostantiDB.PORTE_APPLICATIVE, aliasCONFIGPORTA);
+			sql.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA, aliasCONFIGMAPPING);
 		}
 		else {
-			sql.addFromTable(CostantiDB.PORTE_DELEGATE, aliasCONFIG_PORTA);
-			sql.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD, aliasCONFIG_MAPPING);
+			sql.addFromTable(CostantiDB.PORTE_DELEGATE, aliasCONFIGPORTA);
+			sql.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD, aliasCONFIGMAPPING);
 		}
 		sql.setANDLogicOperator(true);
 		if(erogazioni) {
-			sql.addWhereCondition(aliasCONFIG_MAPPING+".id_erogazione="+CostantiDB.SERVIZI+".id");
-			sql.addWhereCondition(aliasCONFIG_MAPPING+".id_porta="+aliasCONFIG_PORTA+".id");
+			sql.addWhereCondition(aliasCONFIGMAPPING+".id_erogazione="+CostantiDB.SERVIZI+".id");
+			sql.addWhereCondition(aliasCONFIGMAPPING+".id_porta="+aliasCONFIGPORTA+".id");
 		}
 		else {
-			sql.addWhereCondition(aliasCONFIG_MAPPING+".id_fruizione="+CostantiDB.SERVIZI_FRUITORI+".id");
-			sql.addWhereCondition(aliasCONFIG_MAPPING+".id_porta="+aliasCONFIG_PORTA+".id");
+			sql.addWhereCondition(aliasCONFIGMAPPING+".id_fruizione="+CostantiDB.SERVIZI_FRUITORI+".id");
+			sql.addWhereCondition(aliasCONFIGMAPPING+".id_porta="+aliasCONFIGPORTA+".id");
 		}	
 		
 		if(filtroStatoAPIImpl!=null && !"".equals(filtroStatoAPIImpl)) {
@@ -2125,21 +2130,21 @@ public class DBUtils {
 					sqlStato.addFromTable(CostantiDB.PORTE_DELEGATE);
 				}
 				sqlStato.setANDLogicOperator(false);
-				sqlStato.addWhereLikeCondition(aliasCONFIG_PORTA+".stato", "abilitato", false, false, false);
-				sqlStato.addWhereIsNullCondition(aliasCONFIG_PORTA+".stato");
+				sqlStato.addWhereLikeCondition(aliasCONFIGPORTA+".stato", "abilitato", false, false, false);
+				sqlStato.addWhereIsNullCondition(aliasCONFIGPORTA+".stato");
 				sql.addWhereCondition(sqlStato.createSQLConditions());
 			}
 			else if(Filtri.FILTRO_CONFIGURAZIONE_STATO_VALORE_DISABILITATO.equals(filtroStatoAPIImpl)) {
-				sql.addWhereLikeCondition(aliasCONFIG_PORTA+".stato", "disabilitato", false, false, false);
+				sql.addWhereLikeCondition(aliasCONFIGPORTA+".stato", "disabilitato", false, false, false);
 			}	
 		}
 		
 		if(filtroAutenticazioneTokenPolicy!=null && !"".equals(filtroAutenticazioneTokenPolicy)) {
-			sql.addWhereLikeCondition(aliasCONFIG_PORTA+".token_policy", filtroAutenticazioneTokenPolicy, false, false, false);
+			sql.addWhereLikeCondition(aliasCONFIGPORTA+".token_policy", filtroAutenticazioneTokenPolicy, false, false, false);
 		}
 		
 		if(filtroAutenticazioneTrasporto!=null && !"".equals(filtroAutenticazioneTrasporto)) {
-			sql.addWhereLikeCondition(aliasCONFIG_PORTA+".autenticazione", filtroAutenticazioneTrasporto, false, false, false);
+			sql.addWhereLikeCondition(aliasCONFIGPORTA+".autenticazione", filtroAutenticazioneTrasporto, false, false, false);
 		}
 		
 		if(filtroRateLimitingStato!=null && !"".equals(filtroRateLimitingStato)) {
@@ -2148,7 +2153,7 @@ public class DBUtils {
 			sqlRT.addFromTable(CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY, aliasRT);
 			sqlRT.addSelectField(aliasRT, "id");
 			sqlRT.setANDLogicOperator(true);
-			sqlRT.addWhereCondition(aliasCONFIG_PORTA+".nome_porta="+aliasRT+".filtro_porta");
+			sqlRT.addWhereCondition(aliasCONFIGPORTA+".nome_porta="+aliasRT+".filtro_porta");
 			String ruolo = erogazioni ? "applicativa" : "delegata";
 			sqlRT.addWhereLikeCondition(aliasRT+".filtro_ruolo", ruolo, false, false, false);
 			if(Filtri.FILTRO_CONFIGURAZIONE_RATE_LIMITING_STATO_VALORE_ABILITATO.equals(filtroRateLimitingStato)) {
@@ -2161,10 +2166,10 @@ public class DBUtils {
 		
 		if(filtroValidazioneStato!=null && !"".equals(filtroValidazioneStato)) {
 			if(Filtri.FILTRO_CONFIGURAZIONE_VALIDAZIONE_STATO_VALORE_ABILITATO.equals(filtroValidazioneStato)) {
-				sql.addWhereIsNotNullCondition(aliasCONFIG_PORTA+".validazione_contenuti_stato");
+				sql.addWhereIsNotNullCondition(aliasCONFIGPORTA+".validazione_contenuti_stato");
 			}
 			else if(Filtri.FILTRO_CONFIGURAZIONE_VALIDAZIONE_STATO_VALORE_DISABILITATO.equals(filtroValidazioneStato)) {
-				sql.addWhereIsNullCondition(aliasCONFIG_PORTA+".validazione_contenuti_stato");
+				sql.addWhereIsNullCondition(aliasCONFIGPORTA+".validazione_contenuti_stato");
 			}
 		}
 		
@@ -2178,12 +2183,12 @@ public class DBUtils {
 					sqlStato.addFromTable(CostantiDB.PORTE_DELEGATE);
 				}
 				sqlStato.setANDLogicOperator(false);
-				sqlStato.addWhereLikeCondition(aliasCONFIG_PORTA+".response_cache_stato", "disabilitato", false, false, false);
-				sqlStato.addWhereIsNullCondition(aliasCONFIG_PORTA+".response_cache_stato");
+				sqlStato.addWhereLikeCondition(aliasCONFIGPORTA+".response_cache_stato", "disabilitato", false, false, false);
+				sqlStato.addWhereIsNullCondition(aliasCONFIGPORTA+".response_cache_stato");
 				sql.addWhereCondition(sqlStato.createSQLConditions());
 			}
 			else if(Filtri.FILTRO_CONFIGURAZIONE_CACHE_RISPOSTA_STATO_VALORE_ABILITATO.equals(filtroCacheRispostaStato)) {
-				sql.addWhereLikeCondition(aliasCONFIG_PORTA+".response_cache_stato", "abilitato", false, false, false);
+				sql.addWhereLikeCondition(aliasCONFIGPORTA+".response_cache_stato", "abilitato", false, false, false);
 			}	
 		}
 		
@@ -2199,21 +2204,21 @@ public class DBUtils {
 				}
 				if(Filtri.FILTRO_CONFIGURAZIONE_MESSAGE_SECURITY_VALORE_ABILITATO.equals(filtroMessageSecurityStato)) {
 					sqlStato.setANDLogicOperator(false);
-					sqlStato.addWhereIsNotNullCondition(aliasCONFIG_PORTA+".security_request_mode");
-					sqlStato.addWhereIsNotNullCondition(aliasCONFIG_PORTA+".security_response_mode");
+					sqlStato.addWhereIsNotNullCondition(aliasCONFIGPORTA+".security_request_mode");
+					sqlStato.addWhereIsNotNullCondition(aliasCONFIGPORTA+".security_response_mode");
 				}
 				else {
 					sqlStato.setANDLogicOperator(true);
-					sqlStato.addWhereIsNullCondition(aliasCONFIG_PORTA+".security_request_mode");
-					sqlStato.addWhereIsNullCondition(aliasCONFIG_PORTA+".security_response_mode");
+					sqlStato.addWhereIsNullCondition(aliasCONFIGPORTA+".security_request_mode");
+					sqlStato.addWhereIsNullCondition(aliasCONFIGPORTA+".security_response_mode");
 				}
 				sql.addWhereCondition(sqlStato.createSQLConditions());	
 			}
 			else if(Filtri.FILTRO_CONFIGURAZIONE_MESSAGE_SECURITY_STATO_VALORE_ABILITATO_RICHIESTA.equals(filtroMessageSecurityStato)) {
-				sql.addWhereIsNotNullCondition(aliasCONFIG_PORTA+".security_request_mode");
+				sql.addWhereIsNotNullCondition(aliasCONFIGPORTA+".security_request_mode");
 			}
 			else if(Filtri.FILTRO_CONFIGURAZIONE_MESSAGE_SECURITY_STATO_VALORE_ABILITATO_RISPOSTA.equals(filtroMessageSecurityStato)) {
-				sql.addWhereIsNotNullCondition(aliasCONFIG_PORTA+".security_response_mode");
+				sql.addWhereIsNotNullCondition(aliasCONFIGPORTA+".security_response_mode");
 			}
 		}
 		
@@ -2229,21 +2234,21 @@ public class DBUtils {
 				}
 				if(Filtri.FILTRO_CONFIGURAZIONE_MTOM_VALORE_ABILITATO.equals(filtroMTOMStato)) {
 					sqlStato.setANDLogicOperator(false);
-					sqlStato.addWhereCondition(true,  aliasCONFIG_PORTA+".mtom_request_mode is not null", aliasCONFIG_PORTA+".mtom_request_mode <> 'disable'");
-					sqlStato.addWhereCondition(true,  aliasCONFIG_PORTA+".mtom_response_mode is not null", aliasCONFIG_PORTA+".mtom_response_mode <> 'disable'");
+					sqlStato.addWhereCondition(true,  aliasCONFIGPORTA+".mtom_request_mode is not null", aliasCONFIGPORTA+".mtom_request_mode <> 'disable'");
+					sqlStato.addWhereCondition(true,  aliasCONFIGPORTA+".mtom_response_mode is not null", aliasCONFIGPORTA+".mtom_response_mode <> 'disable'");
 				}
 				else {
 					sqlStato.setANDLogicOperator(true);
-					sqlStato.addWhereCondition(false,  aliasCONFIG_PORTA+".mtom_request_mode is null", aliasCONFIG_PORTA+".mtom_request_mode = 'disable'");
-					sqlStato.addWhereCondition(false,  aliasCONFIG_PORTA+".mtom_response_mode is null", aliasCONFIG_PORTA+".mtom_response_mode = 'disable'");
+					sqlStato.addWhereCondition(false,  aliasCONFIGPORTA+".mtom_request_mode is null", aliasCONFIGPORTA+".mtom_request_mode = 'disable'");
+					sqlStato.addWhereCondition(false,  aliasCONFIGPORTA+".mtom_response_mode is null", aliasCONFIGPORTA+".mtom_response_mode = 'disable'");
 				}
 				sql.addWhereCondition(sqlStato.createSQLConditions());	
 			}
 			else if(Filtri.FILTRO_CONFIGURAZIONE_MTOM_STATO_VALORE_ABILITATO_RICHIESTA.equals(filtroMTOMStato)) {
-				sql.addWhereCondition(true,  aliasCONFIG_PORTA+".mtom_request_mode is not null", aliasCONFIG_PORTA+".mtom_request_mode <> 'disable'");
+				sql.addWhereCondition(true,  aliasCONFIGPORTA+".mtom_request_mode is not null", aliasCONFIGPORTA+".mtom_request_mode <> 'disable'");
 			}
 			else if(Filtri.FILTRO_CONFIGURAZIONE_MTOM_STATO_VALORE_ABILITATO_RISPOSTA.equals(filtroMTOMStato)) {
-				sql.addWhereCondition(true,  aliasCONFIG_PORTA+".mtom_response_mode is not null", aliasCONFIG_PORTA+".mtom_response_mode <> 'disable'");
+				sql.addWhereCondition(true,  aliasCONFIGPORTA+".mtom_response_mode is not null", aliasCONFIGPORTA+".mtom_response_mode <> 'disable'");
 			}
 		}
 		
@@ -2258,9 +2263,16 @@ public class DBUtils {
 			}
 			sqlTrasformazione.addSelectField(aliasTRANSFORM, "id");
 			sqlTrasformazione.setANDLogicOperator(true);
-			sqlTrasformazione.addWhereCondition(aliasCONFIG_PORTA+".id="+aliasTRANSFORM+".id_porta");
+			sqlTrasformazione.addWhereCondition(aliasCONFIGPORTA+".id="+aliasTRANSFORM+".id_porta");
 			sqlTrasformazione.addWhereLikeCondition(aliasTRANSFORM+".stato", "abilitato", false, false, false);
 			sql.addWhereExistsCondition(Filtri.FILTRO_CONFIGURAZIONE_TRASFORMAZIONE_STATO_VALORE_ABILITATO.equals(filtroTrasformazione) ? false : true, sqlTrasformazione);
+		}
+		
+		if(filtroConfigurazioneTransazioni!=null && !"".equals(filtroConfigurazioneTransazioni)) {
+			addFiltroConfigurazioneTransazioni(tipoDB,
+					aliasCONFIGPORTA,
+					filtroConfigurazioneTransazioni, erogazioni,
+					sql);
 		}
 		
 		if(filtroCorrelazioneApplicativa!=null && !"".equals(filtroCorrelazioneApplicativa)) {
@@ -2270,14 +2282,14 @@ public class DBUtils {
 			ISQLQueryObject sqlCorrelazioneRichiesta = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlCorrelazioneRichiesta.addFromTable(aliasCorrelazioneRichiesta);
 			sqlCorrelazioneRichiesta.setANDLogicOperator(true);
-			sqlCorrelazioneRichiesta.addWhereCondition(aliasCONFIG_PORTA+".id="+aliasCorrelazioneRichiesta+".id_porta");
+			sqlCorrelazioneRichiesta.addWhereCondition(aliasCONFIGPORTA+".id="+aliasCorrelazioneRichiesta+".id_porta");
 			
 			// Risposta
 			String aliasCorrelazioneRisposta = erogazioni ? CostantiDB.PORTE_APPLICATIVE_CORRELAZIONE_RISPOSTA : CostantiDB.PORTE_DELEGATE_CORRELAZIONE_RISPOSTA;
 			ISQLQueryObject sqlCorrelazioneRisposta = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlCorrelazioneRisposta.addFromTable(aliasCorrelazioneRisposta);
 			sqlCorrelazioneRisposta.setANDLogicOperator(true);
-			sqlCorrelazioneRisposta.addWhereCondition(aliasCONFIG_PORTA+".id="+aliasCorrelazioneRisposta+".id_porta");
+			sqlCorrelazioneRisposta.addWhereCondition(aliasCONFIGPORTA+".id="+aliasCorrelazioneRisposta+".id_porta");
 			
 			if(Filtri.FILTRO_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_VALORE_ABILITATO.equals(filtroCorrelazioneApplicativa) ||
 					Filtri.FILTRO_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_VALORE_DISABILITATO.equals(filtroCorrelazioneApplicativa)) {
@@ -2311,47 +2323,120 @@ public class DBUtils {
 		
 		if(filtroConfigurazioneDumpTipo!=null && !"".equals(filtroConfigurazioneDumpTipo)) {
 			addFiltroConfigurazioneDump(tipoDB,
-					aliasCONFIG_PORTA,
+					aliasCONFIGPORTA,
 					filtroConfigurazioneDumpTipo, erogazioni,
 					sql);
 		}
 		
 		if(filtroCORS!=null && !"".equals(filtroCORS)) {
 			if(Filtri.FILTRO_CONFIGURAZIONE_CORS_TIPO_VALORE_DEFAULT.equals(filtroCORS)) {
-				sql.addWhereIsNullCondition(aliasCONFIG_PORTA+".cors_stato");
+				sql.addWhereIsNullCondition(aliasCONFIGPORTA+".cors_stato");
 			}
 			else if(Filtri.FILTRO_CONFIGURAZIONE_CORS_TIPO_VALORE_RIDEFINITO_ABILITATO.equals(filtroCORS)) {
-				sql.addWhereLikeCondition(aliasCONFIG_PORTA+".cors_stato", "abilitato", false, false, false);
+				sql.addWhereLikeCondition(aliasCONFIGPORTA+".cors_stato", "abilitato", false, false, false);
 				
-				if(filtroCORS_origin!=null && !"".equals(filtroCORS_origin)) {
-					sql.addWhereLikeCondition(aliasCONFIG_PORTA+".cors_allow_origins", filtroCORS_origin, LikeConfig.contains(true));
+				if(filtroCORSOrigin!=null && !"".equals(filtroCORSOrigin)) {
+					sql.addWhereLikeCondition(aliasCONFIGPORTA+".cors_allow_origins", filtroCORSOrigin, LikeConfig.contains(true));
 				}
 			}
 			else if(Filtri.FILTRO_CONFIGURAZIONE_CORS_TIPO_VALORE_RIDEFINITO_DISABILITATO.equals(filtroCORS)) {
-				sql.addWhereLikeCondition(aliasCONFIG_PORTA+".cors_stato", "disabilitato", false, false, false);
+				sql.addWhereLikeCondition(aliasCONFIGPORTA+".cors_stato", "disabilitato", false, false, false);
 			}
 		}
 		
 		sqlQueryObject.addWhereExistsCondition(false, sql);
 	}
-	public static void addFiltroConfigurazioneDump(String tipoDB,
-			String aliasCONFIG_PORTA,
-			String filtroConfigurazioneDumpTipo, boolean erogazioni,
-			ISQLQueryObject sqlQueryQuery) throws Exception {
+	public static void addFiltroConfigurazioneTransazioni(String tipoDB,
+			String aliasCONFIGPORTA,
+			String filtroConfigurazioneTransazioni, boolean erogazioni,
+			ISQLQueryObject sqlQueryQuery) throws SQLQueryObjectException {
 
-		String aliasDUMP_CONFIG = "dump_c";
-		
-		ISQLQueryObject sql = SQLObjectFactory.createSQLQueryObject(tipoDB);
-		sql.addFromTable(CostantiDB.DUMP_CONFIGURAZIONE, aliasDUMP_CONFIG);
-		sql.addSelectField(aliasDUMP_CONFIG, "id_proprietario");
-		sql.setANDLogicOperator(true);
-		if(erogazioni) {
-			sql.addWhereCondition(aliasCONFIG_PORTA+".id="+aliasDUMP_CONFIG+".id_proprietario");
-			sql.addWhereLikeCondition(aliasDUMP_CONFIG+".proprietario", "pa", false, false, false);
+		if(Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_DEFAULT.equals(filtroConfigurazioneTransazioni)) {
+			sqlQueryQuery.addWhereCondition(aliasCONFIGPORTA+".tracciamento_stato is NULL OR "+aliasCONFIGPORTA+".tracciamento_stato='"+CostantiDB.STATO_FUNZIONALITA_DISABILITATO+"'");
 		}
 		else {
-			sql.addWhereCondition(aliasCONFIG_PORTA+".id="+aliasDUMP_CONFIG+".id_proprietario");
-			sql.addWhereLikeCondition(aliasDUMP_CONFIG+".proprietario", "pd", false, false, false);
+			sqlQueryQuery.addWhereCondition(aliasCONFIGPORTA+".tracciamento_stato='"+CostantiDB.STATO_FUNZIONALITA_ABILITATO+"'");
+			
+			String aliasTRANSAZIONICONFIGDB = "trans_cdb";
+			ISQLQueryObject sqlDB = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlDB.addFromTable(CostantiDB.TRACCIAMENTO_CONFIGURAZIONE, aliasTRANSAZIONICONFIGDB);
+			sqlDB.addSelectField(aliasTRANSAZIONICONFIGDB, CostantiDB.COLUMN_ID_PROPRIETARIO);
+			sqlDB.setANDLogicOperator(true);
+			sqlDB.addWhereCondition(aliasCONFIGPORTA+".id="+aliasTRANSAZIONICONFIGDB+"."+CostantiDB.COLUMN_ID_PROPRIETARIO);
+			sqlDB.addWhereCondition(aliasTRANSAZIONICONFIGDB+".proprietario='"+
+					(erogazioni ? CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PA : CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PD)+"'");	
+			sqlDB.addWhereCondition(aliasTRANSAZIONICONFIGDB+".tipo='"+CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_DB+"'");	
+			
+			String aliasTRANSAZIONICONFIGFILETRACE = "trans_cft";
+			ISQLQueryObject sqlFileTrace = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlFileTrace.addFromTable(CostantiDB.TRACCIAMENTO_CONFIGURAZIONE, aliasTRANSAZIONICONFIGFILETRACE);
+			sqlFileTrace.addSelectField(aliasTRANSAZIONICONFIGFILETRACE, CostantiDB.COLUMN_ID_PROPRIETARIO);
+			sqlFileTrace.setANDLogicOperator(true);
+			sqlFileTrace.addWhereCondition(aliasCONFIGPORTA+".id="+aliasTRANSAZIONICONFIGFILETRACE+"."+CostantiDB.COLUMN_ID_PROPRIETARIO);
+			sqlFileTrace.addWhereCondition(aliasTRANSAZIONICONFIGFILETRACE+".proprietario='"+
+					(erogazioni ? CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PA : CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PD)+"'");	
+			sqlFileTrace.addWhereCondition(aliasTRANSAZIONICONFIGFILETRACE+".tipo='"+CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_FILETRACE+"'");	
+		
+			if(Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_ABILITATO_DATABASE_O_FILETRACE.equals(filtroConfigurazioneTransazioni)
+					||
+					Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_ABILITATO_SOLO_DATABASE.equals(filtroConfigurazioneTransazioni)
+					||
+					Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_ABILITATO_DATABASE_E_FILETRACE.equals(filtroConfigurazioneTransazioni)) {
+				sqlDB.addWhereCondition(aliasTRANSAZIONICONFIGDB+".stato<>'"+CostantiDB.STATO_FUNZIONALITA_DISABILITATO+"'");	
+			}
+			else {
+				sqlDB.addWhereCondition(aliasTRANSAZIONICONFIGDB+".stato='"+CostantiDB.STATO_FUNZIONALITA_DISABILITATO+"'");	
+			}
+			
+			if(Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_ABILITATO_DATABASE_O_FILETRACE.equals(filtroConfigurazioneTransazioni)
+				||
+				Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_ABILITATO_SOLO_FILETRACE.equals(filtroConfigurazioneTransazioni)
+				||
+				Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_ABILITATO_DATABASE_E_FILETRACE.equals(filtroConfigurazioneTransazioni)) {
+				sqlFileTrace.addWhereCondition(aliasTRANSAZIONICONFIGFILETRACE+".stato<>'"+CostantiDB.STATO_FUNZIONALITA_DISABILITATO+"'");	
+			}
+			else {
+				sqlFileTrace.addWhereCondition(aliasTRANSAZIONICONFIGFILETRACE+".stato='"+CostantiDB.STATO_FUNZIONALITA_DISABILITATO+"'");	
+			}
+			
+			if(Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_ABILITATO_DATABASE_O_FILETRACE.equals(filtroConfigurazioneTransazioni)) {
+				ISQLQueryObject sqlUtilsDB = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				ISQLQueryObject sqlUtilsFileTrace = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryQuery.addWhereCondition(false, 
+						sqlUtilsDB.getWhereExistsCondition(false, sqlDB),
+						sqlUtilsFileTrace.getWhereExistsCondition(false, sqlFileTrace));
+			}
+			else if(Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_ABILITATO_SOLO_DATABASE.equals(filtroConfigurazioneTransazioni)
+					||
+					Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_ABILITATO_SOLO_FILETRACE.equals(filtroConfigurazioneTransazioni)
+					||
+					Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_ABILITATO_DATABASE_E_FILETRACE.equals(filtroConfigurazioneTransazioni)
+					||
+					Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_DISABILITATO.equals(filtroConfigurazioneTransazioni)) {
+				sqlQueryQuery.addWhereExistsCondition(false, sqlDB);
+				sqlQueryQuery.addWhereExistsCondition(false, sqlFileTrace);
+			}
+		}
+		
+	}
+	public static void addFiltroConfigurazioneDump(String tipoDB,
+			String aliasCONFIGPORTA,
+			String filtroConfigurazioneDumpTipo, boolean erogazioni,
+			ISQLQueryObject sqlQueryQuery) throws SQLQueryObjectException {
+
+		String aliasDUMPCONFIG = "dump_c";
+		
+		ISQLQueryObject sql = SQLObjectFactory.createSQLQueryObject(tipoDB);
+		sql.addFromTable(CostantiDB.DUMP_CONFIGURAZIONE, aliasDUMPCONFIG);
+		sql.addSelectField(aliasDUMPCONFIG, CostantiDB.COLUMN_ID_PROPRIETARIO);
+		sql.setANDLogicOperator(true);
+		if(erogazioni) {
+			sql.addWhereCondition(aliasCONFIGPORTA+".id="+aliasDUMPCONFIG+"."+CostantiDB.COLUMN_ID_PROPRIETARIO);
+			sql.addWhereLikeCondition(aliasDUMPCONFIG+".proprietario", "pa", false, false, false);
+		}
+		else {
+			sql.addWhereCondition(aliasCONFIGPORTA+".id="+aliasDUMPCONFIG+"."+CostantiDB.COLUMN_ID_PROPRIETARIO);
+			sql.addWhereLikeCondition(aliasDUMPCONFIG+".proprietario", "pd", false, false, false);
 		}	
 		
 		//Prepariamo anzi una utility per ogni singola voce e poi ad ogni if la si chiama!
@@ -2411,7 +2496,7 @@ public class DBUtils {
 			BooleanNullable payload = soloHeader ? BooleanNullable.FALSE() : BooleanNullable.TRUE();
 			BooleanNullable headers = BooleanNullable.TRUE();
 			
-			boolean condizione_payload_headers = soloHeader ? and : or;
+			boolean condizionePayloadHeaders = soloHeader ? and : or;
 			
 			List<ISQLQueryObject> sqlMessages = new ArrayList<>();
 			
@@ -2428,9 +2513,9 @@ public class DBUtils {
 					Filtri.FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_ABILITATO_SOLO_HEADER_RICHIESTA_INGRESSO.equals(filtroConfigurazioneDumpTipo)
 					) {
 				ISQLQueryObject sqlRichiestaIngresso = SQLObjectFactory.createSQLQueryObject(tipoDB);
-				_setFiltriDumpRegolaConfigurazioneDump(tipoDB,
-						aliasDUMP_CONFIG, 
-						"id_richiesta_ingresso", payload, headers, condizione_payload_headers,
+				setFiltriDumpRegolaConfigurazioneDumpEngine(tipoDB,
+						aliasDUMPCONFIG, 
+						"id_richiesta_ingresso", payload, headers, condizionePayloadHeaders,
 						sqlRichiestaIngresso, exists);
 				sqlMessages.add(sqlRichiestaIngresso);
 			}
@@ -2448,9 +2533,9 @@ public class DBUtils {
 					Filtri.FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_ABILITATO_SOLO_HEADER_RICHIESTA_USCITA.equals(filtroConfigurazioneDumpTipo)
 					) {
 				ISQLQueryObject sqlRichiestaUscita = SQLObjectFactory.createSQLQueryObject(tipoDB);
-				_setFiltriDumpRegolaConfigurazioneDump(tipoDB,
-						aliasDUMP_CONFIG, 
-						"id_richiesta_uscita", payload, headers, condizione_payload_headers,
+				setFiltriDumpRegolaConfigurazioneDumpEngine(tipoDB,
+						aliasDUMPCONFIG, 
+						"id_richiesta_uscita", payload, headers, condizionePayloadHeaders,
 						sqlRichiestaUscita, exists);
 				sqlMessages.add(sqlRichiestaUscita);
 			}
@@ -2468,9 +2553,9 @@ public class DBUtils {
 					Filtri.FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_ABILITATO_SOLO_HEADER_RISPOSTA_INGRESSO.equals(filtroConfigurazioneDumpTipo)
 					) {
 				ISQLQueryObject sqlRispostaIngresso = SQLObjectFactory.createSQLQueryObject(tipoDB);
-				_setFiltriDumpRegolaConfigurazioneDump(tipoDB,
-						aliasDUMP_CONFIG, 
-						"id_risposta_ingresso", payload, headers, condizione_payload_headers,
+				setFiltriDumpRegolaConfigurazioneDumpEngine(tipoDB,
+						aliasDUMPCONFIG, 
+						"id_risposta_ingresso", payload, headers, condizionePayloadHeaders,
 						sqlRispostaIngresso, exists);
 				sqlMessages.add(sqlRispostaIngresso);
 			}
@@ -2488,14 +2573,14 @@ public class DBUtils {
 					Filtri.FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_ABILITATO_SOLO_HEADER_RISPOSTA_USCITA.equals(filtroConfigurazioneDumpTipo)
 					) {
 				ISQLQueryObject sqlRispostaUscita = SQLObjectFactory.createSQLQueryObject(tipoDB);
-				_setFiltriDumpRegolaConfigurazioneDump(tipoDB,
-						aliasDUMP_CONFIG, 
-						"id_risposta_uscita", payload, headers, condizione_payload_headers,
+				setFiltriDumpRegolaConfigurazioneDumpEngine(tipoDB,
+						aliasDUMPCONFIG, 
+						"id_risposta_uscita", payload, headers, condizionePayloadHeaders,
 						sqlRispostaUscita, exists);
 				sqlMessages.add(sqlRispostaUscita);
 			}
 			
-			_setFiltriDumpRegolaConfigurazioneDump(tipoDB,
+			setFiltriDumpRegolaConfigurazioneDumpEngine(tipoDB,
 					sql, or,
 					sqlMessages.toArray(new ISQLQueryObject[1]));
 			sqlQueryQuery.addWhereExistsCondition(exists, sql);	
@@ -2510,7 +2595,7 @@ public class DBUtils {
 			BooleanNullable payload = BooleanNullable.FALSE();
 			BooleanNullable headers = BooleanNullable.FALSE();
 			
-			boolean condizione_payload_headers = and;
+			boolean condizionePayloadHeaders = and;
 			
 			List<ISQLQueryObject> sqlMessages = new ArrayList<>();
 			
@@ -2519,16 +2604,16 @@ public class DBUtils {
 					Filtri.FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_DISABILITATO_RICHIESTA.equals(filtroConfigurazioneDumpTipo)
 					) {
 				ISQLQueryObject sqlRichiestaIngresso = SQLObjectFactory.createSQLQueryObject(tipoDB);
-				_setFiltriDumpRegolaConfigurazioneDump(tipoDB,
-						aliasDUMP_CONFIG, 
-						"id_richiesta_ingresso", payload, headers, condizione_payload_headers,
+				setFiltriDumpRegolaConfigurazioneDumpEngine(tipoDB,
+						aliasDUMPCONFIG, 
+						"id_richiesta_ingresso", payload, headers, condizionePayloadHeaders,
 						sqlRichiestaIngresso, exists);
 				sqlMessages.add(sqlRichiestaIngresso);
 				
 				ISQLQueryObject sqlRichiestaUscita = SQLObjectFactory.createSQLQueryObject(tipoDB);
-				_setFiltriDumpRegolaConfigurazioneDump(tipoDB,
-						aliasDUMP_CONFIG, 
-						"id_richiesta_uscita", payload, headers, condizione_payload_headers,
+				setFiltriDumpRegolaConfigurazioneDumpEngine(tipoDB,
+						aliasDUMPCONFIG, 
+						"id_richiesta_uscita", payload, headers, condizionePayloadHeaders,
 						sqlRichiestaUscita, exists);
 				sqlMessages.add(sqlRichiestaUscita);
 			}
@@ -2538,31 +2623,35 @@ public class DBUtils {
 					Filtri.FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_RIDEFINITO_DISABILITATO_RISPOSTA.equals(filtroConfigurazioneDumpTipo)
 					) {
 				ISQLQueryObject sqlRispostaIngresso = SQLObjectFactory.createSQLQueryObject(tipoDB);
-				_setFiltriDumpRegolaConfigurazioneDump(tipoDB,
-						aliasDUMP_CONFIG, 
-						"id_risposta_ingresso", payload, headers, condizione_payload_headers,
+				setFiltriDumpRegolaConfigurazioneDumpEngine(tipoDB,
+						aliasDUMPCONFIG, 
+						"id_risposta_ingresso", payload, headers, condizionePayloadHeaders,
 						sqlRispostaIngresso, exists);
 				sqlMessages.add(sqlRispostaIngresso);
 			
 				ISQLQueryObject sqlRispostaUscita = SQLObjectFactory.createSQLQueryObject(tipoDB);
-				_setFiltriDumpRegolaConfigurazioneDump(tipoDB,
-						aliasDUMP_CONFIG, 
-						"id_risposta_uscita", payload, headers, condizione_payload_headers,
+				setFiltriDumpRegolaConfigurazioneDumpEngine(tipoDB,
+						aliasDUMPCONFIG, 
+						"id_risposta_uscita", payload, headers, condizionePayloadHeaders,
 						sqlRispostaUscita, exists);
 				sqlMessages.add(sqlRispostaUscita);
 			}
 			
-			_setFiltriDumpRegolaConfigurazioneDump(tipoDB,
+			setFiltriDumpRegolaConfigurazioneDumpEngine(tipoDB,
 					sql, and,
 					sqlMessages.toArray(new ISQLQueryObject[1]));
 			sqlQueryQuery.addWhereExistsCondition(exists, sql);	
 		}
 		
 	}
-	private static void _setFiltriDumpRegolaConfigurazioneDump(String tipoDB,
+	private static void setFiltriDumpRegolaConfigurazioneDumpEngine(String tipoDB,
 			ISQLQueryObject sqlQueryObjectConditions, boolean and,
-			ISQLQueryObject ... sqlQueryObjectMessage) throws Exception {		
+			ISQLQueryObject ... sqlQueryObjectMessage) throws SQLQueryObjectException {		
 		List<String> conditions = new ArrayList<>();
+		
+		if(tipoDB!=null) {
+			// ignore
+		}
 		
 		if(sqlQueryObjectMessage!=null && sqlQueryObjectMessage.length>0) {
 			for (ISQLQueryObject sql : sqlQueryObjectMessage) {
@@ -2570,36 +2659,41 @@ public class DBUtils {
 			}
 		}
 		
-		if(conditions==null || conditions.isEmpty()) {
-			throw new Exception("Usage error");
+		if(conditions.isEmpty()) {
+			throw new SQLQueryObjectException("Usage error");
 		}
 		sqlQueryObjectConditions.addWhereCondition(and, conditions.toArray(new String[1]));
 	}
-	private static void _setFiltriDumpRegolaConfigurazioneDump(String tipoDB,
-			String aliasDUMP_CONFIG, 
+	private static void setFiltriDumpRegolaConfigurazioneDumpEngine(String tipoDB,
+			String aliasDUMPCONFIG, 
 			String colonna, BooleanNullable payload, BooleanNullable headers, boolean and,
-			ISQLQueryObject sqlQueryObjectConditions, boolean notExists) throws Exception {
-		String aliasDUMP_CONFIG_REGOLE = "dump_cr";
+			ISQLQueryObject sqlQueryObjectConditions, boolean notExists) throws SQLQueryObjectException {
+		
+		if(tipoDB!=null) {
+			// ignore
+		}
+		
+		String aliasDUMPCONFIGREGOLE = "dump_cr";
 		
 		ISQLQueryObject sql = SQLObjectFactory.createSQLQueryObject(tipoDB);
 		sql.addSelectField("id");
-		sql.addFromTable(CostantiDB.DUMP_CONFIGURAZIONE_REGOLA, aliasDUMP_CONFIG_REGOLE);
+		sql.addFromTable(CostantiDB.DUMP_CONFIGURAZIONE_REGOLA, aliasDUMPCONFIGREGOLE);
 		sql.setANDLogicOperator(true);
-		sql.addWhereCondition(aliasDUMP_CONFIG+"."+colonna+"="+aliasDUMP_CONFIG_REGOLE+".id");
+		sql.addWhereCondition(aliasDUMPCONFIG+"."+colonna+"="+aliasDUMPCONFIGREGOLE+".id");
 		if(payload!=null && payload.getValue()!=null &&
 				headers!=null && headers.getValue()!=null) {
 			sql.addWhereCondition(and, 
-					sql.getWhereLikeCondition("payload", payload.getValue()? "abilitato" : "disabilitato", false, false, false),
-					sql.getWhereLikeCondition("headers", headers.getValue()? "abilitato" : "disabilitato", false, false, false));
+					sql.getWhereLikeCondition("payload", payload.getValue()!=null && payload.getValue().booleanValue() ? "abilitato" : "disabilitato", false, false, false),
+					sql.getWhereLikeCondition("headers", headers.getValue()!=null && headers.getValue().booleanValue() ? "abilitato" : "disabilitato", false, false, false));
 		}
 		else if(payload!=null && payload.getValue()!=null) {
-			sql.addWhereLikeCondition("payload", payload.getValue()? "abilitato" : "disabilitato", false, false, false);
+			sql.addWhereLikeCondition("payload", payload.getValue()!=null && payload.getValue().booleanValue() ? "abilitato" : "disabilitato", false, false, false);
 		}
 		else if(headers!=null && headers.getValue()!=null) {
-			sql.addWhereLikeCondition("headers", headers.getValue()? "abilitato" : "disabilitato", false, false, false);
+			sql.addWhereLikeCondition("headers", headers.getValue()!=null && headers.getValue().booleanValue() ? "abilitato" : "disabilitato", false, false, false);
 		}
 		else {
-			throw new Exception("Usage error");
+			throw new SQLQueryObjectException("Usage error");
 		}
 		sqlQueryObjectConditions.addWhereExistsCondition(notExists, sql);
 	}

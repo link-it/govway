@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -24,16 +24,17 @@ package org.openspcoop2.pdd.core.token.attribute_authority;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.mvc.properties.provider.ProviderException;
-import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.token.AbstractPolicyToken;
 import org.openspcoop2.pdd.core.token.TokenException;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.security.message.jose.JOSEUtils;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -104,7 +105,7 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 		return parser;
 	}
 	
-	public boolean isSaveErrorInCache() throws ProviderException, ProviderValidationException{
+	public boolean isSaveErrorInCache() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.AA_SAVE_ERROR_IN_CACHE);	
 	}
 	
@@ -112,14 +113,14 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 		return this.defaultProperties.getProperty(Costanti.AA_URL);
 	}
 	
-	public boolean isEndpointHttps() throws ProviderException, ProviderValidationException{
+	public boolean isEndpointHttps() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.AA_AUTH_SSL_STATO);	
 	}
-	public boolean isHttpsAuthentication() throws ProviderException, ProviderValidationException{
+	public boolean isHttpsAuthentication() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.AA_AUTH_SSL_CLIENT_STATO);	
 	}
 	
-	public boolean isBasicAuthentication() throws ProviderException, ProviderValidationException{
+	public boolean isBasicAuthentication() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.AA_AUTH_BASIC_STATO);	
 	}
 	public String getBasicAuthenticationUsername() {
@@ -129,7 +130,7 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 		return this.defaultProperties.getProperty(Costanti.AA_AUTH_BASIC_PASSWORD);
 	}
 	
-	public boolean isBearerAuthentication() throws ProviderException, ProviderValidationException{
+	public boolean isBearerAuthentication() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.AA_AUTH_BEARER_STATO);	
 	}
 	public String getBeareAuthenticationToken() {
@@ -293,6 +294,21 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 	}
 	public boolean isResponseCustom() {
 		return Costanti.AA_RESPONSE_TYPE_VALUE_CUSTOM.equals(this.getResponseType());
+	}
+	
+	public boolean isResponseJwsLocationHttp() {
+		String location = this.getResponseJwsLocation();
+		return location !=null && 
+				(location.startsWith(JOSEUtils.HTTP_PROTOCOL) || location.startsWith(JOSEUtils.HTTPS_PROTOCOL));
+	}
+	public String getResponseJwsLocation() {
+		if(this.properties!=null) {
+			Properties p = this.properties.get(Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID);
+			if(p!=null) {
+				return p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+			}
+		}
+		return null;
 	}
 	
 	public String getResponseJwsOcspPolicy() {

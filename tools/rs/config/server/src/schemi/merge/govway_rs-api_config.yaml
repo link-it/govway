@@ -3759,6 +3759,142 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
     - $ref: "#/components/parameters/tipo_servizio"
+  /erogazioni/{nome}/{versione}/configurazioni/tracciamento/transazioni:
+    get:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Restituisce la configurazione relativa alla registrazione delle transazioni"
+      description: "Questa operazione consente di ottenere la configurazione relativa\
+        \ alla registrazione delle transazioni"
+      operationId: "getErogazioneRegistrazioneTransazioni"
+      responses:
+        "200":
+          description: "Dettaglio della configurazione restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegistrazioneTransazioniConfigurazione"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Consente di modificare la configurazione relativa alla registrazione\
+        \ delle transazioni"
+      description: "Questa operazione consente di aggiornare la configurazione relativa\
+        \ alla registrazione delle transazioni"
+      operationId: "updateErogazioneRegistrazioneTransazioni"
+      requestBody:
+        description: "Dati da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegistrazioneTransazioniConfigurazione"
+        required: true
+      responses:
+        "204":
+          description: "Configurazione aggiornata correttamente"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+  /erogazioni/{nome}/{versione}/configurazioni/tracciamento/diagnostici:
+    get:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Restituisce la configurazione relativa alla registrazione dei diagnostici"
+      description: "Questa operazione consente di ottenere la configurazione relativa\
+        \ alla registrazione dei diagnostici"
+      operationId: "getErogazioneRegistrazioneDiagnostici"
+      responses:
+        "200":
+          description: "Dettaglio della configurazione restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegistrazioneDiagnosticiConfigurazione"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Consente di modificare la configurazione relativa alla registrazione\
+        \ dei diagnostici"
+      description: "Questa operazione consente di aggiornare la configurazione relativa\
+        \ alla registrazione dei diagnostici"
+      operationId: "updateErogazioneRegistrazioneDiagnostici"
+      requestBody:
+        description: "Dati da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegistrazioneDiagnosticiConfigurazione"
+        required: true
+      responses:
+        "204":
+          description: "Configurazione aggiornata correttamente"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/richiesta:
     get:
       tags:
@@ -6671,6 +6807,144 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/CachingRisposta"
+        required: true
+      responses:
+        "204":
+          description: "Configurazione aggiornata correttamente"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_erogatore"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/tracciamento/transazioni:
+    get:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Restituisce la configurazione relativa alla registrazione delle transazioni"
+      description: "Questa operazione consente di ottenere la configurazione relativa\
+        \ alla registrazione delle transazioni"
+      operationId: "getFruizioneRegistrazioneTransazioni"
+      responses:
+        "200":
+          description: "Dettaglio della configurazione restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegistrazioneTransazioniConfigurazione"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Consente di modificare la configurazione relativa alla registrazione\
+        \ delle transazioni"
+      description: "Questa operazione consente di aggiornare la configurazione relativa\
+        \ alla registrazione delle transazioni"
+      operationId: "updateFruizioneRegistrazioneTransazioni"
+      requestBody:
+        description: "Dati da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegistrazioneTransazioniConfigurazione"
+        required: true
+      responses:
+        "204":
+          description: "Configurazione aggiornata correttamente"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_erogatore"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/tracciamento/diagnostici:
+    get:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Restituisce la configurazione relativa alla registrazione dei diagnostici"
+      description: "Questa operazione consente di ottenere la configurazione relativa\
+        \ alla registrazione dei diagnostici"
+      operationId: "getFruizioneRegistrazioneDiagnostici"
+      responses:
+        "200":
+          description: "Dettaglio della configurazione restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegistrazioneDiagnosticiConfigurazione"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Consente di modificare la configurazione relativa alla registrazione\
+        \ dei diagnostici"
+      description: "Questa operazione consente di aggiornare la configurazione relativa\
+        \ alla registrazione dei diagnostici"
+      operationId: "updateFruizioneRegistrazioneDiagnostici"
+      requestBody:
+        description: "Dati da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegistrazioneDiagnosticiConfigurazione"
         required: true
       responses:
         "204":
@@ -10704,6 +10978,8 @@ components:
           oneOf:
           - $ref: "#/components/schemas/ModIKeyStoreDefault"
           - $ref: "#/components/schemas/ModIKeyStoreRidefinito"
+        keystore_token_policy:
+          type: "boolean"
         includi_signature_token:
           type: "boolean"
         time_to_live:
@@ -10804,6 +11080,8 @@ components:
           oneOf:
           - $ref: "#/components/schemas/ModIKeyStoreDefault"
           - $ref: "#/components/schemas/ModIKeyStoreRidefinito"
+        keystore_token_policy:
+          type: "boolean"
         time_to_live:
           type: "integer"
           format: "int32"
@@ -11996,6 +12274,107 @@ components:
           type: "boolean"
         attachments:
           type: "boolean"
+    RegistrazioneDiagnosticiConfigurazione:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ApiImplConfigurazioneStato"
+      - required:
+        - "stato"
+        type: "object"
+        properties:
+          stato:
+            $ref: "#/components/schemas/StatoDefaultRidefinitoEnum"
+          severita:
+            $ref: "#/components/schemas/DiagnosticiSeverita"
+    RegistrazioneTransazioniConfigurazione:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ApiImplConfigurazioneStato"
+      - required:
+        - "stato"
+        type: "object"
+        properties:
+          stato:
+            $ref: "#/components/schemas/StatoDefaultRidefinitoEnum"
+          database:
+            $ref: "#/components/schemas/RegistrazioneTransazioniConfigurazioneBase"
+          filetrace:
+            $ref: "#/components/schemas/RegistrazioneTransazioniConfigurazioneFiletrace"
+          filtro:
+            $ref: "#/components/schemas/RegistrazioneTransazioniConfigurazioneFiltroEsiti"
+          informazioni:
+            $ref: "#/components/schemas/RegistrazioneTransazioniConfigurazioneInformazioniRegistrate"
+    RegistrazioneTransazioniConfigurazioneBase:
+      required:
+      - "stato"
+      type: "object"
+      properties:
+        stato:
+          $ref: "#/components/schemas/TracciamentoTransazioniStato"
+        fasi:
+          $ref: "#/components/schemas/RegistrazioneTransazioniConfigurazioneFasi"
+        filtro_esiti:
+          $ref: "#/components/schemas/TracciamentoTransazioniStatoFase"
+    RegistrazioneTransazioniConfigurazioneFiletrace:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RegistrazioneTransazioniConfigurazioneBase"
+      - type: "object"
+        properties:
+          config_path:
+            maxLength: 255
+            type: "string"
+          dump_client:
+            $ref: "#/components/schemas/RegistrazioneTransazioniConfigurazioneFiletraceMessaggio"
+          dump_server:
+            $ref: "#/components/schemas/RegistrazioneTransazioniConfigurazioneFiletraceMessaggio"
+    RegistrazioneTransazioniConfigurazioneFiletraceMessaggio:
+      required:
+      - "headers"
+      - "payload"
+      type: "object"
+      properties:
+        headers:
+          type: "boolean"
+        payload:
+          type: "boolean"
+    RegistrazioneTransazioniConfigurazioneFasi:
+      required:
+      - "richiesta_ingresso"
+      - "richiesta_uscita"
+      - "risposta_consegnata"
+      - "risposta_uscita"
+      type: "object"
+      properties:
+        richiesta_ingresso:
+          $ref: "#/components/schemas/TracciamentoTransazioniStatoFaseBloccante"
+        richiesta_uscita:
+          $ref: "#/components/schemas/TracciamentoTransazioniStatoFaseBloccante"
+        risposta_uscita:
+          $ref: "#/components/schemas/TracciamentoTransazioniStatoFaseBloccante"
+        risposta_consegnata:
+          $ref: "#/components/schemas/TracciamentoTransazioniStatoFase"
+    RegistrazioneTransazioniConfigurazioneFiltroEsiti:
+      required:
+      - "esiti"
+      type: "object"
+      properties:
+        esiti:
+          type: "array"
+          description: "Indicare i codici degli esiti richiesti"
+          items:
+            type: "integer"
+            format: "int32"
+    RegistrazioneTransazioniConfigurazioneInformazioniRegistrate:
+      required:
+      - "tempi_elaborazione"
+      - "token"
+      type: "object"
+      properties:
+        token:
+          $ref: "#/components/schemas/TracciamentoTransazioniStatoFase"
+        tempi_elaborazione:
+          $ref: "#/components/schemas/TracciamentoTransazioniStatoFase"
     Proprieta:
       required:
       - "nome"
@@ -12350,6 +12729,39 @@ components:
       enum:
       - "text"
       - "bytes"
+    DiagnosticiSeverita:
+      type: "string"
+      default: "info-integration"
+      enum:
+      - "off"
+      - "fatal"
+      - "error-protocol"
+      - "error-integration"
+      - "info-protocol"
+      - "info-integration"
+      - "debug-low"
+      - "debug-medium"
+      - "debug-high"
+      - "all"
+    TracciamentoTransazioniStato:
+      type: "string"
+      example: "abilitato"
+      enum:
+      - "abilitato"
+      - "disabilitato"
+      - "personalizzato"
+      - "configurazioneEsterna"
+    TracciamentoTransazioniStatoFaseBloccante:
+      type: "string"
+      enum:
+      - "bloccante"
+      - "non-bloccante"
+      - "disabilitato"
+    TracciamentoTransazioniStatoFase:
+      type: "string"
+      enum:
+      - "abilitato"
+      - "disabilitato"
     ModISicurezzaCanaleEnum:
       type: "string"
       enum:

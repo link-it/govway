@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.pdd.config.PDNDResolver;
 import org.openspcoop2.pdd.core.keystore.KeystoreException;
 import org.openspcoop2.pdd.core.keystore.RemoteStoreConfigPropertiesUtils;
 import org.openspcoop2.pdd.core.token.Costanti;
@@ -261,6 +262,7 @@ public class ModIProperties {
 			isSecurityTokenAuditApiSoapX509RiferimentoX5cSingleCertificate();
 			isSecurityTokenAuditApiSoapX509RiferimentoX5u();
 			isSecurityTokenAuditApiSoapX509RiferimentoX5t();
+			isSecurityTokenAuditProcessArrayModeEnabled();
 			isSecurityTokenAuditAddPurposeId();
 			isSecurityTokenAuditExpectedPurposeId();
 			isSecurityTokenAuditCompareAuthorizationPurposeId();
@@ -306,6 +308,7 @@ public class ModIProperties {
 			isRestSecurityTokenResponseDigestClean();
 			isRestSecurityTokenResponseDigestHEADuseServerHeader();
 			isRestSecurityTokenFaultProcessEnabled();
+			isRestSecurityTokenAudienceProcessArrayModeEnabled();
 			getRestResponseSecurityTokenAudienceDefault(null);
 			getRestCorrelationIdHeader();
 			getRestReplyToHeader();
@@ -385,6 +388,7 @@ public class ModIProperties {
 			isValidazioneBufferEnabled();
 			isRiferimentoIDRichiestaPortaDelegataRequired();
 			isRiferimentoIDRichiestaPortaApplicativaRequired();
+			isTokenOAuthUseJtiIntegrityAsMessageId();
 			
 			/* **** SOAP FAULT (Generati dagli attori esterni) **** */
 			
@@ -817,42 +821,13 @@ public class ModIProperties {
 	}
 	
 	public boolean isRemoteStore(String name) throws ProtocolException {
-		for (RemoteStoreConfig rsc : getRemoteStoreConfig()) {
-			if(name.equals(rsc.getStoreName())) {
-				return true;
-			}
-		}
-		return false;
+		return PDNDResolver.isRemoteStore(name, getRemoteStoreConfig());
 	}
 	public RemoteStoreConfig getRemoteStoreConfig(String name, IDSoggetto idDominio) throws ProtocolException {
-		for (RemoteStoreConfig rsc : getRemoteStoreConfig()) {
-			if(name.equals(rsc.getStoreName())) {
-				if(rsc.isMultitenant() && idDominio!=null && idDominio.getNome()!=null) {
-					try {
-						return rsc.newInstanceMultitenant(idDominio.getNome());
-					}catch(Exception e){
-						throw new ProtocolException(e.getMessage(),e);
-					}
-				}
-				return rsc;
-			}
-		}
-		return null;
+		return PDNDResolver.getRemoteStoreConfig(name, idDominio, getRemoteStoreConfig());
 	}
 	public RemoteStoreConfig getRemoteStoreConfigByTokenPolicy(String name, IDSoggetto idDominio) throws ProtocolException {
-		for (RemoteStoreConfig rsc : getRemoteStoreConfig()) {
-			if(name.equals(rsc.getTokenPolicy())) {
-				if(rsc.isMultitenant() && idDominio!=null && idDominio.getNome()!=null) {
-					try {
-						return rsc.newInstanceMultitenant(idDominio.getNome());
-					}catch(Exception e){
-						throw new ProtocolException(e.getMessage(),e);
-					}
-				}
-				return rsc;
-			}
-		}
-		return null;
+		return PDNDResolver.getRemoteStoreConfigByTokenPolicy(name, idDominio, getRemoteStoreConfig());
 	}
 	// riferito in org.openspcoop2.protocol.utils.ModIUtils
 	// non modificare il nome
@@ -1494,6 +1469,34 @@ public class ModIProperties {
 		}
 
 		return this.isSecurityTokenAuditApiSoapX509RiferimentoX5t;
+	}
+	
+	private Boolean getSecurityTokenAuditProcessArrayModeReaded= null;
+	private Boolean getSecurityTokenAuditProcessArrayModeEnabled= null;
+	public boolean isSecurityTokenAuditProcessArrayModeEnabled() throws ProtocolException{
+    	if(this.getSecurityTokenAuditProcessArrayModeReaded==null){
+	    	String name = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.audience.processArrayMode";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					this.getSecurityTokenAuditProcessArrayModeEnabled = Boolean.valueOf(value);
+				}
+				else {
+					throw newProtocolExceptionPropertyNonDefinita();
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = getMessaggioErroreProprietaNonImpostata(name, e); 
+				this.logError(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    		
+    		this.getSecurityTokenAuditProcessArrayModeReaded = true;
+    	}
+    	
+    	return this.getSecurityTokenAuditProcessArrayModeEnabled;
 	}
 	
     private Boolean isSecurityTokenAuditAddPurposeId = null;
@@ -2459,6 +2462,35 @@ public class ModIProperties {
     	
     	return this.getRestSecurityTokenFaultProcessEnabled;
 	}
+	
+	private Boolean getRestSecurityTokenAudienceProcessArrayModeReaded= null;
+	private Boolean getRestSecurityTokenAudienceProcessArrayModeEnabled= null;
+	public boolean isRestSecurityTokenAudienceProcessArrayModeEnabled() throws ProtocolException{
+    	if(this.getRestSecurityTokenAudienceProcessArrayModeReaded==null){
+	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.audience.processArrayMode";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					this.getRestSecurityTokenAudienceProcessArrayModeEnabled = Boolean.valueOf(value);
+				}
+				else {
+					throw newProtocolExceptionPropertyNonDefinita();
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = getMessaggioErroreProprietaNonImpostata(name, e); 
+				this.logError(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    		
+    		this.getRestSecurityTokenAudienceProcessArrayModeReaded = true;
+    	}
+    	
+    	return this.getRestSecurityTokenAudienceProcessArrayModeEnabled;
+	}
+	
 	
 	private Boolean getRestResponseSecurityTokenAudienceDefaultReaded= null;
 	private String getRestResponseSecurityTokenAudienceDefault= null;
@@ -4176,6 +4208,35 @@ public class ModIProperties {
     	}
     	
     	return this.isRiferimentoIDRichiestaPortaApplicativaRequired;
+	}
+    
+	private Boolean isTokenOAuthUseJtiIntegrityAsMessageId= null;
+	private Boolean isTokenOAuthUseJtiIntegrityAsMessageIdRead= null;
+    public Boolean isTokenOAuthUseJtiIntegrityAsMessageId(){
+    	if(this.isTokenOAuthUseJtiIntegrityAsMessageIdRead==null){
+    		String pName = "org.openspcoop2.protocol.modipa.tokenOAuthIntegrity.useJtiIntegrityAsMessageId";
+	    	try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+				
+				if (value != null){
+					value = value.trim();
+					this.isTokenOAuthUseJtiIntegrityAsMessageId = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, true));
+					this.isTokenOAuthUseJtiIntegrityAsMessageId = true;
+				}
+				
+				this.isTokenOAuthUseJtiIntegrityAsMessageIdRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprietà '"+pName+"' non impostata, viene utilizzato il default 'true', errore:"+e.getMessage());
+				this.isTokenOAuthUseJtiIntegrityAsMessageId = true;
+				
+				this.isTokenOAuthUseJtiIntegrityAsMessageIdRead = true;
+			}
+    	}
+    	
+    	return this.isTokenOAuthUseJtiIntegrityAsMessageId;
 	}
 	
 	

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -66,44 +66,60 @@ public class CompressorUtilities {
 		
 	}
 	
-	public static void testCompressor(CompressorType tipo) throws Exception{
+	private static void print(String msg) {
+		System.out.println(msg);
+	}
+	
+	private static final String COMPRESSO_DIMENSIONE = "Compresso, dimensione: ";
+	private static final String COMPRESSO_IN_STRING = "Compresso, in stringa: ";
+	private static final String DECOMPRESSO_IN_STRING = "De-Compresso, in stringa: ";
+	private static final String INFORMAZIONE_DECOMPRESSA_DIFFERENTE = "Informazione decompressa non uguale al sorgente";
+	private static final String INFORMAZIONE_DECOMPRESSA_DIFFERENTE_SIZE = "Informazione decompressa non uguale al sorgente (size)";
+	private static final String INFORMAZIONE_DECOMPRESSA_DIFFERENTE_ENTRY_1 = "Informazione decompressa non uguale al sorgente (entry1 name:";
+	private static final String INFORMAZIONE_DECOMPRESSA_DIFFERENTE_ENTRY_2 = "Informazione decompressa non uguale al sorgente (entry2 name:";
+	private static final String INFORMAZIONE_DECOMPRESSA_DIFFERENTE_ENTRY_1_DIFFERENTE = "Informazione decompressa non uguale al sorgente (entry1 contenuto differente)";
+	private static final String INFORMAZIONE_DECOMPRESSA_UGUALE = "De-Compresso: test di comparazione completati con successo";
+	private static final String DECOMPRESSO = "De-Compresso: ";
+	private static final String ATTESO = " atteso:";
+	
+	public static void testCompressor(CompressorType tipo) throws UtilsException{
 		
 		String test = "<prova xmlns=\"www.test.it\">PROVA</prova>";
 		byte[]testB = test.getBytes();
 		
 		if(tipo==null || CompressorType.DEFLATER.equals(tipo)) {
-			System.out.println("\n\n=== DEFLATER ===");
+			print("\n\n=== DEFLATER ===");
 			byte [] compress = compress(testB, CompressorType.DEFLATER);
-			System.out.println("Compresso, dimensione: "+compress.length);
-			System.out.println("Compresso, in stringa: "+new String(compress));
+			print(COMPRESSO_DIMENSIONE+compress.length);
+			print(COMPRESSO_IN_STRING+new String(compress));
 			String decompresso = new String(decompress(compress, CompressorType.DEFLATER));
-			System.out.println("De-Compresso, in stringa: "+decompresso);
+			print(DECOMPRESSO_IN_STRING+decompresso);
 			if(!decompresso.equals(test)) {
-				throw new Exception("Informazione decompressa non uguale al sorgente");
+				throw new UtilsException(INFORMAZIONE_DECOMPRESSA_DIFFERENTE);
 			}
 		}
 		
 		if(tipo==null || CompressorType.GZIP.equals(tipo)) {
-			System.out.println("\n\n=== GZIP ===");
+			print("\n\n=== GZIP ===");
 			byte [] compress = compress(testB, CompressorType.GZIP);
-			System.out.println("Compresso, dimensione: "+compress.length);
-			System.out.println("Compresso, in stringa: "+new String(compress));
+			print(COMPRESSO_DIMENSIONE+compress.length);
+			print(COMPRESSO_IN_STRING+new String(compress));
 			String decompresso = new String(decompress(compress, CompressorType.GZIP));
-			System.out.println("De-Compresso, in stringa: "+decompresso);
+			print(DECOMPRESSO_IN_STRING+decompresso);
 			if(!decompresso.equals(test)) {
-				throw new Exception("Informazione decompressa non uguale al sorgente");
+				throw new UtilsException(INFORMAZIONE_DECOMPRESSA_DIFFERENTE);
 			}
 		}
 			
 		if(tipo==null || CompressorType.ZIP.equals(tipo)) {
-			System.out.println("\n\n=== ZIP ===");
+			print("\n\n=== ZIP ===");
 			byte [] compress = compress(testB, CompressorType.ZIP);
-			System.out.println("Compresso, dimensione: "+compress.length);
-			System.out.println("Compresso, in stringa: "+new String(compress));
+			print(COMPRESSO_DIMENSIONE+compress.length);
+			print(COMPRESSO_IN_STRING+new String(compress));
 			String decompresso = new String(decompress(compress, CompressorType.ZIP));
-			System.out.println("De-Compresso, in stringa: "+decompresso);
+			print(DECOMPRESSO_IN_STRING+decompresso);
 			if(!decompresso.equals(test)) {
-				throw new Exception("Informazione decompressa non uguale al sorgente");
+				throw new UtilsException(INFORMAZIONE_DECOMPRESSA_DIFFERENTE);
 			}
 		}
 		
@@ -124,81 +140,81 @@ public class CompressorUtilities {
 		entries.add(new Entry(entryName2,test2B));
 		
 		if(tipo==null || ArchiveType.ZIP.equals(tipo)) {
-			System.out.println("\n\n=== ZIP ===");
+			print("\n\n=== ZIP ===");
 			byte [] compress = archive(entries, ArchiveType.ZIP);
-			System.out.println("Compresso, dimensione: "+compress.length);
+			print(COMPRESSO_DIMENSIONE+compress.length);
 			List<Entry> entriesRead = read(compress, ArchiveType.ZIP);
-			System.out.println("De-Compresso: "+entriesRead.size());
+			print(DECOMPRESSO+entriesRead.size());
 			if(entriesRead.size()!=2) {
-				throw new Exception("Informazione decompressa non uguale al sorgente (size)");
+				throw new UtilsException(INFORMAZIONE_DECOMPRESSA_DIFFERENTE_SIZE);
 			}
 			Entry entryRead1 = entriesRead.get(0);
 			Entry entryRead2 = entriesRead.get(1);
 			if(!entryName.equals(entryRead1.getName())) {
-				throw new Exception("Informazione decompressa non uguale al sorgente (entry1 name:"+entryRead1.getName()+" atteso:"+entryName+")");
+				throw new UtilsException(INFORMAZIONE_DECOMPRESSA_DIFFERENTE_ENTRY_1+entryRead1.getName()+ATTESO+entryName+")");
 			}
 			if(!entryName2.equals(entryRead2.getName())) {
-				throw new Exception("Informazione decompressa non uguale al sorgente (entry2 name:"+entryRead2.getName()+" atteso:"+entryName2+")");
+				throw new UtilsException(INFORMAZIONE_DECOMPRESSA_DIFFERENTE_ENTRY_2+entryRead2.getName()+ATTESO+entryName2+")");
 			}
 			if(!test.equals(new String(entryRead1.getContent()))) {
-				throw new Exception("Informazione decompressa non uguale al sorgente (entry1 contenuto differente)");
+				throw new UtilsException(INFORMAZIONE_DECOMPRESSA_DIFFERENTE_ENTRY_1_DIFFERENTE);
 			}
 			if(!test2.equals(new String(entryRead2.getContent()))) {
-				throw new Exception("Informazione decompressa non uguale al sorgente (entry1 contenuto differente)");
+				throw new UtilsException(INFORMAZIONE_DECOMPRESSA_DIFFERENTE_ENTRY_1_DIFFERENTE);
 			}
-			System.out.println("De-Compresso: test di comparazione completati con successo");
+			print(INFORMAZIONE_DECOMPRESSA_UGUALE);
 		}
 		
 		if(tipo==null || ArchiveType.TAR.equals(tipo)) {
-			System.out.println("\n\n=== TAR ===");
+			print("\n\n=== TAR ===");
 			byte [] compress = archive(entries, ArchiveType.TAR);
-			System.out.println("Compresso, dimensione: "+compress.length);
+			print(COMPRESSO_DIMENSIONE+compress.length);
 			List<Entry> entriesRead = read(compress, ArchiveType.TAR);
-			System.out.println("De-Compresso: "+entriesRead.size());
+			print(DECOMPRESSO+entriesRead.size());
 			if(entriesRead.size()!=2) {
-				throw new Exception("Informazione decompressa non uguale al sorgente (size)");
+				throw new UtilsException(INFORMAZIONE_DECOMPRESSA_DIFFERENTE_SIZE);
 			}
 			Entry entryRead1 = entriesRead.get(0);
 			Entry entryRead2 = entriesRead.get(1);
 			if(!entryName.equals(entryRead1.getName())) {
-				throw new Exception("Informazione decompressa non uguale al sorgente (entry1 name:"+entryRead1.getName()+" atteso:"+entryName+")");
+				throw new UtilsException(INFORMAZIONE_DECOMPRESSA_DIFFERENTE_ENTRY_1+entryRead1.getName()+ATTESO+entryName+")");
 			}
 			if(!entryName2.equals(entryRead2.getName())) {
-				throw new Exception("Informazione decompressa non uguale al sorgente (entry2 name:"+entryRead2.getName()+" atteso:"+entryName2+")");
+				throw new UtilsException(INFORMAZIONE_DECOMPRESSA_DIFFERENTE_ENTRY_2+entryRead2.getName()+ATTESO+entryName2+")");
 			}
 			if(!test.equals(new String(entryRead1.getContent()))) {
-				throw new Exception("Informazione decompressa non uguale al sorgente (entry1 contenuto differente)");
+				throw new UtilsException(INFORMAZIONE_DECOMPRESSA_DIFFERENTE_ENTRY_1_DIFFERENTE);
 			}
 			if(!test2.equals(new String(entryRead2.getContent()))) {
-				throw new Exception("Informazione decompressa non uguale al sorgente (entry1 contenuto differente)");
+				throw new UtilsException(INFORMAZIONE_DECOMPRESSA_DIFFERENTE_ENTRY_1_DIFFERENTE);
 			}
-			System.out.println("De-Compresso: test di comparazione completati con successo");
+			print(INFORMAZIONE_DECOMPRESSA_UGUALE);
 		}
 		
 		if(tipo==null || ArchiveType.TGZ.equals(tipo)) {
-			System.out.println("\n\n=== TGZ ===");
+			print("\n\n=== TGZ ===");
 			byte [] compress = archive(entries, ArchiveType.TGZ);
-			System.out.println("Compresso, dimensione: "+compress.length);
+			print(COMPRESSO_DIMENSIONE+compress.length);
 			List<Entry> entriesRead = read(compress, ArchiveType.TGZ);
-			System.out.println("De-Compresso: "+entriesRead.size());
+			print(DECOMPRESSO+entriesRead.size());
 			if(entriesRead.size()!=2) {
-				throw new Exception("Informazione decompressa non uguale al sorgente (size)");
+				throw new UtilsException(INFORMAZIONE_DECOMPRESSA_DIFFERENTE_SIZE);
 			}
 			Entry entryRead1 = entriesRead.get(0);
 			Entry entryRead2 = entriesRead.get(1);
 			if(!entryName.equals(entryRead1.getName())) {
-				throw new Exception("Informazione decompressa non uguale al sorgente (entry1 name:"+entryRead1.getName()+" atteso:"+entryName+")");
+				throw new UtilsException(INFORMAZIONE_DECOMPRESSA_DIFFERENTE_ENTRY_1+entryRead1.getName()+ATTESO+entryName+")");
 			}
 			if(!entryName2.equals(entryRead2.getName())) {
-				throw new Exception("Informazione decompressa non uguale al sorgente (entry2 name:"+entryRead2.getName()+" atteso:"+entryName2+")");
+				throw new UtilsException(INFORMAZIONE_DECOMPRESSA_DIFFERENTE_ENTRY_2+entryRead2.getName()+ATTESO+entryName2+")");
 			}
 			if(!test.equals(new String(entryRead1.getContent()))) {
-				throw new Exception("Informazione decompressa non uguale al sorgente (entry1 contenuto differente)");
+				throw new UtilsException(INFORMAZIONE_DECOMPRESSA_DIFFERENTE_ENTRY_1_DIFFERENTE);
 			}
 			if(!test2.equals(new String(entryRead2.getContent()))) {
-				throw new Exception("Informazione decompressa non uguale al sorgente (entry1 contenuto differente)");
+				throw new UtilsException(INFORMAZIONE_DECOMPRESSA_DIFFERENTE_ENTRY_1_DIFFERENTE);
 			}
-			System.out.println("De-Compresso: test di comparazione completati con successo");
+			print(INFORMAZIONE_DECOMPRESSA_UGUALE);
 		}
 
 		
@@ -225,7 +241,7 @@ public class CompressorUtilities {
 				break;
 			}
             if(out==null) {
-            	throw new Exception("OutputStream undefined");
+            	throw new UtilsException("OutputStream undefined");
             }
             out.flush();
             out.close();
@@ -241,7 +257,7 @@ public class CompressorUtilities {
 		try {
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			
-			org.apache.commons.compress.archivers.ArchiveOutputStream  out = null;
+			org.apache.commons.compress.archivers.ArchiveOutputStream<?>  out = null;
 			org.apache.commons.compress.compressors.CompressorOutputStream compressorOut = null;
             switch (type) {
             case TAR:
@@ -256,7 +272,7 @@ public class CompressorUtilities {
 				break;
 			}
             if(out==null) {
-            	throw new Exception("OutputStream undefined");
+            	throw new UtilsException("OutputStream undefined");
             }
 			for (Entry entry : entries) {
 				String name = entry.getName();
@@ -271,8 +287,16 @@ public class CompressorUtilities {
 					archiveEntry = new ZipArchiveEntry(name);
 					break;
 				}
-				out.putArchiveEntry(archiveEntry);
-				out.write(entry.getContent());
+	            switch (type) {
+	            case TAR:
+				case TGZ:
+	            	((TarArchiveOutputStream)out).putArchiveEntry((TarArchiveEntry) archiveEntry);
+					break;
+				case ZIP:
+					((ZipArchiveOutputStream)out).putArchiveEntry((ZipArchiveEntry)archiveEntry);
+					break;
+				}
+	            out.write(entry.getContent());
 				out.closeArchiveEntry();
 			}
 			out.flush();
@@ -320,10 +344,12 @@ public class CompressorUtilities {
  	 	                baos.write(buffer, 0, len);
  				}finally{
  					try{
- 						if(!f.delete()) {
- 							// ignore
+ 						if(f!=null) {
+ 							java.nio.file.Files.delete(f.toPath());
  						}
- 					}catch(Exception eClose){}
+ 					}catch(Exception eClose){
+ 						// ignore
+ 					}
  					try{
  						if(zf!=null){
  							zf.close();
@@ -347,7 +373,7 @@ public class CompressorUtilities {
 			List<Entry> list = new ArrayList<>();
 			
 			ByteArrayInputStream bin = new ByteArrayInputStream(archiveContent);
-			ArchiveInputStream in = null;
+			ArchiveInputStream<?> in = null;
 			CompressorInputStream compressorIn = null;
 			switch (type) {
 			case TAR:
@@ -362,22 +388,22 @@ public class CompressorUtilities {
 				break;
 			}
             if(in==null) {
-            	throw new Exception("InputStream undefined");
+            	throw new UtilsException("InputStream undefined");
             }
 			ArchiveEntry entry;
 		    while ((entry = in.getNextEntry()) != null) {
 		        String name = entry.getName();
-		    	//System.out.println(name);
+		    	/**print(name);*/
 		        
 		        if(name!=null && !( name.endsWith("/") || name.endsWith("\\") ) ){
 		        	Entry zentry = new Entry();
 	        		zentry.setName(name);
 	        		
 	        		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-	        		byte contents[] = new byte[4096];
+	        		byte [] contents = new byte[4096];
 	        		int direct;
 	        		while ((direct = in.read(contents, 0, contents.length)) >= 0) {
-	        			//System.out.println("Read " + direct + "bytes content.");
+	        			/**print("Read " + direct + "bytes content.");*/
 	        			bout.write(contents, 0, direct);
 	        		}
 	        		bout.flush();
@@ -387,7 +413,7 @@ public class CompressorUtilities {
 	        		list.add(zentry);
 		        }
 		        
-		       // in.closeEntry();
+		       /** in.closeEntry(); */
 		    }
 		    if(compressorIn!=null) {
 		    	compressorIn.close();

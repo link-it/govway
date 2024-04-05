@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -19,9 +19,12 @@
  */
 package org.openspcoop2.pdd.core.token.parser;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import org.openspcoop2.utils.UtilsException;
 
 /**     
  * ITokenParser
@@ -32,10 +35,10 @@ import java.util.Map;
  */
 public interface INegoziazioneTokenParser {
 
-	public void init(String raw, Map<String,Object> claims);
+	public void init(String raw, Map<String,Serializable> claims);
 	
 	// Controllo se il token e' un token atteso su cui leggere le informazioni
-	public void checkHttpTransaction(Integer httpResponseCode) throws Exception;
+	public void checkHttpTransaction(Integer httpResponseCode) throws UtilsException;
 	
 	// Indicazione se il token e' valido
 	public boolean isValid();

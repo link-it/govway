@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -39,18 +39,18 @@ public class CredenzialeTrasporto extends AbstractCredenziale {
 	private String credential;
 	
 	public CredenzialeTrasporto(String tipoAutenticazione, String credential) {
-		super(TipoCredenzialeMittente.trasporto);
+		super(TipoCredenzialeMittente.TRASPORTO);
 		this.tipoAutenticazione = tipoAutenticazione;
 		this.credential = credential;
 	}
 	
 	@Override
-	public String getTipo() throws UtilsException {
+	public String getTipo() {
 		return getTipoTrasporto(this.tipo, this.tipoAutenticazione);
 	}
 
 	public static String getTipoTrasporto(TipoCredenzialeMittente tipo, String tipoAutenticazione) {
-		return tipo.name()+"_"+tipoAutenticazione;
+		return tipo.getRawValue()+"_"+tipoAutenticazione;
 	}
 	
 	@Override

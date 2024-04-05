@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -71,6 +71,9 @@ public class ItemTransazione extends TransazioneBase {
   
   @Schema(description = "")
   private TransazioneExtInformazioniMittenteBase mittente = null;
+  
+  @Schema(description = "")
+  private PDNDOrganizationInfoItemTransazione pdndOrganization = null;
   
   @Schema(description = "")
   private String richiedente = null;
@@ -306,6 +309,25 @@ public class ItemTransazione extends TransazioneBase {
   }
 
  /**
+   * Get pdndOrganization
+   * @return pdndOrganization
+  **/
+  @JsonProperty("pdnd_organization")
+  @Valid
+  public PDNDOrganizationInfoItemTransazione getPdndOrganization() {
+    return this.pdndOrganization;
+  }
+
+  public void setPdndOrganization(PDNDOrganizationInfoItemTransazione pdndOrganization) {
+    this.pdndOrganization = pdndOrganization;
+  }
+
+  public ItemTransazione pdndOrganization(PDNDOrganizationInfoItemTransazione pdndOrganization) {
+    this.pdndOrganization = pdndOrganization;
+    return this;
+  }
+
+ /**
    * Get richiedente
    * @return richiedente
   **/
@@ -342,6 +364,7 @@ public class ItemTransazione extends TransazioneBase {
     sb.append("    risposta: ").append(ItemTransazione.toIndentedString(this.risposta)).append("\n");
     sb.append("    api: ").append(ItemTransazione.toIndentedString(this.api)).append("\n");
     sb.append("    mittente: ").append(ItemTransazione.toIndentedString(this.mittente)).append("\n");
+    sb.append("    pdndOrganization: ").append(ItemTransazione.toIndentedString(this.pdndOrganization)).append("\n");
     sb.append("    richiedente: ").append(ItemTransazione.toIndentedString(this.richiedente)).append("\n");
     sb.append("}");
     return sb.toString();

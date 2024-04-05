@@ -14,7 +14,7 @@
     "raggruppamento": {
         "richiedente": true,
         "azione": true,
-	"token": ["issuer","subject","username"],
+	"token": ["client_id","issuer","subject","username"],
         "chiave_tipo": "content-based",
         "chiave_nome": "chiave_nome2"
     }

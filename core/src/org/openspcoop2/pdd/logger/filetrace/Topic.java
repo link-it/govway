@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -20,6 +20,10 @@
 
 package org.openspcoop2.pdd.logger.filetrace;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.slf4j.Logger;
 
 /**     
@@ -38,6 +42,7 @@ public class Topic {
 	private boolean onlyOutRequestContentDefined = false;
 	private boolean onlyInResponseContentDefined = false;
 	private boolean onlyOutResponseContentDefined = false;
+	private List<FaseTracciamento> onlyInTrackingPhase = new ArrayList<>();
 	
 	private String categoryName;
 	private Logger log;
@@ -105,6 +110,20 @@ public class Topic {
 	}
 	public void setOnlyOutResponseContentDefined(boolean onlyOutResponseContentDefined) {
 		this.onlyOutResponseContentDefined = onlyOutResponseContentDefined;
+	}
+	public void addFaseTracciamento(FaseTracciamento fase) {
+		this.onlyInTrackingPhase.add(fase);
+	}
+	public boolean isEnabled(FaseTracciamento fase) {
+		if(this.onlyInTrackingPhase == null || this.onlyInTrackingPhase.isEmpty()) {
+			// default
+			/**System.out.println("ENABLE DEFAULT '"+this.nome+"' ["+fase+"]: "+(FaseTracciamento.POST_OUT_RESPONSE.equals(fase)));*/
+			//return FaseTracciamento.POST_OUT_RESPONSE.equals(fase);
+			/**System.out.println("ENABLE DEFAULT '"+this.nome+"' ["+fase+"]: "+true);*/
+			return true; // devo usare le fasi nella config per decidere se applicare solo in una fase
+		}
+		/**System.out.println("ENABLE '"+this.nome+"' ["+fase+"]: "+(this.onlyInTrackingPhase.contains(fase)));*/
+		return this.onlyInTrackingPhase.contains(fase);
 	}
 	public String getFormat() {
 		return this.format;

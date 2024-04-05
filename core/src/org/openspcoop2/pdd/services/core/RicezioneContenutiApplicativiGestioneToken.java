@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -24,15 +24,20 @@ import java.util.List;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.handlers.InRequestContext;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
+import org.openspcoop2.pdd.core.token.pd.EsitoDynamicDiscoveryPortaDelegata;
 import org.openspcoop2.pdd.core.token.pd.EsitoGestioneTokenPortaDelegata;
 import org.openspcoop2.pdd.core.token.pd.EsitoPresenzaTokenPortaDelegata;
 import org.openspcoop2.pdd.core.token.pd.GestioneToken;
@@ -79,6 +84,8 @@ public class RicezioneContenutiApplicativiGestioneToken {
 	
 	private IProtocolFactory<?> protocolFactory;
 	
+	private IDSoggetto identitaPdD;
+	
 	public RicezioneContenutiApplicativiGestioneToken(MsgDiagnostico msgDiag, Logger logCore,
 			PortaDelegata portaDelegata, IDPortaDelegata identificativoPortaDelegata,
 			OpenSPCoop2Message requestMessage,
@@ -86,7 +93,8 @@ public class RicezioneContenutiApplicativiGestioneToken {
 			ConfigurazionePdDManager configurazionePdDReader,
 			PdDContext pddContext, String idTransazione,
 			IOpenSPCoopState openspcoopstate, Transaction transaction, RequestInfo requestInfo,
-			IProtocolFactory<?> protocolFactory) {
+			IProtocolFactory<?> protocolFactory,
+			IDSoggetto identitaPdD) {
 		this.msgDiag = msgDiag;
 		this.logCore = logCore;
 				
@@ -108,6 +116,8 @@ public class RicezioneContenutiApplicativiGestioneToken {
 		this.requestInfo = requestInfo; 
 		
 		this.protocolFactory = protocolFactory;
+		
+		this.identitaPdD = identitaPdD;
 		
 	}
 	
@@ -180,7 +190,7 @@ public class RicezioneContenutiApplicativiGestioneToken {
 					this.msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_POLICY_GESTIONE, this.tipoGestioneToken);
 					this.msgContext.getIntegrazione().setTokenPolicy(this.tipoGestioneToken);
 					this.msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_POLICY_AZIONI, policyGestioneToken.getLabelAzioniGestioneToken());
-					this.msgContext.getIntegrazione().setTokenPolicy_actions(policyGestioneToken.getAzioniGestioneToken());
+					this.msgContext.getIntegrazione().setTokenPolicyActions(policyGestioneToken.getAzioniGestioneToken());
 					this.msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_TIPO, policyGestioneToken.getLabelTipoToken());
 					this.msgDiag.logPersonalizzato("gestioneTokenInCorso");
 					
@@ -204,6 +214,7 @@ public class RicezioneContenutiApplicativiGestioneToken {
 					this.msgDiag.logPersonalizzato("gestioneTokenInCorso.verificaPresenzaToken");
 					
 					EsitoPresenzaTokenPortaDelegata esitoPresenzaToken = gestioneTokenEngine.verificaPresenzaToken(datiInvocazione);
+					EsitoDynamicDiscoveryPortaDelegata esitoDynamicDiscovery = null;
 					EsitoGestioneTokenPortaDelegata esitoValidazioneToken = null;
 					EsitoGestioneTokenPortaDelegata esitoIntrospectionToken = null;
 					EsitoGestioneTokenPortaDelegata esitoUserInfoToken = null;
@@ -217,6 +228,70 @@ public class RicezioneContenutiApplicativiGestioneToken {
 						this.msgDiag.logPersonalizzato("gestioneTokenInCorso.verificaPresenzaToken.completataSuccesso");
 	
 						
+						// dynamicDiscovery
+						if(!fineGestione) {
+							
+							if(policyGestioneToken.isDynamicDiscovery()) {
+							
+								this.msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_ENDPOINT_SERVIZIO_DYNAMIC_DISCOVERY, policyGestioneToken.getDynamicDiscoveryEndpoint());
+								
+								this.msgDiag.logPersonalizzato("gestioneTokenInCorso.dynamicDiscovery");
+								
+								esitoDynamicDiscovery = gestioneTokenEngine.dynamicDiscovery(datiInvocazione, esitoPresenzaToken);
+								if(esitoDynamicDiscovery.isValido()) {
+									
+									this.msgDiag.logPersonalizzato("gestioneTokenInCorso.dynamicDiscovery.completataSuccesso");
+									
+									this.msgDiag.addKeyword(CostantiPdD.KEY_DYNAMIC_DISCOVERY_INFO, esitoDynamicDiscovery.getDynamicDiscovery().getRawResponse());
+									
+									this.pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_ESITO_DYNAMIC_DISCOVERY, esitoDynamicDiscovery);
+									
+									if(esitoDynamicDiscovery.isInCache()) {
+										this.msgDiag.logPersonalizzato("gestioneTokenInCorso.dynamicDiscovery.inCache");
+									}
+									else {
+										this.msgDiag.logPersonalizzato("gestioneTokenInCorso.dynamicDiscovery.validato");
+									}
+								}
+								else {
+									
+									this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esitoDynamicDiscovery.getDetails());
+									// La gestione di fallire o dare warning è delegata alla funzionalità stessa jwt/introspection/userInfo che sono le azioni
+									/**if(policyGestioneToken.isDynamicDiscoveryWarningOnly()) {
+										this.msgDiag.logPersonalizzato("gestioneTokenInCorso.dynamicDiscovery.warningOnly.fallita");
+									}
+									else {
+										this.msgDiag.logPersonalizzato("gestioneTokenInCorso.dynamicDiscovery.fallita");
+										fineGestione = true;
+									}*/
+									this.msgDiag.logPersonalizzato("gestioneTokenInCorso.dynamicDiscovery.fallita");
+									
+									String msgErrore = gestioneTokenPrefix+"(Introspection) fallito: " + esitoDynamicDiscovery.getDetails();
+									if(esitoDynamicDiscovery.getEccezioneProcessamento()!=null) {
+										this.logCore.error(msgErrore,esitoDynamicDiscovery.getEccezioneProcessamento());
+									}
+									else {
+										this.logCore.error(msgErrore);
+									}
+								
+									// La gestione di fallire o dare warning è delegata alla funzionalità stessa jwt/introspection/userInfo che sono le azioni
+									/**
+									errore = esitoDynamicDiscovery.getErroreIntegrazione();
+									eGestioneToken = esitoDynamicDiscovery.getEccezioneProcessamento();
+									errorMessageGestioneToken = esitoDynamicDiscovery.getErrorMessage();
+									wwwAuthenticateErrorHeader = esitoDynamicDiscovery.getWwwAuthenticateErrorHeader();
+									integrationFunctionError = esitoDynamicDiscovery.getIntegrationFunctionError();
+									**/
+									
+								}
+							}
+							else {
+								this.msgDiag.logPersonalizzato("gestioneTokenInCorso.dynamicDiscovery.disabilitata");
+							}
+							
+						}
+						
+						
 						// validazione jwt
 						if(!fineGestione) {
 							
@@ -224,7 +299,7 @@ public class RicezioneContenutiApplicativiGestioneToken {
 							
 								this.msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken");
 								
-								esitoValidazioneToken = gestioneTokenEngine.validazioneJWTToken(datiInvocazione, esitoPresenzaToken);
+								esitoValidazioneToken = gestioneTokenEngine.validazioneJWTToken(datiInvocazione, esitoPresenzaToken, esitoDynamicDiscovery);
 								if(esitoValidazioneToken.isValido()) {
 									
 									this.msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken.completataSuccesso");
@@ -279,11 +354,23 @@ public class RicezioneContenutiApplicativiGestioneToken {
 							
 							if(policyGestioneToken.isIntrospection()) {
 							
-								this.msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_ENDPOINT_SERVIZIO_INTROSPECTION, policyGestioneToken.getIntrospectionEndpoint());
+								String endpoint = null;
+								if(esitoDynamicDiscovery!=null) {
+									if(esitoDynamicDiscovery.isValido() && esitoDynamicDiscovery.getDynamicDiscovery()!=null) {
+										endpoint = esitoDynamicDiscovery.getDynamicDiscovery().getIntrospectionEndpoint();
+									}
+									else {
+										endpoint = "dynamic discovery";
+									}
+								}
+								else {
+									endpoint = policyGestioneToken.getIntrospectionEndpoint();
+								}
+								this.msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_ENDPOINT_SERVIZIO_INTROSPECTION, endpoint);
 								
 								this.msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken");
 								
-								esitoIntrospectionToken = gestioneTokenEngine.introspectionToken(datiInvocazione, esitoPresenzaToken);
+								esitoIntrospectionToken = gestioneTokenEngine.introspectionToken(datiInvocazione, esitoPresenzaToken, esitoDynamicDiscovery);
 								if(esitoIntrospectionToken.isValido()) {
 									
 									this.msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken.completataSuccesso");
@@ -332,16 +419,29 @@ public class RicezioneContenutiApplicativiGestioneToken {
 							
 						}
 						
+						
 						// userInfo
 						if(!fineGestione) {
 							
 							if(policyGestioneToken.isUserInfo()) {
 							
-								this.msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_ENDPOINT_SERVIZIO_USER_INFO, policyGestioneToken.getUserInfoEndpoint());
+								String endpoint = null;
+								if(esitoDynamicDiscovery!=null) {
+									if(esitoDynamicDiscovery.isValido() && esitoDynamicDiscovery.getDynamicDiscovery()!=null) {
+										endpoint = esitoDynamicDiscovery.getDynamicDiscovery().getUserinfoEndpoint();
+									}
+									else {
+										endpoint = "dynamic discovery";
+									}
+								}
+								else {
+									endpoint = policyGestioneToken.getUserInfoEndpoint();
+								}
+								this.msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_ENDPOINT_SERVIZIO_USER_INFO, endpoint);
 								
 								this.msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken");
 								
-								esitoUserInfoToken = gestioneTokenEngine.userInfoToken(datiInvocazione, esitoPresenzaToken);
+								esitoUserInfoToken = gestioneTokenEngine.userInfoToken(datiInvocazione, esitoPresenzaToken, esitoDynamicDiscovery);
 								if(esitoUserInfoToken.isValido()) {
 									
 									this.msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken.completataSuccesso");
@@ -360,7 +460,7 @@ public class RicezioneContenutiApplicativiGestioneToken {
 								else {
 									
 									this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esitoUserInfoToken.getDetails());
-									if(policyGestioneToken.isIntrospectionWarningOnly()) {
+									if(policyGestioneToken.isUserInfoWarningOnly()) {
 										this.msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken.warningOnly.fallita");
 									}
 									else {
@@ -434,7 +534,19 @@ public class RicezioneContenutiApplicativiGestioneToken {
 							informazioniTokenNormalizzate = GestoreToken.normalizeInformazioniToken(listaEsiti);
 							informazioniTokenNormalizzate.setValid(false);
 						}
+						if(informazioniTokenNormalizzate==null && esitoDynamicDiscovery!=null && esitoDynamicDiscovery.getDynamicDiscovery()!=null) {
+							informazioniTokenNormalizzate = new InformazioniToken();
+							if(esitoPresenzaToken!=null) {
+								informazioniTokenNormalizzate.setToken(esitoPresenzaToken.getToken());
+							}
+							informazioniTokenNormalizzate.setDynamicDiscovery(esitoDynamicDiscovery.getDynamicDiscovery());
+						}
 						if(informazioniTokenNormalizzate!=null) {
+							
+							if(esitoDynamicDiscovery!=null) {
+								informazioniTokenNormalizzate.setDynamicDiscovery(esitoDynamicDiscovery.getDynamicDiscovery());
+							}
+							
 							this.pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE, informazioniTokenNormalizzate);
 							
 							this.transaction.setInformazioniToken(informazioniTokenNormalizzate);
@@ -448,7 +560,19 @@ public class RicezioneContenutiApplicativiGestioneToken {
 								informazioniTokenNormalizzate = GestoreToken.normalizeInformazioniToken(listaEsiti);
 								informazioniTokenNormalizzate.setValid(true);
 							}
+							if(informazioniTokenNormalizzate==null && esitoDynamicDiscovery!=null && esitoDynamicDiscovery.getDynamicDiscovery()!=null) {
+								informazioniTokenNormalizzate = new InformazioniToken();
+								if(esitoPresenzaToken!=null) {
+									informazioniTokenNormalizzate.setToken(esitoPresenzaToken.getToken());
+								}
+								informazioniTokenNormalizzate.setDynamicDiscovery(esitoDynamicDiscovery.getDynamicDiscovery());
+							}
 							if(informazioniTokenNormalizzate!=null) {
+								
+								if(esitoDynamicDiscovery!=null) {
+									informazioniTokenNormalizzate.setDynamicDiscovery(esitoDynamicDiscovery.getDynamicDiscovery());
+								}
+								
 								this.pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE, informazioniTokenNormalizzate);
 								
 								this.transaction.setInformazioniToken(informazioniTokenNormalizzate);
@@ -519,6 +643,8 @@ public class RicezioneContenutiApplicativiGestioneToken {
 						}
 					}
 					
+					updateCredenzialiToken();
+					
 					return false;
 					
 				}
@@ -531,4 +657,35 @@ public class RicezioneContenutiApplicativiGestioneToken {
 		
 	}
 	
+	private void updateCredenzialiToken() {
+		
+		// Viene chiamato se la validazione fallisce
+		
+		if(OpenSPCoop2Properties.getInstance().isGestioneTokenSaveTokenAuthenticationInfoValidationFailed()) {
+			CredenzialiMittente credenzialiMittente = this.transaction.getCredenzialiMittente();
+			if(credenzialiMittente==null) {
+				credenzialiMittente = new CredenzialiMittente();
+				try {
+					this.transaction.setCredenzialiMittente(credenzialiMittente);
+				}catch(Exception e) {
+					this.logCore.error("SetCredenzialiMittente error: "+e.getMessage(),e);
+				}
+			}
+			InformazioniToken informazioniTokenNormalizzate = null;
+			if(this.pddContext.containsKey(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE)) {
+				informazioniTokenNormalizzate = (InformazioniToken) this.pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+			}
+			if(informazioniTokenNormalizzate!=null) {
+				try {
+					GestoreAutenticazione.updateCredenzialiToken(
+							this.identitaPdD,
+							RicezioneContenutiApplicativi.ID_MODULO, this.idTransazione, informazioniTokenNormalizzate, null, credenzialiMittente, 
+							this.openspcoopstate, "RicezioneContenutiApplicativi.credenzialiToken", this.requestInfo,
+							this.pddContext);
+				}catch(Exception e) {
+					this.logCore.error("updateCredenzialiToken error: "+e.getMessage(),e);
+				}
+			}
+		}
+	}
 }

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -20,12 +20,14 @@
 
 package org.openspcoop2.core.monitor.rs.server.api.impl.utils;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 
 import org.openspcoop2.core.eventi.constants.TipoSeverita;
+import org.openspcoop2.core.monitor.rs.server.model.DimensioniReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneFullSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
@@ -36,7 +38,9 @@ import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteIdentifica
 import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteIndirizzoIPEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoReportEnum;
+import org.openspcoop2.core.monitor.rs.server.model.TokenClaimDistribuzioneStatisticaEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TokenClaimEnum;
+import org.openspcoop2.core.monitor.rs.server.model.TokenClaimSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.UnitaTempoReportEnum;
 import org.openspcoop2.core.statistiche.constants.TipoBanda;
 import org.openspcoop2.core.statistiche.constants.TipoLatenza;
@@ -46,6 +50,7 @@ import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.utils.service.beans.DiagnosticoSeveritaEnum;
 import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
+import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiExporter;
 
 /**
@@ -109,6 +114,16 @@ public class Enums {
 		Enums.toTokenClaim.put(TokenClaimEnum.SUBJECT, CostantiExporter.CLAIM_SUBJECT);
 		Enums.toTokenClaim.put(TokenClaimEnum.USERNAME, CostantiExporter.CLAIM_USERNAME);
 	}
+	
+	public static final Map<TokenClaimSearchEnum, String> toTokenSearchClaim = new HashMap<>();
+	static {
+		Enums.toTokenSearchClaim.put(TokenClaimSearchEnum.CLIENT_ID, CostantiExporter.CLAIM_CLIENT_ID);
+		Enums.toTokenSearchClaim.put(TokenClaimSearchEnum.EMAIL, CostantiExporter.CLAIM_EMAIL);
+		Enums.toTokenSearchClaim.put(TokenClaimSearchEnum.ISSUER, CostantiExporter.CLAIM_ISSUER);
+		Enums.toTokenSearchClaim.put(TokenClaimSearchEnum.SUBJECT, CostantiExporter.CLAIM_SUBJECT);
+		Enums.toTokenSearchClaim.put(TokenClaimSearchEnum.USERNAME, CostantiExporter.CLAIM_USERNAME);
+		Enums.toTokenSearchClaim.put(TokenClaimSearchEnum.PDND_ORGANIZATION_NAME, CostantiExporter.CLAIM_PDND_ORGANIZATION_NAME);
+	}
 
 	public static final Map<FormatoReportEnum, String> toTipoFormato = new HashMap<>();
 	static {
@@ -138,6 +153,17 @@ public class Enums {
 		Enums.toTipoVisualizzazione.put(TipoInformazioneReportEnum.TEMPO_MEDIO_RISPOSTA,
 				TipoVisualizzazione.TEMPO_MEDIO_RISPOSTA);
 	}
+	
+	private static final EnumMap<DimensioniReportEnum, NumeroDimensioni> toNumeroDimensioni = new EnumMap<>(DimensioniReportEnum.class);
+	public static Map<DimensioniReportEnum, NumeroDimensioni> getNumeroDimensioniMap() {
+		return toNumeroDimensioni;
+	}
+	static {
+		Enums.toNumeroDimensioni.put(DimensioniReportEnum._2D,
+				NumeroDimensioni.DIMENSIONI_2);
+		Enums.toNumeroDimensioni.put(DimensioniReportEnum._3D,
+				NumeroDimensioni.DIMENSIONI_3);
+	}
 
 	public static final Map<OccupazioneBandaEnum, TipoBanda> toTipoBanda = new HashMap<>();
 	static {
@@ -160,6 +186,16 @@ public class Enums {
 		Enums.toClaim.put(TokenClaimEnum.ISSUER, CostantiExporter.CLAIM_ISSUER);
 		Enums.toClaim.put(TokenClaimEnum.SUBJECT, CostantiExporter.CLAIM_SUBJECT);
 		Enums.toClaim.put(TokenClaimEnum.USERNAME, CostantiExporter.CLAIM_USERNAME);
+	}
+	
+	public static final Map<TokenClaimDistribuzioneStatisticaEnum, String> toDistribuzioneTokenClaim = new HashMap<>();
+	static {
+		Enums.toDistribuzioneTokenClaim.put(TokenClaimDistribuzioneStatisticaEnum.CLIENT_ID, CostantiExporter.CLAIM_CLIENT_ID);
+		Enums.toDistribuzioneTokenClaim.put(TokenClaimDistribuzioneStatisticaEnum.CLIENT_ID_PDND_INFORMAZIONI, CostantiExporter.CLAIM_PDND_ORGANIZATION_NAME);
+		Enums.toDistribuzioneTokenClaim.put(TokenClaimDistribuzioneStatisticaEnum.EMAIL, CostantiExporter.CLAIM_EMAIL);
+		Enums.toDistribuzioneTokenClaim.put(TokenClaimDistribuzioneStatisticaEnum.ISSUER, CostantiExporter.CLAIM_ISSUER);
+		Enums.toDistribuzioneTokenClaim.put(TokenClaimDistribuzioneStatisticaEnum.SUBJECT, CostantiExporter.CLAIM_SUBJECT);
+		Enums.toDistribuzioneTokenClaim.put(TokenClaimDistribuzioneStatisticaEnum.USERNAME, CostantiExporter.CLAIM_USERNAME);
 	}
 
 	public static final Map<UnitaTempoReportEnum, StatisticType> toStatisticType = new HashMap<>();
@@ -201,11 +237,24 @@ public class Enums {
 	public static final TipoCredenzialeMittente toTipoCredenzialeMittente(TokenClaimEnum v) {
 		if (v==null) return null;
 		switch (v) {
-		case CLIENT_ID: return TipoCredenzialeMittente.token_clientId;
-		case EMAIL: return TipoCredenzialeMittente.token_eMail;
-		case ISSUER: return TipoCredenzialeMittente.token_issuer;
-		case SUBJECT: return TipoCredenzialeMittente.token_subject;
-		case USERNAME: return TipoCredenzialeMittente.token_username;
+		case CLIENT_ID: return TipoCredenzialeMittente.TOKEN_CLIENT_ID;
+		case EMAIL: return TipoCredenzialeMittente.TOKEN_EMAIL;
+		case ISSUER: return TipoCredenzialeMittente.TOKEN_ISSUER;
+		case SUBJECT: return TipoCredenzialeMittente.TOKEN_SUBJECT;
+		case USERNAME: return TipoCredenzialeMittente.TOKEN_USERNAME;
+		default: return null;
+		}
+	}
+	
+	public static final TipoCredenzialeMittente toTipoCredenzialeMittente(TokenClaimSearchEnum v) {
+		if (v==null) return null;
+		switch (v) {
+		case CLIENT_ID: return TipoCredenzialeMittente.TOKEN_CLIENT_ID;
+		case EMAIL: return TipoCredenzialeMittente.TOKEN_EMAIL;
+		case ISSUER: return TipoCredenzialeMittente.TOKEN_ISSUER;
+		case SUBJECT: return TipoCredenzialeMittente.TOKEN_SUBJECT;
+		case USERNAME: return TipoCredenzialeMittente.TOKEN_USERNAME;
+		case PDND_ORGANIZATION_NAME: return TipoCredenzialeMittente.PDND_ORGANIZATION_NAME;
 		default: return null;
 		}
 	}

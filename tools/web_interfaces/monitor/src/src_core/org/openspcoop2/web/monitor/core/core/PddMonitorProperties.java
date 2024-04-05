@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -650,6 +650,10 @@ public class PddMonitorProperties {
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.distribuzioneNonTemporale.periodoPersonalizzato.mostraUnitaTempo", true, true));
 	}
 	
+	public boolean isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.distribuzioneToken.clientIdConInformazioniPDND.export.aggiuntiInformazioneApplicativoRegistrato", false, true));
+	}
+	
 	public Integer getIntervalloTimeoutRicercaStatistiche() throws Exception{
 		String timeoutS = this.appProperties.getProperty("statistiche.timeoutRicercaStatistiche", false, true);
 		return StringUtils.isNotBlank(timeoutS) ? Integer.parseInt(timeoutS) : null;
@@ -659,6 +663,13 @@ public class PddMonitorProperties {
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.latenzaPorta.enabled", true, true));
 	}
 
+	public boolean isStatisticheVisualizzaValoriNelleCelleDelGraficoHeatmap() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.graficoHeatmap.visualizzaValoriNelleCelle.enabled", false, true));
+	}
+	
+	public boolean isStatisticheVisualizzaValoreZeroNelGraficoHeatmap() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.graficoHeatmap.visualizzaValoreZero.enabled", false, true));
+	}
 
 	
 	// periodo refresh live

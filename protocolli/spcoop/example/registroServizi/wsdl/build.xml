@@ -61,20 +61,20 @@
 		<fileset dir="${required_lib}/shared" includes="xercesImpl-2.12.2.jar"/>
 		<fileset dir="${required_lib}/shared" includes="xalan-2.7.3.jar"/>
 		<fileset dir="${required_lib}/shared" includes="serializer-2.7.3.jar"/>
-		<fileset dir="${required_lib}/cxf" includes="cxf-tools-validator-4.0.2.jar"/>
-		<fileset dir="${required_lib}/cxf" includes="cxf-tools-wsdlto-core-4.0.2.jar"/>
-		<fileset dir="${required_lib}/cxf" includes="cxf-tools-wsdlto-frontend-jaxws-4.0.2.jar"/>
-		<fileset dir="${required_lib}/cxf" includes="cxf-tools-wsdlto-databinding-jaxb-4.0.2.jar"/>
-		<fileset dir="${required_lib}/cxf" includes="cxf-tools-common-4.0.2.jar"/>
-		<fileset dir="${required_lib}/cxf" includes="cxf-core-4.0.2-gov4j-1.jar"/>
-		<fileset dir="${required_lib}/cxf" includes="cxf-rt-wsdl-4.0.2.jar"/>
-		<fileset dir="${required_lib}/cxf" includes="cxf-rt-frontend-jaxws-4.0.2.jar"/>
-		<fileset dir="${required_lib}/cxf" includes="cxf-rt-frontend-simple-4.0.2.jar"/>
-		<fileset dir="${required_lib}/cxf" includes="cxf-rt-databinding-jaxb-4.0.2.jar"/>
-		<fileset dir="${required_lib}/cxf" includes="cxf-rt-bindings-soap-4.0.2.jar"/>	
-		<fileset dir="${required_lib}/cxf" includes="stax2-api-4.2.1.jar"/>
-		<fileset dir="${required_lib}/cxf" includes="woodstox-core-6.5.1.jar"/>
-		<fileset dir="${required_lib}/cxf" includes="xmlschema-core-2.3.0.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-tools-validator-4.0.4.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-tools-wsdlto-core-4.0.4.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-tools-wsdlto-frontend-jaxws-4.0.4.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-tools-wsdlto-databinding-jaxb-4.0.4.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-tools-common-4.0.4.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-core-4.0.4-gov4j-1.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-rt-wsdl-4.0.4.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-rt-frontend-jaxws-4.0.4.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-rt-frontend-simple-4.0.4.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-rt-databinding-jaxb-4.0.4.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-rt-bindings-soap-4.0.4.jar"/>	
+		<fileset dir="${required_lib}/cxf" includes="stax2-api-4.2.2.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="woodstox-core-6.6.1.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="xmlschema-core-2.3.1.jar"/>
 		<fileset dir="${required_lib}/cxf" includes="xml-resolver-1.2.jar"/>
 		<fileset dir="${required_lib}/saaj" includes="*.jar"/>
 		<fileset dir="${required_lib}/commons" includes="commons-collections-3.2.2.jar"/>

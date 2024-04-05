@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -39,6 +39,7 @@ import org.openspcoop2.security.keystore.PublicKeyStore;
 import org.openspcoop2.security.keystore.RemoteStore;
 import org.openspcoop2.security.keystore.SSLConfigProps;
 import org.openspcoop2.security.keystore.SSLSocketFactory;
+import org.openspcoop2.security.keystore.SecretKeyStore;
 import org.openspcoop2.security.keystore.SymmetricKeystore;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.cache.Cache;
@@ -452,6 +453,14 @@ public class GestoreKeystoreCaching {
 	}
 	public static PublicKeyStore getPublicKeyStore(RequestInfo requestInfo, byte[] publicKey, String algorithm) throws SecurityException{
 		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getPublicKeyStore(requestInfo, publicKey, algorithm);
+	}
+	
+	
+	public static SecretKeyStore getSecretKeyStore(RequestInfo requestInfo, String secretKeyPath, String algorithm) throws SecurityException{
+		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getSecretKeyStore(requestInfo, secretKeyPath, algorithm);
+	}
+	public static SecretKeyStore getSecretKeyStore(RequestInfo requestInfo, byte[] secretKey, String algorithm) throws SecurityException{
+		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getSecretKeyStore(requestInfo, secretKey, algorithm);
 	}
 	
 	

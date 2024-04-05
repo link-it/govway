@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -33,16 +33,19 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 import org.openspcoop2.monitor.sdk.condition.IFilter;
+import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
@@ -54,6 +57,7 @@ import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.resources.MapReader;
@@ -1680,7 +1684,10 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	}
 
 	public List<SelectItem> getEsitiContesto() {
-		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
+		return getEsitiContesto(false);
+	}
+	public List<SelectItem> getEsitiContesto(boolean addFasi) {
+		ArrayList<SelectItem> list = new ArrayList<>();
 
 		try{
 
@@ -1688,23 +1695,89 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			
 			list.add(new SelectItem(EsitoUtils.ALL_VALUE_AS_STRING,esitoUtils.getEsitoContestoLabelFromValue(EsitoUtils.ALL_VALUE_AS_STRING)));
 			
-			EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(BaseSearchForm.log, getSafeProtocol());
-
-			List<String> esiti = esitiProperties.getEsitiTransactionContextCodeOrderLabel();
-			for (String esito : esiti) {
-
-				SelectItem si = new SelectItem(esito,esitoUtils.getEsitoContestoLabelFromValue(esito));
-
-				list.add(si);
+			boolean addReqIn = false;
+			boolean addReqOut = false;
+			boolean addResOut = false;
+			if(addFasi) {
+				boolean erogazioni = !TipologiaRicerca.uscita.equals(this.tipologiaRicerca);
+				boolean fruizioni = !TipologiaRicerca.ingresso.equals(this.tipologiaRicerca);
+				addReqIn = DynamicPdDBeanUtils.getInstance(BaseSearchForm.log).existsFaseTracciamentoDBRequestIn(erogazioni, fruizioni);
+				addReqOut = DynamicPdDBeanUtils.getInstance(BaseSearchForm.log).existsFaseTracciamentoDBRequestOut(erogazioni, fruizioni);
+				addResOut = DynamicPdDBeanUtils.getInstance(BaseSearchForm.log).existsFaseTracciamentoDBResponseOut(erogazioni, fruizioni);
 			}
+			
+			addEsitiContesto(addReqIn, addReqOut, addResOut, esitoUtils, list);
 
 		}catch(Exception e){
-			throw new RuntimeException(e.getMessage(),e);
+			throw new UtilsRuntimeException(e.getMessage(),e);
 		}
 
 		return list;
 	}
-
+	private void addEsitiContesto(boolean addReqIn, boolean addReqOut, boolean addResOut, EsitoUtils esitoUtils, ArrayList<SelectItem> list) throws ProtocolException {
+		EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(BaseSearchForm.log, getSafeProtocol());
+		List<String> esiti = esitiProperties.getEsitiTransactionContextCodeOrderLabel();
+		for (String esito : esiti) {
+			addEsitoContesto(addReqIn, addReqOut, addResOut, esitoUtils, list,
+					esito, esiti);
+		}
+	}
+	private void addEsitoContesto(boolean addReqIn, boolean addReqOut, boolean addResOut, EsitoUtils esitoUtils, ArrayList<SelectItem> list,
+			String esito, List<String> esiti) {
+		addEsitoContestoFasiIntermedie(addReqIn, addReqOut, addResOut, esitoUtils, list,
+				esito, esiti);
+		
+		String label = esitoUtils.getEsitoContestoLabelFromValue(esito);
+		if(addReqIn || addReqOut || addResOut) {
+			if(esiti.size()>1) {
+				label = label + " - " + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT_COMPLETE;
+			}
+			else {
+				label = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT_COMPLETE;
+			}
+		}
+		SelectItem si = new SelectItem(esito, label);	
+		list.add(si);
+	}
+	private void addEsitoContestoFasiIntermedie(boolean addReqIn, boolean addReqOut, boolean addResOut, EsitoUtils esitoUtils, ArrayList<SelectItem> list,
+			String esito, List<String> esiti) {
+		if(addReqIn) {
+			String label = esitoUtils.getEsitoContestoLabelFromValue(esito);
+			if(esiti.size()>1) {
+				label = label + " - " + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
+			}
+			else {
+				label = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
+			}
+			SelectItem si = new SelectItem(EsitoUtils.buildEsitoContext(esito, FaseTracciamento.IN_REQUEST), label);
+			list.add(si);
+		}
+		
+		if(addReqOut) {
+			String label = esitoUtils.getEsitoContestoLabelFromValue(esito);
+			if(esiti.size()>1) {
+				label = label + " - " + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+			}
+			else {
+				label = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+			}
+			SelectItem si = new SelectItem(EsitoUtils.buildEsitoContext(esito, FaseTracciamento.OUT_REQUEST), label);
+			list.add(si);
+		}
+		
+		if(addResOut) {
+			String label = esitoUtils.getEsitoContestoLabelFromValue(esito);
+			if(esiti.size()>1) {
+				label = label + " - " + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT;
+			}
+			else {
+				label = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT;
+			}
+			SelectItem si = new SelectItem(EsitoUtils.buildEsitoContext(esito, FaseTracciamento.OUT_RESPONSE), label);
+			list.add(si);
+		}
+	}
+	
 	public List<SelectItem> getTipiIdMessaggio() {
 		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
 		list.add(new SelectItem(TipoMessaggio.Richiesta.name(),TipoMessaggio.Richiesta.getLabel()));
@@ -2320,6 +2393,34 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		
 		if (StringUtils.isEmpty(clientAddressMode)	|| "--".equals(clientAddressMode))
 			this.clientAddressMode = null;
+	}
+	
+	public boolean isShowPDNDFilters() {
+		return TipologiaRicerca.ingresso.equals(this.getTipologiaRicercaEnum()) && 
+				org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(this.getProtocollo());
+	}
+	
+	public List<SelectItem> getListaTokenClaim(){
+
+		List<SelectItem> lst = new ArrayList<>();
+		
+		MessageManager mm = MessageManager.getInstance();
+		
+		boolean showPDNDFilters = isShowPDNDFilters();
+		
+		lst.add(new SelectItem("--", "--"));
+		lst.add(new SelectItem(TipoCredenzialeMittente.TOKEN_ISSUER.getRawValue(), mm.getMessage(Costanti.SEARCH_TOKEN_ISSUER)));  
+		lst.add(new SelectItem(TipoCredenzialeMittente.TOKEN_CLIENT_ID.getRawValue(), mm.getMessage(Costanti.SEARCH_TOKEN_CLIENT_ID)));  
+		lst.add(new SelectItem(TipoCredenzialeMittente.TOKEN_SUBJECT.getRawValue(), mm.getMessage(Costanti.SEARCH_TOKEN_SUBJECT)));  
+		lst.add(new SelectItem(TipoCredenzialeMittente.TOKEN_USERNAME.getRawValue(), mm.getMessage(Costanti.SEARCH_TOKEN_USERNAME)));  
+		lst.add(new SelectItem(TipoCredenzialeMittente.TOKEN_EMAIL.getRawValue(), mm.getMessage(Costanti.SEARCH_TOKEN_EMAIL)));  
+		
+		if(showPDNDFilters) {
+			/**lst.add(new SelectItem("--", "--"));*/
+			lst.add(new SelectItem(TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.getRawValue(), mm.getMessage(Costanti.SEARCH_PDND_PREFIX_ORGANIZATION_NAME)));   
+		}
+		
+		return lst;
 	}
 	
 	public String getTokenClaim() {

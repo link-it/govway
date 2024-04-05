@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -35,6 +35,12 @@ public class RandomUtilities {
 		if(_rnd==null) {
 			_rnd = new SecureRandom();
 		}
+	}
+	public static SecureRandom getSecureRandom() {
+		if(_rnd==null) {
+			initRandom();
+		}
+		return _rnd;
 	}
 	public static java.util.Random getRandom() {
 		if(_rnd==null) {

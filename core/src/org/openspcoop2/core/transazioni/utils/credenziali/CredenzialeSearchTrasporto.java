@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -28,6 +28,8 @@ import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.dao.ICredenzialeMittenteService;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
+import org.openspcoop2.generic_project.exception.ExpressionException;
+import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.utils.UtilsException;
@@ -47,7 +49,7 @@ public class CredenzialeSearchTrasporto extends AbstractSearchCredenziale {
 	private String tipoAutenticazione;
 	
 	public CredenzialeSearchTrasporto(String tipoAutenticazione) {
-		super(TipoCredenzialeMittente.trasporto);
+		super(TipoCredenzialeMittente.TRASPORTO);
 		this.tipoAutenticazione = tipoAutenticazione;
 	}
 
@@ -70,41 +72,33 @@ public class CredenzialeSearchTrasporto extends AbstractSearchCredenziale {
 		
 		try {
 		
-			IPaginatedExpression pagEpression = credenzialeMittentiService.newPaginatedExpression();
-			pagEpression.and();
+			IPaginatedExpression pagExpression = credenzialeMittentiService.newPaginatedExpression();
+			pagExpression.and();
 			
-			pagEpression.equals(CredenzialeMittente.model().TIPO, CredenzialeTrasporto.getTipoTrasporto(this.tipo, this.tipoAutenticazione));
+			pagExpression.equals(CredenzialeMittente.model().TIPO, CredenzialeTrasporto.getTipoTrasporto(this.tipo, this.tipoAutenticazione));
 			
 			if(CredenzialeTrasporto.isSsl(this.tipoAutenticazione) && ricercaEsatta) {
-				Map<String,  List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(credential, PrincipalType.SUBJECT);
-				for (String key : hashSubject.keySet()) {
-					List<String> listValues = hashSubject.get(key);
-					for (String value : listValues) {
-						if(caseSensitive) {
-							pagEpression.like(CredenzialeMittente.model().CREDENZIALE, "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", LikeMode.ANYWHERE);
-						}
-						else {
-							pagEpression.ilike(CredenzialeMittente.model().CREDENZIALE, "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", LikeMode.ANYWHERE);
-						}
-					}
-				}				
+				setLikeConditionSslRicercaEsatta(pagExpression, caseSensitive,
+						credential);		
 			}
 			else {
-				if(ricercaEsatta && caseSensitive) {
-					pagEpression.equals(CredenzialeMittente.model().CREDENZIALE, credential);
+				if(ricercaEsatta) {
+					if(caseSensitive) {
+						pagExpression.equals(CredenzialeMittente.model().CREDENZIALE, credential);
+					}
+					else {
+						pagExpression.ilike(CredenzialeMittente.model().CREDENZIALE, credential, LikeMode.EXACT);
+					}
 				}
-				else if(ricercaEsatta && !caseSensitive) {
-					pagEpression.ilike(CredenzialeMittente.model().CREDENZIALE, credential, LikeMode.EXACT);
-				}
-				else if(!ricercaEsatta && !caseSensitive) {
-					pagEpression.ilike(CredenzialeMittente.model().CREDENZIALE, credential, LikeMode.ANYWHERE);
+				else if(!caseSensitive) {
+					pagExpression.ilike(CredenzialeMittente.model().CREDENZIALE, credential, LikeMode.ANYWHERE);
 				}
 				else { // !ricercaEsatta && caseSensitive
-					pagEpression.like(CredenzialeMittente.model().CREDENZIALE, credential, LikeMode.ANYWHERE);
+					pagExpression.like(CredenzialeMittente.model().CREDENZIALE, credential, LikeMode.ANYWHERE);
 				}
 			}
 		
-			return pagEpression;
+			return pagExpression;
 			
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(), e);
@@ -112,10 +106,27 @@ public class CredenzialeSearchTrasporto extends AbstractSearchCredenziale {
 		
 	}
 	
+	private void setLikeConditionSslRicercaEsatta(IPaginatedExpression pagExpression, boolean caseSensitive,
+			String credential) throws ExpressionNotImplementedException, ExpressionException, UtilsException {
+		Map<String,  List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(credential, PrincipalType.SUBJECT);
+		for (Map.Entry<String,List<String>> entry : hashSubject.entrySet()) {
+			String key = entry.getKey();
+			List<String> listValues = hashSubject.get(key);
+			for (String value : listValues) {
+				if(caseSensitive) {
+					pagExpression.like(CredenzialeMittente.model().CREDENZIALE, "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", LikeMode.ANYWHERE);
+				}
+				else {
+					pagExpression.ilike(CredenzialeMittente.model().CREDENZIALE, "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", LikeMode.ANYWHERE);
+				}
+			}
+		}	
+	}
+	
 
 	public static List<CredenzialeMittente> filterList(List<CredenzialeMittente> originalList, String credenziale, Logger log) {
 		// Possono esistere piu' sil che hanno una porzione di subject uguale, devo quindi verificare che sia proprio quello che cerco
-		List<CredenzialeMittente> filteredList = new ArrayList<CredenzialeMittente>();
+		List<CredenzialeMittente> filteredList = new ArrayList<>();
 		if(originalList!=null) {
 			for (CredenzialeMittente credenzialeMittentePotenziale : originalList) {
 				String subjectPotenziale =  credenzialeMittentePotenziale.getCredenziale();
@@ -129,7 +140,7 @@ public class CredenzialeSearchTrasporto extends AbstractSearchCredenziale {
 				}
 			}
 		}
-		//System.out.println("FILTRO PRIMA["+originalList.size()+"] DOPO["+filteredList.size()+"]");
+		/**System.out.println("FILTRO PRIMA["+originalList.size()+"] DOPO["+filteredList.size()+"]");*/
 		return filteredList;
 	}
 }

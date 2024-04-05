@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -49,9 +49,14 @@ public class PolicyDati implements Serializable {
 	private String connettore;
 	
 	private String tokenPolicyNegoziazione;
+	
+	private String tokenPolicyValidazioneDynamicDiscovery;
+	private String tokenPolicyValidazioneJwt;
 	private String tokenPolicyValidazioneIntrospection;
 	private String tokenPolicyValidazioneUserInfo;
+	
 	private String attributeAuthority;
+	private String attributeAuthorityResponseJwt;
 	
 	public String getProfilo() {
 		return this.profilo;
@@ -112,6 +117,19 @@ public class PolicyDati implements Serializable {
 	public void setTokenPolicyNegoziazione(String tokenPolicyNegoziazione) {
 		this.tokenPolicyNegoziazione = tokenPolicyNegoziazione;
 	}
+	
+	public String getTokenPolicyValidazioneDynamicDiscovery() {
+		return this.tokenPolicyValidazioneDynamicDiscovery;
+	}
+	public void setTokenPolicyValidazioneDynamicDiscovery(String tokenPolicyValidazioneDynamicDiscovery) {
+		this.tokenPolicyValidazioneDynamicDiscovery = tokenPolicyValidazioneDynamicDiscovery;
+	}
+	public String getTokenPolicyValidazioneJwt() {
+		return this.tokenPolicyValidazioneJwt;
+	}
+	public void setTokenPolicyValidazioneJwt(String tokenPolicyValidazioneJwt) {
+		this.tokenPolicyValidazioneJwt = tokenPolicyValidazioneJwt;
+	}
 	public String getTokenPolicyValidazioneIntrospection() {
 		return this.tokenPolicyValidazioneIntrospection;
 	}
@@ -124,10 +142,17 @@ public class PolicyDati implements Serializable {
 	public void setTokenPolicyValidazioneUserInfo(String tokenPolicyValidazioneUserInfo) {
 		this.tokenPolicyValidazioneUserInfo = tokenPolicyValidazioneUserInfo;
 	}
+	
 	public String getAttributeAuthority() {
 		return this.attributeAuthority;
 	}
 	public void setAttributeAuthority(String attributeAuthority) {
 		this.attributeAuthority = attributeAuthority;
+	}
+	public String getAttributeAuthorityResponseJwt() {
+		return this.attributeAuthorityResponseJwt;
+	}
+	public void setAttributeAuthorityResponseJwt(String attributeAuthorityResponseJwt) {
+		this.attributeAuthorityResponseJwt = attributeAuthorityResponseJwt;
 	}
 }

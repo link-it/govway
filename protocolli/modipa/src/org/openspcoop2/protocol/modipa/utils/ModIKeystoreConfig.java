@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -32,6 +32,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.utils.ModIKeystoreUtils;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.KeystoreParams;
 
 /**
  * ModIKeystoreConfig
@@ -42,15 +43,19 @@ import org.openspcoop2.utils.UtilsException;
  */
 public class ModIKeystoreConfig extends ModIKeystoreUtils {
 
-	public static boolean isKeystoreDefinitoInFruizione(IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica asps) throws ProtocolException, UtilsException {
+	public static boolean isKeystoreDefinitoInFruizione(IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica asps) throws ProtocolException {
+		String mode = getKeystoreDefinitoIn(soggettoFruitore, asps);
+		return mode!=null && ModICostanti.MODIPA_KEYSTORE_FRUIZIONE.equals(mode);
+	}
+	public static boolean isKeystoreDefinitoInTokenPolicy(IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica asps) throws ProtocolException {
+		String mode = getKeystoreDefinitoIn(soggettoFruitore, asps);
+		return mode!=null && ModICostanti.MODIPA_KEYSTORE_FRUIZIONE_TOKEN_POLICY.equals(mode);
+	}
+	private static String getKeystoreDefinitoIn(IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica asps) throws ProtocolException {
 		boolean fruizione = true;
 		List<ProtocolProperty> listProtocolProperties = ModIPropertiesUtils.getProtocolProperties(fruizione, soggettoFruitore, asps);
-		String mode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, 
+		return ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, 
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE);
-		if(mode!=null && ModICostanti.MODIPA_KEYSTORE_FRUIZIONE.equals(mode)) {
-			return true;
-		}
-		return false;
 	}
 	
 	public ModIKeystoreConfig(ServizioApplicativo sa, String securityMessageProfile) throws ProtocolException, UtilsException {
@@ -64,6 +69,10 @@ public class ModIKeystoreConfig extends ModIKeystoreUtils {
 				getSicurezzaMessaggioCertificatiKeyStorePassword(),
 				getSicurezzaMessaggioCertificatiKeyAlias(),
 				getSicurezzaMessaggioCertificatiKeyPassword());
+	}
+	
+	public ModIKeystoreConfig(KeystoreParams kp) throws ProtocolException, UtilsException {
+		super(kp);
 	}
 	
 	private static ModIProperties modIProperties = null;

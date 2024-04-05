@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -80,7 +80,7 @@ public class GestoreConsegnaMultipla {
 	private static DAOFactory daoFactoryDevNull = null;
 	private static ServiceManagerProperties daoFactoryServiceManagerPropertiesTransazioni = null;
 	private static ServiceManagerProperties daoFactoryDevNullServiceManagerPropertiesTransazioni = null;
-	private static Logger daoFactoryLoggerTransazioni = null;
+	/**private static Logger daoFactoryLoggerTransazioni = null;*/
 	private static Logger daoFactoryLoggerTransazioniSql = null;
 	private static Logger daoFactoryLoggerTransazioniDevNull = null;
 
@@ -91,14 +91,15 @@ public class GestoreConsegnaMultipla {
 		if(gestoreConsegnaMultipla==null){
 			String tipoDatabase = null;
 			boolean debug = false;
+			Logger daoFactoryLoggerTransazioni = null;
 			try{
 				openspcoopProperties = OpenSPCoop2Properties.getInstance();
 
 				tipoDatabase = openspcoopProperties.getDatabaseType();
-				//System.out.println("DS["+this.datasource+"] TIPODB["+this.tipoDatabase+"]");
+				/**System.out.println("DS["+this.datasource+"] TIPODB["+this.tipoDatabase+"]");*/
 
 				if(tipoDatabase==null){
-					throw new Exception("Tipo Database non definito");
+					throw new TransactionMultiDeliverException("Tipo Database non definito");
 				}
 
 				openspcoopProperties = OpenSPCoop2Properties.getInstance();
@@ -144,17 +145,17 @@ public class GestoreConsegnaMultipla {
 
 	
 	
-	private static java.util.Random _rnd = null;
+	private static java.util.Random rndInstance = null;
 	private static synchronized void initRandom() {
-		if(_rnd==null) {
-			_rnd = new SecureRandom();
+		if(rndInstance==null) {
+			rndInstance = new SecureRandom();
 		}
 	}
 	public static java.util.Random getRandom() {
-		if(_rnd==null) {
+		if(rndInstance==null) {
 			initRandom();
 		}
-		return _rnd;
+		return rndInstance;
 	}
 	
 
@@ -163,7 +164,6 @@ public class GestoreConsegnaMultipla {
 
 	private Logger log = null;
 	private Logger logSql = null;
-	//	private String datasource = null;
 	private String tipoDatabase = null;
 	private boolean debug = false;
 
@@ -172,13 +172,11 @@ public class GestoreConsegnaMultipla {
 	private boolean transazioniRegistrazioneDumpHeadersCompactEnabled = false;
 
 	public GestoreConsegnaMultipla(Logger log,Logger logSql,
-			//String dataSource,
 			String tipoDatabase,boolean debug) throws TransactionMultiDeliverException{
 
 		this.log = log;
 		this.logSql = logSql;
 		this.tipoDatabase = tipoDatabase;
-		//		this.datasource = dataSource;
 		this.debug = debug;
 
 		boolean usePdDConnection = true;
@@ -189,7 +187,7 @@ public class GestoreConsegnaMultipla {
 			this.msgDiagnosticiOpenSPCoopAppender = new org.openspcoop2.pdd.logger.MsgDiagnosticoOpenSPCoopProtocolAppender();
 			OpenspcoopAppender diagnosticoOpenSPCoopAppender = new OpenspcoopAppender();
 			diagnosticoOpenSPCoopAppender.setTipo("__gestoreConsegnaMultipla");
-			List<Property> diagnosticoOpenSPCoopAppenderProperties = new ArrayList<Property>();
+			List<Property> diagnosticoOpenSPCoopAppenderProperties = new ArrayList<>();
 
 			// Verra poi utilizzata la connessione ottenuta ogni volta che il timer viene eseguito, infatti si usa usePdDConnection
 			OpenSPCoopAppenderUtilities.addParameters(this.logSql, diagnosticoOpenSPCoopAppenderProperties, 
@@ -213,9 +211,9 @@ public class GestoreConsegnaMultipla {
 
 			// Init
 			this.dumpOpenSPCoopAppender = new org.openspcoop2.pdd.logger.DumpOpenSPCoopProtocolAppender();
-			OpenspcoopAppender dumpOpenSPCoopAppender = new OpenspcoopAppender();
-			dumpOpenSPCoopAppender.setTipo("__gestoreConsegnaMultipla");
-			List<Property> dumpOpenSPCoopAppenderProperties = new ArrayList<Property>();
+			OpenspcoopAppender dumpOpenSPCoopAppenderEngine = new OpenspcoopAppender();
+			dumpOpenSPCoopAppenderEngine.setTipo("__gestoreConsegnaMultipla");
+			List<Property> dumpOpenSPCoopAppenderProperties = new ArrayList<>();
 
 			// Verra poi utilizzata la connessione ottenuta ogni volta che il timer viene eseguito, infatti si usa usePdDConnection
 			OpenSPCoopAppenderUtilities.addParameters(this.logSql, dumpOpenSPCoopAppenderProperties, 
@@ -227,8 +225,8 @@ public class GestoreConsegnaMultipla {
 					);
 			OpenSPCoopAppenderUtilities.addCheckProperties(dumpOpenSPCoopAppenderProperties, false);
 
-			dumpOpenSPCoopAppender.setPropertyList(dumpOpenSPCoopAppenderProperties);
-			this.dumpOpenSPCoopAppender.initializeAppender(dumpOpenSPCoopAppender);
+			dumpOpenSPCoopAppenderEngine.setPropertyList(dumpOpenSPCoopAppenderProperties);
+			this.dumpOpenSPCoopAppender.initializeAppender(dumpOpenSPCoopAppenderEngine);
 			this.dumpOpenSPCoopAppender.isAlive();
 			
 			// Indicazioni sulle modalita' di salvataggio degli header del dump
@@ -339,7 +337,8 @@ public class GestoreConsegnaMultipla {
 					}
 					sb.append(" [GestoreConsegnaMultipla."+tipoOperazione+"]");
 					sb.append(" ").append(times.toString());
-					OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniSlowLog().info(sb.toString());
+					String msg = sb.toString();
+					OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniSlowLog().info(msg);
 				}
 			}
 		}
@@ -385,8 +384,9 @@ public class GestoreConsegnaMultipla {
 			
 			int code = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
 			String codeAsString = code+"";
-			if(esitiDaRegistrare!=null && !esitiDaRegistrare.isEmpty() && esitiDaRegistrare.contains(codeAsString)==false){
-				this.log.debug("Non devo registrare l'informazione, esito '"+codeAsString+"' disabilitato nel tracciamento");
+			if(esitiDaRegistrare!=null && !esitiDaRegistrare.isEmpty() && !esitiDaRegistrare.contains(codeAsString)){
+				String msg = "Non devo registrare l'informazione, esito '"+codeAsString+"' disabilitato nel tracciamento";
+				this.log.debug(msg);
 				return;
 			}
 			
@@ -419,13 +419,13 @@ public class GestoreConsegnaMultipla {
 		}
 		
 		Resource dbResource = null;
-		DBTransazioniManager dbManager_transazioni = null;
+		DBTransazioniManager dbManagerTransazioni = null;
 		DBConsegnePreseInCaricoManager dbConsegnePreseInCaricoManager = null;
 		DBConsegneMessageBoxManager dbConsegneMessageBoxManager = null;
 		if(dbManagerSource!=null) {
 			switch (dbManagerSource) {
 			case runtime:
-				dbManager_transazioni = DBTransazioniManager.getInstance();
+				dbManagerTransazioni = DBTransazioniManager.getInstance();
 				break;
 			case consegnePreseInCarico:
 				dbConsegnePreseInCaricoManager = DBConsegnePreseInCaricoManager.getInstanceTransazioni();
@@ -439,7 +439,7 @@ public class GestoreConsegnaMultipla {
 			}
 		}
 		else {
-			dbManager_transazioni = DBTransazioniManager.getInstance();
+			dbManagerTransazioni = DBTransazioniManager.getInstance();
 		}
 		IDSoggetto idDominio = openspcoopProperties.getIdentitaPortaDefault(protocol, requestInfo);
 		ExceptionSerialzerFileSystem exceptionSerializerFileSystem = new ExceptionSerialzerFileSystem(this.log);
@@ -456,8 +456,8 @@ public class GestoreConsegnaMultipla {
 					timeStart = DateManager.getTimeMillis();
 				}
 				boolean checkPddRuntimeDatasource = false;
-				if(dbManager_transazioni!=null) {
-					checkPddRuntimeDatasource = dbManager_transazioni.useRuntimePdD();
+				if(dbManagerTransazioni!=null) {
+					checkPddRuntimeDatasource = dbManagerTransazioni.useRuntimePdD();
 				}
 				else if(dbConsegnePreseInCaricoManager!=null) {
 					checkPddRuntimeDatasource = dbConsegnePreseInCaricoManager.useRuntimePdD();
@@ -476,20 +476,18 @@ public class GestoreConsegnaMultipla {
 							}
 						}
 					}
-					else if(state!=null) {
-						if(state instanceof StateMessage) {
-							StateMessage s = (StateMessage) state;
-							if(s.getConnectionDB()!=null && !s.getConnectionDB().isClosed()) {
-								con = s.getConnectionDB();
-								useConnectionRuntime = true;
-							}
+					else if(state instanceof StateMessage) {
+						StateMessage s = (StateMessage) state;
+						if(s.getConnectionDB()!=null && !s.getConnectionDB().isClosed()) {
+							con = s.getConnectionDB();
+							useConnectionRuntime = true;
 						}
 					}
 				}
 				
-				if(useConnectionRuntime==false){
-					if(dbManager_transazioni!=null) {
-						dbResource = dbManager_transazioni.getResource(idDominio, ID_MODULO, richiedenteConnessione);
+				if(!useConnectionRuntime){
+					if(dbManagerTransazioni!=null) {
+						dbResource = dbManagerTransazioni.getResource(idDominio, ID_MODULO, richiedenteConnessione);
 					}
 					else if(dbConsegnePreseInCaricoManager!=null) {
 						dbResource = dbConsegnePreseInCaricoManager.getResource(idDominio, ID_MODULO, richiedenteConnessione);
@@ -524,7 +522,7 @@ public class GestoreConsegnaMultipla {
 					if(times!=null) {
 						timeStart = DateManager.getTimeMillis();
 						if(buildDetailsSA) {
-							times.sa_details = new ArrayList<>();
+							times.saDetails = new ArrayList<>();
 						}
 					}
 					
@@ -533,7 +531,6 @@ public class GestoreConsegnaMultipla {
 									con, autoCommit,
 									daoFactoryServiceManagerPropertiesTransazioni,
 									daoFactoryLoggerTransazioniDevNull);
-									//daoFactoryLoggerTransazioniSql);
 					jdbcServiceManager.getJdbcProperties().setShowSql(this.debug);
 					ITransazioneApplicativoServerService transazioneService = jdbcServiceManager.getTransazioneApplicativoServerService();
 	
@@ -549,11 +546,9 @@ public class GestoreConsegnaMultipla {
 					if(transazioneApplicativoServer.isConsegnaTerminata()) {
 						isMessaggioConsegnato = true;
 					}
-					else if(transazioneApplicativoServer.getDataEliminazioneIm()!=null) {
-						isMessaggioConsegnato = true;
-						possibileTerminazioneSingleIntegrationManagerMessage = true;
-					}
-					else if(transazioneApplicativoServer.getDataMessaggioScaduto()!=null) {
+					else if(transazioneApplicativoServer.getDataEliminazioneIm()!=null
+							||
+							transazioneApplicativoServer.getDataMessaggioScaduto()!=null) {
 						isMessaggioConsegnato = true;
 						possibileTerminazioneSingleIntegrationManagerMessage = true;
 					}
@@ -571,20 +566,20 @@ public class GestoreConsegnaMultipla {
 					if(!useSelectForUpdate) {
 						try{
 							oldTransactionIsolation = con.getTransactionIsolation();
-							// già effettuato fuori dal metodo connectionDB.setAutoCommit(false);
+							/** già effettuato fuori dal metodo connectionDB.setAutoCommit(false);*/
 							JDBCUtilities.setTransactionIsolationSerializable(daoFactoryServiceManagerPropertiesTransazioni.getDatabase(), con);
 						} catch(Exception er) {
 							throw new CoreException("(setIsolation) "+er.getMessage(),er);
 						}
 					}
 					
-					long gestioneSerializableDB_AttesaAttiva = openspcoopProperties.getGestioneSerializableDB_AttesaAttiva();
-					int gestioneSerializableDB_CheckInterval = openspcoopProperties.getGestioneSerializableDB_CheckInterval();
+					long gestioneSerializableDBAttesaAttiva = openspcoopProperties.getGestioneSerializableDB_AttesaAttiva();
+					int gestioneSerializableDBCheckInterval = openspcoopProperties.getGestioneSerializableDB_CheckInterval();
 					
-					long scadenzaWhile = DateManager.getTimeMillis() + gestioneSerializableDB_AttesaAttiva;
+					long scadenzaWhile = DateManager.getTimeMillis() + gestioneSerializableDBAttesaAttiva;
 					
 					Throwable lastT = null;
-					while(updateEffettuato==false && DateManager.getTimeMillis() < scadenzaWhile){
+					while(!updateEffettuato && DateManager.getTimeMillis() < scadenzaWhile){
 	
 						List<String> timeDetails = null;
 						try{
@@ -627,7 +622,7 @@ public class GestoreConsegnaMultipla {
 									timeDetails.add("error:"+errorMsg);
 								}
 							}
-							//System.out.println("Serializable error:"+e.getMessage());
+							/**System.out.println("Serializable error:"+e.getMessage());*/
 							try{
 								if(con!=null) {
 									con.rollback();
@@ -636,15 +631,15 @@ public class GestoreConsegnaMultipla {
 						}finally {
 							if(timeDetails!=null && !timeDetails.isEmpty()) {
 								for (String detail : timeDetails) {
-									times.sa_details.add("i"+iteration+"-"+detail);
+									times.saDetails.add("i"+iteration+"-"+detail);
 								}
 							}
 						}
 	
-						if(updateEffettuato == false){
+						if(!updateEffettuato){
 							// Per aiutare ad evitare conflitti
 							try{
-								Utilities.sleep(getRandom().nextInt(gestioneSerializableDB_CheckInterval)); // random da 0ms a checkIntervalms
+								Utilities.sleep(getRandom().nextInt(gestioneSerializableDBCheckInterval)); // random da 0ms a checkIntervalms
 							}catch(Exception eRandom){
 								// ignore
 							}
@@ -657,7 +652,7 @@ public class GestoreConsegnaMultipla {
 							if(con!=null) {
 								con.setTransactionIsolation(oldTransactionIsolation);
 							}
-							// già effettuato fuori dal metodo connectionDB.setAutoCommit(true);
+							/** già effettuato fuori dal metodo connectionDB.setAutoCommit(true);*/
 						} catch(Exception er) {
 							throw new CoreException("(ripristinoIsolation) "+er.getMessage(),er);
 						}
@@ -680,9 +675,9 @@ public class GestoreConsegnaMultipla {
 							times.insert = timeProcess;
 						}
 						if(buildDetailsSA) {
-							times.sa_details.add("iteration:"+iteration);
-							times.sa_details.add("conflicts:"+conflict);
-							times.sa_details.add("updated:"+updateEffettuato);
+							times.saDetails.add("iteration:"+iteration);
+							times.saDetails.add("conflicts:"+conflict);
+							times.saDetails.add("updated:"+updateEffettuato);
 						}
 					}
 				}
@@ -746,7 +741,9 @@ public class GestoreConsegnaMultipla {
 						serverInfo.setProtocollo(protocol);
 						exceptionSerializerFileSystem.registrazioneFileSystemTransazioneApplicativoServerEmessoPdD(serverInfo, serverInfo.getIdTransazione(), serverInfo.getServizioApplicativoErogatore());
 					}
-				} catch (Throwable eClose) {}
+				} catch (Throwable eClose) {
+					// ignore
+				}
 				// Effettuo il log anche nel core per evitare che un eventuale filtro a OFF sul core della PdD eviti la scrittura di questi errori
 				String msg = "Errore durante la scrittura dell'informazione del server '"+serverInfo.getServizioApplicativoErogatore()+"' associato alla transazione sul database: " + e.getLocalizedMessage();
 				this.log.error("["+serverInfo.getIdTransazione()+"] "+msg,e);
@@ -757,7 +754,9 @@ public class GestoreConsegnaMultipla {
 					if(msgDiag.getIdTransazione()!=null && msgDiag.getApplicativo()!=null) {
 						exceptionSerializerFileSystem.registrazioneFileSystemDiagnosticoEmessoPdD(msgDiag, msgDiag.getIdTransazione(), msgDiag.getApplicativo());
 					}
-				} catch (Throwable eClose) {}
+				} catch (Throwable eClose) {
+					// ignore
+				}
 				// Effettuo il log anche nel core per evitare che un eventuale filtro a OFF sul core della PdD eviti la scrittura di questi errori
 				String msg = "Errore durante la scrittura del diagnostico relativo al server '"+msgDiag.getApplicativo()+"' associato alla transazione sul database: " + e.getLocalizedMessage();
 				this.log.error("["+msgDiag.getIdTransazione()+"] "+msg,e);
@@ -769,7 +768,9 @@ public class GestoreConsegnaMultipla {
 						exceptionSerializerFileSystem.registrazioneFileSystemDumpEmessoPdD(messaggio, messaggio.getIdTransazione(), 
 								messaggio.getServizioApplicativoErogatore(), messaggio.getDataConsegna());
 					}
-				} catch (Throwable eClose) {}
+				} catch (Throwable eClose) {
+					// ignore
+				}
 				// Effettuo il log anche nel core per evitare che un eventuale filtro a OFF sul core della PdD eviti la scrittura di questi errori
 				String msg = "Errore durante la scrittura del messaggio relativo al server '"+messaggio.getServizioApplicativoErogatore()+"' associato alla transazione sul database: " + e.getLocalizedMessage();
 				this.log.error("["+messaggio.getIdTransazione()+"] "+msg,e);
@@ -785,13 +786,13 @@ public class GestoreConsegnaMultipla {
 					if(times!=null) {
 						timeStart = DateManager.getTimeMillis();
 						if(buildDetailsUpdateTransaction) {
-							times.transazione_details = new ArrayList<>();
-							timeDetails = times.transazione_details;
+							times.transazioneDetails = new ArrayList<>();
+							timeDetails = times.transazioneDetails;
 						}
 					}
 				
 					// aggiorno esito transazione (non viene sollevata alcuna eccezione)
-					boolean transazioneAggiornata = _safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, esitiProperties, possibileTerminazioneSingleIntegrationManagerMessage, consegnaInErrore, timeDetails);
+					boolean transazioneAggiornata = safeAggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, esitiProperties, possibileTerminazioneSingleIntegrationManagerMessage, consegnaInErrore, timeDetails);
 					if(!transazioneAggiornata) {
 						
 						String prefix = "[id:"+transazioneApplicativoServer.getIdTransazione()+"][sa:"+transazioneApplicativoServer.getServizioApplicativoErogatore()+"]["+transazioneApplicativoServer.getConnettoreNome()+"] 'gestisciErroreAggiornamentoInformazioneConsegnaTerminata'";
@@ -812,9 +813,12 @@ public class GestoreConsegnaMultipla {
 								if(transazioneApplicativoServer.getIdTransazione()!=null && transazioneApplicativoServer.getServizioApplicativoErogatore()!=null) {
 									// NOTA: volutamente salvo serverInfo per poter reimplementare la logica di cui sopra
 									transazioneApplicativoServer.setProtocollo(protocol);
+									/**System.out.println("["+transazioneApplicativoServer.getConnettoreNome()+"] ["+transazioneApplicativoServer.getIdTransazione()+"] SAVE PER RECUPERO");*/
 									exceptionSerializerFileSystem.registrazioneFileSystemTransazioneApplicativoServerConsegnaTerminata(transazioneApplicativoServer, transazioneApplicativoServer.getIdTransazione(), transazioneApplicativoServer.getServizioApplicativoErogatore());
 								}
-							} catch (Throwable eClose) {}
+							} catch (Throwable eClose) {
+								// ignore
+							}
 							
 						}catch(Throwable t) {
 							String msgError = prefix+" compresione esistenza transazione fallita";
@@ -842,9 +846,9 @@ public class GestoreConsegnaMultipla {
 				// ignore
 			}
 			try {
-				if(useConnectionRuntime==false) {
-					if(dbManager_transazioni!=null) {
-						dbManager_transazioni.releaseResource(idDominio, ID_MODULO, dbResource);
+				if(!useConnectionRuntime) {
+					if(dbManagerTransazioni!=null) {
+						dbManagerTransazioni.releaseResource(idDominio, ID_MODULO, dbResource);
 					}
 					else if(dbConsegnePreseInCaricoManager!=null) {
 						dbConsegnePreseInCaricoManager.releaseResource(idDominio, ID_MODULO, dbResource);
@@ -896,7 +900,7 @@ public class GestoreConsegnaMultipla {
 							else if(code>399 && code<=499) {
 								transazioneApplicativoServer.setDettaglioEsito(esitiProperties.convertoToCode(EsitoTransazioneName.HTTP_4xx));
 							}
-							else { //if(code>499) {
+							else { /**if(code>499) {*/
 								transazioneApplicativoServer.setDettaglioEsito(esitiProperties.convertoToCode(EsitoTransazioneName.HTTP_5xx));
 							}
 							
@@ -927,6 +931,10 @@ public class GestoreConsegnaMultipla {
 			}
 		}
 		
+		if(transazioneApplicativoServer.getDettaglioEsito()>0) {
+			// nop
+		}
+		
 	}
 	
 	private void setErroreInvocazione(TransazioneApplicativoServer transazioneApplicativoServer, EsitiProperties esitiProperties, Context context) throws ProtocolException {
@@ -955,23 +963,22 @@ public class GestoreConsegnaMultipla {
 		transazioneApplicativoServer.setDettaglioEsito(esitiProperties.convertoToCode(name));
 	}
 
-	private static boolean _debug = true;
-	public static boolean is_debug() {
-		return _debug;
+	private static boolean debugStaticValue = true;
+	public static boolean isDebug() {
+		return debugStaticValue;
 	}
-	public static void set_debug(boolean _debug) {
-		GestoreConsegnaMultipla._debug = _debug;
+	public static void setDebug(boolean debug) {
+		GestoreConsegnaMultipla.debugStaticValue = debug;
 	}
-	private boolean _safe_aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection con, EsitiProperties esitiProperties,
+	private boolean safeAggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection con, EsitiProperties esitiProperties,
 			 boolean possibileTerminazioneSingleIntegrationManagerMessage,boolean consegnaInErrore,
 			 List<String> timeDetails) {
 		
-		//boolean debug = this.debug;
-		boolean debug = _debug; // un eventuale errore deve essere sempre registrato
+		boolean debugMode = debugStaticValue; // un eventuale errore deve essere sempre registrato
 		
-		DAOFactory daoF = debug ? daoFactory : daoFactoryDevNull;
-		Logger logFactory = debug ? daoFactoryLoggerTransazioniSql : daoFactoryLoggerTransazioniDevNull;
-		ServiceManagerProperties smp = debug ? daoFactoryServiceManagerPropertiesTransazioni : daoFactoryDevNullServiceManagerPropertiesTransazioni;
+		DAOFactory daoF = debugMode ? daoFactory : daoFactoryDevNull;
+		Logger logFactory = debugMode ? daoFactoryLoggerTransazioniSql : daoFactoryLoggerTransazioniDevNull;
+		ServiceManagerProperties smp = debugMode ? daoFactoryServiceManagerPropertiesTransazioni : daoFactoryDevNullServiceManagerPropertiesTransazioni;
 		
 		int esitoConsegnaMultipla = -1;
 		int esitoConsegnaMultiplaInCorso = -1;
@@ -995,7 +1002,7 @@ public class GestoreConsegnaMultipla {
 		}
 		
 		if(esitiLetti) {
-			return TransactionServerUtils.safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, 
+			return TransactionServerUtils.safeAggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, 
 					this.tipoDatabase, this.log,
 					daoF,logFactory,smp,
 					this.debug,
@@ -1016,9 +1023,9 @@ class TransazioniSAProcessTimes{
 	long getConnection = -1;
 	long insert = -1;
 	long update = -1;
-	List<String> sa_details = null;
+	List<String> saDetails = null;
 	long updateTransazione = -1;
-	List<String> transazione_details = null;
+	List<String> transazioneDetails = null;
 	
 	@Override
 	public String toString() {
@@ -1041,7 +1048,7 @@ class TransazioniSAProcessTimes{
 			}
 			sb.append("update:").append(this.update);
 		}
-		if(this.sa_details!=null && !this.sa_details.isEmpty()) {
+		if(this.saDetails!=null && !this.saDetails.isEmpty()) {
 			if(sb.length()>0) {
 				sb.append(" ");
 			}
@@ -1055,7 +1062,7 @@ class TransazioniSAProcessTimes{
 				sb.append("details:{");
 			}
 			boolean first = true;
-			for (String det : this.sa_details) {
+			for (String det : this.saDetails) {
 				if(!first) {
 					sb.append(" ");
 				}
@@ -1070,13 +1077,13 @@ class TransazioniSAProcessTimes{
 			}
 			sb.append("updateTransaction:").append(this.updateTransazione);
 		}
-		if(this.transazione_details!=null && !this.transazione_details.isEmpty()) {
+		if(this.transazioneDetails!=null && !this.transazioneDetails.isEmpty()) {
 			if(sb.length()>0) {
 				sb.append(" ");
 			}
 			sb.append("updateTransactionDetails:{");
 			boolean first = true;
-			for (String det : this.transazione_details) {
+			for (String det : this.transazioneDetails) {
 				if(!first) {
 					sb.append(" ");
 				}

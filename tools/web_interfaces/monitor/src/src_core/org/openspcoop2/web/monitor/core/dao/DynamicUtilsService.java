@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -1504,6 +1504,64 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			}
 		} else {
 			return this.driver.getPlugin(idPlugin);
+		}
+	}
+	
+	
+	
+	
+	
+	// *** Configurazione (Tracciamento) ***
+	
+	@Override
+	public boolean existsFaseTracciamentoDBRequestIn(boolean erogazioni, boolean fruizioni) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
+			String key = buildKey("existsFaseTracciamentoDBRequestIn", "erogazioni:"+erogazioni , "fruizioni:"+fruizioni);
+			String methodName = "existsFaseTracciamentoDBRequestIn";
+			try {
+				return (Boolean) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName,
+						new Class<?>[] {boolean.class, boolean.class }, 
+						erogazioni,fruizioni);
+			}catch(Throwable e) {
+				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return false;
+			}
+		} else {
+			return this.driver.existsFaseTracciamentoDBRequestIn(erogazioni,fruizioni);
+		}
+	}
+	@Override
+	public boolean existsFaseTracciamentoDBRequestOut(boolean erogazioni, boolean fruizioni) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
+			String key = buildKey("existsFaseTracciamentoDBRequestOut", "erogazioni:"+erogazioni , "fruizioni:"+fruizioni);
+			String methodName = "existsFaseTracciamentoDBRequestOut";
+			try {
+				return (Boolean) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName,
+						new Class<?>[] {boolean.class, boolean.class }, 
+						erogazioni,fruizioni);
+			}catch(Throwable e) {
+				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return false;
+			}
+		} else {
+			return this.driver.existsFaseTracciamentoDBRequestOut(erogazioni,fruizioni);
+		}
+	}
+	@Override
+	public boolean existsFaseTracciamentoDBResponseOut(boolean erogazioni, boolean fruizioni) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
+			String key = buildKey("existsFaseTracciamentoDBResponseOut", "erogazioni:"+erogazioni , "fruizioni:"+fruizioni);
+			String methodName = "existsFaseTracciamentoDBResponseOut";
+			try {
+				return (Boolean) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName,
+						new Class<?>[] {boolean.class, boolean.class }, 
+						erogazioni,fruizioni);
+			}catch(Throwable e) {
+				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return false;
+			}
+		} else {
+			return this.driver.existsFaseTracciamentoDBResponseOut(erogazioni,fruizioni);
 		}
 	}
 }

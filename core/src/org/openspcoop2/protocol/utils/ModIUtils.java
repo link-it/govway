@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -38,13 +38,19 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.utils.RegistroServiziUtils;
+import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.digest.DigestEncoding;
+import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.json.JsonPathExpressionEngine;
+import org.slf4j.Logger;
 
 /**
  * ModIUtils
@@ -110,6 +116,8 @@ public class ModIUtils {
 	
 	public static final String API_IMPL_SICUREZZA_OAUTH_IDENTIFICATIVO = "oauth-id";
 	public static final String API_IMPL_SICUREZZA_OAUTH_KID = "oauth-kid";
+	
+		
 	
 	// COSTANTI SERVIZIO
 	public static final String HSM = "hsm";
@@ -879,6 +887,10 @@ public class ModIUtils {
 				map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, 
 						CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_LABEL_FRUIZIONE);
 			}
+			else if(CostantiDB.MODIPA_KEYSTORE_FRUIZIONE_TOKEN_POLICY.equals(v)) {
+				map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, 
+						CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_LABEL_TOKEN_POLICY);
+			}
 			else {
 				// verifico di non essere nel caso di API con pattern ID_AUTH_REST_01 via PDND dove la modalità di scelta non viene indicata.
 				if(v==null || StringUtils.isEmpty(v)) {
@@ -1110,13 +1122,31 @@ public class ModIUtils {
 	private static final String CLASS_MODIPA_PROPERTIES = "org.openspcoop2.protocol.modipa.config.ModIProperties";
 	private static final String CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD = "getInstance";
 	
-	private static String getHeaderModI() throws ProtocolException {
+	public static Object getModiProperties() throws ProtocolException {
 		try {
 			Class<?> modiPropertiesClass = Class.forName(CLASS_MODIPA_PROPERTIES);
 			Method mGetInstance = modiPropertiesClass.getMethod(CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD);
-			Object instance = mGetInstance.invoke(null);
+			return mGetInstance.invoke(null);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	
+	private static String getHeaderModI() throws ProtocolException {
+		try {
+			Object instance = getModiProperties();
 			Method mGetRestSecurityTokenHeaderModI = instance.getClass().getMethod("getRestSecurityTokenHeaderModI");
 			return (String) mGetRestSecurityTokenHeaderModI.invoke(instance);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	
+	public static boolean isTokenOAuthUseJtiIntegrityAsMessageId() throws ProtocolException {
+		try {
+			Object instance = getModiProperties();
+			Method mGetIsTokenOAuthUseJtiIntegrityAsMessageId = instance.getClass().getMethod("isTokenOAuthUseJtiIntegrityAsMessageId");
+			return (Boolean) mGetIsTokenOAuthUseJtiIntegrityAsMessageId.invoke(instance);
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
@@ -1125,9 +1155,7 @@ public class ModIUtils {
 	@SuppressWarnings("unchecked")
 	public static List<RemoteStoreConfig> getRemoteStoreConfig() throws ProtocolException {
 		try {
-			Class<?> modiPropertiesClass = Class.forName(CLASS_MODIPA_PROPERTIES);
-			Method mGetInstance = modiPropertiesClass.getMethod(CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD);
-			Object instance = mGetInstance.invoke(null);
+			Object instance = getModiProperties();
 			Method mGetRemoteStoreConfig = instance.getClass().getMethod("getRemoteStoreConfig");
 			return (List<RemoteStoreConfig>) mGetRemoteStoreConfig.invoke(instance);
 		}catch(Exception e) {
@@ -1137,9 +1165,7 @@ public class ModIUtils {
 	
 	public static RemoteKeyType getRemoteKeyType(String name) throws ProtocolException {
 		try {
-			Class<?> modiPropertiesClass = Class.forName(CLASS_MODIPA_PROPERTIES);
-			Method mGetInstance = modiPropertiesClass.getMethod(CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD);
-			Object instance = mGetInstance.invoke(null);
+			Object instance = getModiProperties();
 			Method mGetRemoteKey = instance.getClass().getMethod("getRemoteKeyType",String.class);
 			return (RemoteKeyType) mGetRemoteKey.invoke(instance,name);
 		}catch(Exception e) {
@@ -1149,9 +1175,7 @@ public class ModIUtils {
 	
 	private static KeystoreParams getSicurezzaMessaggioCertificatiTrustStore() throws ProtocolException {
 		try {
-			Class<?> modiPropertiesClass = Class.forName(CLASS_MODIPA_PROPERTIES);
-			Method mGetInstance = modiPropertiesClass.getMethod(CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD);
-			Object instance = mGetInstance.invoke(null);
+			Object instance = getModiProperties();
 			Method mGet = instance.getClass().getMethod("getSicurezzaMessaggioCertificatiTrustStore");
 			return (KeystoreParams) mGet.invoke(instance);
 		}catch(Exception e) {
@@ -1161,9 +1185,7 @@ public class ModIUtils {
 	
 	private static KeystoreParams getSicurezzaMessaggioSslTrustStore() throws ProtocolException {
 		try {
-			Class<?> modiPropertiesClass = Class.forName(CLASS_MODIPA_PROPERTIES);
-			Method mGetInstance = modiPropertiesClass.getMethod(CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD);
-			Object instance = mGetInstance.invoke(null);
+			Object instance = getModiProperties();
 			Method mGet = instance.getClass().getMethod("getSicurezzaMessaggioSslTrustStore");
 			return (KeystoreParams) mGet.invoke(instance);
 		}catch(Exception e) {
@@ -1173,9 +1195,7 @@ public class ModIUtils {
 	
 	private static KeystoreParams getSicurezzaMessaggioCertificatiKeyStore() throws ProtocolException {
 		try {
-			Class<?> modiPropertiesClass = Class.forName(CLASS_MODIPA_PROPERTIES);
-			Method mGetInstance = modiPropertiesClass.getMethod(CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD);
-			Object instance = mGetInstance.invoke(null);
+			Object instance = getModiProperties();
 			Method mGet = instance.getClass().getMethod("getSicurezzaMessaggioCertificatiKeyStore");
 			return (KeystoreParams) mGet.invoke(instance);
 		}catch(Exception e) {
@@ -1596,4 +1616,118 @@ public class ModIUtils {
 				"' risiedente nel dominio del soggetto '"+idServizioApplicativoMessaggio.getIdSoggettoProprietario().toString()+"'; il dominio differisce dal soggetto identificato sul canale di trasporto ("+idSoggettoMittenteCanale+
 				")";
 	}
+	
+	public static String convertProfiloSicurezzaToSDKValue(String securityMessageProfile, boolean rest) {
+		String profilo = securityMessageProfile.toUpperCase();
+		if(rest) {
+			profilo = profilo.replace("M", "R");
+		}
+		else {
+			profilo = profilo.replace("M", "S");
+		}
+		return profilo;
+	}
+	public static String convertProfiloSicurezzaToConfigurationValue(String securityMessageProfileSDKValue) {
+		String securityMessageProfile = securityMessageProfileSDKValue.toLowerCase();
+		securityMessageProfile = securityMessageProfile.replace("r", "m");
+		securityMessageProfile = securityMessageProfile.replace("s", "m");
+		return securityMessageProfile;
+	}
+	
+	public static String convertProfiloSicurezzaSorgenteTokenToSDKValue(String sorgenteToken) {
+		if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_LOCALE.equals(sorgenteToken)) {
+			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_LOCALE;
+		}
+		else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(sorgenteToken)) {
+			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_PDND;
+		}
+		else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(sorgenteToken)) {
+			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_OAUTH;
+		}
+		else {
+			// backward compatibility
+			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_LOCALE;
+		}
+	}
+	public static String convertProfiloSicurezzaSorgenteTokenToConfigurationValue(String sorgenteTokenSDKValue) throws ProtocolException {
+		if(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_LOCALE.equals(sorgenteTokenSDKValue)) {
+			return CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_LOCALE;
+		}
+		else if(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_PDND.equals(sorgenteTokenSDKValue)) {
+			return CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND;
+		}
+		else if(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_OAUTH.equals(sorgenteTokenSDKValue)) {
+			return CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH;
+		}
+		throw newProtocolExceptionUnknown("Source label",sorgenteTokenSDKValue);
+	}
+	
+	
+	public static String convertProfiloAuditToSDKValue(String patternCorniceSicurezza) throws ProtocolException {
+		if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD.equals(patternCorniceSicurezza)) {
+			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD;
+		}
+		else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_01.equals(patternCorniceSicurezza)) {
+			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_01;
+		}
+		else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02.equals(patternCorniceSicurezza)) {
+			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02;
+		}
+		throw newProtocolExceptionUnknown("Pattern value",patternCorniceSicurezza);
+	}
+	public static String convertProfiloAuditToConfigurationValue(String patternCorniceSicurezzaSDKValue) throws ProtocolException {
+		if(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD.equals(patternCorniceSicurezzaSDKValue)) {
+			return CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD;
+		}
+		else if(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_01.equals(patternCorniceSicurezzaSDKValue)) {
+			return CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_01;
+		}
+		else if(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02.equals(patternCorniceSicurezzaSDKValue)) {
+			return CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02;
+		}
+		throw newProtocolExceptionUnknown("Pattern label",patternCorniceSicurezzaSDKValue);
+	}
+	
+	public static ProtocolException newProtocolExceptionUnknown(String prefix, String value) {
+		return new ProtocolException(prefix+" '"+value+"' unknown");
+	}
+	
+	
+	public static final MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_USE_JTI_AUTHORIZATION = org.openspcoop2.utils.Map.newMapKey("MODIPA_USE_JTI_AUTHORIZATION");
+	public static boolean useJtiAuthorizationObject(OpenSPCoop2Message msg) {
+		Object useJtiAuthorizationObject = msg.getContextProperty(MODIPA_OPENSPCOOP2_MSG_CONTEXT_USE_JTI_AUTHORIZATION);
+		boolean useJtiAuthorization = false;
+		if(useJtiAuthorizationObject instanceof Boolean) {
+			useJtiAuthorization = (Boolean) useJtiAuthorizationObject;
+		}
+		return useJtiAuthorization;
+	}
+	public static void replaceBustaIdWithJtiTokenId(ModIValidazioneSemanticaProfiloSicurezza modIValidazioneSemanticaProfiloSicurezza, String jtiClaimReceived) {
+		if(jtiClaimReceived!=null && !StringUtils.isEmpty(jtiClaimReceived)) {
+			Busta busta = modIValidazioneSemanticaProfiloSicurezza.getBusta();
+			String idIntegrity = busta.getID();
+			busta.removeProperty(CostantiDB.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID);
+			if(modIValidazioneSemanticaProfiloSicurezza.isSicurezzaMessaggio()) {
+				busta.addProperty(CostantiDB.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID, idIntegrity);
+			}
+			busta.setID(jtiClaimReceived);
+		}
+	}
+	
+	public static String readJti(String token, Logger log) {
+		try {
+			if(token!=null && token.contains(".")) {
+				String [] tmp = token.split("\\.");
+				if(tmp!=null && tmp.length>=3) {
+					String jsonBase64 = tmp[1];
+					String json = new String(Base64Utilities.decode(jsonBase64.getBytes()));
+					return JsonPathExpressionEngine.extractAndConvertResultAsString(json, "$.jti", log);
+				}
+			}
+		}catch(Exception e) {
+			// ignore
+		}
+		return null;
+	}
+
 }

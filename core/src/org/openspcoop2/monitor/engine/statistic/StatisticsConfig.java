@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -50,6 +50,12 @@ public class StatisticsConfig {
 	/** Indicazione se devono analizzate le transazioni custom */
 	private boolean analisiTransazioniCustom = false;
 	
+	/** Intervallo di attesa prima di passare al prossimo intervallo */
+	private long waitMsBeforeNextInterval = -1;
+	
+	/** Attesa che tutte le transazioni siano state consegnate con successo prima di passare al prossimo intervallo */
+	private boolean waitStatiInConsegna = false;
+	
 	/** Tipologie di statistiche */
 	private boolean statisticheOrarie = false;
 	private boolean statisticheGiornaliere = false;
@@ -57,14 +63,15 @@ public class StatisticsConfig {
 	private boolean statisticheMensili = false;
 	
 	/** Tipologie di statistiche: gestione ultimo intervallo */
-	private boolean statisticheOrarie_gestioneUltimoIntervallo = false;
-	private boolean statisticheGiornaliere_gestioneUltimoIntervallo = false;
-	private boolean statisticheSettimanali_gestioneUltimoIntervallo = false;
-	private boolean statisticheMensili_gestioneUltimoIntervallo = false;
-	
+	private boolean statisticheOrarieGestioneUltimoIntervallo = false;
+	private boolean statisticheGiornaliereGestioneUltimoIntervallo = false;
+	private boolean statisticheSettimanaliGestioneUltimoIntervallo = false;
+	private boolean statisticheMensiliGestioneUltimoIntervallo = false;
+		
 	/** Lista di indici forzati */
 	private StatisticsForceIndexConfig forceIndexConfig = null;
 	
+	private static final String FALSE = "false";
 	
 	/** Costruttore */
 	public StatisticsConfig(boolean readPropertiesFromFile) throws EngineException{
@@ -77,25 +84,25 @@ public class StatisticsConfig {
 				
 				MonitorProperties props = MonitorProperties.getInstance(this.logCore);
 	
-				if ("true".equals(props.getProperty(CostantiConfigurazione.STAT_DEBUG, "false", true))) {
+				if ("true".equals(props.getProperty(CostantiConfigurazione.STAT_DEBUG, FALSE, true))) {
 					this.debug = true;
 				} else {
 					this.debug = false;
 				}
 				
-				if ("true".equals(props.getProperty(CostantiConfigurazione.STAT_USE_UNION_FOR_LATENCY, "false", true))) {
+				if ("true".equals(props.getProperty(CostantiConfigurazione.STAT_USE_UNION_FOR_LATENCY, FALSE, true))) {
 					this.useUnionForLatency = true;
 				} else {
 					this.useUnionForLatency = false;
 				}
 				
-				if ("true".equals(props.getProperty(CostantiConfigurazione.STAT_CUSTOM_STATISTICS, "false", true))) {
+				if ("true".equals(props.getProperty(CostantiConfigurazione.STAT_CUSTOM_STATISTICS, FALSE, true))) {
 					this.generazioneStatisticheCustom = true;
 				} else {
 					this.generazioneStatisticheCustom = false;
 				}
 				
-				if ("true".equals(props.getProperty(CostantiConfigurazione.STAT_CUSTOM_TRANSACTION_STATISTICS, "false", true))) {
+				if ("true".equals(props.getProperty(CostantiConfigurazione.STAT_CUSTOM_TRANSACTION_STATISTICS, FALSE, true))) {
 					this.analisiTransazioniCustom = true;
 				} else {
 					this.analisiTransazioniCustom = false;
@@ -126,27 +133,27 @@ public class StatisticsConfig {
 				}
 		
 				if ("true".equals(props.getProperty(CostantiConfigurazione.STAT_HOURLY_LASTINT, "true", true))) {
-					this.statisticheOrarie_gestioneUltimoIntervallo = true;
+					this.statisticheOrarieGestioneUltimoIntervallo = true;
 				} else {
-					this.statisticheOrarie_gestioneUltimoIntervallo = false;
+					this.statisticheOrarieGestioneUltimoIntervallo = false;
 				}
 				
 				if ("true".equals(props.getProperty(CostantiConfigurazione.STAT_DAILY_LASTINT, "true", true))) {
-					this.statisticheGiornaliere_gestioneUltimoIntervallo = true;
+					this.statisticheGiornaliereGestioneUltimoIntervallo = true;
 				} else {
-					this.statisticheGiornaliere_gestioneUltimoIntervallo = false;
+					this.statisticheGiornaliereGestioneUltimoIntervallo = false;
 				}
 		
 				if ("true".equals(props.getProperty(CostantiConfigurazione.STAT_WEEKLY_LASTINT, "true", true))) {
-					this.statisticheSettimanali_gestioneUltimoIntervallo = true;
+					this.statisticheSettimanaliGestioneUltimoIntervallo = true;
 				} else {
-					this.statisticheSettimanali_gestioneUltimoIntervallo = false;
+					this.statisticheSettimanaliGestioneUltimoIntervallo = false;
 				}
 		
 				if ("true".equals(props.getProperty(CostantiConfigurazione.STAT_MONTHLY_LASTINT, "true", true))) {
-					this.statisticheMensili_gestioneUltimoIntervallo = true;
+					this.statisticheMensiliGestioneUltimoIntervallo = true;
 				} else {
-					this.statisticheMensili_gestioneUltimoIntervallo = false;
+					this.statisticheMensiliGestioneUltimoIntervallo = false;
 				}
 			}
 			
@@ -227,40 +234,40 @@ public class StatisticsConfig {
 		this.statisticheMensili = statisticheMensili;
 	}
 
-	public boolean isStatisticheOrarie_gestioneUltimoIntervallo() {
-		return this.statisticheOrarie_gestioneUltimoIntervallo;
+	public boolean isStatisticheOrarieGestioneUltimoIntervallo() {
+		return this.statisticheOrarieGestioneUltimoIntervallo;
 	}
 
-	public void setStatisticheOrarie_gestioneUltimoIntervallo(
-			boolean statisticheOrarie_gestioneUltimoIntervallo) {
-		this.statisticheOrarie_gestioneUltimoIntervallo = statisticheOrarie_gestioneUltimoIntervallo;
+	public void setStatisticheOrarieGestioneUltimoIntervallo(
+			boolean statisticheOrarieGestioneUltimoIntervallo) {
+		this.statisticheOrarieGestioneUltimoIntervallo = statisticheOrarieGestioneUltimoIntervallo;
 	}
 
-	public boolean isStatisticheGiornaliere_gestioneUltimoIntervallo() {
-		return this.statisticheGiornaliere_gestioneUltimoIntervallo;
+	public boolean isStatisticheGiornaliereGestioneUltimoIntervallo() {
+		return this.statisticheGiornaliereGestioneUltimoIntervallo;
 	}
 
-	public void setStatisticheGiornaliere_gestioneUltimoIntervallo(
-			boolean statisticheGiornaliere_gestioneUltimoIntervallo) {
-		this.statisticheGiornaliere_gestioneUltimoIntervallo = statisticheGiornaliere_gestioneUltimoIntervallo;
+	public void setStatisticheGiornaliereGestioneUltimoIntervallo(
+			boolean statisticheGiornaliereGestioneUltimoIntervallo) {
+		this.statisticheGiornaliereGestioneUltimoIntervallo = statisticheGiornaliereGestioneUltimoIntervallo;
 	}
 
-	public boolean isStatisticheSettimanali_gestioneUltimoIntervallo() {
-		return this.statisticheSettimanali_gestioneUltimoIntervallo;
+	public boolean isStatisticheSettimanaliGestioneUltimoIntervallo() {
+		return this.statisticheSettimanaliGestioneUltimoIntervallo;
 	}
 
-	public void setStatisticheSettimanali_gestioneUltimoIntervallo(
-			boolean statisticheSettimanali_gestioneUltimoIntervallo) {
-		this.statisticheSettimanali_gestioneUltimoIntervallo = statisticheSettimanali_gestioneUltimoIntervallo;
+	public void setStatisticheSettimanaliGestioneUltimoIntervallo(
+			boolean statisticheSettimanaliGestioneUltimoIntervallo) {
+		this.statisticheSettimanaliGestioneUltimoIntervallo = statisticheSettimanaliGestioneUltimoIntervallo;
 	}
 
-	public boolean isStatisticheMensili_gestioneUltimoIntervallo() {
-		return this.statisticheMensili_gestioneUltimoIntervallo;
+	public boolean isStatisticheMensiliGestioneUltimoIntervallo() {
+		return this.statisticheMensiliGestioneUltimoIntervallo;
 	}
 
-	public void setStatisticheMensili_gestioneUltimoIntervallo(
-			boolean statisticheMensili_gestioneUltimoIntervallo) {
-		this.statisticheMensili_gestioneUltimoIntervallo = statisticheMensili_gestioneUltimoIntervallo;
+	public void setStatisticheMensiliGestioneUltimoIntervallo(
+			boolean statisticheMensiliGestioneUltimoIntervallo) {
+		this.statisticheMensiliGestioneUltimoIntervallo = statisticheMensiliGestioneUltimoIntervallo;
 	}
 	
 	public boolean isAnalisiTransazioniCustom() {
@@ -277,5 +284,21 @@ public class StatisticsConfig {
 
 	public void setForceIndexConfig(StatisticsForceIndexConfig forceIndexConfig) {
 		this.forceIndexConfig = forceIndexConfig;
+	}
+	
+	public long getWaitMsBeforeNextInterval() {
+		return this.waitMsBeforeNextInterval;
+	}
+
+	public void setWaitMsBeforeNextInterval(long waitMsBeforeNextInterval) {
+		this.waitMsBeforeNextInterval = waitMsBeforeNextInterval;
+	}
+
+	public boolean isWaitStatiInConsegna() {
+		return this.waitStatiInConsegna;
+	}
+
+	public void setWaitStatiInConsegna(boolean waitStatiInConsegna) {
+		this.waitStatiInConsegna = waitStatiInConsegna;
 	}
 }

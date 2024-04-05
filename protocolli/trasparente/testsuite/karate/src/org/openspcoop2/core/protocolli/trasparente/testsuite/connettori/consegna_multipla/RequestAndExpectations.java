@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -65,8 +66,20 @@ public class RequestAndExpectations {
 	
 	public RequestAndExpectations(HttpRequest request, Set<String> connettoriSuccesso, Set<String> connettoriFallimento, int esito, int statusCodePrincipale, boolean principaleSuperata, TipoFault tipoFault) {
 		this.request = request;
-		this.connettoriSuccesso = connettoriSuccesso;
-		this.connettoriFallimento = connettoriFallimento;
+		this.connettoriSuccesso = new HashSet<>();
+		if(connettoriSuccesso!=null) {
+			if(!connettoriSuccesso.isEmpty()) {
+				/**System.out.println("ConnettoriSuccesso: "+connettoriSuccesso);*/
+				this.connettoriSuccesso.addAll(connettoriSuccesso);
+			}
+		}
+		this.connettoriFallimento = new HashSet<>();
+		if(connettoriFallimento!=null) {
+			if(!connettoriFallimento.isEmpty()) {
+				/**System.out.println("connettoriFallimento: "+connettoriFallimento);*/
+				this.connettoriFallimento.addAll(connettoriFallimento);
+			}
+		}
 		this.esitoPrincipale = esito;
 		this.statusCodePrincipale = statusCodePrincipale;
 		this.principaleSuperata = principaleSuperata;

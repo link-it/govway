@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -136,6 +136,14 @@ public final class Filtri
 	
 	public static final String FILTRO_AUTENTICAZIONE_TRASPORTO_TIPO = "filtroAutenticazioneTrasportoTipo";
 	public static final String FILTRO_AUTENTICAZIONE_TRASPORTO_TIPO_PLUGIN = "filtroAutenticazioneTrasportoTipoPlugin";
+	
+	public static final String FILTRO_CONFIGURAZIONE_TRANSAZIONI = "filtroConfigurazioneTransazioni";
+	public static final String FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_DEFAULT = "Default";
+	public static final String FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_ABILITATO_DATABASE_O_FILETRACE = "Ridefinito (abilitato database o filetrace)";
+	public static final String FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_ABILITATO_SOLO_DATABASE = "Ridefinito (abilitato solo database)";
+	public static final String FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_ABILITATO_SOLO_FILETRACE = "Ridefinito (abilitato solo filetrace)";
+	public static final String FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_ABILITATO_DATABASE_E_FILETRACE = "Ridefinito (abilitato sia database che filetrace)";
+	public static final String FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_DISABILITATO = "Ridefinito (disabilitato)";
 	
 	public static final String FILTRO_CONFIGURAZIONE_DUMP_TIPO = "filtroConfigurazioneDumpTipo";
 	public static final String FILTRO_CONFIGURAZIONE_DUMP_TIPO_VALORE_DEFAULT = "Default";

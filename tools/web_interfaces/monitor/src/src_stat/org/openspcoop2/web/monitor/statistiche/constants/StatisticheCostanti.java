@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -53,6 +53,7 @@ public class StatisticheCostanti {
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_SUBJECT_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.subject.label";
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_USERNAME_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.username.label";
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_EMAIL_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.email.label";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_PDND_ORGANIZATION_NAME_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.pdndOrganizationName.label";
 	
 	/**public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TEMPORALE_LABEL_SHORT_KEY = STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TEMPORALE_LABEL_KEY + ".short";
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ESITI_LABEL_SHORT_KEY = STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ESITI_LABEL_KEY + ".short";
@@ -91,6 +92,7 @@ public class StatisticheCostanti {
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_SOGGETTO_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tooltip.nosvg.soggetto.pattern";
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_APPLICATIVO_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tooltip.nosvg.sa.applicativo.pattern";
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_IDENTIFICATIVO_AUTENTICATO_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tooltip.nosvg.sa.identificativoAutenticato.pattern";
+	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_IDENTIFICATIVO_AUTENTICATO_AUTENTICAZIONE_KEY = "stats.analisiStatistica.tipoDistribuzione.tooltip.nosvg.sa.identificativoAutenticato.autenticazione";
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_INDIRIZZO_IP_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tooltip.nosvg.sa.indirizzoIP.pattern";
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_TOKENINFO_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tooltip.nosvg.sa.tokenInfo.pattern";
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_TOKENINFO_ISSUER_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tooltip.nosvg.sa.tokenInfo.issuer.pattern";
@@ -112,5 +114,9 @@ public class StatisticheCostanti {
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_SUBJECT_TOOLTIP_SVG_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.subject.tooltip.svg.pattern";
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_USERNAME_TOOLTIP_SVG_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.username.tooltip.svg.pattern";
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_EMAIL_TOOLTIP_SVG_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.email.tooltip.svg.pattern";
+	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_PDND_ORGANIZATION_NAME_TOOLTIP_SVG_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.pdndOrganizationName.tooltip.svg.pattern";
+
+	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_CLIENTID_PDNDINFO = "stats.search.claim.clientIdConPDND";
 	
+	public static final String  STATS_ANALISI_STATISTICA_HEATMAP_TOOLTIP_CATEGORIA_ALTRI_PATTERN_KEY = "stats.analisiStatistica.heatmap.tooltip.categoriaAltri.pattern";
 }

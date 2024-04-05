@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -368,7 +368,7 @@ public class TransazioniHelper {
 				}
 				FiltroMittenteTokenClaim fClaim = (FiltroMittenteTokenClaim) fMittente;
 				search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
-				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).toString());
+				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).getRawValue());
 				search.setMittenteMatchingType( (BooleanUtils.isTrue(fClaim.isRicercaEsatta()) ? TipoMatch.EQUALS : TipoMatch.LIKE).toString());
 				search.setMittenteCaseSensitiveType( (BooleanUtils.isTrue(fClaim.isCaseSensitive()) ? CaseSensitiveMatch.SENSITIVE : CaseSensitiveMatch.INSENSITIVE).toString());
 				search.setValoreRiconoscimento(fClaim.getId());
@@ -462,7 +462,7 @@ public class TransazioniHelper {
 				}
 				FiltroMittenteTokenClaimSoggetto fClaim = (FiltroMittenteTokenClaimSoggetto) fMittente;
 				search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
-				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).toString());
+				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).getRawValue());
 				search.setMittenteMatchingType( (BooleanUtils.isTrue(fClaim.isRicercaEsatta()) ? TipoMatch.EQUALS : TipoMatch.LIKE).toString());
 				search.setMittenteCaseSensitiveType( (BooleanUtils.isTrue(fClaim.isCaseSensitive()) ? CaseSensitiveMatch.SENSITIVE : CaseSensitiveMatch.INSENSITIVE).toString());
 				search.setValoreRiconoscimento(fClaim.getId());
@@ -480,7 +480,7 @@ public class TransazioniHelper {
 				}
 				FiltroMittenteTokenClaim fClaim = (FiltroMittenteTokenClaim) fMittente;
 				search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
-				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).toString());
+				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).getRawValue());
 				search.setMittenteMatchingType( (BooleanUtils.isTrue(fClaim.isRicercaEsatta()) ? TipoMatch.EQUALS : TipoMatch.LIKE).toString());
 				search.setMittenteCaseSensitiveType( (BooleanUtils.isTrue(fClaim.isCaseSensitive()) ? CaseSensitiveMatch.SENSITIVE : CaseSensitiveMatch.INSENSITIVE).toString());
 				search.setValoreRiconoscimento(fClaim.getId());
@@ -552,7 +552,7 @@ public class TransazioniHelper {
 				}
 				FiltroMittenteTokenClaim fClaim = (FiltroMittenteTokenClaim) fMittente;
 				search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
-				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).toString());
+				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).getRawValue());
 				search.setMittenteMatchingType( (BooleanUtils.isTrue(fClaim.isRicercaEsatta()) ? TipoMatch.EQUALS : TipoMatch.LIKE).toString());
 				search.setMittenteCaseSensitiveType( (BooleanUtils.isTrue(fClaim.isCaseSensitive()) ? CaseSensitiveMatch.SENSITIVE : CaseSensitiveMatch.INSENSITIVE).toString());
 				search.setValoreRiconoscimento(fClaim.getId());

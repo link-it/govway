@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -31,6 +31,7 @@ import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
@@ -282,6 +283,59 @@ public class ModIKeystoreUtils {
 		
 	}
 	
+	public ModIKeystoreUtils(KeystoreParams kp) throws ProtocolException, UtilsException {
+		
+		this.securityMessageKeystoreHSM = HSMUtils.isKeystoreHSM(kp.getType());
+		
+		if(!this.securityMessageKeystoreHSM) {
+			this.securityMessageKeystorePath = kp.getPath();
+			
+			try {
+				HttpUtilities.validateUri(this.securityMessageKeystorePath, true);
+			}catch(Exception e) {
+				throw new ProtocolException("["+this.securityMessageKeystorePath+"] "+e.getMessage(),e);
+			}
+		}
+		
+		this.securityMessageKeystoreType = kp.getType();
+	
+		if(this.securityMessageKeystoreHSM) {
+			this.securityMessageKeystorePath = HSMUtils.KEYSTORE_HSM_PREFIX+this.securityMessageKeystoreType;
+		}
+		
+		if(!this.securityMessageKeystoreHSM) {
+			if(CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+				this.securityMessageKeystorePathPublicKey = kp.getKeyPairPublicKeyPath();
+			}
+			
+			if(CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) || 
+				CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+				this.securityMessageKeystoreKeyAlgorithm = kp.getKeyPairAlgorithm();
+			}
+		}
+		
+		if(!this.securityMessageKeystoreHSM) {
+			this.securityMessageKeystorePassword = kp.getPassword();
+		}
+		else {
+			this.securityMessageKeystorePassword = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
+		}
+		
+		if(!CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) && 
+				!CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
+			this.securityMessageKeyAlias = kp.getKeyAlias();
+		}
+		
+		if(!this.securityMessageKeystoreHSM) {
+			this.securityMessageKeyPassword = kp.getKeyPassword();
+		}
+		else if(HSMUtils.isHsmConfigurableKeyPassword()) {
+			this.securityMessageKeyPassword = kp.getKeyPassword();
+		}
+		else {
+			this.securityMessageKeyPassword = HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED;
+		}
+	}
 	
 	public String getSecurityMessageKeyAlias() {
 		return this.securityMessageKeyAlias;

@@ -147,7 +147,7 @@
 				<include name="commons-math3-3.6.1.jar" />
 				<include name="commons-csv-1.10.0.jar" />
 				<include name="${commons_logging_jar}"/>
-				<include name="commons-compress-1.23.0.jar" />
+				<include name="commons-compress-1.26.0.jar" />
 			</lib>
 			<lib dir="${openspcoop2.lib}/console">
 				<include name="govway-monitor-ui-*.jar"/>

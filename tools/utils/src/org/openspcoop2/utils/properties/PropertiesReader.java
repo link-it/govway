@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -102,7 +102,7 @@ public class PropertiesReader extends MapReader<Object, Object> {
 			
 			java.util.Enumeration<?> keys = this.keys();
 			while (keys.hasMoreElements()) {
-				Object keyIt = (Object) keys.nextElement();
+				Object keyIt = keys.nextElement();
 				if(keyIt instanceof String){
 					String property = (String) keyIt;
 					if(property.startsWith(prefix)){
@@ -111,9 +111,9 @@ public class PropertiesReader extends MapReader<Object, Object> {
 							key = key.trim();
 						String value = this.getValue(property);
 						if(value!=null)
-							value = ((String)value).trim();
+							value = (value).trim();
 						if(key!=null && value!=null){
-							prop.setProperty(key,(String) value);
+							prop.setProperty(key,value);
 						}
 					}
 				}
@@ -137,13 +137,13 @@ public class PropertiesReader extends MapReader<Object, Object> {
 	public java.util.Properties readProperties_convertEnvProperties (String prefix, boolean convertKeyEnvProperties)throws UtilsException{
 		java.util.Properties prop = new java.util.Properties();
 		try{ 
-			java.util.Properties prop_tmp = this.readProperties(prefix);
-			java.util.Enumeration<?> en = prop_tmp.propertyNames();
+			java.util.Properties propTmp = this.readProperties(prefix);
+			java.util.Enumeration<?> en = propTmp.propertyNames();
 			for (; en.hasMoreElements() ;) {
 				String property = (String) en.nextElement();
 				String value = null;
 				if(property!=null) {
-					value = prop_tmp.getProperty(property);
+					value = propTmp.getProperty(property);
 				}
 				if(value!=null){
 					value = value.trim();

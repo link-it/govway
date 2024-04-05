@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -28,11 +28,13 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.token.AbstractDatiInvocazione;
+import org.openspcoop2.pdd.core.token.EsitoDynamicDiscovery;
 import org.openspcoop2.pdd.core.token.EsitoGestioneToken;
 import org.openspcoop2.pdd.core.token.EsitoPresenzaToken;
 import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.TokenException;
+import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.slf4j.Logger;
@@ -75,12 +77,36 @@ public class GestioneToken {
     	
     }
     
-    public EsitoGestioneTokenPortaApplicativa validazioneJWTToken(DatiInvocazionePortaApplicativa datiInvocazione, EsitoPresenzaToken token) throws TokenException {   	
+    public EsitoDynamicDiscoveryPortaApplicativa dynamicDiscovery(Busta busta, DatiInvocazionePortaApplicativa datiInvocazione, EsitoPresenzaToken token) throws TokenException {
+    	try {
+        	
+    		EsitoDynamicDiscoveryPortaApplicativa esito = (EsitoDynamicDiscoveryPortaApplicativa) GestoreToken.dynamicDiscovery(this.log, datiInvocazione, 
+    				this.pddContext, this.protocolFactory,
+    				token, GestoreToken.PORTA_APPLICATIVA,
+    				busta, getDominio(datiInvocazione), getServizio(datiInvocazione));
+    		
+        	if(esito.getEccezioneProcessamento()!=null) {
+        		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
+        	}
+        	else if(!esito.isValido() &&
+        		esito.getErrorMessage()==null) {
+        		esito.setErroreCooperazione(ErroriCooperazione.TOKEN_NON_VALIDO.getErroreCooperazione());
+        	}
+        	
+        	return esito;
+    		
+    	}catch(Exception e) {
+    		throw new TokenException(e.getMessage(),e); // errore di processamento
+    	}
+	}
+    
+    public EsitoGestioneTokenPortaApplicativa validazioneJWTToken(Busta busta, DatiInvocazionePortaApplicativa datiInvocazione, EsitoPresenzaToken token, EsitoDynamicDiscovery esitoDynamicDiscovery) throws TokenException {   	
     	try {
     	
     		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.validazioneJWTToken(this.log, datiInvocazione, 
-    				this.pddContext, 
-    				token, GestoreToken.PORTA_APPLICATIVA);
+    				this.pddContext, this.protocolFactory, 
+    				token, esitoDynamicDiscovery, GestoreToken.PORTA_APPLICATIVA,
+    				busta, getDominio(datiInvocazione), getServizio(datiInvocazione));
     		
         	if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
@@ -97,13 +123,13 @@ public class GestioneToken {
     	} 	
     }
     
-    public EsitoGestioneTokenPortaApplicativa introspectionToken(DatiInvocazionePortaApplicativa datiInvocazione, EsitoPresenzaToken token) throws TokenException {
+    public EsitoGestioneTokenPortaApplicativa introspectionToken(Busta busta, DatiInvocazionePortaApplicativa datiInvocazione, EsitoPresenzaToken token, EsitoDynamicDiscovery esitoDynamicDiscovery) throws TokenException {
     	try {
         	
     		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.introspectionToken(this.log, datiInvocazione, 
     				this.pddContext, this.protocolFactory,
-    				token, GestoreToken.PORTA_APPLICATIVA,
-    				getDominio(datiInvocazione), getServizio(datiInvocazione));
+    				token, esitoDynamicDiscovery, GestoreToken.PORTA_APPLICATIVA,
+    				busta, getDominio(datiInvocazione), getServizio(datiInvocazione));
     		
         	if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
@@ -120,13 +146,13 @@ public class GestioneToken {
     	}
 	}
 	
-	public EsitoGestioneTokenPortaApplicativa userInfoToken(DatiInvocazionePortaApplicativa datiInvocazione, EsitoPresenzaToken token) throws TokenException {
+	public EsitoGestioneTokenPortaApplicativa userInfoToken(Busta busta, DatiInvocazionePortaApplicativa datiInvocazione, EsitoPresenzaToken token, EsitoDynamicDiscovery esitoDynamicDiscovery) throws TokenException {
 		try {
         	
     		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.userInfoToken(this.log, datiInvocazione, 
     				this.pddContext, this.protocolFactory,
-    				token, GestoreToken.PORTA_APPLICATIVA,
-    				getDominio(datiInvocazione), getServizio(datiInvocazione));
+    				token, esitoDynamicDiscovery, GestoreToken.PORTA_APPLICATIVA,
+    				busta, getDominio(datiInvocazione), getServizio(datiInvocazione));
     		
         	if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());

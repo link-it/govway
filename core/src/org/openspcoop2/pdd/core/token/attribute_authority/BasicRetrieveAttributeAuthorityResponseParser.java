@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.pdd.core.token.attribute_authority;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,8 @@ import java.util.Map;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.pdd.core.token.parser.TokenUtils;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.slf4j.Logger;
@@ -41,7 +44,7 @@ public class BasicRetrieveAttributeAuthorityResponseParser implements IRetrieveA
 
 	protected Integer httpResponseCode;
 	protected String raw;
-	protected Map<String, Object> claims;
+	protected Map<String, Serializable> claims;
 	protected TipologiaResponseAttributeAuthority parser;
 	protected Date now;
 	protected List<String> attributesClaims;
@@ -57,23 +60,23 @@ public class BasicRetrieveAttributeAuthorityResponseParser implements IRetrieveA
 	}
 	
 	@Override
-	public void init(String raw, Map<String, Object> claims) {
+	public void init(String raw, Map<String, Serializable> claims) {
 		this.raw = raw;
 		this.claims = claims;
 		this.now = DateManager.getDate();
 	}
 	@Override
 	public void init(byte[] content) {
-		throw new RuntimeException("unsupported");
+		throw new UtilsRuntimeException("unsupported");
 	}
 	
 	@Override
 	public String getContentAsString() {
-		throw new RuntimeException("unsupported");
+		throw new UtilsRuntimeException("unsupported");
 	}
 
 	@Override
-	public void checkHttpTransaction(Integer httpResponseCode) throws Exception{
+	public void checkHttpTransaction(Integer httpResponseCode) throws UtilsException{
 		this.httpResponseCode = httpResponseCode;
 		switch (this.parser) {
 		case jws:
@@ -82,7 +85,7 @@ public class BasicRetrieveAttributeAuthorityResponseParser implements IRetrieveA
 			if(this.httpResponseCode!=null && 
 				(this.httpResponseCode.intValue() < 200 || this.httpResponseCode.intValue()>299)) {
 				String msgError = "Connessione terminata con errore (codice trasporto: "+this.httpResponseCode.intValue()+")";
-				throw new Exception(msgError+": "+this.raw);
+				throw new UtilsException(msgError+": "+this.raw);
 			}
 			break;
 		}
@@ -106,10 +109,11 @@ public class BasicRetrieveAttributeAuthorityResponseParser implements IRetrieveA
 	}
 	
 	@Override
-	public Map<String, Object> getAttributes() {
+	public Map<String, Serializable> getAttributes() {
 		
+		Map<String, Serializable> attributes = null;
 		if(TipologiaResponseAttributeAuthority.custom.equals(this.parser)) {
-			return null;
+			return attributes; // null voluto
 		}
 		
 		if(TipologiaResponseAttributeAuthority.json.equals(this.parser) &&
@@ -117,14 +121,14 @@ public class BasicRetrieveAttributeAuthorityResponseParser implements IRetrieveA
 			return this.claims;
 		}
 		
-		if(TipologiaResponseAttributeAuthority.jws.equals(this.parser)) {
-			if(this.attributesClaims==null || this.attributesClaims.isEmpty()) {
-				return null;
-			}			
+		if(TipologiaResponseAttributeAuthority.jws.equals(this.parser) &&
+			(this.attributesClaims==null || this.attributesClaims.isEmpty()) 
+			){
+			return attributes; // null voluto
 		}
 		
 		JSONUtils jsonUtils = JSONUtils.getInstance();
-		Map<String, Object> attributes = jsonUtils.convertToMap(this.log, ("Attribute Authority: "+this.attributeAuthority), this.raw, this.attributesClaims);
+		attributes = jsonUtils.convertToMap(this.log, ("Attribute Authority: "+this.attributeAuthority), this.raw, this.attributesClaims);
 				
 		return attributes;
 	}
@@ -162,13 +166,14 @@ public class BasicRetrieveAttributeAuthorityResponseParser implements IRetrieveA
 	// Service-specific string identifier or list of string identifiers representing the intended audience for this attribute response
 	@Override
 	public List<String> getAudience() {
+		List<String> lNull = null;
 		switch (this.parser) {
 		case jws:
 			return TokenUtilities.getClaimAsList(this.claims,Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE);
 		case custom:
 		case json:
 		default:
-			return null;
+			return lNull;
 		}
 	}
 	

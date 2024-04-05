@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 public class FiltroTokenClaimBase  {
   
   @Schema(required = true, description = "")
-  private TokenClaimEnum claim = null;
+  private TokenClaimSearchEnum claim = null;
  /**
    * Get claim
    * @return claim
@@ -36,15 +36,15 @@ public class FiltroTokenClaimBase  {
   @JsonProperty("claim")
   @NotNull
   @Valid
-  public TokenClaimEnum getClaim() {
+  public TokenClaimSearchEnum getClaim() {
     return this.claim;
   }
 
-  public void setClaim(TokenClaimEnum claim) {
+  public void setClaim(TokenClaimSearchEnum claim) {
     this.claim = claim;
   }
 
-  public FiltroTokenClaimBase claim(TokenClaimEnum claim) {
+  public FiltroTokenClaimBase claim(TokenClaimSearchEnum claim) {
     this.claim = claim;
     return this;
   }

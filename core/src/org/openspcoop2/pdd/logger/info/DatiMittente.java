@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -39,6 +39,8 @@ public class DatiMittente {
 	private String tokenClientTipoSoggettoFruitore = null;
 	private String tokenClientNomeSoggettoFruitore = null;
 	
+	private String pdndOrganizationName;
+	
 	private String trasportoMittente;
 	private String tipoTrasportoMittente;
 	
@@ -53,7 +55,7 @@ public class DatiMittente {
 	
 	private String transportClientAddress;
 	private String socketClientAddress;
-	
+		
 	public String getTokenUsername() {
 		return this.tokenUsername;
 	}
@@ -102,6 +104,14 @@ public class DatiMittente {
 	public void setTokenClientNomeSoggettoFruitore(String tokenClientNomeSoggettoFruitore) {
 		this.tokenClientNomeSoggettoFruitore = tokenClientNomeSoggettoFruitore;
 	}
+	
+	public String getPdndOrganizationName() {
+		return this.pdndOrganizationName;
+	}
+	public void setPdndOrganizationName(String pdndOrganizationName) {
+		this.pdndOrganizationName = pdndOrganizationName;
+	}
+	
 	public String getTrasportoMittente() {
 		return this.trasportoMittente;
 	}

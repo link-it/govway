@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -29,9 +29,12 @@ import org.ajax4jsf.model.DataVisitor;
 import org.ajax4jsf.model.Range;
 import org.ajax4jsf.model.SequenceRange;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.web.monitor.core.datamodel.BaseDataModel;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
+import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere;
 import org.openspcoop2.web.monitor.statistiche.dao.StatisticheGiornaliereService;
 import org.openspcoop2.web.monitor.statistiche.mbean.DistribuzionePerSoggettoBean;
@@ -50,7 +53,12 @@ public class DistribuzioneSoggettoDM extends BaseDataModel<String, ResDistribuzi
 	private static final long serialVersionUID = 500153520162806619L;
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
 	
+	private transient StatsSearchForm search;
 	private boolean visualizzaComandiExport = false;
+	
+	public void setSearch(StatsSearchForm search) {
+		this.search = search;
+	}
 	
 	@Override
 	public int getRowCount() {
@@ -83,6 +91,10 @@ public class DistribuzioneSoggettoDM extends BaseDataModel<String, ResDistribuzi
 				int limit = ((SequenceRange)range).getRows();
 
 				this.wrappedKeys = new ArrayList<>();
+				
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.search.getNumeroDimensioni())) {
+					this.search.setSortOrder(SortOrder.DESC);
+				}
 				List<ResDistribuzione> list =  new ArrayList<>();
 				
 				try {

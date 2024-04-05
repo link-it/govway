@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -111,6 +111,12 @@ public class TimerStatisticheLib {
 	/** Indicazione se deve essere usata la union per calcolare i tempi di latenza */
 	private boolean useUnionForLatency = false;	
 	
+	/** Intervallo di attesa prima di passare al prossimo intervallo */
+	private long waitMsBeforeNextInterval = -1;
+	
+	/** Attesa che tutte le transazioni siano state consegnate con successo prima di passare al prossimo intervallo */
+	private boolean waitStatiInConsegna = false;
+	
 	/** Tipologie di statistiche */
 	private TipoIntervalloStatistico tipoStatistica;
 	private boolean statisticheOrarie = false;
@@ -188,6 +194,8 @@ public class TimerStatisticheLib {
 			break;
 		}
 		
+		this.waitStatiInConsegna = this.op2Properties.isStatisticheGenerazioneAttendiCompletamentoTransazioniInFasiIntermedie();
+		this.waitMsBeforeNextInterval = this.op2Properties.getStatisticheGenerazioneTradeOffMs();
 				
 		try{
 			
@@ -268,10 +276,12 @@ public class TimerStatisticheLib {
 			this.statisticsConfig.setStatisticheGiornaliere(this.statisticheGiornaliere);
 			this.statisticsConfig.setStatisticheSettimanali(this.statisticheSettimanali);
 			this.statisticsConfig.setStatisticheMensili(this.statisticheMensili);
-			this.statisticsConfig.setStatisticheOrarie_gestioneUltimoIntervallo(this.statisticheOrarie_gestioneUltimoIntervallo);
-			this.statisticsConfig.setStatisticheGiornaliere_gestioneUltimoIntervallo(this.statisticheGiornaliere_gestioneUltimoIntervallo);
-			this.statisticsConfig.setStatisticheSettimanali_gestioneUltimoIntervallo(this.statisticheSettimanali_gestioneUltimoIntervallo);
-			this.statisticsConfig.setStatisticheMensili_gestioneUltimoIntervallo(this.statisticheMensili_gestioneUltimoIntervallo);
+			this.statisticsConfig.setStatisticheOrarieGestioneUltimoIntervallo(this.statisticheOrarie_gestioneUltimoIntervallo);
+			this.statisticsConfig.setStatisticheGiornaliereGestioneUltimoIntervallo(this.statisticheGiornaliere_gestioneUltimoIntervallo);
+			this.statisticsConfig.setStatisticheSettimanaliGestioneUltimoIntervallo(this.statisticheSettimanali_gestioneUltimoIntervallo);
+			this.statisticsConfig.setStatisticheMensiliGestioneUltimoIntervallo(this.statisticheMensili_gestioneUltimoIntervallo);
+			this.statisticsConfig.setWaitMsBeforeNextInterval(this.waitMsBeforeNextInterval);
+			this.statisticsConfig.setWaitStatiInConsegna(this.waitStatiInConsegna);
 		}catch(Exception e){
 			throw new Exception("Errore durante la generazione delle statistiche (InitConfigurazione): "+e.getMessage(),e);
 		}

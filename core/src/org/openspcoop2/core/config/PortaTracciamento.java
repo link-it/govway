@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -22,9 +22,11 @@ package org.openspcoop2.core.config;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.Severita;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import java.io.Serializable;
 
 
@@ -34,8 +36,15 @@ import java.io.Serializable;
  * 
  * <pre>
  * &lt;complexType name="porta-tracciamento"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="database" type="{http://www.openspcoop2.org/core/config}tracciamento-configurazione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filetrace" type="{http://www.openspcoop2.org/core/config}tracciamento-configurazione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filetrace-config" type="{http://www.openspcoop2.org/core/config}tracciamento-configurazione-filetrace" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="transazioni" type="{http://www.openspcoop2.org/core/config}transazioni" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
  * 		&lt;attribute name="severita" type="{http://www.openspcoop2.org/core/config}Severita" use="optional"/&gt;
  * 		&lt;attribute name="esiti" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
  * &lt;/complexType&gt;
  * </pre>
  * 
@@ -46,13 +55,52 @@ import java.io.Serializable;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "porta-tracciamento")
+@XmlType(name = "porta-tracciamento", 
+  propOrder = {
+  	"database",
+  	"filetrace",
+  	"filetraceConfig",
+  	"transazioni"
+  }
+)
 
 @XmlRootElement(name = "porta-tracciamento")
 
 public class PortaTracciamento extends org.openspcoop2.utils.beans.BaseBeanWithId implements Serializable , Cloneable {
   public PortaTracciamento() {
     super();
+  }
+
+  public TracciamentoConfigurazione getDatabase() {
+    return this.database;
+  }
+
+  public void setDatabase(TracciamentoConfigurazione database) {
+    this.database = database;
+  }
+
+  public TracciamentoConfigurazione getFiletrace() {
+    return this.filetrace;
+  }
+
+  public void setFiletrace(TracciamentoConfigurazione filetrace) {
+    this.filetrace = filetrace;
+  }
+
+  public TracciamentoConfigurazioneFiletrace getFiletraceConfig() {
+    return this.filetraceConfig;
+  }
+
+  public void setFiletraceConfig(TracciamentoConfigurazioneFiletrace filetraceConfig) {
+    this.filetraceConfig = filetraceConfig;
+  }
+
+  public Transazioni getTransazioni() {
+    return this.transazioni;
+  }
+
+  public void setTransazioni(Transazioni transazioni) {
+    this.transazioni = transazioni;
   }
 
   public void setSeveritaRawEnumValue(String value) {
@@ -83,9 +131,41 @@ public class PortaTracciamento extends org.openspcoop2.utils.beans.BaseBeanWithI
     this.esiti = esiti;
   }
 
+  public void setStatoRawEnumValue(String value) {
+    this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+  }
+
+  public String getStatoRawEnumValue() {
+    if(this.stato == null){
+    	return null;
+    }else{
+    	return this.stato.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.StatoFunzionalita getStato() {
+    return this.stato;
+  }
+
+  public void setStato(org.openspcoop2.core.config.constants.StatoFunzionalita stato) {
+    this.stato = stato;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
+
+  @XmlElement(name="database",required=false,nillable=false)
+  protected TracciamentoConfigurazione database;
+
+  @XmlElement(name="filetrace",required=false,nillable=false)
+  protected TracciamentoConfigurazione filetrace;
+
+  @XmlElement(name="filetrace-config",required=false,nillable=false)
+  protected TracciamentoConfigurazioneFiletrace filetraceConfig;
+
+  @XmlElement(name="transazioni",required=false,nillable=false)
+  protected Transazioni transazioni;
 
   @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String severitaRawEnumValue;
@@ -96,5 +176,11 @@ public class PortaTracciamento extends org.openspcoop2.utils.beans.BaseBeanWithI
   @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="esiti",required=false)
   protected java.lang.String esiti;
+
+  @jakarta.xml.bind.annotation.XmlTransient
+  protected java.lang.String statoRawEnumValue;
+
+  @XmlAttribute(name="stato",required=false)
+  protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
 }

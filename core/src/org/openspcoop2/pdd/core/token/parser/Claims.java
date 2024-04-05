@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -129,6 +129,10 @@ public class Claims {
 	public static final String GOOGLE_CLAIMS_ERROR_DESCRIPTION = "error_description";
 	public static final String GOOGLE_CLAIMS_ERROR = "error";
 
-	
+	// https://swagger.io/docs/specification/authentication/openid-connect-discovery/
+	// https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata
+	public static final String OIDC_ID_DISCOVERY_DYNAMIC_JWK_URI = "jwks_uri";
+	public static final String OIDC_ID_DISCOVERY_DYNAMIC_INTROSPECTION_ENDPOINT = "introspection_endpoint";
+	public static final String OIDC_ID_DISCOVERY_DYNAMIC_USERINFO_ENDPOINT = "userinfo_endpoint";
 	
 }

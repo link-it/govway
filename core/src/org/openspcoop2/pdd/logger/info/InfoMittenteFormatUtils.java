@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -40,6 +40,8 @@ import org.openspcoop2.utils.certificate.PrincipalType;
  *
  */
 public class InfoMittenteFormatUtils {
+	
+	private InfoMittenteFormatUtils() {}
 
 	public static String getRichiedente(DatiMittente infoDatiMittente) {
 		
@@ -62,6 +64,12 @@ public class InfoMittenteFormatUtils {
 			return sTokenClient;
 		}
 		
+		// 2b) Applicativo Token identificato tramite PDND
+		String sTokenClientPdndOrganizationName = infoDatiMittente.getPdndOrganizationName();
+		if(StringUtils.isNotEmpty(sTokenClientPdndOrganizationName)) {
+			return sTokenClientPdndOrganizationName;
+		}
+		
 		// 3) Applicativo Fruitore
 		String sApplicativoFruitore = infoDatiMittente.getServizioApplicativoFruitore();
 		if(StringUtils.isNotEmpty(sApplicativoFruitore)) {
@@ -75,12 +83,11 @@ public class InfoMittenteFormatUtils {
 		if(StringUtils.isNotEmpty(sTokenClientId)) {
 			clientCredentialsFlow = (sTokenSubject==null) || (StringUtils.isEmpty(sTokenSubject)) || (sTokenSubject.equals(sTokenClientId));
 		}
-		
+				
 		// 4a) Client ID, per il caso di ClientCredential
-		if(clientCredentialsFlow) {
-			if(StringUtils.isNotEmpty(sTokenClientId)) {
-				return sTokenClientId;
-			}
+		if(clientCredentialsFlow &&
+			StringUtils.isNotEmpty(sTokenClientId)) {
+			return sTokenClientId;
 		}
 		
 		// 4b) Subject/Issuer del Token
@@ -96,55 +103,69 @@ public class InfoMittenteFormatUtils {
 		}
 		
 		// 4c) Client ID, per il caso diverso da ClientCredential
-		if(!clientCredentialsFlow) {
-			if(StringUtils.isNotEmpty(sTokenClientId)) {
-				return sTokenClientId;
-			}
+		if(!clientCredentialsFlow &&
+			StringUtils.isNotEmpty(sTokenClientId)) {
+			return sTokenClientId;
 		}
 		
 		// 5) Credenziali dell'autenticazione di trasporto
 		// volutamente uso l'id autenticato.
 		// se l'api è pubblica non deve essere visualizzata questa informazione!
+		String sTrasporto = getRichiedenteTrasporto(infoDatiMittente);
+		if(sTrasporto!=null) {
+			return sTrasporto;
+		}
+						
+		return null;
+		
+	}
+	
+	private static String getRichiedenteTrasporto(DatiMittente infoDatiMittente) {
 		String sTrasportoMittente = infoDatiMittente.getTrasportoMittente();
 		String sTipoTrasportoMittente = infoDatiMittente.getTipoTrasportoMittente();
 		if(StringUtils.isNotEmpty(sTrasportoMittente) && StringUtils.isNotEmpty(sTipoTrasportoMittente)) {
 			if(sTipoTrasportoMittente.endsWith("_"+TipoAutenticazione.SSL.getValue())) {
-				try {
-					Map<String, List<String>> l = CertificateUtils.getPrincipalIntoMap(sTrasportoMittente, PrincipalType.SUBJECT);
-					if(l!=null && !l.isEmpty()) {
-						List<String> cnList = l.get("CN");
-						if(cnList==null || cnList.isEmpty()) {
-							cnList = l.get("cn");
-						}
-						if(cnList==null || cnList.isEmpty()) {
-							cnList = l.get("Cn");
-						}
-						if(cnList==null || cnList.isEmpty()) {
-							cnList = l.get("cN");
-						}						
-						if(cnList!=null && cnList.size()>0) {
-							StringBuilder bfList = new StringBuilder();
-							for (String s : cnList) {
-								if(bfList.length()>0) {
-									bfList.append(", ");
-								}
-								bfList.append(s);
-							}
-							return bfList.toString();
-						}
-					}
-					return sTrasportoMittente;
-				}catch(Throwable t) {	
-					return sTrasportoMittente;
-				}
+				return getRichiedenteTrasportoSSLEngine(sTrasportoMittente);
 			}
 			else {
 				return sTrasportoMittente;
 			}
 		}
-						
 		return null;
-		
+	}
+	private static String getRichiedenteTrasportoSSLEngine(String sTrasportoMittente) {
+		try {
+			Map<String, List<String>> l = CertificateUtils.getPrincipalIntoMap(sTrasportoMittente, PrincipalType.SUBJECT);
+			if(l!=null && !l.isEmpty()) {
+				List<String> cnList = getCNList(l);
+				if(cnList!=null && !cnList.isEmpty()) {
+					StringBuilder bfList = new StringBuilder();
+					for (String s : cnList) {
+						if(bfList.length()>0) {
+							bfList.append(", ");
+						}
+						bfList.append(s);
+					}
+					return bfList.toString();
+				}
+			}
+			return sTrasportoMittente;
+		}catch(Exception t) {	
+			return sTrasportoMittente;
+		}
+	}
+	private static List<String> getCNList(Map<String, List<String>> l){
+		List<String> cnList = l.get("CN");
+		if(cnList==null || cnList.isEmpty()) {
+			cnList = l.get("cn");
+		}
+		if(cnList==null || cnList.isEmpty()) {
+			cnList = l.get("Cn");
+		}
+		if(cnList==null || cnList.isEmpty()) {
+			cnList = l.get("cN");
+		}
+		return cnList;
 	}
 	
 	public static String getIpRichiedente(DatiMittente infoDatiMittente) {
@@ -163,7 +184,7 @@ public class InfoMittenteFormatUtils {
 		
 	}
 	
-	public static String getLabelRichiedenteConFruitore(DatiMittente infoDatiMittente) throws Exception {
+	public static String getLabelRichiedenteConFruitore(DatiMittente infoDatiMittente) {
 		StringBuilder bf = new StringBuilder();
 		
 		String richiedente = getRichiedente(infoDatiMittente);
@@ -175,73 +196,89 @@ public class InfoMittenteFormatUtils {
 		if(StringUtils.isNotEmpty(sTokenClient)) {
 			
 			// dominio di un applicativo client
-			if(infoDatiMittente.getTokenClientSoggettoFruitore()!=null &&
-					infoDatiMittente.getTokenClientTipoSoggettoFruitore()!=null && infoDatiMittente.getTokenClientNomeSoggettoFruitore()!=null) {
-				
-				boolean addFruitore = true;
-				
-				IDSoggetto idSoggettoFruitore = new IDSoggetto(infoDatiMittente.getTokenClientTipoSoggettoFruitore(), infoDatiMittente.getTokenClientNomeSoggettoFruitore());
-				
-				if(org.openspcoop2.core.transazioni.constants.PddRuolo.DELEGATA.equals(infoDatiMittente.getPddRuolo())) {
-					addFruitore = (idSoggettoFruitore==null) || (infoDatiMittente.getSoggettoOperativo()==null) || (!infoDatiMittente.getSoggettoOperativo().equals(idSoggettoFruitore.toString()));
-				}
-				
-				if(addFruitore) {
-					if(bf.length()>0) {
-						bf.append(NamingUtils.LABEL_DOMINIO);
-					}
-					
-					bf.append(infoDatiMittente.getTokenClientSoggettoFruitore());	
-				}
-			}
+			processLabelRichiedenteConFruitoreTokenClient(infoDatiMittente, bf);
 			
 		}
 		else {
 			
 			// dominio del soggetto fruitore
+			processLabelRichiedenteConFruitore(infoDatiMittente, bf, richiedente);
 			
-			String sFruitore = infoDatiMittente.getSoggettoFruitore();
-			if(StringUtils.isNotEmpty(sFruitore)) {
-	
-				boolean addFruitore = true;
-							
-				if(org.openspcoop2.core.transazioni.constants.PddRuolo.APPLICATIVA.equals(infoDatiMittente.getPddRuolo())) {
-					
-					// L'AppId di un soggetto è già il soggetto. L'informazione sarebbe ridondante.
-					String sTrasportoMittente = infoDatiMittente.getTrasportoMittente();
-					if(richiedente!=null && sTrasportoMittente!=null && richiedente.equals(sTrasportoMittente)) { // se e' stato selezionato l'appId
-						String sTipoTrasportoMittente = infoDatiMittente.getTipoTrasportoMittente();
-						if(sTipoTrasportoMittente!=null && StringUtils.isNotEmpty(sTipoTrasportoMittente) && 
-								sTipoTrasportoMittente.endsWith("_"+TipoAutenticazione.APIKEY.getValue())) {
-							// autenticazione api-key
-							if(!sTrasportoMittente.contains(ApiKeyUtilities.APPLICATIVO_SOGGETTO_SEPARATOR)) {
-								// appId di un soggetto
-								bf = new StringBuilder(); // aggiunto solo il soggetto
-							}		
-						}
-					}
-					
-				}
-				else if(org.openspcoop2.core.transazioni.constants.PddRuolo.DELEGATA.equals(infoDatiMittente.getPddRuolo())) {
-					
-					if(infoDatiMittente.getSoggettoOperativo()!=null && StringUtils.isNotEmpty(infoDatiMittente.getTipoSoggettoFruitore()) && StringUtils.isNotEmpty(infoDatiMittente.getNomeSoggettoFruitore())) {
-						IDSoggetto idSoggettoFruitore = new IDSoggetto(infoDatiMittente.getTipoSoggettoFruitore(), infoDatiMittente.getNomeSoggettoFruitore());
-						addFruitore = !infoDatiMittente.getSoggettoOperativo().equals(idSoggettoFruitore.toString());
-					}
-					
-				}
-				
-				if(addFruitore) {
-					if(bf.length()>0) {
-						bf.append(NamingUtils.LABEL_DOMINIO);
-					}
-					
-					bf.append(sFruitore);	
-				}
-			}
 		}
 		
 		return bf.toString();
+	}
+	
+	private static void processLabelRichiedenteConFruitoreTokenClient(DatiMittente infoDatiMittente, StringBuilder bfParam) {
+		if(infoDatiMittente.getTokenClientSoggettoFruitore()!=null &&
+				infoDatiMittente.getTokenClientTipoSoggettoFruitore()!=null && infoDatiMittente.getTokenClientNomeSoggettoFruitore()!=null) {
+			
+			boolean addFruitore = true;
+			
+			IDSoggetto idSoggettoFruitore = new IDSoggetto(infoDatiMittente.getTokenClientTipoSoggettoFruitore(), infoDatiMittente.getTokenClientNomeSoggettoFruitore());
+			
+			if(org.openspcoop2.core.transazioni.constants.PddRuolo.DELEGATA.equals(infoDatiMittente.getPddRuolo())) {
+				addFruitore = 
+						/**(idSoggettoFruitore==null) ||*/ 
+						(infoDatiMittente.getSoggettoOperativo()==null) || (!infoDatiMittente.getSoggettoOperativo().equals(idSoggettoFruitore.toString()));
+			}
+			
+			if(addFruitore) {
+				if(bfParam.length()>0) {
+					bfParam.append(NamingUtils.LABEL_DOMINIO);
+				}
+				
+				bfParam.append(infoDatiMittente.getTokenClientSoggettoFruitore());	
+			}
+		}
+	}
+	
+	private static void processLabelRichiedenteConFruitore(DatiMittente infoDatiMittente, StringBuilder bfParam, String richiedente) {
+		String sFruitore = infoDatiMittente.getSoggettoFruitore();
+		if(StringUtils.isNotEmpty(sFruitore)) {
+
+			boolean addFruitore = true;
+						
+			if(org.openspcoop2.core.transazioni.constants.PddRuolo.APPLICATIVA.equals(infoDatiMittente.getPddRuolo())) {
+				
+				processLabelRichiedenteConFruitorePortaApplicativa(infoDatiMittente, bfParam, richiedente);
+				
+			}
+			else if(org.openspcoop2.core.transazioni.constants.PddRuolo.DELEGATA.equals(infoDatiMittente.getPddRuolo()) &&
+					(infoDatiMittente.getSoggettoOperativo()!=null && StringUtils.isNotEmpty(infoDatiMittente.getTipoSoggettoFruitore()) && StringUtils.isNotEmpty(infoDatiMittente.getNomeSoggettoFruitore())) 
+				) {
+			
+				IDSoggetto idSoggettoFruitore = new IDSoggetto(infoDatiMittente.getTipoSoggettoFruitore(), infoDatiMittente.getNomeSoggettoFruitore());
+				addFruitore = !infoDatiMittente.getSoggettoOperativo().equals(idSoggettoFruitore.toString());
+			
+			}
+			
+			if(addFruitore) {
+				if(bfParam.length()>0) {
+					bfParam.append(NamingUtils.LABEL_DOMINIO);
+				}
+				
+				bfParam.append(sFruitore);	
+			}
+		}
+	}
+	
+	private static void processLabelRichiedenteConFruitorePortaApplicativa(DatiMittente infoDatiMittente, StringBuilder bfParam, String richiedente) {
+		// L'AppId di un soggetto è già il soggetto. L'informazione sarebbe ridondante.
+		String sTrasportoMittente = infoDatiMittente.getTrasportoMittente();
+		if(richiedente!=null && sTrasportoMittente!=null && richiedente.equals(sTrasportoMittente)) { // se e' stato selezionato l'appId
+			String sTipoTrasportoMittente = infoDatiMittente.getTipoTrasportoMittente();
+			if(sTipoTrasportoMittente!=null && StringUtils.isNotEmpty(sTipoTrasportoMittente) && 
+					sTipoTrasportoMittente.endsWith("_"+TipoAutenticazione.APIKEY.getValue()) &&
+				// autenticazione api-key
+				(!sTrasportoMittente.contains(ApiKeyUtilities.APPLICATIVO_SOGGETTO_SEPARATOR)) 
+				&&
+				bfParam.length()>0
+				){
+				// appId di un soggetto
+				bfParam.setLength(0); // svuoto il buffer poichè aggiungo solo il soggetto
+			}
+		}
 	}
 	
 }

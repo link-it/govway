@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -127,6 +127,11 @@ public class Costanti {
 	public static final String INDIRIZZO_IP_KEY = "commons.indirizzoIP.label";
 	public static final String IDENTIFICAZIONE_TOKEN_KEY = "commons.identificazione.token.label";
 	public static final String IDENTIFICAZIONE_TRASPORTO_KEY = "commons.identificazione.trasporto.label";
+	public static final String AUTENTICAZIONE_KEY = "commons.autenticazione.label";
+	
+	public static final String TOKEN_CLIENT_ID_PDND_EXTERNAL_ID_KEY = "commons.tokenInfo.clientID.pdnd.externalId.label";
+	public static final String TOKEN_CLIENT_ID_PDND_ORGANIZATION_ID_KEY = "commons.tokenInfo.clientID.pdnd.id.label";
+	public static final String TOKEN_CLIENT_ID_PDND_CATEGORIA_KEY = "commons.tokenInfo.clientID.pdnd.categoria.label";
 	
 	public static final String SEARCH_APPLICATIVO_DEFAULT_LABEL_KEY = "commons.search.applicativo.defaultLabel";
 	public static final String SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_SOGGETTO_LOCALE_KEY = "commons.search.applicativo.defaultLabelNoSoggettoLocal";
@@ -145,6 +150,16 @@ public class Costanti {
 	public static final String SEARCH_MISSING_PARAMETERS_CLAIM_LABEL_KEY = "commons.search.missing_parameters.claim";
 	public static final String SEARCH_MISSING_PARAMETERS_VALORE_LABEL_KEY = "commons.search.missing_parameters.valore";
 	public static final String SEARCH_MISSING_PARAMETERS_TIPO_LABEL_KEY = "commons.search.missing_parameters.tipo";
+	
+	public static final String SEARCH_TOKEN_ISSUER = "transazioni.search.sezioneFiltroRicercaLibera.tokenInfo.issuer.label";
+	public static final String SEARCH_TOKEN_CLIENT_ID = "transazioni.search.sezioneFiltroRicercaLibera.tokenInfo.clientID.label";
+	public static final String SEARCH_TOKEN_SUBJECT = "transazioni.search.sezioneFiltroRicercaLibera.tokenInfo.subject.label";
+	public static final String SEARCH_TOKEN_USERNAME = "transazioni.search.sezioneFiltroRicercaLibera.tokenInfo.username.label";
+	public static final String SEARCH_TOKEN_EMAIL = "transazioni.search.sezioneFiltroRicercaLibera.tokenInfo.email.label";
+	
+	public static final String SEARCH_PDND_PREFIX_ORGANIZATION_NAME = "transazioni.search.sezioneFiltroRicercaLibera.pdndPrefix.organization.name.label";
+	public static final String SEARCH_PDND_ORGANIZATION_NAME = "transazioni.search.sezioneFiltroRicercaLibera.pdnd.organization.name.label";
+	
 	
 	/* Home page utente*/
 	
@@ -169,6 +184,7 @@ public class Costanti {
 	public static final String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI = "Ultimi 7 giorni";
 	public static final String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_30_GIORNI = "Ultimi 30 giorni";
 	public static final String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMO_ANNO = "Ultimo anno";
+	
 	
 	/* CSRF */
 	

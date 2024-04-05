@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +32,9 @@ import java.util.Properties;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.token.validazione.ValidazioneJWTDynamicDiscoveryTest;
+import org.openspcoop2.utils.certificate.ArchiveLoader;
+import org.openspcoop2.utils.certificate.JWKPublicKeyConverter;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.IDUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -65,6 +69,8 @@ public class RestTest extends ConfigLoader {
 	
 	private static void _test(TipoServizio tipoServizio) throws Exception {
 
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetAllCache(logCore);
+		
 		String id = IDUtilities.generateAlphaNumericRandomString(10);
 		File f = new File("/tmp/govway.plugins.testsuite.id");
 		f.delete();
@@ -128,7 +134,9 @@ public class RestTest extends ConfigLoader {
 		File fPostOutResponseHandler =  new File("/tmp/"+id+".post-out-response-handler-"+role+".result");
 		//files.add(fPostOutResponseHandler); deve essere fatta a parte per gestire il disaccoppiamento tra la risposta ritornata e l'esecuzione dell'handler
 		
-		File fTokenValidazioneJWT =  new File("/tmp/"+id+".token-validazione-jwt-"+role+".result");
+		File fTokenDynamicDiscovery =  new File("/tmp/"+id+".token-dynamic-discovery-"+role+".result");
+		filesVerifica.add(fTokenDynamicDiscovery);
+		File fTokenValidazioneJWT=  new File("/tmp/"+id+".token-validazione-jwt-"+role+".result");
 		filesVerifica.add(fTokenValidazioneJWT);
 		File fTokenIntrospection =  new File("/tmp/"+id+".token-validazione-introspection-"+role+".result");
 		filesVerifica.add(fTokenIntrospection);
@@ -148,8 +156,22 @@ public class RestTest extends ConfigLoader {
 		
 		File fAttributeAuthority = new File("/tmp/aaResponse-"+role+".json");
 		
+		File fJWK = File.createTempFile("dynamicKeystore", ".jwk");
+		
+		File fDynamicDiscovery = File.createTempFile("dynamic", ".json");
+		
 		try {
 		
+			byte [] keystore = null;
+			keystore = FileSystemUtilities.readBytesFromFile("/etc/govway/keys/erogatore.jks");
+			PublicKey publicKey = ArchiveLoader.loadFromKeystoreJKS(keystore, "erogatore", "openspcoop").getCertificate().getCertificate().getPublicKey();
+			String jwks = JWKPublicKeyConverter.convert(publicKey, "erogatore", true, false);
+			keystore = jwks.getBytes();
+			FileSystemUtilities.writeFile(fJWK, keystore);
+			
+			String dd = tipoServizio == TipoServizio.EROGAZIONE ? buildDD_PA(fJWK) : buildDD_PD(fJWK);
+			FileSystemUtilities.writeFile(fDynamicDiscovery, dd.getBytes());
+			
 			String jsonJWT = buildJSON(tipoServizio == TipoServizio.EROGAZIONE, "jwt");
 			String jwt = buildJWT(jsonJWT);
 			
@@ -181,6 +203,7 @@ public class RestTest extends ConfigLoader {
 			
 			
 			HttpRequest request = new HttpRequest();
+			request.addHeader(ValidazioneJWTDynamicDiscoveryTest.DYNAMIC_HEADER_LOCATION, fDynamicDiscovery.getAbsolutePath());
 			request.addHeader("test-govway-role", role);
 			request.addHeader("test-plugins-autenticazione", "govway-testsuite-plugins");
 			request.addHeader("test-plugins-autorizzazione-contenuto", "govway-testsuite-plugins-authz");
@@ -253,6 +276,8 @@ public class RestTest extends ConfigLoader {
 			}catch(Throwable t) {
 				// ignore
 			}
+			FileSystemUtilities.deleteFile(fJWK);
+			FileSystemUtilities.deleteFile(fDynamicDiscovery);
 		}
 			
 	}	
@@ -400,6 +425,30 @@ public class RestTest extends ConfigLoader {
 		//System.out.println("TOKEN ["+jsonInput+"]");
 		
 		return jsonInput;
+	}
+	
+	
+	private static String buildDD_PA(File f) {
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		
+		String jwkUri = f.getAbsolutePath();
+		String introUri = "http://127.0.0.1:8080/TestService/echo?existsQueryParameters=test_token&destFile=/tmp/introspectionResponse-pa.json&destFileContentType=application/json";
+		String userInfoUri = "http://127.0.0.1:8080/TestService/echo?existsQueryParameters=test_token_user_info&destFile=/tmp/userinfoResponse-pa.json&destFileContentType=application/json";
+		return ValidazioneJWTDynamicDiscoveryTest.buildDD("", mapExpectedTokenInfo,
+				jwkUri, introUri, userInfoUri, "pa");
+		
+	}
+	private static String buildDD_PD(File f) {
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		
+		String jwkUri = f.getAbsolutePath();
+		String introUri = "http://127.0.0.1:8080/TestService/echo?existsQueryParameters=test_token&destFile=/tmp/introspectionResponse-pd.json&destFileContentType=application/json";
+		String userInfoUri = "http://127.0.0.1:8080/TestService/echo?existsQueryParameters=test_token_user_info&destFile=/tmp/userinfoResponse-pd.json&destFileContentType=application/json";
+		return ValidazioneJWTDynamicDiscoveryTest.buildDD("", mapExpectedTokenInfo,
+				jwkUri, introUri, userInfoUri, "pd");
+		
 	}
 
 }

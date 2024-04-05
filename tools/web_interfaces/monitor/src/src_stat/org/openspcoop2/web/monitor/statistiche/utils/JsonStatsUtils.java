@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -22,11 +22,17 @@ package org.openspcoop2.web.monitor.statistiche.utils;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -38,11 +44,14 @@ import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
+import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
+import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione3D;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
+import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -103,7 +112,7 @@ public class JsonStatsUtils {
 				if(++i<=slice) {
 					if(r.length() > maxLenghtLabel)
 						maxLenghtLabel = r.length();
-					
+
 					String toolText = StatsUtils.getToolText(search,sum); 
 					if(!entry.getParentMap().isEmpty())
 						toolText = StatsUtils.getToolTextConParent(search, r ,entry.getParentMap(), sum);
@@ -309,25 +318,31 @@ public class JsonStatsUtils {
 							String tipoLat = strings[i];
 							if(tipoLat != null && showSeries){
 								if(tipoLat.equals("0")){
-									ObjectNode categoria = jsonUtils.newObjectNode();
-									categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_TOTALE.getValue().toLowerCase().replace(" ", "_"));
-									categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_TOTALE.getValue());
-									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_TOTALE);
-									categorie.set(i,categoria);
+									if(showSeries){
+										ObjectNode categoria = jsonUtils.newObjectNode();
+										categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_TOTALE.getValue().toLowerCase().replace(" ", "_"));
+										categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_TOTALE.getValue());
+										categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_TOTALE);
+										categorie.set(i,categoria);
+									}
 								}
 								else if(tipoLat.equals("1")){
-									ObjectNode categoria = jsonUtils.newObjectNode();
-									categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_SERVIZIO.getValue().toLowerCase().replace(" ", "_"));
-									categoria.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_SERVIZIO);
-									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_SERVIZIO);
-									categorie.set(i,categoria);
+									if(showSeries){
+										ObjectNode categoria = jsonUtils.newObjectNode();
+										categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_SERVIZIO.getValue().toLowerCase().replace(" ", "_"));
+										categoria.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_SERVIZIO);
+										categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_SERVIZIO);
+										categorie.set(i,categoria);
+									}
 								}
 								else if(tipoLat.equals("2")){
-									ObjectNode categoria = jsonUtils.newObjectNode();
-									categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_PORTA.getValue().toLowerCase().replace(" ", "_"));
-									categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_PORTA.getValue());
-									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_PORTA);
-									categorie.set(i,categoria);
+									if(showSeries){
+										ObjectNode categoria = jsonUtils.newObjectNode();
+										categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_PORTA.getValue().toLowerCase().replace(" ", "_"));
+										categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_PORTA.getValue());
+										categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_PORTA);
+										categorie.set(i,categoria);
+									}
 								}
 							}
 						}
@@ -368,9 +383,9 @@ public class JsonStatsUtils {
 			int slice = sliceParam;
 			if(slice != Integer.MAX_VALUE) // viene usato il maxValue per "disattivare" lo slice
 				slice = slice * numeroCategorie;
-			
+
 			int maxLenghtLabel = 0;
-			
+
 			List<Integer> posizioniDaVisualizzare = getListaIndiciLabelDaVisualizzare(list.size(), numeroLabel);
 			boolean nascondiLabel = posizioniDaVisualizzare != null;
 
@@ -437,7 +452,7 @@ public class JsonStatsUtils {
 						if(j==0){
 							if(r.length() > maxLenghtLabel)
 								maxLenghtLabel = r.length();
-							
+
 							bar.put(CostantiGrafici.DATA_KEY, escapeJsonLabel(r));
 							if(!nascondiLabel) {
 								bar.put(CostantiGrafici.DATA_LABEL_KEY, escapeJsonLabel(r));
@@ -466,7 +481,7 @@ public class JsonStatsUtils {
 
 						if(j == numeroCategorie-1)
 							dati.add(bar);
-						
+
 					} else{
 
 						if(j==0){
@@ -490,7 +505,7 @@ public class JsonStatsUtils {
 					}
 				}
 
-				
+
 			}
 			if(iterazione>slice){
 				ObjectNode bar = jsonUtils.newObjectNode();
@@ -531,7 +546,7 @@ public class JsonStatsUtils {
 				}
 				dati.add(bar);
 			}
-			
+
 			if(maxLenghtLabel > CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_DEFAULT_VALUE)
 				grafico.put(CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_KEY, CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_DEFAULT_VALUE);
 
@@ -550,6 +565,505 @@ public class JsonStatsUtils {
 			grafico.put(CostantiGrafici.NO_DATA_KEY, CostantiGrafici.DATI_NON_PRESENTI);
 		}
 		return grafico;
+	}
+
+	/* ************** HEATMAP CHART **************** */
+
+	public static ObjectNode getJsonHeatmapChartDistribuzione(List<ResDistribuzione> list, StatsSearchForm search, 
+			String caption, String subCaption, String direzioneLabelParam, Integer slice, StatisticType tempo, boolean visualizzaTotaleNelleCelleGraficoHeatmap,
+			Logger log) throws UtilsException{
+		return _getJsonHeatmapChartDistribuzione(list, search, caption, subCaption, direzioneLabelParam, slice, null, tempo, visualizzaTotaleNelleCelleGraficoHeatmap, log);
+	}
+
+	private static String buildKeyJsonHeatmapChartDistribuzione(ResDistribuzione res) {
+		StringBuilder sb = new StringBuilder(res.getRisultato());
+		if(res.getParentMap()!=null && !res.getParentMap().isEmpty()) {
+			int i = 0;
+			for (Entry<String, String> entry : res.getParentMap().entrySet()) {
+				sb.append("_");
+				sb.append(i);
+				sb.append(":");
+				sb.append(entry.getValue());
+				i++;
+			}
+		}
+		return sb.toString();
+	}
+	private static ObjectNode _getJsonHeatmapChartDistribuzione(List<ResDistribuzione> list, StatsSearchForm search, 
+			String caption, String subCaption, String direzioneLabelParam, Integer sliceParam, Integer numeroLabel, StatisticType tempo, boolean visualizzaTotaleNelleCelleGraficoHeatmap,
+			Logger log
+			) throws UtilsException{
+		JSONUtils jsonUtils = JSONUtils.getInstance();
+		
+		ObjectNode grafico = jsonUtils.newObjectNode();
+
+		grafico.put(CostantiGrafici.USA_COLORI_AUTOMATICI_KEY, false);
+		grafico.put(CostantiGrafici.X_AXIS_GRID_LINES_KEY,true);
+		grafico.put(CostantiGrafici.TITOLO_KEY, caption);
+		grafico.put(CostantiGrafici.SOTTOTITOLO_KEY, subCaption);
+		grafico.put(CostantiGrafici.X_AXIS_LABEL_DIREZIONE_KEY, getDirezioneLabel(direzioneLabelParam));
+		grafico.put(CostantiGrafici.VISUALIZZA_VALUE_NELLA_CELLA_GRAFICO_HEATMAP, visualizzaTotaleNelleCelleGraficoHeatmap);
+		try {
+			grafico.put(CostantiGrafici.VISUALIZZA_VALORE_ZERO_NEL_GRAFICO_HEATMAP, PddMonitorProperties.getInstance(log).isStatisticheVisualizzaValoreZeroNelGraficoHeatmap());
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		
+
+		SimpleDateFormat sdf = null;
+		SimpleDateFormat sdf_last = null;
+		if(tempo!=null) {
+			sdf_last = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, ApplicationBean.getInstance().getLocale());
+			if (StatisticType.ORARIA.equals(tempo)) {
+				sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY_HH, ApplicationBean.getInstance().getLocale());
+			} else {
+				sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY, ApplicationBean.getInstance().getLocale());
+			}
+		}
+
+		ArrayNode categorie = jsonUtils.newArrayNode();
+
+		boolean showSeries = false;
+		if(categorie.isEmpty()){
+			ObjectNode categoria = jsonUtils.newObjectNode();
+			categoria.put(CostantiGrafici.KEY_KEY , CostantiGrafici.TOTALE_KEY);
+			categoria.put(CostantiGrafici.LABEL_KEY , StatsUtils.getSubCaption(search,true));
+			categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_TOTALE);
+			categorie.add(categoria);
+		}
+
+		// Inserisco le catergorie del grafico
+		grafico.set(CostantiGrafici.CATEGORIE_KEY, categorie);
+
+		grafico.put(CostantiGrafici.MOSTRA_LEGENDA_KEY, showSeries);
+
+		String yAxisName = StatsUtils.getSubCaption(search,true);
+
+		grafico.put(CostantiGrafici.Y_AXIS_LABEL_KEY, yAxisName);
+
+		Number valoreMinimo = 0;
+		Number valoreMassimo = 0;
+
+		ArrayNode dati = jsonUtils.newArrayNode();
+		// colleziono i dati
+		if(list!=null  && !list.isEmpty()){
+//			int iterazione = 0;
+//			long altri_sum_serie1=0;
+
+			int slice = sliceParam;
+			int maxLenghtLabel = 0;
+			
+			// 1. Valorizzare tutti dati mancanti, genero eventuali 0 cosi tutti i calcoli successivi si faranno su un numero di elementi dell'asse y uguale 
+			list = generaElementiMancanti(list, log);
+
+			// 2. Ordinare i risultati per categoria con somma valori piu' alti 
+			Map<String, List<ResDistribuzione>> elementiPerCategoria = new HashMap<>();
+			Map<String, Number> totaliPerCategoria = new HashMap<>();
+
+			for (ResDistribuzione res : list) {
+				String key = buildKeyJsonHeatmapChartDistribuzione(res);
+				List<ResDistribuzione> remove = elementiPerCategoria.remove(key);
+
+				if(remove == null) {
+					remove = new ArrayList<>();
+				} 
+
+				remove.add(res);
+				
+				/**System.out.println("KEY ["+key+"] sizeList:"+remove.size()+" value["+res.getSomma()+"] data["+org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(((ResDistribuzione3D)res).getData())+"] dataFormattata["+((ResDistribuzione3D)res).getDataFormattata()+"]");*/
+				
+				elementiPerCategoria.put(key, remove);
+
+				totaliPerCategoria.put(key, StatsUtils.sum(search, totaliPerCategoria.getOrDefault(key, 0) , res.getSomma()));
+			}
+			
+			// ordinamento delle liste per data cosi che l'eventuale creazione dell'elemento 'altri' risulti corretto
+			for (List<ResDistribuzione> lista : elementiPerCategoria.values()) {
+				ordinaElementiAsseYPerData(search, lista);
+			}
+			
+			
+			List<Map.Entry<String, Number>> totaliPerCategoriaEntryList = new ArrayList<>(totaliPerCategoria.entrySet());
+
+			// 2a. eseguo ordinamento chiavi
+			ordinaElementiAsseXPerSommaDecrescente(search, totaliPerCategoriaEntryList);
+			
+			// 3. sostituisco la lista con quella ordinata per chiave
+			list = valorizzaListaRisultatiConElementiOrdinatiPerSommaDecrescente(elementiPerCategoria, totaliPerCategoriaEntryList);
+						
+			// 4. a questo punto ho le categorie ordinate per somma decrescente, controllo se il numero delle chiavi e' superiore allo slice
+			if(totaliPerCategoriaEntryList.size() > slice) {
+				// ora devo creare un elenco dei risultati contenente la categoria altri 
+				
+				// prendo tutte le chiavi ordinate
+		        List<String> sortedKeys = new ArrayList<>();
+		        for (Map.Entry<String, Number> entry : totaliPerCategoriaEntryList) {
+		            sortedKeys.add(entry.getKey());
+		        }
+				
+		        // estraggo quelle da accorpare come 'altri'
+		        List<String> categorieDaAccorpareComeAltri = sortedKeys.subList(slice, sortedKeys.size());
+		        
+		        // aggiorno contenuto list
+		        list = valorizzaListaRisultatiConElementiOrdinatiPerSommaDecrescenteConElementoAltri(elementiPerCategoria, totaliPerCategoriaEntryList, categorieDaAccorpareComeAltri, search, log);
+			}
+
+			// una volta che ho la lista degli elementi da visualizzare gia' calcolata, comprensiva dell'eventuale elemento 'altri' si tratta solo di creare i rettangoli json
+			for (int z = 0 ; z <list.size() ; z++) {
+				// le  entries sono tutte di tipo 3D
+				ResDistribuzione3D entry = (ResDistribuzione3D) list.get(z);
+				ObjectNode rectangle = jsonUtils.newObjectNode();
+
+				Number sum = entry.getSomma();
+
+				String r = entry.getRisultato();
+				Date rDate =  entry.getData();
+				String dateS = null;
+
+				Calendar c = Calendar.getInstance();
+				c.setTime(rDate);
+
+				StringBuilder sb = new StringBuilder();
+				if (StatisticType.ORARIA.equals(tempo)) {
+					sdf_last.applyPattern(CostantiGrafici.PATTERN_HH);
+					c.add(Calendar.HOUR, 1);
+					sb.append(sdf.format(rDate) + "-").append( sdf_last.format(c.getTime()));
+				} else if (StatisticType.SETTIMANALE.equals(tempo)) {
+					// settimanale
+					sdf.applyPattern(CostantiGrafici.PATTERN_DD_MM_YY);
+					sdf_last.applyPattern(CostantiGrafici.PATTERN_DD_MM_YY);
+
+					c.add(Calendar.WEEK_OF_MONTH, 1);
+					c.add(Calendar.DAY_OF_WEEK, -1);
+
+					sb.append(sdf.format(rDate) + "-").append( sdf_last.format(c.getTime()));
+
+				} else if (StatisticType.MENSILE.equals(tempo)) {
+					// mensile
+					sdf.applyPattern(CostantiGrafici.PATTERN_MMM_YY);
+					sb.append(sdf.format(rDate));
+
+				} else {
+					// giornaliero
+					sb.append(sdf.format(rDate));
+				}
+				dateS = sb.toString();
+
+				// Iterazione 1 memorizzo la label della barra
+				if(r.length() > maxLenghtLabel)
+					maxLenghtLabel = r.length();
+
+				// informazini asse X
+				String key = buildKeyJsonHeatmapChartDistribuzione(entry);
+				rectangle.put(CostantiGrafici.X_KEY, escapeJsonLabel(key));
+				rectangle.put(CostantiGrafici.X_LABEL_KEY, escapeJsonLabel(r));
+
+				// informazini asse Y
+				rectangle.put(CostantiGrafici.Y_KEY, escapeJsonLabel(dateS));
+				rectangle.put(CostantiGrafici.Y_LABEL_KEY, escapeJsonLabel(dateS));
+
+				// calcolo il tooltip
+				String toolText = StatsUtils.getToolText(search,sum);
+
+				// tooltip arricchito da informazioni come servizio/azione/sa ecc..
+				if(!entry.getParentMap().isEmpty()){
+					toolText = StatsUtils.getToolTextConParent(search,r, entry.getParentMap(), sum);
+				}
+				// tooltip categoria altri
+				if(r.equals(CostantiGrafici.ALTRI_LABEL)) {
+					 toolText = StatsUtils.getToolTextCategoriaAltri(search,sum);
+				}
+
+				// valore da visualizzare nel grafico
+				String value = StatsUtils.getValue(search,sum);
+
+				rectangle.put(CostantiGrafici.TOTALE_KEY, value);
+				rectangle.put(CostantiGrafici.TOTALE_KEY+CostantiGrafici.TOOLTIP_SUFFIX, toolText);
+				rectangle.put(CostantiGrafici.TOTALE_KEY+CostantiGrafici.LABEL_SUFFIX, StatsUtils.getToolText(search,sum));
+
+				dati.add(rectangle);
+
+				// calcolo valore massimo
+				valoreMassimo = StatsUtils.getMax(search, sum, valoreMassimo);
+			}
+
+			if(maxLenghtLabel > CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_DEFAULT_VALUE)
+				grafico.put(CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_KEY, CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_DEFAULT_VALUE);
+
+			// inserisco l'array dei dati calcolati nel JSON
+			grafico.set(CostantiGrafici.DATI_KEY, dati);
+		}
+		else{
+			// reset categorie
+			categorie.removeAll();
+			ObjectNode categoria = jsonUtils.newObjectNode();
+			categoria.put(CostantiGrafici.KEY_KEY , CostantiGrafici.TOTALE_KEY);
+			categoria.put(CostantiGrafici.LABEL_KEY , StatsUtils.getSubCaption(search,true));
+			categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_TOTALE);
+			categorie.add(categoria);
+
+			grafico.put(CostantiGrafici.NO_DATA_KEY, CostantiGrafici.DATI_NON_PRESENTI);
+		}
+
+		// imposto scala valori 
+		ObjectNode scalaValori = jsonUtils.newObjectNode();
+
+		// MIN
+		ObjectNode min = jsonUtils.newObjectNode();
+		min.put(CostantiGrafici.COLORE_KEY, Colors.CSS_COLOR_WHITE);
+		min.put(CostantiGrafici.VALORE_KEY, ""+valoreMinimo);
+		scalaValori.set(CostantiGrafici.MIN_KEY, min);
+
+		//MAX
+		ObjectNode max = jsonUtils.newObjectNode();
+		max.put(CostantiGrafici.COLORE_KEY, Colors.CSS_COLOR_TOTALE);
+		max.put(CostantiGrafici.VALORE_KEY, StatsUtils.getValue(search,valoreMassimo));
+		scalaValori.set(CostantiGrafici.MAX_KEY, max);
+
+		grafico.set(CostantiGrafici.SCALA_VALORI_KEY, scalaValori);
+		
+		// Label della legenda in funzione dei valori min e max calcolati
+		ArrayNode labelsLegenda = jsonUtils.newArrayNode();
+		
+		// visualizzazione di 5 label
+		// 0, max/4 , max/2, 3 max/4, max 
+		
+		// MIN LAbel
+		ObjectNode minLabel = jsonUtils.newObjectNode();
+		minLabel.put(CostantiGrafici.VALORE_KEY, StatsUtils.getValue(search,valoreMinimo));
+		minLabel.put(CostantiGrafici.LABEL_KEY, StatsUtils.getToolText(search,valoreMinimo));
+		labelsLegenda.add(minLabel);
+		
+		// 1/4 max
+		Number unQuarto = StatsUtils.avg(search, valoreMassimo, 4);
+		ObjectNode unQuartoLabel = jsonUtils.newObjectNode();
+		unQuartoLabel.put(CostantiGrafici.VALORE_KEY, StatsUtils.getValue(search,unQuarto));
+		unQuartoLabel.put(CostantiGrafici.LABEL_KEY, StatsUtils.getToolText(search,unQuarto));
+		labelsLegenda.add(unQuartoLabel);
+		
+		// 1/2 max
+		Number unMezzo = StatsUtils.avg(search, valoreMassimo, 2);
+		ObjectNode unMezzoLabel = jsonUtils.newObjectNode();
+		unMezzoLabel.put(CostantiGrafici.VALORE_KEY, StatsUtils.getValue(search,unMezzo));
+		unMezzoLabel.put(CostantiGrafici.LABEL_KEY, StatsUtils.getToolText(search,unMezzo));
+		labelsLegenda.add(unMezzoLabel);
+				
+		// 3/4 max ((maxLegend / 2 + maxLegend) / 2)
+		Number treQuarti = StatsUtils.avg(search, StatsUtils.sum(search, valoreMassimo, unMezzo), 2);
+		ObjectNode treQuartiLabel = jsonUtils.newObjectNode();
+		treQuartiLabel.put(CostantiGrafici.VALORE_KEY, StatsUtils.getValue(search,treQuarti));
+		treQuartiLabel.put(CostantiGrafici.LABEL_KEY, StatsUtils.getToolText(search,treQuarti));
+		labelsLegenda.add(treQuartiLabel);
+				
+		// MAX LAbel
+		ObjectNode maxLabel = jsonUtils.newObjectNode();
+		maxLabel.put(CostantiGrafici.VALORE_KEY, StatsUtils.getValue(search,valoreMassimo));
+		maxLabel.put(CostantiGrafici.LABEL_KEY, StatsUtils.getToolText(search,valoreMassimo));
+		labelsLegenda.add(maxLabel);
+
+		grafico.set(CostantiGrafici.LABEL_LEGENDA_GRAFICO_HEATMAP, labelsLegenda);
+
+		return grafico;
+	}
+
+	public static List<ResDistribuzione> generaElementiMancanti(List<ResDistribuzione> origList, Logger log){
+		List<ResDistribuzione> lNull = null;
+		if(origList == null) 
+			return lNull;
+
+		List<ResDistribuzione> destList = new ArrayList<>();
+
+		// Trova i valori minimi e massimi di x, y nei risultati esistenti
+
+		Set<String> existingXValues = new HashSet<>();
+		Map<String,String> existingXValuesOriginalKey = new HashMap<>();
+
+		Set<Date> existingYValues = new HashSet<>();
+
+		Map<String,TreeMap<String, String>> mapParentMaps = new HashMap<>();
+		
+		for (ResDistribuzione res : origList) {
+			ResDistribuzione3D resDistribuzione3D = (ResDistribuzione3D) res;
+			// salvo il dato nella lista destinazione
+			destList.add(resDistribuzione3D);
+
+			// colleziono le X esistenti
+			String key = buildKeyJsonHeatmapChartDistribuzione(resDistribuzione3D);
+			existingXValues.add(key);
+			existingXValuesOriginalKey.put(key, resDistribuzione3D.getRisultato());
+			
+			// colleziono le parentmap
+			mapParentMaps.put(key, resDistribuzione3D.getParentMap());
+
+			// colleziono le Y esistenti
+			existingYValues.add(resDistribuzione3D.getData());
+		}
+
+		// Genera e aggiungi le triple mancanti
+		List<ResDistribuzione> missingTriples = new ArrayList<>();
+		for (String x : existingXValues) {
+			for(Date y : existingYValues) {
+				// Aggiungi una tripla solo se non esiste già una tripla con la stessa x e y
+				if (!containsTriple(destList, x, y)) {
+					String originalKey = existingXValuesOriginalKey.get(x);
+					ResDistribuzione3D resDistribuzione3D = new ResDistribuzione3D(originalKey, y, 0);
+					// copio informazioni parentMap per costruzione tooltip
+					resDistribuzione3D.getParentMap().putAll(mapParentMaps.get(x));
+					missingTriples.add(resDistribuzione3D);
+				}
+			}
+		}
+
+		// aggiungo tutti i risultati mancanti
+		destList.addAll(missingTriples);
+
+		long xYsize = ((long)existingXValues.size()) * ((long)existingYValues.size());
+		if(destList.size()!=xYsize) {
+			log.error("generaElementiMancanti destListSize:"+destList.size()+" xYsize:"+xYsize+" existingXValues:"+existingXValues+" existingYValues:"+existingYValues+"");
+		}
+		
+		return destList;
+	}
+
+	private static boolean containsTriple(List<ResDistribuzione> valuesList, String x, Date y) {
+		for (ResDistribuzione res : valuesList) {
+			ResDistribuzione3D resDistribuzione3D = (ResDistribuzione3D) res;
+			String key = buildKeyJsonHeatmapChartDistribuzione(resDistribuzione3D);
+			if (key.equals(x) && resDistribuzione3D.getData().equals(y)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static List<ResDistribuzione> valorizzaListaRisultatiConElementiOrdinatiPerSommaDecrescente(Map<String, List<ResDistribuzione>> elementiPerCategoria,
+			List<Map.Entry<String, Number>> entryList) {
+		// colleziona i valori ordinati per chiavi con somma decrescente
+		List<ResDistribuzione> destList = new ArrayList<>();
+		for (Map.Entry<String, Number> entry : entryList) {
+			destList.addAll(elementiPerCategoria.get(entry.getKey()));
+		}
+
+		return destList;
+	}
+	
+	private static List<ResDistribuzione> valorizzaListaRisultatiConElementiOrdinatiPerSommaDecrescenteConElementoAltri(
+			Map<String, List<ResDistribuzione>> elementiPerCategoria,
+			List<Map.Entry<String, Number>> entryList, List<String> categorieDaAccorpareComeAltri, StatsSearchForm search,
+			Logger log) {
+		// colleziona i valori ordinati per chiavi con somma decrescente
+		List<ResDistribuzione> destList = new ArrayList<>();
+		for (Map.Entry<String, Number> entry : entryList) {
+			// inserisco solo quelli da non accorpare come altri
+			if(!categorieDaAccorpareComeAltri.contains(entry.getKey())) {
+				destList.addAll(elementiPerCategoria.get(entry.getKey()));
+			}
+		}
+		
+		// calcolo categoria altri
+		List<ResDistribuzione> colonnaAltri = new ArrayList<>();
+		boolean occupazioneBanda = false;
+		boolean tempoMedio = false;
+		TipoVisualizzazione tipoVisualizzazione = search.getTipoVisualizzazione();
+		if(tipoVisualizzazione.equals(TipoVisualizzazione.DIMENSIONE_TRANSAZIONI)) {
+			occupazioneBanda = true;
+		}
+		else if(tipoVisualizzazione.equals(TipoVisualizzazione.TEMPO_MEDIO_RISPOSTA)) {
+			tempoMedio = true;
+		}
+		
+		for (String categoria : categorieDaAccorpareComeAltri) {
+			List<ResDistribuzione> categoriaDaAccorpare = elementiPerCategoria.get(categoria);
+			
+			/**log.error("---- Categoria '"+categoria+"' possiede una dimensione '"+categoriaDaAccorpare.size()+"' --- attesa '"+colonnaAltri.size()+"'");*/
+			
+			if(!colonnaAltri.isEmpty() &&
+					categoriaDaAccorpare.size()!=colonnaAltri.size()) {
+				log.error("Categoria '"+categoria+"' possiede una dimensione '"+categoriaDaAccorpare.size()+"' diversa da quella attesa '"+colonnaAltri.size()+"'");
+			}
+			
+			// prima iterazione aggiungo direttamente tutti valori modificando la label in altri
+			if(colonnaAltri.isEmpty()) {
+				for (ResDistribuzione resDistribuzione : categoriaDaAccorpare) {
+					
+					/**log.error("---- Categoria '"+categoria+"' AGGIUNTA PER ALTRI!");*/
+					
+					resDistribuzione.setRisultato(CostantiGrafici.ALTRI_LABEL);
+					// cancellazione della mappa parent per evitare visualizzare informazioni sul dettaglio della categoria
+					if(resDistribuzione.getParentMap() != null) {
+						resDistribuzione.getParentMap().clear();
+					}
+					colonnaAltri.add(resDistribuzione);
+				}
+			} else {
+				// a questo punto faccio il ciclo per posizione perche' le colonne da unificare hanno la stessa data nella stessa posizione.
+				for (int i = 0; i < colonnaAltri.size(); i++) {
+					ResDistribuzione3D resDistribuzioneColonnaAltri = (ResDistribuzione3D) colonnaAltri.get(i);
+					ResDistribuzione3D resDistribuzioneDaAccorpare = (ResDistribuzione3D) categoriaDaAccorpare.get(i);
+					
+					// per occupazione banda e latenza si deve fare la media, in questa fase calcolo la somma che divido per il numero di categorie che accorpo
+					resDistribuzioneColonnaAltri.setSomma(StatsUtils.sum(search, resDistribuzioneDaAccorpare.getSomma(), resDistribuzioneColonnaAltri.getSomma()));
+					
+				}
+			}
+		}
+		
+		// in caso di latenza o occupazione band c'e' da fare la media di valori
+		if(occupazioneBanda || tempoMedio) {
+			for (int i = 0; i < colonnaAltri.size(); i++) {
+				ResDistribuzione3D resDistribuzioneColonnaAltri = (ResDistribuzione3D) colonnaAltri.get(i);
+				resDistribuzioneColonnaAltri.setSomma(StatsUtils.avg(search, resDistribuzioneColonnaAltri.getSomma(), categorieDaAccorpareComeAltri.size()));
+			}
+		}
+		
+		// aggiungo colonna altri
+		destList.addAll(colonnaAltri);
+
+		return destList;
+	}
+
+
+	private static void ordinaElementiAsseXPerSommaDecrescente(StatsSearchForm search, List<Map.Entry<String, Number>> entryList) {
+		// Ordina la lista di voci in base ai valori decrescenti
+		Collections.sort(entryList, new Comparator<Map.Entry<String, Number>>() {
+			@Override
+			public int compare(Map.Entry<String, Number> entry1, Map.Entry<String, Number> entry2) {
+				TipoVisualizzazione tipoVisualizzazione = null;
+				if(search!=null) {
+					tipoVisualizzazione = search.getTipoVisualizzazione();
+				}
+				
+				if(tipoVisualizzazione!=null) {
+
+					switch (tipoVisualizzazione) {
+			
+					case NUMERO_TRANSAZIONI:
+					case TEMPO_MEDIO_RISPOSTA:
+						return Long.compare(entry2.getValue().longValue(), entry1.getValue().longValue());
+					case DIMENSIONE_TRANSAZIONI:
+					default:
+						return Double.compare(entry2.getValue().doubleValue(), entry1.getValue().doubleValue());
+					}
+				}
+				
+				// Ordina in ordine decrescente in base ai valori
+				return Long.compare(entry2.getValue().longValue(), entry1.getValue().longValue());
+			}
+		});
+	}
+	
+	private static void ordinaElementiAsseYPerData(StatsSearchForm search, List<ResDistribuzione> list) {
+		// Ordina la lista di voci in base ai valori decrescenti
+		Collections.sort(list, new Comparator<ResDistribuzione>() {
+			@Override
+			public int compare(ResDistribuzione entry1, ResDistribuzione entry2) {
+				Date date1 = ((ResDistribuzione3D)entry1).getData();
+				Date date2 = ((ResDistribuzione3D)entry2).getData();
+				
+				 // Ordina in ordine crescente
+		        return date1.compareTo(date2);
+			}
+		});
 	}
 
 	public static ObjectNode getJsonAndamentoTemporale(List<Res> list, StatsSearchForm search, String caption, String subCaption,StatisticType tempo,String direzioneLabelParam, Integer numeroLabel) throws UtilsException{
@@ -625,25 +1139,31 @@ public class JsonStatsUtils {
 						String tipoLat = strings[i];
 						if(tipoLat != null && showSeries){
 							if(tipoLat.equals("0")){
-								ObjectNode categoria = jsonUtils.newObjectNode();
-								categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.COMPLESSIVA.getValue().toLowerCase().replace(" ", "_"));
-								categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.COMPLESSIVA.getValue());
-								categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_COMPLESSIVA);
-								categorie.set(i,categoria);
+								if(showSeries){
+									ObjectNode categoria = jsonUtils.newObjectNode();
+									categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.COMPLESSIVA.getValue().toLowerCase().replace(" ", "_"));
+									categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.COMPLESSIVA.getValue());
+									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_COMPLESSIVA);
+									categorie.set(i,categoria);
+								}
 							}
 							else if(tipoLat.equals("1")){
-								ObjectNode categoria = jsonUtils.newObjectNode();
-								categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.INTERNA.getValue().toLowerCase().replace(" ", "_"));
-								categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.INTERNA.getValue());
-								categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_INTERNA);
-								categorie.set(i,categoria);
+								if(showSeries){
+									ObjectNode categoria = jsonUtils.newObjectNode();
+									categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.INTERNA.getValue().toLowerCase().replace(" ", "_"));
+									categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.INTERNA.getValue());
+									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_INTERNA);
+									categorie.set(i,categoria);
+								}
 							}
 							else if(tipoLat.equals("2")){
-								ObjectNode categoria = jsonUtils.newObjectNode();
-								categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.ESTERNA.getValue().toLowerCase().replace(" ", "_"));
-								categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.ESTERNA.getValue());
-								categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_ESTERNA);
-								categorie.set(i,categoria);
+								if(showSeries){
+									ObjectNode categoria = jsonUtils.newObjectNode();
+									categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.ESTERNA.getValue().toLowerCase().replace(" ", "_"));
+									categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.ESTERNA.getValue());
+									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_ESTERNA);
+									categorie.set(i,categoria);
+								}
 							}
 						}
 					}
@@ -658,25 +1178,31 @@ public class JsonStatsUtils {
 						String tipoLat = strings[i];
 						if(tipoLat != null && showSeries){
 							if(tipoLat.equals("0")){
-								ObjectNode categoria = jsonUtils.newObjectNode();
-								categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_TOTALE.getValue().toLowerCase().replace(" ", "_"));
-								categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_TOTALE.getValue());
-								categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_TOTALE);
-								categorie.set(i,categoria);
+								if(showSeries){
+									ObjectNode categoria = jsonUtils.newObjectNode();
+									categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_TOTALE.getValue().toLowerCase().replace(" ", "_"));
+									categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_TOTALE.getValue());
+									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_TOTALE);
+									categorie.set(i,categoria);
+								}
 							}
 							else if(tipoLat.equals("1")){
-								ObjectNode categoria = jsonUtils.newObjectNode();
-								categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_SERVIZIO.getValue().toLowerCase().replace(" ", "_"));
-								categoria.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_SERVIZIO);
-								categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_SERVIZIO);
-								categorie.set(i,categoria);
+								if(showSeries){
+									ObjectNode categoria = jsonUtils.newObjectNode();
+									categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_SERVIZIO.getValue().toLowerCase().replace(" ", "_"));
+									categoria.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_SERVIZIO);
+									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_SERVIZIO);
+									categorie.set(i,categoria);
+								}
 							}
 							else if(tipoLat.equals("2")){
-								ObjectNode categoria = jsonUtils.newObjectNode();
-								categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_PORTA.getValue().toLowerCase().replace(" ", "_"));
-								categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_PORTA.getValue());
-								categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_PORTA);
-								categorie.set(i,categoria);
+								if(showSeries){
+									ObjectNode categoria = jsonUtils.newObjectNode();
+									categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_PORTA.getValue().toLowerCase().replace(" ", "_"));
+									categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_PORTA.getValue());
+									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_PORTA);
+									categorie.set(i,categoria);
+								}
 							}
 						}
 					}
@@ -743,7 +1269,7 @@ public class JsonStatsUtils {
 
 				String label = sb.toString();
 				point.put(CostantiGrafici.DATA_KEY, escapeJsonLabel(label));
-				
+
 				if(!nascondiLabel) {
 					point.put(CostantiGrafici.DATA_LABEL_KEY, escapeJsonLabel(label));
 				} else {
@@ -753,7 +1279,7 @@ public class JsonStatsUtils {
 						point.put(CostantiGrafici.DATA_LABEL_KEY, "");
 					}
 				}
-				
+
 				for (int j = 0; j < numeroCategorie; j++) {
 					// key che identifica la serie
 					JsonNode keyNode = categorie.get(j).get(CostantiGrafici.KEY_KEY);
@@ -770,7 +1296,7 @@ public class JsonStatsUtils {
 				}
 				dati.add(point);
 			}
-			
+
 			// inserisco l'array dei dati calcolati nel JSON
 			grafico.set(CostantiGrafici.DATI_KEY, dati);
 		} else {
@@ -811,7 +1337,7 @@ public class JsonStatsUtils {
 		// Inserisco le categorie del grafico
 		String yAxisName = StatsUtils.getSubCaption(search,true);
 
-		
+
 		grafico.put(CostantiGrafici.MOSTRA_LEGENDA_KEY, true);
 		grafico.put(CostantiGrafici.Y_AXIS_LABEL_KEY, yAxisName);
 
@@ -852,7 +1378,7 @@ public class JsonStatsUtils {
 						} else {
 							sb.append(sdf.format(r));
 						}
-						
+
 						point.put(CostantiGrafici.DATA_KEY, sb.toString());
 						point.put(CostantiGrafici.DATA_LABEL_KEY, sb.toString());
 						dati.add(point);
@@ -907,7 +1433,7 @@ public class JsonStatsUtils {
 		grafico.put(CostantiGrafici.COLONNE_LEGENDA_KEY, CostantiGrafici.COLONNE_LEGENDA_DEFAULT_VALUE);
 		grafico.put(CostantiGrafici.LIMITE_COLONNE_LEGENDA_KEY, CostantiGrafici.COLONNE_LEGENDA_DEFAULT_VALUE);
 		grafico.put(CostantiGrafici.VISUALIZZA_VALUE_NELLA_LABEL_LEGENDA, true);
-		
+
 		// calcolo series
 		boolean occupazioneBanda = false;
 		boolean tempoMedio = false;
@@ -930,11 +1456,11 @@ public class JsonStatsUtils {
 			for (ResDistribuzione entry : list) {
 				String r = entry.getRisultato();
 				Number sum = entry.getSomma();
-				
+
 				if(++i<=slice) {
 					if(r.length() > maxLenghtLabel)
 						maxLenghtLabel = r.length();
-					
+
 					String toolText = StatsUtils.getToolText(search,sum); 
 					ObjectNode spicchio = jsonUtils.newObjectNode();
 					spicchio.put(CostantiGrafici.LABEL_KEY, escapeJsonLabel(r));
@@ -1050,7 +1576,7 @@ public class JsonStatsUtils {
 						if(j==0){
 							if(r.length() > maxLenghtLabel)
 								maxLenghtLabel = r.length();
-							
+
 							bar.put(CostantiGrafici.DATA_KEY, escapeJsonLabel(r));
 							bar.put(CostantiGrafici.DATA_LABEL_KEY, escapeJsonLabel(r));
 						}
@@ -1061,7 +1587,7 @@ public class JsonStatsUtils {
 
 						bar.put(key, value);
 						bar.put(key+CostantiGrafici.TOOLTIP_SUFFIX, toolText);
-						
+
 						if(j== numeroCategorie-1){
 							dati.add(bar);
 						}
@@ -1072,7 +1598,7 @@ public class JsonStatsUtils {
 						}
 					}
 				}
-				
+
 			}
 
 			if(iterazione>slice){
@@ -1103,10 +1629,10 @@ public class JsonStatsUtils {
 				}
 				dati.add(bar);
 			}
-			
+
 			if(maxLenghtLabel > CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_DEFAULT_VALUE)
 				grafico.put(CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_KEY, CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_DEFAULT_VALUE);
-			
+
 			// inserisco l'array dei dati calcolati nel JSON
 			grafico.set(CostantiGrafici.DATI_KEY, dati);
 		} else{

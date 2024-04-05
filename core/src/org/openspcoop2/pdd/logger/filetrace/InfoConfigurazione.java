@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -40,7 +40,7 @@ import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTokenClient;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
-import org.openspcoop2.pdd.core.handlers.transazioni.PostOutResponseHandler_TransazioneUtilities;
+import org.openspcoop2.pdd.logger.transazioni.TransazioneUtilities;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
@@ -101,7 +101,7 @@ public class InfoConfigurazione implements Serializable {
 		
 		if(contextGateway!=null) {
 			
-			this.nomeConnettoriMultipli = PostOutResponseHandler_TransazioneUtilities.getConnettoriMultipli(contextGateway);
+			this.nomeConnettoriMultipli = TransazioneUtilities.getConnettoriMultipli(contextGateway);
 			
 			if(contextGateway.containsKey(Costanti.REQUEST_INFO)) {
 				try {
@@ -197,7 +197,7 @@ public class InfoConfigurazione implements Serializable {
 		}
 		
 		try {
-			IDServizioApplicativo tokenClientApplication = credenzialiMittente!=null && credenzialiMittente.getToken_clientId()!=null ? CredenzialeTokenClient.convertApplicationDBValueToOriginal(credenzialiMittente.getToken_clientId().getCredenziale()) : null;
+			IDServizioApplicativo tokenClientApplication = credenzialiMittente!=null && credenzialiMittente.getTokenClientId()!=null ? CredenzialeTokenClient.convertApplicationDBValueToOriginal(credenzialiMittente.getTokenClientId().getCredenziale()) : null;
 			if(tokenClientApplication!=null && tokenClientApplication.getNome()!=null && tokenClientApplication.getIdSoggettoProprietario()!=null &&
 					tokenClientApplication.getIdSoggettoProprietario().getTipo()!=null && tokenClientApplication.getIdSoggettoProprietario().getNome()!=null) {
 				try {

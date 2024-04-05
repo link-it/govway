@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -25,6 +25,8 @@ import java.sql.Connection;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.utils.serializer.JaxbDeserializer;
 import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsMultiException;
 import org.slf4j.Logger;
 
 /**
@@ -41,15 +43,19 @@ public class FSRecoveryDumpImpl extends AbstractFSRecovery {
 	public FSRecoveryDumpImpl( 
 			Logger log,
 			boolean debug,
-			IDumpProducer dumpAppender, boolean transazioniRegistrazioneDumpHeadersCompactEnabled,
+			IDumpProducer dumpAppender,
 			File directory, File directoryDLQ,
 			int tentativi,
-			int minutiAttesaProcessingFile) {
-		super(log, debug, directory, directoryDLQ, tentativi, minutiAttesaProcessingFile);
+			long msAttesaProcessingFile) {
+		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile);
 		this.dumpAppender = dumpAppender;
-		this.transazioniRegistrazioneDumpHeadersCompactEnabled = transazioniRegistrazioneDumpHeadersCompactEnabled;
 	}
 
+	public void setTransazioniRegistrazioneDumpHeadersCompactEnabled(
+			boolean transazioniRegistrazioneDumpHeadersCompactEnabled) {
+		this.transazioniRegistrazioneDumpHeadersCompactEnabled = transazioniRegistrazioneDumpHeadersCompactEnabled;
+	}
+	
 	@Override
 	public void process(Connection connection) {
 		this.log.info("Recovery Dump ...");
@@ -58,14 +64,23 @@ public class FSRecoveryDumpImpl extends AbstractFSRecovery {
 	}
 
 	@Override
-	public void insertObject(File file, Connection connection) throws Exception {
+	public void insertObject(File file, Connection connection) throws UtilsException, UtilsMultiException {
 		JaxbDeserializer deserializer = new JaxbDeserializer();
-		DumpMessaggio dumpMessaggio = deserializer.readDumpMessaggio(file);
+		DumpMessaggio dumpMessaggio = null;
+		try {
+			dumpMessaggio = deserializer.readDumpMessaggio(file);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 		
 		//FARE UN WRAPPER COSI COME ABBIAMO FATTO PER TRACCIA E DIAGNOSTICO
 		
 		org.openspcoop2.protocol.sdk.dump.Messaggio messaggioOp2 = new org.openspcoop2.protocol.sdk.dump.Messaggio(dumpMessaggio);
-		this.dumpAppender.dump(connection, messaggioOp2, this.transazioniRegistrazioneDumpHeadersCompactEnabled);
+		try {
+			this.dumpAppender.dump(connection, messaggioOp2, this.transazioniRegistrazioneDumpHeadersCompactEnabled);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 		
 	}
 

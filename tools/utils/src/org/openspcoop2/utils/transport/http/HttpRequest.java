@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -20,6 +20,7 @@
 
 package org.openspcoop2.utils.transport.http;
 
+import java.net.Proxy;
 import java.security.KeyStore;
 import java.security.cert.CertStore;
 
@@ -54,6 +55,7 @@ public class HttpRequest extends AbstractHttp {
 	private CertStore crlStore;
 	private String crlPath;
 	
+	private String ocspPolicy;
 	private IOCSPValidator ocspValidator;
 	
 	private KeyStore keyStore;
@@ -71,6 +73,15 @@ public class HttpRequest extends AbstractHttp {
 	// throttling send bytes every ms
 	private Integer throttlingSendMs;
 	private Integer throttlingSendByte;
+	
+	private String forwardProxyEndpoint;
+	private HttpForwardProxyConfig forwardProxyConfig;
+	
+	private Proxy.Type proxyType = null;
+	private String proxyHostname = null;
+	private int proxyPort;
+	private String proxyUsername;
+	private String proxyPassword;
 	
 	private boolean disconnect = true;
 	
@@ -194,6 +205,14 @@ public class HttpRequest extends AbstractHttp {
 		this.crlPath = crlPath;
 	}
 
+	public String getOcspPolicy() {
+		return this.ocspPolicy;
+	}
+
+	public void setOcspPolicy(String ocspPolicy) {
+		this.ocspPolicy = ocspPolicy;
+	}
+	
 	public IOCSPValidator getOcspValidator() {
 		return this.ocspValidator;
 	}
@@ -296,5 +315,61 @@ public class HttpRequest extends AbstractHttp {
 
 	public void setKeyPassword(String keyPassword) {
 		this.keyPassword = keyPassword;
+	}
+	
+	public String getForwardProxyEndpoint() {
+		return this.forwardProxyEndpoint;
+	}
+
+	public void setForwardProxyEndpoint(String forwardProxyEndpoint) {
+		this.forwardProxyEndpoint = forwardProxyEndpoint;
+	}
+	
+	public HttpForwardProxyConfig getForwardProxyConfig() {
+		return this.forwardProxyConfig;
+	}
+
+	public void setForwardProxyConfig(HttpForwardProxyConfig forwardProxyConfig) {
+		this.forwardProxyConfig = forwardProxyConfig;
+	}
+	
+	public Proxy.Type getProxyType() {
+		return this.proxyType;
+	}
+
+	public void setProxyType(Proxy.Type proxyType) {
+		this.proxyType = proxyType;
+	}
+
+	public String getProxyHostname() {
+		return this.proxyHostname;
+	}
+
+	public void setProxyHostname(String proxyHostname) {
+		this.proxyHostname = proxyHostname;
+	}
+
+	public int getProxyPort() {
+		return this.proxyPort;
+	}
+
+	public void setProxyPort(int proxyPort) {
+		this.proxyPort = proxyPort;
+	}
+
+	public String getProxyUsername() {
+		return this.proxyUsername;
+	}
+
+	public void setProxyUsername(String proxyUsername) {
+		this.proxyUsername = proxyUsername;
+	}
+
+	public String getProxyPassword() {
+		return this.proxyPassword;
+	}
+
+	public void setProxyPassword(String proxyPassword) {
+		this.proxyPassword = proxyPassword;
 	}
 }

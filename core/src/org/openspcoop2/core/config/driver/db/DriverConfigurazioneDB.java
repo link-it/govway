@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -464,6 +464,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		
 		if (this.atomica) {
 			try {
+				/**System.out.println("GET FROM DS ["+methodName+"]");*/
 				con = getConnectionFromDatasource(methodName);
 				if(disableAutoCommit) {
 					con.setAutoCommit(false);
@@ -473,15 +474,24 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			}
 
-		} else
+		} else {
+			/**System.out.println("GET GLOBAL ["+methodName+"]");*/
 			con = this.globalConnection;
+		}
 		
 		return con;
 	}
 	
 	public void releaseConnection(Connection con){
+		releaseConnection(null, con);
+	}
+	public void releaseConnection(String methodName, Connection con){
 		if (this.atomica) {
 			try {
+				if(methodName!=null) {
+					// nop
+				}
+				/**System.out.println("RELEASE ["+methodName+"]");*/
 				con.close();
 			} catch (Exception e) {
 				// ignore
@@ -2401,6 +2411,20 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	}
 	public CanaliConfigurazione getCanaliConfigurazione(boolean readNodi) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		return this.configDriver.getCanaliConfigurazione(readNodi);
+	}
+	
+	
+	
+	// *** Configurazione (Tracciamento) ***
+	
+	public boolean existsFaseTracciamentoDBRequestIn(boolean erogazioni, boolean fruizioni) throws DriverConfigurazioneException { 
+		return this.configSearchDriver.existsFaseTracciamentoDBRequestIn(erogazioni, fruizioni);
+	}
+	public boolean existsFaseTracciamentoDBRequestOut(boolean erogazioni, boolean fruizioni) throws DriverConfigurazioneException { 
+		return this.configSearchDriver.existsFaseTracciamentoDBRequestOut(erogazioni, fruizioni);
+	}
+	public boolean existsFaseTracciamentoDBResponseOut(boolean erogazioni, boolean fruizioni) throws DriverConfigurazioneException { 
+		return this.configSearchDriver.existsFaseTracciamentoDBResponseOut(erogazioni, fruizioni);
 	}
 	
 	

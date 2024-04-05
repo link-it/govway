@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -180,9 +180,11 @@ public class RequestConfig implements java.io.Serializable {
 	private Map<String, Serializable> jwkSetStore = null;
 	private Map<String, Serializable> keyPairStore = null;
 	private Map<String, Serializable> publicKeyStore = null;
+	private Map<String, Serializable> secretKeyStore = null;
 	private Map<String, Serializable> remoteStore = null;
 	private Map<String, Serializable> remoteStoreClientInfo = null;
 	private Map<String, Serializable> httpStore = null;
+	private Map<String, Serializable> byokStore = null;
 	private Map<String, Serializable> crlCertstore = null;
 	private Map<String, Serializable> sslSocketFactory = null;
 	private Map<String, Serializable> sslConfigProps = null;
@@ -431,6 +433,9 @@ public class RequestConfig implements java.io.Serializable {
 		if(source.publicKeyStore!=null) {
 			this.publicKeyStore = source.publicKeyStore;
 		}
+		if(source.secretKeyStore!=null) {
+			this.secretKeyStore = source.secretKeyStore;
+		}
 		if(source.remoteStore!=null) {
 			this.remoteStore = source.remoteStore;
 		}
@@ -439,6 +444,9 @@ public class RequestConfig implements java.io.Serializable {
 		}
 		if(source.httpStore!=null) {
 			this.httpStore = source.httpStore;
+		}
+		if(source.byokStore!=null) {
+			this.byokStore = source.byokStore;
 		}
 		if(source.crlCertstore!=null) {
 			this.crlCertstore = source.crlCertstore;
@@ -1366,6 +1374,31 @@ public class RequestConfig implements java.io.Serializable {
 		return this.publicKeyStore.get(key);
 	}
 	
+	public void addSecretKeyStore(String key, Serializable secretKeyStore, String idTransazione) {
+		 
+		
+		if(this.semaphoreStore==null) {
+			// serializzazione da transient
+			initSemaphoreStore();
+		}
+		
+		this.semaphoreStore.acquireThrowRuntime("addSecretKeyStore", idTransazione);
+		try {
+			if(this.secretKeyStore==null) {
+				this.secretKeyStore = new HashMap<>(3);
+			}
+			this.secretKeyStore.put(key, secretKeyStore);
+		}finally {
+			this.semaphoreStore.release("addSecretKeyStore", idTransazione);
+		}
+	}
+	public Serializable getSecretKeyStore(String key) {
+		if(this.secretKeyStore==null) {
+			return null;
+		}
+		return this.secretKeyStore.get(key);
+	}
+	
 	public void addRemoteStore(String key, Serializable remoteStore, String idTransazione) {
 		 
 		if(!useCacheForRemoteStore) {
@@ -1455,6 +1488,31 @@ public class RequestConfig implements java.io.Serializable {
 			return null;
 		}
 		return this.httpStore.get(key);
+	}
+	
+	public void addBYOKStore(String key, Serializable byokStore, String idTransazione) {
+		 
+		
+		if(this.semaphoreStore==null) {
+			// serializzazione da transient
+			initSemaphoreStore();
+		}
+		
+		this.semaphoreStore.acquireThrowRuntime("addBYOKStore", idTransazione);
+		try {
+			if(this.byokStore==null) {
+				this.byokStore = new HashMap<>(3);
+			}
+			this.byokStore.put(key, byokStore);
+		}finally {
+			this.semaphoreStore.release("addBYOKStore", idTransazione);
+		}
+	}
+	public Serializable getBYOKStore(String key) {
+		if(this.byokStore==null) {
+			return null;
+		}
+		return this.byokStore.get(key);
 	}
 	
 	public void addCRLCertstore(String key, Serializable crlCertstore, String idTransazione) {

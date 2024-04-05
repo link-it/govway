@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -135,10 +135,20 @@ public final class CostantiLabel {
 	public static final String LABEL_CONFIGURAZIONE_MESSAGE_SECURITY = "Sicurezza Messaggio";
 	public static final String LABEL_CONFIGURAZIONE_MTOM = "MTOM";
 	public static final String LABEL_CONFIGURAZIONE_TRASFORMAZIONE = "Trasformazione";
+	public static final String LABEL_CONFIGURAZIONE_TRANSAZIONI = "Tracciamento";
 	public static final String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA= "Correlazione Applicativa";
 	public static final String LABEL_CONFIGURAZIONE_TIPO_DUMP = "Registrazione Messaggi";
 	public static final String LABEL_CONFIGURAZIONE_CORS= "Gestione CORS";
 	public static final String LABEL_CONFIGURAZIONE_CORS_ORIGIN= "Allow Origins";
+	
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN = "Richiesta ricevuta";
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT = "Richiesta in consegna";
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT = "Risposta in consegna";
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT_COMPLETE = "Risposta consegnata";
+	
+	public static final String LABEL_ABILITATO_BLOCCANTE = "abilitato (bloccante)";
+	public static final String LABEL_ABILITATO_NON_BLOCCANTE = "abilitato (non bloccante)";
+	public static final String LABEL_DISABILITATO = "disabilitato";
 	
     /**
      * PROPRIETA CONNETTORE
@@ -349,6 +359,7 @@ public final class CostantiLabel {
     
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_LABEL_APPLICATIVO = "Definito nell'applicativo";
     public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_LABEL_FRUIZIONE = "Definito nella fruizione";
+    public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_LABEL_TOKEN_POLICY = "Definito nella token policy";
     
     public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE_LABEL = "KeyStore";
     public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_PATH_MODE_LABEL = MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE_LABEL+" Path";

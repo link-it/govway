@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -44,6 +44,9 @@ public class Context extends org.openspcoop2.utils.Map<Object> implements Serial
 	
 	// STATIC
 	
+	  /**
+	    * @deprecated (user method MapKey)
+	    */
 	@Deprecated
 	public static String getValue(String key,Context pddContext){
 		if(key==null) {
@@ -55,7 +58,7 @@ public class Context extends org.openspcoop2.utils.Map<Object> implements Serial
 		String value = null;
 		if(pddContext!=null){
 			Object o = pddContext.getObject(key);
-			if(o!=null && (o instanceof String) ){
+			if(o instanceof String){
 				value = (String) o;
 			}
 		}

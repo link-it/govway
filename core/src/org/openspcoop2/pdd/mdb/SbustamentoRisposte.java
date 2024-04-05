@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -220,6 +220,11 @@ public class SbustamentoRisposte extends GenericLib {
 
 		/* ----------------- ID RICHIESTA ---------------------------------------------- */
 		String idMessageRequest = openspcoopstate.getIDMessaggioSessione();
+		
+		String jtiIdModIRequest = null;
+		if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID)) {
+			jtiIdModIRequest = (String) pddContext.get(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID);
+		}
 
 		// Aggiornamento Informazioni messaggio diagnostico
 		msgDiag.setIdMessaggioRichiesta(idMessageRequest);
@@ -1021,7 +1026,8 @@ public class SbustamentoRisposte extends GenericLib {
 				// Se arriva un riferimento msg deve comunque essere quello della richiesta
 				// La validazione non valida il rifMsg per OneWay poiche' e' solo per compatibilita' con HPPdD
 				else if(bustaRisposta.getRiferimentoMessaggio()!=null &&
-						idMessageRequest.equals(bustaRisposta.getRiferimentoMessaggio()) == false){
+						!bustaRisposta.getRiferimentoMessaggio().equals(idMessageRequest) &&
+						!bustaRisposta.getRiferimentoMessaggio().equals(jtiIdModIRequest)){
 					msgDiag.logPersonalizzato("riferimentoMessaggioNonValido");
 					ecc = Eccezione.getEccezioneValidazione(ErroriCooperazione.RIFERIMENTO_MESSAGGIO_NON_VALIDO.getErroreCooperazione(),protocolFactory);
 				}
@@ -1037,7 +1043,8 @@ public class SbustamentoRisposte extends GenericLib {
 					msgDiag.logPersonalizzato("riferimentoMessaggioNonPresente");
 					ecc = Eccezione.getEccezioneValidazione(ErroriCooperazione.RIFERIMENTO_MESSAGGIO_NON_PRESENTE.getErroreCooperazione(),protocolFactory);
 				}else if(bustaRisposta.getRiferimentoMessaggio()!=null &&
-						idMessageRequest.equals(bustaRisposta.getRiferimentoMessaggio()) == false){
+						!bustaRisposta.getRiferimentoMessaggio().equals(idMessageRequest) &&
+						!bustaRisposta.getRiferimentoMessaggio().equals(jtiIdModIRequest)){
 					msgDiag.logPersonalizzato("riferimentoMessaggioNonValido");
 					ecc = Eccezione.getEccezioneValidazione(ErroriCooperazione.RIFERIMENTO_MESSAGGIO_NON_VALIDO.getErroreCooperazione(),protocolFactory);
 				}
@@ -1053,7 +1060,8 @@ public class SbustamentoRisposte extends GenericLib {
 					msgDiag.logPersonalizzato("riferimentoMessaggioNonPresente");
 					ecc = Eccezione.getEccezioneValidazione(ErroriCooperazione.RIFERIMENTO_MESSAGGIO_NON_PRESENTE.getErroreCooperazione(),protocolFactory);
 				}else if(bustaRisposta.getRiferimentoMessaggio()!=null &&
-						idMessageRequest.equals(bustaRisposta.getRiferimentoMessaggio()) == false){
+						!bustaRisposta.getRiferimentoMessaggio().equals(idMessageRequest) &&
+						!bustaRisposta.getRiferimentoMessaggio().equals(jtiIdModIRequest)){
 					msgDiag.logPersonalizzato("riferimentoMessaggioNonValido");
 					ecc = Eccezione.getEccezioneValidazione(ErroriCooperazione.RIFERIMENTO_MESSAGGIO_NON_VALIDO.getErroreCooperazione(),protocolFactory);
 				}
@@ -1070,7 +1078,8 @@ public class SbustamentoRisposte extends GenericLib {
 					msgDiag.logPersonalizzato("riferimentoMessaggioNonPresente");
 					ecc = Eccezione.getEccezioneValidazione(ErroriCooperazione.RIFERIMENTO_MESSAGGIO_NON_PRESENTE.getErroreCooperazione(),protocolFactory);
 				}else if(bustaRisposta.getRiferimentoMessaggio()!=null &&
-						idMessageRequest.equals(bustaRisposta.getRiferimentoMessaggio()) == false){
+						!bustaRisposta.getRiferimentoMessaggio().equals(idMessageRequest) &&
+						!bustaRisposta.getRiferimentoMessaggio().equals(jtiIdModIRequest)){
 					msgDiag.logPersonalizzato("riferimentoMessaggioNonValido");
 					ecc = Eccezione.getEccezioneValidazione(ErroriCooperazione.RIFERIMENTO_MESSAGGIO_NON_VALIDO.getErroreCooperazione(),protocolFactory);
 				}

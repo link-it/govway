@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -380,7 +380,11 @@ public class CostantiConfigurazione {
 	
 	public static final String PARAM_POLICY_ID = "aPluginPolicyId";
 	public static final String POLICY_ID_NON_DEFINITA = "-";
-	
+
+	public static final String POLICY_DYNAMIC_DISCOVERY_CLAIMS_PARSER_TYPE = "policy.discovery.claimsParser";
+	public static final String POLICY_DYNAMIC_DISCOVERY_CLAIMS_PARSER_TYPE_CUSTOM = "CUSTOM";
+	public static final String POLICY_DYNAMIC_DISCOVERY_CLAIMS_PARSER_CLASS_NAME = "policy.discovery.claimsParser.className";
+	public static final String POLICY_DYNAMIC_DISCOVERY_CLAIMS_PARSER_PLUGIN_TYPE = "policy.discovery.claimsParser.pluginType";
 	
 	public static final String POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE = "policy.validazioneJWT.claimsParser";
 	public static final String POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE_CUSTOM = "CUSTOM";

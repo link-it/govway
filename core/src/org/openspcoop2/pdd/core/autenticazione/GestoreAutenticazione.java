@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
@@ -60,6 +61,7 @@ import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchToken
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchTrasporto;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeToken;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTokenClient;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTokenPDND;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTrasporto;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
@@ -84,7 +86,11 @@ import org.openspcoop2.pdd.core.state.OpenSPCoopState;
 import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.PDNDTokenInfo;
+import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
@@ -116,13 +122,13 @@ public class GestoreAutenticazione {
 	//private static final Boolean semaphoreAutenticazionePA = true;
 	//private static final Boolean semaphoreCredenzialiMittente = true;
 	
-	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockAutenticazionePD = new HashMap<String, org.openspcoop2.utils.Semaphore>(); 
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockAutenticazionePD = new HashMap<>(); 
 	private static synchronized org.openspcoop2.utils.Semaphore initLockAutenticazionePD(String tipoAutenticazione){
 		org.openspcoop2.utils.Semaphore s = _lockAutenticazionePD.get(tipoAutenticazione);
 		if(s==null) {
-			Integer permits = OpenSPCoop2Properties.getInstance().getAutenticazione_lock_permits(tipoAutenticazione);
+			Integer permits = OpenSPCoop2Properties.getInstance().getAutenticazioneLockPermits(tipoAutenticazione);
 			if(permits==null) {
-				permits = OpenSPCoop2Properties.getInstance().getAutenticazione_lock_permits();
+				permits = OpenSPCoop2Properties.getInstance().getAutenticazioneLockPermits();
 			}
 			if(permits!=null && permits.intValue()>1) {
 				s = new org.openspcoop2.utils.Semaphore("GestoreAutenticazioneFruizioni_"+tipoAutenticazione, permits);
@@ -143,13 +149,13 @@ public class GestoreAutenticazione {
 	}
 	
 	
-	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockAutenticazionePA = new HashMap<String, org.openspcoop2.utils.Semaphore>(); 
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockAutenticazionePA = new HashMap<>(); 
 	private static synchronized org.openspcoop2.utils.Semaphore initLockAutenticazionePA(String tipoAutenticazione){
 		org.openspcoop2.utils.Semaphore s = _lockAutenticazionePA.get(tipoAutenticazione);
 		if(s==null) {
-			Integer permits = OpenSPCoop2Properties.getInstance().getAutenticazione_lock_permits(tipoAutenticazione);
+			Integer permits = OpenSPCoop2Properties.getInstance().getAutenticazioneLockPermits(tipoAutenticazione);
 			if(permits==null) {
-				permits = OpenSPCoop2Properties.getInstance().getAutenticazione_lock_permits();
+				permits = OpenSPCoop2Properties.getInstance().getAutenticazioneLockPermits();
 			}
 			if(permits!=null && permits.intValue()>1) {
 				s = new org.openspcoop2.utils.Semaphore("GestoreAutenticazioneErogazioni_"+tipoAutenticazione, permits);
@@ -1070,22 +1076,23 @@ public class GestoreAutenticazione {
     
     public static void updateCredenzialiToken(IDSoggetto dominio, String modulo, String idTransazione, 
     		InformazioniToken informazioniTokenNormalizzate, IDServizioApplicativo idApplicativoToken, CredenzialiMittente credenzialiMittente, 
-    		IOpenSPCoopState openspcoopState, String identitaChiamante, RequestInfo requestInfo) throws Exception{
+    		IOpenSPCoopState openspcoopState, String identitaChiamante, RequestInfo requestInfo,
+    		Context context) throws Exception{
     	
     	if(informazioniTokenNormalizzate.getIss()!=null) {
-    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_issuer);
+    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.TOKEN_ISSUER);
     		tokenSearch.disableConvertToDBValue();
-    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_issuer, informazioniTokenNormalizzate.getIss());
-    		credenzialiMittente.setToken_issuer(getCredenzialeMittente(dominio, modulo, idTransazione, 
+    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.TOKEN_ISSUER, informazioniTokenNormalizzate.getIss());
+    		credenzialiMittente.setTokenIssuer(getCredenzialeMittente(dominio, modulo, idTransazione, 
     				tokenSearch, token, openspcoopState, identitaChiamante,
     				null, requestInfo));
     	}
     	if(informazioniTokenNormalizzate.getClientId()!=null) {
     		if(idApplicativoToken==null) {
-	    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_clientId);
+	    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.TOKEN_CLIENT_ID);
 	    		tokenSearch.disableConvertToDBValue();
-	    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_clientId, informazioniTokenNormalizzate.getClientId());
-	    		credenzialiMittente.setToken_clientId(getCredenzialeMittente(dominio, modulo, idTransazione, 
+	    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.TOKEN_CLIENT_ID, informazioniTokenNormalizzate.getClientId());
+	    		credenzialiMittente.setTokenClientId(getCredenzialeMittente(dominio, modulo, idTransazione, 
 	    				tokenSearch, token, openspcoopState, identitaChiamante,
 	    				null, requestInfo));
     		}
@@ -1093,34 +1100,120 @@ public class GestoreAutenticazione {
     			CredenzialeSearchTokenClient tokenSearch = new CredenzialeSearchTokenClient(true, true, true);
     			tokenSearch.disableConvertToDBValue();
     			CredenzialeTokenClient token = new CredenzialeTokenClient(informazioniTokenNormalizzate.getClientId(), idApplicativoToken);
-    			credenzialiMittente.setToken_clientId(getCredenzialeMittente(dominio, modulo, idTransazione, 
+    			credenzialiMittente.setTokenClientId(getCredenzialeMittente(dominio, modulo, idTransazione, 
 	    				tokenSearch, token, openspcoopState, identitaChiamante,
 	    				null, requestInfo));
     		}
     	}
+
     	if(informazioniTokenNormalizzate.getSub()!=null) {
-    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_subject);
+    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.TOKEN_SUBJECT);
     		tokenSearch.disableConvertToDBValue();
-    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_subject, informazioniTokenNormalizzate.getSub());
-    		credenzialiMittente.setToken_subject(getCredenzialeMittente(dominio, modulo, idTransazione, 
+    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.TOKEN_SUBJECT, informazioniTokenNormalizzate.getSub());
+    		credenzialiMittente.setTokenSubject(getCredenzialeMittente(dominio, modulo, idTransazione, 
     				tokenSearch, token, openspcoopState, identitaChiamante,
     				null, requestInfo));
     	}
     	if(informazioniTokenNormalizzate.getUsername()!=null) {
-    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_username);
+    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.TOKEN_USERNAME);
     		tokenSearch.disableConvertToDBValue();
-    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_username, informazioniTokenNormalizzate.getUsername());
-    		credenzialiMittente.setToken_username(getCredenzialeMittente(dominio, modulo, idTransazione, 
+    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.TOKEN_USERNAME, informazioniTokenNormalizzate.getUsername());
+    		credenzialiMittente.setTokenUsername(getCredenzialeMittente(dominio, modulo, idTransazione, 
     				tokenSearch, token, openspcoopState, identitaChiamante,
     				null, requestInfo));
     	}
     	if(informazioniTokenNormalizzate.getUserInfo()!=null && informazioniTokenNormalizzate.getUserInfo().getEMail()!=null) {
-    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_eMail);
+    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.TOKEN_EMAIL);
     		tokenSearch.disableConvertToDBValue();
-    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_eMail, informazioniTokenNormalizzate.getUserInfo().getEMail());
-    		credenzialiMittente.setToken_eMail(getCredenzialeMittente(dominio, modulo, idTransazione, 
+    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.TOKEN_EMAIL, informazioniTokenNormalizzate.getUserInfo().getEMail());
+    		credenzialiMittente.setTokenEMail(getCredenzialeMittente(dominio, modulo, idTransazione, 
     				tokenSearch, token, openspcoopState, identitaChiamante,
     				null, requestInfo));
+    	}
+    	
+    	updateCredenzialiTokenPDND(dominio, modulo, idTransazione, 
+        		informazioniTokenNormalizzate, credenzialiMittente, 
+        		openspcoopState, identitaChiamante, requestInfo,
+        		context);
+    	
+    }
+    
+    public static void updateCredenzialiTokenPDND(IDSoggetto dominio, String modulo, String idTransazione, 
+    		InformazioniToken informazioniTokenNormalizzate, CredenzialiMittente credenzialiMittente, 
+    		IOpenSPCoopState openspcoopState, String identitaChiamante, RequestInfo requestInfo,
+    		Context context) throws Exception{
+    	    	
+    	SecurityToken securityTokenForContext = SecurityTokenUtilities.readSecurityToken(context);
+    	
+    	Long refClientIdCredenzialieMittente = null;
+    	if(credenzialiMittente!=null && credenzialiMittente.getTokenClientId()!=null && credenzialiMittente.getTokenClientId().getId()!=null &&
+    			credenzialiMittente.getTokenClientId().getId()>0) {
+    		refClientIdCredenzialieMittente = credenzialiMittente.getTokenClientId().getId();
+    	}
+    	if(refClientIdCredenzialieMittente==null) {
+    		return;
+    	}
+    	
+    	if(
+    			(securityTokenForContext!=null && securityTokenForContext.getPdnd()!=null)
+    			||
+    			(informazioniTokenNormalizzate.getPdnd()!=null && !informazioniTokenNormalizzate.getPdnd().isEmpty())
+    		) {
+    		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
+    		    		
+    		if(credenzialiMittente.getTokenPdndClientJson()==null &&
+    				properties.isGestoreChiaviPDNDclientsTraceJsonResponse() &&
+    				(securityTokenForContext!=null && securityTokenForContext.getPdnd()!=null)) {
+    			String clientJson = securityTokenForContext.getPdnd().getClientJson();
+    			if(clientJson!=null && StringUtils.isNotEmpty(clientJson)) {
+    				CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.PDND_CLIENT_JSON);
+    	    		tokenSearch.disableConvertToDBValue();
+    	    		CredenzialeTokenPDND token = new CredenzialeTokenPDND(TipoCredenzialeMittente.PDND_CLIENT_JSON, clientJson, refClientIdCredenzialieMittente);
+    	    		credenzialiMittente.setTokenPdndClientJson(getCredenzialeMittente(dominio, modulo, idTransazione, 
+    	    				tokenSearch, token, openspcoopState, identitaChiamante,
+    	    				null, requestInfo));
+    	    		/**System.out.println("["+idTransazione+"] PDND_CLIENT_JSON ref["+refClientIdCredenzialieMittente+"] ("+clientJson+") ID CREDENZIALE: "+credenzialiMittente.getTokenPdndClientJson().getId()+
+    	    				" REFDB: "+credenzialiMittente.getTokenPdndClientJson().getRefCredenziale());*/
+    			}
+    		}
+    			
+    		if(credenzialiMittente.getTokenPdndOrganizationJson()==null &&
+    				properties.isGestoreChiaviPDNDorganizationsTraceJsonResponse() &&
+    				(securityTokenForContext!=null && securityTokenForContext.getPdnd()!=null)) {
+    			String organizationJson = securityTokenForContext.getPdnd().getOrganizationJson();
+    			if(organizationJson!=null && StringUtils.isNotEmpty(organizationJson)) {
+    				CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.PDND_ORGANIZATION_JSON);
+    	    		tokenSearch.disableConvertToDBValue();
+    	    		CredenzialeTokenPDND token = new CredenzialeTokenPDND(TipoCredenzialeMittente.PDND_ORGANIZATION_JSON, organizationJson, refClientIdCredenzialieMittente);
+    	    		credenzialiMittente.setTokenPdndOrganizationJson(getCredenzialeMittente(dominio, modulo, idTransazione, 
+    	    				tokenSearch, token, openspcoopState, identitaChiamante,
+    	    				null, requestInfo));
+    	    		/**System.out.println("["+idTransazione+"] PDND_ORGANIZATION_JSON ref["+refClientIdCredenzialieMittente+"] ("+organizationJson+") ID CREDENZIALE: "+credenzialiMittente.getTokenPdndOrganizationJson().getId()+
+    	    				" REFDB: "+credenzialiMittente.getTokenPdndOrganizationJson().getRefCredenziale());*/
+    			}
+    		}
+    		
+    		if(credenzialiMittente.getTokenPdndOrganizationName()==null &&
+    				properties.isGestoreChiaviPDNDorganizationsTraceName()) {
+    			
+    			String organizationName = null;
+    			if(securityTokenForContext!=null && securityTokenForContext.getPdnd()!=null){
+    				organizationName = securityTokenForContext.getPdnd().getOrganizationName(logger);
+    			}
+    			if(organizationName==null) {
+    				organizationName = PDNDTokenInfo.readOrganizationNameFromPDNDMap(informazioniTokenNormalizzate.getPdnd());
+    			}
+    			if(organizationName!=null && StringUtils.isNotEmpty(organizationName)) {
+    				CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.PDND_ORGANIZATION_NAME);
+    	    		tokenSearch.disableConvertToDBValue();
+    	    		CredenzialeTokenPDND token = new CredenzialeTokenPDND(TipoCredenzialeMittente.PDND_ORGANIZATION_NAME, organizationName, refClientIdCredenzialieMittente);
+    	    		credenzialiMittente.setTokenPdndOrganizationName(getCredenzialeMittente(dominio, modulo, idTransazione, 
+    	    				tokenSearch, token, openspcoopState, identitaChiamante,
+    	    				null, requestInfo));
+    	    		/**System.out.println("["+idTransazione+"] PDND_ORGANIZATION_NAME ref["+refClientIdCredenzialieMittente+"] ("+organizationName+") ID CREDENZIALE: "+credenzialiMittente.getTokenPdndOrganizationName().getId()+
+    	    				" REFDB: "+credenzialiMittente.getTokenPdndOrganizationName().getRefCredenziale());*/
+    			}
+    		}
     	}
     	
     }
@@ -1452,6 +1545,7 @@ public class GestoreAutenticazione {
 			// not exists
 			CredenzialeMittente credenzialeMittente = new CredenzialeMittente();
 			credenzialeMittente.setTipo(credential.getTipo());
+			credenzialeMittente.setRefCredenziale(credential.getReferenceId());
 			credenzialeMittente.setOraRegistrazione(DateManager.getDate());
 			credenzialeMittente.setCredenziale(credential.getCredenziale());
 			try{

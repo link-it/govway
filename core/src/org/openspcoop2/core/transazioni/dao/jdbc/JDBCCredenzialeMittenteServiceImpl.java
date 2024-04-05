@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -75,13 +75,15 @@ public class JDBCCredenzialeMittenteServiceImpl extends JDBCCredenzialeMittenteS
 		sqlQueryObjectInsert.addInsertField(this.getCredenzialeMittenteFieldConverter().toColumn(CredenzialeMittente.model().TIPO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getCredenzialeMittenteFieldConverter().toColumn(CredenzialeMittente.model().CREDENZIALE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getCredenzialeMittenteFieldConverter().toColumn(CredenzialeMittente.model().ORA_REGISTRAZIONE,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getCredenzialeMittenteFieldConverter().toColumn(CredenzialeMittente.model().REF_CREDENZIALE,false),"?");
 
 		// Insert credenzialeMittente
 		org.openspcoop2.utils.jdbc.IKeyGeneratorObject keyGenerator = this.getCredenzialeMittenteFetch().getKeyGeneratorObject(CredenzialeMittente.model());
 		long id = jdbcUtilities.insertAndReturnGeneratedKey(sqlQueryObjectInsert, keyGenerator, jdbcProperties.isShowSql(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(credenzialeMittente.getTipo(),CredenzialeMittente.model().TIPO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(credenzialeMittente.getCredenziale(),CredenzialeMittente.model().CREDENZIALE.getFieldType()),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(credenzialeMittente.getOraRegistrazione(),CredenzialeMittente.model().ORA_REGISTRAZIONE.getFieldType())
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(credenzialeMittente.getOraRegistrazione(),CredenzialeMittente.model().ORA_REGISTRAZIONE.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(credenzialeMittente.getRefCredenziale(),CredenzialeMittente.model().REF_CREDENZIALE.getFieldType())
 		);
 		credenzialeMittente.setId(id);
 
@@ -135,6 +137,8 @@ public class JDBCCredenzialeMittenteServiceImpl extends JDBCCredenzialeMittenteS
 		lstObjects_credenzialeMittente.add(new JDBCObject(credenzialeMittente.getCredenziale(), CredenzialeMittente.model().CREDENZIALE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getCredenzialeMittenteFieldConverter().toColumn(CredenzialeMittente.model().ORA_REGISTRAZIONE,false), "?");
 		lstObjects_credenzialeMittente.add(new JDBCObject(credenzialeMittente.getOraRegistrazione(), CredenzialeMittente.model().ORA_REGISTRAZIONE.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getCredenzialeMittenteFieldConverter().toColumn(CredenzialeMittente.model().REF_CREDENZIALE,false), "?");
+		lstObjects_credenzialeMittente.add(new JDBCObject(credenzialeMittente.getRefCredenziale(), CredenzialeMittente.model().REF_CREDENZIALE.getFieldType()));
 		sqlQueryObjectUpdate.addWhereCondition("id=?");
 		lstObjects_credenzialeMittente.add(new JDBCObject(tableId, Long.class));
 

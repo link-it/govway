@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -310,6 +310,48 @@ public class FileSystemUtilities {
         return true;
     }
     
+    public static boolean deleteDirNotEmpty(String dir, int maxChilds) {
+    	return deleteDirNotEmpty(new File(dir), maxChilds);
+    }
+    public static boolean deleteDirNotEmpty(File dir, int maxChilds) {
+    	return deleteDirNotEmpty(dir, maxChilds , 0);
+    }
+ 	private static boolean deleteDirNotEmpty(File dir, int maxChilds, int level) {
+ 		if (emptyDir(dir)) {
+ 			deleteDir(dir);
+ 			return true;
+ 		}
+ 		else {
+ 			if(maxChilds==level) {
+ 				return false;
+ 			}
+ 			File [] childs = dir.listFiles();
+ 			if(childs!=null && childs.length>0) {
+ 				return deleteDirNotEmpty(childs, maxChilds, level);
+ 			}
+ 			return true;
+ 		}
+    }
+ 	private static boolean deleteDirNotEmpty(File [] childs, int maxChilds, int level) {
+ 		boolean ok = true;
+ 		for (File file : childs) {
+			if(file.isDirectory()) {
+				boolean v = deleteDirNotEmpty(file, maxChilds , level+1);
+				if(!v) {
+					ok = false;
+				}
+			}
+			else {
+				try {
+					Files.delete(file.toPath());
+				}catch(Exception e) {
+					ok = false;
+				}
+			}
+		}
+		return ok;
+ 	}
+    
 	public static boolean deleteDir(String dir) {
 		File d = new File(dir);
 		if(!d.exists()){
@@ -331,6 +373,30 @@ public class FileSystemUtilities {
         }catch(Exception e) {
         	return false;
         }
+    }
+    
+    public static void deleteFile(File f) {
+    	try {
+    		if(f!=null) {
+    			java.nio.file.Files.delete(f.toPath());
+    		}
+		}catch(Exception e) {
+			// ignore
+		}
+    }
+    
+    public static void clearFile(File f) {
+    	try {
+    		if(f!=null) {
+    			try(FileOutputStream fos = new FileOutputStream(f);){
+	                byte[] emptyBytes = new byte[0];
+	                fos.write(emptyBytes);
+	                fos.flush();
+    			}
+    		}
+		}catch(Exception e) {
+			// ignore
+		}
     }
     
     public static boolean moveToDir(String src,String destDir){

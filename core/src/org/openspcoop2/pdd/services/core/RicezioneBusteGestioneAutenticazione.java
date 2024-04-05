@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -662,6 +662,8 @@ public class RicezioneBusteGestioneAutenticazione {
 		
 								}
 								
+								updateCredenzialiSafe(credenzialeTrasporto, tipoAutenticazione, null);
+								
 								this.openspcoopstate.releaseResource();
 								return false;
 								
@@ -687,7 +689,7 @@ public class RicezioneBusteGestioneAutenticazione {
 					String checkAuthnToken = GestoreAutenticazione.getLabel(this.gestioneTokenAutenticazione);
 					this.msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_AUTHN_CHECK, checkAuthnToken);
 					this.msgDiag.logPersonalizzato("autenticazioneTokenInCorso");
-					this.msgContext.getIntegrazione().setTokenPolicy_authn(GestoreAutenticazione.getActions(this.gestioneTokenAutenticazione));
+					this.msgContext.getIntegrazione().setTokenPolicyAuthn(GestoreAutenticazione.getActions(this.gestioneTokenAutenticazione));
 					
 					ErroreCooperazione erroreCooperazione = null;
 					ErroreIntegrazione erroreIntegrazione = null;
@@ -824,6 +826,8 @@ public class RicezioneBusteGestioneAutenticazione {
 							}
 	
 						}
+						
+						updateCredenzialiSafe(credenzialeTrasporto, tipoAutenticazione, null);
 						
 						this.openspcoopstate.releaseResource();
 						return false;
@@ -986,6 +990,8 @@ public class RicezioneBusteGestioneAutenticazione {
 							
 						}
 						
+						updateCredenzialiSafe(credenzialeTrasporto, tipoAutenticazione, informazioniTokenNormalizzate);
+						
 						this.openspcoopstate.releaseResource();
 						return false;
 					}
@@ -1008,7 +1014,8 @@ public class RicezioneBusteGestioneAutenticazione {
 					
 					if(informazioniTokenNormalizzate!=null) {
 						GestoreAutenticazione.updateCredenzialiToken(this.identitaPdD, RicezioneBuste.ID_MODULO, this.idTransazione, informazioniTokenNormalizzate, this.idApplicativoToken, credenzialiMittente, 
-								this.openspcoopstate, "RicezioneBuste.credenzialiToken", this.requestInfo);
+								this.openspcoopstate, "RicezioneBuste.credenzialiToken", this.requestInfo,
+								this.pddContext);
 					}
 					
 					this.transaction.setCredenzialiMittente(credenzialiMittente);
@@ -1250,6 +1257,54 @@ public class RicezioneBusteGestioneAutenticazione {
 		}
 	
 		return true;
+	}
+	
+	private void updateCredenzialiSafe(String credenzialeTrasporto, String tipoAutenticazione, InformazioniToken informazioniTokenNormalizzate) {
+		
+		// Viene chiamato se l'autenticazione fallisce
+		
+		CredenzialiMittente credenzialiMittente = this.transaction.getCredenzialiMittente();
+		if(credenzialiMittente==null) {
+			credenzialiMittente = new CredenzialiMittente();
+			try {
+				this.transaction.setCredenzialiMittente(credenzialiMittente);
+			}catch(Exception e) {
+				this.logCore.error("SetCredenzialiMittente error: "+e.getMessage(),e);
+			}
+		}
+		
+		updateCredenzialiTrasportoSafe(credenzialiMittente, credenzialeTrasporto, tipoAutenticazione);
+		
+		updateCredenzialiTokenSafe(credenzialiMittente, informazioniTokenNormalizzate);
+		
+	}
+	private void updateCredenzialiTrasportoSafe(CredenzialiMittente credenzialiMittente, String credenzialeTrasporto, String tipoAutenticazione) {
+		if(OpenSPCoop2Properties.getInstance().isGestioneAutenticazioneSaveTokenAuthenticationInfoAuthenticationFailed() &&
+				tipoAutenticazione!=null && credenzialeTrasporto!=null) {
+			try {
+				GestoreAutenticazione.updateCredenzialiTrasporto(this.identitaPdD, RicezioneBuste.ID_MODULO, this.idTransazione, tipoAutenticazione, credenzialeTrasporto, credenzialiMittente, 
+						this.openspcoopstate, "RicezioneBuste.credenzialiTrasporto", this.requestInfo);
+			}catch(Exception e) {
+				this.logCore.error("updateCredenzialiTrasporto error: "+e.getMessage(),e);
+			}
+		}
+	}
+	private void updateCredenzialiTokenSafe(CredenzialiMittente credenzialiMittente, InformazioniToken informazioniTokenNormalizzate) {
+		if(OpenSPCoop2Properties.getInstance().isGestioneTokenSaveTokenAuthenticationInfoAuthenticationFailed()) {
+			InformazioniToken info = informazioniTokenNormalizzate;
+			if(info==null && this.pddContext.containsKey(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE)) {
+				info = (InformazioniToken) this.pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+			}
+			if(info!=null) {
+				try {
+					GestoreAutenticazione.updateCredenzialiToken(this.identitaPdD, RicezioneBuste.ID_MODULO, this.idTransazione, info, this.idApplicativoToken, credenzialiMittente, 
+							this.openspcoopstate, "RicezioneBuste.credenzialiToken", this.requestInfo,
+							this.pddContext);
+				}catch(Exception e) {
+					this.logCore.error("updateCredenzialiToken error: "+e.getMessage(),e);
+				}
+			}
+		}
 	}
 
 	private static final String IDENTIFICAZIONE_SOGGETTO_TRAMITE_PROFILO = "Identificato un soggetto (tramite profilo di interoperabilità) '";

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -223,14 +223,24 @@ public class DynamicStringReplace {
 			boolean checkPossibleStart = false;
 			if(startWithDollaro) {
 				if(ch == '$' || ch == '?') {
-					if(ch == '?') {
-						required=false;
-					}
-					checkPossibleStart = true;
+					// verifico che il prossimo carattere non sia un ulteriore carattere speciale
+					boolean analize = true;
 					if(i+1 < messaggioWithPlaceHolder.length()) {
-						i++;
-						chDollaro = ch;
-						ch = messaggioWithPlaceHolder.charAt(i);
+						char chNext = messaggioWithPlaceHolder.charAt(i+1);
+						if(chNext == '$' || chNext == '?') {
+							analize = false;
+						}
+					}
+					if(analize) {
+						if(ch == '?') {
+							required=false;
+						}
+						checkPossibleStart = true;
+						if(i+1 < messaggioWithPlaceHolder.length()) {
+							i++;
+							chDollaro = ch;
+							ch = messaggioWithPlaceHolder.charAt(i);
+						}
 					}
 				}
 			}

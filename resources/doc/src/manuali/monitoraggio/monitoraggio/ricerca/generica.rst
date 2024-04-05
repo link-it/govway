@@ -302,6 +302,13 @@ Rispetto alla ricerca base sono previsti i seguenti ulteriori elementi di filtro
         - **Username**
         - **eMail**
 
+- Dati PDND
+
+    - **Organizzazione**: Modalità che consente di effettuare ricerche di transazioni in cui le richieste provengono dall'organizzazione del client indicata; organizzazione recuperata tramite le API PDND.
+
+      .. note::
+        Il filtro PDND è presente solamente se il profilo di interoperabilità selezionato è 'ModI' e il tipo di transazione è impostato su 'Erogazione'.
+
 - Identificativo Applicativo
 
     - **ID**: Modalità che consente di effettuare ricerche di transazioni contenenti uno specifico identificativo applicativo estratto dalle comunicazioni in transito tramite la funzionalità di Correlazione Applicativa.

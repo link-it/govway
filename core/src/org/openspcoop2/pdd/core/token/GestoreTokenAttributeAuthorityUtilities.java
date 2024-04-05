@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -83,6 +83,7 @@ import org.openspcoop2.pdd.core.token.attribute_authority.pd.EsitoRecuperoAttrib
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
@@ -95,7 +96,6 @@ import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.keystore.cache.GestoreOCSPResource;
 import org.openspcoop2.security.keystore.cache.GestoreOCSPValidator;
 import org.openspcoop2.security.message.constants.SecurityConstants;
-import org.openspcoop2.security.message.jose.JOSEUtils;
 import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.JWKSet;
@@ -138,7 +138,8 @@ public class GestoreTokenAttributeAuthorityUtilities {
 	static EsitoRecuperoAttributi readAttributes(Logger log, PolicyAttributeAuthority policyAttributeAuthority,
 			IProtocolFactory<?> protocolFactory,
 			AttributeAuthorityDynamicParameters dynamicParameters,
-			String request, boolean portaDelegata, String idModulo, PortaApplicativa pa, PortaDelegata pd,
+			String request, boolean portaDelegata, Context context,
+			Busta busta, String idModulo, PortaApplicativa pa, PortaDelegata pd,
 			IState state,
 			IDSoggetto idDominio, IDServizio idServizio,
 			RequestInfo requestInfo) {
@@ -187,7 +188,17 @@ public class GestoreTokenAttributeAuthorityUtilities {
 	    			try {
 	    				JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
 	    				Properties p = policyAttributeAuthority.getProperties().get(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID);
-	    				JOSEUtils.injectKeystore(requestInfo, p, log); // serve per leggere il keystore dalla cache
+	    				TokenUtilities.injectJOSEConfig(p, policyAttributeAuthority, null,  
+	    						busta, idDominio, idServizio,
+	    						context, log,
+	    						requestInfo, state, portaDelegata);
+	    				
+	    				// serve per leggere il keystore dalla cache
+	    				TokenKeystoreInjectUtilities inject = new TokenKeystoreInjectUtilities(log, requestInfo ,
+	    						protocolFactory, 
+	    						context, state);
+	    				inject.initAttributeAuthorityValidazioneRispostaJwt(policyAttributeAuthority.getName(), portaDelegata, pd, pa, p);
+	    				inject.inject(p);
 	    				
 	    				String aliasMode = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS+".mode"); 
 						if(aliasMode!=null && 
@@ -654,7 +665,7 @@ public class GestoreTokenAttributeAuthorityUtilities {
 			 **/
 			Long old = null;
 			try {
-				old = OpenSPCoop2Properties.getInstance().getGestioneToken_iatTimeCheck_milliseconds();
+				old = OpenSPCoop2Properties.getInstance().getGestioneTokenIatTimeCheckMilliseconds();
 			}catch(Exception e) {
 				throw new TokenException(e.getMessage(),e);
 			}
@@ -669,7 +680,7 @@ public class GestoreTokenAttributeAuthorityUtilities {
 			}
 			Long future = null;
 			try {
-				future = OpenSPCoop2Properties.getInstance().getGestioneToken_iatTimeCheck_futureTolerance_milliseconds();
+				future = OpenSPCoop2Properties.getInstance().getGestioneTokenIatTimeCheckFutureToleranceMilliseconds();
 			}catch(Exception e) {
 				throw new TokenException(e.getMessage(),e);
 			}

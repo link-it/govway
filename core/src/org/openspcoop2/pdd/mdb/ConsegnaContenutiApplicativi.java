@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -74,6 +74,7 @@ import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.message.soap.mtom.MtomXomReference;
 import org.openspcoop2.message.utils.MessageUtilities;
+import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ForwardProxy;
@@ -137,10 +138,13 @@ import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.logger.transazioni.InformazioniTransazione;
+import org.openspcoop2.pdd.logger.transazioni.TracciamentoManager;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
+import org.openspcoop2.protocol.basic.builder.EsitoBuilder;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.ConsegnaInOrdine;
@@ -161,6 +165,7 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.LimitExceededIOException;
 import org.openspcoop2.utils.LimitedInputStream;
 import org.openspcoop2.utils.MapKey;
@@ -597,6 +602,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		
 		ResponseCachingConfigurazione responseCachingConfig = null;
 		
+		IntegrationContext integrationContext = null;
+		ProtocolContext protocolContext = null;
+		
 		if(richiestaApplicativa!=null){
 			identitaPdD = richiestaApplicativa.getDominio();
 			soggettoFruitore = richiestaApplicativa.getSoggettoFruitore();
@@ -625,6 +633,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			idCorrelazioneApplicativa = richiestaApplicativa.getIdCorrelazioneApplicativa();
 
 			localForward = richiestaApplicativa.isLocalForward();
+			
+			integrationContext = richiestaApplicativa.getIntegrazione();
+			protocolContext = richiestaApplicativa.getProtocol();
 			
 		}else{
 			identitaPdD = richiestaDelegata.getDominio();
@@ -655,6 +666,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			profiloGestione = richiestaDelegata.getProfiloGestione();
 			servizioApplicativoFruitore = richiestaDelegata.getServizioApplicativo();
 			idCorrelazioneApplicativa = richiestaDelegata.getIdCorrelazioneApplicativa();
+			
+			integrationContext = richiestaDelegata.getIntegrazione();
+			protocolContext = richiestaDelegata.getProtocol();
 		}
 		
 		IDServizio servizioHeaderIntegrazione = null;
@@ -2196,7 +2210,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				outRequestContext.setTransazioneApplicativoServer(transazioneApplicativoServer);
 				
 				// Contesto
-				ProtocolContext protocolContext = new ProtocolContext();
+				if(protocolContext==null) {
+					protocolContext = new ProtocolContext();
+				}
 				protocolContext.setIdRichiesta(idMessaggioConsegna);
 				if(idMessaggioPreBehaviour!=null){
 					protocolContext.setIdRichiesta(idMessaggioPreBehaviour);
@@ -2234,7 +2250,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				outRequestContext.setProtocollo(protocolContext);
 				
 				// Integrazione
-				IntegrationContext integrationContext = new IntegrationContext();
+				if(integrationContext==null) {
+					integrationContext = new IntegrationContext();
+				}
 				integrationContext.setIdCorrelazioneApplicativa(idCorrelazioneApplicativa);
 				integrationContext.setServizioApplicativoFruitore(servizioApplicativoFruitore);
 				integrationContext.addServizioApplicativoErogatore(servizioApplicativo);
@@ -2401,10 +2419,17 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			
 
 			// --------------------- spedizione --------------------------
+						
 			Date dataPrimaInvocazioneConnettore = null;
 			Date dataTerminataInvocazioneConnettore = null;
 			if(invokerNonSupportato==false){
 				msgDiag.logPersonalizzato("consegnaInCorso");
+				
+				// se il tracciamento lo prevedo emetto un log
+				if(transazioneApplicativoServer==null) {
+					registraTracciaOutRequest(outRequestContext, this.log, msgDiag);
+				}
+				
 				// utilizzo connettore
 				ejbUtils.setSpedizioneMsgIngresso(new Timestamp(outRequestContext.getDataElaborazioneMessaggio().getTime()));
 				dataPrimaInvocazioneConnettore = DateManager.getDate();
@@ -4370,12 +4395,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, "ErroreGenerale");
 				}catch(Exception er){
 					msgDiag.logErroreGenerico(er,"ejbUtils.sendErroreGenerale(profiloConRisposta)");
-					ejbUtils.rollbackMessage("Spedizione Errore al Mittente durante una richiesta con gestione della risposta non riuscita",servizioApplicativo, esito);
+					ejbUtils.rollbackMessage("Spedizione Errore al Mittente durante una richiesta con gestione della risposta non riuscita",servizioApplicativo, esito, false);
 					esito.setEsitoInvocazione(false); 
 					esito.setStatoInvocazioneErroreNonGestito(er);
 				}
 			}else{
-				ejbUtils.rollbackMessage("ErroreGenerale:"+e.getMessage(), servizioApplicativo, esito);
+				ejbUtils.rollbackMessage("ErroreGenerale:"+e.getMessage(), servizioApplicativo, esito, false);
 				esito.setEsitoInvocazione(false); 
 				esito.setStatoInvocazioneErroreNonGestito(e);
 			}
@@ -4670,5 +4695,38 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			serviziApplicativiAbilitatiForwardTo = (List<String>) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_SA);
 		}
 		return serviziApplicativiAbilitatiForwardTo;
+	}
+	
+	private void registraTracciaOutRequest(OutRequestContext outRequestContext, Logger log, MsgDiagnostico msgDiag) throws HandlerException {
+
+		try {
+		
+			TracciamentoManager tracciamentoManager = new TracciamentoManager(FaseTracciamento.OUT_REQUEST);
+			if(!tracciamentoManager.isTransazioniEnabled()) {
+				return;
+			}
+				
+			InformazioniTransazione info = new InformazioniTransazione();
+			info.setContext(outRequestContext.getPddContext());
+			info.setTipoPorta(outRequestContext.getTipoPorta());
+			info.setProtocolFactory(outRequestContext.getProtocolFactory());
+			info.setProtocollo(outRequestContext.getProtocollo());
+			info.setIntegrazione(outRequestContext.getIntegrazione());
+			info.setIdModulo(outRequestContext.getIdModulo());
+			
+			TransportRequestContext transportRequestContext = null;
+			if(outRequestContext.getMessaggio()!=null) {
+				transportRequestContext = outRequestContext.getMessaggio().getTransportRequestContext();
+			}
+			String esitoContext = EsitoBuilder.getTipoContext(transportRequestContext, EsitiProperties.getInstance(log, outRequestContext.getProtocolFactory()), log);
+			
+			tracciamentoManager.invoke(info, esitoContext, 
+					outRequestContext.getConnettore()!=null ? outRequestContext.getConnettore().getHeaders() : null,
+							msgDiag);
+			
+		}catch(Exception e) {
+			ServicesUtils.processTrackingException(e, log, FaseTracciamento.OUT_REQUEST, outRequestContext.getPddContext());
+		}
+		
 	}
 }

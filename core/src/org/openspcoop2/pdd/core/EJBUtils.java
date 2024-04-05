@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -420,6 +420,9 @@ public class EJBUtils {
 	}
 
 	public void rollbackMessage(String motivoRollbackEJB, String servizioApplicativo, EsitoLib esito){
+		rollbackMessage(motivoRollbackEJB, servizioApplicativo, esito, true);
+	}
+	public void rollbackMessage(String motivoRollbackEJB, String servizioApplicativo, EsitoLib esito, boolean throwExceptionConnectionNull){
 
 		this.setEJBSuffixFunctionName();
 		try{
@@ -427,7 +430,7 @@ public class EJBUtils {
 			// Imposto Motivo dell'errore - lavora sempre sulla richiesta
 			GestoreMessaggi msg = new GestoreMessaggi(this.openSPCoopState, true ,this.idMessage,this.tipo,this.msgDiag,this.pddContext);
 			msg.setOneWayVersione11(this.oneWayVersione11);
-			msg.aggiornaErroreProcessamentoMessaggio(motivoRollbackEJB, servizioApplicativo);
+			msg.aggiornaErroreProcessamentoMessaggio(motivoRollbackEJB, servizioApplicativo, throwExceptionConnectionNull);
 
 			esito.setErroreProcessamentoMessaggioAggiornato(true);
 			

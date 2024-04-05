@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -37,6 +37,9 @@ public class DetailTransazione extends TransazioneExt {
   
   @Schema(example = "20", description = "")
   private Long latenzaTotale = null;
+  
+  @Schema(description = "")
+  private PDNDOrganizationInfo pdndOrganization = null;
   
   @Schema(description = "")
   private String richiedente = null;
@@ -102,6 +105,25 @@ public class DetailTransazione extends TransazioneExt {
   }
 
  /**
+   * Get pdndOrganization
+   * @return pdndOrganization
+  **/
+  @JsonProperty("pdnd_organization")
+  @Valid
+  public PDNDOrganizationInfo getPdndOrganization() {
+    return this.pdndOrganization;
+  }
+
+  public void setPdndOrganization(PDNDOrganizationInfo pdndOrganization) {
+    this.pdndOrganization = pdndOrganization;
+  }
+
+  public DetailTransazione pdndOrganization(PDNDOrganizationInfo pdndOrganization) {
+    this.pdndOrganization = pdndOrganization;
+    return this;
+  }
+
+ /**
    * Get richiedente
    * @return richiedente
   **/
@@ -148,6 +170,7 @@ public class DetailTransazione extends TransazioneExt {
     sb.append("    data: ").append(DetailTransazione.toIndentedString(this.data)).append("\n");
     sb.append("    latenzaServizio: ").append(DetailTransazione.toIndentedString(this.latenzaServizio)).append("\n");
     sb.append("    latenzaTotale: ").append(DetailTransazione.toIndentedString(this.latenzaTotale)).append("\n");
+    sb.append("    pdndOrganization: ").append(DetailTransazione.toIndentedString(this.pdndOrganization)).append("\n");
     sb.append("    richiedente: ").append(DetailTransazione.toIndentedString(this.richiedente)).append("\n");
     sb.append("    dettaglioErrore: ").append(DetailTransazione.toIndentedString(this.dettaglioErrore)).append("\n");
     sb.append("}");

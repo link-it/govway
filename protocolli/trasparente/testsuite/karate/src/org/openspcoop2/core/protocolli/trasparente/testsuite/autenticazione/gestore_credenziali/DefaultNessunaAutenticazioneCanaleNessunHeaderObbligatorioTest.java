@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -66,7 +66,10 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				headers,
 				"SoggettoInternoTestFruitore",
 				"ApplicativoSoggettoInternoTestFruitore1",
-				"@@GatewayCredenziali@@WebServerErogazioniDefault@@BasicUsername 'ApplicativoSoggettoInternoTestFruitore1'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerErogazioniDefault@@BasicUsername 'ApplicativoSoggettoInternoTestFruitore1'",
+						"basic",
+						"ApplicativoSoggettoInternoTestFruitore1"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( BasicUsername 'ApplicativoSoggettoInternoTestFruitore1' ) fornite da WebServerErogazioniDefault");
@@ -82,7 +85,10 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				headers,
 				null,
 				null,
-				null,
+				new CredenzialeTrasporto(
+						null,
+						"basic",
+						"ApplicativoSoggettoInternoTestFruitore1Errate"),
 				"Basic realm=\"GovWay\", error=\"invalid_request\", error_description=\"Invalid credentials\"",
 				Utilities.CREDENZIALI_NON_CORRETTE,
 				"Ottenute credenziali di accesso ( BasicUsername 'ApplicativoSoggettoInternoTestFruitore1Errate' ) fornite da WebServerErogazioniDefault",
@@ -117,7 +123,10 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				headers,
 				"SoggettoInternoTestFruitore",
 				"ApplicativoSoggettoInternoTestFruitore1",
-				"@@GatewayCredenziali@@WebServerFruizioniDefault@@BasicUsername 'ApplicativoSoggettoInternoTestFruitore1'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerFruizioniDefault@@BasicUsername 'ApplicativoSoggettoInternoTestFruitore1'",
+						"basic",
+						"ApplicativoSoggettoInternoTestFruitore1"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( BasicUsername 'ApplicativoSoggettoInternoTestFruitore1' ) fornite da WebServerFruizioniDefault");
@@ -133,7 +142,10 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				headers,
 				"SoggettoInternoTestFruitore",
 				null,
-				null,
+				new CredenzialeTrasporto(
+						null,
+						"basic",
+						"ApplicativoSoggettoInternoTestFruitore1Errate"),
 				"Basic realm=\"GovWay\", error=\"invalid_request\", error_description=\"Invalid credentials\"",
 				Utilities.CREDENZIALI_NON_CORRETTE,
 				"Ottenute credenziali di accesso ( BasicUsername 'ApplicativoSoggettoInternoTestFruitore1Errate' ) fornite da WebServerFruizioniDefault",
@@ -168,7 +180,10 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				headers,
 				"SoggettoInternoTestFruitore",
 				"HSMClient1",
-				"@@GatewayCredenziali@@WebServerErogazioniDefault@@SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM'\nSSL-Issuer '/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerErogazioniDefault@@SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM'\nSSL-Issuer '/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/'",
+						"ssl",
+						"/st=Italy/c=IT/ou=Test/cn=ExampleClient1HSM/l=Pisa/o=Test/"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM' ) fornite da WebServerErogazioniDefault");
@@ -184,7 +199,10 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				headers,
 				null,
 				null,
-				"@@GatewayCredenziali@@WebServerErogazioniDefault@@SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerErogazioniDefault@@SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM'",
+						"ssl",
+						"/st=Italy/c=IT/ou=Test/cn=ExampleClient1HSM/l=Pisa/o=Test/"),
 				null,
 				Utilities.AUTORIZZAZIONE_NEGATA,
 				"Ottenute credenziali di accesso ( SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM' ) fornite da WebServerErogazioniDefault",
@@ -201,7 +219,10 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				headers,
 				"SoggettoInternoTestFruitore",
 				"ApplicativoTestGestoreCredenzialiCertificato",
-				"@@GatewayCredenziali@@WebServerErogazioniDefault@@SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali'\nSSL-Issuer 'C=IT, O=test, CN=example.gestoreCredenziali'\nSSL-ClientCert-SerialNumber '313156636180879269931219199270197192051648745965'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerErogazioniDefault@@SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali'\nSSL-Issuer 'C=IT, O=test, CN=example.gestoreCredenziali'\nSSL-ClientCert-SerialNumber '313156636180879269931219199270197192051648745965'",
+						"ssl",
+						"/c=IT/cn=example.gestoreCredenziali/o=test/"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali' ) fornite da WebServerErogazioniDefault");
@@ -232,7 +253,10 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				headers,
 				null,
 				null,
-				"@@GatewayCredenziali@@WebServerErogazioniDefault@@SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM, Altro=errato'\nSSL-Issuer '/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/Altro=errato/'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerErogazioniDefault@@SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM, Altro=errato'\nSSL-Issuer '/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/Altro=errato/'",
+						"ssl",
+						"/st=Italy/c=IT/ou=Test/cn=ExampleClient1HSM/l=Pisa/o=Test/altro=errato/"),
 				null,
 				Utilities.AUTORIZZAZIONE_NEGATA,
 				"Ottenute credenziali di accesso ( SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM, Altro=errato' ) fornite da WebServerErogazioniDefault",
@@ -286,7 +310,10 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				headers,
 				"SoggettoInternoTestFruitore",
 				"HSMClient1",
-				"@@GatewayCredenziali@@WebServerFruizioniDefault@@SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM'\nSSL-Issuer '/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerFruizioniDefault@@SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM'\nSSL-Issuer '/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/'",
+						"ssl",
+						"/st=Italy/c=IT/ou=Test/cn=ExampleClient1HSM/l=Pisa/o=Test/"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM' ) fornite da WebServerFruizioniDefault");
@@ -302,7 +329,10 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				headers,
 				"SoggettoInternoTestFruitore",
 				null,
-				null,
+				new CredenzialeTrasporto(
+						null,
+						"ssl",
+						"/st=Italy/c=IT/ou=Test/cn=ExampleClient1HSM/l=Pisa/o=Test/"),
 				null,
 				Utilities.AUTORIZZAZIONE_NEGATA,
 				"Ottenute credenziali di accesso ( SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM' ) fornite da WebServerFruizioniDefault",
@@ -319,7 +349,10 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				headers,
 				"SoggettoInternoTestFruitore",
 				"ApplicativoTestGestoreCredenzialiCertificato",
-				"@@GatewayCredenziali@@WebServerFruizioniDefault@@SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali'\nSSL-Issuer 'C=IT, O=test, CN=example.gestoreCredenziali'\nSSL-ClientCert-SerialNumber '313156636180879269931219199270197192051648745965'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerFruizioniDefault@@SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali'\nSSL-Issuer 'C=IT, O=test, CN=example.gestoreCredenziali'\nSSL-ClientCert-SerialNumber '313156636180879269931219199270197192051648745965'",
+						"ssl",
+						"/c=IT/cn=example.gestoreCredenziali/o=test/"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali' ) fornite da WebServerFruizioniDefault");
@@ -334,7 +367,10 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				headers,
 				"SoggettoInternoTestFruitore",
 				"ApplicativoTestGestoreCredenzialiCertificato",
-				"@@GatewayCredenziali@@WebServerFruizioniDefault@@SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali'\nSSL-Issuer 'C=IT, O=test, CN=example.gestoreCredenziali'\nSSL-ClientCert-SerialNumber '313156636180879269931219199270197192051648745965'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerFruizioniDefault@@SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali'\nSSL-Issuer 'C=IT, O=test, CN=example.gestoreCredenziali'\nSSL-ClientCert-SerialNumber '313156636180879269931219199270197192051648745965'",
+						"ssl",
+						"/c=IT/cn=example.gestoreCredenziali/o=test/"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali' ) fornite da WebServerFruizioniDefault");
@@ -350,7 +386,10 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				headers,
 				"SoggettoInternoTestFruitore",
 				"ApplicativoTestGestoreCredenzialiCertificato2",
-				"@@GatewayCredenziali@@WebServerFruizioniDefault@@SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali2'\nSSL-Issuer 'C=IT, O=test, CN=example.gestoreCredenziali2'\nSSL-ClientCert-SerialNumber '464440956505565963808339808380319088904980969620'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerFruizioniDefault@@SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali2'\nSSL-Issuer 'C=IT, O=test, CN=example.gestoreCredenziali2'\nSSL-ClientCert-SerialNumber '464440956505565963808339808380319088904980969620'",
+						"ssl",
+						"/c=IT/cn=example.gestoreCredenziali2/o=test/"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali2' ) fornite da WebServerFruizioniDefault");
@@ -365,7 +404,10 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				headers,
 				"SoggettoInternoTestFruitore",
 				"ApplicativoTestGestoreCredenzialiCertificato2",
-				"@@GatewayCredenziali@@WebServerFruizioniDefault@@SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali2'\nSSL-Issuer 'C=IT, O=test, CN=example.gestoreCredenziali2'\nSSL-ClientCert-SerialNumber '464440956505565963808339808380319088904980969620'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerFruizioniDefault@@SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali2'\nSSL-Issuer 'C=IT, O=test, CN=example.gestoreCredenziali2'\nSSL-ClientCert-SerialNumber '464440956505565963808339808380319088904980969620'",
+						"ssl",
+						"/c=IT/cn=example.gestoreCredenziali2/o=test/"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali2' ) fornite da WebServerFruizioniDefault");
@@ -382,7 +424,10 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				headers,
 				"SoggettoInternoTestFruitore",
 				null,
-				null,
+				new CredenzialeTrasporto(
+						null,
+						"ssl",
+						"/st=Italy/c=IT/ou=Test/cn=ExampleClient1HSM/l=Pisa/o=Test/altro=errato/"),
 				null,
 				Utilities.AUTORIZZAZIONE_NEGATA,
 				"Ottenute credenziali di accesso ( SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM, Altro=errato' ) fornite da WebServerFruizioniDefault",
@@ -417,7 +462,10 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				headers,
 				"SoggettoInternoTestFruitore",
 				"ApplicativoSoggettoInternoTestFruitore1Principal",
-				"@@GatewayCredenziali@@WebServerErogazioniDefault@@Principal 'ApplicativoSoggettoInternoTestFruitore1'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerErogazioniDefault@@Principal 'ApplicativoSoggettoInternoTestFruitore1'",
+						"principal",
+						"ApplicativoSoggettoInternoTestFruitore1"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( Principal 'ApplicativoSoggettoInternoTestFruitore1' ) fornite da WebServerErogazioniDefault");
@@ -432,7 +480,10 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				headers,
 				null,
 				null,
-				"@@GatewayCredenziali@@WebServerErogazioniDefault@@Principal 'ApplicativoSoggettoInternoTestFruitore1Errate'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerErogazioniDefault@@Principal 'ApplicativoSoggettoInternoTestFruitore1Errate'",
+						"principal",
+						"ApplicativoSoggettoInternoTestFruitore1Errate"),
 				null,
 				Utilities.AUTORIZZAZIONE_NEGATA,
 				"Ottenute credenziali di accesso ( Principal 'ApplicativoSoggettoInternoTestFruitore1Errate' ) fornite da WebServerErogazioniDefault",
@@ -466,7 +517,10 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				headers,
 				"SoggettoInternoTestFruitore",
 				"ApplicativoSoggettoInternoTestFruitore1Principal",
-				"@@GatewayCredenziali@@WebServerFruizioniDefault@@Principal 'ApplicativoSoggettoInternoTestFruitore1'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerFruizioniDefault@@Principal 'ApplicativoSoggettoInternoTestFruitore1'",
+						"principal",
+						"ApplicativoSoggettoInternoTestFruitore1"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( Principal 'ApplicativoSoggettoInternoTestFruitore1' ) fornite da WebServerFruizioniDefault");
@@ -481,7 +535,10 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				headers,
 				"SoggettoInternoTestFruitore",
 				null,
-				null,
+				new CredenzialeTrasporto(
+						null,
+						"principal",
+						"ApplicativoSoggettoInternoTestFruitore1Errate"),
 				null,
 				Utilities.AUTORIZZAZIONE_NEGATA,
 				"Ottenute credenziali di accesso ( Principal 'ApplicativoSoggettoInternoTestFruitore1Errate' ) fornite da WebServerFruizioniDefault",

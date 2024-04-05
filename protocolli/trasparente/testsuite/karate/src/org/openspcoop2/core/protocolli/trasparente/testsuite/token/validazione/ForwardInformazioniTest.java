@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -71,7 +71,7 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		
 		HttpResponse response = Utilities._test(logCore, forward, "govwayHeaders", headers,  null,
 				null,
-				null);
+				null, null);
 		
 		checkGovWayHeaders(response, values);
 	}
@@ -89,7 +89,7 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		
 		HttpResponse response = Utilities._test(logCore, forward, "govwayJson", headers,  null,
 				null,
-				null);
+				null, null);
 		
 		checkGovWayJson("govway-testsuite-govway-token", response, values, true);
 	}
@@ -107,7 +107,7 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		
 		HttpResponse response = Utilities._test(logCore, forward, "govwayJws", headers,  null,
 				null,
-				null);
+				null, null);
 		
 		checkGovWayJwt("govway-testsuite-govway-jwt", response, values, true);
 	}
@@ -125,7 +125,7 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		
 		HttpResponse response = Utilities._test(logCore, forward, "jws", headers,  null,
 				null,
-				null);
+				null, null);
 		
 		checkGovWayJwt("govway-testsuite-custom-jws", response, values, false);
 	}
@@ -143,7 +143,7 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		
 		HttpResponse response = Utilities._test(logCore, forward, "json", headers,  null,
 				null,
-				null);
+				null, null);
 		
 		checkGovWayJson("govway-testsuite-custom-json", response, values, false);
 	}
@@ -163,7 +163,7 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		
 		HttpResponse response = Utilities._test(logCore, forwardAlternativeSigner, "jwk", headers,  null,
 				null,
-				null);
+				null, null);
 		
 		checkGovWayJwt("govway-testsuite-govway-jwt", response, values, true,
 				SecurityConstants.KEYSTORE_TYPE_JWK_VALUE);
@@ -184,7 +184,7 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		
 		HttpResponse response = Utilities._test(logCore, forwardAlternativeSigner, "keyPairProtected", headers,  null,
 				null,
-				null);
+				null, null);
 		
 		checkGovWayJwt("govway-testsuite-govway-jwt", response, values, true,
 				SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE);
@@ -204,7 +204,7 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		
 		HttpResponse response = Utilities._test(logCore, forwardAlternativeSigner, "keyPairUnprotected", headers,  null,
 				null,
-				null);
+				null, null);
 		
 		checkGovWayJwt("govway-testsuite-govway-jwt", response, values, true,
 				SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE);

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -844,7 +844,20 @@ public class ExporterArchiveUtils {
 				if(policy!=null && policy.sizePropertyList()>0) {
 					for (int i = 0; i < policy.sizePropertyList(); i++) {
 						Property p = policy.getProperty(i);
-						if(CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE.equals(p.getNome()) && 
+						if(CostantiConfigurazione.POLICY_DYNAMIC_DISCOVERY_CLAIMS_PARSER_TYPE.equals(p.getNome()) && 
+								CostantiConfigurazione.POLICY_DYNAMIC_DISCOVERY_CLAIMS_PARSER_TYPE_CUSTOM.equals(p.getValore())) {
+							for (int j = 0; j < policy.sizePropertyList(); j++) {
+								Property pJ = policy.getProperty(j);
+								if(CostantiConfigurazione.POLICY_DYNAMIC_DISCOVERY_CLAIMS_PARSER_PLUGIN_TYPE.equals(pJ.getNome())) {
+									try {
+										ArchiveCascadeConfiguration cascadeConfigPlugin = new ArchiveCascadeConfiguration();
+										cascadeConfigPlugin.setCascadePluginConfigurazione(true);
+										readPlugin_classe(archive, TipoPlugin.TOKEN_DYNAMIC_DISCOVERY.getValue(), pJ.getValore(), cascadeConfigPlugin, provenienza);
+									}catch(DriverConfigurazioneNotFound notFound) {}		
+								}
+							}
+						}
+						else if(CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE.equals(p.getNome()) && 
 								CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE_CUSTOM.equals(p.getValore())) {
 							for (int j = 0; j < policy.sizePropertyList(); j++) {
 								Property pJ = policy.getProperty(j);

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -21,24 +21,27 @@
 
 package org.openspcoop2.security.message.jose;
 
+import java.net.Proxy;
 import java.net.URI;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rs.security.jose.common.JoseConstants;
 import org.apache.cxf.rt.security.rs.RSSecurityConstants;
-import org.openspcoop2.core.mvc.properties.provider.ProviderException;
-import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.CRLCertstore;
+import org.openspcoop2.security.keystore.HttpStore;
 import org.openspcoop2.security.keystore.KeyPairStore;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.MerlinTruststore;
@@ -57,6 +60,11 @@ import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWTOptions;
 import org.openspcoop2.utils.security.JwtHeaders;
+import org.openspcoop2.utils.transport.http.HttpForwardProxyConfig;
+import org.openspcoop2.utils.transport.http.HttpForwardProxyOptions;
+import org.openspcoop2.utils.transport.http.HttpOptions;
+import org.openspcoop2.utils.transport.http.HttpProxyOptions;
+import org.openspcoop2.utils.transport.http.HttpsOptions;
 import org.slf4j.Logger;
 
 /**     
@@ -332,7 +340,7 @@ public class JOSEUtils {
 	}
 
 	
-	public static boolean useJwtHeadersMapProperties(Map<String, Properties> properties, JWTOptions options) throws ProviderException, ProviderValidationException {
+	public static boolean useJwtHeadersMapProperties(Map<String, Properties> properties, JWTOptions options) {
 		Properties defaultProperties = MultiPropertiesUtilities.getDefaultProperties(properties);
 		return useJwtHeaders(defaultProperties, options);
 	}
@@ -439,23 +447,23 @@ public class JOSEUtils {
 		}
 		return properties;
 	}
-	public static KeyStore readTrustStoreSsl(RequestInfo requestInfo, Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
+	public static KeyStore readTrustStoreSsl(RequestInfo requestInfo, Map<String, Object> propertiesParam) throws SecurityException {
 		Properties properties = new Properties();
 		properties.putAll(propertiesParam);
 		return readTrustStoreSsl(requestInfo, properties);
 	}
-	public static KeyStore readTrustStoreSsl(RequestInfo requestInfo, Properties properties) throws SecurityException, UtilsException {
+	public static KeyStore readTrustStoreSsl(RequestInfo requestInfo, Properties properties) throws SecurityException {
 		return readTrustStoreEngine(requestInfo, properties, SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_FILE, 
 				SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_TYPE, 
 				SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_PASSWORD);
 	}
 
-	public static KeyStore readTrustStoreJwtX509Cert(RequestInfo requestInfo, Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
+	public static KeyStore readTrustStoreJwtX509Cert(RequestInfo requestInfo, Map<String, Object> propertiesParam) throws SecurityException {
 		Properties properties = new Properties();
 		properties.putAll(propertiesParam);
 		return readTrustStoreJwtX509Cert(requestInfo, properties);
 	}
-	public static KeyStore readTrustStoreJwtX509Cert(RequestInfo requestInfo, Properties properties) throws SecurityException, UtilsException {
+	public static KeyStore readTrustStoreJwtX509Cert(RequestInfo requestInfo, Properties properties) throws SecurityException {
 		return readTrustStoreEngine(requestInfo, properties, SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_FILE, 
 				SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_TYPE, 
 				SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_PASSWORD);
@@ -476,12 +484,12 @@ public class JOSEUtils {
 		return false;
 	}
 		
-	public static JWKSet readTrustStoreJwtJsonWebKeysCert(RequestInfo requestInfo, Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
+	public static JWKSet readTrustStoreJwtJsonWebKeysCert(RequestInfo requestInfo, Map<String, Object> propertiesParam) throws SecurityException {
 		Properties properties = new Properties();
 		properties.putAll(propertiesParam);
 		return readTrustStoreJwtJsonWebKeysCert(requestInfo, properties);
 	}
-	public static JWKSet readTrustStoreJwtJsonWebKeysCert(RequestInfo requestInfo, Properties properties) throws SecurityException, UtilsException {
+	public static JWKSet readTrustStoreJwtJsonWebKeysCert(RequestInfo requestInfo, Properties properties) throws SecurityException {
 		
 		if(properties.containsKey(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_FILE)) {
 			String truststoreFile = (String) properties.get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_FILE);
@@ -516,12 +524,12 @@ public class JOSEUtils {
 		return false;
 	}
 	
-	public static JWKSet readTrustStorePublicKey(RequestInfo requestInfo, Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
+	public static JWKSet readTrustStorePublicKey(RequestInfo requestInfo, Map<String, Object> propertiesParam) throws SecurityException {
 		Properties properties = new Properties();
 		properties.putAll(propertiesParam);
 		return readTrustStorePublicKey(requestInfo, properties);
 	}
-	public static JWKSet readTrustStorePublicKey(RequestInfo requestInfo, Properties properties) throws SecurityException, UtilsException {
+	public static JWKSet readTrustStorePublicKey(RequestInfo requestInfo, Properties properties) throws SecurityException {
 		
 		if(properties.containsKey(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_FILE)) {
 			String truststoreFile = (String) properties.get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_FILE);
@@ -609,12 +617,12 @@ public class JOSEUtils {
 		return false;
 	}
 	
-	public static JWKSet readKeyStoreJwtJsonWebKeysCert(RequestInfo requestInfo, Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
+	public static JWKSet readKeyStoreJwtJsonWebKeysCert(RequestInfo requestInfo, Map<String, Object> propertiesParam) throws SecurityException {
 		Properties properties = new Properties();
 		properties.putAll(propertiesParam);
 		return readKeyStoreJwtJsonWebKeysCert(requestInfo, properties);
 	}
-	public static JWKSet readKeyStoreJwtJsonWebKeysCert(RequestInfo requestInfo, Properties properties) throws SecurityException, UtilsException {
+	public static JWKSet readKeyStoreJwtJsonWebKeysCert(RequestInfo requestInfo, Properties properties) throws SecurityException {
 		
 		if(properties.containsKey(SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_FILE)) {
 			String keystoreFile = (String) properties.get(SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_FILE);
@@ -634,12 +642,12 @@ public class JOSEUtils {
 		return null;
 	}
 		
-	public static KeyStore readKeyStoreJwtX509Cert(RequestInfo requestInfo, Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
+	public static KeyStore readKeyStoreJwtX509Cert(RequestInfo requestInfo, Map<String, Object> propertiesParam) throws SecurityException {
 		Properties properties = new Properties();
 		properties.putAll(propertiesParam);
 		return readKeyStoreJwtX509Cert(requestInfo, properties);
 	}
-	public static KeyStore readKeyStoreJwtX509Cert(RequestInfo requestInfo, Properties properties) throws SecurityException, UtilsException {
+	public static KeyStore readKeyStoreJwtX509Cert(RequestInfo requestInfo, Properties properties) throws SecurityException {
 		return readTrustStoreEngine(requestInfo, properties, SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_FILE, 
 				SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_TYPE, 
 				SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_PASSWORD);
@@ -721,10 +729,17 @@ public class JOSEUtils {
 		return keystore;
 	}
 	
-	private static final String HTTP_PROTOCOL = "http";
-	private static final String HTTPS_PROTOCOL = "https";
+	public static final String HTTP_PROTOCOL = "http";
+	public static final String HTTPS_PROTOCOL = "https";
 	
 	public static void injectKeystore(RequestInfo requestInfo, Properties properties, Logger log) {
+		try {
+			injectKeystore(requestInfo, properties, log, false);
+		}catch(SecurityException e) {
+			// ignore per default
+		}
+	}
+	public static void injectKeystore(RequestInfo requestInfo, Properties properties, Logger log, boolean throwError) throws SecurityException {
 		
 		if(log==null) {
 			log = LoggerWrapperFactory.getLogger(JOSEUtils.class);
@@ -754,32 +769,46 @@ public class JOSEUtils {
 					if(publicKeyProperty==null || "".equals(publicKeyProperty) ) {
 						String error = "Errore durante l'accesso al keyPair '"+file+"': property public key file ("+publicKeyPropertyName+") undefined";
 						log.error(error);
+						if(throwError) {
+							throw new SecurityException(error);
+						}
 					}
 					else {
 						KeyPairStore keyPair = null;
 						if(file.startsWith(HTTP_PROTOCOL) || file.startsWith(HTTPS_PROTOCOL)) {
-							byte[] privateKey = readHttpStore(properties, requestInfo, file, log);
+							byte[] privateKey = readHttpStore(properties, requestInfo, file, log, throwError);
 						
 							byte[] publicKey = null;
 							if(publicKeyProperty.startsWith(HTTP_PROTOCOL) || publicKeyProperty.startsWith(HTTPS_PROTOCOL)) {
-								publicKey = readHttpStore(properties, requestInfo, publicKeyProperty, log);
+								publicKey = readHttpStore(properties, requestInfo, publicKeyProperty, log, throwError);
 							}
 							else {
 								String error = "Errore durante l'accesso al keyPair '"+file+"': property public key file ("+publicKeyPropertyName+") expected as http resource: '"+publicKeyProperty+"'";
 								log.error(error);
+								if(throwError) {
+									throw new SecurityException(error);
+								}
 							}
 							
 							try {
 								keyPair = new KeyPairStore(privateKey, publicKey, privateKeyPassword, algorithmProperty);
 							}catch(Exception e) {
-								log.error("Errore durante istanziazione del keyPair (http resource) '"+file+"'/'"+publicKeyProperty+"': "+e.getMessage(),e);
+								String error = "Errore durante istanziazione del keyPair (http resource) '"+file+"'/'"+publicKeyProperty+"': "+e.getMessage();
+								log.error(error,e);
+								if(throwError) {
+									throw new SecurityException(error, e);
+								}
 							}
 						}
 						else {
 							try {
 								keyPair = GestoreKeystoreCache.getKeyPairStore(requestInfo, file, publicKeyProperty, privateKeyPassword, algorithmProperty);
 							}catch(Exception e) {
-								log.error("Errore durante istanziazione del keyPair '"+file+"'/'"+publicKeyProperty+"': "+e.getMessage(),e);
+								String error = "Errore durante istanziazione del keyPair '"+file+"'/'"+publicKeyProperty+"': "+e.getMessage();
+								log.error(error,e);
+								if(throwError) {
+									throw new SecurityException(error, e);
+								}
 							}
 						}
 						if(keyPair!=null) {
@@ -798,7 +827,11 @@ public class JOSEUtils {
 								properties.put(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS, jwkSetKid);
 								properties.put(RSSecurityConstants.RSSEC_KEY_STORE_TYPE, SecurityConstants.KEYSTORE_TYPE_JWK_VALUE);
 							}catch(Exception e) {
-								log.error("Errore durante istanziazione del keyPair '"+file+"'/'"+publicKeyProperty+"': "+e.getMessage(),e);
+								String error = "Errore durante istanziazione del keyPair '"+file+"'/'"+publicKeyProperty+"': "+e.getMessage();
+								log.error(error,e);
+								if(throwError) {
+									throw new SecurityException(error, e);
+								}
 							}
 						}
 					}
@@ -812,19 +845,27 @@ public class JOSEUtils {
 					
 					PublicKeyStore publicKeyStore = null;
 					if(file.startsWith(HTTP_PROTOCOL) || file.startsWith(HTTPS_PROTOCOL)) {
-						byte[] publicKey = readHttpStore(properties, requestInfo, file, log);
+						byte[] publicKey = readHttpStore(properties, requestInfo, file, log, throwError);
 											
 						try {
 							publicKeyStore = new PublicKeyStore(publicKey, algorithmProperty);
 						}catch(Exception e) {
-							log.error("Errore durante istanziazione della chiave pubblica (http resource) '"+file+"': "+e.getMessage(),e);
+							String error = "Errore durante istanziazione della chiave pubblica (http resource) '"+file+"': "+e.getMessage();
+							log.error(error,e);
+							if(throwError) {
+								throw new SecurityException(error, e);
+							}
 						}
 					}
 					else {
 						try {
 							publicKeyStore = GestoreKeystoreCache.getPublicKeyStore(requestInfo, file, algorithmProperty);
 						}catch(Exception e) {
-							log.error("Errore durante istanziazione della chiave pubblica '"+file+"': "+e.getMessage(),e);
+							String error = "Errore durante istanziazione della chiave pubblica '"+file+"': "+e.getMessage();
+							log.error(error,e);
+							if(throwError) {
+								throw new SecurityException(error, e);
+							}
 						}
 					}
 					if(publicKeyStore!=null) {
@@ -842,7 +883,11 @@ public class JOSEUtils {
 							properties.put(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS, jwkSetKid);
 							properties.put(RSSecurityConstants.RSSEC_KEY_STORE_TYPE, SecurityConstants.KEYSTORE_TYPE_JWK_VALUE);
 						}catch(Exception e) {
-							log.error("Errore durante istanziazione della chiave pubblica '"+file+"': "+e.getMessage(),e);
+							String error = "Errore durante istanziazione della chiave pubblica '"+file+"': "+e.getMessage();
+							log.error(error,e);
+							if(throwError) {
+								throw new SecurityException(error, e);
+							}
 						}
 					}
 					
@@ -852,7 +897,7 @@ public class JOSEUtils {
 					
 					if(file.startsWith(HTTP_PROTOCOL) || file.startsWith(HTTPS_PROTOCOL)) {
 						
-						byte[]content = readHttpStore(properties, requestInfo, file, log);
+						byte[]content = readHttpStore(properties, requestInfo, file, log, throwError);
 						if(content!=null) {
 							if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(type)) {
 								properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
@@ -864,8 +909,12 @@ public class JOSEUtils {
 								try {
 									keystore = KeystoreUtils.readKeystore(content, type, password);
 								}catch(Exception e) {
-									log.error("Errore durante istanziazione del keystore ottenuto via http '"+file+"': "+e.getMessage(),e);
+									String error = "Errore durante istanziazione del keystore ottenuto via http '"+file+"': "+e.getMessage();
+									log.error(error,e);
 									keystore = null;
+									if(throwError) {
+										throw new SecurityException(error, e);
+									}
 								}
 								if(keystore!=null) {
 									properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
@@ -882,7 +931,11 @@ public class JOSEUtils {
 							try {
 								jwkSet = GestoreKeystoreCache.getJwkSetStore(requestInfo, file).getJwkSetContent();
 							}catch(Exception e) {
-								log.error("Errore durante l'accesso al jwk set '"+file+"': "+e.getMessage(),e);
+								String error = "Errore durante l'accesso al jwk set '"+file+"': "+e.getMessage();
+								log.error(error,e);
+								if(throwError) {
+									throw new SecurityException(error, e);
+								}
 							}
 							if(jwkSet!=null) {
 								properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
@@ -903,7 +956,11 @@ public class JOSEUtils {
 								}
 								keystore = keystoreUtils.getKeystore();
 							}catch(Exception e) {
-								log.error("Errore durante l'accesso al keystore '"+file+"': "+e.getMessage(),e);
+								String error = "Errore durante l'accesso al keystore '"+file+"': "+e.getMessage();
+								log.error(error,e);
+								if(throwError) {
+									throw new SecurityException(error, e);
+								}
 							}
 							if(keystore!=null) {
 								properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
@@ -919,17 +976,24 @@ public class JOSEUtils {
 		
 	}
 	
-	private static byte[] readHttpStore(Properties properties, RequestInfo requestInfo, String file, Logger log) {
+	public static byte[] readHttpStore(Properties properties, RequestInfo requestInfo, String file, Logger log, boolean throwError) throws SecurityException {
+		return readHttpStore( properties, requestInfo, file, log, throwError, false);
+	}
+	public static byte[] readHttpStore(Properties properties, RequestInfo requestInfo, String file, Logger log, boolean throwError, boolean forceNoCache) throws SecurityException {
 		byte[]content = null;
 		try {
-			String trustStoreSslPropertyName =  RSSecurityConstants.RSSEC_KEY_STORE_FILE+".ssl";
+			boolean trustAll = false;
+			String trustStoreAllSslProperty = properties.getProperty(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_TRUSTALL);
+			trustAll = trustStoreAllSslProperty!=null && "true".equalsIgnoreCase(trustStoreAllSslProperty);
+			
+			String trustStoreSslPropertyName = JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_FILE;
 			String trustStoreSslProperty =  properties.getProperty(trustStoreSslPropertyName);
 			MerlinTruststore trustStoreSsl = null;
 			if(trustStoreSslProperty!=null) {
-				String trustStoreSslPasswordPropertyName =  RSSecurityConstants.RSSEC_KEY_STORE_PSWD+".ssl";
-				String trustStoreSslTypePropertyName =  RSSecurityConstants.RSSEC_KEY_STORE_TYPE+".ssl";
-				String trustStoreSslPasswordProperty =  properties.getProperty(trustStoreSslPasswordPropertyName);
-				String trustStoreSslTypeProperty =  properties.getProperty(trustStoreSslTypePropertyName);
+				String trustStoreSslPasswordPropertyName = JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_PASSWORD;
+				String trustStoreSslTypePropertyName = JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_TYPE;
+				String trustStoreSslPasswordProperty = properties.getProperty(trustStoreSslPasswordPropertyName);
+				String trustStoreSslTypeProperty = properties.getProperty(trustStoreSslTypePropertyName);
 				if(trustStoreSslPasswordProperty==null) {
 					throw new SecurityException("TrustStore ssl password undefined");
 				}
@@ -939,15 +1003,15 @@ public class JOSEUtils {
 				trustStoreSsl = GestoreKeystoreCache.getMerlinTruststore(requestInfo, trustStoreSslProperty, trustStoreSslTypeProperty, trustStoreSslPasswordProperty);
 			}
 			
-			String trustStoreSslCrlPropertyName =  RSSecurityConstants.RSSEC_KEY_STORE+".crl.ssl";
+			String trustStoreSslCrlPropertyName =  JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_CRL;
 			String trustStoreSslCrlProperty =  properties.getProperty(trustStoreSslCrlPropertyName);
 			CRLCertstore crlStore = null;
 			if(trustStoreSslCrlProperty!=null) {
 				crlStore = GestoreKeystoreCache.getCRLCertstore(requestInfo, trustStoreSslCrlProperty);
 			}
 			
-			String trustStoreSslConnectionTimeoutPropertyName =  RSSecurityConstants.RSSEC_KEY_STORE+".ssl.connectionTimeout";
-			String trustStoreSslReadTimeoutPropertyName =  RSSecurityConstants.RSSEC_KEY_STORE+".ssl.readTimeout";
+			String trustStoreSslConnectionTimeoutPropertyName =  JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_CONNECTION_TIMEOUT;
+			String trustStoreSslReadTimeoutPropertyName =  JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_READ_TIMEOUT;
 			String trustStoreSslConnectionTimeoutProperty =  properties.getProperty(trustStoreSslConnectionTimeoutPropertyName);
 			String trustStoreSslReadTimeoutProperty =  properties.getProperty(trustStoreSslReadTimeoutPropertyName);
 			Integer connectionTimeout = null;
@@ -957,34 +1021,168 @@ public class JOSEUtils {
 				readTimeout = Integer.valueOf(trustStoreSslReadTimeoutProperty);
 			}
 			
-			if(connectionTimeout!=null && readTimeout!=null) {
-				if(trustStoreSsl!=null) {
-					if(crlStore!=null) {
-						content = GestoreKeystoreCache.getHttpStore(requestInfo, file, connectionTimeout, readTimeout, trustStoreSsl, crlStore).getStoreBytes();
+			List<HttpOptions> list = new ArrayList<>();
+			
+			String trustStoreSslHostnameVerifier =  properties.getProperty(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_HOSTNAME_VERIFIER);
+			if(trustStoreSslHostnameVerifier!=null && StringUtils.isNotEmpty(trustStoreSslHostnameVerifier)) {
+				HttpsOptions op = new HttpsOptions();
+				op.setHostnameVerifier("true".equals(trustStoreSslHostnameVerifier)); // lascio default a false
+				list.add(op);
+			}
+			
+			String forwardProxyEndpoint = properties.getProperty(JOSECostanti.ID_FORWARD_PROXY_ENDPOINT);
+			if(forwardProxyEndpoint!=null && StringUtils.isNotEmpty(forwardProxyEndpoint)) {
+				HttpForwardProxyOptions op = new HttpForwardProxyOptions();
+				op.setForwardProxyEndpoint(forwardProxyEndpoint);
+				
+				HttpForwardProxyConfig c = new HttpForwardProxyConfig();
+				String forwardProxyHeader = properties.getProperty(JOSECostanti.ID_FORWARD_PROXY_HEADER);
+				String forwardProxyQuery = properties.getProperty(JOSECostanti.ID_FORWARD_PROXY_QUERY);
+				if(forwardProxyHeader!=null && StringUtils.isNotEmpty(forwardProxyHeader)) {
+					c.setHeader(forwardProxyHeader);
+					String forwardProxyHeaderBase64 = properties.getProperty(JOSECostanti.ID_FORWARD_PROXY_HEADER_BASE64);
+					if(forwardProxyHeaderBase64!=null && StringUtils.isNotEmpty(forwardProxyHeaderBase64)) {
+						c.setHeaderBase64("false".equals(forwardProxyHeaderBase64)); // default true
 					}
-					else {
-						content = GestoreKeystoreCache.getHttpStore(requestInfo, file, connectionTimeout, readTimeout, trustStoreSsl).getStoreBytes();
+				}
+				else if(forwardProxyQuery!=null && StringUtils.isNotEmpty(forwardProxyQuery)) {
+					c.setQuery(forwardProxyQuery);
+					String forwardProxyQueryBase64 = properties.getProperty(JOSECostanti.ID_FORWARD_PROXY_QUERY_BASE64);
+					if(forwardProxyQueryBase64!=null && StringUtils.isNotEmpty(forwardProxyQueryBase64)) {
+						c.setQueryBase64("false".equals(forwardProxyQueryBase64)); // default true
 					}
 				}
 				else {
-					content = GestoreKeystoreCache.getHttpStore(requestInfo, file, connectionTimeout, readTimeout).getStoreBytes();
+					throw new SecurityException("ForwardProxy header o query required");
+				}
+				op.setForwardProxyConfig(c);
+				
+				list.add(op);
+			}
+			
+			String proxyType = properties.getProperty(JOSECostanti.ID_PROXY_TYPE);
+			if(proxyType!=null && StringUtils.isNotEmpty(proxyType)) {
+				HttpProxyOptions op = new HttpProxyOptions();
+				if(CostantiConnettori.CONNETTORE_HTTP_PROXY_TYPE_VALUE_HTTP.equals(proxyType)){
+					op.setProxyType(Proxy.Type.HTTP);
+				}
+				else if(CostantiConnettori.CONNETTORE_HTTP_PROXY_TYPE_VALUE_HTTPS.equals(proxyType)){
+					op.setProxyType(Proxy.Type.HTTP); // voluto
+				}
+				else{
+					throw new SecurityException("Proxy type '"+proxyType+"' unsupported");
+				}
+				
+				String proxyHostname = properties.getProperty(JOSECostanti.ID_PROXY_HOSTNAME);
+				if(proxyHostname!=null && StringUtils.isNotEmpty(proxyHostname)) {
+					op.setProxyHostname(proxyHostname);
+				}
+				else{
+					throw new SecurityException("Proxy hostname undefined");
+				}
+				
+				String proxyPort = properties.getProperty(JOSECostanti.ID_PROXY_HOSTNAME);
+				if(proxyPort!=null && StringUtils.isNotEmpty(proxyPort)) {
+					try {
+						op.setProxyPort(Integer.valueOf(proxyPort));
+					}catch(Exception e) {
+						throw new SecurityException("Proxy port '"+proxyPort+"' invalid: "+e.getMessage());
+					}
+				}
+				else{
+					throw new SecurityException("Proxy port undefined");
+				}
+				
+				String proxyUsername = properties.getProperty(JOSECostanti.ID_PROXY_USERNAME);
+				if(proxyUsername!=null && StringUtils.isNotEmpty(proxyUsername)) {
+					op.setProxyUsername(proxyUsername);
+					String proxyPassword = properties.getProperty(JOSECostanti.ID_PROXY_USERNAME);
+					if(proxyPassword!=null) {
+						op.setProxyPassword(proxyPassword);
+					}
+				}
+				
+				list.add(op);
+			}
+			
+			HttpOptions [] options = null;
+			if(!list.isEmpty()) {
+				options = list.toArray(new HttpOptions[1]);
+			}
+			if(forceNoCache) {
+				if(connectionTimeout!=null && readTimeout!=null) {
+					if(trustStoreSsl!=null) {
+						if(crlStore!=null) {
+							content = new HttpStore(file, connectionTimeout, readTimeout, trustStoreSsl, crlStore, options).getStoreBytes();
+						}
+						else {
+							content = new HttpStore(file, connectionTimeout, readTimeout, trustStoreSsl, options).getStoreBytes();
+						}
+					}
+					else if(trustAll) {
+						content = new HttpStore(file, connectionTimeout, readTimeout, trustAll, options).getStoreBytes();
+					}
+					else {
+						content = new HttpStore(file, connectionTimeout, readTimeout, options).getStoreBytes();
+					}
+				}
+				else {
+					if(trustStoreSsl!=null) {
+						if(crlStore!=null) {
+							content = new HttpStore(file, trustStoreSsl, crlStore, options).getStoreBytes();
+						}
+						else {
+							content = new HttpStore(file, trustStoreSsl, options).getStoreBytes();
+						}
+					}
+					else if(trustAll) {
+						content = new HttpStore(file, trustAll, options).getStoreBytes();
+					}
+					else {
+						content = new HttpStore(file, options).getStoreBytes();
+					}
 				}
 			}
 			else {
-				if(trustStoreSsl!=null) {
-					if(crlStore!=null) {
-						content = GestoreKeystoreCache.getHttpStore(requestInfo, file, trustStoreSsl, crlStore).getStoreBytes();
+				if(connectionTimeout!=null && readTimeout!=null) {
+					if(trustStoreSsl!=null) {
+						if(crlStore!=null) {
+							content = GestoreKeystoreCache.getHttpStore(requestInfo, file, connectionTimeout, readTimeout, trustStoreSsl, crlStore, options).getStoreBytes();
+						}
+						else {
+							content = GestoreKeystoreCache.getHttpStore(requestInfo, file, connectionTimeout, readTimeout, trustStoreSsl, options).getStoreBytes();
+						}
+					}
+					else if(trustAll) {
+						content = GestoreKeystoreCache.getHttpStore(requestInfo, file, connectionTimeout, readTimeout, trustAll, options).getStoreBytes();
 					}
 					else {
-						content = GestoreKeystoreCache.getHttpStore(requestInfo, file, trustStoreSsl).getStoreBytes();
+						content = GestoreKeystoreCache.getHttpStore(requestInfo, file, connectionTimeout, readTimeout, options).getStoreBytes();
 					}
 				}
 				else {
-					content = GestoreKeystoreCache.getHttpStore(requestInfo, file).getStoreBytes();
+					if(trustStoreSsl!=null) {
+						if(crlStore!=null) {
+							content = GestoreKeystoreCache.getHttpStore(requestInfo, file, trustStoreSsl, crlStore, options).getStoreBytes();
+						}
+						else {
+							content = GestoreKeystoreCache.getHttpStore(requestInfo, file, trustStoreSsl, options).getStoreBytes();
+						}
+					}
+					else if(trustAll) {
+						content = GestoreKeystoreCache.getHttpStore(requestInfo, file, trustAll, options).getStoreBytes();
+					}
+					else {
+						content = GestoreKeystoreCache.getHttpStore(requestInfo, file, options).getStoreBytes();
+					}
 				}
 			}
 		}catch(Exception e) {
-			log.error("Errore durante l'accesso al keystore via http '"+file+"': "+e.getMessage(),e);
+			String error = "Errore durante l'accesso al keystore via http '"+file+"': "+e.getMessage();
+			log.error(error,e);
+			if(throwError) {
+				throw new SecurityException(error, e);
+			}
 		}
 		return content;
 	}

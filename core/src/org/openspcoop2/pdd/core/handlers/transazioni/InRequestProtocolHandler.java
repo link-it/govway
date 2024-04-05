@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -21,6 +21,7 @@ package org.openspcoop2.pdd.core.handlers.transazioni;
 
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.controllo_traffico.handler.InRequestProtocolHandlerGestioneControlloTraffico;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.credenziali.engine.GestoreCredenzialiEngine;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
@@ -84,8 +85,8 @@ public class InRequestProtocolHandler extends FirstPositionHandler implements  o
 			if(op2Properties.isControlloTrafficoEnabled()){
 				tr.getTempiElaborazione().startControlloTraffico_rateLimiting();
 				try {
-					InRequestProtocolHandler_GestioneControlloTraffico inRequestProtocolHandler_gestioneControlloTraffico = 
-							new InRequestProtocolHandler_GestioneControlloTraffico();
+					InRequestProtocolHandlerGestioneControlloTraffico inRequestProtocolHandler_gestioneControlloTraffico = 
+							new InRequestProtocolHandlerGestioneControlloTraffico();
 					inRequestProtocolHandler_gestioneControlloTraffico.process(context, tr);
 				}finally {
 					tr.getTempiElaborazione().endControlloTraffico_rateLimiting();

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -100,6 +100,14 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_SOAP_ACTION_BASED="IntegrazioneSOAPActionBased";
 	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con integrazione soap action based */
 	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_SOAP_ACTION_BASED_2="IntegrazioneSOAPActionBased2";
+	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con correlazione applicativa header based */
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_HEADER_BASED="CorrelazioneApplicativaHeaderBased";
+	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con correlazione applicativa header based che accetta identificativi estratti vuoti */
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_HEADER_BASED_ACCEPT_EMPTY_VALUE="CorrelazioneApplicativaHeaderBased_acceptEmptyValue";
+	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con correlazione applicativa header based senza riuso id egov */
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_HEADER_BASED_SENZA_RIUSO_IDEGOV="CorrelazioneApplicativaHeaderBasedSenzaRiusoIDEGov";
+	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con correlazione applicativa header based, accetta se identificazione non riuscita */
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_HEADER_BASED_ACCETTA_CON_IDENTIFICAZIONE_NON_RIUSCITA="CorrelazioneApplicativaHeaderBased_accettaSeErrore";
 	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con correlazione applicativa url based */
 	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_URL_BASED="CorrelazioneApplicativaUrlBased";
 	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con correlazione applicativa url based senza riuso id egov */

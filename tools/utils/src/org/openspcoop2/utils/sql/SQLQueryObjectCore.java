@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -24,6 +24,7 @@ package org.openspcoop2.utils.sql;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -1314,6 +1315,24 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	}
 
 
+	
+	/**
+	 * Aggiunge una costante alla select di tipo 'timestamp'
+	 * es: timestamp 'costante' AS alias FROM ....
+	 * 
+	 * @param date Costante
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectTimestampConstantField(Date date,String alias) throws SQLQueryObjectException{
+		if(date==null)
+			throw new SQLQueryObjectException("Date non puo' essere null");
+		
+		String constantValue = getSelectTimestampConstantField(date);
+		return this.addSelectAliasField(constantValue, alias);			
+	}
+	
+	
 
 
 

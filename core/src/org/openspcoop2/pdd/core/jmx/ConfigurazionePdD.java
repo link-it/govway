@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -1971,7 +1971,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		= new MBeanOperationInfo(CHECK_CONNETTORE_BY_NOME,"Verifica la raggiungibilità dei connettori definiti nella Token Policy di validazione con nome fornito come parametro",
 			new MBeanParameterInfo[]{
 				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Validazione"),
-				new MBeanParameterInfo("tipoConnettore",String.class.getName(),"Tipo del connettore da verificare ["+ConnettoreCheck.POLICY_TIPO_ENDPOINT_INTROSPECTION+","+ConnettoreCheck.POLICY_TIPO_ENDPOINT_USERINFO+"]"),
+				new MBeanParameterInfo("tipoConnettore",String.class.getName(),"Tipo del connettore da verificare ["+ConnettoreCheck.POLICY_TIPO_ENDPOINT_DYNAMIC_DISCOVERY+","+ConnettoreCheck.POLICY_TIPO_ENDPOINT_VALIDAZIONE_JWT+","+ConnettoreCheck.POLICY_TIPO_ENDPOINT_INTROSPECTION+","+ConnettoreCheck.POLICY_TIPO_ENDPOINT_USERINFO+"]"),
 			},
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
@@ -2026,7 +2026,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		= new MBeanOperationInfo(GET_CERTIFICATI_TOKEN_POLICY_VALIDATION,"Recupera i certificati server dell'endpoit definito nella token policy di validazione con nome fornito come parametro",
 			new MBeanParameterInfo[]{
 					new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Validazione"),
-					new MBeanParameterInfo("tipoConnettore",String.class.getName(),"Tipo del connettore da verificare ["+ConnettoreCheck.POLICY_TIPO_ENDPOINT_INTROSPECTION+","+ConnettoreCheck.POLICY_TIPO_ENDPOINT_USERINFO+"]"),
+					new MBeanParameterInfo("tipoConnettore",String.class.getName(),"Tipo del connettore da verificare ["+ConnettoreCheck.POLICY_TIPO_ENDPOINT_DYNAMIC_DISCOVERY+","+ConnettoreCheck.POLICY_TIPO_ENDPOINT_VALIDAZIONE_JWT+","+ConnettoreCheck.POLICY_TIPO_ENDPOINT_INTROSPECTION+","+ConnettoreCheck.POLICY_TIPO_ENDPOINT_USERINFO+"]"),
 			},
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
@@ -2128,7 +2128,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		= new MBeanOperationInfo(CHECK_CERTIFICATI_CONNETTORE_HTTPS_TOKEN_POLICY_VALIDAZIONE,"Verifica i certificati del connettore https definito nella Token Policy di validazione con nome fornito come parametro",
 			new MBeanParameterInfo[]{
 				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Validazione"),
-				new MBeanParameterInfo("tipoConnettore",String.class.getName(),"Tipo del connettore da verificare ["+ConnettoreCheck.POLICY_TIPO_ENDPOINT_INTROSPECTION+","+ConnettoreCheck.POLICY_TIPO_ENDPOINT_USERINFO+"]"),
+				new MBeanParameterInfo("tipoConnettore",String.class.getName(),"Tipo del connettore da verificare ["+ConnettoreCheck.POLICY_TIPO_ENDPOINT_DYNAMIC_DISCOVERY+","+ConnettoreCheck.POLICY_TIPO_ENDPOINT_VALIDAZIONE_JWT+","+ConnettoreCheck.POLICY_TIPO_ENDPOINT_INTROSPECTION+","+ConnettoreCheck.POLICY_TIPO_ENDPOINT_USERINFO+"]"),
 				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
 			},
 			String.class.getName(),

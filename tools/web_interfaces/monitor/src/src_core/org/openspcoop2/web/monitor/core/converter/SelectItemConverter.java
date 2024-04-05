@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -136,6 +136,30 @@ public class SelectItemConverter implements Converter {
 						// ignore
 					}
 					long v1 = ((Long)value).longValue();
+					if(v2 == v1) {
+						return selectItem.getLabel();
+					}
+				}
+			}
+		}
+		else if(value instanceof Boolean){
+			for (SelectItem selectItem : selectItems) {
+				Object value2 = selectItem.getValue();
+				if( value2 instanceof Boolean){
+					boolean v2 = ((Boolean)value2).booleanValue();
+					boolean v1 = ((Boolean)value).booleanValue();
+					if(v2 == v1) {
+						return selectItem.getLabel();
+					}
+				}
+				else if( value2 instanceof String){
+					boolean v2 = false;
+					try{
+						v2 = Boolean.parseBoolean((String)value2);
+					}catch(Exception e){
+						// ignore
+					}
+					boolean v1 = ((Boolean)value).booleanValue();
 					if(v2 == v1) {
 						return selectItem.getLabel();
 					}

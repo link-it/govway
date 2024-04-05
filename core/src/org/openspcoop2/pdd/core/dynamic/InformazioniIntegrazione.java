@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -192,7 +192,7 @@ public class InformazioniIntegrazione extends org.openspcoop2.utils.beans.BaseBe
 		}
 		
 		if(root!=null) {
-			Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(root);
+			Map<String, Serializable> readClaims = jsonUtils.convertToSimpleMap(root);
 			if(readClaims!=null && readClaims.size()>0) {
 				this.claims.putAll(readClaims);
 			}
@@ -208,7 +208,7 @@ public class InformazioniIntegrazione extends org.openspcoop2.utils.beans.BaseBe
 	private transient Logger log;
 	
 	// Informazioni
-	private Map<String, Object> integrationInfo;
+	private Map<String, Serializable> integrationInfo;
 	
 	// Claims
 	private Map<String,Object> claims = new HashMap<>();
@@ -226,13 +226,13 @@ public class InformazioniIntegrazione extends org.openspcoop2.utils.beans.BaseBe
 	private boolean sourceRequired;
 	
 	
-	public Map<String, Object> getIntegrationInfo() {
+	public Map<String, Serializable> getIntegrationInfo() {
 		return this.integrationInfo;
 	}
-	public Map<String, Object> getInfo() {
+	public Map<String, Serializable> getInfo() {
 		return this.integrationInfo;
 	}
-	public void setIntegrationInfo(Map<String, Object> integrationInfo) {
+	public void setIntegrationInfo(Map<String, Serializable> integrationInfo) {
 		this.integrationInfo = integrationInfo;
 	}
 	public List<String> getInfoNames(){

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -1076,30 +1076,30 @@ public class Transaction {
 						") (tipo:"+this.credenzialiMittente.getTrasporto().getTipo()+
 						"): ").append(this.credenzialiMittente.getTrasporto().getCredenziale());
 			}
-			if(this.credenzialiMittente.getToken_issuer()!=null) {
-				sb.append("\n").append("credenzialiMittente.issuer (id:"+this.credenzialiMittente.getToken_issuer().getId()+
-						") (tipo:"+this.credenzialiMittente.getToken_issuer().getTipo()+
-						"): ").append(this.credenzialiMittente.getToken_issuer().getCredenziale());
+			if(this.credenzialiMittente.getTokenIssuer()!=null) {
+				sb.append("\n").append("credenzialiMittente.issuer (id:"+this.credenzialiMittente.getTokenIssuer().getId()+
+						") (tipo:"+this.credenzialiMittente.getTokenIssuer().getTipo()+
+						"): ").append(this.credenzialiMittente.getTokenIssuer().getCredenziale());
 			}
-			if(this.credenzialiMittente.getToken_subject()!=null) {
-				sb.append("\n").append("credenzialiMittente.subject (id:"+this.credenzialiMittente.getToken_subject().getId()+
-						") (tipo:"+this.credenzialiMittente.getToken_subject().getTipo()+
-						"): ").append(this.credenzialiMittente.getToken_subject().getCredenziale());
+			if(this.credenzialiMittente.getTokenSubject()!=null) {
+				sb.append("\n").append("credenzialiMittente.subject (id:"+this.credenzialiMittente.getTokenSubject().getId()+
+						") (tipo:"+this.credenzialiMittente.getTokenSubject().getTipo()+
+						"): ").append(this.credenzialiMittente.getTokenSubject().getCredenziale());
 			}
-			if(this.credenzialiMittente.getToken_clientId()!=null) {
-				sb.append("\n").append("credenzialiMittente.clientId (id:"+this.credenzialiMittente.getToken_clientId().getId()+
-						") (tipo:"+this.credenzialiMittente.getToken_clientId().getTipo()+
-						"): ").append(this.credenzialiMittente.getToken_clientId().getCredenziale());
+			if(this.credenzialiMittente.getTokenClientId()!=null) {
+				sb.append("\n").append("credenzialiMittente.clientId (id:"+this.credenzialiMittente.getTokenClientId().getId()+
+						") (tipo:"+this.credenzialiMittente.getTokenClientId().getTipo()+
+						"): ").append(this.credenzialiMittente.getTokenClientId().getCredenziale());
 			}
-			if(this.credenzialiMittente.getToken_username()!=null) {
-				sb.append("\n").append("credenzialiMittente.username (id:"+this.credenzialiMittente.getToken_username().getId()+
-						") (tipo:"+this.credenzialiMittente.getToken_username().getTipo()+
-						"): ").append(this.credenzialiMittente.getToken_username().getCredenziale());
+			if(this.credenzialiMittente.getTokenUsername()!=null) {
+				sb.append("\n").append("credenzialiMittente.username (id:"+this.credenzialiMittente.getTokenUsername().getId()+
+						") (tipo:"+this.credenzialiMittente.getTokenUsername().getTipo()+
+						"): ").append(this.credenzialiMittente.getTokenUsername().getCredenziale());
 			}
-			if(this.credenzialiMittente.getToken_eMail()!=null) {
-				sb.append("\n").append("credenzialiMittente.eMail (id:"+this.credenzialiMittente.getToken_eMail().getId()+
-						") (tipo:"+this.credenzialiMittente.getToken_eMail().getTipo()+
-						"): ").append(this.credenzialiMittente.getToken_eMail().getCredenziale());
+			if(this.credenzialiMittente.getTokenEMail()!=null) {
+				sb.append("\n").append("credenzialiMittente.eMail (id:"+this.credenzialiMittente.getTokenEMail().getId()+
+						") (tipo:"+this.credenzialiMittente.getTokenEMail().getTipo()+
+						"): ").append(this.credenzialiMittente.getTokenEMail().getCredenziale());
 			}
 		}
 		

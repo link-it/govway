@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -78,12 +79,15 @@ import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.logger.transazioni.ConfigurazioneTracciamento;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.dump.DumpException;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.utils.ModIUtils;
+import org.openspcoop2.protocol.utils.ModIValidazioneSemanticaProfiloSicurezza;
 import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
@@ -402,20 +406,18 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 						idPA.setNome(nomePorta);
 					}
 					
-					this.logFileTrace_headers = this.openspcoopProperties.isTransazioniFileTraceEnabled() && 
-							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled() && 
-							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAConnettoreHeadersEnabled();
-					this.logFileTrace_payload = this.openspcoopProperties.isTransazioniFileTraceEnabled() && 
-							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled() && 
-							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAConnettorePayloadEnabled();
+					ConfigurazioneTracciamento configurazioneTracciamento = new ConfigurazioneTracciamento(this.logger.getLogger(), configurazionePdDManager, TipoPdD.APPLICATIVA);
+					this.logFileTrace_headers = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettoreHeaderEnabled();
+					this.logFileTrace_payload = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled();
 					
 					if(idPA!=null) {
 						this.pa = configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, this.requestInfo);
 						if(this.pa!=null) {
 							this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(this.pa);
 							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(this.pa);
-							this.logFileTrace_headers = configurazionePdDManager.isTransazioniFileTraceEnabled(this.pa) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettoreHeadersEnabled(this.pa);
-							this.logFileTrace_payload = configurazionePdDManager.isTransazioniFileTraceEnabled(this.pa) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled(this.pa);
+							configurazioneTracciamento = new ConfigurazioneTracciamento(this.logger.getLogger(), configurazionePdDManager, this.pa);
+							this.logFileTrace_headers = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettoreHeaderEnabled();
+							this.logFileTrace_payload = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled();
 							this.proprietaPorta = this.pa.getProprietaList();
 							if(request.getTransazioneApplicativoServer()!=null) {
 								this.nomeConnettoreAsincrono = request.getTransazioneApplicativoServer().getConnettoreNome();
@@ -432,20 +434,18 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 						idPD.setNome(nomePorta);
 					}
 					
-					this.logFileTrace_headers = this.openspcoopProperties.isTransazioniFileTraceEnabled() && 
-							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled() &&
-							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDConnettoreHeadersEnabled();
-					this.logFileTrace_payload = this.openspcoopProperties.isTransazioniFileTraceEnabled() && 
-							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled() &&
-							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDConnettorePayloadEnabled();
+					ConfigurazioneTracciamento configurazioneTracciamento = new ConfigurazioneTracciamento(this.logger.getLogger(), configurazionePdDManager, TipoPdD.DELEGATA);
+					this.logFileTrace_headers = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettoreHeaderEnabled();
+					this.logFileTrace_payload = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled();
 					
 					if(idPD!=null) {
 						this.pd = configurazionePdDManager.getPortaDelegataSafeMethod(idPD, this.requestInfo);
 						if(this.pd!=null) {
 							this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(this.pd);
 							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(this.pd);
-							this.logFileTrace_headers = configurazionePdDManager.isTransazioniFileTraceEnabled(this.pd) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettoreHeadersEnabled(this.pd);
-							this.logFileTrace_payload = configurazionePdDManager.isTransazioniFileTraceEnabled(this.pd) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled(this.pd);
+							configurazioneTracciamento = new ConfigurazioneTracciamento(this.logger.getLogger(), configurazionePdDManager, this.pd);
+							this.logFileTrace_headers = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettoreHeaderEnabled();
+							this.logFileTrace_payload = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled();
 							this.proprietaPorta = this.pd.getProprietaList();
 						}
 					}
@@ -629,6 +629,11 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	protected NameValue getTokenQueryParameter() throws ConnettoreException {
 		return this.getTokenParameter(false);
 	}
+	private ModIValidazioneSemanticaProfiloSicurezza modIValidazioneSemanticaProfiloSicurezza;
+	public void setModIValidazioneSemanticaProfiloSicurezza(
+			ModIValidazioneSemanticaProfiloSicurezza modIValidazioneSemanticaProfiloSicurezza) {
+		this.modIValidazioneSemanticaProfiloSicurezza = modIValidazioneSemanticaProfiloSicurezza;
+	}
 	private NameValue getTokenParameter(boolean header) throws ConnettoreException {
 		if(this.policyNegoziazioneToken!=null) {
 			try {
@@ -710,7 +715,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					if(this.msgDiagnostico!=null) {
 						try {
 							this.msgDiagnostico.logPersonalizzato("negoziazioneToken.inCache");
-						}catch(Throwable t) {
+						}catch(Exception t) {
 							this.logger.error("Emissione diagnostica 'negoziazioneToken.inCache' fallita: "+t.getMessage(),t);
 						}
 					}
@@ -725,8 +730,29 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					if(this.msgDiagnostico!=null) {
 						try {
 							this.msgDiagnostico.logPersonalizzato("negoziazioneToken.completata");
-						}catch(Throwable t) {
+						}catch(Exception t) {
 							this.logger.error("Emissione diagnostica 'negoziazioneToken.completata' fallita: "+t.getMessage(),t);
+						}
+					}
+				}
+				
+				if(this.modIValidazioneSemanticaProfiloSicurezza!=null) {
+					String jti = ModIUtils.readJti(esitoNegoziazione.getToken(), this.logger.getLogger());
+					if(jti!=null && StringUtils.isNotEmpty(jti)) {
+						ModIUtils.replaceBustaIdWithJtiTokenId(this.modIValidazioneSemanticaProfiloSicurezza, jti);
+						if(this.msgDiagnostico!=null) {
+							this.msgDiagnostico.updateKeywordIdMessaggioRichiesta(this.busta.getID());
+						}
+						if(this.getPddContext()!=null) {
+							this.getPddContext().put(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID, jti);
+						}
+					}
+					
+					if(this.msgDiagnostico!=null) {
+						try {
+							this.msgDiagnostico.logPersonalizzato("inoltroInCorso");
+						}catch(Exception t) {
+							this.logger.error("Emissione diagnostica 'inoltroInCorso' fallita: "+t.getMessage(),t);
 						}
 					}
 				}
@@ -1122,9 +1148,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     }
         
     protected String readExceptionMessageFromException(Throwable e) {
-    	return _readExceptionMessageFromException(e);
+    	return readConnectionExceptionMessageFromException(e);
     }
-    protected static String _readExceptionMessageFromException(Throwable e) {
+    public static String readConnectionExceptionMessageFromException(Throwable e) {
     	
     	// In questo metodo è possibile gestire meglio la casistica dei messaggi di errore ritornati.
     	

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -258,6 +258,12 @@ public class CostantiProprieta {
 	public static final String CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_ACCEPT_IDENTIFICATION_FAILED_TRUNCATE_ID = "correlation.response.acceptIdentificationFailed.truncate";
 	public static final String CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_BLOCK_IDENTIFICATION_FAILED_TRUNCATE_ID = "correlation.response.blockIdentificationFailed.truncate";
 	
+	public static final String CORRELAZIONE_APPLICATIVA_RICHIESTA_PROPERTY_NAME_EXTRACTED_IDENTIFIER_IS_NULL_ABORT_TRANSACTION_ID = "correlation.request.extractedIdentifierIsNull.abortTransaction";
+	public static final String CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_EXTRACTED_IDENTIFIER_IS_NULL_ABORT_TRANSACTION_ID = "correlation.response.extractedIdentifierIsNull.abortTransaction";
+	
+	public static final String CORRELAZIONE_APPLICATIVA_RICHIESTA_PROPERTY_NAME_EXTRACTED_IDENTIFIER_IS_EMPTY_ABORT_TRANSACTION_ID = "correlation.request.extractedIdentifierIsEmpty.abortTransaction";
+	public static final String CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_EXTRACTED_IDENTIFIER_IS_EMPTY_ABORT_TRANSACTION_ID = "correlation.response.extractedIdentifierIsEmpty.abortTransaction";
+			
 	public static final String CORRELAZIONE_APPLICATIVA_RICHIESTA_PROPERTY_NAME_RULE_NOT_FOUND_ABORT_TRANSACTION_ID = "correlation.request.ruleNotFound.abortTransaction";
 	public static final String CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_RULE_NOT_FOUND_ABORT_TRANSACTION_ID = "correlation.response.ruleNotFound.abortTransaction";
 	
@@ -344,6 +350,20 @@ public class CostantiProprieta {
 		}
 		
 		return BooleanNullable.NULL();
+	}
+	
+	public static boolean isCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsNullTerminaTransazioneConErrore(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, CORRELAZIONE_APPLICATIVA_RICHIESTA_PROPERTY_NAME_EXTRACTED_IDENTIFIER_IS_NULL_ABORT_TRANSACTION_ID, defaultValue, CORRELAZIONE_APPLICATIVA_VALUE_ENABLED, CORRELAZIONE_APPLICATIVA_VALUE_DISABLED);
+	}
+	public static boolean isCorrelazioneApplicativaRispostaIdentificativoEstrattoIsNullTerminaTransazioneConErrore(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_EXTRACTED_IDENTIFIER_IS_NULL_ABORT_TRANSACTION_ID, defaultValue, CORRELAZIONE_APPLICATIVA_VALUE_ENABLED, CORRELAZIONE_APPLICATIVA_VALUE_DISABLED);
+	}
+	
+	public static boolean isCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsEmptyTerminaTransazioneConErrore(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, CORRELAZIONE_APPLICATIVA_RICHIESTA_PROPERTY_NAME_EXTRACTED_IDENTIFIER_IS_EMPTY_ABORT_TRANSACTION_ID, defaultValue, CORRELAZIONE_APPLICATIVA_VALUE_ENABLED, CORRELAZIONE_APPLICATIVA_VALUE_DISABLED);
+	}
+	public static boolean isCorrelazioneApplicativaRispostaIdentificativoEstrattoIsEmptyTerminaTransazioneConErrore(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_EXTRACTED_IDENTIFIER_IS_EMPTY_ABORT_TRANSACTION_ID, defaultValue, CORRELAZIONE_APPLICATIVA_VALUE_ENABLED, CORRELAZIONE_APPLICATIVA_VALUE_DISABLED);
 	}
 	
 	public static boolean isCorrelazioneApplicativaRichiestaRegolaNonTrovataTerminaTransazioneConErrore(List<Proprieta> proprieta, boolean defaultValue) {
@@ -855,7 +875,7 @@ public class CostantiProprieta {
 	private static final String MODI_AUDIT_SUFFIX_TRACE_ENABLED = ".trace.enabled";
 	private static final String MODI_AUDIT_SUFFIX_FORWARD_BACKEND_ENABLED = ".forwardBackend.enabled";
 	private static final String MODI_AUDIT_SUFFIX_FORWARD_BACKEND = ".forwardBackend";
-
+	
 	public static boolean isModIAuditTraceEnabled(List<Proprieta> proprieta, String claim, boolean defaultValue) {
 		String p = MODI_AUDIT_CLAIM_PREFIX+claim+MODI_AUDIT_SUFFIX_TRACE_ENABLED;
 		return readBooleanValueWithDefault(proprieta, p, defaultValue, MODI_VALUE_ENABLED, MODI_VALUE_DISABLED);
@@ -869,6 +889,27 @@ public class CostantiProprieta {
 		String valueS = readValue(proprieta, p);
 		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
 			return valueS;
+		}
+		return defaultValue;
+	}
+	
+	private static final String MODI_TRACE_JTI_SOURCE = "modi.trace.jti.source";
+	public static final String MODI_TRACE_JTI_SOURCE_VALUE_AUTHORIZATION = "authorization";
+	public static final String MODI_TRACE_JTI_SOURCE_VALUE_INTEGRITY = "integrity";
+	
+	public static boolean isModITraceJtiSourceAuthorization(List<Proprieta> proprieta, boolean defaultValue) {
+		String p = MODI_TRACE_JTI_SOURCE;
+		String valueS = readValue(proprieta, p);
+		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
+			return valueS.equalsIgnoreCase(MODI_TRACE_JTI_SOURCE_VALUE_AUTHORIZATION);
+		}
+		return defaultValue;
+	}
+	public static boolean isModITraceJtiSourceIntegrity(List<Proprieta> proprieta, boolean defaultValue) {
+		String p = MODI_TRACE_JTI_SOURCE;
+		String valueS = readValue(proprieta, p);
+		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
+			return valueS.equalsIgnoreCase(MODI_TRACE_JTI_SOURCE_VALUE_INTEGRITY);
 		}
 		return defaultValue;
 	}

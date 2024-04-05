@@ -89,7 +89,7 @@ per la API selezionata.
     Prospetto riepilogativo con API selezionata
 
 Gli elementi di configurazione mostrati in elenco possono essere
-selezionati ed esportati in formato CSV tramite il pulsante "Esporta". Le informazioni esportate con i dettagli sul formato utilizzato vengono fornite nella sezione :ref:`mon_reportistica_config_csv`.
+selezionati ed esportati in formato CSV o XLS tramite il pulsante "Esporta". Le informazioni esportate con i dettagli sul formato utilizzato vengono fornite nella sezione :ref:`mon_reportistica_config_csv`.
 
 .. toctree::
         :maxdepth: 1

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -120,6 +120,8 @@ Context, Cloneable {
 	private String ricercaLiberaTokenClientID;
 	private String ricercaLiberaTokenUsername;
 	private String ricercaLiberaTokenEmail;
+	
+	private String ricercaLiberaPdndOrganization;
 	
 	private String ricercaLiberaIdApplicativo;
 	
@@ -365,6 +367,8 @@ Context, Cloneable {
 		this.ricercaLiberaTokenClientID = null;
 		this.ricercaLiberaTokenUsername = null;
 		this.ricercaLiberaTokenEmail = null;
+		
+		this.ricercaLiberaPdndOrganization = null;
 		
 		this.ricercaLiberaIdApplicativo = null;
 		
@@ -1446,6 +1450,14 @@ Context, Cloneable {
 	public void setRicercaLiberaTokenEmail(String ricercaLiberaTokenEmail) {
 		this.ricercaLiberaTokenEmail = ricercaLiberaTokenEmail;
 	}
+	
+	public String getRicercaLiberaPdndOrganization() {
+		return this.ricercaLiberaPdndOrganization;
+	}
+
+	public void setRicercaLiberaPdndOrganization(String ricercaLiberaPdndOrganization) {
+		this.ricercaLiberaPdndOrganization = ricercaLiberaPdndOrganization;
+	}
 
 	public String getRicercaLiberaIdApplicativo() {
 		return this.ricercaLiberaIdApplicativo;
@@ -1518,5 +1530,10 @@ Context, Cloneable {
 
 	public void setBackRicerca(boolean backRicerca) {
 		this.backRicerca = backRicerca;
+	}
+	
+	@Override
+	public List<SelectItem> getEsitiContesto() {
+		return getEsitiContesto(true);
 	}
 }

@@ -1,0 +1,1 @@
+INSERT INTO transazioni_esiti (govway_status, govway_status_key, govway_status_detail, govway_status_description, govway_status_class) VALUES ( 53 , 'ERRORE_TRACCIAMENTO' , 'Tracciamento Fallito' , 'Sono emersi degli errori durante il tracciamento' , (select id from transazioni_classe_esiti WHERE govway_status=10) );

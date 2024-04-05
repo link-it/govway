@@ -1,3 +1,259 @@
+2024-04-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1719
+	(https://github.com/link-it/govway/issues/160)
+	Utilizzando una architettura con database distinti per configurazione e runtime si otteneva un errore non bloccante riportato nei log del database, ad esempio su postgresql:
+	"ERROR:  relation "db_info_console" does not exist at character 15
+	 STATEMENT:  select * from db_info_console order by id DESC"
+
+2024-03-27  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Risolto Bug OP-1717
+	I file relativi ai profili di interoperabilità (es. modipa_local.properties) presenti nella configurazione esterna (es. /etc/govway) 
+	non venivano configurati correttamente dall'installer se erano presenti archivi patch al suo interno.
+	Gli archivi patch relativi ai profili di interoperabilità (es. openspcoop2_modipa-protocol-<version>.jar) non venivanon configurati nel file di proprietà interno (es. modipa.properties) 
+	per contenere la proprietà relativa alla directory di configurazione esterna indicata nell'installer (es. 'org.openspcoop2.protocol.modipa.confDirectory=/etc/govway').
+
+2024-03-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, Utils]
+	Aggiunta funzionalità OP-1701
+	Introdotta funzionalità 'Bring Your Own Key (BYOK)' nelle utility.
+	Aggiunta possibilità di utilizzare funzionalità di 'unwrap' della chiave per la cifratura dei dati registrati tramite 'FileTrace'
+
+2024-03-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2024-22257: aggiornata libreria 'org.springframework.security:*' alla versione 5.8.11
+	- CVE-2024-28752: aggiornata libreria 'org.apache.cxf:*' alla versione 3.6.3
+                          aggiornata libreria 'org.ow2.asm:asm' alla versione 9.6
+                          aggiornata libreria 'org.codehaus.woodstox:stax2-api' alla versione 4.2.2
+                          aggiornata libreria 'com.fasterxml.woodstox:woodstox-core' alla versione 6.6.0
+                          aggiornata libreria 'org.apache.ws.xmlschema:xmlschema-core' alla versione 2.3.1
+                          aggiornata libreria 'org.springframework:*' alla versione 5.3.3
+
+2024-03-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Nella funzionalità di consegna asincrona in alcuni casi limite, con connettori con consegna in errore, non veniva correttamente aggiornato lo stato della transazione.
+
+2024-03-20  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1715
+	È adesso possibile definire una token policy di validazione tramite una "well-know-url" come descritto nella specifica 'https://swagger.io/docs/specification/authentication/openid-connect-discovery'.
+	Inoltre è stata aggiunta la possibilità di definire il keystore contenente le chiavi necessarie ad effettuare una 'validazione jwt' del token anche indicando un endpoint.
+
+2024-03-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug
+	La modifica del nome di un soggetto non veniva riflessa correttamente sul nome dell'erogazione. 
+	Nella denominazione del componente 'porta_applicativa', veniva erroneamente aggiunto un carattere '/' finale, 
+	causando l'impossibilità di riconoscere l'erogazione al momento della sua invocazione e generando un errore '404 NotFound' restituito al chiamante.
+
+2024-03-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Modificato il comportamento predefinito in modo che il tracciamento delle richieste che violano una politica di RateLimiting sia disabilitato.
+
+2024-03-15  Andrea Poli <apoli@link.it>
+
+	* [BatchStatistiche]
+	Risolto Bug
+	Le transazioni da inserire in un intervallo temporale potrebbero non essere ancora tutte presenti nella base dati nel caso in cui il generatore di statistiche 
+	si avvii nell'intervallo prossimo successivo (es. calcolo intervallo orario 16-17 e generatore che si avvia alle 17:00:06).
+	Transazioni che non rientrano nel calcolo dell'intervallo potrebbe essere relative ad eventi di 'readTimeout' (scritte sulla base dati dopo 120 secondi e oltre) o 
+	di lettura dello storico delle transazioni su una base dati in replica (ritardo dovuto alla sincronizzazione).
+	Per risolvere l'anomalia è stato introdotto un parametro di tradeoff per individuare anche le transazioni che vengono registrate sulla base dati in un tempo successivo alla data di avvio del batch.
+	Il generatore continuerà ad aggiornare i dati aggregati fino a quando la data di esecuzione del generatore non supera l'intervallo temporale corrente aumentato del tradeoff. 
+	Per default viene utilizzato un tradeoff di 5 minuti. In questo scenario ad esempio il generatore continuerà ad aggiornare i dati dell'intervallo 16-17 fino a quando non verrò avviato dopo le 17:05, 
+	consentendo così alle transazioni scritte dopo le 17:00 ma facenti parte dell'intervallo 16-17 di essere incluse nel dato aggregato statistico.
+
+2024-03-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, GovWayMonitor, ApiRsConfigurazione]
+	Aggiunta funzionalità OP-1692
+	Migliorata funzionalità di tracciamento introducendo la possibilità di attivare il tracciamento su database e/o su file (FileTrace) in 4 momenti differenti della gestione di una richiesta:
+        - Richiesta ricevuta
+        - Richiesta in consegna
+        - Risposta in consegna
+        - Risposta consegnata
+        Ogni fase è attivabile sia a livello di configurazione generale che sulla singola erogazione o fruizione.
+        Inoltre ogni fase è configurabile per far terminare la richiesta con errore in caso tracciamento fallito o proseguire segnalando l'anomalia solamente nei log.
+	Nel caso richiesta terminata con errore di tracciamento è stato aggiunto un nuovo esito 'Tracciamento Fallito'.
+	Infine sono stati attuate le seguenti migliorie agli aspetti di configurazione del tracciamento su file (FileTrace):
+	- possibilità di attivare il tracciamento rispetto all'esito di una transazione;
+	- maschera di configurazione sulla singola erogazione o fruizione che consente di indicare il file di configurazione e l'attivazione o meno del buffer dei messaggi.
+	Nel menù principale la configurazione a livello globale del tracciamento e della registrazione messaggi è stata suddivisa in due voci distinte.
+
+2024-03-01  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2024-21742: aggiornata libreria 'org.apache.james:apache-mime4j-*' alla versione 0.8.10
+
+2024-02-23  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Risolto Bug OP-1713
+	In caso di Violazione Policy di RateLimiting con raggruppamento per Token Claim l'evento emesso non conteneva l'informazione puntuale sul valore del claim.
+	Nell'intervento è stata corretta anche una anomalia presente durante il salvataggio di una policy con criterio di raggruppamento per Token Claim 'subject';
+	l'impostazione del criterio di raggruppamento per token subject non consentiva di entrare nuovamente in modifica della policy e nei log si poteva riscontrare un errore simile al seguente:
+	"Enum with value [TOKEN_ISSUER] not found"
+
+2024-02-23  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2024-22243: aggiornata libreria 'org.springframework:*' alla versione 5.3.32
+
+2024-02-23  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2024-25710: aggiornata libreria 'org.apache.commons:commons-compress' alla versione 1.26.0
+
+2024-02-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2023-52428: aggiornata libreria 'com.nimbusds:nimbus-jose-jwt' alla versione 9.37.3
+
+2024-02-13  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Aggiunta funzionalità OP-1710
+	Il report 'heatmap' fornito con la distribuzione statistica in 3 dimensioni presente nella funzionalità di "Analisi Statistica" è stato migliorato per:
+	- contenere una legenda che descriva la corrispondenza tra tonalità del colore e misura rappresentata;
+	- possibilità di visualizzare in ogni quadratino la misura.
+
+2024-02-10  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1708
+	In una configurazione che prevede un access token PDND (ID_AUTH_REST_01), 
+	il jti presente all'interno del token non veniva utilizzato come identificativo messaggio della richiesta alla quale veniva invece asssociato un identificativo generato da GovWay.
+	L'anomalia comportava:
+	- un doppio tracciamento sia del jti e che dell'identificativo generato da GovWay;
+	- una valorizzazione dell'header di integrazione 'GovWay-Message-ID' con l'identificativo generato da GovWay invece del jti.
+
+2024-02-06  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.3.14
+
+2024-02-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1706
+	Risolta anomalia che si verificava in alcuni casi limite durante il tracciamento delle fruizioni di API con negoziazione token.
+	L'errore segnalato nei log era: 
+		"PostOutResponseHandler [transazioni]Errore durante la scrittura della transazione sul database (Lettura dati Transazione): Caused by: java.util.ConcurrentModificationException
+			at java.util.HashMap$HashIterator.nextNode(HashMap.java)
+			...
+			at org.openspcoop2.pdd.core.token.TokenUtilities.replaceTokenInMap(TokenUtilities.java)
+
+2024-02-01  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor, ApiRsMonitoraggio]
+	Aggiunta funzionalità OP-1691
+	Nella funzionalità "Analisi Statistica" è adesso possibile produrre anche una distribuzione statistica in 3 dimensioni: criterio di distribuzione, data e valore.
+
+2024-01-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, ProtocolloModIPA]
+	Risolto Bug OP-1702
+	Durante la registrazione di un applicativo con profilo di interoperabilità 'ModI',
+	se nella sezione 'ModI - Sicurezza Messaggio - KeyStore' veniva effettuato con modalità 'Archivio' l'upload di un keystore pkcs12,
+	creato importando un altro archivio pkcs12 al suo interno, si ottevena l'errore: "keystore password was incorrect".
+	Si trattava dello stesso bug risolto nell'issue 'https://github.com/link-it/govway/issues/128' 
+	la cui risoluzione non era però stata riportata nella maschera di gestione della sicurezza ModI di un applicativo.
+
+2024-01-23  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, ProtocolloModIPA]
+	Risolto Bug OP-1694
+	La validazione dei token 'ModI' non supportava token contenenti claim 'aud' definiti come stringhe di array.
+	È stato aggiunto il supporto in modo da rispettare entrambe le modalità (array of case-sensitive strings or single case-sensitive string)
+	indicate nel RFC 'https://datatracker.ietf.org/doc/html/rfc7519.html#section-4.1.3'.
+	Nell'intervento è stato rivista anche la verifica dei certificati di una fruizione o erogazione, 
+	in modo che i keystore/truststore utilizzati per i token di una risposta vengono validati solamente se l'API prevede un token di sicurezza nella risposta.
+
+2024-01-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2023-51074: aggiornata libreria 'com.jayway.jsonpath:json-path' alla versione 2.9.0
+
+2024-01-19  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Aggiunti script di svecchiamento delle tracce per tipo di database sqlserver.
+
+2024-01-19  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria, ProtocolloAS4]
+	Risolto Bug OP-1697
+	Gli artefatti prodotti dall'installer in caso di scelta del profilo di interoperabiltà 'eDelivery' presentavano i seguenti errori:
+	- nell'archivio govway.ear manca il jar 'openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar' 
+	- il datasource per wildfly 'domibus-ds.xml' non contiene il nome jndi 'org.govway.datasource.domibus' atteso
+	Inoltre è stato aggiornato il riferimento al progetto eDelivery Domibus: https://ec.europa.eu/digital-building-blocks/sites/display/DIGITAL/Domibus
+
+2024-01-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayMonitor, ApiRsMonitoraggio, ProtocolloModIPA]
+	Aggiunta funzionalità OP-1689
+	Migliorato tracciamento per le richieste contenenti credenziali non valide, token scaduti o non autorizzati. Vengono adesso registrate:
+	- le informazioni sui claim principali presenti nel token (clientId, subject/issuer, username, eMail); 
+        - le informazioni recuperate tramite le API PDND (es. nome e categoria dell'organizzazione);
+	- l'identificativo autenticato a livello trasporto (principal).
+        È stata inoltre rivisto il concetto di richiedente di una richiesta di servizio al fine di considerare anche il nome dell'organizzazione recuperata tramite le API PDND,
+	in modo da visualizzarla al posto del clientId durante la consultazione dello storico delle transazioni.
+	Sono stati introdotti i seguenti miglioramenti alla console di monitoraggio (govwayMonitor) alle API (govwayAPIMonitor):
+	- nello storico delle transazioni è adesso possibile effettuare una ricerca per nome dell'organizzazione individuata tramite le API PDND;
+	- i dati dei report statistici possono essere filtrati per nome dell'organizzazione individuata tramite le API PDND;
+	- è possibile adesso ottenere una distribuzione per clientId contenente anche le informazioni recuperate tramite le API PDND.
+	Le informazioni raccolte tramite le API PDND sono inoltre state aggiunte alla base dati di tracciamento in modo da consentirne l'estrazione tramite viste personalizzate.
+	Sono stati introdotti i seguenti miglioramenti nella funzionalità 'fileTrace' che consentono di accedere:
+	- alle informazioni del token ModI di audit 'Agid-JWT-TrackingEvidence';
+	- alle informazioni recuperate tramite le API PDND.
+	
+2023-12-19  Andrea Poli <apoli@link.it>
+
+	* [ApiRsConfigurazione]
+	Aggiunta funzionalità OP-1685
+	Aggiunto scenario di fruizione ModI in cui è possibile utilizzare il materiale crittografico definito nella token policy per firmare i token di AUDIT e di INTEGRITY.
+
+2023-12-19  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Risolto Bug OP-1687
+	Le richieste contenenti metodi http 'PATCH', 'LINK' e 'UNLINK' venivano inoltrate al backend erroneamente come metodo POST se la connessione era https.
+	Nell'intervento è stato risolto anche un problema sulla console di gestione che avveniva su una erogazione configurata per gestire gruppi di risorse differenti, 
+	in cui in ogni gruppo veniva ridefinito il connettore e attivata la consegna condizionale. 
+	La problematica era riscontrabile se venivano visualizzati i connettori di un gruppo e successivamente si passava a visualizzare i connettori dell'altro gruppo: i dati riportati sui connettori erano errati.
+
+2023-12-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, ProtocolloModIPA]
+	Aggiunta funzionalità OP-1685
+	Aggiunto scenario di fruizione ModI in cui è possibile utilizzare il materiale crittografico definito nella token policy per firmare i token di AUDIT e di INTEGRITY.
+
+2023-12-12  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1683
+	Una correlazione applicativa configurata con una modalità d'identificazione basata su header HTTP e un comportamento di identificazione fallita uguale al valore 'accetta', 
+	provocava la terminazione con errore della transazione se la richiesta non presentava l'header HTTP indicato nonostante fosse stato indicato di proseguire con successo in caso di identificazione fallita.
+	L'errore riportato era il seguente: "Identificativo di correlazione applicativa non identificato; nessun elemento tra quelli di correlazione definiti è presente nel body". 
+	L'anomalia si presentava anche su altre modalità di identificazione nel caso in cui l'identificativo estratto risultasse null o una stringa vuota.
+	È stato modificato il comportamento di default del gateway in modo da considerare entrambi i casi come una estrazione di correlazione applicativa fallita per la specifica modalità,
+	per la quale si può poi decidere se proseguire comunque o terminare con errore.
+	Il precedente comportamento di accettare identificativi null o stringhe vuote è ripristinabile agendo sulle proprietà della singola fruizione o erogazione di API.
+
 2023-12-11  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole, ProtocolloModIPA]
@@ -75,7 +331,7 @@
 	* [GovWayCore]
 	Aggiunta funzionalità OP-1663
 	Una richiesta non applicabile a nessuna regola di correlazione applicativa, fino alla versione 3.3.13.p1, terminava con l’errore: 
-	"Identificativo di correlazione applicativa non identificato; nessun elemento tra quelli di correlazione definiti, sono presenti nel body". 
+	"Identificativo di correlazione applicativa non identificato; nessun elemento tra quelli di correlazione definiti è presente nel body". 
 	È stato modificato il default in modo da accettare la richiesta.
 	Il precedente comportamento è ripristinabile agendo sulle proprietà della singola fruizione o erogazione di API.
 

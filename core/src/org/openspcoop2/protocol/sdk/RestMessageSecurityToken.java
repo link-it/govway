@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -155,21 +155,21 @@ public class RestMessageSecurityToken extends AbstractMessageSecurityToken<Strin
 			JSONUtils jsonUtils = JSONUtils.getInstance();
 			if(jsonUtils.isJson(hdr)) {
 				JsonNode root = jsonUtils.getAsNode(hdr);
-				Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(root);
+				Map<String, Serializable> readClaims = jsonUtils.convertToSimpleMap(root);
 				initReadClaimsHeader(readClaims);
 			}
 		}
 	}
-	private void initReadClaimsHeader(Map<String, Object> readClaims) {
+	private void initReadClaimsHeader(Map<String, Serializable> readClaims) {
 		if(readClaims!=null && readClaims.size()>0) {
-			for (Map.Entry<String,Object> entry: readClaims.entrySet()) {
+			for (Map.Entry<String,Serializable> entry: readClaims.entrySet()) {
 				String claim = entry.getKey();
-				Object o = readClaims.get(claim);
+				Serializable o = readClaims.get(claim);
 				putClaimHeader(claim, o);
 			}
 		}
 	}
-	private void putClaimHeader(String claim, Object o) {
+	private void putClaimHeader(String claim, Serializable o) {
 		if(o!=null) {
 			List<String> lClaimValues = getClaimValues(o);
 			if(lClaimValues!=null && !lClaimValues.isEmpty()) {
@@ -189,21 +189,21 @@ public class RestMessageSecurityToken extends AbstractMessageSecurityToken<Strin
 			JSONUtils jsonUtils = JSONUtils.getInstance();
 			if(jsonUtils.isJson(hdr)) {
 				JsonNode root = jsonUtils.getAsNode(hdr);
-				Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(root);
+				Map<String, Serializable> readClaims = jsonUtils.convertToSimpleMap(root);
 				initReadClaimsPayload(readClaims);
 			}
 		}
 	}
-	private void initReadClaimsPayload(Map<String, Object> readClaims) {
+	private void initReadClaimsPayload(Map<String, Serializable> readClaims) {
 		if(readClaims!=null && readClaims.size()>0) {
-			for (Map.Entry<String,Object> entry: readClaims.entrySet()) {
+			for (Map.Entry<String,Serializable> entry: readClaims.entrySet()) {
 				String claim = entry.getKey();
-				Object o = readClaims.get(claim);
+				Serializable o = readClaims.get(claim);
 				putClaimPayload(claim, o);
 			}
 		}
 	}
-	private void putClaimPayload(String claim, Object o) {
+	private void putClaimPayload(String claim, Serializable o) {
 		if(o!=null) {
 			List<String> lClaimValues = getClaimValues(o);
 			if(lClaimValues!=null && !lClaimValues.isEmpty()) {

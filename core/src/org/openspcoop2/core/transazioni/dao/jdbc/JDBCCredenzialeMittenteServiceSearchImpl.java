@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -177,6 +177,7 @@ public class JDBCCredenzialeMittenteServiceSearchImpl implements IJDBCServiceSea
         	fields.add(CredenzialeMittente.model().TIPO);
         	fields.add(CredenzialeMittente.model().CREDENZIALE);
         	fields.add(CredenzialeMittente.model().ORA_REGISTRAZIONE);
+        	fields.add(CredenzialeMittente.model().REF_CREDENZIALE);
         	fields.add(new CustomField("id", Long.class, "id", this.getCredenzialeMittenteFieldConverter().toTable(CredenzialeMittente.model())));
         	
         	List<Map<String, Object>> returnMap = null;
@@ -253,6 +254,7 @@ public class JDBCCredenzialeMittenteServiceSearchImpl implements IJDBCServiceSea
         	fields.add(CredenzialeMittente.model().TIPO);
         	fields.add(CredenzialeMittente.model().CREDENZIALE);
         	fields.add(CredenzialeMittente.model().ORA_REGISTRAZIONE);
+        	fields.add(CredenzialeMittente.model().REF_CREDENZIALE);
         	fields.add(new CustomField("id", Long.class, "id", this.getCredenzialeMittenteFieldConverter().toTable(CredenzialeMittente.model())));
         	
         	List<Map<String, Object>> returnMap = null;
@@ -627,6 +629,7 @@ public class JDBCCredenzialeMittenteServiceSearchImpl implements IJDBCServiceSea
 		sqlQueryObjectGet_credenzialeMittente.addSelectField(this.getCredenzialeMittenteFieldConverter().toColumn(CredenzialeMittente.model().TIPO,true));
 		sqlQueryObjectGet_credenzialeMittente.addSelectField(this.getCredenzialeMittenteFieldConverter().toColumn(CredenzialeMittente.model().CREDENZIALE,true));
 		sqlQueryObjectGet_credenzialeMittente.addSelectField(this.getCredenzialeMittenteFieldConverter().toColumn(CredenzialeMittente.model().ORA_REGISTRAZIONE,true));
+		sqlQueryObjectGet_credenzialeMittente.addSelectField(this.getCredenzialeMittenteFieldConverter().toColumn(CredenzialeMittente.model().REF_CREDENZIALE,true));
 		sqlQueryObjectGet_credenzialeMittente.addWhereCondition("id=?");
 
 		// Get credenzialeMittente

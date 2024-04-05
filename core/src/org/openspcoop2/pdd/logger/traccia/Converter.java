@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -668,8 +668,8 @@ public class Converter {
 			if(this.mittente_credenziali) {
 				((TransazioneExtInformazioniMittente)mittente).setCredenziali(transazioneDB.getCredenziali());
 			}
-			if(this.mittente_applicativoToken && credenzialiMittente!=null && credenzialiMittente.getToken_clientId()!=null) {
-				IDServizioApplicativo idSA = CredenzialeTokenClient.convertApplicationDBValueToOriginal(credenzialiMittente.getToken_clientId().getCredenziale());
+			if(this.mittente_applicativoToken && credenzialiMittente!=null && credenzialiMittente.getTokenClientId()!=null) {
+				IDServizioApplicativo idSA = CredenzialeTokenClient.convertApplicationDBValueToOriginal(credenzialiMittente.getTokenClientId().getCredenziale());
 				if(idSA!=null) {
 					((TransazioneExtInformazioniMittente)mittente).setApplicativoToken(new TransazioneExtInformazioniMittenteApplicativoToken());
 					((TransazioneExtInformazioniMittente)mittente).getApplicativoToken().setNome(idSA.getNome());
@@ -686,11 +686,11 @@ public class Converter {
 		if(this.mittente_fruitore) {
 			mittente.setFruitore(transazioneDB.getNomeSoggettoFruitore());
 		}
-		if(this.mittente_utente && credenzialiMittente!=null && credenzialiMittente.getToken_username()!=null) {
-			mittente.setUtente(credenzialiMittente.getToken_username().getCredenziale());
+		if(this.mittente_utente && credenzialiMittente!=null && credenzialiMittente.getTokenUsername()!=null) {
+			mittente.setUtente(credenzialiMittente.getTokenUsername().getCredenziale());
 		}
-		if(this.mittente_client && credenzialiMittente!=null && credenzialiMittente.getToken_clientId()!=null) {
-			mittente.setClient(CredenzialeTokenClient.convertClientIdDBValueToOriginal(credenzialiMittente.getToken_clientId().getCredenziale()));
+		if(this.mittente_client && credenzialiMittente!=null && credenzialiMittente.getTokenClientId()!=null) {
+			mittente.setClient(CredenzialeTokenClient.convertClientIdDBValueToOriginal(credenzialiMittente.getTokenClientId().getCredenziale()));
 		}
 		if(this.mittente_indirizzoClient) {
 			mittente.setIndirizzoClient(transazioneDB.getSocketClientAddress());
@@ -704,24 +704,24 @@ public class Converter {
 				TransazioneExtInformazioniToken informazioniToken = new TransazioneExtInformazioniToken();
 				boolean add = false;
 				if(this.mittente_tokenClaims && credenzialiMittente!=null) {
-					if(credenzialiMittente.getToken_clientId()!=null) {
-						informazioniToken.setClientId(CredenzialeTokenClient.convertClientIdDBValueToOriginal(credenzialiMittente.getToken_clientId().getCredenziale()));
+					if(credenzialiMittente.getTokenClientId()!=null) {
+						informazioniToken.setClientId(CredenzialeTokenClient.convertClientIdDBValueToOriginal(credenzialiMittente.getTokenClientId().getCredenziale()));
 						add=true;
 					}
-					if(credenzialiMittente.getToken_issuer()!=null) {
-						informazioniToken.setIssuer(credenzialiMittente.getToken_issuer().getCredenziale());
+					if(credenzialiMittente.getTokenIssuer()!=null) {
+						informazioniToken.setIssuer(credenzialiMittente.getTokenIssuer().getCredenziale());
 						add=true;
 					}
-					if(credenzialiMittente.getToken_subject()!=null) {
-						informazioniToken.setSubject(credenzialiMittente.getToken_subject().getCredenziale());
+					if(credenzialiMittente.getTokenSubject()!=null) {
+						informazioniToken.setSubject(credenzialiMittente.getTokenSubject().getCredenziale());
 						add=true;
 					}
-					if(credenzialiMittente.getToken_username()!=null) {
-						informazioniToken.setUsername(credenzialiMittente.getToken_username().getCredenziale());
+					if(credenzialiMittente.getTokenUsername()!=null) {
+						informazioniToken.setUsername(credenzialiMittente.getTokenUsername().getCredenziale());
 						add=true;
 					}
-					if(credenzialiMittente.getToken_eMail()!=null) {
-						informazioniToken.setMail(credenzialiMittente.getToken_eMail().getCredenziale());
+					if(credenzialiMittente.getTokenEMail()!=null) {
+						informazioniToken.setMail(credenzialiMittente.getTokenEMail().getCredenziale());
 						add=true;
 					}
 				}

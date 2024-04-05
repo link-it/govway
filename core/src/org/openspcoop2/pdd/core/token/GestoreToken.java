@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -46,6 +46,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.utils.WWWAuthenticateErrorCode;
 import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
@@ -104,11 +105,34 @@ public class GestoreToken {
 	private static Cache cacheGestioneToken = null;
 	private static Cache cacheAttributeAuthority = null;
 	
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockDynamicDiscovery = new HashMap<>();
+	private static synchronized org.openspcoop2.utils.Semaphore initLockDynamicDiscovery(String nomePolicy){
+		org.openspcoop2.utils.Semaphore s = _lockDynamicDiscovery.get(nomePolicy);
+		if(s==null) {
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneTokenDynamicDiscoveryLockPermits();
+			if(permits!=null && permits.intValue()>1) {
+				s = new org.openspcoop2.utils.Semaphore("GestoreTokenDynamicDiscovery_"+nomePolicy, permits);
+			}
+			else {
+				s = new org.openspcoop2.utils.Semaphore("GestoreTokenDynamicDiscovery_"+nomePolicy);
+			}
+			_lockDynamicDiscovery.put(nomePolicy, s);
+		}
+		return s;
+	}
+	private static org.openspcoop2.utils.Semaphore getLockDynamicDiscovery(String nomePolicy){
+		org.openspcoop2.utils.Semaphore s = _lockDynamicDiscovery.get(nomePolicy);
+		if(s==null) {
+			s = initLockDynamicDiscovery(nomePolicy);
+		}
+		return s;
+	} 
+	
 	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockJWT = new HashMap<>();
 	private static synchronized org.openspcoop2.utils.Semaphore initLockJWT(String nomePolicy){
 		org.openspcoop2.utils.Semaphore s = _lockJWT.get(nomePolicy);
 		if(s==null) {
-			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneToken_validazioneJWT_lock_permits();
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneTokenValidazioneJWTLockPermits();
 			if(permits!=null && permits.intValue()>1) {
 				s = new org.openspcoop2.utils.Semaphore("GestoreTokenValidazioneJWT_"+nomePolicy, permits);
 			}
@@ -131,7 +155,7 @@ public class GestoreToken {
 	private static synchronized org.openspcoop2.utils.Semaphore initLockIntrospection(String nomePolicy){
 		org.openspcoop2.utils.Semaphore s = _lockIntrospection.get(nomePolicy);
 		if(s==null) {
-			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneToken_introspection_lock_permits();
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneTokenIntrospectionLockPermits();
 			if(permits!=null && permits.intValue()>1) {
 				s = new org.openspcoop2.utils.Semaphore("GestoreTokenIntrospection_"+nomePolicy, permits);
 			}
@@ -154,7 +178,7 @@ public class GestoreToken {
 	private static synchronized org.openspcoop2.utils.Semaphore initLockUserInfo(String nomePolicy){
 		org.openspcoop2.utils.Semaphore s = _lockUserInfo.get(nomePolicy);
 		if(s==null) {
-			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneToken_userInfo_lock_permits();
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneTokenUserInfoLockPermits();
 			if(permits!=null && permits.intValue()>1) {
 				s = new org.openspcoop2.utils.Semaphore("GestoreTokenUserInfo_"+nomePolicy, permits);
 			}
@@ -177,7 +201,7 @@ public class GestoreToken {
 	private static synchronized org.openspcoop2.utils.Semaphore initLockNegoziazione(String nomePolicy){
 		org.openspcoop2.utils.Semaphore s = _lockNegoziazione.get(nomePolicy);
 		if(s==null) {
-			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneRetrieveToken_lock_permits();
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneRetrieveTokenLockPermits();
 			if(permits!=null && permits.intValue()>1) {
 				s = new org.openspcoop2.utils.Semaphore("GestoreTokenNegoziazione_"+nomePolicy, permits);
 			}
@@ -200,7 +224,7 @@ public class GestoreToken {
 	private static synchronized org.openspcoop2.utils.Semaphore initLockAttributeAuthority(String nomePolicy){
 		org.openspcoop2.utils.Semaphore s = _lockAttributeAuthority.get(nomePolicy);
 		if(s==null) {
-			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneAttributeAuthority_lock_permits();
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneAttributeAuthorityLockPermits();
 			if(permits!=null && permits.intValue()>1) {
 				s = new org.openspcoop2.utils.Semaphore("GestoreTokenAttributeAuthority_"+nomePolicy, permits);
 			}
@@ -223,7 +247,7 @@ public class GestoreToken {
 	private static synchronized org.openspcoop2.utils.Semaphore initLockGenericToken(String funzione){
 		org.openspcoop2.utils.Semaphore s = _lockGenericToken.get(funzione);
 		if(s==null) {
-			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneRetrieveToken_lock_permits();
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneRetrieveTokenLockPermits();
 			if(permits!=null && permits.intValue()>1) {
 				s = new org.openspcoop2.utils.Semaphore("GestoreGenericTokenCache_"+funzione, permits);
 			}
@@ -292,11 +316,16 @@ public class GestoreToken {
 	}
 	static final String CONNETTORE_RISPOSTA_NON_PERVENUTA = "; non è pervenuta alcuna risposta";
 	
-	static final String KEY_ALIAS_UNDEFINED = "JWT Signature key alias undefined";
-	static final String KEY_PASSWORD_UNDEFINED = "JWT Signature key password undefined";
-	static final String KEYSTORE_TYPE_UNDEFINED = "JWT Signature keystore type undefined";
-	static final String KEYSTORE_KEYPAIR_UNDEFINED = "JWT Signature keyPair undefined";
-	static final String KEYSTORE_KEYSTORE_UNDEFINED = "JWT Signature keystore undefined";
+	public static final String KEY_ALIAS_UNDEFINED = "JWT Signature key alias undefined";
+	public static final String KEY_PASSWORD_UNDEFINED = "JWT Signature key password undefined";
+	public static final String KEYSTORE_TYPE_UNDEFINED = "JWT Signature keystore type undefined";
+	public static final String KEYSTORE_KEYPAIR_UNDEFINED = "JWT Signature keyPair undefined";
+	public static final String KEYSTORE_KEYSTORE_UNDEFINED = "JWT Signature keystore undefined";
+	public static final String KEYSTORE_KEYSTORE_FILE_UNDEFINED = "JWT Signature keystore file undefined";
+	public static final String KEYSTORE_KEYSTORE_PASSWORD_UNDEFINED = "JWT Signature keystore password undefined";
+	public static final String KEYSTORE_PRIVATE_KEY_UNDEFINED = "JWT Signature private key file undefined";
+	public static final String KEYSTORE_PUBLIC_KEY_UNDEFINED = "JWT Signature public key file undefined";
+	public static final String KEYSTORE_KEY_PAIR_ALGORITHM_UNDEFINED = "JWT Signature key pair algorithm undefined";
 	
 	/** Connettore Utils */
 	static void addProperties(ConnettoreMsg connettoreMsg, Properties p) {
@@ -1180,20 +1209,144 @@ public class GestoreToken {
 	
 	
 	
+	
+	
+	// ********* [VALIDAZIONE-TOKEN] DYNAMIC DISCOVERY ****************** */
+	
+	public static final String DYNAMIC_DISCOVERY_FUNCTION = "DynamicDiscovery";
+	
+	public static EsitoDynamicDiscovery dynamicDiscovery(Logger log, AbstractDatiInvocazione datiInvocazione, 
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			EsitoPresenzaToken esitoPresenzaToken, boolean portaDelegata,
+			Busta busta, IDSoggetto idDominio, IDServizio idServizio) throws Exception {
+		EsitoDynamicDiscovery esitoDynamicDiscovery = null;
+
+		String token = esitoPresenzaToken.getToken();
+		
+		Cache cache = null;
+		if(OpenSPCoop2Properties.getInstance().isGestioneTokenDynamicDiscoveryUseCacheConfig()) {
+			cache = ConfigurazionePdDReader.getCache();
+		}	
+		else {
+			cache = GestoreToken.cacheGestioneToken;
+		}
+		
+		if(cache==null){
+			esitoDynamicDiscovery = GestoreTokenValidazioneUtilities.dynamicDiscoveryEngine(log, datiInvocazione, 
+					pddContext, protocolFactory,
+					token, portaDelegata,
+					busta, idDominio, idServizio);
+		}
+    	else{
+    		String policyName = datiInvocazione.getPolicyGestioneToken().getName();
+    		String endpoint = datiInvocazione.getPolicyGestioneToken().getDynamicDiscoveryEndpoint();
+    		String funzione = DYNAMIC_DISCOVERY_FUNCTION;
+    		
+    		String tokenCache = "";
+    		if(OpenSPCoop2Properties.getInstance().isGestioneTokenDynamicDiscoveryKeyCacheUseToken()) {
+    			tokenCache = token;
+    		}
+    		tokenCache=tokenCache+"_endpoint:"+endpoint;
+    		
+    		String keyCache = GestoreTokenValidazioneUtilities.buildCacheKeyValidazione(policyName, funzione, portaDelegata, tokenCache);
+
+    		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+    		
+    		org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) cache.get(keyCache);
+			if(response != null){
+				if(response.getObject()!=null){
+					GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
+					esitoDynamicDiscovery = (EsitoDynamicDiscovery) response.getObject();
+					esitoDynamicDiscovery.setInCache(true);
+				}else if(response.getException()!=null){
+					GestoreToken.loggerDebug(GestoreToken.getMessageEccezioneInCache(response, keyCache, funzione));
+					throw (Exception) response.getException();
+				}else{
+					GestoreToken.loggerError(MESSAGE_ELEMENT_CACHE_NE_OGGETTO_NE_ECCEZIONE);
+				}
+			}
+    		
+			if(esitoDynamicDiscovery==null) {
+				
+				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
+				org.openspcoop2.utils.Semaphore lockDynamicDiscovery = getLockDynamicDiscovery(policyName);
+				lockDynamicDiscovery.acquire("dynamicDiscovery", idTransazione);
+				try {
+					
+					response = 
+						(org.openspcoop2.utils.cache.CacheResponse) cache.get(keyCache);
+					if(response != null){
+						if(response.getObject()!=null){
+							GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
+							esitoDynamicDiscovery = (EsitoDynamicDiscovery) response.getObject();
+							esitoDynamicDiscovery.setInCache(true);
+						}else if(response.getException()!=null){
+							GestoreToken.loggerDebug(GestoreToken.getMessageEccezioneInCache(response, keyCache, funzione));
+							throw (Exception) response.getException();
+						}else{
+							GestoreToken.loggerError(MESSAGE_ELEMENT_CACHE_NE_OGGETTO_NE_ECCEZIONE);
+						}
+					}
+	
+					if(esitoDynamicDiscovery==null) {
+						// Effettuo la query
+						GestoreToken.loggerDebug(getPrefixOggettoConChiave(keyCache)+getSuffixEseguiOperazione(funzione));
+						esitoDynamicDiscovery = GestoreTokenValidazioneUtilities.dynamicDiscoveryEngine(log, datiInvocazione, 
+								pddContext, protocolFactory,
+								token, portaDelegata,
+								busta, idDominio, idServizio);
+							
+						// Aggiungo la risposta in cache (se esiste una cache)	
+						// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+						// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+						// - impostare il noCache a true
+						esitoDynamicDiscovery.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
+						if(!esitoDynamicDiscovery.isNoCache()){
+							GestoreToken.loggerInfo(getMessaggioAggiuntaOggettoInCache(keyCache));
+							try{	
+								org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+								responseCache.setObject(esitoDynamicDiscovery);
+								cache.put(keyCache,responseCache);
+							}catch(UtilsException e){
+								GestoreToken.loggerError(getMessaggioErroreInserimentoInCache(keyCache, e));
+							}
+						}
+					}
+				}finally {
+					lockDynamicDiscovery.release("dynamicDiscovery", idTransazione);
+				}
+			}
+    	}
+		
+		return esitoDynamicDiscovery;
+	}
+	
+	
+	
+	
+	
+	
+	
 	// ********* [VALIDAZIONE-TOKEN] VALIDAZIONE JWT TOKEN ****************** */
 	
 	public static final String VALIDAZIONE_JWT_FUNCTION = "ValidazioneJWT";
 		
 	public static EsitoGestioneToken validazioneJWTToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
-			PdDContext pddContext,
-			EsitoPresenzaToken esitoPresenzaToken, boolean portaDelegata) throws Exception {
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			EsitoPresenzaToken esitoPresenzaToken, EsitoDynamicDiscovery esitoDynamicDiscovery, boolean portaDelegata,
+			Busta busta, IDSoggetto idDominio, IDServizio idServizio) throws Exception {
 		
 		EsitoGestioneToken esitoGestioneToken = null;
 		
 		String token = esitoPresenzaToken.getToken();
+		DynamicDiscovery dynamicDiscovery = esitoDynamicDiscovery!=null ? esitoDynamicDiscovery.getDynamicDiscovery() : null;
 		
 		if(GestoreToken.cacheGestioneToken==null){
-			esitoGestioneToken = GestoreTokenValidazioneUtilities.validazioneJWTTokenEngine(log, datiInvocazione, esitoPresenzaToken, token, portaDelegata, pddContext);
+			esitoGestioneToken = GestoreTokenValidazioneUtilities.validazioneJWTTokenEngine(log, datiInvocazione, esitoPresenzaToken, 
+					dynamicDiscovery, 
+					token, portaDelegata, pddContext,
+					busta, idDominio, idServizio);
 		}
     	else{
     		String policyName = datiInvocazione.getPolicyGestioneToken().getName();
@@ -1241,7 +1394,10 @@ public class GestoreToken {
 					if(esitoGestioneToken==null) {
 						// Effettuo la query
 						GestoreToken.loggerDebug(getPrefixOggettoConChiave(keyCache)+getSuffixEseguiOperazione(funzione));
-						esitoGestioneToken = GestoreTokenValidazioneUtilities.validazioneJWTTokenEngine(log, datiInvocazione, esitoPresenzaToken, token, portaDelegata, pddContext);
+						esitoGestioneToken = GestoreTokenValidazioneUtilities.validazioneJWTTokenEngine(log, datiInvocazione, esitoPresenzaToken, 
+								dynamicDiscovery, 
+								token, portaDelegata, pddContext,
+								busta, idDominio, idServizio);
 							
 						// Aggiungo la risposta in cache (se esiste una cache)	
 						// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -1275,10 +1431,17 @@ public class GestoreToken {
 					datiInvocazione.getPolicyGestioneToken().isValidazioneJWTSaveErrorInCache());
 		}
 		
-		if(esitoGestioneToken.isValido() && esitoGestioneToken.getRestSecurityToken()!=null) {
-			SecurityToken securityToken = SecurityTokenUtilities.newSecurityToken(pddContext);
+		SecurityToken securityToken = null;
+		if(
+				// esitoGestioneToken.isValido() && se non si genera comunque un security token non si hanno i json recuperati tramite la PDND 
+				esitoGestioneToken.getRestSecurityToken()!=null) {
+			securityToken = SecurityTokenUtilities.newSecurityToken(pddContext);
 			securityToken.setAccessToken(esitoGestioneToken.getRestSecurityToken());
 		}
+		
+		// enrich PDND Client Info
+		GestoreTokenValidazioneUtilities.validazioneInformazioniTokenEnrichPDNDClientInfo(esitoGestioneToken, datiInvocazione.getPolicyGestioneToken(), 
+				pddContext, protocolFactory, datiInvocazione, securityToken);
 		
 		return esitoGestioneToken;
 	}
@@ -1295,17 +1458,18 @@ public class GestoreToken {
 	
 	public static EsitoGestioneToken introspectionToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
-			EsitoPresenzaToken esitoPresenzaToken, boolean portaDelegata,
-			IDSoggetto idDominio, IDServizio idServizio) throws Exception {
+			EsitoPresenzaToken esitoPresenzaToken, EsitoDynamicDiscovery esitoDynamicDiscovery, boolean portaDelegata,
+			Busta busta, IDSoggetto idDominio, IDServizio idServizio) throws Exception {
 		EsitoGestioneToken esitoGestioneToken = null;
 		
 		String token = esitoPresenzaToken.getToken();
+		DynamicDiscovery dynamicDiscovery = esitoDynamicDiscovery!=null ? esitoDynamicDiscovery.getDynamicDiscovery() : null;
 		
 		if(GestoreToken.cacheGestioneToken==null){
 			esitoGestioneToken = GestoreTokenValidazioneUtilities.introspectionTokenEngine(log, datiInvocazione, 
 					pddContext, protocolFactory,
-					token, portaDelegata,
-					idDominio, idServizio);
+					dynamicDiscovery, token, portaDelegata,
+					busta, idDominio, idServizio);
 		}
     	else{
     		String policyName = datiInvocazione.getPolicyGestioneToken().getName();
@@ -1356,8 +1520,8 @@ public class GestoreToken {
 						GestoreToken.loggerDebug(getPrefixOggettoConChiave(keyCache)+getSuffixEseguiOperazione(funzione));
 						esitoGestioneToken = GestoreTokenValidazioneUtilities.introspectionTokenEngine(log, datiInvocazione, 
 								pddContext, protocolFactory,
-								token, portaDelegata,
-								idDominio, idServizio);
+								dynamicDiscovery, token, portaDelegata,
+								busta, idDominio, idServizio);
 							
 						// Aggiungo la risposta in cache (se esiste una cache)	
 						// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -1401,17 +1565,18 @@ public class GestoreToken {
 	
 	public static EsitoGestioneToken userInfoToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
-			EsitoPresenzaToken esitoPresenzaToken, boolean portaDelegata,
-			IDSoggetto idDominio, IDServizio idServizio) throws Exception {
+			EsitoPresenzaToken esitoPresenzaToken, EsitoDynamicDiscovery esitoDynamicDiscovery, boolean portaDelegata,
+			Busta busta, IDSoggetto idDominio, IDServizio idServizio) throws Exception {
 		EsitoGestioneToken esitoGestioneToken = null;
 		
 		String token = esitoPresenzaToken.getToken();
+		DynamicDiscovery dynamicDiscovery = esitoDynamicDiscovery!=null ? esitoDynamicDiscovery.getDynamicDiscovery() : null;
 		
 		if(GestoreToken.cacheGestioneToken==null){
 			esitoGestioneToken = GestoreTokenValidazioneUtilities.userInfoTokenEngine(log, datiInvocazione, 
 					pddContext, protocolFactory,
-					token, portaDelegata,
-					idDominio, idServizio);
+					dynamicDiscovery, token, portaDelegata,
+					busta, idDominio, idServizio);
 		}
     	else{
     		String policyName = datiInvocazione.getPolicyGestioneToken().getName();
@@ -1461,8 +1626,8 @@ public class GestoreToken {
 						GestoreToken.loggerDebug(getPrefixOggettoConChiave(keyCache)+getSuffixEseguiOperazione(funzione));
 						esitoGestioneToken = GestoreTokenValidazioneUtilities.userInfoTokenEngine(log, datiInvocazione, 
 								pddContext, protocolFactory,
-								token, portaDelegata,
-								idDominio, idServizio);
+								dynamicDiscovery, token, portaDelegata,
+								busta, idDominio, idServizio);
 							
 						// Aggiungo la risposta in cache (se esiste una cache)	
 						// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -1568,7 +1733,8 @@ public class GestoreToken {
 				}
 				
 				if(jwtSecurity!=null) {
-					JOSEUtils.injectKeystore(datiInvocazione.getRequestInfo(), jwtSecurity, log); // serve per leggere il keystore dalla cache
+					boolean throwError = true;
+    				JOSEUtils.injectKeystore(datiInvocazione.getRequestInfo(), jwtSecurity, log, throwError); // serve per leggere il keystore dalla cache
 				}
 				
 				forwardValidazioneJWT = policyGestioneToken.isForwardTokenInformazioniRaccolteValidazioneJWT();
@@ -1674,7 +1840,7 @@ public class GestoreToken {
 			return list.get(0);
 		}
 		else {
-			return new InformazioniToken(OpenSPCoop2Properties.getInstance().isGestioneToken_saveSourceTokenInfo(), list.toArray(new InformazioniToken[1]));
+			return new InformazioniToken(OpenSPCoop2Properties.getInstance().isGestioneTokenSaveSourceTokenInfo(), list.toArray(new InformazioniToken[1]));
 		}
 	}
 	
@@ -1988,7 +2154,9 @@ public class GestoreToken {
 			esitoRecuperoAttributi = GestoreTokenAttributeAuthorityUtilities.readAttributes(log, policyAttributeAuthority, 
 					protocolFactory,
 					dynamicParameters,
-					request, portaDelegata, datiInvocazione.getIdModulo(), pa, pd,
+					request, portaDelegata, 
+					pddContext, datiInvocazione.getBusta(),
+					datiInvocazione.getIdModulo(), pa, pd,
 					datiInvocazione.getState(),
 					idDominio, idServizio,
 					requestInfo);
@@ -2072,7 +2240,9 @@ public class GestoreToken {
 						esitoRecuperoAttributi = GestoreTokenAttributeAuthorityUtilities.readAttributes(log, policyAttributeAuthority, 
 								protocolFactory,
 								dynamicParameters,
-								request, portaDelegata, datiInvocazione.getIdModulo(), pa, pd,
+								request, portaDelegata, 
+								pddContext, datiInvocazione.getBusta(),
+								datiInvocazione.getIdModulo(), pa, pd,
 								datiInvocazione.getState(),
 								idDominio, idServizio,
 								requestInfo);

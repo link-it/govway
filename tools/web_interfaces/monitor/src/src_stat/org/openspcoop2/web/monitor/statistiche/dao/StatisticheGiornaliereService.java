@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -20,6 +20,7 @@
 package org.openspcoop2.web.monitor.statistiche.dao;
 
 import java.sql.Connection;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -38,6 +39,7 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -58,7 +60,6 @@ import org.openspcoop2.core.statistiche.model.StatisticaContenutiModel;
 import org.openspcoop2.core.statistiche.model.StatisticaModel;
 import org.openspcoop2.core.statistiche.utils.StatisticheUtils;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
-import org.openspcoop2.core.transazioni.dao.jdbc.JDBCCredenzialeMittenteServiceSearch;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.core.transazioni.utils.credenziali.AbstractSearchCredenziale;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeClientAddress;
@@ -102,6 +103,8 @@ import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.pdd.config.DynamicClusterManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.protocol.sdk.PDNDTokenInfo;
+import org.openspcoop2.protocol.sdk.PDNDTokenInfoDetails;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
@@ -113,19 +116,24 @@ import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
+import org.openspcoop2.web.monitor.core.dao.CredenzialiMittenteUtils;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceEngine;
+import org.openspcoop2.web.monitor.core.dao.MBeanUtilsService;
 import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
+import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione3D;
 import org.openspcoop2.web.monitor.core.datamodel.ResLive;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.report.CostantiReport;
 import org.openspcoop2.web.monitor.core.thread.ThreadExecutorManager;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
+import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 import org.openspcoop2.web.monitor.statistiche.bean.StatistichePersonalizzateSearchForm;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.mbean.DistribuzionePerServizioBean;
+import org.openspcoop2.web.monitor.statistiche.utils.ExportUtils;
 import org.openspcoop2.web.monitor.statistiche.utils.StatsUtils;
 import org.slf4j.Logger;
 
@@ -140,6 +148,21 @@ import org.slf4j.Logger;
 public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 	private static Logger log =  LoggerManager.getPddMonitorSqlLogger();
+	private static void logError(String msg, Throwable e) {
+		if(log!=null) {
+			log.error(msg,e);
+		}
+	}
+	private static void logDebug(String msg) {
+		if(log!=null) {
+			log.debug(msg);
+		}
+	}
+	private static void logDebug(String msg, Throwable e) {
+		if(log!=null) {
+			log.debug(msg,e);
+		}
+	}
 	
 	private boolean timeoutEvent = false;
 	private Integer timeoutRicerche = null;
@@ -147,6 +170,17 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private static final String FALSA_UNION_DEFAULT_VALUE = "gbyfake";
 	private static final Integer FALSA_UNION_DEFAULT_VALUE_INT = -99999;
 	private static final Integer FALSA_UNION_DEFAULT_VALUE_VERSIONE = 1;
+	private static Date FALSA_UNION_DEFAULT_VALUE_TIMESTAMP = null; 
+	
+	private static final String ALIAS_FIELD_DATA_3D = "data3d";
+	
+	static {
+		try {
+			FALSA_UNION_DEFAULT_VALUE_TIMESTAMP = DateUtils.getSimpleDateFormatDay().parse("1970-01-01");
+		} catch (ParseException e) {
+			log.error("Errore durante la init della data fake ", e);
+		}
+	}
 
 	private StatsSearchForm andamentoTemporaleSearch;
 	private StatsSearchForm distribErroriSearch;
@@ -187,6 +221,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private int clusterDinamicoRefresh;
 	
 	private IServiceSearchWithoutId<?> dao = null;
+	
+	private boolean isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato = false;
 	
 	public StatisticheGiornaliereService() {
 
@@ -230,8 +266,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			this.timeoutRicerche = this.govwayMonitorProperties.getIntervalloTimeoutRicercaStatistiche();
 			
+			this.isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato = this.govwayMonitorProperties.isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato();
+			ExportUtils.setDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato(this.isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato);
+			
 		} catch (Exception e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		}
 	}
 
@@ -284,8 +323,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			this.timeoutRicerche = this.govwayMonitorProperties.getIntervalloTimeoutRicercaStatistiche();
 			
+			this.isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato = this.govwayMonitorProperties.isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato();
+			ExportUtils.setDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato(this.isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato);
+			
 		} catch (Exception e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		}
 	}
 	
@@ -338,8 +380,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			this.timeoutRicerche = this.govwayMonitorProperties.getIntervalloTimeoutRicercaStatistiche();
 			
+			this.isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato = this.govwayMonitorProperties.isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato();
+			ExportUtils.setDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato(this.isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato);
+			
 		} catch (Exception e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		}
 	}
 	
@@ -468,40 +513,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	}
 	
 	public StatisticType checkStatisticType(StatsSearchForm form) {
-		StatisticType tipologia = form.getModalitaTemporale();
-		if(!form.isShowUnitaTempo()) {
-			if(form.isPeriodoPersonalizzato() && !form.isShowUnitaTempoPersonalizzato_periodoPersonalizzato()) {
-				// calcolo qua
-				Date dInizio = form.getDataInizio();
-				Date dFine = form.getDataFine();
-				if(dInizio!=null && dFine!=null) {
-					/*
-					long msDiff = dFine.getTime() - dInizio.getTime();
-					long ore24ms = 86400000;
-					if(msDiff > ore24ms) {
-						tipologia = StatisticType.GIORNALIERA; 
-					}
-					else {
-						tipologia = StatisticType.ORARIA; 
-					}*/
-					
-					// nel personalizzato considero sempre le ore
-					String format = "HH:mm";
-					String inizio = DateUtils.getSimpleDateFormat(format).format(dInizio);
-					String fine = DateUtils.getSimpleDateFormat(format).format(dFine);
-					if("00:00".equals(inizio) && "23:59".equals(fine)) {
-						tipologia = StatisticType.GIORNALIERA; 
-					}
-					else {
-						tipologia = StatisticType.ORARIA; 
-					}
-				}
-				if(tipologia==null) {
-					tipologia = StatisticType.GIORNALIERA; // default in caso di errore
-				}
-			}
+		
+		boolean onlyForCount = true;
+		boolean distribuzione3d = form.getNumeroDimensioni()!=null && NumeroDimensioni.DIMENSIONI_3.equals(form.getNumeroDimensioni());
+		if(distribuzione3d) {
+			onlyForCount = false;
 		}
-		return tipologia;
+		return StatsUtils.checkStatisticType(form, onlyForCount);
 	}
 	
 	
@@ -518,7 +536,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		try {
 			return (int) countAndamentoTemporale().longValue();
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		}
 		return 0;
 	}
@@ -630,7 +648,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			}
 
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					gByExpr.addForceIndex(index);	
 				}
@@ -642,13 +660,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					FunctionField fCount = new FunctionField(model.NUMERO_TRANSAZIONI,Function.SUM, "somma"); // uso sempre e comunque la somma, non e' importante
 					list = dao.groupBy(gByExpr, fCount);
 				} catch (NotFoundException e) {
-					StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente: "+e.getMessage(),e);
+					StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente: "+e.getMessage(),e);
 					return new NonNegativeNumber(0);
 				}
 				if(list==null || list.isEmpty()) {
 					return new NonNegativeNumber(0);
 				}
-				List<Date> dateFound = new ArrayList<Date>();
+				List<Date> dateFound = new ArrayList<>();
 				for (Map<String, Object> row : list) {
 					Date data = (Date) row.get(GenericJDBCUtilities.getAlias(model.DATA));
 					Date truncDate = null;
@@ -677,15 +695,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				return nnn;
 			}
 			
-		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
-		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
-		} catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
-		}
+		} catch (ServiceException | NotImplementedException | ExpressionNotImplementedException | ExpressionException e) {
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
+		} 
 		return new NonNegativeNumber(0);
 	}
 
@@ -914,7 +926,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 
 			
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					gByExpr.addForceIndex(index);	
 				}
@@ -925,19 +937,19 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					try{
 						list = this.dao.groupBy(gByExpr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
 					} catch (NotFoundException e) {
-						StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente: "+e.getMessage(),e);
-						list = new ArrayList<Map<String,Object>>(); // per evitare il nullPointer
+						StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente: "+e.getMessage(),e);
+						list = new ArrayList<>(); // per evitare il nullPointer
 					} 
 				} else {
 					try {
 						list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.groupBy(gByExpr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 					} catch (InterruptedException e) {
-						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						StatisticheGiornaliereService.logError(e.getMessage(), e);
 						Thread.currentThread().interrupt();
 					} catch (ExecutionException e) {
 						if(e.getCause() instanceof NotFoundException) {
-							StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente: "+e.getMessage(),e);
-							list = new ArrayList<Map<String,Object>>(); // per evitare il nullPointer
+							StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente: "+e.getMessage(),e);
+							list = new ArrayList<>(); // per evitare il nullPointer
 						} else {
 							if(e.getCause() instanceof ServiceException) {
 								throw (ServiceException) e.getCause();
@@ -945,12 +957,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							if(e.getCause() instanceof NotImplementedException) {
 								throw (NotImplementedException) e.getCause();
 							}
-							StatisticheGiornaliereService.log.error(e.getMessage(), e);
+							StatisticheGiornaliereService.logError(e.getMessage(), e);
 						}
 					} catch (TimeoutException e) {
 						this.timeoutEvent = true;
-						list = new ArrayList<Map<String,Object>>(); // per evitare il nullPointer
-						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						list = new ArrayList<>(); // per evitare il nullPointer
+						StatisticheGiornaliereService.logError(e.getMessage(), e);
 					}
 				}
 			} else {
@@ -964,19 +976,19 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					try{
 						list = this.dao.groupBy(pagExpr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
 					} catch (NotFoundException e) {
-						StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente: "+e.getMessage(),e);
-						list = new ArrayList<Map<String,Object>>(); // per evitare il nullPointer
+						StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente: "+e.getMessage(),e);
+						list = new ArrayList<>(); // per evitare il nullPointer
 					} 
 				} else {
 					try {
 						list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.groupBy(pagExpr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 					} catch (InterruptedException e) {
-						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						StatisticheGiornaliereService.logError(e.getMessage(), e);
 						Thread.currentThread().interrupt();
 					} catch (ExecutionException e) {
 						if(e.getCause() instanceof NotFoundException) {
-							StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente: "+e.getMessage(),e);
-							list = new ArrayList<Map<String,Object>>(); // per evitare il nullPointer
+							StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente: "+e.getMessage(),e);
+							list = new ArrayList<>(); // per evitare il nullPointer
 						} else {
 							if(e.getCause() instanceof ServiceException) {
 								throw (ServiceException) e.getCause();
@@ -984,18 +996,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							if(e.getCause() instanceof NotImplementedException) {
 								throw (NotImplementedException) e.getCause();
 							}
-							StatisticheGiornaliereService.log.error(e.getMessage(), e);
+							StatisticheGiornaliereService.logError(e.getMessage(), e);
 						}
 					} catch (TimeoutException e) {
 						this.timeoutEvent = true;
-						list = new ArrayList<Map<String,Object>>(); // per evitare il nullPointer
-						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						list = new ArrayList<>(); // per evitare il nullPointer
+						StatisticheGiornaliereService.logError(e.getMessage(), e);
 					} 
 				}
 			}
 			
 			
-			List<Res> res = new ArrayList<Res>();
+			List<Res> res = new ArrayList<>();
 			if(list!=null) {
 				for (Map<String, Object> row : list) {
 	
@@ -1003,7 +1015,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					Date data = (Date) row.get(GenericJDBCUtilities.getAlias(model.DATA));
 					r.setId(data != null ? data.getTime() : null);
 					r.setRisultato(data);
-					List<Number> rSommaMediaPesata = new ArrayList<Number>();
+					List<Number> rSommaMediaPesata = new ArrayList<>();
 					
 					//collezione dei risultati
 					if(isLatenza){
@@ -1144,7 +1156,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							break;
 						}
 						
-						if(forceIndexes!=null && forceIndexes.size()>0){
+						if(forceIndexes!=null && !forceIndexes.isEmpty()){
 							for (Index index : forceIndexes) {
 								expOk.addForceIndex(index);	
 								expKo.addForceIndex(index);	
@@ -1165,7 +1177,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						Res rEsito = new Res();
 						rEsito.setId(data.getTime());
 						rEsito.setRisultato(data);
-						List<Number> rEsitoSommaMediaPesata = new ArrayList<Number>();
+						List<Number> rEsitoSommaMediaPesata = new ArrayList<>();
 						
 						this.timeoutEvent = false;
 						
@@ -1173,7 +1185,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							try{
 							listOk = this.dao.groupBy(expOk, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
 							} catch (NotFoundException e) {
-								StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Ok: "+esitiOk);
+								StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente con esiti Ok: "+esitiOk);
 								//collezione dei risultati
 								rEsito.inserisciSomma(0);
 							} 
@@ -1183,11 +1195,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 								this.dao.groupBy(expOk, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))
 									).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 							} catch (InterruptedException e) {
-								StatisticheGiornaliereService.log.error(e.getMessage(), e);
+								StatisticheGiornaliereService.logError(e.getMessage(), e);
 								Thread.currentThread().interrupt();
 							} catch (ExecutionException e) {
 								if(e.getCause() instanceof NotFoundException) {
-									StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Ok: "+esitiOk);
+									StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente con esiti Ok: "+esitiOk);
 									//collezione dei risultati
 									rEsito.inserisciSomma(0);
 								}else {
@@ -1197,13 +1209,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 									if(e.getCause() instanceof NotImplementedException) {
 										throw (NotImplementedException) e.getCause();
 									}
-									StatisticheGiornaliereService.log.error(e.getMessage(), e);
+									StatisticheGiornaliereService.logError(e.getMessage(), e);
 								}
 							} catch (TimeoutException e) {
 								this.timeoutEvent = true;
 								//collezione dei risultati
 								rEsito.inserisciSomma(0);
-								StatisticheGiornaliereService.log.error(e.getMessage(), e);
+								StatisticheGiornaliereService.logError(e.getMessage(), e);
 							}
 						}
 						
@@ -1330,7 +1342,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							try{
 								listFaultApplicativo = this.dao.groupBy(expFault, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
 							} catch (NotFoundException e) {
-								StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Fault: "+esitiFault);
+								StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente con esiti Fault: "+esitiFault);
 								//collezione dei risultati
 								rEsito.inserisciSomma(0);
 							} 
@@ -1340,11 +1352,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 								 this.dao.groupBy(expFault, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))
 									).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 							} catch (InterruptedException e) {
-								StatisticheGiornaliereService.log.error(e.getMessage(), e);
+								StatisticheGiornaliereService.logError(e.getMessage(), e);
 								Thread.currentThread().interrupt();
 							} catch (ExecutionException e) {
 								if(e.getCause() instanceof NotFoundException) {
-									StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Fault: "+esitiFault);
+									StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente con esiti Fault: "+esitiFault);
 									//collezione dei risultati
 									rEsito.inserisciSomma(0);
 								}else {
@@ -1354,13 +1366,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 									if(e.getCause() instanceof NotImplementedException) {
 										throw (NotImplementedException) e.getCause();
 									}
-									StatisticheGiornaliereService.log.error(e.getMessage(), e);
+									StatisticheGiornaliereService.logError(e.getMessage(), e);
 								}
 							} catch (TimeoutException e) {
 								this.timeoutEvent = true;
 								//collezione dei risultati
 								rEsito.inserisciSomma(0);
-								StatisticheGiornaliereService.log.error(e.getMessage(), e);
+								StatisticheGiornaliereService.logError(e.getMessage(), e);
 							}
 						}
 					
@@ -1485,7 +1497,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							try{
 								listKo = this.dao.groupBy(expKo, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
 							} catch (NotFoundException e) {
-								StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Ko: "+esitiKo);
+								StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente con esiti Ko: "+esitiKo);
 								//collezione dei risultati
 								rEsito.inserisciSomma(0);
 							} 
@@ -1495,11 +1507,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 								this.dao.groupBy(expKo, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))
 									).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 							} catch (InterruptedException e) {
-								StatisticheGiornaliereService.log.error(e.getMessage(), e);
+								StatisticheGiornaliereService.logError(e.getMessage(), e);
 								Thread.currentThread().interrupt();
 							} catch (ExecutionException e) {
 								if(e.getCause() instanceof NotFoundException) {
-									StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Ko: "+esitiKo);
+									StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente con esiti Ko: "+esitiKo);
 									//collezione dei risultati
 									rEsito.inserisciSomma(0);
 								}else {
@@ -1509,13 +1521,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 									if(e.getCause() instanceof NotImplementedException) {
 										throw (NotImplementedException) e.getCause();
 									}
-									StatisticheGiornaliereService.log.error(e.getMessage(), e);
+									StatisticheGiornaliereService.logError(e.getMessage(), e);
 								}
 							} catch (TimeoutException e) {
 								this.timeoutEvent = true;
 								//collezione dei risultati
 								rEsito.inserisciSomma(0);
-								StatisticheGiornaliereService.log.error(e.getMessage(), e);
+								StatisticheGiornaliereService.logError(e.getMessage(), e);
 							}
 						}
 						
@@ -1683,7 +1695,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					return res;
 				}
 				
-				ArrayList<Res> resPaginated = new ArrayList<Res>();
+				ArrayList<Res> resPaginated = new ArrayList<>();
 				for (int i = 0; i < res.size(); i++) {
 					if(i<offset) {
 						continue;
@@ -1698,23 +1710,23 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			return res;
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		} catch (NotFoundException e) {
-			StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente.");
+			StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente.");
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		} catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		} catch (Exception e) {
 			if(e!=null && e instanceof InterruptedException) {
 				Thread.currentThread().interrupt();
 			}
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		}
 
-		return new ArrayList<Res>();
+		return new ArrayList<>();
 	}
 
 	private void elaboraIntervalloTemporale(Date truncDate, List<Res> res, Res r, boolean isLatenza, List<Number> sommaMediaPesata) throws Exception {
@@ -1758,7 +1770,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			Res rEsitoRicalcolato = new Res();
 			rEsitoRicalcolato.setId(truncDate.getTime());
 			rEsitoRicalcolato.setRisultato(truncDate);
-			List<Number> sommaMediaPesataRicalcolata = new ArrayList<Number>();
+			List<Number> sommaMediaPesataRicalcolata = new ArrayList<>();
 			for (int i = 0; i < listaEsistente.size(); i++) {
 				Number nEsistente = listaEsistente.get(i);
 				Number nNuovo = listaNuovo.get(i);
@@ -1767,19 +1779,19 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						Number nSommaMediaEsistente = sommeMediaPesataEsistente.get(i);
 						Number nSommaMediaNuovo = sommaMediaPesata.get(i);
 						
-						StatisticheGiornaliereService.log.debug("Latenza già registrata: "+nEsistente+" per un totale di record "+nSommaMediaEsistente);
-						StatisticheGiornaliereService.log.debug("Latenza nuova: "+nNuovo+" per un totale di record "+nSommaMediaNuovo);
+						StatisticheGiornaliereService.logDebug("Latenza già registrata: "+nEsistente+" per un totale di record "+nSommaMediaEsistente);
+						StatisticheGiornaliereService.logDebug("Latenza nuova: "+nNuovo+" per un totale di record "+nSommaMediaNuovo);
 						
 						Number totale = nSommaMediaEsistente.longValue() + nSommaMediaNuovo.longValue();
 						sommaMediaPesataRicalcolata.add(totale);
-						StatisticheGiornaliereService.log.debug("TOT: "+totale);
+						StatisticheGiornaliereService.logDebug("TOT: "+totale);
 						Number nMediaEsistente = nSommaMediaEsistente.longValue() * nEsistente.longValue();
 						Number nMediaNuovo = nSommaMediaNuovo.longValue() * nNuovo.longValue();
 						Number nMedia = nMediaEsistente.longValue() + nMediaNuovo.longValue();
-						StatisticheGiornaliereService.log.debug("MEDIA: esi "+nMediaEsistente+" + nuovo "+nMediaNuovo+" = "+nMedia);
+						StatisticheGiornaliereService.logDebug("MEDIA: esi "+nMediaEsistente+" + nuovo "+nMediaNuovo+" = "+nMedia);
 						Number nMediaPesata = (totale.longValue()>0) ? (nMedia.longValue() / totale.longValue()) : 0;
-						StatisticheGiornaliereService.log.debug("MEDIA PESATA: "+nMediaPesata);
-						//log.debug("MEDIA REALE: "+((nEsistente.longValue() + nNuovo.longValue())/2));
+						StatisticheGiornaliereService.logDebug("MEDIA PESATA: "+nMediaPesata);
+						//logDebug("MEDIA REALE: "+((nEsistente.longValue() + nNuovo.longValue())/2));
 						rEsitoRicalcolato.inserisciSomma(nMediaPesata);
 					}
 					else {
@@ -1902,7 +1914,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// soggetto selezionato va messo come complementare
 
 				boolean trafficoSoggetto = StringUtils.isNotBlank(this.andamentoTemporaleSearch.getTrafficoPerSoggetto());
-				boolean soggetto = listaSoggettiGestione.size() > 0;
+				boolean soggetto = !listaSoggettiGestione.isEmpty();
 				String tipoTrafficoSoggetto = null;
 				String nomeTrafficoSoggetto = null;
 				if (trafficoSoggetto) {
@@ -1921,7 +1933,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if (trafficoSoggetto && soggetto) {
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -1975,7 +1987,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// e' impostato solo il soggetto in gestione
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -2015,7 +2027,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -2048,7 +2060,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -2097,17 +2109,17 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			expr.addGroupBy(model.DATA);
 
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		} catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		} catch (CoreException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		} catch (Exception e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		}
 
 		return expr;
@@ -2125,7 +2137,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			String protocolloSelected, String protocolloDefault, TipologiaRicerca tipologiaRicerca) {
 
 		// StringBuilder pezzoIdPorta = new StringBuilder();
-		StatisticheGiornaliereService.log.debug("Get Esiti [id porta: " + permessiUtente + "],[ Date Min: " + min + "], [Date Max: " + max + "]");
+		StatisticheGiornaliereService.logDebug("Get Esiti [id porta: " + permessiUtente + "],[ Date Min: " + min + "], [Date Max: " + max + "]");
 		try {
 			StatisticaModel model = null;
 			IServiceSearchWithoutId<?> dao = null;
@@ -2263,7 +2275,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				impostaTipiCompatibiliConProtocollo(dao, model, exprKo, protocolloSelected, null);
 			}
 			
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					exprOk.addForceIndex(index);	
 					exprKo.addForceIndex(index);	
@@ -2281,7 +2293,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			try {
 				list = dao.groupBy(exprOk,fSum);
 			} catch (NotFoundException e) {
-				StatisticheGiornaliereService.log.debug("Non sono presenti statistiche con esito OK");
+				StatisticheGiornaliereService.logDebug("Non sono presenti statistiche con esito OK");
 			}
 			long s = 0l;
 			if(list != null && list.size() > 0){
@@ -2297,11 +2309,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			numOk = Long.valueOf(s);
 
 			// fault
-			list = new ArrayList<Map<String,Object>>();
+			list = new ArrayList<>();
 			try {
 				list = dao.groupBy(exprFault,fSum);
 			} catch (NotFoundException e) {
-				StatisticheGiornaliereService.log.debug("Non sono presenti statistiche con esito Fault");
+				StatisticheGiornaliereService.logDebug("Non sono presenti statistiche con esito Fault");
 			}
 			s = 0l;
 			if(list != null && list.size() > 0){
@@ -2317,11 +2329,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			numFault = Long.valueOf(s);
 
 			// ko
-			list = new ArrayList<Map<String,Object>>();
+			list = new ArrayList<>();
 			try {
 				list = dao.groupBy(exprKo,fSum);
 			} catch (NotFoundException e) {
-				StatisticheGiornaliereService.log.debug("Non sono presenti statistiche con esito KO");
+				StatisticheGiornaliereService.logDebug("Non sono presenti statistiche con esito KO");
 			}
 			s = 0l;
 			if(list != null && list.size() > 0){
@@ -2339,15 +2351,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			return new ResLive(numOk.longValue(), numFault.longValue(), numKo.longValue(), new Date());
 
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		} catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		} catch (Exception e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		}
 
 		return new ResLive(Long.valueOf("0"), Long.valueOf("0"), Long.valueOf("0"));
@@ -2404,7 +2416,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			IExpression gByExpr = createDistribuzioneErroriExpression(dao, model, true);
 			
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					gByExpr.addForceIndex(index);	
 				}
@@ -2414,13 +2426,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			return nnn != null ? ((int)nnn.longValue()) : 0;
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw e;
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (Exception e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e.getMessage(),e);
 		}
 	}
@@ -2436,7 +2448,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private IExpression createDistribuzioneErroriExpression(IServiceSearchWithoutId<?> dao, StatisticaModel model, boolean isCount) throws ServiceException {
 		IExpression expr = null;
 
-		StatisticheGiornaliereService.log.debug("creo Expression per distribuzione Errori!");
+		StatisticheGiornaliereService.logDebug("creo Expression per distribuzione Errori!");
 
 		List<Soggetto> listaSoggettiGestione = this.distribErroriSearch.getSoggettiGestione();
 
@@ -2520,7 +2532,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				boolean trafficoSoggetto = StringUtils
 						.isNotBlank(this.distribErroriSearch
 								.getTrafficoPerSoggetto());
-				boolean soggetto = listaSoggettiGestione.size() > 0;
+				boolean soggetto = !listaSoggettiGestione.isEmpty();
 				String tipoTrafficoSoggetto = null;
 				String nomeTrafficoSoggetto = null;
 				if (trafficoSoggetto) {
@@ -2539,7 +2551,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if (trafficoSoggetto && soggetto) {
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -2601,7 +2613,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// e' impostato solo il soggetto in gestione
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -2643,7 +2655,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -2677,7 +2689,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -2733,24 +2745,29 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			this.impostaFiltroIdClusterOrCanale(expr, this.distribErroriSearch, model, isCount);
 			
+			// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				expr.addGroupBy(model.DATA);
+			}
+			
 			expr.addGroupBy(model.ESITO);
 
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw e;
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (CoreException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		} catch (Exception e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		}
 
 		return expr;
@@ -2792,6 +2809,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			IExpression gByExpr = this.createDistribuzioneErroriExpression(this.dao,	model, false);
 
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribErroriSearch.getSortOrder() != null ? 	this.distribErroriSearch.getSortOrder() : SortOrder.ASC;
+				gByExpr.sortOrder(s).addOrder(model.DATA);
+			}
+			
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.ESITO);
 
 			List<Index> forceIndexes = null;
@@ -2803,13 +2826,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				throw new ServiceException(e.getMessage(),e);
 			}
 			
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					gByExpr.addForceIndex(index);	
 				}
 			}
 			
 			UnionExpression unionExpr = new UnionExpression(gByExpr);
+			
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				unionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+			}
 			String aliasFieldEsito = "esito";
 			
 			unionExpr.addSelectField(model.ESITO,		aliasFieldEsito);
@@ -2817,13 +2845,32 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// Espressione finta per usare l'ordinamento
 			IExpression fakeExpr = this.dao.newExpression();
 			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
+						model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+			}
 			unionExprFake.addSelectField(new ConstantField(aliasFieldEsito, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_INT,
 					model.ESITO.getFieldType()), aliasFieldEsito);
 			
 			Union union = new Union();
 			union.setUnionAll(true);
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				union.addField(ALIAS_FIELD_DATA_3D);
+			}
 			union.addField(aliasFieldEsito);
+			// group by field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			}
 			union.addGroupBy(aliasFieldEsito);
+			
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribErroriSearch.getSortOrder() != null ? 	this.distribErroriSearch.getSortOrder() : SortOrder.ASC;
+				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
+			}
 
 			TipoVisualizzazione tipoVisualizzazione = this.distribErroriSearch.getTipoVisualizzazione();
 			String sommaAliasName = "somma";
@@ -2933,7 +2980,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			}
 
-			ArrayList<ResDistribuzione> res = new ArrayList<ResDistribuzione>();
+			ArrayList<ResDistribuzione> res = new ArrayList<>();
 
 			if(start != null)
 				union.setOffset(start);
@@ -2949,7 +2996,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				try {
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.union(union, unionExpr, unionExprFake)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof NotFoundException) {
@@ -2961,10 +3008,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					if(e.getCause() instanceof NotImplementedException) {
 						throw (NotImplementedException) e.getCause();
 					}
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 				} catch (TimeoutException e) {
 					this.timeoutEvent = true;
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 				}
 			}
 			if (list != null) {
@@ -2972,8 +3019,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				EsitiProperties esitiProperties = null;
 				try {
 					esitiProperties = EsitiProperties.getInstanceFromProtocolName(StatisticheGiornaliereService.log, this.distribErroriSearch.getProtocollo());
-				}catch(Throwable t) {
-					StatisticheGiornaliereService.log.error("EsitiProperties reader non disponibile: "+t.getMessage(), t);
+				}catch(Exception t) {
+					StatisticheGiornaliereService.logError("EsitiProperties reader non disponibile: "+t.getMessage(), t);
 				}
 				if(esitiProperties==null) {
 					throw new ServiceException("EsitiProperties unavailable");
@@ -2981,26 +3028,36 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 								
 				// List<Object[]> list = q.getResultList();
 				for (Map<String, Object> row : list) {
-
-					ResDistribuzione r = new ResDistribuzione();
 					
 					int esito = ((Integer) row.get(aliasFieldEsito));
 					if(esito == StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_INT) {
 						continue;
 					} 	
 					
+					ResDistribuzione r = null;
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3D();
+
+						// setto la data e la sua versione formattata in funziona dell'unita' temporale scelta
+						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
+						((ResDistribuzione3D)r).setData(data);
+						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
+					} else {
+						r = new ResDistribuzione();
+					}
+					
 					try {
 						r.setRisultato(esitiProperties.getEsitoLabel(esito));
-					}catch(Throwable t) {
+					}catch(Exception t) {
 						r.setRisultato("Esito '"+esito+"'");
-						StatisticheGiornaliereService.log.error("Traduzione esito '"+esito+"' non riuscita: "+t.getMessage(), t);
+						StatisticheGiornaliereService.logError("Traduzione esito '"+esito+"' non riuscita: "+t.getMessage(), t);
 					}
 					
 					try {
 						r.getParentMap().put("0",esitiProperties.getEsitoDescription(esito));
-					}catch(Throwable t) {
+					}catch(Exception t) {
 						r.getParentMap().put("0","");
-						StatisticheGiornaliereService.log.error("Traduzione esito '"+esito+"' in descrizione non riuscita: "+t.getMessage(), t);
+						StatisticheGiornaliereService.logError("Traduzione esito '"+esito+"' in descrizione non riuscita: "+t.getMessage(), t);
 					}
 						
 					Number somma = StatsUtils.converToNumber(row.get(sommaAliasName));
@@ -3018,21 +3075,21 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			return res;
 
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw e;
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (NotFoundException e) {
-			StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente.");
+			StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente.");
 		}
-		return new ArrayList<ResDistribuzione>();
+		return new ArrayList<>();
 	}
 	
 	
@@ -3074,7 +3131,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			Long countValue = this.countDistribuzioneSoggetto( dao,model);
 			return countValue != null ? countValue.intValue() : 0;
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		}
 
@@ -3115,26 +3172,26 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			return this.executeDistribuzioneSoggetto( dao,model, false, -1, -1);
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw e;
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (NotFoundException e) {
-			StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente.");
+			StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente.");
 		} catch (CoreException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		} catch (Exception e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		}
 
-		return new ArrayList<ResDistribuzione>();
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -3172,26 +3229,26 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			return this.executeDistribuzioneSoggetto(dao,model, true, start, limit);
 
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw e;
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (NotFoundException e) {
-			StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente.");
+			StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente.");
 		} catch (CoreException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		} catch (Exception e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		}
 
-		return new ArrayList<ResDistribuzione>();
+		return new ArrayList<>();
 	}
 
 	private Long countDistribuzioneSoggetto(IServiceSearchWithoutId<?> dao, StatisticaModel model) throws ServiceException {
@@ -3294,7 +3351,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					erogazione_portaApplicativa_Expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -3312,7 +3369,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					erogazione_portaApplicativa_Expr.or(orSoggetti);
 				}
 				
-				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+				if(!this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					// il mittente puo nn essere specificato
 					if (StringUtils.isNotBlank(this.distribSoggettoSearch.getTrafficoPerSoggetto())) {
 						erogazione_portaApplicativa_Expr.and().equals(	model.TIPO_MITTENTE,	this.distribSoggettoSearch.getTipoTrafficoPerSoggetto());
@@ -3394,7 +3451,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					fruizione_portaDelegata_Expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -3412,7 +3469,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					fruizione_portaDelegata_Expr.or(orSoggetti);
 				}
 				
-				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+				if(!this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					// il destinatario puo nn essere specificato
 					if (StringUtils.isNotBlank(this.distribSoggettoSearch.getTrafficoPerSoggetto())) {
 						fruizione_portaDelegata_Expr.and().equals(	model.TIPO_DESTINATARIO,	this.distribSoggettoSearch.getTipoTrafficoPerSoggetto());
@@ -3436,36 +3493,59 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// UNION
 
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
+					
+					// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						erogazione_portaApplicativa_Expr.addGroupBy(model.DATA);
+					}
 					erogazione_portaApplicativa_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					erogazione_portaApplicativa_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					erogazione_portaApplicativa_Expr.addGroupBy(model.TIPO_MITTENTE);
 					erogazione_portaApplicativa_Expr.addGroupBy(model.MITTENTE);
 
+					// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						fruizione_portaDelegata_Expr.addGroupBy(model.DATA);
+					}
 					fruizione_portaDelegata_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					fruizione_portaDelegata_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					fruizione_portaDelegata_Expr.addGroupBy(model.TIPO_DESTINATARIO);
 					fruizione_portaDelegata_Expr.addGroupBy(model.DESTINATARIO);
 				}
 				else{
+					// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						erogazione_portaApplicativa_Expr.addGroupBy(model.DATA);
+					}
 					erogazione_portaApplicativa_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					erogazione_portaApplicativa_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					erogazione_portaApplicativa_Expr.addGroupBy(model.TIPO_DESTINATARIO);
 					erogazione_portaApplicativa_Expr.addGroupBy(model.DESTINATARIO);
 
+					// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						fruizione_portaDelegata_Expr.addGroupBy(model.DATA);
+					}
 					fruizione_portaDelegata_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					fruizione_portaDelegata_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					fruizione_portaDelegata_Expr.addGroupBy(model.TIPO_MITTENTE);
 					fruizione_portaDelegata_Expr.addGroupBy(model.MITTENTE);
 				}
 
-				if(forceIndexes!=null && forceIndexes.size()>0){
+				if(forceIndexes!=null && !forceIndexes.isEmpty()){
 					for (Index index : forceIndexes) {
 						erogazione_portaApplicativa_Expr.addForceIndex(index);	
 						fruizione_portaDelegata_Expr.addForceIndex(index);
 					}
 				}
-				
+								
 				UnionExpression erogazione_portaApplicativa_UnionExpr = new UnionExpression(erogazione_portaApplicativa_Expr);
+				
+				// select field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					erogazione_portaApplicativa_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+				}
+				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					erogazione_portaApplicativa_UnionExpr.addSelectField(model.TIPO_MITTENTE,
 							"tipo_soggetto");
@@ -3480,6 +3560,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 
 				UnionExpression fruizione_portaDelegata_UnionExpr = new UnionExpression(fruizione_portaDelegata_Expr);
+				
+				// select field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					fruizione_portaDelegata_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+				}				
+				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					fruizione_portaDelegata_UnionExpr.addSelectField(
 							model.TIPO_DESTINATARIO, "tipo_soggetto");
@@ -3495,11 +3581,20 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				Union union = new Union();
 				union.setUnionAll(true);
+				
+				// select field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					union.addField(ALIAS_FIELD_DATA_3D);
+				}
 				union.addField("tipo_soggetto");
 				union.addField("soggetto");
+				
+				// group by field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					union.addGroupBy(ALIAS_FIELD_DATA_3D);
+				}
 				union.addGroupBy("tipo_soggetto");
 				union.addGroupBy("soggetto");
-
 
 				NonNegativeNumber nnn = dao.unionCount(union, erogazione_portaApplicativa_UnionExpr, fruizione_portaDelegata_UnionExpr); 
 				return nnn != null ? nnn.longValue() : 0L;
@@ -3584,7 +3679,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					erogazione_portaApplicativa_Expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -3602,7 +3697,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					erogazione_portaApplicativa_Expr.or(orSoggetti);
 				}
 				
-				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+				if(!this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					
 					// il mittente puo nn essere specificato
 					boolean ignoreSetMittente = isIgnoreSetMittente(this.distribSoggettoSearch);
@@ -3621,6 +3716,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				
 				this.impostaFiltroIdClusterOrCanale(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
 				
+				// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					erogazione_portaApplicativa_Expr.addGroupBy(model.DATA);
+				}
+				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					erogazione_portaApplicativa_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					erogazione_portaApplicativa_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -3634,13 +3734,19 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					erogazione_portaApplicativa_Expr.addGroupBy(model.DESTINATARIO);
 				}
 
-				if(forceIndexes!=null && forceIndexes.size()>0){
+				if(forceIndexes!=null && !forceIndexes.isEmpty()){
 					for (Index index : forceIndexes) {
 						erogazione_portaApplicativa_Expr.addForceIndex(index);		
 					}
 				}
 				
 				UnionExpression erogazione_portaApplicativa_UnionExpr = new UnionExpression(erogazione_portaApplicativa_Expr);
+				
+				// select field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					erogazione_portaApplicativa_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+				}	
+				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					erogazione_portaApplicativa_UnionExpr.addSelectField(
 							model.TIPO_MITTENTE, "tipo_soggetto");
@@ -3657,6 +3763,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// Espressione finta per usare l'ordinamento
 				IExpression fakeExpr = dao.newExpression();
 				UnionExpression unionExprFake = new UnionExpression(fakeExpr);
+				// select field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
+							model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+				}
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_MITTENTE.getFieldType()), "tipo_soggetto");
 					unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.MITTENTE.getFieldType()), "soggetto");
@@ -3668,8 +3779,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				
 				Union union = new Union();
 				union.setUnionAll(true);
+				
+				// select field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					union.addField(ALIAS_FIELD_DATA_3D);
+				}
 				union.addField("tipo_soggetto");
 				union.addField("soggetto");
+				
+				// group by field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					union.addGroupBy(ALIAS_FIELD_DATA_3D);
+				}
 				union.addGroupBy("tipo_soggetto");
 				union.addGroupBy("soggetto");
 
@@ -3753,7 +3874,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					fruizione_portaDelegata_Expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -3771,7 +3892,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					fruizione_portaDelegata_Expr.or(orSoggetti);
 				}
 				
-				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+				if(!this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					// il destinatario puo nn essere specificato
 					if (StringUtils.isNotBlank(this.distribSoggettoSearch.getNomeDestinatario())) {
 						fruizione_portaDelegata_Expr.and().equals(	model.TIPO_DESTINATARIO,	this.distribSoggettoSearch.getTipoDestinatario());
@@ -3788,6 +3909,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				this.impostaFiltroIdClusterOrCanale(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
 				
+				// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					fruizione_portaDelegata_Expr.addGroupBy(model.DATA);
+				}
+				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					fruizione_portaDelegata_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					fruizione_portaDelegata_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -3801,13 +3927,19 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					fruizione_portaDelegata_Expr.addGroupBy(model.MITTENTE);
 				}
 
-				if(forceIndexes!=null && forceIndexes.size()>0){
+				if(forceIndexes!=null && !forceIndexes.isEmpty()){
 					for (Index index : forceIndexes) {
 						fruizione_portaDelegata_Expr.addForceIndex(index);	
 					}
 				}
 				
 				UnionExpression fruizione_portaDelegata_UnionExpr = new UnionExpression(fruizione_portaDelegata_Expr);
+				
+				// select field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					fruizione_portaDelegata_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+				}
+				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					fruizione_portaDelegata_UnionExpr.addSelectField(
 							model.TIPO_DESTINATARIO,
@@ -3826,6 +3958,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// Espressione finta per usare l'ordinamento
 				IExpression fakeExpr = dao.newExpression();
 				UnionExpression unionExprFake = new UnionExpression(fakeExpr);
+				// select field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
+							model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+				}
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_DESTINATARIO.getFieldType()), "tipo_soggetto");
 					unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.DESTINATARIO.getFieldType()), "soggetto");
@@ -3837,8 +3974,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				
 				Union union = new Union();
 				union.setUnionAll(true);
+				
+				// select field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					union.addField(ALIAS_FIELD_DATA_3D);
+				}
 				union.addField("tipo_soggetto");
 				union.addField("soggetto");
+				
+				// group by field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					union.addGroupBy(ALIAS_FIELD_DATA_3D);
+				}
 				union.addGroupBy("tipo_soggetto");
 				union.addGroupBy("soggetto");
 
@@ -3848,24 +3995,24 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				//				return dao.count(destExpr);
 			}
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw e;
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (CoreException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (NotFoundException e) {
-			StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente.");
+			StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente.");
 		} catch (Exception e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		}
 		return 0L;
 	}
@@ -3877,6 +4024,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			ExpressionException, ServiceException, NotImplementedException,
 			CoreException, NotFoundException, ProtocolException, UserInvalidException, UtilsException {
 
+		StatisticType tipologia = checkStatisticType(this.distribSoggettoSearch);
+		
 		List<Index> forceIndexes = null;
 		try{
 			forceIndexes = 
@@ -3889,7 +4038,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)dao).getFieldConverter(); 
 		
 		List<Map<String, Object>> list = null;
-		ArrayList<ResDistribuzione> res = new ArrayList<ResDistribuzione>();
+		ArrayList<ResDistribuzione> res = new ArrayList<>();
 		StatisticheGiornaliereService.log
 		.debug("creo Expression per distribuzione Soggetto!");
 
@@ -3978,7 +4127,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			// il mittente e' l'utente loggato (sempre presente se non
 			// sn admin)
-			if (listaSoggettiGestione.size() > 0) {
+			if (!listaSoggettiGestione.isEmpty()) {
 				erogazione_portaApplicativa_Expr.and();
 
 				IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -3996,7 +4145,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				erogazione_portaApplicativa_Expr.or(orSoggetti);
 			}
 
-			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+			if(!this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				// il mittente puo nn essere specificato
 				if (StringUtils.isNotBlank(this.distribSoggettoSearch.getTrafficoPerSoggetto())) {
 					erogazione_portaApplicativa_Expr.and().equals(	model.TIPO_MITTENTE,	this.distribSoggettoSearch.getTipoTrafficoPerSoggetto());
@@ -4077,7 +4226,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			// il mittente e' l'utente loggato (sempre presente se non
 			// sn admin)
-			if (listaSoggettiGestione.size() > 0) {
+			if (!listaSoggettiGestione.isEmpty()) {
 				fruizione_portaDelegata_Expr.and();
 
 				IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -4095,7 +4244,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				fruizione_portaDelegata_Expr.or(orSoggetti);
 			}
 
-			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+			if(!this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				// il destinatario puo nn essere specificato
 				if (StringUtils.isNotBlank(this.distribSoggettoSearch.getTrafficoPerSoggetto())) {
 					fruizione_portaDelegata_Expr.and().equals(	model.TIPO_DESTINATARIO,	this.distribSoggettoSearch.getTipoTrafficoPerSoggetto());
@@ -4119,29 +4268,51 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// UNION
 
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
+				
+				// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					erogazione_portaApplicativa_Expr.addGroupBy(model.DATA);
+				}
+				
 				erogazione_portaApplicativa_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				erogazione_portaApplicativa_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				erogazione_portaApplicativa_Expr.addGroupBy(model.TIPO_MITTENTE);
 				erogazione_portaApplicativa_Expr.addGroupBy(model.MITTENTE);
 
+				// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					fruizione_portaDelegata_Expr.addGroupBy(model.DATA);
+				}
+				
 				fruizione_portaDelegata_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				fruizione_portaDelegata_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				fruizione_portaDelegata_Expr.addGroupBy(model.TIPO_DESTINATARIO);
 				fruizione_portaDelegata_Expr.addGroupBy(model.DESTINATARIO);
 			}
 			else{
+				
+				// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					erogazione_portaApplicativa_Expr.addGroupBy(model.DATA);
+				}
+				
 				erogazione_portaApplicativa_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				erogazione_portaApplicativa_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				erogazione_portaApplicativa_Expr.addGroupBy(model.TIPO_DESTINATARIO);
 				erogazione_portaApplicativa_Expr.addGroupBy(model.DESTINATARIO);
 
+				// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					fruizione_portaDelegata_Expr.addGroupBy(model.DATA);
+				}
+				
 				fruizione_portaDelegata_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				fruizione_portaDelegata_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				fruizione_portaDelegata_Expr.addGroupBy(model.TIPO_MITTENTE);
 				fruizione_portaDelegata_Expr.addGroupBy(model.MITTENTE);
 			}
 
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					erogazione_portaApplicativa_Expr.addForceIndex(index);	
 					fruizione_portaDelegata_Expr.addForceIndex(index);	
@@ -4149,6 +4320,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			
 			UnionExpression erogazione_portaApplicativa_UnionExpr = new UnionExpression(erogazione_portaApplicativa_Expr);
+			
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				erogazione_portaApplicativa_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+			}
+			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				erogazione_portaApplicativa_UnionExpr.addSelectField(model.TIPO_MITTENTE,
 						"tipo_soggetto");
@@ -4163,6 +4340,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 
 			UnionExpression fruizione_portaDelegata_UnionExpr = new UnionExpression(fruizione_portaDelegata_Expr);
+			
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				fruizione_portaDelegata_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+			}
+			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				fruizione_portaDelegata_UnionExpr.addSelectField(
 						model.TIPO_DESTINATARIO, "tipo_soggetto");
@@ -4178,11 +4361,27 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			Union union = new Union();
 			union.setUnionAll(true);
+			
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				union.addField(ALIAS_FIELD_DATA_3D);
+			}
 			union.addField("tipo_soggetto");
 			union.addField("soggetto");
+			
+			// group by field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			}
 			union.addGroupBy("tipo_soggetto");
 			union.addGroupBy("soggetto");
 
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribSoggettoSearch.getSortOrder() != null ? 	this.distribSoggettoSearch.getSortOrder() : SortOrder.ASC;
+				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
+			}
+			
 			TipoVisualizzazione tipoVisualizzazione = this.distribSoggettoSearch.getTipoVisualizzazione();
 			switch (tipoVisualizzazione) {
 			case DIMENSIONE_TRANSAZIONI:
@@ -4320,7 +4519,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				try {
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> dao.union(union, erogazione_portaApplicativa_UnionExpr, fruizione_portaDelegata_UnionExpr)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof NotFoundException) {
@@ -4332,10 +4531,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					if(e.getCause() instanceof NotImplementedException) {
 						throw (NotImplementedException) e.getCause();
 					}
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 				} catch (TimeoutException e) {
 					this.timeoutEvent = true;
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 				}
 			}
 			if (list != null) {
@@ -4343,7 +4542,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// List<Object[]> list = q.getResultList();
 				for (Map<String, Object> row : list) {
 
-					ResDistribuzione r = new ResDistribuzione();
+					ResDistribuzione r = null;
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3D();
+
+						// setto la data e la sua versione formattata in funziona dell'unita' temporale scelta
+						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
+						((ResDistribuzione3D)r).setData(data);
+						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
+					} else {
+						r = new ResDistribuzione();
+					}
+					
 					r.setRisultato(((String) row.get("tipo_soggetto")) + "/"
 							+ ((String) row.get("soggetto")));
 
@@ -4439,7 +4649,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			// il mittente e' l'utente loggato (sempre presente se non
 			// sn admin)
-			if (listaSoggettiGestione.size() > 0) {
+			if (!listaSoggettiGestione.isEmpty()) {
 				erogazione_portaApplicativa_Expr.and();
 
 				IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -4457,7 +4667,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				erogazione_portaApplicativa_Expr.or(orSoggetti);
 			}
 
-			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+			if(!this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				
 				// il mittente puo nn essere specificato
 				boolean ignoreSetMittente = isIgnoreSetMittente(this.distribSoggettoSearch);
@@ -4476,6 +4686,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			this.impostaFiltroIdClusterOrCanale(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
 			
+			// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				erogazione_portaApplicativa_Expr.addGroupBy(model.DATA);
+			}
+			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				erogazione_portaApplicativa_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				erogazione_portaApplicativa_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -4489,7 +4704,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				erogazione_portaApplicativa_Expr.addGroupBy(model.DESTINATARIO);
 			}
 
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					erogazione_portaApplicativa_Expr.addForceIndex(index);	
 				}
@@ -4500,6 +4715,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			//			erogazione_portaApplicativa_Expr.addOrder(model.MITTENTE);
 
 			UnionExpression erogazione_portaApplicativa_UnionExpr = new UnionExpression(erogazione_portaApplicativa_Expr);
+			
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				erogazione_portaApplicativa_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+			}	
+			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				erogazione_portaApplicativa_UnionExpr.addSelectField(
 						model.TIPO_MITTENTE, "tipo_soggetto");
@@ -4516,6 +4737,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// Espressione finta per usare l'ordinamento
 			IExpression fakeExpr = dao.newExpression();
 			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
+						model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+			}
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_MITTENTE.getFieldType()), "tipo_soggetto");
 				unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.MITTENTE.getFieldType()), "soggetto");
@@ -4527,11 +4753,27 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			Union union = new Union();
 			union.setUnionAll(true);
+			
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				union.addField(ALIAS_FIELD_DATA_3D);
+			}
 			union.addField("tipo_soggetto");
 			union.addField("soggetto");
+			
+			// group by field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			}
 			union.addGroupBy("tipo_soggetto");
 			union.addGroupBy("soggetto");
 
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribSoggettoSearch.getSortOrder() != null ? 	this.distribSoggettoSearch.getSortOrder() : SortOrder.ASC;
+				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
+			}
+			
 			TipoVisualizzazione tipoVisualizzazione = this.distribSoggettoSearch.getTipoVisualizzazione();
 			switch (tipoVisualizzazione) {
 			case DIMENSIONE_TRANSAZIONI:
@@ -4649,7 +4891,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				try {
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> dao.union(union, erogazione_portaApplicativa_UnionExpr, unionExprFake)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof NotFoundException) {
@@ -4661,10 +4903,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					if(e.getCause() instanceof NotImplementedException) {
 						throw (NotImplementedException) e.getCause();
 					}
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 				} catch (TimeoutException e) {
 					this.timeoutEvent = true;
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 				}
 			}
 			if (list != null) {
@@ -4672,9 +4914,25 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// List<Object[]> list = q.getResultList();
 				for (Map<String, Object> row : list) {
 
-					ResDistribuzione r = new ResDistribuzione();
-					r.setRisultato(((String) row.get("tipo_soggetto")) + "/"
-							+ ((String) row.get("soggetto")));
+					String risultato = ((String) row.get("tipo_soggetto")) + "/"
+							+ ((String) row.get("soggetto"));
+					if(risultato!=null && risultato.contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) {
+						continue;
+					}
+					
+					ResDistribuzione r = null;
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3D();
+
+						// setto la data e la sua versione formattata in funziona dell'unita' temporale scelta
+						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
+						((ResDistribuzione3D)r).setData(data);
+						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
+					} else {
+						r = new ResDistribuzione();
+					}
+					
+					r.setRisultato(risultato);
 
 					Number somma = StatsUtils.converToNumber(row.get("somma"));
 					if(somma!=null){
@@ -4683,8 +4941,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						r.setSomma(0);
 					}
 
-					if(!r.getRisultato().contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE))
-						res.add(r);
+					res.add(r);
 				}
 
 			}
@@ -4767,7 +5024,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			// il mittente e' l'utente loggato (sempre presente se non
 			// sn admin)
-			if (listaSoggettiGestione.size() > 0) {
+			if (!listaSoggettiGestione.isEmpty()) {
 				fruizione_portaDelegata_Expr.and();
 
 				IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -4785,7 +5042,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				fruizione_portaDelegata_Expr.or(orSoggetti);
 			}
 
-			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+			if(!this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				// il destinatario puo nn essere specificato
 				if (StringUtils.isNotBlank(this.distribSoggettoSearch.getNomeDestinatario())) {
 					fruizione_portaDelegata_Expr.and().equals(	model.TIPO_DESTINATARIO,	this.distribSoggettoSearch.getTipoDestinatario());
@@ -4802,6 +5059,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			this.impostaFiltroIdClusterOrCanale(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
 			
+			// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				fruizione_portaDelegata_Expr.addGroupBy(model.DATA);
+			}
+			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				fruizione_portaDelegata_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				fruizione_portaDelegata_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -4815,7 +5077,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				fruizione_portaDelegata_Expr.addGroupBy(model.MITTENTE);
 			}
 
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					fruizione_portaDelegata_Expr.addForceIndex(index);	
 				}
@@ -4826,6 +5088,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			//			fruizione_portaDelegata_Expr.addOrder(model.DESTINATARIO);
 
 			UnionExpression fruizione_portaDelegata_UnionExpr = new UnionExpression(fruizione_portaDelegata_Expr);
+			
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				fruizione_portaDelegata_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+			}
+			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				fruizione_portaDelegata_UnionExpr.addSelectField(
 						model.TIPO_DESTINATARIO,
@@ -4844,6 +5112,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// Espressione finta per usare l'ordinamento
 			IExpression fakeExpr = dao.newExpression();
 			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
+						model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+			}
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_DESTINATARIO.getFieldType()), "tipo_soggetto");
 				unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.DESTINATARIO.getFieldType()), "soggetto");
@@ -4855,11 +5128,27 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			Union union = new Union();
 			union.setUnionAll(true);
+			
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				union.addField(ALIAS_FIELD_DATA_3D);
+			}
 			union.addField("tipo_soggetto");
 			union.addField("soggetto");
+			
+			// group by field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			}
 			union.addGroupBy("tipo_soggetto");
 			union.addGroupBy("soggetto");
 
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribSoggettoSearch.getSortOrder() != null ? 	this.distribSoggettoSearch.getSortOrder() : SortOrder.ASC;
+				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
+			}
+			
 			TipoVisualizzazione tipoVisualizzazione = this.distribSoggettoSearch.getTipoVisualizzazione();
 			switch (tipoVisualizzazione) {
 			case DIMENSIONE_TRANSAZIONI:
@@ -4982,7 +5271,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				try {
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> dao.union(union, fruizione_portaDelegata_UnionExpr, unionExprFake)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof NotFoundException) {
@@ -4994,10 +5283,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					if(e.getCause() instanceof NotImplementedException) {
 						throw (NotImplementedException) e.getCause();
 					}
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 				} catch (TimeoutException e) {
 					this.timeoutEvent = true;
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 				}
 			}
 			if (list != null) {
@@ -5005,9 +5294,25 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// List<Object[]> list = q.getResultList();
 				for (Map<String, Object> row : list) {
 
-					ResDistribuzione r = new ResDistribuzione();
-					r.setRisultato(((String) row.get("tipo_soggetto")) + "/"
-							+ ((String) row.get("soggetto")));
+					String risultato = ((String) row.get("tipo_soggetto")) + "/"
+							+ ((String) row.get("soggetto"));
+					if(risultato!=null && risultato.contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) {
+						continue;
+					}
+					
+					ResDistribuzione r = null;
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3D();
+
+						// setto la data e la sua versione formattata in funziona dell'unita' temporale scelta
+						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
+						((ResDistribuzione3D)r).setData(data);
+						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
+					} else {
+						r = new ResDistribuzione();
+					}
+					
+					r.setRisultato(risultato);
 
 					Number somma = StatsUtils.converToNumber(row.get("somma"));
 					if(somma!=null){
@@ -5016,8 +5321,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						r.setSomma(0);
 					}
 
-					if(!r.getRisultato().contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) 	
-						res.add(r);
+					res.add(r);
 				}
 
 			}
@@ -5079,7 +5383,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			IExpression gByExpr = createDistribuzioneServizioExpression(dao,model, true);
 			
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					gByExpr.addForceIndex(index);	
 				}
@@ -5089,13 +5393,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			return nnn != null ? ((int) nnn.longValue()) : 0;
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw e;
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (Exception e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e.getMessage(),e);
 		}
 
@@ -5149,6 +5453,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			IExpression gByExpr = this.createDistribuzioneServizioExpression(this.dao, model, false);
 
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribServizioSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribServizioSearch.getSortOrder() != null ? 	this.distribServizioSearch.getSortOrder() : SortOrder.ASC;
+				gByExpr.sortOrder(s).addOrder(model.DATA);
+			}
+			
 			if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
 				gByExpr.sortOrder(SortOrder.ASC).addOrder(model.TIPO_SERVIZIO);
 				gByExpr.sortOrder(SortOrder.ASC).addOrder(model.SERVIZIO);
@@ -5168,7 +5478,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				throw new ServiceException(e.getMessage(),e);
 			}
 			
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					gByExpr.addForceIndex(index);	
 				}
@@ -5185,6 +5495,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			UnionExpression unionExpr = new UnionExpression(gByExpr);
 			IExpression fakeExpr = this.dao.newExpression();
 			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
+			
+			// select field by data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribServizioSearch.getNumeroDimensioni())) {
+				unionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+
+				unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
+						model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+			}
 			
 			if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
 				
@@ -5218,6 +5536,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			Union union = new Union();
 			union.setUnionAll(true);
+			
+			// select field e group by data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribServizioSearch.getNumeroDimensioni())) {
+				union.addField(ALIAS_FIELD_DATA_3D);
+				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			}
+			
 			if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
 				union.addField(aliasFieldTipoServizio);
 				union.addField(aliasFieldServizio);
@@ -5233,6 +5558,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			else {
 				union.addField(aliasUriApi);
 				union.addGroupBy(aliasUriApi);
+			}
+			
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribServizioSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribServizioSearch.getSortOrder() != null ? 	this.distribServizioSearch.getSortOrder() : SortOrder.ASC;
+				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
 			}
 
 			TipoVisualizzazione tipoVisualizzazione = this.distribServizioSearch.getTipoVisualizzazione();
@@ -5341,7 +5672,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			}
 
-			ArrayList<ResDistribuzione> res = new ArrayList<ResDistribuzione>();
+			ArrayList<ResDistribuzione> res = new ArrayList<>();
 
 			if(start != null)
 				union.setOffset(start);
@@ -5357,7 +5688,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				try {
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.union(union, unionExpr, unionExprFake)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof NotFoundException) {
@@ -5369,10 +5700,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					if(e.getCause() instanceof NotImplementedException) {
 						throw (NotImplementedException) e.getCause();
 					}
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 				} catch (TimeoutException e) {
 					this.timeoutEvent = true;
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 				}
 			}
 			if (list != null) {
@@ -5380,23 +5711,42 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// List<Object[]> list = q.getResultList();
 				for (Map<String, Object> row : list) {
 
-					ResDistribuzione r = new ResDistribuzione();
+					String risultato = null;
+					if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
+						risultato = ((String) row.get(aliasFieldTipoServizio)) + "/"
+								+ ((String) row.get(aliasFieldServizio)) + ":"
+								+ (row.get(aliasFieldVersioneServizio));
+					}
+					else {
+						risultato = (String) row.get(aliasUriApi);
+					}
+					
+					if(risultato!=null && risultato.contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) {
+						continue;
+					}
+					
+					ResDistribuzione r = null;
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribServizioSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3D();
+
+						// setto la data e la sua versione formattata in funziona dell'unita' temporale scelta
+						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
+						((ResDistribuzione3D)r).setData(data);
+						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
+					} else {
+						r = new ResDistribuzione();
+					}
 					
 					if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
 						
-						r.setRisultato(((String) row.get(aliasFieldTipoServizio)) + "/"
-								+ ((String) row.get(aliasFieldServizio)) + ":"
-								+ (row.get(aliasFieldVersioneServizio)));
+						r.setRisultato(risultato);
 						
 						r.getParentMap().put("0",((String) row.get(aliasFieldTipoDestinatario)) + "/"
 								+ ((String) row.get(aliasFieldDestinatario)));
 					}
 					else {
 						
-						String risultato = (String) row.get(aliasUriApi);
-						
-						if(!risultato.contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE))
-							risultato = this.getLabelCredenzialeFieldGroupBy(risultato, this.distribServizioSearch);	
+						risultato = this.getLabelCredenzialeFieldGroupBy(risultato, this.distribServizioSearch, new StringBuilder());	
 						
 						r.setRisultato(DistribuzionePerServizioBean.PREFIX_API+risultato);
 						
@@ -5409,8 +5759,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						r.setSomma(0);
 					}
 
-					if(!r.getRisultato().contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) 	
-						res.add(r);
+					res.add(r);
 				}
 
 			}
@@ -5418,27 +5767,27 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			return res;
 
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw e;
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (NotFoundException e) {
-			StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente.");
+			StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente.");
 		}
-		return new ArrayList<ResDistribuzione>();
+		return new ArrayList<>();
 	}
 
 	private IExpression createDistribuzioneServizioExpression(IServiceSearchWithoutId<?> dao, StatisticaModel model, boolean isCount) throws ServiceException {
 		IExpression expr = null;
 
-		StatisticheGiornaliereService.log.debug("creo Expression per distribuzione Servizio!");
+		StatisticheGiornaliereService.logDebug("creo Expression per distribuzione Servizio!");
 
 		List<Soggetto> listaSoggettiGestione = this.distribServizioSearch.getSoggettiGestione();
 
@@ -5509,7 +5858,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				boolean trafficoSoggetto = StringUtils
 						.isNotBlank(this.distribServizioSearch
 								.getTrafficoPerSoggetto());
-				boolean soggetto = listaSoggettiGestione.size() > 0;
+				boolean soggetto = !listaSoggettiGestione.isEmpty();
 				String tipoTrafficoSoggetto = null;
 				String nomeTrafficoSoggetto = null;
 				if (trafficoSoggetto) {
@@ -5528,7 +5877,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if (trafficoSoggetto && soggetto) {
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -5590,7 +5939,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// e' impostato solo il soggetto in gestione
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -5632,7 +5981,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -5666,7 +6015,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -5702,6 +6051,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			this.impostaFiltroIdClusterOrCanale(expr, this.distribServizioSearch, model, isCount);
 
+			// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribServizioSearch.getNumeroDimensioni())) {
+				expr.addGroupBy(model.DATA);
+			}
+			
 			if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
 			
 				expr.notEquals(model.TIPO_SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -5725,21 +6079,21 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw e;
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (CoreException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		} catch (Exception e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		}
 
 		return expr;
@@ -5798,7 +6152,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			IExpression gByExpr = createDistribuzioneAzioneExpression(dao,	model, true);
 			
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					gByExpr.addForceIndex(index);	
 				}
@@ -5808,13 +6162,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			return nnn != null ? ((int) nnn.longValue()) : 0;
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw e;
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (Exception e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e.getMessage(),e);
 		}
 	}
@@ -5830,7 +6184,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private IExpression createDistribuzioneAzioneExpression(IServiceSearchWithoutId<?> dao, StatisticaModel model, boolean isCount) throws ServiceException {
 		IExpression expr = null;
 
-		StatisticheGiornaliereService.log.debug("creo Expression per distribuzione Azione!");
+		StatisticheGiornaliereService.logDebug("creo Expression per distribuzione Azione!");
 
 		List<Soggetto> listaSoggettiGestione = this.distribAzioneSearch.getSoggettiGestione();
 
@@ -5901,7 +6255,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				boolean trafficoSoggetto = StringUtils
 						.isNotBlank(this.distribAzioneSearch
 								.getTrafficoPerSoggetto());
-				boolean soggetto = listaSoggettiGestione.size() > 0;
+				boolean soggetto = !listaSoggettiGestione.isEmpty();
 				String tipoTrafficoSoggetto = null;
 				String nomeTrafficoSoggetto = null;
 				if (trafficoSoggetto) {
@@ -5920,7 +6274,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if (trafficoSoggetto && soggetto) {
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -5982,7 +6336,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// e' impostato solo il soggetto in gestione
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -6024,7 +6378,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -6058,7 +6412,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -6107,6 +6461,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.impostaFiltroApi(expr, this.distribAzioneSearch, model, isCount);
 
 			this.impostaFiltroIdClusterOrCanale(expr, this.distribAzioneSearch, model, isCount);
+
+			// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+				expr.addGroupBy(model.DATA);
+			}
 			
 			expr.notEquals(model.AZIONE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 			expr.addGroupBy(model.AZIONE);
@@ -6124,21 +6483,21 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			expr.addGroupBy(model.DESTINATARIO);
 
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw e;
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (CoreException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		} catch (Exception e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		}
 
 		return expr;
@@ -6179,6 +6538,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			IExpression gByExpr = this.createDistribuzioneAzioneExpression(this.dao,	model, false);
 
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribAzioneSearch.getSortOrder() != null ? 	this.distribAzioneSearch.getSortOrder() : SortOrder.ASC;
+				gByExpr.sortOrder(s).addOrder(model.DATA);
+			}
+			
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.AZIONE);
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.TIPO_SERVIZIO);
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.SERVIZIO);
@@ -6195,7 +6560,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				throw new ServiceException(e.getMessage(),e);
 			}
 			
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					gByExpr.addForceIndex(index);	
 				}
@@ -6209,6 +6574,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			String aliasFieldTipoDestinatario = "tipo_destinatario";
 			String aliasFieldDestinatario = "destinatario";
 			
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+				unionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+			}
+			
 			unionExpr.addSelectField(model.AZIONE,		aliasFieldAzione);
 			unionExpr.addSelectField(model.TIPO_SERVIZIO, aliasFieldTipoServizio);
 			unionExpr.addSelectField(model.SERVIZIO, aliasFieldServizio);
@@ -6219,6 +6589,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// Espressione finta per usare l'ordinamento
 			IExpression fakeExpr = this.dao.newExpression();
 			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
+			
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+				unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
+						model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+			}
+			
 			unionExprFake.addSelectField(new ConstantField(aliasFieldAzione, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
 					model.AZIONE.getFieldType()), aliasFieldAzione);			
 			unionExprFake.addSelectField(new ConstantField(aliasFieldTipoServizio, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
@@ -6234,6 +6611,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			Union union = new Union();
 			union.setUnionAll(true);
+			
+			// select field e group by data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+				union.addField(ALIAS_FIELD_DATA_3D);
+				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			}
+			
 			union.addField(aliasFieldAzione);
 			union.addField(aliasFieldTipoServizio);
 			union.addField(aliasFieldServizio);
@@ -6247,6 +6631,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			union.addGroupBy(aliasFieldTipoDestinatario);
 			union.addGroupBy(aliasFieldDestinatario);
 
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribAzioneSearch.getSortOrder() != null ? 	this.distribAzioneSearch.getSortOrder() : SortOrder.ASC;
+				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
+			}
+
+			
 			TipoVisualizzazione tipoVisualizzazione = this.distribAzioneSearch.getTipoVisualizzazione();
 			String sommaAliasName = "somma";
 			String datoParamAliasName = "dato";
@@ -6355,7 +6746,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			}
 
-			ArrayList<ResDistribuzione> res = new ArrayList<ResDistribuzione>();
+			ArrayList<ResDistribuzione> res = new ArrayList<>();
 
 			if(start != null)
 				union.setOffset(start);
@@ -6371,7 +6762,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				try {
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.union(union, unionExpr, unionExprFake)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof NotFoundException) {
@@ -6383,19 +6774,34 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					if(e.getCause() instanceof NotImplementedException) {
 						throw (NotImplementedException) e.getCause();
 					}
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 				} catch (TimeoutException e) {
 					this.timeoutEvent = true;
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 				}
 			}
 			if (list != null) {
 
-				// List<Object[]> list = q.getResultList();
 				for (Map<String, Object> row : list) {
 
-					ResDistribuzione r = new ResDistribuzione();
-					r.setRisultato(((String) row.get(aliasFieldAzione)));
+					String risultato = ((String) row.get(aliasFieldAzione));
+					if(risultato!=null && risultato.contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) {
+						continue;
+					}
+					
+					ResDistribuzione r = null;
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3D();
+
+						// setto la data e la sua versione formattata in funziona dell'unita' temporale scelta
+						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
+						((ResDistribuzione3D)r).setData(data);
+						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
+					} else {
+						r = new ResDistribuzione();
+					}
+					
+					r.setRisultato(risultato);
 					
 					r.getParentMap().put("0",((String) row.get(aliasFieldTipoServizio)) + "/"
 							+ ((String) row.get(aliasFieldServizio)) + ":"
@@ -6411,8 +6817,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						r.setSomma(0);
 					}
 
-					if(!r.getRisultato().contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) 	
-						res.add(r);
+					res.add(r);
 				}
 
 			}
@@ -6420,21 +6825,21 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			return res;
 
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw e;
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (NotFoundException e) {
-			StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente.");
+			StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente.");
 		}
-		return new ArrayList<ResDistribuzione>();
+		return new ArrayList<>();
 	}
 	
 	
@@ -6506,7 +6911,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if(forceErogazione){
 					IExpression expr = createDistribuzioneServizioApplicativoExpression(dao, model, true, forceErogazione, false);
 					
-					if(forceIndexes!=null && forceIndexes.size()>0){
+					if(forceIndexes!=null && !forceIndexes.isEmpty()){
 						for (Index index : forceIndexes) {
 							expr.addForceIndex(index);	
 						}
@@ -6519,7 +6924,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if(forceFruizione){
 					IExpression expr = createDistribuzioneServizioApplicativoExpression(dao, model, true, false, forceFruizione);
 					
-					if(forceIndexes!=null && forceIndexes.size()>0){
+					if(forceIndexes!=null && !forceIndexes.isEmpty()){
 						for (Index index : forceIndexes) {
 							expr.addForceIndex(index);	
 						}
@@ -6536,7 +6941,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// Lascio else solo se si vuole tornare indietro come soluzione
 				IExpression expr = createDistribuzioneServizioApplicativoExpression(dao, model, true, false, false);
 				
-				if(forceIndexes!=null && forceIndexes.size()>0){
+				if(forceIndexes!=null && !forceIndexes.isEmpty()){
 					for (Index index : forceIndexes) {
 						expr.addForceIndex(index);	
 					}
@@ -6546,17 +6951,16 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				return nnn != null ? ((int) nnn.longValue()) : 0;
 			}
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw e;
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (Exception e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e.getMessage(),e);
 		} 
 
-		//		return 0;
 	}
 
 	@Override
@@ -6576,7 +6980,6 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		try {
 			StatisticType tipologia = checkStatisticType(this.distribSaSearch);
 			StatisticaModel model = null;
-//			IServiceSearchWithoutId<?> dao = null;
 
 			switch (tipologia) {
 			case GIORNALIERA:
@@ -6599,6 +7002,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			if(this.dao==null) {
 				throw new ServiceException("DAO unknown");
+			}
+			if(model==null) {
+				throw new ServiceException("Model unknown");
 			}
 			
 			ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)this.dao).getFieldConverter(); 
@@ -6632,10 +7038,17 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if(forceErogazione){
 					gByExprErogazione = createDistribuzioneServizioApplicativoExpression(this.dao,model,false,
 							forceErogazione,false);	
+					
+					// ordinamento per data in caso di visualizzazione a 3 dimensioni
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+						SortOrder s = 	this.distribSaSearch.getSortOrder() != null ? 	this.distribSaSearch.getSortOrder() : SortOrder.ASC;
+						gByExprErogazione.sortOrder(s).addOrder(model.DATA);
+					}
+					
 					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(credenzialeFieldGroupBy);
 					// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
-//					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.TIPO_DESTINATARIO);
-//					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.DESTINATARIO);
+/**					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.TIPO_DESTINATARIO);
+//					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.DESTINATARIO);*/
 					if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
 						if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
 							if (!org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.distribSaSearch.getIdentificazione())) {
@@ -6645,7 +7058,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						}
 					}
 					
-					if(forceIndexes!=null && forceIndexes.size()>0){
+					if(forceIndexes!=null && !forceIndexes.isEmpty()){
 						for (Index index : forceIndexes) {
 							gByExprErogazione.addForceIndex(index);	
 						}
@@ -6654,6 +7067,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if(forceFruizione){
 					gByExprFruizione = createDistribuzioneServizioApplicativoExpression(this.dao,model,false,
 							false,forceFruizione);	
+					
+					// ordinamento per data in caso di visualizzazione a 3 dimensioni
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+						SortOrder s = 	this.distribSaSearch.getSortOrder() != null ? 	this.distribSaSearch.getSortOrder() : SortOrder.ASC;
+						gByExprFruizione.sortOrder(s).addOrder(model.DATA);
+					}
+					
 					gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(credenzialeFieldGroupBy);
 					if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
 						if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
@@ -6664,7 +7084,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						}
 					}
 					
-					if(forceIndexes!=null && forceIndexes.size()>0){
+					if(forceIndexes!=null && !forceIndexes.isEmpty()){
 						for (Index index : forceIndexes) {
 							gByExprFruizione.addForceIndex(index);	
 						}
@@ -6675,9 +7095,16 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// Lascio else solo se si vuole tornare indietro come soluzione
 				gByExpr = createDistribuzioneServizioApplicativoExpression(this.dao,model,false,
 						false, false);	
+				
+				// ordinamento per data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+					SortOrder s = 	this.distribSaSearch.getSortOrder() != null ? 	this.distribSaSearch.getSortOrder() : SortOrder.ASC;
+					gByExpr.sortOrder(s).addOrder(model.DATA);
+				}
+				
 				gByExpr.sortOrder(SortOrder.ASC).addOrder(credenzialeFieldGroupBy);
 				
-				if(forceIndexes!=null && forceIndexes.size()>0){
+				if(forceIndexes!=null && !forceIndexes.isEmpty()){
 					for (Index index : forceIndexes) {
 						gByExpr.addForceIndex(index);	
 					}
@@ -6695,6 +7122,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(forceErogazione || forceFruizione){
 				if(forceErogazione){
 					unionExprErogatore = new UnionExpression(gByExprErogazione);
+					// select field data in caso di visualizzazione a 3 dimensioni
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+						unionExprErogatore.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+					}
 					unionExprErogatore.addSelectField(credenzialeFieldGroupBy, aliasFieldCredenzialeMittente);
 					// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
 //					unionExprErogatore.addSelectField(model.TIPO_DESTINATARIO, aliasFieldTipoSoggetto);
@@ -6711,6 +7142,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 				if(forceFruizione){
 					unionExprFruitore = new UnionExpression(gByExprFruizione);
+					// select field data in caso di visualizzazione a 3 dimensioni
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+						unionExprFruitore.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+					}
 					unionExprFruitore.addSelectField(credenzialeFieldGroupBy, aliasFieldCredenzialeMittente);
 					if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
 						if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
@@ -6726,9 +7161,17 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// Espressione finta per usare l'ordinamento
 					fakeExpr = this.dao.newExpression();
 					unionExprFake = new UnionExpression(fakeExpr);
+					
+					// select field data in caso di visualizzazione a 3 dimensioni
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+						unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
+								model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+					}
+					
 					unionExprFake.addSelectField(new ConstantField(aliasFieldCredenzialeMittente, 
 							StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, credenzialeFieldGroupBy.getFieldType()), 
 							aliasFieldCredenzialeMittente);
+					
 					if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
 						if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
 							if (!org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.distribSaSearch.getIdentificazione())) {
@@ -6748,6 +7191,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// Lascio else solo se si vuole tornare indietro come soluzione
 				
 				unionExpr = new UnionExpression(gByExpr);
+				
+				// select field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+					unionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+				}
+				
 				unionExpr.addSelectField(credenzialeFieldGroupBy, aliasFieldCredenzialeMittente);
 				
 				// Espressione finta per usare l'ordinamento
@@ -6761,6 +7210,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			 			
 			Union union = new Union();
 			union.setUnionAll(true);
+			
+			// select field by data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+				union.addField(ALIAS_FIELD_DATA_3D);
+			}
+			
 			union.addField(aliasFieldCredenzialeMittente);
 			if(forceErogazione || forceFruizione){
 				if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
@@ -6773,6 +7228,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					}
 				}
 			}
+			
+			// select group by data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			}
+			
 			union.addGroupBy(aliasFieldCredenzialeMittente);
 			if(forceErogazione || forceFruizione){
 				if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
@@ -6799,8 +7260,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				uExpressions[indexUE++] = unionExpr;
 			}
 			if(indexUE == 1){
-				uExpressions[indexUE++] = unionExprFake;
+				uExpressions[indexUE] = unionExprFake;
 				fake = true;
+			}
+			
+			
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribSaSearch.getSortOrder() != null ? 	this.distribSaSearch.getSortOrder() : SortOrder.ASC;
+				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
 			}
 			
 			TipoVisualizzazione tipoVisualizzazione = this.distribSaSearch.getTipoVisualizzazione();
@@ -6913,7 +7381,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				String datoParamRichiesteAliasName = "dato_richieste";
 				
 				union.addOrderBy(sommaAliasName,SortOrder.DESC);
-				//union.addField(sommaAliasName, Function.AVG, datoParamAliasName);
+				/**union.addField(sommaAliasName, Function.AVG, datoParamAliasName);*/
 				if(fake) {
 					union.addField(sommaAliasName, Function.SUM, datoParamAliasName);
 				}
@@ -6937,29 +7405,29 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				case LATENZA_PORTA:
 					if(unionExprErogatore!=null){
 						gByExprErogazione.isNotNull(model.LATENZA_PORTA);
-//						unionExprErogatore.addSelectFunctionField(new FunctionField(
+/**						unionExprErogatore.addSelectFunctionField(new FunctionField(
 //								model.LATENZA_PORTA,
-//								Function.AVG, datoParamAliasName));
+//								Function.AVG, datoParamAliasName));*/
 						unionExprErogatore.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_PORTA, model.NUMERO_TRANSAZIONI, datoParamAliasName));
 					}
 					if(unionExprFruitore!=null){
 						gByExprFruizione.isNotNull(model.LATENZA_PORTA);
-//						unionExprFruitore.addSelectFunctionField(new FunctionField(
+/**						unionExprFruitore.addSelectFunctionField(new FunctionField(
 //								model.LATENZA_PORTA,
-//								Function.AVG, datoParamAliasName));
+//								Function.AVG, datoParamAliasName));*/
 						unionExprFruitore.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_PORTA, model.NUMERO_TRANSAZIONI, datoParamAliasName));
 					}
 					if(unionExpr!=null){
 						gByExpr.isNotNull(model.LATENZA_PORTA);
-//						unionExpr.addSelectFunctionField(new FunctionField(
+/**						unionExpr.addSelectFunctionField(new FunctionField(
 //								model.LATENZA_PORTA,
-//								Function.AVG, datoParamAliasName));
+//								Function.AVG, datoParamAliasName));*/
 						unionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_PORTA, model.NUMERO_TRANSAZIONI, datoParamAliasName));
 					}
 					if(unionExprFake!=null){
 						fakeExpr.isNotNull(model.LATENZA_PORTA);
-//						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
-//								Integer.valueOf(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, datoParamAliasName));
+/**						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
+//								Integer.valueOf(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, datoParamAliasName));*/
 						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta", 
 								Integer.valueOf(0), model.LATENZA_PORTA.getFieldType()), Function.SUM, datoParamAliasName));
 					}
@@ -6967,29 +7435,29 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				case LATENZA_SERVIZIO:
 					if(unionExprErogatore!=null){
 						gByExprErogazione.isNotNull(model.LATENZA_SERVIZIO);
-//						unionExprErogatore.addSelectFunctionField(new FunctionField(
+/**						unionExprErogatore.addSelectFunctionField(new FunctionField(
 //								model.LATENZA_SERVIZIO,
-//								Function.AVG, datoParamAliasName));
+//								Function.AVG, datoParamAliasName));*/
 						unionExprErogatore.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_SERVIZIO, model.NUMERO_TRANSAZIONI, datoParamAliasName));
 					}
 					if(unionExprFruitore!=null){
 						gByExprFruizione.isNotNull(model.LATENZA_SERVIZIO);
-//						unionExprFruitore.addSelectFunctionField(new FunctionField(
+/**						unionExprFruitore.addSelectFunctionField(new FunctionField(
 //								model.LATENZA_SERVIZIO,
-//								Function.AVG, datoParamAliasName));
+//								Function.AVG, datoParamAliasName));*/
 						unionExprFruitore.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_SERVIZIO, model.NUMERO_TRANSAZIONI, datoParamAliasName));
 					}
 					if(unionExpr!=null){
 						gByExpr.isNotNull(model.LATENZA_SERVIZIO);
-//						unionExpr.addSelectFunctionField(new FunctionField(
+/**						unionExpr.addSelectFunctionField(new FunctionField(
 //								model.LATENZA_SERVIZIO,
-//								Function.AVG, datoParamAliasName));
+//								Function.AVG, datoParamAliasName));*/
 						unionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_SERVIZIO, model.NUMERO_TRANSAZIONI, datoParamAliasName));
 					}
 					if(unionExprFake!=null){
 						fakeExpr.isNotNull(model.LATENZA_SERVIZIO);
-//						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio",
-//								Integer.valueOf(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, datoParamAliasName));
+/**						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio",
+//								Integer.valueOf(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, datoParamAliasName));*/
 						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
 								Integer.valueOf(0), model.LATENZA_SERVIZIO.getFieldType()), Function.SUM, datoParamAliasName));
 					}
@@ -6999,29 +7467,29 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				default:
 					if(unionExprErogatore!=null){
 						gByExprErogazione.isNotNull(model.LATENZA_TOTALE);
-//						unionExprErogatore.addSelectFunctionField(new FunctionField(
+/**						unionExprErogatore.addSelectFunctionField(new FunctionField(
 //								model.LATENZA_TOTALE,
-//								Function.AVG, datoParamAliasName));
+//								Function.AVG, datoParamAliasName));*/
 						unionExprErogatore.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_TOTALE, model.NUMERO_TRANSAZIONI, datoParamAliasName));
 					}
 					if(unionExprFruitore!=null){
 						gByExprFruizione.isNotNull(model.LATENZA_TOTALE);
-//						unionExprFruitore.addSelectFunctionField(new FunctionField(
+/**						unionExprFruitore.addSelectFunctionField(new FunctionField(
 //								model.LATENZA_TOTALE,
-//								Function.AVG, datoParamAliasName));
+//								Function.AVG, datoParamAliasName));*/
 						unionExprFruitore.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_TOTALE, model.NUMERO_TRANSAZIONI, datoParamAliasName));
 					}
 					if(unionExpr!=null){
 						gByExpr.isNotNull(model.LATENZA_TOTALE);
-//						unionExpr.addSelectFunctionField(new FunctionField(
+/**						unionExpr.addSelectFunctionField(new FunctionField(
 //								model.LATENZA_TOTALE,
-//								Function.AVG, datoParamAliasName));
+//								Function.AVG, datoParamAliasName));*/
 						unionExpr.addSelectFunctionField(StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_TOTALE, model.NUMERO_TRANSAZIONI, datoParamAliasName));
 					}
 					if(unionExprFake!=null){
 						fakeExpr.isNotNull(model.LATENZA_TOTALE);
-//						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
-//								Integer.valueOf(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, datoParamAliasName));
+/**						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
+//								Integer.valueOf(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, datoParamAliasName));*/
 						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale", 
 								Integer.valueOf(0), model.LATENZA_TOTALE.getFieldType()), Function.SUM, datoParamAliasName));
 					}
@@ -7031,12 +7499,20 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			}
 
-			ArrayList<ResDistribuzione> res = new ArrayList<ResDistribuzione>();
+			ArrayList<ResDistribuzione> res = new ArrayList<>();
 
-			if(start != null)
+			boolean countApplicativo = false;
+			int elementi = 0;
+			if(start != null && limit!=null && !this.distribSaSearch.isUseCount()) {
+				countApplicativo = true;
+			}
+			
+			if(!countApplicativo && start != null) {
 				union.setOffset(start);
-			if(start != null)
+			}
+			if(!countApplicativo && start != null && limit!=null) {
 				union.setLimit(limit);
+			}
 
 			this.timeoutEvent = false;
 			
@@ -7047,7 +7523,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				try {
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.union(union, uExpressions)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof NotFoundException) {
@@ -7059,22 +7535,41 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					if(e.getCause() instanceof NotImplementedException) {
 						throw (NotImplementedException) e.getCause();
 					}
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 				} catch (TimeoutException e) {
 					this.timeoutEvent = true;
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 				}
 			}
 			if (list != null) {
 
-				// List<Object[]> list = q.getResultList();
 				for (Map<String, Object> row : list) {
 
-					ResDistribuzione r = new ResDistribuzione();
 					String risultato = (String) row.get(aliasFieldCredenzialeMittente);
 					
-					if(!risultato.contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE))
-						risultato = this.getLabelCredenzialeFieldGroupBy(risultato, this.distribSaSearch);
+					if(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE.equals(risultato)) {
+						continue;
+					} 
+					if(risultato!=null && risultato.contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) {
+						continue;
+					}
+					
+					ResDistribuzione r = null;
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3D();
+
+						// setto la data e la sua versione formattata in funziona dell'unita' temporale scelta
+						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
+						((ResDistribuzione3D)r).setData(data);
+						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
+					} else {
+						r = new ResDistribuzione();
+					}
+										
+					String risultatoIdLongCredenzialeMittente = risultato;
+										
+					StringBuilder sbTipoCredenziale = new StringBuilder();
+					risultato = this.getLabelCredenzialeFieldGroupBy(risultato, this.distribSaSearch, sbTipoCredenziale);
 					
 					boolean addSoggetto = true;
 					
@@ -7094,8 +7589,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 											else {
 												r.getParentMap().put("1", Costanti.INFORMAZIONE_NON_DISPONIBILE);
 											}
-										}catch(Throwable tAppId) {
-											StatisticheGiornaliereService.log.error(tAppId.getMessage(), tAppId);
+										}catch(Exception tAppId) {
+											StatisticheGiornaliereService.logError(tAppId.getMessage(), tAppId);
 											r.getParentMap().put("1", Costanti.INFORMAZIONE_NON_DISPONIBILE);
 										}
 										
@@ -7106,16 +7601,16 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 										// informazione precedente o che non contiene un applicativo
 										continue;
 									}
-								}catch(Throwable tApp) {
-									StatisticheGiornaliereService.log.error(tApp.getMessage(), tApp);
+								}catch(Exception tApp) {
+									StatisticheGiornaliereService.logError(tApp.getMessage(), tApp);
 									continue;
 								}
 							}
 						}
 						else if(	this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
 							try {
-								org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(this.distribSaSearch.getTokenClaim());
-								if(org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_clientId.equals(tcm)) {
+								org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.toEnumConstant(this.distribSaSearch.getTokenClaim(),true);
+								if(org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_CLIENT_ID.equals(tcm)) {
 									boolean add = false;
 									try {
 										IDServizioApplicativo idApplicativo = CredenzialeTokenClient.convertApplicationDBValueToOriginal(risultato);
@@ -7125,8 +7620,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 											r.getParentMap().put("1", soggetto );
 											add = true;
 										}
-									}catch(Throwable tApp) {
-										StatisticheGiornaliereService.log.error(tApp.getMessage(), tApp);
+									}catch(Exception tApp) {
+										StatisticheGiornaliereService.logError(tApp.getMessage(), tApp);
 									}
 									if(!add) {
 										r.getParentMap().put("0", Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -7135,10 +7630,141 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 									
 									risultato=CredenzialeTokenClient.convertClientIdDBValueToOriginal(risultato);
 								}
-							}catch(Throwable t) {
-								StatisticheGiornaliereService.log.error(t.getMessage(), t);
+								else if(org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.equals(tcm)) {
+									
+									String organizzazione = null;
+									try {
+										MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, StatisticheGiornaliereService.log);
+										CredenzialeMittente credenzialeMittentePDNDOrganization = mBeanUtilsService.getCredenzialeMittenteByReferenceFromCache(TipoCredenzialeMittente.PDND_ORGANIZATION_NAME,Long.parseLong(risultatoIdLongCredenzialeMittente));
+										if(credenzialeMittentePDNDOrganization!=null) {
+											organizzazione = credenzialeMittentePDNDOrganization.getCredenziale();
+										}
+									}catch(Exception tApp) {
+										StatisticheGiornaliereService.logError(tApp.getMessage(), tApp);
+									}
+									if(organizzazione==null) {
+										// informazione che non contiene la risoluzione del clientId
+										/**if(limit!=null) {
+											// siamo nella visualizzazione a tabella, in questo caso poiche' viene calcoltata anche la count prima, che non considera il filtro applicativo del 'continue',
+											// ritorno l'informazione non disponibile
+											organizzazione = Costanti.INFORMAZIONE_NON_DISPONIBILE;
+										}
+										else {
+										Non va bene perchè l'export presenta solo i dati con pdnd, ed inoltre non e' in linea con gli altri report.
+										La soluzione e' invece eliminare il count dalla tabella visualizzata!
+										*
+										*/
+										continue;
+										/**}*/
+									}
+									
+									String categoria = null;
+									String extIdOrigin = null;
+									String extIdCode = null;
+									String extId = null;
+									String categoriaIdPdnd = null;
+									try {
+										MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, StatisticheGiornaliereService.log);
+										CredenzialeMittente credenzialeMittentePDNDjson = mBeanUtilsService.getCredenzialeMittenteByReferenceFromCache(TipoCredenzialeMittente.PDND_ORGANIZATION_JSON,Long.parseLong(risultatoIdLongCredenzialeMittente));
+										if(credenzialeMittentePDNDjson!=null && credenzialeMittentePDNDjson.getCredenziale()!=null) {
+											PDNDTokenInfoDetails d = new PDNDTokenInfoDetails();
+											d.setDetails(credenzialeMittentePDNDjson.getCredenziale());
+											PDNDTokenInfo info = new PDNDTokenInfo();
+											info.setOrganization(d);
+											
+											categoria = info.getOrganizationCategory(StatisticheGiornaliereService.log);
+											
+											extIdOrigin = info.getOrganizationExternalOrigin(StatisticheGiornaliereService.log);
+											extIdCode = info.getOrganizationExternalId(StatisticheGiornaliereService.log);
+											if(extIdOrigin!=null && extIdCode!=null) {
+												extId = extIdOrigin + " " + extIdCode;
+											}
+											else if(extIdOrigin!=null) {
+												extId = extIdOrigin;
+											}
+											else {
+												extId = extIdCode;
+											}
+											
+											categoriaIdPdnd = info.getOrganizationId(StatisticheGiornaliereService.log);
+										}
+									}catch(Exception tApp) {
+										StatisticheGiornaliereService.logError(tApp.getMessage(), tApp);
+									}
+									if(categoria==null) {
+										categoria = Costanti.INFORMAZIONE_NON_DISPONIBILE;
+									}
+									if(extId==null) {
+										extId = Costanti.INFORMAZIONE_NON_DISPONIBILE;
+									}
+									if(categoriaIdPdnd==null) {
+										categoriaIdPdnd = Costanti.INFORMAZIONE_NON_DISPONIBILE;
+									}
+									
+									IDServizioApplicativo idApplicativo = null;
+									if(this.isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato) {
+										try {
+											idApplicativo = CredenzialeTokenClient.convertApplicationDBValueToOriginal(risultato);
+										}catch(Exception tApp) {
+											StatisticheGiornaliereService.logError(tApp.getMessage(), tApp);
+										}
+									}
+									
+									risultato=CredenzialeTokenClient.convertClientIdDBValueToOriginal(risultato);
+									String clientId = risultato;
+									
+									// Devo invertire. Il dato principale deve essere l'organizzazione.
+									risultato = organizzazione;
+									
+									r.getParentMap().put("0", clientId);
+									r.getParentMap().put("1", extId);
+									r.getParentMap().put("2", categoria);
+									
+									// non visualizzato nel report grafico ma solo negli export pdf, csv ...
+									r.getParentMap().put("3", categoriaIdPdnd);
+									
+									if(this.isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato) {
+										if(idApplicativo!=null) {
+											String soggetto = NamingUtils.getLabelSoggetto(idApplicativo.getIdSoggettoProprietario());
+											r.getParentMap().put("4", idApplicativo.getNome());
+											r.getParentMap().put("5", soggetto );
+										}
+										else {
+											r.getParentMap().put("4", Costanti.INFORMAZIONE_NON_DISPONIBILE);
+											r.getParentMap().put("5", Costanti.INFORMAZIONE_NON_DISPONIBILE );
+										}
+									}
+								}
+							}catch(Exception t) {
+								StatisticheGiornaliereService.logError(t.getMessage(), t);
 							}
 						}
+						else if(	this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+							
+							String tipoCredenziale = "-";
+							if(sbTipoCredenziale.length()>0 && sbTipoCredenziale.toString().contains("_")) {
+								String [] tmp = sbTipoCredenziale.toString().split("_");
+								if(tmp!=null && tmp.length>1 && tmp[1]!=null && StringUtils.isNotEmpty(tmp[1])) {
+									tipoCredenziale = tmp[1];
+								}
+							}
+							if(TipoAutenticazione.SSL.getValue().equals(tipoCredenziale)) {
+								tipoCredenziale = TipoAutenticazione.SSL.getLabel(); 
+							}
+							else if(TipoAutenticazione.BASIC.getValue().equals(tipoCredenziale)) {
+								tipoCredenziale = TipoAutenticazione.BASIC.getLabel(); 
+							}
+							else if(TipoAutenticazione.APIKEY.getValue().equals(tipoCredenziale)) {
+								tipoCredenziale = TipoAutenticazione.APIKEY.getLabel(); 
+							}
+							else if(TipoAutenticazione.PRINCIPAL.getValue().equals(tipoCredenziale)) {
+								tipoCredenziale = TipoAutenticazione.PRINCIPAL.getLabel(); 
+							}
+							
+							r.getParentMap().put("0", tipoCredenziale);
+							
+						}
+
 					}
 					
 					r.setRisultato(risultato);
@@ -7162,36 +7788,49 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						r.setSomma(0);
 					}
 
-					if(!r.getRisultato().contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) 	
-						res.add(r);
+					/**System.out.println("============");
+					System.out.println("actual-size:"+res.size()+" elementi:"+elementi+" start:"+start+" limit:"+limit+"");*/
+					if(countApplicativo) {
+						elementi++;
+						if(elementi<=start) {
+							/**System.out.println("CONTINUE");*/
+							continue; 
+						}
+						if(res.size()>=limit) {
+							/**System.out.println("BREAK");*/
+							break;
+						}
+					}
+					
+					res.add(r);
 				}
 
 			}
 
 			return res;
 		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (NotFoundException e) {
-			StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente.");
+			StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente.");
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		}
-		return new ArrayList<ResDistribuzione>();
+		return new ArrayList<>();
 	}
 
 	private IExpression createDistribuzioneServizioApplicativoExpression(IServiceSearchWithoutId<?> dao, StatisticaModel model, boolean isCount,
 			boolean forceErogazione, boolean forceFruizione) throws ServiceException{
 		IExpression expr = null;
 
-		StatisticheGiornaliereService.log.debug("creo Expression per distribuzione sa!");
+		StatisticheGiornaliereService.logDebug("creo Expression per distribuzione sa!");
 
 		List<Soggetto> listaSoggettiGestione = this.distribSaSearch.getSoggettiGestione();
 
@@ -7282,7 +7921,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				boolean trafficoSoggetto = StringUtils
 						.isNotBlank(this.distribSaSearch
 								.getTrafficoPerSoggetto());
-				boolean soggetto = listaSoggettiGestione.size() > 0;
+				boolean soggetto = !listaSoggettiGestione.isEmpty();
 				String tipoTrafficoSoggetto = null;
 				String nomeTrafficoSoggetto = null;
 				if (trafficoSoggetto) {
@@ -7301,7 +7940,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if (trafficoSoggetto && soggetto) {
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -7363,7 +8002,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// e' impostato solo il soggetto in gestione
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -7405,7 +8044,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -7439,7 +8078,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -7467,6 +8106,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 			}
 
+			// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+				expr.addGroupBy(model.DATA);
+			}
 			
 			this.impostaGroupByFiltroDatiMittente(expr, this.distribSaSearch, model, isCount); 
 			
@@ -7475,7 +8118,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.impostaFiltroApi(expr, this.distribSaSearch, model, isCount);
 
 			this.impostaFiltroIdClusterOrCanale(expr, this.distribSaSearch, model, isCount);
-
+			
 			// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
 			// Poichè gli applicativi sono identificati univocamente insieme anche al soggetto proprietario, si aggiunge il soggetto nella group by
 			if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
@@ -7490,21 +8133,21 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw e;
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (CoreException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		} catch (Exception e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		}
 
 		return expr;
@@ -7528,10 +8171,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			return nnn != null ? ((int) nnn.longValue()) : 0;
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw e;
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		}
 
@@ -7545,10 +8188,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			List<ResDistribuzione> res = executeDistribuzionePersonalizzataSearch(false, false, -1, -1);
 			return res;
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw e;
 		}
-		//		return new ArrayList<ResDistribuzione>();
+		//		return new ArrayList<>();
 	}
 
 	@Override
@@ -7557,10 +8200,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			List<ResDistribuzione> res = executeDistribuzionePersonalizzataSearch(false, true, start, limit);
 			return res;
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw e;
 		}
-		//		return new ArrayList<ResDistribuzione>();
+		//		return new ArrayList<>();
 	}
 
 	private List<ResDistribuzione> executeDistribuzionePersonalizzataSearch(boolean isCount, boolean isPaginated, int offset, int limit) throws ServiceException{
@@ -7627,7 +8270,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(modelContenuti.RISORSA_VALORE);
 
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					gByExpr.addForceIndex(index);	
 				}
@@ -7752,7 +8395,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				try {
 					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.union(union, unionExpr, unionExprFake)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 					Thread.currentThread().interrupt();
 				} catch (ExecutionException e) {
 					if(e.getCause() instanceof NotFoundException) {
@@ -7764,13 +8407,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					if(e.getCause() instanceof NotImplementedException) {
 						throw (NotImplementedException) e.getCause();
 					}
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 				} catch (TimeoutException e) {
 					this.timeoutEvent = true;
-					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					StatisticheGiornaliereService.logError(e.getMessage(), e);
 				}
 			}
-			List<ResDistribuzione> res = new ArrayList<ResDistribuzione>();
+			List<ResDistribuzione> res = new ArrayList<>();
 			//			Map<String, ResDistribuzione> map = new HashMap<String, ResDistribuzione>();
 			if (list != null) {
 
@@ -7803,7 +8446,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			//			}
 			//			Collections.sort(order,Collections.reverseOrder());
 			//			// risultato ordinato
-			//			List<ResDistribuzione> res = new ArrayList<ResDistribuzione>();
+			//			List<ResDistribuzione> res = new ArrayList<>();
 			//			for (String key : order) {
 			//				res.add(map.get(key));
 			//			}
@@ -7811,22 +8454,22 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			return res;
 
 		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw e;
 		} catch (NotFoundException e) {
-			StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente.");
+			StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente.");
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		}
 
-		return new ArrayList<ResDistribuzione>();
+		return new ArrayList<>();
 
 	}
 
@@ -7881,7 +8524,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 		IExpression expr = createDistribuzionePersonalizzataExpression(dao,	model, modelContenuti, true);
 
-		if(forceIndexes!=null && forceIndexes.size()>0){
+		if(forceIndexes!=null && !forceIndexes.isEmpty()){
 			for (Index index : forceIndexes) {
 				try{
 					expr.addForceIndex(index);
@@ -7952,16 +8595,16 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 
 		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (UtilsException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ServiceException e) {
 			throw e;
@@ -7977,7 +8620,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			return res;
 		} catch (ServiceException e) {
 			throw e;
-			//			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			//			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		}
 		//		return new HashMap<String, List<Res>>();
 	}
@@ -8127,7 +8770,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			//			}
 			}
 
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					expr.addForceIndex(index);
 				}
@@ -8143,7 +8786,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					try {
 						list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.groupBy(expr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 					} catch (InterruptedException e) {
-						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						StatisticheGiornaliereService.logError(e.getMessage(), e);
 						Thread.currentThread().interrupt();
 					} catch (ExecutionException e) {
 						if(e.getCause() instanceof NotFoundException) {
@@ -8155,10 +8798,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						if(e.getCause() instanceof NotImplementedException) {
 							throw (NotImplementedException) e.getCause();
 						}
-						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						StatisticheGiornaliereService.logError(e.getMessage(), e);
 					} catch (TimeoutException e) {
 						this.timeoutEvent = true;
-						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						StatisticheGiornaliereService.logError(e.getMessage(), e);
 						return null;
 					}
 				}
@@ -8171,7 +8814,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					try {
 						list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.groupBy(pagExpr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
 					} catch (InterruptedException e) {
-						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						StatisticheGiornaliereService.logError(e.getMessage(), e);
 						Thread.currentThread().interrupt();
 					} catch (ExecutionException e) {
 						if(e.getCause() instanceof NotFoundException) {
@@ -8183,10 +8826,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						if(e.getCause() instanceof NotImplementedException) {
 							throw (NotImplementedException) e.getCause();
 						}
-						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						StatisticheGiornaliereService.logError(e.getMessage(), e);
 					} catch (TimeoutException e) {
 						this.timeoutEvent = true;
-						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						StatisticheGiornaliereService.logError(e.getMessage(), e);
 						return null;
 					}
 				}
@@ -8195,7 +8838,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// supporto
 			TreeMap<String, List<Res>> mapRisultati = new TreeMap<String, List<Res>>();
 			TreeMap<String, List<Date>> mapDateUsate = new TreeMap<String, List<Date>>();
-			List<Date> listaDateUtilizzate = new ArrayList<Date>();
+			List<Date> listaDateUtilizzate = new ArrayList<>();
 
 			// Scorro i risultati per generare gli elementi del grafico.
 			if(list!=null) {
@@ -8213,8 +8856,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					}
 	
 					if(nuovaEntry){
-						res = new ArrayList<Res>();
-						datePerRes = new ArrayList<Date>();
+						res = new ArrayList<>();
+						datePerRes = new ArrayList<>();
 					}
 	
 	
@@ -8323,7 +8966,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				Collections.sort(listaDateUtilizzate);
 				// scorro tutte le date, trovate dalla query
 
-				List<Res> listaResOrdinata = new ArrayList<Res>();
+				List<Res> listaResOrdinata = new ArrayList<>();
 				for (Date data : listaDateUtilizzate) {
 					// se la data non e' stata utilizzata per la serie corrente simulo uno zero
 					if(!dateVal.contains(data)) {
@@ -8354,21 +8997,21 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			return mapRisultati;
 		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (UtilsException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		}catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw e;
 		} catch (NotFoundException e) {
-			StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente.");
+			StatisticheGiornaliereService.logDebug("Nessuna statistica trovata per la ricerca corrente.");
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		}
 
@@ -8420,13 +9063,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 
 		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ServiceException e) {
 			throw e;
@@ -8524,7 +9167,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				boolean trafficoSoggetto = StringUtils
 						.isNotBlank(this.statistichePersonalizzateSearch
 								.getTrafficoPerSoggetto());
-				boolean soggetto = listaSoggettiGestione.size() > 0;
+				boolean soggetto = !listaSoggettiGestione.isEmpty();
 				String tipoTrafficoSoggetto = null;
 				String nomeTrafficoSoggetto = null;
 				if (trafficoSoggetto) {
@@ -8543,7 +9186,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if (trafficoSoggetto && soggetto) {
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -8597,7 +9240,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// e' impostato solo il soggetto in gestione
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -8637,7 +9280,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -8668,7 +9311,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -8693,18 +9336,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		} catch (ServiceException e) {
 			throw e;
 		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (CoreException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		} catch (Exception e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		}  
 
 		return expr;
@@ -8713,7 +9356,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 	@Override
 	public List<String> getValoriRisorse() throws ServiceException{
-		StatisticheGiornaliereService.log.debug("Leggo i valori delle risorse per la statistica: " + this.statistichePersonalizzateSearch.getNomeStatisticaPersonalizzata()); 
+		StatisticheGiornaliereService.logDebug("Leggo i valori delle risorse per la statistica: " + this.statistichePersonalizzateSearch.getNomeStatisticaPersonalizzata()); 
 
 		List<String> valori = new ArrayList<>();
 		StatisticaModel model = null;
@@ -8781,7 +9424,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 								resourceStats = true;
 							}
 						}catch(Exception e){
-							StatisticheGiornaliereService.log.error(e.getMessage(), e);
+							StatisticheGiornaliereService.logError(e.getMessage(), e);
 						}
 					}
 				}
@@ -8807,22 +9450,22 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 
 		} catch (ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw e;
 		} catch (UtilsException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionNotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (NotFoundException e) {
-			StatisticheGiornaliereService.log.debug(e.getMessage(), e);
+			StatisticheGiornaliereService.logDebug(e.getMessage(), e);
 		}   
 		return valori;
 	}
@@ -8835,7 +9478,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				expressionTipoServiziCompatibili = DynamicUtilsServiceEngine.getExpressionTipiServiziCompatibiliConProtocollo(dao, model.TIPO_SERVIZIO, protocollo);
 			}
 		} catch (Exception e) {
-			StatisticheGiornaliereService.log.error("Si e' verificato un errore durante il calcolo dei tipi servizio compatibili con il protocollo scelto: "+ e.getMessage(), e);
+			StatisticheGiornaliereService.logError("Si e' verificato un errore durante il calcolo dei tipi servizio compatibili con il protocollo scelto: "+ e.getMessage(), e);
 		}
 
 		if(expressionTipoServiziCompatibili != null)
@@ -8858,7 +9501,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 			}
 		} catch (Exception e) {
-			StatisticheGiornaliereService.log.error("Si e' verificato un errore durante il calcolo dei tipi soggetto mittente compatibili con il protocollo scelto: "+ e.getMessage(), e);
+			StatisticheGiornaliereService.logError("Si e' verificato un errore durante il calcolo dei tipi soggetto mittente compatibili con il protocollo scelto: "+ e.getMessage(), e);
 		}
 
 		if(expressionTipoSoggettiMittenteCompatibili != null)
@@ -8872,7 +9515,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				expressionTipoSoggettiDestinatarioCompatibili = DynamicUtilsServiceEngine.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.TIPO_DESTINATARIO, protocollo);
 			}
 		} catch (Exception e) {
-			StatisticheGiornaliereService.log.error("Si e' verificato un errore durante il calcolo dei tipi soggetto destinatario compatibili con il protocollo scelto: "+ e.getMessage(), e);
+			StatisticheGiornaliereService.logError("Si e' verificato un errore durante il calcolo dei tipi soggetto destinatario compatibili con il protocollo scelto: "+ e.getMessage(), e);
 		}
 
 		if(expressionTipoSoggettiDestinatarioCompatibili != null)
@@ -8880,42 +9523,50 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	}
 
 
-	private IField getCredenzialeField(org.openspcoop2.core.transazioni.CredenzialeMittente credenzialeMittente, StatisticaModel model) {
+	private IField getCredenzialeField(org.openspcoop2.core.transazioni.CredenzialeMittente credenzialeMittente, StatisticaModel model) throws ServiceException {
 		IField fieldCredenziale = null;
 		String credenzialeTipo = credenzialeMittente.getTipo();
 		if(credenzialeTipo.startsWith(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_CREDENZIALE_TRASPORTO_PREFIX)) {
 			fieldCredenziale = model.TRASPORTO_MITTENTE;
 		} else {
-			org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(credenzialeTipo);
+			org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = null;
+			try {
+				tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.toEnumConstant(credenzialeTipo, true);
+			}catch(NotFoundException e) {
+				throw new ServiceException(e.getMessage(),e);
+			}
 			
 			switch (tcm) {
-			case token_clientId:
+			case TOKEN_CLIENT_ID:
 				fieldCredenziale = model.TOKEN_CLIENT_ID;
 				break;
-			case token_eMail:
+			case TOKEN_EMAIL:
 				fieldCredenziale = model.TOKEN_MAIL;
 				break;
-			case token_issuer:
+			case TOKEN_ISSUER:
 				fieldCredenziale = model.TOKEN_ISSUER;
 				break;
-			case token_subject:
+			case TOKEN_SUBJECT:
 				fieldCredenziale = model.TOKEN_SUBJECT;
 				break;
-			case token_username:
+			case TOKEN_USERNAME:
 				fieldCredenziale = model.TOKEN_USERNAME;
 				break;
 				
-			case client_address:
+			case CLIENT_ADDRESS:
 				return model.CLIENT_ADDRESS;
 				
-			case gruppi:
+			case GRUPPI:
 				return model.GRUPPI;
 				
-			case api:
+			case API:
 				return model.URI_API;
 				
-			case eventi:
-			case trasporto:
+			case EVENTI:
+			case TRASPORTO:
+			case PDND_CLIENT_JSON:
+			case PDND_ORGANIZATION_JSON:
+			case PDND_ORGANIZATION_NAME:
 				// caso impossibile
 				break; 
 			}
@@ -8962,25 +9613,28 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				pagExpr = searchClientAddress.createExpression(credenzialeMittentiService, searchForm.getValoreRiconoscimento(), ricercaEsatta, caseSensitive);
 			} 
 			
+			boolean searchByRefCredentials = false;
 			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
-				org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(searchForm.getTokenClaim());
+				org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.toEnumConstant(searchForm.getTokenClaim(), true);
 				AbstractSearchCredenziale searchToken = null;
-				if(TipoCredenzialeMittente.token_clientId.equals(tcm)) {
+				if(TipoCredenzialeMittente.TOKEN_CLIENT_ID.equals(tcm)) {
 					searchToken = new CredenzialeSearchTokenClient(true, false, true);
 				}
 				else {
 					searchToken = new CredenzialeSearchToken(tcm);
+					searchByRefCredentials = TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.equals(tcm);
 				}
 				pagExpr = searchToken.createExpression(credenzialeMittentiService, searchForm.getValoreRiconoscimento(), ricercaEsatta, caseSensitive);
 			}
 			
 			findAll = credenzialeMittentiService.findAll(pagExpr);
-		}catch(ServiceException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
-		} catch (UtilsException e) {
-			StatisticheGiornaliereService	.log.error(e.getMessage(), e);
+			
+			if(searchByRefCredentials) {
+				findAll = CredenzialiMittenteUtils.translateByRef(findAll, credenzialeMittentiService);
+			}
+			
+		}catch(ServiceException | ExpressionException | NotImplementedException | ExpressionNotImplementedException | UtilsException | NotFoundException e) {
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 		}
 		return findAll;
 	}
@@ -9087,7 +9741,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	}
 	
 	private void impostaGroupByFiltroDatiMittente(IExpression filter, BaseSearchForm searchForm, StatisticaModel model, boolean isCount)
-			throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
+			throws ExpressionNotImplementedException, ExpressionException, NotFoundException {
 		// credenziali mittente
 		if(StringUtils.isNotEmpty(searchForm.getRiconoscimento())) {
 			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
@@ -9109,47 +9763,50 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				filter.notEquals(model.CLIENT_ADDRESS, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				filter.addGroupBy(model.CLIENT_ADDRESS);
 			} else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
-				org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(searchForm.getTokenClaim());
+				org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.toEnumConstant(searchForm.getTokenClaim(), true);
 				
 				switch (tcm) {
-				case token_clientId:
+				case TOKEN_CLIENT_ID:
+				case PDND_ORGANIZATION_NAME: // viene risolto per riferimento
 					filter.notEquals(model.TOKEN_CLIENT_ID, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					filter.addGroupBy(model.TOKEN_CLIENT_ID);
 					break;
-				case token_eMail:
+				case TOKEN_EMAIL:
 					filter.notEquals(model.TOKEN_MAIL, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					filter.addGroupBy(model.TOKEN_MAIL);
 					break;
-				case token_issuer:
+				case TOKEN_ISSUER:
 					filter.notEquals(model.TOKEN_ISSUER, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					filter.addGroupBy(model.TOKEN_ISSUER);
 					break;
-				case token_subject:
+				case TOKEN_SUBJECT:
 					filter.notEquals(model.TOKEN_SUBJECT, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					filter.addGroupBy(model.TOKEN_SUBJECT);
 					break;
-				case token_username:
+				case TOKEN_USERNAME:
 					filter.notEquals(model.TOKEN_USERNAME, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					filter.addGroupBy(model.TOKEN_USERNAME);
 					break;
 					
-				case client_address:
+				case CLIENT_ADDRESS:
 					filter.notEquals(model.CLIENT_ADDRESS, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					filter.addGroupBy(model.CLIENT_ADDRESS);
 					break;
 					
-				case gruppi:
+				case GRUPPI:
 					filter.notEquals(model.GRUPPI, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					filter.addGroupBy(model.GRUPPI);
 					break;
 					
-				case api:
+				case API:
 					filter.notEquals(model.URI_API, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					filter.addGroupBy(model.URI_API);
 					break;
-										
-				case eventi:
-				case trasporto:
+					
+				case EVENTI:
+				case TRASPORTO:
+				case PDND_CLIENT_JSON:
+				case PDND_ORGANIZATION_JSON:
 					// caso impossibile
 					break; 
 				}
@@ -9158,7 +9815,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	}
 	
 	
-	private IField getCredenzialeFieldGroupBy(BaseSearchForm searchForm, StatisticaModel model) {
+	private IField getCredenzialeFieldGroupBy(BaseSearchForm searchForm, StatisticaModel model) throws NotFoundException {
 		// credenziali mittente
 		if(StringUtils.isNotEmpty(searchForm.getRiconoscimento())) {
 			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
@@ -9180,31 +9837,37 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				return model.CLIENT_ADDRESS;
 			} 
 			else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
-				org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(searchForm.getTokenClaim());
+				org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.toEnumConstant(searchForm.getTokenClaim(), true);
 				
 				switch (tcm) {
-				case token_clientId:
+				case TOKEN_CLIENT_ID:
 					return model.TOKEN_CLIENT_ID;
-				case token_eMail:
+				case TOKEN_EMAIL:
 					return model.TOKEN_MAIL;
-				case token_issuer:
+				case TOKEN_ISSUER:
 					return model.TOKEN_ISSUER;
-				case token_subject:
+				case TOKEN_SUBJECT:
 					return model.TOKEN_SUBJECT;
-				case token_username:
+				case TOKEN_USERNAME:
 					return model.TOKEN_USERNAME;
 					
-				case client_address:
+				case CLIENT_ADDRESS:
 					return model.CLIENT_ADDRESS;
 					
-				case gruppi:
+				case GRUPPI:
 					return model.GRUPPI;
 					
-				case api:
+				case API:
 					return model.URI_API;
 					
-				case eventi:
-				case trasporto:
+				case PDND_ORGANIZATION_NAME: 
+					// Verro poi risolto per riferimento
+					return model.TOKEN_CLIENT_ID;
+					
+				case EVENTI:
+				case TRASPORTO:
+				case PDND_CLIENT_JSON:
+				case PDND_ORGANIZATION_JSON:
 					// caso impossibile
 					break; 
 				}
@@ -9216,14 +9879,19 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	}
 	
 	
-	private String getLabelCredenzialeFieldGroupBy(String risultato, BaseSearchForm searchForm) {
+	private String getLabelCredenzialeFieldGroupBy(String risultato, BaseSearchForm searchForm, StringBuilder sbTipoCredenziale) {
 		try {
 			// credenziali mittente
 			if(StringUtils.isNotEmpty(searchForm.getRiconoscimento())) {
 				if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
 					if (StringUtils.isNotBlank(this.distribSaSearch.getIdentificazione()) && org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.distribSaSearch.getIdentificazione())) {
 						if(StringUtils.isNotEmpty(risultato)) {
-							CredenzialeMittente credenzialeMittente =  ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
+							/**CredenzialeMittente credenzialeMittente =  ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));*/
+							MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, StatisticheGiornaliereService.log);
+							CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(risultato));
+							if(credenzialeMittente!=null && credenzialeMittente.getTipo()!=null) {
+								sbTipoCredenziale.append(credenzialeMittente.getTipo());
+							}
 							return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
 						}
 						else {
@@ -9240,15 +9908,26 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}  
 				else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
 					if(StringUtils.isNotEmpty(risultato)) {
-						CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
+						/**CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));*/
+						MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, StatisticheGiornaliereService.log);
+						CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(risultato));
+						if(credenzialeMittente!=null && credenzialeMittente.getTipo()!=null) {
+							sbTipoCredenziale.append(credenzialeMittente.getTipo());
+						}
 						return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
 					}
 				} 
 				else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP)) {
 					if(StringUtils.isNotEmpty(risultato)) {
-						CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
+						/**CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));*/
+						MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, StatisticheGiornaliereService.log);
+						CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(risultato));
 						
-						String credenziale = credenzialeMittente.getCredenziale();
+						if(credenzialeMittente!=null && credenzialeMittente.getTipo()!=null) {
+							sbTipoCredenziale.append(credenzialeMittente.getTipo());
+						}
+						
+						String credenziale = credenzialeMittente!=null ? credenzialeMittente.getCredenziale() : null;
 						if(credenziale!=null) {
 							StringBuilder bf = new StringBuilder();
 							if(CredenzialeClientAddress.isSocketAddressDBValue(credenziale)) {
@@ -9271,26 +9950,25 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					}
 				} 
 				else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
-					org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(searchForm.getTokenClaim());
+					org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.toEnumConstant(searchForm.getTokenClaim(), true);
 					CredenzialeMittente credenzialeMittente  = null;
 					if(StringUtils.isNotEmpty(risultato)) {
 					switch (tcm) {
-					case token_clientId:
-							credenzialeMittente  = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
+					case TOKEN_CLIENT_ID:
+					case TOKEN_EMAIL:
+					case TOKEN_ISSUER:
+					case TOKEN_SUBJECT:
+					case TOKEN_USERNAME:
+					case PDND_ORGANIZATION_NAME:
+							/**credenzialeMittente  = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));*/
+							MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, StatisticheGiornaliereService.log);
+							credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(risultato));
+							if(credenzialeMittente!=null && credenzialeMittente.getTipo()!=null) {
+								sbTipoCredenziale.append(credenzialeMittente.getTipo());
+							}
 							return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
-					case token_eMail:
-							credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
-							return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
-					case token_issuer:
-							credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
-							return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
-					case token_subject:
-							credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
-							return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
-					case token_username:
-							credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
-							return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
-					case trasporto:
+
+					case TRASPORTO:
 					default:
 						// caso impossibile
 						break; 
@@ -9300,14 +9978,16 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			else if(!this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
 				if(StringUtils.isNotEmpty(risultato)) {
-					CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
+					/**CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));*/
+					MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, StatisticheGiornaliereService.log);
+					CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(risultato));
 					return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
 				}
 			}
 		} catch (NotFoundException e) {
-			StatisticheGiornaliereService	.log.debug(e.getMessage(), e);
+			StatisticheGiornaliereService	.logDebug(e.getMessage(), e);
 		} catch (Exception e) {
-			StatisticheGiornaliereService	.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService	.logError(e.getMessage(), e);
 		}
 		
 		return risultato;
@@ -9316,7 +9996,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	
 	private void addListaCredenzialiMittente(IExpression filter, List<CredenzialeMittente> listaCredenzialiMittente, StatisticaModel model) throws ExpressionNotImplementedException, ExpressionException {
 		// se non ho trovato credenziali che corrispondono a quelle inserite allora restituisco un elenco di transazioni vuoto forzando l'id transazione
-		if(listaCredenzialiMittente.size() ==0) {
+		if(listaCredenzialiMittente.isEmpty()) {
 			Calendar c = Calendar.getInstance();
 			Date d = new Date();
 			c.setTime(d);
@@ -9324,7 +10004,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			filter.and().equals(model.DATA, c.getTime());
 		} else {
 			org.openspcoop2.core.transazioni.CredenzialeMittente credenzialeMittente = listaCredenzialiMittente.get(0);
-			IField fieldCredenziale = getCredenzialeField(credenzialeMittente, model);
+			IField fieldCredenziale = null;
+			try {
+				fieldCredenziale = getCredenzialeField(credenzialeMittente, model);
+			}catch(ServiceException e) {
+				throw new ExpressionException(e.getMessage(),e);
+			}
 			
 			if(listaCredenzialiMittente.size() ==1) {
 				filter.and().equals(fieldCredenziale, credenzialeMittente.getId().toString());
@@ -9348,12 +10033,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			con = this.driverConfigurazioneDB.getConnection("StatisticheGiornaliereService.getHostnames");
 			return DynamicClusterManager.getHostnames(con, this.driverConfigurazioneDB.getTipoDB(), gruppo, refreshSecondsInterval);
 		}catch (Exception e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			StatisticheGiornaliereService.logError(e.getMessage(), e);
 			return null;
 		}finally {
 			try {
 				this.driverConfigurazioneDB.releaseConnection(con);
-			}catch(Throwable eClose) {}
+			}catch(Exception eClose) {
+				// ignore
+			}
 		}
 	}
 	@Override

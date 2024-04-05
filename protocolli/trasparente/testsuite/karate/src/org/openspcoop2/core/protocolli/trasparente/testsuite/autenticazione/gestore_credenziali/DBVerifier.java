@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -22,6 +22,7 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.ges
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -29,6 +30,8 @@ import java.util.Map;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.DbUtils;
+import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTokenClient;
 import org.openspcoop2.utils.Utilities;
 import org.slf4j.Logger;
 
@@ -52,7 +55,7 @@ public class DBVerifier {
 	public static void verify(String idTransazione, 
 			long esitoExpected, 
 			String soggetto, String applicativo,
-			String credenziali,
+			CredenzialeTrasporto credenzialiTrasporto,
 			String ... msgErrore) throws Exception  {
 		
 		// La scrittura su database avviene dopo aver risposto al client
@@ -60,21 +63,21 @@ public class DBVerifier {
 		Utilities.sleep(100); 
 		try {
 			DBVerifier._verify(idTransazione, 
-					esitoExpected, soggetto, applicativo, credenziali, msgErrore);
+					esitoExpected, soggetto, applicativo, credenzialiTrasporto, msgErrore);
 		}catch(Throwable t) {
 			Utilities.sleep(500);
 			try {
 				DBVerifier._verify(idTransazione, 
-						esitoExpected, soggetto, applicativo, credenziali, msgErrore);
+						esitoExpected, soggetto, applicativo, credenzialiTrasporto, msgErrore);
 			}catch(Throwable t2) {
 				Utilities.sleep(2000);
 				try {
 					DBVerifier._verify(idTransazione, 
-							esitoExpected, soggetto, applicativo, credenziali, msgErrore);
+							esitoExpected, soggetto, applicativo, credenzialiTrasporto, msgErrore);
 				}catch(Throwable t3) {
 					Utilities.sleep(5000);
 					DBVerifier._verify(idTransazione, 
-							esitoExpected, soggetto, applicativo, credenziali, msgErrore);
+							esitoExpected, soggetto, applicativo, credenzialiTrasporto, msgErrore);
 				}
 			}
 		}
@@ -83,7 +86,7 @@ public class DBVerifier {
 	private static void _verify(String idTransazione, 
 			long esitoExpected, 
 			String soggetto, String applicativo,
-			String credenziali,
+			CredenzialeTrasporto credenzialiTrasporto,
 			String ... msgErrori) throws Exception  {
 		
 		
@@ -95,7 +98,7 @@ public class DBVerifier {
 
 		
 		
-		query = "select esito,nome_soggetto_fruitore,servizio_applicativo_fruitore,credenziali from transazioni where id = ?";
+		query = "select esito,nome_soggetto_fruitore,servizio_applicativo_fruitore,credenziali,trasporto_mittente from transazioni where id = ?";
 		log().info(query);
 		
 		String msg = "IdTransazione: "+idTransazione;
@@ -153,6 +156,7 @@ public class DBVerifier {
 			assertTrue(msg+" atteso applicativo null, trovato: "+oApplicativo, isNull);
 		}
 		
+		String credenziali = credenzialiTrasporto!=null ? credenzialiTrasporto.getCredenziali() : null;
 		if(credenziali!=null) {
 			Object oCredenziali = row.get("credenziali");
 			assertNotNull(msg,oCredenziali);
@@ -172,7 +176,11 @@ public class DBVerifier {
 			assertTrue(msg+" attese credenziali null, trovate: "+oCredenziali, isNull);
 		}
 
-		
+		// Check credenziali mittente
+		String identificativoAutenticato = credenzialiTrasporto!=null ? credenzialiTrasporto.getIdentificativoAutenticato() : null;
+		String tipoCredenziali = credenzialiTrasporto!=null ? credenzialiTrasporto.getTipoCredenziali() : null;
+		checkCredenzialiMittente(row, "trasporto_mittente", identificativoAutenticato, 
+				TipoCredenzialeMittente.TRASPORTO, tipoCredenziali);
 		
 		// diagnostici
 		
@@ -191,4 +199,73 @@ public class DBVerifier {
 
 	}
 	
+	private static void checkCredenzialiMittente(Map<String, Object> row, String colonna, String expectedValue, 
+			TipoCredenzialeMittente tipoCredenzialeMittente, String tipoCredenziali) throws Exception {
+		Object oColumnValue = row.get(colonna);
+		if( expectedValue!=null) {
+			assertNotNull(colonna,oColumnValue);
+			assertTrue(colonna+" classe '"+oColumnValue.getClass().getName()+"'", (oColumnValue instanceof String));
+			String tokenClientId = null;
+			if(oColumnValue instanceof String) {
+				tokenClientId = (String)oColumnValue;
+			}
+			assertNotNull(colonna+" (string)",tokenClientId);
+			long idToken = -1;
+			try {
+				idToken = Long.parseLong(tokenClientId);
+				if(idToken<=0) {
+					throw new Exception("Minore o uguale a zero");
+				}
+			}catch(Throwable t) {
+				throw new Exception(colonna+" non valido '"+idToken+"': "+t.getMessage(),t);
+			}
+			
+			Map<String,Object> map = getCredenzialiMittenteById(tokenClientId);
+			if(map==null || map.isEmpty()) {
+				throw new Exception(colonna+" '"+idToken+"' non corrisponde a nessuna credenziale mittente");
+			}
+			
+			if(!map.containsKey("tipo")) {
+				throw new Exception(colonna+" '"+idToken+"' corrisponde a una credenziale mittente ("+map.keySet()+") che non contiene la colonna 'tipo' ?");
+			}
+			Object oTipo = map.get("tipo");
+			assertTrue(colonna+" o tipo credenziale classe '"+oTipo.getClass().getName()+"'", (oTipo instanceof String));
+			String tipo = null;
+			if(oTipo instanceof String) {
+				tipo = (String)oTipo;
+			}
+			assertNotNull(colonna+" (tipo credenziale string)",tipo);
+			String expectedTipo = tipoCredenzialeMittente.getRawValue()+"_"+tipoCredenziali;
+			assertTrue(colonna+" tipo credenziale 'found:"+tipo+"' == 'expected:"+expectedTipo+"'", (tipo.equals(expectedTipo)));
+			
+			if(!map.containsKey("credenziale")) {
+				throw new Exception(colonna+" '"+idToken+"' corrisponde a una credenziale mittente ("+map.keySet()+") che non contiene la colonna 'credenziale' ?");
+			}
+			Object oCredenziale = map.get("credenziale");
+			assertTrue(colonna+" o credenziale classe '"+oCredenziale.getClass().getName()+"'", (oCredenziale instanceof String));
+			String credenziale = null;
+			if(oCredenziale instanceof String) {
+				credenziale = (String)oCredenziale;
+			}
+			assertNotNull(colonna+" (credenziale string)",credenziale);
+			
+			String valueFound = credenziale;
+			if(TipoCredenzialeMittente.TOKEN_CLIENT_ID.equals(tipoCredenzialeMittente)) {
+				valueFound = CredenzialeTokenClient.convertClientIdDBValueToOriginal(credenziale);
+			}
+			
+			assertNotNull(colonna,valueFound);
+			assertTrue(colonna+" tradotto 'found:"+valueFound+"' == 'expected:"+expectedValue+"'", (valueFound.equals(expectedValue)));
+			
+		}
+		else {
+			assertNull(colonna,oColumnValue);
+		}
+	}
+	
+	private static Map<String,Object> getCredenzialiMittenteById(String id) {
+		String query = "select * from credenziale_mittente where id="+id;
+		log().info(query);
+		return dbUtils().readRow(query);
+	}
 }

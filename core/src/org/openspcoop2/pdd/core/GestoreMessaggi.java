@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -1706,20 +1706,31 @@ public class GestoreMessaggi  {
 	 * 
 	 */
 	public void aggiornaErroreProcessamentoMessaggio(String motivoErrore,String servizioApplicativo) throws GestoreMessaggiException{
+		aggiornaErroreProcessamentoMessaggio(motivoErrore, servizioApplicativo, true);
+	}
+	public boolean aggiornaErroreProcessamentoMessaggio(String motivoErrore,String servizioApplicativo, boolean throwExceptionConnectionNull) throws GestoreMessaggiException{
 
 		if( (this.openspcoopstate instanceof OpenSPCoopStateful) || this.oneWayVersione11) {
 			StateMessage stateMSG = (this.isRichiesta) ? ((StateMessage)this.openspcoopstate.getStatoRichiesta()) 
 					: ((StateMessage)this.openspcoopstate.getStatoRisposta()) ;
 			Connection connectionDB = stateMSG.getConnectionDB();
 
+			if(connectionDB==null) {
+				if(throwExceptionConnectionNull) {
+					throw new GestoreMessaggiException("Connessione non disponibile");
+				}
+				else {
+					return false;
+				}
+			}
+			
 			String motivoErroreGiaRegistrato = this.getErroreProcessamentoMessaggio(servizioApplicativo);
 			String prefix = "";
-			if(motivoErroreGiaRegistrato!=null){
-				if( motivoErroreGiaRegistrato.startsWith(GestoreMessaggi.NUMERO_RISPEDIZIONE)){
-					int index =  motivoErroreGiaRegistrato.indexOf("]");
-					prefix = motivoErroreGiaRegistrato.substring(0,(index+2));
-					motivoErroreGiaRegistrato = motivoErroreGiaRegistrato.substring(index+2);
-				}
+			if(motivoErroreGiaRegistrato!=null &&
+				motivoErroreGiaRegistrato.startsWith(GestoreMessaggi.NUMERO_RISPEDIZIONE)){
+				int index =  motivoErroreGiaRegistrato.indexOf("]");
+				prefix = motivoErroreGiaRegistrato.substring(0,(index+2));
+				motivoErroreGiaRegistrato = motivoErroreGiaRegistrato.substring(index+2);
 			}
 
 			// aggiorno il motivo dell'errore solo se ho un errore diverso da quanto e' capitato precedentemente
@@ -1777,8 +1788,12 @@ public class GestoreMessaggi  {
 					throw new GestoreMessaggiException(errorMsg,e);
 				}
 			}
+			
+			return true;
+			
 		}else if (this.openspcoopstate instanceof OpenSPCoopStateless){
 			//NOP
+			return false;
 		}else{
 			throw new GestoreMessaggiException("Metodo invocato con OpenSPCoopState non valido");
 		}

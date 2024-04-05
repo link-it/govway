@@ -11,6 +11,7 @@
 		<collection name="endpointConfig"/>
 		<collection name="sslConfig"/>
 		<collection name="sslClientConfig"/>
+		<collection name="dynamicDiscoveryParserPropRefId"/>
 		<collection name="validazioneJwtTokenParserPropRefId"/>
 		<collection name="introspectionTokenParserPropRefId"/>
 		<collection name="userInfoTokenParserPropRefId"/>
@@ -40,6 +41,16 @@
 					<value value="jwe" label="JWE"/>
 				</values>
 				<property name="policy.token.type" />
+			</item>
+			<item type="checkbox" name="discoveryStato" label="Discovery Document URL" defaultSelected="false" reloadOnChange="true">
+				<!-- 
+				Serve anche ad identificare le url di introspection o userinfo
+				<conditions>
+					<condition and="false">
+						<equals name="tokenType" value="jws"/>
+					</condition>
+				</conditions> -->
+				<property name="policy.token.discovery" />
 			</item>
 		
 			<item type="select" name="tokenSource" label="Posizione" default="RFC6750" reloadOnChange="true">
@@ -123,15 +134,113 @@
 			</item>
 			
 		</subsection>
+
+		<subsection label="Discovery Document URL">
+		
+			<conditions>
+				<condition and="false">
+					<selected name="discoveryStato"/>
+				</condition>
+			</conditions>
+
+			<!--
+				https://swagger.io/docs/specification/authentication/openid-connect-discovery/
+				https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata
+			-->
+			<item type="select" name="discoveryType" label="Tipo" default="OIDC_ID_TOKEN" reloadOnChange="true">
+				<values>
+					<value value="OIDC_ID_TOKEN" label="OpenID Connect Discovery"/>
+					<value value="MAPPING" label="Personalizzato"/>
+					<value value="CUSTOM" label="Plugin"/>
+				</values>
+				<property name="policy.discovery.claimsParser" />
+			</item>
+
+			<item type="select" name="discoveryParserCustomPluginChoice" label="" reloadOnChange="true" >
+				<conditions>
+					<condition and="true">
+						<equals name="discoveryType" value="CUSTOM"/>
+					</condition>
+				</conditions>
+				<property name="policy.discovery.claimsParser.pluginType" />
+			</item>
+			<item type="text" name="discoveryParserCustom" label="ClassName" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="discoveryType" value="CUSTOM"/>
+					</condition>
+				</conditions>
+			   	<property name="policy.discovery.claimsParser.className" />
+			</item>
+
+			<item type="textarea" name="discoveryURL" label="URL" required="true" default="https://">
+				<property name="policy.discovery.endpoint.url" />
+			</item>
+			<item type="hidden" name="discoveryJWK" label="JWK Set" value="jwks_uri">
+				<conditions>
+					<condition and="true" not="true">
+						<selected name="validazioneJwtStato"/>
+						<equals name="discoveryType" value="MAPPING"/>						
+					</condition>
+				</conditions>
+		      		<property name="policy.discovery.jwk" properties="dynamicDiscoveryParserPropRefId" />
+			</item>
+			<item type="text" name="discoveryJWKCustom" label="JWK Set" required="true" default="jwks_uri">
+				<conditions>
+					<condition and="true">
+						<selected name="validazioneJwtStato"/>
+						<equals name="discoveryType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="policy.discovery.jwk" properties="dynamicDiscoveryParserPropRefId" />
+			</item>
+			<item type="hidden" name="discoveryIntrospection" label="Introspection" value="introspection_endpoint">
+				<conditions>
+					<condition and="true" not="true">
+						<selected name="introspectionStato"/>
+						<equals name="discoveryType" value="MAPPING"/>						
+					</condition>
+				</conditions>
+		      		<property name="policy.discovery.introspection" properties="dynamicDiscoveryParserPropRefId" />
+			</item>
+			<item type="text" name="discoveryIntrospectionCustom" label="Introspection" required="true" default="introspection_endpoint">
+				<conditions>
+					<condition and="true">
+						<selected name="introspectionStato"/>
+						<equals name="discoveryType" value="MAPPING"/>						
+					</condition>
+				</conditions>
+		      		<property name="policy.discovery.introspection" properties="dynamicDiscoveryParserPropRefId" />
+			</item>
+			<item type="hidden" name="discoveryUserInfo" label="UserInfo" value="userinfo_endpoint">
+				<conditions>
+					<condition and="true" not="true">
+						<selected name="userInfoStato"/>
+						<equals name="discoveryType" value="MAPPING"/>						
+					</condition>
+				</conditions>
+		      		<property name="policy.discovery.userInfo" properties="dynamicDiscoveryParserPropRefId" />
+			</item>
+			<item type="text" name="discoveryUserInfoCustom" label="UserInfo" required="true" default="userinfo_endpoint">
+				<conditions>
+					<condition and="true">
+						<selected name="userInfoStato"/>
+						<equals name="discoveryType" value="MAPPING"/>						
+					</condition>
+				</conditions>
+		      		<property name="policy.discovery.userInfo" properties="dynamicDiscoveryParserPropRefId" />
+			</item>
+
+		</subsection>
 		
 		<subsection label="Endpoint Token">
 
-			<conditions>
+			<!--<conditions>
 				<condition and="false">
 					<selected name="introspectionStato"/>
 					<selected name="userInfoStato" />
 				</condition>
-			</conditions>
+			</conditions>-->
 
 			<item type="number" name="endpointConnectionTimeout" label="Connection Timeout" required="true" default="5000" min="1">
 				<property name="connectionTimeout" properties="endpointConfig" />
@@ -380,14 +489,33 @@
 			</conditions>
 
 			<item type="select" name="validazioneJwtTruststoreType" label="Tipo" default="jks" reloadOnChange="true">
+				<conditions>
+					<condition>
+						<selected not="true" name="discoveryStato"/>
+					</condition>
+				</conditions>
 				<property name="rs.security.keystore.type" properties="signatureVerificationPropRefId" />
 			</item>
-			<item type="textarea" name="validazioneJwtTruststoreFile" label="File" required="true">
-			    <property name="rs.security.keystore.file" properties="signatureVerificationPropRefId" />
+			<item type="hidden" name="validazioneJwtTruststoreTypeDynamicDiscovery" label="Tipo" value="jwk">
+				<conditions>
+					<condition>
+						<selected name="discoveryStato"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.type" properties="signatureVerificationPropRefId" />
+			</item>
+			<item type="textarea" name="validazioneJwtTruststoreFile" label="Location" required="true">
+				<conditions>
+					<condition>
+						<selected not="true" name="discoveryStato"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.file" properties="signatureVerificationPropRefId" />
 			</item>
 			<item type="hidden" name="validazioneJwtTruststorePublicKeyAlgorithm" value="RSA">
-				<conditions and="true">
-					<condition and="false">
+				<conditions>
+					<condition and="true">
+						<selected not="true" name="discoveryStato"/>
 						<equals name="validazioneJwtTruststoreType" value="public"/>
 					</condition>
 				</conditions>
@@ -396,6 +524,7 @@
 			<item type="text" name="validazioneJwtTruststorePassword" label="Password" required="true">
 				<conditions>
 					<condition not="true" and="false">
+						<selected name="discoveryStato"/>
 						<equals name="validazioneJwtTruststoreType" value="jwk"/>
 						<equals name="validazioneJwtTruststoreType" value="public"/>
 					</condition>
@@ -406,15 +535,17 @@
 			<item type="select" name="validazioneJwtTruststoreTypeSelectCertificate" label="Riferimento X.509" default="alias" reloadOnChange="true">
 				<conditions>
 					<condition not="true" and="false">
+						<selected name="discoveryStato"/>
 						<equals name="validazioneJwtTruststoreType" value="jwk"/>
 						<equals name="validazioneJwtTruststoreType" value="public"/>
 					</condition>
 				</conditions>
 				<property name="rs.security.keystore.alias.mode" properties="signatureVerificationPropRefId" />
 			</item>
-			<item type="select" name="validazioneJwtTruststoreTypeSelectJWKPublicKey" label="Riferimento Chiave Pubblica" default="alias" reloadOnChange="true">
+			<item type="select" name="validazioneJwtTruststoreTypeSelectJWKPublicKey" label="Riferimento Chiave Pubblica" default="kid" reloadOnChange="true">
 				<conditions>
-					<condition and="true">
+					<condition and="false">
+						<selected name="discoveryStato"/>
 						<equals name="validazioneJwtTruststoreType" value="jwk"/>
 					</condition>
 				</conditions>
@@ -423,6 +554,7 @@
 			<item type="text" name="validazioneJwtTruststoreCertificateAlias" label="Alias Certificato" required="true">
 				<conditions and="true">
 					<condition not="true" and="false">
+						<selected name="discoveryStato"/>
 						<equals name="validazioneJwtTruststoreType" value="jwk"/>
 						<equals name="validazioneJwtTruststoreType" value="public"/>
 					</condition>
@@ -436,7 +568,8 @@
 			</item>
 			<item type="text" name="validazioneJwtTruststoreKidAlias" label="Kid Chiave Pubblica" required="true">
 				<conditions and="true">
-					<condition>
+					<condition and="false">
+						<selected name="discoveryStato"/>
 						<equals name="validazioneJwtTruststoreType" value="jwk"/>
 					</condition>
 					<condition and="false">
@@ -451,6 +584,7 @@
 			<item type="select" name="validazioneJwtTruststoreOcspPolicy" label="OCSP Policy" default="" reloadOnChange="true">
 				<conditions and="true">
 					<condition not="true" and="false">
+						<selected name="discoveryStato"/>
 						<equals name="validazioneJwtTruststoreType" value="jwk"/>
 						<equals name="validazioneJwtTruststoreType" value="public"/>
 					</condition>
@@ -465,6 +599,7 @@
 			<item type="checkbox" name="validazioneJwtTruststoreEnableRevocation" label="CRL" reloadOnChange="true" defaultSelected="false">
 				<conditions and="true">
 					<condition not="true" and="false">
+						<selected name="discoveryStato"/>
 						<equals name="validazioneJwtTruststoreType" value="jwk"/>
 						<equals name="validazioneJwtTruststoreType" value="public"/>
 					</condition>
@@ -546,14 +681,33 @@
 			</item>
 
 			<item type="select" name="validazioneJwtKeystoreType" label="Tipo" default="jks" reloadOnChange="true">
+				<conditions>
+					<condition>
+						<selected not="true" name="discoveryStato"/>
+					</condition>
+				</conditions>
 				<property name="rs.security.keystore.type" properties="decryptionPropRefId" />
 			</item>
-			<item type="textarea" name="validazioneJwtKeystoreFile" label="File" required="true">
-			    <property name="rs.security.keystore.file" properties="decryptionPropRefId" />
+			<item type="hidden" name="validazioneJwtKeystoreTypeDynamicDiscovery" label="Tipo" value="jwk">
+				<conditions>
+					<condition>
+						<selected name="discoveryStato"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.type" properties="decryptionPropRefId" />
+			</item>
+			<item type="textarea" name="validazioneJwtKeystoreFile" label="Location" required="true">
+				<conditions>
+					<condition>
+						<selected not="true" name="discoveryStato"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.file" properties="decryptionPropRefId" />
 			</item>
 			<item type="text" name="validazioneJwtKeystorePassword" label="Password" required="true">
 				<conditions>
-					<condition not="true" and="true">
+					<condition not="true" and="false">
+						<selected name="discoveryStato"/>
 						<equals name="validazioneJwtKeystoreType" value="jwk"/>
 					</condition>
 				</conditions>
@@ -601,10 +755,13 @@
 			</conditions>
 			<property name="policy.introspection.endpoint.url" />
 		</item>
-		<item type="textarea" name="introspectionEndpointURL" label="URL" required="true" default="http://">
+		<item type="textarea" name="introspectionEndpointURL" label="URL" required="true" default="https://">
 			<conditions>
 				<condition not="true" and="true">
 					<equals name="introspectionType" value="GOOGLE"/>
+				</condition>
+				<condition and="false" not="true">
+					<selected name="discoveryStato"/>
 				</condition>
 			</conditions>
 			<property name="policy.introspection.endpoint.url" />
@@ -997,10 +1154,13 @@
 			</conditions>
 		    <property name="policy.userInfo.endpoint.url" />
 		</item>
-		<item type="textarea" name="userInfoEndpointURL" label="URL" required="true" default="http://">
+		<item type="textarea" name="userInfoEndpointURL" label="URL" required="true" default="https://">
 			<conditions>
 				<condition not="true" and="true">
 					<equals name="userInfoType" value="GOOGLE"/>
+				</condition>
+				<condition and="false" not="true">
+					<selected name="discoveryStato"/>
 				</condition>
 			</conditions>
 		    <property name="policy.userInfo.endpoint.url" />

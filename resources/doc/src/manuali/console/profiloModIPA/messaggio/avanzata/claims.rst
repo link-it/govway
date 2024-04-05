@@ -31,6 +31,9 @@ Di seguito vengono forniti i valori di default inseriti da GovWay nel payload jw
 		- valore presente nel claim 'sub' del payload JWT ricevuto nella richiesta;
 		- valore 'anonymous'
 
+        .. note::
+            Il claim 'aud', inserito nei token generati nella richiesta in una fruizione e nella risposta in una erogazione, viene generato come 'single case-sensitive string'. È possibile generarlo come 'array of case-sensitive strings' indicandolo tra array (es. *[valoreAudience]*) e in questo caso è possibile indicare anche molteplici valori (es. *[valoreAudience1,valoreAudience2]*).
+
 - 'iss': identificativo del soggetto che ha rilasciato (e firmato) il token; viene utilizzato il primo valore che ha un match in ordine con i seguenti criteri:
 
 	- claim 'iss' indicato nel campo 'Claims' tra i criteri di configurazione 'ModI' della richiesta, in una fruizione, o della risposta, in una erogazione;

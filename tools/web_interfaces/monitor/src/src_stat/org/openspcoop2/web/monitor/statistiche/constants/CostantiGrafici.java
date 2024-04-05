@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -58,6 +58,7 @@ public class CostantiGrafici {
 	public static final String DISTRIBUZIONE_ESITO_DEI_MESSAGGI_NELL_ULTIMO_PERIODO =org.openspcoop2.web.monitor.core.constants.CostantiGrafici.DISTRIBUZIONE_ESITO_DEI_MESSAGGI_NELL_ULTIMO_PERIODO;
 	
 	public static final String TOOLTIP_SUFFIX = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TOOLTIP_SUFFIX;
+	public static final String LABEL_SUFFIX = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LABEL_SUFFIX;
 	
 	public static final String TITOLO_KEY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TITOLO_KEY;
 	public static final String SOTTOTITOLO_KEY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.SOTTOTITOLO_KEY;
@@ -92,6 +93,9 @@ public class CostantiGrafici {
 	public static final String LIMITE_LUNGHEZZA_LABEL_LEGENDA_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_LEGENDA_KEY;
 	public static final int LIMITE_LUNGHEZZA_LABEL_LEGENDA_DEFAULT_VALUE = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_LEGENDA_DEFAULT_VALUE;
 	public static final String VISUALIZZA_VALUE_NELLA_LABEL_LEGENDA= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.VISUALIZZA_VALUE_NELLA_LABEL_LEGENDA;
+	public static final String VISUALIZZA_VALUE_NELLA_CELLA_GRAFICO_HEATMAP= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.VISUALIZZA_VALUE_NELLA_CELLA_GRAFICO_HEATMAP;
+	public static final String VISUALIZZA_VALORE_ZERO_NEL_GRAFICO_HEATMAP= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.VISUALIZZA_VALORE_ZERO_NEL_GRAFICO_HEATMAP;
+	public static final String LABEL_LEGENDA_GRAFICO_HEATMAP= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LABEL_LEGENDA_GRAFICO_HEATMAP;
 	
 	public static final String OK_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.OK_KEY;
 	public static final String OK_LABEL= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.OK_LABEL;
@@ -104,6 +108,17 @@ public class CostantiGrafici {
 	
 	public static final String TOTALE_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TOTALE_KEY;
 	public static final String TOTALE_LABEL= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TOTALE_LABEL;
+	
+	public static final String X_LABEL_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.X_LABEL_KEY;
+	public static final String X_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.X_KEY;
+	
+	public static final String Y_LABEL_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.Y_LABEL_KEY;
+	public static final String Y_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.Y_KEY;
+	
+	public static final String SCALA_VALORI_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.SCALA_VALORI_KEY;
+	public static final String MIN_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.MIN_KEY;
+	public static final String MAX_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.MAX_KEY;
+	public static final String VALORE_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.VALORE_KEY;
 	
 	/** Costanti modulo statistiche*/
 	
@@ -229,7 +244,6 @@ public class CostantiGrafici {
 	public static final String SPEED_KEY= "speed";
 	public static final String MISC_KEY= "misc";
 	public static final String PIECENTEROFFSET_KEY= "pieCenterOffset";
-	public static final String Y_KEY= "y";
 	public static final String CSSPREFIX_KEY= "cssPrefix";
 	
 	public static final String EFFECT_LINEAR_VALUE= "linear";
@@ -303,5 +317,8 @@ public class CostantiGrafici {
 	
 	public static final String LABEL_TIPO_LATENZA_LATENZA_MEDIA_TOTALE_MS = "Latenza Media Totale [ms]";
 	public static final String LABEL_TIPO_LATENZA_LATENZA_MEDIA_TOTALE = "Latenza Media Totale";
+	
+	public static final String SEARCH_NUMERO_DIMENSIONI_2D_LABEL_KEY = "stats.search.numeroDimensioni.2d.label";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_LABEL_KEY = "stats.search.numeroDimensioni.3d.label";
 
 }

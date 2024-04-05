@@ -64,14 +64,14 @@
 			<include name="cxf-core-*.jar"/>
 			<include name="cxf-rt-rs-json-basic-*.jar"/>
 			<include name="cxf-rt-rs-security-jose-*.jar"/>
-			<include name="asm-9.5.jar"/>
-			<include name="woodstox-core-6.5.1.jar"/>
-			<include name="xmlschema-core-2.3.0.jar"/>
+			<include name="asm-9.6.jar"/>
+			<include name="woodstox-core-6.6.1.jar"/>
+			<include name="xmlschema-core-2.3.1.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/security">
 			<include name="neethi-3.2.0.jar"/>
 			<include name="bcprov-ext-jdk18on-1.76.jar"/>
-			<include name="nimbus-jose-jwt-9.31.jar"/>
+			<include name="nimbus-jose-jwt-9.37.3.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/stub/cxf">
 			<include name="openspcoop2_integrationManagerStub_messageBox_cxf.jar"/>
@@ -152,6 +152,12 @@
 				<path refid="karate_testsuite"/>
 			</classpath>
 		</javac>
+		<javac includeantruntime="false" destdir="${build_plugin}" debug="${debug}">
+			<src path="${src_testsuite}/org/openspcoop2/core/protocolli/trasparente/testsuite/tracciamento/classes"/>
+			<classpath>
+				<path refid="karate_testsuite"/>
+			</classpath>
+		</javac>
 		<jar jarfile="${dist_testsuite}/govway_testsuite_plugins.jar">
 			<zipfileset dir="${build_plugin}" />
 		</jar>
@@ -163,6 +169,7 @@
 		<javac includeantruntime="false" destdir="${build_testsuite}" debug="${debug}">
 			<src path="${src_testsuite}"/>
 			<exclude name="org/openspcoop2/core/protocolli/trasparente/testsuite/plugin/classes/*" />
+			<exclude name="org/openspcoop2/core/protocolli/trasparente/testsuite/tracciamento/classes/*" />
 			<classpath>
 				<path refid="karate_testsuite"/>
 			</classpath>

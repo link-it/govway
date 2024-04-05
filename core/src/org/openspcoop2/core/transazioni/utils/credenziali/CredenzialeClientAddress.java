@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -36,7 +36,7 @@ public class CredenzialeClientAddress extends AbstractCredenziale {
 	private String transportAddress;
 		
 	public CredenzialeClientAddress(String socketAddress, String transportAddress) {
-		super(TipoCredenzialeMittente.client_address);
+		super(TipoCredenzialeMittente.CLIENT_ADDRESS);
 		this.socketAddress = socketAddress;
 		this.transportAddress = transportAddress;
 	}
@@ -56,8 +56,8 @@ public class CredenzialeClientAddress extends AbstractCredenziale {
 		}
 	}
 	
-	private static String PREFIX_SOCKET = "#S#";
-	private static String PREFIX_TRANSPORT = "#T#";
+	private static final String PREFIX_SOCKET = "#S#";
+	private static final String PREFIX_TRANSPORT = "#T#";
 	
 	public static String getSocketAddressDBValue(String address) {
 		return getSocketAddressDBValue(address, true);
@@ -96,10 +96,9 @@ public class CredenzialeClientAddress extends AbstractCredenziale {
 				String s = tmp[i];
 				if(s!=null) {
 					s = s.trim();
-					if(!"".equals(s)) {
-						if(!isTransportAddressDBValue(s)) {
-							return s;
-						}	
+					if( (!"".equals(s)) &&
+						(!isTransportAddressDBValue(s))  ) {
+						return s;
 					}
 				}
 			}
@@ -114,10 +113,9 @@ public class CredenzialeClientAddress extends AbstractCredenziale {
 				String s = tmp[i];
 				if(s!=null) {
 					s = s.trim();
-					if(!"".equals(s)) {
-						if(!isSocketAddressDBValue(s)) {
-							return s;
-						}	
+					if( (!"".equals(s)) &&
+						(!isSocketAddressDBValue(s))  ) {
+						return s;
 					}
 				}
 			}

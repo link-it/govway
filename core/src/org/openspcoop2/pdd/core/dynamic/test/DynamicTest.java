@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -582,6 +582,32 @@ public class DynamicTest {
 		}
 		
 		
+		expr = "VALORE_INIZIALE_STATICO_"+prefix + "{context:TEST1}"+"_VALORE_FINALE_STATICO";
+		DynamicUtils.validate("testPddContext", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testPddContext", expr, dynamicMap, pddContext);
+		System.out.println("testPddContext: "+value+"\n\n");
+		expected = "VALORE_INIZIALE_STATICO_"+"VALORE DI ESEMPIO"+"_VALORE_FINALE_STATICO";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = "VALORE_INIZIALE_STATICO_?"+prefix + "{context:TEST1}"+"_VALORE_FINALE_STATICO?";
+		DynamicUtils.validate("testPddContext", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testPddContext", expr, dynamicMap, pddContext);
+		System.out.println("testPddContext: "+value+"\n\n");
+		expected = "VALORE_INIZIALE_STATICO_?"+"VALORE DI ESEMPIO"+"_VALORE_FINALE_STATICO?";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = "VALORE_INIZIALE_STATICO_$"+prefixOptional + "{context:TEST1}"+"_VALORE_FINALE_STATICO$?$";
+		DynamicUtils.validate("testPddContext", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testPddContext", expr, dynamicMap, pddContext);
+		System.out.println("testPddContext: "+value+"\n\n");
+		expected = "VALORE_INIZIALE_STATICO_$"+"VALORE DI ESEMPIO"+"_VALORE_FINALE_STATICO$?$";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
 		
 		expr = prefix + "{header:Header1}";
 		DynamicUtils.validate("testHeader", expr, addPrefixError);

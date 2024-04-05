@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -144,7 +144,713 @@ public class IntegrazioneCorrelazioneApplicativa extends GestioneViaJmx {
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// HEADER-BASED
+	
+	/***
+	 * Test Correlazione Applicativa Header Based
+	 */
+		
+	private String runClientCorrelazioneApplicativaHeaderBased(String portaDelegata,String idUnivoco,Repository repository) throws Exception{
+		java.io.FileInputStream fin = null;
+		DatabaseComponent dbComponentFruitore = null;
+		try{
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
+			Message msg=new Message(fin);
+			msg.getSOAPPartAsBytes();
+
+			
+			ClientHttpGenerico client=new ClientHttpGenerico(repository);
+			client.setSoapAction("\"TEST\"");
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(portaDelegata);
+			client.connectToSoapEngine();
+			client.setProperty("correlazione-applicativa", idUnivoco);
+			client.setMessage(msg);
+			client.setRispostaDaGestire(true);
+			// AttesaTerminazioneMessaggi
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentFruitore= DatabaseProperties.getDatabaseComponentFruitore();
+
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+			}
+			try {
+				client.run();
+			} catch (AxisFault error) {
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				throw error;
+			}finally{
+				dbComponentFruitore.close();
+			}
+			
+			checkHttpRisposta(client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
+			
+			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
+			
+			return client.getIdMessaggio();
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			try{
+				fin.close();
+			}catch(Exception e){}
+			try{
+				dbComponentFruitore.close();
+			}catch(Exception e){}
+		}
+	}
+	
+	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBased=new Repository();
+	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedIDUnivoco=new Repository();
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_HEADER_BASED"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoCorrelazioneApplicativaHeaderBased() throws TestSuiteException, IOException, Exception{
+		
+		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
+		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedIDUnivoco.add(idUnivoco);
+		
+		String id1 = runClientCorrelazioneApplicativaHeaderBased(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_HEADER_BASED,idUnivoco,
+				this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBased);
+		
+		Reporter.log("Sleep 4 secondi...");
+		try{
+			Thread.sleep(4000);
+		}catch(Exception e){}
+		
+		String id2 = runClientCorrelazioneApplicativaHeaderBased(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_HEADER_BASED,idUnivoco,
+				this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBased);
+		
+		Reporter.log("ID 1st invocazione["+id1+"]");
+		Reporter.log("ID 2nd invocazione["+id2+"]");
+		Assert.assertTrue(id1.equals(id2));
+	}
+	@DataProvider (name="SincronoCorrelazioneApplicativaHeaderBased")
+	public Object[][]testSincronoCorrelazioneApplicativaHeaderBased()throws Exception{
+		String id=this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBased.getNext();
+		String idUnivoco=this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedIDUnivoco.getNext();
+		return new Object[][]{
+				{idUnivoco,DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
+				{idUnivoco,null,DatabaseProperties.getDatabaseComponentErogatore(),id,false}	
+		};
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_HEADER_BASED"},dataProvider="SincronoCorrelazioneApplicativaHeaderBased",dependsOnMethods={"sincronoCorrelazioneApplicativaHeaderBased"})
+	public void testSincronoCorrelazioneApplicativaHeaderBased(String idUnivoco,DatabaseMsgDiagnosticiComponent dataMsgDiag,DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE, checkServizioApplicativo,
+					null);
+			Reporter.log("Numero messaggi arrivati al servizio applicativo: "+data.getVerificatoreTracciaRichiesta().isArrivedCount(id));
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isArrivedCount(id)==2);
+			
+			if(dataMsgDiag!=null){
+				//fruitore
+				
+				String msgInizioCorrelazione = MSG_INIZIO_CORRELAZIONE.replace("@IDAPPLICATIVO@", idUnivoco);
+				msgInizioCorrelazione = msgInizioCorrelazione.replace("@IDEGOV@", id);
+				Reporter.log("Check inizio correlazione ["+msgInizioCorrelazione+"]");
+				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgInizioCorrelazione));
+				
+				String msgCorrelazioneAvvenuta = MSG_CORRELAZIONE.replace("@IDAPPLICATIVO@", idUnivoco);
+				msgCorrelazioneAvvenuta = msgCorrelazioneAvvenuta.replace("@IDEGOV@", id);
+				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"]");
+				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta));
+				
+			}
+			
+			// Check correlazione in tracciamento
+			Reporter.log("Check correlazione ["+idUnivoco+"] in tracciamento nella richiesta");
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedCorrelazioneApplicativaRichiesta(id, this.collaborazioneSPCoopBase.getMittente(), idUnivoco));
+			Reporter.log("Check correlazione ["+idUnivoco+"] in tracciamento nella risposta");
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedCorrelazioneApplicativaRichiesta(id, this.collaborazioneSPCoopBase.getMittente(), idUnivoco));
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+			if(dataMsgDiag!=null)
+				dataMsgDiag.close();
+		}
+	}
+	
+	
+	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedSenzaRiusoIDEGov=new Repository();
+	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedSenzaRiusoIDEGovIDUnivoco=new Repository();
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_HEADER_BASED"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
+			dependsOnMethods={"testSincronoCorrelazioneApplicativaHeaderBased"})
+	public void sincronoCorrelazioneApplicativaHeaderBasedSenzaRiusoIDEGov() throws TestSuiteException, IOException, Exception{
+		
+		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
+		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedSenzaRiusoIDEGovIDUnivoco.add(idUnivoco);
+		
+		String id1 = runClientCorrelazioneApplicativaHeaderBased(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_HEADER_BASED_SENZA_RIUSO_IDEGOV,
+				idUnivoco,
+				this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedSenzaRiusoIDEGov);
+		
+		Reporter.log("Sleep 4 secondi...");
+		try{
+			Thread.sleep(4000);
+		}catch(Exception e){}
+		
+		String id2 = runClientCorrelazioneApplicativaHeaderBased(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_HEADER_BASED_SENZA_RIUSO_IDEGOV,
+				idUnivoco,
+				this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedSenzaRiusoIDEGov);
+		
+		Reporter.log("ID 1st invocazione["+id1+"]");
+		Reporter.log("ID 2nd invocazione["+id2+"]");
+		Assert.assertTrue(id1.equals(id2)==false);
+	}
+	@DataProvider (name="SincronoCorrelazioneApplicativaHeaderBasedSenzaRiusoIDEGov")
+	public Object[][]testSincronoCorrelazioneApplicativaHeaderBasedSenzaRiusoIDEGov()throws Exception{
+		String id=this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedSenzaRiusoIDEGov.getNext();
+		String idUnivoco=this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedSenzaRiusoIDEGovIDUnivoco.getNext();
+		return new Object[][]{
+				{idUnivoco,DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
+				{idUnivoco,null,DatabaseProperties.getDatabaseComponentErogatore(),id,false}	
+		};
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_HEADER_BASED"},
+			dataProvider="SincronoCorrelazioneApplicativaHeaderBasedSenzaRiusoIDEGov",dependsOnMethods={"sincronoCorrelazioneApplicativaHeaderBasedSenzaRiusoIDEGov"})
+	public void testSincronoCorrelazioneApplicativaHeaderBasedSenzaRiusoIDEGov(String idUnivoco,DatabaseMsgDiagnosticiComponent dataMsgDiag,DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE, checkServizioApplicativo,
+					null);
+			Reporter.log("Numero messaggi arrivati al servizio applicativo: "+data.getVerificatoreTracciaRichiesta().isArrivedCount(id));
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isArrivedCount(id)==1);
+			
+			if(dataMsgDiag!=null){
+				//fruitore
+				
+				String msgInizioCorrelazione = MSG_INIZIO_CORRELAZIONE.replace("@IDAPPLICATIVO@", idUnivoco);
+				msgInizioCorrelazione = msgInizioCorrelazione.replace("@IDEGOV@", id);
+				Reporter.log("Check inizio correlazione ["+msgInizioCorrelazione+"] non esistente");
+				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgInizioCorrelazione)==false);
+				
+				String msgCorrelazioneAvvenuta = MSG_CORRELAZIONE.replace("@IDAPPLICATIVO@", idUnivoco);
+				msgCorrelazioneAvvenuta = msgCorrelazioneAvvenuta.replace("@IDEGOV@", id);
+				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"] non esistente");
+				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta)==false);
+				
+			}
+			
+			// Check correlazione in tracciamento
+			Reporter.log("Check correlazione ["+idUnivoco+"] in tracciamento nella richiesta");
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedCorrelazioneApplicativaRichiesta(id, this.collaborazioneSPCoopBase.getMittente(), idUnivoco));
+			Reporter.log("Check correlazione ["+idUnivoco+"] in tracciamento nella risposta");
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedCorrelazioneApplicativaRichiesta(id, this.collaborazioneSPCoopBase.getMittente(), idUnivoco));
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+			if(dataMsgDiag!=null)
+				dataMsgDiag.close();
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedExtracedIdentifierEmpty=new Repository();
+	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedExtracedIdentifierEmptyIDUnivoco=new Repository();
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_HEADER_BASED_EMPTY_ID"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoCorrelazioneApplicativaHeaderBasedExtracedIdentifierEmpty() throws TestSuiteException, IOException, Exception{
+		
+		String idUnivoco = ""; // empty
+		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedExtracedIdentifierEmptyIDUnivoco.add(idUnivoco);
+		
+		String id1 = runClientCorrelazioneApplicativaHeaderBased(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_HEADER_BASED_ACCEPT_EMPTY_VALUE,idUnivoco,
+				this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedExtracedIdentifierEmpty);
+		
+		Reporter.log("Sleep 4 secondi...");
+		try{
+			Thread.sleep(4000);
+		}catch(Exception e){}
+		
+		String id2 = runClientCorrelazioneApplicativaHeaderBased(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_HEADER_BASED_ACCEPT_EMPTY_VALUE,idUnivoco,
+				this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedExtracedIdentifierEmpty);
+		
+		Reporter.log("ID 1st invocazione["+id1+"]");
+		Reporter.log("ID 2nd invocazione["+id2+"]");
+		Assert.assertFalse(id1.equals(id2)); // il riuso non e' abilitato
+	}
+	@DataProvider (name="SincronoCorrelazioneApplicativaHeaderBasedExtracedIdentifierEmpty")
+	public Object[][]testSincronoCorrelazioneApplicativaHeaderBasedExtracedIdentifierEmpty()throws Exception{
+		String id=this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedExtracedIdentifierEmpty.getNext();
+		String idSecondaInvocazione=this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedExtracedIdentifierEmpty.getNext();
+		String idUnivoco=this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedExtracedIdentifierEmptyIDUnivoco.getNext();
+		return new Object[][]{
+				{idUnivoco,DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),DatabaseProperties.getDatabaseComponentFruitore(),id,idSecondaInvocazione,false},	
+				{idUnivoco,null,DatabaseProperties.getDatabaseComponentErogatore(),id,idSecondaInvocazione,false}	
+		};
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_HEADER_BASED_EMPTY_ID"},dataProvider="SincronoCorrelazioneApplicativaHeaderBasedExtracedIdentifierEmpty",dependsOnMethods={"sincronoCorrelazioneApplicativaHeaderBasedExtracedIdentifierEmpty"})
+	public void testSincronoCorrelazioneApplicativaHeaderBasedExtracedIdentifierEmpty(String idUnivoco,DatabaseMsgDiagnosticiComponent dataMsgDiag,DatabaseComponent data,
+			String id,String idSecondaInvocazione,boolean checkServizioApplicativo) throws Exception{
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE, checkServizioApplicativo,
+					null);
+			Reporter.log("Numero messaggi arrivati al servizio applicativo: "+data.getVerificatoreTracciaRichiesta().isArrivedCount(id));
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isArrivedCount(id)==1);
+			
+			this.collaborazioneSPCoopBase.testSincrono(data, idSecondaInvocazione, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE, checkServizioApplicativo,
+					null);
+			Reporter.log("Numero messaggi arrivati al servizio applicativo: "+data.getVerificatoreTracciaRichiesta().isArrivedCount(idSecondaInvocazione));
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isArrivedCount(idSecondaInvocazione)==1);
+			
+			if(dataMsgDiag!=null){
+				//fruitore
+				
+				String msgInizioCorrelazione = MSG_INIZIO_CORRELAZIONE.replace("@IDAPPLICATIVO@", idUnivoco);
+				msgInizioCorrelazione = msgInizioCorrelazione.replace("@IDEGOV@", id);
+				Reporter.log("Check inizio correlazione ["+msgInizioCorrelazione+"]");
+				Assert.assertFalse(dataMsgDiag.isTracedMessaggio(msgInizioCorrelazione));
+				
+				String msgCorrelazioneAvvenuta = MSG_CORRELAZIONE.replace("@IDAPPLICATIVO@", idUnivoco);
+				msgCorrelazioneAvvenuta = msgCorrelazioneAvvenuta.replace("@IDEGOV@", id);
+				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"]");
+				Assert.assertFalse(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta));
+				
+				
+				
+				msgInizioCorrelazione = MSG_INIZIO_CORRELAZIONE.replace("@IDAPPLICATIVO@", idUnivoco);
+				msgInizioCorrelazione = msgInizioCorrelazione.replace("@IDEGOV@", idSecondaInvocazione);
+				Reporter.log("Check inizio correlazione ["+msgInizioCorrelazione+"]");
+				Assert.assertFalse(dataMsgDiag.isTracedMessaggio(msgInizioCorrelazione));
+				
+				msgCorrelazioneAvvenuta = MSG_CORRELAZIONE.replace("@IDAPPLICATIVO@", idUnivoco);
+				msgCorrelazioneAvvenuta = msgCorrelazioneAvvenuta.replace("@IDEGOV@", idSecondaInvocazione);
+				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"]");
+				Assert.assertFalse(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta));
+				
+			}
+			
+			// Check correlazione in tracciamento
+			boolean emptyEqualsNull = true; // per oracle
+			Reporter.log("Check correlazione ["+idUnivoco+"] in tracciamento nella richiesta");
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedCorrelazioneApplicativaRichiesta(id, this.collaborazioneSPCoopBase.getMittente(), idUnivoco, emptyEqualsNull));
+			Reporter.log("Check correlazione ["+idUnivoco+"] in tracciamento nella risposta");
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedCorrelazioneApplicativaRichiesta(id, this.collaborazioneSPCoopBase.getMittente(), idUnivoco, emptyEqualsNull));
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+			if(dataMsgDiag!=null)
+				dataMsgDiag.close();
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/***
+	 * Test Correlazione Applicativa Header Based, input mancanti
+	 */
+	Repository repositorySincronoCorrelazioneApplicativaHeaderBasedDatiMancanti=new Repository();
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,
+			IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_HEADER_BASED_DATI_MANCANTI"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoCorrelazioneApplicativaHeaderBasedDatiMancanti_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoCorrelazioneApplicativaHeaderBasedDatiMancanti(genericCode, false);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,
+			IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_HEADER_BASED_DATI_MANCANTI"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoCorrelazioneApplicativaHeaderBasedDatiMancanti_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoCorrelazioneApplicativaHeaderBasedDatiMancanti(genericCode, false);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,
+			IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_HEADER_BASED_DATI_MANCANTI_EMPTY_VALUE"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoCorrelazioneApplicativaHeaderBasedDatiMancantiEmptyValue_genericCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoCorrelazioneApplicativaHeaderBasedDatiMancanti(genericCode, true);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,
+			IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_HEADER_BASED_DATI_MANCANTI_EMPTY_VALUE"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoCorrelazioneApplicativaHeaderBasedDatiMancantiEmptyValue_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		try {
+			super.lockForCode(genericCode, false);
+			
+			_sincronoCorrelazioneApplicativaHeaderBasedDatiMancanti(genericCode, true);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	
+	private void _sincronoCorrelazioneApplicativaHeaderBasedDatiMancanti(boolean genericCode, boolean emptyValue) throws TestSuiteException, IOException, Exception{
+		
+		Date dataInizioTest = DateManager.getDate();
+		
+		java.io.FileInputStream fin = null;
+		DatabaseComponent dbComponentFruitore = null;
+		try{
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
+
+			Message msg=new Message(fin);
+			msg.getSOAPPartAsBytes();
+			
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySincronoCorrelazioneApplicativaHeaderBasedDatiMancanti);
+			client.setSoapAction("\"TEST\"");
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_HEADER_BASED);
+			client.connectToSoapEngine();
+			if(emptyValue) {
+				client.setProperty("correlazione-applicativa", "");
+			}
+			client.setMessage(msg);
+			client.setRispostaDaGestire(true);
+			// AttesaTerminazioneMessaggi
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentFruitore= DatabaseProperties.getDatabaseComponentFruitore();
+
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+			}
+			try {
+				client.run();
+				throw new Exception("Errore atteso ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"416] non si e' verificato...");
+			} catch (AxisFault error) {
+				
+				String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE);
+				String msgErrore = emptyValue ? "extracted identifier is empty" : "header not found";
+				String msgVerifica="identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione headerBased (Header:correlazione-applicativa): "+msgErrore;
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.APPLICATION_CORRELATION_IDENTIFICATION_REQUEST_FAILED;
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceEccezione = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msgVerifica = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault code ["+codiceEccezione+"]");
+				Assert.assertTrue(codiceEccezione.equals(error.getFaultCode().getLocalPart()));
+				Reporter.log("Controllo fault string ["+msgVerifica+"]");
+				Assert.assertTrue(error.getFaultString().contains(msgVerifica));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
+			}finally{
+				dbComponentFruitore.close();
+			}
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			try{
+				fin.close();
+			}catch(Exception e){}
+			try{
+				dbComponentFruitore.close();
+			}catch(Exception e){}
+		}
+		
+		Date dataFineTest = DateManager.getDate();
+		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+		err.setIntervalloInferiore(dataInizioTest);
+		err.setIntervalloSuperiore(dataFineTest);
+		err.setMsgErrore("identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione headerBased (Pattern:correlazione-applicativa): nessun match trovato");
+		this.erroriAttesiOpenSPCoopCore.add(err);
+	}
+	@DataProvider (name="SincronoCorrelazioneApplicativaHeaderBasedDatiMancanti")
+	public Object[][]testSincronoCorrelazioneApplicativaHeaderBasedDatiMancanti()throws Exception{
+		String id=this.repositorySincronoCorrelazioneApplicativaHeaderBasedDatiMancanti.getNext();
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
+		};
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_HEADER_BASED_DATI_MANCANTI"},dataProvider="SincronoCorrelazioneApplicativaHeaderBasedDatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaHeaderBasedDatiMancanti_genericCode"})
+	public void testSincronoCorrelazioneApplicativaHeaderBasedDatiMancanti_genericCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_HEADER_BASED_DATI_MANCANTI"},dataProvider="SincronoCorrelazioneApplicativaHeaderBasedDatiMancanti",dependsOnMethods={"sincronoCorrelazioneApplicativaHeaderBasedDatiMancanti_specificCode"})
+	public void testSincronoCorrelazioneApplicativaHeaderBasedDatiMancanti_specificCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/***
+	 * Test Correlazione Applicativa HEADER Based, con correlazione non riuscita, ma da accettere comunque.
+	 * Verranno utilizzati due id egov differenti
+	 */
+		
+	private String runClientCorrelazioneApplicativaHeaderBased_erroreAccettato(String idUnivoco) throws Exception{
+		java.io.FileInputStream fin = null;
+		DatabaseComponent dbComponentFruitore = null;
+		try{
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
+
+			Message msg=new Message(fin);
+			msg.getSOAPPartAsBytes();
+
+			
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBased_erroreAccettato);
+			client.setSoapAction("\"TEST\"");
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_HEADER_BASED_ACCETTA_CON_IDENTIFICAZIONE_NON_RIUSCITA);
+			client.connectToSoapEngine();
+			client.setProperty("correlazione-applicativa-errata", idUnivoco);
+			client.setMessage(msg);
+			client.setRispostaDaGestire(true);
+			// AttesaTerminazioneMessaggi
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentFruitore= DatabaseProperties.getDatabaseComponentFruitore();
+
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+			}
+			try {
+				client.run();
+			} catch (AxisFault error) {
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				throw error;
+			}finally{
+				dbComponentFruitore.close();
+			}
+			
+			checkHttpRisposta(client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
+			
+			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
+			
+			return client.getIdMessaggio();
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			try{
+				fin.close();
+			}catch(Exception e){}
+			try{
+				dbComponentFruitore.close();
+			}catch(Exception e){}
+		}
+	}
+	
+	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBased_erroreAccettato=new Repository();
+	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedIDUnivoco_erroreAccettato=new Repository();
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_HEADER_BASED_ACCETTA_IDENTIFICAZIONE_NON_RIUSCITA"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoCorrelazioneApplicativaHeaderBased_erroreAccettato() throws TestSuiteException, IOException, Exception{
+		
+		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
+		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedIDUnivoco_erroreAccettato.add(idUnivoco);
+		
+		String id1 = runClientCorrelazioneApplicativaHeaderBased_erroreAccettato(idUnivoco);
+		
+		Reporter.log("Sleep 4 secondi...");
+		try{
+			Thread.sleep(4000);
+		}catch(Exception e){}
+		
+		String id2 = runClientCorrelazioneApplicativaHeaderBased_erroreAccettato(idUnivoco);
+		
+		Reporter.log("ID 1st invocazione["+id1+"]");
+		Reporter.log("ID 2nd invocazione["+id2+"]");
+		Assert.assertTrue(id1.equals(id2)==false);
+	}
+	@DataProvider (name="SincronoCorrelazioneApplicativaHeaderBased_erroreAccettato")
+	public Object[][]testSincronoCorrelazioneApplicativaHeaderBased_erroreAccettato()throws Exception{
+		String id=this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBased_erroreAccettato.getNext();
+		String idSecondaInvocazione=this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBased_erroreAccettato.getNext();
+		String idUnivoco = this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaHeaderBasedIDUnivoco_erroreAccettato.getNext();
+		return new Object[][]{
+				{idUnivoco,idSecondaInvocazione,DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
+				{idUnivoco,idSecondaInvocazione,null,DatabaseProperties.getDatabaseComponentErogatore(),id,false}	
+		};
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_HEADER_BASED_ACCETTA_IDENTIFICAZIONE_NON_RIUSCITA"},
+			dataProvider="SincronoCorrelazioneApplicativaHeaderBased_erroreAccettato",dependsOnMethods={"sincronoCorrelazioneApplicativaHeaderBased_erroreAccettato"})
+	public void testSincronoCorrelazioneApplicativaHeaderBased_erroreAccettato(String idUnivoco,String idSecondaInvocazione,DatabaseMsgDiagnosticiComponent dataMsgDiag,DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE, checkServizioApplicativo,
+					null);
+			
+			Reporter.log("Numero messaggi arrivati al servizio applicativo: "+data.getVerificatoreTracciaRichiesta().isArrivedCount(id));
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isArrivedCount(id)==1);
+			
+			this.collaborazioneSPCoopBase.testSincrono(data, idSecondaInvocazione, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE, checkServizioApplicativo,
+					null);
+			
+			Reporter.log("Numero messaggi arrivati al servizio applicativo: "+data.getVerificatoreTracciaRichiesta().isArrivedCount(id));
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isArrivedCount(idSecondaInvocazione)==1);
+
+			if(dataMsgDiag!=null){
+				//fruitore
+				
+				String msgInizioCorrelazione = MSG_INIZIO_CORRELAZIONE.replace("@IDEGOV@", id);
+				String [] msgRicerca = msgInizioCorrelazione.split("@IDAPPLICATIVO@");
+				Reporter.log("Check inizio correlazione ["+msgInizioCorrelazione+"]");
+				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgRicerca)==false);
+				
+				String msgCorrelazioneAvvenuta = MSG_CORRELAZIONE.replace("@IDEGOV@", id);
+				msgRicerca = msgCorrelazioneAvvenuta.split("@IDAPPLICATIVO@");
+				Reporter.log("Check inizio correlazione ["+msgCorrelazioneAvvenuta+"]");
+				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgRicerca)==false);
+				
+				msgInizioCorrelazione = MSG_INIZIO_CORRELAZIONE.replace("@IDEGOV@", idSecondaInvocazione);
+				msgRicerca = msgInizioCorrelazione.split("@IDAPPLICATIVO@");
+				Reporter.log("Check inizio correlazione ["+msgInizioCorrelazione+"]");
+				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgRicerca)==false);
+				
+				msgCorrelazioneAvvenuta = MSG_CORRELAZIONE.replace("@IDEGOV@", idSecondaInvocazione);
+				msgRicerca = msgCorrelazioneAvvenuta.split("@IDAPPLICATIVO@");
+				Reporter.log("Check inizio correlazione ["+msgCorrelazioneAvvenuta+"]");
+				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgRicerca)==false);
+
+			}
+			
+			// Check correlazione in tracciamento
+			Reporter.log("Check correlazione ["+idUnivoco+"] in tracciamento nella richiesta non esistente");
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedCorrelazioneApplicativaRichiesta(id, this.collaborazioneSPCoopBase.getMittente(),idUnivoco)==false);
+			Reporter.log("Check correlazione ["+idUnivoco+"] in tracciamento nella risposta non esistente");
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedCorrelazioneApplicativaRichiesta(id, this.collaborazioneSPCoopBase.getMittente(),idUnivoco)==false);
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+			if(dataMsgDiag!=null)
+				dataMsgDiag.close();
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// URL-BASED
 	
 	/***
 	 * Test Correlazione Applicativa URL Based

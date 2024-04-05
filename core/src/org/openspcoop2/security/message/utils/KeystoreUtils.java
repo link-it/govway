@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -20,12 +20,15 @@
 package org.openspcoop2.security.message.utils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.KeystoreConstants;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.MerlinTruststore;
@@ -34,6 +37,7 @@ import org.openspcoop2.security.keystore.SymmetricKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -48,8 +52,14 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * @version $Rev$, $Date$
  */
 public class KeystoreUtils {
+	
+	private KeystoreUtils() {}
 
-	public static EncryptionBean getSenderEncryptionBean(MessageSecurityContext messageSecurityContext, org.openspcoop2.utils.Map<Object> ctx) throws Exception {
+	private static final String PREFIX_ALIAS = "Alias ";
+	private static final String SUFFIX_NON_FORNITA = " non fornita";
+	private static final String SUFFIX_NON_TROVATO_MULTIKEYSTORE = " non trovato nella configurazione MultiKeystore";
+	
+	public static EncryptionBean getSenderEncryptionBean(MessageSecurityContext messageSecurityContext, org.openspcoop2.utils.Map<Object> ctx) throws UtilsException, SecurityException, FileNotFoundException, URISyntaxException {
 		
 		if(messageSecurityContext.getEncryptionBean()!=null) {
 			return messageSecurityContext.getEncryptionBean();
@@ -71,7 +81,7 @@ public class KeystoreUtils {
 		if(aliasEncryptUser==null){
 			aliasEncryptUser = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.USER);
 			if(aliasEncryptUser==null){
-				throw new Exception(SecurityConstants.ENCRYPTION_USER+"/"+SecurityConstants.USER+" non fornita");
+				throw new UtilsException(SecurityConstants.ENCRYPTION_USER+"/"+SecurityConstants.USER+SUFFIX_NON_FORNITA);
 			}
 		}
 
@@ -132,7 +142,7 @@ public class KeystoreUtils {
 		if(encryptionStore!=null || encryptionStoreProperties!=null){
 			aliasEncryptPassword = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_PASSWORD);
 			if(aliasEncryptPassword==null){
-				throw new Exception(SecurityConstants.ENCRYPTION_PASSWORD+" non fornita");
+				throw new UtilsException(SecurityConstants.ENCRYPTION_PASSWORD+SUFFIX_NON_FORNITA);
 			}
 		}
 		if(encryptionStore!=null){
@@ -178,20 +188,20 @@ public class KeystoreUtils {
 					messageSecurityContext.getIdServizio().getSoggettoErogatore().getNome()!=null){
 				String fruitore = messageSecurityContext.getIdFruitore().getNome();
 				String erogatore = messageSecurityContext.getIdServizio().getSoggettoErogatore().getNome();
-				String aliasFR_ER = fruitore+"-"+erogatore;
-				String aliasER_FR = erogatore+"-"+fruitore;
-				if(multiKeystore.existsAlias(aliasFR_ER)){
-					encryptionKS = multiKeystore.getKeyStore(aliasFR_ER);
-					aliasEncryptUser = multiKeystore.getKeyAlias(aliasFR_ER);
-					aliasEncryptPassword = multiKeystore.getKeyPassword(aliasFR_ER);
+				String aliasFruitoreErogatore = fruitore+"-"+erogatore;
+				String aliasErogatoreFruitore = erogatore+"-"+fruitore;
+				if(multiKeystore.existsAlias(aliasFruitoreErogatore)){
+					encryptionKS = multiKeystore.getKeyStore(aliasFruitoreErogatore);
+					aliasEncryptUser = multiKeystore.getKeyAlias(aliasFruitoreErogatore);
+					aliasEncryptPassword = multiKeystore.getKeyPassword(aliasFruitoreErogatore);
 				}
-				else if(multiKeystore.existsAlias(aliasER_FR)){
-					encryptionKS = multiKeystore.getKeyStore(aliasER_FR);
-					aliasEncryptUser = multiKeystore.getKeyAlias(aliasER_FR);
-					aliasEncryptPassword = multiKeystore.getKeyPassword(aliasER_FR);
+				else if(multiKeystore.existsAlias(aliasErogatoreFruitore)){
+					encryptionKS = multiKeystore.getKeyStore(aliasErogatoreFruitore);
+					aliasEncryptUser = multiKeystore.getKeyAlias(aliasErogatoreFruitore);
+					aliasEncryptPassword = multiKeystore.getKeyPassword(aliasErogatoreFruitore);
 				}
 				else{
-					throw new Exception("Alias ["+aliasFR_ER+"] o ["+aliasER_FR+"] non trovato nella configurazione MultiKeystore");
+					throw new UtilsException(PREFIX_ALIAS+"["+aliasFruitoreErogatore+"]"+" o "+"["+aliasErogatoreFruitore+"]"+SUFFIX_NON_TROVATO_MULTIKEYSTORE);
 				}
 			}
 			else if(SecurityConstants.MULTI_USER_KEYWORD_PORTA_DOMINIO_FRUITORE.equals(aliasEncryptUser) && 
@@ -234,7 +244,7 @@ public class KeystoreUtils {
 		else if(encryptionSymmetricKeyValue!=null){
 			Object encryptionSymmetricAlgoritm = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_SYMMETRIC_ALGORITHM);
 			if(encryptionSymmetricAlgoritm==null){
-				throw new Exception("E' stata indicata una funzionalita' di encrypt con chiave simmetrica fornita direttamente nelle proprieta' ["+
+				throw new UtilsException("E' stata indicata una funzionalita' di encrypt con chiave simmetrica fornita direttamente nelle proprieta' ["+
 						SecurityConstants.ENCRYPTION_SYMMETRIC_KEY_VALUE+"="+encryptionSymmetricKeyValue+"], ma non e' stato indicato l'algoritmo associato tramite la proprieta' "+
 						SecurityConstants.ENCRYPTION_SYMMETRIC_ALGORITHM);
 			}
@@ -249,7 +259,7 @@ public class KeystoreUtils {
 		}
 		
 		if(encryptionKS==null && encryptionTrustStoreKS==null && encryptionJWKSet==null) {
-			throw new Exception("Nessuna modalita' di recupero del Keystore per la funzionalita' di Encryption indicata");
+			throw new UtilsException("Nessuna modalita' di recupero del Keystore per la funzionalita' di Encryption indicata");
 		}
 
 		EncryptionBean bean = new EncryptionBean();
@@ -263,7 +273,7 @@ public class KeystoreUtils {
 		
 		return bean;
 	}
-	public static EncryptionBean getReceiverEncryptionBean(MessageSecurityContext messageSecurityContext, org.openspcoop2.utils.Map<Object> ctx) throws Exception {
+	public static EncryptionBean getReceiverEncryptionBean(MessageSecurityContext messageSecurityContext, org.openspcoop2.utils.Map<Object> ctx) throws UtilsException, SecurityException, FileNotFoundException, URISyntaxException {
 
 		if(messageSecurityContext.getEncryptionBean()!=null) {
 			return messageSecurityContext.getEncryptionBean();
@@ -285,7 +295,7 @@ public class KeystoreUtils {
 		if(aliasDecryptUser==null){
 			aliasDecryptUser = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.USER);
 			if(aliasDecryptUser==null){
-				throw new Exception(SecurityConstants.DECRYPTION_USER+"/"+SecurityConstants.USER+" non fornita");
+				throw new UtilsException(SecurityConstants.DECRYPTION_USER+"/"+SecurityConstants.USER+SUFFIX_NON_FORNITA);
 			}
 		}
 		
@@ -346,7 +356,7 @@ public class KeystoreUtils {
 		if(decryptionStore!=null || decryptionStoreProperties!=null){
 			aliasDecryptPassword = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.DECRYPTION_PASSWORD);
 			if(aliasDecryptPassword==null){
-				throw new Exception(SecurityConstants.DECRYPTION_PASSWORD+" non fornita");
+				throw new UtilsException(SecurityConstants.DECRYPTION_PASSWORD+SUFFIX_NON_FORNITA);
 			}
 		}
 		if(decryptionStore!=null){
@@ -392,20 +402,20 @@ public class KeystoreUtils {
 					messageSecurityContext.getIdServizio().getSoggettoErogatore().getNome()!=null){
 				String fruitore = messageSecurityContext.getIdFruitore().getNome();
 				String erogatore = messageSecurityContext.getIdServizio().getSoggettoErogatore().getNome();
-				String aliasFR_ER = fruitore+"-"+erogatore;
-				String aliasER_FR = erogatore+"-"+fruitore;
-				if(multiKeystore.existsAlias(aliasFR_ER)){
-					decryptionKS = multiKeystore.getKeyStore(aliasFR_ER);
-					aliasDecryptUser = multiKeystore.getKeyAlias(aliasFR_ER);
-					aliasDecryptPassword = multiKeystore.getKeyPassword(aliasFR_ER);
+				String aliasFruitoreErogatore = fruitore+"-"+erogatore;
+				String aliasErogatoreFruitore = erogatore+"-"+fruitore;
+				if(multiKeystore.existsAlias(aliasFruitoreErogatore)){
+					decryptionKS = multiKeystore.getKeyStore(aliasFruitoreErogatore);
+					aliasDecryptUser = multiKeystore.getKeyAlias(aliasFruitoreErogatore);
+					aliasDecryptPassword = multiKeystore.getKeyPassword(aliasFruitoreErogatore);
 				}
-				else if(multiKeystore.existsAlias(aliasER_FR)){
-					decryptionKS = multiKeystore.getKeyStore(aliasER_FR);
-					aliasDecryptUser = multiKeystore.getKeyAlias(aliasER_FR);
-					aliasDecryptPassword = multiKeystore.getKeyPassword(aliasER_FR);
+				else if(multiKeystore.existsAlias(aliasErogatoreFruitore)){
+					decryptionKS = multiKeystore.getKeyStore(aliasErogatoreFruitore);
+					aliasDecryptUser = multiKeystore.getKeyAlias(aliasErogatoreFruitore);
+					aliasDecryptPassword = multiKeystore.getKeyPassword(aliasErogatoreFruitore);
 				}
 				else{
-					throw new Exception("Alias ["+aliasFR_ER+"] o ["+aliasER_FR+"] non trovato nella configurazione MultiKeystore");
+					throw new UtilsException(PREFIX_ALIAS+"["+aliasFruitoreErogatore+"] o ["+aliasErogatoreFruitore+"]"+SUFFIX_NON_TROVATO_MULTIKEYSTORE);
 				}
 			}
 			else if(SecurityConstants.MULTI_USER_KEYWORD_PORTA_DOMINIO_FRUITORE.equals(aliasDecryptUser) && 
@@ -448,7 +458,7 @@ public class KeystoreUtils {
 		else if(decryptionSymmetricKeyValue!=null){
 			Object decryptionSymmetricAlgoritm = messageSecurityContext.getIncomingProperties().get(SecurityConstants.DECRYPTION_SYMMETRIC_ALGORITHM);
 			if(decryptionSymmetricAlgoritm==null){
-				throw new Exception("E' stata indicata una funzionalita' di encrypt con chiave simmetrica fornita direttamente nelle proprieta' ["+
+				throw new UtilsException("E' stata indicata una funzionalita' di encrypt con chiave simmetrica fornita direttamente nelle proprieta' ["+
 						SecurityConstants.DECRYPTION_SYMMETRIC_KEY_VALUE+"="+decryptionSymmetricKeyValue+"], ma non e' stato indicato l'algoritmo associato tramite la proprieta' "+
 
 						SecurityConstants.DECRYPTION_SYMMETRIC_ALGORITHM);
@@ -462,7 +472,7 @@ public class KeystoreUtils {
 			decryptionJWKSet = new JWKSet(new String(readResources(decryptionJWKSetFile)));
 		}
 		else{
-			throw new Exception("Nessuna modalita' di recupero del Keystore per la funzionalita' di Encryption indicata");
+			throw new UtilsException("Nessuna modalita' di recupero del Keystore per la funzionalita' di Encryption indicata");
 		}
 		
 
@@ -478,7 +488,7 @@ public class KeystoreUtils {
 		return bean;
 	}
 
-	public static SignatureBean getSenderSignatureBean(MessageSecurityContext messageSecurityContext, org.openspcoop2.utils.Map<Object> ctx) throws Exception {
+	public static SignatureBean getSenderSignatureBean(MessageSecurityContext messageSecurityContext, org.openspcoop2.utils.Map<Object> ctx) throws UtilsException, SecurityException, FileNotFoundException, URISyntaxException {
 
 		if(messageSecurityContext.getSignatureBean()!=null) {
 			return messageSecurityContext.getSignatureBean();
@@ -499,7 +509,7 @@ public class KeystoreUtils {
 		if(aliasSignatureUser==null){
 			aliasSignatureUser = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.USER);
 			if(aliasSignatureUser==null){
-				throw new Exception(SecurityConstants.SIGNATURE_USER+"/"+SecurityConstants.USER+" non fornita");
+				throw new UtilsException(SecurityConstants.SIGNATURE_USER+"/"+SecurityConstants.USER+SUFFIX_NON_FORNITA);
 			}
 		}
 
@@ -550,7 +560,7 @@ public class KeystoreUtils {
 		if(signatureStore!=null || signatureStoreProperties!=null){
 			aliasSignaturePassword = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_PASSWORD);
 			if(aliasSignaturePassword==null){
-				throw new Exception(SecurityConstants.SIGNATURE_PASSWORD+" non fornita");
+				throw new UtilsException(SecurityConstants.SIGNATURE_PASSWORD+SUFFIX_NON_FORNITA);
 			}
 		}
 		if(signatureStore!=null){	
@@ -596,20 +606,20 @@ public class KeystoreUtils {
 					messageSecurityContext.getIdServizio().getSoggettoErogatore().getNome()!=null){
 				String fruitore = messageSecurityContext.getIdFruitore().getNome();
 				String erogatore = messageSecurityContext.getIdServizio().getSoggettoErogatore().getNome();
-				String aliasFR_ER = fruitore+"-"+erogatore;
-				String aliasER_FR = erogatore+"-"+fruitore;
-				if(multiKeystore.existsAlias(aliasFR_ER)){
-					signatureKS = multiKeystore.getKeyStore(aliasFR_ER);
-					aliasSignatureUser = multiKeystore.getKeyAlias(aliasFR_ER);
-					aliasSignaturePassword = multiKeystore.getKeyPassword(aliasFR_ER);
+				String aliasFruitoreErogatore = fruitore+"-"+erogatore;
+				String aliasErogatoreFruitore = erogatore+"-"+fruitore;
+				if(multiKeystore.existsAlias(aliasFruitoreErogatore)){
+					signatureKS = multiKeystore.getKeyStore(aliasFruitoreErogatore);
+					aliasSignatureUser = multiKeystore.getKeyAlias(aliasFruitoreErogatore);
+					aliasSignaturePassword = multiKeystore.getKeyPassword(aliasFruitoreErogatore);
 				}
-				else if(multiKeystore.existsAlias(aliasER_FR)){
-					signatureKS = multiKeystore.getKeyStore(aliasER_FR);
-					aliasSignatureUser = multiKeystore.getKeyAlias(aliasER_FR);
-					aliasSignaturePassword = multiKeystore.getKeyPassword(aliasER_FR);
+				else if(multiKeystore.existsAlias(aliasErogatoreFruitore)){
+					signatureKS = multiKeystore.getKeyStore(aliasErogatoreFruitore);
+					aliasSignatureUser = multiKeystore.getKeyAlias(aliasErogatoreFruitore);
+					aliasSignaturePassword = multiKeystore.getKeyPassword(aliasErogatoreFruitore);
 				}
 				else{
-					throw new Exception("Alias ["+aliasFR_ER+"] o ["+aliasER_FR+"] non trovato nella configurazione MultiKeystore");
+					throw new UtilsException(PREFIX_ALIAS+"["+aliasFruitoreErogatore+"] o ["+aliasErogatoreFruitore+"]"+SUFFIX_NON_TROVATO_MULTIKEYSTORE);
 				}
 			}
 			else if(SecurityConstants.MULTI_USER_KEYWORD_PORTA_DOMINIO_FRUITORE.equals(aliasSignatureUser) && 
@@ -653,7 +663,7 @@ public class KeystoreUtils {
 			signatureJWKSet = new JWKSet(new String(readResources(signatureJWKSetFile)));
 		}
 		else{
-			throw new Exception("Nessuna modalita' di recupero del Keystore per la funzionalita' di Signature indicata");
+			throw new UtilsException("Nessuna modalita' di recupero del Keystore per la funzionalita' di Signature indicata");
 		}
 
 		SignatureBean bean = new SignatureBean();
@@ -666,7 +676,7 @@ public class KeystoreUtils {
 		return bean;
 
 	}	
-	public static SignatureBean getReceiverSignatureBean(MessageSecurityContext messageSecurityContext, org.openspcoop2.utils.Map<Object> ctx) throws Exception {
+	public static SignatureBean getReceiverSignatureBean(MessageSecurityContext messageSecurityContext, org.openspcoop2.utils.Map<Object> ctx) throws UtilsException, SecurityException, FileNotFoundException, URISyntaxException {
 
 		if(messageSecurityContext.getSignatureBean()!=null) {
 			return messageSecurityContext.getSignatureBean();
@@ -688,7 +698,7 @@ public class KeystoreUtils {
 		if(aliasSignatureUser==null){
 			aliasSignatureUser = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.USER);
 			if(aliasSignatureUser==null){
-				throw new Exception(SecurityConstants.SIGNATURE_USER+"/"+SecurityConstants.USER+" non fornita");
+				throw new UtilsException(SecurityConstants.SIGNATURE_USER+"/"+SecurityConstants.USER+SUFFIX_NON_FORNITA);
 			}
 		}
 
@@ -742,7 +752,7 @@ public class KeystoreUtils {
 		if(signatureStore!=null){
 			aliasSignaturePassword = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_PASSWORD);
 			if(aliasSignaturePassword==null){
-				throw new Exception(SecurityConstants.SIGNATURE_PASSWORD+" non fornita");
+				throw new UtilsException(SecurityConstants.SIGNATURE_PASSWORD+SUFFIX_NON_FORNITA);
 			}
 			MerlinKeystore merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, signatureStore, aliasSignaturePassword);
 			signatureKS = merlinKeystore.getKeyStore();
@@ -786,20 +796,20 @@ public class KeystoreUtils {
 					messageSecurityContext.getIdServizio().getSoggettoErogatore().getNome()!=null){
 				String fruitore = messageSecurityContext.getIdFruitore().getNome();
 				String erogatore = messageSecurityContext.getIdServizio().getSoggettoErogatore().getNome();
-				String aliasFR_ER = fruitore+"-"+erogatore;
-				String aliasER_FR = erogatore+"-"+fruitore;
-				if(multiKeystore.existsAlias(aliasFR_ER)){
-					signatureKS = multiKeystore.getKeyStore(aliasFR_ER);
-					aliasSignatureUser = multiKeystore.getKeyAlias(aliasFR_ER);
-					aliasSignaturePassword = multiKeystore.getKeyPassword(aliasFR_ER);
+				String aliasFruitoreErogatore = fruitore+"-"+erogatore;
+				String aliasErogatoreFruitore = erogatore+"-"+fruitore;
+				if(multiKeystore.existsAlias(aliasFruitoreErogatore)){
+					signatureKS = multiKeystore.getKeyStore(aliasFruitoreErogatore);
+					aliasSignatureUser = multiKeystore.getKeyAlias(aliasFruitoreErogatore);
+					aliasSignaturePassword = multiKeystore.getKeyPassword(aliasFruitoreErogatore);
 				}
-				else if(multiKeystore.existsAlias(aliasER_FR)){
-					signatureKS = multiKeystore.getKeyStore(aliasER_FR);
-					aliasSignatureUser = multiKeystore.getKeyAlias(aliasER_FR);
-					aliasSignaturePassword = multiKeystore.getKeyPassword(aliasER_FR);
+				else if(multiKeystore.existsAlias(aliasErogatoreFruitore)){
+					signatureKS = multiKeystore.getKeyStore(aliasErogatoreFruitore);
+					aliasSignatureUser = multiKeystore.getKeyAlias(aliasErogatoreFruitore);
+					aliasSignaturePassword = multiKeystore.getKeyPassword(aliasErogatoreFruitore);
 				}
 				else{
-					throw new Exception("Alias ["+aliasFR_ER+"] o ["+aliasER_FR+"] non trovato nella configurazione MultiKeystore");
+					throw new UtilsException(PREFIX_ALIAS+"["+aliasFruitoreErogatore+"] o ["+aliasErogatoreFruitore+"]"+SUFFIX_NON_TROVATO_MULTIKEYSTORE);
 				}
 			}
 			else if(SecurityConstants.MULTI_USER_KEYWORD_PORTA_DOMINIO_FRUITORE.equals(aliasSignatureUser) && 
@@ -846,7 +856,7 @@ public class KeystoreUtils {
 				
 
 		if(signatureKS==null && signatureTrustStoreKS==null && signatureJWKSet==null) {
-			throw new Exception("Nessuna modalita' di recupero del TrustStore per la funzionalita' di Signature indicata");
+			throw new UtilsException("Nessuna modalita' di recupero del TrustStore per la funzionalita' di Signature indicata");
 		}
 		
 		SignatureBean bean = new SignatureBean();
@@ -862,28 +872,29 @@ public class KeystoreUtils {
 	}
 	
 	
-	private static byte[] readResources(String path) throws Exception {
+	private static byte[] readResources(String path) throws UtilsException, FileNotFoundException, URISyntaxException {
+		byte [] b = null;
 		if(path==null) {
-			return null;
+			return b;
 		}
-		if(path!=null && (path.startsWith("http") || path.startsWith("https"))) {
+		if(path.startsWith("http") || path.startsWith("https")) {
 			HttpResponse httpResponse = HttpUtilities.getHTTPResponse(path, 60000, 10000);
 			if(httpResponse==null || httpResponse.getContent()==null) {
-				throw new Exception("Resource '"+path+"' unavailable");
+				throw new UtilsException("Resource '"+path+"' unavailable");
 			}
 			if(httpResponse.getResultHTTPOperation()!=200) {
-				throw new Exception("Retrieve resource '"+path+"' failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
+				throw new UtilsException("Retrieve resource '"+path+"' failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
 			}
 			return httpResponse.getContent();
 		}
-		else if(path!=null && (path.startsWith("file"))){
+		else if(path.startsWith("file")){
 			File f = new File(new URI(path));
 			return FileSystemUtilities.readBytesFromFile(f);
 		}
 		else {
 			File f = new File(path);
-			if(f.exists()==false) {
-				throw new Exception("File '"+f.getAbsolutePath()+"' not exists");
+			if(!f.exists()) {
+				throw new UtilsException("File '"+f.getAbsolutePath()+"' not exists");
 			}
 			return FileSystemUtilities.readBytesFromFile(f);
 		}

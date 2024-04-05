@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -33,13 +33,21 @@ import org.openspcoop2.utils.UtilsException;
 public abstract class AbstractCredenziale {
 
 	protected TipoCredenzialeMittente tipo;
+	protected Long referenceId;
 	
-	public AbstractCredenziale(TipoCredenzialeMittente tipo) {
+	protected AbstractCredenziale(TipoCredenzialeMittente tipo) {
 		this.tipo = tipo;
 	}
+	protected AbstractCredenziale(TipoCredenzialeMittente tipo, Long referenceId) {
+		this.tipo = tipo;
+		this.referenceId = referenceId;
+	}
 	
-	public String getTipo() throws UtilsException {
-		return this.tipo.name();
+	public String getTipo() {
+		return this.tipo.getRawValue();
+	}
+	public Long getReferenceId() {
+		return this.referenceId;
 	}
 	
 	public abstract String getCredenziale() throws UtilsException;

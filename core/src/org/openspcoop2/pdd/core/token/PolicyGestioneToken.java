@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -25,16 +25,19 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.mvc.properties.provider.ProviderException;
-import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
+import org.openspcoop2.pdd.core.token.parser.BasicDynamicDiscoveryParser;
 import org.openspcoop2.pdd.core.token.parser.BasicTokenParser;
+import org.openspcoop2.pdd.core.token.parser.IDynamicDiscoveryParser;
 import org.openspcoop2.pdd.core.token.parser.ITokenParser;
 import org.openspcoop2.pdd.core.token.parser.TipologiaClaims;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.security.message.jose.JOSEUtils;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
@@ -54,6 +57,8 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 	
 	private boolean tokenOpzionale;
 	
+	private boolean dynamicDiscovery;
+	
 	private boolean validazioneJWT;
 	private boolean validazioneJWTWarningOnly;
 	
@@ -71,6 +76,12 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 	}
 	public void setTokenOpzionale(boolean tokenOpzionale) {
 		this.tokenOpzionale = tokenOpzionale;
+	}
+	public boolean isDynamicDiscovery() {
+		return this.dynamicDiscovery;
+	}
+	public void setDynamicDiscovery(boolean dynamicDiscovery) {
+		this.dynamicDiscovery = dynamicDiscovery;
 	}
 	public boolean isValidazioneJWT() {
 		return this.validazioneJWT;
@@ -246,11 +257,63 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 		return "Sconosciuto"; // non dovrebbe mai succedere, esiste la validazione
 	}
 	
-	public boolean isEndpointHttps() throws ProviderException, ProviderValidationException{
+	public boolean isEndpointHttps() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_ENDPOINT_HTTPS_STATO);	
 	}
 	
-	public boolean isValidazioneJWTSaveErrorInCache() throws ProviderException, ProviderValidationException{
+	
+	public String getDynamicDiscoveryEndpoint() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_DISCOVERY_URL);
+	}
+	public TipologiaClaims getDynamicDiscoveryType() {
+		return TipologiaClaims.valueOf(this.defaultProperties.getProperty(Costanti.POLICY_DISCOVERY_CLAIMS_PARSER_TYPE));
+	}
+	public IDynamicDiscoveryParser getDynamicDiscoveryParser() throws TokenException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		IDynamicDiscoveryParser parser = null;
+		TipologiaClaims tipologiaClaims = TipologiaClaims.valueOf(this.defaultProperties.getProperty(Costanti.POLICY_DISCOVERY_CLAIMS_PARSER_TYPE));
+		if(TipologiaClaims.CUSTOM.equals(tipologiaClaims)) {
+			String className = this.defaultProperties.getProperty(Costanti.POLICY_DISCOVERY_CLAIMS_PARSER_CLASS_NAME);
+			if(className!=null && StringUtils.isNotEmpty(className) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(className)) {
+				parser = (IDynamicDiscoveryParser) ClassLoaderUtilities.newInstance(className);
+			}
+			else {
+				String tipo = this.defaultProperties.getProperty(Costanti.POLICY_DISCOVERY_CLAIMS_PARSER_PLUGIN_TYPE);
+				if(tipo!=null && StringUtils.isNotEmpty(tipo) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(tipo)) {
+			    	try{
+						PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
+						parser = pluginLoader.newDynamicDiscovery(tipo);
+					}catch(Exception e){
+						throw new TokenException(e.getMessage(),e); // descrizione errore già corretta
+					}
+				}
+				else {
+					throw new TokenException("Deve essere selezionato un plugin per il parser dei claims della risposta del servizio 'Introspection'");
+				}
+			}
+		}
+		else{
+			parser = new BasicDynamicDiscoveryParser(tipologiaClaims, TokenUtilities.getDynamicDiscoveryClaimsMappingProperties(this.properties));
+		}
+		return parser;
+	}
+	
+	
+	
+	public boolean isValidazioneJWTLocationHttp() {
+		String location = this.getValidazioneJWTLocation();
+		return location !=null && 
+				(location.startsWith(JOSEUtils.HTTP_PROTOCOL) || location.startsWith(JOSEUtils.HTTPS_PROTOCOL));
+	}
+	public String getValidazioneJWTLocation() {
+		if(this.properties!=null) {
+			Properties p = this.properties.get(Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID);
+			if(p!=null) {
+				return p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+			}
+		}
+		return null;
+	}
+	public boolean isValidazioneJWTSaveErrorInCache() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_VALIDAZIONE_SAVE_ERROR_IN_CACHE);	
 	}
 	public ITokenParser getValidazioneJWTTokenParser() throws TokenException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
@@ -288,7 +351,7 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 		return this.defaultProperties.getProperty(SecurityConstants.SIGNATURE_CRL);
 	}
 	
-	public boolean isValidazioneJWTHeader() throws ProviderException, ProviderValidationException{
+	public boolean isValidazioneJWTHeader() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_VALIDAZIONE_JWS_HEADER);	
 	}
 	public List<String> getValidazioneJWTHeaderTyp() {
@@ -304,7 +367,7 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 	public String getIntrospectionEndpoint() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_URL);
 	}
-	public boolean isIntrospectionSaveErrorInCache() throws ProviderException, ProviderValidationException{
+	public boolean isIntrospectionSaveErrorInCache() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_INTROSPECTION_SAVE_ERROR_IN_CACHE);	
 	}
 	public HttpRequestMethod getIntrospectionHttpMethod() {
@@ -353,7 +416,7 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 		}
 		return parser;
 	}
-	public boolean isIntrospectionBasicAuthentication() throws ProviderException, ProviderValidationException{
+	public boolean isIntrospectionBasicAuthentication() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_INTROSPECTION_AUTH_BASIC_STATO);	
 	}
 	public String getIntrospectionBasicAuthenticationUsername() {
@@ -362,20 +425,20 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 	public String getIntrospectionBasicAuthenticationPassword() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_AUTH_BASIC_PASSWORD);
 	}
-	public boolean isIntrospectionBearerAuthentication() throws ProviderException, ProviderValidationException{
+	public boolean isIntrospectionBearerAuthentication() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_INTROSPECTION_AUTH_BEARER_STATO);	
 	}
 	public String getIntrospectionBeareAuthenticationToken() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_AUTH_BEARER_TOKEN);
 	}
-	public boolean isIntrospectionHttpsAuthentication() throws ProviderException, ProviderValidationException{
+	public boolean isIntrospectionHttpsAuthentication() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_INTROSPECTION_AUTH_SSL_STATO);	
 	}
 	
 	public String getUserInfoEndpoint() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_URL);
 	}
-	public boolean isUserInfoSaveErrorInCache() throws ProviderException, ProviderValidationException{
+	public boolean isUserInfoSaveErrorInCache() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_USER_INFO_SAVE_ERROR_IN_CACHE);	
 	}
 	public HttpRequestMethod getUserInfoHttpMethod() {
@@ -424,7 +487,7 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 		}
 		return parser;
 	}
-	public boolean isUserInfoBasicAuthentication() throws ProviderException, ProviderValidationException{
+	public boolean isUserInfoBasicAuthentication() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_USER_INFO_AUTH_BASIC_STATO);	
 	}
 	public String getUserInfoBasicAuthenticationUsername() {
@@ -433,18 +496,18 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 	public String getUserInfoBasicAuthenticationPassword() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_AUTH_BASIC_PASSWORD);
 	}
-	public boolean isUserInfoBearerAuthentication() throws ProviderException, ProviderValidationException{
+	public boolean isUserInfoBearerAuthentication() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_USER_INFO_AUTH_BEARER_STATO);	
 	}
 	public String getUserInfoBeareAuthenticationToken() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_AUTH_BEARER_TOKEN);
 	}
-	public boolean isUserInfoHttpsAuthentication() throws ProviderException, ProviderValidationException{
+	public boolean isUserInfoHttpsAuthentication() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_USER_INFO_AUTH_SSL_STATO);	
 	}
 	
 	
-	public boolean isForwardTokenTrasparente() throws ProviderException, ProviderValidationException{
+	public boolean isForwardTokenTrasparente() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_STATO);	
 	}
 	public String getForwardTokenTrasparenteMode() {
@@ -457,17 +520,17 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL_PARAMETER_NAME);
 	}
 	
-	public boolean isForwardTokenInformazioniRaccolte() throws ProviderException, ProviderValidationException{
+	public boolean isForwardTokenInformazioniRaccolte() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_STATO);	
 	}
 	public String getForwardTokenInformazioniRaccolteMode() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE);
 	}
-	public boolean isForwardTokenInformazioniRaccolteEncodeBase64() throws ProviderException, ProviderValidationException{
+	public boolean isForwardTokenInformazioniRaccolteEncodeBase64() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_ENCODE_BASE64);	
 	}
 	
-	public boolean isForwardTokenInformazioniRaccolteValidazioneJWT() throws ProviderException, ProviderValidationException{
+	public boolean isForwardTokenInformazioniRaccolteValidazioneJWT() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_VALIDAZIONE_JWT);	
 	}
 	public String getForwardTokenInformazioniRaccolteValidazioneJWTMode() {
@@ -480,7 +543,7 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_VALIDAZIONE_JWT_MODE_URL_PARAMETER_NAME);
 	}
 	
-	public boolean isForwardTokenInformazioniRaccolteIntrospection() throws ProviderException, ProviderValidationException{
+	public boolean isForwardTokenInformazioniRaccolteIntrospection() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION);	
 	}
 	public String getForwardTokenInformazioniRaccolteIntrospectionMode() {
@@ -493,7 +556,7 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION_MODE_URL_PARAMETER_NAME);
 	}
 	
-	public boolean isForwardTokenInformazioniRaccolteUserInfo() throws ProviderException, ProviderValidationException{
+	public boolean isForwardTokenInformazioniRaccolteUserInfo() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO);	
 	}
 	public String getForwardTokenInformazioniRaccolteUserInfoMode() {
@@ -506,7 +569,7 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO_MODE_URL_PARAMETER_NAME);
 	}
 
-	public String getAzioniForwardToken() throws ProviderException, ProviderValidationException {
+	public String getAzioniForwardToken() {
 		StringBuilder bf = new StringBuilder();
 		if(this.isForwardToken()) {
 			boolean first = true;

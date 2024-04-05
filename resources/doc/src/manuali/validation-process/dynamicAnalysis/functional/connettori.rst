@@ -17,7 +17,8 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <htt
 - `connettori.consegna_con_notifiche <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/connettori/consegna_con_notifiche>`_; viene verificata la funzionalità dei connettori multipli con tipo 'Consegna con Notifiche'.
 - `connettori.proxy_pass <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/connettori/proxy_pass>`_; viene verificata la funzionalità relativa alle regole di proxy pass.
 - `connettori.override_jvm <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/connettori/override_jvm>`_; viene verificata la funzionalità che consente di modificare la configurazione jvm utilizzata per endpoint https, consentendo di personalizzare i keystore utilizzati tramite la definizione di un file di proprietà.
-- `connettori.tls <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/connettori/tls>`_; viene verificata l'utilizzo di un keystore pkcs12 creato a partire a sua volta da un altro keystore PKCS12. Il test serve a verificare che non si ripresenti la problematica descritta nell'issue `128 <https://github.com/link-it/govway/issues/128>`_.
+- `connettori.tls <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/connettori/tls>`_; viene verificata l'utilizzo di un keystore pkcs12 creato a partire a sua volta da un altro keystore PKCS12. Il test serve a verificare che non si ripresenti la problematica descritta nell'issue `128 <https://github.com/link-it/govway/issues/128>`_. Vengono inoltre verificati tutti i metodi HTTP (DELETE, GET, POST, PUT, HEAD, OPTIONS, PATCH, TRACE, LINK, UNLINK) sia su connessioni http che https in cui il protocollo viene gestito tramite parametri della JVM o tramite la personalizzazione attuabile tramite il connettore https.
+- `connettori.forward_proxy <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/connettori/forward_proxy>`_; viene verificata la funzionalità :ref:`avanzate_govway_proxy`.
 
 Evidenze disponibili in:
 
@@ -32,6 +33,7 @@ Evidenze disponibili in:
 - `risultati dei test del gruppo 'connettori.proxy_pass' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriProxyPass/html/>`_ 
 - `risultati dei test del gruppo 'connettori.override_jvm' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriOverrideJvm/html/>`_ 
 - `risultati dei test del gruppo 'connettori.tls' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriTls/html/>`_ 
+- `risultati dei test del gruppo 'connettori.forward_proxy' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriForwardProxy/html/>`_ 
 
 Sono inoltre disponibili ulteriori test realizzati tramite il tool `TestNG <https://testng.org/doc/>`_ i cui sorgenti sono disponibili in `protocolli/spcoop/testsuite/src <https://github.com/link-it/govway/tree/master/protocolli/spcoop/testsuite/src/org/openspcoop2/protocol/spcoop/testsuite/units/connettori>`_ relativamente ai seguenti gruppi:
 

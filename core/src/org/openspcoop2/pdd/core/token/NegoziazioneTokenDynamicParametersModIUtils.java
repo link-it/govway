@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -22,7 +22,7 @@ package org.openspcoop2.pdd.core.token;
 import java.lang.reflect.Method;
 
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.protocol.utils.ModIUtils;
 
 /**
  * NegoziazioneTokenDynamicParametersModIUtils
@@ -35,15 +35,11 @@ public class NegoziazioneTokenDynamicParametersModIUtils {
 	
 	private NegoziazioneTokenDynamicParametersModIUtils() {}
 
-	private static Class<?> modIPropertiesClass = null;
 	private static Object modIProperties = null;
 	private static synchronized void initModiProperties() throws ProtocolException {
 		if(modIProperties==null) {
 			try {
-				Loader loader = new Loader();
-				modIPropertiesClass = loader.forName("org.openspcoop2.protocol.modipa.config.ModIProperties");
-				Method m = modIPropertiesClass.getMethod("getInstance");
-				modIProperties = m.invoke(null);
+				modIProperties = ModIUtils.getModiProperties();
 			}catch(Exception e) {
 				throw new ProtocolException(e.getMessage(),e);
 			}
@@ -57,9 +53,9 @@ public class NegoziazioneTokenDynamicParametersModIUtils {
 	}
 	public static String getSicurezzaMessaggioCertificatiKeyStoreTipo() throws ProtocolException {
 		try {
-			Object o = getModiProperties();
-			Method m = modIPropertiesClass.getMethod("getSicurezzaMessaggioCertificatiKeyStoreTipo");
-			return (String) m.invoke(o);
+			Object instance = getModiProperties();
+			Method m = instance.getClass().getMethod("getSicurezzaMessaggioCertificatiKeyStoreTipo");
+			return (String) m.invoke(instance);
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
@@ -67,9 +63,9 @@ public class NegoziazioneTokenDynamicParametersModIUtils {
 	public static String getSicurezzaMessaggioCertificatiKeyStorePath() throws ProtocolException {
 		try {
 			if(getSicurezzaMessaggioCertificatiKeyStoreTipo()!=null) {
-				Object o = getModiProperties();
-				Method m = modIPropertiesClass.getMethod("getSicurezzaMessaggioCertificatiKeyStorePath");
-				return (String) m.invoke(o);
+				Object instance = getModiProperties();
+				Method m = instance.getClass().getMethod("getSicurezzaMessaggioCertificatiKeyStorePath");
+				return (String) m.invoke(instance);
 			}
 			return null;
 		}catch(Exception e) {
@@ -79,9 +75,9 @@ public class NegoziazioneTokenDynamicParametersModIUtils {
 	public static String getSicurezzaMessaggioCertificatiKeyStorePassword() throws ProtocolException {
 		try {
 			if(getSicurezzaMessaggioCertificatiKeyStoreTipo()!=null) {
-				Object o = getModiProperties();
-				Method m = modIPropertiesClass.getMethod("getSicurezzaMessaggioCertificatiKeyStorePassword");
-				return (String) m.invoke(o);
+				Object instance = getModiProperties();
+				Method m = instance.getClass().getMethod("getSicurezzaMessaggioCertificatiKeyStorePassword");
+				return (String) m.invoke(instance);
 			}
 			return null;
 		}catch(Exception e) {
@@ -91,9 +87,9 @@ public class NegoziazioneTokenDynamicParametersModIUtils {
 	public static String getSicurezzaMessaggioCertificatiKeyAlias() throws ProtocolException {
 		try {
 			if(getSicurezzaMessaggioCertificatiKeyStoreTipo()!=null) {
-				Object o = getModiProperties();
-				Method m = modIPropertiesClass.getMethod("getSicurezzaMessaggioCertificatiKeyAlias");
-				return (String) m.invoke(o);
+				Object instance = getModiProperties();
+				Method m = instance.getClass().getMethod("getSicurezzaMessaggioCertificatiKeyAlias");
+				return (String) m.invoke(instance);
 			}
 			return null;
 		}catch(Exception e) {
@@ -103,9 +99,9 @@ public class NegoziazioneTokenDynamicParametersModIUtils {
 	public static String getSicurezzaMessaggioCertificatiKeyPassword() throws ProtocolException {
 		try {
 			if(getSicurezzaMessaggioCertificatiKeyStoreTipo()!=null) {
-				Object o = getModiProperties();
-				Method m = modIPropertiesClass.getMethod("getSicurezzaMessaggioCertificatiKeyPassword");
-				return (String) m.invoke(o);
+				Object instance = getModiProperties();
+				Method m = instance.getClass().getMethod("getSicurezzaMessaggioCertificatiKeyPassword");
+				return (String) m.invoke(instance);
 			}
 			return null;
 		}catch(Exception e) {

@@ -328,12 +328,7 @@
 						<link:prop label="Claim" required="true">
 							<rich:comboBox id="claimCombo" value="#{sf_bean.tokenClaim}" defaultLabel="Selezione Claim" 
 									converter="selectItemConverter"	directInputSuggestions="true" width="416" enableManualInput="false">
-								<f:selectItem itemValue="--" itemLabel="--"/>
-								<f:selectItem itemValue="token_issuer" itemLabel="Issuer"/>
-								<f:selectItem itemValue="token_clientId" itemLabel="Client ID"/>
-								<f:selectItem itemValue="token_subject" itemLabel="Subject"/>
-								<f:selectItem itemValue="token_username" itemLabel="Username"/>
-								<f:selectItem itemValue="token_eMail" itemLabel="eMail"/>
+								<f:selectItems value="#{sf_bean.listaTokenClaim}"/>
 							</rich:comboBox>
 						</link:prop>
 					

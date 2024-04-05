@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -163,6 +163,12 @@ public class GestoreCorrelazioneApplicativa {
 	private int maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateResponse = -1;
 	private int maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateResponse = -1;
 	
+	private boolean isRichiestaIdentificativoEstrattoIsNullThrowError = false;
+	private boolean isRispostaIdentificativoEstrattoIsNullThrowError = false;
+	
+	private boolean isRichiestaIdentificativoEstrattoIsEmptyThrowError = false;
+	private boolean isRispostaIdentificativoEstrattoIsEmptyThrowError = false;
+	
 	private boolean isRichiestaRegolaCorrelazioneNonTrovataBlocca = false;
 	private boolean isRispostaRegolaCorrelazioneNonTrovataBlocca = false;
 
@@ -235,6 +241,32 @@ public class GestoreCorrelazioneApplicativa {
 		}
 	
 		try {
+			this.isRichiestaIdentificativoEstrattoIsNullThrowError = CostantiProprieta.isCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsNullTerminaTransazioneConErrore(proprieta, 
+					op2Properties.isRepositoryCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsNullConsideraErrore());
+		}catch(Exception e) {
+			this.log.error("[isCorrelazioneApplicativaRichiesta_identificativoEstrattoIsNull_terminaTransazioneConErrore] failed: "+e.getMessage(),e);
+		}
+		try {
+			this.isRispostaIdentificativoEstrattoIsNullThrowError = CostantiProprieta.isCorrelazioneApplicativaRispostaIdentificativoEstrattoIsNullTerminaTransazioneConErrore(proprieta, 
+					op2Properties.isRepositoryCorrelazioneApplicativaRispostaIdentificativoEstrattoIsNullConsideraErrore());
+		}catch(Exception e) {
+			this.log.error("[isCorrelazioneApplicativaRisposta_identificativoEstrattoIsNull_terminaTransazioneConErrore] failed: "+e.getMessage(),e);
+		}
+		
+		try {
+			this.isRichiestaIdentificativoEstrattoIsEmptyThrowError = CostantiProprieta.isCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsEmptyTerminaTransazioneConErrore(proprieta, 
+					op2Properties.isRepositoryCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsEmptyConsideraErrore());
+		}catch(Exception e) {
+			this.log.error("[isCorrelazioneApplicativaRichiesta_identificativoEstrattoIsEmpty_terminaTransazioneConErrore] failed: "+e.getMessage(),e);
+		}
+		try {
+			this.isRispostaIdentificativoEstrattoIsEmptyThrowError = CostantiProprieta.isCorrelazioneApplicativaRispostaIdentificativoEstrattoIsEmptyTerminaTransazioneConErrore(proprieta, 
+					op2Properties.isRepositoryCorrelazioneApplicativaRispostaIdentificativoEstrattoIsEmptyConsideraErrore());
+		}catch(Exception e) {
+			this.log.error("[isCorrelazioneApplicativaRisposta_identificativoEstrattoIsEmpty_terminaTransazioneConErrore] failed: "+e.getMessage(),e);
+		}
+		
+		try {
 			this.isRichiestaRegolaCorrelazioneNonTrovataBlocca = CostantiProprieta.isCorrelazioneApplicativaRichiestaRegolaNonTrovataTerminaTransazioneConErrore(proprieta, 
 					op2Properties.isRepositoryCorrelazioneApplicativaRichiestaRegolaCorrelazioneNonTrovataBlocca());
 		}catch(Exception e) {
@@ -258,6 +290,7 @@ public class GestoreCorrelazioneApplicativa {
 	private static final String ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO_MODALITA_URL_BASED = "] con modalita' di acquisizione urlBased (Pattern:";
 	private static final String ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO_MODALITA_HEADER_BASED = "] con modalita' di acquisizione headerBased (Header:";
 	private static final String ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO_MODALITA_CONTENT_BASED = "] con modalita' di acquisizione contentBased (Pattern:";
+	private static final String ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO_MODALITA_TEMPLATE_BASED = "] con modalita' di acquisizione "; // usato per template, freemarkerTemplate e velocityTemplate
 	private static final String ERRORE_IDENTIFICAZIONE_PER_ELEMENTO = "identificativo di correlazione applicativa per l'elemento [";
 	private static final String ERRORE_IDENTIFICAZIONE_PER_ELEMENTO_MODALITA_INPUT_BASED = "con modalita' di acquisizione inputBased non presente tra le informazioni di integrazione";
 
@@ -265,7 +298,18 @@ public class GestoreCorrelazioneApplicativa {
 		return "Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai "+this.maxLengthCorrelazioneApplicativa+" caratteri consentiti";
 	}
 	
-	
+	private void checkExtractedIdentifierIsNull(String idCorrelazioneApplicativa, boolean request) throws GestoreMessaggiException {
+		boolean identificativoEstrattoIsNullThrowError = request ? this.isRichiestaIdentificativoEstrattoIsNullThrowError : this.isRispostaIdentificativoEstrattoIsNullThrowError;
+		if(idCorrelazioneApplicativa==null && identificativoEstrattoIsNullThrowError) {
+			throw new GestoreMessaggiException("extracted identifier is null");
+		}
+	}
+	private void checkExtractedIdentifierIsEmpty(String idCorrelazioneApplicativa, boolean request) throws GestoreMessaggiException {
+		boolean identificativoEstrattoIsEmptyThrowError = request ? this.isRichiestaIdentificativoEstrattoIsEmptyThrowError : this.isRispostaIdentificativoEstrattoIsEmptyThrowError;
+		if(StringUtils.isEmpty(idCorrelazioneApplicativa) && identificativoEstrattoIsEmptyThrowError) {
+			throw new GestoreMessaggiException("extracted identifier is empty");
+		}
+	}
 	
 	
 	
@@ -588,6 +632,8 @@ public class GestoreCorrelazioneApplicativa {
 								}
 								idCorrelazioneApplicativa =  bf.toString();
 							}
+							checkExtractedIdentifierIsNull(idCorrelazioneApplicativa, true);
+							checkExtractedIdentifierIsEmpty(idCorrelazioneApplicativa, true);
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
@@ -604,9 +650,14 @@ public class GestoreCorrelazioneApplicativa {
 									message.getTransportRequestContext()==null || 
 									message.getTransportRequestContext().getHeaders()==null ||
 									message.getTransportRequestContext().getHeaders().isEmpty()) {
-								throw new CoreException ("Header trasporto non disponibile");
+								throw new CoreException ("headers not found");
 							}
 							idCorrelazioneApplicativa = message.getTransportRequestContext().getHeaderFirstValue(elemento.getPattern());
+							if(idCorrelazioneApplicativa==null) {
+								// NOTA: deve essere considerato come vi fosse un errore nel pattern
+								throw new GestoreMessaggiException("header not found");
+							}
+							checkExtractedIdentifierIsEmpty(idCorrelazioneApplicativa, true);
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
@@ -619,7 +670,11 @@ public class GestoreCorrelazioneApplicativa {
 					}
 					else if( CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_INPUT_BASED.equals(elemento.getIdentificazione()) ){
 						idCorrelazioneApplicativa = headerIntegrazione.getIdApplicativo();
-						if(idCorrelazioneApplicativa==null){
+						if(
+								(idCorrelazioneApplicativa==null) // NOTA: deve essere considerato come vi fosse un errore
+								|| 
+								(StringUtils.isEmpty(idCorrelazioneApplicativa) && this.isRichiestaIdentificativoEstrattoIsEmptyThrowError)
+							){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
 										getErrore416_CorrelazioneApplicativaRichiesta(ERRORE_IDENTIFICAZIONE_PER_ELEMENTO+nomeElemento+"] " +
@@ -726,11 +781,14 @@ public class GestoreCorrelazioneApplicativa {
 									idCorrelazioneApplicativa = ConditionalUtils.normalizeTemplateResult(idCorrelazioneApplicativa);
 								}
 							}
+							
+							checkExtractedIdentifierIsNull(idCorrelazioneApplicativa, true);
+							checkExtractedIdentifierIsEmpty(idCorrelazioneApplicativa, true);
 
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
-										getErrore416_CorrelazioneApplicativaRichiesta(ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO+nomeElemento+ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO_MODALITA_HEADER_BASED+elemento.getPattern()+"): "+e.getMessage());
+										getErrore416_CorrelazioneApplicativaRichiesta(ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO+nomeElemento+ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO_MODALITA_TEMPLATE_BASED+elemento.getIdentificazione().getValue()+"): "+e.getMessage());
 								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 							}else{
 								correlazioneNonRiuscitaDaAccettare = true;
@@ -757,7 +815,10 @@ public class GestoreCorrelazioneApplicativa {
 							else {
 								idCorrelazioneApplicativa = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, elemento.getPattern(), this.log);
 							}
-														
+									
+							checkExtractedIdentifierIsNull(idCorrelazioneApplicativa, true);
+							checkExtractedIdentifierIsEmpty(idCorrelazioneApplicativa, true);
+							
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
@@ -812,7 +873,7 @@ public class GestoreCorrelazioneApplicativa {
 			}
 			if( generaErrore ){
 				this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
-						getErrore416_CorrelazioneApplicativaRichiesta("Identificativo di correlazione applicativa non identificato; nessun elemento tra quelli di correlazione definiti, sono presenti nel body");
+						getErrore416_CorrelazioneApplicativaRichiesta("Identificativo di correlazione applicativa non identificato; nessun elemento tra quelli di correlazione definiti è presente nel body");
 				throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
 			}
 		}else{			
@@ -1209,9 +1270,14 @@ public class GestoreCorrelazioneApplicativa {
 									message.getTransportResponseContext()==null || 
 									message.getTransportResponseContext().getHeaders()==null ||
 									message.getTransportResponseContext().getHeaders().isEmpty()) {
-								throw new CoreException ("Header trasporto non disponibile");
+								throw new CoreException ("headers not found");
 							}
 							idCorrelazioneApplicativa = message.getTransportResponseContext().getHeaderFirstValue(elemento.getPattern());
+							if(idCorrelazioneApplicativa==null) {
+								// NOTA: deve essere considerato come vi fosse un errore nel pattern
+								throw new GestoreMessaggiException("header not found");
+							}
+							checkExtractedIdentifierIsEmpty(idCorrelazioneApplicativa, false);
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
@@ -1225,7 +1291,11 @@ public class GestoreCorrelazioneApplicativa {
 					}
 					else if( CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_INPUT_BASED.equals(elemento.getIdentificazione()) ){
 						idCorrelazioneApplicativa = headerIntegrazione.getIdApplicativo();
-						if(idCorrelazioneApplicativa==null){
+						if(
+								(idCorrelazioneApplicativa==null) // NOTA: deve essere considerato come vi fosse un errore
+								|| 
+								(StringUtils.isEmpty(idCorrelazioneApplicativa) && this.isRispostaIdentificativoEstrattoIsEmptyThrowError)
+							){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
 										getErrore434_CorrelazioneApplicativaRisposta(ERRORE_IDENTIFICAZIONE_PER_ELEMENTO+nomeElemento+"] " +
@@ -1353,10 +1423,13 @@ public class GestoreCorrelazioneApplicativa {
 								}
 							}
 
+							checkExtractedIdentifierIsNull(idCorrelazioneApplicativa, false);
+							checkExtractedIdentifierIsEmpty(idCorrelazioneApplicativa, false);
+							
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
-										getErrore416_CorrelazioneApplicativaRichiesta(ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO+nomeElemento+ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO_MODALITA_HEADER_BASED+elemento.getPattern()+"): "+e.getMessage());
+										getErrore416_CorrelazioneApplicativaRichiesta(ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO+nomeElemento+ERRORE_IDENTIFICAZIONE_NON_IDENTIFICATO_NEL_ELEMENTO_MODALITA_TEMPLATE_BASED+elemento.getIdentificazione().getValue()+"): "+e.getMessage());
 								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 							}else{
 								correlazioneNonRiuscitaDaAccettare = true;
@@ -1383,7 +1456,10 @@ public class GestoreCorrelazioneApplicativa {
 							else {
 								idCorrelazioneApplicativa = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, elemento.getPattern(), this.log);
 							}
-														
+									
+							checkExtractedIdentifierIsNull(idCorrelazioneApplicativa, false);
+							checkExtractedIdentifierIsEmpty(idCorrelazioneApplicativa, false);
+							
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
@@ -1435,7 +1511,7 @@ public class GestoreCorrelazioneApplicativa {
 			}
 			if( generaErrore ){
 				this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
-						getErrore434_CorrelazioneApplicativaRisposta("Identificativo di correlazione applicativa non identificato; nessun elemento tra quelli di correlazione definiti, sono presenti nel body");
+						getErrore434_CorrelazioneApplicativaRisposta("Identificativo di correlazione applicativa non identificato; nessun elemento tra quelli di correlazione definiti è presente nel body");
 				throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
 			}
 		}else{

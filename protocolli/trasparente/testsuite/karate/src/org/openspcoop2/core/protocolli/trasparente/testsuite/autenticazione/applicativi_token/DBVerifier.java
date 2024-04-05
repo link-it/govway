@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -178,9 +178,17 @@ public class DBVerifier {
 		}
 		
 		Object oTokenClientId = row.get("token_client_id");
-		if( (msgErrore==null || !msgErrore.contains("differente dal soggetto proprietario della porta invocata")) 
-				&& 
-			(idApplicativoToken!=null || clientId!=null)) {
+		if( 
+				/**(
+						msgErrore==null 
+						|| 
+						!msgErrore.contains("differente dal soggetto proprietario della porta invocata")
+				) 
+				&& */
+				(
+						idApplicativoToken!=null || clientId!=null
+				)
+			) {
 			assertNotNull(msg,oTokenClientId);
 			assertTrue(msg+" o token_client_id classe '"+oTokenClientId.getClass().getName()+"'", (oTokenClientId instanceof String));
 			String tokenClientId = null;
@@ -213,7 +221,7 @@ public class DBVerifier {
 				tipo = (String)oTipo;
 			}
 			assertNotNull(msg+" (tipo credenziale string)",tipo);
-			assertTrue(msg+" tipo credenziale 'found:"+tipo+"' == 'expected:"+TipoCredenzialeMittente.token_clientId.name()+"'", (tipo.equals(TipoCredenzialeMittente.token_clientId.name())));
+			assertTrue(msg+" tipo credenziale 'found:"+tipo+"' == 'expected:"+TipoCredenzialeMittente.TOKEN_CLIENT_ID.getRawValue()+"'", (tipo.equals(TipoCredenzialeMittente.TOKEN_CLIENT_ID.getRawValue())));
 			
 			if(!map.containsKey("credenziale")) {
 				throw new Exception(msg+"token client id '"+idToken+"' corrisponde a una credenziale mittente ("+map.keySet()+") che non contiene la colonna 'credenziale' ?");

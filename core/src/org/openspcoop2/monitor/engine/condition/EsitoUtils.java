@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -21,13 +21,16 @@ package org.openspcoop2.monitor.engine.condition;
 
 import java.util.List;
 
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
+import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.slf4j.Logger;
@@ -305,7 +308,25 @@ public class EsitoUtils {
 			}
 			
 			try{
-				return this.esitiProperties.getEsitoTransactionContextLabel((String)value);
+				boolean moreContext = this.esitiProperties.getEsitiTransactionContextCode().size()>1;
+				
+				String code = (String)value;
+				
+				String label = null;
+				if(isFaseRequestIn(code)) {
+					label = (moreContext ? this.esitiProperties.getEsitoTransactionContextLabel(getRawEsitoContext(code))+" - " : "" ) + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
+				}
+				else if(isFaseRequestOut(code)) {
+					label = (moreContext ? this.esitiProperties.getEsitoTransactionContextLabel(getRawEsitoContext(code))+" - " : "" ) + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+				}
+				else if(isFaseResponseOut(code)) {
+					label = (moreContext ? this.esitiProperties.getEsitoTransactionContextLabel(getRawEsitoContext(code))+" - " : "" ) + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT;
+				}
+				else {
+					label = this.esitiProperties.getEsitoTransactionContextLabel(code);
+				}
+				
+				return label;
 			}catch(Exception e){
 				this.logger.error("Conversione non riuscita: "+e.getMessage(),e);
 				return "Conversione non riuscita";
@@ -315,5 +336,46 @@ public class EsitoUtils {
 			this.logger.error("Conversione non riuscita: tipo ["+value.getClass().getName()+"] non supportato");
 			return "Conversione non riuscita";
 		}
+	}
+	
+	
+	
+	
+	private static final String SUFFIX_IN_REQUEST = "_irq";
+	private static final String SUFFIX_OUT_REQUEST = "_orq";
+	private static final String SUFFIX_OUT_RESPONSE = "_ors";
+	public static String buildEsitoContext(String esitoContext, FaseTracciamento fase) {
+		// non deve superare i 20 caratteri
+		if(esitoContext==null) {
+			esitoContext= CostantiProtocollo.ESITO_TRANSACTION_CONTEXT_STANDARD;
+		}
+		switch (fase) {
+		case IN_REQUEST:
+			return esitoContext + SUFFIX_IN_REQUEST;
+		case OUT_REQUEST:
+			return esitoContext + SUFFIX_OUT_REQUEST;
+		case OUT_RESPONSE:
+			return esitoContext + SUFFIX_OUT_RESPONSE;
+		default:
+			return esitoContext;
+		}
+	}
+	public static boolean isFaseIntermedia(String esito) {
+		return isFaseRequestIn(esito) || isFaseRequestOut(esito) || isFaseResponseOut(esito);
+	}
+	public static String getRawEsitoContext(String esito) {
+		if(isFaseIntermedia(esito) && esito.length()>SUFFIX_IN_REQUEST.length()) { // tutti e 3 stessa lunghezza
+			return esito.substring(0,esito.length()-SUFFIX_IN_REQUEST.length());
+		}
+		return esito;
+	}
+	public static boolean isFaseRequestIn(String esito) {
+		return esito!=null && esito.endsWith(SUFFIX_IN_REQUEST); 
+	}
+	public static boolean isFaseRequestOut(String esito) {
+		return esito!=null && esito.endsWith(SUFFIX_OUT_REQUEST); 
+	}
+	public static boolean isFaseResponseOut(String esito) {
+		return esito!=null && esito.endsWith(SUFFIX_OUT_RESPONSE); 
 	}
 }

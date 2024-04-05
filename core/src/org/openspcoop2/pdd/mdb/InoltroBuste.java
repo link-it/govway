@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -34,6 +34,8 @@ import java.util.Map;
 import jakarta.xml.soap.SOAPBody;
 import jakarta.xml.soap.SOAPFault;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneErrore;
@@ -47,6 +49,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.eccezione.details.utils.XMLUtils;
@@ -69,8 +72,10 @@ import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.mtom.MtomXomReference;
 import org.openspcoop2.message.utils.MessageUtilities;
+import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.MTOMProcessorConfig;
 import org.openspcoop2.pdd.config.MessageSecurityConfig;
@@ -125,12 +130,15 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.Tracciamento;
+import org.openspcoop2.pdd.logger.transazioni.InformazioniTransazione;
+import org.openspcoop2.pdd.logger.transazioni.TracciamentoManager;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.pdd.services.error.AbstractErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
+import org.openspcoop2.protocol.basic.builder.EsitoBuilder;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
@@ -167,6 +175,9 @@ import org.openspcoop2.protocol.sdk.validator.IValidatoreErrori;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
+import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.protocol.utils.ModIUtils;
+import org.openspcoop2.protocol.utils.ModIValidazioneSemanticaProfiloSicurezza;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.MessageSecurityContextParameters;
 import org.openspcoop2.security.message.constants.SecurityConstants;
@@ -182,6 +193,7 @@ import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.rest.problem.JsonDeserializer;
 import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
 import org.openspcoop2.utils.rest.problem.XmlDeserializer;
+import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -348,6 +360,8 @@ public class InoltroBuste extends GenericLib{
 			esito.setEsitoInvocazione(false); 
 			return esito;
 		}
+		IntegrationContext integrationContext = richiestaDelegata.getIntegrazione();
+		ProtocolContext protocolContext = richiestaDelegata.getProtocol();
 		
 		Busta bustaRichiesta = inoltroBusteMsg.getBusta();
 		if(bustaRichiesta==null) {
@@ -2104,7 +2118,9 @@ public class InoltroBuste extends GenericLib{
 				outRequestContext.setMessaggio(requestMessageTrasformato);
 				
 				// Contesto
-				ProtocolContext protocolContext = new ProtocolContext();
+				if(protocolContext==null) {
+					protocolContext = new ProtocolContext();
+				}
 				protocolContext.setFruitore(soggettoFruitore);
 				if(bustaRichiesta!=null){
 					protocolContext.setIndirizzoFruitore(bustaRichiesta.getIndirizzoMittente());
@@ -2135,7 +2151,9 @@ public class InoltroBuste extends GenericLib{
 				outRequestContext.setProtocollo(protocolContext);
 				
 				// Integrazione
-				IntegrationContext integrationContext = new IntegrationContext();
+				if(integrationContext==null) {
+					integrationContext = new IntegrationContext();
+				}
 				integrationContext.setIdCorrelazioneApplicativa(idCorrelazioneApplicativa);
 				integrationContext.setServizioApplicativoFruitore(servizioApplicativoFruitore);
 				integrationContext.setGestioneStateless(portaDiTipoStateless);
@@ -2308,14 +2326,51 @@ public class InoltroBuste extends GenericLib{
 			Utilities.printFreeMemory("InoltroBuste - spedizione..");
 			
 			
-			
 
+			
+		
 			// --------------------- spedizione --------------------------
+						
 			Date dataPrimaInvocazioneConnettore = null;
 			Date dataTerminataInvocazioneConnettore = null;
-			if(invokerNonSupportato==false){
+			if(!invokerNonSupportato){
+				
+				boolean emitDiagnostic=true;
+				if(org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol()) &&
+						bustaRichiesta!=null && requestMessageTrasformato!=null &&
+						connectorSender instanceof ConnettoreBase) {
+					ModIValidazioneSemanticaProfiloSicurezza modIValidazioneSemanticaProfiloSicurezza = new ModIValidazioneSemanticaProfiloSicurezza(bustaRichiesta, true);
+					if(modIValidazioneSemanticaProfiloSicurezza.isSicurezzaTokenOauth()) {
+						/**boolean useJtiAuthorization = ModIUtils.useJtiAuthorizationObject(this.requestMsg); 
+						 * Da realizzare tramite proprieta' nella configurazione della fruizione, simile a quella dell'erogazione
+						 * Per adesso ci si basa su una proprietà definita in modipa.properties e su una proprietà ridefinibile nella fruizione
+						 * */
+						boolean useJtiAuthorization = !(CostantiProprieta.isModITraceJtiSourceIntegrity(pd!=null ? pd.getProprietaList() : null, ModIUtils.isTokenOAuthUseJtiIntegrityAsMessageId())); 
+						if(useJtiAuthorization) {
+							((ConnettoreBase)connectorSender).setModIValidazioneSemanticaProfiloSicurezza(modIValidazioneSemanticaProfiloSicurezza);
+							emitDiagnostic=false;
+							// il log di inoltroInCorso verra emesso dopo la negoziazione del token in modo da utilizzare il corretto id.
+						}
+						else {
+							// verifico che il token di integrity sia stato prodotto altrimenti comunque indico di usare il jti dell'header authorization
+							String id = bustaRichiesta.getProperty(CostantiDB.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID);
+							if( id==null || StringUtils.isEmpty(id) ) {
+								((ConnettoreBase)connectorSender).setModIValidazioneSemanticaProfiloSicurezza(modIValidazioneSemanticaProfiloSicurezza);
+								emitDiagnostic=false;
+								// il log di inoltroInCorso verra emesso dopo la negoziazione del token in modo da utilizzare il corretto id.
+							}
+						}
+					}
+				}
+				
+				if(emitDiagnostic) {
+					msgDiag.logPersonalizzato("inoltroInCorso");
+				}
+				
+				// se il tracciamento lo prevedo emetto un log
+				registraTracciaOutRequest(outRequestContext, this.log, msgDiag);
+				
 				// utilizzo connettore
-				msgDiag.logPersonalizzato("inoltroInCorso");
 				ejbUtils.setSpedizioneMsgIngresso(new Timestamp(outRequestContext.getDataElaborazioneMessaggio().getTime()));
 				dataPrimaInvocazioneConnettore = DateManager.getDate();
 				errorConsegna = !connectorSender.send(responseCachingConfig, connettoreMsg);
@@ -5448,5 +5503,38 @@ public class InoltroBuste extends GenericLib{
 			}
 		}
 		return integrationFunctionError;
+	}
+	
+	private void registraTracciaOutRequest(OutRequestContext outRequestContext, Logger log, MsgDiagnostico msgDiag) throws CoreException, HandlerException, ProtocolException {
+
+		try {
+		
+			TracciamentoManager tracciamentoManager = new TracciamentoManager(FaseTracciamento.OUT_REQUEST);
+			if(!tracciamentoManager.isTransazioniEnabled()) {
+				return;
+			}
+				
+			InformazioniTransazione info = new InformazioniTransazione();
+			info.setContext(outRequestContext.getPddContext());
+			info.setTipoPorta(outRequestContext.getTipoPorta());
+			info.setProtocolFactory(outRequestContext.getProtocolFactory());
+			info.setProtocollo(outRequestContext.getProtocollo());
+			info.setIntegrazione(outRequestContext.getIntegrazione());
+			info.setIdModulo(outRequestContext.getIdModulo());
+			
+			TransportRequestContext transportRequestContext = null;
+			if(outRequestContext.getMessaggio()!=null) {
+				transportRequestContext = outRequestContext.getMessaggio().getTransportRequestContext();
+			}
+			String esitoContext = EsitoBuilder.getTipoContext(transportRequestContext, EsitiProperties.getInstance(log, outRequestContext.getProtocolFactory()), log);
+			
+			tracciamentoManager.invoke(info, esitoContext, 
+					outRequestContext.getConnettore()!=null ? outRequestContext.getConnettore().getHeaders() : null,
+							msgDiag);
+			
+		}catch(Exception e) {
+			ServicesUtils.processTrackingException(e, log, FaseTracciamento.OUT_REQUEST, outRequestContext.getPddContext());
+		}
+		
 	}
 }

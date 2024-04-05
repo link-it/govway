@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -185,9 +185,9 @@ public class DriverConfigurazioneDB_dumpLIB {
 			}
 		
 		} catch (SQLException se) {
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConfigurazioneGenerale] SQLException [" + se.getMessage() + "].",se);
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDDumpConfigurazione] SQLException [" + se.getMessage() + "].",se);
 		}catch (Exception se) {
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConfigurazioneGenerale] Exception [" + se.getMessage() + "].",se);
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDDumpConfigurazione] Exception [" + se.getMessage() + "].",se);
 		} finally {
 	
 			JDBCUtilities.closeResources(updateStmt);

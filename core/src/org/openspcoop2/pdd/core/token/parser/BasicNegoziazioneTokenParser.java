@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.pdd.core.token.parser;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 
 /**     
@@ -41,7 +43,7 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 
 	protected Integer httpResponseCode;
 	protected String raw;
-	protected Map<String, Object> claims;
+	protected Map<String, Serializable> claims;
 	protected TipologiaClaimsNegoziazione parser;
 	protected Properties parserConfig;
 	protected Date now;
@@ -55,7 +57,7 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 	}
 	
 	@Override
-	public void init(String raw, Map<String, Object> claims) {
+	public void init(String raw, Map<String, Serializable> claims) {
 		this.raw = raw;
 		this.claims = claims;
 		this.now = DateManager.getDate();
@@ -63,7 +65,7 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 
 	
 	@Override
-	public void checkHttpTransaction(Integer httpResponseCode) throws Exception{
+	public void checkHttpTransaction(Integer httpResponseCode) throws UtilsException{
 		this.httpResponseCode = httpResponseCode;
 		switch (this.parser) {
 		case OAUTH2_RFC_6749:
@@ -72,7 +74,7 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 			if(this.httpResponseCode!=null && 
 				(this.httpResponseCode.intValue() < 200 || this.httpResponseCode.intValue()>299)) {
 				String msgError = "Connessione terminata con errore (codice trasporto: "+this.httpResponseCode.intValue()+")";
-				throw new Exception(msgError+": "+this.raw);
+				throw new UtilsException(msgError+": "+this.raw);
 			}
 			break;
 		}
@@ -258,10 +260,11 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 		}
 		else if(TipologiaClaimsNegoziazione.MAPPING.equals(this.parser)) {
 			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.RETRIEVE_TOKEN_PARSER_SCOPE);
-			List<String> tmpScopes_list = TokenUtilities.getFirstClaimAsList(this.claims, claimNames);
-			if(tmpScopes_list!=null && !tmpScopes_list.isEmpty()) {
+			List<String> tmpScopesList = TokenUtilities.getFirstClaimAsList(this.claims, claimNames);
+			List<String> lNull = null;
+			if(tmpScopesList!=null && !tmpScopesList.isEmpty()) {
 				List<String> scopes = new ArrayList<>();
-				for (String s : tmpScopes_list) {
+				for (String s : tmpScopesList) {
 					List<String> tmp = readScope(s);
 					if(tmp!=null && !tmp.isEmpty()) {
 						for (String sTmp : tmp) {
@@ -274,13 +277,14 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 				return scopes;
 			}
 			else {
-				return null;
+				return lNull;
 			}
 		}
 		
 		return readScope(tmpScopes);
 	}
 	private List<String> readScope(String tmpScopes) {
+		List<String> lNull = null;
 		if(tmpScopes!=null) {
 			String [] tmpArray = tmpScopes.split(" ");
 			if(tmpArray!=null && tmpArray.length>0) {
@@ -291,7 +295,7 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 				return scopes;
 			}
 		}
-		return null;
+		return lNull;
 	}
 	
 }

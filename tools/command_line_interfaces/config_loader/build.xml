@@ -43,7 +43,7 @@
 			<include name="spring/*"/>
 			<include name="spring-security/*"/>
 			<include name="stub/*"/>
-			<include name="testsuite/spring-jdbc-6.0.11.jar"/>
+			<include name="testsuite/spring-jdbc-6.1.5.jar"/>
 		</fileset>
 	</path>
 	<path id="classpath_dist" >
@@ -157,7 +157,7 @@
 			<fileset dir="${openspcoop2.lib}/shared" includes="joda-time-2.12.5.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="wsdl4j-1.6.3.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="snakeyaml-2.1-gov4j-1.jar"/>
-			<fileset dir="${openspcoop2.lib}/testsuite" includes="spring-jdbc-6.0.11.jar"/>
+			<fileset dir="${openspcoop2.lib}/testsuite" includes="spring-jdbc-6.1.5.jar"/>
 			<fileset dir="${openspcoop2.lib}/wss4j" includes="wss4j-ws-security-common-3.0.1.jar"/>
 			<fileset dir="${openspcoop2.lib}/applicationServer/tomcat10" includes="*.jar"/> <!-- Serve per il datasource env -->
 		</copy>

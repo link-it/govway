@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -77,6 +77,8 @@ public class ConfigurazionePluginsTipoPluginUtils {
 		valori.add(TipoPlugin.MESSAGE_HANDLER.toString());
 		valori.add(TipoPlugin.SERVICE_HANDLER.toString());
 		
+		valori.add(TipoPlugin.TOKEN_DYNAMIC_DISCOVERY.toString());
+		
 		valori.add(TipoPlugin.TOKEN_VALIDAZIONE.toString());
 		
 		valori.add(TipoPlugin.TOKEN_NEGOZIAZIONE.toString());
@@ -138,6 +140,8 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_STATISTICA;
 		case TRANSAZIONE:
 			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_TRANSAZIONE;
+		case TOKEN_DYNAMIC_DISCOVERY:
+			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_TOKEN_DYNAMIC_DISCOVERY;
 		case TOKEN_VALIDAZIONE:
 			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE_TOKEN_VALIDAZIONE;
 		case TOKEN_NEGOZIAZIONE:
@@ -254,6 +258,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			case RICERCA:
 			case STATISTICA:
 			case TRANSAZIONE:
+			case TOKEN_DYNAMIC_DISCOVERY:
 			case TOKEN_VALIDAZIONE:
 			case TOKEN_NEGOZIAZIONE:
 			case ATTRIBUTE_AUTHORITY:
@@ -320,6 +325,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			case RICERCA:
 			case STATISTICA:
 			case TRANSAZIONE:
+			case TOKEN_DYNAMIC_DISCOVERY:
 			case TOKEN_VALIDAZIONE:
 			case TOKEN_NEGOZIAZIONE:
 			case ATTRIBUTE_AUTHORITY:
@@ -522,6 +528,10 @@ public class ConfigurazionePluginsTipoPluginUtils {
 		case STATISTICA:
 		case TRANSAZIONE:
 			break;
+		case TOKEN_DYNAMIC_DISCOVERY:
+			info.setHeaderBody(infoSingola);
+			listBody.add(org.openspcoop2.pdd.core.token.parser.IDynamicDiscoveryParser.class.getName());
+			break;
 		case TOKEN_VALIDAZIONE:
 			info.setHeaderBody(infoSingola);
 			listBody.add(org.openspcoop2.pdd.core.token.parser.ITokenParser.class.getName());
@@ -623,6 +633,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			case RICERCA:
 			case STATISTICA:
 			case TRANSAZIONE:
+			case TOKEN_DYNAMIC_DISCOVERY:
 			case TOKEN_VALIDAZIONE:
 			case TOKEN_NEGOZIAZIONE:
 			case ATTRIBUTE_AUTHORITY:
@@ -656,6 +667,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			case RICERCA:
 			case STATISTICA:
 			case TRANSAZIONE:
+			case TOKEN_DYNAMIC_DISCOVERY:
 			case TOKEN_VALIDAZIONE:
 			case TOKEN_NEGOZIAZIONE:
 			case ATTRIBUTE_AUTHORITY:
@@ -718,6 +730,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 		case RICERCA:
 		case STATISTICA:
 		case TRANSAZIONE:
+		case TOKEN_DYNAMIC_DISCOVERY:
 		case TOKEN_VALIDAZIONE:
 		case TOKEN_NEGOZIAZIONE:
 		case ATTRIBUTE_AUTHORITY:

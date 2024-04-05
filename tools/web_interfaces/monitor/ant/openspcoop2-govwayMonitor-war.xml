@@ -167,7 +167,7 @@
 				<include name="commons-codec-1.16.0.jar" />
 				<include name="commons-math3-3.6.1.jar" />
 				<include name="commons-csv-1.10.0.jar" />
-				<include name="commons-compress-1.23.0.jar" />
+				<include name="commons-compress-1.26.0.jar" />
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/console">
 				<include name="jquery-3.6.4.jar"/>
@@ -199,7 +199,7 @@
 			<lib dir="${required_lib_govwayMonitor}/cxf">
 				<include name="cxf-core-*.jar" />
 				<include name="cxf-rt-*.jar" />
-				<include name="woodstox-core-6.5.1.jar" />
+				<include name="woodstox-core-6.6.1.jar" />
 				<include name="${stax2-api_jar}" />
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/saaj">
@@ -216,7 +216,7 @@
 				<include name="bcprov-ext-jdk18on-1.76.jar"/>
 				<include name="bcutil-jdk18on-1.76.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
-				<include name="nimbus-jose-jwt-9.31.jar"/>
+				<include name="nimbus-jose-jwt-9.37.3.jar"/>
 			</lib>
 			<lib dir="${required_lib}/json">
 				<include name="*.jar"/>

@@ -33,8 +33,8 @@
 		<failureaccess.version>1.0.1</failureaccess.version>
 		<libphonenumber.version>8.13.18</libphonenumber.version>
 
-		<json-path.version>2.8.0</json-path.version>
-		<json-path.gov4j.version>2.8.0-gov4j-1</json-path.gov4j.version>
+		<json-path.version>2.9.0</json-path.version>
+		<json-path.gov4j.version>2.9.0-gov4j-1</json-path.gov4j.version>
 		<json-smart.version>2.5.0</json-smart.version>
 		<accessors-smart.version>2.5.0</accessors-smart.version>
 

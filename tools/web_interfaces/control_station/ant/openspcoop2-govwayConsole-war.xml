@@ -346,7 +346,7 @@
 				<include name="commons-codec-1.16.0.jar"/>
 				<include name="${commons_logging_jar}"/>
 				<include name="commons-lang3-3.13.0.jar"/>
-				<include name="commons-compress-1.23.0.jar"/>
+				<include name="commons-compress-1.26.0.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayConsole}/console">
 				<include name="jquery-3.6.4.jar"/>
@@ -397,7 +397,7 @@
 				<include name="bcprov-ext-jdk18on-1.76.jar"/>
 				<include name="bcutil-jdk18on-1.76.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
-				<include name="nimbus-jose-jwt-9.31.jar"/>
+				<include name="nimbus-jose-jwt-9.37.3.jar"/>
 			</lib>
 			<lib dir="${required_lib}/json">
 				<include name="*.jar"/>

@@ -47,8 +47,7 @@ sezione *Token Endpoint* si specifica il tipo di negoziazione e i vari parametri
 -  *Https*: Parametri di configurazione nel caso in cui il server di
    negoziazione token richieda un accesso Https.
 
--  *Proxy*: Parametri di configurazione nel caso in cui il server di
-   negoziazione token richieda l'uso di un proxy per l'accesso.
+-  *Proxy*: Parametri di configurazione nel caso si richieda l'uso di un proxy per l'accesso.
 
 Nel caso sia attivato il flag relativo ad un Proxy o una configurazione Https saranno presentate delle sezioni omonime dove poter inserire i dati di configurazione richiesti.
 

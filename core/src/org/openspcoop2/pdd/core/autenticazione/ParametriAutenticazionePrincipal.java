@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -105,22 +105,22 @@ public class ParametriAutenticazionePrincipal extends ParametriAutenticazione im
 			return null;
 		}
 		if(TOKEN_CLAIM_ISSUER.equalsIgnoreCase(valore)) {
-			return TipoCredenzialeMittente.token_issuer;
+			return TipoCredenzialeMittente.TOKEN_ISSUER;
 		}
 		else if(TOKEN_CLAIM_SUBJECT.equalsIgnoreCase(valore)) {
-			return TipoCredenzialeMittente.token_subject;
+			return TipoCredenzialeMittente.TOKEN_SUBJECT;
 		}
 		else if(TOKEN_CLAIM_CLIENT_ID.equalsIgnoreCase(valore)) {
-			return TipoCredenzialeMittente.token_clientId;
+			return TipoCredenzialeMittente.TOKEN_CLIENT_ID;
 		}
 		else if(TOKEN_CLAIM_USERNAME.equalsIgnoreCase(valore)) {
-			return TipoCredenzialeMittente.token_username;
+			return TipoCredenzialeMittente.TOKEN_USERNAME;
 		}
 		else if(TOKEN_CLAIM_EMAIL.equalsIgnoreCase(valore)) {
-			return TipoCredenzialeMittente.token_eMail;
+			return TipoCredenzialeMittente.TOKEN_EMAIL;
 		}
 		else if(TOKEN_CLAIM_CUSTOM.equalsIgnoreCase(valore)) {
-			return TipoCredenzialeMittente.trasporto; // uso trasporto come custom
+			return TipoCredenzialeMittente.TRASPORTO; // uso trasporto come custom
 		}
 		return null;
 	}

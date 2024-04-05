@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -703,6 +703,11 @@ public class ConsoleProperties {
 			}
 		}
 		return 60;
+	}
+	
+	public boolean isTracciamentoDatabaseRispostaConsegnataSelectEnabled() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "tracciamento.database.rispostaConsegnata.selectEnabled");
+		return parse(b, false);
 	}
 	
 	

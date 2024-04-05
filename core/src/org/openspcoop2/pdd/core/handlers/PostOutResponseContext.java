@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 
 import java.util.Date;
 
+import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 
@@ -63,6 +64,9 @@ public class PostOutResponseContext extends OutResponseContext {
 	/** Data risposta spedita */
 	private Date dataRispostaSpedita;
 	
+	/** Transazione da aggiornare */
+	private Transazione transazioneDaAggiornare;
+
 
 	public EsitoTransazione getEsito() {
 		return this.esito;
@@ -142,5 +146,12 @@ public class PostOutResponseContext extends OutResponseContext {
 
 	public void setDataRispostaSpedita(Date dataRispostaSpedita) {
 		this.dataRispostaSpedita = dataRispostaSpedita;
+	}
+	
+	public Transazione getTransazioneDaAggiornare() {
+		return this.transazioneDaAggiornare;
+	}
+	public void setTransazioneDaAggiornare(Transazione transazioneDaAggiornare) {
+		this.transazioneDaAggiornare = transazioneDaAggiornare;
 	}
 }

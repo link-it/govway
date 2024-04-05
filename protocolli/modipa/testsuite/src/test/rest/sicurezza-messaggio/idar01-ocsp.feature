@@ -31,11 +31,14 @@ And match header Authorization == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=Client-test.esempio.it, O=Esempio, C=it' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=Client-test.esempio.it, O=Esempio, C=it' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=Client-test.esempio.it, O=Esempio, C=it', requestMessageId:client_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=Client-test.esempio.it, O=Esempio, C=it' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=Client-test.esempio.it, O=Esempio, C=it' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=Client-test.esempio.it, O=Esempio, C=it', requestMessageId:client_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_token.payload.jti
 
 
 @certificato-client-revocato-ocsp

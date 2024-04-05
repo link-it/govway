@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -73,6 +73,9 @@ public final class AccordiServizioParteSpecificaPorteApplicativeList extends Act
 
 		try {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+			
+			// Rimuovo l'eventuale lista per evitare che in presenza di connettori multipli ridefiniti su un gruppo, lo switch tra gruppi diversi faccia trovare in sessione la lista dei connettori errati
+			ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI);
 			
 			// Preparo il menu
 			apsHelper.makeMenu();

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -594,10 +594,13 @@ public class ModIImbustamentoRest {
 				throw pe;
 			}
 			/**}*/
-			payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE, audience);
+			/**payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE, audience);*/
+			StringBuilder sbAudience = new StringBuilder();
+			addAudienceClaim(jsonUtils, payloadToken, audience, sbAudience);
 			String audAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE);
-			if(audAuthorization==null || !audience.equals(audAuthorization)) {
-				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_AUDIENCE, audience);
+			String audDaAggiungereInBusta = sbAudience.toString();
+			if(audAuthorization==null || !audDaAggiungereInBusta.equals(audAuthorization)) {
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_AUDIENCE, audDaAggiungereInBusta);
 			}
 		}
 		else if(securityConfig.getAudience()!=null) {
@@ -614,14 +617,17 @@ public class ModIImbustamentoRest {
 				throw pe;
 			}
 			/**}*/
-			payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE, audience);
+			/**payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE, audience);*/
+			StringBuilder sbAudience = new StringBuilder();
+			addAudienceClaim(jsonUtils, payloadToken, audience, sbAudience);
+			String audDaAggiungereInBusta = sbAudience.toString();
 			if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
-				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, audience);
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, audDaAggiungereInBusta);
 			}
 			else {
 				String audAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE);
-				if(!audience.equals(audAuthorization)) {
-					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_AUDIENCE, audience);
+				if(!audDaAggiungereInBusta.equals(audAuthorization)) {
+					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_AUDIENCE, audDaAggiungereInBusta);
 				}
 			}
 		}
@@ -1412,6 +1418,35 @@ public class ModIImbustamentoRest {
 		
 		
 		return modiToken;
+	}
+	
+	private void addAudienceClaim(JSONUtils jsonUtils, ObjectNode payloadToken, String audience, StringBuilder sbAudience) throws ProtocolException {
+		if(audience!=null) {
+			audience = audience.trim();
+			List<String> lArray = ModIUtilities.getArrayStringAsList(audience, true);
+			if(lArray!=null && !lArray.isEmpty()) {
+				ArrayNode values = null;
+				try {
+					values = jsonUtils.newArrayNode();
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
+				sbAudience.append("[");
+				for (int i = 0; i < lArray.size(); i++) {
+					String v = lArray.get(i);
+					values.add(v);	
+					if(i>0) {
+						sbAudience.append(",");
+					}
+					sbAudience.append("\"").append(v).append("\"");
+				}
+				sbAudience.append("]");
+				payloadToken.set(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE, values);
+				return;
+			}
+			payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE, audience);
+			sbAudience.append(audience);
+		}
 	}
 	
 	public static List<String> getHeaderValues(RuoloMessaggio ruoloMessaggio, OpenSPCoop2Message msg, Map<String, List<String>> mapForceTransportHeaders, String httpHeader){

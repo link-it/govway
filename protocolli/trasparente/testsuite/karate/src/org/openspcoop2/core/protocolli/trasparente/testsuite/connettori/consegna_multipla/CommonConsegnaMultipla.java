@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -414,17 +414,33 @@ public class CommonConsegnaMultipla {
 	 * Controlla che la transazione principale abbia un determinato esito e determinate consegne da fare
 	 */
 	public static void checkStatoConsegna(HttpResponse response, int esito, int consegneMultipleRimanenti) {
+		checkStatoConsegna(response, esito, consegneMultipleRimanenti, -1,
+				null);
+	}
+	public static void checkStatoConsegna(HttpResponse response, int esito, int consegneMultipleRimanenti, int consegneMultipleCompletate,
+			RequestAndExpectations requestAndExpectation) {
 		
-		// Provo 5 tentativi
-		int tentativi = 5;
+		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+		if(requestAndExpectation!=null){
+			ConfigLoader.getLoggerCore().info("*** Checking stato consegna for transazione:  " + id_transazione + " AND esito = " + esito + " AND consegne-rimanenti: " + requestAndExpectation.connettoriFallimento.size()+
+					" connettoriFalliti:"+requestAndExpectation.connettoriFallimento+" connettoriConSuccesso:"+requestAndExpectation.connettoriSuccesso);
+		}
+		else {
+			ConfigLoader.getLoggerCore().info("*** Checking stato consegna for transazione:  " + id_transazione + " AND esito = " + esito + " consegne-rimanenti:"+consegneMultipleRimanenti);
+		}
+				
+		// Provo 10 tentativi
+		int tentativi = 10;
 		int index = 0;
 		Integer count = null;
+		
+		StringBuilder sb = null;
 		
 		while(index<tentativi) {
 			
 			String query = "select count(*) from transazioni where id=? and esito = ? and consegne_multiple = ?";
-			String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
-			ConfigLoader.getLoggerCore().info("Checking stato consegna for transazione:  " + id_transazione + " AND esito = " + esito + " AND consegne-rimanenti: " + consegneMultipleRimanenti);
+			ConfigLoader.getLoggerCore().info("Checking stato consegna for transazione:  " + id_transazione + " AND esito = " + esito + 
+					" AND consegne-completate:"+consegneMultipleCompletate+" consegne-rimanenti: " + consegneMultipleRimanenti);
 			count = ConfigLoader.getDbUtils().readValue(query, Integer.class,  id_transazione, esito, consegneMultipleRimanenti);
 			
 			// debug for error
@@ -433,19 +449,27 @@ public class CommonConsegnaMultipla {
 				String query2 = "select esito, esito_sincrono, consegne_multiple from transazioni where id = ?";
 				List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione);
 				int row = 0;
+				
+				sb = new StringBuilder();
+				sb.append(query2);
+				sb.append(" id:").append(id_transazione);
+				
 				for (Map<String, Object> map : letto) {
 					if(map!=null && !map.isEmpty()) {
 						for (Map.Entry<String,Object> entry : map.entrySet()) {
 							if(entry!=null) {
 								ConfigLoader.getLoggerCore().error("Entry["+row+"] key["+entry.getKey()+"]=["+entry.getValue()+"]");
+								sb.append(" entry[").append(row).append("]:key["+entry.getKey()+"]:value["+entry.getValue()+"]");
 							}
 							else {
 								ConfigLoader.getLoggerCore().error("Entry["+row+"] null");
+								sb.append(" entry[").append(row).append("]:null");
 							}
 						}
 					}
 					else {
 						ConfigLoader.getLoggerCore().error("Entry["+row+"] empty");
+						sb.append(" entry[").append(row).append("]:empty");
 					}
 					row++;
 				}
@@ -459,7 +483,7 @@ public class CommonConsegnaMultipla {
 			
 		}
 		
-		assertEquals(Integer.valueOf(1), count);
+		assertEquals(sb!=null ? sb.toString(): "id:"+id_transazione,Integer.valueOf(1), count);
 		
 	}
 
@@ -692,7 +716,8 @@ public class CommonConsegnaMultipla {
 		Set<String> wholeConnettori = setSum(requestAndExpectation.connettoriSuccesso,requestAndExpectation.connettoriFallimento);
 		checkConnettoriRaggiuntiEsclusivamente(response, wholeConnettori);
 		
-		checkStatoConsegna(response,requestAndExpectation.esitoPrincipale, requestAndExpectation.connettoriFallimento.size());
+		checkStatoConsegna(response,requestAndExpectation.esitoPrincipale, requestAndExpectation.connettoriFallimento.size(), requestAndExpectation.connettoriSuccesso.size(),
+				requestAndExpectation);
 	}
 
 	
@@ -749,7 +774,8 @@ public class CommonConsegnaMultipla {
 		Set<String> wholeConnettori = setSum(requestAndExpectation.connettoriSuccesso,requestAndExpectation.connettoriFallimento);
 		checkConnettoriRaggiuntiEsclusivamente(response, wholeConnettori);
 		
-		checkStatoConsegna(response,requestAndExpectation.esitoPrincipale, requestAndExpectation.connettoriFallimento.size());
+		checkStatoConsegna(response,requestAndExpectation.esitoPrincipale, requestAndExpectation.connettoriFallimento.size(), requestAndExpectation.connettoriSuccesso.size(),
+				requestAndExpectation);
 	}
 	
 	

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 public class RicercaStatisticaDistribuzioneTokenInfo extends RicercaStatisticaDistribuzioneApplicativo {
   
   @Schema(required = true, description = "")
-  private TokenClaimEnum claim = null;
+  private TokenClaimDistribuzioneStatisticaEnum claim = null;
   
   @Schema(description = "")
   private BaseOggettoWithSimpleName soggetto = null;
@@ -39,15 +39,15 @@ public class RicercaStatisticaDistribuzioneTokenInfo extends RicercaStatisticaDi
   @JsonProperty("claim")
   @NotNull
   @Valid
-  public TokenClaimEnum getClaim() {
+  public TokenClaimDistribuzioneStatisticaEnum getClaim() {
     return this.claim;
   }
 
-  public void setClaim(TokenClaimEnum claim) {
+  public void setClaim(TokenClaimDistribuzioneStatisticaEnum claim) {
     this.claim = claim;
   }
 
-  public RicercaStatisticaDistribuzioneTokenInfo claim(TokenClaimEnum claim) {
+  public RicercaStatisticaDistribuzioneTokenInfo claim(TokenClaimDistribuzioneStatisticaEnum claim) {
     this.claim = claim;
     return this;
   }

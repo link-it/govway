@@ -20,6 +20,8 @@ Entrambie le informazioni vengono calcolate seguendo la logica riportata di segu
 
 	- identificativo dell'applicativo registrato su GovWay ed identificato tramite il clientId presente nel token;
 
+	- nome dell’organizzazione del client ottenuto risolvendo il clientId presente nel token tramite la consultazione delle API PDND;
+
 	- identificativo dell'applicativo registrato su GovWay ed identificato tramite l'autenticazione di trasporto;
 
 	- clientId presente nel token nel caso di client credentials grant type (claims clientId e sub presentano lo stesso valore);
@@ -33,6 +35,6 @@ Entrambie le informazioni vengono calcolate seguendo la logica riportata di segu
 
          - l'utente descritto in forma umana in un token rappresenta l'informazione più significativa (username);
 
-	 - altrimenti prevale un eventuale applicativo identificato (registrato su GovWay) dando precedenza ad un applicativo token rispetto ad un applicativo di trasporto;
+	 - altrimenti prevale un eventuale applicativo identificato (registrato su GovWay o su PDND) dando precedenza ad un applicativo token rispetto ad un applicativo di trasporto;
 
          - infine prevalgono le informazioni di un eventuale token presente rispetto al trasporto; se si tratta di client credentials grant type prevale l'informazione sul clientId altrimenti quella sul subject.

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -59,7 +59,10 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 				headers,
 				"SoggettoInternoTestFruitore",
 				"HSMClient1",
-				"@@GatewayCredenziali@@WebServerErogazioniSoggettoAuthSsl@@SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM'\nSSL-Issuer '/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerErogazioniSoggettoAuthSsl@@SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM'\nSSL-Issuer '/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/'",
+						"ssl",
+						"/st=Italy/c=IT/ou=Test/cn=ExampleClient1HSM/l=Pisa/o=Test/"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM' ) fornite da WebServerErogazioniSoggettoAuthSsl");
@@ -103,7 +106,8 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 				headers,
 				null,
 				null,
-				"SSL-Subject 'CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634113758'",
+				new CredenzialeTrasporto(
+						"SSL-Subject 'CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634113758'"),
 				"ProxyAuth realm=\"GovWay\", error=\"invalid_request\", error_description=\"Invalid client certificate\"",
 				Utilities.CREDENZIALI_PROXY_NON_CORRETTE,
 				"Autenticazione ssl del Gestore delle Credenziali 'WebServerErogazioniSoggettoAuthSsl' fallita, credenziali presenti nel trasporto ( SSL-Subject 'CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it' )");
@@ -130,7 +134,8 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 				headers,
 				null,
 				null,
-				"SSL-Subject 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634114074'",
+				new CredenzialeTrasporto(
+						"SSL-Subject 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634114074'"),
 				"mTLS realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required client certificate\"",
 				Utilities.CREDENZIALI_PROXY_FORNITE_NON_CONFORMI,
 				"Header HTTP 'X-Erogazione-SSL-Subject' o 'X-Erogazione-SSL-Cert' non presente");
@@ -156,7 +161,8 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 				headers,
 				null,
 				null,
-				"SSL-Subject 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634114074'",
+				new CredenzialeTrasporto(
+						"SSL-Subject 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634114074'"),
 				"mTLS realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required client certificate\"",
 				Utilities.CREDENZIALI_PROXY_FORNITE_NON_CONFORMI,
 				"Header HTTP 'X-Erogazione-SSL-Subject' o 'X-Erogazione-SSL-Cert' non presente");
@@ -181,7 +187,8 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 				headers,
 				null,
 				null,
-				"SSL-Subject 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634114074'",
+				new CredenzialeTrasporto(
+						"SSL-Subject 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634114074'"),
 				"mTLS realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required client certificate\"",
 				Utilities.CREDENZIALI_PROXY_FORNITE_NON_CONFORMI,
 				"Header HTTP 'X-Erogazione-SSL-Subject' o 'X-Erogazione-SSL-Cert' non presente");
@@ -212,7 +219,10 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 				headers,
 				"SoggettoInternoTestGestoreCredenzialeSsl",
 				"ApplicativoSoggettoInternoTestGestoreCredenzialiSsl",
-				"@@GatewayCredenziali@@WebServerFruizioniSoggettoAuthSsl@@SSL-Subject '/cn=ApplicativoSoggettoInternoTestGestoreCredenzialiSsl/'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerFruizioniSoggettoAuthSsl@@SSL-Subject '/cn=ApplicativoSoggettoInternoTestGestoreCredenzialiSsl/'",
+						"ssl",
+						"/cn=ApplicativoSoggettoInternoTestGestoreCredenzialiSsl/"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( SSL-Subject '/cn=ApplicativoSoggettoInternoTestGestoreCredenzialiSsl/' ) fornite da WebServerFruizioniSoggettoAuthSsl");
@@ -254,7 +264,8 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 				headers,
 				"SoggettoInternoTestGestoreCredenzialeSsl",
 				null,
-				"SSL-Subject 'CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634113758'",
+				new CredenzialeTrasporto(
+						"SSL-Subject 'CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634113758'"),
 				"ProxyAuth realm=\"GovWay\", error=\"invalid_request\", error_description=\"Invalid client certificate\"",
 				Utilities.CREDENZIALI_PROXY_NON_CORRETTE,
 				"Autenticazione ssl del Gestore delle Credenziali 'WebServerFruizioniSoggettoAuthSsl' fallita, credenziali presenti nel trasporto ( SSL-Subject 'CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it' )");
@@ -281,7 +292,8 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 				headers,
 				"SoggettoInternoTestGestoreCredenzialeSsl",
 				null,
-				"SSL-Subject 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634114074'",
+				new CredenzialeTrasporto(
+						"SSL-Subject 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634114074'"),
 				"mTLS realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required client certificate\"",
 				Utilities.CREDENZIALI_PROXY_FORNITE_NON_CONFORMI,
 				"Header HTTP 'X-Fruizione-SSL-Subject' o 'X-Fruizione-SSL-Cert' non presente");
@@ -307,7 +319,8 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 				headers,
 				"SoggettoInternoTestGestoreCredenzialeSsl",
 				null,
-				"SSL-Subject 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634114074'",
+				new CredenzialeTrasporto(
+						"SSL-Subject 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634114074'"),
 				"mTLS realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required client certificate\"",
 				Utilities.CREDENZIALI_PROXY_FORNITE_NON_CONFORMI,
 				"Header HTTP 'X-Fruizione-SSL-Subject' o 'X-Fruizione-SSL-Cert' non presente");
@@ -333,7 +346,8 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 				headers,
 				"SoggettoInternoTestGestoreCredenzialeSsl",
 				null,
-				"SSL-Subject 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634114074'",
+				new CredenzialeTrasporto(
+						"SSL-Subject 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634114074'"),
 				"mTLS realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required client certificate\"",
 				Utilities.CREDENZIALI_PROXY_FORNITE_NON_CONFORMI,
 				"Header HTTP 'X-Fruizione-SSL-Subject' o 'X-Fruizione-SSL-Cert' non presente");

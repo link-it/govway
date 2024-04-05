@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -666,6 +666,10 @@ public class CostantiPdD {
     public static final String KEY_TOKEN = "@TOKEN@";
     /** Costante che identifica le informazioni sul token */
     public static final String KEY_TOKEN_INFO = "@TOKEN_INFO@";
+    /** Costante che identifica le informazioni sul token */
+    public static final String KEY_DYNAMIC_DISCOVERY_INFO = "@DYNAMIC_DISCOVERY_INFO@";
+    /** Costante che identifica l'endpoint del servizio di dynamic discovery */
+    public static final String KEY_TOKEN_ENDPOINT_SERVIZIO_DYNAMIC_DISCOVERY = "@TOKEN_ENDPOINT_SERVIZIO_DYNAMIC_DISCOVERY@";
     /** Costante che identifica l'endpoint del servizio di introspection */
     public static final String KEY_TOKEN_ENDPOINT_SERVIZIO_INTROSPECTION = "@TOKEN_ENDPOINT_SERVIZIO_INTROSPECTION@";
     /** Costante che identifica l'endpoint del servizio di userInfo */
@@ -782,6 +786,8 @@ public class CostantiPdD {
     public static final String KEY_TRACCIA_TIPO = "@TIPO_TRACCIA@";
     /** Costante che indica la traccia */
     public static final String KEY_TRACCIA = "@TRACCIA@";
+    /** Costante che indica la fase di tracciamento */
+    public static final String KEY_FASE_TRACCIAMENTO = "@FASE_TRACCIAMENTO@";
    
     /** Costante che identifica una keyword per la causale di un lock */
     public static final String KEY_LOCK_CAUSALE = "@CAUSA_LOCK@";

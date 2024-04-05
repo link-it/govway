@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -584,6 +584,10 @@ public class ClientTest {
 				// Test con extract part date time
 				test_extract_partDateTime(tipoDatabase, con, selectForUpdate);
 				
+				
+				//Test con date trattate come costanti
+				test_constantDateTime(tipoDatabase, con);
+
 				
 				// step6. Test query
 				test0_engine(tipoDatabase, con,selectForUpdate);
@@ -2630,6 +2634,7 @@ public class ClientTest {
 						shortDayNameColonnaWhere = shortDayNameColonna;
 						
 						String dayOfYear = ld.getDayOfYear()+"";
+						dayOfYear = normalizeDayOfYear(tipo, dayOfYear);
 						String dayOfYearColonna = rs.getString("dayOfYearColonna");
 						String dayOfYearColonnaTabella = rs.getString("dayOfYearColonnaTabella");
 						info(log,systemOut,"riga["+(index++)+"]= (dayOfYearColonna:"+dayOfYearColonna+") (dayOfYearColonnaTabella:"+dayOfYearColonnaTabella+")");
@@ -2927,6 +2932,7 @@ public class ClientTest {
 							shortDayNameColonnaWhere = shortDayNameColonna;
 							
 							String dayOfYear = ld.getDayOfYear()+"";
+							dayOfYear = normalizeDayOfYear(tipo, dayOfYear);
 							String dayOfYearColonna = rs.getString("dayOfYearColonna");
 							String dayOfYearColonnaTabella = rs.getString("dayOfYearColonnaTabella");
 							info(log,systemOut,"riga["+(index++)+"]= ["+whereType+"] (dayOfYearColonna:"+dayOfYearColonna+") (dayOfYearColonnaTabella:"+dayOfYearColonnaTabella+")");
@@ -2999,6 +3005,269 @@ public class ClientTest {
 		
 	}
 	
+	private static String normalizeDayOfYear(TipiDatabase tipo, String dayOfYear) {
+		if(TipiDatabase.POSTGRESQL.equals(tipo) || TipiDatabase.ORACLE.equals(tipo)) {
+			if(dayOfYear.length()<=1) {
+				dayOfYear = "00"+dayOfYear;
+			}
+			else if(dayOfYear.length()<=2) {
+				dayOfYear = "0"+dayOfYear;
+			}
+		}
+		return dayOfYear;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	private static void test_constantDateTime(TipiDatabase tipo, Connection con) throws Exception {
+
+		Statement stmtQuery = null;
+		ResultSet rs = null;
+		PreparedStatement pstmt = null;
+		
+		String format = "yyyy-MM-dd HH:mm:ss.SSS";
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		
+		String dataPast = "2022-01-01 12:34:56.789";
+		String dataFuture = "2092-10-31 17:34:56.789";
+		
+		Date now = DateManager.getDate();
+		Date past = sdf.parse(dataPast);
+		Date future = sdf.parse(dataFuture);
+		
+		String dataNow = sdf.format(now);
+		
+		String aliasNow = "data_attuale";
+		String aliasPassata = "data_passata";
+		String aliasFutura = "data_futura";
+		
+		try{
+			
+			// TEST 1. (Case string)
+			
+			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); 
+
+			sqlQueryObject.addFromTable("msgdiagnostici","aliasMSG");
+
+			sqlQueryObject.addSelectTimestampConstantField(now, aliasNow);
+			sqlQueryObject.addSelectTimestampConstantField(past, aliasPassata);
+			sqlQueryObject.addSelectTimestampConstantField(future, aliasFutura);
+			
+			info(log,systemOut,"");
+
+			
+			String test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntest0_engine:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				try {
+					while(rs.next()){
+						
+						Date readNow = rs.getTimestamp(aliasNow);
+						Date readPast = rs.getTimestamp(aliasPassata);
+						Date readFuture = rs.getTimestamp(aliasFutura);
+						
+						info(log,systemOut,"riga["+(index++)+"]= (now:"+sdf.format(readNow)+") (past:"+sdf.format(readPast)+") (future:"+sdf.format(readFuture)+")");
+						
+						String readAsS = sdf.format(readNow);
+						if(readNow.getTime() != now.getTime()) {
+							throw new Exception("Test failed; expected now '"+dataNow+"', trovato '"+readAsS+"'"); 
+						}
+						if(!readAsS.equals(dataNow)) {
+							throw new Exception("Test failed (string); expected now '"+dataNow+"', trovato '"+readAsS+"'"); 
+						}
+						
+						readAsS = sdf.format(readPast);
+						if(readPast.getTime() != past.getTime()) {
+							throw new Exception("Test failed; expected past '"+dataPast+"', trovato '"+readAsS+"'"); 
+						}
+						if(!readAsS.equals(dataPast)) {
+							throw new Exception("Test failed (string); expected past '"+dataPast+"', trovato '"+readAsS+"'"); 
+						}
+						
+						readAsS = sdf.format(readFuture);
+						if(readFuture.getTime() != future.getTime()) {
+							throw new Exception("Test failed; expected future '"+dataFuture+"', trovato '"+readAsS+"'"); 
+						}
+						if(!readAsS.equals(dataFuture)) {
+							throw new Exception("Test failed (string); expected future '"+dataFuture+"', trovato '"+readAsS+"'"); 
+						}
+						
+						index++;
+						
+					}
+				}finally {
+					rs.close();
+					rs = null;
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+							
+				if(index==0) {
+					throw new Exception("Test failed"); 
+				}
+
+				
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+		}finally{
+			try{
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+			}catch(Exception eClose){}
+			try{
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception eClose){
+				// close
+			}
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		// TEST 2. (where)
+				
+		stmtQuery = null;
+		rs = null;
+		try{
+							
+			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // forUpdate non permesso in group by
+
+			sqlQueryObject.addFromTable("msgdiagnostici","aliasMSG");
+
+			sqlQueryObject.addSelectTimestampConstantField(now, aliasNow);
+			sqlQueryObject.addSelectTimestampConstantField(past, aliasPassata);
+			sqlQueryObject.addSelectTimestampConstantField(future, aliasFutura);
+			
+			String costanteNow = sqlQueryObject.getSelectTimestampConstantField(now);
+			String costanteFuture = sqlQueryObject.getSelectTimestampConstantField(future);
+			String costantePast = sqlQueryObject.getSelectTimestampConstantField(past);
+			
+			sqlQueryObject.addWhereCondition(costanteNow+"=?" );
+			sqlQueryObject.addWhereCondition(costantePast+"<?" );
+			sqlQueryObject.addWhereCondition(costanteFuture+">?" );
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			info(log,systemOut,"");
+
+			
+			String test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntest0_engine:\n\t"+test);
+			try{
+				pstmt = con.prepareStatement(test);
+				if(pstmt==null) {
+					throw new Exception("Statement is null"); 
+				}
+				pstmt.setTimestamp(1, new Timestamp(now.getTime()));
+				pstmt.setTimestamp(2, new Timestamp(now.getTime()));
+				pstmt.setTimestamp(3, new Timestamp(now.getTime()));
+				rs = pstmt.executeQuery();
+				int index = 0;
+				try {
+					while(rs.next()){
+						
+						Date readNow = rs.getTimestamp(aliasNow);
+						Date readPast = rs.getTimestamp(aliasPassata);
+						Date readFuture = rs.getTimestamp(aliasFutura);
+						
+						info(log,systemOut,"riga["+(index++)+"]= (now:"+sdf.format(readNow)+") (past:"+sdf.format(readPast)+") (future:"+sdf.format(readFuture)+")");
+						
+						String readAsS = sdf.format(readNow);
+						if(readNow.getTime() != now.getTime()) {
+							throw new Exception("Test failed; expected now '"+dataNow+"', trovato '"+readAsS+"'"); 
+						}
+						if(!readAsS.equals(dataNow)) {
+							throw new Exception("Test failed (string); expected now '"+dataNow+"', trovato '"+readAsS+"'"); 
+						}
+						
+						readAsS = sdf.format(readPast);
+						if(readPast.getTime() != past.getTime()) {
+							throw new Exception("Test failed; expected past '"+dataPast+"', trovato '"+readAsS+"'"); 
+						}
+						if(!readAsS.equals(dataPast)) {
+							throw new Exception("Test failed (string); expected past '"+dataPast+"', trovato '"+readAsS+"'"); 
+						}
+						
+						readAsS = sdf.format(readFuture);
+						if(readFuture.getTime() != future.getTime()) {
+							throw new Exception("Test failed; expected future '"+dataFuture+"', trovato '"+readAsS+"'"); 
+						}
+						if(!readAsS.equals(dataFuture)) {
+							throw new Exception("Test failed (string); expected future '"+dataFuture+"', trovato '"+readAsS+"'"); 
+						}
+						
+						index++;
+						
+					}
+				}finally {
+					rs.close();
+					rs = null;
+					pstmt.close();
+					pstmt = null;
+				}
+							
+				if(index==0) {
+					throw new Exception("Test failed"); 
+				}
+
+				
+			}catch(Exception e){
+				
+				throw e;
+			}
+							
+		}finally{
+			try{
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+			}catch(Exception eClose){}
+			try{
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception eClose){
+				// close
+			}
+			try{
+				if(pstmt!=null){
+					pstmt.close();
+					pstmt = null;
+				}
+			}catch(Exception eClose){
+				// close
+			}
+		}
+		
+	}
 	
 	
 	

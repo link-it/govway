@@ -16,7 +16,15 @@ Background:
     * url reportisticaUrl
     * configure headers = ({ "Authorization": govwayMonitorCred }) 
 
-@DistribuzioneTemporaleFiltroMittenteTokenInfo
+@DistribuzioneTemporaleFiltroMittenteTokenInfoFruizione
+Scenario: Ricerca di transazioni filtrate per Token claim
+    * call read('classpath:andamento-temporale-filtro-mittente-token-info.feature');
+
+@DistribuzioneTemporaleFiltroMittenteTokenInfoErogazione
+Scenario: Ricerca di transazioni filtrate per Token claim
+    * call read('classpath:andamento-temporale-filtro-mittente-token-info.feature');
+
+@DistribuzioneTemporaleFiltroMittenteTokenInfoErogazionePDND
 Scenario: Ricerca di transazioni filtrate per Token claim
     * call read('classpath:andamento-temporale-filtro-mittente-token-info.feature');
 

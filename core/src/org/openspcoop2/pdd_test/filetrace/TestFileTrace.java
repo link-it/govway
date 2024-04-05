@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -22,6 +22,7 @@ package org.openspcoop2.pdd_test.filetrace;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.pdd_test.Costanti;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.test.TestLogger;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -40,7 +41,10 @@ public class TestFileTrace {
 	private static final boolean requestWithPayload = true;
 	
 	@DataProvider(name="fileTraceProvider")
-	public Object[][] provider(){
+	public Object[][] provider() throws UtilsException, ReflectiveOperationException{
+		
+		org.openspcoop2.pdd.logger.filetrace.test.FileTraceTest.initDir();
+		
 		return new Object[][]{
 			
 			{TipoPdD.APPLICATIVA, !log4j, 0, requestWithPayload},

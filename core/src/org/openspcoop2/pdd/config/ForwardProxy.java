@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -82,28 +82,47 @@ public class ForwardProxy implements Serializable {
 	public static final String DEFAULT_GOVWAY_PROXY_QUERY = "govway_api_address";
 	public static final boolean DEFAULT_GOVWAY_PROXY_QUERY_BASE64 = false; 
 	
+	public static final String GOVWAY_PROXY_TOKEN_DYNAMIC_DISCOVERY = "govway-proxy-token-dynamic-discovery";
+	public static final String GOVWAY_FRUIZIONI_PROXY_TOKEN_DYNAMIC_DISCOVERY = "govway-fruizioni-proxy-token-dynamic-discovery";
+	public static final String GOVWAY_EROGAZIONI_PROXY_TOKEN_DYNAMIC_DISCOVERY = "govway-erogazioni-proxy-token-dynamic-discovery";
+	public static final String GOVWAY_PROXY_TOKEN_VALIDAZIONE_JWT = "govway-proxy-token-jwt-validation";
+	public static final String GOVWAY_FRUIZIONI_PROXY_TOKEN_VALIDAZIONE_JWT = "govway-fruizioni-proxy-token-jwt-validation";
+	public static final String GOVWAY_EROGAZIONI_PROXY_TOKEN_VALIDAZIONE_JWT = "govway-erogazioni-proxy-token-jwt-validation";
 	public static final String GOVWAY_PROXY_TOKEN_INTROSPECTION = "govway-proxy-token-introspection";
 	public static final String GOVWAY_FRUIZIONI_PROXY_TOKEN_INTROSPECTION = "govway-fruizioni-proxy-token-introspection";
 	public static final String GOVWAY_EROGAZIONI_PROXY_TOKEN_INTROSPECTION = "govway-erogazioni-proxy-token-introspection";
 	public static final String GOVWAY_PROXY_TOKEN_USERINFO = "govway-proxy-token-userinfo";
 	public static final String GOVWAY_FRUIZIONI_PROXY_TOKEN_USERINFO = "govway-fruizioni-proxy-token-userinfo";
 	public static final String GOVWAY_EROGAZIONI_PROXY_TOKEN_USERINFO = "govway-erogazioni-proxy-token-userinfo";
+	
 	public static final String GOVWAY_PROXY_TOKEN_RETRIEVE = "govway-proxy-token-retrieve";
 	public static final String GOVWAY_FRUIZIONI_PROXY_TOKEN_RETRIEVE = "govway-fruizioni-proxy-token-retrieve";
 	public static final String GOVWAY_EROGAZIONI_PROXY_TOKEN_RETRIEVE = "govway-erogazioni-proxy-token-retrieve";
+	
 	public static final String GOVWAY_PROXY_ATTRIBUTE_AUTHORITY = "govway-proxy-attribute-authority";
 	public static final String GOVWAY_FRUIZIONI_PROXY_ATTRIBUTE_AUTHORITY = "govway-fruizioni-proxy-attribute-authority";
 	public static final String GOVWAY_EROGAZIONI_PROXY_ATTRIBUTE_AUTHORITY = "govway-erogazioni-proxy-attribute-authority";
+	public static final String GOVWAY_PROXY_ATTRIBUTE_AUTHORITY_RESPONSE_JWT_VALIDATION = "govway-proxy-attribute-authority-response-jwt-validation";
+	public static final String GOVWAY_FRUIZIONI_PROXY_ATTRIBUTE_AUTHORITY_RESPONSE_JWT_VALIDATION = "govway-fruizioni-proxy-attribute-authority-response-jwt-validation";
+	public static final String GOVWAY_EROGAZIONI_PROXY_ATTRIBUTE_AUTHORITY_RESPONSE_JWT_VALIDATION = "govway-erogazioni-proxy-attribute-authority-response-jwt-validation";
 	
+	public static final boolean DEFAULT_GOVWAY_PROXY_TOKEN_DYNAMIC_DISCOVERY = false;
+	public static final boolean DEFAULT_GOVWAY_PROXY_TOKEN_VALIDAZIONE_JWT = false;
 	public static final boolean DEFAULT_GOVWAY_PROXY_TOKEN_INTROSPECTION = false;
 	public static final boolean DEFAULT_GOVWAY_PROXY_TOKEN_USERINFO = false;
+	
 	public static final boolean DEFAULT_GOVWAY_PROXY_TOKEN_RETRIEVE = false;
+	
 	public static final boolean DEFAULT_GOVWAY_PROXY_ATTRIBUTE_AUTHORITY = false;
+	public static final boolean DEFAULT_GOVWAY_PROXY_ATTRIBUTE_AUTHORITY_RESPONSE_JWT_VALIDATION = false;
+	
+	private static final String TRUE = "true";
+	private static final String FALSE = "false";
 	
 	public static boolean isProxyEnabled() {
 		String enable = System.getProperty(GOVWAY_PROXY_ENABLED);
 		if(enable!=null && !"".equals(enable)) {
-			return "true".equalsIgnoreCase(enable);
+			return TRUE.equalsIgnoreCase(enable);
 		}
 		return OpenSPCoop2Properties.getInstance().isForwardProxyEnable();
 	}
@@ -325,42 +344,42 @@ public class ForwardProxy implements Serializable {
 		ForwardProxyConfigurazione config = new ForwardProxyConfigurazione();
 				
 		if(header!=null && !"".equals(header)) {
-			config.header = header;
+			config.setHeader(header);
 			
 			String base64 = System.getProperty(systemPropertyProxyHeaderBase64);
 			if(base64!=null && !"".equals(base64)) {
-				if("true".equalsIgnoreCase(base64)) {
-					config.headerBase64 = true;
+				if(TRUE.equalsIgnoreCase(base64)) {
+					config.setHeaderBase64(true);
 				}
-				else if("false".equalsIgnoreCase(base64)) {
-					config.headerBase64 = false;
+				else if(FALSE.equalsIgnoreCase(base64)) {
+					config.setHeaderBase64(false);
 				}
 				else {
-					config.headerBase64 = DEFAULT_GOVWAY_PROXY_HEADER_BASE64;
+					config.setHeaderBase64(DEFAULT_GOVWAY_PROXY_HEADER_BASE64);
 				}
 			}
 			else {
-				config.headerBase64 = DEFAULT_GOVWAY_PROXY_HEADER_BASE64;
+				config.setHeaderBase64(DEFAULT_GOVWAY_PROXY_HEADER_BASE64);
 			}
 		}
 		
 		if(query!=null && !"".equals(query)) {
-			config.query = query;
+			config.setQuery(query);
 			
 			String base64 = System.getProperty(systemPropertyProxyQueryBase64);
 			if(base64!=null && !"".equals(base64)) {
-				if("true".equalsIgnoreCase(base64)) {
-					config.queryBase64 = true;
+				if(TRUE.equalsIgnoreCase(base64)) {
+					config.setQueryBase64(true);
 				}
-				else if("false".equalsIgnoreCase(base64)) {
-					config.queryBase64 = false;
+				else if(FALSE.equalsIgnoreCase(base64)) {
+					config.setQueryBase64(false);
 				}
 				else {
-					config.queryBase64 = DEFAULT_GOVWAY_PROXY_QUERY_BASE64;
+					config.setQueryBase64(DEFAULT_GOVWAY_PROXY_QUERY_BASE64);
 				}
 			}
 			else {
-				config.queryBase64 = DEFAULT_GOVWAY_PROXY_QUERY_BASE64;
+				config.setQueryBase64(DEFAULT_GOVWAY_PROXY_QUERY_BASE64);
 			}
 		}
 		
@@ -370,55 +389,103 @@ public class ForwardProxy implements Serializable {
 	
 	private static ForwardProxyConfigurazioneToken readForwardProxyConfigurazioneToken(boolean byProtocollo, String tipoSoggetto, Boolean fruizione, IDGenericProperties policy) throws ProtocolException {
 		
+		String systemPropertyProxyTokenDynamicDiscovery = GOVWAY_PROXY_TOKEN_DYNAMIC_DISCOVERY;
+		String systemPropertyProxyTokenValidazioneJwt = GOVWAY_PROXY_TOKEN_VALIDAZIONE_JWT;
 		String systemPropertyProxyTokenIntrospection = GOVWAY_PROXY_TOKEN_INTROSPECTION;
 		String systemPropertyProxyTokenUserInfo = GOVWAY_PROXY_TOKEN_USERINFO;
 		String systemPropertyProxyTokenRetrieve = GOVWAY_PROXY_TOKEN_RETRIEVE;
 		String systemPropertyProxyAttributeAuthority = GOVWAY_PROXY_ATTRIBUTE_AUTHORITY;
+		String systemPropertyProxyAttributeAuthorityResponseJwtValidation = GOVWAY_PROXY_ATTRIBUTE_AUTHORITY_RESPONSE_JWT_VALIDATION;
 		
 		if(fruizione!=null) {
+			systemPropertyProxyTokenDynamicDiscovery = fruizione ? GOVWAY_FRUIZIONI_PROXY_TOKEN_DYNAMIC_DISCOVERY : GOVWAY_EROGAZIONI_PROXY_TOKEN_DYNAMIC_DISCOVERY;
+			systemPropertyProxyTokenValidazioneJwt = fruizione ? GOVWAY_FRUIZIONI_PROXY_TOKEN_VALIDAZIONE_JWT : GOVWAY_EROGAZIONI_PROXY_TOKEN_VALIDAZIONE_JWT;
 			systemPropertyProxyTokenIntrospection = fruizione ? GOVWAY_FRUIZIONI_PROXY_TOKEN_INTROSPECTION : GOVWAY_EROGAZIONI_PROXY_TOKEN_INTROSPECTION;
 			systemPropertyProxyTokenUserInfo = fruizione ? GOVWAY_FRUIZIONI_PROXY_TOKEN_USERINFO : GOVWAY_EROGAZIONI_PROXY_TOKEN_USERINFO;
 			systemPropertyProxyTokenRetrieve = fruizione ? GOVWAY_FRUIZIONI_PROXY_TOKEN_RETRIEVE : GOVWAY_EROGAZIONI_PROXY_TOKEN_RETRIEVE;
 			systemPropertyProxyAttributeAuthority = fruizione ? GOVWAY_FRUIZIONI_PROXY_ATTRIBUTE_AUTHORITY : GOVWAY_EROGAZIONI_PROXY_ATTRIBUTE_AUTHORITY;
+			systemPropertyProxyAttributeAuthorityResponseJwtValidation = fruizione ? GOVWAY_FRUIZIONI_PROXY_ATTRIBUTE_AUTHORITY_RESPONSE_JWT_VALIDATION : GOVWAY_EROGAZIONI_PROXY_ATTRIBUTE_AUTHORITY_RESPONSE_JWT_VALIDATION;
 		}
 		
 		if(byProtocollo) {
 			String protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(tipoSoggetto);
+			systemPropertyProxyTokenDynamicDiscovery= GOVWAY_PREFISSO_PROTOCOLLO_PROXY+ protocollo +GOVWAY_SEPARATORE+ systemPropertyProxyTokenDynamicDiscovery;
+			systemPropertyProxyTokenValidazioneJwt= GOVWAY_PREFISSO_PROTOCOLLO_PROXY+ protocollo +GOVWAY_SEPARATORE+ systemPropertyProxyTokenValidazioneJwt;
 			systemPropertyProxyTokenIntrospection= GOVWAY_PREFISSO_PROTOCOLLO_PROXY+ protocollo +GOVWAY_SEPARATORE+ systemPropertyProxyTokenIntrospection;
 			systemPropertyProxyTokenUserInfo= GOVWAY_PREFISSO_PROTOCOLLO_PROXY+ protocollo +GOVWAY_SEPARATORE+ systemPropertyProxyTokenUserInfo;
 			systemPropertyProxyTokenRetrieve= GOVWAY_PREFISSO_PROTOCOLLO_PROXY+ protocollo +GOVWAY_SEPARATORE+ systemPropertyProxyTokenRetrieve;
 			systemPropertyProxyAttributeAuthority= GOVWAY_PREFISSO_PROTOCOLLO_PROXY+ protocollo +GOVWAY_SEPARATORE+ systemPropertyProxyAttributeAuthority;
+			systemPropertyProxyAttributeAuthorityResponseJwtValidation= GOVWAY_PREFISSO_PROTOCOLLO_PROXY+ protocollo +GOVWAY_SEPARATORE+ systemPropertyProxyAttributeAuthorityResponseJwtValidation;
 		}
 		
 		if(policy!=null && policy.getNome()!=null) {
+			systemPropertyProxyTokenDynamicDiscovery+=GOVWAY_SEPARATORE+policy.getNome();
+			systemPropertyProxyTokenValidazioneJwt+=GOVWAY_SEPARATORE+policy.getNome();
 			systemPropertyProxyTokenIntrospection+=GOVWAY_SEPARATORE+policy.getNome();
 			systemPropertyProxyTokenUserInfo+=GOVWAY_SEPARATORE+policy.getNome();
 			systemPropertyProxyTokenRetrieve+=GOVWAY_SEPARATORE+policy.getNome();
 			systemPropertyProxyAttributeAuthority+=GOVWAY_SEPARATORE+policy.getNome();
+			systemPropertyProxyAttributeAuthorityResponseJwtValidation+=GOVWAY_SEPARATORE+policy.getNome();
 		}
 		
+		String dynamicDiscovery = System.getProperty(systemPropertyProxyTokenDynamicDiscovery);
+		String validazioneJwt = System.getProperty(systemPropertyProxyTokenValidazioneJwt);
 		String introspection = System.getProperty(systemPropertyProxyTokenIntrospection);
 		String userInfo = System.getProperty(systemPropertyProxyTokenUserInfo);
 		String retrieve = System.getProperty(systemPropertyProxyTokenRetrieve);
 		String attributeAuthority = System.getProperty(systemPropertyProxyAttributeAuthority);
+		String attributeAuthorityResponseJwtValidation = System.getProperty(systemPropertyProxyAttributeAuthorityResponseJwtValidation);
 			
 		if( 
+				(dynamicDiscovery==null || "".equals(dynamicDiscovery)) &&
+				(validazioneJwt==null || "".equals(validazioneJwt)) &&
 				(introspection==null || "".equals(introspection)) &&
 				(userInfo==null || "".equals(userInfo)) &&
 				(retrieve==null || "".equals(retrieve)) &&
-				(attributeAuthority==null || "".equals(attributeAuthority)) 
+				(attributeAuthority==null || "".equals(attributeAuthority)) &&
+				(attributeAuthorityResponseJwtValidation==null || "".equals(attributeAuthorityResponseJwtValidation)) 
 			) {
 			// verrà usata quella di default
 			return null;
 		}
 		
 		ForwardProxyConfigurazioneToken config = new ForwardProxyConfigurazioneToken();
-				
+			
+		if(dynamicDiscovery!=null && !"".equals(dynamicDiscovery)) {
+			if(TRUE.equalsIgnoreCase(dynamicDiscovery)) {
+				config.tokenDynamicDiscoveryEnabled = true;
+			}
+			else if(FALSE.equalsIgnoreCase(dynamicDiscovery)) {
+				config.tokenDynamicDiscoveryEnabled = false;
+			}
+			else {
+				config.tokenDynamicDiscoveryEnabled = DEFAULT_GOVWAY_PROXY_TOKEN_DYNAMIC_DISCOVERY;
+			}
+		}
+		else {
+			config.tokenDynamicDiscoveryEnabled = DEFAULT_GOVWAY_PROXY_TOKEN_DYNAMIC_DISCOVERY;
+		}
+		
+		if(validazioneJwt!=null && !"".equals(validazioneJwt)) {
+			if(TRUE.equalsIgnoreCase(validazioneJwt)) {
+				config.tokenJwtValidationEnabled = true;
+			}
+			else if(FALSE.equalsIgnoreCase(validazioneJwt)) {
+				config.tokenJwtValidationEnabled = false;
+			}
+			else {
+				config.tokenJwtValidationEnabled = DEFAULT_GOVWAY_PROXY_TOKEN_VALIDAZIONE_JWT;
+			}
+		}
+		else {
+			config.tokenJwtValidationEnabled = DEFAULT_GOVWAY_PROXY_TOKEN_VALIDAZIONE_JWT;
+		}
+		
 		if(introspection!=null && !"".equals(introspection)) {
-			if("true".equalsIgnoreCase(introspection)) {
+			if(TRUE.equalsIgnoreCase(introspection)) {
 				config.tokenIntrospectionEnabled = true;
 			}
-			else if("false".equalsIgnoreCase(introspection)) {
+			else if(FALSE.equalsIgnoreCase(introspection)) {
 				config.tokenIntrospectionEnabled = false;
 			}
 			else {
@@ -430,10 +497,10 @@ public class ForwardProxy implements Serializable {
 		}
 				
 		if(userInfo!=null && !"".equals(userInfo)) {
-			if("true".equalsIgnoreCase(userInfo)) {
+			if(TRUE.equalsIgnoreCase(userInfo)) {
 				config.tokenUserInfoEnabled = true;
 			}
-			else if("false".equalsIgnoreCase(userInfo)) {
+			else if(FALSE.equalsIgnoreCase(userInfo)) {
 				config.tokenUserInfoEnabled = false;
 			}
 			else {
@@ -445,10 +512,10 @@ public class ForwardProxy implements Serializable {
 		}
 		
 		if(retrieve!=null && !"".equals(retrieve)) {
-			if("true".equalsIgnoreCase(retrieve)) {
+			if(TRUE.equalsIgnoreCase(retrieve)) {
 				config.tokenRetrieveEnabled = true;
 			}
-			else if("false".equalsIgnoreCase(retrieve)) {
+			else if(FALSE.equalsIgnoreCase(retrieve)) {
 				config.tokenRetrieveEnabled = false;
 			}
 			else {
@@ -460,10 +527,10 @@ public class ForwardProxy implements Serializable {
 		}
 		
 		if(attributeAuthority!=null && !"".equals(attributeAuthority)) {
-			if("true".equalsIgnoreCase(attributeAuthority)) {
+			if(TRUE.equalsIgnoreCase(attributeAuthority)) {
 				config.attributeAuthorityEnabled = true;
 			}
-			else if("false".equalsIgnoreCase(attributeAuthority)) {
+			else if(FALSE.equalsIgnoreCase(attributeAuthority)) {
 				config.attributeAuthorityEnabled = false;
 			}
 			else {
@@ -472,6 +539,21 @@ public class ForwardProxy implements Serializable {
 		}
 		else {
 			config.attributeAuthorityEnabled = DEFAULT_GOVWAY_PROXY_ATTRIBUTE_AUTHORITY;
+		}
+		
+		if(attributeAuthorityResponseJwtValidation!=null && !"".equals(attributeAuthorityResponseJwtValidation)) {
+			if(TRUE.equalsIgnoreCase(attributeAuthorityResponseJwtValidation)) {
+				config.attributeAuthorityResponseJwtValidationEnabled = true;
+			}
+			else if(FALSE.equalsIgnoreCase(attributeAuthorityResponseJwtValidation)) {
+				config.attributeAuthorityResponseJwtValidationEnabled = false;
+			}
+			else {
+				config.attributeAuthorityResponseJwtValidationEnabled = DEFAULT_GOVWAY_PROXY_ATTRIBUTE_AUTHORITY_RESPONSE_JWT_VALIDATION;
+			}
+		}
+		else {
+			config.attributeAuthorityResponseJwtValidationEnabled = DEFAULT_GOVWAY_PROXY_ATTRIBUTE_AUTHORITY_RESPONSE_JWT_VALIDATION;
 		}
 		
 		return config;
@@ -569,66 +651,93 @@ public class ForwardProxy implements Serializable {
 		
 		
 		
+		String systemPropertyProxyTokenDynamicDiscovery = GOVWAY_PROXY_TOKEN_DYNAMIC_DISCOVERY;
+		String systemPropertyProxyTokenValidazioneJwt = GOVWAY_PROXY_TOKEN_VALIDAZIONE_JWT;
 		String systemPropertyProxyTokenIntrospection = GOVWAY_PROXY_TOKEN_INTROSPECTION;
 		String systemPropertyProxyTokenUserInfo = GOVWAY_PROXY_TOKEN_USERINFO;
 		String systemPropertyProxyTokenRetrieve = GOVWAY_PROXY_TOKEN_RETRIEVE;
 		String systemPropertyProxyAttributeAuthority = GOVWAY_PROXY_ATTRIBUTE_AUTHORITY;
+		String systemPropertyProxyAttributeAuthorityResponseJwtValidation = GOVWAY_PROXY_ATTRIBUTE_AUTHORITY_RESPONSE_JWT_VALIDATION;
 		
 		if(fruizione!=null) {
+			systemPropertyProxyTokenDynamicDiscovery = fruizione ? GOVWAY_FRUIZIONI_PROXY_TOKEN_DYNAMIC_DISCOVERY : GOVWAY_EROGAZIONI_PROXY_TOKEN_DYNAMIC_DISCOVERY;
+			systemPropertyProxyTokenValidazioneJwt = fruizione ? GOVWAY_FRUIZIONI_PROXY_TOKEN_VALIDAZIONE_JWT : GOVWAY_EROGAZIONI_PROXY_TOKEN_VALIDAZIONE_JWT;
 			systemPropertyProxyTokenIntrospection = fruizione ? GOVWAY_FRUIZIONI_PROXY_TOKEN_INTROSPECTION : GOVWAY_EROGAZIONI_PROXY_TOKEN_INTROSPECTION;
 			systemPropertyProxyTokenUserInfo = fruizione ? GOVWAY_FRUIZIONI_PROXY_TOKEN_USERINFO : GOVWAY_EROGAZIONI_PROXY_TOKEN_USERINFO;
 			systemPropertyProxyTokenRetrieve = fruizione ? GOVWAY_FRUIZIONI_PROXY_TOKEN_RETRIEVE : GOVWAY_EROGAZIONI_PROXY_TOKEN_RETRIEVE;
 			systemPropertyProxyAttributeAuthority = fruizione ? GOVWAY_FRUIZIONI_PROXY_ATTRIBUTE_AUTHORITY : GOVWAY_EROGAZIONI_PROXY_ATTRIBUTE_AUTHORITY;
+			systemPropertyProxyAttributeAuthorityResponseJwtValidation = fruizione ? GOVWAY_FRUIZIONI_PROXY_ATTRIBUTE_AUTHORITY_RESPONSE_JWT_VALIDATION : GOVWAY_EROGAZIONI_PROXY_ATTRIBUTE_AUTHORITY_RESPONSE_JWT_VALIDATION;
 		}
 		
 		if(tag!=null) {
+			systemPropertyProxyTokenDynamicDiscovery= GOVWAY_PREFISSO_TAG_PROXY+ tag +GOVWAY_SEPARATORE+ systemPropertyProxyTokenDynamicDiscovery;
+			systemPropertyProxyTokenValidazioneJwt= GOVWAY_PREFISSO_TAG_PROXY+ tag +GOVWAY_SEPARATORE+ systemPropertyProxyTokenValidazioneJwt;
 			systemPropertyProxyTokenIntrospection= GOVWAY_PREFISSO_TAG_PROXY+ tag +GOVWAY_SEPARATORE+ systemPropertyProxyTokenIntrospection;
 			systemPropertyProxyTokenUserInfo= GOVWAY_PREFISSO_TAG_PROXY+ tag +GOVWAY_SEPARATORE+ systemPropertyProxyTokenUserInfo;
 			systemPropertyProxyTokenRetrieve= GOVWAY_PREFISSO_TAG_PROXY+ tag +GOVWAY_SEPARATORE+ systemPropertyProxyTokenRetrieve;
 			systemPropertyProxyAttributeAuthority= GOVWAY_PREFISSO_TAG_PROXY+ tag +GOVWAY_SEPARATORE+ systemPropertyProxyAttributeAuthority;
+			systemPropertyProxyAttributeAuthorityResponseJwtValidation= GOVWAY_PREFISSO_TAG_PROXY+ tag +GOVWAY_SEPARATORE+ systemPropertyProxyAttributeAuthorityResponseJwtValidation;
 		}
 		else if(nomeSoggetto!=null) {
 			if(tipoSoggetto==null) {
+				systemPropertyProxyTokenDynamicDiscovery= GOVWAY_PREFISSO_DOMINIO_PROXY + nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyTokenDynamicDiscovery;
+				systemPropertyProxyTokenValidazioneJwt= GOVWAY_PREFISSO_DOMINIO_PROXY + nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyTokenValidazioneJwt;
 				systemPropertyProxyTokenIntrospection= GOVWAY_PREFISSO_DOMINIO_PROXY + nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyTokenIntrospection;
 				systemPropertyProxyTokenUserInfo= GOVWAY_PREFISSO_DOMINIO_PROXY + nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyTokenUserInfo;
 				systemPropertyProxyTokenRetrieve= GOVWAY_PREFISSO_DOMINIO_PROXY + nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyTokenRetrieve;
 				systemPropertyProxyAttributeAuthority= GOVWAY_PREFISSO_DOMINIO_PROXY + nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyAttributeAuthority;
+				systemPropertyProxyAttributeAuthorityResponseJwtValidation= GOVWAY_PREFISSO_DOMINIO_PROXY + nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyAttributeAuthorityResponseJwtValidation;
 			}
 			else {
 				if(byProtocollo) {
 					String protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(tipoSoggetto);
+					systemPropertyProxyTokenDynamicDiscovery= GOVWAY_PREFISSO_DOMINIO_PROXY + protocollo+GOVWAY_SEPARATORE+nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyTokenDynamicDiscovery;
+					systemPropertyProxyTokenValidazioneJwt= GOVWAY_PREFISSO_DOMINIO_PROXY + protocollo+GOVWAY_SEPARATORE+nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyTokenValidazioneJwt;
 					systemPropertyProxyTokenIntrospection= GOVWAY_PREFISSO_DOMINIO_PROXY + protocollo+GOVWAY_SEPARATORE+nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyTokenIntrospection;
 					systemPropertyProxyTokenUserInfo= GOVWAY_PREFISSO_DOMINIO_PROXY + protocollo+GOVWAY_SEPARATORE+nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyTokenUserInfo;
 					systemPropertyProxyTokenRetrieve= GOVWAY_PREFISSO_DOMINIO_PROXY + protocollo+GOVWAY_SEPARATORE+nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyTokenRetrieve;
 					systemPropertyProxyAttributeAuthority= GOVWAY_PREFISSO_DOMINIO_PROXY + protocollo+GOVWAY_SEPARATORE+nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyAttributeAuthority;
+					systemPropertyProxyAttributeAuthorityResponseJwtValidation= GOVWAY_PREFISSO_DOMINIO_PROXY + protocollo+GOVWAY_SEPARATORE+nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyAttributeAuthorityResponseJwtValidation;
 				}
 				else {
+					systemPropertyProxyTokenDynamicDiscovery= GOVWAY_PREFISSO_DOMINIO_PROXY + tipoSoggetto+GOVWAY_SEPARATORE+nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyTokenDynamicDiscovery;
+					systemPropertyProxyTokenValidazioneJwt= GOVWAY_PREFISSO_DOMINIO_PROXY + tipoSoggetto+GOVWAY_SEPARATORE+nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyTokenValidazioneJwt;
 					systemPropertyProxyTokenIntrospection= GOVWAY_PREFISSO_DOMINIO_PROXY + tipoSoggetto+GOVWAY_SEPARATORE+nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyTokenIntrospection;
 					systemPropertyProxyTokenUserInfo= GOVWAY_PREFISSO_DOMINIO_PROXY + tipoSoggetto+GOVWAY_SEPARATORE+nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyTokenUserInfo;
 					systemPropertyProxyTokenRetrieve= GOVWAY_PREFISSO_DOMINIO_PROXY + tipoSoggetto+GOVWAY_SEPARATORE+nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyTokenRetrieve;
 					systemPropertyProxyAttributeAuthority= GOVWAY_PREFISSO_DOMINIO_PROXY + tipoSoggetto+GOVWAY_SEPARATORE+nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyAttributeAuthority;
+					systemPropertyProxyAttributeAuthorityResponseJwtValidation= GOVWAY_PREFISSO_DOMINIO_PROXY + tipoSoggetto+GOVWAY_SEPARATORE+nomeSoggetto +GOVWAY_SEPARATORE+ systemPropertyProxyAttributeAuthorityResponseJwtValidation;
 				}
 			}
 		}
 		else if(byProtocollo) {
 			String protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(tipoSoggetto);
+			systemPropertyProxyTokenDynamicDiscovery= GOVWAY_PREFISSO_PROTOCOLLO_PROXY+ protocollo +GOVWAY_SEPARATORE+ systemPropertyProxyTokenDynamicDiscovery;
+			systemPropertyProxyTokenValidazioneJwt= GOVWAY_PREFISSO_PROTOCOLLO_PROXY+ protocollo +GOVWAY_SEPARATORE+ systemPropertyProxyTokenValidazioneJwt;
 			systemPropertyProxyTokenIntrospection= GOVWAY_PREFISSO_PROTOCOLLO_PROXY+ protocollo +GOVWAY_SEPARATORE+ systemPropertyProxyTokenIntrospection;
 			systemPropertyProxyTokenUserInfo= GOVWAY_PREFISSO_PROTOCOLLO_PROXY+ protocollo +GOVWAY_SEPARATORE+ systemPropertyProxyTokenUserInfo;
 			systemPropertyProxyTokenRetrieve= GOVWAY_PREFISSO_PROTOCOLLO_PROXY+ protocollo +GOVWAY_SEPARATORE+ systemPropertyProxyTokenRetrieve;
 			systemPropertyProxyAttributeAuthority= GOVWAY_PREFISSO_PROTOCOLLO_PROXY+ protocollo +GOVWAY_SEPARATORE+ systemPropertyProxyAttributeAuthority;
+			systemPropertyProxyAttributeAuthorityResponseJwtValidation= GOVWAY_PREFISSO_PROTOCOLLO_PROXY+ protocollo +GOVWAY_SEPARATORE+ systemPropertyProxyAttributeAuthorityResponseJwtValidation;
 		}
 		
 		
-		String systemPropertyProxyTokenIntrospection_nomePolicy = null;
-		String systemPropertyProxyTokenUserInfo_nomePolicy = null;
-		String systemPropertyProxyTokenRetrieve_nomePolicy = null;
-		String systemPropertyProxyAttributeAuthority_nomePolicy = null;
+		String systemPropertyProxyTokenDynamicDiscoveryNomePolicy = null;
+		String systemPropertyProxyTokenValidazioneJwtNomePolicy = null;
+		String systemPropertyProxyTokenIntrospectionNomePolicy = null;
+		String systemPropertyProxyTokenUserInfoNomePolicy = null;
+		String systemPropertyProxyTokenRetrieveNomePolicy = null;
+		String systemPropertyProxyAttributeAuthorityNomePolicy = null;
+		String systemPropertyProxyAttributeAuthorityResponseJwtValidationNomePolicy = null;
 		
 		if(policy!=null && policy.getNome()!=null) {
-			systemPropertyProxyTokenIntrospection_nomePolicy = systemPropertyProxyTokenIntrospection+GOVWAY_SEPARATORE+policy.getNome();
-			systemPropertyProxyTokenUserInfo_nomePolicy = systemPropertyProxyTokenUserInfo+GOVWAY_SEPARATORE+policy.getNome();
-			systemPropertyProxyTokenRetrieve_nomePolicy = systemPropertyProxyTokenRetrieve+GOVWAY_SEPARATORE+policy.getNome();
-			systemPropertyProxyAttributeAuthority_nomePolicy = systemPropertyProxyAttributeAuthority+GOVWAY_SEPARATORE+policy.getNome();
+			systemPropertyProxyTokenDynamicDiscoveryNomePolicy = systemPropertyProxyTokenDynamicDiscovery+GOVWAY_SEPARATORE+policy.getNome();
+			systemPropertyProxyTokenValidazioneJwtNomePolicy = systemPropertyProxyTokenValidazioneJwt+GOVWAY_SEPARATORE+policy.getNome();
+			systemPropertyProxyTokenIntrospectionNomePolicy = systemPropertyProxyTokenIntrospection+GOVWAY_SEPARATORE+policy.getNome();
+			systemPropertyProxyTokenUserInfoNomePolicy = systemPropertyProxyTokenUserInfo+GOVWAY_SEPARATORE+policy.getNome();
+			systemPropertyProxyTokenRetrieveNomePolicy = systemPropertyProxyTokenRetrieve+GOVWAY_SEPARATORE+policy.getNome();
+			systemPropertyProxyAttributeAuthorityNomePolicy = systemPropertyProxyAttributeAuthority+GOVWAY_SEPARATORE+policy.getNome();
+			systemPropertyProxyAttributeAuthorityResponseJwtValidationNomePolicy = systemPropertyProxyAttributeAuthorityResponseJwtValidation+GOVWAY_SEPARATORE+policy.getNome();
 		}
 		
 		
@@ -660,42 +769,42 @@ public class ForwardProxy implements Serializable {
 				sConfig.config = config;
 				
 				if(header!=null && !"".equals(header)) {
-					config.header = header;
+					config.setHeader(header);
 					
 					String base64 = System.getProperty(systemPropertyProxyHeaderBase64);
 					if(base64!=null && !"".equals(base64)) {
-						if("true".equalsIgnoreCase(base64)) {
-							config.headerBase64 = true;
+						if(TRUE.equalsIgnoreCase(base64)) {
+							config.setHeaderBase64(true);
 						}
-						else if("false".equalsIgnoreCase(base64)) {
-							config.headerBase64 = false;
+						else if(FALSE.equalsIgnoreCase(base64)) {
+							config.setHeaderBase64(false);
 						}
 						else {
-							config.headerBase64 = DEFAULT_GOVWAY_PROXY_HEADER_BASE64;
+							config.setHeaderBase64(DEFAULT_GOVWAY_PROXY_HEADER_BASE64);
 						}
 					}
 					else {
-						config.headerBase64 = DEFAULT_GOVWAY_PROXY_HEADER_BASE64;
+						config.setHeaderBase64(DEFAULT_GOVWAY_PROXY_HEADER_BASE64);
 					}
 				}
 				
 				if(query!=null && !"".equals(query)) {
-					config.query = query;
+					config.setQuery(query);
 					
 					String base64 = System.getProperty(systemPropertyProxyQueryBase64);
 					if(base64!=null && !"".equals(base64)) {
-						if("true".equalsIgnoreCase(base64)) {
-							config.queryBase64 = true;
+						if(TRUE.equalsIgnoreCase(base64)) {
+							config.setQueryBase64(true);
 						}
-						else if("false".equalsIgnoreCase(base64)) {
-							config.queryBase64 = false;
+						else if(FALSE.equalsIgnoreCase(base64)) {
+							config.setQueryBase64(false);
 						}
 						else {
-							config.queryBase64 = DEFAULT_GOVWAY_PROXY_QUERY_BASE64;
+							config.setQueryBase64(DEFAULT_GOVWAY_PROXY_QUERY_BASE64);
 						}
 					}
 					else {
-						config.queryBase64 = DEFAULT_GOVWAY_PROXY_QUERY_BASE64;
+						config.setQueryBase64(DEFAULT_GOVWAY_PROXY_QUERY_BASE64);
 					}
 				}
 				
@@ -704,43 +813,70 @@ public class ForwardProxy implements Serializable {
 			
 			// gestione token
 			
+			String dynamicDiscovery = null;
+			if(systemPropertyProxyTokenDynamicDiscoveryNomePolicy!=null) {
+				dynamicDiscovery = System.getProperty(systemPropertyProxyTokenDynamicDiscoveryNomePolicy);
+			}
+			if((dynamicDiscovery==null || "".equals(dynamicDiscovery))) {
+				dynamicDiscovery = System.getProperty(systemPropertyProxyTokenDynamicDiscovery);
+			}
+			
+			String validazioneJwt = null;
+			if(systemPropertyProxyTokenValidazioneJwtNomePolicy!=null) {
+				validazioneJwt = System.getProperty(systemPropertyProxyTokenValidazioneJwtNomePolicy);
+			}
+			if((validazioneJwt==null || "".equals(validazioneJwt))) {
+				validazioneJwt = System.getProperty(systemPropertyProxyTokenValidazioneJwt);
+			}
+			
 			String introspection = null;
-			if(systemPropertyProxyTokenIntrospection_nomePolicy!=null) {
-				introspection = System.getProperty(systemPropertyProxyTokenIntrospection_nomePolicy);
+			if(systemPropertyProxyTokenIntrospectionNomePolicy!=null) {
+				introspection = System.getProperty(systemPropertyProxyTokenIntrospectionNomePolicy);
 			}
 			if((introspection==null || "".equals(introspection))) {
 				introspection = System.getProperty(systemPropertyProxyTokenIntrospection);
 			}
 			
 			String userInfo = null;
-			if(systemPropertyProxyTokenUserInfo_nomePolicy!=null) {
-				userInfo = System.getProperty(systemPropertyProxyTokenUserInfo_nomePolicy);
+			if(systemPropertyProxyTokenUserInfoNomePolicy!=null) {
+				userInfo = System.getProperty(systemPropertyProxyTokenUserInfoNomePolicy);
 			}
 			if((userInfo==null || "".equals(userInfo))) {
 				userInfo = System.getProperty(systemPropertyProxyTokenUserInfo);
 			}
 			
 			String retrieve = null;
-			if(systemPropertyProxyTokenRetrieve_nomePolicy!=null) {
-				retrieve = System.getProperty(systemPropertyProxyTokenRetrieve_nomePolicy);
+			if(systemPropertyProxyTokenRetrieveNomePolicy!=null) {
+				retrieve = System.getProperty(systemPropertyProxyTokenRetrieveNomePolicy);
 			}
 			if((retrieve==null || "".equals(retrieve))) {
 				retrieve = System.getProperty(systemPropertyProxyTokenRetrieve);
 			}
 			
 			String attributeAuthority = null;
-			if(systemPropertyProxyAttributeAuthority_nomePolicy!=null) {
-				attributeAuthority = System.getProperty(systemPropertyProxyAttributeAuthority_nomePolicy);
+			if(systemPropertyProxyAttributeAuthorityNomePolicy!=null) {
+				attributeAuthority = System.getProperty(systemPropertyProxyAttributeAuthorityNomePolicy);
 			}
 			if((attributeAuthority==null || "".equals(attributeAuthority))) {
 				attributeAuthority = System.getProperty(systemPropertyProxyAttributeAuthority);
 			}
+			
+			String attributeAuthorityResponseJwtValidation = null;
+			if(systemPropertyProxyAttributeAuthorityResponseJwtValidationNomePolicy!=null) {
+				attributeAuthorityResponseJwtValidation = System.getProperty(systemPropertyProxyAttributeAuthorityResponseJwtValidationNomePolicy);
+			}
+			if((attributeAuthorityResponseJwtValidation==null || "".equals(attributeAuthorityResponseJwtValidation))) {
+				attributeAuthorityResponseJwtValidation = System.getProperty(systemPropertyProxyAttributeAuthorityResponseJwtValidation);
+			}
 						
 			if( 
+					(dynamicDiscovery==null || "".equals(dynamicDiscovery)) &&
+					(validazioneJwt==null || "".equals(validazioneJwt)) &&
 					(introspection==null || "".equals(introspection)) &&
 					(userInfo==null || "".equals(userInfo)) &&
 					(retrieve==null || "".equals(retrieve)) &&
-					(attributeAuthority==null || "".equals(attributeAuthority)) 
+					(attributeAuthority==null || "".equals(attributeAuthority))  &&
+					(attributeAuthorityResponseJwtValidation==null || "".equals(attributeAuthorityResponseJwtValidation)) 
 				) {
 				// verrà usata quella di default
 				sConfig.configToken = defaultConfigToken;
@@ -750,11 +886,41 @@ public class ForwardProxy implements Serializable {
 				ForwardProxyConfigurazioneToken config = new ForwardProxyConfigurazioneToken();
 				sConfig.configToken = config;
 						
+				if(dynamicDiscovery!=null && !"".equals(dynamicDiscovery)) {
+					if(TRUE.equalsIgnoreCase(dynamicDiscovery)) {
+						config.tokenDynamicDiscoveryEnabled = true;
+					}
+					else if(FALSE.equalsIgnoreCase(dynamicDiscovery)) {
+						config.tokenDynamicDiscoveryEnabled = false;
+					}
+					else {
+						config.tokenDynamicDiscoveryEnabled = DEFAULT_GOVWAY_PROXY_TOKEN_DYNAMIC_DISCOVERY;
+					}
+				}
+				else {
+					config.tokenDynamicDiscoveryEnabled = DEFAULT_GOVWAY_PROXY_TOKEN_DYNAMIC_DISCOVERY;
+				}
+				
+				if(validazioneJwt!=null && !"".equals(validazioneJwt)) {
+					if(TRUE.equalsIgnoreCase(validazioneJwt)) {
+						config.tokenJwtValidationEnabled = true;
+					}
+					else if(FALSE.equalsIgnoreCase(validazioneJwt)) {
+						config.tokenJwtValidationEnabled = false;
+					}
+					else {
+						config.tokenJwtValidationEnabled = DEFAULT_GOVWAY_PROXY_TOKEN_VALIDAZIONE_JWT;
+					}
+				}
+				else {
+					config.tokenJwtValidationEnabled = DEFAULT_GOVWAY_PROXY_TOKEN_VALIDAZIONE_JWT;
+				}
+				
 				if(introspection!=null && !"".equals(introspection)) {
-					if("true".equalsIgnoreCase(introspection)) {
+					if(TRUE.equalsIgnoreCase(introspection)) {
 						config.tokenIntrospectionEnabled = true;
 					}
-					else if("false".equalsIgnoreCase(introspection)) {
+					else if(FALSE.equalsIgnoreCase(introspection)) {
 						config.tokenIntrospectionEnabled = false;
 					}
 					else {
@@ -766,10 +932,10 @@ public class ForwardProxy implements Serializable {
 				}
 						
 				if(userInfo!=null && !"".equals(userInfo)) {
-					if("true".equalsIgnoreCase(userInfo)) {
+					if(TRUE.equalsIgnoreCase(userInfo)) {
 						config.tokenUserInfoEnabled = true;
 					}
-					else if("false".equalsIgnoreCase(userInfo)) {
+					else if(FALSE.equalsIgnoreCase(userInfo)) {
 						config.tokenUserInfoEnabled = false;
 					}
 					else {
@@ -781,10 +947,10 @@ public class ForwardProxy implements Serializable {
 				}
 				
 				if(retrieve!=null && !"".equals(retrieve)) {
-					if("true".equalsIgnoreCase(retrieve)) {
+					if(TRUE.equalsIgnoreCase(retrieve)) {
 						config.tokenRetrieveEnabled = true;
 					}
-					else if("false".equalsIgnoreCase(retrieve)) {
+					else if(FALSE.equalsIgnoreCase(retrieve)) {
 						config.tokenRetrieveEnabled = false;
 					}
 					else {
@@ -796,10 +962,10 @@ public class ForwardProxy implements Serializable {
 				}
 				
 				if(attributeAuthority!=null && !"".equals(attributeAuthority)) {
-					if("true".equalsIgnoreCase(attributeAuthority)) {
+					if(TRUE.equalsIgnoreCase(attributeAuthority)) {
 						config.attributeAuthorityEnabled = true;
 					}
-					else if("false".equalsIgnoreCase(attributeAuthority)) {
+					else if(FALSE.equalsIgnoreCase(attributeAuthority)) {
 						config.attributeAuthorityEnabled = false;
 					}
 					else {
@@ -810,6 +976,20 @@ public class ForwardProxy implements Serializable {
 					config.attributeAuthorityEnabled = DEFAULT_GOVWAY_PROXY_ATTRIBUTE_AUTHORITY;
 				}
 				
+				if(attributeAuthorityResponseJwtValidation!=null && !"".equals(attributeAuthorityResponseJwtValidation)) {
+					if(TRUE.equalsIgnoreCase(attributeAuthorityResponseJwtValidation)) {
+						config.attributeAuthorityResponseJwtValidationEnabled = true;
+					}
+					else if(FALSE.equalsIgnoreCase(attributeAuthorityResponseJwtValidation)) {
+						config.attributeAuthorityResponseJwtValidationEnabled = false;
+					}
+					else {
+						config.attributeAuthorityResponseJwtValidationEnabled = DEFAULT_GOVWAY_PROXY_ATTRIBUTE_AUTHORITY_RESPONSE_JWT_VALIDATION;
+					}
+				}
+				else {
+					config.attributeAuthorityResponseJwtValidationEnabled = DEFAULT_GOVWAY_PROXY_ATTRIBUTE_AUTHORITY_RESPONSE_JWT_VALIDATION;
+				}
 			}
 		}
 		
@@ -840,6 +1020,7 @@ public class ForwardProxy implements Serializable {
 	private ForwardProxyConfigurazioneToken configToken;
 	
 	public ForwardProxy() {
+		// nop
 	}
 	
 	public boolean isEnabled() {

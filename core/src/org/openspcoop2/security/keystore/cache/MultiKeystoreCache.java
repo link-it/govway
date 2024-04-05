@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -22,6 +22,7 @@ package org.openspcoop2.security.keystore.cache;
 
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.MultiKeystore;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 
 /**
  * MultiKeystoreCache
@@ -35,11 +36,20 @@ public class MultiKeystoreCache extends AbstractKeystoreCache<MultiKeystore> {
 	@Override
 	public MultiKeystore createKeystore(String key, Object... params)
 			throws SecurityException {
-		if(params!=null && params.length>0){
-			throw new SecurityException("Params not supported");
-		}
 		String propertyFilePath = key;
-		return new MultiKeystore(propertyFilePath);
+		if(params==null || params.length<=0){
+			return new MultiKeystore(propertyFilePath);
+		}
+		if(params.length==1){
+			if( ! (params[0] instanceof BYOKRequestParams) ){
+				throw new SecurityException("Param[0] must be BYOKRequestParams");
+			}
+			BYOKRequestParams requestParams = (BYOKRequestParams) params[0];
+			return new MultiKeystore(propertyFilePath,requestParams);
+		}
+		else{
+			throw new SecurityException("Params [lenght:"+params.length+"] not supported");
+		}
 	}
 
 	@Override

@@ -27,11 +27,11 @@
 		<a4j:keepAlive beanName="distribuzionePerSABean" />
 		<a4j:keepAlive beanName="analisiStatisticaBean" />
 		<a4j:loadScript src="/FusionCharts/FusionCharts.js" rendered="#{not distribuzioneSASearchForm.useGraficiSVG}" />
-		<a4j:loadScript src="/scripts/d3.min.js" rendered="#{distribuzioneSASearchForm.useGraficiSVG}" />
 		<a4j:loadScript src="/scripts/d3-format.min.js" rendered="#{distribuzioneSASearchForm.useGraficiSVG}" />
 		<a4j:loadScript src="/scripts/c3.js" rendered="#{distribuzioneSASearchForm.useGraficiSVG}" />
 		<a4j:loadScript src="/scripts/ChartMap.js" rendered="#{distribuzioneSASearchForm.useGraficiSVG}" />
 		<a4j:loadScript src="/scripts/SvgRaster.js" rendered="#{distribuzioneSASearchForm.useGraficiSVG}" />
+		<a4j:loadScript src="/scripts/heatmap.js" rendered="#{distribuzioneSASearchForm.useGraficiSVG}" />
 		<a4j:outputPanel id="scriptSVGPanel" rendered="#{distribuzioneSASearchForm.useGraficiSVG}">
    			<script type="text/javascript" nonce="#{_csp_random_nonce}">
    			//<![CDATA[
@@ -45,6 +45,11 @@
 				function updateChart2(slider){
 					chartWidth = parseInt(slider.value);
 					createChart(chartDivId, data0, chartType, chartWidth, chartHeight);
+				}
+				
+				function updateChart3(slider){
+					chartWidth = parseInt(slider.value);
+					createHeatMapChart(chartDivId, data0, chartType, chartWidth, chartHeight);
 				}
 	   		 //]]>	
 			</script>
@@ -77,7 +82,14 @@
 								value="#{distribuzionePerSADM}"
 								id="table"
 								headerText="#{distribuzionePerSABean.caption} - #{distribuzionePerSABean.subCaption}"
-								enableDelete="false">
+								enableDelete="false"
+								useCount="#{distribuzioneSASearchForm.useCount}">
+								<rich:column rendered="#{distribuzioneSASearchForm._value_numeroDimensioni == '3d'}">
+									<f:facet name="header">
+										<h:outputText value="#{msg['commons.data.label']}" />
+									</f:facet>
+									<h:outputText value="#{item.dataFormattata}"/>
+								</rich:column>
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="#{distribuzionePerSABean.tipoFiltroDatiMittente}" />
@@ -86,33 +98,57 @@
 								</rich:column>
 								<rich:column rendered="#{distribuzionePerSABean.showColumnSoggetto}">
 									<f:facet name="header">
-										<h:outputText value="Soggetto" />
+										<h:outputText value="#{msg['commons.soggetto.label']}" />
 									</f:facet>
 									<h:outputText value="#{item.parentMap['0']}"/>
 								</rich:column>
 								<rich:column rendered="false">
 									<f:facet name="header">
-										<h:outputText value="Ruolo" />
+										<h:outputText value="#{msg['commons.ruolo.label']}" />
 									</f:facet>
 									<h:outputText value="#{item.parentMap['1']}"/>
 								</rich:column>
 								<rich:column rendered="#{distribuzionePerSABean.showColumnClientIdApplicativoSoggetto}">
 									<f:facet name="header">
-										<h:outputText value="Applicativo" />
+										<h:outputText value="#{msg['commons.applicativo.label']}" />
 									</f:facet>
 									<h:outputText value="#{item.parentMap['0']}"/>
 								</rich:column>
 								<rich:column rendered="#{distribuzionePerSABean.showColumnClientIdApplicativoSoggetto}">
 									<f:facet name="header">
-										<h:outputText value="Soggetto" />
+										<h:outputText value="#{msg['commons.soggetto.label']}" />
 									</f:facet>
 									<h:outputText value="#{item.parentMap['1']}"/>
 								</rich:column>
 								<rich:column rendered="#{distribuzionePerSABean.showColumnClientIdApplicativo}">
 									<f:facet name="header">
-										<h:outputText value="Token Client ID" />
+										<h:outputText value="#{msg['commons.tokenInfo.clientID.label']}" />
 									</f:facet>
 									<h:outputText value="#{item.parentMap['1']}"/>
+								</rich:column>
+								<rich:column rendered="#{distribuzionePerSABean.showColumnClientIdPDNDInfo}">
+									<f:facet name="header">
+										<h:outputText value="#{msg['commons.tokenInfo.clientID.label']}" />
+									</f:facet>
+									<h:outputText value="#{item.parentMap['0']}"/>
+								</rich:column>
+								<rich:column rendered="#{distribuzionePerSABean.showColumnClientIdPDNDInfo}">
+									<f:facet name="header">
+										<h:outputText value="#{msg['commons.tokenInfo.clientID.pdnd.externalId.label']}" />
+									</f:facet>
+									<h:outputText value="#{item.parentMap['1']}"/>
+								</rich:column>
+								<rich:column rendered="#{distribuzionePerSABean.showColumnClientIdPDNDInfo}">
+									<f:facet name="header">
+										<h:outputText value="#{msg['commons.tokenInfo.clientID.pdnd.categoria.label']}" />
+									</f:facet>
+									<h:outputText value="#{item.parentMap['2']}"/>
+								</rich:column>
+								<rich:column rendered="#{distribuzionePerSABean.showColumnAutenticazione}">
+									<f:facet name="header">
+										<h:outputText value="#{msg['commons.autenticazione.label']}" />
+									</f:facet>
+									<h:outputText value="#{item.parentMap['0']}"/>
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
@@ -173,6 +209,7 @@
 				</rich:panel>
 			</c:if>
 			<c:if test="#{distribuzioneSASearchForm._value_tipoReport == 'pie_chart'}">
+				<a4j:loadScript src="/scripts/d3.min.js" rendered="#{distribuzioneSASearchForm.useGraficiSVG}" />
 				<rich:panel id="chartPanel" rendered="#{distribuzioneSASearchForm._value_tipoReport == 'pie_chart'}" styleClass="noborder">
 					<div id="distribuzioneSADiv"></div>
 					<a4j:outputPanel id="scriptPieChartPanel" rendered="#{true}">
@@ -274,7 +311,8 @@
 					</div>
 				</rich:panel>
 			</c:if>
-			<c:if test="#{distribuzioneSASearchForm._value_tipoReport == 'bar_chart'}">
+			<c:if test="#{distribuzioneSASearchForm.visualizzaGraficoBars}">
+				<a4j:loadScript src="/scripts/d3.min.js" rendered="#{distribuzioneSASearchForm.useGraficiSVG}" />
 				<script type="text/javascript" nonce="#{_csp_random_nonce}">
 					//<![CDATA[
 			   				jQuery(document).ready(function() {
@@ -412,6 +450,148 @@
 									</h:commandLink>
 									<h:outputText value=" | " rendered="#{distribuzioneSASearchForm.useGraficiSVG}" />
 									<h:commandLink id="exportImgLink" target="_blank" value="" title="Esporta i risultati in formato PNG" onclick="getImage('distribuzioneSABarsDiv'); return false;" rendered="#{distribuzioneSASearchForm.useGraficiSVG}">
+										<h:outputText value="PNG" /> 
+									</h:commandLink>
+								</h:form>
+							</rich:panel>
+						</h:panelGrid>
+					</div>
+				</rich:panel>
+			</c:if>
+			<c:if test="#{distribuzioneSASearchForm.visualizzaGraficoHeatmap}">
+				<a4j:loadScript src="/scripts/d3.v4.min.js" />
+				<script type="text/javascript" nonce="#{_csp_random_nonce}">
+					//<![CDATA[
+			   				jQuery(document).ready(function() {
+			   					setSlider(chartWidth);
+			   					});	
+						 //]]>	
+				</script>
+				  <a4j:form >
+				  	<input type="hidden" id="_csrfFormSetSliderJs" name="_csrf" value="#{loginBean.csrf}"/>
+		        	<a4j:jsFunction name="setSlider" reRender="gridComandiHeatmap">
+		            	<a4j:actionparam name="param1" assignTo="#{distribuzionePerSABean.initLarghezzaGrafico}"  /> 
+		        	</a4j:jsFunction>
+		    	</a4j:form>
+				<rich:panel id="chartPanelHeatmap" rendered="#{distribuzioneSASearchForm.visualizzaGraficoHeatmap}" styleClass="noborder">
+					<div id="distribuzioneSAHeatmapDiv" class="c3"></div>
+					<a4j:outputPanel id="scriptHeatmapChartPanel" rendered="#{true}">
+						<c:if test="#{distribuzioneSASearchForm.useGraficiSVG}">
+							<a4j:outputPanel id="svgHeatmapChartPanel" rendered="#{distribuzioneSASearchForm.useGraficiSVG}">
+								<script type="text/javascript" nonce="#{_csp_random_nonce}">
+					   			//<![CDATA[
+					   				var chartId = 'distribuzioneSAHeatmapId';
+					   				var chartDivId = 'distribuzioneSAHeatmapDiv';
+					   				var chartWidth = jQuery('#chartPanelHeatmap_body').width() -40;
+									var chartHeight = 700;
+									var chartType = 'heatmap';
+					   				var data0 = '#{distribuzionePerSABean.data}';
+					   				// init 
+					   				createHeatMapChart(chartDivId, data0, chartType, chartWidth, chartHeight);
+// 					   				createChart(chartDivId, data0, chartType, chartWidth, chartHeight);
+					   			 //]]>	
+								</script>
+							</a4j:outputPanel>
+						</c:if>
+						
+						<ui:include src="/stat/includes/timeoutModale.xhtml">
+			               	<ui:param name="mBean" value="#{distribuzionePerSABean}" />
+			               	<ui:param name="id" value="modale_heatmap_chart" />
+			           	</ui:include>
+					</a4j:outputPanel>
+					<div id="panelComandiHeatmap">  
+						<h:panelGrid columns="3" id="gridComandiHeatmap" styleClass="width-cento" columnClasses="comandi-grafici-align-default,comandi-grafici-align-center,comandi-grafici-align-right">
+							<rich:panel id="formCmdPanelHeatmap" styleClass="noborder" bodyClass="nopadding">
+								<a4j:form id="cmdHeatmapPanel">
+									<input type="hidden" id="_csrfFormCmdHeatmapPanel" name="_csrf" value="#{loginBean.csrf}"/>
+									<h:inputHidden value="true" id="usaSVG"/>
+									<a4j:commandLink value="#{distribuzionePerSABean.prevBtnLabel}" reRender="scriptHeatmapChartPanel,gridComandiHeatmap">
+										<a4j:actionparam name="dir" value="prev" assignTo="#{distribuzionePerSABean.dir}" actionListener="#{distribuzionePerSABean.updateChartDateOffset}"/>
+									</a4j:commandLink>
+									<h:outputText value=" | "/>
+									<a4j:commandLink value='#{distribuzionePerSABean.actualBtnLabel}' reRender="scriptHeatmapChartPanel,gridComandiHeatmap">
+										<a4j:actionparam name="dir" value="actual" assignTo="#{distribuzionePerSABean.dir}" actionListener="#{distribuzionePerSABean.updateChartDateOffset}"/>
+									</a4j:commandLink>
+									<h:outputText value=" | "/>	
+									<a4j:commandLink value='#{distribuzionePerSABean.nextBtnLabel}' reRender="scriptHeatmapChartPanel,gridComandiHeatmap">
+										<a4j:actionparam name="dir" value="next" assignTo="#{distribuzionePerSABean.dir}" actionListener="#{distribuzionePerSABean.updateChartDateOffset}"/>
+									</a4j:commandLink>
+								</a4j:form>
+							</rich:panel>
+							<rich:panel id="formSliderPanelHeatmap" styleClass="noborder" bodyClass="nopadding">
+								<div class="form-container noborder">
+									<a4j:form rendered="#{distribuzionePerSABean.visualizzaComandiExport}" id="formSliderHeatmap">
+										<input type="hidden" id="_csrfFormSliderHeatmap" name="_csrf" value="#{loginBean.csrf}"/>
+										<a4j:outputPanel rendered="#{distribuzioneSASearchForm.useGraficiSVG}">
+											<style type="text/css" nonce="#{_csp_random_nonce}">
+												div.form-container div.rich-combobox {
+													    margin-left: 0px;
+												}
+											</style>	
+										</a4j:outputPanel>
+										<h:inputHidden value="true" id="usaSVG"/>
+										<h:panelGrid columns="#{distribuzioneSASearchForm.useGraficiSVG ? 7 : 3 }" >
+											<h:panelGrid columns="2" rendered="#{distribuzioneSASearchForm.useGraficiSVG}">
+												<h:outputLabel value="Label" styleClass="direzioneLabelGrafici" />
+												<rich:comboBox id="rotazioneCombo" value="#{distribuzionePerSABean.direzioneLabel}" defaultLabel="Seleziona Label"
+													  width="100" enableManualInput="false">
+													<f:selectItem itemValue="Orizzontale" />
+													<f:selectItem itemValue="Obliquo" />
+													<f:selectItem itemValue="Verticale" />
+													<a4j:support status="mainStatus" event="onselect" reRender="scriptHeatmapChartPanel,gridComandiHeatmap" actionListener="#{distribuzionePerSABean.updateChartDirezioneLabel}" />
+												</rich:comboBox>
+											</h:panelGrid>
+											<a4j:outputPanel rendered="#{distribuzioneSASearchForm.useGraficiSVG}" layout="block" >
+												<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
+											</a4j:outputPanel>
+											<h:panelGrid columns="2">
+												<h:outputLabel value="Numero Risultati" styleClass="labelSpinnerGrafici" />
+												<rich:inputNumberSpinner value="#{distribuzionePerSABean.slice}" minValue="#{distribuzionePerSABean.minCategorie}" 
+													maxValue="#{distribuzionePerSABean.maxCategorie}" cycled="false"  styleClass="spinnerNumeroRisultatiGrafici">
+													<a4j:support event="onchange" actionListener="#{distribuzionePerSABean.updateChartNumeroRisultati}" reRender="scriptHeatmapChartPanel,gridComandiHeatmap"/>
+												</rich:inputNumberSpinner>
+											</h:panelGrid>
+											<a4j:outputPanel rendered="#{distribuzioneSASearchForm.useGraficiSVG}" layout="block" >
+												<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
+											</a4j:outputPanel>
+											<h:panelGrid columns="2" rendered="#{distribuzioneSASearchForm.useGraficiSVG}">
+												<h:outputLabel value="Mostra Valori" styleClass="labelMostraValoriGrafico" />
+												<rich:comboBox id="visualizzaValoriNelleCelle" value="#{distribuzionePerSABean.visualizzaTotaleNelleCelleGraficoHeatmap}" 
+													defaultLabel="Mostra valori grafico" width="55" enableManualInput="false" converter="selectItemConverter">
+													<f:selectItem itemValue="true" itemLabel="Si"/>
+													<f:selectItem itemValue="false" itemLabel="No"/>
+													<a4j:support status="mainStatus" event="onselect" reRender="scriptHeatmapChartPanel,gridComandiHeatmap" actionListener="#{distribuzionePerSABean.updateChartVisualizzaTotaleNelleCelleGraficoHeatmap}" />
+												</rich:comboBox>
+											</h:panelGrid>
+											<a4j:outputPanel rendered="#{distribuzioneSASearchForm.useGraficiSVG}" layout="block" >
+												<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
+											</a4j:outputPanel>
+											<h:panelGrid columns="2">
+												<h:outputLabel value="Larghezza Grafico" styleClass="labelSliderGrafici width-160-important"/>
+												<rich:inputNumberSlider id="sliderLarghezzaGrafico" value="#{distribuzionePerSABean.larghezzaGrafico}" onchange="updateChart3(this)"
+													showInput="false" enableManualInput="false" minValue="#{distribuzionePerSABean.minLarghezzaGrafico}" maxValue="#{distribuzionePerSABean.maxLarghezzaGrafico}" showBoundaryValues="false" >
+												</rich:inputNumberSlider>
+											</h:panelGrid>
+										</h:panelGrid>
+									</a4j:form>
+								</div>
+							</rich:panel>
+							<rich:panel id="exportCmdPanelHeatmap" styleClass="noborder" bodyClass="nopadding">
+								<h:form id="formExportCmdPanelHeatmap" rendered="#{distribuzionePerSABean.visualizzaComandiExport}" >
+									<input type="hidden" id="_csrfFormExportCmdPanelHeatmap" name="_csrf" value="#{loginBean.csrf}"/>
+									<h:commandLink id="heatmap_exportCsvLink" target="_blank" action="#{distribuzionePerSABean.esportaCsv}" title="Esporta i risultati in formato CSV">
+										<h:outputText value="CSV" />
+									</h:commandLink>
+									<h:outputText value=" | "/>
+									<h:commandLink id="heatmap_exportXlsLink" target="_blank" action="#{distribuzionePerSABean.esportaXls}" title="Esporta i risultati in formato XLS">
+										<h:outputText value="XLS" />
+									</h:commandLink>
+									<h:outputText value=" | "/>	
+									<h:commandLink id="heatmap_exportPdfLink" target="_blank" action="#{distribuzionePerSABean.esportaPdf}" title="Esporta i risultati in formato PDF">
+										<h:outputText value="PDF" />
+									</h:commandLink>
+									<h:outputText value=" | " rendered="#{distribuzioneSASearchForm.useGraficiSVG}" />
+									<h:commandLink id="exportImgLink" target="_blank" value="" title="Esporta i risultati in formato PNG" onclick="getImage('distribuzioneSAHeatmapDiv'); return false;" rendered="#{distribuzioneSASearchForm.useGraficiSVG}">
 										<h:outputText value="PNG" /> 
 									</h:commandLink>
 								</h:form>

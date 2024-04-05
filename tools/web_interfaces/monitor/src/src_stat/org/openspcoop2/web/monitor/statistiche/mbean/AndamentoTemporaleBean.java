@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -413,7 +413,8 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti(), false);
 			
 			// scrittura del report sullo stream
-			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda,tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),null,null,null,
+			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+					tipiBanda,tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),null,null,null,
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti());
 
 			if(useFaceContext){
@@ -510,7 +511,8 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti(), false); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda,tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),null,null,null,
+			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+					tipiBanda,tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),null,null,null,
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti());
 			response.flushBuffer();
 
@@ -608,7 +610,8 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti(), true);
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda,tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),null,null,null,
+			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+					tipiBanda,tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),null,null,null,
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti());
 
 			if(useFaceContext){

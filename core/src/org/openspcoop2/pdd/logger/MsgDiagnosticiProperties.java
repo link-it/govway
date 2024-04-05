@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -929,6 +929,12 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"validazioneSemantica.risposta.inCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"validazioneSemantica.risposta.completata",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"validazioneSemantica.risposta.fallita",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"gestioneTokenInCorso.dynamicDiscovery",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"gestioneTokenInCorso.dynamicDiscovery.completataSuccesso",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"gestioneTokenInCorso.dynamicDiscovery.validato",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"gestioneTokenInCorso.dynamicDiscovery.inCache",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"gestioneTokenInCorso.dynamicDiscovery.fallita",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"gestioneTokenInCorso.dynamicDiscovery.disabilitata",
 		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+"registroServizi.ricercaServizioInCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+"registroServizi.ricercaServizioEffettuata",
 		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+"registroServizi.ricercaServizioFallita",
@@ -1189,6 +1195,12 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"validazioneSemantica.autorizzazione.completata",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"validazioneSemantica.autorizzazione.fallita",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"protocolli.tipoSoggetto.fruitore.unsupported.warning",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"gestioneTokenInCorso.dynamicDiscovery",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"gestioneTokenInCorso.dynamicDiscovery.completataSuccesso",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"gestioneTokenInCorso.dynamicDiscovery.validato",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"gestioneTokenInCorso.dynamicDiscovery.inCache",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"gestioneTokenInCorso.dynamicDiscovery.fallita",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"gestioneTokenInCorso.dynamicDiscovery.disabilitata",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"ricezioneBustaErrore",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"ricezioneBusta.eccezioniNonGravi",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"validazioneNonRiuscita",
@@ -1347,6 +1359,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativiFileTrace.rispostaIngresso.completato",
 		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativiFileTrace.rispostaUscita.inCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"dumpContenutiApplicativiFileTrace.rispostaUscita.completato",
+		MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO+"registrazioneTransazioneNonRiuscita",
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_RISCONTRI_RICEVUTE+"avvioInCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_RISCONTRI_RICEVUTE+"avvioEffettuato",
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_RISCONTRI_RICEVUTE+"timerGiaAvviato",

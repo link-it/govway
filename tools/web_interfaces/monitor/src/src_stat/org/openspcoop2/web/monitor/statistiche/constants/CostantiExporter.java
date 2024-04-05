@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -28,6 +28,7 @@ import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
+import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 
 /**
  * CostantiExporter
@@ -253,12 +254,18 @@ public class CostantiExporter {
 	public static final String TIPO_LATENZA_VISUALIZZATA = "latenza";
 	public static final TipoLatenza TIPO_LATENZA_VISUALIZZATA_DEFAULT = TipoLatenza.LATENZA_TOTALE;
 	
+	public static final String DIMENSIONI_VISUALIZZATE = "dimensioni";
+	public static final NumeroDimensioni DIMENSIONI_VISUALIZZATE_DEFAULT = NumeroDimensioni.DIMENSIONI_2;
+	public static final String DIMENSIONI_VISUALIZZATE_2 = NumeroDimensioni.DIMENSIONI_2.getValue();
+	public static final String DIMENSIONI_VISUALIZZATE_3 = NumeroDimensioni.DIMENSIONI_3.getValue();
+	
 	public static final String CLAIM = "claim";
 	public static final String CLAIM_SUBJECT = "subject";
 	public static final String CLAIM_ISSUER = "issuer";
 	public static final String CLAIM_USERNAME = "username";
 	public static final String CLAIM_EMAIL = "eMail";
 	public static final String CLAIM_CLIENT_ID = "clientId";
+	public static final String CLAIM_PDND_ORGANIZATION_NAME = "pdndOrganizationName";
 	private static final List<String> claims = new ArrayList<> ();
 	public static List<String> getClaims() {
 		return claims;
@@ -269,6 +276,7 @@ public class CostantiExporter {
 		claims.add(CLAIM_USERNAME);
 		claims.add(CLAIM_EMAIL);
 		claims.add(CLAIM_CLIENT_ID);
+		claims.add(CLAIM_PDND_ORGANIZATION_NAME);
 	}
 	
 	public static final String TIPO_FORMATO_CONFIGURAZIONE_CSV = "csv";

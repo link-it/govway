@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.logger.filetrace;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import java.util.Scanner;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
@@ -41,7 +43,7 @@ import org.openspcoop2.utils.properties.PropertiesReader;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 
 /**     
- * LogTraceConfig
+ * FileTraceConfig
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
@@ -49,11 +51,10 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
  */
 public class FileTraceConfig {
 	
-	private static HashMap<String, FileTraceConfig> staticInstanceMap = new HashMap<String, FileTraceConfig>();
+	private static HashMap<String, FileTraceConfig> staticInstanceMap = new HashMap<>();
 	private static final org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("FileTraceConfig");
 
 	public static void init(InputStream is, String fileNamePath, boolean globale) throws CoreException {
-		//synchronized(staticInstanceMap) {
 		semaphore.acquireThrowRuntime("init_InputStream");
 		try {
 			if(!staticInstanceMap.containsKey(fileNamePath)){
@@ -65,7 +66,6 @@ public class FileTraceConfig {
 		}
 	}
 	public static void init(File file, boolean globale) throws CoreException {
-		//synchronized(staticInstanceMap) {
 		semaphore.acquireThrowRuntime("init_File");
 		try {
 			if(!staticInstanceMap.containsKey(file.getAbsolutePath())){
@@ -77,29 +77,28 @@ public class FileTraceConfig {
 		}
 	}
 	public static void update(File file, boolean globale) throws CoreException {
-		//synchronized(staticInstanceMap) {
 		semaphore.acquireThrowRuntime("update");
 		try {
-			_updateWithoutSynchronized(file, globale);
+			updateWithoutSynchronizedEngine(file, globale);
 		}finally {
 			semaphore.release("update_File");
 		}
 	}
-	public static void resetFileTraceAssociatePorte() throws CoreException {
-		//synchronized(staticInstanceMap) {
+	public static void resetFileTraceAssociatePorte()  {
 		semaphore.acquireThrowRuntime("resetFileTraceAssociatePorte");
 		try {
 			if(!staticInstanceMap.isEmpty()) {
 				List<String> removeEntries = new ArrayList<>();
-				for (String path : staticInstanceMap.keySet()) {
+				for (Map.Entry<String,FileTraceConfig> entry : staticInstanceMap.entrySet()) {
+					String path = entry.getKey();
 					FileTraceConfig config = staticInstanceMap.get(path);
 					if(config.isGlobale()) {
 						continue;
 					}
-					//_updateWithoutSynchronized(new File(path), config.isGlobale());
+					/**updateWithoutSynchronizedEngine(new File(path), config.isGlobale());*/
 					removeEntries.add(path); // verra poi ricreato
 				}
-				while(removeEntries.size()>0) {
+				while(!removeEntries.isEmpty()) {
 					String path = removeEntries.remove(0);
 					staticInstanceMap.remove(path);
 				}
@@ -108,7 +107,7 @@ public class FileTraceConfig {
 			semaphore.release("resetFileTraceAssociatePorte");
 		}
 	}
-	private static void _updateWithoutSynchronized(File file, boolean globale) throws CoreException {
+	private static void updateWithoutSynchronizedEngine(File file, boolean globale) throws CoreException {
 		FileTraceConfig newConfig = new FileTraceConfig(file, globale);
 		FileTraceConfig instance = newConfig;
 		staticInstanceMap.remove(file.getAbsolutePath());
@@ -139,22 +138,25 @@ public class FileTraceConfig {
 	private List<String> propertiesSortKeys = new ArrayList<>();
 	private Map<String, String> propertiesNames = new HashMap<>();
 	private Map<String, String> propertiesValues = new HashMap<>();
+	private Map<String, String> propertiesEncryptionMode = new HashMap<>();
+	
+	private Map<String, FileTraceEncryptConfig> encryptionMode = new HashMap<>();
 	
 	private List<String> topicErogazioni = new ArrayList<>();
-	private Map<String, Topic> topicErogazioniMap = new HashMap<String, Topic>();
+	private Map<String, Topic> topicErogazioniMap = new HashMap<>();
 	
 	private List<String> topicFruizioni = new ArrayList<>();
-	private Map<String, Topic> topicFruizioneMap = new HashMap<String, Topic>();
+	private Map<String, Topic> topicFruizioneMap = new HashMap<>();
 	
 	public FileTraceConfig(File file, boolean globale) throws CoreException {
 		try(FileInputStream fin = new FileInputStream(file)){
-			_init(fin, globale);
+			initEngine(fin, globale);
 		}catch(Exception e) {
 			throw new CoreException(e.getMessage(),e);
 		}
 	}
 	public FileTraceConfig(InputStream is, boolean globale) throws CoreException {
-		_init(is, globale);
+		initEngine(is, globale);
 	}
 	
 	private static boolean escapeInFile = true;
@@ -164,9 +166,9 @@ public class FileTraceConfig {
 	public static void setEscapeInFile(boolean escapeInFile) {
 		FileTraceConfig.escapeInFile = escapeInFile;
 	}
-	private void _init(InputStream is, boolean globale) throws CoreException {
+	private void initEngine(InputStream is, boolean globale) throws CoreException {
 		try {
-			this.globale = false;
+			this.globale = globale;
 			
 			Properties p = new Properties();
 			
@@ -174,35 +176,7 @@ public class FileTraceConfig {
 				p.load(is); // non tratta bene i caratteri speciali
 			}
 			else {
-				Scanner scanner = new Scanner(is);
-				while (scanner.hasNextLine()) {
-					String line = scanner.nextLine();
-					if(line.startsWith("#")) {
-						continue;
-					}
-					if(StringUtils.isEmpty(line)) {
-						continue;
-					}
-					//System.out.println("LINE ["+line+"]");
-					String key = line;
-					String value = "";
-					if(line.endsWith("=")) {
-						if(line.length()==1) {
-							continue;
-						}
-						key = line.substring(0, line.length()-1);
-					}
-					else {
-						int indexOf = line.indexOf("=");
-						if(indexOf<=0) {
-							continue;
-						}
-						key = line.substring(0, indexOf);
-						value = line.substring(indexOf+1, line.length());
-					}
-					p.put(key, value);
-				}
-				scanner.close();
+				fillProperties(p, is);
 				
 				File fTmp = FileSystemUtilities.createTempFile("test", ".properties");
 				try {
@@ -214,9 +188,7 @@ public class FileTraceConfig {
 						 p.load(finNewP);
 					}
 				}finally {
-					if(!fTmp.delete()) {
-						// ignore
-					}
+					FileSystemUtilities.deleteFile(fTmp);
 				}
 			}
 			
@@ -241,16 +213,46 @@ public class FileTraceConfig {
 			registerTopic(reader, erogazioni);
 			registerTopic(reader, !erogazioni);
 			
+			// ** Encryption mode
+			
+			this.encryptionMode = FileTraceEncryptConfig.parse(reader);
+			
 			// ** Format **
 			
 			readFormatProperties(reader);
 				
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new CoreException(t.getMessage(),t);
 		}
 	}
+	private void fillProperties(Properties p, InputStream is) {
+		Scanner scanner = new Scanner(is);
+		while (scanner.hasNextLine()) {
+			String line = scanner.nextLine();
+			if(line.startsWith("#") || 
+					StringUtils.isEmpty(line) || 
+					(line.endsWith("=") && line.length()==1) ||
+					(line.indexOf("=")<=0)
+				) {
+				continue;
+			}
+			/**System.out.println("LINE ["+line+"]");*/
+			String key = null;
+			String value = "";
+			if(line.endsWith("=")) {
+				key = line.substring(0, line.length()-1);
+			}
+			else {
+				int indexOf = line.indexOf("=");
+				key = line.substring(0, indexOf);
+				value = line.substring(indexOf+1, line.length());
+			}
+			p.put(key, value);
+		}
+		scanner.close();
+	}
 	
-	private InputStream getInputStreamLogFile(PropertiesReader reader) throws Exception {
+	private InputStream getInputStreamLogFile(PropertiesReader reader) throws UtilsException, FileNotFoundException {
 		String tmp = getProperty(reader, "log.config.file", true);
 		
 		File fTmp = new File(tmp);
@@ -275,11 +277,11 @@ public class FileTraceConfig {
 			return new FileInputStream(fTmp);
 		}
 	
-		throw new Exception("File '"+tmp+"' not found");
+		throw new UtilsException("File '"+tmp+"' not found");
 		
 	}
 	
-	private void registerTopic(PropertiesReader reader, boolean erogazioni) throws Exception {
+	private void registerTopic(PropertiesReader reader, boolean erogazioni) throws UtilsException {
 		
 		String tipo = erogazioni ? "erogazioni" : "fruizioni";
 		
@@ -339,6 +341,28 @@ public class FileTraceConfig {
 					if(tmpOutResponseContentDefined!=null)
 						topic.setOnlyOutResponseContentDefined(Boolean.valueOf(tmpOutResponseContentDefined));
 					
+					String propertyNameTrackingPhases = propertyName+"."+nome+".trackingPhases";
+					List<String> trackingPhases = getList(reader, propertyNameTrackingPhases);
+					if(trackingPhases!=null && !trackingPhases.isEmpty()) {
+						for (String phase : trackingPhases) {
+							if("inRequest".equalsIgnoreCase(phase) || "in-request".equalsIgnoreCase(phase) || "requestIn".equalsIgnoreCase(phase) || "request-in".equalsIgnoreCase(phase)) {
+								topic.addFaseTracciamento(FaseTracciamento.IN_REQUEST);
+							}
+							else if("outRequest".equalsIgnoreCase(phase) || "out-request".equalsIgnoreCase(phase) || "requestOut".equalsIgnoreCase(phase) || "request-out".equalsIgnoreCase(phase)) {
+								topic.addFaseTracciamento(FaseTracciamento.OUT_REQUEST);
+							} 
+							else if("outResponse".equalsIgnoreCase(phase) || "out-response".equalsIgnoreCase(phase) || "responseOut".equalsIgnoreCase(phase) || "response-out".equalsIgnoreCase(phase)) {
+								topic.addFaseTracciamento(FaseTracciamento.OUT_RESPONSE);
+							} 
+							else if("postOutResponse".equalsIgnoreCase(phase) || "post-out-response".equalsIgnoreCase(phase) || "postResponseOut".equalsIgnoreCase(phase) || "post-response-out".equalsIgnoreCase(phase)) {								topic.addFaseTracciamento(FaseTracciamento.POST_OUT_RESPONSE);
+								topic.addFaseTracciamento(FaseTracciamento.POST_OUT_RESPONSE);
+							} 
+							else {
+								throw new UtilsException("Found unknown tracking phase '"+phase+"' in property '"+propertyNameTrackingPhases+"'");
+							}
+						}
+					}
+					
 					String propertyNameCategory = "category.topic."+tipo+"."+nome;
 					String category = getProperty(reader, propertyNameCategory, true);
 					topic.setCategoryName(category);
@@ -353,8 +377,7 @@ public class FileTraceConfig {
 			}
 		}
 	}
-	@SuppressWarnings("unused")
-	private List<String> getList(PropertiesReader reader, String propertyName) throws Exception{
+	private List<String> getList(PropertiesReader reader, String propertyName) throws UtilsException {
 		List<String> list = new ArrayList<>();		
 		String tmp = getProperty(reader, propertyName, false);
 		if(tmp!=null && !StringUtils.isEmpty(tmp)) {
@@ -381,32 +404,25 @@ public class FileTraceConfig {
 			}
 		}
 		
-		Properties propertiesMap = reader.readProperties("format.property.");
 		List<String> listPosition = new ArrayList<>();
 		List<String> listPnames = new ArrayList<>();
-		if(propertiesMap!=null && !propertiesMap.isEmpty()) {
-			for (Object s : propertiesMap.keySet()) {
-				String key = (String) s;
-				if(!key.contains(".") || key.length()<3 || key.startsWith(".") || key.endsWith(".")) {
-					throw new UtilsException("Format property 'format.property."+key+"' wrong (expected: format.property.<intPosition>.<nomeProperty>)");
-				}
-				int indexOf = key.indexOf(".");
-				String pos = key.substring(0, indexOf);
-				String nomeP = key.substring(indexOf+1,key.length());
-				String posPadded = StringUtils.leftPad(pos, 10, "0");
-				if(listPosition.contains(posPadded)) {
-					throw new UtilsException("Bad property 'format.property."+key+"': contains duplicate position '"+pos+"'");
-				}
-				if(listPnames.contains(nomeP)) {
-					throw new UtilsException("Bad property 'format.property."+key+"'. contains duplicate name '"+nomeP+"'");
-				}
-				listPosition.add(posPadded);
-				this.propertiesNames.put(posPadded, nomeP);
-				this.propertiesValues.put(posPadded, propertiesMap.getProperty(key));
-			}
-			Collections.sort(listPosition);
-			this.propertiesSortKeys = listPosition;
-		}
+				
+		String prefixProperty = "format.property.";
+		Properties propertiesMap = reader.readProperties(prefixProperty);
+		parseProperties(propertiesMap, prefixProperty,
+				listPosition, listPnames,
+				false,
+				reader);
+		
+		String prefixEncryptedProperty = "format.encryptedProperty.";
+		propertiesMap = reader.readProperties(prefixEncryptedProperty);
+		parseProperties(propertiesMap, prefixEncryptedProperty,
+				listPosition, listPnames,
+				true,
+				reader);		
+		
+		Collections.sort(listPosition);
+		this.propertiesSortKeys = listPosition;
 		
 		String tmp = getProperty(reader, "format.headers.separator", false);
 		if(tmp!=null) {
@@ -478,6 +494,73 @@ public class FileTraceConfig {
 		}
 	}
 	
+	private void parseProperties(Properties propertiesMap, String prefix,
+			List<String> listPosition, List<String> listPnames, 
+			boolean encrypted,
+			PropertiesReader reader) throws UtilsException {
+		if(propertiesMap!=null && !propertiesMap.isEmpty()) {
+			for (Object s : propertiesMap.keySet()) {
+				String key = (String) s;
+				parseProperty(key, propertiesMap, prefix,
+						listPosition, listPnames, 
+						encrypted,
+						reader);
+			}
+		}
+	}
+	private void parseProperty(String key, Properties propertiesMap, String prefix,
+			List<String> listPosition, List<String> listPnames, 
+			boolean encrypted,
+			PropertiesReader reader) throws UtilsException {
+		if(!key.contains(".") || key.length()<3 || key.startsWith(".") || key.endsWith(".")) {
+			throw new UtilsException("Format property '"+prefix+""+key+"' wrong (expected: "+prefix+"<intPosition>.<nomeProperty>)");
+		}
+		String prefixBad = "Bad property '"+prefix+""+key+"'";
+		
+		int indexOf = key.indexOf(".");
+		String pos = key.substring(0, indexOf);
+		String nomeP = key.substring(indexOf+1,key.length());
+		String posPadded = StringUtils.leftPad(pos, 10, "0");
+		if(listPosition.contains(posPadded)) {
+			throw new UtilsException(prefixBad+": contains duplicate position '"+pos+"'");
+		}
+		if(listPnames.contains(nomeP)) {
+			throw new UtilsException(prefixBad+". contains duplicate name '"+nomeP+"'");
+		}
+		listPosition.add(posPadded);
+		this.propertiesNames.put(posPadded, nomeP);
+		this.propertiesValues.put(posPadded, propertiesMap.getProperty(key));
+		
+		if(encrypted) {
+			parseEncryptedProperty(reader,
+					key, prefixBad, posPadded);
+		}
+	}
+	private void parseEncryptedProperty(PropertiesReader reader,
+			String key, String prefixBad, String posPadded) throws UtilsException {
+		String modeP = "format.encrypt."+key;
+		String mode = reader.getValue_convertEnvProperties(modeP);
+		if(this.encryptionMode==null || this.encryptionMode.isEmpty()) {
+			throw new UtilsException(prefixBad+": no encryption mode defined");	
+		}
+		if(mode==null || StringUtils.isEmpty(mode.trim())) {
+			if(this.encryptionMode.size()==1) {
+				// ce n'è solo una definita
+				this.propertiesEncryptionMode.put(posPadded, this.encryptionMode.keySet().iterator().next());
+			}
+			else {
+				throw new UtilsException(prefixBad+": undefined property '"+modeP+"'");
+			}
+		}
+		else {
+			mode = mode.trim();
+			if(!this.encryptionMode.containsKey(mode)) {
+				throw new UtilsException(prefixBad+": unknown encryption mode '"+mode+"'");
+			}
+			this.propertiesEncryptionMode.put(posPadded, mode);
+		}
+	}
+	
 	private String getProperty(PropertiesReader reader, String key, boolean required) throws UtilsException {
 		String tmp = reader.getValue(key);
 		if(tmp==null) {
@@ -531,6 +614,13 @@ public class FileTraceConfig {
 	}
 	public Map<String, String> getPropertiesValues() {
 		return this.propertiesValues;
+	}
+	public Map<String, String> getPropertiesEncryptionMode() {
+		return this.propertiesEncryptionMode;
+	}
+	
+	public Map<String, FileTraceEncryptConfig> getEncryptionMode() {
+		return this.encryptionMode;
 	}
 	
 	public List<String> getTopicErogazioni() {

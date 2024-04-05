@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -28,6 +28,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.openspcoop2.security.Constants;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 
 /**
  * SymmetricKeystore
@@ -42,7 +43,7 @@ public class SymmetricKeystore implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+		
 	private SecretKeySpec key = null;
 	private transient KeyStore keyStore = null;
 	private String pwKey = null;
@@ -56,6 +57,9 @@ public class SymmetricKeystore implements Serializable {
 	}
 	
 	public SymmetricKeystore(String alias,String key,String algoritmo) throws SecurityException{
+		this(alias, key, algoritmo, null);
+	}
+	public SymmetricKeystore(String alias,String key,String algoritmo, BYOKRequestParams requestParams) throws SecurityException{
 		try{
 			String algorithm = null;
 			if(Constants.TRIPLE_DES.equals(algoritmo)){
@@ -65,7 +69,13 @@ public class SymmetricKeystore implements Serializable {
 				algorithm = "DES"; // default
 			}
 
-			this.key = new SecretKeySpec(key.getBytes(),algorithm);
+			byte[] keyBytes = key.getBytes();
+			
+			if(requestParams!=null) {
+				keyBytes = StoreUtils.unwrapBYOK(keyBytes, requestParams);	
+			}
+			
+			this.key = new SecretKeySpec(keyBytes,algorithm);
 			
 			this.alias = alias;
 			this.pwKey = "PW_CUSTOM";
@@ -110,7 +120,5 @@ public class SymmetricKeystore implements Serializable {
 	public String getPasswordKey() {
 		return this.pwKey;
 	}
-	
-	
 
 }

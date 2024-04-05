@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -36,6 +36,8 @@ import org.openspcoop2.utils.regexp.RegularExpressionEngine;
  * @version $Rev$, $Date$
  */
 public class PrincipalUtilities {
+	
+	private PrincipalUtilities() {}
 
 	public static String getPrincipal(TipoAutenticazionePrincipal tipoAutenticazionePrincipal, String nome, String pattern, TipoCredenzialeMittente token,
 			InfoConnettoreIngresso infoConnettore, PdDContext pddContext, boolean throwException,
@@ -47,12 +49,11 @@ public class PrincipalUtilities {
 			if(infoConnettore!=null && infoConnettore.getCredenziali()!=null) {
 				principal = infoConnettore.getCredenziali().getPrincipal();
 			}
-			if(principal==null || "".equals(principal)) {
-				if(throwException) {
-					throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Principal non presente all'interno delle credenziali");
-				}
+			if( (principal==null || "".equals(principal)) &&
+				throwException) {
+				throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Principal non presente all'interno delle credenziali");
 			}
-			/*
+			/**
 			 * L'info 'container' viene gia' registrata in automatico tra le credenziali come principal.
 			if(fullCredential.length()>0) {
 				fullCredential.append("\n");
@@ -67,10 +68,9 @@ public class PrincipalUtilities {
 			if(nome!=null && infoConnettore!=null && infoConnettore.getUrlProtocolContext()!=null) {
 				principal = infoConnettore.getUrlProtocolContext().getHeaderFirstValue(nome);
 			}
-			if(principal==null || "".equals(principal)) {
-				if(throwException) {
-					throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Principal non presente nell'header http '"+nome+"'");
-				}
+			if( (principal==null || "".equals(principal)) &&
+				throwException) {
+				throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Principal non presente nell'header http '"+nome+"'");
 			}
 			if(fullCredential.length()>0) {
 				fullCredential.append("\n");
@@ -84,10 +84,9 @@ public class PrincipalUtilities {
 			if(nome!=null && infoConnettore!=null && infoConnettore.getUrlProtocolContext()!=null) {
 				principal = infoConnettore.getUrlProtocolContext().getParameterFirstValue(nome);
 			}
-			if(principal==null || "".equals(principal)) {
-				if(throwException) {
-					throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Principal non presente nel parametro della query '"+nome+"'");
-				}
+			if( (principal==null || "".equals(principal)) &&
+				throwException) {
+				throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Principal non presente nel parametro della query '"+nome+"'");
 			}
 			if(fullCredential.length()>0) {
 				fullCredential.append("\n");
@@ -103,18 +102,17 @@ public class PrincipalUtilities {
 				msgErrore = "["+tipoAutenticazionePrincipal+"] Principal non estraibile con l'espressione regolare '"+pattern+"' dalla url '"+infoConnettore.getUrlProtocolContext().getUrlInvocazione_formBased()+"'";
 				try {
 					principal = RegularExpressionEngine.getStringMatchPattern(infoConnettore.getUrlProtocolContext().getUrlInvocazione_formBased(), pattern);
-				}catch(Throwable t) {
+				}catch(Exception t) {
 					if(throwException) {
 						throw new AutenticazioneException(msgErrore+": "+t.getMessage(), t);
 					}
 				}
 			}
-			if(principal==null || "".equals(principal)) {
-				if(throwException) {
-					throw new AutenticazioneException(msgErrore);
-				}
+			if( (principal==null || "".equals(principal)) &&
+				throwException) {
+				throw new AutenticazioneException(msgErrore);
 			}
-			/*
+			/**
 			 * La url viene gia' registrata in automatico tra le info della transazione
 			if(fullCredential.length()>0) {
 				fullCredential.append("\n");
@@ -126,12 +124,11 @@ public class PrincipalUtilities {
 			if(pddContext!=null && pddContext.containsKey(Costanti.CLIENT_IP_REMOTE_ADDRESS)) {
 				principal = PdDContext.getValue(Costanti.CLIENT_IP_REMOTE_ADDRESS, pddContext);
 			}
-			if(principal==null || "".equals(principal)) {
-				if(throwException) {
-					throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Indirizzo IP del Client non disponibile");
-				}
+			if( (principal==null || "".equals(principal)) &&
+				throwException) {
+				throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Indirizzo IP del Client non disponibile");
 			}
-			/*
+			/**
 			 * Il client ip viene gia' registrato in automatico tra le info della transazione
 			if(fullCredential.length()>0) {
 				fullCredential.append("\n");
@@ -143,12 +140,11 @@ public class PrincipalUtilities {
 			if(pddContext!=null && pddContext.containsKey(Costanti.CLIENT_IP_TRANSPORT_ADDRESS)) {
 				principal = PdDContext.getValue(Costanti.CLIENT_IP_TRANSPORT_ADDRESS, pddContext);
 			}
-			if(principal==null || "".equals(principal)) {
-				if(throwException) {
-					throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Indirizzo IP del Client, tramite 'X-Forwarded-For', non disponibile");
-				}
+			if( (principal==null || "".equals(principal)) &&
+				throwException) {
+				throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Indirizzo IP del Client, tramite 'X-Forwarded-For', non disponibile");
 			}
-			/*
+			/**
 			 * L'indirizzo ip forwared viene gia' registrato in automatico tra le info della transazione
 			if(fullCredential.length()>0) {
 				fullCredential.append("\n");
@@ -168,58 +164,60 @@ public class PrincipalUtilities {
 			}
 			String nomeClaim = null;
 			switch (token) {
-			case token_issuer:
+			case TOKEN_ISSUER:
 				nomeClaim = "issuer";
 				if(informazioniTokenNormalizzate!=null) {
 					principal = informazioniTokenNormalizzate.getIss();
 				}
 				break;
-			case token_subject:
+			case TOKEN_SUBJECT:
 				nomeClaim = "subject";
 				if(informazioniTokenNormalizzate!=null) {
 					principal = informazioniTokenNormalizzate.getSub();
 				}
 				break;
-			case token_clientId:
+			case TOKEN_CLIENT_ID:
 				nomeClaim = "clientId";
 				if(informazioniTokenNormalizzate!=null) {
 					principal = informazioniTokenNormalizzate.getClientId();
 				}
 				break;
-			case token_username:
+			case TOKEN_USERNAME:
 				nomeClaim = "username";
 				if(informazioniTokenNormalizzate!=null) {
 					principal = informazioniTokenNormalizzate.getUsername();
 				}
 				break;
-			case token_eMail:
+			case TOKEN_EMAIL:
 				nomeClaim = "eMail";
 				if(informazioniTokenNormalizzate!=null && informazioniTokenNormalizzate.getUserInfo()!=null) {
 					principal = informazioniTokenNormalizzate.getUserInfo().getEMail();
 				}
 				break;
-			case trasporto:
+			case TRASPORTO:
 				nomeClaim = nome;
 				if(informazioniTokenNormalizzate!=null && informazioniTokenNormalizzate.getClaims()!=null) {
 					Object oValueClaim = informazioniTokenNormalizzate.getClaims().get(nomeClaim);
-					if(oValueClaim!=null && oValueClaim instanceof String) {
+					if(oValueClaim instanceof String) {
 						principal = (String) oValueClaim;
 					}
 				}
 				break;
-			case client_address:
-			case gruppi:
-			case api:
-			case eventi:
+			case PDND_CLIENT_JSON:
+			case PDND_ORGANIZATION_JSON:
+			case PDND_ORGANIZATION_NAME:
+			case CLIENT_ADDRESS:
+			case GRUPPI:
+			case API:
+			case EVENTI:
 				// non usati in questo contesto
 				break;
 			}
-			if(principal==null || "".equals(principal)) {
-				if(throwException) {
-					throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Token claim '"+nomeClaim+"' non disponibile");
-				}
+			if( (principal==null || "".equals(principal)) &&
+				throwException) {
+				throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Token claim '"+nomeClaim+"' non disponibile");
 			}
-			/*
+			/**
 			 * Le info sul token vengono gia' registrate in automatico tra le info della transazione
 			if(fullCredential.length()>0) {
 				fullCredential.append("\n");

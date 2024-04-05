@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -112,6 +112,8 @@ import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.pdd.config.DynamicClusterManager;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.protocol.sdk.PDNDTokenInfo;
+import org.openspcoop2.protocol.sdk.PDNDTokenInfoDetails;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
@@ -123,6 +125,7 @@ import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
+import org.openspcoop2.web.monitor.core.dao.CredenzialiMittenteUtils;
 import org.openspcoop2.web.monitor.core.dao.MBeanUtilsService;
 import org.openspcoop2.web.monitor.core.datamodel.ResLive;
 import org.openspcoop2.web.monitor.core.dynamic.DynamicComponentUtils;
@@ -1194,7 +1197,7 @@ public class TransazioniService implements ITransazioniService {
 		return null;
 	}
 	
-	public void normalizeInfoTransazioniFromCredenzialiMittente(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException {
+	public void normalizeInfoTransazioniFromCredenzialiMittente(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException, ExpressionNotImplementedException {
 		// Integrazione dei dati delle credenziali
 		
 		normalizeInfoTransazioniFromCredenzialiMittenteTrasporto(transazioneBean, t);
@@ -1256,11 +1259,13 @@ public class TransazioniService implements ITransazioniService {
 		
 	}
 	
-	public void normalizeInfoTransazioniFromCredenzialiMittenteToken(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException {
+	public void normalizeInfoTransazioniFromCredenzialiMittenteToken(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException, ExpressionNotImplementedException {
 	
 		normalizeInfoTransazioniFromCredenzialiMittenteTokenIssuer(transazioneBean, t);
 		
 		normalizeInfoTransazioniFromCredenzialiMittenteTokenClientID(transazioneBean, t);
+		
+		normalizeInfoTransazioniFromCredenzialiMittenteTokenPdnd(transazioneBean, t, true);
 		
 		normalizeInfoTransazioniFromCredenzialiMittenteTokenSubject(transazioneBean, t);
 	
@@ -1343,6 +1348,108 @@ public class TransazioniService implements ITransazioniService {
 		}
 		
 	}
+	
+	public void normalizeInfoTransazioniFromCredenzialiMittenteTokenPdnd(TransazioneBean transazioneBean, Transazione t, boolean normalizeAllInfo) throws ServiceException, NotImplementedException, ExpressionNotImplementedException {
+		
+		if(!org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(t.getProtocollo())) {
+			return;
+		}
+		
+		// Token Client ID
+		String tokenClientID = t.getTokenClientId();
+		if(StringUtils.isNotEmpty(tokenClientID)) {
+			
+			Long lTokenClientID = Long.parseLong(tokenClientID);
+			
+			normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndOrganizationName(transazioneBean, lTokenClientID);
+			
+			if(normalizeAllInfo) {
+				normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfo(transazioneBean, lTokenClientID);
+			}
+			
+		}
+		
+	}
+	private void normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndOrganizationName(TransazioneBean transazioneBean, Long tokenClientID) throws ServiceException, NotImplementedException, ExpressionNotImplementedException {
+		try {
+			MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
+			CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteByReferenceFromCache(TipoCredenzialeMittente.PDND_ORGANIZATION_NAME,tokenClientID);
+			if(credenzialeMittente!=null) {
+				String credenziale = credenzialeMittente.getCredenziale();
+				transazioneBean.setPdndOrganizationName(credenziale);
+			}
+		} catch(NumberFormatException | ExpressionException e) {
+			// Può davvero non essere stata acquisita l'informazione.
+			transazioneBean.setPdndOrganizationName(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+		} catch(NotFoundException e) {
+			// informazione non piu disponibile
+			// oppure può davvero non essere stata acquisita l'informazione per la raccolta da PDND è disabilitata.
+			/** transazioneBean.setPdndOrganizationName(Costanti.LABEL_INFORMAZIONE_NON_PIU_PRESENTE); */
+			transazioneBean.setPdndOrganizationName(null);
+		}
+	}
+	private void normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfo(TransazioneBean transazioneBean, Long tokenClientID) throws ServiceException, NotImplementedException, ExpressionNotImplementedException {
+		try {
+			MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
+			CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteByReferenceFromCache(TipoCredenzialeMittente.PDND_ORGANIZATION_JSON,tokenClientID);
+			if(credenzialeMittente!=null) {
+				
+				String credenziale = credenzialeMittente.getCredenziale();
+				
+				PDNDTokenInfo pdndTokenOrganizationInfo=new PDNDTokenInfo();
+				PDNDTokenInfoDetails idDetails = new PDNDTokenInfoDetails();
+				idDetails.setDetails(credenziale);
+				pdndTokenOrganizationInfo.setOrganization(idDetails);
+				
+				normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoSetOrganizationCategory(transazioneBean, pdndTokenOrganizationInfo);
+
+				normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoSetOrganizationExternalId(transazioneBean, pdndTokenOrganizationInfo);
+				
+			}
+		} catch(NumberFormatException | ExpressionException e) {
+			// informazione non valida
+			transazioneBean.setPdndOrganizationCategory(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+			transazioneBean.setPdndOrganizationExternalId(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+		} catch(NotFoundException e) {
+			// informazione non piu disponibile
+			// oppure può davvero non essere stata acquisita l'informazione per la raccolta da PDND è disabilitata.
+			/** transazioneBean.setPdndOrganizationCategory(Costanti.LABEL_INFORMAZIONE_NON_PIU_PRESENTE); 
+			transazioneBean.setPdndOrganizationExternalId(Costanti.LABEL_INFORMAZIONE_NON_PIU_PRESENTE); **/
+			transazioneBean.setPdndOrganizationCategory(null); 
+			transazioneBean.setPdndOrganizationExternalId(null);
+		}
+	}
+	private void normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoSetOrganizationCategory(TransazioneBean transazioneBean, PDNDTokenInfo pdndTokenOrganizationInfo) {
+		try {
+			transazioneBean.setPdndOrganizationCategory(pdndTokenOrganizationInfo.getOrganizationCategory(this.log));
+		} catch(Exception e) {
+			// informazione non valida
+			transazioneBean.setPdndOrganizationCategory(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+		}
+	}
+	private void normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoSetOrganizationExternalId(TransazioneBean transazioneBean, PDNDTokenInfo pdndTokenOrganizationInfo) {
+		try {
+			String pdndOrganizationExternalId = null;
+			String origin = pdndTokenOrganizationInfo.getOrganizationExternalOrigin(this.log);
+			String id = pdndTokenOrganizationInfo.getOrganizationExternalId(this.log);
+			if(origin!=null && StringUtils.isNotEmpty(origin) &&
+					id!=null && StringUtils.isNotEmpty(id)) {
+				pdndOrganizationExternalId = origin + " "+id;
+			}
+			else if(origin!=null && StringUtils.isNotEmpty(origin)) {
+				pdndOrganizationExternalId = origin;
+			}
+			else if(id!=null && StringUtils.isNotEmpty(id)) {
+				pdndOrganizationExternalId = id;
+			}
+			
+			transazioneBean.setPdndOrganizationExternalId(pdndOrganizationExternalId);
+		} catch(Exception e) {
+			// informazione non valida
+			transazioneBean.setPdndOrganizationExternalId(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+		}		
+	}
+		
 	
 	public void normalizeInfoTransazioniFromCredenzialiMittenteTokenSubject(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException {
 				
@@ -3744,7 +3851,7 @@ public class TransazioniService implements ITransazioniService {
 		return this.isRicercaLiberaEsatta() ? LikeMode.EXACT : LikeMode.ANYWHERE;
 	}
 	private void impostaFiltroDatiMittente(IExpression filter, ITransazioneServiceSearch transazioniSearchDAO , BaseSearchForm searchForm, TransazioneModel model, boolean isCount, boolean isLiveSearch)
-			throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
+			throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException, NotFoundException {
 		// credenziali mittente
 		if(StringUtils.isNotEmpty(searchForm.getRiconoscimento())) {
 			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO)) {
@@ -3889,7 +3996,7 @@ public class TransazioniService implements ITransazioniService {
 				
 				if(StringUtils.isNotBlank(this.searchForm.getRicercaLiberaTokenIssuer())) {
 					try {
-						CredenzialeSearchToken searchToken = new CredenzialeSearchToken(TipoCredenzialeMittente.token_issuer);
+						CredenzialeSearchToken searchToken = new CredenzialeSearchToken(TipoCredenzialeMittente.TOKEN_ISSUER);
 						IPaginatedExpression pagExpr = searchToken.createExpression(this.credenzialiMittenteDAO, this.searchForm.getRicercaLiberaTokenIssuer(), ricercaLiberaEsatta, ricercaLiberaCaseSensitive);
 						List<CredenzialeMittente> listaCredenzialiMittente = this.credenzialiMittenteDAO.findAll(pagExpr);
 						addListaCredenzialiMittente(filter, listaCredenzialiMittente, Transazione.model());
@@ -3899,7 +4006,7 @@ public class TransazioniService implements ITransazioniService {
 				}
 				if(StringUtils.isNotBlank(this.searchForm.getRicercaLiberaTokenSubject())) {
 					try {
-						CredenzialeSearchToken searchToken = new CredenzialeSearchToken(TipoCredenzialeMittente.token_subject);
+						CredenzialeSearchToken searchToken = new CredenzialeSearchToken(TipoCredenzialeMittente.TOKEN_SUBJECT);
 						IPaginatedExpression pagExpr = searchToken.createExpression(this.credenzialiMittenteDAO, this.searchForm.getRicercaLiberaTokenSubject(), ricercaLiberaEsatta, ricercaLiberaCaseSensitive);
 						List<CredenzialeMittente> listaCredenzialiMittente = this.credenzialiMittenteDAO.findAll(pagExpr);
 						addListaCredenzialiMittente(filter, listaCredenzialiMittente, Transazione.model());
@@ -3909,7 +4016,7 @@ public class TransazioniService implements ITransazioniService {
 				}
 				if(StringUtils.isNotBlank(this.searchForm.getRicercaLiberaTokenClientID())) {
 					try {
-						CredenzialeSearchToken searchToken = new CredenzialeSearchToken(TipoCredenzialeMittente.token_clientId);
+						CredenzialeSearchToken searchToken = new CredenzialeSearchToken(TipoCredenzialeMittente.TOKEN_CLIENT_ID);
 						IPaginatedExpression pagExpr = searchToken.createExpression(this.credenzialiMittenteDAO, this.searchForm.getRicercaLiberaTokenClientID(), ricercaLiberaEsatta, ricercaLiberaCaseSensitive);
 						List<CredenzialeMittente> listaCredenzialiMittente = this.credenzialiMittenteDAO.findAll(pagExpr);
 						addListaCredenzialiMittente(filter, listaCredenzialiMittente, Transazione.model());
@@ -3919,7 +4026,7 @@ public class TransazioniService implements ITransazioniService {
 				}
 				if(StringUtils.isNotBlank(this.searchForm.getRicercaLiberaTokenUsername())) {
 					try {
-						CredenzialeSearchToken searchToken = new CredenzialeSearchToken(TipoCredenzialeMittente.token_username);
+						CredenzialeSearchToken searchToken = new CredenzialeSearchToken(TipoCredenzialeMittente.TOKEN_USERNAME);
 						IPaginatedExpression pagExpr = searchToken.createExpression(this.credenzialiMittenteDAO, this.searchForm.getRicercaLiberaTokenUsername(), ricercaLiberaEsatta, ricercaLiberaCaseSensitive);
 						List<CredenzialeMittente> listaCredenzialiMittente = this.credenzialiMittenteDAO.findAll(pagExpr);
 						addListaCredenzialiMittente(filter, listaCredenzialiMittente, Transazione.model());
@@ -3929,9 +4036,21 @@ public class TransazioniService implements ITransazioniService {
 				}
 				if(StringUtils.isNotBlank(this.searchForm.getRicercaLiberaTokenEmail())) {
 					try {
-						CredenzialeSearchToken searchToken = new CredenzialeSearchToken(TipoCredenzialeMittente.token_eMail);
+						CredenzialeSearchToken searchToken = new CredenzialeSearchToken(TipoCredenzialeMittente.TOKEN_EMAIL);
 						IPaginatedExpression pagExpr = searchToken.createExpression(this.credenzialiMittenteDAO, this.searchForm.getRicercaLiberaTokenEmail(), ricercaLiberaEsatta, ricercaLiberaCaseSensitive);
 						List<CredenzialeMittente> listaCredenzialiMittente = this.credenzialiMittenteDAO.findAll(pagExpr);
+						addListaCredenzialiMittente(filter, listaCredenzialiMittente, Transazione.model());
+					}catch(Exception e) {
+						throw new ServiceException(e.getMessage(),e);
+					}
+				}
+				
+				if(StringUtils.isNotBlank(this.searchForm.getRicercaLiberaPdndOrganization())) {
+					try {
+						CredenzialeSearchToken searchToken = new CredenzialeSearchToken(TipoCredenzialeMittente.PDND_ORGANIZATION_NAME);
+						IPaginatedExpression pagExpr = searchToken.createExpression(this.credenzialiMittenteDAO, this.searchForm.getRicercaLiberaPdndOrganization(), ricercaLiberaEsatta, ricercaLiberaCaseSensitive);
+						List<CredenzialeMittente> listaCredenzialiMittente = this.credenzialiMittenteDAO.findAll(pagExpr);
+						listaCredenzialiMittente = CredenzialiMittenteUtils.translateByRef(listaCredenzialiMittente, this.credenzialiMittenteDAO);
 						addListaCredenzialiMittente(filter, listaCredenzialiMittente, Transazione.model());
 					}catch(Exception e) {
 						throw new ServiceException(e.getMessage(),e);
@@ -3940,46 +4059,53 @@ public class TransazioniService implements ITransazioniService {
 			}
 		}
 	}
-	private IField getCredenzialeField(CredenzialeMittente credenzialeMittente, TransazioneModel model) {
+	private IField getCredenzialeField(CredenzialeMittente credenzialeMittente, TransazioneModel model) throws NotFoundException {
 		IField fieldCredenziale = null;
 		String credenzialeTipo = credenzialeMittente.getTipo();
 		if(credenzialeTipo.startsWith(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_CREDENZIALE_TRASPORTO_PREFIX)) {
 			fieldCredenziale = model.TRASPORTO_MITTENTE;
 		} else {
-			TipoCredenzialeMittente tcm = TipoCredenzialeMittente.valueOf(credenzialeTipo);
+			TipoCredenzialeMittente tcm = TipoCredenzialeMittente.toEnumConstant(credenzialeTipo, true);
 			
 			switch (tcm) {
-			case token_clientId:
+			case TOKEN_CLIENT_ID:
 				fieldCredenziale = model.TOKEN_CLIENT_ID;
 				break;
-			case token_eMail:
+			case TOKEN_EMAIL:
 				fieldCredenziale = model.TOKEN_MAIL;
 				break;
-			case token_issuer:
+			case TOKEN_ISSUER:
 				fieldCredenziale = model.TOKEN_ISSUER;
 				break;
-			case token_subject:
+			case TOKEN_SUBJECT:
 				fieldCredenziale = model.TOKEN_SUBJECT;
 				break;
-			case token_username:
+			case TOKEN_USERNAME:
 				fieldCredenziale = model.TOKEN_USERNAME;
 				break;
 				
-			case client_address:
+			case CLIENT_ADDRESS:
 				fieldCredenziale = model.CLIENT_ADDRESS;
 				break;
 				
-			case eventi:
+			case EVENTI:
 				fieldCredenziale = model.EVENTI_GESTIONE;
 				break;
-			case gruppi:
+			case GRUPPI:
 				fieldCredenziale = model.GRUPPI;
 				break;
-			case api:
+			case API:
 				fieldCredenziale = model.URI_API;
 				break;
 				
-			case trasporto:
+			case PDND_ORGANIZATION_NAME:
+				// viene cercata per riferimento
+				fieldCredenziale = model.TOKEN_CLIENT_ID;
+				break;
+				
+			case TRASPORTO:
+			case PDND_CLIENT_JSON:
+			case PDND_ORGANIZATION_JSON:
 				// caso impossibile
 				break; 
 			}
@@ -3989,7 +4115,7 @@ public class TransazioniService implements ITransazioniService {
 	}
 	
 	
-	private List<CredenzialeMittente> getIdCredenzialiFromFilter(BaseSearchForm searchForm, ICredenzialeMittenteService credenzialeMittentiService, boolean isCount, boolean isLiveSearch) {
+	private List<CredenzialeMittente> getIdCredenzialiFromFilter(BaseSearchForm searchForm, ICredenzialeMittenteService credenzialeMittentiService, boolean isCount, boolean isLiveSearch) throws NotFoundException {
 		List<CredenzialeMittente> findAll = new ArrayList<>();
 		
 		try {
@@ -4029,35 +4155,37 @@ public class TransazioniService implements ITransazioniService {
 				pagExpr = searchClientAddress.createExpression(credenzialeMittentiService, searchForm.getValoreRiconoscimento(), ricercaEsatta, caseSensitive);
 			} 
 			
+			boolean searchByRefCredentials = false;
 			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
-				TipoCredenzialeMittente tcm = TipoCredenzialeMittente.valueOf(searchForm.getTokenClaim());
+				TipoCredenzialeMittente tcm = TipoCredenzialeMittente.toEnumConstant(searchForm.getTokenClaim(),true);
 				AbstractSearchCredenziale searchToken = null;
-				if(TipoCredenzialeMittente.token_clientId.equals(tcm)) {
+				if(TipoCredenzialeMittente.TOKEN_CLIENT_ID.equals(tcm)) {
 					searchToken = new CredenzialeSearchTokenClient(true, false, true);
 				}
 				else {
 					searchToken = new CredenzialeSearchToken(tcm);
+					searchByRefCredentials = TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.equals(tcm);
 				}
 				pagExpr = searchToken.createExpression(credenzialeMittentiService, searchForm.getValoreRiconoscimento(), ricercaEsatta, caseSensitive);
 			}
 			
 			findAll = credenzialeMittentiService.findAll(pagExpr);
 			
+			if(searchByRefCredentials) {
+				findAll = CredenzialiMittenteUtils.translateByRef(findAll, credenzialeMittentiService);
+			}
+			
 			if(ricercaIdentificatoAutenticatoSsl && ricercaEsatta && findAll!=null && !findAll.isEmpty()) {
 				findAll = CredenzialeSearchTrasporto.filterList(findAll, searchForm.getValoreRiconoscimento(), this.log);
 			}
 			
-		}catch(ServiceException e) {
-			this.log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			this.log.error(e.getMessage(), e);
-		} catch (UtilsException e) {
+		}catch(ServiceException | ExpressionException | NotImplementedException | ExpressionNotImplementedException | UtilsException e) {
 			this.log.error(e.getMessage(), e);
 		}
 		return findAll;
 	}
-	
-	private void addListaCredenzialiMittente(IExpression filter, List<CredenzialeMittente> listaCredenzialiMittente, TransazioneModel model) throws ExpressionNotImplementedException, ExpressionException {
+		
+	private void addListaCredenzialiMittente(IExpression filter, List<CredenzialeMittente> listaCredenzialiMittente, TransazioneModel model) throws ExpressionNotImplementedException, ExpressionException, NotFoundException {
 		// se non ho trovato credenziali che corrispondono a quelle inserite allora restituisco un elenco di transazioni vuoto forzando l'id transazione
 		if(listaCredenzialiMittente.size() ==0) {
 			filter.and().equals(model.ID_TRANSAZIONE, "-1");

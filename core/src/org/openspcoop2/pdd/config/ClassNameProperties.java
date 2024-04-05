@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -1290,6 +1290,21 @@ public class ClassNameProperties {
 	public String[] getRateLimiting() throws Exception{
 		return this.getTipiGestiti("org.openspcoop2.pdd.controlloTraffico.rateLimiting.");
 	}
+
+	
+	
+	/**
+	 * Ritorna una classe 'IDynamicDiscoveryParser' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getTokenDynamicDiscovery(String nome){
+		return this.getValue("org.openspcoop2.pdd.token.dynamicDiscovery.", nome);
+	}
+	public String[] getTokenDynamicDiscovery() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.token.dynamicDiscovery.");
+	}
+	
 	
 	
 	

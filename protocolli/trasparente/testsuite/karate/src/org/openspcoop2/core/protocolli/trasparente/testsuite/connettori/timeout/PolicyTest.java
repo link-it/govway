@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -88,6 +88,120 @@ public class PolicyTest extends ConfigLoader {
 				RestTest.MESSAGGIO_READ_TIMEOUT.replace(RestTest.SOGLIA, "2000"),
 				"TempiRispostaPolicyReadTimeout");
 	}
+	
+	
+
+	
+	
+	/** Policy Validazione Dynamic Discovery */
+	
+	// connectTimeout
+	@Test
+	public void erogazione_validazione_dynamicDiscovery_connectTimeout() throws Exception {
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(),
+				"validazione/dynamicDiscovery/connectionTimeout", "connectionTimeout",
+				Optional.of("validazione.dynamicDiscovery.connectionTimeout"), // gruppo
+				Optional.empty(), // connettore  
+				RestTest.DIAGNOSTICO_CONNECTION_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT,
+				RestTest.MESSAGGIO_CONNECTION_TIMEOUT.replace(RestTest.SOGLIA, "10"),
+				"TempiRispostaPolicyDynamicDiscoveryConnectionTimeout");
+	}
+	@Test
+	public void fruizione_validazione_dynamicDiscovery_connectTimeout() throws Exception {
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(),
+				"validazione/dynamicDiscovery/connectionTimeout", "connectionTimeout",
+				Optional.of("validazione.dynamicDiscovery.connectionTimeout"), // gruppo
+				Optional.empty(), // connettore   
+				RestTest.DIAGNOSTICO_CONNECTION_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT,
+				RestTest.MESSAGGIO_CONNECTION_TIMEOUT.replace(RestTest.SOGLIA, "10"),
+				"TempiRispostaPolicyDynamicDiscoveryConnectionTimeout");
+	}
+	
+	// readTimeout
+	@Test
+	public void erogazione_validazione_dynamicDiscovery_readTimeout() throws Exception {
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(),
+				"validazione/dynamicDiscovery/readTimeout", "readTimeout",
+				Optional.of("validazione.dynamicDiscovery.readTimeout"), // gruppo
+				Optional.empty(), // connettore  
+				RestTest.DIAGNOSTICO_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+				RestTest.MESSAGGIO_READ_TIMEOUT.replace(RestTest.SOGLIA, "2000"),
+				"TempiRispostaPolicyDynamicDiscoveryReadTimeout");
+	}
+	@Test
+	public void fruizione_validazione_dynamicDiscovery_readTimeout() throws Exception {
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(),
+				"validazione/dynamicDiscovery/readTimeout", "readTimeout",
+				Optional.of("validazione.dynamicDiscovery.readTimeout"), // gruppo
+				Optional.empty(), // connettore   
+				RestTest.DIAGNOSTICO_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+				RestTest.MESSAGGIO_READ_TIMEOUT.replace(RestTest.SOGLIA, "2000"),
+				"TempiRispostaPolicyDynamicDiscoveryReadTimeout");
+	}
+	
+	
+	
+	
+	
+	
+	
+	/** Policy Validazione ValidazioneJwt */
+	
+	// connectTimeout
+	@Test
+	public void erogazione_validazione_validazioneJwt_connectTimeout() throws Exception {
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(),
+				"validazione/validazioneJwt/connectionTimeout", "connectionTimeout",
+				Optional.of("validazione.validazioneJwt.connectionTimeout"), // gruppo
+				Optional.empty(), // connettore  
+				RestTest.DIAGNOSTICO_CONNECTION_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT,
+				RestTest.MESSAGGIO_CONNECTION_TIMEOUT.replace(RestTest.SOGLIA, "10"),
+				"TempiRispostaPolicyValidazioneJwtConnectionTimeout");
+	}
+	@Test
+	public void fruizione_validazione_validazioneJwt_connectTimeout() throws Exception {
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(),
+				"validazione/validazioneJwt/connectionTimeout", "connectionTimeout",
+				Optional.of("validazione.validazioneJwt.connectionTimeout"), // gruppo
+				Optional.empty(), // connettore   
+				RestTest.DIAGNOSTICO_CONNECTION_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT,
+				RestTest.MESSAGGIO_CONNECTION_TIMEOUT.replace(RestTest.SOGLIA, "10"),
+				"TempiRispostaPolicyValidazioneJwtConnectionTimeout");
+	}
+	
+	// readTimeout
+	@Test
+	public void erogazione_validazione_validazioneJwt_readTimeout() throws Exception {
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(),
+				"validazione/validazioneJwt/readTimeout", "readTimeout",
+				Optional.of("validazione.validazioneJwt.readTimeout"), // gruppo
+				Optional.empty(), // connettore  
+				RestTest.DIAGNOSTICO_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+				RestTest.MESSAGGIO_READ_TIMEOUT.replace(RestTest.SOGLIA, "2000"),
+				"TempiRispostaPolicyValidazioneJwtReadTimeout");
+	}
+	@Test
+	public void fruizione_validazione_validazioneJwt_readTimeout() throws Exception {
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(),
+				"validazione/validazioneJwt/readTimeout", "readTimeout",
+				Optional.of("validazione.validazioneJwt.readTimeout"), // gruppo
+				Optional.empty(), // connettore   
+				RestTest.DIAGNOSTICO_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+				RestTest.MESSAGGIO_READ_TIMEOUT.replace(RestTest.SOGLIA, "2000"),
+				"TempiRispostaPolicyValidazioneJwtReadTimeout");
+	}
+	
+	
+	
+	
 	
 	
 	
@@ -248,6 +362,65 @@ public class PolicyTest extends ConfigLoader {
 				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
 				RestTest.MESSAGGIO_READ_TIMEOUT.replace(RestTest.SOGLIA, "2000"),
 				"TempiRispostaAAReadTimeout");
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/** AttributeAuthority (rispostaJWt) */
+	
+	// connectTimeout
+	@Test
+	public void erogazione_attributeAuthority_validazioneRispostaJwt_connectTimeout() throws Exception {
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(),
+				"attributeAuthority/validazioneRispostaJwt/connectionTimeout", "connectionTimeout",
+				Optional.of("attributeAuthority.validazioneRispostaJwt.connectionTimeout"), // gruppo
+				Optional.empty(), // connettore  
+				RestTest.DIAGNOSTICO_CONNECTION_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT,
+				RestTest.MESSAGGIO_CONNECTION_TIMEOUT.replace(RestTest.SOGLIA, "10"),
+				"TempiRispostaAAValidazioneRispostaJwtConnectionTimeout");
+	}
+	@Test
+	public void fruizione_attributeAuthority_validazioneRispostaJwt_connectTimeout() throws Exception {
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(),
+				"attributeAuthority/validazioneRispostaJwt/connectionTimeout", "connectionTimeout",
+				Optional.of("attributeAuthority.validazioneRispostaJwt.connectionTimeout"), // gruppo
+				Optional.empty(), // connettore   
+				RestTest.DIAGNOSTICO_CONNECTION_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT,
+				RestTest.MESSAGGIO_CONNECTION_TIMEOUT.replace(RestTest.SOGLIA, "10"),
+				"TempiRispostaAAValidazioneRispostaJwtConnectionTimeout");
+	}
+	
+	// readTimeout
+	@Test
+	public void erogazione_attributeAuthority_validazioneRispostaJwt_readTimeout() throws Exception {
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(),
+				"attributeAuthority/validazioneRispostaJwt/readTimeout", "readTimeout",
+				Optional.of("attributeAuthority.validazioneRispostaJwt.readTimeout"), // gruppo
+				Optional.empty(), // connettore  
+				RestTest.DIAGNOSTICO_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+				RestTest.MESSAGGIO_READ_TIMEOUT.replace(RestTest.SOGLIA, "2000"),
+				"TempiRispostaAAValidazioneRispostaJwtReadTimeout");
+	}
+	@Test
+	public void fruizione_attributeAuthority_validazioneRispostaJwt_readTimeout() throws Exception {
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(),
+				"attributeAuthority/validazioneRispostaJwt/readTimeout", "readTimeout",
+				Optional.of("attributeAuthority.validazioneRispostaJwt.readTimeout"), // gruppo
+				Optional.empty(), // connettore   
+				RestTest.DIAGNOSTICO_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+				RestTest.MESSAGGIO_READ_TIMEOUT.replace(RestTest.SOGLIA, "2000"),
+				"TempiRispostaAAValidazioneRispostaJwtReadTimeout");
 	}
 	
 	

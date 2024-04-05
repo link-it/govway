@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -23,6 +23,7 @@
 package org.openspcoop2.pdd.core.autorizzazione;
 
 import java.io.File;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -200,9 +201,9 @@ public class XACMLPolicyUtilities {
 		
 		InformazioniToken informazioniTokenNormalizzate = null;
 		InformazioniTokenUserInfo informazioniTokenUserInfoNormalizzate = null;
-		Map<String, Object> jwtClaims = null;
-		Map<String, Object> introspectionClaims = null;
-		Map<String, Object> userInfoClaims = null;
+		Map<String, Serializable> jwtClaims = null;
+		Map<String, Serializable> introspectionClaims = null;
+		Map<String, Serializable> userInfoClaims = null;
 		Object oInformazioniTokenNormalizzate = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
 		if(oInformazioniTokenNormalizzate!=null) {
 			informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
@@ -241,7 +242,7 @@ public class XACMLPolicyUtilities {
 		}
 		
 		List<String> attributeNames = null;
-		Map<String, Object> attributes = null;
+		Map<String, Serializable> attributes = null;
 		boolean multipleAA = false;
 		InformazioniAttributi informazioniAttributiNormalizzati = null;
 		Object oInformazioniAttributiNormalizzati = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_ATTRIBUTI_INFORMAZIONI_NORMALIZZATE);
@@ -766,7 +767,7 @@ public class XACMLPolicyUtilities {
 		return null;
 	}
 	
-	private static void addAttributes(XacmlRequest xacmlRequest, Map<String, Object> attributesParam, boolean multipleAA) {
+	private static void addAttributes(XacmlRequest xacmlRequest, Map<String, Serializable> attributesParam, boolean multipleAA) {
 		if(attributesParam!=null && !attributesParam.isEmpty()) {
 			String logAA = "";
 			if(multipleAA) {
@@ -777,7 +778,7 @@ public class XACMLPolicyUtilities {
 						try {
 							List<String> attributesNames = new ArrayList<>();
 							@SuppressWarnings("unchecked")
-							Map<String, Object> attributes = (Map<String, Object>) o;
+							Map<String, Serializable> attributes = (Map<String, Serializable>) o;
 							if(attributes!=null && !attributes.isEmpty()) {
 								for (String attrName : attributes.keySet()) {
 									if(!attributesNames.contains(attrName)) {
@@ -817,7 +818,7 @@ public class XACMLPolicyUtilities {
 			}
 		}
 	}
-	private static void addAttribute(XacmlRequest xacmlRequest, String xacmlIdPrefix, Map<String, Object> attributes, String attributeName,
+	private static void addAttribute(XacmlRequest xacmlRequest, String xacmlIdPrefix, Map<String, Serializable> attributes, String attributeName,
 			JSONUtils jsonUtils, String logAA) {
 		Object oValue = attributes.get(attributeName);
 		if(oValue!=null) {

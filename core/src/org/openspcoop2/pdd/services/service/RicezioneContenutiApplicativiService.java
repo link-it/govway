@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -40,6 +40,7 @@ import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -49,6 +50,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -69,6 +71,9 @@ import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.logger.transazioni.ConfigurazioneTracciamento;
+import org.openspcoop2.pdd.logger.transazioni.InformazioniTransazione;
+import org.openspcoop2.pdd.logger.transazioni.TracciamentoManager;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.DumpRaw;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
@@ -87,6 +92,7 @@ import org.openspcoop2.pdd.services.connector.messages.DumpRawConnectorOutMessag
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativiContext;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
+import org.openspcoop2.protocol.basic.builder.EsitoBuilder;
 import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -100,6 +106,7 @@ import org.openspcoop2.protocol.sdk.constants.IDService;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
+import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.LimitExceededIOException;
 import org.openspcoop2.utils.LimitedInputStream;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -109,6 +116,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
+import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -433,12 +441,13 @@ public class RicezioneContenutiApplicativiService {
 				logCore.error("Errore generazione diagnostico",e);
 			}
 			DumpConfigurazione dumpConfigurazione = configPdDManager.getDumpConfigurazione(pd);
-			boolean fileTrace_headers = configPdDManager.isTransazioniFileTraceEnabled(pd) && configPdDManager.isTransazioniFileTraceDumpBinarioHeadersEnabled(pd);
-			boolean fileTrace_payload = configPdDManager.isTransazioniFileTraceEnabled(pd) && configPdDManager.isTransazioniFileTraceDumpBinarioPayloadEnabled(pd);
+			ConfigurazioneTracciamento configurazioneTracciamento = new ConfigurazioneTracciamento(logCore, configPdDManager, pd);
+			boolean fileTraceHeaders = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioHeaderEnabled();
+			boolean fileTracePayload = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioPayloadEnabled();
 			dumpRaw = new DumpRaw(logCore,requestInfo.getIdentitaPdD(), idModulo, TipoPdD.DELEGATA, 
 					dumpBinario, 
 					dumpConfigurazione,
-					fileTrace_headers, fileTrace_payload);
+					fileTraceHeaders, fileTracePayload);
 			if(dumpRaw.isActiveDumpRichiesta()) {
 				req = new DumpRawConnectorInMessage(logCore, req, 
 						(context!=null ? context.getPddContext(): null), 
@@ -823,6 +832,9 @@ public class RicezioneContenutiApplicativiService {
 					// Log elaborazione dati completata
 					msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.completata");
 			
+					// se il tracciamento lo prevedo emetto un log
+					registraTracciaInRequest(context, protocolFactory, logCore, msgDiag);
+					
 					// Invocazione...
 					RicezioneContenutiApplicativi gestoreRichiesta = new RicezioneContenutiApplicativi(context, this.generatoreErrore);
 					gestoreRichiesta.process(req);
@@ -1148,6 +1160,7 @@ public class RicezioneContenutiApplicativiService {
 
 		Date dataPrimaSpedizioneRisposta = DateManager.getDate();
 		Date dataRispostaSpedita = null; 
+		Transazione transazioneDaAggiornare = null;
 		
 		if(context.getMsgDiagnostico()!=null){
 			msgDiag = context.getMsgDiagnostico();
@@ -1250,6 +1263,7 @@ public class RicezioneContenutiApplicativiService {
 		boolean erroreResponseTimeout = false;
 		boolean erroreResponsePayloadTooLarge = false;
 		boolean sendInvoked = false;
+		boolean registraTracciaOutResponse = false;
 		try{
 			if(responseMessage!=null && !responseMessage.isForcedEmptyResponse() && (responseMessage.getForcedResponse()==null)){
 					
@@ -1318,6 +1332,16 @@ public class RicezioneContenutiApplicativiService {
 						statoServletResponse, requestInfo.getIntegrationServiceBinding(),
 						responseMessage, context.getProprietaErroreAppl(), informazioniErrori,
 						pddContext);
+				
+				// se il tracciamento lo prevedo emetto un log
+				registraTracciaOutResponse = true;
+				transazioneDaAggiornare = registraTracciaOutResponse(context, postOutResponseContext,
+						dataAccettazioneRichiesta, dataIngressoRichiesta,
+						dataPrimaSpedizioneRisposta, dataRispostaSpedita,
+						esito, statoServletResponse,
+						idModulo, req, requestMessage, 
+						responseMessage, erroreConsegnaRisposta, responseMessageError,
+						msgDiag);
 				
 				// contenuto
 				Utilities.printFreeMemory("RicezioneContenutiApplicativiDirect - Pre scrittura risposta");
@@ -1404,6 +1428,16 @@ public class RicezioneContenutiApplicativiService {
 						responseMessage, context.getProprietaErroreAppl(),informazioniErrori,
 						pddContext);
 				
+				// se il tracciamento lo prevedo emetto un log
+				registraTracciaOutResponse = true;
+				transazioneDaAggiornare = registraTracciaOutResponse(context, postOutResponseContext,
+						dataAccettazioneRichiesta, dataIngressoRichiesta,
+						dataPrimaSpedizioneRisposta, dataRispostaSpedita,
+						esito, statoServletResponse,
+						idModulo, req, requestMessage, 
+						responseMessage, erroreConsegnaRisposta, responseMessageError,
+						msgDiag);
+				
 				if(response!=null) {
 					sendInvoked = true;
 					res.sendResponse(DumpByteArrayOutputStream.newInstance(response));
@@ -1423,11 +1457,23 @@ public class RicezioneContenutiApplicativiService {
 				}
 				res.setStatus(statoServletResponse);
 				httpEmptyResponse = true;
+				
 				// carico-vuoto gestito all'interno
 				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
 						statoServletResponse, requestInfo.getIntegrationServiceBinding(),
 						responseMessage, context.getProprietaErroreAppl(), informazioniErrori,
 						pddContext);
+				
+				// se il tracciamento lo prevedo emetto un log
+				registraTracciaOutResponse = true;
+				transazioneDaAggiornare = registraTracciaOutResponse(context, postOutResponseContext,
+						dataAccettazioneRichiesta, dataIngressoRichiesta,
+						dataPrimaSpedizioneRisposta, dataRispostaSpedita,
+						esito, statoServletResponse,
+						idModulo, req, requestMessage, 
+						responseMessage, erroreConsegnaRisposta, responseMessageError,
+						msgDiag);
+
 			}
 		}catch(Throwable e){			
 			logCore.error("ErroreGenerale",e);
@@ -1470,7 +1516,14 @@ public class RicezioneContenutiApplicativiService {
 								getErrore440_MessaggioRispostaMalformato(parseException.getParseException()),
 								parseException.getParseException(),null);
 					} else{
-						responseMessageError = this.generatoreErrore.build(pddContext, IntegrationFunctionError.INTERNAL_RESPONSE_ERROR,
+						IntegrationFunctionError ife = IntegrationFunctionError.INTERNAL_RESPONSE_ERROR;
+						if(e instanceof HandlerException) {
+							HandlerException he = (HandlerException) e;
+							if(he.getIntegrationFunctionError()!=null) {
+								ife = he.getIntegrationFunctionError();
+							}
+						}
+						responseMessageError = this.generatoreErrore.build(pddContext, ife,
 								ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.
 								getErrore426_ServletError(false, e),
 								e,null);
@@ -1507,6 +1560,18 @@ public class RicezioneContenutiApplicativiService {
 							responseMessageError, context.getProprietaErroreAppl(), informazioniErrori_error,
 							pddContext);
 					
+					// se il tracciamento lo prevedo emetto un log
+					// se ho già provato prima a tracciare non lo faccio un'altra volta
+					if(!registraTracciaOutResponse) {
+						transazioneDaAggiornare = registraTracciaOutResponse(context, postOutResponseContext,
+							dataAccettazioneRichiesta, dataIngressoRichiesta,
+							dataPrimaSpedizioneRisposta, dataRispostaSpedita,
+							esito, statoServletResponse,
+							idModulo, req, requestMessage, 
+							responseMessage, erroreConsegnaRisposta, responseMessageError,
+							msgDiag);
+					}
+					
 					// contenuto
 					// Il contentLenght, nel caso di TransferLengthModes.CONTENT_LENGTH e' gia' stato calcolato
 					// con una writeTo senza consume. Riuso il solito metodo per evitare differenze di serializzazione
@@ -1528,7 +1593,18 @@ public class RicezioneContenutiApplicativiService {
 				logCore.error("Generazione di un risposta errore non riuscita",error);
 				statoServletResponse = 500;
 				try{
-					responseMessageError = this.generatoreErrore.buildFault(error, pddContext);
+					IntegrationFunctionError ife = null;
+					if(error instanceof HandlerException) {
+						HandlerException he = (HandlerException) error;
+						if(he.getIntegrationFunctionError()!=null) {
+							ife = he.getIntegrationFunctionError();
+						}
+					}
+					if(ife!=null) {
+						responseMessageError = this.generatoreErrore.buildFault(error, pddContext, ife);
+					}else {
+						responseMessageError = this.generatoreErrore.buildFault(error, pddContext);
+					}
 					if(responseMessageError!=null && responseMessageError.getForcedResponseCode()!=null) {
 						try{
 							statoServletResponse = Integer.parseInt(responseMessageError.getForcedResponseCode());
@@ -1669,6 +1745,10 @@ public class RicezioneContenutiApplicativiService {
 				esito = EsitoTransazione.ESITO_TRANSAZIONE_ERROR;
 			}
 		}
+		else if(EsitoTransazioneName.OK.equals(esito.getName()) && context!=null && context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.EMESSI_DIAGNOSTICI_ERRORE)) {
+			// caso di errore generato durante il tracciamento dopo aver calcolato l'esito, in cui non viene sollevata una eccezione
+			esito = ServicesUtils.updateEsitoConAnomalie(esito, logCore, protocolFactory);
+		}
 		
 		
 		
@@ -1709,78 +1789,18 @@ public class RicezioneContenutiApplicativiService {
 		/* ------------  PostOutResponseHandler ------------- */
 		
 		if(postOutResponseContext!=null){
-			try{
-				postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_ACCETTAZIONE_RICHIESTA, dataAccettazioneRichiesta);
-				if(dataIngressoRichiesta!=null){
-					postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_INGRESSO_RICHIESTA, dataIngressoRichiesta);
-				}
-				postOutResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
-				postOutResponseContext.setDataPrimaSpedizioneRisposta(dataPrimaSpedizioneRisposta);
-				postOutResponseContext.setDataRispostaSpedita(dataRispostaSpedita);
-				postOutResponseContext.setEsito(esito);
-				postOutResponseContext.setReturnCode(statoServletResponse);
-				postOutResponseContext.setResponseHeaders(context.getResponseHeaders());
-				postOutResponseContext.setProtocollo(context.getProtocol());
-				postOutResponseContext.setIntegrazione(context.getIntegrazione());
-				if(context.getTipoPorta()!=null)
-					postOutResponseContext.setTipoPorta(context.getTipoPorta());	
-				postOutResponseContext.setIdModulo(idModulo);
-				
-				if(requestMessage!=null){
-					long incomingRequestMessageContentLength = requestMessage.getIncomingMessageContentLength();
-					long outgoingRequestMessageContentLenght = requestMessage.getOutgoingMessageContentLength();
-					if(incomingRequestMessageContentLength<0){
-						int cl = req.getContentLength();
-						if(cl>0){
-							//System.out.println("HTTP");
-							incomingRequestMessageContentLength = cl + 0l;
-						}
-						else{
-							//System.out.println("FLUSH");
-							// forzo la lettura del messaggio per impostare la dimensione della richiesta
-							try{
-								requestMessage.writeTo(NullOutputStream.INSTANCE, true);
-							}catch(Exception eFlush){
-								// ignore
-							}
-							incomingRequestMessageContentLength = requestMessage.getIncomingMessageContentLength();
-						}
-					}
-					postOutResponseContext.setInputRequestMessageSize(incomingRequestMessageContentLength);
-					postOutResponseContext.setOutputRequestMessageSize(outgoingRequestMessageContentLenght);
-				}else{
-					postOutResponseContext.setInputRequestMessageSize(req.getContentLength()+0l);
-				}
-				
-				if(erroreConsegnaRisposta!=null){
-					if(responseMessageError!=null){
-						postOutResponseContext.setInputResponseMessageSize(responseMessageError.getIncomingMessageContentLength());
-						postOutResponseContext.setOutputResponseMessageSize(responseMessageError.getOutgoingMessageContentLength());
-						postOutResponseContext.setMessaggio(responseMessageError);
-					}else{
-						if(responseMessage!=null && !responseMessage.isForcedEmptyResponse() && responseMessage.getForcedResponse()==null){
-							postOutResponseContext.setInputResponseMessageSize(responseMessage.getIncomingMessageContentLength());
-							postOutResponseContext.setOutputResponseMessageSize(responseMessage.getOutgoingMessageContentLength());
-							postOutResponseContext.setMessaggio(responseMessage);
-						}
-					}
-					postOutResponseContext.setErroreConsegna(erroreConsegnaRisposta.toString()); // NOTA: lasciare e.toString()
-				}
-				else if(responseMessage!=null && !responseMessage.isForcedEmptyResponse() && responseMessage.getForcedResponse()==null){
-					postOutResponseContext.setInputResponseMessageSize(responseMessage.getIncomingMessageContentLength());
-					postOutResponseContext.setOutputResponseMessageSize(responseMessage.getOutgoingMessageContentLength());
-					postOutResponseContext.setMessaggio(responseMessage);
-				}
-				else if(responseMessage!=null && responseMessage.getForcedResponse()!=null &&
-						responseMessage.getForcedResponse().getContent()!=null) {
-					postOutResponseContext.setInputResponseMessageSize(responseMessage.getIncomingMessageContentLength());
-					postOutResponseContext.setOutputResponseMessageSize((long) responseMessage.getForcedResponse().getContent().length);
-				}
-								
+			try {
+				updateContext(context, postOutResponseContext,
+						dataAccettazioneRichiesta, dataIngressoRichiesta,
+						dataPrimaSpedizioneRisposta, dataRispostaSpedita,
+						esito, statoServletResponse,
+						idModulo, req, requestMessage, 
+						responseMessage, erroreConsegnaRisposta, responseMessageError);
+				postOutResponseContext.setTransazioneDaAggiornare(transazioneDaAggiornare);
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"postOutResponse, preparazione contesto");
 			}
-			
+
 			GestoreHandlers.postOutResponse(postOutResponseContext, msgDiag, logCore);
 		}
 		
@@ -1831,4 +1851,147 @@ public class RicezioneContenutiApplicativiService {
 
 	}
 	
+	
+	private void updateContext(RicezioneContenutiApplicativiContext context, PostOutResponseContext postOutResponseContext,
+			Date dataAccettazioneRichiesta, Date dataIngressoRichiesta,
+			Date dataPrimaSpedizioneRisposta, Date dataRispostaSpedita,
+			EsitoTransazione esito, int statoServletResponse,
+			String idModulo, ConnectorInMessage req, OpenSPCoop2Message requestMessage, 
+			OpenSPCoop2Message responseMessage, Throwable erroreConsegnaRisposta, OpenSPCoop2Message responseMessageError) throws ConnectorException {
+		if(postOutResponseContext!=null){
+			postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_ACCETTAZIONE_RICHIESTA, dataAccettazioneRichiesta);
+			if(dataIngressoRichiesta!=null){
+				postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_INGRESSO_RICHIESTA, dataIngressoRichiesta);
+			}
+			postOutResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
+			postOutResponseContext.setDataPrimaSpedizioneRisposta(dataPrimaSpedizioneRisposta);
+			postOutResponseContext.setDataRispostaSpedita(dataRispostaSpedita);
+			postOutResponseContext.setEsito(esito);
+			postOutResponseContext.setReturnCode(statoServletResponse);
+			postOutResponseContext.setResponseHeaders(context.getResponseHeaders());
+			postOutResponseContext.setProtocollo(context.getProtocol());
+			postOutResponseContext.setIntegrazione(context.getIntegrazione());
+			if(context.getTipoPorta()!=null)
+				postOutResponseContext.setTipoPorta(context.getTipoPorta());	
+			postOutResponseContext.setIdModulo(idModulo);
+			
+			if(requestMessage!=null){
+				long incomingRequestMessageContentLength = requestMessage.getIncomingMessageContentLength();
+				long outgoingRequestMessageContentLenght = requestMessage.getOutgoingMessageContentLength();
+				if(incomingRequestMessageContentLength<0){
+					int cl = req.getContentLength();
+					if(cl>0){
+						/**System.out.println("HTTP");*/
+						incomingRequestMessageContentLength = cl + 0l;
+					}
+					else{
+						/**System.out.println("FLUSH");*/
+						// forzo la lettura del messaggio per impostare la dimensione della richiesta
+						try{
+							requestMessage.writeTo(NullOutputStream.INSTANCE, true);
+						}catch(Exception eFlush){
+							// ignore
+						}
+						incomingRequestMessageContentLength = requestMessage.getIncomingMessageContentLength();
+					}
+				}
+				postOutResponseContext.setInputRequestMessageSize(incomingRequestMessageContentLength);
+				postOutResponseContext.setOutputRequestMessageSize(outgoingRequestMessageContentLenght);
+			}else{
+				postOutResponseContext.setInputRequestMessageSize(req.getContentLength()+0l);
+			}
+			
+			if(erroreConsegnaRisposta!=null){
+				if(responseMessageError!=null){
+					postOutResponseContext.setInputResponseMessageSize(responseMessageError.getIncomingMessageContentLength());
+					postOutResponseContext.setOutputResponseMessageSize(responseMessageError.getOutgoingMessageContentLength());
+					postOutResponseContext.setMessaggio(responseMessageError);
+				}else{
+					if(responseMessage!=null && !responseMessage.isForcedEmptyResponse() && responseMessage.getForcedResponse()==null){
+						postOutResponseContext.setInputResponseMessageSize(responseMessage.getIncomingMessageContentLength());
+						postOutResponseContext.setOutputResponseMessageSize(responseMessage.getOutgoingMessageContentLength());
+						postOutResponseContext.setMessaggio(responseMessage);
+					}
+				}
+				postOutResponseContext.setErroreConsegna(erroreConsegnaRisposta.toString()); // NOTA: lasciare e.toString()
+			}
+			else if(responseMessage!=null && !responseMessage.isForcedEmptyResponse() && responseMessage.getForcedResponse()==null){
+				postOutResponseContext.setInputResponseMessageSize(responseMessage.getIncomingMessageContentLength());
+				postOutResponseContext.setOutputResponseMessageSize(responseMessage.getOutgoingMessageContentLength());
+				postOutResponseContext.setMessaggio(responseMessage);
+			}
+			else if(responseMessage!=null && responseMessage.getForcedResponse()!=null &&
+					responseMessage.getForcedResponse().getContent()!=null) {
+				postOutResponseContext.setInputResponseMessageSize(responseMessage.getIncomingMessageContentLength());
+				postOutResponseContext.setOutputResponseMessageSize((long) responseMessage.getForcedResponse().getContent().length);
+			}					
+		}
+	}
+
+	private Transazione registraTracciaOutResponse(RicezioneContenutiApplicativiContext context, PostOutResponseContext postOutResponseContext,
+			Date dataAccettazioneRichiesta, Date dataIngressoRichiesta,
+			Date dataPrimaSpedizioneRisposta, Date dataRispostaSpedita,
+			EsitoTransazione esito, int statoServletResponse,
+			String idModulo, ConnectorInMessage req, OpenSPCoop2Message requestMessage, 
+			OpenSPCoop2Message responseMessage, Throwable erroreConsegnaRisposta, OpenSPCoop2Message responseMessageError, 
+			MsgDiagnostico msgDiag) throws HandlerException {
+
+		try {
+		
+			if(postOutResponseContext!=null) {
+				updateContext(context, postOutResponseContext,
+						dataAccettazioneRichiesta, dataIngressoRichiesta,
+						dataPrimaSpedizioneRisposta, dataRispostaSpedita,
+						esito, statoServletResponse,
+						idModulo, req, requestMessage, 
+						responseMessage, erroreConsegnaRisposta, responseMessageError);
+				
+				TracciamentoManager tracciamentoManager = new TracciamentoManager(FaseTracciamento.OUT_RESPONSE);
+				if(!tracciamentoManager.isTransazioniEnabled()) {
+					return null;
+				}
+				
+				InformazioniTransazione info = new InformazioniTransazione(postOutResponseContext);
+				
+				tracciamentoManager.invoke(info, postOutResponseContext.getEsito(), context.getResponseHeaders(), msgDiag);
+				
+				return info.getTransazioneDaAggiornare();
+			}
+			
+		}catch(Exception e) {
+			ServicesUtils.processTrackingException(e, postOutResponseContext.getLogCore(), FaseTracciamento.OUT_RESPONSE, context.getPddContext());
+		}
+		
+		return null;
+	}
+	
+	private void registraTracciaInRequest(RicezioneContenutiApplicativiContext context, 
+			IProtocolFactory<?> protocolFactory, Logger log, MsgDiagnostico msgDiag) throws HandlerException {
+
+		try {
+			TracciamentoManager tracciamentoManager = new TracciamentoManager(FaseTracciamento.IN_REQUEST);
+			if(!tracciamentoManager.isTransazioniEnabled()) {
+				return;
+			}
+				
+			InformazioniTransazione info = new InformazioniTransazione();
+			info.setContext(context.getPddContext());
+			info.setTipoPorta(context.getTipoPorta());
+			info.setProtocolFactory(protocolFactory);
+			info.setProtocollo(context.getProtocol());
+			info.setIntegrazione(context.getIntegrazione());
+			info.setIdModulo(context.getIdModulo());
+			
+			TransportRequestContext transportRequestContext = null;
+			if(context.getMessageRequest()!=null) {
+				transportRequestContext = context.getMessageRequest().getTransportRequestContext();
+			}
+			String esitoContext = EsitoBuilder.getTipoContext(transportRequestContext, EsitiProperties.getInstance(log, protocolFactory), log);
+			
+			tracciamentoManager.invoke(info, esitoContext, msgDiag);
+		}catch(Exception e) {
+			ServicesUtils.processTrackingException(e, log, FaseTracciamento.IN_REQUEST, context.getPddContext());
+		}
+		
+	}
 }

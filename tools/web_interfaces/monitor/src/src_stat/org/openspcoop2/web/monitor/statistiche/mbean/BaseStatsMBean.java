@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -84,6 +84,8 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 	// comandi export 
 	private boolean visualizzaComandiExport = false;
 	
+	private boolean visualizzaTotaleNelleCelleGraficoHeatmap = false;
+	
 	// private boolean enableSpecialFilters = false;
 	// private SelectItem[] specialFilters;
 
@@ -103,6 +105,7 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 			this.direzioneLabel = govwayMonitorProperties.getOrientamentoDefaultLabelGrafici();
 			this.numeroLabelAsseXDistribuzioneTemporale = govwayMonitorProperties.getNumeroLabelDefaultDistribuzioneTemporale();
 			this.nascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati = govwayMonitorProperties.isNascondiComandoNumeroLabelSeInferioreAlNumeroRisultati();
+			this.visualizzaTotaleNelleCelleGraficoHeatmap = govwayMonitorProperties.isStatisticheVisualizzaValoriNelleCelleDelGraficoHeatmap();
 		} catch (Exception e) {
 			DynamicPdDBean.log.error(e.getMessage(), e);
 		}
@@ -548,5 +551,14 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 	}
 	
 	public void updateChartNumeroRisultati(ActionEvent e) {
+	}
+	
+	public void updateChartVisualizzaTotaleNelleCelleGraficoHeatmap(ActionEvent e) {
+	}
+	public boolean isVisualizzaTotaleNelleCelleGraficoHeatmap() {
+		return this.visualizzaTotaleNelleCelleGraficoHeatmap;
+	}
+	public void setVisualizzaTotaleNelleCelleGraficoHeatmap(boolean visualizzaTotaleNelleCelleGraficoHeatmap) {
+		this.visualizzaTotaleNelleCelleGraficoHeatmap = visualizzaTotaleNelleCelleGraficoHeatmap;
 	}
 }

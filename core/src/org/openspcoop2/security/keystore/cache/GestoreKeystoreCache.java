@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -21,11 +21,14 @@
 package org.openspcoop2.security.keystore.cache;
 
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.security.keystore.BYOKStore;
 import org.openspcoop2.security.keystore.CRLCertstore;
 import org.openspcoop2.security.keystore.ExternalResource;
 import org.openspcoop2.security.keystore.HttpStore;
@@ -39,14 +42,18 @@ import org.openspcoop2.security.keystore.PublicKeyStore;
 import org.openspcoop2.security.keystore.RemoteStore;
 import org.openspcoop2.security.keystore.SSLConfigProps;
 import org.openspcoop2.security.keystore.SSLSocketFactory;
+import org.openspcoop2.security.keystore.SecretKeyStore;
 import org.openspcoop2.security.keystore.SymmetricKeystore;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.byok.BYOKInstance;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 import org.openspcoop2.utils.certificate.remote.IRemoteStoreProvider;
 import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreClientInfo;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.transport.http.ExternalResourceConfig;
+import org.openspcoop2.utils.transport.http.HttpOptions;
 import org.openspcoop2.utils.transport.http.IOCSPValidator;
 import org.openspcoop2.utils.transport.http.SSLConfig;
 
@@ -68,9 +75,11 @@ public class GestoreKeystoreCache {
 	private static final JWKSetStoreCache jwkSetStoreCache = new JWKSetStoreCache();
 	private static final KeyPairStoreCache keyPairStoreCache = new KeyPairStoreCache();
 	private static final PublicKeyStoreCache publicKeyStoreCache = new PublicKeyStoreCache();
+	private static final SecretKeyStoreCache secretKeyStoreCache = new SecretKeyStoreCache();
 	private static final RemoteStoreCache remoteStoreCache = new RemoteStoreCache();
 	private static final RemoteStoreClientInfoCache remoteStoreClientInfoCache = new RemoteStoreClientInfoCache();
 	private static final HttpStoreCache httpStoreCache = new HttpStoreCache();
+	private static final BYOKStoreCache byokStoreCache = new BYOKStoreCache();
 	private static final CRLCertstoreCache crlCertstoreCache = new CRLCertstoreCache();
 	private static final SSLSocketFactoryCache sslSocketFactoryCache = new SSLSocketFactoryCache();
 	private static final SSLConfigPropsCache sslConfigPropsCache = new SSLConfigPropsCache();
@@ -87,9 +96,11 @@ public class GestoreKeystoreCache {
 		GestoreKeystoreCache.jwkSetStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.keyPairStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.publicKeyStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
+		GestoreKeystoreCache.secretKeyStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.remoteStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.remoteStoreClientInfoCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.httpStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
+		GestoreKeystoreCache.byokStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.crlCertstoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.sslSocketFactoryCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.sslConfigPropsCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
@@ -105,9 +116,11 @@ public class GestoreKeystoreCache {
 		GestoreKeystoreCache.jwkSetStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.keyPairStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.publicKeyStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
+		GestoreKeystoreCache.secretKeyStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.remoteStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.remoteStoreClientInfoCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.httpStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
+		GestoreKeystoreCache.byokStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.crlCertstoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.sslSocketFactoryCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.sslConfigPropsCache.setCacheJCS(cacheLifeSecond, cacheJCS);
@@ -180,6 +193,11 @@ public class GestoreKeystoreCache {
 	
 	
 	public static MerlinKeystore getMerlinKeystore(RequestInfo requestInfo, String propertyFilePath) throws SecurityException{
+		return getMerlinKeystore(requestInfo, propertyFilePath, 
+				(BYOKRequestParams) null);
+	}
+	public static MerlinKeystore getMerlinKeystore(RequestInfo requestInfo, String propertyFilePath, 
+			BYOKRequestParams requestParams) throws SecurityException{
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && propertyFilePath!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getMerlinKeystore(propertyFilePath);
@@ -188,16 +206,30 @@ public class GestoreKeystoreCache {
 			}
 		}
 		MerlinKeystore k = null;
-		if(GestoreKeystoreCache.cacheEnabled)
-			k = GestoreKeystoreCache.merlinKeystoreCache.getKeystoreAndCreateIfNotExists(propertyFilePath);
-		else
-			k = new MerlinKeystore(propertyFilePath);
+		if(requestParams!=null) {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.merlinKeystoreCache.getKeystoreAndCreateIfNotExists(propertyFilePath, requestParams);
+			else
+				k = new MerlinKeystore(propertyFilePath, requestParams);
+		}
+		else {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.merlinKeystoreCache.getKeystoreAndCreateIfNotExists(propertyFilePath);
+			else
+				k = new MerlinKeystore(propertyFilePath);
+		}
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addMerlinKeystore(propertyFilePath, k, requestInfo.getIdTransazione());
 		}
 		return k;
 	}
+	
 	public static MerlinKeystore getMerlinKeystore(RequestInfo requestInfo, String propertyFilePath,String passwordPrivateKey) throws SecurityException{
+		return getMerlinKeystore(requestInfo, propertyFilePath, passwordPrivateKey, 
+				(BYOKRequestParams) null);
+	}
+	public static MerlinKeystore getMerlinKeystore(RequestInfo requestInfo, String propertyFilePath,String passwordPrivateKey, 
+			BYOKRequestParams requestParams) throws SecurityException{
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && propertyFilePath!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getMerlinKeystore(propertyFilePath);
@@ -206,16 +238,30 @@ public class GestoreKeystoreCache {
 			}
 		}
 		MerlinKeystore k = null;
-		if(GestoreKeystoreCache.cacheEnabled)
-			k = GestoreKeystoreCache.merlinKeystoreCache.getKeystoreAndCreateIfNotExists(propertyFilePath, passwordPrivateKey);
-		else
-			k = new MerlinKeystore(propertyFilePath, passwordPrivateKey);
+		if(requestParams!=null) {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.merlinKeystoreCache.getKeystoreAndCreateIfNotExists(propertyFilePath, passwordPrivateKey, requestParams);
+			else
+				k = new MerlinKeystore(propertyFilePath, passwordPrivateKey, requestParams);
+		}
+		else {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.merlinKeystoreCache.getKeystoreAndCreateIfNotExists(propertyFilePath, passwordPrivateKey);
+			else
+				k = new MerlinKeystore(propertyFilePath, passwordPrivateKey);
+		}
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addMerlinKeystore(propertyFilePath, k, requestInfo.getIdTransazione());
 		}
 		return k;
 	}
+	
 	public static MerlinKeystore getMerlinKeystore(RequestInfo requestInfo, String pathStore,String tipoStore,String passwordStore) throws SecurityException{
+		return getMerlinKeystore(requestInfo, pathStore, tipoStore, passwordStore, 
+				(BYOKRequestParams) null);
+	}
+	public static MerlinKeystore getMerlinKeystore(RequestInfo requestInfo, String pathStore,String tipoStore,String passwordStore, 
+			BYOKRequestParams requestParams) throws SecurityException{
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && pathStore!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getMerlinKeystore(pathStore);
@@ -224,16 +270,30 @@ public class GestoreKeystoreCache {
 			}
 		}
 		MerlinKeystore k = null;
-		if(GestoreKeystoreCache.cacheEnabled)
-			k = GestoreKeystoreCache.merlinKeystoreCache.getKeystoreAndCreateIfNotExists(pathStore, tipoStore, passwordStore);
-		else
-			k = new MerlinKeystore(pathStore, tipoStore, passwordStore);
+		if(requestParams!=null) {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.merlinKeystoreCache.getKeystoreAndCreateIfNotExists(pathStore, tipoStore, passwordStore, requestParams);
+			else
+				k = new MerlinKeystore(pathStore, tipoStore, passwordStore, requestParams);
+		}
+		else {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.merlinKeystoreCache.getKeystoreAndCreateIfNotExists(pathStore, tipoStore, passwordStore);
+			else
+				k = new MerlinKeystore(pathStore, tipoStore, passwordStore);
+		}
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addMerlinKeystore(pathStore, k, requestInfo.getIdTransazione());
 		}
 		return k;
 	}
+	
 	public static MerlinKeystore getMerlinKeystore(RequestInfo requestInfo, String pathStore,String tipoStore,String passwordStore,String passwordPrivateKey) throws SecurityException{
+		return getMerlinKeystore(requestInfo, pathStore, tipoStore, passwordStore, passwordPrivateKey, 
+				(BYOKRequestParams) null);
+	}
+	public static MerlinKeystore getMerlinKeystore(RequestInfo requestInfo, String pathStore,String tipoStore,String passwordStore,String passwordPrivateKey, 
+			BYOKRequestParams requestParams) throws SecurityException{
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && pathStore!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getMerlinKeystore(pathStore);
@@ -242,16 +302,30 @@ public class GestoreKeystoreCache {
 			}
 		}
 		MerlinKeystore k = null;
-		if(GestoreKeystoreCache.cacheEnabled)
-			k = GestoreKeystoreCache.merlinKeystoreCache.getKeystoreAndCreateIfNotExists(pathStore, tipoStore, passwordStore, passwordPrivateKey);
-		else
-			k = new MerlinKeystore(pathStore, tipoStore, passwordStore, passwordPrivateKey);
+		if(requestParams!=null) {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.merlinKeystoreCache.getKeystoreAndCreateIfNotExists(pathStore, tipoStore, passwordStore, passwordPrivateKey, requestParams);
+			else
+				k = new MerlinKeystore(pathStore, tipoStore, passwordStore, passwordPrivateKey, requestParams);
+		}
+		else {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.merlinKeystoreCache.getKeystoreAndCreateIfNotExists(pathStore, tipoStore, passwordStore, passwordPrivateKey);
+			else
+				k = new MerlinKeystore(pathStore, tipoStore, passwordStore, passwordPrivateKey);
+		}
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addMerlinKeystore(pathStore, k, requestInfo.getIdTransazione());
 		}
 		return k;
 	}
+	
 	public static MerlinKeystore getMerlinKeystore(RequestInfo requestInfo, byte[] bytesStore,String tipoStore,String passwordStore) throws SecurityException{
+		return getMerlinKeystore(requestInfo, bytesStore, tipoStore, passwordStore, 
+				(BYOKRequestParams) null);
+	}
+	public static MerlinKeystore getMerlinKeystore(RequestInfo requestInfo, byte[] bytesStore,String tipoStore,String passwordStore, 
+			BYOKRequestParams requestParams) throws SecurityException{
 		String keyParam = null;
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && bytesStore!=null;
 		if(useRequestInfo) {
@@ -262,16 +336,30 @@ public class GestoreKeystoreCache {
 			}
 		}
 		MerlinKeystore k = null;
-		if(GestoreKeystoreCache.cacheEnabled)
-			k = GestoreKeystoreCache.merlinKeystoreCache.getKeystoreAndCreateIfNotExists(bytesStore, tipoStore, passwordStore);
-		else
-			k = new MerlinKeystore(bytesStore, tipoStore, passwordStore);
+		if(requestParams!=null) {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.merlinKeystoreCache.getKeystoreAndCreateIfNotExists(bytesStore, tipoStore, passwordStore, requestParams);
+			else
+				k = new MerlinKeystore(bytesStore, tipoStore, passwordStore, requestParams);
+		}
+		else {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.merlinKeystoreCache.getKeystoreAndCreateIfNotExists(bytesStore, tipoStore, passwordStore);
+			else
+				k = new MerlinKeystore(bytesStore, tipoStore, passwordStore);
+		}
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addMerlinKeystore(keyParam, k, requestInfo.getIdTransazione());
 		}
 		return k;
 	}
+	
 	public static MerlinKeystore getMerlinKeystore(RequestInfo requestInfo,byte[] bytesStore,String tipoStore,String passwordStore,String passwordPrivateKey) throws SecurityException{
+		return getMerlinKeystore(requestInfo, bytesStore, tipoStore, passwordStore,passwordPrivateKey, 
+				(BYOKRequestParams) null);
+	}
+	public static MerlinKeystore getMerlinKeystore(RequestInfo requestInfo,byte[] bytesStore,String tipoStore,String passwordStore,String passwordPrivateKey, 
+			BYOKRequestParams requestParams) throws SecurityException{
 		String keyParam = null;
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && bytesStore!=null;
 		if(useRequestInfo) {
@@ -282,10 +370,18 @@ public class GestoreKeystoreCache {
 			}
 		}
 		MerlinKeystore k = null;
-		if(GestoreKeystoreCache.cacheEnabled)
-			k = GestoreKeystoreCache.merlinKeystoreCache.getKeystoreAndCreateIfNotExists(bytesStore, tipoStore, passwordStore, passwordPrivateKey);
-		else
-			k = new MerlinKeystore(bytesStore, tipoStore, passwordStore, passwordPrivateKey);
+		if(requestParams!=null) {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.merlinKeystoreCache.getKeystoreAndCreateIfNotExists(bytesStore, tipoStore, passwordStore, passwordPrivateKey, requestParams);
+			else
+				k = new MerlinKeystore(bytesStore, tipoStore, passwordStore, passwordPrivateKey, requestParams);
+		}
+		else {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.merlinKeystoreCache.getKeystoreAndCreateIfNotExists(bytesStore, tipoStore, passwordStore, passwordPrivateKey);
+			else
+				k = new MerlinKeystore(bytesStore, tipoStore, passwordStore, passwordPrivateKey);
+		}
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addMerlinKeystore(keyParam, k, requestInfo.getIdTransazione());
 		}
@@ -294,6 +390,11 @@ public class GestoreKeystoreCache {
 	
 	
 	public static SymmetricKeystore getSymmetricKeystore(RequestInfo requestInfo, String alias,String key,String algoritmo) throws SecurityException{
+		return getSymmetricKeystore(requestInfo, alias, key, algoritmo, 
+				(BYOKRequestParams) null);
+	}
+	public static SymmetricKeystore getSymmetricKeystore(RequestInfo requestInfo, String alias,String key,String algoritmo, 
+			BYOKRequestParams requestParams) throws SecurityException{
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && key!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getSymmetricKeystore(key);
@@ -302,10 +403,18 @@ public class GestoreKeystoreCache {
 			}
 		}
 		SymmetricKeystore k = null;
-		if(GestoreKeystoreCache.cacheEnabled)
-			k = GestoreKeystoreCache.symmetricKeystoreCache.getKeystoreAndCreateIfNotExists(key, alias, algoritmo);
-		else
-			k = new SymmetricKeystore(alias, key, algoritmo);
+		if(requestParams!=null) {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.symmetricKeystoreCache.getKeystoreAndCreateIfNotExists(key, alias, algoritmo, requestParams);
+			else
+				k = new SymmetricKeystore(alias, key, algoritmo, requestParams);
+		}
+		else {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.symmetricKeystoreCache.getKeystoreAndCreateIfNotExists(key, alias, algoritmo);
+			else
+				k = new SymmetricKeystore(alias, key, algoritmo);
+		}
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addSymmetricKeystore(key, k, requestInfo.getIdTransazione());
 		}
@@ -314,6 +423,11 @@ public class GestoreKeystoreCache {
 	
 	
 	public static MultiKeystore getMultiKeystore(RequestInfo requestInfo, String propertyFilePath) throws SecurityException{
+		return getMultiKeystore(requestInfo, propertyFilePath, 
+				(BYOKRequestParams) null);
+	}
+	public static MultiKeystore getMultiKeystore(RequestInfo requestInfo, String propertyFilePath, 
+			BYOKRequestParams requestParams) throws SecurityException{
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && propertyFilePath!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getMultiKeystore(propertyFilePath);
@@ -322,10 +436,18 @@ public class GestoreKeystoreCache {
 			}
 		}
 		MultiKeystore k = null;
-		if(GestoreKeystoreCache.cacheEnabled)
-			k = GestoreKeystoreCache.multiKeystoreCache.getKeystoreAndCreateIfNotExists(propertyFilePath);
-		else
-			k = new MultiKeystore(propertyFilePath);
+		if(requestParams!=null) {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.multiKeystoreCache.getKeystoreAndCreateIfNotExists(propertyFilePath, requestParams);
+			else
+				k = new MultiKeystore(propertyFilePath, requestParams);
+		}
+		else {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.multiKeystoreCache.getKeystoreAndCreateIfNotExists(propertyFilePath);
+			else
+				k = new MultiKeystore(propertyFilePath);
+		}
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addMultiKeystore(propertyFilePath, k, requestInfo.getIdTransazione());
 		}
@@ -334,6 +456,11 @@ public class GestoreKeystoreCache {
 	
 	
 	public static JWKSetStore getJwkSetStore(RequestInfo requestInfo, String propertyFilePath) throws SecurityException{
+		return getJwkSetStore(requestInfo, propertyFilePath, 
+				(BYOKRequestParams) null);
+	}
+	public static JWKSetStore getJwkSetStore(RequestInfo requestInfo, String propertyFilePath, 
+			BYOKRequestParams requestParams) throws SecurityException{
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && propertyFilePath!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getJWKSetStore(propertyFilePath);
@@ -342,16 +469,30 @@ public class GestoreKeystoreCache {
 			}
 		}
 		JWKSetStore k = null;
-		if(GestoreKeystoreCache.cacheEnabled)
-			k = GestoreKeystoreCache.jwkSetStoreCache.getKeystoreAndCreateIfNotExists(propertyFilePath);
-		else
-			k = new JWKSetStore(propertyFilePath);
+		if(requestParams!=null) {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.jwkSetStoreCache.getKeystoreAndCreateIfNotExists(propertyFilePath, requestParams);
+			else
+				k = new JWKSetStore(propertyFilePath, requestParams);
+		}
+		else {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.jwkSetStoreCache.getKeystoreAndCreateIfNotExists(propertyFilePath);
+			else
+				k = new JWKSetStore(propertyFilePath);
+		}
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addJWKSetStore(propertyFilePath, k, requestInfo.getIdTransazione());
 		}
 		return k;
 	}
+	
 	public static JWKSetStore getJwkSetStore(RequestInfo requestInfo, byte[] archive) throws SecurityException{
+		return getJwkSetStore(requestInfo, archive, 
+				(BYOKRequestParams) null);
+	}
+	public static JWKSetStore getJwkSetStore(RequestInfo requestInfo, byte[] archive, 
+			BYOKRequestParams requestParams) throws SecurityException{
 		String keyParam = null;
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && archive!=null;
 		if(useRequestInfo) {
@@ -362,10 +503,18 @@ public class GestoreKeystoreCache {
 			}
 		}
 		JWKSetStore k = null;
-		if(GestoreKeystoreCache.cacheEnabled)
-			k = GestoreKeystoreCache.jwkSetStoreCache.getKeystoreAndCreateIfNotExists(archive);
-		else
-			k = new JWKSetStore(archive);
+		if(requestParams!=null) {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.jwkSetStoreCache.getKeystoreAndCreateIfNotExists(archive, requestParams);
+			else
+				k = new JWKSetStore(archive, requestParams);
+		}
+		else {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.jwkSetStoreCache.getKeystoreAndCreateIfNotExists(archive);
+			else
+				k = new JWKSetStore(archive);
+		}
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addJWKSetStore(keyParam, k, requestInfo.getIdTransazione());
 		}
@@ -373,8 +522,12 @@ public class GestoreKeystoreCache {
 	}
 	
 	
-	
 	public static KeyPairStore getKeyPairStore(RequestInfo requestInfo, String privateKeyPath, String publicKeyPath, String privateKeyPassword, String algorithm) throws SecurityException{
+		return getKeyPairStore(requestInfo, privateKeyPath, publicKeyPath, privateKeyPassword, algorithm, 
+				(BYOKRequestParams) null);
+	}
+	public static KeyPairStore getKeyPairStore(RequestInfo requestInfo, String privateKeyPath, String publicKeyPath, String privateKeyPassword, String algorithm, 
+			BYOKRequestParams requestParams) throws SecurityException{
 		// come chiave di cache si usa solo la chiave privata
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && privateKeyPath!=null;
 		if(useRequestInfo) {
@@ -384,16 +537,30 @@ public class GestoreKeystoreCache {
 			}
 		}
 		KeyPairStore k = null;
-		if(GestoreKeystoreCache.cacheEnabled)
-			k = GestoreKeystoreCache.keyPairStoreCache.getKeystoreAndCreateIfNotExists(privateKeyPath, publicKeyPath, privateKeyPassword, algorithm);
-		else
-			k = new KeyPairStore(privateKeyPath, publicKeyPath, privateKeyPassword, algorithm);
+		if(requestParams!=null) {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.keyPairStoreCache.getKeystoreAndCreateIfNotExists(privateKeyPath, publicKeyPath, privateKeyPassword, algorithm, requestParams);
+			else
+				k = new KeyPairStore(privateKeyPath, publicKeyPath, privateKeyPassword, algorithm, requestParams);
+		}
+		else {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.keyPairStoreCache.getKeystoreAndCreateIfNotExists(privateKeyPath, publicKeyPath, privateKeyPassword, algorithm);
+			else
+				k = new KeyPairStore(privateKeyPath, publicKeyPath, privateKeyPassword, algorithm);
+		}
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addKeyPairStore(privateKeyPath, k, requestInfo.getIdTransazione());
 		}
 		return k;
 	}
+	
 	public static KeyPairStore getKeyPairStore(RequestInfo requestInfo, byte[] privateKey, byte[] publicKey, String privateKeyPassword, String algorithm) throws SecurityException{
+		return getKeyPairStore(requestInfo, privateKey, publicKey, privateKeyPassword, algorithm, 
+				(BYOKRequestParams) null);
+	}
+	public static KeyPairStore getKeyPairStore(RequestInfo requestInfo, byte[] privateKey, byte[] publicKey, String privateKeyPassword, String algorithm, 
+			BYOKRequestParams requestParams) throws SecurityException{
 		// come chiave di cache si usa solo la chiave privata
 		String keyParam = null;
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && privateKey!=null;
@@ -405,10 +572,18 @@ public class GestoreKeystoreCache {
 			}
 		}
 		KeyPairStore k = null;
-		if(GestoreKeystoreCache.cacheEnabled)
-			k = GestoreKeystoreCache.keyPairStoreCache.getKeystoreAndCreateIfNotExists(privateKey, publicKey, privateKeyPassword, algorithm);
-		else
-			k = new KeyPairStore(privateKey, publicKey, privateKeyPassword, algorithm);
+		if(requestParams!=null) {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.keyPairStoreCache.getKeystoreAndCreateIfNotExists(privateKey, publicKey, privateKeyPassword, algorithm, requestParams);
+			else
+				k = new KeyPairStore(privateKey, publicKey, privateKeyPassword, algorithm, requestParams);
+		}
+		else {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.keyPairStoreCache.getKeystoreAndCreateIfNotExists(privateKey, publicKey, privateKeyPassword, algorithm);
+			else
+				k = new KeyPairStore(privateKey, publicKey, privateKeyPassword, algorithm);
+		}
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addKeyPairStore(keyParam, k, requestInfo.getIdTransazione());
 		}
@@ -455,6 +630,78 @@ public class GestoreKeystoreCache {
 		}
 		return k;
 	}
+	
+	
+	
+	
+	
+	public static SecretKeyStore getSecretKeyStore(RequestInfo requestInfo, String secretKeyPath, String algorithm) throws SecurityException{
+		return getSecretKeyStore(requestInfo, secretKeyPath, algorithm, 
+				(BYOKRequestParams) null);
+	}
+	public static SecretKeyStore getSecretKeyStore(RequestInfo requestInfo, String secretKeyPath, String algorithm, 
+			BYOKRequestParams requestParams) throws SecurityException{
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && secretKeyPath!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getSecretKeyStore(secretKeyPath);
+			if(o instanceof SecretKeyStore) {
+				return (SecretKeyStore) o;
+			}
+		}
+		SecretKeyStore k = null;
+		if(requestParams!=null) {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.secretKeyStoreCache.getKeystoreAndCreateIfNotExists(secretKeyPath, algorithm, requestParams);
+			else
+				k = new SecretKeyStore(secretKeyPath, algorithm, requestParams);
+		}
+		else {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.secretKeyStoreCache.getKeystoreAndCreateIfNotExists(secretKeyPath, algorithm);
+			else
+				k = new SecretKeyStore(secretKeyPath, algorithm);
+		}
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addSecretKeyStore(secretKeyPath, k, requestInfo.getIdTransazione());
+		}
+		return k;
+	}
+	
+	public static SecretKeyStore getSecretKeyStore(RequestInfo requestInfo, byte[] secretKey, String algorithm) throws SecurityException{
+		return getSecretKeyStore(requestInfo, secretKey, algorithm,
+				(BYOKRequestParams) null);
+	}
+	public static SecretKeyStore getSecretKeyStore(RequestInfo requestInfo, byte[] secretKey, String algorithm, 
+			BYOKRequestParams requestParams) throws SecurityException{
+		String keyParam = null;
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && secretKey!=null;
+		if(useRequestInfo) {
+			keyParam = AbstractKeystoreCache.buildKeyCacheFromBytes(secretKey);
+			Object o = requestInfo.getRequestConfig().getSecretKeyStore(keyParam);
+			if(o instanceof SecretKeyStore) {
+				return (SecretKeyStore) o;
+			}
+		}
+		SecretKeyStore k = null;
+		if(requestParams!=null) {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.secretKeyStoreCache.getKeystoreAndCreateIfNotExists(secretKey, algorithm, requestParams);
+			else
+				k = new SecretKeyStore(secretKey, algorithm, requestParams);
+		}
+		else {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.secretKeyStoreCache.getKeystoreAndCreateIfNotExists(secretKey, algorithm);
+			else
+				k = new SecretKeyStore(secretKey, algorithm);
+		}
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addSecretKeyStore(keyParam, k, requestInfo.getIdTransazione());
+		}
+		return k;
+	}
+	
+	
 	
 	
 	
@@ -538,7 +785,8 @@ public class GestoreKeystoreCache {
 	
 	
 	
-	public static HttpStore getHttpStore(RequestInfo requestInfo, String endpoint) throws SecurityException{
+	public static HttpStore getHttpStore(RequestInfo requestInfo, String endpoint,
+			HttpOptions ... options) throws SecurityException{
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && endpoint!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getHttpStore(endpoint);
@@ -547,16 +795,26 @@ public class GestoreKeystoreCache {
 			}
 		}
 		HttpStore k = null;
-		if(GestoreKeystoreCache.cacheEnabled)
-			k = GestoreKeystoreCache.httpStoreCache.getKeystoreAndCreateIfNotExists(endpoint);
-		else
-			k = new HttpStore(endpoint);
+		if(GestoreKeystoreCache.cacheEnabled) {
+			if(options!=null && options.length>0) {
+				List<HttpOptions> list = new ArrayList<>();
+				list.addAll(Arrays.asList(options));
+				k = GestoreKeystoreCache.httpStoreCache.getKeystoreAndCreateIfNotExists(endpoint,
+						list);
+			}
+			else {
+				k = GestoreKeystoreCache.httpStoreCache.getKeystoreAndCreateIfNotExists(endpoint);
+			}
+		}else
+			k = new HttpStore(endpoint,
+					options);
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addHttpStore(endpoint, k, requestInfo.getIdTransazione());
 		}
 		return k;
 	}
-	public static HttpStore getHttpStore(RequestInfo requestInfo, String endpoint, Integer connectionTimeout, Integer readTimeout) throws SecurityException{
+	public static HttpStore getHttpStore(RequestInfo requestInfo, String endpoint, Integer connectionTimeout, Integer readTimeout,
+			HttpOptions ... options) throws SecurityException{
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && endpoint!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getHttpStore(endpoint);
@@ -566,15 +824,18 @@ public class GestoreKeystoreCache {
 		}
 		HttpStore k = null;
 		if(GestoreKeystoreCache.cacheEnabled)
-			k = GestoreKeystoreCache.httpStoreCache.getKeystoreAndCreateIfNotExists(endpoint, connectionTimeout, readTimeout);
+			k = GestoreKeystoreCache.httpStoreCache.getKeystoreAndCreateIfNotExists(endpoint, connectionTimeout, readTimeout,
+					options);
 		else
-			k = new HttpStore(endpoint, connectionTimeout, readTimeout);
+			k = new HttpStore(endpoint, connectionTimeout, readTimeout,
+					options);
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addHttpStore(endpoint, k, requestInfo.getIdTransazione());
 		}
 		return k;
 	}
-	public static HttpStore getHttpStore(RequestInfo requestInfo, String endpoint, MerlinTruststore trustStoreSsl) throws SecurityException{
+	public static HttpStore getHttpStore(RequestInfo requestInfo, String endpoint, MerlinTruststore trustStoreSsl,
+			HttpOptions ... options) throws SecurityException{
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && endpoint!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getHttpStore(endpoint);
@@ -584,15 +845,18 @@ public class GestoreKeystoreCache {
 		}
 		HttpStore k = null;
 		if(GestoreKeystoreCache.cacheEnabled)
-			k = GestoreKeystoreCache.httpStoreCache.getKeystoreAndCreateIfNotExists(endpoint, trustStoreSsl);
+			k = GestoreKeystoreCache.httpStoreCache.getKeystoreAndCreateIfNotExists(endpoint, trustStoreSsl,
+					options);
 		else
-			k = new HttpStore(endpoint, trustStoreSsl);
+			k = new HttpStore(endpoint, trustStoreSsl,
+					options);
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addHttpStore(endpoint, k, requestInfo.getIdTransazione());
 		}
 		return k;
 	}
-	public static HttpStore getHttpStore(RequestInfo requestInfo, String endpoint, MerlinTruststore trustStoreSsl, CRLCertstore crlTrustStoreSsl) throws SecurityException{
+	public static HttpStore getHttpStore(RequestInfo requestInfo, String endpoint, MerlinTruststore trustStoreSsl, CRLCertstore crlTrustStoreSsl,
+			HttpOptions ... options) throws SecurityException{
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && endpoint!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getHttpStore(endpoint);
@@ -602,9 +866,11 @@ public class GestoreKeystoreCache {
 		}
 		HttpStore k = null;
 		if(GestoreKeystoreCache.cacheEnabled)
-			k = GestoreKeystoreCache.httpStoreCache.getKeystoreAndCreateIfNotExists(endpoint, trustStoreSsl, crlTrustStoreSsl);
+			k = GestoreKeystoreCache.httpStoreCache.getKeystoreAndCreateIfNotExists(endpoint, trustStoreSsl, crlTrustStoreSsl,
+					options);
 		else
-			k = new HttpStore(endpoint, trustStoreSsl, crlTrustStoreSsl);
+			k = new HttpStore(endpoint, trustStoreSsl, crlTrustStoreSsl,
+					options);
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addHttpStore(endpoint, k, requestInfo.getIdTransazione());
 		}
@@ -612,7 +878,8 @@ public class GestoreKeystoreCache {
 	}
 	public static HttpStore getHttpStore(RequestInfo requestInfo, String endpoint, 
 			Integer connectionTimeout, Integer readTimeout,
-			MerlinTruststore trustStoreSsl) throws SecurityException{
+			MerlinTruststore trustStoreSsl,
+			HttpOptions ... options) throws SecurityException{
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && endpoint!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getHttpStore(endpoint);
@@ -624,11 +891,13 @@ public class GestoreKeystoreCache {
 		if(GestoreKeystoreCache.cacheEnabled)
 			k = GestoreKeystoreCache.httpStoreCache.getKeystoreAndCreateIfNotExists(endpoint, 
 					connectionTimeout, readTimeout, 
-					trustStoreSsl);
+					trustStoreSsl,
+					options);
 		else
 			k = new HttpStore(endpoint, 
 					connectionTimeout, readTimeout, 
-					trustStoreSsl);
+					trustStoreSsl,
+					options);
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addHttpStore(endpoint, k, requestInfo.getIdTransazione());
 		}
@@ -636,7 +905,8 @@ public class GestoreKeystoreCache {
 	}
 	public static HttpStore getHttpStore(RequestInfo requestInfo,String endpoint, 
 			Integer connectionTimeout, Integer readTimeout,
-			MerlinTruststore trustStoreSsl, CRLCertstore crlTrustStoreSsl) throws SecurityException{
+			MerlinTruststore trustStoreSsl, CRLCertstore crlTrustStoreSsl,
+			HttpOptions ... options) throws SecurityException{
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && endpoint!=null;
 		if(useRequestInfo) {
 			Object o = requestInfo.getRequestConfig().getHttpStore(endpoint);
@@ -648,16 +918,91 @@ public class GestoreKeystoreCache {
 		if(GestoreKeystoreCache.cacheEnabled)
 			k = GestoreKeystoreCache.httpStoreCache.getKeystoreAndCreateIfNotExists(endpoint, 
 					connectionTimeout, readTimeout, 
-					trustStoreSsl, crlTrustStoreSsl);
+					trustStoreSsl, crlTrustStoreSsl,
+					options);
 		else
 			k = new HttpStore(endpoint, 
 					connectionTimeout, readTimeout, 
-					trustStoreSsl, crlTrustStoreSsl);
+					trustStoreSsl, crlTrustStoreSsl,
+					options);
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addHttpStore(endpoint, k, requestInfo.getIdTransazione());
 		}
 		return k;
 	}
+	public static HttpStore getHttpStore(RequestInfo requestInfo, String endpoint, Boolean trustAll,
+			HttpOptions ... options) throws SecurityException{
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && endpoint!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getHttpStore(endpoint);
+			if(o instanceof HttpStore) {
+				return (HttpStore) o;
+			}
+		}
+		HttpStore k = null;
+		if(GestoreKeystoreCache.cacheEnabled)
+			k = GestoreKeystoreCache.httpStoreCache.getKeystoreAndCreateIfNotExists(endpoint, trustAll,
+					options);
+		else
+			k = new HttpStore(endpoint, trustAll,
+					options);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addHttpStore(endpoint, k, requestInfo.getIdTransazione());
+		}
+		return k;
+	}
+	public static HttpStore getHttpStore(RequestInfo requestInfo, String endpoint, 
+			Integer connectionTimeout, Integer readTimeout,
+			Boolean trustAll,
+			HttpOptions ... options) throws SecurityException{
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && endpoint!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getHttpStore(endpoint);
+			if(o instanceof HttpStore) {
+				return (HttpStore) o;
+			}
+		}
+		HttpStore k = null;
+		if(GestoreKeystoreCache.cacheEnabled)
+			k = GestoreKeystoreCache.httpStoreCache.getKeystoreAndCreateIfNotExists(endpoint, 
+					connectionTimeout, readTimeout, 
+					trustAll,
+					options);
+		else
+			k = new HttpStore(endpoint, 
+					connectionTimeout, readTimeout, 
+					trustAll,
+					options);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addHttpStore(endpoint, k, requestInfo.getIdTransazione());
+		}
+		return k;
+	}
+	
+	
+	
+	public static BYOKStore getBYOKStore(RequestInfo requestInfo, BYOKInstance instance) throws SecurityException{
+		if(instance==null) {
+			throw new SecurityException("Instance is null");
+		}
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && instance!=null && instance.getKeyCache()!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getBYOKStore(instance.getKeyCache());
+			if(o instanceof BYOKStore) {
+				return (BYOKStore) o;
+			}
+		}
+		BYOKStore k = null;
+		if(GestoreKeystoreCache.cacheEnabled) {
+			k = GestoreKeystoreCache.byokStoreCache.getKeystoreAndCreateIfNotExists(instance.getKeyCache(), instance);
+		}else
+			k = new BYOKStore(instance.getKeyCache(), instance);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addBYOKStore(instance.getKeyCache(), k, requestInfo.getIdTransazione());
+		}
+		return k;
+	}
+	
 	
 	
 	public static CRLCertstore getCRLCertstore(RequestInfo requestInfo,String crlPath) throws SecurityException{

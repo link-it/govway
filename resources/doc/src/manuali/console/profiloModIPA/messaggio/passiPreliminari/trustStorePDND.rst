@@ -21,7 +21,7 @@ Per la validazione del token GovWay utilizza una ':ref:`tokenValidazionePolicy`'
 
 Con il prodotto viene fornita built-in la token policy 'PDND' (:numref:`tokenPolicyPDNDpassiPreliminari`) da finalizzare nella sezione 'TrustStore' nei seguenti aspetti:
 
-	- File: deve essere indicato un path su file system che contiene il certificato di firma della PDND ottenibile tramite la well-know-url fornita dalla PDND stessa:
+	- Location: deve essere indicata la well-known URL fornita dalla PDND, oppure in alternativa un percorso nel file system contenente ciò che è stato scaricato tramite la well-known URL:
 	
 		- ambiente di collaudo: https://uat.interop.pagopa.it/.well-known/jwks.json
 		- ambiente di produzione: https://interop.pagopa.it/.well-known/jwks.json

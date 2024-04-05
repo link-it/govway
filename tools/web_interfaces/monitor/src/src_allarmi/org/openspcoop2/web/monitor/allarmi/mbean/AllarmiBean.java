@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -1289,26 +1289,29 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 				if(tokenSelezionatiDB!=null && tokenSelezionatiDB.length>0) {
 					List<String> l = new ArrayList<>();
 					for (int i = 0; i < tokenSelezionatiDB.length; i++) {
-						TipoCredenzialeMittente tipo = TipoCredenzialeMittente.valueOf(tokenSelezionatiDB[i]);
+						TipoCredenzialeMittente tipo = TipoCredenzialeMittente.toEnumConstant(tokenSelezionatiDB[i], true);
 						
 						switch (tipo) {
-						case token_subject:
+						case TOKEN_SUBJECT:
 							l.add("Subject");
 							break;
-						case token_username:
+						case TOKEN_USERNAME:
 							l.add("Username");
 							break;
-						case token_clientId:
+						case TOKEN_CLIENT_ID:
 							l.add("ClientId");
 							break;
-						case token_eMail:
+						case TOKEN_EMAIL:
 							l.add("eMail");
 							break;
-						case client_address:
-						case eventi:
-						case gruppi:
-						case token_issuer:
-						case trasporto:
+						case CLIENT_ADDRESS:
+						case EVENTI:
+						case GRUPPI:
+						case TOKEN_ISSUER:
+						case TRASPORTO:
+						case PDND_CLIENT_JSON:
+						case PDND_ORGANIZATION_JSON:
+						case PDND_ORGANIZATION_NAME:
 						default:
 							// non selezionabilit sulla console
 							break;

@@ -3,7 +3,7 @@
 
     <protocol name="as4" label="eDelivery" 
     	descrizione="Scambio sicuro ed affidabile di dati e documenti tramite il profilo 'AS4' della specifica OASIS ebMS 3.0" 
-    	webSite="https://ec.europa.eu/cefdigital/wiki/display/CEFDIGITAL/eDelivery" logger="true">
+    	webSite="https://ec.europa.eu/digital-building-blocks/sites/display/DIGITAL/Domibus" logger="true">
     	<factory>org.openspcoop2.protocol.as4.AS4Factory</factory>
     	<transaction 
     		errorProtocol="true" envelopeErrorProtocol="true" labelErrorProtocol="Errore eDelivery"

@@ -43,7 +43,7 @@ Rispetto a quanto indicato nella sezione :ref:`modipa_pdnd_fruizione` l'interfac
     + Algoritmo: l'algoritmo che si vuole utilizzare per la firma digitale del messaggio;
     + Codifica Digest: consente di selezionare l'algoritmo utilizzato per produrre il digest;
     + HTTP Headers da firmare: indicazione degli eventuali Header HTTP da firmare;
-    + KeyStore: lo scenario descritto in questa sezione è relativo alla configurazione proposta di default con la voce 'Definito nell'applicativo', mentre uno scenario differente è attuabile utilizzando la configurazione descritta in :ref:`modipa_sicurezza_avanzate_fruizione_keystore`;
+    + KeyStore: lo scenario descritto in questa sezione è relativo alla configurazione proposta di default con la voce 'Definito nell'applicativo', mentre scenari differenti sono attuabili utilizzando le configurazioni descritte in :ref:`modipa_sicurezza_avanzate_fruizione_keystore` e :ref:`modipa_sicurezza_avanzate_fruizione_token_policy_keystore`;
     + Time to Live: tempo di validità del token prodotto (in secondi);
     + Audience: identificativo dell'applicativo destinatario da indicare come audience nel token di sicurezza; se non viene indicato alcun valore verrà utilizzato la url del connettore. Il valore fornito può contenere parti dinamiche risolte a runtime dal Gateway (per maggiori dettagli :ref:`valoriDinamici`).
     + Claims: consente di personalizzare i claims presenti all'interno del token prodotto. Per maggiori dettagli si rimanda alla sezione ':ref:`modipa_sicurezza_avanzate_claims`'.

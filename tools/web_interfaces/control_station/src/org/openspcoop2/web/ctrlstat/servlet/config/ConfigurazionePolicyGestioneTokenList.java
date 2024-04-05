@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -66,8 +66,6 @@ public class ConfigurazionePolicyGestioneTokenList extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		//	String userLogin = ServletUtils.getUserLoginFromSession(session);	
-		
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 
@@ -100,7 +98,7 @@ public class ConfigurazionePolicyGestioneTokenList extends Action {
 				ConfigManager configManager = ConfigManager.getinstance(ControlStationCore.getLog());
 				configManager.leggiConfigurazioni(propertiesSourceConfiguration, true);
 				for (Object oTipo : mapId.keySet()) {
-					if(oTipo!=null && oTipo instanceof String) {
+					if(oTipo instanceof String) {
 						String tipo = (String) oTipo;
 						Config config = configManager.getConfigurazione(propertiesSourceConfiguration, tipo);
 						ServletUtils.removeConfigurazioneBeanFromSession(request, session, config.getId());

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -30,6 +30,7 @@ import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.json.JSONUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -162,22 +163,34 @@ public class JWK {
 	}
 	
 	public JWK(javax.crypto.SecretKey secretKey) throws UtilsException {
-		this(secretKey, null, null);
+		this(secretKey, null, null, null);
 	}
 	public JWK(javax.crypto.SecretKey secretKey, String kid) throws UtilsException {
-		this(secretKey, kid, null);
+		this(secretKey, kid, null, null);
+	}
+	public JWK(javax.crypto.SecretKey secretKey, String kid, String algorithm) throws UtilsException {
+		this(secretKey, kid, null, algorithm);
 	}
 	public JWK(javax.crypto.SecretKey secretKey, KeyUse use) throws UtilsException {
-		this(secretKey, null, use);
-	}	
+		this(secretKey, null, use, null);
+	}
+	public JWK(javax.crypto.SecretKey secretKey, KeyUse use, String algorithm) throws UtilsException {
+		this(secretKey, null, use, algorithm);
+	}
 	public JWK(javax.crypto.SecretKey secretKey, String kid, KeyUse use) throws UtilsException {
+		this(secretKey, kid, use, null);
+	}
+	public JWK(javax.crypto.SecretKey secretKey, String kid, KeyUse use, String algorithm) throws UtilsException {
 		try {
 			OctetSequenceKey.Builder builder = new OctetSequenceKey.Builder(secretKey);
+			if(algorithm!=null) {
+				builder = builder.algorithm(Algorithm.parse(algorithm));
+			}
 			if(kid!=null) {
-				builder.keyID(kid);
+				builder = builder.keyID(kid);
 			}
 			if(use!=null) {
-				builder.keyUse(use);
+				builder = builder.keyUse(use);
 			}
 			this.jwkNimbusds = builder.build();
 		}catch(Exception e) {

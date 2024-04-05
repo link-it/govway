@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -21,11 +21,8 @@
 
 package org.openspcoop2.utils.security;
 
-import java.security.PublicKey;
 import java.util.Iterator;
 import java.util.Properties;
-
-import javax.crypto.SecretKey;
 
 import org.apache.cxf.rs.security.jose.common.JoseConstants;
 import org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm;
@@ -75,8 +72,8 @@ public class JsonEncrypt {
 			this.provider = JsonUtils.getJweEncryptionProvider(props);
 			if(this.provider==null) {
 				
-				KeyAlgorithm keyAlgorithm = JweUtils.getKeyEncryptionAlgorithm(props, null);
-				if (KeyAlgorithm.DIRECT.equals(keyAlgorithm)) {
+				KeyAlgorithm keyAlgorithmP = JweUtils.getKeyEncryptionAlgorithm(props, null);
+				if (KeyAlgorithm.DIRECT.equals(keyAlgorithmP)) {
 					this.provider = JsonUtils.getJweEncryptionProviderFromJWKSymmetric(props, this.headers);
 				}
 				else {
@@ -86,13 +83,13 @@ public class JsonEncrypt {
 			
 			this.contentAlgorithm = JweUtils.getContentEncryptionAlgorithm(props, ContentAlgorithm.A256GCM);
 			this.keyAlgorithm = JweUtils.getKeyEncryptionAlgorithm(props, null);
-//			if(this.keyAlgorithm==null) {
+/**			if(this.keyAlgorithm==null) {
 //				throw new Exception("KeyAlgorithm undefined");
-//			}
+//			}*/
 						
 			this.jwtHeaders = jwtHeaders;
 			
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw JsonUtils.convert(options.getSerialization(), JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
 		}
 	}
@@ -125,10 +122,10 @@ public class JsonEncrypt {
 				compression = JoseConstants.JWE_DEFLATE_ZIP_ALGORITHM;
 			}
 			
-			this.provider = JweUtils.createJweEncryptionProvider( (PublicKey) keystore.getPublicKey(alias), this.keyAlgorithm, this.contentAlgorithm, compression);
+			this.provider = JweUtils.createJweEncryptionProvider( keystore.getPublicKey(alias), this.keyAlgorithm, this.contentAlgorithm, compression);
 			
 			this.jwtHeaders = jwtHeaders;
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw JsonUtils.convert(options.getSerialization(), JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
 		}
 	}
@@ -161,10 +158,15 @@ public class JsonEncrypt {
 				compression = JoseConstants.JWE_DEFLATE_ZIP_ALGORITHM;
 			}
 			
-			this.provider = JweUtils.createJweEncryptionProvider( (SecretKey) keystore.getSecretKey(alias, passwordPrivateKey), this.keyAlgorithm, this.contentAlgorithm, compression);
+			if (KeyAlgorithm.DIRECT.equals(this.keyAlgorithm)) {
+				this.provider = JweUtils.getDirectKeyJweEncryption(keystore.getSecretKey(alias, passwordPrivateKey), this.contentAlgorithm);
+			}
+			else {
+				this.provider = JweUtils.createJweEncryptionProvider(keystore.getSecretKey(alias, passwordPrivateKey), this.keyAlgorithm, this.contentAlgorithm, compression);
+			}
 			
 			this.jwtHeaders = jwtHeaders;
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw JsonUtils.convert(options.getSerialization(), JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
 		}
 	}
@@ -201,16 +203,21 @@ public class JsonEncrypt {
 				if(jsonWebKey.getAlgorithm()==null) {
 					jsonWebKey.setAlgorithm(contentAlgorithm);
 				}
-				this.provider = JweUtils.getDirectKeyJweEncryption(JwkUtils.toSecretKey(jsonWebKey), this.contentAlgorithm);
+				if (KeyAlgorithm.DIRECT.equals(this.keyAlgorithm)) {
+					this.provider = JweUtils.getDirectKeyJweEncryption(JwkUtils.toSecretKey(jsonWebKey), this.contentAlgorithm);
+				}
+				else {
+					this.provider = JweUtils.createJweEncryptionProvider(JwkUtils.toSecretKey(jsonWebKey), this.keyAlgorithm, this.contentAlgorithm, compression);
+				}
 				if(this.provider==null) {
-					throw new Exception("(JsonWebKey) JwsEncryptionProvider init failed; check content algorithm ("+contentAlgorithm+")");
+					throw new UtilsException("(JsonWebKey) JwsEncryptionProvider init failed; check content algorithm ("+contentAlgorithm+")");
 				}
 			}else {
 				this.provider = JweUtils.createJweEncryptionProvider(JwkUtils.toRSAPublicKey(jsonWebKey), this.keyAlgorithm, this.contentAlgorithm, compression);
 			}
 			
 			this.jwtHeaders = jwtHeaders;
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw JsonUtils.convert(options.getSerialization(), JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
 		}
 	}
@@ -223,25 +230,43 @@ public class JsonEncrypt {
 				default: throw new UtilsException("Unsupported serialization '"+this.options.getSerialization()+"'");
 			}
 		}
-		catch(Throwable t) {
+		catch(Exception t) {
+			throw JsonUtils.convert(this.options.getSerialization(), JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
+		}
+	}
+	public String encrypt(byte[] json) throws UtilsException{
+		try {
+			switch(this.options.getSerialization()) {
+				case JSON: return encryptJson(json);
+				case COMPACT: return encryptCompact(json);
+				default: throw new UtilsException("Unsupported serialization '"+this.options.getSerialization()+"'");
+			}
+		}
+		catch(Exception t) {
 			throw JsonUtils.convert(this.options.getSerialization(), JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
 		}
 	}
 
 	private String encryptCompact(String jsonString) throws Exception {	
-		JweHeaders headers = null;
+		return encryptCompact(jsonString.getBytes());
+	}
+	private String encryptCompact(byte[] json) throws Exception {	
+		JweHeaders headersBuild = null;
 		if(this.keyAlgorithm!=null) {
-			headers = new JweHeaders(this.keyAlgorithm,this.contentAlgorithm,this.options.isDeflate());
+			headersBuild = new JweHeaders(this.keyAlgorithm,this.contentAlgorithm,this.options.isDeflate());
 		}
 		else {
-			headers = new JweHeaders(this.contentAlgorithm,this.options.isDeflate());
+			headersBuild = new JweHeaders(this.contentAlgorithm,this.options.isDeflate());
 		}
-		fillJwtHeaders(headers, this.keyAlgorithm);
-		return this.provider.encrypt(jsonString.getBytes(), headers);
+		fillJwtHeaders(headersBuild, this.keyAlgorithm);
+		return this.provider.encrypt(json, headersBuild);
 	}
 
 
 	private String encryptJson(String jsonString) throws Exception {
+		return encryptJson(jsonString.getBytes()); 
+	}
+	private String encryptJson(byte[] json) throws Exception {
 		
 		JweHeaders sharedUnprotectedHeaders = null;
 		if(this.keyAlgorithm!=null) {
@@ -255,24 +280,23 @@ public class JsonEncrypt {
 		JweJsonProducer producer = null;
 		if(sharedUnprotectedHeaders!=null) {
 			protectedHeaders.removeProperty("alg"); // e' in sharedUnprotectedHeaders
-			producer = new JweJsonProducer(protectedHeaders, sharedUnprotectedHeaders, jsonString.getBytes());
+			producer = new JweJsonProducer(protectedHeaders, sharedUnprotectedHeaders, json);
 		}
 		else {
-			producer = new JweJsonProducer(protectedHeaders, jsonString.getBytes());
+			producer = new JweJsonProducer(protectedHeaders, json);
 		}
 		
 		return producer.encryptWith(this.provider);
 	}
 	
 	private void fillJwtHeaders(JweHeaders headers, org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm keyAlgo) throws Exception {
-		if(this.headers!=null) {
-			if(this.headers.asMap()!=null && !this.headers.asMap().isEmpty()) {
-				Iterator<String> itKeys = this.headers.asMap().keySet().iterator();
-				while (itKeys.hasNext()) {
-					String key = (String) itKeys.next();
-					if(!headers.containsHeader(key)) {
-						headers.setHeader(key, this.headers.getHeader(key));
-					}
+		if(this.headers!=null &&
+			this.headers.asMap()!=null && !this.headers.asMap().isEmpty()) {
+			Iterator<String> itKeys = this.headers.asMap().keySet().iterator();
+			while (itKeys.hasNext()) {
+				String key = itKeys.next();
+				if(!headers.containsHeader(key)) {
+					headers.setHeader(key, this.headers.getHeader(key));
 				}
 			}
 		}

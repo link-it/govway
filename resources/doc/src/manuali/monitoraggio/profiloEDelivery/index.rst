@@ -9,7 +9,7 @@ configurazioni di scenari di interoperabilità che si basano sullo
 standard europeo eDelivery. Per rendere il trattamento dei messaggi
 conforme a tale standard, GovWay si interfaccia ad una installazione del
 software Domibus
-(https://ec.europa.eu/cefdigital/wiki/display/CEFDIGITAL/Domibus).
+(https://ec.europa.eu/digital-building-blocks/sites/display/DIGITAL/Domibus).
 
 
 La struttura complessiva del processo di monitoraggio si mantiene analoga a quanto già descritto per il profilo API Gateway. Le differenze, rispetto al profilo API Gateway, presentate in questa sezione, riguardano informazioni aggiuntive presenti nelle tracce di Richiesta o Risposta di una transazione.

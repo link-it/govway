@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -52,17 +52,7 @@ public class DateTypeFormatter implements ITypeFormatter<Date> {
 	
 	@Override
 	public String toSQLString(Date o, TipiDatabase databaseType) throws ExpressionException {
-		switch (databaseType) {
-		case POSTGRESQL:
-			return "timestamp '"+this.toString(o)+"'";
-		case ORACLE:
-		case MYSQL:
-		case HSQL:
-		case SQLSERVER:
-		case DEFAULT:
-		default:
-			return "'"+this.toString(o)+"'";
-		}
+		return TimestampTypeFormatter.toSQLString(o, o, databaseType, this);
 	}
 
 	@Override

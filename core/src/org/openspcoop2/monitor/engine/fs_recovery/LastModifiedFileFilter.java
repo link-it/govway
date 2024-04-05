@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -31,17 +31,17 @@ import java.util.Date;
  * @version $Rev$, $Date$
  */
 public class LastModifiedFileFilter implements FileFilter {
-		private int minutiAttesaProcessingFile;
+		private long msAttesaProcessingFile;
 		
-		public LastModifiedFileFilter(int minutiAttesaProcessingFile) {
-			this.minutiAttesaProcessingFile = minutiAttesaProcessingFile;
+		public LastModifiedFileFilter(long msAttesaProcessingFile) {
+			this.msAttesaProcessingFile = msAttesaProcessingFile;
 		}
 
 		@Override
 		public boolean accept(File pathname) {
-			//Accetto il file se non e' una directory e se non e' stato modificato negli ultimi this.minutiAttesaProcessingFile minuti 
+			//Accetto il file se non e' una directory e se non e' stato modificato negli ultimi this.msAttesaProcessingFile millisecondi 
 			Date now = new Date();
-			Long fromTime = now.getTime() - (60 * 1000 * this.minutiAttesaProcessingFile);
+			Long fromTime = now.getTime() - (this.msAttesaProcessingFile);
 			return !pathname.isDirectory() && pathname.lastModified() < fromTime;
 		}
 		

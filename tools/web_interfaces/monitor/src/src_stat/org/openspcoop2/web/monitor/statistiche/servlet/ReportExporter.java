@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -59,6 +59,7 @@ import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioniGeneraliSearchForm;
+import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 import org.openspcoop2.web.monitor.statistiche.bean.StatistichePersonalizzateSearchForm;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiExporter;
@@ -390,19 +391,22 @@ public class ReportExporter extends HttpServlet{
 							+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.getClaims());
 				}
 				if(CostantiExporter.CLAIM_ISSUER.equals(claim)) {
-					tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_issuer;
+					tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_ISSUER;
 				}
 				else if(CostantiExporter.CLAIM_SUBJECT.equals(claim)) {
-					tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_subject;
+					tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_SUBJECT;
 				}
 				else if(CostantiExporter.CLAIM_USERNAME.equals(claim)) {
-					tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_username;
+					tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_USERNAME;
 				}
 				else if(CostantiExporter.CLAIM_CLIENT_ID.equals(claim)) {
-					tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_clientId;
+					tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_CLIENT_ID;
 				}
 				else if(CostantiExporter.CLAIM_EMAIL.equals(claim)) {
-					tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_eMail;
+					tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_EMAIL;
+				}
+				else if(CostantiExporter.CLAIM_PDND_ORGANIZATION_NAME.equals(claim)) {
+					tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.PDND_ORGANIZATION_NAME;
 				}
 			}
 			
@@ -533,7 +537,7 @@ public class ReportExporter extends HttpServlet{
 			else if(CostantiExporter.TIPO_DISTRIBUZIONE_TOKEN_INFO.equals(tipoDistribuzioneReport)){
 				statSearchForm.setTipoStatistica(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO);
 				statSearchForm.setRiconoscimento(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
-				statSearchForm.setTokenClaim(tokenClaim.name());
+				statSearchForm.setTokenClaim(tokenClaim.getRawValue());
 				service.setDistribSaSearch(statSearchForm);
 				bean = new DistribuzionePerSABean<>(service.getUtilsServiceManager(), service.getPluginsServiceManager(),
 						service.getDriverRegistroServiziDB(), service.getDriverConfigurazioneDB());
@@ -542,7 +546,7 @@ public class ReportExporter extends HttpServlet{
 				((DistribuzionePerSABean<?>) bean).getSearch().initSearchListener(null);
 				// initSearchListener riazzera
 				statSearchForm.setRiconoscimento(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
-				statSearchForm.setTokenClaim(tokenClaim.name());
+				statSearchForm.setTokenClaim(tokenClaim.getRawValue());
 			}
 			else if(CostantiExporter.TIPO_DISTRIBUZIONE_PERSONALIZZATA.equals(tipoDistribuzioneReport)){
 				statSearchForm.setTipoStatistica(TipoStatistica.STATISTICA_PERSONALIZZATA);
@@ -890,20 +894,24 @@ public class ReportExporter extends HttpServlet{
 						}
 						TipoCredenzialeMittente tokenClaim = null;
 						if(CostantiExporter.CLAIM_ISSUER.equals(tipoClaim)) {
-							tokenClaim  = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_issuer;
+							tokenClaim  = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_ISSUER;
 						}
 						else if(CostantiExporter.CLAIM_SUBJECT.equals(tipoClaim)) {
-							tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_subject;
+							tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_SUBJECT;
 						}
 						else if(CostantiExporter.CLAIM_USERNAME.equals(tipoClaim)) {
-							tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_username;
+							tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_USERNAME;
 						}
 						else if(CostantiExporter.CLAIM_CLIENT_ID.equals(tipoClaim)) {
-							tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_clientId;
+							tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_CLIENT_ID;
 						}
 						else if(CostantiExporter.CLAIM_EMAIL.equals(tipoClaim)) {
-							tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_eMail;
-						} else {
+							tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_EMAIL;
+						}
+						else if(CostantiExporter.CLAIM_PDND_ORGANIZATION_NAME.equals(tipoClaim)) {
+							tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.PDND_ORGANIZATION_NAME;
+						}
+						else {
 							TipoCredenzialeMittente [] values = TipoCredenzialeMittente.values();
 							StringBuilder sb = new StringBuilder();
 							if(values!=null && values.length>0) {
@@ -918,7 +926,7 @@ public class ReportExporter extends HttpServlet{
 									+"' sconosciuto. I tipi supportati sono: "+ sb.toString());
 						}
 
-						statSearchForm.setTokenClaim(tokenClaim.name());
+						statSearchForm.setTokenClaim(tokenClaim.getRawValue());
 					}
 					else {
 						throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_RICERCA_MITTENTE+"' valorizzato con '"+tipoRicercaMittente
@@ -1277,6 +1285,32 @@ public class ReportExporter extends HttpServlet{
 			}
 			statSearchForm.setTipiLatenza(arrayLatenza);
 		}
+		
+		
+		
+		// ** dimensioni visualizzate **
+		
+		String dimensioniVisualizzate = req.getParameter(CostantiExporter.DIMENSIONI_VISUALIZZATE);
+		NumeroDimensioni dimensioniVisualizzateEnum = CostantiExporter.DIMENSIONI_VISUALIZZATE_DEFAULT;
+		if(dimensioniVisualizzate!=null){
+			dimensioniVisualizzate = dimensioniVisualizzate.trim();
+			dimensioniVisualizzateEnum = NumeroDimensioni.toEnumConstant(dimensioniVisualizzate);
+			if(dimensioniVisualizzateEnum==null){
+				String [] values = NumeroDimensioni.toArray();
+				StringBuilder sb = new StringBuilder();
+				if(values!=null && values.length>0) {
+					for (String tipo : values) {
+						if(sb.length()>0) {
+							sb.append(",");
+						}
+						sb.append(tipo);
+					}
+				}
+				throw new ParameterUncorrectException("Parametro '"+CostantiExporter.DIMENSIONI_VISUALIZZATE+"' fornito possiede un valore '"+dimensioniVisualizzate
+						+"' sconosciuto. I tipi supportati sono: "+sb.toString());
+			}
+		}
+		statSearchForm.setNumeroDimensioni(dimensioniVisualizzateEnum);
 	}
 	
 	

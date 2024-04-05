@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -57,6 +57,7 @@ public class CostantiGrafici {
 	public static final String DISTRIBUZIONE_ESITO_DEI_MESSAGGI_NELL_ULTIMO_PERIODO = "Distribuzione Esito dei messaggi nell'ultimo periodo.";
 	
 	public static final String TOOLTIP_SUFFIX = "_tooltip";
+	public static final String LABEL_SUFFIX = "_label";
 	
 	public static final String TITOLO_KEY= "titolo";
 	public static final String SOTTOTITOLO_KEY= "sottotitolo";
@@ -89,6 +90,9 @@ public class CostantiGrafici {
 	public static final int COLONNE_LEGENDA_DEFAULT_VALUE = 16;
 	
 	public static final String VISUALIZZA_VALUE_NELLA_LABEL_LEGENDA= "valueOnLegend";
+	public static final String VISUALIZZA_VALUE_NELLA_CELLA_GRAFICO_HEATMAP= "visualizzaValoreNellaCella";
+	public static final String VISUALIZZA_VALORE_ZERO_NEL_GRAFICO_HEATMAP= "visualizzaValoreZero";
+	public static final String LABEL_LEGENDA_GRAFICO_HEATMAP= "labelLegenda";
 	
 	public static final String LIMITE_LUNGHEZZA_LABEL_GRAFICO_KEY = "limit";
 	public static final int LIMITE_LUNGHEZZA_LABEL_GRAFICO_DEFAULT_VALUE = 50;
@@ -106,4 +110,15 @@ public class CostantiGrafici {
 	
 	public static final String TOTALE_KEY= "totale";
 	public static final String TOTALE_LABEL= "Totale";
+	
+	public static final String SCALA_VALORI_KEY= "scalaValori";
+	public static final String MIN_KEY= "min";
+	public static final String MAX_KEY= "max";
+	public static final String VALORE_KEY= "valore";
+	
+	public static final String X_LABEL_KEY= "xLabel";
+	public static final String X_KEY= "x";
+	
+	public static final String Y_LABEL_KEY= "yLabel";
+	public static final String Y_KEY= "y";
 }

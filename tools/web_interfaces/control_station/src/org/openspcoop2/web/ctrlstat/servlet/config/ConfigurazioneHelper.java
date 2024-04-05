@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -4564,7 +4564,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoBuste);
 			de.setSelected(registrazioneTracce);
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 		}
 		else{
 			de.setType(DataElementType.HIDDEN);
@@ -4621,6 +4621,29 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.add(de);
 	}
 		
+	public void addConfigurazioneTracciamentoToDati(List<DataElement> dati) {
+		
+		DataElement de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONI);
+		de.setType(DataElementType.TITLE);
+		dati.add(de);
+		
+		de = new DataElement();
+		de.setType(DataElementType.LINK);
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI, 
+				new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE, ConfigurazioneCostanti.VALORE_PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE_TRACCIAMENTO_PA));
+		de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO_CONFIGURAZIONE_EROGAZIONI);
+		dati.add(de);
+		
+		de = new DataElement();
+		de.setType(DataElementType.LINK);
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI, 
+				new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE, ConfigurazioneCostanti.VALORE_PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE_TRACCIAMENTO_PD));
+		de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO_CONFIGURAZIONE_FRUIZIONI);
+		dati.add(de);
+		
+	}
+	
 	public void addMessaggiDiagnosticiToDati(String severita, String severita_log4j, Configurazione configurazione,
 			List<DataElement> dati, Boolean contaListe) {
 		
@@ -5374,9 +5397,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String fileTraceGovWayState = this.confCore.getInvoker().invokeJMXMethod(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias),
 					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
 					this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace(alias));
-			FileTraceGovWayState state = FileTraceGovWayState.toConfig(fileTraceGovWayState);
-
-			if(state.isEnabled()) {
+			FileTraceGovWayState stateFileTrace = FileTraceGovWayState.toConfig(fileTraceGovWayState,true);
+			boolean fileTraceEnabled = stateFileTrace!=null && stateFileTrace.isEnabled();
+			if(fileTraceEnabled) {
 				de = newDataElementStyleRuntime();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_LABEL);
 				de.setType(DataElementType.SUBTITLE);
@@ -5385,28 +5408,28 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FILE_TRACE);
-			if(state.isEnabled()) {
+			if(fileTraceEnabled) {
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_STATO_LABEL);
 			}
 			else {
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_LABEL);
 			}
-			String v = state.isEnabled() ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			String v = fileTraceEnabled ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
 			de.setValue(v);
 			dati.add(de);
 			
-			if(state.isEnabled()) {
+			if(fileTraceEnabled) {
 				
 				de = newDataElementStyleRuntime();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FILE_TRACE_CONFIG);
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_CONFIGURAZIONE_LABEL);
 				de.setType(DataElementType.TEXT);
-				de.setValue(state.getPath());
+				de.setValue(stateFileTrace.getPath());
 				dati.add(de);
 				
 				String[] valori = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
-				String[] label = { ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_CONFIGURAZIONE_NOTE, state.getLastModified() };
+				String[] label = { ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_CONFIGURAZIONE_NOTE, stateFileTrace.getLastModified() };
 				
 				de = newDataElementStyleRuntime();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FILE_TRACE_UPDATE);
@@ -7213,41 +7236,43 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	
 
 	
-	public boolean checkConfigurazioneTracciamento(TipoOperazione tipoOperazione, String configurazioneEsiti)	throws Exception {
-		// &Egrave; possibile disabilitare anche tutti gli esiti
-//		if(configurazioneEsiti ==null || "".equals(configurazioneEsiti.trim())){
-//			this.pd.setMessage("Deve essere selezionato almeno un esito");
-//			return false;
-//		}
-		
-		//String severita = this.getParameter("severita");
-		//String severita_log4j = this.getParameter("severita_log4j");
-		String registrazioneTracce = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
-		String dumpApplicativo = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
-		String dumpPD = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
-		String dumpPA = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
-		
-		if (!registrazioneTracce.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
-				!registrazioneTracce.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
-			this.pd.setMessage("Buste dev'essere abilitato o disabilitato");
-			return false;
+	public boolean checkConfigurazioneTracciamento(TipoOperazione tipoOperazione, String configurazioneEsiti, String tipoConfigurazione) throws DriverControlStationException {
+
+		if(ConfigurazioneCostanti.VALORE_PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE_TRACCIAMENTO.equals(tipoConfigurazione)) {
+			String registrazioneTracce = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
+			if (!registrazioneTracce.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
+					!registrazioneTracce.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
+				this.pd.setMessage("Buste dev'essere abilitato o disabilitato");
+				return false;
+			}
 		}
-		if (!dumpApplicativo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
-				!dumpApplicativo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
-			this.pd.setMessage("Dump Applicativo dev'essere abilitato o disabilitato");
-			return false;
+		else if(ConfigurazioneCostanti.VALORE_PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE_TRACCIAMENTO_PD.equals(tipoConfigurazione)
+				||
+				ConfigurazioneCostanti.VALORE_PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE_TRACCIAMENTO_PA.equals(tipoConfigurazione)) {
+			// nop
 		}
-		if (!dumpPD.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
-				!dumpPD.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
-			this.pd.setMessage("Dump Binario Porta Delegata dev'essere abilitato o disabilitato");
-			return false;
+		else if(ConfigurazioneCostanti.VALORE_PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE_REGISTRAZIONE_MESSAGGI.equals(tipoConfigurazione)) {
+			String dumpApplicativo = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
+			String dumpPD = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
+			String dumpPA = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
+			if (!dumpApplicativo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
+					!dumpApplicativo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
+				this.pd.setMessage("Dump Applicativo dev'essere abilitato o disabilitato");
+				return false;
+			}
+			if (!dumpPD.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
+					!dumpPD.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
+				this.pd.setMessage("Dump Binario Porta Delegata dev'essere abilitato o disabilitato");
+				return false;
+			}
+			if (!dumpPA.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
+					!dumpPA.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
+				this.pd.setMessage("Dump Binario Porta Applicativa dev'essere abilitato o disabilitato");
+				return false;
+			}
+			
 		}
-		if (!dumpPA.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
-				!dumpPA.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
-			this.pd.setMessage("Dump Binario Porta Applicativa dev'essere abilitato o disabilitato");
-			return false;
-		}
-		
+
 		return true;
 	}
 	
@@ -12590,15 +12615,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(tokenSelezionati!=null && tokenSelezionati.length>0) {
 						StringBuilder bf = new StringBuilder();
 						for (int i = 0; i < tokenSelezionati.length; i++) {
-							TipoCredenzialeMittente tipo = TipoCredenzialeMittente.valueOf(tokenSelezionati[i]);
-							if(TipoCredenzialeMittente.token_issuer.equals(tipo)) {
+							TipoCredenzialeMittente tipo = TipoCredenzialeMittente.toEnumConstant(tokenSelezionati[i], true);
+							if(TipoCredenzialeMittente.TOKEN_ISSUER.equals(tipo)) {
 								continue;
 							}
-							else if(TipoCredenzialeMittente.token_subject.equals(tipo)) {
+							else if(TipoCredenzialeMittente.TOKEN_SUBJECT.equals(tipo)) {
 								if(!bf.toString().endsWith(",") && bf.length()>0) {
 									bf.append(",");
 								}
-								bf.append(TipoCredenzialeMittente.token_issuer.name());
+								bf.append(TipoCredenzialeMittente.TOKEN_ISSUER.getRawValue());
 								if(i==0) {
 									bf.append(",");
 								}
@@ -15929,8 +15954,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(tokenSelezionatiDB!=null && tokenSelezionatiDB.length>0) {
 					List<String> l = new ArrayList<>();
 					for (int i = 0; i < tokenSelezionatiDB.length; i++) {
-						TipoCredenzialeMittente tipo = TipoCredenzialeMittente.valueOf(tokenSelezionatiDB[i]);
-						if(!TipoCredenzialeMittente.token_issuer.equals(tipo)) {
+						TipoCredenzialeMittente tipo = TipoCredenzialeMittente.toEnumConstant(tokenSelezionatiDB[i], true);
+						if(!TipoCredenzialeMittente.TOKEN_ISSUER.equals(tipo)) {
 							l.add(tokenSelezionatiDB[i]);
 						}
 					}
@@ -16958,8 +16983,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						sb.append(ConfigurazioneCostanti.MESSAGE_METADATI_SEPARATORE);
 						sb.append(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_TOKEN_POLICY_FORWARD, labelForward));
 						
-						if(!policyGestioneToken.isIntrospection() && !policyGestioneToken.isUserInfo()) {
-							verificaConnettivita = false;
+						if(!policyGestioneToken.isDynamicDiscovery() && !policyGestioneToken.isIntrospection() && !policyGestioneToken.isUserInfo()) {
+							if(policyGestioneToken.isValidazioneJWT()) {
+								verificaConnettivita = policyGestioneToken.isValidazioneJWTLocationHttp();
+							}
+							else {
+								verificaConnettivita = false;
+							}
 						}
 						
 					}catch(Exception t) {
@@ -20409,15 +20439,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(tokenSelezionati!=null && tokenSelezionati.length>0) {
 						StringBuilder bf = new StringBuilder();
 						for (int i = 0; i < tokenSelezionati.length; i++) {
-							TipoCredenzialeMittente tipo = TipoCredenzialeMittente.valueOf(tokenSelezionati[i]);
-							if(TipoCredenzialeMittente.token_issuer.equals(tipo)) {
+							TipoCredenzialeMittente tipo = TipoCredenzialeMittente.toEnumConstant(tokenSelezionati[i],true);
+							if(TipoCredenzialeMittente.TOKEN_ISSUER.equals(tipo)) {
 								continue;
 							}
-							else if(TipoCredenzialeMittente.token_subject.equals(tipo)) {
+							else if(TipoCredenzialeMittente.TOKEN_SUBJECT.equals(tipo)) {
 								if(!bf.toString().endsWith(",") && bf.length()>0) {
 									bf.append(",");
 								}
-								bf.append(TipoCredenzialeMittente.token_issuer.name());
+								bf.append(TipoCredenzialeMittente.TOKEN_ISSUER.name());
 								if(i==0) {
 									bf.append(",");
 								}
@@ -23241,8 +23271,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(tokenSelezionatiDB!=null && tokenSelezionatiDB.length>0) {
 					List<String> l = new ArrayList<>();
 					for (int i = 0; i < tokenSelezionatiDB.length; i++) {
-						TipoCredenzialeMittente tipo = TipoCredenzialeMittente.valueOf(tokenSelezionatiDB[i]);
-						if(!TipoCredenzialeMittente.token_issuer.equals(tipo)) {
+						TipoCredenzialeMittente tipo = TipoCredenzialeMittente.toEnumConstant(tokenSelezionatiDB[i],true);
+						if(!TipoCredenzialeMittente.TOKEN_ISSUER.equals(tipo)) {
 							l.add(tokenSelezionatiDB[i]);
 						}
 					}

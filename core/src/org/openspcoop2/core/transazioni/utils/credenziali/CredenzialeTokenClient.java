@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -37,7 +37,7 @@ public class CredenzialeTokenClient extends AbstractCredenziale {
 	private IDServizioApplicativo applicativo;
 		
 	public CredenzialeTokenClient(String clientId, IDServizioApplicativo applicativo) {
-		super(TipoCredenzialeMittente.token_clientId);
+		super(TipoCredenzialeMittente.TOKEN_CLIENT_ID);
 		this.clientId = clientId;
 		this.applicativo = applicativo;
 	}
@@ -64,8 +64,8 @@ public class CredenzialeTokenClient extends AbstractCredenziale {
 		return IDServizioApplicativo.toIDServizioApplicativo(v);
 	}
 	
-	private static String PREFIX_CLIENT_ID = "#C#";
-	private static String PREFIX_APPLICATION = "#A#";
+	private static final String PREFIX_CLIENT_ID = "#C#";
+	private static final String PREFIX_APPLICATION = "#A#";
 	
 	public static String getClientIdDBValue(String clientId) {
 		return getClientIdDBValue(clientId, true);
@@ -105,10 +105,9 @@ public class CredenzialeTokenClient extends AbstractCredenziale {
 				String s = tmp[i];
 				if(s!=null) {
 					s = s.trim();
-					if(!"".equals(s)) {
-						if(!isApplicationDBValue(s)) {
-							return s;
-						}	
+					if( (!"".equals(s)) &&
+						(!isApplicationDBValue(s)) ){
+						return s;
 					}
 				}
 			}
@@ -130,10 +129,10 @@ public class CredenzialeTokenClient extends AbstractCredenziale {
 				String s = tmp[i];
 				if(s!=null) {
 					s = s.trim();
-					if(!"".equals(s)) {
-						if(!isClientIdDBValue(s)) {
-							return s;
-						}	
+					if( (!"".equals(s)) &&
+						(!isClientIdDBValue(s)) 
+						){
+						return s;
 					}
 				}
 			}

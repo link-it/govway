@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -32,6 +32,7 @@ import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -1359,6 +1360,8 @@ public class RicezioneContenutiApplicativi {
 		RichiestaDelegata richiestaDelegata = new RichiestaDelegata(
 				identificativoPortaDelegata, null,
 				idModuloInAttesa, proprietaErroreAppl, identitaPdD);
+		richiestaDelegata.setIntegrazione(this.msgContext.getIntegrazione());
+		richiestaDelegata.setProtocol(this.msgContext.getProtocol());
 		IDServizio idServizio = null;
 		try {
 			if(portaDelegata==null) {
@@ -1918,7 +1921,8 @@ public class RicezioneContenutiApplicativi {
 				configurazionePdDReader,
 				pddContext, idTransazione,
 				openspcoopstate, transaction, requestInfo,
-				protocolFactory);
+				protocolFactory,
+				identitaPdD);
 	
 		GestioneTokenAutenticazione gestioneTokenAutenticazione = null;
 		String token = null;
@@ -4058,6 +4062,8 @@ public class RicezioneContenutiApplicativi {
 				
 				if(erroreConfigurazione==null){
 					ra = new RichiestaApplicativa(soggettoFruitore,idServizio.getSoggettoErogatore(), idPA);
+					ra.setIntegrazione(this.msgContext.getIntegrazione());
+					ra.setProtocol(this.msgContext.getProtocol());
 					pa = configurazionePdDReader.getPortaApplicativaSafeMethod(ra.getIdPortaApplicativa(), requestInfo);
 					if(pa.sizeServizioApplicativoList()<=0){
 						erroreConfigurazione = "non risultano registrati servizi applicativi erogatori associati alla porta applicativa ("+pa.getNome()
@@ -5263,14 +5269,26 @@ public class RicezioneContenutiApplicativi {
 		// -- REFRESH Impostation Risposta dell'Header Trasporto o se l'invocazione e' stata attiva dall'IntegrationManager --
 		// Refresh necessario in seguito alla potenziale impostazione della collaborazione e Profilo di Collaborazione
 		// ed eventuali altre future informazioni non subito disponibili
-		headerIntegrazioneRisposta.getBusta().setID(idMessageRequest);
-		OutResponsePDMessage outResponsePDMessage = new OutResponsePDMessage();
-		outResponsePDMessage.setBustaRichiesta(bustaRichiesta);
+		
+		String jtiIdModIRequest = null;
 		Object bustaRispostaObject = null;
 		if(pddContext!=null) {
-			bustaRispostaObject = pddContext.getObject(CostantiPdD.BUSTA_RISPOSTA);
+			if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID)) {
+				jtiIdModIRequest = (String) pddContext.get(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID);
+			}
+			if(pddContext.containsKey(CostantiPdD.BUSTA_RISPOSTA)) {
+				bustaRispostaObject = pddContext.getObject(CostantiPdD.BUSTA_RISPOSTA);
+			}
 		}
-		if(bustaRispostaObject!=null && bustaRispostaObject instanceof Busta){
+		if(jtiIdModIRequest!=null && StringUtils.isNotEmpty(jtiIdModIRequest) && !jtiIdModIRequest.equals(idMessageRequest)) {
+			headerIntegrazioneRisposta.getBusta().setID(jtiIdModIRequest);
+		}
+		else {
+			headerIntegrazioneRisposta.getBusta().setID(idMessageRequest);
+		}
+		OutResponsePDMessage outResponsePDMessage = new OutResponsePDMessage();
+		outResponsePDMessage.setBustaRichiesta(bustaRichiesta);
+		if(bustaRispostaObject instanceof Busta){
 			Busta bustaRisposta = (Busta) bustaRispostaObject;
 			// aggiungo proprieta' (vengono serializzate negli header di integrazione)
 			if(bustaRisposta.sizeProperties()>0){

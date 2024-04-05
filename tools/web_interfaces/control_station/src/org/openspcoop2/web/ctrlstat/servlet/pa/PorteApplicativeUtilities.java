@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -22,10 +22,24 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaTracciamento;
+import org.openspcoop2.core.config.TracciamentoConfigurazione;
+import org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace;
+import org.openspcoop2.core.config.TracciamentoConfigurazioneFiletraceConnector;
+import org.openspcoop2.core.config.Transazioni;
 import org.openspcoop2.core.config.TrasformazioneRegola;
+import org.openspcoop2.core.config.constants.Severita;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.protocol.utils.EsitiConfigUtils;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 
 
 /**
@@ -38,6 +52,8 @@ import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
  */
 public class PorteApplicativeUtilities {
 
+	private PorteApplicativeUtilities() {}
+	
 	public static void deletePortaApplicativaAzioni(PortaApplicativa pa, PorteApplicativeCore porteApplicativeCore, PorteApplicativeHelper porteApplicativeHelper, 
 			StringBuilder inUsoMessage, String newLine, List<String> azioni, String userLogin) throws Exception {
 	
@@ -113,4 +129,102 @@ public class PorteApplicativeUtilities {
 		
 	}
 	
+	public static void initTracciamento(PortaApplicativa pde, PorteApplicativeCore porteApplicativeCore, Configurazione config,
+			String tracciamentoStato, String statoDiagnostici, String severita) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		PortaTracciamento portaTracciamento = pde.getTracciamento();
+		if(portaTracciamento==null) {
+			portaTracciamento = new PortaTracciamento();
+			pde.setTracciamento(portaTracciamento);
+		}
+		
+		portaTracciamento.setStato(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(tracciamentoStato) ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+		if(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(tracciamentoStato)) {
+			if(config==null) {
+				config = porteApplicativeCore.getConfigurazioneGenerale();
+			}
+			if(config.getTracciamento()!=null && config.getTracciamento().getPortaApplicativa()!=null) {
+				portaTracciamento.setDatabase(config.getTracciamento().getPortaApplicativa().getDatabase());
+				portaTracciamento.setFiletrace(config.getTracciamento().getPortaApplicativa().getFiletrace());
+				if(portaTracciamento.getFiletrace()!=null && org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.CONFIGURAZIONE_ESTERNA.equals(portaTracciamento.getFiletrace().getStato())) {
+					portaTracciamento.getFiletrace().setStato(org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.DISABILITATO);
+				}
+				portaTracciamento.setFiletraceConfig(config.getTracciamento().getPortaApplicativa().getFiletraceConfig());
+				portaTracciamento.setEsiti(config.getTracciamento().getPortaApplicativa().getEsiti());
+				portaTracciamento.setTransazioni(config.getTracciamento().getPortaApplicativa().getTransazioni());
+			}
+		}
+		
+		if(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(statoDiagnostici)) {
+			portaTracciamento.setSeverita(Severita.toEnumConstant(severita));
+		}
+		else {
+			portaTracciamento.setSeverita(null);
+		}
+	}
+	
+	public static void setTracciamentoTransazioni(PortaApplicativa pde, PorteApplicativeCore porteApplicativeCore,
+			String dbStato,
+			String dbStatoReqIn, String dbStatoReqOut, String dbStatoResOut, String dbStatoResOutComplete,
+			boolean dbFiltroEsiti,
+			String fsStato,
+			String fsStatoReqIn, String fsStatoReqOut, String fsStatoResOut, String fsStatoResOutComplete,
+			boolean fsFiltroEsiti,
+			String nuovaConfigurazioneEsiti,
+			String transazioniTempiElaborazione, String transazioniToken,
+			String fileTraceStato, String fileTraceConfigFile,
+			String fileTraceClient, String fileTraceClientHdr, String fileTraceClientBody,
+			String fileTraceServer, String fileTraceServerHdr, String fileTraceServerBody) {
+		PortaTracciamento portaTracciamento = pde.getTracciamento();
+		if(portaTracciamento==null) {
+			portaTracciamento = new PortaTracciamento();
+			pde.setTracciamento(portaTracciamento);
+		}		
+		
+		TracciamentoConfigurazione database = porteApplicativeCore.buildTracciamentoConfigurazioneDatabase(dbStato,
+				dbStatoReqIn, dbStatoReqOut, dbStatoResOut, dbStatoResOutComplete,
+				dbFiltroEsiti);
+		portaTracciamento.setDatabase(database);
+		
+		TracciamentoConfigurazione filetrace = porteApplicativeCore.buildTracciamentoConfigurazioneFiletrace(fsStato,
+				fsStatoReqIn, fsStatoReqOut, fsStatoResOut, fsStatoResOutComplete,
+				fsFiltroEsiti);
+		portaTracciamento.setFiletrace(filetrace);
+		
+		if(StringUtils.isEmpty(nuovaConfigurazioneEsiti)) {
+			portaTracciamento.setEsiti(EsitiConfigUtils.TUTTI_ESITI_DISABILITATI+"");
+		}
+		else {
+			portaTracciamento.setEsiti(nuovaConfigurazioneEsiti);
+		}
+		
+		if(portaTracciamento.getTransazioni()==null) {
+			portaTracciamento.setTransazioni( new Transazioni() );
+		}
+		portaTracciamento.getTransazioni().setTempiElaborazione(StatoFunzionalita.toEnumConstant(transazioniTempiElaborazione));
+		portaTracciamento.getTransazioni().setToken(StatoFunzionalita.toEnumConstant(transazioniToken));
+		
+		if(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(fileTraceStato)) {
+			portaTracciamento.setFiletraceConfig(new TracciamentoConfigurazioneFiletrace());
+			portaTracciamento.getFiletraceConfig().setConfig(fileTraceConfigFile);
+			
+			portaTracciamento.getFiletraceConfig().setDumpIn(new TracciamentoConfigurazioneFiletraceConnector());			
+			portaTracciamento.getFiletraceConfig().getDumpIn().setStato(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(fileTraceClient) ?
+					StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+			portaTracciamento.getFiletraceConfig().getDumpIn().setHeader(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(fileTraceClientHdr) ?
+					StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+			portaTracciamento.getFiletraceConfig().getDumpIn().setPayload(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(fileTraceClientBody) ?
+					StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+			
+			portaTracciamento.getFiletraceConfig().setDumpOut(new TracciamentoConfigurazioneFiletraceConnector());			
+			portaTracciamento.getFiletraceConfig().getDumpOut().setStato(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(fileTraceServer) ?
+					StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+			portaTracciamento.getFiletraceConfig().getDumpOut().setHeader(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(fileTraceServerHdr) ?
+					StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+			portaTracciamento.getFiletraceConfig().getDumpOut().setPayload(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(fileTraceServerBody) ?
+					StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+		}
+		else {
+			portaTracciamento.setFiletraceConfig(null);
+		}
+	}
 }

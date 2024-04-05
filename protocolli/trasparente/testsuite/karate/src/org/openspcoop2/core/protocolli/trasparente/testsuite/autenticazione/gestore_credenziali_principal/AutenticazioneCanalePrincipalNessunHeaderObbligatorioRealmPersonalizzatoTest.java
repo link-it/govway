@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.CredenzialeTrasporto;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -55,7 +56,10 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 				headers,
 				"SoggettoInternoTestFruitore",
 				"ApplicativoSoggettoInternoTestFruitore1Principal",
-				"@@GatewayCredenziali@@WebServerErogazioniSoggettoAuthPrincipal@@Principal 'ApplicativoSoggettoInternoTestFruitore1'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerErogazioniSoggettoAuthPrincipal@@Principal 'ApplicativoSoggettoInternoTestFruitore1'",
+						"principal",
+						"ApplicativoSoggettoInternoTestFruitore1"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( Principal 'ApplicativoSoggettoInternoTestFruitore1' ) fornite da WebServerErogazioniSoggettoAuthPrincipal");
@@ -93,7 +97,8 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 				headers,
 				null,
 				null,
-				"BasicUsername/Principal 'esempioFruitoreTrasparentePrincipal2'",
+				new CredenzialeTrasporto(
+						"BasicUsername/Principal 'esempioFruitoreTrasparentePrincipal2'"),
 				"ProxyAuthErogazioni realm=\"GovWayErogazioni\", error=\"invalid_request\", error_description=\"Invalid principal credentials\"",
 				Utilities.CREDENZIALI_PROXY_NON_CORRETTE,
 				"Autenticazione principal del Gestore delle Credenziali 'WebServerErogazioniSoggettoAuthPrincipal' fallita, credenziali presenti nel trasporto ( BasicUsername/Principal 'esempioFruitoreTrasparentePrincipal2' )");
@@ -116,7 +121,10 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 				headers,
 				"SoggettoInternoTestFruitore",
 				"HSMClient1",
-				"@@GatewayCredenziali@@WebServerErogazioniSoggettoAuthPrincipal@@SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM'\nSSL-Issuer '/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerErogazioniSoggettoAuthPrincipal@@SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM'\nSSL-Issuer '/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/'",
+						"ssl",
+						"/st=Italy/c=IT/ou=Test/cn=ExampleClient1HSM/l=Pisa/o=Test/"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM' ) fornite da WebServerErogazioniSoggettoAuthPrincipal");
@@ -139,7 +147,10 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 				headers,
 				"SoggettoInternoTestFruitore",
 				"ApplicativoSoggettoInternoTestFruitore1",
-				"@@GatewayCredenziali@@WebServerErogazioniSoggettoAuthPrincipal@@BasicUsername 'ApplicativoSoggettoInternoTestFruitore1'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerErogazioniSoggettoAuthPrincipal@@BasicUsername 'ApplicativoSoggettoInternoTestFruitore1'",
+						"basic",
+						"ApplicativoSoggettoInternoTestFruitore1"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( BasicUsername 'ApplicativoSoggettoInternoTestFruitore1' ) fornite da WebServerErogazioniSoggettoAuthPrincipal");
@@ -160,7 +171,8 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 				headers,
 				null,
 				null,
-				"BasicUsername/Principal 'esempioFruitoreTrasparentePrincipal'",
+				new CredenzialeTrasporto(
+						"BasicUsername/Principal 'esempioFruitoreTrasparentePrincipal'"),
 				null,
 				null);
 	}
@@ -185,7 +197,10 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 				headers,
 				"SoggettoInternoTestGestoreCredenzialePrincipal",
 				"ApplicativoSoggettoInternoTestGestoreCredenzialiPrincipal",
-				"@@GatewayCredenziali@@WebServerFruizioniSoggettoAuthPrincipal@@Principal 'ApplicativoSoggettoInternoTestGestoreCredenzialiPrincipal'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerFruizioniSoggettoAuthPrincipal@@Principal 'ApplicativoSoggettoInternoTestGestoreCredenzialiPrincipal'",
+						"principal",
+						"ApplicativoSoggettoInternoTestGestoreCredenzialiPrincipal"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( Principal 'ApplicativoSoggettoInternoTestGestoreCredenzialiPrincipal' ) fornite da WebServerFruizioniSoggettoAuthPrincipal");
@@ -223,7 +238,8 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 				headers,
 				"SoggettoInternoTestGestoreCredenzialePrincipal",
 				null,
-				"BasicUsername/Principal 'esempioFruitoreTrasparentePrincipal2'",
+				new CredenzialeTrasporto(
+						"BasicUsername/Principal 'esempioFruitoreTrasparentePrincipal2'"),
 				"ProxyAuthFruizioni realm=\"GovWayFruizioni\", error=\"invalid_request\", error_description=\"Invalid principal credentials\"",
 				Utilities.CREDENZIALI_PROXY_NON_CORRETTE,
 				"Autenticazione principal del Gestore delle Credenziali 'WebServerFruizioniSoggettoAuthPrincipal' fallita, credenziali presenti nel trasporto ( BasicUsername/Principal 'esempioFruitoreTrasparentePrincipal2' )");
@@ -245,7 +261,10 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 				headers,
 				"SoggettoInternoTestGestoreCredenzialePrincipal",
 				"ApplicativoSoggettoInternoTestGestoreCredenzialiPrincipal_ssl",
-				"@@GatewayCredenziali@@WebServerFruizioniSoggettoAuthPrincipal@@SSL-Subject '/cn=ApplicativoSoggettoInternoTestGestoreCredenzialiPrincipal/'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerFruizioniSoggettoAuthPrincipal@@SSL-Subject '/cn=ApplicativoSoggettoInternoTestGestoreCredenzialiPrincipal/'",
+						"ssl",
+						"/cn=ApplicativoSoggettoInternoTestGestoreCredenzialiPrincipal/"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( SSL-Subject '/cn=ApplicativoSoggettoInternoTestGestoreCredenzialiPrincipal/' ) fornite da WebServerFruizioniSoggettoAuthPrincipal");
@@ -268,7 +287,10 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 				headers,
 				"SoggettoInternoTestGestoreCredenzialePrincipal",
 				"ApplicativoSoggettoInternoTestGestoreCredenzialiPrincipal_basic",
-				"@@GatewayCredenziali@@WebServerFruizioniSoggettoAuthPrincipal@@BasicUsername 'ApplicativoSoggettoInternoTestGestoreCredenzialiPrincipal'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerFruizioniSoggettoAuthPrincipal@@BasicUsername 'ApplicativoSoggettoInternoTestGestoreCredenzialiPrincipal'",
+						"basic",
+						"ApplicativoSoggettoInternoTestGestoreCredenzialiPrincipal"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( BasicUsername 'ApplicativoSoggettoInternoTestGestoreCredenzialiPrincipal' ) fornite da WebServerFruizioniSoggettoAuthPrincipal");
@@ -289,7 +311,8 @@ public class AutenticazioneCanalePrincipalNessunHeaderObbligatorioRealmPersonali
 				headers,
 				"SoggettoInternoTestGestoreCredenzialePrincipal",
 				null,
-				"BasicUsername/Principal 'esempioFruitoreTrasparentePrincipal'",
+				new CredenzialeTrasporto(
+						"BasicUsername/Principal 'esempioFruitoreTrasparentePrincipal'"),
 				null,
 				null);
 	}

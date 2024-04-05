@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -40,7 +40,7 @@ public class FSRecoveryConfig {
 
 	/** Indicazione sul numero massimo di tentativi di recovery */
 	private int tentativi;
-
+	
 	/** Indicazione se deve essere effettuato il log delle query */
 	private boolean debug = false;	
 	
@@ -49,6 +49,10 @@ public class FSRecoveryConfig {
 
 	/** Indicazione se devono essere ripristinati le transazioni (con tracce e diagnostici) */
 	private boolean ripristinoTransazioni = false;
+
+	/** Indicazione dopo quanti millisecondi iniziare a processare un file presente nel repository */
+	private long processingTransactionFileAfterMs;
+	private long processingEventFileAfterMs;
 	
 	/** Repository */
 	private String repository = null;
@@ -87,11 +91,11 @@ public class FSRecoveryConfig {
 					this.ripristinoTransazioni = false;
 				}
 				
-				try {
-					this.tentativi = Integer.parseInt(props.getProperty(CostantiConfigurazione.FS_RECOVERY_MAX_ATTEMPTS, true, true));
-				} catch (NumberFormatException e) {
-					throw e;
-				}
+				this.tentativi = Integer.parseInt(props.getProperty(CostantiConfigurazione.FS_RECOVERY_MAX_ATTEMPTS, true, true));
+				
+				this.processingEventFileAfterMs = Long.parseLong(props.getProperty(CostantiConfigurazione.FS_RECOVERY_EVENTS_PROCESSING_FILE_AFTER_MS, true, true));
+				
+				this.processingTransactionFileAfterMs = Long.parseLong(props.getProperty(CostantiConfigurazione.FS_RECOVERY_TRANSACTION_PROCESSING_FILE_AFTER_MS, true, true));
 				
 				this.defaultProtocol = props.getProperty(CostantiConfigurazione.PDD_MONITOR_DEFAULT_PROTOCOL, false, true);
 			}
@@ -105,7 +109,6 @@ public class FSRecoveryConfig {
 	public Logger getLogCore() {
 		return this.logCore;
 	}
-
 	public void setLogCore(Logger logCore) {
 		this.logCore = logCore;
 	}
@@ -113,7 +116,6 @@ public class FSRecoveryConfig {
 	public Logger getLogSql() {
 		return this.logSql;
 	}
-
 	public void setLogSql(Logger logSql) {
 		this.logSql = logSql;
 	}
@@ -121,7 +123,6 @@ public class FSRecoveryConfig {
 	public boolean isDebug() {
 		return this.debug;
 	}
-
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
@@ -129,28 +130,20 @@ public class FSRecoveryConfig {
 	public boolean isRipristinoEventi() {
 		return this.ripristinoEventi;
 	}
-
-
 	public void setRipristinoEventi(boolean ripristinoEventi) {
 		this.ripristinoEventi = ripristinoEventi;
 	}
 
-
 	public boolean isRipristinoTransazioni() {
 		return this.ripristinoTransazioni;
 	}
-
-
 	public void setRipristinoTransazioni(boolean ripristinoTransazioni) {
 		this.ripristinoTransazioni = ripristinoTransazioni;
 	}
 
-
 	public String getRepository() {
 		return this.repository;
 	}
-
-
 	public void setRepository(String repository) {
 		this.repository = repository;
 	}
@@ -158,17 +151,27 @@ public class FSRecoveryConfig {
 	public int getTentativi() {
 		return this.tentativi;
 	}
-
-
 	public void setTentativi(int tentativi) {
 		this.tentativi = tentativi;
+	}
+
+	public long getProcessingTransactionFileAfterMs() {
+		return this.processingTransactionFileAfterMs;
+	}
+	public void setProcessingTransactionFileAfterMs(long processingTransactionFileAfterMs) {
+		this.processingTransactionFileAfterMs = processingTransactionFileAfterMs;
+	}
+
+	public long getProcessingEventFileAfterMs() {
+		return this.processingEventFileAfterMs;
+	}
+	public void setProcessingEventFileAfterMs(long processingEventFileAfterMs) {
+		this.processingEventFileAfterMs = processingEventFileAfterMs;
 	}
 	
 	public String getDefaultProtocol() {
 		return this.defaultProtocol;
 	}
-
-
 	public void setDefaultProtocol(String defaultProtocol) {
 		this.defaultProtocol = defaultProtocol;
 	}

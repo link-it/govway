@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -24,6 +24,7 @@ import java.util.List;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.controllo_traffico.handler.PreInRequestHandlerGestioneControlloTraffico;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PreInRequestContext;
@@ -71,7 +72,7 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 		if(op2Properties.isControlloTrafficoEnabled()){
 			tr.getTempiElaborazione().startControlloTraffico_maxRequests();
 			try {
-				PreInRequestHandler_GestioneControlloTraffico preInRequestHandler_gestioneControlloTraffico = new PreInRequestHandler_GestioneControlloTraffico();
+				PreInRequestHandlerGestioneControlloTraffico preInRequestHandler_gestioneControlloTraffico = new PreInRequestHandlerGestioneControlloTraffico();
 				preInRequestHandler_gestioneControlloTraffico.process(context);
 			}finally {
 				tr.getTempiElaborazione().endControlloTraffico_maxRequests();

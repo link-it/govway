@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -38,6 +38,8 @@ public class StatisticsLibrary {
 	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM;
 	private org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM;
 	
+	private static final String ERRORE = "Errore durante la generazione delle statistiche: ";
+	
 	public StatisticsLibrary(StatisticsConfig config,
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM,
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
@@ -55,29 +57,29 @@ public class StatisticsLibrary {
 	}
 	
 	public void close() {
-		if(this.statisticheSM!=null && this.statisticheSM instanceof JDBCServiceManagerBase) {
-			_close((JDBCServiceManagerBase)this.statisticheSM,"Statistiche");
+		if(this.statisticheSM instanceof JDBCServiceManagerBase) {
+			closeEngine((JDBCServiceManagerBase)this.statisticheSM,"Statistiche");
 		}
-		if(this.transazioniSM!=null && this.transazioniSM instanceof JDBCServiceManagerBase) {
-			_close((JDBCServiceManagerBase)this.transazioniSM,"Transazioni");
+		if(this.transazioniSM instanceof JDBCServiceManagerBase) {
+			closeEngine((JDBCServiceManagerBase)this.transazioniSM,"Transazioni");
 		}
-		if(this.utilsSM!=null && this.utilsSM instanceof JDBCServiceManagerBase) {
-			_close((JDBCServiceManagerBase)this.utilsSM,"Utils");
+		if(this.utilsSM instanceof JDBCServiceManagerBase) {
+			closeEngine((JDBCServiceManagerBase)this.utilsSM,"Utils");
 		}
-		if(this.pluginsBaseSM!=null && this.pluginsBaseSM instanceof JDBCServiceManagerBase) {
-			_close((JDBCServiceManagerBase)this.pluginsBaseSM,"PluginBase");
+		if(this.pluginsBaseSM instanceof JDBCServiceManagerBase) {
+			closeEngine((JDBCServiceManagerBase)this.pluginsBaseSM,"PluginBase");
 		}
-		if(this.pluginsStatisticheSM!=null && this.pluginsStatisticheSM instanceof JDBCServiceManagerBase) {
-			_close((JDBCServiceManagerBase)this.pluginsStatisticheSM,"PluginStatistiche");
+		if(this.pluginsStatisticheSM instanceof JDBCServiceManagerBase) {
+			closeEngine((JDBCServiceManagerBase)this.pluginsStatisticheSM,"PluginStatistiche");
 		}
-		if(this.pluginsTransazioniSM!=null && this.pluginsTransazioniSM instanceof JDBCServiceManagerBase) {
-			_close((JDBCServiceManagerBase)this.pluginsTransazioniSM,"PluginTransazioni");
+		if(this.pluginsTransazioniSM instanceof JDBCServiceManagerBase) {
+			closeEngine((JDBCServiceManagerBase)this.pluginsTransazioniSM,"PluginTransazioni");
 		}
 	}
-	private void _close(JDBCServiceManagerBase serviceManager, String tipo) {
+	private void closeEngine(JDBCServiceManagerBase serviceManager, String tipo) {
 		try {
 			serviceManager.close();
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			String msgError = "Rilascio connessione '"+tipo+"' fallita: "+t.getMessage();
 			if(this.config.getLogSql()!=null) {
 				this.config.getLogSql().error(msgError, t);
@@ -105,7 +107,9 @@ public class StatisticsLibrary {
 						this.config.getForceIndexConfig(),
 						this.statisticheSM, this.transazioniSM, 
 						this.pluginsStatisticheSM, this.pluginsBaseSM, this.utilsSM, this.pluginsTransazioniSM );
-				sg.generaStatistiche( this.config.isStatisticheOrarie_gestioneUltimoIntervallo() );
+				sg.generaStatistiche( this.config.isStatisticheOrarieGestioneUltimoIntervallo(),
+						this.config.getWaitMsBeforeNextInterval(),
+						this.config.isWaitStatiInConsegna());
 				if(this.config.isDebug()){
 					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche orarie  terminata");
 				}
@@ -116,7 +120,8 @@ public class StatisticsLibrary {
 			}
 			
 		}catch(Exception e){
-			this.config.getLogCore().error("Errore durante la generazione delle statistiche: "+e.getMessage(),e);
+			String msg = ERRORE+e.getMessage();
+			this.config.getLogCore().error(msg,e);
 		} 
 	}
 	
@@ -134,7 +139,9 @@ public class StatisticsLibrary {
 						this.config.getForceIndexConfig(),
 						this.statisticheSM, this.transazioniSM, 
 						this.pluginsStatisticheSM, this.pluginsBaseSM, this.utilsSM, this.pluginsTransazioniSM );
-				sg.generaStatistiche( this.config.isStatisticheGiornaliere_gestioneUltimoIntervallo() );
+				sg.generaStatistiche( this.config.isStatisticheGiornaliereGestioneUltimoIntervallo(),
+						this.config.getWaitMsBeforeNextInterval(),
+						this.config.isWaitStatiInConsegna() );
 				if(this.config.isDebug()){
 					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche giornaliere  terminata");
 				}
@@ -145,7 +152,7 @@ public class StatisticsLibrary {
 			}
 			
 		}catch(Exception e){
-			this.config.getLogCore().error("Errore durante la generazione delle statistiche: "+e.getMessage(),e);
+			this.config.getLogCore().error(ERRORE+e.getMessage(),e);
 		} 
 	}
 			
@@ -162,7 +169,9 @@ public class StatisticsLibrary {
 						this.config.getForceIndexConfig(),
 						this.statisticheSM, this.transazioniSM, 
 						this.pluginsStatisticheSM, this.pluginsBaseSM, this.utilsSM, this.pluginsTransazioniSM );
-				sg.generaStatistiche( this.config.isStatisticheSettimanali_gestioneUltimoIntervallo() );
+				sg.generaStatistiche( this.config.isStatisticheSettimanaliGestioneUltimoIntervallo(),
+						this.config.getWaitMsBeforeNextInterval(),
+						this.config.isWaitStatiInConsegna() );
 				if(this.config.isDebug()){
 					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche settimanali  terminata");
 				}
@@ -172,7 +181,7 @@ public class StatisticsLibrary {
 				}
 			}
 		}catch(Exception e){
-			this.config.getLogCore().error("Errore durante la generazione delle statistiche: "+e.getMessage(),e);
+			this.config.getLogCore().error(ERRORE+e.getMessage(),e);
 		} 
 	}
 			
@@ -189,7 +198,9 @@ public class StatisticsLibrary {
 						this.config.getForceIndexConfig(),
 						this.statisticheSM, this.transazioniSM, 
 						this.pluginsStatisticheSM, this.pluginsBaseSM, this.utilsSM, this.pluginsTransazioniSM );
-				sg.generaStatistiche( this.config.isStatisticheMensili_gestioneUltimoIntervallo() );
+				sg.generaStatistiche( this.config.isStatisticheMensiliGestioneUltimoIntervallo(),
+						this.config.getWaitMsBeforeNextInterval(),
+						this.config.isWaitStatiInConsegna() );
 				if(this.config.isDebug()){
 					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche mensili  terminata");
 				}
@@ -200,7 +211,7 @@ public class StatisticsLibrary {
 			}
 			
 		}catch(Exception e){
-			this.config.getLogCore().error("Errore durante la generazione delle statistiche: "+e.getMessage(),e);
+			this.config.getLogCore().error(ERRORE+e.getMessage(),e);
 		} 
 	}
 	

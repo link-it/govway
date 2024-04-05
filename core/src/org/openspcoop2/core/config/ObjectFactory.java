@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -151,6 +151,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ConfigurazioneTracciamentoPorta }
+     */
+    public ConfigurazioneTracciamentoPorta createConfigurazioneTracciamentoPorta() {
+        return new ConfigurazioneTracciamentoPorta();
+    }
+
+    /**
      * Create an instance of {@link GenericProperties }
      */
     public GenericProperties createGenericProperties() {
@@ -232,6 +239,13 @@ public class ObjectFactory {
      */
     public InvocazionePortaGestioneErrore createInvocazionePortaGestioneErrore() {
         return new InvocazionePortaGestioneErrore();
+    }
+
+    /**
+     * Create an instance of {@link TracciamentoConfigurazioneFiletraceConnector }
+     */
+    public TracciamentoConfigurazioneFiletraceConnector createTracciamentoConfigurazioneFiletraceConnector() {
+        return new TracciamentoConfigurazioneFiletraceConnector();
     }
 
     /**
@@ -473,6 +487,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TracciamentoConfigurazioneFiletrace }
+     */
+    public TracciamentoConfigurazioneFiletrace createTracciamentoConfigurazioneFiletrace() {
+        return new TracciamentoConfigurazioneFiletrace();
+    }
+
+    /**
      * Create an instance of {@link TrasformazioneRegolaApplicabilitaRichiesta }
      */
     public TrasformazioneRegolaApplicabilitaRichiesta createTrasformazioneRegolaApplicabilitaRichiesta() {
@@ -568,6 +589,13 @@ public class ObjectFactory {
      */
     public StatoServiziPdd createStatoServiziPdd() {
         return new StatoServiziPdd();
+    }
+
+    /**
+     * Create an instance of {@link TracciamentoConfigurazione }
+     */
+    public TracciamentoConfigurazione createTracciamentoConfigurazione() {
+        return new TracciamentoConfigurazione();
     }
 
     /**

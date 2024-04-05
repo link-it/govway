@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -57,6 +57,7 @@ public final class CostantiDB {
     /*COMMONS*/
 	public static final String COLUMN_ALIAS_COUNT = "count";
     public static final String COLUMN_ID = "id";
+    public static final String COLUMN_ID_PROPRIETARIO = "id_proprietario";
     public static final String CONNETTORI = "connettori";
     public static final String CONNETTORI_CUSTOM = "connettori_custom";
     public static final String SOGGETTI = "soggetti";
@@ -358,6 +359,23 @@ public final class CostantiDB {
     public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA = "configpa";
     public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_PD = "pd";
     public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_PA = "pa";
+    
+    public static final String TRACCIAMENTO_CONFIGURAZIONE = "tracce_config";
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_COLUMN_PROPRIETARIO = "proprietario";
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_COLUMN_TIPO = "tipo";
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_COLUMN_ID_PROPRIETARIO = "id_proprietario";
+    
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD = "configpd";
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA = "configpa";
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PD = "pd";
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PA = "pa";
+    
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_FILETRACE = "filetrace_config";
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_FILETRACE_COLUMN_PROPRIETARIO = "proprietario";
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_FILETRACE_COLUMN_ID_PROPRIETARIO = "id_proprietario";
+    
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_TIPO_DB = "db";
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_TIPO_FILETRACE = "filetrace";
     
     /*DIAGNOSTICA*/
     public static final String MSG_DIAGNOSTICI = "msgdiagnostici";
@@ -759,6 +777,16 @@ public final class CostantiDB {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA_CON_ATTACHMENTS = "risposta_attachments";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_PERSONALIZZATO = "custom";
     
+    public static final String MODIPA_PROFILO_SICUREZZA_RICHIESTA_MODE = "modipaSecurityRequest";
+    public static final String MODIPA_PROFILO_SICUREZZA_RICHIESTA_MODE_VALUE_ABILITATO = "true";
+    public static final String MODIPA_PROFILO_SICUREZZA_RICHIESTA_MODE_VALUE_DISABILITATO = "false";
+    public static final String MODIPA_PROFILO_SICUREZZA_RICHIESTA_MODE_VALUE_PERSONALIZZATO = "custom";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_RISPOSTA_MODE = "modipaSecurityResponse";
+    public static final String MODIPA_PROFILO_SICUREZZA_RISPOSTA_MODE_VALUE_ABILITATO = "true";
+    public static final String MODIPA_PROFILO_SICUREZZA_RISPOSTA_MODE_VALUE_DISABILITATO = "false";
+    public static final String MODIPA_PROFILO_SICUREZZA_RISPOSTA_MODE_VALUE_PERSONALIZZATO = "custom";
+    
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO = "modipaSecurityMessageProfile";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01 = "idam01";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02 = "idam02";
@@ -963,6 +991,18 @@ public final class CostantiDB {
     
     public static final String MODIPA_KEYSTORE_FRUIZIONE_APPLICATIVO = "applicativo";
     public static final String MODIPA_KEYSTORE_FRUIZIONE = "fruizione";
+    public static final String MODIPA_KEYSTORE_FRUIZIONE_TOKEN_POLICY = "token";
+    
+	// COSTANTI buste
+	
+	public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_CANALE = "ProfiloSicurezzaCanale";
+    
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO = "ProfiloSicurezzaMessaggio";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN = "GenerazioneTokenIDAuth";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID = "ProfiloSicurezzaMessaggio-MessageId";    
+    
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PATTERN = "ProfiloSicurezzaAudit";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_SCHEMA = "ProfiloSicurezzaAudit-SchemaDati";
     
     
     /**
@@ -971,6 +1011,9 @@ public final class CostantiDB {
     
     public static final String STATO_FUNZIONALITA_ABILITATO = "abilitato";
     public static final String STATO_FUNZIONALITA_DISABILITATO = "disabilitato";
+    
+    public static final String STATO_FUNZIONALITA_PERSONALIZZATO = "personalizzato";
+    public static final String STATO_FUNZIONALITA_CONFIGURAZIONE_ESTERNA = "configurazioneEsterna";
     
 	
     public static final String COMPONENTE_SERVIZIO_PD = "pd";

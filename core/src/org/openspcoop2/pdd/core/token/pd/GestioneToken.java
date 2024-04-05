@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -28,11 +28,13 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.token.AbstractDatiInvocazione;
+import org.openspcoop2.pdd.core.token.EsitoDynamicDiscovery;
 import org.openspcoop2.pdd.core.token.EsitoGestioneToken;
 import org.openspcoop2.pdd.core.token.EsitoPresenzaToken;
 import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.TokenException;
+import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
@@ -77,12 +79,45 @@ public class GestioneToken {
     	
     }
     
-    public EsitoGestioneTokenPortaDelegata validazioneJWTToken(DatiInvocazionePortaDelegata datiInvocazione, EsitoPresenzaToken token) throws TokenException { 	
+    public EsitoDynamicDiscoveryPortaDelegata dynamicDiscovery(DatiInvocazionePortaDelegata datiInvocazione, EsitoPresenzaToken token) throws TokenException {
+    	try {
+        	
+    		IDSoggetto soggettoFruitore = getDominio(datiInvocazione);
+    		IDServizio idServizio = getServizio(datiInvocazione);
+    		Busta busta = getBusta(datiInvocazione, soggettoFruitore, idServizio);
+    		
+    		EsitoDynamicDiscoveryPortaDelegata esito = (EsitoDynamicDiscoveryPortaDelegata) GestoreToken.dynamicDiscovery(this.log, datiInvocazione, 
+    				this.pddContext, this.protocolFactory,
+    				token, GestoreToken.PORTA_DELEGATA,
+    				busta, soggettoFruitore, idServizio);
+    		
+    		if(esito.getEccezioneProcessamento()!=null) {
+        		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+    					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_560_GESTIONE_TOKEN));
+        	}
+        	else if(!esito.isValido() &&
+        		esito.getErrorMessage()==null) {
+        		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_444_TOKEN_NON_VALIDO.getErroreIntegrazione());
+        	}
+        	
+        	return esito;
+    		
+    	}catch(Exception e) {
+    		throw new TokenException(e.getMessage(),e); // errore di processamento
+    	}
+	}
+    
+    public EsitoGestioneTokenPortaDelegata validazioneJWTToken(DatiInvocazionePortaDelegata datiInvocazione, EsitoPresenzaToken token, EsitoDynamicDiscovery esitoDynamicDiscovery) throws TokenException { 	
     	try {
     	
+    		IDSoggetto soggettoFruitore = getDominio(datiInvocazione);
+    		IDServizio idServizio = getServizio(datiInvocazione);
+    		Busta busta = getBusta(datiInvocazione, soggettoFruitore, idServizio);
+    		
     		EsitoGestioneTokenPortaDelegata esito = (EsitoGestioneTokenPortaDelegata) GestoreToken.validazioneJWTToken(this.log, datiInvocazione, 
-    				this.pddContext, 
-    				token, GestoreToken.PORTA_DELEGATA);
+    				this.pddContext, this.protocolFactory, 
+    				token, esitoDynamicDiscovery, GestoreToken.PORTA_DELEGATA,
+    				busta, soggettoFruitore, idServizio);
     		
         	if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -100,13 +135,17 @@ public class GestioneToken {
     	}  	
     }
     
-    public EsitoGestioneTokenPortaDelegata introspectionToken(DatiInvocazionePortaDelegata datiInvocazione, EsitoPresenzaToken token) throws TokenException {
+    public EsitoGestioneTokenPortaDelegata introspectionToken(DatiInvocazionePortaDelegata datiInvocazione, EsitoPresenzaToken token, EsitoDynamicDiscovery esitoDynamicDiscovery) throws TokenException {
     	try {
         	
+    		IDSoggetto soggettoFruitore = getDominio(datiInvocazione);
+    		IDServizio idServizio = getServizio(datiInvocazione);
+    		Busta busta = getBusta(datiInvocazione, soggettoFruitore, idServizio);
+    		
     		EsitoGestioneTokenPortaDelegata esito = (EsitoGestioneTokenPortaDelegata) GestoreToken.introspectionToken(this.log, datiInvocazione, 
     				this.pddContext, this.protocolFactory,
-    				token, GestoreToken.PORTA_DELEGATA,
-    				getDominio(datiInvocazione), getServizio(datiInvocazione));
+    				token, esitoDynamicDiscovery, GestoreToken.PORTA_DELEGATA,
+    				busta, soggettoFruitore, idServizio);
     		
     		if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -124,13 +163,17 @@ public class GestioneToken {
     	}
 	}
 	
-	public EsitoGestioneTokenPortaDelegata userInfoToken(DatiInvocazionePortaDelegata datiInvocazione, EsitoPresenzaToken token) throws TokenException {
+	public EsitoGestioneTokenPortaDelegata userInfoToken(DatiInvocazionePortaDelegata datiInvocazione, EsitoPresenzaToken token, EsitoDynamicDiscovery esitoDynamicDiscovery) throws TokenException {
 		try {
         	
+    		IDSoggetto soggettoFruitore = getDominio(datiInvocazione);
+    		IDServizio idServizio = getServizio(datiInvocazione);
+    		Busta busta = getBusta(datiInvocazione, soggettoFruitore, idServizio);
+			
 			EsitoGestioneTokenPortaDelegata esito = (EsitoGestioneTokenPortaDelegata) GestoreToken.userInfoToken(this.log, datiInvocazione, 
 					this.pddContext, this.protocolFactory,
-    				token, GestoreToken.PORTA_DELEGATA,
-    				getDominio(datiInvocazione), getServizio(datiInvocazione));
+    				token, esitoDynamicDiscovery, GestoreToken.PORTA_DELEGATA,
+    				busta, soggettoFruitore, idServizio);
     		
 			if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -179,6 +222,27 @@ public class GestioneToken {
 					datiInvocazione.getPd().getServizio().getVersione());
 		}
 		return servizio;
+	}
+	
+	private Busta getBusta(DatiInvocazionePortaDelegata datiInvocazione, IDSoggetto soggettoFruitore, IDServizio idServizio) {
+		Busta busta = new Busta(this.protocolFactory.getProtocol());
+		if(soggettoFruitore!=null) {
+			busta.setTipoMittente(soggettoFruitore.getTipo());
+			busta.setMittente(soggettoFruitore.getNome());
+		}
+		if(idServizio!=null) {
+			if(idServizio.getSoggettoErogatore()!=null) {
+				busta.setTipoDestinatario(idServizio.getSoggettoErogatore().getTipo());
+				busta.setDestinatario(idServizio.getSoggettoErogatore().getNome());
+			}
+			busta.setTipoServizio(idServizio.getTipo());
+			busta.setServizio(idServizio.getNome());
+			busta.setVersioneServizio(idServizio.getVersione());
+			if(datiInvocazione.getRequestInfo()!=null && datiInvocazione.getRequestInfo().getIdServizio()!=null) {
+				busta.setAzione(datiInvocazione.getRequestInfo().getIdServizio().getAzione());
+			}
+		}
+		return busta;
 	}
   
 }

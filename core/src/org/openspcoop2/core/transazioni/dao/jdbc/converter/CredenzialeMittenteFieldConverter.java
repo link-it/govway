@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -88,6 +88,13 @@ public class CredenzialeMittenteFieldConverter extends AbstractSQLFieldConverter
 				return "ora_registrazione";
 			}
 		}
+		if(field.equals(CredenzialeMittente.model().REF_CREDENZIALE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".ref_credenziale";
+			}else{
+				return "ref_credenziale";
+			}
+		}
 
 
 		return super.toColumn(field,returnAlias,appendTablePrefix);
@@ -108,6 +115,9 @@ public class CredenzialeMittenteFieldConverter extends AbstractSQLFieldConverter
 			return this.toTable(CredenzialeMittente.model(), returnAlias);
 		}
 		if(field.equals(CredenzialeMittente.model().ORA_REGISTRAZIONE)){
+			return this.toTable(CredenzialeMittente.model(), returnAlias);
+		}
+		if(field.equals(CredenzialeMittente.model().REF_CREDENZIALE)){
 			return this.toTable(CredenzialeMittente.model(), returnAlias);
 		}
 

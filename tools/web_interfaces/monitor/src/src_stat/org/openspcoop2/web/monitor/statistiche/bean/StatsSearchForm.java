@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -35,6 +35,7 @@ import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.core.statistiche.constants.TipoStatistica;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
+import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
@@ -53,6 +54,7 @@ import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
+import org.openspcoop2.web.monitor.statistiche.constants.StatisticheCostanti;
 import org.slf4j.Logger;
 
 /**
@@ -94,6 +96,10 @@ public class StatsSearchForm extends BaseSearchForm{
 	//Tipo Statistica
 	private TipoStatistica tipoStatistica;
 	protected String _value_tipoStatistica;
+	
+	// Numero dimensioni 
+	private NumeroDimensioni numeroDimensioni;
+	protected String _value_numeroDimensioni;
 
 	// Indicazione se il la distribuzione per soggetto è locale o remota. Vale solo per la distribuzione per soggetto.
 	// Negli altri casi è true per default per visualizzare la select list dei soggetti locali
@@ -146,6 +152,7 @@ public class StatsSearchForm extends BaseSearchForm{
 		//imposto defaults	
 		this.setPeriodo(this.getPeriodoDefault()!=null ? this.getPeriodoDefault() : "Ultimo mese");
 		this.tipoReport=TipoReport.BAR_CHART;
+		this.numeroDimensioni = NumeroDimensioni.DIMENSIONI_2;
 		this.setSortOrder(SortOrder.ASC);  
 		this.tipoVisualizzazione = TipoVisualizzazione.NUMERO_TRANSAZIONI;
 		this.tipoLatenza = TipoLatenza.LATENZA_TOTALE;
@@ -258,6 +265,26 @@ public class StatsSearchForm extends BaseSearchForm{
 	
 	public List<SelectItem> getEsitiDettagliPersonalizzati() {
 		return super.getEsitiDettagliPersonalizzati(true);
+	}
+	
+	public List<SelectItem> getListaDistribuzioneTokenClaim(){
+		List<SelectItem> lst = new ArrayList<>();
+		
+		MessageManager mm = MessageManager.getInstance();
+		
+		boolean showPDNDFilters = isShowPDNDFilters();
+		
+		lst.add(new SelectItem("--", "--"));
+		lst.add(new SelectItem(TipoCredenzialeMittente.TOKEN_ISSUER.getRawValue(), mm.getMessage(Costanti.SEARCH_TOKEN_ISSUER)));  
+		lst.add(new SelectItem(TipoCredenzialeMittente.TOKEN_CLIENT_ID.getRawValue(), mm.getMessage(Costanti.SEARCH_TOKEN_CLIENT_ID)));  
+		if(showPDNDFilters) {
+			lst.add(new SelectItem(TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.getRawValue(), mm.getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_CLIENTID_PDNDINFO)));
+		}
+		lst.add(new SelectItem(TipoCredenzialeMittente.TOKEN_SUBJECT.getRawValue(), mm.getMessage(Costanti.SEARCH_TOKEN_SUBJECT)));  
+		lst.add(new SelectItem(TipoCredenzialeMittente.TOKEN_USERNAME.getRawValue(), mm.getMessage(Costanti.SEARCH_TOKEN_USERNAME)));  
+		lst.add(new SelectItem(TipoCredenzialeMittente.TOKEN_EMAIL.getRawValue(), mm.getMessage(Costanti.SEARCH_TOKEN_EMAIL)));  
+		
+		return lst;
 	}
 	
 	@Override
@@ -498,6 +525,7 @@ public class StatsSearchForm extends BaseSearchForm{
 			}
 		}
 
+		this.numeroDimensioni = NumeroDimensioni.DIMENSIONI_2;
 		this.setSortOrder(SortOrder.ASC); 
 		this.tipoVisualizzazione = TipoVisualizzazione.NUMERO_TRANSAZIONI;
 		this.tipoLatenza = TipoLatenza.LATENZA_TOTALE;
@@ -558,7 +586,9 @@ public class StatsSearchForm extends BaseSearchForm{
 		this.setTipiBanda(new String[3]);
 		this.getTipiBanda()[0] = "0";
 		this.getTipiBanda()[1] = getTipiBanda()[2] = null;
-
+		
+		// numero dimensioni
+		this.numeroDimensioni = NumeroDimensioni.DIMENSIONI_2;
 	}
 
 	public void tipoLatenzaListener(ActionEvent ae){
@@ -823,10 +853,33 @@ public class StatsSearchForm extends BaseSearchForm{
 
 		this.setSortOrder(SortOrder.ASC);
 
-		if(this.tipoReport != null){
-			if(this.tipoReport.equals(TipoReport.TABELLA))
-				this.setSortOrder(SortOrder.DESC);
+		boolean useCount = true;
+		
+		if(this.tipoReport != null &&
+			this.tipoReport.equals(TipoReport.TABELLA)) {
+			
+			this.setSortOrder(SortOrder.DESC);
+			
+			/**
+			 * Nota: se si gestisce altri tipi di distribuzione con useCount=false aggiungere attributo useCount in <link:dataTable  come fatto in distribSAGrafico.xhtml
+			 * */
+			
+			if(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO.equals(this.tipoStatistica)) {
+				if(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO.equals(this.getRiconoscimento())
+						&&
+						org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.getIdentificazione())) {
+					useCount = false; // ci sono dei continue nel metodo 'executeDistribuzioneServizioApplicativo', quando non vi è l'applicativo identificato tramite count, che fanno saltare il count
+				}
+				else if(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO.equals(this.getRiconoscimento())){
+					org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.toEnumConstant(this.getTokenClaim());
+					if(tcm!=null && org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.equals(tcm)) {
+						useCount = false; // ci sono dei continue nel metodo 'executeDistribuzioneServizioApplicativo', per i record per cui la risoluzione PDND non è stata attuata, che fanno saltare il count
+					}
+				}
+			}
 		}
+		
+		this.setUseCount(useCount);
 	}
 
 	public String get_value_tipoReport() {
@@ -843,6 +896,7 @@ public class StatsSearchForm extends BaseSearchForm{
 	}
 
 	public void tipoReportSelected(ActionEvent ae){
+		this.numeroDimensioni = NumeroDimensioni.DIMENSIONI_2;
 	}
 
 	public TipoStatistica getTipoStatistica() {
@@ -852,7 +906,7 @@ public class StatsSearchForm extends BaseSearchForm{
 	public void setTipoStatistica(TipoStatistica tipoStatistica) {
 		this.tipoStatistica = tipoStatistica;
 
-		if(tipoStatistica != null)
+		if(tipoStatistica != null) {
 			if(!this.tipoStatistica.equals(TipoStatistica.ANDAMENTO_TEMPORALE)){
 				this.tipoReport=TipoReport.BAR_CHART;
 			}else {
@@ -863,6 +917,7 @@ public class StatsSearchForm extends BaseSearchForm{
 					this.tipoReport=TipoReport.LINE_CHART;
 				}
 			}
+		}
 	}
 
 	public String get_value_tipoStatistica() {
@@ -1033,5 +1088,57 @@ public class StatsSearchForm extends BaseSearchForm{
 	public boolean isShowUnitaTempoPersonalizzato_periodoPersonalizzato() {
 		return this.isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato;
 	}
+	
+	public List<SelectItem> getDimensioniDisponibili() {
+		List<SelectItem> dimensioniDisponibili = new ArrayList<>();
+		
+		dimensioniDisponibili.add(new SelectItem(NumeroDimensioni.DIMENSIONI_2.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_2D_LABEL_KEY)));
+		dimensioniDisponibili.add(new SelectItem(NumeroDimensioni.DIMENSIONI_3.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_LABEL_KEY)));
+		
+		return dimensioniDisponibili;
+	}
 
+	public String get_value_numeroDimensioni() {
+		if(this.numeroDimensioni == null){
+			return null;
+		}else{
+			return this.numeroDimensioni.toString();
+		}
+	}
+
+	public void set_value_numeroDimensioni(String valueNumeroDimensioni) {
+		NumeroDimensioni nd = (NumeroDimensioni) NumeroDimensioni.toEnumConstantFromString(valueNumeroDimensioni);
+		this.setNumeroDimensioni(nd); 
+	}
+
+	public NumeroDimensioni getNumeroDimensioni() {
+		return this.numeroDimensioni;
+	}
+
+	public void setNumeroDimensioni(NumeroDimensioni numeroDimensioni) {
+		this.numeroDimensioni = numeroDimensioni;
+	}
+	
+	public boolean isVisualizzaNumeroDimensioni() {
+		TipoReport tipoReportToCheck = this.getTipoReport();
+		
+		// si visualizza se e' stato scelto  il report tabella o barchart con grafici svg attivi
+		return tipoReportToCheck != null && (tipoReportToCheck.equals(TipoReport.TABELLA) || (tipoReportToCheck.equals(TipoReport.BAR_CHART) && this.isUseGraficiSVG()));
+	}
+	
+	public boolean isVisualizzaGraficoBars() {
+		TipoReport tipoReportToCheck = this.getTipoReport();
+		NumeroDimensioni numeroDimensioniToCheck = this.getNumeroDimensioni();
+		return (tipoReportToCheck != null && tipoReportToCheck.equals(TipoReport.BAR_CHART)) &&
+				(numeroDimensioniToCheck != null && numeroDimensioniToCheck.equals(NumeroDimensioni.DIMENSIONI_2)) 
+				;
+	}
+	
+	public boolean isVisualizzaGraficoHeatmap() {
+		TipoReport tipoReportToCheck = this.getTipoReport();
+		NumeroDimensioni numeroDimensioniToCheck = this.getNumeroDimensioni();
+		return (tipoReportToCheck != null && (tipoReportToCheck.equals(TipoReport.BAR_CHART) && this.isUseGraficiSVG())) &&
+				(numeroDimensioniToCheck != null && numeroDimensioniToCheck.equals(NumeroDimensioni.DIMENSIONI_3)) 
+				;
+	}
 }

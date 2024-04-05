@@ -13,7 +13,15 @@ Background:
 * url ricercaUrl
 * configure headers = ({ "Authorization": govwayMonitorCred }) 
 
-@FiltroMittenteTokenInfo
+@FiltroMittenteTokenInfoFruizione
+Scenario: Ricerca con le possibili combinazioni del filtro mittente
+    * call read('classpath:ricerca-transazioni-filtro-mittente-token-info.feature')
+
+@FiltroMittenteTokenInfoErogazione
+Scenario: Ricerca con le possibili combinazioni del filtro mittente
+    * call read('classpath:ricerca-transazioni-filtro-mittente-token-info.feature')
+
+@FiltroMittenteTokenInfoErogazionePDND
 Scenario: Ricerca con le possibili combinazioni del filtro mittente
     * call read('classpath:ricerca-transazioni-filtro-mittente-token-info.feature')
 

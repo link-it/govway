@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -216,6 +216,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.certificate.CertificateFactory;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
@@ -2577,7 +2578,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}
 				
 				// recovery
-				File dirRecovery = propertiesReader.getFileSystemRecovery_repository();
+				File dirRecovery = propertiesReader.getFileSystemRecoveryRepository();
 				FileSystemUtilities.mkdir(dirRecovery, configMkdir);
 				FileSystemSerializer fs = FileSystemSerializer.getInstance();
 				FileSystemUtilities.mkdir(fs.getDirTransazioni().getAbsolutePath(), configMkdir);
@@ -2806,7 +2807,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					File f = new File(hsmConfig);
 					HSMManager.init(f, propertiesReader.isHSMConfigRequired(), log, true);
 					HSMManager hsmManager = HSMManager.getInstance();
-					hsmManager.providerInit(logCore, propertiesReader.isHSMConfig_uniqueProviderInstance());
+					hsmManager.providerInit(logCore, propertiesReader.isHSMConfigUniqueProviderInstance());
 					String msgInit = "Gestore HSM inizializzato; keystore registrati: "+hsmManager.getKeystoreTypes();
 					log.info(msgInit);
 					logCore.info(msgInit);
@@ -2838,6 +2839,29 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				msgDiag.logStartupError(e,"Inizializzazione Gestore OCSP");
 				return;
 			}
+			
+			
+			
+			
+			
+			
+			/* ----------- Gestori BYOK ------------ */
+			try {
+				String byokConfig = propertiesReader.getBYOKConfig();
+				if(StringUtils.isNotEmpty(byokConfig)) {
+					File f = new File(byokConfig);
+					BYOKManager.init(f, propertiesReader.isBYOKConfigRequired(), log);
+					BYOKManager byokManager = BYOKManager.getInstance();
+					String msgInit = "Gestore BYOK inizializzato; keystore registrati: "+byokManager.getKeystoreTypes();
+					log.info(msgInit);
+					logCore.info(msgInit);
+				}
+			} catch (Exception e) {
+				logCore.error("Inizializzazione Gestore HSM non riuscita: "+e.getMessage(),e);
+				msgDiag.logStartupError(e,"Inizializzazione Gestore HSM");
+				return;
+			}
+			
 			
 			
 			

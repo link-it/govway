@@ -5,7 +5,7 @@ Functional tests
 
 Ad ogni commit sul `master dei sorgenti del progetto <https://github.com/link-it/govway/>`_ vengono avviati test mirati ad identificare problematiche e vulnerabilità del software.
 
-Vengono eseguiti oltre 8.800 test realizzati con il tool `TestNG <https://testng.org/doc/>`_ ed oltre 6.000 test realizzati tramite i tool `JUnit <https://junit.org/junit4/>`_ e `Karate <https://karatelabs.github.io/karate/>`_ i cui sorgenti sono disponibili pubblicamente sul `repository dei sorgenti del progetto <https://github.com/link-it/govway/>`_ nei seguenti path:
+Vengono eseguiti oltre 8.800 test realizzati con il tool `TestNG <https://testng.org/doc/>`_ ed oltre 7.000 test realizzati tramite i tool `JUnit <https://junit.org/junit4/>`_ e `Karate <https://karatelabs.github.io/karate/>`_ i cui sorgenti sono disponibili pubblicamente sul `repository dei sorgenti del progetto <https://github.com/link-it/govway/>`_ nei seguenti path:
 
 - test che verificano le utilità di base del progetto (certificati, firma, cifratura ...) risiedono in `tools/utils/src/org/openspcoop2/utils/test <https://github.com/link-it/govway/tree/master/tools/utils/src/org/openspcoop2/utils/test>`_ e `core/src/org/openspcoop2/pdd_test <https://github.com/link-it/govway/tree/master/core/src/org/openspcoop2/pdd_test>`_;
 
@@ -69,6 +69,7 @@ Sono inoltre disponibili `report di dettaglio in vari formati <https://jenkins.l
 	trasformazione
 	mtom
 	correlazioneApplicativa
+	tracciamento
         registrazioneMessaggi
 	headerIntegrazione
 	encoding

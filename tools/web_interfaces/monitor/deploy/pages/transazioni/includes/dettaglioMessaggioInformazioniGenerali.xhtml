@@ -38,12 +38,12 @@
 			<h:outputLabel value="Esito" styleClass="outputFieldLabel" rendered="#{empty dettagliBean.dettaglio.esitoIcona}" />
 			<h:outputText id="outEsitoConCodice" value="#{dettagliBean.dettaglio.esitoLabel} (#{dettagliBean.dettaglio.codiceRispostaUscita})" rendered="#{not empty dettagliBean.dettaglio.codiceRispostaUscita}">
 				<rich:toolTip for="outEsitoConCodice">
-					<h:outputText value="#{dettagliBean.dettaglio.esitoLabelDescription}" escape="false" />
+					<h:outputText value="#{dettagliBean.dettaglio.esitoLabelDescriptionCheckResponseOut}" escape="false" />
 				</rich:toolTip>
 			</h:outputText>
 			<h:outputText id="outEsito" value="#{dettagliBean.dettaglio.esitoLabel}" rendered="#{empty dettagliBean.dettaglio.codiceRispostaUscita}">
 				<rich:toolTip for="outEsito">
-					<h:outputText value="#{dettagliBean.dettaglio.esitoLabelDescription}" escape="false" />
+					<h:outputText value="#{dettagliBean.dettaglio.esitoLabelDescriptionCheckResponseOut}" escape="false" />
 				</rich:toolTip>
 			</h:outputText>
 			

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -180,7 +180,10 @@ public class FileTraceGovWayState {
 		return sb.toString();
 	}
 	
-	public static FileTraceGovWayState toConfig(String s) {
+	public static FileTraceGovWayState toConfig(String s, boolean checkFormatString) {
+		if(checkFormatString && !s.startsWith("Enabled:")) {
+			return null; // stringa non corretta
+		}
 		FileTraceGovWayState state = new FileTraceGovWayState();
 		state.enabled = s!=null && s.startsWith("Enabled: true");
 		if(state.enabled) {

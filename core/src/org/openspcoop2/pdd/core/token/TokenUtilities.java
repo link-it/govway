@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -21,6 +21,7 @@
 
 package org.openspcoop2.pdd.core.token;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,10 @@ import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.id.IDGenericProperties;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mvc.properties.Item;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
 import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
@@ -47,10 +52,20 @@ import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
 import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.plugins.utils.PluginsDriverUtils;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.ForwardProxy;
+import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
+import org.openspcoop2.pdd.core.token.attribute_authority.PolicyAttributeAuthority;
+import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
+import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.security.message.jose.JOSECostanti;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.KeystoreType;
+import org.slf4j.Logger;
 
 /**     
  * TokenUtilities
@@ -63,8 +78,11 @@ public class TokenUtilities {
 	
 	private TokenUtilities() {}
 
-	public static Properties getDefaultProperties(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
+	public static Properties getDefaultProperties(Map<String, Properties> mapProperties) {
 		return MultiPropertiesUtilities.getDefaultProperties(mapProperties);
+	}
+	public static Properties getDynamicDiscoveryClaimsMappingProperties(Map<String, Properties> mapProperties) {
+		return mapProperties.get(Costanti.DYNAMIC_DISCOVERY_PARSER_COLLECTION_ID);
 	}
 	public static Properties getValidazioneJwtClaimsMappingProperties(Map<String, Properties> mapProperties) {
 		return mapProperties.get(Costanti.VALIDAZIONE_JWT_TOKEN_PARSER_COLLECTION_ID);
@@ -110,52 +128,63 @@ public class TokenUtilities {
 		}
 		return multiProperties;
 	}
+
+	public static boolean isDynamicDiscoveryEnabled(Map<String, Properties> mapProperties) {
+		return isDynamicDiscoveryEnabled(getDefaultProperties(mapProperties));
+	}
+	public static boolean isDynamicDiscoveryEnabled(Properties pDefault) {
+		return isEnabled(pDefault, Costanti.POLICY_DISCOVERY_STATO);
+	}
+	public static boolean isDynamicDiscoveryEnabled(GenericProperties gp) throws ProviderException {
+		Map<String, Properties> multiProperties = getMultiProperties(gp);
+		return isDynamicDiscoveryEnabled(multiProperties);
+	}
 	
-	public static boolean isValidazioneEnabled(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
+	public static boolean isValidazioneEnabled(Map<String, Properties> mapProperties) {
 		return isValidazioneEnabled(getDefaultProperties(mapProperties));
 	}
-	public static boolean isValidazioneEnabled(Properties pDefault) throws ProviderException, ProviderValidationException {
+	public static boolean isValidazioneEnabled(Properties pDefault) {
 		return isEnabled(pDefault, Costanti.POLICY_VALIDAZIONE_STATO);
 	}
-	public static boolean isValidazioneEnabled(GenericProperties gp) throws ProviderException, ProviderValidationException {
+	public static boolean isValidazioneEnabled(GenericProperties gp) throws ProviderException {
 		Map<String, Properties> multiProperties = getMultiProperties(gp);
 		return isValidazioneEnabled(multiProperties);
 	}
 		
-	public static boolean isIntrospectionEnabled(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
+	public static boolean isIntrospectionEnabled(Map<String, Properties> mapProperties) {
 		return isIntrospectionEnabled(getDefaultProperties(mapProperties));
 	}
-	public static boolean isIntrospectionEnabled(Properties pDefault) throws ProviderException, ProviderValidationException {
+	public static boolean isIntrospectionEnabled(Properties pDefault) {
 		return isEnabled(pDefault, Costanti.POLICY_INTROSPECTION_STATO);
 	}
-	public static boolean isIntrospectionEnabled(GenericProperties gp) throws ProviderException, ProviderValidationException {
+	public static boolean isIntrospectionEnabled(GenericProperties gp) throws ProviderException {
 		Map<String, Properties> multiProperties = getMultiProperties(gp);
 		return isIntrospectionEnabled(multiProperties);
 	}
 	
-	public static boolean isUserInfoEnabled(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
+	public static boolean isUserInfoEnabled(Map<String, Properties> mapProperties) {
 		return isUserInfoEnabled(getDefaultProperties(mapProperties));
 	}
-	public static boolean isUserInfoEnabled(Properties pDefault) throws ProviderException, ProviderValidationException {
+	public static boolean isUserInfoEnabled(Properties pDefault) {
 		return isEnabled(pDefault, Costanti.POLICY_USER_INFO_STATO);
 	}
-	public static boolean isUserInfoEnabled(GenericProperties gp) throws ProviderException, ProviderValidationException {
+	public static boolean isUserInfoEnabled(GenericProperties gp) throws ProviderException {
 		Map<String, Properties> multiProperties = getMultiProperties(gp);
 		return isUserInfoEnabled(multiProperties);
 	}
 	
-	public static boolean isTokenForwardEnabled(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
+	public static boolean isTokenForwardEnabled(Map<String, Properties> mapProperties) {
 		return isTokenForwardEnabled(getDefaultProperties(mapProperties));
 	}
-	public static boolean isTokenForwardEnabled(Properties pDefault) throws ProviderException, ProviderValidationException {
+	public static boolean isTokenForwardEnabled(Properties pDefault) {
 		return isEnabled(pDefault, Costanti.POLICY_TOKEN_FORWARD_STATO);
 	}
-	public static boolean isTokenForwardEnabled(GenericProperties gp) throws ProviderException, ProviderValidationException {
+	public static boolean isTokenForwardEnabled(GenericProperties gp) throws ProviderException {
 		Map<String, Properties> multiProperties = getMultiProperties(gp);
 		return isTokenForwardEnabled(multiProperties);
 	}
 	
-	public static boolean isEnabled(Properties p, String propertyName) throws ProviderException, ProviderValidationException {
+	public static boolean isEnabled(Properties p, String propertyName) {
 		return MultiPropertiesUtilities.isEnabled(p, propertyName);
 	}
 	
@@ -268,6 +297,8 @@ public class TokenUtilities {
 		
 		policy.setTokenOpzionale(false);
 		
+		policy.setDynamicDiscovery(false);
+		
 		policy.setValidazioneJWT(false);
 		policy.setValidazioneJWTWarningOnly(false);
 		
@@ -286,10 +317,13 @@ public class TokenUtilities {
 		return policy;
 
 	}
-	private static void fill(PolicyGestioneToken policy, GestioneToken gestioneToken, Map<String, Properties> multiProperties) throws ProviderException, ProviderValidationException {
+	private static void fill(PolicyGestioneToken policy, GestioneToken gestioneToken, Map<String, Properties> multiProperties) {
 		if(gestioneToken.getTokenOpzionale()!=null) {
 			policy.setTokenOpzionale(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(gestioneToken.getTokenOpzionale()));
 		}
+		
+		boolean dynamicDiscoveryEnabledDaPolicy = isDynamicDiscoveryEnabled(multiProperties);
+		policy.setDynamicDiscovery(dynamicDiscoveryEnabledDaPolicy);
 		
 		boolean validazioneEnabledDaPolicy = isValidazioneEnabled(multiProperties);
 		if(validazioneEnabledDaPolicy &&
@@ -407,14 +441,14 @@ public class TokenUtilities {
 		return claimValueSB.length()>0 ? claimValueSB.toString() : null;
 	}
 	
-	public static String getClaimAsString(Map<String, Object> claims, String claim) {
+	public static String getClaimAsString(Map<String, Serializable> claims, String claim) {
 		List<String> l = getClaimAsList(claims, claim);
 		if(l==null || l.isEmpty()) {
 			return null;
 		}
 		return TokenUtilities.getClaimValuesAsString(l);
 	}
-	public static List<String> getClaimAsList(Map<String, Object> claims, String claim) {
+	public static List<String> getClaimAsList(Map<String, Serializable> claims, String claim) {
 		List<String> l = null;
 		Object o = claims.get(claim);
 		if(o==null) {
@@ -428,7 +462,7 @@ public class TokenUtilities {
 		return l;
 	}
 	
-	public static String getFirstClaimAsString(Map<String, Object> claims, List<String> names) {
+	public static String getFirstClaimAsString(Map<String, Serializable> claims, List<String> names) {
 		for (String name : names) {
 			String claim = getClaimAsString(claims, name);
 			if(claim!=null) {
@@ -437,7 +471,7 @@ public class TokenUtilities {
 		}
 		return null;
 	}
-	public static List<String> getFirstClaimAsList(Map<String, Object> claims, List<String> names) {
+	public static List<String> getFirstClaimAsList(Map<String, Serializable> claims, List<String> names) {
 		List<String> lRet = null;
 		for (String name : names) {
 			List<String> l = getClaimAsList(claims, name);
@@ -595,22 +629,24 @@ public class TokenUtilities {
 		}
 		return token;
 	}
-	public static void replaceTokenInMap(Map<String, Object> claims, String originale, String newToken) {
+	public static Map<String, Serializable> replaceTokenInMapByValue(Map<String, Serializable> claims, String valueOriginale, String newValue) {
+		
+		Map<String, Serializable> newMap = new HashMap<>();
+		
 		if(claims!=null && !claims.isEmpty()) {
-			List<String> keyDaSostituire = new ArrayList<>();
-			for (Map.Entry<String,Object> entry : claims.entrySet()) {
+			for (Map.Entry<String,Serializable> entry : claims.entrySet()) {
 				String key = entry.getKey();
-				Object o = claims.get(key);
-				if(o instanceof String && originale.equals(o)) {
-					keyDaSostituire.add(key);
+				Serializable o = claims.get(key);
+				if(o instanceof String && valueOriginale.equals(o)) {
+					newMap.put(key, newValue);
+				}
+				else {
+					newMap.put(key, o);
 				}
 			}
-			while(!keyDaSostituire.isEmpty()) {
-				String key = keyDaSostituire.remove(0);
-				claims.remove(key);
-				claims.put(key, newToken);
-			}
 		}
+		
+		return newMap;
 	}
 	
 	private static final String EXTERNAL_RESOURCE_UNDEFINED = "External resource undefined";
@@ -754,5 +790,302 @@ public class TokenUtilities {
 			item.setRequired(true);
 		}
 		return actualValue;
+	}
+	
+	
+	
+	
+	public static HashMap<String, Serializable> toHashMapSerializable(Map<String, Serializable> map) {
+		HashMap<String, Serializable> mapNull = null;
+		if(map instanceof HashMap) {
+			return (HashMap<String, Serializable>) map;
+		}
+		else if(map!=null) {
+			HashMap<String, Serializable> sMap = new HashMap<>();
+			for (Map.Entry<String,Serializable> entry : map.entrySet()) {
+				sMap.put(entry.getKey(), entry.getValue());
+			}
+		}
+		return mapNull;
+	}
+	
+	public static String readJtiFromInformazioniToken(Context context) {
+		Object oInformazioniTokenNormalizzate = null;
+		if(context!=null) {
+			oInformazioniTokenNormalizzate = context.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+		}
+		InformazioniToken informazioniTokenNormalizzate = null;
+		String jtiClaimReceived = null;
+		if(oInformazioniTokenNormalizzate!=null) {
+			informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
+			jtiClaimReceived = informazioniTokenNormalizzate.getJti();
+		}
+		return jtiClaimReceived;
+	}
+	
+	
+	
+	
+	public static Map<String, Object> buildDynamicMap(Busta busta, 
+			RequestInfo requestInfo, Context pddContext, Logger log) {
+		return DynamicMapBuilderUtils.buildDynamicMap(busta, requestInfo, pddContext, log);
+	}
+	public static String convertDynamicPropertyValue(String v, String nome, Map<String, Object> dynamicMap, Context context) throws TokenException {
+		return DynamicMapBuilderUtils.convertDynamicPropertyValue(v, nome, dynamicMap, context);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static void injectJOSEConfig(Properties p, AbstractPolicyToken policyToken, DynamicDiscovery dynamicDiscovery,
+			Busta busta, IDSoggetto idDominio, IDServizio idServizio,
+			Context context, Logger log,
+			RequestInfo requestInfo, IState state, boolean delegata) throws TokenException {
+		
+		Map<String, Object> dynamicMap = TokenUtilities.buildDynamicMap(busta, requestInfo, context, log);
+		
+		if(policyToken instanceof PolicyGestioneToken) {
+			injectJOSEConfigDynamicDiscovery(p, (PolicyGestioneToken)policyToken, dynamicDiscovery,
+					dynamicMap, context);
+		}
+		injectJOSEConfigKeystore(p,  
+				dynamicMap, context);
+		injectJOSEConfigSsl(p, policyToken, 
+				dynamicMap, context);
+		injectJOSEConfigTimeout(p, policyToken, 
+				dynamicMap, context);
+		injectJOSEConfigProxy(p, policyToken, 
+				dynamicMap, context);
+		injectJOSEConfigForwardProxy(p, policyToken, 
+				idDominio, idServizio,
+				requestInfo, state, delegata);
+	}
+	private static void injectJOSEConfigDynamicDiscovery(Properties p, PolicyGestioneToken policyGestioneToken, DynamicDiscovery dynamicDiscovery,
+			Map<String, Object> dynamicMap, Context context) throws TokenException {
+		if(policyGestioneToken.isDynamicDiscovery()) {
+			GestoreTokenValidazioneUtilities.check(dynamicDiscovery);
+			String endpoint = dynamicDiscovery.getJwksUri();
+			endpoint = convertDynamicPropertyValue(endpoint, "endpoint", dynamicMap, context);
+			if(endpoint==null || StringUtils.isEmpty(endpoint)) {
+				throw new TokenException("DynamicDiscovery.jwkUri undefined");
+			}
+			p.put(RSSecurityConstants.RSSEC_KEY_STORE_FILE, endpoint);
+		}
+	}
+	private static void injectJOSEConfigKeystore(Properties p, 
+			Map<String, Object> dynamicMap, Context context) throws TokenException {
+		
+		String file = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+		if(file!=null && !"".equals(file)) {
+			file = convertDynamicPropertyValue(file, "file", dynamicMap, context);
+			p.put(RSSecurityConstants.RSSEC_KEY_STORE_FILE, file);
+		}
+		
+		String alias = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS);
+		if(alias!=null && !"".equals(alias)) {
+			alias = convertDynamicPropertyValue(alias, "alias", dynamicMap, context);
+			p.put(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS, alias);
+		}
+		
+		String pwd = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_PSWD);
+		if(pwd!=null && !"".equals(pwd)) {
+			pwd = convertDynamicPropertyValue(pwd, "pwd", dynamicMap, context);
+			p.put(RSSecurityConstants.RSSEC_KEY_STORE_PSWD, pwd);
+		}
+		
+		String type = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
+		if(type!=null && !"".equals(type)) {
+			type = convertDynamicPropertyValue(type, "type", dynamicMap, context);
+			p.put(RSSecurityConstants.RSSEC_KEY_STORE_TYPE, type);
+		}
+		
+	}
+	public static void injectJOSEConfigSsl(Properties p, AbstractPolicyToken policyToken,
+			Map<String, Object> dynamicMap, Context context) throws TokenException {
+		boolean https = false;
+		if(policyToken instanceof PolicyGestioneToken) {
+			https = ((PolicyGestioneToken)policyToken).isEndpointHttps();
+		}
+		else if(policyToken instanceof PolicyAttributeAuthority) {
+			try {
+				https = ((PolicyAttributeAuthority)policyToken).isEndpointHttps();
+			}catch(Exception e) {
+				throw new TokenException(e.getMessage(),e);
+			}
+		}
+		if(https) {
+			Properties sslConfig = policyToken.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CONFIG);
+			if(sslConfig!=null) {
+				injectJOSEConfigSsl(p, sslConfig,
+						dynamicMap, context);
+			}
+		}
+	}
+	private static void injectJOSEConfigSsl(Properties p, Properties sslConfig,
+			Map<String, Object> dynamicMap, Context context) throws TokenException {
+		String trustAll = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS);
+		if(trustAll!=null && StringUtils.isNotEmpty(trustAll) && "true".equalsIgnoreCase(trustAll)) {
+			p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_TRUSTALL, trustAll);
+		}
+		else {
+			injectJOSEConfigSslTrustStore(p, sslConfig,
+					dynamicMap, context);
+		}
+		
+		String hostnameVerifier = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER);
+		if(hostnameVerifier!=null && StringUtils.isNotEmpty(hostnameVerifier)) {
+			p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_HOSTNAME_VERIFIER, hostnameVerifier);
+		}
+	}
+	private static void injectJOSEConfigSslTrustStore(Properties p, Properties sslConfig,
+			Map<String, Object> dynamicMap, Context context) throws TokenException {
+		String trustLocation = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
+		if(trustLocation!=null && StringUtils.isNotEmpty(trustLocation)) {
+			trustLocation = convertDynamicPropertyValue(trustLocation, "trustLocation", dynamicMap, context);
+			p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_FILE, trustLocation);
+			
+			String trustType = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_TYPE);
+			if(trustType!=null && StringUtils.isNotEmpty(trustType)) {
+				trustType = convertDynamicPropertyValue(trustType, "trustType", dynamicMap, context);
+				p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_TYPE, trustType);
+			}
+			
+			String trustPassword = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+			if(trustPassword!=null && StringUtils.isNotEmpty(trustPassword)) {
+				trustPassword = convertDynamicPropertyValue(trustPassword, "trustPassword", dynamicMap, context);
+				p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_PASSWORD, trustPassword);
+			}
+			
+			String trustCrl = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+			if(trustCrl!=null && StringUtils.isNotEmpty(trustCrl)) {
+				trustCrl = convertDynamicPropertyValue(trustCrl, "trustCrl", dynamicMap, context);
+				p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_CRL, trustCrl);
+			}
+		}
+	}
+	private static void injectJOSEConfigTimeout(Properties p, AbstractPolicyToken policyToken,
+			Map<String, Object> dynamicMap, Context context) throws TokenException {
+		Properties endpointConfig = policyToken.getProperties().get(Costanti.POLICY_ENDPOINT_CONFIG);
+		if(endpointConfig!=null && endpointConfig.containsKey(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)) {
+			String connectionTimeout = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT);
+			if(connectionTimeout!=null && StringUtils.isNotEmpty(connectionTimeout)) {
+				connectionTimeout = convertDynamicPropertyValue(connectionTimeout, "connectionTimeout", dynamicMap, context);
+			}
+			
+			String readTimeout = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT);
+			if(readTimeout!=null && StringUtils.isNotEmpty(readTimeout)) {
+				readTimeout = convertDynamicPropertyValue(readTimeout, "readTimeout", dynamicMap, context);
+			}
+		
+			if(connectionTimeout!=null) {
+				p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_CONNECTION_TIMEOUT, connectionTimeout);
+			}
+			if(readTimeout!=null) {
+				p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_READ_TIMEOUT, readTimeout);
+			}
+		}
+	}
+	private static void injectJOSEConfigProxy(Properties p, AbstractPolicyToken policyToken,
+			Map<String, Object> dynamicMap, Context context) throws TokenException {
+		Properties endpointConfig = policyToken.getProperties().get(Costanti.POLICY_ENDPOINT_CONFIG);
+		if(endpointConfig!=null && endpointConfig.containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME)) {
+			String hostProxy = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME);
+			if(hostProxy!=null && StringUtils.isNotEmpty(hostProxy)) {
+				hostProxy = convertDynamicPropertyValue(hostProxy, "hostProxy", dynamicMap, context);
+			}
+			
+			String portProxy = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT);
+			if(portProxy!=null && StringUtils.isNotEmpty(portProxy)) {
+				portProxy = convertDynamicPropertyValue(portProxy, "portProxy", dynamicMap, context);
+			}
+		
+			if(hostProxy!=null) {
+				p.put(JOSECostanti.ID_PROXY_HOSTNAME, hostProxy);
+			}
+			if(portProxy!=null) {
+				p.put(JOSECostanti.ID_PROXY_PORT, portProxy);
+			}
+			
+			injectJOSEConfigProxyCredentials(p, endpointConfig,
+					dynamicMap, context);
+		}
+	}
+	private static void injectJOSEConfigProxyCredentials(Properties p, Properties endpointConfig,
+			Map<String, Object> dynamicMap, Context context) throws TokenException {
+		String usernameProxy = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_USERNAME);
+		String passwordProxy = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD);
+		if(usernameProxy!=null && StringUtils.isNotEmpty(usernameProxy)) {
+			usernameProxy = convertDynamicPropertyValue(usernameProxy, "usernameProxy", dynamicMap, context);
+			p.put(JOSECostanti.ID_PROXY_USERNAME, usernameProxy);
+			
+			if(passwordProxy!=null && StringUtils.isNotEmpty(passwordProxy)) {
+				passwordProxy = convertDynamicPropertyValue(passwordProxy, "passwordProxy", dynamicMap, context);
+			}
+			if(passwordProxy!=null) {
+				p.put(JOSECostanti.ID_PROXY_PASSWORD, passwordProxy);
+			}
+		}
+	}
+	private static void injectJOSEConfigForwardProxy(Properties p, AbstractPolicyToken policyToken,
+			IDSoggetto idDominio, IDServizio idServizio,
+			RequestInfo requestInfo, IState state, boolean delegata) throws TokenException {
+
+		ForwardProxy forwardProxy = getForwardProxy(policyToken,
+				requestInfo, state, delegata,
+				idDominio, idServizio);
+		if(forwardProxy!=null && forwardProxy.isEnabled() && forwardProxy.getConfigToken()!=null) {
+			boolean enabled = false;
+			if(policyToken instanceof PolicyGestioneToken) {
+				enabled = forwardProxy.getConfigToken().isTokenJwtValidationEnabled();
+			}
+			else if(policyToken instanceof PolicyAttributeAuthority) {
+				enabled = forwardProxy.getConfigToken().isAttributeAuthorityResponseJwtValidationEnabled();
+			}
+			if(enabled) {
+				p.put(JOSECostanti.ID_FORWARD_PROXY_ENDPOINT, forwardProxy.getUrl());
+				if(forwardProxy.getConfig()!=null) {
+					if(forwardProxy.getConfig().getHeader()!=null) {
+						p.put(JOSECostanti.ID_FORWARD_PROXY_HEADER, forwardProxy.getConfig().getHeader());
+						p.put(JOSECostanti.ID_FORWARD_PROXY_HEADER_BASE64, forwardProxy.getConfig().isHeaderBase64()+"");
+					}
+					else if(forwardProxy.getConfig().getQuery()!=null) {
+						p.put(JOSECostanti.ID_FORWARD_PROXY_QUERY, forwardProxy.getConfig().getQuery());
+						p.put(JOSECostanti.ID_FORWARD_PROXY_QUERY_BASE64, forwardProxy.getConfig().isQueryBase64()+"");
+					}
+				}
+			}
+		}
+	}
+	
+	
+	
+	
+	public static ForwardProxy getForwardProxy(AbstractPolicyToken policyToken,
+			RequestInfo requestInfo, IState state, boolean delegata,
+			IDSoggetto idDominio, IDServizio idServizio) throws TokenException{
+		ForwardProxy forwardProxy = null;
+		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+		if(configurazionePdDManager.isForwardProxyEnabled(requestInfo)) {
+			try {
+				IDGenericProperties policy = new IDGenericProperties();
+				policy.setTipologia(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION);
+				policy.setNome(policyToken.getName());
+				if(delegata) {
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigFruizione(idDominio, idServizio, policy, requestInfo);
+				}
+				else {
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigErogazione(idDominio, idServizio, policy, requestInfo);
+				}
+			}catch(Exception e) {
+				throw new TokenException(GestoreToken.getMessageErroreGovWayProxy(e),e);
+			}
+		}
+		return forwardProxy;
 	}
 }

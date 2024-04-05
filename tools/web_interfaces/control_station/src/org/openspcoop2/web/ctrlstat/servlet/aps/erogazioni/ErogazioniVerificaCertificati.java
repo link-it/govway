@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -640,11 +640,39 @@ public class ErogazioniVerificaCertificati  extends Action {
 							GenericProperties gp = confCore.getGenericProperties(policy.getPolicy(), org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, false);
 							if(gp!=null) {
 								PolicyGestioneToken policyToken = TokenUtilities.convertTo(gp, policy);
-								boolean httpsIntrospection = policyToken.isIntrospection();
-								boolean httpsUserInfo = policyToken.isUserInfo();
-								boolean validazioneJwt = policyToken.isValidazioneJWT();
+								boolean httpsDynamicDiscovery = policyToken.isDynamicDiscovery();
+								boolean httpsValidazioneJwt = false;
+								boolean httpsIntrospection = false;
+								boolean httpsUserInfo = false;
+								boolean validazioneJwt = false;
+								if(!policyToken.isDynamicDiscovery()) {
+									httpsValidazioneJwt = policyToken.isValidazioneJWT() && policyToken.isValidazioneJWTLocationHttp();
+									httpsIntrospection = policyToken.isIntrospection();
+									httpsUserInfo = policyToken.isUserInfo();
+									validazioneJwt = policyToken.isValidazioneJWT();
+								}
 								boolean forwardToJwt = policyToken.isForwardToken();
 								
+								if(httpsDynamicDiscovery &&
+									!policyToken.isEndpointHttps()) {
+									httpsDynamicDiscovery = false;
+									
+									String endpoint = policyToken.getDynamicDiscoveryEndpoint();
+									if(endpoint!=null && StringUtils.isNotEmpty(endpoint) &&
+										!findConnettoreHttpConPrefissoHttps) {
+										findConnettoreHttpConPrefissoHttps = endpoint.trim().startsWith("https");
+									}
+								}
+								if(httpsValidazioneJwt &&
+									!policyToken.isEndpointHttps()) {
+									httpsValidazioneJwt = false;
+									
+									String endpoint = policyToken.getValidazioneJWTLocation();
+									if(endpoint!=null && StringUtils.isNotEmpty(endpoint) &&
+										!findConnettoreHttpConPrefissoHttps) {
+										findConnettoreHttpConPrefissoHttps = endpoint.trim().startsWith("https");
+									}
+								}
 								if(httpsIntrospection &&
 									!policyToken.isEndpointHttps()) {
 									httpsIntrospection = false;
@@ -704,7 +732,8 @@ public class ErogazioniVerificaCertificati  extends Action {
 								if(httpsIntrospection || httpsUserInfo || validazioneJwt || forwardToJwt) {
 									StringBuilder sbDetailsWarningTokenPolicyValidazioneSecured = new StringBuilder(); 
 									certificateChecker.checkTokenPolicyValidazione(sbDetailsError, sbDetailsWarningTokenPolicyValidazioneSecured, 
-											httpsIntrospection, httpsUserInfo, validazioneJwt, forwardToJwt,
+											httpsDynamicDiscovery, httpsValidazioneJwt, httpsIntrospection, httpsUserInfo, 
+											validazioneJwt, forwardToJwt,
 											gp,
 											sogliaWarningGiorni);
 									if(sbDetailsWarningTokenPolicyValidazione.length()<=0 && sbDetailsWarningTokenPolicyValidazioneSecured.length()>0) {

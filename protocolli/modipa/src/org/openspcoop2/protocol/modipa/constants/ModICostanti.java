@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -25,12 +25,13 @@ package org.openspcoop2.protocol.modipa.constants;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.protocol.engine.constants.Costanti;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.constants.SignatureAlgorithm;
 import org.openspcoop2.security.message.constants.SignatureC14NAlgorithm;
-import org.openspcoop2.utils.digest.DigestEncoding;
 import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.MapKey;
+import org.openspcoop2.utils.digest.DigestEncoding;
 
 /**
  * Classe dove sono fornite le stringhe costanti, definite dalla specifica del protocollo ModI, 
@@ -67,10 +68,10 @@ public class ModICostanti {
     
     public static final String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE_AGGIUNTO_PER_CONSENTIRE_VALIDAZIONE_CONTENUTI = "__@@SkipValidation##__";
     
-    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_CANALE = "ProfiloSicurezzaCanale";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_CANALE = CostantiDB.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_CANALE;
     
-    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO = "ProfiloSicurezzaMessaggio";
-    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN = "GenerazioneTokenIDAuth";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO = CostantiDB.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO;
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN = CostantiDB.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN;
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_PREFIX = "ProfiloSicurezzaMessaggio-";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CUSTOM_HEADER = "ProfiloSicurezzaMessaggio-Custom-JWT-Signature";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_SUBJECT = "ProfiloSicurezzaMessaggio-X509-Subject";
@@ -83,7 +84,7 @@ public class ModICostanti {
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_IAT = "ProfiloSicurezzaMessaggio-IntegrityIssuedAt";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_EXP = "ProfiloSicurezzaMessaggio-IntegrityExpiration";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ORIGIN_TRANSACTION_ID = "ProfiloSicurezzaMessaggio-OriginTransactionId";
-    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID = "ProfiloSicurezzaMessaggio-MessageId";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID = CostantiDB.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID;
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_RELATES_TO = "ProfiloSicurezzaMessaggio-RelatesTo";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_DIGEST = "ProfiloSicurezzaMessaggio-Digest";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_SUBJECT = "ProfiloSicurezzaMessaggio-Subject";
@@ -103,8 +104,8 @@ public class ModICostanti {
     
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_SOAP_PREFIX = "ProfiloSicurezzaMessaggioSignedSoap-";
     
-    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PATTERN = "ProfiloSicurezzaAudit";
-    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_SCHEMA = "ProfiloSicurezzaAudit-SchemaDati";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PATTERN = CostantiDB.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PATTERN;
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_SCHEMA = CostantiDB.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_SCHEMA;
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PREFIX = "ProfiloSicurezzaMessaggioAudit-";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_AUDIENCE = "ProfiloSicurezzaMessaggioAudit-Audience";
     public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_ORIGIN_TRANSACTION_ID = "ProfiloSicurezzaMessaggioAudit-OriginTransactionId";
@@ -133,7 +134,7 @@ public class ModICostanti {
     public static final MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_BUILD_SECURITY_REQUEST_TOKEN = Map.newMapKey("MODIPA_BUILD_SECURITY_REQUEST_TOKEN");
     public static final MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_REST = Map.newMapKey("MODIPA_SBUSTAMENTO_REST");
     public static final MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_SOAP = Map.newMapKey("MODIPA_SBUSTAMENTO_SOAP");
-    public static final MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_USE_JTI_AUTHORIZATION = Map.newMapKey("MODIPA_USE_JTI_AUTHORIZATION");
+    public static final MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_USE_JTI_AUTHORIZATION = ModIUtils.MODIPA_OPENSPCOOP2_MSG_CONTEXT_USE_JTI_AUTHORIZATION;
     
     public static final MapKey<String> MODIPA_CONTEXT_REQUEST_DIGEST = Map.newMapKey("MODIPA_REQUEST_DIGEST");
     public static final MapKey<String> MODIPA_CONTEXT_X509_AUTHORIZATION = Map.newMapKey("MODIPA_X509_AUTHORIZATION");
@@ -181,6 +182,7 @@ public class ModICostanti {
     
     public static final String MODIPA_KEYSTORE_FRUIZIONE_APPLICATIVO = CostantiDB.MODIPA_KEYSTORE_FRUIZIONE_APPLICATIVO;
     public static final String MODIPA_KEYSTORE_FRUIZIONE = CostantiDB.MODIPA_KEYSTORE_FRUIZIONE;
+    public static final String MODIPA_KEYSTORE_FRUIZIONE_TOKEN_POLICY = CostantiDB.MODIPA_KEYSTORE_FRUIZIONE_TOKEN_POLICY;
     
     public static final String MODIPA_PROFILO_INTERAZIONE = CostantiDB.MODIPA_PROFILO_INTERAZIONE;
     public static final String MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD = CostantiDB.MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD;
@@ -281,18 +283,18 @@ public class ModICostanti {
     public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_PERSONALIZZATO = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_PERSONALIZZATO;
     public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_DEFAULT = MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI;
     
-    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE = "modipaSecurityRequest";
-    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_ABILITATO = "true";
-    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_DISABILITATO = "false";
-    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_PERSONALIZZATO = "custom";
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE = CostantiDB.MODIPA_PROFILO_SICUREZZA_RICHIESTA_MODE;
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_ABILITATO = CostantiDB.MODIPA_PROFILO_SICUREZZA_RICHIESTA_MODE_VALUE_ABILITATO;
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_DISABILITATO = CostantiDB.MODIPA_PROFILO_SICUREZZA_RICHIESTA_MODE_VALUE_DISABILITATO;
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_PERSONALIZZATO = CostantiDB.MODIPA_PROFILO_SICUREZZA_RICHIESTA_MODE_VALUE_PERSONALIZZATO;
     public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_DEFAULT = MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_ABILITATO;
     
     public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_CONTENT_TYPE_MODE_ID = "modipaSecurityRequestContentType";
    
-    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE = "modipaSecurityResponse";
-    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_ABILITATO = "true";
-    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_DISABILITATO = "false";
-    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_PERSONALIZZATO = "custom";
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE = CostantiDB.MODIPA_PROFILO_SICUREZZA_RISPOSTA_MODE;
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_ABILITATO = CostantiDB.MODIPA_PROFILO_SICUREZZA_RISPOSTA_MODE_VALUE_ABILITATO;
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_DISABILITATO = CostantiDB.MODIPA_PROFILO_SICUREZZA_RISPOSTA_MODE_VALUE_DISABILITATO;
+    public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_PERSONALIZZATO = CostantiDB.MODIPA_PROFILO_SICUREZZA_RISPOSTA_MODE_VALUE_PERSONALIZZATO;
     public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_DEFAULT = MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_ABILITATO;
     
     public static final String MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_CONTENT_TYPE_MODE_ID = "modipaSecurityResponseContentType";

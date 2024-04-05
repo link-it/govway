@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -31,6 +31,8 @@ import java.util.Map;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
+import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.date.DateManager;
@@ -53,20 +55,34 @@ import net.minidev.json.JSONObject;
 */
 public class Utilities extends ConfigLoader {
 
-	public static List<String> getMapExpectedTokenInfoInvalid() {
+	public static List<String> getMapExpectedTokenInfoInvalid(String token) {
 		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		mapExpectedTokenInfo.add("\"type\":\"validated_token\"");
 		mapExpectedTokenInfo.add("\"valid\":false");
+		mapExpectedTokenInfo.add("\"token\":\""+TokenUtilities.deleteSignature(token)+"\"");
 		return mapExpectedTokenInfo;
 	}
 	
+	
 	public static HttpResponse _test(Logger logCore, String api, String operazione,
 			Map<String, String> headers, Map<String, String> queryParameters, String msgError,
-			List<String> mapExpectedTokenInfo) throws Exception {
+			CredenzialiMittenteVerifier credenzialiMittente, List<String> mapExpectedTokenInfo) throws Exception {
+		return _test(logCore, TipoServizio.EROGAZIONE, api, operazione,
+				headers, queryParameters, msgError,
+				credenzialiMittente,mapExpectedTokenInfo);
+	}
+	public static HttpResponse _test(Logger logCore, TipoServizio tipoServizio, String api, String operazione,
+			Map<String, String> headers, Map<String, String> queryParameters, String msgError,
+			CredenzialiMittenteVerifier credenzialiMittente, List<String> mapExpectedTokenInfo) throws Exception {
 		
 		String contentType = HttpConstants.CONTENT_TYPE_JSON;
 		byte[]content = Bodies.getJson(Bodies.SMALL_SIZE).getBytes();
 		
-		String url = System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+api+"/v1/"+operazione;
+		String apiInvoke = "SoggettoInternoTest/"+api+"/v1";
+		String url = tipoServizio == TipoServizio.EROGAZIONE
+				? System.getProperty("govway_base_path") + "/"+apiInvoke+"/"+operazione
+				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/"+apiInvoke+"/"+operazione;
+		
 		if(queryParameters!=null && !queryParameters.isEmpty()) {
 			for (String key : queryParameters.keySet()) {
 				url+= url.contains("?") ? "&" : "?";
@@ -102,7 +118,15 @@ public class Utilities extends ConfigLoader {
 		assertNotNull(idTransazione);
 		
 		long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
-		if(msgError!=null) {
+		if(msgError!=null &&
+				"warningOnly".equals(operazione) &&
+				(		ValidazioneJWTDynamicDiscoveryTest.validazione.equals(api) ||
+						IntrospectionDynamicDiscoveryTest.validazione.equals(api) ||
+						UserInfoDynamicDiscoveryTest.validazione.equals(api))) {
+			esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK_PRESENZA_ANOMALIE);
+			verifyOk(response, 200, contentType);
+		}
+		else if(msgError!=null) {
 			
 			int code = -1;
 			String error = null;
@@ -116,7 +140,7 @@ public class Utilities extends ConfigLoader {
 					msg = "Required token scopes not found";
 				}
 			}
-			else if(msgError.contains("Il mittente non è autorizzato ad invocare il servizio gw/TestValidazioneToken-")){
+			else if(msgError.contains("Il mittente non è autorizzato ad invocare il servizio gw/TestValidazioneToken-") || msgError.contains("Il servizio applicativo Anonimo non risulta autorizzato a fruire del servizio richiesto")){
 				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
 				code = 403;
 				if(msgError.contains("Role ") || msgError.contains("roles")) {
@@ -170,6 +194,22 @@ public class Utilities extends ConfigLoader {
 				error = "AuthorizationContentDeny";
 				msg = "Unauthorized request content";
 			}
+			else if(msgError.contains("Validazione del token, tramite il servizio di Introspection") &&  msgError.contains("fallita: Token non valido")) {
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_TOKEN);
+				code = 401;
+				error = "TokenAuthenticationFailed";
+				msg = "Invalid token";
+			}
+			else if(msgError!=null && 
+					(ValidazioneJWTKeystoreDinamicoTest.validazione.equals(api) || 
+							ValidazioneJWTDynamicDiscoveryTest.validazione.equals(api) ||
+							IntrospectionDynamicDiscoveryTest.validazione.equals(api) ||
+							UserInfoDynamicDiscoveryTest.validazione.equals(api))) {
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_TOKEN);
+				code = 401;
+				error = "TokenAuthenticationFailed";
+				msg = "Invalid token";
+			}
 			verifyKo(response, error, code, msg, true);
 		
 		}
@@ -179,7 +219,7 @@ public class Utilities extends ConfigLoader {
 					
 		if(!ForwardInformazioniTest.forward.equals(api) && !ForwardInformazioniTest.forwardAlternativeSigner.equals(api)) {
 			DBVerifier.verify(idTransazione, esitoExpected, msgError,
-					mapExpectedTokenInfo);
+					credenzialiMittente, mapExpectedTokenInfo);
 		}
 		
 		return response;
@@ -225,6 +265,26 @@ public class Utilities extends ConfigLoader {
 	}
 	
 	public static final String username = "Utente di Prova";
+	public static final String username_invalid = "usernameErrato";
+	
+	public static final String client_id = "18192.apps";
+	public static final String client_id_invalid = "18192.apps.invalid";
+	
+	public static final String issuer = "testAuthEnte";
+	public static final String subject = "10623542342342323";
+	
+	public static final String email = "mariorossi@govway.org";
+	
+	public static CredenzialiMittenteVerifier credenzialiMittente = new CredenzialiMittenteVerifier(subject, issuer, client_id, username, email);
+	
+	public static CredenzialiMittenteVerifier credenzialiMittente_subjectNull = new CredenzialiMittenteVerifier(null, issuer, client_id, username, email);
+	public static CredenzialiMittenteVerifier credenzialiMittente_issuerNull = new CredenzialiMittenteVerifier(subject, null, client_id, username, email);
+	public static CredenzialiMittenteVerifier credenzialiMittente_clientIdNull = new CredenzialiMittenteVerifier(subject, issuer, null, username, email);
+	public static CredenzialiMittenteVerifier credenzialiMittente_usernameNull = new CredenzialiMittenteVerifier(subject, issuer, client_id, null, email);
+	public static CredenzialiMittenteVerifier credenzialiMittente_emailNull = new CredenzialiMittenteVerifier(subject, issuer, client_id, username, null);
+	
+	public static CredenzialiMittenteVerifier credenzialiMittente_clientIdInvalid = new CredenzialiMittenteVerifier(subject, issuer, client_id_invalid, username, email);
+	public static CredenzialiMittenteVerifier credenzialiMittente_usernameInvalid = new CredenzialiMittenteVerifier(subject, issuer, client_id, username_invalid, email);
 	
 	public static final String s1 = "https://userinfo.email";
 	public static final String s2 = "https://userinfo.profile";
@@ -240,13 +300,15 @@ public class Utilities extends ConfigLoader {
 			boolean scope1, boolean scope2, boolean scope3,
 			boolean role1, boolean role2, boolean role3,
 			boolean invalidIat, boolean futureIat, boolean invalidNbf, boolean invalidExp,
-			boolean invalidClientId, boolean invalidAudience, boolean invalidUsername, boolean invalidClaimCheNonDeveEsistere,
+			boolean invalidClientId, 
+			boolean singleValueNoArrayAudience, boolean invalidAudience, 
+			boolean invalidUsername, boolean invalidClaimCheNonDeveEsistere,
 			List<String> mapExpectedTokenInfo,
 			String prefix) throws Exception {
 			
-		String cliendId = "18192.apps";
+		String cliendId = client_id;
 		if(invalidClientId) {
-			cliendId = "18192.apps.invalid";
+			cliendId = client_id_invalid;
 		}
 		String audience = "23223.apps";
 		String audience2 = "7777.apps";
@@ -255,8 +317,6 @@ public class Utilities extends ConfigLoader {
 			audience2 = "7777.apps.invalid";
 		}
 		
-		String issuer = "testAuthEnte";
-		String subject = "10623542342342323";
 		String jti = "33aa1676-1f9e-34e2-8515-0cfca111a188";
 		Date now = DateManager.getDate();
 		Date campione = new Date( (now.getTime()/1000)*1000);
@@ -278,9 +338,11 @@ public class Utilities extends ConfigLoader {
 		String firstName = "Mario";
 		String middleName = "Bianchi";
 		String familyName = "Rossi";
-		String email = "mariorossi@govway.org";
 		
 		String aud = "\""+prefix+"aud\":[\""+audience+"\",\""+audience2+"\"]";
+		if(singleValueNoArrayAudience) {
+			aud = "\""+prefix+"aud\":\""+audience+"\"";
+		}
 		String jsonInput = 
 				"{ "+aud+",";
 		if(mapExpectedTokenInfo!=null) {
@@ -313,7 +375,7 @@ public class Utilities extends ConfigLoader {
 				}
 			}
 			if(requiredClaims_username) {
-				String u = "\""+prefix+"username\":\""+(invalidUsername ? "usernameErrato" : username)+"\"";
+				String u = "\""+prefix+"username\":\""+(invalidUsername ? username_invalid : username)+"\"";
 				String name = "\""+prefix+"name\":\""+fullName+"\"";
 				jsonInput = jsonInput+
 						u+" ,"+

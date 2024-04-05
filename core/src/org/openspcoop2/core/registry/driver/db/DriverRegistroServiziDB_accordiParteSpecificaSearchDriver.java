@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -588,7 +588,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		boolean error = false;
-		ArrayList<AccordoServizioParteSpecifica> serviziList = new ArrayList<AccordoServizioParteSpecifica>();
+		ArrayList<AccordoServizioParteSpecifica> serviziList = new ArrayList<>();
 
 		String aliasSoggettiFruitori = "soggettoFruitore";
 		
@@ -716,6 +716,11 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 		String filtroTrasformazione = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONFIGURAZIONE_TRASFORMAZIONE_STATO);
 		if((filtroTrasformazione!=null && "".equals(filtroTrasformazione))) {
 			filtroTrasformazione=null;
+		}
+		
+		String filtroConfigurazioneTransazioni = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI);
+		if((filtroConfigurazioneTransazioni!=null && "".equals(filtroConfigurazioneTransazioni))) {
+			filtroConfigurazioneTransazioni=null;
 		}
 		
 		String filtroCorrelazioneApplicativa = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_STATO);
@@ -848,6 +853,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 		this.driver.logDebug("filtroMessageSecurityStato : " + filtroMessageSecurityStato);
 		this.driver.logDebug("filtroMTOMStato : " + filtroMTOMStato);
 		this.driver.logDebug("filtroTrasformazione : " + filtroTrasformazione);
+		this.driver.logDebug("filtroConfigurazioneTransazioni : " + filtroConfigurazioneTransazioni);
 		this.driver.logDebug("filtroCorrelazioneApplicativa : " + filtroCorrelazioneApplicativa);
 		this.driver.logDebug("filtroConfigurazioneDumpTipo : " + filtroConfigurazioneDumpTipo);
 		this.driver.logDebug("filtroCORS : " + filtroCORS);
@@ -981,6 +987,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 							filtroMessageSecurityStato!=null ||
 							filtroMTOMStato!=null ||
 							filtroTrasformazione!=null ||
+							filtroConfigurazioneTransazioni!=null ||
 							filtroCorrelazioneApplicativa!=null ||
 							filtroConfigurazioneDumpTipo!=null ||
 							filtroCORS!=null) {
@@ -993,6 +1000,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 								filtroMessageSecurityStato,
 								filtroMTOMStato,
 								filtroTrasformazione,
+								filtroConfigurazioneTransazioni,
 								filtroCorrelazioneApplicativa,
 								filtroConfigurazioneDumpTipo,
 								filtroCORS, filtroCORSorigin);
@@ -1032,6 +1040,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 							filtroMessageSecurityStato!=null ||
 							filtroMTOMStato!=null ||
 							filtroTrasformazione!=null ||
+							filtroConfigurazioneTransazioni!=null ||
 							filtroCorrelazioneApplicativa!=null ||
 							filtroConfigurazioneDumpTipo!=null ||
 							filtroCORS!=null) {
@@ -1044,6 +1053,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 								filtroMessageSecurityStato,
 								filtroMTOMStato,
 								filtroTrasformazione,
+								filtroConfigurazioneTransazioni,
 								filtroCorrelazioneApplicativa,
 								filtroConfigurazioneDumpTipo,
 								filtroCORS, filtroCORSorigin);
@@ -1189,6 +1199,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 							filtroMessageSecurityStato!=null ||
 							filtroMTOMStato!=null ||
 							filtroTrasformazione!=null ||
+							filtroConfigurazioneTransazioni!=null ||
 							filtroCorrelazioneApplicativa!=null ||
 							filtroConfigurazioneDumpTipo!=null ||
 							filtroCORS!=null) {
@@ -1201,6 +1212,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 								filtroMessageSecurityStato,
 								filtroMTOMStato,
 								filtroTrasformazione,
+								filtroConfigurazioneTransazioni,
 								filtroCorrelazioneApplicativa,
 								filtroConfigurazioneDumpTipo,
 								filtroCORS, filtroCORSorigin);
@@ -1240,6 +1252,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 							filtroMessageSecurityStato!=null ||
 							filtroMTOMStato!=null ||
 							filtroTrasformazione!=null ||
+							filtroConfigurazioneTransazioni!=null ||
 							filtroCorrelazioneApplicativa!=null ||
 							filtroConfigurazioneDumpTipo!=null ||
 							filtroCORS!=null) {
@@ -1252,6 +1265,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 								filtroMessageSecurityStato,
 								filtroMTOMStato,
 								filtroTrasformazione,
+								filtroConfigurazioneTransazioni,
 								filtroCorrelazioneApplicativa,
 								filtroConfigurazioneDumpTipo,
 								filtroCORS, filtroCORSorigin);
@@ -1428,6 +1442,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 							filtroMessageSecurityStato!=null ||
 							filtroMTOMStato!=null ||
 							filtroTrasformazione!=null ||
+							filtroConfigurazioneTransazioni!=null ||
 							filtroCorrelazioneApplicativa!=null ||
 							filtroConfigurazioneDumpTipo!=null ||
 							filtroCORS!=null) {
@@ -1440,6 +1455,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 								filtroMessageSecurityStato,
 								filtroMTOMStato,
 								filtroTrasformazione,
+								filtroConfigurazioneTransazioni,
 								filtroCorrelazioneApplicativa,
 								filtroConfigurazioneDumpTipo,
 								filtroCORS, filtroCORSorigin);
@@ -1479,6 +1495,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 							filtroMessageSecurityStato!=null ||
 							filtroMTOMStato!=null ||
 							filtroTrasformazione!=null ||
+							filtroConfigurazioneTransazioni!=null ||
 							filtroCorrelazioneApplicativa!=null ||
 							filtroConfigurazioneDumpTipo!=null ||
 							filtroCORS!=null) {
@@ -1491,6 +1508,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 								filtroMessageSecurityStato,
 								filtroMTOMStato,
 								filtroTrasformazione,
+								filtroConfigurazioneTransazioni,
 								filtroCorrelazioneApplicativa,
 								filtroConfigurazioneDumpTipo,
 								filtroCORS, filtroCORSorigin);
@@ -1666,6 +1684,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 							filtroMessageSecurityStato!=null ||
 							filtroMTOMStato!=null ||
 							filtroTrasformazione!=null ||
+							filtroConfigurazioneTransazioni!=null ||
 							filtroCorrelazioneApplicativa!=null ||
 							filtroConfigurazioneDumpTipo!=null ||
 							filtroCORS!=null) {
@@ -1678,6 +1697,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 								filtroMessageSecurityStato,
 								filtroMTOMStato,
 								filtroTrasformazione,
+								filtroConfigurazioneTransazioni,
 								filtroCorrelazioneApplicativa,
 								filtroConfigurazioneDumpTipo,
 								filtroCORS, filtroCORSorigin);
@@ -1717,6 +1737,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 							filtroMessageSecurityStato!=null ||
 							filtroMTOMStato!=null ||
 							filtroTrasformazione!=null ||
+							filtroConfigurazioneTransazioni!=null ||
 							filtroCorrelazioneApplicativa!=null ||
 							filtroConfigurazioneDumpTipo!=null ||
 							filtroCORS!=null) {
@@ -1729,6 +1750,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 								filtroMessageSecurityStato,
 								filtroMTOMStato,
 								filtroTrasformazione,
+								filtroConfigurazioneTransazioni,
 								filtroCorrelazioneApplicativa,
 								filtroConfigurazioneDumpTipo,
 								filtroCORS, filtroCORSorigin);

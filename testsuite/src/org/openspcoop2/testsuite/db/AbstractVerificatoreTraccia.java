@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -1437,18 +1438,31 @@ public abstract class AbstractVerificatoreTraccia {
 	
 	public boolean isTracedCorrelazioneApplicativaRichiesta(String idMessaggio, String correlazioneApplicativa)
 			throws TestSuiteException {
-		return _isTracedCorrelazioneApplicativaRichiesta(this.prepareStatement(idMessaggio),correlazioneApplicativa);
+		return _isTracedCorrelazioneApplicativaRichiesta(this.prepareStatement(idMessaggio),correlazioneApplicativa, false);
 	}
 	public boolean isTracedCorrelazioneApplicativaRichiesta(String idMessaggio,IDSoggetto idPortaMessaggio, String correlazioneApplicativa)
 			throws TestSuiteException {
-		return _isTracedCorrelazioneApplicativaRichiesta(this.prepareStatement(idMessaggio,idPortaMessaggio),correlazioneApplicativa);
+		return _isTracedCorrelazioneApplicativaRichiesta(this.prepareStatement(idMessaggio,idPortaMessaggio),correlazioneApplicativa, false);
 	}
 	public boolean isTracedCorrelazioneApplicativaRichiesta(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			String correlazioneApplicativa)
 			throws TestSuiteException {
-		return _isTracedCorrelazioneApplicativaRichiesta(this.prepareStatement(idMessaggio,datiServizioAzione),correlazioneApplicativa);
+		return _isTracedCorrelazioneApplicativaRichiesta(this.prepareStatement(idMessaggio,datiServizioAzione),correlazioneApplicativa, false);
 	}
-	private boolean _isTracedCorrelazioneApplicativaRichiesta(PreparedStatement pstmt, String correlazioneApplicativa)
+	public boolean isTracedCorrelazioneApplicativaRichiesta(String idMessaggio, String correlazioneApplicativa, boolean emptyEqualsNull)
+			throws TestSuiteException {
+		return _isTracedCorrelazioneApplicativaRichiesta(this.prepareStatement(idMessaggio),correlazioneApplicativa, emptyEqualsNull);
+	}
+	public boolean isTracedCorrelazioneApplicativaRichiesta(String idMessaggio,IDSoggetto idPortaMessaggio, String correlazioneApplicativa, boolean emptyEqualsNull)
+			throws TestSuiteException {
+		return _isTracedCorrelazioneApplicativaRichiesta(this.prepareStatement(idMessaggio,idPortaMessaggio),correlazioneApplicativa, emptyEqualsNull);
+	}
+	public boolean isTracedCorrelazioneApplicativaRichiesta(String idMessaggio, DatiServizioAzione datiServizioAzione, 
+			String correlazioneApplicativa, boolean emptyEqualsNull)
+			throws TestSuiteException {
+		return _isTracedCorrelazioneApplicativaRichiesta(this.prepareStatement(idMessaggio,datiServizioAzione),correlazioneApplicativa, emptyEqualsNull);
+	}
+	private boolean _isTracedCorrelazioneApplicativaRichiesta(PreparedStatement pstmt, String correlazioneApplicativa, boolean emptyEqualsNull)
 			throws TestSuiteException {
 
 		ResultSet res = null;
@@ -1461,8 +1475,16 @@ public abstract class AbstractVerificatoreTraccia {
 
 				String value = res.getString(CostantiDB.TRACCE_COLUMN_CORRELAZIONE_APPLICATIVA_RICHIESTA);
 				if(value==null){
-					if(correlazioneApplicativa!=null)
-						return false;
+					if(correlazioneApplicativa!=null) {
+						if(StringUtils.isEmpty(correlazioneApplicativa)) {
+							if(!emptyEqualsNull) {
+								return false;
+							}
+						}
+						else {
+							return false;
+						}
+					}
 				}else{
 					if (!(value.equals(correlazioneApplicativa)))
 						return false;

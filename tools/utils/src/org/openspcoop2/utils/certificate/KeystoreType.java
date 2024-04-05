@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -39,7 +39,8 @@ public enum KeystoreType {
 	JCEKS ("jceks","JCEKS"),
 	JWK_SET ("jwk","JWK Set"),
 	PUBLIC_KEY ("public","Public Key"),
-	KEY_PAIR ("keys","Key Pair");
+	KEY_PAIR ("keys","Key Pair"),
+	SYMMETRIC_KEY ("symm", "Symmetric Key");
 	
 	
 	private final String nome;

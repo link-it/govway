@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -62,11 +62,11 @@ public class MapReader<K,V> {
 			
 			this.fastMap = new FastHashMap(map);
 			this.fastMap.setFast(true);
-//			Enumeration<?> keys = this.javaProperties.keys();
-//			while (keys.hasMoreElements()) {
-//				Object key = (Object) keys.nextElement();
-//				this.fastProperties.put(key, properties.get(key));
-//			}
+			/**Enumeration<?> keys = this.javaProperties.keys();
+			while (keys.hasMoreElements()) {
+				Object key = (Object) keys.nextElement();
+				this.fastProperties.put(key, properties.get(key));
+			}*/
 		}
 		else{
 			this.javaMap = map;
@@ -96,16 +96,16 @@ public class MapReader<K,V> {
 	@SuppressWarnings("unchecked")
 	public java.util.Enumeration<K> keys(){
 		if(this.readCallsNotSynchronized){
-			return (java.util.Enumeration<K>) (new IteratorEnumeration(this.fastMap.keySet().iterator()));
+			return (new IteratorEnumeration(this.fastMap.keySet().iterator()));
 		}else{
-			return (java.util.Enumeration<K>) (new IteratorEnumeration(this.javaMap.keySet().iterator()));
+			return (new IteratorEnumeration(this.javaMap.keySet().iterator()));
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
 	public Collection<V> values(){
 		if(this.readCallsNotSynchronized){
-			return (Collection<V>) this.fastMap.values();
+			return this.fastMap.values();
 		}else{
 			return this.javaMap.values();
 		}
@@ -113,7 +113,7 @@ public class MapReader<K,V> {
 	
 	@SuppressWarnings("unchecked")
 	public Enumeration<V> elements(){
-		return (Enumeration<V>) new IteratorEnumeration(this.values().iterator());
+		return new IteratorEnumeration(this.values().iterator());
 	}
 	
 	public boolean containsKey(K key){

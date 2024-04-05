@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -493,6 +493,44 @@ public class Utils {
 		org.openspcoop2.utils.Utilities.sleep(to_wait);
 	}
 	
+	public static void resetCacheDatiRichieste(Logger log) {
+		Map<String,String> queryParams = Map.of(
+				"resourceName", "DatiRichieste",
+				"methodName", "resetCache"
+				//,
+				//"paramValue", idPolicy
+			);
+		String jmxUrl = buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
+		log.info("Resetto la policy di rate limiting sulla url: " + jmxUrl );
+		
+		try {
+			String resp = new String(HttpUtilities.getHTTPResponse(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password")).getContent());
+			log.info(resp);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		//HttpUtilities.check(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password"));
+	}
+	
+	public static void resetCacheKeystore(Logger log) {
+		Map<String,String> queryParams = Map.of(
+				"resourceName", "Keystore",
+				"methodName", "resetCache"
+				//,
+				//"paramValue", idPolicy
+			);
+		String jmxUrl = buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
+		log.info("Resetto la policy di rate limiting sulla url: " + jmxUrl );
+		
+		try {
+			String resp = new String(HttpUtilities.getHTTPResponse(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password")).getContent());
+			log.info(resp);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		//HttpUtilities.check(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password"));
+	}
+	
 	public static void resetCacheToken(Logger log) {
 		Map<String,String> queryParams = Map.of(
 				"resourceName", "GestioneToken",
@@ -550,6 +588,25 @@ public class Utils {
 		//HttpUtilities.check(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password"));
 	}
 	
+	public static void resetCacheConfigurazione(Logger log) {
+		Map<String,String> queryParams = Map.of(
+				"resourceName", "ConfigurazionePdD",
+				"methodName", "resetCache"
+				//,
+				//"paramValue", idPolicy
+			);
+		String jmxUrl = buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
+		log.info("Resetto la policy di rate limiting sulla url: " + jmxUrl );
+		
+		try {
+			String resp = new String(HttpUtilities.getHTTPResponse(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password")).getContent());
+			log.info(resp);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		//HttpUtilities.check(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password"));
+	}
+	
 	public static void resetAllCache(Logger log) {
 		
 		List<String> resource = new ArrayList<>();
@@ -560,6 +617,7 @@ public class Utils {
 		resource.add("DatiAutenticazione");
 		resource.add("GestioneToken");
 		resource.add("Keystore");
+		resource.add("AttributeAuthority");
 		resource.add("ResponseCaching");
 		// disabilitata resource.add("ControlloTraffico");
 		resource.add("LoadBalancer");

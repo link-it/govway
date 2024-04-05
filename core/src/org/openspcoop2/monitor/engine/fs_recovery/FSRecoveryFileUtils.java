@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 
+import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
 /**
@@ -34,89 +35,79 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class FSRecoveryFileUtils {
+	
+	private FSRecoveryFileUtils() {}
 
-	public static String getDateFromFilename(String fileName) throws Exception {
+	public static final String ERROR_SUFFIX = ".error";
+	
+	public static String getDateFromFilename(String fileName) throws UtilsException {
 		String[] split = fileName.split("_");
 		if(split.length < 2) {
-			throw new Exception("Impossibile ricavare la data dal nome file ["+fileName+"]");
+			throw new UtilsException("Impossibile ricavare la data dal nome file ["+fileName+"]");
 		}
 		return split[1];
 	}
 	
-	public static String getNewFileNameFromFilename(String fileName) throws Exception {
+	public static String getNewFileNameFromFilename(String fileName) throws UtilsException {
 		
 		int tentativi = getTentativiFromFilename(fileName);
 		
 		if(tentativi == 0) {
-			return fileName + "_1.error";
+			return fileName + "_1"+ERROR_SUFFIX;
 		} else {
-			String substring = fileName.substring(0, fileName.indexOf(".error"));
+			String substring = fileName.substring(0, fileName.indexOf(ERROR_SUFFIX));
 			
 			String[] split = substring.split("_");
 			if(split==null || split.length <= 0) {
-				throw new Exception("Impossibile ricavare il nuovo nome file dal nome file ["+fileName+"]");
+				throw new UtilsException("Impossibile ricavare il nuovo nome file dal nome file ["+fileName+"]");
 			}
 			StringBuilder sb  = new StringBuilder();
 			for(int i =0; i < split.length -1; i++) {
 				sb.append(split[i]).append("_");
 			}
 			int newErrorIndex = tentativi+1;
-			sb.append(newErrorIndex).append(".error");
+			sb.append(newErrorIndex).append(ERROR_SUFFIX);
 			return sb.toString();
 		}
 	}
 	
-	public static int getTentativiFromFilename(String fileName) throws Exception {
+	public static int getTentativiFromFilename(String fileName) throws UtilsException {
 		if(fileName.endsWith(".xml")) {
 			return 0;
 		} else {
-			if(!fileName.endsWith(".error")){
-				throw new Exception("Impossibile ricavare il numero di tentativi dal nome file ["+fileName+"]");	
+			if(!fileName.endsWith(ERROR_SUFFIX)){
+				throw new UtilsException("Impossibile ricavare il numero di tentativi dal nome file ["+fileName+"]");	
 			}
 			
-			String substring = fileName.substring(0, fileName.indexOf(".error"));
+			String substring = fileName.substring(0, fileName.indexOf(ERROR_SUFFIX));
 			
 			String[] split = substring.split("_");
 			if(split==null || split.length <= 0) {
-				throw new Exception("Impossibile ricavare il numero di tentativi dal nome file ["+fileName+"]");
+				throw new UtilsException("Impossibile ricavare il numero di tentativi dal nome file ["+fileName+"]");
 			}
 			return Integer.parseInt(split[split.length -1].trim());
 		}
 	}
 	
-	public static String renameToDLQ(File directoryDLQ, File file, Throwable e, Logger log) throws Exception {
-		ByteArrayOutputStream baos = null;
-		PrintWriter pw = null;
-		try{
-			baos = new ByteArrayOutputStream();
-			pw = new PrintWriter(baos);
+	public static String renameToDLQ(File directoryDLQ, File file, Throwable e, Logger log) throws UtilsException {
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				PrintWriter pw = new PrintWriter(baos);){
 			e.printStackTrace(pw);
 			pw.flush();
-			pw.close();
+			baos.flush();
 			return renameToDLQ(directoryDLQ, file, baos.toString(), log);
-		} finally {
-			if(pw != null) {
-				try {pw.flush();} catch(Exception ex){
-					// close
-				}
-				try {pw.close();} catch(Exception ex){
-					// close
-				}
-			}
-			if(baos != null){
-				try {baos.flush();} catch(Exception ex){
-					// close
-				}
-				try {baos.close();} catch(Exception ex){
-					// close
-				}
-			}
+		} catch(Exception er) {
+			throw new UtilsException(e.getMessage(),e);
 		}
-		
 		
 	}
 	
-	public static String renameToDLQ(File directoryDLQ, File file, String error, Logger log) throws Exception {
+	public static String renameToDLQ(File directoryDLQ, File file, String error, Logger log) throws UtilsException {
+		
+		if(log!=null) {
+			// nop
+		}
+		
 		// Se per un file si raggiunge il massimo numero di tentativi, effettuare il rename del file file.renameTo(file2)
 		// Spostandolo nella directory DLQ.
 
@@ -132,26 +123,15 @@ public class FSRecoveryFileUtils {
 			// ignore
 		}
 		
-		FileOutputStream fos = null;
-		
-		try {
-			File readme = new File(dir, file.getName() + ".README");
-			fos = new FileOutputStream(readme);
+		File readme = new File(dir, file.getName() + ".README");
+		try (FileOutputStream fos = new FileOutputStream(readme);){
 			fos.write(error.getBytes());
 			fos.flush();
-			fos.close();
-		} finally {
-			if(fos != null) {
-				try {fos.flush();} catch(Exception e){
-					// close
-				}
-				try {fos.close();} catch(Exception e){
-					// close
-				}
-			}
+		} 
+		catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
 		}
-		
-		
+			
 		return newFile.getAbsolutePath();
 
 	}

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -45,10 +45,12 @@ import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
+import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
 import org.openspcoop2.web.monitor.core.report.ReportDataSource;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
 import org.openspcoop2.web.monitor.statistiche.constants.StatisticheCostanti;
@@ -56,6 +58,7 @@ import org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere;
 import org.openspcoop2.web.monitor.statistiche.utils.ExportUtils;
 import org.openspcoop2.web.monitor.statistiche.utils.JsonStatsUtils;
 import org.openspcoop2.web.monitor.statistiche.utils.StatsUtils;
+import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -148,8 +151,20 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 
 		try {
 			switch (tipoReport) {
-			case BAR_CHART:
-				grafico = JsonStatsUtils.getJsonBarChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), this.getSlice());
+			case BAR_CHART:{
+				NumeroDimensioni numeroDimensioni = ((StatsSearchForm)this.search).getNumeroDimensioni();
+				
+				switch (numeroDimensioni) {
+					case DIMENSIONI_3:
+						StatisticType statisticType = StatsUtils.checkStatisticType((StatsSearchForm) this.search, false);
+						grafico = JsonStatsUtils.getJsonHeatmapChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), this.getSlice(), statisticType, this.isVisualizzaTotaleNelleCelleGraficoHeatmap(), DynamicPdDBean.log);
+						break;
+					case DIMENSIONI_2:
+					default:
+						grafico = JsonStatsUtils.getJsonBarChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), this.getSlice());
+						break;
+					}
+				}
 				break;
 			case PIE_CHART:
 				grafico = JsonStatsUtils.getJsonPieChartDistribuzione(list, ((StatsSearchForm)this.search), this.getCaption(), this.getSubCaption() , this.getSlice());
@@ -243,23 +258,33 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 				return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_MITTENTE_INDIRIZZO_IP_SUFFIX_KEY);
 			} else { // token
 				if (StringUtils.isNotEmpty(this.search.getTokenClaim())) {
-					org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(this.search.getTokenClaim());
+					org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = null;
+					try {
+						tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.toEnumConstant(this.search.getTokenClaim(), true);
+					}catch(Exception e) {
+						Logger log = LoggerManager.getPddMonitorCoreLogger();
+						log.error(e.getMessage(),e);
+					}
 
-					switch (tcm) {
-					case token_clientId:
-						return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_CLIENT_ID_LABEL_KEY);
-					case token_eMail:
-						return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_EMAIL_LABEL_KEY);
-					case token_issuer:
-						return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_ISSUER_LABEL_KEY);
-					case token_subject:
-						return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_SUBJECT_LABEL_KEY);
-					case token_username:
-						return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_USERNAME_LABEL_KEY);
-					case trasporto:
-					default:
-						// caso impossibile
-						break; 
+					if(tcm!=null) {
+						switch (tcm) {
+						case TOKEN_CLIENT_ID:
+							return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_CLIENT_ID_LABEL_KEY);
+						case TOKEN_EMAIL:
+							return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_EMAIL_LABEL_KEY);
+						case TOKEN_ISSUER:
+							return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_ISSUER_LABEL_KEY);
+						case TOKEN_SUBJECT:
+							return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_SUBJECT_LABEL_KEY);
+						case TOKEN_USERNAME:
+							return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_USERNAME_LABEL_KEY);
+						case PDND_ORGANIZATION_NAME:
+							return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_PDND_ORGANIZATION_NAME_LABEL_KEY);
+						case TRASPORTO:
+						default:
+							// caso impossibile
+							break; 
+						}
 					}
 				} 
 			}
@@ -276,13 +301,34 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 		return false;
 	}
 	
+	public boolean isShowColumnAutenticazione() {
+		if(StringUtils.isNotEmpty(this.search.getRiconoscimento())) {
+			return this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO);
+		}
+		return false;
+	}
+	
 	public boolean isShowColumnClientIdApplicativoSoggetto() {
 		if(StringUtils.isNotEmpty(this.search.getRiconoscimento()) &&
 			this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO) &&
 			StringUtils.isNotEmpty(this.search.getTokenClaim())) {
 			try {
-				org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(this.search.getTokenClaim());
-				return org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_clientId.equals(tcm);
+				org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.toEnumConstant(this.search.getTokenClaim(), true);
+				return org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_CLIENT_ID.equals(tcm);
+			}catch(Exception t) {
+				// ignore
+			}
+		}
+		return false;
+	}
+	
+	public boolean isShowColumnClientIdPDNDInfo() {
+		if(StringUtils.isNotEmpty(this.search.getRiconoscimento()) &&
+			this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)  &&
+			StringUtils.isNotEmpty(this.search.getTokenClaim())) {
+			try {
+				org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.toEnumConstant(this.search.getTokenClaim(), true);
+				return org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.equals(tcm);
 			}catch(Exception t) {
 				// ignore
 			}
@@ -432,11 +478,13 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			String identificazione = this.search.getIdentificazione();
 			String tokenClaim = this.search.getTokenClaim();
 			// creazione del report con Dynamic Report
-			ReportDataSource report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,
+			ReportDataSource report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
+					tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, identificazione, tokenClaim, false); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,
+			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+					tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(),tipoRiconoscimento, identificazione, tokenClaim);
 
 			if(useFaceContext){
@@ -534,11 +582,13 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			String identificazione = this.search.getIdentificazione();
 			String tokenClaim = this.search.getTokenClaim();
 			// creazione del report con Dynamic Report
-			ReportDataSource report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,
+			ReportDataSource report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
+					tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, identificazione, tokenClaim, false); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,
+			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+					tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(),tipoRiconoscimento, identificazione, tokenClaim);
 
 			if(useFaceContext){
@@ -636,11 +686,13 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			String identificazione = this.search.getIdentificazione();
 			String tokenClaim = this.search.getTokenClaim();
 			// creazione del report con Dynamic Report
-			ReportDataSource report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,
+			ReportDataSource report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
+					tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, identificazione, tokenClaim, true); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,
+			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+					tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(),tipoRiconoscimento, identificazione, tokenClaim);
 
 			if(useFaceContext){
@@ -805,23 +857,31 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 				return CostantiGrafici.DISTRIBUZIONE_SA_INDIRIZZO_IP_FILE_NAME;
 			} else { // token
 				if (StringUtils.isNotEmpty(this.search.getTokenClaim())) {
-					org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(this.search.getTokenClaim());
-
-					switch (tcm) {
-					case token_clientId:
-						return CostantiGrafici.DISTRIBUZIONE_SA_TOKEN_CLIENTID_FILE_NAME;
-					case token_eMail:
-						return CostantiGrafici.DISTRIBUZIONE_SA_TOKEN_EMAIL_FILE_NAME;
-					case token_issuer:
-						return CostantiGrafici.DISTRIBUZIONE_SA_TOKEN_ISSUER_FILE_NAME;
-					case token_subject:
-						return CostantiGrafici.DISTRIBUZIONE_SA_TOKEN_SUBJECT_FILE_NAME;
-					case token_username:
-						return CostantiGrafici.DISTRIBUZIONE_SA_TOKEN_USERNAME_FILE_NAME;
-					case trasporto:
-					default:
-						// caso impossibile
-						break; 
+					org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = null;
+					try {
+						tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.toEnumConstant(this.search.getTokenClaim(), true);
+					}catch(Exception e) {
+						Logger log = LoggerManager.getPddMonitorCoreLogger();
+						log.error(e.getMessage(),e);
+					}
+					
+					if(tcm!=null) {
+						switch (tcm) {
+						case TOKEN_CLIENT_ID:
+							return CostantiGrafici.DISTRIBUZIONE_SA_TOKEN_CLIENTID_FILE_NAME;
+						case TOKEN_EMAIL:
+							return CostantiGrafici.DISTRIBUZIONE_SA_TOKEN_EMAIL_FILE_NAME;
+						case TOKEN_ISSUER:
+							return CostantiGrafici.DISTRIBUZIONE_SA_TOKEN_ISSUER_FILE_NAME;
+						case TOKEN_SUBJECT:
+							return CostantiGrafici.DISTRIBUZIONE_SA_TOKEN_SUBJECT_FILE_NAME;
+						case TOKEN_USERNAME:
+							return CostantiGrafici.DISTRIBUZIONE_SA_TOKEN_USERNAME_FILE_NAME;
+						case TRASPORTO:
+						default:
+							// caso impossibile
+							break; 
+						}
 					}
 				} 
 			}

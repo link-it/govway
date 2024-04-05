@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.protocol.modipa.properties;
 
-import java.io.ByteArrayInputStream;
 import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +47,7 @@ import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.KeystoreUtils;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPProvider;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
@@ -674,8 +674,7 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 				
 				// Verifico chiave privata
 				if(archive!=null) {
-					KeyStore ks = KeyStore.getInstance(archiveType.name());
-					ks.load(new ByteArrayInputStream(archive), keystorePasswordItemValue.getValue().toCharArray());
+					KeyStore ks = KeystoreUtils.readKeystore(archive, archiveType.name(), keystorePasswordItemValue.getValue());
 					ks.getKey(keyAliasItemValue.getValue(), keyPasswordItemValue.getValue().toCharArray());
 				}
 			}
@@ -690,26 +689,38 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 	
 	static void addTrustStoreSSLConfigChoice(ConsoleConfiguration configuration, boolean x5u) throws ProtocolException {
 		addTrustStoreConfigChoice(configuration, true, false, 
-				false, false, false, x5u);
+				false, 
+				false, false, false, 
+				x5u);
 	}
 	static void addTrustStoreCertificatiConfigChoice(ConsoleConfiguration configuration, boolean x5u) throws ProtocolException {
 		addTrustStoreConfigChoice(configuration, false, true, 
-				false, false, false, x5u);
+				false, 
+				false, false, false, 
+				x5u);
 	}
 	static void addTrustStoreKeystoreErogazioneConfigChoice(ConsoleConfiguration configuration) throws ProtocolException {
 		addTrustStoreConfigChoice(configuration, false, false, 
-				true, false, false, false);
+				true, 
+				false, false, false, 
+				false);
 	}
-	static void addTrustStoreKeystoreFruizioneConfigChoice(ConsoleConfiguration configuration) throws ProtocolException {
+	static void addTrustStoreKeystoreFruizioneConfigChoice(ConsoleConfiguration configuration, boolean tokenNonLocale) throws ProtocolException {
 		addTrustStoreConfigChoice(configuration, false, false, 
-				false, true, false, false);
+				false, 
+				true, tokenNonLocale, false, 
+				false);
 	}
 	static void addTrustStoreKeystoreFruizioneOAuthConfigChoice(ConsoleConfiguration configuration) throws ProtocolException {
 		addTrustStoreConfigChoice(configuration, false, false, 
-				false, false, true, false);
+				false, 
+				false, false, true, 
+				false);
 	}
 	private static void addTrustStoreConfigChoice(ConsoleConfiguration configuration, boolean ssl, boolean truststore, 
-			boolean keystoreErogazione, boolean keystoreFruizione, boolean keystoreFruizioneOauthNoSicurezzaMessaggio, boolean x5u) throws ProtocolException {
+			boolean keystoreErogazione, 
+			boolean keystoreFruizione, boolean tokenNonLocale, boolean keystoreFruizioneOauthNoSicurezzaMessaggio, 
+			boolean x5u) throws ProtocolException {
 		
 		if(keystoreErogazione) {
 			// nop
@@ -724,6 +735,10 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 					ModIConsoleCostanti.MODIPA_KEYSTORE_FRUIZIONE_APPLICATIVO);
 			modeItem.addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_LABEL_FRUIZIONE,
 					ModIConsoleCostanti.MODIPA_KEYSTORE_FRUIZIONE);
+			if(tokenNonLocale) {
+				modeItem.addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_LABEL_TOKEN_POLICY,
+						ModIConsoleCostanti.MODIPA_KEYSTORE_FRUIZIONE_TOKEN_POLICY);
+			}
 			modeItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_DEFAULT_VALUE);
 			modeItem.setReloadOnChange(true);
 			configuration.addConsoleItem(modeItem);

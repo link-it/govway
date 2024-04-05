@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -31,6 +31,7 @@ import java.util.Properties;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 
 /**
  * MultiKeystore
@@ -67,8 +68,10 @@ public class MultiKeystore implements Serializable  {
 		return bf.toString();
 	}
 	
-	
 	public MultiKeystore(String propertyFilePath) throws SecurityException{
+		this(propertyFilePath, null);
+	}
+	public MultiKeystore(String propertyFilePath, BYOKRequestParams requestParams) throws SecurityException{
 		
 		try{
 			Properties multiProperties = StoreUtils.readProperties("MultiProperties", propertyFilePath);
@@ -81,12 +84,7 @@ public class MultiKeystore implements Serializable  {
 			}
 			
 			for (String alias : this.aliasesList) {
-				String keyAlias = null;
-				try{
-					keyAlias = getProperty(multiProperties, alias+MultiKeystore.KEY_ALIAS);
-				}catch(Exception e){
-					keyAlias = alias;
-				}
+				String keyAlias = getSafeKeyAlias(alias, multiProperties);
 				String keyPassword = getProperty(multiProperties, alias+MultiKeystore.KEY_PASSWORD);
 				
 				String keyValue = multiProperties.getProperty(alias+MultiKeystore.KEY_VALUE);
@@ -94,24 +92,14 @@ public class MultiKeystore implements Serializable  {
 				if(keyValue!=null){
 					// Configurazione con keyValue fornita direttamente
 					String keyAlgorithm = getProperty(multiProperties, alias+MultiKeystore.KEY_ALGORITHM);
-					try {
-						this.keystores.put(alias, new SymmetricKeystore(keyAlias, keyValue, keyAlgorithm));
-					}catch(Exception e) {
-						String idKeystore = "!!! Errore durante il caricamento del SymmetricKeystore !!! [keyAlias:"+keyAlias+"] ";
-						LoggerWrapperFactory.getLogger(MultiKeystore.class).error(idKeystore+e.getMessage(),e);
-					}
+					addSymmetricKeystore(alias, keyAlias, keyValue, keyAlgorithm, requestParams);
 				}
 				else{
 					// Configurazione con MerlinKeystore
 					String keystoreType = getProperty(multiProperties, alias+MultiKeystore.KEYSTORE_TYPE);
 					String keystorePath = getProperty(multiProperties, alias+MultiKeystore.KEYSTORE_PATH);
 					String keystorePassword = getProperty(multiProperties, alias+MultiKeystore.KEYSTORE_PASSWORD);
-					try {
-						this.keystores.put(alias, new MerlinKeystore(keystorePath, keystoreType, keystorePassword, keyPassword));
-					}catch(Exception e) {
-						String idKeystore = "!!! Errore durante il caricamento del MerlinKeystore !!! [keyAlias:"+keyAlias+"] ";
-						LoggerWrapperFactory.getLogger(MultiKeystore.class).error(idKeystore+e.getMessage(),e);
-					}
+					addMerlinKeystore(alias, keyAlias, keystoreType, keystorePath, keystorePassword, keyPassword, requestParams);
 				}
 				
 				this.mappingAliasToKeyAlias.put(alias, keyAlias);
@@ -120,6 +108,33 @@ public class MultiKeystore implements Serializable  {
 			
 		}catch(Exception e){
 			throw new SecurityException(e.getMessage(),e);
+		}
+	}
+	
+	private String getSafeKeyAlias(String alias, Properties multiProperties) {
+		String keyAlias = null;
+		try{
+			keyAlias = getProperty(multiProperties, alias+MultiKeystore.KEY_ALIAS);
+		}catch(Exception e){
+			keyAlias = alias;
+		}
+		return keyAlias;
+	}
+	
+	private void addSymmetricKeystore(String alias, String keyAlias, String keyValue, String keyAlgorithm, BYOKRequestParams requestParams) {
+		try {
+			this.keystores.put(alias, new SymmetricKeystore(keyAlias, keyValue, keyAlgorithm, requestParams));
+		}catch(Exception e) {
+			String idKeystore = "!!! Errore durante il caricamento del SymmetricKeystore !!! [keyAlias:"+keyAlias+"] ";
+			LoggerWrapperFactory.getLogger(MultiKeystore.class).error(idKeystore+e.getMessage(),e);
+		}
+	}
+	private void addMerlinKeystore(String alias, String keyAlias, String keystoreType, String keystorePath, String keystorePassword, String keyPassword, BYOKRequestParams requestParams) {
+		try {
+			this.keystores.put(alias, new MerlinKeystore(keystorePath, keystoreType, keystorePassword, keyPassword, requestParams));
+		}catch(Exception e) {
+			String idKeystore = "!!! Errore durante il caricamento del MerlinKeystore !!! [keyAlias:"+keyAlias+"] ";
+			LoggerWrapperFactory.getLogger(MultiKeystore.class).error(idKeystore+e.getMessage(),e);
 		}
 	}
 	

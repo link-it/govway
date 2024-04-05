@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -223,7 +223,7 @@ public class DatiTransazione extends org.openspcoop2.utils.beans.BaseBean implem
 		return this.tokenClaims;
 	}
 
-	public void setTokenClaims(Map<String, Object> tokenClaims) {
+	public void setTokenClaims(Map<String, Serializable> tokenClaims) {
 		this.tokenClaims = new HashMap<>();
 		if(tokenClaims!=null && !tokenClaims.isEmpty()) {
 			for (String key : tokenClaims.keySet()) {

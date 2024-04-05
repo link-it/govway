@@ -195,19 +195,38 @@ Scenario: Preparazione Test
         client_id: 'client_id',
         subject:    'subject',
         email:      'email@test',
+        pdnd_organization_name:      'Comune di Esempio C-'
     }
     """
-    * eval randomize(claims, ["username","issuer", "client_id", "subject", "email"]);
+    * eval randomize(claims, ["username","issuer", "client_id", "subject", "email", "pdnd_organization_name"]);
     * eval claims.email = claims.email + ".it"
 
-    * def filtro_claims = 
+    * def filtro_claims_fruizione = 
     """
     ([
         { nome: "username", valore: claims.username },
         { nome: "issuer", valore: claims.issuer },
         { nome: "client_id", valore: claims.client_id },
         { nome: "subject", valore: claims.subject },
-        { nome: "email", valore: claims.email },
+        { nome: "email", valore: claims.email }
+    ])
+    """
+
+    * def filtro_claims_erogazione = 
+    """
+    ([
+        { nome: "username", valore: claims.username },
+        { nome: "issuer", valore: claims.issuer },
+        { nome: "client_id", valore: claims.client_id },
+        { nome: "subject", valore: claims.subject },
+        { nome: "email", valore: claims.email }
+    ])
+    """
+
+    * def filtro_claims_pdnd = 
+    """
+    ([
+        { nome: "pdnd_organization_name", valore: claims.pdnd_organization_name }
     ])
     """
 
@@ -221,6 +240,9 @@ Scenario: Preparazione Test
 	client_id_only: 0,
         subject: 0,
         email: 0,
+        pdnd_organization_name_client_id_raw: 0,
+        pdnd_organization_name_client_id_application: 0,
+        pdnd_organization_name_client_id_only: 0
     }
     """
     
@@ -254,6 +276,18 @@ Scenario: Preparazione Test
     * eval db.update("INSERT INTO credenziale_mittente(tipo,credenziale) VALUES ('token_eMail', '"+claims.email+"')");
     * def result = db.readRows("SELECT * FROM credenziale_mittente WHERE tipo='token_eMail' AND credenziale ='"+claims.email+"'");
     * eval id_credenziale.email = result[0].id;
+
+    * eval db.update("INSERT INTO credenziale_mittente(tipo,credenziale,ref_credenziale) VALUES ('pdnd_org_name', 'TESTRAW "+claims.pdnd_organization_name+"',"+id_credenziale.client_id_raw+")");
+    * def result = db.readRows("SELECT * FROM credenziale_mittente WHERE tipo='pdnd_org_name' AND credenziale ='TESTRAW "+claims.pdnd_organization_name+"'");
+    * eval id_credenziale.pdnd_organization_name_client_id_raw = result[0].id;
+
+    * eval db.update("INSERT INTO credenziale_mittente(tipo,credenziale,ref_credenziale) VALUES ('pdnd_org_name', 'TESTAPPLICATION "+claims.pdnd_organization_name+"',"+id_credenziale.client_id_application+")");
+    * def result = db.readRows("SELECT * FROM credenziale_mittente WHERE tipo='pdnd_org_name' AND credenziale ='TESTAPPLICATION "+claims.pdnd_organization_name+"'");
+    * eval id_credenziale.pdnd_organization_name_client_id_application = result[0].id;
+
+    * eval db.update("INSERT INTO credenziale_mittente(tipo,credenziale,ref_credenziale) VALUES ('pdnd_org_name', 'TESTONLY "+claims.pdnd_organization_name+"',"+id_credenziale.client_id_only+")");
+    * def result = db.readRows("SELECT * FROM credenziale_mittente WHERE tipo='pdnd_org_name' AND credenziale ='TESTONLY "+claims.pdnd_organization_name+"'");
+    * eval id_credenziale.pdnd_organization_name_client_id_only = result[0].id;
 
     # Esegue un'invocazione per recuperare l'id transazione dell'invocazione,
     # da associare poi alle credenziali mittente del soggetto creato in precedenza

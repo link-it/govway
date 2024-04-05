@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -23,6 +23,8 @@ package org.openspcoop2.core.transazioni.utils.credenziali;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.dao.ICredenzialeMittenteService;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
+import org.openspcoop2.generic_project.exception.ExpressionException;
+import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.utils.UtilsException;
@@ -39,7 +41,7 @@ public abstract class AbstractSearchCredenziale {
 	protected TipoCredenzialeMittente tipo;
 	protected boolean convertToDBValue = true; // usato dalla console
 	
-	public AbstractSearchCredenziale(TipoCredenzialeMittente tipo) { 
+	protected AbstractSearchCredenziale(TipoCredenzialeMittente tipo) { 
 		this.tipo = tipo;
 	}
 	
@@ -48,7 +50,7 @@ public abstract class AbstractSearchCredenziale {
 	}
 	
 	public String getTipo() {
-		return this.tipo.name();
+		return this.tipo.getRawValue();
 	}
 	public TipoCredenzialeMittente getTipoCredenzialeMittente() {
 		return this.tipo;
@@ -60,42 +62,50 @@ public abstract class AbstractSearchCredenziale {
 		
 		try {
 		
-			IPaginatedExpression pagEpression = credenzialeMittentiService.newPaginatedExpression();
-			pagEpression.and();
+			IPaginatedExpression pagExpression = credenzialeMittentiService.newPaginatedExpression();
+			pagExpression.and();
 			
 			String credential = this.convertToDBValue ? this.getExactValueDatabase(credentialParam, ricercaEsatta) : credentialParam;
 			
-			pagEpression.equals(CredenzialeMittente.model().TIPO, this.tipo.name());
+			pagExpression.equals(CredenzialeMittente.model().TIPO, this.tipo.getRawValue());
 			
-			if(ricercaEsatta && caseSensitive) {
-				if(this.convertToDBValue) {
-					pagEpression.like(CredenzialeMittente.model().CREDENZIALE, credential, LikeMode.ANYWHERE); // il valore credential è già convertito sul valore del database.
-				}
-				else {
-					pagEpression.equals(CredenzialeMittente.model().CREDENZIALE, credential); 
-				}
-			}
-			else if(ricercaEsatta && !caseSensitive) {
-				if(this.convertToDBValue) {
-					pagEpression.ilike(CredenzialeMittente.model().CREDENZIALE, credential, LikeMode.ANYWHERE); // il valore credential è già convertito sul valore del database.
-				}
-				else {
-					pagEpression.ilike(CredenzialeMittente.model().CREDENZIALE, credential, LikeMode.EXACT); 
-				}
-			}
-			else if(!ricercaEsatta && !caseSensitive) {
-				pagEpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialParam, LikeMode.ANYWHERE); // credentialParam: non bisogna cercare il valore esatto, basta quanto fornito
-			}
-			else { // !ricercaEsatta && caseSensitive
-				pagEpression.like(CredenzialeMittente.model().CREDENZIALE, credentialParam, LikeMode.ANYWHERE); // credentialParam: non bisogna cercare il valore esatto, basta quanto fornito 
-			}
+			setLikeCondition(pagExpression, ricercaEsatta, caseSensitive,
+					credential, credentialParam);
 		
-			return pagEpression;
+			return pagExpression;
 			
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(), e);
 		}
 		
+	}
+	
+	private void setLikeCondition(IPaginatedExpression pagExpression, boolean ricercaEsatta, boolean caseSensitive,
+			String credential, String credentialParam) throws ExpressionNotImplementedException, ExpressionException {
+		if(ricercaEsatta) {
+			if(caseSensitive) {
+				if(this.convertToDBValue) {
+					pagExpression.like(CredenzialeMittente.model().CREDENZIALE, credential, LikeMode.ANYWHERE); // il valore credential è già convertito sul valore del database.
+				}
+				else {
+					pagExpression.equals(CredenzialeMittente.model().CREDENZIALE, credential); 
+				}
+			}
+			else {
+				if(this.convertToDBValue) {
+					pagExpression.ilike(CredenzialeMittente.model().CREDENZIALE, credential, LikeMode.ANYWHERE); // il valore credential è già convertito sul valore del database.
+				}
+				else {
+					pagExpression.ilike(CredenzialeMittente.model().CREDENZIALE, credential, LikeMode.EXACT); 
+				}
+			}
+		}
+		else if(!caseSensitive) {
+			pagExpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialParam, LikeMode.ANYWHERE); // credentialParam: non bisogna cercare il valore esatto, basta quanto fornito
+		}
+		else { // !ricercaEsatta && caseSensitive
+			pagExpression.like(CredenzialeMittente.model().CREDENZIALE, credentialParam, LikeMode.ANYWHERE); // credentialParam: non bisogna cercare il valore esatto, basta quanto fornito 
+		}
 	}
 	
 }

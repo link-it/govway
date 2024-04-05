@@ -83,13 +83,15 @@ And match header Authorization == '#notpresent'
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
-* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'bloccante', token_auth: 'Authorization OAuth' })
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'bloccante', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'bloccante' })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
-* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'bloccante', token_auth: 'Authorization OAuth' })
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'bloccante', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'bloccante' })
 
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_authorization_token.payload.jti
 
 Examples:
 | tipo-test | tipo-test-minuscolo | nome-api-impl | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
@@ -144,13 +146,18 @@ And match header Authorization == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
-* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'bloccante' })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
-* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'bloccante' })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 
 Examples:
@@ -218,13 +225,18 @@ And match header Authorization == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
-* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: sicurezzaPattern, other_checks: checks_richiesta })
+* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: sicurezzaPattern, other_checks: checks_richiesta, requestMessageId:client_request_id })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'bloccante' })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
-* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: sicurezzaPattern, other_checks: checks_richiesta })
+* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: sicurezzaPattern, other_checks: checks_richiesta, requestMessageId:client_request_id })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'bloccante' })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 
 Examples:
@@ -232,4 +244,43 @@ Examples:
 | X509 | x509-0301 | SoapBlockingAuditRest01 | AUDIT_REST_01 | IDAS0301 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | ExampleClient1 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT |
 
 
+
+
+
+
+@negoziazioneViaTokenPolicySecurityOk
+Scenario: Test negoziazione ok tramite l'utilizzo di un keystore JWK definito nella token policy
+
+Given url govway_base_path + "/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenSicurezzaAuditViaTokenPolicySOAP/v1"
+And path 'test'
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'FruizioneAuditViaTokenPolicy'
+And header GovWay-Audit-User = "utente-token"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read("request.xml")
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+
+
+@negoziazioneViaTokenPolicySecurityConIntegrityOk
+Scenario: Test negoziazione ok tramite l'utilizzo di un keystore JWK definito nella token policy, anche con integrity (fallisce poichè il kid nell'audit non è presente nel truststore)
+
+Given url govway_base_path + "/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenSicurezzaIntegrityAuditViaTokenPolicySOAP/v1"
+And path 'test'
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'FruizioneIntegrityAuditViaTokenPolicy'
+And header GovWay-Audit-User = "utente-token"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 500
+And match response == read('error-bodies/audit_via_token_policy_kid_non_valido.xml')
 

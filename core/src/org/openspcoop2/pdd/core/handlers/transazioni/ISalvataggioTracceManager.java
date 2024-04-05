@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -19,9 +19,11 @@
  */
 package org.openspcoop2.pdd.core.handlers.transazioni;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.transazioni.Transazione;
-import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.pdd.logger.transazioni.InformazioniTransazione;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.slf4j.Logger;
 
 /**     
@@ -34,15 +36,15 @@ import org.slf4j.Logger;
 public interface ISalvataggioTracceManager {
 
 	public StatoSalvataggioTracce getInformazioniSalvataggioTracciaRichiesta(Logger log,
-			PostOutResponseContext context,
+			InformazioniTransazione info,
 			Transaction transaction,
 			Transazione transazioneDTO,
-			boolean pddStateless) throws Exception;
+			boolean pddStateless) throws CoreException, ProtocolException;
 	
 	public StatoSalvataggioTracce getInformazioniSalvataggioTracciaRisposta(Logger log,
-			PostOutResponseContext context,
+			InformazioniTransazione info,
 			Transaction transaction,
 			Transazione transazioneDTO,
-			boolean pddStateless) throws Exception;
+			boolean pddStateless) throws CoreException, ProtocolException;
 	
 }

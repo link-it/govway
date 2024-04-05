@@ -10,6 +10,10 @@ Background:
     * def check_traccia_id_messaggio = read('check-tracce/check-traccia-id-messaggio.feature')
     * def check_signature = read('classpath:org/openspcoop2/core/protocolli/modipa/testsuite/soap/sicurezza_messaggio/check-signature.feature')
 
+    * def check_traccia_oauth = read('check-tracce/check-traccia-oauth.feature')
+
+    * def reset_cache_token = read('classpath:utils/reset-cache-token.feature')
+
     * def decode_token = read('classpath:utils/decode-token.js')
 
     * def client_x509_sub = 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT'
@@ -34,13 +38,18 @@ And match response == read("response.xml")
 * xml client_request = karateCache.get("Client-Request")
 * xml server_response = karateCache.get("Server-Response")
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: client_x509_sub, profilo_sicurezza: 'IDAS02' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02', requestMessageId:client_request_id })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: client_x509_sub, profilo_sicurezza: 'IDAS02' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02', requestMessageId:client_request_id })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 
 @connettivita-base-richiesta-con-header
@@ -62,13 +71,18 @@ And match response == read("responseConHeader.xml")
 * xml client_request = karateCache.get("Client-Request")
 * xml server_response = karateCache.get("Server-Response")
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: client_x509_sub, profilo_sicurezza: 'IDAS02' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02', requestMessageId:client_request_id })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: client_x509_sub, profilo_sicurezza: 'IDAS02' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02', requestMessageId:client_request_id })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 
 @connettivita-base-richiesta-con-header-e-trasformazione
@@ -90,13 +104,18 @@ And match response == read("responseConHeader.xml")
 * xml client_request = karateCache.get("Client-Request")
 * xml server_response = karateCache.get("Server-Response")
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: client_x509_sub, profilo_sicurezza: 'IDAS02' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02', requestMessageId:client_request_id })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: client_x509_sub, profilo_sicurezza: 'IDAS02' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02', requestMessageId:client_request_id })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 
 @riutilizzo-token
@@ -164,6 +183,9 @@ And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRespons
 @riutilizzo-token-oauth2
 Scenario: Il token viene riutilizzato, fruizione ed erogazione devono arrabbiarsi, token generato tramite authorization server
 
+# Svuoto la cache per evitare che venga generato lo stesso token in questo test usato già in altri
+* call reset_cache_token ({ })
+
 * def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SoapBlockingIDAS02TokenOAuth/v1'
 
 Given url soap_url
@@ -189,10 +211,12 @@ And match response == read("response.xml")
 # Verifico che l'identificativo utilizzato sia quello di Authorization, per l'id della busta
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
-# Implementato solo lato erogazione l'associazione del jti del token come id di messaggio per fare il filtro duplicato * call check_traccia_id_messaggio ({ tid: tid, tipo: 'Richiesta', id_messaggio: jti_token })
+* call check_traccia_id_messaggio ({ tid: tid, tipo: 'Richiesta', id_messaggio: jti_token })
+* call check_traccia_oauth ({ tid: tid, tipo: 'Richiesta', client_request_id: jti_token, profilo_sicurezza: 'IDAS02' })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia_id_messaggio ({ tid: tid, tipo: 'Richiesta', id_messaggio: jti_token })
+* call check_traccia_oauth ({ tid: tid, tipo: 'Richiesta', client_request_id: jti_token, profilo_sicurezza: 'IDAS02' })
 
 
 
@@ -236,10 +260,15 @@ And match response == read("response.xml")
 * xml client_request = karateCache.get("Client-Request")
 * xml server_response = karateCache.get("Server-Response")
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: client_x509_sub, profilo_sicurezza: 'IDAS02' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02', requestMessageId:client_request_id })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: client_x509_sub, profilo_sicurezza: 'IDAS02' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02', requestMessageId:client_request_id })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id

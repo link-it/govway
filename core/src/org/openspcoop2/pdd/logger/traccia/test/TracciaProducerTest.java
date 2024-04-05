@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -229,23 +229,23 @@ public class TracciaProducerTest {
 		
 		CredenzialeMittente token_issuer = new CredenzialeMittente();
 		token_issuer.setCredenziale("issuer");
-		credenziali.setToken_issuer(token_issuer);
+		credenziali.setTokenIssuer(token_issuer);
 		
 		CredenzialeMittente token_subject = new CredenzialeMittente();
 		token_subject.setCredenziale("subject");
-		credenziali.setToken_subject(token_subject);
+		credenziali.setTokenSubject(token_subject);
 		
 		CredenzialeMittente token_clientId = new CredenzialeMittente();
 		token_clientId.setCredenziale("clientId");
-		credenziali.setToken_clientId(token_clientId);
+		credenziali.setTokenClientId(token_clientId);
 		
 		CredenzialeMittente token_username = new CredenzialeMittente();
 		token_username.setCredenziale("Andrea Rossi");
-		credenziali.setToken_username(token_username);
+		credenziali.setTokenUsername(token_username);
 		
 		CredenzialeMittente token_mail = new CredenzialeMittente();
 		token_mail.setCredenziale("mail");
-		credenziali.setToken_eMail(token_mail);
+		credenziali.setTokenEMail(token_mail);
 		
 		transazioneDB.setTokenInfo("\n{\n\t\"valid\":\"true\",\n\t\"name2\":\"value2\"\n}");
 		

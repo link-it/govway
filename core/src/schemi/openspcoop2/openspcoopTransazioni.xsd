@@ -81,6 +81,9 @@
 						<linkit:sql-table-index name="CREDENZIALE_ORAREG">
 							<linkit:sql-table-index-field name="ora-registrazione" ignoreTypeCompatibility="true"/>
 						</linkit:sql-table-index>
+						<linkit:sql-table-index name="CREDENZIALE_INTERNAL_REF">
+							<linkit:sql-table-index-field name="ref-credenziale" />
+						</linkit:sql-table-index>
 					</linkit:sql-table-mapping>
 				</linkit:generator>
 			</xsd:appinfo>
@@ -116,6 +119,17 @@
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
 								<linkit:sql-ddl-column-comment>Data di registrazione delle credenziali</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="ref-credenziale" type="xsd:unsignedLong" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="ref_credenziale" />
+								<linkit:sql-ddl-column-comment>FK verso altra credenziale</linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>

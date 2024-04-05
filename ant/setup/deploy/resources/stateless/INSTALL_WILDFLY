@@ -6,7 +6,7 @@ Per completare il processo di installazione si devono effettuare i seguenti pass
 
    1. Creare un utente sul RDBMS avente i medesimi valori di username e password indicati in fase di setup.
 
-   2. Creare un database, per ospitare le tabelle dell'applicazione, avente il nome indicato durante la fase di setup. Il charset da utilizzare è UTF-8, la collection deve essere case sensitive.
+   2. Creare un database, per ospitare le tabelle dell'applicazione, avente il nome indicato durante la fase di setup. Il charset da utilizzare è UTF-8, la collation deve essere case sensitive.
 
    3. Impostare i permessi di accesso in modo che l'utente creato al passo 1 abbia i diritti di lettura/scrittura sul database creato al passo 2. 
 

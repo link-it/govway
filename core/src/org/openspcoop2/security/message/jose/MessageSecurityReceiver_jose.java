@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -159,7 +159,8 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				}
 				if(bean!=null) {
 					Properties signatureProperties = bean.getProperties();
-					JOSEUtils.injectKeystore(requestInfo, signatureProperties, messageSecurityContext.getLog()); // serve per leggere il keystore dalla cache
+					boolean throwError = true;
+    				JOSEUtils.injectKeystore(requestInfo, signatureProperties, messageSecurityContext.getLog(), throwError); // serve per leggere il keystore dalla cache
 					this.jsonVerifierSignature = new JsonVerifySignature(signatureProperties, options);	
 				}
 				else if(useHeaders) {
@@ -380,7 +381,8 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				}
 				if(bean!=null) {
 					Properties encryptionProperties = bean.getProperties();
-					JOSEUtils.injectKeystore(requestInfo, encryptionProperties, messageSecurityContext.getLog()); // serve per leggere il keystore dalla cache
+					boolean throwError = true;
+    				JOSEUtils.injectKeystore(requestInfo, encryptionProperties, messageSecurityContext.getLog(), throwError); // serve per leggere il keystore dalla cache
 					this.jsonDecrypt = new JsonDecrypt(encryptionProperties, options);	
 				}
 				else if(useHeaders) {

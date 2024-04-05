@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -481,6 +481,10 @@ public class CostantiControlStation {
 	public static final String LABEL_SOAP_11 = "SOAP 1.1";
 	public static final String LABEL_SOAP_12 = "SOAP 1.2";
 		
+	public static final String LABEL_TRACCIAMENTO_CONFIGURAZIONE = "Configurazione";
+	public static final String LABEL_TRACCIAMENTO_CONFIGURAZIONE_EROGAZIONI = "Configurazione Erogazioni";
+	public static final String LABEL_TRACCIAMENTO_CONFIGURAZIONE_FRUIZIONI = "Configurazione Fruizioni";
+	
 	public static final String LABEL_DUMP = "Dump";
 	public static final String LABEL_REGISTRAZIONE_MESSAGGI = "Registrazione Messaggi";
 	public static final String LABEL_REGISTRAZIONE_MESSAGGI_CONFIG_DI = "Registrazione Messaggi di ";
@@ -980,7 +984,7 @@ public class CostantiControlStation {
 	public static final String PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN = "autorizzazioneToken";
 	public static final String PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS = "autorizzazioneTokenOptions";
 	
-	public static final String PARAMETRO_PORTE_TRACCIAMENTO_ESITO = "portaEsiti";
+	public static final String PARAMETRO_PORTE_TRACCIAMENTO_STATO = "portaTrStato";
 	public static final String PARAMETRO_AUTORIZZAZIONE_CONTENUTI = "autorizzazioneContenuti";
 	public static final String PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO = "authContenutiStato";
 	public static final String PARAMETRO_AUTORIZZAZIONE_CONTENUTI_PROPERTIES = "authContenutiProp";
@@ -1334,6 +1338,10 @@ public class CostantiControlStation {
 	public static final String LABEL_FILTRO_CONFIGURAZIONE_TIPO_AUTENTICAZIONE_TRASPORTO = CostantiLabel.LABEL_CONFIGURAZIONE_TIPO_AUTENTICAZIONE_TRASPORTO;
 	public static final String LABEL_FILTRO_CONFIGURAZIONE_TIPO_AUTENTICAZIONE_CANALE = CostantiLabel.LABEL_CONFIGURAZIONE_TIPO_AUTENTICAZIONE_CANALE;
 
+	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRANSAZIONI_QUALSIASI = "";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_TRANSAZIONI_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
+	public static final String LABEL_FILTRO_CONFIGURAZIONE_TRANSAZIONI = CostantiLabel.LABEL_CONFIGURAZIONE_TRANSAZIONI;
+	
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_DUMP_QUALSIASI = "";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_DUMP_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	public static final String LABEL_FILTRO_CONFIGURAZIONE_TIPO_DUMP = CostantiLabel.LABEL_CONFIGURAZIONE_TIPO_DUMP;
@@ -1720,19 +1728,19 @@ public class CostantiControlStation {
 	
 	public static final List<String> TOKEN_VALUES = new ArrayList<>();
 	static {
-		TOKEN_VALUES.add(TipoCredenzialeMittente.token_subject.name());
-		TOKEN_VALUES.add(TipoCredenzialeMittente.token_issuer.name());
-		TOKEN_VALUES.add(TipoCredenzialeMittente.token_clientId.name());
-		TOKEN_VALUES.add(TipoCredenzialeMittente.token_username.name());
-		TOKEN_VALUES.add(TipoCredenzialeMittente.token_eMail.name());
+		TOKEN_VALUES.add(TipoCredenzialeMittente.TOKEN_SUBJECT.getRawValue());
+		TOKEN_VALUES.add(TipoCredenzialeMittente.TOKEN_ISSUER.getRawValue());
+		TOKEN_VALUES.add(TipoCredenzialeMittente.TOKEN_CLIENT_ID.getRawValue());
+		TOKEN_VALUES.add(TipoCredenzialeMittente.TOKEN_USERNAME.getRawValue());
+		TOKEN_VALUES.add(TipoCredenzialeMittente.TOKEN_EMAIL.getRawValue());
 	}
 	
 	public static final List<String> TOKEN_VALUES_WITHOUT_ISSUER = new ArrayList<>();
 	static {
-		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.token_subject.name());
-		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.token_clientId.name());
-		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.token_username.name());
-		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.token_eMail.name());
+		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.TOKEN_SUBJECT.getRawValue());
+		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.TOKEN_CLIENT_ID.getRawValue());
+		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.TOKEN_USERNAME.getRawValue());
+		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.TOKEN_EMAIL.getRawValue());
 	}
 		
 	

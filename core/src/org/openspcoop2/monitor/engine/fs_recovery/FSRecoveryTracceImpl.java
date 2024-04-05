@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -26,6 +26,8 @@ import org.slf4j.Logger;
 import org.openspcoop2.core.tracciamento.Traccia;
 import org.openspcoop2.core.tracciamento.utils.serializer.JaxbDeserializer;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsMultiException;
 
 /**
  * FSRecoveryTracceImpl
@@ -43,8 +45,8 @@ public class FSRecoveryTracceImpl extends AbstractFSRecovery {
 			ITracciaProducer tracciamentoAppender,
 			File directory, File directoryDLQ,
 			int tentativi,
-			int minutiAttesaProcessingFile) {
-		super(log, debug, directory, directoryDLQ, tentativi, minutiAttesaProcessingFile);
+			long msAttesaProcessingFile) {
+		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile);
 		this.tracciamentoAppender = tracciamentoAppender;
 	}
 
@@ -56,11 +58,20 @@ public class FSRecoveryTracceImpl extends AbstractFSRecovery {
 	}
 
 	@Override
-	public void insertObject(File file, Connection connection) throws Exception {
+	public void insertObject(File file, Connection connection) throws UtilsException, UtilsMultiException {
 		JaxbDeserializer deserializer = new JaxbDeserializer();
-		Traccia traccia = deserializer.readTraccia(file);
+		Traccia traccia = null;
+		try {
+			traccia = deserializer.readTraccia(file);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 		org.openspcoop2.protocol.sdk.tracciamento.Traccia tracciaOp2 = new org.openspcoop2.protocol.sdk.tracciamento.Traccia(traccia);
-		this.tracciamentoAppender.log(connection, tracciaOp2);
+		try {
+			this.tracciamentoAppender.log(connection, tracciaOp2);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 	}
 
 

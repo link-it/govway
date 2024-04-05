@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -43,6 +43,7 @@ public class CredenzialeMittenteModel extends AbstractModel<CredenzialeMittente>
 		this.TIPO = new Field("tipo",java.lang.String.class,"credenziale-mittente",CredenzialeMittente.class);
 		this.CREDENZIALE = new Field("credenziale",java.lang.String.class,"credenziale-mittente",CredenzialeMittente.class);
 		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"credenziale-mittente",CredenzialeMittente.class);
+		this.REF_CREDENZIALE = new Field("ref-credenziale",java.lang.Long.class,"credenziale-mittente",CredenzialeMittente.class);
 	
 	}
 	
@@ -53,6 +54,7 @@ public class CredenzialeMittenteModel extends AbstractModel<CredenzialeMittente>
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"credenziale-mittente",CredenzialeMittente.class);
 		this.CREDENZIALE = new ComplexField(father,"credenziale",java.lang.String.class,"credenziale-mittente",CredenzialeMittente.class);
 		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"credenziale-mittente",CredenzialeMittente.class);
+		this.REF_CREDENZIALE = new ComplexField(father,"ref-credenziale",java.lang.Long.class,"credenziale-mittente",CredenzialeMittente.class);
 	
 	}
 	
@@ -63,6 +65,8 @@ public class CredenzialeMittenteModel extends AbstractModel<CredenzialeMittente>
 	public IField CREDENZIALE = null;
 	 
 	public IField ORA_REGISTRAZIONE = null;
+	 
+	public IField REF_CREDENZIALE = null;
 	 
 
 	@Override

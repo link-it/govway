@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -48,17 +48,30 @@ public class MsgDiagnostico implements Serializable{
 
 	private static final long serialVersionUID = -3157816024001587816L;
 
+    // indicazione store
+    private boolean stored = false;
+	
     // msgdiagnostico
     private org.openspcoop2.core.diagnostica.MessaggioDiagnostico messaggioDiagnostico;
 
+    
 	
-    public MsgDiagnostico(){
+	public MsgDiagnostico(){
     	this.messaggioDiagnostico = new MessaggioDiagnostico();
     }
     public MsgDiagnostico(org.openspcoop2.core.diagnostica.MessaggioDiagnostico messaggioDiagnostico) {
     	this.messaggioDiagnostico = messaggioDiagnostico;
     }
+
     
+    // stored
+    
+    public boolean isStored() {
+		return this.stored;
+	}
+	public void setStored(boolean stored) {
+		this.stored = stored;
+	}
     
     
     // base

@@ -440,12 +440,7 @@
 						<link:prop label="#{msg['transazioni.search.claim']}" required="true">
 							<rich:comboBox id="claimCombo" value="#{sf_bean.tokenClaim}" defaultLabel="Selezione #{msg['transazioni.search.claim']}" 
 									converter="selectItemConverter"	directInputSuggestions="true" width="416" enableManualInput="false">
-								<f:selectItem itemValue="--" itemLabel="--"/>
-								<f:selectItem itemValue="token_issuer" itemLabel="Issuer"/>
-								<f:selectItem itemValue="token_clientId" itemLabel="Client ID"/>
-								<f:selectItem itemValue="token_subject" itemLabel="Subject"/>
-								<f:selectItem itemValue="token_username" itemLabel="Username"/>
-								<f:selectItem itemValue="token_eMail" itemLabel="eMail"/>
+								<f:selectItems value="#{sf_bean.listaTokenClaim}"/>
 							</rich:comboBox>
 						</link:prop>
 					
@@ -703,6 +698,16 @@
 				<link:prop label="#{msg['transazioni.search.sezioneFiltroRicercaLibera.tokenInfo.email.label']}" rendered="">
 					<h:inputText id="ricercaLiberaTokenEmail" value="#{sf_bean.ricercaLiberaTokenEmail}"  styleClass="inputLinkLong"/>
 				</link:prop>
+				
+				<a4j:outputPanel id="ctr-ricerca-personal-pdnd" rendered="#{sf_bean.showPDNDFilters}">
+					<div class="subtitle" >
+						<h:outputText id="idDatiPDNDRicercaLibera" value="#{msg['transazioni.search.sezioneFiltroRicercaLibera.pdnd.label']}" styleClass="subtitle"/>
+					</div>
+					
+					<link:prop label="#{msg['transazioni.search.sezioneFiltroRicercaLibera.pdnd.organization.name.label']}" rendered="">
+						<h:inputText id="ricercaLiberaPdndOrganization" value="#{sf_bean.ricercaLiberaPdndOrganization}"  styleClass="inputLinkLong"/>
+					</link:prop>
+				</a4j:outputPanel>
 				
 				<div class="subtitle">
 					<h:outputText id="idDatiIdApplicativoRicercaLibera" value="#{msg['transazioni.search.sezioneFiltroIdentificativoApplicativo.label']}" styleClass="subtitle"/>

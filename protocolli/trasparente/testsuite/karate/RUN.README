@@ -28,6 +28,14 @@
     <CookieProcessor className="org.apache.tomcat.util.http.LegacyCookieProcessor" />
   </Context>
 
+- Deve essere abilitato il TRACE METHOD http, altrimenti risulta '405 Not Allowed'
+  Per farlo su wildfly aggiungere l'attributo disallowed-methods valorizzato vuoto in tutti gli http e https listener:
+     <http-listener name="default" socket-binding="http" redirect-socket="https" disallowed-methods=""/>
+     <https-listener name="httpsNoClientAuth" socket-binding="httpsNoClientAuth" record-request-start-time="true" ssl-context="openspcoop2noClientAuthSSC" disallowed-methods=""/>
+  Per farlo su tomcat aggiungere l'attributo allowTrace="true" nel'elemento Connector:
+     <Connector port="8080" protocol="HTTP/1.1" connectionTimeout="20000" redirectPort="8443" allowTrace="true" />
+     <Connector port="8445" protocol="HTTP/1.1" SSLEnabled="true" ... allowTrace="true"/>
+
 - Impostare a <15> il massimo numero di richieste simultanee generali nella console di govway sotto 
 		
 		Configurazione->Controllo del Traffico->Limitazione Numero di Richieste Complessive
@@ -98,8 +106,10 @@
         Fruizioni:  UPDATE ct_config set pd_connection_timeout=8000, pd_read_timeout=15000; 
 	Erogazioni: UPDATE ct_config set pa_connection_timeout=9000, pa_read_timeout=16000; 
 
-- Nella console Andare su Tracciamento->Superamento Limite Richieste e impostarlo su <abilitato>
-	 Questo perchè di base govway non traccia le transazioni quando è stata superata la soglia globale.
+- Nella console andare su Tracciamento 'Erogazioni' e 'Fruizioni' ed impostare su <abilitato>:
+    - Violazione Policy Rate Limiting
+    - Superamento Limite Richieste
+  Questo perchè di base govway non traccia le transazioni quando è stata superata la soglia globale o quando è stata violata una policy di rate limiting.
 
 - Impostare in govway_local.properties 
 	org.openspcoop2.pdd.statistiche.generazione.baseOraria.timer.intervalloSecondi=8
@@ -162,6 +172,26 @@
 
 - Per i test sulle credenziali aggiungere in govway_local.properties la configurazione che si trova in 'src/org/openspcoop2/core/protocolli/trasparente/testsuite/autenticazione/gestore_credenziali/govway_local.properties.adjunct'.
   Inoltre copiare il truststore src/org/openspcoop2/core/protocolli/trasparente/testsuite/autenticazione/gestore_credenziali/applicativoCertExampleTrustStore.jks in /etc/govway/keys/applicativoCertExampleTrustStore.jks
+
+- Per i test sul tracciamento aggiungere in govway_local.properties la configurazione che abilita la generazione degli errori e renda più frequente la procedura di recupero delle transazioni salvate su filesystem (failover):
+
+	# Generazione fault per test prima del commit su database
+	org.openspcoop2.pdd.transazioni.testsuite.manuallyFaultHeader.db.beforeCommit=GovWay-TestSuite-GenerateFault-TracciamentoDB-Commit
+	# Generazione fault per test prima dell'emissione del log su file trace
+	org.openspcoop2.pdd.transazioni.testsuite.manuallyFaultHeader.fileTrace.beforeLog=GovWay-TestSuite-GenerateFault-TracciamentoFileTrace-Log
+
+	# Procedura di failover (un file viene recuperato dopo org.openspcoop2.pdd.resources.fileSystemRecovery.timeout*2 secondi)
+	org.openspcoop2.pdd.resources.fileSystemRecovery.timeout=2
+	org.openspcoop2.pdd.resources.fileSystemRecovery.maxAttempts=5
+	org.openspcoop2.pdd.resources.fileSystemRecovery.events.enabled=true
+	org.openspcoop2.pdd.resources.fileSystemRecovery.transaction.enabled=true
+	org.openspcoop2.pdd.resources.fileSystemRecovery.debug=true
+	# Indicazione dopo quanti millisecondi iniziare a processare un file presente nel repository (inserire un valore in ms uguale a org.openspcoop2.pdd.resources.fileSystemRecovery.timeout)
+	org.openspcoop2.pdd.resources.fileSystemRecovery.events.processingFileAfterMs=2000
+	org.openspcoop2.pdd.resources.fileSystemRecovery.transaction.processingFileAfterMs=2000
+
+	# merge handler
+	org.openspcoop2.pdd.handler.merge=true
 
 - Configurare l'application server in modo tale da supportare connessioni ssl sulla porta 8444, 8445, 8450 e 8451 utilizzando le configurazioni presenti nella directory https:
   a) un connettore HTTPS che esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8444)
@@ -297,6 +327,34 @@
 	cp https/override/erogazioni/erogazione_HttpsOverrideJvmConfigSoggetto1.properties  /etc/govway/https/erogazioni/
 	mkdir -p /etc/govway/https/fruizioni/
 	cp https/override/fruizioni/fruizione_HttpsOverrideJvmConfigSoggetto1.properties  /etc/govway/https/fruizioni/
+
+- Per i test via proxy forward:
+
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('govway-proxy-enable','true');
+
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettori-govway-erogazioni-proxy','http://127.0.0.1:8080/TestService/echo?existsHttpHeaders=govway-api-address&replyHttpHeader=govway-api-address&replyPrefixHttpHeader=test-');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettori-govway-erogazioni-proxy-header','govway-api-address');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettori-govway-erogazioni-proxy-header-base64','true');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettori-govway-fruizioni-proxy','http://127.0.0.1:8080/TestService/echo?existsQueryParameters=govway_api_address&replyQueryParameter=govway_api_address&replyPrefixQueryParameter=test_');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettori-govway-fruizioni-proxy-query','govway_api_address');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettori-govway-fruizioni-proxy-query-base64','true');
+
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy','http://127.0.0.1:8080/TestService/echo?destFile=/tmp/response.json&destFileContentType=application/json');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-header','govway-api-address');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-header-base64','true');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-token-dynamic-discovery-TestForwardProxyDynamicDiscovery','true');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-token-jwt-validation-TestForwardProxyValidazioneJwt','true');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-token-introspection-TestForwardProxyIntrospection','true');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-token-userinfo-TestForwardProxyUserInfo','true');
+
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-token-retrieve-TestForwardProxyNegoziazione','true');
+
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-attribute-authority-TestForwardProxyAA','true');
+  INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-attribute-authority-response-jwt-validation-TestForwardProxyAARispostaJwt','true');
+
+
+
+
 
 Per eseguire i test:
 	ant run_test
@@ -441,6 +499,9 @@ Di seguito vengono descritti i test del package 'connettori':
 - 'tls', verifica la funzionalità tls
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.tls
 
+- 'forward_proxy', verifica la funzionalità di forward proxy
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.forward_proxy
+
 Di seguito vengono descritti i test del package 'token':
 
 - 'attribute_authority', verifica l'interazione con le AttributeAuthority
@@ -512,6 +573,14 @@ Di seguito vengono descritti i test del package 'plugin':
 
 - 'test', verifica l'utilizzo dei plugins su tutti i componenti "pluggabili"
    ant run_test -Ddelete=false -Dload=false -Dpackage=plugin.test
+
+Di seguito vengono descritti i test del package 'tracciamento':
+
+- 'database', verifica il tracciamento su database
+   ant run_test -Ddelete=false -Dload=false -Dpackage=tracciamento.database
+
+- 'filetrace', verifica il tracciamento su filetrace
+   ant run_test -Ddelete=false -Dload=false -Dpackage=tracciamento.filetrace
 
 Di seguito vengono descritti i test del package 'other':
 

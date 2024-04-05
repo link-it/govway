@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -4042,6 +4042,27 @@ public class ImporterArchiveUtils {
 					}
 				}
 				
+				// ulteriore per token dynamic discovery
+				tokenName.clear();
+				if(tokenValidazione) {
+					tokenName.add(CostantiConfigurazione.POLICY_DYNAMIC_DISCOVERY_CLAIMS_PARSER_PLUGIN_TYPE);
+					tipoPlugin = TipoPlugin.TOKEN_DYNAMIC_DISCOVERY;
+				}
+				if(!tokenName.isEmpty()) {
+					if(archiveGenericProperties!=null && archiveGenericProperties.getPolicy()!=null && archiveGenericProperties.getPolicy().sizePropertyList()>0) {
+						for (int i = 0; i < archiveGenericProperties.getPolicy().sizePropertyList(); i++) {
+							Property p = archiveGenericProperties.getPolicy().getProperty(i);
+							if(tokenName.contains(p.getNome())) {
+								String gpName = p.getValore();
+								if(gpName!=null && StringUtils.isNotEmpty(gpName) && !CostantiConfigurazione.POLICY_ID_NON_DEFINITA.equals(gpName)) {
+									if(this.importerEngine.existsPluginClasse(tipoPlugin.getValue(), gpName) == false ){
+										throw new Exception("Plugin '"+tipoPlugin.getValue()+"' ["+p.getValore()+"] non esistente nel registro");
+									}	
+								}
+							}
+						}
+					}
+				}
 			}
 			
 			

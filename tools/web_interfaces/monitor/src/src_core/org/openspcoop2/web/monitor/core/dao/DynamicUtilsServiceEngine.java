@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -2932,5 +2932,42 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			log.error(e.getMessage(), e);
 		} 
 		return null;
+	}
+	
+	
+	
+	
+	
+	// *** Configurazione (Tracciamento) ***
+	
+	@Override
+	public boolean existsFaseTracciamentoDBRequestIn(boolean erogazioni, boolean fruizioni) {
+		log.debug("existsFaseTracciamentoDBRequestIn [erogazioni:" + erogazioni + ", fruizioni:"+fruizioni+"]");
+		try {
+			return this.driverConfigDB.existsFaseTracciamentoDBRequestIn(erogazioni, fruizioni);
+		}catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+		return false;
+	}
+	@Override
+	public boolean existsFaseTracciamentoDBRequestOut(boolean erogazioni, boolean fruizioni) {
+		log.debug("existsFaseTracciamentoDBRequestOut [erogazioni:" + erogazioni + ", fruizioni:"+fruizioni+"]");
+		try {
+			return this.driverConfigDB.existsFaseTracciamentoDBRequestOut(erogazioni, fruizioni);
+		}catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+		return false;
+	}
+	@Override
+	public boolean existsFaseTracciamentoDBResponseOut(boolean erogazioni, boolean fruizioni) {
+		log.debug("existsFaseTracciamentoDBResponseOut [erogazioni:" + erogazioni + ", fruizioni:"+fruizioni+"]");
+		try {
+			return this.driverConfigDB.existsFaseTracciamentoDBResponseOut(erogazioni, fruizioni);
+		}catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+		return false;
 	}
 }

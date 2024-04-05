@@ -118,9 +118,12 @@ CREATE TABLE configurazione
 	msg_diag_severita_log4j VARCHAR2(255) NOT NULL,
 	-- Tracciamento Buste
 	tracciamento_buste VARCHAR2(255),
+	tracciamento_esiti_pd VARCHAR2(255),
 	tracciamento_esiti VARCHAR2(255),
 	-- Transazione
+	transazioni_tempi_pd VARCHAR2(255),
 	transazioni_tempi VARCHAR2(255),
+	transazioni_token_pd VARCHAR2(255),
 	transazioni_token VARCHAR2(255),
 	-- Dump
 	dump VARCHAR2(255),
@@ -323,7 +326,7 @@ end;
 
 
 
--- **** Messaggi diagnostici Appender ****
+-- **** Messaggi diagnostici ****
 
 CREATE SEQUENCE seq_msgdiag_appender MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
 
@@ -380,7 +383,7 @@ end;
 
 
 
--- **** Tracciamento Appender ****
+-- **** Tracciamento ****
 
 CREATE SEQUENCE seq_tracce_appender MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
 
@@ -437,7 +440,77 @@ end;
 
 
 
--- **** Dump Appender ****
+CREATE SEQUENCE seq_tracce_config MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE tracce_config
+(
+	proprietario VARCHAR2(255) NOT NULL,
+	tipo VARCHAR2(255) NOT NULL,
+	id_proprietario NUMBER NOT NULL,
+	stato VARCHAR2(255),
+	filtro_esiti VARCHAR2(255),
+	request_in VARCHAR2(255),
+	request_out VARCHAR2(255),
+	response_out VARCHAR2(255),
+	response_out_complete VARCHAR2(255),
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT pk_tracce_config PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX index_tracce_config_1 ON tracce_config (proprietario,tipo);
+CREATE TRIGGER trg_tracce_config
+BEFORE
+insert on tracce_config
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_tracce_config.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_filetrace_config MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE filetrace_config
+(
+	proprietario VARCHAR2(255) NOT NULL,
+	id_proprietario NUMBER NOT NULL,
+	config VARCHAR2(255),
+	dump_in_stato VARCHAR2(255),
+	dump_in_stato_hdr VARCHAR2(255),
+	dump_in_stato_body VARCHAR2(255),
+	dump_out_stato VARCHAR2(255),
+	dump_out_stato_hdr VARCHAR2(255),
+	dump_out_stato_body VARCHAR2(255),
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT pk_filetrace_config PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX index_filetrace_config_1 ON filetrace_config (proprietario);
+CREATE TRIGGER trg_filetrace_config
+BEFORE
+insert on filetrace_config
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_filetrace_config.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+-- **** Dump ****
 
 CREATE SEQUENCE seq_dump_config MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
 

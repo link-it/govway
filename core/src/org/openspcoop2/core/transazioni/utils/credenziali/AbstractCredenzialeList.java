@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -38,7 +38,7 @@ public abstract class AbstractCredenzialeList extends AbstractCredenziale {
 
 	private List<String> values;
 	
-	public AbstractCredenzialeList(TipoCredenzialeMittente tipo, List<String> values) {
+	protected AbstractCredenzialeList(TipoCredenzialeMittente tipo, List<String> values) {
 		super(tipo);
 		this.values = values;
 	}
@@ -54,7 +54,7 @@ public abstract class AbstractCredenzialeList extends AbstractCredenziale {
 		return bf.toString();
 	}
 	
-	public static String PREFIX = "##";
+	public static final String PREFIX = "##";
 	
 	public static String getDBValue(String address) {
 		return getDBValue(address, true);
@@ -69,24 +69,28 @@ public abstract class AbstractCredenzialeList extends AbstractCredenziale {
 	}
 	
 	public static List<String> normalizeToList(String dbValue){
+		List<String> lReturn = null;
 		if(dbValue.contains(PREFIX)) {
 			List<String> l = new ArrayList<>();
 			String [] tmp = dbValue.split(PREFIX);
-			if(tmp!=null && tmp.length>0) {
-				for (String t : tmp) {
-					if(t!=null) {
-						t = t.trim();
-						if(!StringUtils.isEmpty(t)) {
-							l.add(t);
-						}
-					}
-				}
-			}
+			normalizeToList(tmp, l);
 			if(!l.isEmpty()) {
 				return l;
 			}
 		}
-		return null;
+		return lReturn;
+	}
+	private static void normalizeToList(String [] tmp, List<String> l){
+		if(tmp!=null && tmp.length>0) {
+			for (String t : tmp) {
+				if(t!=null) {
+					t = t.trim();
+					if(!StringUtils.isEmpty(t)) {
+						l.add(t);
+					}
+				}
+			}
+		}
 	}
 	public static String normalize(String dbValue) {
 		List<String> l = normalizeToList(dbValue);

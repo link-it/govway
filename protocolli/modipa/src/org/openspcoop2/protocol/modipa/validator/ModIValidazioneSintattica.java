@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -30,6 +30,7 @@ import java.util.Map;
 
 import jakarta.xml.soap.SOAPEnvelope;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -551,6 +552,22 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 											dynamicMap, datiRichiesta,
 											idSoggetto);
 									
+									if(token==null && !sorgenteLocale) {
+										// non c'era un token di integrita nonostante ne sia stato configurato (es. per GET) e sia stato indicato di utilizzarlo come identificativo messaggio.
+										// per questo motivo in ricezione buste il metodo 'ModIUtils.replaceBustaIdWithJtiTokenId' non è stato invocato
+										// Utilizzo come identificativo del messaggio quello presente nel voucher.
+										/** verra' gestito nella validazione semantica, in questa fase il token non e' ancora stato validato 
+										 * String jtiClaimReceived = ModIUtils.readJtiFromInformazioniToken(this.context);
+										if(jtiClaimReceived!=null && StringUtils.isNotEmpty(jtiClaimReceived) &&
+												!jtiClaimReceived.equals(bustaRitornata.getID())) {
+											bustaRitornata.removeProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUTHORIZATION_ID);
+											bustaRitornata.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID, jtiClaimReceived);
+											if(jtiClaimReceived.length()<=255) {
+												bustaRitornata.setID(jtiClaimReceived);
+											}
+										}*/
+									}
+									
 									if(erroriValidazione.isEmpty()) {
 										msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_COMPLETATA);
 									}
@@ -695,6 +712,23 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 											buildSecurityTokenInRequest, ModIHeaderType.BOTH_INTEGRITY, integritaCustom, securityHeaderIntegrityObbligatorio,
 											null, null,
 											idSoggetto); // gia' inizializzato sopra
+												
+									if(tokenIntegrity==null) {
+										// non c'era un token di integrita nonostante ne sia stato configurato (es. per GET) e sia stato indicato di utilizzarlo come identificativo messaggio.
+										// Utilizzo come identificativo del messaggio quello presente nell'authorization.
+										String idAuth = bustaRitornata.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUTHORIZATION_ID);
+										String id = bustaRitornata.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID);
+										if( (id ==null || StringUtils.isEmpty(id)) 
+												&&  
+												idAuth!=null && StringUtils.isNotEmpty(idAuth) &&
+												!idAuth.equals(bustaRitornata.getID())) {
+											bustaRitornata.removeProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUTHORIZATION_ID);
+											bustaRitornata.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID, idAuth);
+											if(idAuth.length()<=255) {
+												bustaRitornata.setID(idAuth);
+											}
+										}
+									}
 									
 									if(erroriValidazione.isEmpty()) {
 										msgDiag.logPersonalizzato(DIAGNOSTIC_VALIDATE_TOKEN_INTEGRITY+tipoDiagnostico+DIAGNOSTIC_COMPLETATA);
@@ -711,7 +745,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 									msgDiag.logPersonalizzato(DIAGNOSTIC_VALIDATE_TOKEN_INTEGRITY+tipoDiagnostico+DIAGNOSTIC_FALLITA);
 									throw pe;
 								}
-								
+																
 								if(tokenIntegrity!=null &&
 									securityConfigIntegrity.getAudience()!=null &&
 									(request || (securityConfigIntegrity.isCheckAudience())) 

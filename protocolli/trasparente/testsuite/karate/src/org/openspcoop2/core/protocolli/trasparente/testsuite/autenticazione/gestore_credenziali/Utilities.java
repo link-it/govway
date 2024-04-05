@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -88,7 +88,7 @@ public class Utilities extends ConfigLoader {
 			Map<String, String> headers,
 			String identitaSoggetto,
 			String identitaServizioApplicativo,
-			String credenziali,
+			CredenzialeTrasporto credenzialiTrasporto,
 			String wwwAuthenticateMessage,
 			String tipoErrore,
 			String ... msgErrori) throws Exception {
@@ -99,7 +99,7 @@ public class Utilities extends ConfigLoader {
 				headers,
 				identitaSoggetto,
 				identitaServizioApplicativo,
-				credenziali,
+				credenzialiTrasporto,
 				wwwAuthenticateMessage,
 				tipoErrore,
 				msgErrori);
@@ -111,7 +111,7 @@ public class Utilities extends ConfigLoader {
 			Map<String, String> headers,
 			String identitaSoggetto,
 			String identitaServizioApplicativo,
-			String credenziali,
+			CredenzialeTrasporto credenzialiTrasporto,
 			String wwwAuthenticateMessage,
 			String tipoErrore,
 			String ... msgErrori) throws Exception {
@@ -124,7 +124,7 @@ public class Utilities extends ConfigLoader {
 				headers,
 				identitaSoggetto,
 				identitaServizioApplicativo,
-				credenziali,
+				credenzialiTrasporto,
 				wwwAuthenticateMessage,
 				tipoErrore,
 				msgErrori);
@@ -137,7 +137,7 @@ public class Utilities extends ConfigLoader {
 			Map<String, String> headers,
 			String identitaSoggetto,
 			String identitaServizioApplicativo,
-			String credenziali,
+			CredenzialeTrasporto credenzialiTrasporto,
 			String wwwAuthenticateMessage,
 			String tipoErrore,
 			String ... msgErrori) throws Exception {
@@ -264,7 +264,7 @@ public class Utilities extends ConfigLoader {
 				
 		DBVerifier.verify(idTransazione, esitoExpected, 
 				identitaSoggetto, identitaServizioApplicativo,
-				credenziali,
+				credenzialiTrasporto,
 				msgErrori);
 		
 		return response;	
