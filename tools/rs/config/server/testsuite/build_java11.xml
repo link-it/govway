@@ -20,6 +20,18 @@
                 <fileset dir="${required_lib}/testsuite" >
                         <include name="hamcrest-core-1.3.jar"/>
 			<include name="junit-4.13.2.jar"/>
+		<!-- con 1.4 fallisce il test, 1.4 non supporta junit 4
+			<include name="karate-core-1.4.0.jar"/>
+			<include name="karate-apache-0.9.6.jar"/>
+			<include name="karate-junit4-0.9.6.jar"/>  
+			
+			<include name="karate-core-1.3.1.jar"/>
+			<include name="karate-apache-0.9.6.jar"/>
+			<include name="karate-junit4-1.3.1.jar"/>
+                        <include name="classgraph-4.8.152.jar"/>
+                        <include name="graal-sdk-22.3.0.jar"/>
+		-->
+
 			<include name="karate-*.jar"/>
 			<include name="picocli-4.2.0.jar"/>
 			<include name="logback-*.jar"/>
