@@ -545,6 +545,9 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		this.servizioApplicativo=null;
 	}
 	
+	public void claimSelected(ActionEvent ae) {
+	}
+	
 	public void tipologiaRicercaListener(ActionEvent ae) {
 		// se cambia la tipologia di ricerca devo azzerare le scelte precedenti
 		// this.nomeDestinatario = null;

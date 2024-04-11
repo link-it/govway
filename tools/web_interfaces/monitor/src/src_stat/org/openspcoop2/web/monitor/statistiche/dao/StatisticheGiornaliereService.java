@@ -3562,6 +3562,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// raggruppamento per data in caso di visualizzazione a 3 dimensioni
 					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 						erogazione_portaApplicativa_Expr.addGroupBy(model.DATA);
+					} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						impostaGroupByFiltro3dCustom(erogazione_portaApplicativa_Expr, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom());
 					}
 					erogazione_portaApplicativa_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					erogazione_portaApplicativa_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -3571,6 +3573,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// raggruppamento per data in caso di visualizzazione a 3 dimensioni
 					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 						fruizione_portaDelegata_Expr.addGroupBy(model.DATA);
+					} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						impostaGroupByFiltro3dCustom(fruizione_portaDelegata_Expr, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom());
 					}
 					fruizione_portaDelegata_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					fruizione_portaDelegata_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -3581,6 +3585,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// raggruppamento per data in caso di visualizzazione a 3 dimensioni
 					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 						erogazione_portaApplicativa_Expr.addGroupBy(model.DATA);
+					} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						impostaGroupByFiltro3dCustom(erogazione_portaApplicativa_Expr, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom());
 					}
 					erogazione_portaApplicativa_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					erogazione_portaApplicativa_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -3590,6 +3596,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// raggruppamento per data in caso di visualizzazione a 3 dimensioni
 					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 						fruizione_portaDelegata_Expr.addGroupBy(model.DATA);
+					} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						impostaGroupByFiltro3dCustom(fruizione_portaDelegata_Expr, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom());
 					}
 					fruizione_portaDelegata_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					fruizione_portaDelegata_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -3604,11 +3612,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					}
 				}
 								
+				List<String> aliases3dCustom = new ArrayList<>();
 				UnionExpression erogazione_portaApplicativa_UnionExpr = new UnionExpression(erogazione_portaApplicativa_Expr);
 				
 				// select field data in caso di visualizzazione a 3 dimensioni
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 					erogazione_portaApplicativa_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+				} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					impostaSelectField3dCustom(erogazione_portaApplicativa_UnionExpr, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom(), aliases3dCustom);
 				}
 				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
@@ -3629,7 +3640,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// select field data in caso di visualizzazione a 3 dimensioni
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 					fruizione_portaDelegata_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
-				}				
+				} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					impostaSelectField3dCustom(fruizione_portaDelegata_UnionExpr, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom(), aliases3dCustom);
+				}		
 				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					fruizione_portaDelegata_UnionExpr.addSelectField(
@@ -3650,6 +3663,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// select field data in caso di visualizzazione a 3 dimensioni
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 					union.addField(ALIAS_FIELD_DATA_3D);
+				} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					for (String a3dCustom : aliases3dCustom) {
+						union.addField(a3dCustom);
+					}
 				}
 				union.addField("tipo_soggetto");
 				union.addField("soggetto");
@@ -3657,6 +3674,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// group by field data in caso di visualizzazione a 3 dimensioni
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 					union.addGroupBy(ALIAS_FIELD_DATA_3D);
+				} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					for (String a3dCustom : aliases3dCustom) {
+						union.addGroupBy(a3dCustom);
+					}
 				}
 				union.addGroupBy("tipo_soggetto");
 				union.addGroupBy("soggetto");
@@ -3784,6 +3805,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// raggruppamento per data in caso di visualizzazione a 3 dimensioni
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 					erogazione_portaApplicativa_Expr.addGroupBy(model.DATA);
+				} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					impostaGroupByFiltro3dCustom(erogazione_portaApplicativa_Expr, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom());
 				}
 				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
@@ -3806,10 +3829,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 				
 				UnionExpression erogazione_portaApplicativa_UnionExpr = new UnionExpression(erogazione_portaApplicativa_Expr);
+				List<String> aliases3dCustom = new ArrayList<>();
 				
 				// select field data in caso di visualizzazione a 3 dimensioni
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 					erogazione_portaApplicativa_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+				} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					impostaSelectField3dCustom(erogazione_portaApplicativa_UnionExpr, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom(), aliases3dCustom );
 				}	
 				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
@@ -3832,6 +3858,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 					unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
 							model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+				} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					impostaSelectField3dCustomFake(unionExprFake, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom(), aliases3dCustom);
 				}
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_MITTENTE.getFieldType()), "tipo_soggetto");
@@ -3848,6 +3876,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// select field data in caso di visualizzazione a 3 dimensioni
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 					union.addField(ALIAS_FIELD_DATA_3D);
+				} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					for (String a3dCustom : aliases3dCustom) {
+						union.addField(a3dCustom);
+					}
 				}
 				union.addField("tipo_soggetto");
 				union.addField("soggetto");
@@ -3855,6 +3887,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// group by field data in caso di visualizzazione a 3 dimensioni
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 					union.addGroupBy(ALIAS_FIELD_DATA_3D);
+				} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					for (String a3dCustom : aliases3dCustom) {
+						union.addGroupBy(a3dCustom);
+					}
 				}
 				union.addGroupBy("tipo_soggetto");
 				union.addGroupBy("soggetto");
@@ -3977,6 +4013,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// raggruppamento per data in caso di visualizzazione a 3 dimensioni
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 					fruizione_portaDelegata_Expr.addGroupBy(model.DATA);
+				} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					impostaGroupByFiltro3dCustom(fruizione_portaDelegata_Expr, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom());
 				}
 				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
@@ -3999,10 +4037,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 				
 				UnionExpression fruizione_portaDelegata_UnionExpr = new UnionExpression(fruizione_portaDelegata_Expr);
+				List<String> aliases3dCustom = new ArrayList<>();
 				
 				// select field data in caso di visualizzazione a 3 dimensioni
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 					fruizione_portaDelegata_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+				} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					impostaSelectField3dCustom(fruizione_portaDelegata_UnionExpr, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom(), aliases3dCustom  );
 				}
 				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
@@ -4027,6 +4068,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 					unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
 							model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+				} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					impostaSelectField3dCustomFake(unionExprFake, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom(), aliases3dCustom);
 				}
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_DESTINATARIO.getFieldType()), "tipo_soggetto");
@@ -4043,6 +4086,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// select field data in caso di visualizzazione a 3 dimensioni
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 					union.addField(ALIAS_FIELD_DATA_3D);
+				} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					for (String a3dCustom : aliases3dCustom) {
+						union.addField(a3dCustom);
+					}
 				}
 				union.addField("tipo_soggetto");
 				union.addField("soggetto");
@@ -4050,6 +4097,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// group by field data in caso di visualizzazione a 3 dimensioni
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 					union.addGroupBy(ALIAS_FIELD_DATA_3D);
+				} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					for (String a3dCustom : aliases3dCustom) {
+						union.addGroupBy(a3dCustom);
+					}
 				}
 				union.addGroupBy("tipo_soggetto");
 				union.addGroupBy("soggetto");
@@ -4337,6 +4388,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// raggruppamento per data in caso di visualizzazione a 3 dimensioni
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 					erogazione_portaApplicativa_Expr.addGroupBy(model.DATA);
+				} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					impostaGroupByFiltro3dCustom(erogazione_portaApplicativa_Expr, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom());
 				}
 				
 				erogazione_portaApplicativa_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -4347,6 +4400,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// raggruppamento per data in caso di visualizzazione a 3 dimensioni
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 					fruizione_portaDelegata_Expr.addGroupBy(model.DATA);
+				} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					impostaGroupByFiltro3dCustom(fruizione_portaDelegata_Expr, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom());
 				}
 				
 				fruizione_portaDelegata_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -4359,6 +4414,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// raggruppamento per data in caso di visualizzazione a 3 dimensioni
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 					erogazione_portaApplicativa_Expr.addGroupBy(model.DATA);
+				} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					impostaGroupByFiltro3dCustom(erogazione_portaApplicativa_Expr, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom());
 				}
 				
 				erogazione_portaApplicativa_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -4369,6 +4426,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// raggruppamento per data in caso di visualizzazione a 3 dimensioni
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 					fruizione_portaDelegata_Expr.addGroupBy(model.DATA);
+				} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					impostaGroupByFiltro3dCustom(fruizione_portaDelegata_Expr, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom());
 				}
 				
 				fruizione_portaDelegata_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -4384,11 +4443,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 			}
 			
+			List<String> aliases3dCustom = new ArrayList<>();
 			UnionExpression erogazione_portaApplicativa_UnionExpr = new UnionExpression(erogazione_portaApplicativa_Expr);
 			
 			// select field data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 				erogazione_portaApplicativa_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				impostaSelectField3dCustom(erogazione_portaApplicativa_UnionExpr, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom(), aliases3dCustom);
 			}
 			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
@@ -4409,7 +4471,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// select field data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 				fruizione_portaDelegata_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
-			}
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				impostaSelectField3dCustom(fruizione_portaDelegata_UnionExpr, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom(), aliases3dCustom);
+			}	
 			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				fruizione_portaDelegata_UnionExpr.addSelectField(
@@ -4430,6 +4494,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// select field data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 				union.addField(ALIAS_FIELD_DATA_3D);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					union.addField(a3dCustom);
+				}
 			}
 			union.addField("tipo_soggetto");
 			union.addField("soggetto");
@@ -4437,6 +4505,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// group by field data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					union.addGroupBy(a3dCustom);
+				}
 			}
 			union.addGroupBy("tipo_soggetto");
 			union.addGroupBy("soggetto");
@@ -4445,6 +4517,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 				SortOrder s = 	this.distribSoggettoSearch.getSortOrder() != null ? 	this.distribSoggettoSearch.getSortOrder() : SortOrder.ASC;
 				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					SortOrder s = 	this.distribSoggettoSearch.getSortOrder() != null ? 	this.distribSoggettoSearch.getSortOrder() : SortOrder.ASC;
+					union.addOrderBy(a3dCustom, s);
+				}
 			}
 			
 			TipoVisualizzazione tipoVisualizzazione = this.distribSoggettoSearch.getTipoVisualizzazione();
@@ -4606,7 +4683,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// List<Object[]> list = q.getResultList();
 				for (Map<String, Object> row : list) {
-
+					String risultato = ((String) row.get("tipo_soggetto")) + "/" + ((String) row.get("soggetto"));
 					ResDistribuzione r = null;
 					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 						r = new ResDistribuzione3D();
@@ -4615,12 +4692,34 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
 						((ResDistribuzione3D)r).setData(data);
 						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
-					} else {
+					} 
+					else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3DCustom();
+
+						StringBuilder resFailure = new StringBuilder();
+						try {
+							BooleanNullable bSkip = BooleanNullable.NULL();
+							String customData = getCustomData(row, this.distribSoggettoSearch.getNumeroDimensioniCustom(), this.distribSoggettoSearch, resFailure, bSkip);
+							if(bSkip!=null && bSkip.getValue()!=null && bSkip.getValue().booleanValue()) {
+								continue;
+							}
+							if(customData==null) {
+								if(resFailure.length()<=0) {
+									resFailure.append("-?-");
+								}
+								throw new CoreException("Informazione personalizzata non presente");
+							}
+							((ResDistribuzione3DCustom)r).setDatoCustom(customData);
+						}catch(Exception t) {
+							((ResDistribuzione3DCustom)r).setDatoCustom("Soggetto '"+risultato+"' - "+resFailure.toString());
+							StatisticheGiornaliereService.logError("Traduzione Soggetto("+risultato+") '"+resFailure.toString()+"' non riuscita: "+t.getMessage(), t);
+						}
+					} 
+					else {
 						r = new ResDistribuzione();
 					}
 					
-					r.setRisultato(((String) row.get("tipo_soggetto")) + "/"
-							+ ((String) row.get("soggetto")));
+					r.setRisultato(risultato);
 
 					Number somma = StatsUtils.converToNumber( row.get("somma"));
 					if(somma!=null){
@@ -4754,6 +4853,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// raggruppamento per data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 				erogazione_portaApplicativa_Expr.addGroupBy(model.DATA);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				impostaGroupByFiltro3dCustom(erogazione_portaApplicativa_Expr, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom());
 			}
 			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
@@ -4780,11 +4881,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			//			erogazione_portaApplicativa_Expr.addOrder(model.MITTENTE);
 
 			UnionExpression erogazione_portaApplicativa_UnionExpr = new UnionExpression(erogazione_portaApplicativa_Expr);
+			List<String> aliases3dCustom = new ArrayList<>();
 			
 			// select field data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 				erogazione_portaApplicativa_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
-			}	
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				impostaSelectField3dCustom(erogazione_portaApplicativa_UnionExpr, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom(), aliases3dCustom );
+			}
 			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				erogazione_portaApplicativa_UnionExpr.addSelectField(
@@ -4806,6 +4910,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 				unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
 						model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				impostaSelectField3dCustomFake(unionExprFake, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom(), aliases3dCustom);
 			}
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_MITTENTE.getFieldType()), "tipo_soggetto");
@@ -4822,6 +4928,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// select field data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 				union.addField(ALIAS_FIELD_DATA_3D);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					union.addField(a3dCustom);
+				}
 			}
 			union.addField("tipo_soggetto");
 			union.addField("soggetto");
@@ -4829,6 +4939,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// group by field data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					union.addGroupBy(a3dCustom);
+				}
 			}
 			union.addGroupBy("tipo_soggetto");
 			union.addGroupBy("soggetto");
@@ -4837,6 +4951,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 				SortOrder s = 	this.distribSoggettoSearch.getSortOrder() != null ? 	this.distribSoggettoSearch.getSortOrder() : SortOrder.ASC;
 				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					SortOrder s = 	this.distribSoggettoSearch.getSortOrder() != null ? 	this.distribSoggettoSearch.getSortOrder() : SortOrder.ASC;
+					union.addOrderBy(a3dCustom, s);
+				}
 			}
 			
 			TipoVisualizzazione tipoVisualizzazione = this.distribSoggettoSearch.getTipoVisualizzazione();
@@ -4993,7 +5112,30 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
 						((ResDistribuzione3D)r).setData(data);
 						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
-					} else {
+					} 
+					else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3DCustom();
+
+						StringBuilder resFailure = new StringBuilder();
+						try {
+							BooleanNullable bSkip = BooleanNullable.NULL();
+							String customData = getCustomData(row, this.distribSoggettoSearch.getNumeroDimensioniCustom(), this.distribSoggettoSearch, resFailure, bSkip);
+							if(bSkip!=null && bSkip.getValue()!=null && bSkip.getValue().booleanValue()) {
+								continue;
+							}
+							if(customData==null) {
+								if(resFailure.length()<=0) {
+									resFailure.append("-?-");
+								}
+								throw new CoreException("Informazione personalizzata non presente");
+							}
+							((ResDistribuzione3DCustom)r).setDatoCustom(customData);
+						}catch(Exception t) {
+							((ResDistribuzione3DCustom)r).setDatoCustom("Soggetto '"+risultato+"' - "+resFailure.toString());
+							StatisticheGiornaliereService.logError("Traduzione Soggetto("+risultato+") '"+resFailure.toString()+"' non riuscita: "+t.getMessage(), t);
+						}
+					}
+					else {
 						r = new ResDistribuzione();
 					}
 					
@@ -5127,6 +5269,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// raggruppamento per data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 				fruizione_portaDelegata_Expr.addGroupBy(model.DATA);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				impostaGroupByFiltro3dCustom(fruizione_portaDelegata_Expr, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom());
 			}
 			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
@@ -5153,10 +5297,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			//			fruizione_portaDelegata_Expr.addOrder(model.DESTINATARIO);
 
 			UnionExpression fruizione_portaDelegata_UnionExpr = new UnionExpression(fruizione_portaDelegata_Expr);
+			List<String> aliases3dCustom = new ArrayList<>();
 			
 			// select field data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 				fruizione_portaDelegata_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				impostaSelectField3dCustom(fruizione_portaDelegata_UnionExpr, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom(), aliases3dCustom  );
 			}
 			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
@@ -5181,6 +5328,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 				unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
 						model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				impostaSelectField3dCustomFake(unionExprFake, model, this.distribSoggettoSearch, this.distribSoggettoSearch.getNumeroDimensioniCustom(), aliases3dCustom);
 			}
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_DESTINATARIO.getFieldType()), "tipo_soggetto");
@@ -5197,6 +5346,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// select field data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 				union.addField(ALIAS_FIELD_DATA_3D);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					union.addField(a3dCustom);
+				}
 			}
 			union.addField("tipo_soggetto");
 			union.addField("soggetto");
@@ -5204,6 +5357,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// group by field data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					union.addGroupBy(a3dCustom);
+				}
 			}
 			union.addGroupBy("tipo_soggetto");
 			union.addGroupBy("soggetto");
@@ -5212,6 +5369,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
 				SortOrder s = 	this.distribSoggettoSearch.getSortOrder() != null ? 	this.distribSoggettoSearch.getSortOrder() : SortOrder.ASC;
 				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					SortOrder s = 	this.distribSoggettoSearch.getSortOrder() != null ? 	this.distribSoggettoSearch.getSortOrder() : SortOrder.ASC;
+					union.addOrderBy(a3dCustom, s);
+				}
 			}
 			
 			TipoVisualizzazione tipoVisualizzazione = this.distribSoggettoSearch.getTipoVisualizzazione();
@@ -5373,7 +5535,30 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
 						((ResDistribuzione3D)r).setData(data);
 						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
-					} else {
+					} 
+					else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3DCustom();
+
+						StringBuilder resFailure = new StringBuilder();
+						try {
+							BooleanNullable bSkip = BooleanNullable.NULL();
+							String customData = getCustomData(row, this.distribSoggettoSearch.getNumeroDimensioniCustom(), this.distribSoggettoSearch, resFailure, bSkip);
+							if(bSkip!=null && bSkip.getValue()!=null && bSkip.getValue().booleanValue()) {
+								continue;
+							}
+							if(customData==null) {
+								if(resFailure.length()<=0) {
+									resFailure.append("-?-");
+								}
+								throw new CoreException("Informazione personalizzata non presente");
+							}
+							((ResDistribuzione3DCustom)r).setDatoCustom(customData);
+						}catch(Exception t) {
+							((ResDistribuzione3DCustom)r).setDatoCustom("Soggetto '"+risultato+"' - "+resFailure.toString());
+							StatisticheGiornaliereService.logError("Traduzione Soggetto("+risultato+") '"+resFailure.toString()+"' non riuscita: "+t.getMessage(), t);
+						}
+					}
+					else {
 						r = new ResDistribuzione();
 					}
 					
@@ -5522,6 +5707,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribServizioSearch.getNumeroDimensioni())) {
 				SortOrder s = 	this.distribServizioSearch.getSortOrder() != null ? 	this.distribServizioSearch.getSortOrder() : SortOrder.ASC;
 				gByExpr.sortOrder(s).addOrder(model.DATA);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribServizioSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribErroriSearch.getSortOrder() != null ? 	this.distribServizioSearch.getSortOrder() : SortOrder.ASC;
+				impostaSortOrder3dCustom(gByExpr, model, this.distribServizioSearch, this.distribServizioSearch.getNumeroDimensioniCustom(), s);
 			}
 			
 			if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
@@ -5560,6 +5748,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			UnionExpression unionExpr = new UnionExpression(gByExpr);
 			IExpression fakeExpr = this.dao.newExpression();
 			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
+			List<String> aliases3dCustom = new ArrayList<>();
 			
 			// select field by data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribServizioSearch.getNumeroDimensioni())) {
@@ -5567,6 +5756,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
 						model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+			}else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribServizioSearch.getNumeroDimensioni())) {
+				impostaSelectField3dCustom(unionExpr, model, this.distribServizioSearch, this.distribServizioSearch.getNumeroDimensioniCustom(), aliases3dCustom);
+				impostaSelectField3dCustomFake(unionExprFake, model, this.distribServizioSearch, this.distribServizioSearch.getNumeroDimensioniCustom(), aliases3dCustom);
 			}
 			
 			if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
@@ -5602,10 +5794,23 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			Union union = new Union();
 			union.setUnionAll(true);
 			
-			// select field e group by data in caso di visualizzazione a 3 dimensioni
+			// select field data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribServizioSearch.getNumeroDimensioni())) {
 				union.addField(ALIAS_FIELD_DATA_3D);
+			}
+			else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribServizioSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					union.addField(a3dCustom);
+				}
+			}
+			// group by field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribServizioSearch.getNumeroDimensioni())) {
 				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			}
+			else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribServizioSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					union.addGroupBy(a3dCustom);
+				}
 			}
 			
 			if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
@@ -5629,6 +5834,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribServizioSearch.getNumeroDimensioni())) {
 				SortOrder s = 	this.distribServizioSearch.getSortOrder() != null ? 	this.distribServizioSearch.getSortOrder() : SortOrder.ASC;
 				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
+			}else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribServizioSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					SortOrder s = 	this.distribServizioSearch.getSortOrder() != null ? 	this.distribServizioSearch.getSortOrder() : SortOrder.ASC;
+					union.addOrderBy(a3dCustom, s);
+				}
 			}
 
 			TipoVisualizzazione tipoVisualizzazione = this.distribServizioSearch.getTipoVisualizzazione();
@@ -5798,7 +6008,30 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
 						((ResDistribuzione3D)r).setData(data);
 						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
-					} else {
+					} 
+					else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribServizioSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3DCustom();
+
+						StringBuilder resFailure = new StringBuilder();
+						try {
+							BooleanNullable bSkip = BooleanNullable.NULL();
+							String customData = getCustomData(row, this.distribServizioSearch.getNumeroDimensioniCustom(), this.distribServizioSearch, resFailure, bSkip);
+							if(bSkip!=null && bSkip.getValue()!=null && bSkip.getValue().booleanValue()) {
+								continue;
+							}
+							if(customData==null) {
+								if(resFailure.length()<=0) {
+									resFailure.append("-?-");
+								}
+								throw new CoreException("Informazione personalizzata non presente");
+							}
+							((ResDistribuzione3DCustom)r).setDatoCustom(customData);
+						}catch(Exception t) {
+							((ResDistribuzione3DCustom)r).setDatoCustom("Servizio '"+risultato+"' - "+resFailure.toString());
+							StatisticheGiornaliereService.logError("Traduzione Servizio("+risultato+") '"+resFailure.toString()+"' non riuscita: "+t.getMessage(), t);
+						}
+					} 
+					else {
 						r = new ResDistribuzione();
 					}
 					
@@ -6119,6 +6352,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// raggruppamento per data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribServizioSearch.getNumeroDimensioni())) {
 				expr.addGroupBy(model.DATA);
+			}
+			else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribServizioSearch.getNumeroDimensioni())) {
+				impostaGroupByFiltro3dCustom(expr, model, this.distribServizioSearch, this.distribServizioSearch.getNumeroDimensioniCustom());
 			}
 			
 			if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
@@ -6530,6 +6766,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// raggruppamento per data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
 				expr.addGroupBy(model.DATA);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+				impostaGroupByFiltro3dCustom(expr, model, this.distribAzioneSearch, this.distribAzioneSearch.getNumeroDimensioniCustom());
 			}
 			
 			expr.notEquals(model.AZIONE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -6607,7 +6845,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
 				SortOrder s = 	this.distribAzioneSearch.getSortOrder() != null ? 	this.distribAzioneSearch.getSortOrder() : SortOrder.ASC;
 				gByExpr.sortOrder(s).addOrder(model.DATA);
-			}
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribAzioneSearch.getSortOrder() != null ? 	this.distribAzioneSearch.getSortOrder() : SortOrder.ASC;
+				impostaSortOrder3dCustom(gByExpr, model, this.distribAzioneSearch, this.distribAzioneSearch.getNumeroDimensioniCustom(), s);
+			}			
 			
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.AZIONE);
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.TIPO_SERVIZIO);
@@ -6632,6 +6873,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			
 			UnionExpression unionExpr = new UnionExpression(gByExpr);
+			
+			List<String> aliases3dCustom = new ArrayList<>();
 			String aliasFieldAzione = "azione";
 			String aliasFieldTipoServizio = "tipo_servizio";
 			String aliasFieldServizio = "servizio";
@@ -6642,6 +6885,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// select field data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
 				unionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+				impostaSelectField3dCustom(unionExpr, model, this.distribAzioneSearch, this.distribAzioneSearch.getNumeroDimensioniCustom(), aliases3dCustom);
 			}
 			
 			unionExpr.addSelectField(model.AZIONE,		aliasFieldAzione);
@@ -6659,6 +6904,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
 				unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
 						model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+				impostaSelectField3dCustomFake(unionExprFake, model, this.distribAzioneSearch, this.distribAzioneSearch.getNumeroDimensioniCustom(), aliases3dCustom);
 			}
 			
 			unionExprFake.addSelectField(new ConstantField(aliasFieldAzione, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
@@ -6680,7 +6927,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// select field e group by data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
 				union.addField(ALIAS_FIELD_DATA_3D);
-				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					union.addField(a3dCustom);
+				}
 			}
 			
 			union.addField(aliasFieldAzione);
@@ -6689,6 +6939,17 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			union.addField(aliasFieldVersioneServizio);
 			union.addField(aliasFieldTipoDestinatario);
 			union.addField(aliasFieldDestinatario);
+			
+			// group by field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			}
+			else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					union.addGroupBy(a3dCustom);
+				}
+			}
+			
 			union.addGroupBy(aliasFieldAzione);
 			union.addGroupBy(aliasFieldTipoServizio);
 			union.addGroupBy(aliasFieldServizio);
@@ -6700,8 +6961,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
 				SortOrder s = 	this.distribAzioneSearch.getSortOrder() != null ? 	this.distribAzioneSearch.getSortOrder() : SortOrder.ASC;
 				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					SortOrder s = 	this.distribAzioneSearch.getSortOrder() != null ? 	this.distribAzioneSearch.getSortOrder() : SortOrder.ASC;
+					union.addOrderBy(a3dCustom, s);
+				}
 			}
-
 			
 			TipoVisualizzazione tipoVisualizzazione = this.distribAzioneSearch.getTipoVisualizzazione();
 			String sommaAliasName = "somma";
@@ -6862,7 +7127,30 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
 						((ResDistribuzione3D)r).setData(data);
 						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
-					} else {
+					}
+					else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3DCustom();
+
+						StringBuilder resFailure = new StringBuilder();
+						try {
+							BooleanNullable bSkip = BooleanNullable.NULL();
+							String customData = getCustomData(row, this.distribAzioneSearch.getNumeroDimensioniCustom(), this.distribAzioneSearch, resFailure, bSkip);
+							if(bSkip!=null && bSkip.getValue()!=null && bSkip.getValue().booleanValue()) {
+								continue;
+							}
+							if(customData==null) {
+								if(resFailure.length()<=0) {
+									resFailure.append("-?-");
+								}
+								throw new CoreException("Informazione personalizzata non presente");
+							}
+							((ResDistribuzione3DCustom)r).setDatoCustom(customData);
+						}catch(Exception t) {
+							((ResDistribuzione3DCustom)r).setDatoCustom("Azione '"+risultato+"' - "+resFailure.toString());
+							StatisticheGiornaliereService.logError("Traduzione Azione("+risultato+") '"+resFailure.toString()+"' non riuscita: "+t.getMessage(), t);
+						}
+					} 
+					else {
 						r = new ResDistribuzione();
 					}
 					
@@ -7108,7 +7396,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
 						SortOrder s = 	this.distribSaSearch.getSortOrder() != null ? 	this.distribSaSearch.getSortOrder() : SortOrder.ASC;
 						gByExprErogazione.sortOrder(s).addOrder(model.DATA);
-					}
+					} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSaSearch.getNumeroDimensioni())) {
+						SortOrder s = 	this.distribAzioneSearch.getSortOrder() != null ? 	this.distribSaSearch.getSortOrder() : SortOrder.ASC;
+						impostaSortOrder3dCustom(gByExprErogazione, model, this.distribSaSearch, this.distribSaSearch.getNumeroDimensioniCustom(), s);
+					}	
 					
 					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(credenzialeFieldGroupBy);
 					// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
@@ -7137,6 +7428,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
 						SortOrder s = 	this.distribSaSearch.getSortOrder() != null ? 	this.distribSaSearch.getSortOrder() : SortOrder.ASC;
 						gByExprFruizione.sortOrder(s).addOrder(model.DATA);
+					} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSaSearch.getNumeroDimensioni())) {
+						SortOrder s = 	this.distribAzioneSearch.getSortOrder() != null ? 	this.distribSaSearch.getSortOrder() : SortOrder.ASC;
+						impostaSortOrder3dCustom(gByExprFruizione, model, this.distribSaSearch, this.distribSaSearch.getNumeroDimensioniCustom(), s);
 					}
 					
 					gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(credenzialeFieldGroupBy);
@@ -7165,6 +7459,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
 					SortOrder s = 	this.distribSaSearch.getSortOrder() != null ? 	this.distribSaSearch.getSortOrder() : SortOrder.ASC;
 					gByExpr.sortOrder(s).addOrder(model.DATA);
+				} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSaSearch.getNumeroDimensioni())) {
+					SortOrder s = 	this.distribAzioneSearch.getSortOrder() != null ? 	this.distribSaSearch.getSortOrder() : SortOrder.ASC;
+					impostaSortOrder3dCustom(gByExpr, model, this.distribSaSearch, this.distribSaSearch.getNumeroDimensioniCustom(), s);
 				}
 				
 				gByExpr.sortOrder(SortOrder.ASC).addOrder(credenzialeFieldGroupBy);
@@ -7176,6 +7473,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 			}
 			
+			List<String> aliases3dCustom = new ArrayList<>();
 			String aliasFieldCredenzialeMittente = "credenziale_mittente";
 			String aliasFieldTipoSoggetto = "tipo_soggetto";
 			String aliasFieldSoggetto = "soggetto";
@@ -7190,6 +7488,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// select field data in caso di visualizzazione a 3 dimensioni
 					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
 						unionExprErogatore.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+					} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSaSearch.getNumeroDimensioni())) {
+						impostaSelectField3dCustom(unionExprErogatore, model, this.distribSaSearch, this.distribSaSearch.getNumeroDimensioniCustom(), aliases3dCustom);
 					}
 					unionExprErogatore.addSelectField(credenzialeFieldGroupBy, aliasFieldCredenzialeMittente);
 					// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
@@ -7210,6 +7510,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// select field data in caso di visualizzazione a 3 dimensioni
 					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
 						unionExprFruitore.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+					} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSaSearch.getNumeroDimensioni())) {
+						impostaSelectField3dCustom(unionExprFruitore, model, this.distribSaSearch, this.distribSaSearch.getNumeroDimensioniCustom(), aliases3dCustom);
 					}
 					unionExprFruitore.addSelectField(credenzialeFieldGroupBy, aliasFieldCredenzialeMittente);
 					if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
@@ -7231,6 +7533,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
 						unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
 								model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+					} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSaSearch.getNumeroDimensioni())) {
+						impostaSelectField3dCustomFake(unionExprFake, model, this.distribSaSearch, this.distribSaSearch.getNumeroDimensioniCustom(), aliases3dCustom);
 					}
 					
 					unionExprFake.addSelectField(new ConstantField(aliasFieldCredenzialeMittente, 
@@ -7260,6 +7564,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// select field data in caso di visualizzazione a 3 dimensioni
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
 					unionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+				} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSaSearch.getNumeroDimensioni())) {
+					impostaSelectField3dCustom(unionExpr, model, this.distribSaSearch, this.distribSaSearch.getNumeroDimensioniCustom(), aliases3dCustom);
 				}
 				
 				unionExpr.addSelectField(credenzialeFieldGroupBy, aliasFieldCredenzialeMittente);
@@ -7279,6 +7585,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// select field by data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
 				union.addField(ALIAS_FIELD_DATA_3D);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSaSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					union.addField(a3dCustom);
+				}
 			}
 			
 			union.addField(aliasFieldCredenzialeMittente);
@@ -7297,6 +7607,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// select group by data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
 				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSaSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					union.addGroupBy(a3dCustom);
+				}
 			}
 			
 			union.addGroupBy(aliasFieldCredenzialeMittente);
@@ -7334,6 +7648,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
 				SortOrder s = 	this.distribSaSearch.getSortOrder() != null ? 	this.distribSaSearch.getSortOrder() : SortOrder.ASC;
 				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSaSearch.getNumeroDimensioni())) {
+				for (String a3dCustom : aliases3dCustom) {
+					SortOrder s = 	this.distribSaSearch.getSortOrder() != null ? 	this.distribSaSearch.getSortOrder() : SortOrder.ASC;
+					union.addOrderBy(a3dCustom, s);
+				}
 			}
 			
 			TipoVisualizzazione tipoVisualizzazione = this.distribSaSearch.getTipoVisualizzazione();
@@ -7627,7 +7946,30 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
 						((ResDistribuzione3D)r).setData(data);
 						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
-					} else {
+					}
+					else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSaSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3DCustom();
+
+						StringBuilder resFailure = new StringBuilder();
+						try {
+							BooleanNullable bSkip = BooleanNullable.NULL();
+							String customData = getCustomData(row, this.distribSaSearch.getNumeroDimensioniCustom(), this.distribSaSearch, resFailure, bSkip);
+							if(bSkip!=null && bSkip.getValue()!=null && bSkip.getValue().booleanValue()) {
+								continue;
+							}
+							if(customData==null) {
+								if(resFailure.length()<=0) {
+									resFailure.append("-?-");
+								}
+								throw new CoreException("Informazione personalizzata non presente");
+							}
+							((ResDistribuzione3DCustom)r).setDatoCustom(customData);
+						}catch(Exception t) {
+							((ResDistribuzione3DCustom)r).setDatoCustom("SA '"+risultato+"' - "+resFailure.toString());
+							StatisticheGiornaliereService.logError("Traduzione SA("+risultato+") '"+resFailure.toString()+"' non riuscita: "+t.getMessage(), t);
+						}
+					}
+					else {
 						r = new ResDistribuzione();
 					}
 										
@@ -8177,6 +8519,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// raggruppamento per data in caso di visualizzazione a 3 dimensioni
 			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
 				expr.addGroupBy(model.DATA);
+			} else if(NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.distribSaSearch.getNumeroDimensioni())) {
+				impostaGroupByFiltro3dCustom(expr, model, this.distribSaSearch, this.distribSaSearch.getNumeroDimensioniCustom());
 			}
 			
 			this.impostaGroupByFiltroDatiMittente(expr, this.distribSaSearch, model, isCount); 

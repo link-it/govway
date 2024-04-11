@@ -611,6 +611,19 @@ public class StatsSearchForm extends BaseSearchForm{
 		this.numeroDimensioniCustom = null;
 		
 	}
+	
+	@Override
+	public void claimSelected(ActionEvent ae){
+		// numero dimensioni
+		this.numeroDimensioniCustom = null;
+	}
+	
+	@Override
+	public void identificazioneSelected(ActionEvent ae) {
+		super.identificazioneSelected(ae);
+		// numero dimensioni
+		this.numeroDimensioniCustom = null;
+	}
 
 	public void tipoLatenzaListener(ActionEvent ae){
 	}
