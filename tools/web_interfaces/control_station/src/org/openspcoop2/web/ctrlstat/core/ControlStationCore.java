@@ -41,6 +41,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
+import org.openspcoop2.core.byok.IDriverBYOKConfig;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.Filtri;
@@ -75,6 +76,7 @@ import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.TracciamentoConfigurazione;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione;
@@ -147,6 +149,7 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
+import org.openspcoop2.pdd.core.byok.DriverBYOK;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.pdd.core.keystore.RemoteStoreKeyEntry;
 import org.openspcoop2.pdd.core.keystore.RemoteStoreProviderDriverUtils;
@@ -170,6 +173,10 @@ import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.VersionUtilities;
+import org.openspcoop2.utils.certificate.byok.BYOKConfig;
+import org.openspcoop2.utils.certificate.byok.BYOKEncryptionMode;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
+import org.openspcoop2.utils.certificate.byok.BYOKSecurityConfig;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.crypt.CryptFactory;
 import org.openspcoop2.utils.crypt.CryptType;
@@ -181,6 +188,7 @@ import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.resources.ScriptInvoker;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -1193,6 +1201,12 @@ public class ControlStationCore {
 		return this.isClusterDinamicoEnabled;
 	}
 	
+	/** BYOK */
+	private String byokInternalConfigSecurityEngine = null;
+	public String getByokInternalConfigSecurityEngine() {
+		return this.byokInternalConfigSecurityEngine;
+	}
+
 	/** OCSP */
 	private boolean isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = false;
 	public boolean isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata() {
@@ -1649,6 +1663,8 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoInformazioniInstallazione = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoUnwrapKey = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoWrapKey = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoConnessioniDB = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoConnessioniJMS = new HashMap<>();
@@ -1882,6 +1898,12 @@ public class ControlStationCore {
 	}
 	public String getJmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace(String alias) {
 		return this.jmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace.get(alias);
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoUnwrapKey(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoUnwrapKey.get(alias);
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoWrapKey(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoWrapKey.get(alias);
 	}
 	public String getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(String alias) {
 		return this.jmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio.get(alias);
@@ -2637,6 +2659,9 @@ public class ControlStationCore {
 		/** Cluster dinamico */
 		this.isClusterDinamicoEnabled = core.isClusterDinamicoEnabled;
 		
+		/** BYOK **/
+		this.byokInternalConfigSecurityEngine = core.byokInternalConfigSecurityEngine;
+		
 		/** OCSP */
 		this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = core.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata; 
 		
@@ -2780,6 +2805,8 @@ public class ControlStationCore {
 		this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniInstallazione = core.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniInstallazione;
 		this.jmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace = core.jmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace;
 		this.jmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace = core.jmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoUnwrapKey = core.jmxPdDConfigurazioneSistemaNomeMetodoUnwrapKey;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoWrapKey = core.jmxPdDConfigurazioneSistemaNomeMetodoWrapKey;
 		this.jmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio = core.jmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio;
 		this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniDB = core.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniDB;
 		this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniJMS = core.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniJMS;
@@ -3078,6 +3105,7 @@ public class ControlStationCore {
 			}
 			this.isRegistrazioneMessaggiMultipartPayloadParsingEnabled = consoleProperties.isRegistrazioneMessaggiMultipartPayloadParsingEnabled();
 			this.isClusterDinamicoEnabled = consoleProperties.isClusterDinamicoEnabled();
+			this.byokInternalConfigSecurityEngine = consoleProperties.getBYOKInternalConfigSecurityEngine();
 			this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = consoleProperties.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata();
 			this.verificaCertificatiWarningExpirationDays = consoleProperties.getVerificaCertificatiWarningExpirationDays();
 			this.verificaCertificatiSceltaClusterId = consoleProperties.isVerificaCertificatiSceltaClusterId();
@@ -3333,6 +3361,8 @@ public class ControlStationCore {
 					this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniInstallazione.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniInstallazione(alias));
 					this.jmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace(alias));
 					this.jmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoUnwrapKey.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoUnwrapKey(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoWrapKey.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoWrapKey(alias));
 					this.jmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(alias));
 					this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniDB.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniDB(alias));
 					this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniJMS.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniJMS(alias));
@@ -3608,7 +3638,7 @@ public class ControlStationCore {
 
 		try {
 
-			operazioneDaSmistareList = new ArrayList<OperazioneDaSmistare>();
+			operazioneDaSmistareList = new ArrayList<>();
 			con = ControlStationCore.dbM.getConnection();
 			if(con==null) {
 				throw new ControlStationCoreException("Connection is null");
@@ -3623,6 +3653,10 @@ public class ControlStationCore {
 
 			// creo il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			// BYOK
+			activeBYOK(driver, true, false);
+			
 			SoggettiCore soggettiCore = new SoggettiCore(this);
 
 			for (int i = 0; i < oggetti.length; i++) {
@@ -8838,5 +8872,101 @@ public class ControlStationCore {
 			filetrace.setFiltroEsiti(fsFiltroEsiti ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
 		}
 		return filetrace;
+	}
+	
+	
+	private static final String GOVWAY_RUNTIME_CONTEXT="govway-runtime";
+	private static final String GOVWAY_RUNTIME_ENDPOINT_WRAP="endpoint-wrap";
+	private static final String GOVWAY_RUNTIME_ENDPOINT_UNWRAP="endpoint-unwrap";
+	private static final String GOVWAY_RUNTIME_USERNAME="username";
+	private static final String GOVWAY_RUNTIME_PASSWORD="password";
+
+	protected void activeBYOK(DriverControlStationDB driver, boolean wrap, boolean unwrap) throws UtilsException{
+		String securityManagerPolicy = this.getByokInternalConfigSecurityEngine();
+		if(securityManagerPolicy!=null) {
+			Map<String, Object> dynamicMap = new HashMap<>();
+			
+			if(isBYOKRemoteConfig(securityManagerPolicy)) {
+				initBYOKDynamicMap(dynamicMap, wrap, unwrap);
+			}
+			
+			DriverBYOK driverBYOK = new DriverBYOK(ControlStationCore.log, securityManagerPolicy, dynamicMap, true);
+			if(driver.getDriverConfigurazioneDB() instanceof IDriverBYOKConfig) {
+				IDriverBYOKConfig c = driver.getDriverConfigurazioneDB();
+				c.initialize(driverBYOK, wrap, unwrap);
+			}
+		}
+	}
+	private boolean isActiveNode(String alias) {
+		try {
+			String value = this.getInvoker().readJMXAttribute(alias, this.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.getJmxPdDConfigurazioneSistemaNomeRisorsaStatoServiziPdD(alias), 
+					this.getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegata(alias));
+			return value!=null && !"".equals(value) && !value.startsWith("[httpCode ") && 
+					(CostantiConfigurazione.ABILITATO.getValue().equals(value) || CostantiConfigurazione.DISABILITATO.getValue().equals(value));
+		}catch(Exception e) {
+			log.debug("Non 'alias' non attivo?: "+e.getMessage(),e);
+			return false;
+		}
+	}
+	private boolean isBYOKRemoteConfig(String securityManagerPolicy) throws UtilsException {
+		BYOKManager byokManager = BYOKManager.getInstance();
+		if(byokManager!=null) {
+			BYOKSecurityConfig bsc = byokManager.getKSMSecurityConfig(securityManagerPolicy);
+			
+			BYOKConfig c = byokManager.getKSMConfigByType(bsc.getWrapId());
+			if(BYOKEncryptionMode.REMOTE.equals(c.getEncryptionMode())) {
+				return true;
+			}
+			
+			c = byokManager.getKSMConfigByType(bsc.getUnwrapId());
+			if(BYOKEncryptionMode.REMOTE.equals(c.getEncryptionMode())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	private void initBYOKDynamicMap(Map<String, Object> dynamicMap, boolean wrap, boolean unwrap) throws UtilsException {
+		List<String> aliases = this.getJmxPdDAliases();
+		if(aliases!=null && !aliases.isEmpty()){
+			// prendo il primo nodo funzionante
+			for (String alias : aliases) {
+				if(isActiveNode(alias) &&
+					this.configurazioneNodiRuntime.getResourceUrl(alias)!=null && !"".equals(this.configurazioneNodiRuntime.getResourceUrl(alias))
+					&& !"locale".equals(this.configurazioneNodiRuntime.getResourceUrl(alias))
+						){
+					initBYOKDynamicMap(dynamicMap, wrap, unwrap, alias);
+					break;
+				}
+			}
+		}
+	}
+	private void initBYOKDynamicMap(Map<String, Object> dynamicMap, boolean wrap, boolean unwrap, String alias) throws UtilsException {
+		String remoteUrl = this.configurazioneNodiRuntime.getResourceUrl(alias);
+		
+		Map<String, String> govwayContext = new HashMap<>();
+		dynamicMap.put(GOVWAY_RUNTIME_CONTEXT, govwayContext);
+		
+		Map<String, List<String>> p = new HashMap<>();
+		TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, this.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias));
+		if(wrap) {
+			TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_METHOD_NAME, this.getJmxPdDConfigurazioneSistemaNomeMetodoWrapKey(alias));
+			String urlWrap = TransportUtils.buildUrlWithParameters(p, remoteUrl);
+			govwayContext.put(GOVWAY_RUNTIME_ENDPOINT_WRAP, urlWrap);
+		}
+		if(unwrap) {
+			TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_METHOD_NAME, this.getJmxPdDConfigurazioneSistemaNomeMetodoUnwrapKey(alias));
+			String urlUnwrap = TransportUtils.buildUrlWithParameters(p, remoteUrl);
+			govwayContext.put(GOVWAY_RUNTIME_ENDPOINT_UNWRAP, urlUnwrap);
+		}
+
+		String username = this.configurazioneNodiRuntime.getUsername(alias);
+		if(username!=null) {
+			govwayContext.put(GOVWAY_RUNTIME_USERNAME, username);
+		}
+		String password = this.configurazioneNodiRuntime.getPassword(alias);
+		if(password!=null) {
+			govwayContext.put(GOVWAY_RUNTIME_PASSWORD, password);
+		}
 	}
 }

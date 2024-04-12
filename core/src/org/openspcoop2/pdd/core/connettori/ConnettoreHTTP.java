@@ -269,14 +269,14 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 				this.maxNumberRedirects = Integer.parseInt(redirectTmp);
 			}
 			
-			redirectTmp = this.properties.get(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_NUMBER);
+			redirectTmp = this.properties.get(CostantiConnettori.CONNETTORE_HTTP_REDIRECT_NUMBER);
 			//this.log.info("PROPERTY! ("+redirectTmp+")");
 			if(redirectTmp!=null){
 				redirectTmp = redirectTmp.trim();
 				this.numberRedirect = Integer.parseInt(redirectTmp);
 			}
 			
-			redirectTmp = this.properties.get(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_ROUTE);
+			redirectTmp = this.properties.get(CostantiConnettori.CONNETTORE_HTTP_REDIRECT_ROUTE);
 			//this.log.info("PROPERTY! ("+redirectTmp+")");
 			if(redirectTmp!=null){
 				redirectTmp = redirectTmp.trim();
@@ -787,14 +787,14 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 						}
 						
 						TransportUtils.removeObject(request.getConnectorProperties(), CostantiConnettori.CONNETTORE_LOCATION);
-						TransportUtils.removeObject(request.getConnectorProperties(), CostantiConnettori._CONNETTORE_HTTP_REDIRECT_NUMBER);
-						TransportUtils.removeObject(request.getConnectorProperties(), CostantiConnettori._CONNETTORE_HTTP_REDIRECT_ROUTE);
+						TransportUtils.removeObject(request.getConnectorProperties(), CostantiConnettori.CONNETTORE_HTTP_REDIRECT_NUMBER);
+						TransportUtils.removeObject(request.getConnectorProperties(), CostantiConnettori.CONNETTORE_HTTP_REDIRECT_ROUTE);
 						request.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION, redirectLocation);
-						request.getConnectorProperties().put(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_NUMBER, (this.numberRedirect+1)+"" );
+						request.getConnectorProperties().put(CostantiConnettori.CONNETTORE_HTTP_REDIRECT_NUMBER, (this.numberRedirect+1)+"" );
 						if(this.routeRedirect!=null){
-							request.getConnectorProperties().put(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_ROUTE, this.routeRedirect+" -> "+redirectLocation );
+							request.getConnectorProperties().put(CostantiConnettori.CONNETTORE_HTTP_REDIRECT_ROUTE, this.routeRedirect+" -> "+redirectLocation );
 						}else{
-							request.getConnectorProperties().put(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_ROUTE, redirectLocation );
+							request.getConnectorProperties().put(CostantiConnettori.CONNETTORE_HTTP_REDIRECT_ROUTE, redirectLocation );
 						}
 						if(this.originalAbsolutePrefixForRelativeRedirectLocation==null) {
 							this.originalAbsolutePrefixForRelativeRedirectLocation = url.getProtocol()+"://"+url.getHost()+":"+url.getPort();

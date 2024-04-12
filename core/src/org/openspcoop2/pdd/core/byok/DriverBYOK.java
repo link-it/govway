@@ -1,0 +1,227 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * https://govway.org
+ * 
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+package org.openspcoop2.pdd.core.byok;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.openspcoop2.core.byok.BYOKUtilities;
+import org.openspcoop2.core.byok.BYOKWrappedValue;
+import org.openspcoop2.core.byok.IDriverBYOK;
+import org.openspcoop2.pdd.core.jmx.JMXUtils;
+import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.security.keystore.BYOKLocalEncrypt;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.byok.BYOKConfig;
+import org.openspcoop2.utils.certificate.byok.BYOKInstance;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
+import org.openspcoop2.utils.certificate.byok.BYOKMode;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
+import org.openspcoop2.utils.certificate.byok.BYOKSecurityConfig;
+import org.openspcoop2.utils.certificate.byok.BYOKSecurityConfigParameter;
+import org.openspcoop2.utils.transport.http.HttpResponse;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.slf4j.Logger;
+
+/**
+ * DriverBYOK
+ *
+ * @author Andrea Poli (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ */
+public class DriverBYOK implements IDriverBYOK {
+
+	private Logger log;
+	private String securityPolicy;
+	private Map<String, Object> dynamicMap;
+	private boolean checkJmxPrefixOperazioneNonRiuscita;
+	public DriverBYOK(Logger log, String securityPolicy) {
+		this(log, securityPolicy, null, false);
+	}
+	public DriverBYOK(Logger log, String securityPolicy, Map<String, Object> dynamicMapParam, boolean checkJmxPrefixOperazioneNonRiuscita) {
+		this.log = log;
+		this.securityPolicy = securityPolicy;
+		this.dynamicMap = dynamicMapParam==null ? new HashMap<>() : dynamicMapParam;
+		this.checkJmxPrefixOperazioneNonRiuscita = checkJmxPrefixOperazioneNonRiuscita;
+	}
+	
+	@Override
+	public BYOKWrappedValue wrap(String value) throws UtilsException {
+		if(value==null) {
+			throw new UtilsException("Value undefined");
+		}
+		if(BYOKUtilities.isWrappedValue(value)) {
+			return new BYOKWrappedValue(value, BYOKUtilities.extractPrefixWrappedValue(value));
+		}
+		
+		if(this.securityPolicy==null) {
+			return null;
+		}
+		
+		BYOKRequestParams p = getBYOKRequestParams(true, this.securityPolicy);
+		String prefix = BYOKUtilities.newPrefixWrappedValue(this.securityPolicy);
+		byte[]wrapped = process(getBYOKInstance(this.log,value.getBytes(),p));
+		return new BYOKWrappedValue(prefix+new String(wrapped), prefix);
+	}
+	@Override
+	public BYOKWrappedValue wrap(byte[] value) throws UtilsException {
+		if(value==null) {
+			throw new UtilsException("Value undefined");
+		}
+		if(BYOKUtilities.isWrappedValue(value)) {
+			return new BYOKWrappedValue(value, BYOKUtilities.extractPrefixWrappedValue(value));
+		}
+		
+		if(this.securityPolicy==null) {
+			return null;
+		}
+		
+		BYOKRequestParams p = getBYOKRequestParams(true, this.securityPolicy);
+		String prefix = BYOKUtilities.newPrefixWrappedValue(this.securityPolicy);
+		byte[]wrapped = process(getBYOKInstance(this.log,value,p));
+		return new BYOKWrappedValue(prefix+new String(wrapped), prefix);
+	}
+
+	@Override
+	public byte[] unwrap(String value) throws UtilsException {
+		if(BYOKUtilities.isWrappedValue(value)) {
+			if(this.securityPolicy==null) {
+				return value.getBytes();
+			}
+			
+			String rawWrappedValue =  BYOKUtilities.getRawWrappedValue(value);
+			BYOKRequestParams p = getBYOKRequestParams(false, this.securityPolicy);
+			return process(getBYOKInstance(this.log,rawWrappedValue.getBytes(),p));
+		}
+		return value.getBytes();
+	}
+	
+	public String unwrapAsString(String value, String securityPolicy, boolean checkAppendPrefix) throws UtilsException{
+		if(BYOKUtilities.isWrappedValue(value)) {
+			return this.unwrapAsString(value);
+		}
+		else if(checkAppendPrefix){
+			String newWrappedValue = BYOKUtilities.newPrefixWrappedValue(securityPolicy)+value;
+			String unwrappedValue = this.unwrapAsString(newWrappedValue);
+			if(newWrappedValue.equals(unwrappedValue)) {
+				// decodifica non riuscita
+				return value;
+			}
+			else {
+				return unwrappedValue;
+			}
+		}
+		else {
+			return value;
+		}
+	}
+	
+	private BYOKInstance getBYOKInstance(Logger log,byte[] key, BYOKRequestParams p) throws UtilsException {
+		return BYOKInstance.newInstance(log, p, key);
+	}
+	private BYOKRequestParams getBYOKRequestParams(boolean wrap, String securityPolicy) throws UtilsException {
+		
+		if(securityPolicy==null) {
+			return null;
+		}
+		
+		BYOKManager manager = BYOKManager.getInstance();
+		if(manager==null) {
+			throw new UtilsException("BYOKManager not initialized");
+		}
+		
+		BYOKSecurityConfig secConfig = manager.getKSMSecurityConfig(securityPolicy); 
+		
+		String ksmId = wrap ? secConfig.getWrapId() : secConfig.getUnwrapId();
+		if(ksmId==null) {
+			throw new UtilsException("BYOK security configuration '"+securityPolicy+"' without "+(wrap ?  "wrap" : "unwrap")+" ksm id");
+		}
+		
+		BYOKConfig bconfig = manager.getKSMConfigByType(ksmId);
+		if(bconfig==null) {
+			throw new UtilsException("BYOK configuration for ksm id '"+ksmId+"' not found");
+		}
+		BYOKRequestParams req = new BYOKRequestParams();
+		req.setConfig(bconfig);
+			
+		Map<String, String> inputMap = new HashMap<>();
+		if(secConfig.getInputParameters()!=null && !secConfig.getInputParameters().isEmpty()) {
+			for (BYOKSecurityConfigParameter sec : secConfig.getInputParameters()) {
+				inputMap.put(sec.getName(), sec.getValue());
+			}
+		}
+		req.setInputMap(inputMap);
+		
+		req.setDynamicMap(this.dynamicMap);
+		
+		req.setKeyIdentity(ksmId);
+		
+		return req;
+	}
+	
+	private byte[] process(BYOKInstance instance) throws UtilsException{
+		
+		try{
+			if(instance==null){
+				throw new SecurityException("Instance non fornita");
+			}
+			
+			if(instance.getHttpRequest()!=null) {
+				HttpResponse httpResponse = HttpUtilities.httpInvoke(instance.getHttpRequest());
+				if(httpResponse==null || httpResponse.getContent()==null) {
+					throw new UtilsException("Store '"+instance.getConfig().getLabel()+"' (endpoint:"+instance.getHttpRequest().getUrl()+") unavailable");
+				}
+				if(httpResponse.getResultHTTPOperation()!=200) {
+					throw new UtilsException("Retrieve store '"+instance.getConfig().getLabel()+"' (endpoint:"+instance.getHttpRequest().getUrl()+") failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
+				}
+				if(this.checkJmxPrefixOperazioneNonRiuscita) {
+					byte[] b = httpResponse.getContent();
+					if(b==null || b.length<=0) {
+						throw new UtilsException("Store '"+instance.getConfig().getLabel()+"' (endpoint:"+instance.getHttpRequest().getUrl()+") empty response");
+					}
+					String check = new String(b);
+					if(check.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)) {
+						throw new UtilsException("Retrieve store '"+instance.getConfig().getLabel()+"' (endpoint:"+instance.getHttpRequest().getUrl()+") failed (returnCode:"+httpResponse.getResultHTTPOperation()+"): "+check);
+					}
+					return b;
+				}
+				else {
+					return httpResponse.getContent();
+				}
+			}
+			else {
+				BYOKLocalEncrypt localEncrypt = new BYOKLocalEncrypt();
+				if(BYOKMode.WRAP.equals(instance.getConfig().getMode())) {
+					return localEncrypt.wrap(instance.getLocalConfigResolved(), instance.getLocalKey()).getBytes();
+				}
+				else {
+					return localEncrypt.unwrap(instance.getLocalConfigResolved(), instance.getLocalKey());
+				}
+			}
+
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+		
+	}
+	
+}

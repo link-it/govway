@@ -119,6 +119,8 @@ public class BYOKManager {
 	private List<String> wrapTypes = new ArrayList<>();
 	private List<String> wrapLabels = new ArrayList<>();
 
+	private static final String UNKNOWN = "unknown";
+	
 	private HashMap<String, BYOKSecurityConfig> securityMapIDtoConfig = new HashMap<>();
 	
 	private BYOKManager(File f, boolean throwNotExists, Logger log) throws UtilsException {
@@ -265,7 +267,7 @@ public class BYOKManager {
 	
 	public BYOKConfig getKSMConfigByType(String type) throws UtilsException {
 		if(!this.ksmKeystoreMapTypeToID.containsKey(type)) {
-			throw new UtilsException("KSM type '"+type+"' unknown");
+			throw new UtilsException("KSM type '"+type+"' "+UNKNOWN);
 		}
 		String idK = this.ksmKeystoreMapTypeToID.get(type);
 		if(!this.ksmKeystoreMapIDtoConfig.containsKey(idK)) {
@@ -276,7 +278,7 @@ public class BYOKManager {
 	
 	public BYOKConfig getKSMConfigByLabel(String label) throws UtilsException {
 		if(!this.ksmKeystoreMapLabelToID.containsKey(label)) {
-			throw new UtilsException("KSM label '"+label+"' unknown");
+			throw new UtilsException("KSM label '"+label+"' "+UNKNOWN);
 		}
 		String idK = this.ksmKeystoreMapLabelToID.get(label);
 		if(!this.ksmKeystoreMapIDtoConfig.containsKey(idK)) {
@@ -330,5 +332,16 @@ public class BYOKManager {
 	}
 	public List<String> getWrapLabels() {
 		return this.wrapLabels;
+	}
+	
+	public BYOKSecurityConfig getKSMSecurityConfig(String type) throws UtilsException {
+		if(!this.securityMapIDtoConfig.containsKey(type)) {
+			throw new UtilsException("KSM security config type '"+type+"' "+UNKNOWN);
+		}
+		BYOKSecurityConfig c = this.securityMapIDtoConfig.get(type);
+		if(c==null) {
+			throw new UtilsException("KSM security config type '"+type+"' "+UNKNOWN);
+		}
+		return c;
 	}
 }

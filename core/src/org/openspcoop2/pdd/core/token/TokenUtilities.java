@@ -962,7 +962,7 @@ public class TokenUtilities {
 				p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_PASSWORD, trustPassword);
 			}
 			
-			String trustCrl = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+			String trustCrl = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLS);
 			if(trustCrl!=null && StringUtils.isNotEmpty(trustCrl)) {
 				trustCrl = convertDynamicPropertyValue(trustCrl, "trustCrl", dynamicMap, context);
 				p.put(JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_CRL, trustCrl);

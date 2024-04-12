@@ -52,6 +52,7 @@ import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsRuntimeException;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
@@ -445,6 +446,21 @@ public class InitListener implements ServletContextListener {
 				}
 			} catch (Exception e) {
 				String msgErrore = "Errore durante l'inizializzazione del manager HSM: " + e.getMessage();
+				InitListener.logError(
+						//					throw new ServletException(
+						msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
+			}
+			
+			// inizializzo BYOK Manager
+			try {
+				String byokConfig = consoleProperties.getBYOKConfigurazione();
+				if(StringUtils.isNotEmpty(byokConfig)) {
+					File f = new File(byokConfig);
+					BYOKManager.init(f, consoleProperties.isBYOKRequired(), log);
+				}
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'inizializzazione del manager BYOK: " + e.getMessage();
 				InitListener.logError(
 						//					throw new ServletException(
 						msgErrore,e);

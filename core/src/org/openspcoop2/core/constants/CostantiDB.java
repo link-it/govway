@@ -54,6 +54,9 @@ public final class CostantiDB {
 	public static final String CONDITION_AND = " AND ";
 	public static final String CONDITION_OR = " OR ";
 	
+	/*ENC*/
+	public static final String ENC_PREFIX = "==";
+	
     /*COMMONS*/
 	public static final String COLUMN_ALIAS_COUNT = "count";
     public static final String COLUMN_ID = "id";
@@ -73,6 +76,7 @@ public final class CostantiDB {
     public static final String SOGGETTI_COLUMN_NOME_SOGGETTO_VIRTUALE = "nome_soggetto_virtuale";
     public static final String SOGGETTI_COLUMN_SUPERUSER = "superuser";
     
+    /*COMMONS PROPRIETA*/
     public static final String PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE = "utente_richiedente";
     public static final String PROPRIETA_OGGETTO_DATA_CREAZIONE = "data_creazione";
     public static final String PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA = "utente_ultima_modifica";
@@ -701,7 +705,7 @@ public final class CostantiDB {
     public static final String CONNETTORE_HTTPS_TRUST_STORE_PASSWORD = CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD;
     public static final String CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM = CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM;
     public static final String CONNETTORE_HTTPS_TRUST_STORE_TYPE = CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_TYPE;
-    public static final String CONNETTORE_HTTPS_TRUST_STORE_CRLS = CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs;
+    public static final String CONNETTORE_HTTPS_TRUST_STORE_CRLS = CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLS;
     public static final String CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY = CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY;
     public static final String CONNETTORE_HTTPS_KEY_STORE_LOCATION = CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION;
     public static final String CONNETTORE_HTTPS_KEY_STORE_PASSWORD = CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD;

@@ -124,8 +124,11 @@ public class BYOKCostanti {
 	
 	
 	public static final String VARIABILE_KSM_KEY = "${ksm-key}";
+	public static final String VARIABILE_KSM_KEY_URL_ENCODED = "${ksm-urlencoded-key}";
 	public static final String VARIABILE_KSM_KEY_BASE64 = "${ksm-base64-key}";
+	public static final String VARIABILE_KSM_KEY_BASE64_URL_ENCODED = "${ksm-base64-urlencoded-key}";
 	public static final String VARIABILE_KSM_KEY_HEX = "${ksm-hex-key}";
+	public static final String VARIABILE_KSM_KEY_HEX_URL_ENCODED = "${ksm-hex-urlencoded-key}";
 	
 	public static final String VARIABILE_KSM = "ksm";
 	public static final String VARIABILE_KSM_KEY_PREFIX = "${ksm:";

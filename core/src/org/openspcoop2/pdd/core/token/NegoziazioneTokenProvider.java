@@ -140,7 +140,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 				throw new ProviderValidationException("Non indicare spazi nell'algoritmo per l'autenticazione server");
 			}
 			
-			String locationCRL = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+			String locationCRL = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLS);
 			if(locationCRL!=null && !"".equals(locationCRL)) {
 				InputValidationUtils.validateTextAreaInput(locationCRL, "Https - Autenticazione Server - CRL File(s)");
 			}

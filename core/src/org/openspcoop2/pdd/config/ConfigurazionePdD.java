@@ -33,6 +33,7 @@ import java.util.Properties;
 
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.utils.FiltroRicercaAllarmi;
+import org.openspcoop2.core.byok.IDriverBYOKConfig;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.AccessoDatiAttributeAuthority;
@@ -101,6 +102,7 @@ import org.openspcoop2.monitor.engine.dynamic.IRegistroPluginsReader;
 import org.openspcoop2.monitor.sdk.alarm.AlarmStatus;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.byok.DriverBYOK;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.pdd.core.dynamic.TemplateSource;
@@ -554,6 +556,15 @@ public class ConfigurazionePdD  {
 				}
 			}
 
+			if(this.driverConfigurazionePdD instanceof IDriverBYOKConfig) {
+				String securityRuntimePolicy = this.openspcoopProperties.getBYOKConfigInternalConfigSecurityEngine();
+				if(securityRuntimePolicy!=null) {
+					DriverBYOK driverBYOK = new DriverBYOK(this.logger, securityRuntimePolicy);
+					IDriverBYOKConfig c = (IDriverBYOKConfig) this.driverConfigurazionePdD;
+					c.initialize(driverBYOK, false, true);
+				}
+			}
+			
 		}catch(Exception e){
 			String msg = "Riscontrato errore durante l'inizializzazione della configurazione di OpenSPCoop: "+e.getMessage();
 			this.logError(msg,e);

@@ -874,7 +874,7 @@ public class ConnettoreCheck {
 				String policyType = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
 				if(policyType!=null && StringUtils.isNotEmpty(policyType)) {
 					GestoreOCSPResource ocspResourceReader = new GestoreOCSPResource(null);
-					String crlInputConfig = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+					String crlInputConfig = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLS);
 					LoggerBuffer lb = new LoggerBuffer();
 					lb.setLogDebug(log);
 					lb.setLogError(log);

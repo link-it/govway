@@ -188,6 +188,8 @@ public class BYOKLocalConfig implements Serializable {
 		
 		if(KeystoreType.KEY_PAIR.equals(this.keystoreType)) {
 			this.publicKeyPath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_PATH, true);
+			
+			this.keyPassword = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_PASSWORD, false);
 		}
 	
 	}

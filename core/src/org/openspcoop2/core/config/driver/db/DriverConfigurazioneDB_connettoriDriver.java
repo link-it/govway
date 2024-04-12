@@ -77,7 +77,7 @@ public class DriverConfigurazioneDB_connettoriDriver {
 		try {
 			this.driver.logDebug("CRUDConnettore type = 1");
 			// creo connettore
-			DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(1, connettore, con);
+			DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(1, connettore, con, this.driver.getDriverWrapBYOK());
 
 		} catch (DriverConfigurazioneException qe) {
 			error = true;
@@ -114,7 +114,7 @@ public class DriverConfigurazioneDB_connettoriDriver {
 		try {
 			this.driver.logDebug("CRUDConnettore type = 2");
 			// update connettore
-			DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(2, connettore, con);
+			DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(2, connettore, con, this.driver.getDriverWrapBYOK());
 
 		} catch (DriverConfigurazioneException qe) {
 			error = true;
@@ -152,7 +152,7 @@ public class DriverConfigurazioneDB_connettoriDriver {
 		try {
 			this.driver.logDebug("CRUDConnettore type = 3");
 			// delete connettore
-			DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(3, connettore, con);
+			DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(3, connettore, con, this.driver.getDriverWrapBYOK());
 
 		} catch (DriverConfigurazioneException qe) {
 			error = true;
@@ -310,7 +310,7 @@ public class DriverConfigurazioneDB_connettoriDriver {
 
 		try {
 
-			Connettore connettore = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettore, con);
+			Connettore connettore = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettore, con, this.driver.getDriverUnwrapBYOK());
 			if(connettore==null) {
 				throw new DriverConfigurazioneNotFound("Connettore con id '"+idConnettore+"' non esistente");
 			}
@@ -366,7 +366,7 @@ public class DriverConfigurazioneDB_connettoriDriver {
 				throw new DriverConfigurazioneNotFound("Connettore con nome '"+nomeConnettore+"' non esistente");
 			}
 					
-			Connettore connettore = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettore, con);
+			Connettore connettore = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettore, con, this.driver.getDriverUnwrapBYOK());
 			if(connettore==null) {
 				throw new DriverConfigurazioneNotFound("Connettore con id '"+idConnettore+"' non esistente");
 			}

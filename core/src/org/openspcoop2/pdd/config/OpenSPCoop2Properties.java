@@ -887,6 +887,7 @@ public class OpenSPCoop2Properties {
 			
 			this.getBYOKConfig();
 			this.isBYOKConfigRequired();
+			this.getBYOKConfigInternalConfigSecurityEngine();
 			
 			this.getHttpUserAgent();
 			this.getHttpServer();
@@ -10066,6 +10067,31 @@ public class OpenSPCoop2Properties {
 			}
 		}
 		return this.isBYOKConfigRequired;
+	}
+	
+	private String getBYOKConfigInternalConfigSecurityEngine = null;
+	private Boolean getBYOKConfigInternalConfigSecurityEngineRead = null;
+	public String getBYOKConfigInternalConfigSecurityEngine(){
+		if(this.getBYOKConfigInternalConfigSecurityEngineRead==null){
+			String pName = "org.openspcoop2.pdd.byok.internalConfig.securityEngine";
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					if(!"".equals(value)) {
+						this.getBYOKConfigInternalConfigSecurityEngine = value;
+					}
+				}
+				
+				this.getBYOKConfigInternalConfigSecurityEngineRead=true;
+
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, non verrà abilitato l'engine BYOK errore:"+e.getMessage(),e);
+				this.getBYOKConfigInternalConfigSecurityEngine = null;
+				this.getBYOKConfigInternalConfigSecurityEngineRead=true;
+			}
+		}
+		return this.getBYOKConfigInternalConfigSecurityEngine;
 	}
 	
 	

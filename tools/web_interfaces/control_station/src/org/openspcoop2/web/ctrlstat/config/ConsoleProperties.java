@@ -657,6 +657,17 @@ public class ConsoleProperties {
 		return parse(b, false);
 	}
 	
+	public String getBYOKConfigurazione() throws UtilsException{
+		return this.readProperty(false, "byok.config");
+	}
+	public boolean isBYOKRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "byok.required");
+		return parse(b, false);
+	}
+	public String getBYOKInternalConfigSecurityEngine() throws UtilsException{
+		return this.readProperty(false, "byok.internalConfig.securityEngine");
+	}
+	
 	public Integer getVerificaCertificatiWarningExpirationDays() throws UtilsException{
 		String cacheV = this.readProperty(true, "verificaCertificati.warning.expirationDays");
 		if(cacheV!=null && StringUtils.isNotEmpty(cacheV)) {
@@ -1009,6 +1020,12 @@ public class ConsoleProperties {
 	}
 	public String getJmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace(String alias) throws UtilsException {
 		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.updateFileTrace");
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoUnwrapKey(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.unwrapKey");
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoWrapKey(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.wrapKey");
 	}
 	public String getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(String alias) throws UtilsException {
 		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaMonitoraggio");

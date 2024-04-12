@@ -51,9 +51,11 @@ import javax.management.MBeanConstructorInfo;
 import javax.management.MBeanException;
 import javax.management.MBeanInfo;
 import javax.management.MBeanOperationInfo;
+import javax.management.MBeanParameterInfo;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ReflectionException;
 
+import org.openspcoop2.core.byok.BYOKWrappedValue;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.Property;
@@ -66,6 +68,7 @@ import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.byok.DriverBYOK;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceConfig;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceGovWayState;
@@ -123,6 +126,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	public static final String INFORMAZIONI_INSTALLAZIONE = "getInformazioniInstallazione";
 	public static final String FILE_TRACE_CONFIG = "getFileTrace";
 	public static final String FILE_TRACE_UPDATE = "updateFileTrace";
+	public static final String BYOK_WRAP = "wrapKey";
+	public static final String BYOK_UNWRAP = "unwrapKey";
 
 	private static boolean includePassword = false;
 	public static boolean isIncludePassword() {
@@ -305,7 +310,32 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		else if(actionName.equals(FILE_TRACE_UPDATE)){
 			return this.updateFileTrace();
 		}
-
+		
+		else if(actionName.equals(BYOK_UNWRAP)){
+			
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+BYOK_UNWRAP+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			return this.byokUnwrap(param1);
+		}
+		
+		else if(actionName.equals(BYOK_WRAP)){
+			
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+BYOK_UNWRAP+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			return this.byokWrap(param1);
+		}
 
 		throw new UnsupportedOperationException("Operazione "+actionName+" sconosciuta");
 	}
@@ -456,6 +486,21 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				String.class.getName(),
 				MBeanOperationInfo.ACTION);
 		
+		// BYOK_UNWRAP
+		MBeanOperationInfo byokUnwrapOp = new MBeanOperationInfo(BYOK_UNWRAP,"Effettua l'unwrap della chiave fornita",
+				new MBeanParameterInfo[]{
+						new MBeanParameterInfo("key",String.class.getName(),"Chiave"),
+				},
+				String.class.getName(),
+				MBeanOperationInfo.ACTION);
+
+		// BYOK_WRAP
+		MBeanOperationInfo byokWrapOp = new MBeanOperationInfo(BYOK_WRAP,"Effettua il wrap della chiave fornita",
+				new MBeanParameterInfo[]{
+						new MBeanParameterInfo("key",String.class.getName(),"Chiave"),
+				},
+				String.class.getName(),
+				MBeanOperationInfo.ACTION);
 		
 		// Mbean costruttore
 		MBeanConstructorInfo defaultConstructor = new MBeanConstructorInfo("Default Constructor","Crea e inizializza una nuova istanza del MBean",null);
@@ -474,7 +519,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				informazioniProprietaJavaNetworkingOp, informazioniCompleteProprietaJavaNetworkingOp, 
 				informazioniProprietaJavaAltroOp, informazioniProprietaSistemaOp,
 				messageFactoryOp,confDirectoryOp,protocolsOp,
-				fileTraceConfigOp, fileTraceUpdateOp};
+				fileTraceConfigOp, fileTraceUpdateOp,
+				byokUnwrapOp, byokWrapOp};
 
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
 	}
@@ -1233,6 +1279,40 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			else {
 				throw new CoreException("Funzionalità 'FileTrace' disabilitata");
 			}
+		}catch(Exception e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String byokUnwrap(String value){
+		try {
+			String securityRuntimePolicy = this.openspcoopProperties.getBYOKConfigInternalConfigSecurityEngine();
+			if(securityRuntimePolicy!=null) {
+				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy);
+				return driverBYOK.unwrapAsString(value, securityRuntimePolicy, true);
+			}
+			return value;
+		}catch(Exception e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String byokWrap(String value){
+		try {
+			String securityRuntimePolicy = this.openspcoopProperties.getBYOKConfigInternalConfigSecurityEngine();
+			if(securityRuntimePolicy!=null) {
+				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy);
+				BYOKWrappedValue v = driverBYOK.wrap(value);
+				if(v!=null) {
+					return v.getWrappedValue();
+				}
+				else {
+					return null;
+				}
+			}
+			return value;
 		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();

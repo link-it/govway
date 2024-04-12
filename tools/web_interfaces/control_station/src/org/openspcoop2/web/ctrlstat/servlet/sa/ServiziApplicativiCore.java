@@ -65,6 +65,9 @@ public class ServiziApplicativiCore extends ControlStationCore {
 	}
 		
 	public ServizioApplicativo getServizioApplicativo(long idServizioApplicativo) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		return getServizioApplicativo(idServizioApplicativo, false);
+	}
+	public ServizioApplicativo getServizioApplicativo(long idServizioApplicativo, boolean byokUnwrap) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getServizioApplicativo";
 		DriverControlStationDB driver = null;
@@ -75,6 +78,10 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
+			if(byokUnwrap) {
+				this.activeBYOK(driver, false, true);
+			}
+			
 			return driver.getDriverConfigurazioneDB().getServizioApplicativo(idServizioApplicativo);
 
 		} catch (DriverConfigurazioneNotFound e) {

@@ -20,6 +20,9 @@
 
 package org.openspcoop2.core.constants;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 
 /**
@@ -30,6 +33,8 @@ import org.openspcoop2.utils.transport.http.SSLUtilities;
  * @version $Rev$, $Date$
  */
 public class CostantiConnettori {
+	
+	private CostantiConnettori() {}
 	
 	
 	/** COMMONS PROPERTIES */
@@ -65,8 +70,8 @@ public class CostantiConnettori {
     
     public static final String CONNETTORE_HTTP_REDIRECT_FOLLOW = "followRedirects";
     public static final String CONNETTORE_HTTP_REDIRECT_MAX_HOP = "maxHopRedirect";
-    public static final String _CONNETTORE_HTTP_REDIRECT_NUMBER = "numberRedirect";
-    public static final String _CONNETTORE_HTTP_REDIRECT_ROUTE = "routeRedirect";
+    public static final String CONNETTORE_HTTP_REDIRECT_NUMBER = "numberRedirect";
+    public static final String CONNETTORE_HTTP_REDIRECT_ROUTE = "routeRedirect";
     
     public static final String CONNETTORE_HTTP_DATA_TRANSFER_MODE = "dataTransferMode";
     public static final String CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE = "transferChunkSize";
@@ -104,7 +109,7 @@ public class CostantiConnettori {
     public static final String CONNETTORE_HTTPS_TRUST_STORE_PASSWORD = "trustStorePassword";
     public static final String CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM = "trustManagementAlgorithm";
     public static final String CONNETTORE_HTTPS_TRUST_STORE_TYPE = "trustStoreType";
-    public static final String CONNETTORE_HTTPS_TRUST_STORE_CRLs = "trustStoreCRLs";
+    public static final String CONNETTORE_HTTPS_TRUST_STORE_CRLS = "trustStoreCRLs";
     public static final String CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY = "trustStoreOCSPPolicy";
     public static final String CONNETTORE_HTTPS_KEY_STORE_LOCATION = "keyStoreLocation";
     public static final String CONNETTORE_HTTPS_KEY_STORE_PASSWORD = "keyStorePassword";
@@ -162,4 +167,18 @@ public class CostantiConnettori {
     public static final String CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE = "generaTrasmissione";
     public static final String CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE_INVERTITA = "generaTrasmissioneInvertita";
     public static final String CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE_ANDATA_RITORNO = "generaTrasmissioneAndataRitorno";
+    
+    
+    
+    /** BYOK PROPERTIES */
+    
+    private static List<String> confidentials = new ArrayList<>();
+    static {
+    	confidentials.add(CONNETTORE_PASSWORD);
+    	confidentials.add(CONNETTORE_BEARER_TOKEN);
+    }
+    
+    public static boolean isConfidential(String nome) {
+    	return confidentials.contains(nome);
+    }
 }

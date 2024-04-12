@@ -23973,12 +23973,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			dati.add(de);
 				
-			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs)) {
+			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLS)) {
 				
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
 				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLS);
-				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs));
+				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLS));
 				dati.add(de);
 				
 			}

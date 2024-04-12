@@ -1498,6 +1498,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setType(DataElementType.TEXT_EDIT);
 				if(connettore){
 					de.setName(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+					de.setType(DataElementType.CRYPT);
 				}
 				else{
 					
