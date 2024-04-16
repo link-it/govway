@@ -2174,6 +2174,10 @@ td.riepilogo-spacer {
 	align-items: center;
 }
 
+.spanIconInfoBox-lock {
+	cursor: default;
+}
+
 div.prop table.controlset-cb-info label{
 	float: right;
 	padding-left: 2px;

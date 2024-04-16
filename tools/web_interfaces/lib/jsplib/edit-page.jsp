@@ -910,7 +910,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                    				boolean visualizzaIconaMostraPassword = dePwd.isVisualizzaIconaMostraPassword();
 		                    				
 		                    				String dePwdType = visualizzaPasswordChiaro ? "text" : "password";
-		                    				String dePwdNoEdit = visualizzaPasswordChiaro ? de.getValue() : "********";
+		                    				String dePwdNoEdit = visualizzaPasswordChiaro ? de.getValue() : Costanti.PARAMETER_LOCK_DEFAULT_VALUE;
 		                    				if(bottoneGeneraPassword){
 		                    					classInput = Costanti.INPUT_PWD_CHIARO_CSS_CLASS;
 		                    				}
@@ -1444,8 +1444,90 @@ for (int i = 0; i < dati.size(); i++) {
 																			      	<% } %>
 												                    			</div>
 			                                                				<%
-			                                                			} else{ // else interval number			                                                			
-			                                                				//fineelementi
+			                                                			} else{ // else interval number			   
+			                                                				if (type.equals("lock")){
+			                        		                    				String idPwd = "pwd_" + i;
+			                        		                    				%>
+			                        		                        			<div class="prop">
+			                        		                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" ><%=deLabel %></label>
+			                        		                        				<%
+			                        							          			if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
+			                        													%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%= Costanti.PARAMETER_LOCK_DEFAULT_VALUE  %></span></div><%
+			                        							   					} else {
+			                        							   						String idPwdEdit = "pwd_" + i + "_edit";
+			                        							   						String idPwdEditSpan = "pwd_" + i + "_edit_span";
+			                        							   						String idPwdLock = "pwd_" + i + "_lock";
+			                        							   						String hiddenLockName = Costanti.PARAMETER_LOCK_PREFIX + deName;
+			                        							   						String hiddenLockId = Costanti.PARAMETER_LOCK_PREFIX + idPwd;
+			                        							   						boolean lockValuePresent = !de.getValue().equals(""); // e' gia' presente un valore
+			                        							   						String lockValue = lockValuePresent ? Costanti.PARAMETER_LOCK_DEFAULT_VALUE : de.getValue();
+			                        							   						String lockDisabled = lockValuePresent ? " disabled=\"disabled\"" : "";
+			                        							   						String lockIcon = lockValuePresent ? "lock" : "lock_open";
+			                        							   						String dePwdType = !lockValuePresent ? "text" : "password";
+			                        													%><input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= lockValue %>" <%=lockDisabled %>>
+			                        													  <input type="hidden" name="<%= hiddenLockName  %>" id="<%=hiddenLockId %>" value="<%= de.getValue()  %>">
+			                        													<%
+			                        							          				if (lockValuePresent) {
+			                        								          				%>
+			                        								          					<span id="<%=idPwdEditSpan %>" class="span-password-eye">
+			                        														  		<i id="<%=idPwdEdit %>" class="material-icons md-24">edit</i>
+			                        														  	</span>
+			                        															<script type="text/javascript" nonce="<%= randomNonce %>">
+			                        																$(document).ready(function(){
+			                        																	$('#<%=idPwdEdit %>').click(function() {
+			                        																		
+			                        																		// Abilita l'input di tipo password
+			                        																        $('#<%=idPwd %>').attr('disabled', false);
+			                        																        // Svuota l'input di tipo password
+			                        																        $('#<%=idPwd %>').val('');
+			                        																        // convertire l'elemento in un text
+			                        																        // toggle the type attribute
+																											var x = document.getElementById("<%=idPwd %>");
+																										    x.type = "text";
+			                        																        
+			                        																        // eliminare il comando di edit
+			                        																        $('#<%=idPwdEditSpan %>').remove();
+			                        																        
+			                        																        // sostituire l'icona lock con unlock
+			                        																		const lockIcon = $('#<%=idPwdLock %>');
+																										    lockIcon.text('lock_open');
+			                        																	});
+			                        																});
+			                        															</script>
+			                        							     					<% 
+			                        								   					}
+			                        									      		
+			                        									      			String idDivIconInfo = "divIconInfo_"+i;
+			                        									      			String idIconInfo = "iconInfo_"+i; 
+			                        									      			
+			                        											      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
+			                        											      		<span class="spanIconInfoBox-lock">
+			                        																<i class="material-icons md-24 md-nohover" id="<%=idPwdLock %>"><%=lockIcon %></i>
+			                        															</span>
+			                        											      			                        											      	
+			                        											      		<% 
+			                        									      				if(deInfo != null){
+			                        									      				%>
+			                        											      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+			                        											      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+			                        													      	<span class="spanIconInfoBox">
+			                        																<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+			                        															</span>
+			                        															
+			                        														<% } %>	
+			                        														</div>
+			                        											      	<% 
+			                        							   					
+			                        						     					%>
+			                        						     					<% if(!deNote.equals("")){ %>
+			                        									      			<p class="note <%= labelStyleClass %>"><%=deNote %></p>
+			                        									      		<% } %>
+			                        		                        			</div>
+			                        		                        			<%
+			                        						   					}
+			                        		                        		} else { // else lock
+			                                                					//fineelementi
+			                        		                        		} // end else lock
 			                                                			} // end else interval number
 			                                                		} // end else radio
 			                                            		} // end else checkbox

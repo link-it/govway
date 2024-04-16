@@ -1466,6 +1466,23 @@ public class ConsoleHelper implements IConsoleHelper {
 		return toRet;
 	}
 	
+	public String getParametroPassword(String parameterName) throws DriverControlStationException {
+		// 1. leggo il valore del parametro associato all'elemento di tipo password
+		String passwordFromInput = this.getParameter(parameterName);
+		
+		// 2. pwd puo' essere null se non c'e' oppure se e' postback, se viene fatta la submit e' impostata e se corrisponde alla costante allora provo a leggere il valore del parametro hidden associato
+		if(passwordFromInput == null || Costanti.PARAMETER_LOCK_DEFAULT_VALUE.equals(passwordFromInput)) {
+			String passwordFromHidden = this.getParameter(Costanti.PARAMETER_LOCK_PREFIX + parameterName);
+			
+			// 3. unwrap TODO Poli 
+			// passwordFromHidden = unwrapPassword(passwordFromHidden);
+			
+			return passwordFromHidden;
+		}
+				
+		return passwordFromInput;				
+	}
+	
 	/***
 	 * cancella i file temporanei dei parametri binari del protocollo, da usare dopo il salvataggio dell'oggetto.
 	 * 

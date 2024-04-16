@@ -284,6 +284,11 @@ public class Costanti {
 	public static final String PARAMETER_TAB_KEY ="__tabKey__";
 	public static final String PARAMETER_PREV_TAB_KEY ="__prevTabKey__";
 	
+	/** PARAMETRI LOCK **/
+	
+	public static final String PARAMETER_LOCK_PREFIX = "__lk__";
+	public static final String PARAMETER_LOCK_DEFAULT_VALUE = "********";  
+	
 	/** PAGE DATA TITLE */
 	
 	public static final MessageType MESSAGE_TYPE_ERROR = MessageType.ERROR;

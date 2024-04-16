@@ -32,6 +32,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.utils.UtilsRuntimeException;
 
 
 
@@ -259,9 +260,19 @@ public class DataElement implements Serializable {
 		if(DataElementType.LINK.toString().equals(s)) {
 			this.styleClass = null;
 		}
+		// Carico la configurazione di default per il tipo password
+		if(DataElementType.LOCK.toString().equals(s)) {
+			throw new UtilsRuntimeException("Use method setLock(String value) instead of setType(DataElementType.LOCK)");
+		}
 	}
 	public String getType() {
 		return DataElement.checkNull(this.type);
+	}
+	
+	public void setLock(String value) {
+		this.setValue(value);
+		this.type = DataElementType.LOCK.toString();
+		this.password = new DataElementPassword();
 	}
 	
 	public boolean isRequired() {
