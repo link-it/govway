@@ -19,10 +19,11 @@
  */
 
 package org.openspcoop2.core.config.rs.testsuite;
+import org.junit.jupiter.api.Test;
 
-import com.intuit.karate.junit4.Karate;
 
-import org.junit.runner.RunWith;
+import com.intuit.karate.junit5.Karate;
+
 
 /**
  * ApplicativiTest
@@ -31,7 +32,11 @@ import org.junit.runner.RunWith;
  * @version $Rev$, $Date$
  */
 
-@RunWith(Karate.class)
-public class ApiConfigTestSuite {
+public 	class ApiConfigTestSuite {
 
+    @Karate.Test
+    public Karate testAll() {
+        return Karate.run().relativeTo(getClass());
+    }
 }
+

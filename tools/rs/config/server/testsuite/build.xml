@@ -15,37 +15,48 @@
 
 	<path id="karate_testsuite" >
                 <fileset dir="${required_lib}/testsuite" >
-                
-			<include name="karate-core-1.3.1.jar"/>
-			<include name="karate-junit4-1.3.1.jar"/>
-			
-                        <include name="hamcrest-core-*.jar"/>
+			<include name="karate-core-1.4.1.jar"/>
+			<include name="karate-junit5-1.4.1.jar"/>
 			<include name="junit-*.jar"/>
+			<include name="hamcrest-core-*.jar"/>
+			<include name="junit-jupiter-5.9.3.jar"/>
+			<include name="junit-jupiter-api-5.9.3.jar"/>
+			<include name="junit-jupiter-engine-5.9.3.jar"/>
+			<include name="junit-platform-engine-5.9.3.jar"/>
+			<include name="junit-platform-launcher-*.jar"/>
+			<include name="junit-platform-console-*.jar"/>
+			<include name="junit-platform-reporting-*.jar"/>
+			<include name="junit-platform-commons*.jar"/>
+			<include name="junit-jupiter-api*.jar"/>
+			<include name="apiguardian-api*.jar"/>
 			<include name="picocli-*.jar"/>
 			<include name="logback-*.jar"/>
-
-                        <include name="classgraph-*"/>
-                        <include name="graal-sdk-*"/>
-                        <include name="org.graalvm.js-*"/>
-                        <include name="js-*"/>
-                        <include name="truffle-api-*"/>
-			<include name="regex-*"/>
-
-                        <include name="thymeleaf-*.jar"/>
-                        <include name="attoparser-*.jar"/>
-                        <include name="unbescape-*.jar"/>
-                        
                         <include name="netty-codec-http-*.jar"/>
-                        <include name="netty-codec-*.jar"/>
+			<include name="netty-codec-*.jar"/>
 			<include name="netty-common-*.jar"/>
-			<include name="netty-buffer-*.jar"/>
-			
+                        <include name="thymeleaf-*.jar"/>
+             		<include name="netty-buffer-*.jar"/>
                         <include name="httpclient-*.jar"/>
                         <include name="httpcore-*.jar"/>
-
                         <include name="antlr4-runtime-*.jar"/>
+			<include name="opentest4j-*.jar"/>
+			<include name="graal-sdk-*"/>
+			<include name="js-*"/>
+                        <include name="truffle-api-*"/>
+             		<include name="regex-*"/>
+                        <include name="attoparser-*.jar"/>
+			<include name="unbescape-*.jar"/>
 
                 </fileset>
+		<fileset dir="${required_lib}/swagger" >
+                        <include name="classgraph-*.jar"/>
+                                                <include name="*.jar"/>
+                </fileset> 
+
+		<fileset dir="${required_lib}/jackson" >
+                        <include name="*.jar"/>
+                </fileset>
+
 		<fileset dir="${required_lib}/commons" >
                         <include name="*.jar"/>
                 </fileset>
@@ -64,11 +75,11 @@
                 <fileset dir="${required_lib}/cxf" >
                         <include name="asm-9.6.jar"/>
                 </fileset>
-        </path> 
+	</path> 
 
 	<property name="src_testsuite" location="src" />
 	<property name="build_testsuite" location="build" />
-	
+
 	<!-- Ripulisce la distribuzione -->
 	<target name="clean">
 		<delete dir="${build_testsuite}"/>
@@ -93,86 +104,61 @@
 		</copy>
 	</target>
 
-	<!-- Esecuzione dei test -->
-
 	<target name="run_test">
-
-		<delete dir="${output}"/>
-		<mkdir dir="${output}"/>
-
 		<if>
-			<equals arg1="${karate.options}" arg2="$${karate.options}"/>
-			<then>
-				<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}">
-	
-					<!-- Per non far comparire il Warning: Nashorn engine is planned to be removed from a future JDK release -->
-					<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
-
-					<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
-					     (file:.../lib/json/accessors-smart-2.5.0.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
-					<!-- Modificato da deny a permit per non far comparire il messaggio (sono test): 
-						Caused by: java.lang.IllegalAccessError: class Log4jHotPatch (in unnamed module @0x7a356a0d) 
-							cannot access class jdk.internal.org.objectweb.asm.Opcodes (in module java.base) 
-							because module java.base does not export jdk.internal.org.objectweb.asm to unnamed module @0x7a356a0d
-							at Log4jHotPatch.asmVersion(Log4jHotPatch.java:71)
-					-->
-					<jvmarg value="-Djdk.module.illegalAccess=permit"/>
-
-					<classpath refid="karate_testsuite" />
-					<classpath location="${build_testsuite}" />
-
-					<formatter type="plain"/>			
-					<formatter type="xml" />
-
-					<batchtest fork="yes" todir="${output}">
-						<fileset dir="${src_testsuite}">
-							<include name="**/*Test*.java" />
-						</fileset>
-					</batchtest>
-			
-				 </junit>
-			</then>
-			<else>
-				<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}">
-	
-					<jvmarg value="-Dkarate.options=${karate.options}"/>
-
-					<!-- Per non far comparire il Warning: Nashorn engine is planned to be removed from a future JDK release -->
-					<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
-
-					<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
-					     (file:.../lib/json/accessors-smart-2.5.0.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
-					<!-- Modificato da deny a permit per non far comparire il messaggio (sono test): 
-						Caused by: java.lang.IllegalAccessError: class Log4jHotPatch (in unnamed module @0x7a356a0d) 
-							cannot access class jdk.internal.org.objectweb.asm.Opcodes (in module java.base) 
-							because module java.base does not export jdk.internal.org.objectweb.asm to unnamed module @0x7a356a0d
-							at Log4jHotPatch.asmVersion(Log4jHotPatch.java:71)
-					-->
-					<jvmarg value="-Djdk.module.illegalAccess=permit"/>
-
-					<classpath refid="karate_testsuite" />
-					<classpath location="${build_testsuite}" />
-
-					<formatter type="plain"/>			
-					<formatter type="xml" />
-
-					<batchtest fork="yes" todir="${output}">
-						<fileset dir="${src_testsuite}">
-							<include name="**/*Test*.java" />
-						</fileset>
-					</batchtest>
-			
-				 </junit>				
-			</else>
-		</if>
-
-		<junitreport todir="${output}">
-			<fileset dir="${output}">
-				<include name="TEST-*.xml" />
-			</fileset>
-			<report format="frames" todir="${output}\html\" />
-		</junitreport>
-
+    			<equals arg1="${karate.options}" arg2="$${karate.options}"/>
+    		<then>
+    			<antcall target="run_test_without_options"/>
+    		</then>
+    		<else>
+  			  <antcall target="run_test_with_options"/>
+    		</else>
+ 		</if>
 	</target>
 
+
+
+	<!-- Esecuzione dei test -->
+	<target name="run_test_with_options">
+  		<delete dir="${output}"/>
+    		<mkdir dir="${output}"/>
+    		<java classname="org.junit.platform.console.ConsoleLauncher" fork="true" failonerror="true">
+        		<arg value="--scan-classpath"/>
+        		<arg value="--class-path"/>
+        		<arg value="${build_testsuite};${required_lib}"/>
+        		<arg value="--reports-dir"/>
+        		<arg value="${output}"/>
+            		<!-- Esecuzione condizionata basata sui nomi dei file di test -->
+            		<arg value="--include-classname=.*Test.*"/>
+            		<arg value="--include-classname=.*Tests.*"/>
+            		<jvmarg value="-Dkarate.options=${karate.options}"/>
+			<jvmarg value="-Dkarate.output.dir=${output}"/>
+        		<classpath>
+            			<pathelement location="${build_testsuite}"/>
+            			<path refid="karate_testsuite"/>
+        		</classpath>
+    		</java>
+	</target>
+
+
+	<!-- Esecuzione dei test senza karate.options-->
+	<target name="run_test_without_options">
+	    <delete dir="${output}"/>
+	    <mkdir dir="${output}"/>
+
+	    <java classname="org.junit.platform.console.ConsoleLauncher" fork="true" failonerror="true">
+		<arg value="--scan-classpath"/>
+	        <arg value="--class-path"/>
+	        <arg value="${build_testsuite};${required_lib}"/>
+	        <arg value="--reports-dir"/>
+	        <arg value="${output}"/>
+		<arg value="--include-classname=.*Test.*"/>
+		<arg value="--include-classname=.*Tests.*"/>
+           	<jvmarg value="-Dkarate.output.dir=${output}"/>
+        	<classpath>
+            		<pathelement location="${build_testsuite}"/>
+            		<path refid="karate_testsuite"/>
+        	</classpath>
+	    </java>
+	</target>
 </project>

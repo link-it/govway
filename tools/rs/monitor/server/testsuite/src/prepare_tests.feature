@@ -301,11 +301,11 @@ Scenario: Preparazione Test
     And path 'pet', pet_update.id
     When method get
     Then status 200
-    * call pause(1000)
+    * pause(1000)
     * def id_transazione = responseHeaders['GovWay-Transaction-ID'][0];
     * def dbquery = "UPDATE transazioni set token_username = '"+id_credenziale.username+"', token_issuer='"+id_credenziale.issuer+"', token_client_id='"+id_credenziale.client_id_raw+"', token_subject='"+id_credenziale.subject+"', token_mail='"+id_credenziale.email+"' WHERE id='"+id_transazione+"'";
     * eval db.update(dbquery);
-    * call pause(1000)
+    * pause(1000)
 
     * def fruizione_url_invocazione_https =  ( fruizione_url_invocazione.replace('http','https').replace('8080', '8444'))
     Given url fruizione_url_invocazione_https
@@ -313,11 +313,11 @@ Scenario: Preparazione Test
     And path 'pet', pet_update.id
     When method get
     Then status 200
-    * call pause(1000)
+    * pause(1000)
     * def id_transazione = responseHeaders['GovWay-Transaction-ID'][0];
     * def dbquery = "UPDATE transazioni set token_username = '"+id_credenziale.username+"', token_issuer='"+id_credenziale.issuer+"', token_client_id='"+id_credenziale.client_id_application+"', token_subject='"+id_credenziale.subject+"', token_mail='"+id_credenziale.email+"' WHERE id='"+id_transazione+"'";
     * eval db.update(dbquery);
-    * call pause(1000)
+    * pause(1000)
 
     * def fruizione_url_invocazione_https =  ( fruizione_url_invocazione.replace('http','https').replace('8080', '8444'))
     Given url fruizione_url_invocazione_https
@@ -325,11 +325,11 @@ Scenario: Preparazione Test
     And path 'pet', pet_update.id
     When method get
     Then status 200
-    * call pause(1000)
+    * pause(1000)
     * def id_transazione = responseHeaders['GovWay-Transaction-ID'][0];
     * def dbquery = "UPDATE transazioni set token_username = '"+id_credenziale.username+"', token_issuer='"+id_credenziale.issuer+"', token_client_id='"+id_credenziale.client_id_only+"', token_subject='"+id_credenziale.subject+"', token_mail='"+id_credenziale.email+"' WHERE id='"+id_transazione+"'";
     * eval db.update(dbquery);
-    * call pause(1000)
+    * pause(1000)
 
 
     * def url_invocazione_https = ( url_invocazione.replace('http','https').replace('8080', '8444'))
@@ -338,7 +338,7 @@ Scenario: Preparazione Test
     And path 'pet', pet_update.id
     When method get
     Then status 200
-    * call pause(1000)  
+    * pause(1000)  
     * def id_transazione = responseHeaders['GovWay-Transaction-ID'][0];
     * def dbquery = "UPDATE transazioni set token_username = '"+id_credenziale.username+"', token_issuer='"+id_credenziale.issuer+"', token_client_id='"+id_credenziale.client_id_raw+"', token_subject='"+id_credenziale.subject+"', token_mail='"+id_credenziale.email+"' WHERE id='"+id_transazione+"'";
     * eval db.update(dbquery);
@@ -349,7 +349,7 @@ Scenario: Preparazione Test
     And path 'pet', pet_update.id
     When method get
     Then status 200
-    * call pause(1000)  
+    * pause(1000)  
     * def id_transazione = responseHeaders['GovWay-Transaction-ID'][0];
     * def dbquery = "UPDATE transazioni set token_username = '"+id_credenziale.username+"', token_issuer='"+id_credenziale.issuer+"', token_client_id='"+id_credenziale.client_id_application+"', token_subject='"+id_credenziale.subject+"', token_mail='"+id_credenziale.email+"' WHERE id='"+id_transazione+"'";
     * eval db.update(dbquery);
@@ -360,7 +360,7 @@ Scenario: Preparazione Test
     And path 'pet', pet_update.id
     When method get
     Then status 200
-    * call pause(1000)  
+    * pause(1000)  
     * def id_transazione = responseHeaders['GovWay-Transaction-ID'][0];
     * def dbquery = "UPDATE transazioni set token_username = '"+id_credenziale.username+"', token_issuer='"+id_credenziale.issuer+"', token_client_id='"+id_credenziale.client_id_only+"', token_subject='"+id_credenziale.subject+"', token_mail='"+id_credenziale.email+"' WHERE id='"+id_transazione+"'";
     * eval db.update(dbquery);

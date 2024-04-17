@@ -50,9 +50,9 @@
                 <fileset dir="${required_lib}/cxf" >
                         <include name="asm-9.6.jar"/>
                 </fileset>
-                <fileset dir="${openspcoop2.dist}" >
+                <!-- <fileset dir="${openspcoop2.dist}" >
                         <include name="*.jar"/>
-                </fileset>
+                </fileset> -->
 	</path> 
 
 	<property name="src_testsuite" location="src" />

@@ -20,18 +20,21 @@
 
 package org.openspcoop2.core.monitor.rs.testsuite;
 
-import com.intuit.karate.junit4.Karate;
-
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import com.intuit.karate.junit5.Karate;
 
 /**
- * ApiMonitorTestSuite
+ * ApplicativiTest
  *
  * @author $Author$
  * @version $Rev$, $Date$
  */
 
-@RunWith(Karate.class)
-public class ApiMonitorTestSuite {
+public 	class ApiMonitorTestSuite {
 
+    @Karate.Test
+    public Karate testAll() {
+        return Karate.run().relativeTo(getClass());
+    }
 }
+
