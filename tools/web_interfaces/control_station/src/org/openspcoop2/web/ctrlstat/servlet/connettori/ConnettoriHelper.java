@@ -1494,13 +1494,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 				de.setValue(StringEscapeUtils.escapeHtml(password));
-				// de.setType("crypt");
 				de.setType(DataElementType.TEXT_EDIT);
 				if(connettore){
 					de.setName(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-					// TODO Poli Lock type
-					de.setLock(StringEscapeUtils.escapeHtml(password));
-//					de.setType(DataElementType.CRYPT);
+					this.core.lock(de, password);
 				}
 				else{
 					
@@ -3648,7 +3645,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			
 			if(ServletUtils.isCheckBoxEnabled(autenticazioneHttp)){
 				user = this.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				password = this.getParametroPassword(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				password = this.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			}
 			
 			// file

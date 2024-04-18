@@ -38,9 +38,11 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
+import org.openspcoop2.core.byok.BYOKWrappedValue;
 import org.openspcoop2.core.byok.IDriverBYOKConfig;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
@@ -227,6 +229,7 @@ import org.openspcoop2.web.lib.audit.dao.Filtro;
 import org.openspcoop2.web.lib.audit.log.constants.Stato;
 import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
 import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
@@ -1203,8 +1206,12 @@ public class ControlStationCore {
 	
 	/** BYOK */
 	private String byokInternalConfigSecurityEngine = null;
+	private String byokInternalConfigRemoteSecurityEngine = null;
 	public String getByokInternalConfigSecurityEngine() {
 		return this.byokInternalConfigSecurityEngine;
+	}
+	public String getByokInternalConfigRemoteSecurityEngine() {
+		return this.byokInternalConfigRemoteSecurityEngine;
 	}
 
 	/** OCSP */
@@ -2661,6 +2668,7 @@ public class ControlStationCore {
 		
 		/** BYOK **/
 		this.byokInternalConfigSecurityEngine = core.byokInternalConfigSecurityEngine;
+		this.byokInternalConfigRemoteSecurityEngine = core.byokInternalConfigRemoteSecurityEngine;
 		
 		/** OCSP */
 		this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = core.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata; 
@@ -3106,6 +3114,7 @@ public class ControlStationCore {
 			this.isRegistrazioneMessaggiMultipartPayloadParsingEnabled = consoleProperties.isRegistrazioneMessaggiMultipartPayloadParsingEnabled();
 			this.isClusterDinamicoEnabled = consoleProperties.isClusterDinamicoEnabled();
 			this.byokInternalConfigSecurityEngine = consoleProperties.getBYOKInternalConfigSecurityEngine();
+			this.byokInternalConfigRemoteSecurityEngine = consoleProperties.getBYOKInternalConfigRemoteSecurityEngine();
 			this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = consoleProperties.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata();
 			this.verificaCertificatiWarningExpirationDays = consoleProperties.getVerificaCertificatiWarningExpirationDays();
 			this.verificaCertificatiSceltaClusterId = consoleProperties.isVerificaCertificatiSceltaClusterId();
@@ -8882,20 +8891,33 @@ public class ControlStationCore {
 	private static final String GOVWAY_RUNTIME_PASSWORD="password";
 
 	protected void activeBYOK(DriverControlStationDB driver, boolean wrap, boolean unwrap) throws UtilsException{
+		DriverBYOK driverBYOK = getDriverBYOK(wrap, unwrap);
+		if(driverBYOK!=null && driver.getDriverConfigurazioneDB() instanceof IDriverBYOKConfig) {
+			IDriverBYOKConfig c = driver.getDriverConfigurazioneDB();
+			c.initialize(driverBYOK, wrap, unwrap);
+		}
+	}
+	public boolean isEnabledBYOK() {
 		String securityManagerPolicy = this.getByokInternalConfigSecurityEngine();
-		if(securityManagerPolicy!=null) {
+		return securityManagerPolicy!=null && StringUtils.isNotEmpty(securityManagerPolicy);
+	}
+	protected DriverBYOK getDriverBYOK(boolean wrap, boolean unwrap) throws UtilsException{
+		String securityManagerPolicy = this.getByokInternalConfigSecurityEngine();
+		if(securityManagerPolicy!=null && StringUtils.isNotEmpty(securityManagerPolicy)) {
 			Map<String, Object> dynamicMap = new HashMap<>();
 			
 			if(isBYOKRemoteConfig(securityManagerPolicy)) {
 				initBYOKDynamicMap(dynamicMap, wrap, unwrap);
 			}
 			
-			DriverBYOK driverBYOK = new DriverBYOK(ControlStationCore.log, securityManagerPolicy, dynamicMap, true);
-			if(driver.getDriverConfigurazioneDB() instanceof IDriverBYOKConfig) {
-				IDriverBYOKConfig c = driver.getDriverConfigurazioneDB();
-				c.initialize(driverBYOK, wrap, unwrap);
+			String driverSecurityManagerPolicy = this.getByokInternalConfigRemoteSecurityEngine();
+			if(driverSecurityManagerPolicy==null || StringUtils.isEmpty(driverSecurityManagerPolicy)) {
+				driverSecurityManagerPolicy = securityManagerPolicy;
 			}
+			
+			return new DriverBYOK(ControlStationCore.log, driverSecurityManagerPolicy, dynamicMap, true);
 		}
+		return null;
 	}
 	private boolean isActiveNode(String alias) {
 		try {
@@ -8967,6 +8989,52 @@ public class ControlStationCore {
 		String password = this.configurazioneNodiRuntime.getPassword(alias);
 		if(password!=null) {
 			govwayContext.put(GOVWAY_RUNTIME_PASSWORD, password);
+		}
+	}
+	
+	public String wrap(String value) throws DriverControlStationException {
+		try {
+			if(value==null || StringUtils.isEmpty(value)) {
+				return value;
+			}
+			DriverBYOK driverBYOK = getDriverBYOK(true, false);
+			if(driverBYOK==null) {
+				return value;
+			}
+			BYOKWrappedValue v = driverBYOK.wrap(value);
+			if(v!=null && v.getWrappedValue()!=null) {
+				return v.getWrappedValue();
+			}
+			throw new UtilsException("Wrap value failed");
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
+	}
+	public String unwrap(String value) throws DriverControlStationException {
+		try {
+			if(value==null || StringUtils.isEmpty(value)) {
+				return value;
+			}
+			DriverBYOK driverBYOK = getDriverBYOK(false, true);
+			if(driverBYOK==null) {
+				return value;
+			}
+			return driverBYOK.unwrapAsString(value);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
+	}
+	
+	public void lock(DataElement de, String value) throws DriverControlStationException {
+		lock(de, value, true);
+	}
+	public void lock(DataElement de, String value, boolean escapeHtml) throws DriverControlStationException {
+		if(this.isEnabledBYOK()) {
+			String wrapValue = this.wrap(value);
+			de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue);
+		}
+		else {
+			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml(value) : value);
 		}
 	}
 }

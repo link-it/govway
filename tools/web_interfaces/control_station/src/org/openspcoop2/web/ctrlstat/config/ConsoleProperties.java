@@ -667,6 +667,9 @@ public class ConsoleProperties {
 	public String getBYOKInternalConfigSecurityEngine() throws UtilsException{
 		return this.readProperty(false, "byok.internalConfig.securityEngine");
 	}
+	public String getBYOKInternalConfigRemoteSecurityEngine() throws UtilsException{
+		return this.readProperty(false, "byok.internalConfig.securityEngine.remote");
+	}
 	
 	public Integer getVerificaCertificatiWarningExpirationDays() throws UtilsException{
 		String cacheV = this.readProperty(true, "verificaCertificati.warning.expirationDays");
