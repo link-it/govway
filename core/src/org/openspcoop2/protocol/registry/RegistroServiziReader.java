@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.ConnettoreHTTPSProperties;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
@@ -842,14 +843,14 @@ public class RegistroServiziReader {
 			boolean raggiungibilitaTotale, boolean readObjectStatoBozza, 
 			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX, 
 			boolean prefillCache, CryptConfig cryptConfigSoggetti,
-			CacheType cacheType){
+			CacheType cacheType, IDriverBYOK driverBYOK){
 
 		try {
 			RegistroServiziReader.registroServiziReader = 
 				new RegistroServiziReader(accessoRegistro,aLog,aLogconsole,raggiungibilitaTotale,readObjectStatoBozza,
 						jndiNameDatasourcePdD,useOp2UtilsDatasource,bindJMX, 
 						prefillCache, cryptConfigSoggetti,
-						cacheType);	
+						cacheType, driverBYOK);	
 			return RegistroServiziReader.initialize;
 		}
 		catch(Exception e) {
@@ -900,7 +901,7 @@ public class RegistroServiziReader {
 			Logger aLogconsole,boolean raggiungibilitaTotale, boolean readObjectStatoBozza, 
 			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX, 
 			boolean prefillCache, CryptConfig cryptConfigSoggetti,
-			CacheType cacheType)throws DriverRegistroServiziException{
+			CacheType cacheType, IDriverBYOK driverBYOK)throws DriverRegistroServiziException{
 		try{
 			if(aLog!=null)
 				this.log = aLog;
@@ -909,7 +910,7 @@ public class RegistroServiziReader {
 			this.registroServizi = new RegistroServizi(accessoRegistro,this.log,aLogconsole,raggiungibilitaTotale,readObjectStatoBozza,
 					jndiNameDatasourcePdD, useOp2UtilsDatasource, bindJMX, 
 					prefillCache, cryptConfigSoggetti,
-					cacheType);
+					cacheType, driverBYOK);
 			RegistroServiziReader.initialize = true;
 		}catch(Exception e){
 			RegistroServiziReader.initialize = false;

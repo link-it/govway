@@ -2018,7 +2018,8 @@ public class AccordiServizioParteSpecificaUtilities {
 			AccordoServizioParteSpecifica asps, 
 			String protocollo, String userLogin,
 			AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper, String nomeSAServer,
-			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception {
+			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi,
+			String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue) throws Exception {
 	
 		if(autenticazioneToken && nomeSA!=null) {
 			// nop: eliminare questo if se viene usato uno dei parametri
@@ -2093,6 +2094,7 @@ public class AccordiServizioParteSpecificaUtilities {
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					tokenPolicy,
+					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
 					listExtendedConnettore);
 		}
 		boolean addSpecSicurezza = false;
@@ -2561,7 +2563,8 @@ public class AccordiServizioParteSpecificaUtilities {
 			IDSoggetto idSoggettoFruitore, AccordoServizioParteSpecifica asps, 
 			String userLogin,
 			AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper,
-			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception {
+			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi,
+			String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue) throws Exception {
 	
 		if(autenticazioneHttp!=null && autenticazioneToken) {
 			// nop: rimuovere questo if se viene usato un qualche parametro
@@ -2618,6 +2621,7 @@ public class AccordiServizioParteSpecificaUtilities {
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					tokenPolicy,
+					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
 					listExtendedConnettore);
 		}
 		

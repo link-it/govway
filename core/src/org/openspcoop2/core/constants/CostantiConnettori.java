@@ -75,7 +75,13 @@ public class CostantiConnettori {
     
     public static final String CONNETTORE_HTTP_DATA_TRANSFER_MODE = "dataTransferMode";
     public static final String CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE = "transferChunkSize";
-
+    
+    public static final String CONNETTORE_APIKEY_HEADER = "apiKeyHeader";
+    public static final String CONNETTORE_APIKEY = "apiKey";
+    public static final String CONNETTORE_APIKEY_APPID_HEADER = "appIdHeader";
+    public static final String CONNETTORE_APIKEY_APPID = "appId";
+    public static final String DEFAULT_HEADER_API_KEY = "X-API-KEY";
+    public static final String DEFAULT_HEADER_APP_ID = "X-APP-ID";
     
 	/** JMS PROPERTIES */
 	
@@ -176,6 +182,7 @@ public class CostantiConnettori {
     static {
     	confidentials.add(CONNETTORE_PASSWORD);
     	confidentials.add(CONNETTORE_BEARER_TOKEN);
+    	confidentials.add(CONNETTORE_APIKEY);
     }
     
     public static boolean isConfidential(String nome) {

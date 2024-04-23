@@ -23915,7 +23915,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_USERNAME));
 			dati.add(de);
 			
-			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_PASSWORD)) {
+			/** Informazione sensibile if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_PASSWORD)) {
 				
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
@@ -23924,7 +23924,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setValue(pw!=null ? StringEscapeUtils.escapeHtml(pw) : pw);
 				dati.add(de);
 				
-			}
+			}*/
 			
 		}
 		
@@ -23942,6 +23942,42 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY));
 			dati.add(de);
 			
+		}
+		
+		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_APIKEY)) {
+			
+			de = new DataElement();
+			de.setType(DataElementType.SUBTITLE);
+			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_API_KEY);
+			de.setValue(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_API_KEY);
+			dati.add(de);
+		
+			String apiKeyHeader = connettore.getProperties().get(CostantiConnettori.CONNETTORE_APIKEY_HEADER);
+			if(apiKeyHeader==null || StringUtils.isEmpty(apiKeyHeader)) {
+				apiKeyHeader = CostantiConnettori.DEFAULT_HEADER_API_KEY;
+			}
+			
+			de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_VALUE);
+			de.setValue(StringEscapeUtils.escapeHtml(apiKeyHeader+": ******"));
+			/**de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_APIKEY));Informazione sensibile*/
+			dati.add(de);
+			
+			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_APIKEY_APPID)) {
+							
+				String appIdHeader = connettore.getProperties().get(CostantiConnettori.CONNETTORE_APIKEY_APPID_HEADER);
+				if(appIdHeader==null || StringUtils.isEmpty(appIdHeader)) {
+					appIdHeader = CostantiConnettori.DEFAULT_HEADER_APP_ID;
+				}
+				
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE);
+				de.setValue(StringEscapeUtils.escapeHtml(appIdHeader+": "+connettore.getProperties().get(CostantiConnettori.CONNETTORE_APIKEY_APPID)));
+				dati.add(de);
+				
+			}
 		}
 		
 		boolean trustAllCerts = false;

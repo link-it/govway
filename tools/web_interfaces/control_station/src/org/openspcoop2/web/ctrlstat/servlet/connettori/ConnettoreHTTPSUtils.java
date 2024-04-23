@@ -374,7 +374,8 @@ public class ConnettoreHTTPSUtils {
 			String stato,
 			ControlStationCore core,ConsoleHelper consoleHelper, int pageSize, boolean addUrlParameter,
 			String prefix, boolean forceHttpsClient,
-			boolean modi, boolean fruizione, boolean forceNoSec) {
+			boolean modi, boolean fruizione, boolean forceNoSec,
+			boolean postBackViaPost) {
 		
 		// default
 		if(httpsalgoritmo==null || "".equals(httpsalgoritmo)){
@@ -454,7 +455,12 @@ public class ConnettoreHTTPSUtils {
 		de.setValue(httpsTrustVerifyCert ? Costanti.CHECK_BOX_ENABLED : "");
 		de.setSelected(httpsTrustVerifyCert);
 		de.setType(DataElementType.CHECKBOX);
-		de.setPostBack(true);
+		if(postBackViaPost) {
+			de.setPostBack_viaPOST(true);
+		}
+		else {
+			de.setPostBack(true);
+		}
 		dati.add(de);
 		
 		boolean truststoreHsm = false;
@@ -484,7 +490,12 @@ public class ConnettoreHTTPSUtils {
 				de.setValues(values);
 				de.setLabels(labels);
 				if(ConnettoriCostanti.existsTIPOLOGIE_KEYSTORE_HSM(true)) {
-					de.setPostBack(true);
+					if(postBackViaPost) {
+						de.setPostBack_viaPOST(true);
+					}
+					else {
+						de.setPostBack(true);
+					}
 				}
 			}
 			if(httpstipo!=null) {
@@ -563,7 +574,12 @@ public class ConnettoreHTTPSUtils {
 				de.setType(DataElementType.SELECT);
 				de.setValues(ocspTypes);
 				de.setLabels(ocspLabels);
-				de.setPostBack(core.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata());
+				if(postBackViaPost) {
+					de.setPostBack_viaPOST(core.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata());
+				}
+				else {
+					de.setPostBack(core.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata());
+				}
 				if(httpsTrustStoreOCSPPolicy==null) {
 					httpsTrustStoreOCSPPolicy = "";
 				}	
@@ -658,7 +674,12 @@ public class ConnettoreHTTPSUtils {
 			de.setValue(httpsstato ? Costanti.CHECK_BOX_ENABLED : "");
 			de.setSelected(httpsstato);
 			de.setType(DataElementType.CHECKBOX);
-			de.setPostBack(true);
+			if(postBackViaPost) {
+				de.setPostBack_viaPOST(true);
+			}
+			else {
+				de.setPostBack(true);
+			}
 		}
 		dati.add(de);
 
@@ -672,7 +693,12 @@ public class ConnettoreHTTPSUtils {
 				de.setValues(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODES);
 				de.setLabels(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_LABEL_MODES);
 				de.setSelected(httpskeystore);
-				de.setPostBack(true);
+				if(postBackViaPost) {
+					de.setPostBack_viaPOST(true);
+				}
+				else {
+					de.setPostBack(true);
+				}
 			}
 			else {
 				de.setType(DataElementType.HIDDEN);
@@ -731,7 +757,12 @@ public class ConnettoreHTTPSUtils {
 				de.setValues(values);
 				de.setLabels(labels);
 				if(ConnettoriCostanti.existsTIPOLOGIE_KEYSTORE_HSM(false)) {
-					de.setPostBack(true);
+					if(postBackViaPost) {
+						de.setPostBack_viaPOST(true);
+					}
+					else {
+						de.setPostBack(true);
+					}
 				}
 			}
 			if(httpstipokey!=null) {

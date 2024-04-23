@@ -120,6 +120,7 @@ import org.openspcoop2.pdd.core.StatoServiziPdD;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.GestoreLoadBalancerCaching;
+import org.openspcoop2.pdd.core.byok.DriverBYOK;
 import org.openspcoop2.pdd.core.cache.GestoreCacheCleaner;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneGatewayControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
@@ -2237,14 +2238,18 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 
 			// inizializzo registri
+			DriverBYOK driverBYOK = null;
+			if(propertiesReader.getBYOKConfigInternalConfigSecurityEngine()!=null) {
+				driverBYOK = new DriverBYOK(logCore, propertiesReader.getBYOKConfigInternalConfigSecurityEngine());
+			}
 			boolean isInitializeRegistro = 
 				RegistroServiziReader.initialize(accessoRegistro,
 						logCore,OpenSPCoop2Startup.log,propertiesReader.isControlloRisorseRegistriRaggiungibilitaTotale(),
 						propertiesReader.isReadObjectStatoBozza(),propertiesReader.getJNDIName_DataSource(),
 						propertiesReader.isDSOp2UtilsEnabled(), propertiesReader.isRisorseJMXAbilitate(),
 						propertiesReader.isConfigurazioneCache_RegistryPrefill(), propertiesReader.getCryptConfigAutenticazioneSoggetti(),
-						propertiesReader.getCacheTypeRegistry());
-			if(isInitializeRegistro == false){
+						propertiesReader.getCacheTypeRegistry(), driverBYOK);
+			if(!isInitializeRegistro){
 				msgDiag.logStartupError("Inizializzazione fallita","Accesso registro/i dei servizi");
 				return;
 			}
@@ -2258,12 +2263,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 
 			// Inizializza il reader del registro dei Servizi utilizzato nella configurazione
-//			try{
-//				configurazionePdDReader.initializeRegistroServiziReader();
-//			}catch(Exception e){
-//				msgDiag.logStartupError(e,"Inizializzazione Reader per il registro dei servizi utilizzato nella configurazione");
-//				return;
-//			}
+			/**try{
+				configurazionePdDReader.initializeRegistroServiziReader();
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Inizializzazione Reader per il registro dei servizi utilizzato nella configurazione");
+				return;
+			}*/
 
 
 			

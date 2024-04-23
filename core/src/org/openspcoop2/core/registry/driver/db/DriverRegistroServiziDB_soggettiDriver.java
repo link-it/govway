@@ -753,7 +753,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		try {
 			this.driver.logDebug("CRUDSoggetto type = 1");
 			// creo soggetto
-			DriverRegistroServiziDB_soggettiLIB.CRUDSoggetto(1, soggetto, con, this.driver.tipoDB);
+			DriverRegistroServiziDB_soggettiLIB.CRUDSoggetto(1, soggetto, con, this.driver.tipoDB, this.driver.getDriverWrapBYOK());
 
 		} catch (Exception qe) {
 			error = true;
@@ -1143,7 +1143,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 						this.driver.logDebug("nuovo nome connettore ["+newNomeConnettore+"]");
 						connettore.setNome(newNomeConnettore);
 						//aggiorno il connettore
-						DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(CostantiDB.UPDATE, connettore, con);
+						DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(CostantiDB.UPDATE, connettore, con, this.driver.getDriverWrapBYOK());
 					}
 				}
 				rs.close();
@@ -1183,7 +1183,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 						this.driver.logDebug("nuovo nome connettore ["+newNomeConnettore+"]");
 						connettore.setNome(newNomeConnettore);
 						//aggiorno il connettore
-						DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(CostantiDB.UPDATE, connettore, con);
+						DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(CostantiDB.UPDATE, connettore, con, this.driver.getDriverWrapBYOK());
 					}
 				}
 				rs.close();
@@ -1191,7 +1191,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 			}
 
 			// UPDATE soggetto
-			DriverRegistroServiziDB_soggettiLIB.CRUDSoggetto(2, soggetto, con, this.driver.tipoDB);
+			DriverRegistroServiziDB_soggettiLIB.CRUDSoggetto(2, soggetto, con, this.driver.tipoDB, this.driver.getDriverWrapBYOK());
 
 		} catch (Exception qe) {
 			error = true;
@@ -1228,7 +1228,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		try {
 			this.driver.logDebug("CRUDSoggetto type = 3");
 			// DELETE soggetto
-			DriverRegistroServiziDB_soggettiLIB.CRUDSoggetto(3, soggetto, con, this.driver.tipoDB);
+			DriverRegistroServiziDB_soggettiLIB.CRUDSoggetto(3, soggetto, con, this.driver.tipoDB, this.driver.getDriverWrapBYOK());
 
 		} catch (Exception qe) {
 			error = true;
@@ -1239,7 +1239,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		}
 	}
 
-	protected IDSoggetto[] getSoggettiWithSuperuser(String user) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+	protected IDSoggetto[] getSoggettiWithSuperuser(String user) throws DriverRegistroServiziException {
 
 		IDSoggetto [] idSoggetti = null;
 

@@ -527,7 +527,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		try {
 			this.driver.logDebug("CRUDServizio tupe=1");
 			// CREATE
-			DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecifica(1, accordoServizioParteSpecifica, con, this.driver.tipoDB);
+			DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecifica(1, accordoServizioParteSpecifica, con, this.driver.tipoDB, this.driver.getDriverWrapBYOK());
 
 		} catch (Exception qe) {
 			error = true;
@@ -719,7 +719,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		try {
 
 			// UPDATE
-			DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecifica(2, servizio, con, this.driver.tipoDB);
+			DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecifica(2, servizio, con, this.driver.tipoDB, this.driver.getDriverWrapBYOK());
 
 		} catch (Exception qe) {
 			error = true;
@@ -754,7 +754,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		try {
 			this.driver.logDebug("CRUDServizio type = 3");
 			// creo soggetto
-			DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecifica(3, servizio, con, this.driver.tipoDB);
+			DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecifica(3, servizio, con, this.driver.tipoDB, this.driver.getDriverWrapBYOK());
 
 		} catch (Exception qe) {
 			error = true;

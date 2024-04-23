@@ -168,6 +168,9 @@ public final class CostantiLabel {
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_BEARER = "Autenticazione Bearer";
 	public static final String LABEL_CONNETTORE_BEARER_TOKEN = "Token";
 	
+	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_API_KEY = "Autenticazione API Key";
+	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_API_KEY_APP_ID = "App ID";
+	
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_TOKEN = "Autenticazione Token";
 	public static final String LABEL_CONNETTORE_TOKEN_POLICY = "Policy";
 	

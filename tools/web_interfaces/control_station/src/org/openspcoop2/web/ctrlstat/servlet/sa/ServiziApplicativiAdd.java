@@ -53,6 +53,7 @@ import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazio
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -233,10 +234,12 @@ public final class ServiziApplicativiAdd extends Action {
 			String tipoCredenzialiSSLAliasCertificatoNotBefore= saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_BEFORE);
 			String tipoCredenzialiSSLAliasCertificatoNotAfter = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_AFTER); 
 			String tipoCredenzialiSSLVerificaTuttiICampi = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
-			if (tipoCredenzialiSSLVerificaTuttiICampi == null || StringUtils.isEmpty(tipoCredenzialiSSLVerificaTuttiICampi)) {
-				if(saHelper.isEditModeInProgress() && saHelper.getPostBackElementName()==null) { // prima volta
-					tipoCredenzialiSSLVerificaTuttiICampi = ConnettoriCostanti.DEFAULT_VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI;
-				}
+			if (
+					(tipoCredenzialiSSLVerificaTuttiICampi == null || StringUtils.isEmpty(tipoCredenzialiSSLVerificaTuttiICampi)) 
+					&&
+					(saHelper.isEditModeInProgress() && saHelper.getPostBackElementName()==null) 
+				){ // prima volta
+				tipoCredenzialiSSLVerificaTuttiICampi = ConnettoriCostanti.DEFAULT_VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI;
 			}
 			String tipoCredenzialiSSLConfigurazioneManualeSelfSigned= saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_MANUALE_SELF_SIGNED);
 			if (tipoCredenzialiSSLConfigurazioneManualeSelfSigned == null) {
@@ -323,7 +326,7 @@ public final class ServiziApplicativiAdd extends Action {
 			String proxyHostname = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
 			String proxyPort = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
 			String proxyUsername = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
-			String proxyPassword = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			String proxyPassword = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 			
 			// tempi risposta
 			String tempiRispostaEnabled = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
@@ -345,6 +348,35 @@ public final class ServiziApplicativiAdd extends Action {
 				password = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			}
 			
+			// api key
+			String autenticazioneApiKey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_API_KEY);
+			String apiKeyHeader = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_HEADER);
+			if(apiKeyHeader==null || StringUtils.isEmpty(apiKeyHeader)) {
+				apiKeyHeader = CostantiConnettori.DEFAULT_HEADER_API_KEY;
+			}
+			String apiKeyValue = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_VALUE);
+			String appIdHeader = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_APP_ID_HEADER);
+			if(appIdHeader==null || StringUtils.isEmpty(appIdHeader)) {
+				appIdHeader = CostantiConnettori.DEFAULT_HEADER_APP_ID;
+			}
+			String appIdValue = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE);
+			String useOAS3NamesTmp = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_NOMI_OAS);
+			boolean useOAS3Names=true;
+			if(useOAS3NamesTmp!=null && StringUtils.isNotEmpty(useOAS3NamesTmp)) {
+				useOAS3Names = ServletUtils.isCheckBoxEnabled(useOAS3NamesTmp);
+			}
+			else {
+				useOAS3Names = saHelper.isAutenticazioneApiKeyUseOAS3Names(apiKeyHeader, appIdHeader);
+			}
+			String useAppIdTmp = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_USE_APP_ID);
+			boolean useAppId=false;
+			if(useAppIdTmp!=null && StringUtils.isNotEmpty(useAppIdTmp)) {
+				useAppId = ServletUtils.isCheckBoxEnabled(useAppIdTmp);
+			}
+			else {
+				useAppId = saHelper.isAutenticazioneApiKeyUseAppId(appIdValue);
+			}
+			
 			// jms
 			String nomeCodaJMS = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_NOME_CODA);
 			String tipoCodaJMS = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
@@ -355,7 +387,7 @@ public final class ServiziApplicativiAdd extends Action {
 			String sendas = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
 			if(TipiConnettore.JMS.toString().equals(endpointtype)){
 				user = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_USERNAME);
-				password = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
+				password = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
 			}
 			
 			// https
@@ -383,7 +415,7 @@ public final class ServiziApplicativiAdd extends Action {
 			String httpsTrustStoreOCSPPolicy = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				password = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				password = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			}
 					
 			// file
@@ -599,22 +631,22 @@ public final class ServiziApplicativiAdd extends Action {
 			if(isSupportatoAutenticazioneApplicativiEsterni) {
 				dominioEsterno = SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(dominio);
 			}
-			if(dominioEsterno) {
-				if(soggettiList==null || soggettiList.length<=0) {
-					pd.setMessage("Non risultano registrati soggetti di dominio esterno", MessageType.ERROR);
-					pd.disableEditMode();
+			if(dominioEsterno &&
+				(soggettiList==null || soggettiList.length<=0) 
+				){
+				pd.setMessage("Non risultano registrati soggetti di dominio esterno", MessageType.ERROR);
+				pd.disableEditMode();
 
-					List<DataElement> dati = new ArrayList<>();
+				List<DataElement> dati = new ArrayList<>();
 
-					dati.add(ServletUtils.getDataElementForEditModeFinished());
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-					pd.setDati(dati);
+				pd.setDati(dati);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
-					return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
-							ForwardParams.ADD());
-				}
+				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
+						ForwardParams.ADD());
 			}
 			
 			
@@ -779,10 +811,12 @@ public final class ServiziApplicativiAdd extends Action {
 							idSoggetto!=null && 
 							idSoggetto.getTipo()!=null && !"".equals(idSoggetto.getTipo()) && 
 							idSoggetto.getNome()!=null && !"".equals(idSoggetto.getNome());
-					if(appId==null || "".equals(appId)) {
-						if( saDefined ) {
-							appId = saCore.toAppId(tipoProtocollo, idSA, multipleApiKeysEnabled);
-						}
+					if( 
+							(appId==null || "".equals(appId)) 
+							&&
+							( saDefined ) 
+						){
+						appId = saCore.toAppId(tipoProtocollo, idSA, multipleApiKeysEnabled);
 					}
 				}
 			}
@@ -855,11 +889,11 @@ public final class ServiziApplicativiAdd extends Action {
 					}
 					if(httpshostverifyS==null || "".equals(httpshostverifyS)){
 						httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
-						httpshostverify = true;
+						httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
 					}
 					if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
 						httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
-						httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
+						httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 					}
 				}
 				
@@ -907,7 +941,8 @@ public final class ServiziApplicativiAdd extends Action {
 						autenticazioneToken,tokenPolicy, tipoSA, useAsClient,
 						integrationManagerEnabled, 
 						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
-						tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA);
+						tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
+						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiRegistry(dati, consoleConfiguration,consoleOperationType, protocolProperties);
@@ -916,10 +951,10 @@ public final class ServiziApplicativiAdd extends Action {
 				if(isSupportatoAutenticazioneApplicativiEsterni) {
 					dominioEsterno = SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(dominio);
 				}
-				if(dominioEsterno) {
-					if(soggettiList==null || soggettiList.length<=0) {
-						pd.setMessage("Non risultano registrati soggetti di dominio esterno", MessageType.ERROR);
-					}
+				if(dominioEsterno &&
+					(soggettiList==null || soggettiList.length<=0) 
+					){
+					pd.setMessage("Non risultano registrati soggetti di dominio esterno", MessageType.ERROR);
 				}
 				
 				pd.setDati(dati);
@@ -1021,7 +1056,8 @@ public final class ServiziApplicativiAdd extends Action {
 						autenticazioneToken,tokenPolicy, tipoSA, useAsClient,
 						integrationManagerEnabled, 
 						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
-						tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA);
+						tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
+						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiRegistry(dati, consoleConfiguration,consoleOperationType, protocolProperties);
@@ -1225,6 +1261,7 @@ public final class ServiziApplicativiAdd extends Action {
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							tokenPolicy,
+							apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
 							listExtendedConnettore);
 					invServizio.setConnettore(connis);
 				}
@@ -1268,18 +1305,18 @@ public final class ServiziApplicativiAdd extends Action {
 					credenziali.setAppId(false);
 				}
 				
-				if(saCore.isApplicativiPasswordEncryptEnabled()) {
-					if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC) || tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY)) {
-						secret = true;
-						secretUser = credenziali.getUser();
-						if (apiKeyGenerated!=null) {
-							secretPassword = apiKeyGenerated.getApiKey();
-						}
-						else {
-							secretPassword = credenziali.getPassword();
-						}
-						secretAppId = credenziali.isAppId();
+				if(saCore.isApplicativiPasswordEncryptEnabled() &&
+					(tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC) || tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY)) 
+					){
+					secret = true;
+					secretUser = credenziali.getUser();
+					if (apiKeyGenerated!=null) {
+						secretPassword = apiKeyGenerated.getApiKey();
 					}
+					else {
+						secretPassword = credenziali.getPassword();
+					}
+					secretAppId = credenziali.isAppId();
 				}
 				
 				if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoauthSA)) {

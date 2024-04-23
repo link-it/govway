@@ -616,6 +616,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 					}
 				}
 				
+				boolean postBackViaPost = false;
+				
 				dati = this.addCredenzialiToDati(tipoOp, dati, tipoauth, oldtipoauth, utente, password, subject, principal, servlet, true, null, false, true, null, autenticazioneNessunaAbilitata,
 						tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword, listaAliasEstrattiCertificato, 
 						tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
@@ -625,7 +627,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 						changepwd,
 						multipleApiKey, appId, apiKey, visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
 						false, null, null, false,
-						SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(dominio), protocollo);
+						SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(dominio), protocollo,
+						postBackViaPost);
 			}
 		}
 		

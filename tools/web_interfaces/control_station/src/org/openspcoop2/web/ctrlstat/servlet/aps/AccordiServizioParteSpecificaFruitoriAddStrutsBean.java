@@ -102,6 +102,14 @@ public class AccordiServizioParteSpecificaFruitoriAddStrutsBean {
 	protected boolean autenticazioneToken = false;
 	protected String tokenPolicy = null;
 	
+	protected String autenticazioneApiKey = null;
+	protected boolean useOAS3Names=true;
+	protected boolean useAppId=false;
+	protected String apiKeyHeader = null;
+	protected String apiKeyValue = null;
+	protected String appIdHeader = null;
+	protected String appIdValue = null;
+	
 	protected String proxyEnabled;
 	protected String proxyHostname;
 	protected String proxyPort;

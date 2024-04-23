@@ -429,6 +429,36 @@ public class ConnettoreUtils {
 				sb.append(separator);
 				sb.append(bearerToken);
 			}
+			
+			String apiKey = getProperty(CostantiConnettori.CONNETTORE_APIKEY, connettore.getPropertyList());
+			if(apiKey!=null && StringUtils.isNotEmpty(apiKey)){
+				
+				String apiKeyHeader = getProperty(CostantiConnettori.CONNETTORE_APIKEY_HEADER, connettore.getPropertyList());
+				if(apiKeyHeader==null || StringUtils.isEmpty(apiKeyHeader)) {
+					apiKeyHeader = CostantiConnettori.DEFAULT_HEADER_API_KEY;
+				}
+				
+				sb.append(newLine);
+				sb.append(CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_API_KEY).append(" '").append(apiKeyHeader).append("'");
+				/**sb.append(separator);
+				sb.append(apiKey); Informazione sensibile*/
+				
+				String appId = getProperty(CostantiConnettori.CONNETTORE_APIKEY_APPID, connettore.getPropertyList());
+				if(appId!=null && StringUtils.isNotEmpty(appId)){
+					
+					String appIdHeader = getProperty(CostantiConnettori.CONNETTORE_APIKEY_APPID_HEADER, connettore.getPropertyList());
+					if(appIdHeader==null || StringUtils.isEmpty(appIdHeader)) {
+						appIdHeader = CostantiConnettori.DEFAULT_HEADER_APP_ID;
+					}
+					
+					sb.append(newLine);
+					sb.append(CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_API_KEY_APP_ID).append(" '").append(appIdHeader).append("'");
+					sb.append(separator);
+					sb.append(appId);
+					
+				}
+			}
+			
 		}
 		
 		if(TipiConnettore.HTTPS.getNome().equals(connettore.getTipo())){

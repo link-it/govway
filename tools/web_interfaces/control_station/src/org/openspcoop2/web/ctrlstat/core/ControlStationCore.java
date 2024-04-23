@@ -230,6 +230,7 @@ import org.openspcoop2.web.lib.audit.log.constants.Stato;
 import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
@@ -8896,6 +8897,10 @@ public class ControlStationCore {
 			IDriverBYOKConfig c = driver.getDriverConfigurazioneDB();
 			c.initialize(driverBYOK, wrap, unwrap);
 		}
+		if(driverBYOK!=null && driver.getDriverRegistroServiziDB() instanceof IDriverBYOKConfig) {
+			IDriverBYOKConfig c = driver.getDriverRegistroServiziDB();
+			c.initialize(driverBYOK, wrap, unwrap);
+		}
 	}
 	public boolean isEnabledBYOK() {
 		String securityManagerPolicy = this.getByokInternalConfigSecurityEngine();
@@ -9029,12 +9034,35 @@ public class ControlStationCore {
 		lock(de, value, true);
 	}
 	public void lock(DataElement de, String value, boolean escapeHtml) throws DriverControlStationException {
+		lockEngine(de, value, escapeHtml, false);
+	}
+	public void lockHidden(DataElement de, String value) throws DriverControlStationException {
+		lockHidden(de, value, true);
+	}
+	public void lockHidden(DataElement de, String value, boolean escapeHtml) throws DriverControlStationException {
+		lockEngine(de, value, escapeHtml, true);
+	}
+	private void lockEngine(DataElement de, String value, boolean escapeHtml, boolean hidden) throws DriverControlStationException {
 		if(this.isEnabledBYOK()) {
-			String wrapValue = this.wrap(value);
-			de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue);
+			lockEngineWithBIOK(de, value, escapeHtml, hidden);
 		}
 		else {
+			if(de.getType()==null || StringUtils.isEmpty(de.getType())) {
+				de.setType(hidden ?  DataElementType.HIDDEN:DataElementType.TEXT_EDIT);
+			}
 			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml(value) : value);
+		}
+	}
+	private void lockEngineWithBIOK(DataElement de, String value, boolean escapeHtml, boolean hidden) throws DriverControlStationException {
+		String wrapValue = this.wrap(value);
+		if(hidden) {
+			if(de.getType()==null || StringUtils.isEmpty(de.getType())) {
+				de.setType(DataElementType.HIDDEN);
+			}
+			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue);
+		}
+		else {
+			de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue);
 		}
 	}
 }

@@ -119,6 +119,11 @@ public class DriverConfigurazioneDB_connettoriLIB {
 		
 		String tokenPolicy = null;
 		
+		String apiKey = null;
+		String apiKeyHeader = null;
+		String appId = null;
+		String appIdHeader = null;
+		
 		boolean isAbilitato = false;
 
 		Map<String, String> extendedProperties = new HashMap<>();
@@ -210,6 +215,23 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				tokenPolicy = valoreProperty;
 			}
 			
+			// ApiKey
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_APIKEY)){
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				apiKey = valoreProperty;
+			}
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_APIKEY_HEADER)){
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				apiKeyHeader = valoreProperty;
+			}
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_APIKEY_APPID)){
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				appId = valoreProperty;
+			}
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_APIKEY_APPID_HEADER)){
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				appIdHeader = valoreProperty;
+			}
 
 			if(TipiConnettore.HTTP.getNome().equals(endpointtype)){
 				if (nomeProperty.equals(CostantiDB.CONNETTORE_HTTP_LOCATION))
@@ -267,6 +289,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				sqlQueryObject.addInsertField("tipo", "?");
 				sqlQueryObject.addInsertField("utente", "?");
 				sqlQueryObject.addInsertField("password", "?");
+				sqlQueryObject.addInsertField("enc_password", "?");
 				sqlQueryObject.addInsertField("initcont", "?");
 				sqlQueryObject.addInsertField("urlpkg", "?");
 				sqlQueryObject.addInsertField("provurl", "?");
@@ -280,11 +303,16 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				sqlQueryObject.addInsertField("proxy_port", "?");		
 				sqlQueryObject.addInsertField("proxy_username", "?");		
 				sqlQueryObject.addInsertField("proxy_password", "?");	
+				sqlQueryObject.addInsertField("enc_proxy_password", "?");
 				sqlQueryObject.addInsertField("connection_timeout", "?");		
 				sqlQueryObject.addInsertField("read_timeout", "?");		
 				sqlQueryObject.addInsertField("avg_response_time", "?");		
 				sqlQueryObject.addInsertField("custom", "?");
 				sqlQueryObject.addInsertField("token_policy", "?");
+				sqlQueryObject.addInsertField("api_key", "?");
+				sqlQueryObject.addInsertField("api_key_header", "?");
+				sqlQueryObject.addInsertField("app_id", "?");
+				sqlQueryObject.addInsertField("app_id_header", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = connection.prepareStatement(sqlQuery);
 
@@ -308,7 +336,19 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				stm.setString(index++, isAbilitato ? nome : null);
 				stm.setString(index++, isAbilitato ? tipo : null);
 				stm.setString(index++, (isAbilitato ? utente : null));
-				stm.setString(index++, (isAbilitato ? password : null));
+				
+				String plainPassword = isAbilitato ? password : null;
+				String encPassword = null;
+				if(isAbilitato && driverBYOK!=null && plainPassword!=null) {
+					BYOKWrappedValue byokValue = driverBYOK.wrap(plainPassword);
+					if(byokValue!=null) {
+						encPassword = byokValue.getWrappedValue();
+						plainPassword = byokValue.getWrappedPlainValue();
+					}
+				}
+				stm.setString(index++, plainPassword);
+				stm.setString(index++, encPassword);
+				
 				stm.setString(index++, (isAbilitato ? initcont : null));
 				stm.setString(index++, (isAbilitato ? urlpkg : null));
 				stm.setString(index++, (isAbilitato ? provurl : null));
@@ -329,7 +369,19 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				stm.setString(index++, isAbilitato && proxy ? proxyHostname : null);
 				stm.setString(index++, isAbilitato && proxy ? proxyPort : null);
 				stm.setString(index++, isAbilitato && proxy ? proxyUsername : null);
-				stm.setString(index++, isAbilitato && proxy ? proxyPassword : null);
+
+				String plainProxyPassword = isAbilitato ? proxyPassword : null;
+				String encProxyPassword = null;
+				if(isAbilitato && driverBYOK!=null && plainProxyPassword!=null) {
+					BYOKWrappedValue byokValue = driverBYOK.wrap(plainProxyPassword);
+					if(byokValue!=null) {
+						encProxyPassword = byokValue.getWrappedValue();
+						plainProxyPassword = byokValue.getWrappedPlainValue();
+					}
+				}
+				stm.setString(index++, plainProxyPassword);
+				stm.setString(index++, encProxyPassword);
+				
 				if(tempiRispostaConnectionTimeout!=null) {
 					stm.setInt(index++, tempiRispostaConnectionTimeout);
 				}
@@ -354,14 +406,34 @@ public class DriverConfigurazioneDB_connettoriLIB {
 					stm.setInt(index++, 0);
 				}
 				stm.setString(index++, tokenPolicy);
+				
+				String apiKeyInsert = isAbilitato ? apiKey : null;
+				if(isAbilitato && apiKey!=null && StringUtils.isNotEmpty(apiKey) && driverBYOK!=null && CostantiConnettori.isConfidential(CostantiDB.CONNETTORE_APIKEY)) {
+					BYOKWrappedValue byokValue = driverBYOK.wrap(apiKey);
+					if(byokValue!=null) {
+						apiKeyInsert = byokValue.getWrappedValue();
+						stm.setString(index++, byokValue.getWrappedValue());
+					}
+					else {
+						stm.setString(index++, apiKey);
+					}
+				}
+				else {
+					stm.setString(index++, apiKey);
+				}
+				stm.setString(index++, isAbilitato ? apiKeyHeader : null);
+				stm.setString(index++, isAbilitato ? appId : null);
+				stm.setString(index++, isAbilitato ? appIdHeader : null);
 
 				DriverConfigurazioneDBLib.logDebug("CRUDConnettore CREATE : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, url, 
 						transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
-						nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore,debug,
-						proxy, proxyType, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+						nome, tipo, utente, plainPassword, encPassword, 
+						initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore,debug,
+						proxy, proxyType, proxyHostname, proxyPort, proxyUsername, plainProxyPassword, encProxyPassword,
 						tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaAvgResponseTime,
 						(connettore.getCustom()!=null && connettore.getCustom()),
-						tokenPolicy));
+						tokenPolicy,
+						apiKeyInsert, apiKeyHeader, appId, appIdHeader));
 
 				n = stm.executeUpdate();
 				stm.close();
@@ -495,6 +567,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				sqlQueryObject.addUpdateField("tipo", "?");
 				sqlQueryObject.addUpdateField("utente", "?");
 				sqlQueryObject.addUpdateField("password", "?");
+				sqlQueryObject.addUpdateField("enc_password", "?");
 				sqlQueryObject.addUpdateField("initcont", "?");
 				sqlQueryObject.addUpdateField("urlpkg", "?");
 				sqlQueryObject.addUpdateField("provurl", "?");
@@ -508,11 +581,16 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				sqlQueryObject.addUpdateField("proxy_port", "?");		
 				sqlQueryObject.addUpdateField("proxy_username", "?");		
 				sqlQueryObject.addUpdateField("proxy_password", "?");
+				sqlQueryObject.addUpdateField("enc_proxy_password", "?");
 				sqlQueryObject.addUpdateField("connection_timeout", "?");		
 				sqlQueryObject.addUpdateField("read_timeout", "?");		
 				sqlQueryObject.addUpdateField("avg_response_time", "?");
 				sqlQueryObject.addUpdateField("custom", "?");
 				sqlQueryObject.addUpdateField("token_policy", "?");
+				sqlQueryObject.addUpdateField("api_key", "?");
+				sqlQueryObject.addUpdateField("api_key_header", "?");
+				sqlQueryObject.addUpdateField("app_id", "?");
+				sqlQueryObject.addUpdateField("app_id_header", "?");
 				sqlQueryObject.addWhereCondition("id=?");
 				sqlQuery = sqlQueryObject.createSQLUpdate();
 				stm = connection.prepareStatement(sqlQuery);
@@ -534,15 +612,27 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				else{
 					stm.setNull(index++, Types.INTEGER);
 				}
-				stm.setString(index++, nome);
-				stm.setString(index++, tipo);
-				stm.setString(index++, utente);
-				stm.setString(index++, password);
-				stm.setString(index++, initcont);
-				stm.setString(index++, urlpkg);
-				stm.setString(index++, provurl);
-				stm.setString(index++, connectionfactory);
-				stm.setString(index++, sendas);
+				stm.setString(index++, isAbilitato ? nome : null);
+				stm.setString(index++, isAbilitato ? tipo: null);
+				stm.setString(index++, (isAbilitato ? utente : null));
+				
+				plainPassword = isAbilitato ? password : null;
+				encPassword = null;
+				if(isAbilitato && driverBYOK!=null && plainPassword!=null) {
+					BYOKWrappedValue byokValue = driverBYOK.wrap(plainPassword);
+					if(byokValue!=null) {
+						encPassword = byokValue.getWrappedValue();
+						plainPassword = byokValue.getWrappedPlainValue();
+					}
+				}
+				stm.setString(index++, plainPassword);
+				stm.setString(index++, encPassword);
+				
+				stm.setString(index++, (isAbilitato ? initcont : null));
+				stm.setString(index++, (isAbilitato ? urlpkg : null));
+				stm.setString(index++, (isAbilitato ? provurl : null));
+				stm.setString(index++, (isAbilitato ? connectionfactory : null));
+				stm.setString(index++, (isAbilitato ? sendas : null));
 				stm.setString(index++, nomeConnettore);
 				if(debug){
 					stm.setInt(index++, 1);
@@ -558,7 +648,19 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				stm.setString(index++, isAbilitato && proxy ? proxyHostname : null);
 				stm.setString(index++, isAbilitato && proxy ? proxyPort : null);
 				stm.setString(index++, isAbilitato && proxy ? proxyUsername : null);
-				stm.setString(index++, isAbilitato && proxy ? proxyPassword : null);
+
+				plainProxyPassword = isAbilitato ? proxyPassword : null;
+				encProxyPassword = null;
+				if(isAbilitato && driverBYOK!=null && plainProxyPassword!=null) {
+					BYOKWrappedValue byokValue = driverBYOK.wrap(plainProxyPassword);
+					if(byokValue!=null) {
+						encProxyPassword = byokValue.getWrappedValue();
+						plainProxyPassword = byokValue.getWrappedPlainValue();
+					}
+				}
+				stm.setString(index++, plainProxyPassword);
+				stm.setString(index++, encProxyPassword);
+				
 				if(tempiRispostaConnectionTimeout!=null) {
 					stm.setInt(index++, tempiRispostaConnectionTimeout);
 				}
@@ -583,17 +685,38 @@ public class DriverConfigurazioneDB_connettoriLIB {
 					stm.setInt(index++, 0);
 				}
 				stm.setString(index++, tokenPolicy);
+				
+				apiKeyInsert = isAbilitato ? apiKey : null;
+				if(isAbilitato && apiKey!=null && StringUtils.isNotEmpty(apiKey) && driverBYOK!=null && CostantiConnettori.isConfidential(CostantiDB.CONNETTORE_APIKEY)) {
+					BYOKWrappedValue byokValue = driverBYOK.wrap(apiKey);
+					if(byokValue!=null) {
+						apiKeyInsert = byokValue.getWrappedValue();
+						stm.setString(index++, byokValue.getWrappedValue());
+					}
+					else {
+						stm.setString(index++, apiKey);
+					}
+				}
+				else {
+					stm.setString(index++, apiKey);
+				}
+				stm.setString(index++, isAbilitato ? apiKeyHeader : null);
+				stm.setString(index++, isAbilitato ? appId : null);
+				stm.setString(index++, isAbilitato ? appIdHeader : null);
+				
 				stm.setLong(index++, idConnettore);
 
 				stm.executeUpdate();
 				stm.close();
 				DriverConfigurazioneDBLib.logDebug("CRUDConnettore UPDATE : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, url, 
 						transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
-						nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas,nomeConnettore, debug,
-						proxy, proxyType, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+						nome, tipo, utente, plainPassword, encPassword, 
+						initcont, urlpkg, provurl, connectionfactory, sendas,nomeConnettore, debug,
+						proxy, proxyType, proxyHostname, proxyPort, proxyUsername, plainProxyPassword, encProxyPassword,
 						tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaAvgResponseTime,
 						(connettore.getCustom()!=null && connettore.getCustom()),
 						tokenPolicy,
+						apiKeyInsert, apiKeyHeader, appId, appIdHeader,
 						idConnettore));
 
 				// Custom properties
@@ -780,7 +903,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 					}
 					
 					// Proxy
-					readConnettoreProxy(rs, connettore);
+					readConnettoreProxy(rs, connettore, driverBYOK);
 					
 					// Tempi Risposta
 					readConnettoreTempiRisposta(rs, connettore);
@@ -800,23 +923,13 @@ public class DriverConfigurazioneDB_connettoriLIB {
 						connettore.addProperty(prop);
 					}
 
+					// api key
+					readAutenticazioneApiKey(rs, connettore, driverBYOK);
 
 					if (endpoint.equals(CostantiDB.CONNETTORE_TIPO_HTTP)) {
-						
-						//	url
-						String value = rs.getString("url");
-						if(value!=null)
-							value = value.trim();
-						if(value == null || "".equals(value) || " ".equals(value)){
-							throw new DriverConfigurazioneException("Connettore di tipo http possiede una url non definita");
-						}
-						prop = new Property();
-						prop.setNome(CostantiDB.CONNETTORE_HTTP_LOCATION);
-						prop.setValore(value);
-						connettore.addProperty(prop);
-						
+						readConnettoreHttp(rs, connettore);
 					} else if (endpoint.equals(TipiConnettore.JMS.getNome())){//jms
-						readConnettoreJms(rs, connettore);
+						readConnettoreJms(rs, connettore, driverBYOK);
 					}else if(endpoint.equals(TipiConnettore.NULL.getNome())){
 						//nessuna proprieta per connettore null
 					}else if(endpoint.equals(TipiConnettore.NULLECHO.getNome())){
@@ -854,7 +967,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 		}
 	}
 	
-	private static void readConnettoreProxy(ResultSet rs, Connettore connettore) throws SQLException {
+	private static void readConnettoreProxy(ResultSet rs, Connettore connettore, IDriverBYOK driverBYOK) throws SQLException, UtilsException {
 		if(rs.getInt("proxy")==1){
 			
 			String tmp = rs.getString("proxy_type");
@@ -881,10 +994,10 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				connettore.addProperty(prop);
 			}
 			
-			readConnettoreProxyCredentials(rs, connettore);
+			readConnettoreProxyCredentials(rs, connettore, driverBYOK);
 		}
 	}
-	private static void readConnettoreProxyCredentials(ResultSet rs, Connettore connettore) throws SQLException {
+	private static void readConnettoreProxyCredentials(ResultSet rs, Connettore connettore, IDriverBYOK driverBYOK) throws SQLException, UtilsException {
 		String tmp = rs.getString("proxy_username");
 		if(tmp!=null && !"".equals(tmp)){
 			Property prop = new Property();
@@ -894,10 +1007,23 @@ public class DriverConfigurazioneDB_connettoriLIB {
 		}
 		
 		tmp = rs.getString("proxy_password");
+		String encValue = rs.getString("enc_proxy_password");
 		if(tmp!=null && !"".equals(tmp)){
 			Property prop = new Property();
 			prop.setNome(CostantiDB.CONNETTORE_PROXY_PASSWORD);
-			prop.setValore(tmp.trim());
+			
+			if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+				if(driverBYOK!=null) {
+					prop.setValore(driverBYOK.unwrapAsString(encValue));
+				}
+				else {
+					prop.setValore(encValue);
+				}
+			}
+			else {
+				prop.setValore(tmp.trim());
+			}
+			
 			connettore.addProperty(prop);
 		}
 	}
@@ -964,7 +1090,63 @@ public class DriverConfigurazioneDB_connettoriLIB {
 		}
 	}
 	
-	private static void readConnettoreJms(ResultSet rs, Connettore connettore) throws DriverConfigurazioneException, SQLException {
+	private static void readAutenticazioneApiKey(ResultSet rs, Connettore connettore, IDriverBYOK driverBYOK) throws SQLException, UtilsException {
+		String apiKey = rs.getString("api_key");
+		if(apiKey!=null && !"".equals(apiKey)){
+			
+			Property prop = new Property();
+			prop.setNome(CostantiDB.CONNETTORE_APIKEY);
+			if(driverBYOK!=null) {
+				prop.setValore(driverBYOK.unwrapAsString(apiKey));
+			}
+			else {
+				prop.setValore(apiKey);
+			}
+			connettore.addProperty(prop);
+			
+			String apiKeyHeader = rs.getString("api_key_header");
+			if(apiKeyHeader!=null && !"".equals(apiKeyHeader)){
+				prop = new Property();
+				prop.setNome(CostantiDB.CONNETTORE_APIKEY_HEADER);
+				prop.setValore(apiKeyHeader.trim());
+				connettore.addProperty(prop);
+			}
+			
+			
+			String appId = rs.getString("app_id");
+			if(appId!=null && !"".equals(appId)){
+				
+				prop = new Property();
+				prop.setNome(CostantiDB.CONNETTORE_APIKEY_APPID);
+				prop.setValore(appId);
+				connettore.addProperty(prop);
+				
+				String appIdHeader = rs.getString("app_id_header");
+				if(appIdHeader!=null && !"".equals(appIdHeader)){
+					prop = new Property();
+					prop.setNome(CostantiDB.CONNETTORE_APIKEY_APPID_HEADER);
+					prop.setValore(appIdHeader.trim());
+					connettore.addProperty(prop);
+				}
+			}
+		}
+	}
+	
+	private static void readConnettoreHttp(ResultSet rs, Connettore connettore) throws DriverConfigurazioneException, SQLException {
+		//	url
+		String value = rs.getString("url");
+		if(value!=null)
+			value = value.trim();
+		if(value == null || "".equals(value) || " ".equals(value)){
+			throw new DriverConfigurazioneException("Connettore di tipo http possiede una url non definita");
+		}
+		Property prop = new Property();
+		prop.setNome(CostantiDB.CONNETTORE_HTTP_LOCATION);
+		prop.setValore(value);
+		connettore.addProperty(prop);
+	}
+	
+	private static void readConnettoreJms(ResultSet rs, Connettore connettore, IDriverBYOK driverBYOK) throws DriverConfigurazioneException, SQLException, UtilsException {
 		// nome coda/topic
 		String value = rs.getString("nome");
 		if(value!=null)
@@ -1013,11 +1195,11 @@ public class DriverConfigurazioneDB_connettoriLIB {
 		prop.setValore(value);
 		connettore.addProperty(prop);
 
-		readConnettoreJmsCredentials(rs, connettore);
+		readConnettoreJmsCredentials(rs, connettore, driverBYOK);
 		
 		readConnettoreJmsContext(rs, connettore);
 	}
-	private static void readConnettoreJmsCredentials(ResultSet rs, Connettore connettore) throws SQLException {
+	private static void readConnettoreJmsCredentials(ResultSet rs, Connettore connettore, IDriverBYOK driverBYOK) throws SQLException, UtilsException {
 		// user
 		String usr = rs.getString("utente");
 		if (usr != null && !usr.trim().equals("")) {
@@ -1028,10 +1210,23 @@ public class DriverConfigurazioneDB_connettoriLIB {
 		}
 		// password
 		String pwd = rs.getString("password");
+		String encValue = rs.getString("enc_password");
 		if (pwd != null && !pwd.trim().equals("")) {
 			Property prop = new Property();
 			prop.setNome(CostantiDB.CONNETTORE_PWD);
-			prop.setValore(pwd);
+			
+			if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+				if(driverBYOK!=null) {
+					prop.setValore(driverBYOK.unwrapAsString(encValue));
+				}
+				else {
+					prop.setValore(encValue);
+				}
+			}
+			else {
+				prop.setValore(pwd);
+			}
+			
 			connettore.addProperty(prop);
 		}
 	}

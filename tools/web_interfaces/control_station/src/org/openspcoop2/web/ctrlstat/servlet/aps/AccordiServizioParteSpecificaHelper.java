@@ -881,8 +881,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String fruizioneAutorizzazioneAutenticati,String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
 			String protocollo,BinaryParameter allegatoXacmlPolicy,
 			String descrizione, String tipoFruitore, String nomeFruitore,
-			boolean autenticazioneToken, String tokenPolicy, boolean erogazioneServizioApplicativoServerEnabled,
-			String erogazioneServizioApplicativoServer, String canaleStato, String canale, boolean gestioneCanaliEnabled)	throws Exception {
+			boolean autenticazioneToken, String tokenPolicy,
+			String autenticazioneApiKey, boolean useOAS3Names, boolean useAppId, String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue,
+			boolean erogazioneServizioApplicativoServerEnabled, String erogazioneServizioApplicativoServer, String canaleStato, String canale, boolean gestioneCanaliEnabled)	throws Exception {
 
 		boolean isModalitaAvanzata = this.isModalitaAvanzata();
 
@@ -1146,6 +1147,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken, tokenPolicy,
+						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
 						listExtendedConnettore,erogazioneServizioApplicativoServerEnabled,erogazioneServizioApplicativoServer)) {
 				return false;
 			}
@@ -1519,14 +1521,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			boolean validazioneDocumenti, String backToStato,
 			String autenticazioneHttp,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
-			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
-			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
-			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
+			String tempiRispostaEnabled, String tempiRispostaConnectionTimeout, String tempiRispostaReadTimeout, String tempiRispostaTempoMedioRisposta,
+			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop,
+			String requestOutputFileName, String requestOutputFileNamePermissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeadersPermissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			String fruizioneServizioApplicativo,String fruizioneRuolo,String fruizioneAutenticazione,String fruizioneAutenticazioneOpzionale, TipoAutenticazionePrincipal fruizioneAutenticazionePrincipal, List<String> fruizioneAutenticazioneParametroList, String fruizioneAutorizzazione,
 			String fruizioneAutorizzazioneAutenticati,String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,BinaryParameter allegatoXacmlPolicy,
 			boolean autenticazioneToken, String tokenPolicy,
+			String autenticazioneApiKey, boolean useOAS3Names, boolean useAppId, String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue,
 			List<ExtendedConnettore> listExtendedConnettore)
 					throws Exception {
 		try {
@@ -1667,12 +1670,13 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
 						tipoconn,autenticazioneHttp,
 						proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
-						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-						requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken, tokenPolicy,
+						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
 						listExtendedConnettore,servizioApplicativoServerEnabled,servizioApplicativoServer)) {
 					return false;
 				}

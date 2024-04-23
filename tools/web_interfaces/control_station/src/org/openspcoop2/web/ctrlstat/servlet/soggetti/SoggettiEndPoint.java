@@ -21,9 +21,9 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
@@ -31,20 +31,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Soggetto;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
@@ -113,7 +115,7 @@ public final class SoggettiEndPoint extends Action {
 			String proxyHostname = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
 			String proxyPort = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
 			String proxyUsername = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
-			String proxyPassword = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			String proxyPassword = soggettiHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 			
 			// tempi risposta
 			String tempiRispostaEnabled = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
@@ -132,7 +134,36 @@ public final class SoggettiEndPoint extends Action {
 			String url = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			if(TipiConnettore.HTTP.toString().equals(endpointtype)){
 				user = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				password = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				password = soggettiHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			}
+			
+			// api key
+			String autenticazioneApiKey = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_API_KEY);
+			String apiKeyHeader = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_HEADER);
+			if(apiKeyHeader==null || StringUtils.isEmpty(apiKeyHeader)) {
+				apiKeyHeader = CostantiConnettori.DEFAULT_HEADER_API_KEY;
+			}
+			String apiKeyValue = soggettiHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_VALUE);
+			String appIdHeader = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_APP_ID_HEADER);
+			if(appIdHeader==null || StringUtils.isEmpty(appIdHeader)) {
+				appIdHeader = CostantiConnettori.DEFAULT_HEADER_APP_ID;
+			}
+			String appIdValue = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE);
+			String useOAS3NamesTmp = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_NOMI_OAS);
+			boolean useOAS3Names=true;
+			if(useOAS3NamesTmp!=null && StringUtils.isNotEmpty(useOAS3NamesTmp)) {
+				useOAS3Names = ServletUtils.isCheckBoxEnabled(useOAS3NamesTmp);
+			}
+			else {
+				useOAS3Names = soggettiHelper.isAutenticazioneApiKeyUseOAS3Names(apiKeyHeader, appIdHeader);
+			}
+			String useAppIdTmp = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_USE_APP_ID);
+			boolean useAppId=false;
+			if(useAppIdTmp!=null && StringUtils.isNotEmpty(useAppIdTmp)) {
+				useAppId = ServletUtils.isCheckBoxEnabled(useAppIdTmp);
+			}
+			else {
+				useAppId = soggettiHelper.isAutenticazioneApiKeyUseAppId(appIdValue);
 			}
 			
 			// jms
@@ -145,7 +176,7 @@ public final class SoggettiEndPoint extends Action {
 			String sendas = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
 			if(TipiConnettore.JMS.toString().equals(endpointtype)){
 				user = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_USERNAME);
-				password = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
+				password = soggettiHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
 			}
 			
 			// https
@@ -173,7 +204,7 @@ public final class SoggettiEndPoint extends Action {
 			String httpsTrustStoreOCSPPolicy = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				password = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				password = soggettiHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			}
 			
 			// file
@@ -189,6 +220,7 @@ public final class SoggettiEndPoint extends Action {
 			String responseInputDeleteAfterRead = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 
+			boolean postBackViaPost = true;
 			
 			// Preparo il menu
 			soggettiHelper.makeMenu();
@@ -395,6 +427,25 @@ public final class SoggettiEndPoint extends Action {
 				
 				autenticazioneHttp = soggettiHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 				
+				if(autenticazioneApiKey==null || StringUtils.isEmpty(autenticazioneApiKey)) {
+					apiKeyHeader = props.get(CostantiDB.CONNETTORE_APIKEY_HEADER);
+					apiKeyValue = props.get(CostantiDB.CONNETTORE_APIKEY);
+					appIdHeader = props.get(CostantiDB.CONNETTORE_APIKEY_APPID_HEADER);
+					appIdValue = props.get(CostantiDB.CONNETTORE_APIKEY_APPID);
+					
+					autenticazioneApiKey = soggettiHelper.getAutenticazioneApiKey(autenticazioneApiKey, endpointtype, apiKeyValue);
+					if(ServletUtils.isCheckBoxEnabled(autenticazioneApiKey)) {
+						useOAS3Names = soggettiHelper.isAutenticazioneApiKeyUseOAS3Names(apiKeyHeader, appIdHeader);
+						useAppId = soggettiHelper.isAutenticazioneApiKeyUseAppId(appIdValue);
+					}
+					else {
+						apiKeyValue=null;
+						apiKeyHeader=null;
+						appIdHeader=null;
+						appIdValue=null;
+					}
+				}
+				
 				if (httpstipologia == null) {
 					httpsurl = props.get(CostantiDB.CONNETTORE_HTTPS_LOCATION);
 					httpstipologia = props.get(CostantiDB.CONNETTORE_HTTPS_SSL_TYPE);
@@ -447,12 +498,12 @@ public final class SoggettiEndPoint extends Action {
 					httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 				}
 				if(httpshostverifyS==null || "".equals(httpshostverifyS)){
-					httpshostverifyS = Costanti.CHECK_BOX_ENABLED;
-					httpshostverify = true;
+					httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
+					httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
 				}
 				if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
 					httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
-					httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
+					httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 				}
 
 				// file
@@ -463,32 +514,32 @@ public final class SoggettiEndPoint extends Action {
 					requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);	
 					requestOutputFileNameHeadersPermissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS);
 					String v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
-					if(v!=null && !"".equals(v)){
-						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-							requestOutputParentDirCreateIfNotExists = Costanti.CHECK_BOX_ENABLED_TRUE;
-						}
+					if(v!=null && !"".equals(v) &&
+						("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+						){
+						requestOutputParentDirCreateIfNotExists = Costanti.CHECK_BOX_ENABLED_TRUE;
 					}					
 					v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE);
-					if(v!=null && !"".equals(v)){
-						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-							requestOutputOverwriteIfExists = Costanti.CHECK_BOX_ENABLED_TRUE;
-						}
+					if(v!=null && !"".equals(v) &&
+						("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+						){
+						requestOutputOverwriteIfExists = Costanti.CHECK_BOX_ENABLED_TRUE;
 					}	
 					
 					v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_MODE);
-					if(v!=null && !"".equals(v)){
-						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-							responseInputMode = CostantiConfigurazione.ABILITATO.getValue();
-						}
+					if(v!=null && !"".equals(v) &&
+						("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+						){
+						responseInputMode = CostantiConfigurazione.ABILITATO.getValue();
 					}
 					if(CostantiConfigurazione.ABILITATO.getValue().equals(responseInputMode)){						
 						responseInputFileName = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE);
 						responseInputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS);
 						v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ);
-						if(v!=null && !"".equals(v)){
-							if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-								responseInputDeleteAfterRead = Costanti.CHECK_BOX_ENABLED_TRUE;
-							}
+						if(v!=null && !"".equals(v) &&
+							("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+							){
+							responseInputDeleteAfterRead = Costanti.CHECK_BOX_ENABLED_TRUE;
 						}						
 						responseInputWaitTime = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);						
 					}
@@ -530,7 +581,9 @@ public final class SoggettiEndPoint extends Action {
 						autenticazioneToken,tokenPolicy, forcePDND, forceOAuth,
 						listExtendedConnettore, false,
 						protocollo, false, false
-						, false, false, null, null
+						, false, false, null, null,
+						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+						postBackViaPost
 						);
 
 				pd.setDati(dati);
@@ -583,7 +636,9 @@ public final class SoggettiEndPoint extends Action {
 						autenticazioneToken,tokenPolicy, forcePDND, forceOAuth,
 						listExtendedConnettore, false,
 						protocollo, false, false
-						, false, false, null, null
+						, false, false, null, null,
+						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+						postBackViaPost
 						);
 
 				pd.setDati(dati);
@@ -614,6 +669,7 @@ public final class SoggettiEndPoint extends Action {
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					tokenPolicy,
+					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
 					listExtendedConnettore);
 			ss.setConnettore(c);
 			SoggettoCtrlStat newCsc = new SoggettoCtrlStat(ss, ssconf);

@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -416,6 +417,15 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String provider = "";
 			String user = "";
 			String password = "";
+			
+			String autenticazioneApiKey = null;
+			boolean useOAS3Names=true;
+			boolean useAppId=false;
+			String apiKeyHeader = null;
+			String apiKeyValue = null;
+			String appIdHeader = null;
+			String appIdValue = null;
+			
 			String httpsurl = null;
 			String httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE ;
 			boolean httpshostverify = true;
@@ -496,6 +506,25 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					password = passwordTmp;
 				}
 				autenticazioneHttp = apsHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
+				
+				if(autenticazioneApiKey==null || StringUtils.isEmpty(autenticazioneApiKey)) {
+					apiKeyHeader = props.get(CostantiDB.CONNETTORE_APIKEY_HEADER);
+					apiKeyValue = props.get(CostantiDB.CONNETTORE_APIKEY);
+					appIdHeader = props.get(CostantiDB.CONNETTORE_APIKEY_APPID_HEADER);
+					appIdValue = props.get(CostantiDB.CONNETTORE_APIKEY_APPID);
+					
+					autenticazioneApiKey = apsHelper.getAutenticazioneApiKey(autenticazioneApiKey, endpointtype, apiKeyValue);
+					if(ServletUtils.isCheckBoxEnabled(autenticazioneApiKey)) {
+						useOAS3Names = apsHelper.isAutenticazioneApiKeyUseOAS3Names(apiKeyHeader, appIdHeader);
+						useAppId = apsHelper.isAutenticazioneApiKeyUseAppId(appIdValue);
+					}
+					else {
+						apiKeyValue=null;
+						apiKeyHeader=null;
+						appIdHeader=null;
+						appIdValue=null;
+					}
+				}
 				
 				if(connettoreDebug==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_DEBUG);
@@ -706,32 +735,32 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);	
 					requestOutputFileNameHeadersPermissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS);
 					String v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
-					if(v!=null && !"".equals(v)){
-						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-							requestOutputParentDirCreateIfNotExists = Costanti.CHECK_BOX_ENABLED_TRUE;
-						}
+					if(v!=null && !"".equals(v) &&
+						("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+						){
+						requestOutputParentDirCreateIfNotExists = Costanti.CHECK_BOX_ENABLED_TRUE;
 					}					
 					v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE);
-					if(v!=null && !"".equals(v)){
-						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-							requestOutputOverwriteIfExists = Costanti.CHECK_BOX_ENABLED_TRUE;
-						}
+					if(v!=null && !"".equals(v) &&
+						("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+						){
+						requestOutputOverwriteIfExists = Costanti.CHECK_BOX_ENABLED_TRUE;
 					}	
 					
 					v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_MODE);
-					if(v!=null && !"".equals(v)){
-						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-							responseInputMode = CostantiConfigurazione.ABILITATO.getValue();
-						}
+					if(v!=null && !"".equals(v) &&
+						("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+						){
+						responseInputMode = CostantiConfigurazione.ABILITATO.getValue();
 					}
 					if(CostantiConfigurazione.ABILITATO.getValue().equals(responseInputMode)){						
 						responseInputFileName = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE);
 						responseInputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS);
 						v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ);
-						if(v!=null && !"".equals(v)){
-							if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-								responseInputDeleteAfterRead = Costanti.CHECK_BOX_ENABLED_TRUE;
-							}
+						if(v!=null && !"".equals(v) &&
+							("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+							){
+							responseInputDeleteAfterRead = Costanti.CHECK_BOX_ENABLED_TRUE;
 						}						
 						responseInputWaitTime = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);						
 					}
@@ -830,6 +859,8 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					null, 
 					null, null, null);
 
+			boolean postBackViaPost = false;
+			
 			dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 					url, nome,
 					strutsBean.tipo, user, password, initcont, urlpgk, provurl,
@@ -853,7 +884,9 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
 					listExtendedConnettore, false,
 					protocollo,false,false
-					, false, servizioApplicativoServerEnabled, servizioApplicativoServer, null
+					, false, servizioApplicativoServerEnabled, servizioApplicativoServer, null,
+					autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+					postBackViaPost
 					);
 
 			pd.setDati(dati);

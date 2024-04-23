@@ -48,6 +48,7 @@ import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDAccordo;
@@ -217,7 +218,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String proxyHostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
 			String proxyPort = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
 			String proxyUsername = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
-			String proxyPassword = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			String proxyPassword = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 
 			// tempi risposta
 			String tempiRispostaEnabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
@@ -239,9 +240,38 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String url = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL  );
 			if(TipiConnettore.HTTP.toString().equals(endpointtype)){
 				user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				password = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			}
 
+			// api key
+			String autenticazioneApiKey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_API_KEY);
+			String apiKeyHeader = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_HEADER);
+			if(apiKeyHeader==null || StringUtils.isEmpty(apiKeyHeader)) {
+				apiKeyHeader = CostantiConnettori.DEFAULT_HEADER_API_KEY;
+			}
+			String apiKeyValue = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_VALUE);
+			String appIdHeader = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_APP_ID_HEADER);
+			if(appIdHeader==null || StringUtils.isEmpty(appIdHeader)) {
+				appIdHeader = CostantiConnettori.DEFAULT_HEADER_APP_ID;
+			}
+			String appIdValue = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE);
+			String useOAS3NamesTmp = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_NOMI_OAS);
+			boolean useOAS3Names=true;
+			if(useOAS3NamesTmp!=null && StringUtils.isNotEmpty(useOAS3NamesTmp)) {
+				useOAS3Names = ServletUtils.isCheckBoxEnabled(useOAS3NamesTmp);
+			}
+			else {
+				useOAS3Names = apsHelper.isAutenticazioneApiKeyUseOAS3Names(apiKeyHeader, appIdHeader);
+			}
+			String useAppIdTmp = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_USE_APP_ID);
+			boolean useAppId=false;
+			if(useAppIdTmp!=null && StringUtils.isNotEmpty(useAppIdTmp)) {
+				useAppId = ServletUtils.isCheckBoxEnabled(useAppIdTmp);
+			}
+			else {
+				useAppId = apsHelper.isAutenticazioneApiKeyUseAppId(appIdValue);
+			}
+			
 			// jms
 			String nomeCodaJms = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_NOME_CODA);
 			String tipoJms = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
@@ -252,7 +282,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String tipoSendas = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
 			if(TipiConnettore.JMS.toString().equals(endpointtype)){
 				user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_USERNAME);
-				password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
+				password = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
 			}
 
 			// https
@@ -278,7 +308,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String httpsTrustStoreOCSPPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				password = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			}
 			
 			// file
@@ -321,6 +351,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			if(gestioneErogatori) {
 				pddTipologiaSoggettoAutenticati = PddTipologia.ESTERNO;
 			}
+			
+			boolean postBackViaPost = true;
 			
 			Connettore conTmp = null;
 			List<ExtendedConnettore> listExtendedConnettore = 
@@ -403,11 +435,10 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			boolean initConnettore = false;
 			// Controllo se ho modificato l'azione allora ricalcolo il nome
 			if(postBackElementName != null ){
-				if(postBackElementName.equalsIgnoreCase(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE_CONNETTORE)){
+				if(postBackElementName.equalsIgnoreCase(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE_CONNETTORE) &&
 					// devo resettare il connettore
-					if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
-						initConnettore = true;
-					}
+					ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
+					initConnettore = true;
 				}
 				
 				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER)){
@@ -599,14 +630,12 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						tipoconn = "";
 						url = "";
 						nomeCodaJms = "";
-						tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
 						user = "";
 						password = "";
 						initcont = "";
 						urlpgk = "";
 						provurl = "";
 						connfact = "";
-						tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
 						httpsurl = "";
 						httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 						httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
@@ -637,6 +666,11 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 
 						autenticazioneHttp = apsHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 						
+						apiKeyHeader = null;
+						apiKeyValue = null;
+						appIdHeader = null;
+						appIdValue = null;
+						
 						tempiRispostaEnabled=null;
 						ConfigurazioneCore configCore = new ConfigurazioneCore(soggettiCore);
 						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
@@ -659,11 +693,11 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						}
 						if(httpshostverifyS==null || "".equals(httpshostverifyS)){
 							httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
-							httpshostverify = true;
+							httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
 						}
 						if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
 							httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
-							httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
+							httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 						}
 					}
 					
@@ -734,7 +768,9 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 								autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
 								listExtendedConnettore, forceEnableConnettore,
 								protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
-								erogazioneServizioApplicativoServer, saSoggetti);
+								erogazioneServizioApplicativoServer, saSoggetti,
+								autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+								postBackViaPost);
 					}
 				}
 					
@@ -768,6 +804,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken, tokenPolicy,
+						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
 						listExtendedConnettore,erogazioneServizioApplicativoServerEnabled,
 						erogazioneServizioApplicativoServer);
 			}
@@ -828,7 +865,9 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 							autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
-							erogazioneServizioApplicativoServer, saSoggetti);
+							erogazioneServizioApplicativoServer, saSoggetti,
+							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+							postBackViaPost);
 				}
 
 				pd.setDati(dati);
@@ -992,7 +1031,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					asps, 
 					protocollo, userLogin,
 					apsCore, apsHelper,erogazioneServizioApplicativoServer,
-					identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
+					identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi,
+					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
 			
 			
 			// Preparo la lista

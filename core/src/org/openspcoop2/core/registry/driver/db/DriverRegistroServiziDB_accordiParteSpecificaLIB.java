@@ -34,6 +34,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -82,7 +83,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 	 * @throws DriverRegistroServiziException
 	 */
 	public static long CRUDAccordoServizioParteSpecifica(int type, org.openspcoop2.core.registry.AccordoServizioParteSpecifica asps, Connection con,
-			String tipoDatabase) throws DriverRegistroServiziException {
+			String tipoDatabase, IDriverBYOK driverBYOK) throws DriverRegistroServiziException {
 		if (asps == null)
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecifica] asps non valido.");
 
@@ -182,7 +183,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				}
 
 				// creo il connettore del servizio
-				idConnettore = DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(1, connettore, con);
+				idConnettore = DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(1, connettore, con, driverBYOK);
 
 				String utenteRichiedente = null;
 				if(asps.getProprietaOggetto()!=null && asps.getProprietaOggetto().getUtenteRichiedente()!=null) {
@@ -316,7 +317,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				fruitore = null;
 				for (int i = 0; i < sizeFruitori; i++) {
 					fruitore = asps.getFruitore(i);
-					DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecificaFruitore(1, fruitore, con, asps);
+					DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecificaFruitore(1, fruitore, con, asps, driverBYOK);
 				}
 				
 				// aggiungo azioni
@@ -324,7 +325,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 					sizeAzioni = asps.getConfigurazioneServizio().sizeConfigurazioneAzioneList();
 					for (int i = 0; i < sizeAzioni; i++) {
 						ConfigurazioneServizioAzione conf = asps.getConfigurazioneServizio().getConfigurazioneAzione(i);
-						DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecificaAzioni(1, conf, con, asps);
+						DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecificaAzioni(1, conf, con, asps, driverBYOK);
 					}
 				}
 				
@@ -510,7 +511,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				// aggiorno nome connettore
 				String newNomeConnettore = "CNT_" + tipoProprietario+"/"+nomeProprietario +"_"+ tipoServizio + "/" +nomeServizio+ "/"+versioneServizio;
 				connettore.setNome(newNomeConnettore);
-				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(2, connettore, con);
+				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(2, connettore, con, driverBYOK);
 
 				
 				//aggiorno fruitori
@@ -538,7 +539,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 					if(idFruizione>0){
 						typeFruitore = 2; // update
 					}
-					DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecificaFruitore(typeFruitore, fruitore, con, asps);
+					DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecificaFruitore(typeFruitore, fruitore, con, asps, driverBYOK);
 					idFruitoriEsistenti.add(DBUtils.getIdSoggetto(fruitore.getNome(), fruitore.getTipo(), con, tipoDatabase));
 				}
 				DriverRegistroServiziDB_accordiParteSpecificaLIB.deleteAllFruitoriServizio(idServizio, idFruitoriEsistenti, con);
@@ -554,7 +555,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 					//creazione
 					for (int i = 0; i < sizeAzioni; i++) {
 						ConfigurazioneServizioAzione conf = asps.getConfigurazioneServizio().getConfigurazioneAzione(i);
-						DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecificaAzioni(1, conf, con, asps);
+						DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecificaAzioni(1, conf, con, asps, driverBYOK);
 					}
 				}
 				
@@ -612,7 +613,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				for (int i = 0; i < sizeFruitori; i++) {
 					fruitore = asps.getFruitore(i);
 
-					DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecificaFruitore(3, fruitore, con, asps);
+					DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecificaFruitore(3, fruitore, con, asps, driverBYOK);
 				}
 				
 				// elimino azioni
@@ -620,7 +621,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 					sizeAzioni = asps.getConfigurazioneServizio().sizeConfigurazioneAzioneList();
 					for (int i = 0; i < sizeAzioni; i++) {
 						ConfigurazioneServizioAzione conf = asps.getConfigurazioneServizio().getConfigurazioneAzione(i);
-						DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecificaAzioni(3, conf, con, asps);
+						DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecificaAzioni(3, conf, con, asps, driverBYOK);
 					}
 				}
 
@@ -652,7 +653,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				// elimino connettore
 				connettore=new Connettore();
 				connettore.setId(idConnettore);
-				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(CostantiDB.DELETE, connettore, con);
+				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(CostantiDB.DELETE, connettore, con, driverBYOK);
 				DriverRegistroServiziDB_LIB.logDebug("CRUDAccordoServizioParteSpecifica CREATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(updateQuery, idServizio));
 
 				// nn cancello azioni nn interessa per adesso
@@ -683,7 +684,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 	 * @param fruitore
 	 * @param con
 	 */
-	public static long CRUDAccordoServizioParteSpecificaFruitore(int type, Fruitore fruitore, Connection con, AccordoServizioParteSpecifica servizio) throws DriverRegistroServiziException {
+	public static long CRUDAccordoServizioParteSpecificaFruitore(int type, Fruitore fruitore, Connection con, AccordoServizioParteSpecifica servizio, IDriverBYOK driverBYOK) throws DriverRegistroServiziException {
 		PreparedStatement updateStmt = null;
 		String updateQuery;
 		PreparedStatement selectStmt = null;
@@ -753,7 +754,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				connettore.setNome("CNT_SF_" + tipoSoggetto+"/"+nomeSoggetto + "_" + servizio.getTipoSoggettoErogatore()+"/"+servizio.getNomeSoggettoErogatore() + "_" + 
 						servizio.getTipo() +"/"+servizio.getNome()+"/"+servizio.getVersione());
 				
-				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(CostantiDB.CREATE, connettore, con);
+				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(CostantiDB.CREATE, connettore, con, driverBYOK);
 				idConnettore = connettore.getId();
 
 				String utenteRichiedente = null;
@@ -853,7 +854,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				int	sizeAzioni = fruitore.sizeConfigurazioneAzioneList();
 				for (int i = 0; i < sizeAzioni; i++) {
 					ConfigurazioneServizioAzione conf = fruitore.getConfigurazioneAzione(i);
-					DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecificaFruitoreAzioni(1, conf, con, servizio, fruitore);
+					DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecificaFruitoreAzioni(1, conf, con, servizio, fruitore, driverBYOK);
 				}
 				
 				// ProtocolProperties
@@ -948,7 +949,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 						servizio.getTipo() +"/"+servizio.getNome()+"/"+servizio.getVersione();
 				connettore.setNome(newNomeConnettore);
 				DriverRegistroServiziDB_LIB.logDebug("nuovo nome connettore ["+newNomeConnettore+"]");
-				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(2, connettore, con);
+				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(2, connettore, con, driverBYOK);
 				
 				//aggiorno azioni
 				//La lista delle azioni del servizio contiene tutti e soli le azioni di questo servizio
@@ -959,7 +960,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				//creazione
 				for (int i = 0; i < sizeAzioni; i++) {
 					ConfigurazioneServizioAzione conf = fruitore.getConfigurazioneAzione(i);
-					DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecificaFruitoreAzioni(1, conf, con, servizio, fruitore);
+					DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecificaFruitoreAzioni(1, conf, con, servizio, fruitore, driverBYOK);
 				}
 								
 				// ProtocolProperties
@@ -979,7 +980,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				sizeAzioni = fruitore.sizeConfigurazioneAzioneList();
 				for (int i = 0; i < sizeAzioni; i++) {
 					ConfigurazioneServizioAzione conf = fruitore.getConfigurazioneAzione(i);
-					DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecificaFruitoreAzioni(3, conf, con, servizio, fruitore);
+					DriverRegistroServiziDB_accordiParteSpecificaLIB.CRUDAccordoServizioParteSpecificaFruitoreAzioni(3, conf, con, servizio, fruitore, driverBYOK);
 				}
 				
 				// delete
@@ -1003,7 +1004,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				// elimino il connettore
 				connettore=new Connettore();
 				connettore.setId(idConnettore);
-				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(3, connettore, con);
+				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(3, connettore, con, driverBYOK);
 
 				break;
 			}
@@ -1027,7 +1028,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 	}
 	
 	
-	public static long CRUDAccordoServizioParteSpecificaAzioni(int type, ConfigurazioneServizioAzione conf, Connection con, AccordoServizioParteSpecifica servizio) throws DriverRegistroServiziException {
+	public static long CRUDAccordoServizioParteSpecificaAzioni(int type, ConfigurazioneServizioAzione conf, Connection con, AccordoServizioParteSpecifica servizio, IDriverBYOK driverBYOK) throws DriverRegistroServiziException {
 		PreparedStatement updateStmt = null;
 		String updateQuery;
 		PreparedStatement selectStmt = null;
@@ -1075,7 +1076,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 			switch (type) {
 			case 1:
 				
-				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(CostantiDB.CREATE, connettore, con);
+				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(CostantiDB.CREATE, connettore, con, driverBYOK);
 				idConnettore = connettore.getId();
 
 				// create
@@ -1138,7 +1139,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				//aggiorno nome
 				DriverRegistroServiziDB_LIB.logDebug("Tento aggiornamento connettore id: ["+idConnettore+"] oldNome: ["+connettore.getNome()+"]...");
 				DriverRegistroServiziDB_LIB.logDebug("nuovo nome connettore ["+connettore.getNome()+"]");
-				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(2, connettore, con);
+				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(2, connettore, con, driverBYOK);
 
 				break;
 
@@ -1194,7 +1195,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				// elimino il connettore
 				connettore=new Connettore();
 				connettore.setId(idConnettore);
-				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(3, connettore, con);
+				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(3, connettore, con, driverBYOK);
 
 				break;
 			}
@@ -1214,7 +1215,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 	}
 	
 	public static long CRUDAccordoServizioParteSpecificaFruitoreAzioni(int type, ConfigurazioneServizioAzione conf, Connection con, 
-			AccordoServizioParteSpecifica servizio, Fruitore fruitore) throws DriverRegistroServiziException {
+			AccordoServizioParteSpecifica servizio, Fruitore fruitore, IDriverBYOK driverBYOK) throws DriverRegistroServiziException {
 		PreparedStatement updateStmt = null;
 		String updateQuery;
 		PreparedStatement selectStmt = null;
@@ -1257,7 +1258,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 			switch (type) {
 			case 1:
 				
-				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(CostantiDB.CREATE, connettore, con);
+				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(CostantiDB.CREATE, connettore, con, driverBYOK);
 				idConnettore = connettore.getId();
 
 				// create
@@ -1320,7 +1321,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				//aggiorno nome
 				DriverRegistroServiziDB_LIB.logDebug("Tento aggiornamento connettore id: ["+idConnettore+"] oldNome: ["+connettore.getNome()+"]...");
 				DriverRegistroServiziDB_LIB.logDebug("nuovo nome connettore ["+connettore.getNome()+"]");
-				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(2, connettore, con);
+				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(2, connettore, con, driverBYOK);
 
 				break;
 
@@ -1376,7 +1377,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				// elimino il connettore
 				connettore=new Connettore();
 				connettore.setId(idConnettore);
-				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(3, connettore, con);
+				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(3, connettore, con, driverBYOK);
 
 				break;
 			}

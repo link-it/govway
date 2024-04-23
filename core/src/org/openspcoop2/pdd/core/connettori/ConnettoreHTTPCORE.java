@@ -32,6 +32,7 @@ import java.util.Map;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HeaderElementIterator;
@@ -453,6 +454,32 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 	    		if(this.debug)
 					this.logger.info("Impostazione autenticazione token (header-name '"+nv.getName()+"' value '"+nv.getValue()+"')",false);
 	    	}
+	    	
+	    	
+	    	
+	    	
+	    	// Authentication Api Key
+			String apiKey = this.properties.get(CostantiConnettori.CONNETTORE_APIKEY);
+			if(apiKey!=null && StringUtils.isNotEmpty(apiKey)){
+				String apiKeyHeader = this.properties.get(CostantiConnettori.CONNETTORE_APIKEY_HEADER);
+				if(apiKeyHeader==null || StringUtils.isEmpty(apiKeyHeader)) {
+					apiKeyHeader = CostantiConnettori.DEFAULT_HEADER_API_KEY;
+				}
+				this.setRequestHeader(apiKeyHeader,apiKey, propertiesTrasportoDebug);
+				if(this.debug)
+					this.logger.info("Impostazione autenticazione api key ["+apiKeyHeader+"]=["+apiKey+"]",false);
+				
+				String appId = this.properties.get(CostantiConnettori.CONNETTORE_APIKEY_APPID);
+				if(appId!=null && StringUtils.isNotEmpty(appId)){
+					String appIdHeader = this.properties.get(CostantiConnettori.CONNETTORE_APIKEY_APPID_HEADER);
+					if(appIdHeader==null || StringUtils.isEmpty(appIdHeader)) {
+						appIdHeader = CostantiConnettori.DEFAULT_HEADER_APP_ID;
+					}
+					this.setRequestHeader(appIdHeader,appId, propertiesTrasportoDebug);
+					if(this.debug)
+						this.logger.info("Impostazione autenticazione api key (app id) ["+appIdHeader+"]=["+appId+"]",false);
+				}
+			}
 	    	
 	    	
 	    	

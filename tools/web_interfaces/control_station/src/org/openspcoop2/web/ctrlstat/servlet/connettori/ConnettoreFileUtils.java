@@ -233,7 +233,8 @@ public class ConnettoreFileUtils {
 			String requestOutputFileName, String requestOutputFileNamePermissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeadersPermissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
-			boolean modi, boolean fruizione, boolean forceNoSec){
+			boolean modi, boolean fruizione, boolean forceNoSec,
+			boolean postBackViaPost){
 
 		DataElement de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT);
@@ -360,7 +361,12 @@ public class ConnettoreFileUtils {
 		de.setValue(responseInputMode);
 		de.setSelected(responseInputMode);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
-		de.setPostBack(true);
+		if(postBackViaPost) {
+			de.setPostBack_viaPOST(true);
+		}
+		else {
+			de.setPostBack(true);
+		}
 		de.setSize(pageSize);
 		dati.add(de);
 		

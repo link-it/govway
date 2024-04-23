@@ -1059,6 +1059,18 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					
 					String autenticazioneHttp = saHelper.getAutenticazioneHttp(null, endpointtype, user);
 					
+					String apiKeyValue = props.get(CostantiDB.CONNETTORE_APIKEY);
+					String apiKeyHeader = props.get(CostantiDB.CONNETTORE_APIKEY_HEADER);
+					String appIdValue = props.get(CostantiDB.CONNETTORE_APIKEY_APPID);
+					String appIdHeader = props.get(CostantiDB.CONNETTORE_APIKEY_APPID_HEADER);
+					String autenticazioneApiKey = saHelper.getAutenticazioneApiKey(null, endpointtype, apiKeyValue);
+					boolean useOAS3Names=true;
+					boolean useAppId=false;
+					if(ServletUtils.isCheckBoxEnabled(autenticazioneApiKey)) {
+						useOAS3Names = saHelper.isAutenticazioneApiKeyUseOAS3Names(apiKeyHeader, appIdHeader);
+						useAppId = saHelper.isAutenticazioneApiKeyUseAppId(appIdValue);
+					}
+					
 					List<Property> cp = connis!=null ? connis.getPropertyList() : null;
 					String url = null;
 					String nomeCodaJMS = null;
@@ -1179,12 +1191,12 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 						httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 					}
 					if(httpshostverifyS==null || "".equals(httpshostverifyS)){
-						httpshostverifyS = "true";
-						httpshostverify = true;
+						httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
+						httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
 					}
 					if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
 						httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
-						httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
+						httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 					}
 					
 					// file
@@ -1206,32 +1218,32 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 						requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);
 						requestOutputFileNameHeadersPermissions = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
 						String v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
-						if(v!=null && !"".equals(v)){
-							if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-								requestOutputParentDirCreateIfNotExists = Costanti.CHECK_BOX_ENABLED_TRUE;
-							}
+						if(v!=null && !"".equals(v) &&
+							("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+							){
+							requestOutputParentDirCreateIfNotExists = Costanti.CHECK_BOX_ENABLED_TRUE;
 						}					
 						v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE);
-						if(v!=null && !"".equals(v)){
-							if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-								requestOutputOverwriteIfExists = Costanti.CHECK_BOX_ENABLED_TRUE;
-							}
+						if(v!=null && !"".equals(v) &&
+							("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+							){
+							requestOutputOverwriteIfExists = Costanti.CHECK_BOX_ENABLED_TRUE;
 						}	
 						
 						v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_MODE);
-						if(v!=null && !"".equals(v)){
-							if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-								responseInputMode = CostantiConfigurazione.ABILITATO.getValue();
-							}
+						if(v!=null && !"".equals(v) &&
+							("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+							){
+							responseInputMode = CostantiConfigurazione.ABILITATO.getValue();
 						}
 						if(CostantiConfigurazione.ABILITATO.getValue().equals(responseInputMode)){						
 							responseInputFileName = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE);
 							responseInputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS);
 							v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ);
-							if(v!=null && !"".equals(v)){
-								if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-									responseInputDeleteAfterRead = Costanti.CHECK_BOX_ENABLED_TRUE;
-								}
+							if(v!=null && !"".equals(v) &&
+								("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+								){
+								responseInputDeleteAfterRead = Costanti.CHECK_BOX_ENABLED_TRUE;
 							}						
 							responseInputWaitTime = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);						
 						}
@@ -1394,7 +1406,8 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 							autenticazioneToken,tokenPolicy,tipoSA, useAsClient,
 							integrationManagerEnabled, 
 							visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
-							tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA);
+							tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
+							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
 
 					// aggiunta campi custom
 					dati = saHelper.addProtocolPropertiesToDatiConfig(dati, consoleConfiguration,consoleOperationType, protocolProperties,oldProtocolPropertyList,propertiesProprietario);

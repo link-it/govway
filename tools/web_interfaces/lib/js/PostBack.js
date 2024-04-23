@@ -97,8 +97,14 @@ function postVersion_postBack(dataElementName) {
 		if(nome == "edit-mode")
 			document.form.elements[k].value = 'in_progress_postback';
 		
+		var tipo = document.form.elements[k].type;
+		if (tipo == "checkbox") {
+			if (!document.form.elements[k].checked){
+  			   addHidden(document.form, nome , 'no');
+			}
+		}
+		
 		if(dump) { 
-		    var tipo = document.form.elements[k].type;
 		    var valore = "";
 		    if (tipo == "text" || tipo == "file" || tipo == "hidden" || tipo == "textarea" || tipo == "number")
 			valore = document.form.elements[k].value;

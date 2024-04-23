@@ -32,6 +32,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -257,7 +258,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 	 * @throws DriverRegistroServiziException
 	 */
 	public static long CRUDSoggetto(int type, org.openspcoop2.core.registry.Soggetto soggetto, 
-			Connection con, String tipoDatabase) throws DriverRegistroServiziException {
+			Connection con, String tipoDatabase, IDriverBYOK driverBYOK) throws DriverRegistroServiziException {
 		if (soggetto == null)
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDSoggetto] Parametro non valido.");
 
@@ -357,7 +358,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 				if (connettore.getNome() == null || connettore.getNome().equals(""))
 					connettore.setNome("CNT_" + tipo + "_" + nome);
 
-				idConnettore = DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(CostantiDB.CREATE, connettore, con);
+				idConnettore = DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(CostantiDB.CREATE, connettore, con, driverBYOK);
 
 				int index = 1;
 				
@@ -739,7 +740,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 				//setto il nuovo nome
 				String newNomeConnettore = "CNT_" + tipo + "_" + nome;
 				connettore.setNome(newNomeConnettore);
-				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(2, connettore, con);
+				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(2, connettore, con, driverBYOK);
 
 				DriverRegistroServiziDB_LIB.logDebug("CRUDSoggetto UPDATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(updateQuery, nome, descizione, identificativoPorta, tipo, idSoggetto));
 
@@ -970,7 +971,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 				// elimino il connettore
 				connettore=new Connettore();
 				connettore.setId(idConnettore);
-				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(3, connettore, con);
+				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(3, connettore, con, driverBYOK);
 
 				DriverRegistroServiziDB_LIB.logDebug("CRUDSoggetto DELETE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(updateQuery, idSoggetto));
 

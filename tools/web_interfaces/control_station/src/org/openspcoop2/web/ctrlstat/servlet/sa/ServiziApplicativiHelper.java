@@ -360,7 +360,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			boolean autenticazioneToken, String tokenPolicy, String tipoSA, boolean useAsClient,
 			boolean integrationManagerEnabled, 
 			boolean visualizzaModificaCertificato, boolean visualizzaAddCertificato, String servletCredenzialiList, List<Parameter> parametersServletCredenzialiList, Integer numeroCertificati, String servletCredenzialiAdd,
-			String tokenPolicySA, String tokenClientIdSA, boolean tokenWithHttpsEnabledByConfigSA) throws Exception {
+			String tokenPolicySA, String tokenClientIdSA, boolean tokenWithHttpsEnabledByConfigSA,
+			String autenticazioneApiKey, boolean useOAS3Names, boolean useAppId, String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue) throws Exception {
 
 		if(oldNomeSA!=null && invrifRichiesta!=null) {
 			// nop
@@ -962,6 +963,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			showErogatore = this.isModalitaStandard() && !TipologiaErogazione.DISABILITATO.equals(ruoloErogatore);
 		}
 		
+		boolean postBackViaPost = false;
+		if(showErogatore) {
+			postBackViaPost = true;
+		}
 		
 		
 		
@@ -1043,7 +1048,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						multipleApiKey, appId, apiKey,
 						subtitleConfigSslCredenziali, visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
 						true, tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
-						dominioEsterno, tipoProtocollo);
+						dominioEsterno, tipoProtocollo,
+						postBackViaPost);
 			}
 			else {
 				// aggiungo dopo il link sui ruoli
@@ -1109,7 +1115,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						multipleApiKey, appId, apiKey,
 						subtitleConfigSslCredenziali, visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
 						true, tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
-						dominioEsterno, tipoProtocollo);
+						dominioEsterno, tipoProtocollo,
+						postBackViaPost);
 			}
 			
 		}
@@ -1194,8 +1201,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de.setType(DataElementType.SELECT);
 				de.setValues(ServiziApplicativiCostanti.getServiziApplicativiFault());
 				de.setSelected(fault);
-				//			de.setOnChange("CambiaFault()");
-				de.setPostBack(true);
+				if(postBackViaPost) {
+					de.setPostBack_viaPOST(true);
+				}
+				else {
+					de.setPostBack(true);
+				}
 			}
 			else{
 				de.setType(DataElementType.HIDDEN);
@@ -1399,7 +1410,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					parentSA,null,null,servizioApplicativoServerEnabled,
 					tipoSA, useAsClient,
 					integrationManagerEnabled,
-					tipoOperazione, tipoCredenzialiSSLVerificaTuttiICampi, changepwd);
+					tipoOperazione, tipoCredenzialiSSLVerificaTuttiICampi, changepwd, 
+					postBackViaPost);
 			
 			if(!applicativiServerEnabled && TipologiaFruizione.DISABILITATO.equals(ruoloFruitore) &&
 					CostantiConfigurazione.ABILITATO.equals(getmsg)){
@@ -1431,7 +1443,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						multipleApiKey, appId, apiKey,
 						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
 						true, tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
-						dominioEsterno, tipoProtocollo
+						dominioEsterno, tipoProtocollo,
+						postBackViaPost
 						);
 				
 			}
@@ -1460,7 +1473,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					autenticazioneToken, tokenPolicy, false, false,
 					listExtendedConnettore, connettoreErogatoreForceEnabled,
 					nomeProtocollo, false, false
-					, false, servizioApplicativoServerEnabled, null, null
+					, false, servizioApplicativoServerEnabled, null, null,
+					autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+					postBackViaPost
 					);
 		}
 		
@@ -3433,7 +3448,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String accessoDaAPSParametro, boolean servizioApplicativoServerEnabled, 
 			String tipoSA, boolean useAsClient,
 			boolean integrationManagerEnabled,
-			TipoOperazione tipoOperazione, String tipoCredenzialiSSLVerificaTuttiICampi, String changepwd) throws Exception{
+			TipoOperazione tipoOperazione, String tipoCredenzialiSSLVerificaTuttiICampi, String changepwd,
+			boolean postBackViaPost) throws Exception{
 		
 		if(servizioApplicativoServerEnabled) {
 			this.addEndPointToDatiAsHidden(dati, idsil, nomeservizioApplicativo, sbustamento,
@@ -3613,7 +3629,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}else{
 					de.setSelected(getmsg);
 				}
-				de.setPostBack(true);
+				if(postBackViaPost) {
+					de.setPostBack_viaPOST(true);
+				}
+				else {
+					de.setPostBack(true);
+				}
 			} else {
 				de.setType(DataElementType.HIDDEN);
 				if(getmsg==null){
