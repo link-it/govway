@@ -2762,7 +2762,7 @@ public abstract class AbstractVerificatoreTraccia {
 			pstmt = this.con
 					.prepareStatement("select * from "+ CostantiDB.TRACCE+", "+CostantiDB.TRACCE_ECCEZIONI+"  where "+
 							CostantiDB.TRACCE+"."+CostantiDB.TRACCE_COLUMN_ID+"="+CostantiDB.TRACCE_ECCEZIONI+"."+CostantiDB.TRACCE_ECCEZIONI_COLUMN_ID_TRACCIA+" AND "+
-							CostantiDB.TRACCE_COLUMN_GDO+">? AND "+
+							CostantiDB.TRACCE+"."+CostantiDB.TRACCE_COLUMN_GDO+">? AND "+
 							CostantiDB.TRACCE_COLUMN_TIPO_MESSAGGIO+"=? AND "+
 							checkOraRegistrazioneString+
 							CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE+"=? AND "+
