@@ -1464,10 +1464,13 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							   						String lockDisabled = lockValuePresent ? " disabled=\"disabled\"" : "";
 			                        							   						String lockIcon = lockValuePresent ? "lock" : "lock_open";
 			                        							   						String dePwdType = !lockValuePresent ? "text" : "password";
+			                        							   						DataElementPassword dePwd = de.getPassword();
+			                        				                    				boolean visualizzaInformazioniCifrate = dePwd.isLockVisualizzaInformazioniCifrate();
+			                        				                    				boolean lockReadOnly = dePwd.isLockReadOnly();
 			                        													%><input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= lockValue %>" <%=lockDisabled %>>
 			                        													  <input type="hidden" name="<%= hiddenLockName  %>" id="<%=hiddenLockId %>" value="<%= de.getValue()  %>">
 			                        													<%
-			                        							          				if (lockValuePresent) {
+			                        							          				if (lockValuePresent && !lockReadOnly) {
 			                        								          				%>
 			                        								          					<span id="<%=idPwdEditSpan %>" class="span-password-eye">
 			                        														  		<i id="<%=idPwdEdit %>" class="material-icons md-24">edit</i>

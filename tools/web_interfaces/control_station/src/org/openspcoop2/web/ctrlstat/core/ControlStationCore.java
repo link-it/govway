@@ -1214,6 +1214,15 @@ public class ControlStationCore {
 	public String getByokInternalConfigRemoteSecurityEngine() {
 		return this.byokInternalConfigRemoteSecurityEngine;
 	}
+	private boolean visualizzaInformazioniCifrate = false;
+	public boolean isVisualizzaInformazioniCifrate() {
+		return this.visualizzaInformazioniCifrate;
+	}
+	private String byokWarningMessage = null;
+	// TODO Zulio leggere da properties
+	public String getByokWarningMessage() {
+		return this.byokWarningMessage;
+	}
 
 	/** OCSP */
 	private boolean isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = false;
@@ -2670,6 +2679,7 @@ public class ControlStationCore {
 		/** BYOK **/
 		this.byokInternalConfigSecurityEngine = core.byokInternalConfigSecurityEngine;
 		this.byokInternalConfigRemoteSecurityEngine = core.byokInternalConfigRemoteSecurityEngine;
+		this.visualizzaInformazioniCifrate = core.visualizzaInformazioniCifrate;
 		
 		/** OCSP */
 		this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = core.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata; 
@@ -3116,6 +3126,7 @@ public class ControlStationCore {
 			this.isClusterDinamicoEnabled = consoleProperties.isClusterDinamicoEnabled();
 			this.byokInternalConfigSecurityEngine = consoleProperties.getBYOKInternalConfigSecurityEngine();
 			this.byokInternalConfigRemoteSecurityEngine = consoleProperties.getBYOKInternalConfigRemoteSecurityEngine();
+			this.visualizzaInformazioniCifrate = consoleProperties.isVisualizzaInformazioniCifrate();
 			this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = consoleProperties.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata();
 			this.verificaCertificatiWarningExpirationDays = consoleProperties.getVerificaCertificatiWarningExpirationDays();
 			this.verificaCertificatiSceltaClusterId = consoleProperties.isVerificaCertificatiSceltaClusterId();
@@ -9062,7 +9073,9 @@ public class ControlStationCore {
 			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue);
 		}
 		else {
-			de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue);
+			// TODO Poli
+			boolean readOnly = false;
+			de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue, readOnly, this.isVisualizzaInformazioniCifrate(), this.getByokWarningMessage());
 		}
 	}
 }

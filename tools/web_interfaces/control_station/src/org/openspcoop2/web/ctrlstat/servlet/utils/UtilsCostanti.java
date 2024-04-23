@@ -40,6 +40,8 @@ public class UtilsCostanti {
 	
 	public static final String SERVLET_NAME_PROPRIETA_OGGETTO = "proprietaOggettoRegistro";
 	
+	public static final String SERVLET_NAME_SECRET_DECODER = "secretDecoder";
+	
 	
 	/* PARAMETRI */
 	
@@ -64,4 +66,7 @@ public class UtilsCostanti {
 	
 	
 	public static final String KEY_JSON_RISPOSTA_USO = "uso";
+	
+	
+	public static final String PARAMETRO_SECRET_TO_UNWRAP = "secret";
 }

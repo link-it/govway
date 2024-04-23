@@ -50,6 +50,12 @@
     <servlet-name>proprietaOggettoRegistro</servlet-name>
 	<servlet-class>org.openspcoop2.web.ctrlstat.servlet.utils.ProprietaOggettoRegistro</servlet-class>
   </servlet>
+  
+    <!-- Servlet per l'unwrap dei secrets -->
+  <servlet>
+    <servlet-name>secretDecoder</servlet-name>
+	<servlet-class>org.openspcoop2.web.ctrlstat.servlet.utils.SecretDecoder</servlet-class>
+  </servlet>
 
 
   <!-- Servlet per il download dei documenti -->
@@ -86,6 +92,12 @@
   <servlet-mapping>
     <servlet-name>proprietaOggettoRegistro</servlet-name>
 	<url-pattern>/proprietaOggettoRegistro</url-pattern>
+  </servlet-mapping>
+  
+    <!-- Servlet per l'unwrap dei secrets -->
+  <servlet-mapping>
+    <servlet-name>secretDecoder</servlet-name>
+	<url-pattern>/secretDecoder</url-pattern>
   </servlet-mapping>
 
   <!-- Action Servlet Mapping -->

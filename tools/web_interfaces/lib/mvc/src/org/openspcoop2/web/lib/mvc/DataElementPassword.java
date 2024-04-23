@@ -27,7 +27,7 @@ import org.openspcoop2.utils.crypt.PasswordGenerator;
 /**
  * DataElementPassword
  * 
- * @author Giuliano Puntori (pintori@link.it)
+ * @author Giuliano Pintori (pintori@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -45,6 +45,9 @@ public class DataElementPassword implements Serializable {
 	private String labelButtonGeneraPw = Costanti.LABEL_MONITOR_BUTTON_GENERA;
 	private String tooltipButtonGeneraPw = Costanti.TOOLTIP_MONITOR_BUTTON_GENERA_PWD;
 	private boolean visualizzaIconaMostraPassword = true;
+	private boolean lockVisualizzaInformazioniCifrate = false;
+	private boolean lockReadOnly = false;
+	private String lockWarningMessage = null;
 	
 	public DataElementPassword() {
 		this.visualizzaBottoneGeneraPassword = false;
@@ -54,6 +57,9 @@ public class DataElementPassword implements Serializable {
 		this.labelButtonGeneraPw = Costanti.LABEL_MONITOR_BUTTON_GENERA;
 		this.tooltipButtonGeneraPw = Costanti.TOOLTIP_MONITOR_BUTTON_GENERA_PWD;
 		this.setVisualizzaIconaMostraPassword(true);
+		this.setLockVisualizzaInformazioniCifrate(false);
+		this.setLockReadOnly(false);
+		this.setLockWarningMessage(null);
 	}
 
 	public boolean isVisualizzaBottoneGeneraPassword() {
@@ -109,5 +115,29 @@ public class DataElementPassword implements Serializable {
 
 	public void setVisualizzaIconaMostraPassword(boolean visualizzaIconaMostraPassword) {
 		this.visualizzaIconaMostraPassword = visualizzaIconaMostraPassword;
+	}
+
+	public boolean isLockReadOnly() {
+		return this.lockReadOnly;
+	}
+
+	public void setLockReadOnly(boolean lockReadOnly) {
+		this.lockReadOnly = lockReadOnly;
+	}
+
+	public String getLockWarningMessage() {
+		return this.lockWarningMessage;
+	}
+
+	public void setLockWarningMessage(String lockWarningMessage) {
+		this.lockWarningMessage = lockWarningMessage;
+	}
+
+	public boolean isLockVisualizzaInformazioniCifrate() {
+		return this.lockVisualizzaInformazioniCifrate;
+	}
+
+	public void setLockVisualizzaInformazioniCifrate(boolean lockVisualizzaInformazioniCifrate) {
+		this.lockVisualizzaInformazioniCifrate = lockVisualizzaInformazioniCifrate;
 	}
 }

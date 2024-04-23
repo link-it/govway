@@ -363,6 +363,9 @@ $(document).ready(function(){
 <div id="dataElementInfoModal" title="Info">
 	<div id="dataElementInfoModalBody" class="contenutoModal"></div>
 </div>
+<div id="visualizzaInformazioniCifrateModal" title="Visualizza Informazioni Cifrate">
+	<div id="visualizzaInformazioniCifrateModalBody" class="contenutoModal"></div>
+</div>
 <jsp:include page="/jsplib/conferma.jsp" flush="true" />
 </body>
 </html>

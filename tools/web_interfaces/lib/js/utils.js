@@ -97,6 +97,22 @@
 		    
 		}
 	}
+	
+	if($( "#visualizzaInformazioniCifrateModal" ).length > 0){
+ 		$( "#visualizzaInformazioniCifrateModal" ).dialog({
+ 	      resizable: false,
+ 	      autoOpen: false,
+ 	      height: "auto",
+ 	      width: 400,
+ 	      modal: true,
+ 	      buttons: {
+ 	    	 'Visualizza' : function() {
+ 	 	          visualizzaAjaxStatus();
+ 	 	          // visualizzaInformazioniCifrate();
+ 	 	        }
+ 	      }
+ 	    });
+ 	}
  
  });
  

@@ -266,7 +266,8 @@ public final class AuthorizationFilter implements Filter {
 								&& urlRichiesta.indexOf("/"+ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER) == -1
 								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_RESOCONTO_EXPORT) == -1 
 								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO) == -1
-								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_PROPRIETA_OGGETTO) == -1) {
+								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_PROPRIETA_OGGETTO) == -1
+								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_SECRET_DECODER) == -1) {
 	
 							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA,MessageType.ERROR_SINTETICO, this.filterConfig);
 							// return so that we do not chain to other filters
@@ -504,7 +505,8 @@ public final class AuthorizationFilter implements Filter {
 								&& urlRichiesta.indexOf("/"+ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER) == -1
 								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_RESOCONTO_EXPORT) == -1 
 								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO) == -1
-								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_PROPRIETA_OGGETTO) == -1) {
+								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_PROPRIETA_OGGETTO) == -1
+								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_SECRET_DECODER) == -1) {
 	
 							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA,MessageType.ERROR_SINTETICO, this.filterConfig);
 							// return so that we do not chain to other filters
@@ -751,7 +753,8 @@ public final class AuthorizationFilter implements Filter {
 		// tranne che per le richieste verso la servlet informazioniUtilizzoOggettoRegistro e proprietaOggettoRegistro
 		String urlRichiesta = request.getRequestURI();
 		if ((urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO) != -1)
-				|| (urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_PROPRIETA_OGGETTO) != -1))  {
+				|| (urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_PROPRIETA_OGGETTO) != -1)
+				|| (urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_SECRET_DECODER) != -1))  {
 			ControlStationCore.logDebug("Richiesta Risorsa ["+urlRichiesta+"], Token CSRF non verra' aggiornato.");
 			return false;
 		}

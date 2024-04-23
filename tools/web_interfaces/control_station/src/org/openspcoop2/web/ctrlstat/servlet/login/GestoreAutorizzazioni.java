@@ -486,6 +486,7 @@ public class GestoreAutorizzazioni {
 		this.servletRegistro = new ArrayList<>();
 		this.servletRegistro.add(UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO);
 		this.servletRegistro.add(UtilsCostanti.SERVLET_NAME_PROPRIETA_OGGETTO);
+		this.servletRegistro.add(UtilsCostanti.SERVLET_NAME_SECRET_DECODER);
 		/** Permessi Associati al supporto delle funzionalita' di registro */
 		this.permessiRegistro = new PermessiUtente();
 		this.permessiRegistro.setServizi(true);
