@@ -9045,36 +9045,52 @@ public class ControlStationCore {
 		lock(de, value, true);
 	}
 	public void lock(DataElement de, String value, boolean escapeHtml) throws DriverControlStationException {
-		lockEngine(de, value, escapeHtml, false);
+		lockEngine(de, value, escapeHtml, false, false);
+	}
+	public void lockReadOnly(DataElement de, String value) throws DriverControlStationException {
+		lockReadOnly(de, value, true);
+	}
+	public void lockReadOnly(DataElement de, String value, boolean escapeHtml) throws DriverControlStationException {
+		lockEngine(de, value, escapeHtml, false, true);
 	}
 	public void lockHidden(DataElement de, String value) throws DriverControlStationException {
 		lockHidden(de, value, true);
 	}
 	public void lockHidden(DataElement de, String value, boolean escapeHtml) throws DriverControlStationException {
-		lockEngine(de, value, escapeHtml, true);
+		lockEngine(de, value, escapeHtml, true, false);
 	}
-	private void lockEngine(DataElement de, String value, boolean escapeHtml, boolean hidden) throws DriverControlStationException {
+	private void lockEngine(DataElement de, String value, boolean escapeHtml, boolean hidden, boolean readOnly) throws DriverControlStationException {
 		if(this.isEnabledBYOK()) {
-			lockEngineWithBIOK(de, value, escapeHtml, hidden);
+			lockEngineWithBIOK(de, value, escapeHtml, hidden, readOnly);
 		}
 		else {
-			if(de.getType()==null || StringUtils.isEmpty(de.getType())) {
-				de.setType(hidden ?  DataElementType.HIDDEN:DataElementType.TEXT_EDIT);
+			if(hidden &&
+					(de.getType()==null || StringUtils.isEmpty(de.getType()) || !DataElementType.HIDDEN.toString().equals(de.getType())) 
+					){
+				de.setType(DataElementType.HIDDEN);
+			}
+			else if(readOnly &&
+					(de.getType()==null || StringUtils.isEmpty(de.getType()) || !DataElementType.TEXT.toString().equals(de.getType())) 
+					){
+				de.setType(DataElementType.TEXT);
+			}
+			else if( de.getType()==null || StringUtils.isEmpty(de.getType()) || 
+					( (!DataElementType.TEXT_EDIT.toString().equals(de.getType())) && (!DataElementType.TEXT_AREA.toString().equals(de.getType())) )
+					){
+				de.setType(DataElementType.TEXT_EDIT);
 			}
 			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml(value) : value);
 		}
 	}
-	private void lockEngineWithBIOK(DataElement de, String value, boolean escapeHtml, boolean hidden) throws DriverControlStationException {
+	private void lockEngineWithBIOK(DataElement de, String value, boolean escapeHtml, boolean hidden, boolean readOnly ) throws DriverControlStationException {
 		String wrapValue = this.wrap(value);
 		if(hidden) {
-			if(de.getType()==null || StringUtils.isEmpty(de.getType())) {
+			if(de.getType()==null || StringUtils.isEmpty(de.getType()) || !DataElementType.HIDDEN.toString().equals(de.getType())) {
 				de.setType(DataElementType.HIDDEN);
 			}
 			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue);
 		}
 		else {
-			// TODO Poli
-			boolean readOnly = false;
 			de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue, readOnly, this.isVisualizzaInformazioniCifrate(), this.getByokWarningMessage());
 		}
 	}
