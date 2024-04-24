@@ -644,6 +644,11 @@ public class ConsoleProperties {
 			return this.readBooleanRequiredProperty("cluster_dinamico.enabled");
 		}
 	}
+	
+	public boolean isSecurityLoadBouncyCastle() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "security.addBouncyCastleProvider");
+		return parse(b, false);
+	}
 
 	public String getHSMConfigurazione() throws UtilsException{
 		return this.readProperty(false, "hsm.config");

@@ -26,6 +26,7 @@ import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Security;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -99,6 +100,11 @@ public class InitListener implements ServletContextListener {
 	static void logDebug(String msg, Throwable e) {
 		if(InitListener.log!=null) {
 			InitListener.log.debug(msg, e);
+		}
+	}
+	static void logInfo(String msg) {
+		if(InitListener.log!=null) {
+			InitListener.log.info(msg);
 		}
 	}
 	static void logError(String msg) {
@@ -430,6 +436,21 @@ public class InitListener implements ServletContextListener {
 				}
 			} catch (Exception e) {
 				String msgErrore = "Errore durante l'inizializzazione del loader dei plugins: " + e.getMessage();
+				InitListener.logError(
+						//					throw new ServletException(
+						msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
+			}
+			
+			// Load Security Provider
+			try {
+				if(consoleProperties.isSecurityLoadBouncyCastle()) {
+					/**Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());*/
+					Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 2); // lasciare alla posizione 1 il provider 'SUN'
+					InitListener.logInfo("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
+				}
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'aggiunta dei security provider: " + e.getMessage();
 				InitListener.logError(
 						//					throw new ServletException(
 						msgErrore,e);
