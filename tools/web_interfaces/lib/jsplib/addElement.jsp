@@ -73,9 +73,11 @@ var path = '<%= request.getContextPath()%>';
 <link rel="stylesheet" href="css/ui.core.css" type="text/css">
 <link rel="stylesheet" href="css/ui.theme.css" type="text/css">
 <link rel="stylesheet" href="css/ui.dialog.css" type="text/css">
+<link rel="stylesheet" href="css/ui.resizable.css" type="text/css">
 <link rel="stylesheet" href="css/ui.slider.css" type="text/css">
 <script type="text/javascript" src="js/ui.core.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/ui.dialog.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/ui.resizable.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/ui.slider.js" nonce="<%= randomNonce %>"></script>
 <link rel="stylesheet" href="css/bootstrap-tagsinput.css" type="text/css">
 <script type="text/javascript" src="js/jquery-on.js" nonce="<%= randomNonce %>"></script>
@@ -141,8 +143,77 @@ function CheckDati() {
 		$("#dataElementInfoModalBody").html(body);
 		$("#dataElementInfoModal").dialog("open");
 	}
+	
+	function mostraInformazioniCifrateModal(title,body,url,valore){
+		setValoriLock(url,valore);
+		
+		$("#txtA_ne_dec").val('');
+		$("#txtA_ne_dec").attr('style','');		
+		$("#iconCopy_dec").hide();
+		
+		$("#visualizzaInformazioniCifrateModal").prev().children('span').text(title);
+		$("#visualizzaInformazioniCifrateModalBodyNotaSpan").html(body);
+		$("#visualizzaInformazioniCifrateModal").dialog("open");
+	}
+		
+	function mostraAlertInformazioniCifrateModal(title,body,url,valore){
+		setValoriLock(url,valore);
+		
+		$("#alertInformazioniCifrateModal").prev().children('span').text(title);
+		$("#alertInformazioniCifrateModal").html(body);
+		$("#alertInformazioniCifrateModal").dialog("open");
+	}
 
         $(document).ready(function(){
+        	
+        	// copia contenuto della modale secret
+        	if($("#iconCopy_dec").length>0){
+
+		 		$("#iconCopy_dec").click(function(evt){
+       				var valueToCopy = $("#txtA_ne_dec").val();
+       				var copiatoOK = copyTextToClipboard(valueToCopy);
+       				
+       				if(copiatoOK) {
+       					showTooltip(evt);
+       				}
+    			});
+        		
+		 		$("#iconCopy_dec").mouseout(function(){
+        			$('div.copyTooltip').remove();  
+        		});
+        	}
+        	
+        	// visualizza secrets
+        	if($(".spanIconInfoBox-viewLock").length>0){
+        		$(".spanIconInfoBox-viewLock").click(function(){
+        			var iconInfoBoxId = $(this).parent().attr('id');
+        			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
+        			console.log(idx);
+        			if(idx) {
+						var label = $("#hidden_title_pwd_"+ idx + "_lock_view").val();
+						var body = $("#hidden_body_pwd_"+ idx+ "_lock_view").val();
+						var url = $("#hidden_url_pwd_"+ idx+ "_lock_view").val();
+						var valore = $("#__lk__pwd_"+ idx+ "").val();
+						mostraInformazioniCifrateModal(label,body,url,valore);
+        			}
+    			});
+        	}
+        	
+        	// copia secrets
+        	if($(".spanIconInfoBox-copyLock").length>0){
+        		$(".spanIconInfoBox-copyLock").click(function(){
+        			var iconInfoBoxId = $(this).parent().attr('id');
+        			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
+        			console.log(idx);
+        			if(idx) {
+        				var label = $("#hidden_title_pwd_"+ idx + "_lock_view").val();
+						var body = $("#hidden_body_pwd_"+ idx+ "_lock_view").val();
+						var url = $("#hidden_url_pwd_"+ idx+ "_lock_view").val();
+						var valore = $("#__lk__pwd_"+ idx+ "").val();
+						mostraAlertInformazioniCifrateModal(label,body,url,valore);
+        			}
+    			});
+        	}
 
         	// info
         	if($(".spanIconInfoBox").length>0){
@@ -364,7 +435,27 @@ $(document).ready(function(){
 	<div id="dataElementInfoModalBody" class="contenutoModal"></div>
 </div>
 <div id="visualizzaInformazioniCifrateModal" title="Visualizza Informazioni Cifrate">
-	<div id="visualizzaInformazioniCifrateModalBody" class="contenutoModal"></div>
+	<div id="visualizzaInformazioniCifrateModalBody" class="contenutoModal">
+		<div class="propDialog">
+			<div class="txtA_div_propDialog_dec">
+				<textarea id="txtA_ne_dec" readonly rows="5" cols="" name="txtA_ne_dec" class="inputLinkLong textAreaDec"></textarea>
+			 	<div class="iconCopyBox" id="divIconInfo_dec">
+	      			<input type="hidden" name="__i_hidden_value_iconCopy_dec" id="hidden_value_iconCopy_dec"  value=""/>
+			      	<span class="spanIconCopyBox" title="Copia">
+						<i class="material-icons md-18" id="iconCopy_dec"><%= Costanti.ICON_COPY %></i>
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="propDialog">
+		<div id="visualizzaInformazioniCifrateModalBodyNota" class="finestraDialogModalNota">
+			<span class="finestraDialogModalBodyNota" id="visualizzaInformazioniCifrateModalBodyNotaSpan"></span>
+		</div>
+	</div>
+</div>
+<div id="alertInformazioniCifrateModal" title="Attenzione">
+	<div id="alertInformazioniCifrateModalBody" class="contenutoModal"></div>
 </div>
 <jsp:include page="/jsplib/conferma.jsp" flush="true" />
 </body>

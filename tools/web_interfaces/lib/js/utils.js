@@ -100,15 +100,104 @@
 	
 	if($( "#visualizzaInformazioniCifrateModal" ).length > 0){
  		$( "#visualizzaInformazioniCifrateModal" ).dialog({
+ 	      resizable: true,
+ 	      autoOpen: false,
+ 	      height: "auto",
+ 	      width: "660px",
+ 	      modal: true,
+ 	      buttons: {
+			'Visualizza' : function(evt) {
+				// recupero la url
+				var urlLockDecoder = $("#__i_hidden_lockurl_").val();
+				var valToDecode = $("#__i_hidden_lockvalue_").val();
+				
+				// chiamata ajax
+				visualizzaAjaxStatus();
+				
+				$.ajax({
+					url : urlLockDecoder,
+					method: 'POST',
+					async : false,
+					data: {
+				        secret: valToDecode
+				    },
+				    contentType: 'application/x-www-form-urlencoded',
+					success: function(data, textStatus, jqXHR){
+						var valueToCopy = data;
+						
+						// inserimento del valore nella text area
+	    				$("textarea[id^='txtA_ne_dec']").val(data);
+	    				
+	    				// visualizzo il pulsante di copia
+	    				$("#iconCopy_dec").show();
+	    				
+	    				nascondiAjaxStatus();
+					},
+					error: function(data, textStatus, jqXHR){
+						nascondiAjaxStatus();
+					}
+				});
+				
+				// resetto i valori lock
+				resetValoriLock();
+ 	 	        }
+ 	 	     ,
+ 	    	 'Chiudi' : function() {
+ 	 	          $( this ).dialog( "close" );
+ 	 	        }
+ 	      }
+ 	    });
+ 	}
+ 	
+ 	if($( "#alertInformazioniCifrateModal" ).length > 0){
+ 		$( "#alertInformazioniCifrateModal" ).dialog({
  	      resizable: false,
  	      autoOpen: false,
  	      height: "auto",
- 	      width: 400,
+ 	      width: 500,
  	      modal: true,
  	      buttons: {
- 	    	 'Visualizza' : function() {
- 	 	          visualizzaAjaxStatus();
- 	 	          // visualizzaInformazioniCifrate();
+ 	    	 'Copia' : function(evt) {
+				// recupero la url
+				var urlLockDecoder = $("#__i_hidden_lockurl_").val();
+				var valToDecode = $("#__i_hidden_lockvalue_").val();
+				
+				// chiamata ajax
+				visualizzaAjaxStatus();
+				
+				$.ajax({
+					url : urlLockDecoder,
+					method: 'POST',
+					async : false,
+					data: {
+				        secret: valToDecode
+				    },
+				    contentType: 'application/x-www-form-urlencoded',
+					success: function(data, textStatus, jqXHR){
+						var valueToCopy = data;
+						
+						// copio valore nella clipboard
+						var copiatoOK = copyTextToClipboard(valueToCopy);
+						
+						// inserimento del valore nella text area
+	    				//$("textarea[id^='idFinestraModale_<%=numeroLink %>_txtA']").val(data);
+	    				
+	    				nascondiAjaxStatus();
+	    				
+	    				if(copiatoOK) {
+        					showTooltipAndFadeOut(evt);
+        				}
+					},
+					error: function(data, textStatus, jqXHR){
+						nascondiAjaxStatus();
+					}
+				});
+				
+				// resetto i valori lock
+				resetValoriLock();
+				
+				// chiudo il dialog
+ 	 	        $( this ).dialog( "close" );
  	 	        }
  	      }
  	    });
@@ -154,3 +243,101 @@ function setPercentuale(td,value){
                 td.text(newText);
         }
 }
+
+function changeTooltipPosition(event) {
+	var tooltipX = event.pageX - 8;
+	var tooltipY = event.pageY + 8;
+	$('div.copyTooltip').css({top: tooltipY, left: tooltipX});
+};
+
+function showTooltip(event) {
+	$('div.copyTooltip').remove();
+	$('<div class="copyTooltip">Copiato</div>').appendTo('body');
+	changeTooltipPosition(event);
+};
+
+function showTooltipAndFadeOut(event) {
+    showTooltip(event);
+
+    // Imposta il timeout per far sparire il div dopo 2 secondi
+    setTimeout(function() {
+        $('div.copyTooltip').fadeOut('slow'); // Scompare gradualmente in 1 secondo
+    }, 1000); // Tempo di attesa in millisecondi (1 secondi)
+}
+
+
+
+function copyTextToClipboard(text) {
+	  var textArea = document.createElement("textarea");
+
+	  //
+	  // *** This styling is an extra step which is likely not required. ***
+	  //
+	  // Why is it here? To ensure:
+	  // 1. the element is able to have focus and selection.
+	  // 2. if element was to flash render it has minimal visual impact.
+	  // 3. less flakyness with selection and copying which **might** occur if
+	  //    the textarea element is not visible.
+	  //
+	  // The likelihood is the element won't even render, not even a
+	  // flash, so some of these are just precautions. However in
+	  // Internet Explorer the element is visible whilst the popup
+	  // box asking the user for permission for the web page to
+	  // copy to the clipboard.
+	  //
+
+	  // Place in top-left corner of screen regardless of scroll position.
+	  textArea.style.position = 'fixed';
+	  textArea.style.top = 0;
+	  textArea.style.left = 0;
+
+	  // Ensure it has a small width and height. Setting to 1px / 1em
+	  // doesn't work as this gives a negative w/h on some browsers.
+	  textArea.style.width = '2em';
+	  textArea.style.height = '2em';
+
+	  // We don't need padding, reducing the size if it does flash render.
+	  textArea.style.padding = 0;
+
+	  // Clean up any borders.
+	  textArea.style.border = 'none';
+	  textArea.style.outline = 'none';
+	  textArea.style.boxShadow = 'none';
+
+	  // Avoid flash of white box if rendered for any reason.
+	  textArea.style.background = 'transparent';
+
+
+	  textArea.value = text;
+
+	  document.body.appendChild(textArea);
+	  textArea.focus();
+	  textArea.select();
+
+	  var successful = false;
+	  try {
+	    successful = document.execCommand('copy');
+	    
+	    if(successful) {
+	    	console.log('Valore Copiato ' + text);
+	    } else {
+	    	console.log('Copia non effettuata');
+	    }
+	  } catch (err) {
+		var successful = false;
+// 		    console.log('Oops, unable to copy');
+	  }
+
+	  document.body.removeChild(textArea);
+	  return successful;
+}
+		
+function setValoriLock(url,valore){
+		$("#__i_hidden_lockurl_").val(url);
+		$("#__i_hidden_lockvalue_").val(valore);
+}
+
+function resetValoriLock(){
+	setValoriLock('','');
+}
+

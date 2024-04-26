@@ -72,6 +72,18 @@ if (mime) {
 String csrfTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
 if(csrfTokenFromSession == null)
 	csrfTokenFromSession = "";
+
+// cerco se è presente un lock
+boolean isLockPresent = false;
+for (int i = 0; i < dati.size(); i++) {
+	DataElement de = (DataElement) dati.get(i);
+  	String type = de.getType();
+  	if (type.equals("lock")) {
+  		isLockPresent = true;
+  		break;
+  	}
+}
+
 %>
 
 
@@ -84,6 +96,15 @@ if(csrfTokenFromSession == null)
 		if(!csrfTokenFromSession.equals("")){
 			%>
 			<input type="hidden" name="<%=Costanti.PARAMETRO_CSRF_TOKEN%>" id="<%=Costanti.PARAMETRO_CSRF_TOKEN%>"  value="<%= csrfTokenFromSession %>"/>
+			<%			
+		}
+		%>
+		
+		<%
+		if(isLockPresent){
+			%>
+			<input type="hidden" name="__i_hidden_lockurl_" id="__i_hidden_lockurl_"  value=""/>
+			<input type="hidden" name="__i_hidden_lockvalue_" id="__i_hidden_lockvalue_"  value=""/>
 			<%			
 		}
 		%>
@@ -1457,6 +1478,8 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							   						String idPwdEdit = "pwd_" + i + "_edit";
 			                        							   						String idPwdEditSpan = "pwd_" + i + "_edit_span";
 			                        							   						String idPwdLock = "pwd_" + i + "_lock";
+			                        							   						String idPwdViewLock = "pwd_" + i + "_lock_view";
+			                        							   						String idPwdCopyLock = "pwd_" + i + "_lock_edit";
 			                        							   						String hiddenLockName = Costanti.PARAMETER_LOCK_PREFIX + deName;
 			                        							   						String hiddenLockId = Costanti.PARAMETER_LOCK_PREFIX + idPwd;
 			                        							   						boolean lockValuePresent = !de.getValue().equals(""); // e' gia' presente un valore
@@ -1473,7 +1496,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							          				if (lockValuePresent && !lockReadOnly) {
 			                        								          				%>
 			                        								          					<span id="<%=idPwdEditSpan %>" class="span-password-eye">
-			                        														  		<i id="<%=idPwdEdit %>" class="material-icons md-24">edit</i>
+			                        														  		<i id="<%=idPwdEdit %>" class="material-icons md-24" title="Modifica">edit</i>
 			                        														  	</span>
 			                        															<script type="text/javascript" nonce="<%= randomNonce %>">
 			                        																$(document).ready(function(){
@@ -1507,6 +1530,21 @@ for (int i = 0; i < dati.size(); i++) {
 			                        											      		<span class="spanIconInfoBox-lock">
 			                        																<i class="material-icons md-24 md-nohover" id="<%=idPwdLock %>"><%=lockIcon %></i>
 			                        															</span>
+			                        															
+			                        															<% 
+			                        									      				if(visualizzaInformazioniCifrate){
+			                        									      				%>
+			                        											      			<input type="hidden" name="__i_hidden_title_<%= idPwdViewLock %>" id="hidden_title_<%= idPwdViewLock %>"  value="<%= Costanti.TITOLO_FINESTRA_MODALE_MESSAGE_WARNING %>"/>
+			                        											      			<input type="hidden" name="__i_hidden_body_<%= idPwdViewLock %>" id="hidden_body_<%= idPwdViewLock %>"  value="<%= dePwd.getLockWarningMessage() %>"/>
+			                        											      			<input type="hidden" name="__i_hidden_url_<%= idPwdViewLock %>" id="hidden_url_<%= idPwdViewLock %>"  value="<%= de.getUrl() %>"/>
+			                        													      	<span class="spanIconInfoBox-viewLock">
+			                        																<i class="material-icons md-24" id="<%=idPwdViewLock %>" title="Visualizza informazione cifrata">vpn_key_off</i>
+			                        															</span>
+			                        															<span class="spanIconInfoBox-copyLock">
+			                        																<i class="material-icons md-24" id="<%=idPwdCopyLock %>" title="Copia informazione cifrata">content_copy</i>
+			                        															</span>
+			                        															
+			                        														<% } %>	
 			                        											      			                        											      	
 			                        											      		<% 
 			                        									      				if(deInfo != null){

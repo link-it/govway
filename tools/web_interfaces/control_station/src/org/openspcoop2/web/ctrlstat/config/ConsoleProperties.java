@@ -679,6 +679,10 @@ public class ConsoleProperties {
 		BooleanNullable b = this.readBooleanProperty(false, "console.visualizzaInformazioniCifrate.enabled");
 		return parse(b, false);
 	}
+	public String getVisualizzaInformazioniCifrateWarningMessage() throws UtilsException {
+		return this.readProperty(false, "console.visualizzaInformazioniCifrate.warningMessage");
+	}
+	
 	
 	public Integer getVerificaCertificatiWarningExpirationDays() throws UtilsException{
 		String cacheV = this.readProperty(true, "verificaCertificati.warning.expirationDays");

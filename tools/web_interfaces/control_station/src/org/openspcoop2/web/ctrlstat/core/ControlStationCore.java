@@ -218,6 +218,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.ctrlstat.servlet.utils.UtilsCostanti;
 import org.openspcoop2.web.lib.audit.DriverAudit;
 import org.openspcoop2.web.lib.audit.appender.AuditAppender;
 import org.openspcoop2.web.lib.audit.appender.AuditDBAppender;
@@ -1219,7 +1220,6 @@ public class ControlStationCore {
 		return this.visualizzaInformazioniCifrate;
 	}
 	private String byokWarningMessage = null;
-	// TODO Zulio leggere da properties
 	public String getByokWarningMessage() {
 		return this.byokWarningMessage;
 	}
@@ -2680,6 +2680,7 @@ public class ControlStationCore {
 		this.byokInternalConfigSecurityEngine = core.byokInternalConfigSecurityEngine;
 		this.byokInternalConfigRemoteSecurityEngine = core.byokInternalConfigRemoteSecurityEngine;
 		this.visualizzaInformazioniCifrate = core.visualizzaInformazioniCifrate;
+		this.byokWarningMessage = core.byokWarningMessage;
 		
 		/** OCSP */
 		this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = core.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata; 
@@ -3127,6 +3128,7 @@ public class ControlStationCore {
 			this.byokInternalConfigSecurityEngine = consoleProperties.getBYOKInternalConfigSecurityEngine();
 			this.byokInternalConfigRemoteSecurityEngine = consoleProperties.getBYOKInternalConfigRemoteSecurityEngine();
 			this.visualizzaInformazioniCifrate = consoleProperties.isVisualizzaInformazioniCifrate();
+			this.byokWarningMessage = consoleProperties.getVisualizzaInformazioniCifrateWarningMessage();
 			this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = consoleProperties.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata();
 			this.verificaCertificatiWarningExpirationDays = consoleProperties.getVerificaCertificatiWarningExpirationDays();
 			this.verificaCertificatiSceltaClusterId = consoleProperties.isVerificaCertificatiSceltaClusterId();
@@ -9091,7 +9093,7 @@ public class ControlStationCore {
 			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue);
 		}
 		else {
-			de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue, readOnly, this.isVisualizzaInformazioniCifrate(), this.getByokWarningMessage());
+			de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue, readOnly, this.isVisualizzaInformazioniCifrate(), this.getByokWarningMessage(), UtilsCostanti.SERVLET_NAME_SECRET_DECODER);
 		}
 	}
 }
