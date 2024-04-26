@@ -457,7 +457,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 				
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.CREATE, soggetto.getProtocolPropertyList(), 
-						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase);
+						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase, driverBYOK);
 				
 				
 				// ruoli
@@ -906,7 +906,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 				
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, soggetto.getProtocolPropertyList(), 
-						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase);
+						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase, driverBYOK);
 				
 				
 				break;
@@ -922,7 +922,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 				
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
-						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase);
+						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase, driverBYOK);
 				
 				// elimino le proprieta' del soggetto
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);

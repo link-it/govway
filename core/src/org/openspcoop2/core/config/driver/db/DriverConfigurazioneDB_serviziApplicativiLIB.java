@@ -569,7 +569,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				
 				// ProtocolProperties
 				DriverConfigurazioneDBLib.crudProtocolProperty(CostantiDB.CREATE, aSA.getProtocolPropertyList(), 
-						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDBLib.tipoDB);
+						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDBLib.tipoDB, driverBYOK);
 				
 				
 				break;
@@ -1052,7 +1052,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				
 				// ProtocolProperties
 				DriverConfigurazioneDBLib.crudProtocolProperty(CostantiDB.UPDATE, aSA.getProtocolPropertyList(), 
-						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDBLib.tipoDB);
+						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDBLib.tipoDB, driverBYOK);
 				
 				break;
 
@@ -1068,7 +1068,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 
 				// ProtocolProperties
 				DriverConfigurazioneDBLib.crudProtocolProperty(CostantiDB.DELETE, null, 
-						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDBLib.tipoDB);
+						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDBLib.tipoDB, driverBYOK);
 				
 				// proprieta'
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);

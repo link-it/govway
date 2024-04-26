@@ -34,6 +34,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.ProprietariProtocolProperty;
@@ -93,7 +94,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 	}
 	
 	public static void createAccordoServizioParteComune(org.openspcoop2.core.registry.AccordoServizioParteComune accordoServizio, 
-			Connection con, String tabellaSoggetti, Logger log, IDAccordoFactory idAccordoFactory) throws DriverRegistroServiziException {
+			Connection con, String tabellaSoggetti, Logger log, IDAccordoFactory idAccordoFactory, IDriverBYOK driverBYOK) throws DriverRegistroServiziException {
 
 		if (accordoServizio == null)
 			throw new DriverRegistroServiziException(ACCORDO_DIVERSO_NULL);
@@ -287,7 +288,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 			Azione azione = null;
 			for (int i = 0; i < accordoServizio.sizeAzioneList(); i++) {
 				azione = accordoServizio.getAzione(i);
-				DriverRegistroServiziDB_accordiSoapLIB.CRUDAzione(CostantiDB.CREATE,accordoServizio, azione, con, idAccordo);
+				DriverRegistroServiziDB_accordiSoapLIB.CRUDAzione(CostantiDB.CREATE,accordoServizio, azione, con, idAccordo, driverBYOK);
 
 			}
 			logDebug(log, "inserite " + accordoServizio.sizeAzioneList() + " azioni relative all'accordo :" + nome + " id :" + idAccordo);
@@ -295,14 +296,14 @@ public class DriverRegistroServiziDB_accordiLIB {
 			PortType pt = null;
 			for (int i = 0; i < accordoServizio.sizePortTypeList(); i++) {
 				pt = accordoServizio.getPortType(i);
-				DriverRegistroServiziDB_accordiSoapLIB.CRUDPortType(CostantiDB.CREATE,accordoServizio,pt, con, idAccordo);
+				DriverRegistroServiziDB_accordiSoapLIB.CRUDPortType(CostantiDB.CREATE,accordoServizio,pt, con, idAccordo, driverBYOK);
 			}
 			logDebug(log, "inserite " + accordoServizio.sizePortTypeList() + " porttype relative all'accordo :" + nome + " id :" + idAccordo);
 
 			Resource resource = null;
 			for (int i = 0; i < accordoServizio.sizeResourceList(); i++) {
 				resource = accordoServizio.getResource(i);
-				DriverRegistroServiziDB_accordiRestLIB.CRUDResource(CostantiDB.CREATE,accordoServizio,resource, con, idAccordo);
+				DriverRegistroServiziDB_accordiRestLIB.CRUDResource(CostantiDB.CREATE,accordoServizio,resource, con, idAccordo, driverBYOK);
 			}
 			logDebug(log, "inserite " + accordoServizio.sizeResourceList() + " resources relative all'accordo :" + nome + " id :" + idAccordo);
 			
@@ -349,7 +350,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 			
 			// ProtocolProperties
 			DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.CREATE, accordoServizio.getProtocolPropertyList(), 
-					idAccordo, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, con, DriverRegistroServiziDB_LIB.tipoDB);
+					idAccordo, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, con, DriverRegistroServiziDB_LIB.tipoDB, driverBYOK);
 			
 
 		} catch (SQLException se) {
@@ -367,7 +368,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 	
 	
 	public static void updateAccordoServizioParteComune(org.openspcoop2.core.registry.AccordoServizioParteComune accordoServizio, 
-			Connection con, String tabellaSoggetti, Logger log, IDAccordoFactory idAccordoFactory) throws DriverRegistroServiziException {
+			Connection con, String tabellaSoggetti, Logger log, IDAccordoFactory idAccordoFactory, IDriverBYOK driverBYOK) throws DriverRegistroServiziException {
 
 		if (accordoServizio == null)
 			throw new DriverRegistroServiziException(ACCORDO_DIVERSO_NULL);
@@ -600,7 +601,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 				{
 					azione.setProfiloCollaborazione(profiloCollaborazione);
 				}
-				DriverRegistroServiziDB_accordiSoapLIB.CRUDAzione(CostantiDB.CREATE, accordoServizio,azione, con, idAccordoLong);
+				DriverRegistroServiziDB_accordiSoapLIB.CRUDAzione(CostantiDB.CREATE, accordoServizio,azione, con, idAccordoLong, driverBYOK);
 			}
 			logDebug(log, "Inserite "+accordoServizio.sizeAzioneList()+" azioni associate all'accordo "+idAccordoLong);
 
@@ -691,7 +692,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 			PortType pt = null;
 			for (int i = 0; i < accordoServizio.sizePortTypeList(); i++) {
 				pt = accordoServizio.getPortType(i);
-				DriverRegistroServiziDB_accordiSoapLIB.CRUDPortType(CostantiDB.CREATE,accordoServizio,pt, con, idAccordoLong);
+				DriverRegistroServiziDB_accordiSoapLIB.CRUDPortType(CostantiDB.CREATE,accordoServizio,pt, con, idAccordoLong, driverBYOK);
 			}
 			logDebug(log, "inserite " + accordoServizio.sizePortTypeList() + " porttype relative all'accordo :" + nome + " id :" + idAccordoLong);
 
@@ -718,14 +719,14 @@ public class DriverRegistroServiziDB_accordiLIB {
 				Long idR = idResources.remove(0);
 				Resource resource = new Resource();
 				resource.setId(idR);
-				n = n + DriverRegistroServiziDB_accordiRestLIB.CRUDResource(CostantiDB.DELETE, accordoServizio, resource, con, idAccordoLong);
+				n = n + DriverRegistroServiziDB_accordiRestLIB.CRUDResource(CostantiDB.DELETE, accordoServizio, resource, con, idAccordoLong, driverBYOK);
 			}
 			logDebug(log, "Cancellate "+n+" resources associate all'accordo :" + nome + " id :" + idAccordoLong);
 			
 			Resource resource = null;
 			for (int i = 0; i < accordoServizio.sizeResourceList(); i++) {
 				resource = accordoServizio.getResource(i);
-				DriverRegistroServiziDB_accordiRestLIB.CRUDResource(CostantiDB.CREATE,accordoServizio,resource, con, idAccordoLong);
+				DriverRegistroServiziDB_accordiRestLIB.CRUDResource(CostantiDB.CREATE,accordoServizio,resource, con, idAccordoLong, driverBYOK);
 			}
 			logDebug(log, "inserite " + accordoServizio.sizeResourceList() + " resources relative all'accordo :" + nome + " id :" + idAccordoLong);
 			
@@ -817,7 +818,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 			
 			// ProtocolProperties
 			DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, accordoServizio.getProtocolPropertyList(), 
-					idAccordoLong, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, con, DriverRegistroServiziDB_LIB.tipoDB);
+					idAccordoLong, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, con, DriverRegistroServiziDB_LIB.tipoDB, driverBYOK);
 			
 			
 		}catch (SQLException se) {
@@ -1119,7 +1120,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 	
 	
 	public static void deleteAccordoServizioParteComune(org.openspcoop2.core.registry.AccordoServizioParteComune accordoServizio, 
-			Connection con, String tabellaSoggetti, Logger log, IDAccordoFactory idAccordoFactory) throws DriverRegistroServiziException {
+			Connection con, String tabellaSoggetti, Logger log, IDAccordoFactory idAccordoFactory, IDriverBYOK driverBYOK) throws DriverRegistroServiziException {
 
 		if(tabellaSoggetti!=null) {
 			// nop
@@ -1251,7 +1252,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 				Long idR = idResources.remove(0);
 				Resource resource = new Resource();
 				resource.setId(idR);
-				DriverRegistroServiziDB_accordiRestLIB.CRUDResource(CostantiDB.DELETE, accordoServizio, resource, con, idAccordoLong);
+				DriverRegistroServiziDB_accordiRestLIB.CRUDResource(CostantiDB.DELETE, accordoServizio, resource, con, idAccordoLong, driverBYOK);
 			}
 			
 			
@@ -1308,7 +1309,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 			
 			// ProtocolProperties
 			DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
-					idAccordoLong, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, con, DriverRegistroServiziDB_LIB.tipoDB);
+					idAccordoLong, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, con, DriverRegistroServiziDB_LIB.tipoDB, driverBYOK);
 			
 
 			// elimino accordoservizio

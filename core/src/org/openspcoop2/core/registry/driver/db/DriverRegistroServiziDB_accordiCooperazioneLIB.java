@@ -34,6 +34,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -364,7 +365,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneLIB {
 	 * Accordo di Cooperazione CRUD
 	 */
 	public static void CRUDAccordoCooperazione(int type, org.openspcoop2.core.registry.AccordoCooperazione accordoCooperazione, 
-			Connection con, String tipoDatabase) throws DriverRegistroServiziException {
+			Connection con, String tipoDatabase, IDriverBYOK driverBYOK) throws DriverRegistroServiziException {
 		if (accordoCooperazione == null)
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoCooperazione] Accordo di Cooperazione non valido.");
 
@@ -513,7 +514,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneLIB {
 				
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.CREATE, accordoCooperazione.getProtocolPropertyList(), 
-						idAccordoCooperazione, ProprietariProtocolProperty.ACCORDO_COOPERAZIONE, con, tipoDatabase);
+						idAccordoCooperazione, ProprietariProtocolProperty.ACCORDO_COOPERAZIONE, con, tipoDatabase, driverBYOK);
 				
 
 				break;
@@ -700,7 +701,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneLIB {
 				
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, accordoCooperazione.getProtocolPropertyList(), 
-						idAccordoLong, ProprietariProtocolProperty.ACCORDO_COOPERAZIONE, con, tipoDatabase);
+						idAccordoLong, ProprietariProtocolProperty.ACCORDO_COOPERAZIONE, con, tipoDatabase, driverBYOK);
 				
 				
 				
@@ -746,7 +747,7 @@ public class DriverRegistroServiziDB_accordiCooperazioneLIB {
 				
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
-						idAccordoLong, ProprietariProtocolProperty.ACCORDO_COOPERAZIONE, con, tipoDatabase);
+						idAccordoLong, ProprietariProtocolProperty.ACCORDO_COOPERAZIONE, con, tipoDatabase, driverBYOK);
 				
 				
 				// delete Accordo di Cooperazione

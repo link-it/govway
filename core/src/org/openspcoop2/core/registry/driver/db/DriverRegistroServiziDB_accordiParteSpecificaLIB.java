@@ -361,7 +361,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.CREATE, asps.getProtocolPropertyList(), 
-						idServizio, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA, con, DriverRegistroServiziDB_LIB.tipoDB);
+						idServizio, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA, con, DriverRegistroServiziDB_LIB.tipoDB, driverBYOK);
 				
 				
 				break;
@@ -593,7 +593,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, asps.getProtocolPropertyList(), 
-						idServizio, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA, con, DriverRegistroServiziDB_LIB.tipoDB);
+						idServizio, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA, con, DriverRegistroServiziDB_LIB.tipoDB, driverBYOK);
 				
 				
 				break;
@@ -636,7 +636,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
-						idServizio, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA, con, DriverRegistroServiziDB_LIB.tipoDB);
+						idServizio, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA, con, DriverRegistroServiziDB_LIB.tipoDB, driverBYOK);
 				
 				
 				
@@ -859,7 +859,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, fruitore.getProtocolPropertyList(), 
-						idFruizione, ProprietariProtocolProperty.FRUITORE, con, DriverRegistroServiziDB_LIB.tipoDB);
+						idFruizione, ProprietariProtocolProperty.FRUITORE, con, DriverRegistroServiziDB_LIB.tipoDB, driverBYOK);
 				
 				break;
 
@@ -965,7 +965,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 								
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, fruitore.getProtocolPropertyList(), 
-						idFruizione, ProprietariProtocolProperty.FRUITORE, con, DriverRegistroServiziDB_LIB.tipoDB);
+						idFruizione, ProprietariProtocolProperty.FRUITORE, con, DriverRegistroServiziDB_LIB.tipoDB, driverBYOK);
 				
 				break;
 
@@ -973,7 +973,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
-						idFruizione, ProprietariProtocolProperty.FRUITORE, con, DriverRegistroServiziDB_LIB.tipoDB);
+						idFruizione, ProprietariProtocolProperty.FRUITORE, con, DriverRegistroServiziDB_LIB.tipoDB, driverBYOK);
 				
 				
 				// elimino azioni

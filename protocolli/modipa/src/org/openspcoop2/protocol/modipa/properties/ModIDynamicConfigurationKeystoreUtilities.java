@@ -80,7 +80,7 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 				ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_ID, 
 				ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_LABEL);
 		modeItem.setDefaultValue(ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_DEFAULT_VALUE);
-		modeItem.setReloadOnChange(true);
+		modeItem.setReloadOnChange(true, true);
 		configuration.addConsoleItem(modeItem);
 				
 		StringConsoleItem typeItem = (StringConsoleItem) 
@@ -89,7 +89,7 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 				ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_ID, 
 				ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_LABEL);
 		typeItem.setDefaultValue(ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_DEFAULT_VALUE);
-		typeItem.setReloadOnChange(true);
+		typeItem.setReloadOnChange(true, true);
 		configuration.addConsoleItem(typeItem);
 		
 		AbstractConsoleItem<?> archiveItem = 
@@ -102,6 +102,7 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 		((BinaryConsoleItem)archiveItem).setReadOnly(false);
 		((BinaryConsoleItem)archiveItem).setRequired(true);
 		((BinaryConsoleItem)archiveItem).setNoteUpdate(ModIConsoleCostanti.MODIPA_KEYSTORE_ARCHIVE_NOTE_UPDATE);
+		((BinaryConsoleItem)archiveItem).setLock(true);
 		configuration.addConsoleItem(archiveItem);
 		
 		AbstractConsoleItem<?> pathItem = 
@@ -132,7 +133,7 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 		AbstractConsoleItem<?> keystorePasswordItem = 
 				ProtocolPropertiesFactory.newConsoleItem(
 						ConsoleItemValueType.STRING,
-						ConsoleItemType.HIDDEN,
+						ConsoleItemType.LOCK_HIDDEN,
 						ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_ID, 
 						ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_LABEL);
 		keystorePasswordItem.setRequired(requiredValue);
@@ -150,7 +151,7 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 		AbstractConsoleItem<?> keyPasswordItem = 
 				ProtocolPropertiesFactory.newConsoleItem(
 						ConsoleItemValueType.STRING,
-						ConsoleItemType.HIDDEN,
+						ConsoleItemType.LOCK_HIDDEN,
 						ModIConsoleCostanti.MODIPA_KEY_PASSWORD_ID, 
 						ModIConsoleCostanti.MODIPA_KEY_PASSWORD_LABEL);
 		keyPasswordItem.setRequired(requiredValue);
@@ -553,10 +554,10 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_ID);
 		if(keystorePasswordItem!=null) {
 			if(ridefinisci && !hsm && !keystoreKeyPair && !keystoreJWK) {
-				keystorePasswordItem.setType(ConsoleItemType.TEXT_EDIT);
+				keystorePasswordItem.setType(ConsoleItemType.LOCK);
 			}
 			else {
-				keystorePasswordItem.setType(ConsoleItemType.HIDDEN);
+				keystorePasswordItem.setType(ConsoleItemType.LOCK_HIDDEN);
 				
 				StringProperty keystorePasswordItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_ID);
 				if(keystorePasswordItemValue!=null) {
@@ -585,14 +586,14 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_KEY_PASSWORD_ID);
 		if(keyPasswordItem!=null) {
 			if(ridefinisci && (!hsm || HSMUtils.isHsmConfigurableKeyPassword()) && !keystoreJWK) {
-				keyPasswordItem.setType(ConsoleItemType.TEXT_EDIT);
+				keyPasswordItem.setType(ConsoleItemType.LOCK);
 				
 				if(keystoreKeyPair) {
 					keyPasswordItem.setRequired(false);
 				}
 			}
 			else {
-				keyPasswordItem.setType(ConsoleItemType.HIDDEN);
+				keyPasswordItem.setType(ConsoleItemType.LOCK_HIDDEN);
 				
 				StringProperty keyPasswordItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_PASSWORD_ID);
 				if(keyPasswordItemValue!=null) {
@@ -740,7 +741,7 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 						ModIConsoleCostanti.MODIPA_KEYSTORE_FRUIZIONE_TOKEN_POLICY);
 			}
 			modeItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_DEFAULT_VALUE);
-			modeItem.setReloadOnChange(true);
+			modeItem.setReloadOnChange(true, true);
 			configuration.addConsoleItem(modeItem);
 		}
 		if(keystoreFruizioneOauthNoSicurezzaMessaggio) {
@@ -793,7 +794,7 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 		else {
 			modeItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE_DEFAULT_VALUE);
 		}
-		modeItem.setReloadOnChange(true);
+		modeItem.setReloadOnChange(true, true);
 		if( (ssl && !x5u) || keystoreFruizione) {
 			modeItem.setType(ConsoleItemType.HIDDEN);
 		}
@@ -810,7 +811,7 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 				(BooleanConsoleItem) ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.BOOLEAN, ConsoleItemType.CHECKBOX,
 						id, label);
 		booleanConsoleItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_KEYSTORE_MODE_DEFAULT_VALUE);
-		booleanConsoleItem.setReloadOnChange(true);
+		booleanConsoleItem.setReloadOnChange(true, true);
 		configuration.addConsoleItem(booleanConsoleItem);
 				
 	}
@@ -863,7 +864,7 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 		StringConsoleItem passwordItem =  (StringConsoleItem)
 				ProtocolPropertiesFactory.newConsoleItem(
 						ConsoleItemValueType.STRING,
-						ConsoleItemType.HIDDEN,
+						ConsoleItemType.LOCK_HIDDEN,
 						ssl ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD_ID
 							: 
 							ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD_ID, 
@@ -978,14 +979,14 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 				List<String> l = new ArrayList<>();
 				HSMUtils.fillTipologieKeystore(true, false, l);
 				if(l!=null && !l.isEmpty()) {
-					typeItem.setReloadOnChange(true);
+					typeItem.setReloadOnChange(true, true);
 					for (String hsmType : l) {
 						((StringConsoleItem)typeItem).addLabelValue(hsmType, hsmType);
 					}
 				}
 			}
 			else {
-				typeItem.setReloadOnChange(reloadOnChange);
+				typeItem.setReloadOnChange(reloadOnChange, true);
 			}
 			
 			StringProperty typeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, 
@@ -1039,7 +1040,7 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 		AbstractConsoleItem<?> passwordItem = 	
 				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), 
 						passwordId);
-		passwordItem.setType(password ? ConsoleItemType.TEXT_EDIT : ConsoleItemType.HIDDEN);
+		passwordItem.setType(password ? ConsoleItemType.LOCK : ConsoleItemType.LOCK_HIDDEN);
 		if(password)
 			passwordItem.setRequired(requiredValue);
 		else 

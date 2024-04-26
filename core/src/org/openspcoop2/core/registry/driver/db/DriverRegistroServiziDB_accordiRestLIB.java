@@ -33,6 +33,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.ProprietariProtocolProperty;
@@ -62,7 +63,7 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
 public class DriverRegistroServiziDB_accordiRestLIB {
 	
 	
-	public static int CRUDResource(int type, AccordoServizioParteComune as,Resource resource, Connection con, long idAccordo) throws DriverRegistroServiziException {
+	public static int CRUDResource(int type, AccordoServizioParteComune as,Resource resource, Connection con, long idAccordo, IDriverBYOK driverBYOK) throws DriverRegistroServiziException {
 		PreparedStatement updateStmt = null;
 		String updateQuery;
 		PreparedStatement selectStmt = null;
@@ -341,7 +342,7 @@ public class DriverRegistroServiziDB_accordiRestLIB {
 				
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(type, resource.getProtocolPropertyList(), 
-						idResource, ProprietariProtocolProperty.RESOURCE, con, DriverRegistroServiziDB_LIB.tipoDB);
+						idResource, ProprietariProtocolProperty.RESOURCE, con, DriverRegistroServiziDB_LIB.tipoDB, driverBYOK);
 			}
 
 

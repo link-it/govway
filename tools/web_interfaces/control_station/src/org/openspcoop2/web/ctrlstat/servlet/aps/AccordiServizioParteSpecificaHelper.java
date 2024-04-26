@@ -6637,7 +6637,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setSelected(tipoProtocollo);
 			de.setType(DataElementType.SELECT);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 		}else {
 			de.setValue(tipoProtocollo);
 			de.setType(DataElementType.HIDDEN);
@@ -6660,7 +6660,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de.setType(DataElementType.SELECT);
 				de.setValues(soggettiFruitoriList);
 				de.setLabels(soggettiFruitoriListLabel);
-				de.setPostBack(true);
+				de.setPostBack_viaPOST(true);
 				de.setSelected(providerSoggettoFruitore);
 				dati.add(de);
 			} else {
@@ -6692,7 +6692,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de.setType(DataElementType.SELECT);
 				de.setValues(soggettiList);
 				de.setLabels(soggettiListLabel);
-				de.setPostBack(true);
+				de.setPostBack_viaPOST(true);
 				de.setSelected(provider);
 				dati.add(de);
 			} else {
@@ -6729,7 +6729,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ACCORDO);
 			de.setValues(accordiList);
 			de.setLabels(accordiListLabel);
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 			if (accordo != null)
 				de.setSelected(accordo);
 			
@@ -6931,7 +6931,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							de.setValues(ptList);
 							de.setLabels(ptList);
 							de.setSelected(portType);
-							de.setPostBack(true);
+							if(tipoOp.equals(TipoOperazione.ADD)) {
+								de.setPostBack_viaPOST(true);
+							}
+							else {
+								de.setPostBack(true);
+							}
 							if (!isModalitaAvanzata || this.apsCore.isPortTypeObbligatorioImplementazioniSOAP()) {
 								de.setRequired(true);
 							}
@@ -7110,7 +7115,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de.setType(DataElementType.SELECT);
 					de.setSize(this.getSize());
 					if(tipoOp.equals(TipoOperazione.ADD)) {
-						de.setPostBack(true);
+						de.setPostBack_viaPOST(true);
 					}
 				}
 				else {
@@ -7470,7 +7475,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de.setType(DataElementType.SELECT);
 				de.setValues(soggettiList);
 				de.setLabels(soggettiListLabel);
-				de.setPostBack(true);
+				de.setPostBack_viaPOST(true);
 				de.setSelected(provider);
 				dati.add(de);
 			} else {

@@ -36,9 +36,7 @@ public interface IDriverBYOK {
 	}
 	public BYOKWrappedValue wrap(byte[] value) throws UtilsException;
 	
-	public default byte[] unwrap(byte[] value) throws UtilsException {
-		return unwrap(new String(value));
-	}
+	public byte[] unwrap(byte[] value) throws UtilsException;
 	public byte[] unwrap(String value) throws UtilsException;
 	
 	public default String unwrapAsString(String value) throws UtilsException{
