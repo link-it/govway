@@ -18,9 +18,9 @@
 	<target name="build_manifest" description="Crea il Manifest di OpenSPCoop2">
 		
 		<var name="tmp_prefix" value="lib" />
-		<var name="tmp" value="${tmp_prefix}/bcprov-ext-jdk18on-1.74.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk18on-1.74.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/bcutil-jdk18on-1.74.jar"/>
+		<var name="tmp" value="${tmp_prefix}/bcprov-ext-jdk18on-1.78.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk18on-1.78.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/bcutil-jdk18on-1.78.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-codec-1.15.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections-3.2.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections4-4.4.jar"/>
@@ -61,15 +61,15 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/saaj-impl-1.5.3-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/stax-ex-1.8.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/mimepull-1.9.14.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aop-5.3.33.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aspects-5.3.33.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-beans-5.3.33.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-5.3.33.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-support-5.3.33.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-core-5.3.33.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-expression-5.3.33.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-tx-5.3.33.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-web-5.3.33.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aop-5.3.34.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aspects-5.3.34.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-beans-5.3.34.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-5.3.34.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-support-5.3.34.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-core-5.3.34.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-expression-5.3.34.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-tx-5.3.34.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-web-5.3.34.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-5.8.11.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/uddi4j-2.0.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xalan-2.7.3.jar"/>
@@ -816,9 +816,9 @@
 				<include name="commons-fileupload-1.5.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/security">
-				<include name="bcprov-ext-jdk18on-1.74.jar"/>
-				<include name="bcpkix-jdk18on-1.74.jar"/>
-				<include name="bcutil-jdk18on-1.74.jar"/>
+				<include name="bcprov-ext-jdk18on-1.78.jar"/>
+				<include name="bcpkix-jdk18on-1.78.1.jar"/>
+				<include name="bcutil-jdk18on-1.78.1.jar"/>
 				<include name="neethi-3.2.0.jar"/>
 				<include name="xmlsec-2.3.4-gov4j-1.jar"/>
 				<include name="cryptacular-1.2.5.jar"/>

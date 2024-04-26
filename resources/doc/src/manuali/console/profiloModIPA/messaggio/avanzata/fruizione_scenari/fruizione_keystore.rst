@@ -61,6 +61,8 @@ Nella sezione "ModI - Risposta" se viene abilitata la 'Verifica Audience' nel to
  :scale: 70%
  :align: center
  :name: modipa_fruizione_keystore_audience_risposta
+ 
+ Configurazione fruizione 'ModI' con verifica dell'audience atteso nella risposta
 
 
 

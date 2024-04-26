@@ -30,4 +30,36 @@
       <packageUrl regex="true">^pkg:javascript/jquery@.*$</packageUrl>
       <vulnerabilityName>jQuery 1.x and 2.x are End-of-Life and no longer receiving security updates</vulnerabilityName>
    </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: jfreechart-1.5.3.jar
+      Viene utilizzato dalle console di gestione e monitoraggio adibite a funzioni di backoffice che non devono essere esposte al pubblico.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/org\.jfree/jfreechart@.*$</packageUrl>
+      <cpe>cpe:/a:time_project:time</cpe>
+   </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: jfreechart-1.5.3.jar
+      Viene utilizzato dalle console di gestione e monitoraggio adibite a funzioni di backoffice che non devono essere esposte al pubblico.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/org\.jfree/jfreechart@.*$</packageUrl>
+      <vulnerabilityName>CVE-2023-52070</vulnerabilityName>
+   </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: jfreechart-1.5.3.jar
+      Viene utilizzato dalle console di gestione e monitoraggio adibite a funzioni di backoffice che non devono essere esposte al pubblico.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/org\.jfree/jfreechart@.*$</packageUrl>
+      <vulnerabilityName>CVE-2024-22949</vulnerabilityName>
+   </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: jfreechart-1.5.3.jar
+      Viene utilizzato dalle console di gestione e monitoraggio adibite a funzioni di backoffice che non devono essere esposte al pubblico.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/org\.jfree/jfreechart@.*$</packageUrl>
+      <vulnerabilityName>CVE-2024-23076</vulnerabilityName>
+   </suppress>
 </suppressions>

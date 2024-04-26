@@ -34,6 +34,8 @@ I reports prodotti nella directory 'spotbugs-reports' sono analizzabili tramite 
 .. figure:: ../../_figure_console/SpotBugs_gui.png
   :scale: 60%
   :name: SpotBugs_gui
+  
+  Report analizzato tramite la console di SpotBugs
 
 Per produrre un report in un formato direttamente fruibile senza dove utilizzare la `SpotBugs GUI <https://spotbugs.readthedocs.io/en/stable/gui.html>`_ è possibile indicare il formato desiderato tramite il parametro 'spotbugs.outputType'. 
 

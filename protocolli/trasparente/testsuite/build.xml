@@ -126,9 +126,9 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/security" >
-			<include name="bcpkix-jdk18on-1.74.jar"/>
-			<include name="bcprov-ext-jdk18on-1.74.jar"/>
-			<include name="bcutil-jdk18on-1.74.jar"/>
+			<include name="bcpkix-jdk18on-1.78.1.jar"/>
+			<include name="bcprov-ext-jdk18on-1.78.jar"/>
+			<include name="bcutil-jdk18on-1.78.1.jar"/>
 			<include name="neethi-3.2.0.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/shared" >

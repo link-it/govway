@@ -38,7 +38,7 @@ La sola registrazione delle proprietà non è sufficiente su API SOAP poichè pe
 - *puntuale sull'erogazione/fruizione di API*: creare una regola di trasformazione sugli header http di risposta che consenta l'inoltro verso il client degli header 'Location', 'Content-Location' o 'Set-Cookie' (per ulteriori dettagli sulle trasformazioni far riferimento alla sezione :ref:`trasformazioniRisposta`). Nella figura (:numref:`proxyPassReverse_APISoapSetCookie`) viene fornito un esempio di configurazione.
 
    .. table:: Trasformazione per attuare proxy pass reverse su API SOAP
-      :widths: 35 65
+      :widths: 35 65 30
       :class: longtable
       :name: proxyPassReverseTrasformazioneAPISOAP
 
