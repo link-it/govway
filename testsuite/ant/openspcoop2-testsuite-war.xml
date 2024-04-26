@@ -128,9 +128,9 @@
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="bcpkix-jdk18on-1.76.jar"/>
-				<include name="bcprov-ext-jdk18on-1.76.jar"/>
-				<include name="bcutil-jdk18on-1.76.jar"/>
+				<include name="bcpkix-jdk18on-1.78.1.jar"/>
+				<include name="bcprov-ext-jdk18on-1.78.jar"/>
+				<include name="bcutil-jdk18on-1.78.1.jar"/>
 			</lib>
 			<lib dir="${required_lib}/saaj">
 				<include name="*.jar"/>
@@ -139,8 +139,8 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/spring">
-				<include name="spring-web-6.1.5.jar"/>
-				<include name="spring-core-6.1.5.jar"/>
+				<include name="spring-web-6.1.6.jar"/>
+				<include name="spring-core-6.1.6.jar"/>
 			</lib>
 			<lib dir="${required_lib}/jaxb">
 				<include name="${jaxb_jar}" />

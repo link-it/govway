@@ -4,7 +4,6 @@ dist
 bin
 target
 .ant-targets-build.xml
-log
 dependency-check-result
 testsuite-result
 # Except this file

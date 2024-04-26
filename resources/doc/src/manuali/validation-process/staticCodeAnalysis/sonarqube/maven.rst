@@ -47,3 +47,5 @@ La figura :numref:`SonarQube_report` mostra un esempio di report.
 .. figure:: ../../_figure_console/SonarQube_report.png
   :scale: 60%
   :name: SonarQube_report
+  
+  SonarQube report

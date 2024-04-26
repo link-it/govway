@@ -42,6 +42,8 @@ Le evidenze del processo di validazione relative al token PDND sono le medesime 
  :scale: 80%
  :align: center
  :name: modipa_erogazione_messaggio_richiesta_audit_01_fig
+ 
+ Evidenza diagnostica degli header "Authorization" e "Agid-Jwt-TrackingEvidence"
 
 
 2. Grazie alle configurazioni presenti nell'erogazione, ed in particolare all'indicazione che il token ricevuto deve essere validato tramite Token Policy PDND, GovWay è in grado di validare i dati di sicurezza ricevuti (:numref:`modipa_pdnd_validazione_token_audit01_02`) e decodificare il token. 

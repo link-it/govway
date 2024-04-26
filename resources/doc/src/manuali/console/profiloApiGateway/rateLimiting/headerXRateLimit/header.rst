@@ -86,7 +86,7 @@ Header HTTP utilizzati nelle Policy di Rate Limiting
 - **Numero Richieste Completate con Successo, Fallite o con Fault Applicativi** (:numref:`headerGwRateLimitingMetricaNumeroRichiesteEsito`)
 
   .. table:: Header HTTP relativi alla metrica 'Numero Richieste Completate con Successo, Fallite o con Fault Applicativi'
-     :widths: 35 65
+     :widths: 50 50 50 50 50
      :name: headerGwRateLimitingMetricaNumeroRichiesteEsito
 
      =============================================  ========================================  =======================================  =================================================  ==============================================================================

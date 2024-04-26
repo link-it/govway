@@ -9,7 +9,7 @@ Ogni funzionalità precedentemente indicata richiede che venga indicato il forma
 Di seguito viene fornita una tabella di mapping tra le informazioni che GovWay cerca di estrarre dal token e i nomi dei claims rispetto al formato impostabile nelle funzionalità suddette.
 
 .. table:: Mapping informazione-claim per ogni formato di token
-   :widths: 30 30 40
+   :widths: 30 30 30 30 30 30
    :name: mappingClaimsGwTab
 
    =================   ==============================   =========================   =========================   ==========================   ==================
