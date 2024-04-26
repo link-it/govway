@@ -87,6 +87,7 @@ public class ModIFactory extends BasicFactory<AbstractModISecurityToken<?>> {
 		DBProtocolPropertiesUtils.addConfidentialProtocolProperty(ModICostanti.MODIPA_KEY_PASSWORD);
 		DBProtocolPropertiesUtils.addConfidentialProtocolProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD);
 		DBProtocolPropertiesUtils.addConfidentialProtocolProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD);
+		DBProtocolPropertiesUtils.addConfidentialProtocolProperty(ModICostanti.MODIPA_KEYSTORE_ARCHIVE);
 	}
 	
 	

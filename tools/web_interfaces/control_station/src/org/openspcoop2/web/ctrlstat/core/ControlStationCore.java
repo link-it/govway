@@ -9041,6 +9041,39 @@ public class ControlStationCore {
 		}
 	}
 	
+	public byte[] wrap(byte[] value) throws DriverControlStationException {
+		try {
+			if(value==null || value.length<=0) {
+				return value;
+			}
+			DriverBYOK driverBYOK = getDriverBYOK(true, false);
+			if(driverBYOK==null) {
+				return value;
+			}
+			BYOKWrappedValue v = driverBYOK.wrap(value);
+			if(v!=null && v.getWrappedValue()!=null) {
+				return v.getWrappedValue().getBytes();
+			}
+			throw new UtilsException("Wrap value failed");
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
+	}
+	public byte[] unwrap(byte[] value) throws DriverControlStationException {
+		try {
+			if(value==null || value.length<=0) {
+				return value;
+			}
+			DriverBYOK driverBYOK = getDriverBYOK(false, true);
+			if(driverBYOK==null) {
+				return value;
+			}
+			return driverBYOK.unwrap(value);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
+	}
+	
 	public void lock(DataElement de, String value) throws DriverControlStationException {
 		lock(de, value, true);
 	}

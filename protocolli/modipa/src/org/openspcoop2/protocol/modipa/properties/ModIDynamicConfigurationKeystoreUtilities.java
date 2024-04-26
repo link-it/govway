@@ -102,6 +102,7 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 		((BinaryConsoleItem)archiveItem).setReadOnly(false);
 		((BinaryConsoleItem)archiveItem).setRequired(true);
 		((BinaryConsoleItem)archiveItem).setNoteUpdate(ModIConsoleCostanti.MODIPA_KEYSTORE_ARCHIVE_NOTE_UPDATE);
+		((BinaryConsoleItem)archiveItem).setLock(true);
 		configuration.addConsoleItem(archiveItem);
 		
 		AbstractConsoleItem<?> pathItem = 

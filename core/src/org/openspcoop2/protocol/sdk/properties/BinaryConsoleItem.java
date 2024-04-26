@@ -38,6 +38,7 @@ public class BinaryConsoleItem extends AbstractConsoleItem<byte[]> {
 	private boolean readOnly = false; // vale solo in change
 	private boolean showContent = true; // vale solo in change
 	private String noteUpdate = null;
+	private boolean lock = false;
 
 	protected BinaryConsoleItem(String id, String label, ConsoleItemType type) throws ProtocolException {
 		this(id, label, type, null, null);
@@ -88,6 +89,15 @@ public class BinaryConsoleItem extends AbstractConsoleItem<byte[]> {
 	public void setNoteUpdate(String noteUpdate) {
 		this.noteUpdate = noteUpdate;
 	}
+
+	public void setLock(boolean lock) {
+		this.lock = lock;
+	}
+	
+	@Override
+	public boolean isLockedType() {
+		return this.lock;
+	}
 	
 	@Override
 	protected byte[] cloneValue(byte[] value) throws ProtocolException {
@@ -101,4 +111,5 @@ public class BinaryConsoleItem extends AbstractConsoleItem<byte[]> {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 	}
+
 }

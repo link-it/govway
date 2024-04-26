@@ -102,6 +102,23 @@ public class DriverBYOK implements IDriverBYOK {
 	}
 
 	@Override
+	public byte[] unwrap(byte[] value) throws UtilsException {
+		if(value==null || value.length<=0) {
+			return value;
+		}
+		String check = new String(value);
+		if(BYOKUtilities.isWrappedValue(check)) {
+			if(this.securityPolicy==null) {
+				return value;
+			}
+			
+			String rawWrappedValue =  BYOKUtilities.getRawWrappedValue(check);
+			BYOKRequestParams p = getBYOKRequestParams(false, this.securityPolicy);
+			return process(getBYOKInstance(this.log,rawWrappedValue.getBytes(),p));
+		}
+		return value;
+	}
+	@Override
 	public byte[] unwrap(String value) throws UtilsException {
 		if(BYOKUtilities.isWrappedValue(value)) {
 			if(this.securityPolicy==null) {

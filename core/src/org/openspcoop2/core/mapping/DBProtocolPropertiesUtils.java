@@ -189,6 +189,13 @@ public class DBProtocolPropertiesUtils {
 							}
 							if(binaryValue){
 								contenutoBinarioFileName = protocolProperty.getFile();
+							
+								if(driverBYOK!=null && isConfidentialProtocolProperty(protocolProperty.getName())) {
+									BYOKWrappedValue byokValue = driverBYOK.wrap(contenutoBinario);
+									if(byokValue!=null) {
+										contenutoBinario = byokValue.getWrappedValue().getBytes();
+									}
+								}
 							}
 						}
 						
@@ -360,6 +367,13 @@ public class DBProtocolPropertiesUtils {
 							}
 							if(binaryValue){
 								contenutoBinarioFileName = protocolProperty.getFile();
+							
+								if(driverBYOK!=null && isConfidentialProtocolProperty(protocolProperty.getName())) {
+									BYOKWrappedValue byokValue = driverBYOK.wrap(contenutoBinario);
+									if(byokValue!=null) {
+										contenutoBinario = byokValue.getWrappedValue().getBytes();
+									}
+								}
 							}
 						}
 						
@@ -758,7 +772,9 @@ public class DBProtocolPropertiesUtils {
 				pp = new ProtocolProperty();
 				pp.setTipoProprietario(rs.getString(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO));
 				pp.setIdProprietario(rs.getLong(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO));
-				pp.setName(rs.getString(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME));
+				
+				String ppName = rs.getString(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME);
+				pp.setName(ppName);
 				
 				String plainStringValue = rs.getString(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING);
 				String encStringValue = rs.getString(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_ENCODING_STRING);
@@ -783,7 +799,13 @@ public class DBProtocolPropertiesUtils {
 				if(rs.wasNull()){
 					pp.setBooleanValue(null);
 				}
-				pp.setByteFile(jdbcAdapter.getBinaryData(rs,CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_BINARY));
+				
+				byte[]binaryValue = jdbcAdapter.getBinaryData(rs,CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_BINARY);
+				if(binaryValue!=null && binaryValue.length>0 && driverBYOK!=null && isConfidentialProtocolProperty(ppName)) {
+					binaryValue = driverBYOK.unwrap(binaryValue);
+				}
+				pp.setByteFile(binaryValue);
+				
 				pp.setFile(rs.getString(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_FILENAME));
 				pp.setId(rs.getLong(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID));
 			}

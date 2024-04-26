@@ -1677,7 +1677,8 @@ public class ConsoleHelper implements IConsoleHelper {
 						} else {
 							bp.setName(item.getId()); 
 						}
-						BinaryProperty binaryProperty = ProtocolPropertiesFactory.newProperty(bp.getName(), bp.getValue(), bp.getFilename(), bp.getId());
+						byte [] binValue = item.isLockedType() ? this.core.unwrap(bp.getValue()) : bp.getValue(); 
+						BinaryProperty binaryProperty = ProtocolPropertiesFactory.newProperty(bp.getName(), binValue, bp.getFilename(), bp.getId());
 						properties.addProperty(binaryProperty); 
 						break;
 					case NUMBER:
