@@ -300,13 +300,16 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 				
 				// Protocol Properties
 				try{
-					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAccordoLong, ProprietariProtocolProperty.ACCORDO_COOPERAZIONE, con, this.driver.tipoDB);
-					if(listPP!=null && listPP.size()>0){
+					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAccordoLong, ProprietariProtocolProperty.ACCORDO_COOPERAZIONE, con, 
+							this.driver.tipoDB, this.driver.getDriverUnwrapBYOK());
+					if(listPP!=null && !listPP.isEmpty()){
 						for (ProtocolProperty protocolProperty : listPP) {
 							accordoCooperazione.addProtocolProperty(protocolProperty);
 						}
 					}
-				}catch(DriverRegistroServiziNotFound dNotFound){}
+				}catch(DriverRegistroServiziNotFound dNotFound){
+					// ignore
+				}
 				
 
 			} else {
@@ -645,7 +648,8 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 		try {
 			this.driver.logDebug("CRUDServizio tupe=1");
 			// CREATE
-			DriverRegistroServiziDB_accordiCooperazioneLIB.CRUDAccordoCooperazione(CostantiDB.CREATE, accordoCooperazione, con, this.driver.tipoDB);
+			DriverRegistroServiziDB_accordiCooperazioneLIB.CRUDAccordoCooperazione(CostantiDB.CREATE, accordoCooperazione, con, 
+					this.driver.tipoDB, this.driver.getDriverWrapBYOK());
 
 		} catch (Exception qe) {
 			error = true;
@@ -719,7 +723,8 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 		try {
 
 			// UPDATE
-			DriverRegistroServiziDB_accordiCooperazioneLIB.CRUDAccordoCooperazione(CostantiDB.UPDATE, accordoCooperazione, con, this.driver.tipoDB);
+			DriverRegistroServiziDB_accordiCooperazioneLIB.CRUDAccordoCooperazione(CostantiDB.UPDATE, accordoCooperazione, con, 
+					this.driver.tipoDB, this.driver.getDriverWrapBYOK());
 
 		} catch (Exception qe) {
 			error = true;
@@ -759,7 +764,8 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 		try {
 			this.driver.logDebug("CRUDServizio type = 3");
 			// creo soggetto
-			DriverRegistroServiziDB_accordiCooperazioneLIB.CRUDAccordoCooperazione(CostantiDB.DELETE, accordoCooperazione, con, this.driver.tipoDB);
+			DriverRegistroServiziDB_accordiCooperazioneLIB.CRUDAccordoCooperazione(CostantiDB.DELETE, accordoCooperazione, con, 
+					this.driver.tipoDB, this.driver.getDriverWrapBYOK());
 
 		} catch (Exception qe) {
 			error = true;

@@ -26,7 +26,6 @@ import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.Security;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -59,6 +58,7 @@ import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.json.YamlSnakeLimits;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.security.ProviderUtils;
 import org.openspcoop2.utils.xml.XMLDiffImplType;
 import org.openspcoop2.utils.xml.XMLDiffOptions;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
@@ -445,8 +445,7 @@ public class InitListener implements ServletContextListener {
 			// Load Security Provider
 			try {
 				if(consoleProperties.isSecurityLoadBouncyCastle()) {
-					/**Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());*/
-					Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 2); // lasciare alla posizione 1 il provider 'SUN'
+					ProviderUtils.addBouncyCastleAfterSun(true);
 					InitListener.logInfo("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
 				}
 			} catch (Exception e) {

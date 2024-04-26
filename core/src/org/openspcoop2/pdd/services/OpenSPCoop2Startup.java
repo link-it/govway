@@ -240,6 +240,7 @@ import org.openspcoop2.utils.resources.FileSystemMkdirConfig;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.security.ProviderUtils;
 import org.openspcoop2.utils.semaphore.Semaphore;
 import org.openspcoop2.utils.semaphore.SemaphoreConfiguration;
 import org.openspcoop2.utils.semaphore.SemaphoreMapping;
@@ -588,8 +589,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			 */
 			// NOTA: il caricamento di BouncyCastleProvider DEVE essere effettuato prima dell'inizializzazione 'org.apache.wss4j.dom.engine.WSSConfig.init' 
 			if(propertiesReader.isLoadBouncyCastle()){ 
-				//Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-				Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 2); // lasciare alla posizione 1 il provider 'SUN'
+				ProviderUtils.addBouncyCastleAfterSun(true);
 				OpenSPCoop2Startup.logStartupInfo("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
 				
 				if(propertiesReader.getBouncyCastleSecureRandomAlgorithm()!=null) {

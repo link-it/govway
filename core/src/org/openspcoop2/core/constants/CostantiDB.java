@@ -88,6 +88,17 @@ public final class CostantiDB {
     
     /*REGSERV*/
     public static final String PROTOCOL_PROPERTIES = "protocol_properties";
+    public static final String PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO = "tipo_proprietario";
+    public static final String PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO = "id_proprietario";
+    public static final String PROTOCOL_PROPERTIES_COLUMN_NAME = "name";
+    public static final String PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING = "value_string";
+    public static final String PROTOCOL_PROPERTIES_COLUMN_VALUE_ENCODING_STRING = "enc_value_string";
+    public static final String PROTOCOL_PROPERTIES_COLUMN_VALUE_NUMBER = "value_number";
+    public static final String PROTOCOL_PROPERTIES_COLUMN_VALUE_BOOLEAN = "value_boolean";
+    public static final String PROTOCOL_PROPERTIES_COLUMN_VALUE_BINARY = "value_binary";
+    public static final String PROTOCOL_PROPERTIES_COLUMN_FILENAME = "file_name";
+    public static final String PROTOCOL_PROPERTIES_COLUMN_ID = "id";
+    
     public static final String PDD = "pdd";
     public static final String PDD_COLUMN_NOME = "nome";
     public static final String PDD_COLUMN_TIPO = "tipo";

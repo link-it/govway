@@ -1154,13 +1154,16 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 				
 				// Protocol Properties
 				try{
-					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(fruitore.getId(), ProprietariProtocolProperty.FRUITORE, con, this.driver.tipoDB);
+					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(fruitore.getId(), ProprietariProtocolProperty.FRUITORE, con, 
+							this.driver.tipoDB, this.driver.getDriverUnwrapBYOK());
 					if(listPP!=null && !listPP.isEmpty()){
 						for (ProtocolProperty protocolProperty : listPP) {
 							fruitore.addProtocolProperty(protocolProperty);
 						}
 					}
-				}catch(DriverRegistroServiziNotFound dNotFound){}
+				}catch(DriverRegistroServiziNotFound dNotFound){
+					// ignore
+				}
 				
 				
 				accordoServizioParteSpecifica.addFruitore(fruitore);
@@ -1377,13 +1380,17 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 			
 			// Protocol Properties
 			try{
-				List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(longIdAccordoServizioParteSpecifica, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA, con, this.driver.tipoDB);
-				if(listPP!=null && listPP.size()>0){
+				List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(longIdAccordoServizioParteSpecifica, 
+						ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA, con, 
+						this.driver.tipoDB, this.driver.getDriverUnwrapBYOK());
+				if(listPP!=null && !listPP.isEmpty()){
 					for (ProtocolProperty protocolProperty : listPP) {
 						accordoServizioParteSpecifica.addProtocolProperty(protocolProperty);
 					}
 				}
-			}catch(DriverRegistroServiziNotFound dNotFound){}	
+			}catch(DriverRegistroServiziNotFound dNotFound){
+				// ignore
+			}	
 			
 			
 			return accordoServizioParteSpecifica;

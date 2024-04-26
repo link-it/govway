@@ -58,6 +58,8 @@ import org.openspcoop2.web.lib.mvc.Parameter;
  * @version $Rev$, $Date$
  */
 public class ProtocolPropertiesUtilities {
+	
+	private ProtocolPropertiesUtilities() {}
 
 
 	public static ConsoleInterfaceType getTipoInterfaccia(ConsoleHelper consoleHelper){
@@ -70,41 +72,49 @@ public class ProtocolPropertiesUtilities {
 		return ConsoleInterfaceType.AVANZATA;
 	}
 
+	private static String getPrefixErrorItemConClasse(AbstractConsoleItem<?> abItem) {
+		return "Item con classe ["+abItem.getClass()+"] ";
+	}
+	private static String getPrefixErrorItemConClasse(BaseConsoleItem item) {
+		return "Item con classe ["+item.getClass()+"] ";
+	}
+	
+	
 	public static List<DataElement> itemToDataElement(List<DataElement> dati ,
 			ConsoleHelper consoleHelper,
 			BaseConsoleItem item, Object defaultItemValue,
 			ConsoleOperationType consoleOperationType, 
-			Properties binaryChangeProperties, ProtocolProperty protocolProperty, int size) throws Exception {
-		return _itemToDataElement(dati, consoleHelper,
+			Properties binaryChangeProperties, ProtocolProperty protocolProperty, int size) throws ProtocolException {
+		return itemToDataElementEngine(dati, consoleHelper,
 				item, defaultItemValue, 
 				consoleOperationType, 
 				binaryChangeProperties, 
 				protocolProperty!=null ? protocolProperty.getId() : null, 
 				protocolProperty!=null ? protocolProperty.getFile() : null, 
 				size,
-				protocolProperty!=null ? (protocolProperty.getByteFile()!=null) : false);
+				protocolProperty!=null && (protocolProperty.getByteFile()!=null));
 	}
 	public static List<DataElement> itemToDataElement(List<DataElement> dati ,
 			ConsoleHelper consoleHelper,
 			BaseConsoleItem item, Object defaultItemValue,
 			ConsoleOperationType consoleOperationType, 
-			Properties binaryChangeProperties, org.openspcoop2.core.config.ProtocolProperty protocolProperty, int size) throws Exception {
-		return _itemToDataElement(dati, consoleHelper,
+			Properties binaryChangeProperties, org.openspcoop2.core.config.ProtocolProperty protocolProperty, int size) throws ProtocolException {
+		return itemToDataElementEngine(dati, consoleHelper,
 				item, defaultItemValue, 
 				consoleOperationType, 
 				binaryChangeProperties, 
 				protocolProperty!=null ? protocolProperty.getId() : null, 
 				protocolProperty!=null ? protocolProperty.getFile() : null, 
 				size,
-				protocolProperty!=null ? (protocolProperty.getByteFile()!=null) : false);
+				protocolProperty!=null && (protocolProperty.getByteFile()!=null));
 	}
-	private static List<DataElement> _itemToDataElement(List<DataElement> dati ,
+	private static List<DataElement> itemToDataElementEngine(List<DataElement> dati ,
 			ConsoleHelper consoleHelper,
 			BaseConsoleItem item, Object defaultItemValue,
 			ConsoleOperationType consoleOperationType, 
 			Properties binaryChangeProperties, 
 			Long protocolPropertyId, String protocolPropertyFile, int size,
-			boolean contentSaved) throws Exception {
+			boolean contentSaved) throws ProtocolException {
 		if(item == null)
 			return dati;
 
@@ -113,71 +123,82 @@ public class ProtocolPropertiesUtilities {
 			AbstractConsoleItem<?> abItem = (AbstractConsoleItem<?>) item;
 			switch (abItem.getType()) {
 			case CHECKBOX:
-				dati = getCheckbox(dati,abItem, defaultItemValue, size);
+				getCheckbox(dati,abItem, defaultItemValue, size);
+				break;
+			case LOCK:
+				getText(dati, consoleHelper,abItem, size, DataElementType.LOCK);
+				break;
+			case LOCK_HIDDEN:
+				getHidden(dati, consoleHelper, abItem, size);
 				break;
 			case CRYPT:
-				dati = getText(dati,abItem, size, DataElementType.CRYPT);
+				getText(dati, consoleHelper,abItem, size, DataElementType.CRYPT);
 				break;
 			case FILE:
-				dati = getFile(dati,consoleHelper, abItem, size, consoleOperationType,binaryChangeProperties, protocolPropertyId, protocolPropertyFile, contentSaved); 
+				getFile(dati, consoleHelper, abItem, size, consoleOperationType,binaryChangeProperties, protocolPropertyId, protocolPropertyFile, contentSaved); 
 				break;
 			case HIDDEN:
-				dati = getHidden(dati,abItem, size);
+				getHidden(dati, consoleHelper, abItem, size);
 				break;
 			case SELECT:
-				dati = getSelect(dati,abItem, defaultItemValue, size);
+				getSelect(dati,abItem, defaultItemValue, size);
 				break;
 			case MULTI_SELECT:
-				dati = getMultiSelect(dati,abItem, defaultItemValue, size);
+				getMultiSelect(dati,abItem, defaultItemValue, size);
 				break;
 			case TEXT:
-				dati = getText(dati,abItem, size, DataElementType.TEXT);
+				getText(dati, consoleHelper,abItem, size, DataElementType.TEXT);
 				break;
 			case TEXT_AREA:
-				dati = getText(dati,abItem, size, DataElementType.TEXT_AREA);
+				getText(dati, consoleHelper,abItem, size, DataElementType.TEXT_AREA);
 				break;
 			case TEXT_AREA_NO_EDIT:
-				dati = getText(dati,abItem, size, DataElementType.TEXT_AREA_NO_EDIT);
+				getText(dati, consoleHelper,abItem, size, DataElementType.TEXT_AREA_NO_EDIT);
 				break;
 			case TEXT_EDIT:
-				dati = getText(dati,abItem, size, DataElementType.TEXT_EDIT);
+				getText(dati, consoleHelper,abItem, size, DataElementType.TEXT_EDIT);
 				break;
 			case TAGS:
-				dati = getText(dati,abItem, size, DataElementType.TEXT_EDIT);
+				getText(dati, consoleHelper,abItem, size, DataElementType.TEXT_EDIT);
 				dati.get(dati.size()-1).enableTags();
 				break;
 			case NUMBER:
-				dati = getText(dati,abItem, size, DataElementType.NUMBER);
+				getText(dati, consoleHelper,abItem, size, DataElementType.NUMBER);
 				break;
 			default:
-				throw new ProtocolException("Item con classe ["+abItem.getClass()+"] identificato come tipo AbstractConsoleItem ma con Type: ["+abItem.getType()+"] di tipo titolo o note");
+				throw new ProtocolException(getPrefixErrorItemConClasse(abItem)+"identificato come tipo AbstractConsoleItem ma con Type: ["+abItem.getType()+"] di tipo titolo o note");
 			}
 		} else {
 			// titoli e note
 			switch (item.getType()) {
 			case NOTE:
-				dati = getTitle(dati,item, size,DataElementType.NOTE);
+				getTitle(dati,item, size,DataElementType.NOTE);
 				break;
 			case SUBTITLE:
-				dati = getTitle(dati,item, size,DataElementType.SUBTITLE);
+				getTitle(dati,item, size,DataElementType.SUBTITLE);
 				break;
 			case TITLE:
-				dati = getTitle(dati,item, size,DataElementType.TITLE);
+				getTitle(dati,item, size,DataElementType.TITLE);
 				break;
 			case HIDDEN:
-				dati = getHidden(dati,item, size);
+				getHidden(dati, consoleHelper, item, size);
 				break;
 			default:
-				throw new ProtocolException("Item con classe ["+item.getClass()+"] non identificato come tipo AbstractConsoleItem ma con Type: ["+item.getType()+"] non di tipo titolo o note");
+				throw new ProtocolException(getPrefixErrorItemConClasse(item)+"non identificato come tipo AbstractConsoleItem ma con Type: ["+item.getType()+"] non di tipo titolo o note");
 			}
 		}
 
 		return dati;
 	}
 	
-	public static List<DataElement> itemToDataElementAsHidden(List<DataElement> dati ,BaseConsoleItem item, Object defaultItemValue,
+	public static List<DataElement> itemToDataElementAsHidden(List<DataElement> dati ,ConsoleHelper consoleHelper, BaseConsoleItem item, Object defaultItemValue,
 			ConsoleOperationType consoleOperationType, 
-			Properties binaryChangeProperties, ProtocolProperty protocolProperty, int size) throws Exception {
+			Properties binaryChangeProperties, ProtocolProperty protocolProperty, int size) throws ProtocolException {
+		
+		if(defaultItemValue!=null || consoleOperationType!=null || binaryChangeProperties!=null || protocolProperty!=null) {
+			// nop
+		}
+		
 		if(item == null)
 			return dati;
 
@@ -186,6 +207,8 @@ public class ProtocolPropertiesUtilities {
 			AbstractConsoleItem<?> abItem = (AbstractConsoleItem<?>) item;
 			switch (abItem.getType()) {
 			case CHECKBOX:
+			case LOCK:
+			case LOCK_HIDDEN:
 			case CRYPT:
 			case FILE:
 			case HIDDEN:
@@ -197,10 +220,10 @@ public class ProtocolPropertiesUtilities {
 			case TEXT_EDIT:
 			case TAGS:
 			case NUMBER:
-				dati = getHidden(dati,abItem, size);
+				getHidden(dati, consoleHelper, abItem, size);
 				break;
 			default:
-				throw new ProtocolException("Item con classe ["+abItem.getClass()+"] identificato come tipo AbstractConsoleItem ma con Type: ["+abItem.getType()+"] di tipo titolo o note");
+				throw new ProtocolException(getPrefixErrorItemConClasse(abItem)+"identificato come tipo AbstractConsoleItem ma con Type: ["+abItem.getType()+"] di tipo titolo o note");
 			}
 		} else {
 			// titoli e note non vengono aggiunti lascio il controllo dei tipi per sicurezza
@@ -211,14 +234,14 @@ public class ProtocolPropertiesUtilities {
 			case HIDDEN:
 				break;
 			default:
-				throw new ProtocolException("Item con classe ["+item.getClass()+"] non identificato come tipo AbstractConsoleItem ma con Type: ["+item.getType()+"] non di tipo titolo o note");
+				throw new ProtocolException(getPrefixErrorItemConClasse(item)+"non identificato come tipo AbstractConsoleItem ma con Type: ["+item.getType()+"] non di tipo titolo o note");
 			}
 		}
 
 		return dati;
 	}
 
-	public static List<DataElement> getTitle(List<DataElement> dati ,BaseConsoleItem item, int size, DataElementType type) throws Exception{
+	public static List<DataElement> getTitle(List<DataElement> dati ,BaseConsoleItem item, int size, DataElementType type) {
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		de.setType(type);
@@ -245,49 +268,39 @@ public class ProtocolPropertiesUtilities {
 		return dati;
 	}
 
-	public static List<DataElement> getText(List<DataElement> dati ,AbstractConsoleItem<?> item, int size, DataElementType type) throws Exception{
+	private static String getPrefixMessageErrorConsoleItemType(ConsoleItemValueType consoleItemValueType) {
+		return "Item con consoleItemType ["+consoleItemValueType+"] "; 
+	}
+	
+	public static List<DataElement> getText(List<DataElement> dati ,ConsoleHelper consoleHelper, AbstractConsoleItem<?> item, int size, DataElementType type) throws ProtocolException {
 		DataElement de = new DataElement();
 		de.setName(item.getId());
-		de.setType(type);
+		if(DataElementType.LOCK.equals(type)) {
+			// imposto il tipo insieme al valore
+		}
+		else {
+			de.setType(type);
+		}
 		de.setRequired(item.isRequired());
 		de.setLabel(item.getLabel());
 		de.setLabelRight(item.getLabelRight());
-		de.setPostBack(item.isReloadOnChange()); 
+		if(item.isReloadOnChange()) {
+			if(item.isReloadOnHttpPost()) {
+				de.setPostBack_viaPOST(true); 
+			}
+			else {
+				de.setPostBack(true); 
+			}
+		}
 		de.setNote(item.getNote());
 		de.setSize(size);
 		addDataElementInfo(item, de);
 		
 		ConsoleItemValueType consoleItemValueType = ProtocolPropertiesUtils.getConsoleItemValueType(item);
 
-		switch(consoleItemValueType){
-		// [TODO] controllare casi che ci possono essere
-		case BOOLEAN:
-			BooleanConsoleItem booleanItem = (BooleanConsoleItem) item;
-			de.setValue(booleanItem.getDefaultValue() != null ? booleanItem.getDefaultValue() + "" : "");
-			break;
-		case NUMBER:
-			NumberConsoleItem numberItem = (NumberConsoleItem) item;
-			de.setValue(numberItem.getDefaultValue() != null ? numberItem.getDefaultValue() + "" : "");
-			if(DataElementType.NUMBER.equals(type)) {
-				de.setMinValue((int)numberItem.getMin());
-				de.setMaxValue((int)numberItem.getMax());
-			}
-			break;
-		case STRING:
-			StringConsoleItem stringItem = (StringConsoleItem) item;
-			de.setValue(stringItem.getDefaultValue() != null ? stringItem.getDefaultValue() : "");
-			if(stringItem.getRows()!=null) {
-				de.setRows(stringItem.getRows());
-			}
-			break;
-		case BINARY: // [TODO] da decidere 
-			de.setValue("Prova Binary");
-			break;
-		default:
-			throw new ProtocolException("Item con consoleItemType ["+consoleItemValueType+"] non puo' essere visualizzato come un "+type);
-		}
+		setTextValue(consoleItemValueType, consoleHelper, item, de, type);
 		
-		if(item.getDefaultValueForCloseableSection()!=null && item.getDefaultValueForCloseableSection() instanceof String) {
+		if(item.getDefaultValueForCloseableSection() instanceof String) {
 			String s = (String) item.getDefaultValueForCloseableSection();
 			de.setValoreDefault(s);
 		}		
@@ -296,38 +309,85 @@ public class ProtocolPropertiesUtilities {
 
 		return dati;
 	}
+	private static void setTextValue(ConsoleItemValueType consoleItemValueType,ConsoleHelper consoleHelper,AbstractConsoleItem<?> item,DataElement de, DataElementType type) throws ProtocolException {
+		String value = null;
+		switch(consoleItemValueType){
+		case BOOLEAN:
+			BooleanConsoleItem booleanItem = (BooleanConsoleItem) item;
+			value = booleanItem.getDefaultValue() != null ? booleanItem.getDefaultValue() + "" : "";
+			break;
+		case NUMBER:
+			NumberConsoleItem numberItem = (NumberConsoleItem) item;
+			value = numberItem.getDefaultValue() != null ? numberItem.getDefaultValue() + "" : "";
+			if(DataElementType.NUMBER.equals(type)) {
+				de.setMinValue((int)numberItem.getMin());
+				de.setMaxValue((int)numberItem.getMax());
+			}
+			break;
+		case STRING:
+			StringConsoleItem stringItem = (StringConsoleItem) item;
+			value = stringItem.getDefaultValue() != null ? stringItem.getDefaultValue() : "";
+			if(stringItem.getRows()!=null) {
+				de.setRows(stringItem.getRows());
+			}
+			break;
+		case BINARY: // NOP
+			value = "Prova Binary";
+			break;
+		default:
+			throw new ProtocolException(getPrefixMessageErrorConsoleItemType(consoleItemValueType)+"non puo' essere visualizzato come un "+type);
+		}
+		
+		if(DataElementType.LOCK.equals(type)) {
+			// imposto il tipo insieme al valore
+			try {
+				consoleHelper.getCore().lock(de, value);
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+		}
+		else {
+			de.setValue(value);
+		}
+
+	}
 
 	public static List<DataElement> getFile(List<DataElement> dati ,
 			ConsoleHelper consoleHelper,
 			AbstractConsoleItem<?> item, int size, ConsoleOperationType consoleOperationType, 
 			Properties binaryChangeProperties,
 			Long protocolPropertyId, String protocolPropertyFile,
-			boolean contentSaved) throws Exception{
+			boolean contentSaved) {
+		
+		if(consoleHelper!=null) {
+			// nop
+		}
+		
 		DataElement de = new DataElement();
 		DataElement de2 =null ;
 		List<DataElement> df = null;
 		de.setName(item.getId());
 
-//		String nameRechange = ProtocolPropertiesCostanti.PARAMETER_FILENAME_RECHANGE_PREFIX + item.getId();
-//		String nameRechangeParamTmp = consoleHelper.getParameter(nameRechange);
-//		boolean isNameRechange = "true".equals(nameRechangeParamTmp);
-//		
-//		org.openspcoop2.protocol.sdk.properties.BinaryConsoleItem bci = null;
-//		String fileName = null;
-//		if(item!=null && item instanceof org.openspcoop2.protocol.sdk.properties.BinaryConsoleItem) {
-//			bci = (org.openspcoop2.protocol.sdk.properties.BinaryConsoleItem) item;
-//			fileName = bci.getFileName();
-//		}
-//		if(!consoleOperationType.equals(ConsoleOperationType.ADD) && fileName==null) {
-//			// aggiungo riferimento per dopo
-//			DataElement deChange = new DataElement();
-//			deChange.setName(nameRechange);
-//			deChange.setValue("true");
-//			deChange.setType(DataElementType.HIDDEN);
-//			dati.add(deChange);
-//		}
+		/**String nameRechange = ProtocolPropertiesCostanti.PARAMETER_FILENAME_RECHANGE_PREFIX + item.getId();
+		String nameRechangeParamTmp = consoleHelper.getParameter(nameRechange);
+		boolean isNameRechange = "true".equals(nameRechangeParamTmp);
 		
-		boolean addDE = true;
+		org.openspcoop2.protocol.sdk.properties.BinaryConsoleItem bci = null;
+		String fileName = null;
+		if(item!=null && item instanceof org.openspcoop2.protocol.sdk.properties.BinaryConsoleItem) {
+			bci = (org.openspcoop2.protocol.sdk.properties.BinaryConsoleItem) item;
+			fileName = bci.getFileName();
+		}
+		if(!consoleOperationType.equals(ConsoleOperationType.ADD) && fileName==null) {
+			// aggiungo riferimento per dopo
+			DataElement deChange = new DataElement();
+			deChange.setName(nameRechange);
+			deChange.setValue("true");
+			deChange.setType(DataElementType.HIDDEN);
+			dati.add(deChange);
+		}*/
+		
+		/**boolean addDE = true;*/
 		
 		if(consoleOperationType.equals(ConsoleOperationType.ADD) || !contentSaved){
 			BinaryConsoleItem binaryItem = (BinaryConsoleItem) item;
@@ -339,14 +399,14 @@ public class ProtocolPropertiesUtilities {
 
 			de = bp.getFileDataElement(item.getLabel(), "", size);
 			de.setRequired(item.isRequired());
-			//			de.setPostBack(item.isReloadOnChange()); 
+			/**			de.setPostBack(item.isReloadOnChange()); */ 
 			df = bp.getFileNameDataElement();
 			de2 = bp.getFileIdDataElement();
 		} else {
 			
-//			if(fileName==null || isNameRechange) {
-//				addDE = false;
-//			}
+			/**if(fileName==null || isNameRechange) {
+				addDE = false;
+			}*/
 			
 			de.setType(DataElementType.LINK);
 			String idItem = protocolPropertyId != null ? protocolPropertyId + "" : ""; 
@@ -384,9 +444,9 @@ public class ProtocolPropertiesUtilities {
 			}
 		}
 
-		if(addDE) {
-			dati.add(de);
-		}
+		/**if(addDE) {*/
+		dati.add(de);
+		/**}*/
 		
 		if(df != null)
 			dati.addAll(df);
@@ -413,7 +473,7 @@ public class ProtocolPropertiesUtilities {
 		if(booleanItem.getDefaultValue() != null) {
 			selectedBooleanValue = booleanItem.getDefaultValue();
 		}
-		else if(defaultItemValue!=null && defaultItemValue instanceof Boolean) {
+		else if(defaultItemValue instanceof Boolean) {
 			selectedBooleanValue = (Boolean) defaultItemValue;
 		}
 		else {
@@ -426,11 +486,11 @@ public class ProtocolPropertiesUtilities {
 		if(numberItem.getDefaultValue()!=null) {
 			selectedNumberValue = numberItem.getDefaultValue() + "";
 		}
-		else if(defaultItemValue!=null && defaultItemValue instanceof Long) {
-			selectedNumberValue = ((Long) defaultItemValue) + "";
+		else if(defaultItemValue instanceof Long) {
+			selectedNumberValue = (defaultItemValue) + "";
 		}
-		else if(defaultItemValue!=null && defaultItemValue instanceof Integer) {
-			selectedNumberValue = ((Integer) defaultItemValue) + "";
+		else if(defaultItemValue instanceof Integer) {
+			selectedNumberValue = (defaultItemValue) + "";
 		}
 		else {
 			selectedNumberValue = null;
@@ -442,7 +502,7 @@ public class ProtocolPropertiesUtilities {
 		if(stringItem.getDefaultValue()!=null) {
 			selectedStringValue = stringItem.getDefaultValue();
 		}
-		else if(defaultItemValue!=null && defaultItemValue instanceof String) {
+		else if(defaultItemValue instanceof String) {
 			selectedStringValue = ((String) defaultItemValue);
 		}
 		else {
@@ -451,14 +511,21 @@ public class ProtocolPropertiesUtilities {
 		return selectedStringValue;
 	}
 	
-	public static List<DataElement> getCheckbox(List<DataElement> dati ,AbstractConsoleItem<?> item, Object defaultItemValue, int size) throws Exception{
+	public static List<DataElement> getCheckbox(List<DataElement> dati ,AbstractConsoleItem<?> item, Object defaultItemValue, int size) throws ProtocolException{
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		de.setType(DataElementType.CHECKBOX);
 		de.setRequired(item.isRequired());
 		de.setLabel(item.getLabel());
 		de.setLabelRight(item.getLabelRight());
-		de.setPostBack(item.isReloadOnChange()); 
+		if(item.isReloadOnChange()) {
+			if(item.isReloadOnHttpPost()) {
+				de.setPostBack_viaPOST(true); 
+			}
+			else {
+				de.setPostBack(true); 
+			}
+		}
 		de.setNote(item.getNote());
 		de.setSize(size);
 		addDataElementInfo(item, de);
@@ -466,7 +533,6 @@ public class ProtocolPropertiesUtilities {
 		ConsoleItemValueType consoleItemValueType = ProtocolPropertiesUtils.getConsoleItemValueType(item);
 
 		switch(consoleItemValueType){
-		// [TODO] controllare casi che ci possono essere
 		case BOOLEAN:
 			BooleanConsoleItem booleanItem = (BooleanConsoleItem) item;
 			Boolean selectedBooleanValue = getSelectedValue(booleanItem, defaultItemValue);
@@ -484,10 +550,10 @@ public class ProtocolPropertiesUtilities {
 			break;
 		case BINARY: // non supportato 
 		default:
-			throw new ProtocolException("Item con consoleItemType ["+consoleItemValueType+"] non puo' essere visualizzato come una CheckBox");
+			throw new ProtocolException(getPrefixMessageErrorConsoleItemType(consoleItemValueType)+"non puo' essere visualizzato come una CheckBox");
 		}
 		
-		if(item.getDefaultValueForCloseableSection()!=null && item.getDefaultValueForCloseableSection() instanceof Boolean) {
+		if(item.getDefaultValueForCloseableSection() instanceof Boolean) {
 			boolean b = (Boolean) item.getDefaultValueForCloseableSection();
 			de.setValoreDefaultCheckbox(b);
 		}
@@ -497,47 +563,71 @@ public class ProtocolPropertiesUtilities {
 		return dati;
 	}
 
-	public static List<DataElement> getHidden(List<DataElement> dati ,AbstractConsoleItem<?> item, int size) throws Exception{
+	public static List<DataElement> getHidden(List<DataElement> dati, ConsoleHelper consoleHelper, AbstractConsoleItem<?> item, int size) throws ProtocolException {
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		de.setType(DataElementType.HIDDEN);
 		de.setRequired(item.isRequired());
 		de.setLabel(item.getLabel());
 		de.setLabelRight(item.getLabelRight());
-		de.setPostBack(item.isReloadOnChange()); 
+		if(item.isReloadOnChange()) {
+			if(item.isReloadOnHttpPost()) {
+				de.setPostBack_viaPOST(true); 
+			}
+			else {
+				de.setPostBack(true); 
+			}
+		}
 		de.setNote(item.getNote());
 		de.setSize(size);
-		//addDataElementInfo(item, de);
+		/**addDataElementInfo(item, de);*/
 
 		ConsoleItemValueType consoleItemValueType = ProtocolPropertiesUtils.getConsoleItemValueType(item);
 
-		switch(consoleItemValueType){
-		// [TODO] controllare casi che ci possono essere
-		case BOOLEAN:
-			BooleanConsoleItem booleanItem = (BooleanConsoleItem) item;
-			de.setValue(booleanItem.getDefaultValue() != null ? booleanItem.getDefaultValue() + "" : "");
-			break;
-		case NUMBER:
-			NumberConsoleItem numberItem = (NumberConsoleItem) item;
-			de.setValue(numberItem.getDefaultValue() != null ? numberItem.getDefaultValue() + "" : "");
-			break;
-		case STRING:
-			StringConsoleItem stringItem = (StringConsoleItem) item;
-			de.setValue(stringItem.getDefaultValue() != null ? stringItem.getDefaultValue() + "" : "");
-			break;
-		case BINARY: // [TODO] da decidere 
-			de.setValue("");
-			break;
-		default:
-			throw new ProtocolException("Item con consoleItemType ["+consoleItemValueType+"] non puo' essere visualizzato come una Hidden");
-		}
+		setHiddenValue(consoleItemValueType, consoleHelper, item, de);
 
 		dati.add(de);
 
 		return dati;
 	}
+	private static void setHiddenValue(ConsoleItemValueType consoleItemValueType,ConsoleHelper consoleHelper,AbstractConsoleItem<?> item,DataElement de) throws ProtocolException {
+		
+		String value = null;
+		switch(consoleItemValueType){
+		case BOOLEAN:
+			BooleanConsoleItem booleanItem = (BooleanConsoleItem) item;
+			value = booleanItem.getDefaultValue() != null ? booleanItem.getDefaultValue() + "" : "";
+			break;
+		case NUMBER:
+			NumberConsoleItem numberItem = (NumberConsoleItem) item;
+			value = numberItem.getDefaultValue() != null ? numberItem.getDefaultValue() + "" : "";
+			break;
+		case STRING:
+			StringConsoleItem stringItem = (StringConsoleItem) item;
+			value = stringItem.getDefaultValue() != null ? stringItem.getDefaultValue() + "" : "";
+			break;
+		case BINARY: // NOP
+			value = "";
+			break;
+		default:
+			throw new ProtocolException(getPrefixMessageErrorConsoleItemType(consoleItemValueType)+"non puo' essere visualizzato come una Hidden");
+		}
+		
+		if(item.isLockedType()) {
+			// imposto il tipo insieme al valore
+			try {
+				consoleHelper.getCore().lockHidden(de, value);
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+		}
+		else {
+			de.setValue(value);
+		}
+
+	}
 	
-	public static List<DataElement> getHidden(List<DataElement> dati ,BaseConsoleItem item, int size) throws Exception{
+	public static List<DataElement> getHidden(List<DataElement> dati, ConsoleHelper consoleHelper ,BaseConsoleItem item, int size) {
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		de.setType(DataElementType.HIDDEN);
@@ -548,14 +638,21 @@ public class ProtocolPropertiesUtilities {
 		return dati;
 	}
 
-	public static List<DataElement> getSelect(List<DataElement> dati ,AbstractConsoleItem<?> item, Object defaultItemValue, int size) throws Exception{
+	public static List<DataElement> getSelect(List<DataElement> dati ,AbstractConsoleItem<?> item, Object defaultItemValue, int size) throws ProtocolException {
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		de.setType(DataElementType.SELECT);
 		de.setRequired(item.isRequired());
 		de.setLabel(item.getLabel());
 		de.setLabelRight(item.getLabelRight());
-		de.setPostBack(item.isReloadOnChange()); 
+		if(item.isReloadOnChange()) {
+			if(item.isReloadOnHttpPost()) {
+				de.setPostBack_viaPOST(true); 
+			}
+			else {
+				de.setPostBack(true); 
+			}
+		}
 		de.setNote(item.getNote());
 		de.setSize(size);
 		addDataElementInfo(item, de);
@@ -566,7 +663,6 @@ public class ProtocolPropertiesUtilities {
 		List<String> labels = new ArrayList<>();
 
 		switch(consoleItemValueType){
-		// [TODO] controllare casi che ci possono essere
 		case BOOLEAN:
 			BooleanConsoleItem booleanItem = (BooleanConsoleItem) item;
 			Boolean selectedBooleanValue = getSelectedValue(booleanItem, defaultItemValue);
@@ -602,13 +698,13 @@ public class ProtocolPropertiesUtilities {
 			break;
 		case BINARY: // non supportato 
 		default:
-			throw new ProtocolException("Item con consoleItemType ["+consoleItemValueType+"] non puo' essere visualizzato come una Select List");
+			throw new ProtocolException(getPrefixMessageErrorConsoleItemType(consoleItemValueType)+"non puo' essere visualizzato come una Select List");
 		}
 
 		de.setValues(values);
 		de.setLabels(labels); 
 
-		if(item.getDefaultValueForCloseableSection()!=null && item.getDefaultValueForCloseableSection() instanceof String) {
+		if(item.getDefaultValueForCloseableSection() instanceof String) {
 			String s = (String) item.getDefaultValueForCloseableSection();
 			de.setValoreDefaultSelect(s);
 		}
@@ -618,20 +714,39 @@ public class ProtocolPropertiesUtilities {
 		return dati;
 	}
 	
-	public static List<DataElement> getMultiSelect(List<DataElement> dati ,AbstractConsoleItem<?> item, Object defaultItemValue, int size) throws Exception{
+	public static List<DataElement> getMultiSelect(List<DataElement> dati ,AbstractConsoleItem<?> item, Object defaultItemValue, int size) throws ProtocolException {
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		de.setType(DataElementType.MULTI_SELECT);
 		de.setRequired(item.isRequired());
 		de.setLabel(item.getLabel());
 		de.setLabelRight(item.getLabelRight());
-		de.setPostBack(item.isReloadOnChange());
+		if(item.isReloadOnChange()) {
+			if(item.isReloadOnHttpPost()) {
+				de.setPostBack_viaPOST(true); 
+			}
+			else {
+				de.setPostBack(true); 
+			}
+		}
 		de.setNote(item.getNote());
 		de.setSize(size);
 		addDataElementInfo(item, de);
 
 		ConsoleItemValueType consoleItemValueType = ProtocolPropertiesUtils.getConsoleItemValueType(item);
 
+		setValuesLabelsMultiSelect(consoleItemValueType, item, defaultItemValue, de);
+		
+		if(item.getDefaultValueForCloseableSection() instanceof String) {
+			String s = (String) item.getDefaultValueForCloseableSection();
+			de.setValoreDefaultMultiSelect(new String [] {s});
+		}
+		
+		dati.add(de);
+
+		return dati;
+	}
+	private static void setValuesLabelsMultiSelect(ConsoleItemValueType consoleItemValueType, AbstractConsoleItem<?> item, Object defaultItemValue, DataElement de) throws ProtocolException {
 		List<String> values = new ArrayList<>();
 		List<String> labels = new ArrayList<>();
 
@@ -658,21 +773,15 @@ public class ProtocolPropertiesUtilities {
 			}
 			break;
 		
+		case BINARY:
+		case BOOLEAN:
+		case NUMBER:
 		default:
-			throw new ProtocolException("Item con consoleItemType ["+consoleItemValueType+"] non puo' essere visualizzato come una Multi-Select List");
+			throw new ProtocolException(getPrefixMessageErrorConsoleItemType(consoleItemValueType)+"non puo' essere visualizzato come una Multi-Select List");
 		}
 
 		de.setValues(values);
 		de.setLabels(labels); 
-		
-		if(item.getDefaultValueForCloseableSection()!=null && item.getDefaultValueForCloseableSection() instanceof String) {
-			String s = (String) item.getDefaultValueForCloseableSection();
-			de.setValoreDefaultMultiSelect(new String [] {s});
-		}
-		
-		dati.add(de);
-
-		return dati;
 	}
 
 	public static String getLabelTipoProprietario(ProprietariProtocolProperty tipoProprietario, String tipoAccordo) {

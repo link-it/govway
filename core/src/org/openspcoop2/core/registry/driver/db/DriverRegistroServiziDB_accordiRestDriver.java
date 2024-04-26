@@ -174,13 +174,16 @@ public class DriverRegistroServiziDB_accordiRestDriver {
 
 				// Protocol Properties
 				try{
-					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idResource, ProprietariProtocolProperty.RESOURCE, con, this.driver.tipoDB);
-					if(listPP!=null && listPP.size()>0){
+					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idResource, ProprietariProtocolProperty.RESOURCE, con, 
+							this.driver.tipoDB, this.driver.getDriverUnwrapBYOK());
+					if(listPP!=null && !listPP.isEmpty()){
 						for (ProtocolProperty protocolProperty : listPP) {
 							resource.addProtocolProperty(protocolProperty);
 						}
 					}
-				}catch(DriverRegistroServiziNotFound dNotFound){}
+				}catch(DriverRegistroServiziNotFound dNotFound){
+					// ignore
+				}
 				
 				as.addResource(resource);
 

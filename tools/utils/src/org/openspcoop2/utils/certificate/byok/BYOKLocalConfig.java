@@ -171,7 +171,7 @@ public class BYOKLocalConfig implements Serializable {
 		
 		this.keyAlias = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ALIAS, true);
 				
-		if(KeystoreType.JCEKS.equals(this.keystoreType) || BYOKMode.WRAP.equals(config.getMode())) {
+		if(KeystoreType.JCEKS.equals(this.keystoreType) || BYOKMode.UNWRAP.equals(config.getMode())) {
 			
 			this.keyPassword = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_PASSWORD, false);
 			

@@ -1117,13 +1117,16 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				
 				// Protocol Properties
 				try{
-					List<ProtocolProperty> listPP = DriverConfigurazioneDBLib.getListaProtocolProperty(sa.getId(), ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, this.driver.tipoDB);
-					if(listPP!=null && listPP.size()>0){
+					List<ProtocolProperty> listPP = DriverConfigurazioneDBLib.getListaProtocolProperty(sa.getId(), ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, 
+							this.driver.tipoDB, this.driver.getDriverUnwrapBYOK());
+					if(listPP!=null && !listPP.isEmpty()){
 						for (ProtocolProperty protocolProperty : listPP) {
 							sa.addProtocolProperty(protocolProperty);
 						}
 					}
-				}catch(DriverConfigurazioneNotFound dNotFound){}
+				}catch(DriverConfigurazioneNotFound dNotFound){
+					// ignore
+				}
 				
 				
 				return sa;

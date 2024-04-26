@@ -156,13 +156,16 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 
 				// Protocol Properties
 				try{
-					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idPortType, ProprietariProtocolProperty.PORT_TYPE, con, this.driver.tipoDB);
-					if(listPP!=null && listPP.size()>0){
+					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idPortType, ProprietariProtocolProperty.PORT_TYPE, con, 
+							this.driver.tipoDB, this.driver.getDriverUnwrapBYOK());
+					if(listPP!=null && !listPP.isEmpty()){
 						for (ProtocolProperty protocolProperty : listPP) {
 							pt.addProtocolProperty(protocolProperty);
 						}
 					}
-				}catch(DriverRegistroServiziNotFound dNotFound){}
+				}catch(DriverRegistroServiziNotFound dNotFound){
+					// ignore
+				}
 				
 				as.addPortType(pt);
 
@@ -297,13 +300,16 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 
 				// Protocol Properties
 				try{
-					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAzionePortType, ProprietariProtocolProperty.OPERATION, con, this.driver.tipoDB);
-					if(listPP!=null && listPP.size()>0){
+					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAzionePortType, ProprietariProtocolProperty.OPERATION, con, 
+							this.driver.tipoDB, this.driver.getDriverUnwrapBYOK());
+					if(listPP!=null && !listPP.isEmpty()){
 						for (ProtocolProperty protocolProperty : listPP) {
 							azionePT.addProtocolProperty(protocolProperty);
 						}
 					}
-				}catch(DriverRegistroServiziNotFound dNotFound){}
+				}catch(DriverRegistroServiziNotFound dNotFound){
+					// ignore
+				}
 				
 				pt.addAzione(azionePT);
 
@@ -778,7 +784,8 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 			
 			for (int i = 0; i < portType.sizeAzioneList(); i++) {
 				Operation azione = portType.getAzione(i);			
-				DriverRegistroServiziDB_accordiSoapLIB.CRUDAzionePortType(CostantiDB.CREATE,as,portType,azione, connection, portType.getId());
+				DriverRegistroServiziDB_accordiSoapLIB.CRUDAzionePortType(CostantiDB.CREATE,as,portType,azione, connection, portType.getId(),
+						this.driver.getDriverWrapBYOK());
 			}
 			this.driver.logDebug("inserite " + portType.sizeAzioneList() + " azioni relative al port type["+portType.getNome()+"] id-porttype["+portType.getId()+"]");
 			

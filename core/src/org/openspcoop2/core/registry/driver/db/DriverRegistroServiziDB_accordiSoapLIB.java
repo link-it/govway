@@ -31,6 +31,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.ProprietariProtocolProperty;
@@ -60,7 +61,7 @@ public class DriverRegistroServiziDB_accordiSoapLIB {
 	
 	
 
-	public static long CRUDAzione(int type, AccordoServizioParteComune as,Azione azione, Connection con, long idAccordo) throws DriverRegistroServiziException {
+	public static long CRUDAzione(int type, AccordoServizioParteComune as,Azione azione, Connection con, long idAccordo, IDriverBYOK driverBYOK) throws DriverRegistroServiziException {
 		PreparedStatement updateStmt = null;
 		String updateQuery;
 		PreparedStatement selectStmt = null;
@@ -191,7 +192,7 @@ public class DriverRegistroServiziDB_accordiSoapLIB {
 
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
-						azione.getId(), ProprietariProtocolProperty.AZIONE_ACCORDO, con, DriverRegistroServiziDB_LIB.tipoDB);
+						azione.getId(), ProprietariProtocolProperty.AZIONE_ACCORDO, con, DriverRegistroServiziDB_LIB.tipoDB, driverBYOK);
 				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.ACCORDI_AZIONI);
@@ -222,7 +223,7 @@ public class DriverRegistroServiziDB_accordiSoapLIB {
 						
 						// ProtocolProperties
 						DriverRegistroServiziDB_LIB.CRUDProtocolProperty(type, azione.getProtocolPropertyList(), 
-								azione.getId(), ProprietariProtocolProperty.AZIONE_ACCORDO, con, DriverRegistroServiziDB_LIB.tipoDB);
+								azione.getId(), ProprietariProtocolProperty.AZIONE_ACCORDO, con, DriverRegistroServiziDB_LIB.tipoDB, driverBYOK);
 						
 						return azione.getId();
 	
@@ -242,7 +243,7 @@ public class DriverRegistroServiziDB_accordiSoapLIB {
 		}
 	}
 
-	public static long CRUDPortType(int type, AccordoServizioParteComune as,PortType pt, Connection con, long idAccordo) throws DriverRegistroServiziException {
+	public static long CRUDPortType(int type, AccordoServizioParteComune as,PortType pt, Connection con, long idAccordo, IDriverBYOK driverBYOK) throws DriverRegistroServiziException {
 		PreparedStatement updateStmt = null;
 		String updateQuery;
 		PreparedStatement selectStmt = null;
@@ -421,12 +422,12 @@ public class DriverRegistroServiziDB_accordiSoapLIB {
 
 				// Operations
 				for(int i=0;i<pt.sizeAzioneList();i++){
-					DriverRegistroServiziDB_accordiSoapLIB.CRUDAzionePortType(CostantiDB.DELETE, as, pt, pt.getAzione(i), con, idPT);
+					DriverRegistroServiziDB_accordiSoapLIB.CRUDAzionePortType(CostantiDB.DELETE, as, pt, pt.getAzione(i), con, idPT, driverBYOK);
 				}
 
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
-						idPT, ProprietariProtocolProperty.PORT_TYPE, con, DriverRegistroServiziDB_LIB.tipoDB);
+						idPT, ProprietariProtocolProperty.PORT_TYPE, con, DriverRegistroServiziDB_LIB.tipoDB, driverBYOK);
 				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORT_TYPE);
@@ -459,7 +460,7 @@ public class DriverRegistroServiziDB_accordiSoapLIB {
 				if ( CostantiDB.UPDATE == type ){
 					n = 0;
 					for(int i=0;i<pt.sizeAzioneList();i++){
-						n += DriverRegistroServiziDB_accordiSoapLIB.CRUDAzionePortType(CostantiDB.DELETE, as, pt, pt.getAzione(i), con, idPT);
+						n += DriverRegistroServiziDB_accordiSoapLIB.CRUDAzionePortType(CostantiDB.DELETE, as, pt, pt.getAzione(i), con, idPT, driverBYOK);
 					}
 					
 //					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
@@ -478,14 +479,14 @@ public class DriverRegistroServiziDB_accordiSoapLIB {
 				Operation azione = null;
 				for (int i = 0; i < pt.sizeAzioneList(); i++) {
 					azione = pt.getAzione(i);
-					DriverRegistroServiziDB_accordiSoapLIB.CRUDAzionePortType(CostantiDB.CREATE,as,pt, azione, con, idPT);
+					DriverRegistroServiziDB_accordiSoapLIB.CRUDAzionePortType(CostantiDB.CREATE,as,pt, azione, con, idPT, driverBYOK);
 				}
 				DriverRegistroServiziDB_LIB.log.debug("inserite " + pt.sizeAzioneList() + " azioni relative al port type["+pt.getNome()+"] id-porttype["+pt.getId()+"] dell'accordo :" + IDAccordoFactory.getInstance().getUriFromAccordo(as) + " id-accordo :" + idAccordo);
 				
 				
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(type, pt.getProtocolPropertyList(), 
-						idPT, ProprietariProtocolProperty.PORT_TYPE, con, DriverRegistroServiziDB_LIB.tipoDB);
+						idPT, ProprietariProtocolProperty.PORT_TYPE, con, DriverRegistroServiziDB_LIB.tipoDB, driverBYOK);
 			}
 
 
@@ -501,7 +502,7 @@ public class DriverRegistroServiziDB_accordiSoapLIB {
 		}
 	}
 
-	public static long CRUDAzionePortType(int type, AccordoServizioParteComune as,PortType pt,Operation azione, Connection con, long idPortType) throws DriverRegistroServiziException {
+	public static long CRUDAzionePortType(int type, AccordoServizioParteComune as,PortType pt,Operation azione, Connection con, long idPortType, IDriverBYOK driverBYOK) throws DriverRegistroServiziException {
 		PreparedStatement updateStmt = null;
 		String updateQuery;
 		PreparedStatement selectStmt = null;
@@ -775,7 +776,7 @@ public class DriverRegistroServiziDB_accordiSoapLIB {
 
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
-						azione.getId(), ProprietariProtocolProperty.OPERATION, con, DriverRegistroServiziDB_LIB.tipoDB);
+						azione.getId(), ProprietariProtocolProperty.OPERATION, con, DriverRegistroServiziDB_LIB.tipoDB, driverBYOK);
 				
 				// azioni
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
@@ -809,7 +810,7 @@ public class DriverRegistroServiziDB_accordiSoapLIB {
 
 					// ProtocolProperties
 					DriverRegistroServiziDB_LIB.CRUDProtocolProperty(type, azione.getProtocolPropertyList(), 
-							azione.getId(), ProprietariProtocolProperty.OPERATION, con, DriverRegistroServiziDB_LIB.tipoDB);
+							azione.getId(), ProprietariProtocolProperty.OPERATION, con, DriverRegistroServiziDB_LIB.tipoDB, driverBYOK);
 					
 					return azione.getId();
 

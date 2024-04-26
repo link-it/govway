@@ -1681,7 +1681,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						properties.addProperty(binaryProperty); 
 						break;
 					case NUMBER:
-						String lvS = this.getParameter(item.getId());
+						String lvS = item.isLockedType() ? this.getLockedParameter(item.getId()) : this.getParameter(item.getId());
 						Long longValue = null;
 						try{
 							// soluzione necessaria perche' il tipo di dato number puo' essere utilizzato anche negli input di tipo text che possono non controllare il tipo di dato inserito
@@ -1696,7 +1696,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						properties.addProperty(numberProperty); 
 						break;
 					case BOOLEAN:
-						String bvS = this.getParameter(item.getId());
+						String bvS = item.isLockedType() ? this.getLockedParameter(item.getId()) : this.getParameter(item.getId());
 						Boolean booleanValue = ServletUtils.isCheckBoxEnabled(bvS);
 						Boolean falseValue = null;
 						if(item instanceof BooleanConsoleItem) {
@@ -1720,7 +1720,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							stringProperty = ProtocolPropertiesFactory.newProperty(item.getId(), value);
 						}
 						else {
-							String parameterValue = this.getParameter(item.getId());
+							String parameterValue = item.isLockedType() ? this.getLockedParameter(item.getId()) : this.getParameter(item.getId());
 							stringProperty = ProtocolPropertiesFactory.newProperty(item.getId(), parameterValue);
 						}
 						if(primoAccessoAdd) {
@@ -4356,7 +4356,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				ProtocolPropertiesUtils.setDefaultValue(item, property); 
 	
 				ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolPropertyRegistry(item.getId(), listaProtocolPropertiesDaDB); 
-				dati = ProtocolPropertiesUtilities.itemToDataElementAsHidden(dati,item, defaultItemValue,
+				dati = ProtocolPropertiesUtilities.itemToDataElementAsHidden(dati, this, item, defaultItemValue,
 						consoleOperationType, binaryPropertyChangeInfoProprietario, protocolProperty, this.getSize());
 			}catch(Exception e) {
 				throw new DriverControlStationException(e.getMessage(),e);
@@ -4380,79 +4380,76 @@ public class ConsoleHelper implements IConsoleHelper {
 				AbstractProperty<?> property = properties.getProperty(i);
 				AbstractConsoleItem<?> consoleItem = ProtocolPropertiesUtils.getAbstractConsoleItem(consoleItems, property);
 
-				if(consoleItem != null) {
-					if(!ConsoleItemType.HIDDEN.equals(consoleItem.getType())) {
-						if(consoleItem instanceof StringConsoleItem){
-							StringProperty sp = (StringProperty) property;
-							if (consoleItem.isRequired() && StringUtils.isEmpty(sp.getValue())) {
-								if(consoleItem.getLabel()==null || "".equals(consoleItem.getLabel())) {
-									throw new ProtocolException(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI);
-								}
-								else {
-									throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
-								}
+				if(consoleItem != null &&
+					!consoleItem.isHidden()) {
+					if(consoleItem instanceof StringConsoleItem){
+						StringProperty sp = (StringProperty) property;
+						if (consoleItem.isRequired() && StringUtils.isEmpty(sp.getValue())) {
+							if(consoleItem.getLabel()==null || "".equals(consoleItem.getLabel())) {
+								throw new ProtocolException(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI);
 							}
-	
-							if(StringUtils.isNotEmpty(consoleItem.getRegexpr())){
-								if(!RegularExpressionEngine.isMatch(sp.getValue(),consoleItem.getRegexpr())){
-									throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_IL_CAMPO_XX_DEVE_RISPETTARE_IL_PATTERN_YY, consoleItem.getLabel(), consoleItem.getRegexpr()));
-								}
-							}
-							
-							if(StringUtils.isNotEmpty(sp.getValue())) {
-								try {
-									if(!this.checkLength4000(sp.getValue(), consoleItem.getLabel())) {
-										throw new ProtocolException(this.pd.getMessage());
-									}
-								}catch(Exception e) {
-									throw new ProtocolException(e.getMessage(),e);
-								}
+							else {
+								throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
 							}
 						}
-						else if(consoleItem instanceof NumberConsoleItem){
-							NumberProperty np = (NumberProperty) property;
-							if (consoleItem.isRequired() && np.getValue() == null) {
-								if(consoleItem.getLabel()==null || "".equals(consoleItem.getLabel())) {
-									throw new ProtocolException(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI);
+
+						if(StringUtils.isNotEmpty(consoleItem.getRegexpr()) &&
+							!RegularExpressionEngine.isMatch(sp.getValue(),consoleItem.getRegexpr())){
+							throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_IL_CAMPO_XX_DEVE_RISPETTARE_IL_PATTERN_YY, consoleItem.getLabel(), consoleItem.getRegexpr()));
+						}
+						
+						if(StringUtils.isNotEmpty(sp.getValue())) {
+							try {
+								if(!this.checkLength4000(sp.getValue(), consoleItem.getLabel())) {
+									throw new ProtocolException(this.pd.getMessage());
 								}
-								else {
-									throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
-								}
-							}
-							if(np.getValue()!=null) {
-								if(ConsoleItemType.NUMBER.equals(consoleItem.getType()) && (consoleItem instanceof NumberConsoleItem)) {
-									long v = np.getValue();
-									NumberConsoleItem nci = (NumberConsoleItem) consoleItem;
-									if(v<nci.getMin()) {
-										throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_VALORE_MINORE_DEL_MINIMO, consoleItem.getLabel(), nci.getMin()));
-									}
-									if(v>nci.getMax()) {
-										throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_VALORE_MINORE_DEL_MASSIMO, consoleItem.getLabel(), nci.getMax()));
-									}
-								}
+							}catch(Exception e) {
+								throw new ProtocolException(e.getMessage(),e);
 							}
 						}
-						else if(consoleItem instanceof BinaryConsoleItem){
-							BinaryProperty bp = (BinaryProperty) property;
-							if (consoleOperationType.equals(ConsoleOperationType.ADD) && consoleItem.isRequired() && (bp.getValue() == null || bp.getValue().length == 0)) {
-								if(consoleItem.getLabel()==null || "".equals(consoleItem.getLabel())) {
-									throw new ProtocolException(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI);
-								}
-								else {
-									throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
-								}
+					}
+					else if(consoleItem instanceof NumberConsoleItem){
+						NumberProperty np = (NumberProperty) property;
+						if (consoleItem.isRequired() && np.getValue() == null) {
+							if(consoleItem.getLabel()==null || "".equals(consoleItem.getLabel())) {
+								throw new ProtocolException(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI);
+							}
+							else {
+								throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
 							}
 						}
-						else if(consoleItem instanceof BooleanConsoleItem){
-							BooleanProperty bp = (BooleanProperty) property;
-							// le checkbox obbligatorie non dovrebbero esserci...
-							if (consoleItem.isRequired() && bp.getValue() == null) {
-								if(consoleItem.getLabel()==null || "".equals(consoleItem.getLabel())) {
-									throw new ProtocolException(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI);
-								}
-								else {
-									throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
-								}
+						if(np.getValue()!=null &&
+							ConsoleItemType.NUMBER.equals(consoleItem.getType()) && (consoleItem instanceof NumberConsoleItem)) {
+							long v = np.getValue();
+							NumberConsoleItem nci = (NumberConsoleItem) consoleItem;
+							if(v<nci.getMin()) {
+								throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_VALORE_MINORE_DEL_MINIMO, consoleItem.getLabel(), nci.getMin()));
+							}
+							if(v>nci.getMax()) {
+								throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_VALORE_MINORE_DEL_MASSIMO, consoleItem.getLabel(), nci.getMax()));
+							}
+						}
+					}
+					else if(consoleItem instanceof BinaryConsoleItem){
+						BinaryProperty bp = (BinaryProperty) property;
+						if (consoleOperationType.equals(ConsoleOperationType.ADD) && consoleItem.isRequired() && (bp.getValue() == null || bp.getValue().length == 0)) {
+							if(consoleItem.getLabel()==null || "".equals(consoleItem.getLabel())) {
+								throw new ProtocolException(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI);
+							}
+							else {
+								throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
+							}
+						}
+					}
+					else if(consoleItem instanceof BooleanConsoleItem){
+						BooleanProperty bp = (BooleanProperty) property;
+						// le checkbox obbligatorie non dovrebbero esserci...
+						if (consoleItem.isRequired() && bp.getValue() == null) {
+							if(consoleItem.getLabel()==null || "".equals(consoleItem.getLabel())) {
+								throw new ProtocolException(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI);
+							}
+							else {
+								throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
 							}
 						}
 					}

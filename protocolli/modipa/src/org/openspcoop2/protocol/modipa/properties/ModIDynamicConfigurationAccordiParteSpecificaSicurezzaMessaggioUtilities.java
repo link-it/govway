@@ -177,7 +177,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 			modeItem.addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_LABEL_RIDEFINISCI,
 					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_VALUE_RIDEFINISCI);
 			modeItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_DEFAULT_VALUE);
-			modeItem.setReloadOnChange(true);
+			modeItem.setReloadOnChange(true, true);
 			configuration.addConsoleItem(modeItem);
 			
 			NumberConsoleItem secondsItem = (NumberConsoleItem) 
@@ -259,7 +259,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 						rest ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_REST_LABEL :  ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_SOAP_LABEL);
 				profiloSicurezzaMessaggioAudienceItem.setNote(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_FRUIZIONE_KEYSTORE_SA_NOTE);
 				profiloSicurezzaMessaggioAudienceItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_DEFAULT);
-				profiloSicurezzaMessaggioAudienceItem.setReloadOnChange(true);
+				profiloSicurezzaMessaggioAudienceItem.setReloadOnChange(true, true);
 				configuration.addConsoleItem(profiloSicurezzaMessaggioAudienceItem);
 				
 				StringConsoleItem audValueItem = (StringConsoleItem) 
@@ -386,7 +386,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_VALUE_DIFFERENT);
 			jtiItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_VALUE_DEFAULT);
 			jtiItem.setUseDefaultValueForCloseableSection(true);
-			jtiItem.setReloadOnChange(true);
+			jtiItem.setReloadOnChange(true, true);
 			configuration.addConsoleItem(jtiItem);
 			
 			StringConsoleItem jtiAsIdMessaggioItem = (StringConsoleItem) 
@@ -421,7 +421,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_VALUE_DIFFERENT);
 				audItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_VALUE_DEFAULT);
 				audItem.setUseDefaultValueForCloseableSection(true);
-				audItem.setReloadOnChange(true);
+				audItem.setReloadOnChange(true, true);
 				configuration.addConsoleItem(audItem);
 				
 				StringConsoleItem audValueItem = (StringConsoleItem) 
@@ -536,7 +536,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_VALUE_DIFFERENT);
 			audItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_VALUE_DEFAULT);
 			audItem.setUseDefaultValueForCloseableSection(true);
-			audItem.setReloadOnChange(true);
+			audItem.setReloadOnChange(true, true);
 			configuration.addConsoleItem(audItem);
 			
 			StringConsoleItem audValueItem = (StringConsoleItem) 
@@ -688,7 +688,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 				ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIENCE_VALUE_DIFFERENT);
 		audItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIENCE_VALUE_DEFAULT);
 		audItem.setUseDefaultValueForCloseableSection(true);
-		audItem.setReloadOnChange(true);
+		audItem.setReloadOnChange(true, true);
 		configuration.addConsoleItem(audItem);
 		
 		StringConsoleItem audValueItem = (StringConsoleItem) 
@@ -742,7 +742,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 				ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_RIDEFINISCI);
 		modeItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA_MODE_DEFAULT_VALUE);
 		modeItem.setUseDefaultValueForCloseableSection(true);
-		modeItem.setReloadOnChange(true);
+		modeItem.setReloadOnChange(true, true);
 		configuration.addConsoleItem(modeItem);
 		
 		StringConsoleItem ridefineItem = (StringConsoleItem) 
@@ -773,7 +773,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 				ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_RIDEFINISCI);
 		modeCodiceEnteItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE_DEFAULT_VALUE);
 		modeCodiceEnteItem.setUseDefaultValueForCloseableSection(true);
-		modeCodiceEnteItem.setReloadOnChange(true);
+		modeCodiceEnteItem.setReloadOnChange(true, true);
 		configuration.addConsoleItem(modeCodiceEnteItem);
 		
 		StringConsoleItem profiloSicurezzaMessaggioCorniceCodiceEnteItem = (StringConsoleItem) 
@@ -800,7 +800,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 				ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_RIDEFINISCI);
 		modeUserItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE_DEFAULT_VALUE);
 		modeUserItem.setUseDefaultValueForCloseableSection(true);
-		modeUserItem.setReloadOnChange(true);
+		modeUserItem.setReloadOnChange(true, true);
 		configuration.addConsoleItem(modeUserItem);
 		
 		StringConsoleItem profiloSicurezzaMessaggioCorniceUserItem = (StringConsoleItem) 
@@ -827,7 +827,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 				ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_RIDEFINISCI);
 		modeIPUserItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_DEFAULT_VALUE);
 		modeIPUserItem.setUseDefaultValueForCloseableSection(true);
-		modeIPUserItem.setReloadOnChange(true);
+		modeIPUserItem.setReloadOnChange(true, true);
 		configuration.addConsoleItem(modeIPUserItem);
 		
 		StringConsoleItem profiloSicurezzaMessaggioCorniceIPUserItem = (StringConsoleItem) 
@@ -1257,7 +1257,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 			profiloSicurezzaMessaggioRifX509AsRequestItem.addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_RIFERIMENTO_X509_AS_REQUEST_LABEL_FALSE,
 					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_RIFERIMENTO_X509_AS_REQUEST_VALUE_FALSE);
 			profiloSicurezzaMessaggioRifX509AsRequestItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_RIFERIMENTO_X509_AS_REQUEST_DEFAULT_VALUE);
-			profiloSicurezzaMessaggioRifX509AsRequestItem.setReloadOnChange(true);
+			profiloSicurezzaMessaggioRifX509AsRequestItem.setReloadOnChange(true, true);
 			configuration.addConsoleItem(profiloSicurezzaMessaggioRifX509AsRequestItem);
 		}
 		
@@ -1287,7 +1287,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 				profiloSicurezzaMessaggioRifX509ItemDefault.add(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_RIFERIMENTO_X509_VALUE_X5U);
 			}
 			ProtocolPropertiesUtils.setDefaultValueMultiSelect(profiloSicurezzaMessaggioRifX509ItemDefault, profiloSicurezzaMessaggioRifX509Item);
-			profiloSicurezzaMessaggioRifX509Item.setReloadOnChange(true);
+			profiloSicurezzaMessaggioRifX509Item.setReloadOnChange(true, true);
 			configuration.addConsoleItem(profiloSicurezzaMessaggioRifX509Item);
 			
 			String rifX509Xc5ChainId = null;
@@ -1458,7 +1458,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 			profiloSicurezzaMessaggioRifX509Item.addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RIFERIMENTO_X509_LABEL_KEY_IDENTIFIER_SKI,
 					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RIFERIMENTO_X509_VALUE_KEY_IDENTIFIER_SKI);
 			profiloSicurezzaMessaggioRifX509Item.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RIFERIMENTO_X509_DEFAULT_VALUE);
-			profiloSicurezzaMessaggioRifX509Item.setReloadOnChange(true);
+			profiloSicurezzaMessaggioRifX509Item.setReloadOnChange(true, true);
 			configuration.addConsoleItem(profiloSicurezzaMessaggioRifX509Item);
 			
 			BooleanConsoleItem profiloSicurezzaMessaggioRifX509ItemBinarySecurityTokenSingleCertificate = (BooleanConsoleItem) 

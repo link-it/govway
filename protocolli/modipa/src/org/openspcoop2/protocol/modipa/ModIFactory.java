@@ -24,6 +24,7 @@ package org.openspcoop2.protocol.modipa;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openspcoop2.core.mapping.DBProtocolPropertiesUtils;
 import org.openspcoop2.protocol.basic.BasicFactory;
 import org.openspcoop2.protocol.basic.BasicStaticInstanceConfig;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
@@ -32,6 +33,7 @@ import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.config.ModIProtocolConfiguration;
 import org.openspcoop2.protocol.modipa.config.ModIProtocolManager;
 import org.openspcoop2.protocol.modipa.config.ModIProtocolVersionManager;
+import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.properties.ModIDynamicConfiguration;
 import org.openspcoop2.protocol.modipa.tracciamento.ModITracciaSerializer;
 import org.openspcoop2.protocol.modipa.validator.ModIValidazioneSemantica;
@@ -79,6 +81,12 @@ public class ModIFactory extends BasicFactory<AbstractModISecurityToken<?>> {
 			staticInstanceProtocolVersionManager = new HashMap<>();
 			staticInstanceProtocolConfiguration = new ModIProtocolConfiguration(this);
 		}
+		
+		// Le registro per consentire anche al runtime di decodificarle
+		DBProtocolPropertiesUtils.addConfidentialProtocolProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD);
+		DBProtocolPropertiesUtils.addConfidentialProtocolProperty(ModICostanti.MODIPA_KEY_PASSWORD);
+		DBProtocolPropertiesUtils.addConfidentialProtocolProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD);
+		DBProtocolPropertiesUtils.addConfidentialProtocolProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD);
 	}
 	
 	

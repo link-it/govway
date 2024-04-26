@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.protocol.sdk.properties;
 
+import org.openspcoop2.core.mapping.DBProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemType;
 
@@ -58,7 +59,13 @@ public class BaseConsoleItem {
 		this.label = label;
 	}
 	
+	public boolean isHidden() {
+		return this.type!=null && (ConsoleItemType.HIDDEN.equals(this.type) || ConsoleItemType.LOCK_HIDDEN.equals(this.type));
+	}
 	
+	public boolean isLockedType() {
+		return this.type!=null && (ConsoleItemType.LOCK.equals(this.type) || ConsoleItemType.LOCK_HIDDEN.equals(this.type));
+	}
 	public ConsoleItemType getType() {
 		return this.type;
 	}
@@ -67,6 +74,9 @@ public class BaseConsoleItem {
 			throw new ProtocolException("Type undefined");
 		}
 		this.type = type;
+		if(this.isLockedType()) {
+			DBProtocolPropertiesUtils.addConfidentialProtocolProperty(this.id);
+		}
 	}
 	
 }

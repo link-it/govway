@@ -109,7 +109,7 @@ public class DriverRegistroServiziDB_protocolPropertiesDriver {
 		}
 
 		try {
-			return DBProtocolPropertiesUtils.getProtocolPropertyRegistry(proprietarioProtocolProperty, idProprietario, nome, con, this.driver.tipoDB);
+			return DBProtocolPropertiesUtils.getProtocolPropertyRegistry(proprietarioProtocolProperty, idProprietario, nome, con, this.driver.tipoDB, this.driver.getDriverUnwrapBYOK());
 		} catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziException::" + nomeMetodo + "] Exception: " + se.getMessage());
 		} finally {
@@ -137,7 +137,7 @@ public class DriverRegistroServiziDB_protocolPropertiesDriver {
 
 		try {
 
-			return DriverRegistroServiziDB_LIB.getProtocolProperty(idProtocolProperty, con, this.driver.tipoDB);
+			return DriverRegistroServiziDB_LIB.getProtocolProperty(idProtocolProperty, con, this.driver.tipoDB, this.driver.getDriverUnwrapBYOK());
 
 		} catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziException::" + nomeMetodo + "] Exception: " + se.getMessage());
