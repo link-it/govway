@@ -203,9 +203,9 @@
 	<!-- security -->
         <archive path="/op2_3.3.dev/lib/security/xmlsec-2.3.4-gov4j-1.jar"/>
         <archive path="/op2_3.3.dev/lib/security/neethi-3.2.0.jar"/>
-        <archive path="/op2_3.3.dev/lib/security/bcprov-ext-jdk18on-1.78.jar"/>
-	<archive path="/op2_3.3.dev/lib/security/bcpkix-jdk18on-1.78.1.jar"/>
-	<archive path="/op2_3.3.dev/lib/security/bcutil-jdk18on-1.78.1.jar"/>
+        <archive path="/op2_3.3.dev/lib/security/bcprov-ext-jdk18on-1.77.jar"/>
+	<archive path="/op2_3.3.dev/lib/security/bcpkix-jdk18on-1.77.jar"/>
+	<archive path="/op2_3.3.dev/lib/security/bcutil-jdk18on-1.77.jar"/>
 	<archive path="/op2_3.3.dev/lib/security/herasaf-xacml-core-2.0.4.jar"/>
 	<archive path="/op2_3.3.dev/lib/security/nimbus-jose-jwt-9.37.3.jar"/>
 	<archive path="/op2_3.3.dev/lib/security/jasypt-1.9.3.jar"/>

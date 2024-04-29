@@ -225,9 +225,9 @@
 			<lib dir="${required_lib}/security">
 				<include name="xmlsec-2.3.4-gov4j-1.jar"/>
 				<include name="neethi-3.2.0.jar" />
-				<include name="bcpkix-jdk18on-1.78.1.jar"/>
-				<include name="bcprov-ext-jdk18on-1.78.jar"/>
-				<include name="bcutil-jdk18on-1.78.1.jar"/>
+				<include name="bcpkix-jdk18on-1.77.jar"/>
+				<include name="bcprov-ext-jdk18on-1.77.jar"/>
+				<include name="bcutil-jdk18on-1.77.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 				<include name="nimbus-jose-jwt-9.37.3.jar"/>
 			</lib>
