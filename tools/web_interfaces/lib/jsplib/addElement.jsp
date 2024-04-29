@@ -50,8 +50,10 @@ String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CS
 <title><%= gd.getTitle() %></title>
 <link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="css/materialIcons/material-icons-fontface.css" type="text/css">
+<link rel="stylesheet" href="css/materialSymbols/material-symbols-fontface.css" type="text/css">
 <link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
 <link rel="stylesheet" href="css/materialIcons.css" type="text/css">
+<link rel="stylesheet" href="css/materialSymbols.css" type="text/css">
 <!-- JQuery lib-->
 <script type="text/javascript" src="js/jquery-1.4.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />

@@ -1538,7 +1538,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        											      			<input type="hidden" name="__i_hidden_body_<%= idPwdViewLock %>" id="hidden_body_<%= idPwdViewLock %>"  value="<%= dePwd.getLockWarningMessage() %>"/>
 			                        											      			<input type="hidden" name="__i_hidden_url_<%= idPwdViewLock %>" id="hidden_url_<%= idPwdViewLock %>"  value="<%= de.getUrl() %>"/>
 			                        													      	<span class="spanIconInfoBox-viewLock">
-			                        																<i class="material-icons md-24" id="<%=idPwdViewLock %>" title="Visualizza informazione cifrata">vpn_key_off</i>
+			                        																<i class="material-symbols-outlined md-24" id="<%=idPwdViewLock %>" title="Visualizza informazione cifrata">visibility_lock</i>
 			                        															</span>
 			                        															<span class="spanIconInfoBox-copyLock">
 			                        																<i class="material-icons md-24" id="<%=idPwdCopyLock %>" title="Copia informazione cifrata">content_copy</i>
