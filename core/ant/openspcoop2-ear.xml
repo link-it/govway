@@ -18,9 +18,9 @@
 	<target name="build_manifest" description="Crea il Manifest di OpenSPCoop2">
 		
 		<var name="tmp_prefix" value="lib" />
-		<var name="tmp" value="${tmp_prefix}/bcprov-ext-jdk18on-1.78.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk18on-1.78.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/bcutil-jdk18on-1.78.1.jar"/>
+		<var name="tmp" value="${tmp_prefix}/bcprov-ext-jdk18on-1.77.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk18on-1.77.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/bcutil-jdk18on-1.77.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-codec-1.16.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections-3.2.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections4-4.4.jar"/>
@@ -677,9 +677,9 @@
 				<include name="commons-fileupload2-*.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/security">
-				<include name="bcprov-ext-jdk18on-1.78.jar"/>
-				<include name="bcpkix-jdk18on-1.78.1.jar"/>
-				<include name="bcutil-jdk18on-1.78.1.jar"/>
+				<include name="bcprov-ext-jdk18on-1.77.jar"/>
+				<include name="bcpkix-jdk18on-1.77.jar"/>
+				<include name="bcutil-jdk18on-1.77.jar"/>
 				<include name="neethi-3.2.0.jar"/>
 				<include name="xmlsec-3.0.3-gov4j-1.jar"/>
 				<include name="cryptacular-1.2.5.jar"/>
