@@ -304,7 +304,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 
 			// Prendo il sil
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
-			ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt, true);
+			ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
 			SoggettiCore soggettiCore = new SoggettiCore(saCore);
 			PddCore pddCore = new PddCore(saCore);
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());

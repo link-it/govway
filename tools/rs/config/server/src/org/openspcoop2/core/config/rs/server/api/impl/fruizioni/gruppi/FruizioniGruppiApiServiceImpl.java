@@ -339,7 +339,11 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 					env.apsHelper,
 					null, // identificazioneAttributiStato
 	        		null, //String [] attributeAuthoritySelezionate
-	        		null // attributeAuthorityAttributi
+	        		null, // attributeAuthorityAttributi
+	        		null, // apiKeyHeader
+					null, // apiKey,
+					null, // appIdHeader,
+					null // appId,
 				);
 
 

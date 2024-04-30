@@ -4313,6 +4313,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						return false;
 					}
 					if(proxyPassword!=null && !"".equals(proxyPassword) &&
+						!this.core.isWrapped(proxyPassword) &&
 						!this.checkLength255(proxyPassword, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PASSWORD)) {
 						return false;
 					}
@@ -4406,7 +4407,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 					if(!this.checkLength255(user, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME)) {
 						return false;
 					}
-					if(!this.checkLength255(password, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD)) {
+					if(!this.core.isWrapped(password) && 
+							!this.checkLength255(password, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD)) {
 						return false;
 					}
 				}
@@ -4685,7 +4687,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 							this.pd.setMessage("La password del TrustStore è necessaria per l'Autenticazione Server");
 							return false;
 						}
-						if(!this.checkLength255(httpspwd, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD)) {
+						if(!this.core.isWrapped(httpspwd) && 
+								!this.checkLength255(httpspwd, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD)) {
 							return false;
 						}
 						
@@ -4734,7 +4737,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 								this.pd.setMessage("La password della chiave privata è necessaria in caso di Autenticazione Client abilitata");
 								return false;
 							}
-							if(!this.checkLength255(httpspwdprivatekeytrust, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE)) {
+							if(!this.core.isWrapped(httpspwdprivatekeytrust) && 
+									!this.checkLength255(httpspwdprivatekeytrust, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE)) {
 								return false;
 							}
 							
@@ -4774,7 +4778,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 								this.pd.setMessage("La password del KeyStore è necessaria per l'Autenticazione Client, in caso di dati di accesso al KeyStore ridefiniti");
 								return false;
 							}
-							if(!this.checkLength255(httpspwdkey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD)) {
+							if(!this.core.isWrapped(httpspwdkey) && 
+									!this.checkLength255(httpspwdkey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD)) {
 								return false;
 							}
 							
@@ -4782,7 +4787,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 								this.pd.setMessage("La password della chiave privata è necessaria in caso di Autenticazione Client abilitata");
 								return false;
 							}
-							if(!this.checkLength255(httpspwdprivatekey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE)) {
+							if(!this.core.isWrapped(httpspwdprivatekey) && 
+									!this.checkLength255(httpspwdprivatekey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE)) {
 								return false;
 							}
 							

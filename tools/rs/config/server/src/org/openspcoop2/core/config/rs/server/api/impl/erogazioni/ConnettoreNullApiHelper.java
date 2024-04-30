@@ -128,8 +128,11 @@ public class ConnettoreNullApiHelper extends AbstractConnettoreApiHelper<Connett
 				null,	// this.responseInputFileNameHeaders, 
 				null,	// this.responseInputDeleteAfterRead, 
 				null,	// this.responseInputWaitTime,
-				null,
-				null);			
+				null,   // tokenPolicy
+				null, null, // apiKeyHeader,  apiKeyValue
+				null, null, // appIdHeader, appIdValue
+				null // listExtendedConnettore
+				);		
 		return regConnettore;
 	}
 
@@ -200,8 +203,11 @@ public class ConnettoreNullApiHelper extends AbstractConnettoreApiHelper<Connett
 				null,	// this.responseInputFileNameHeaders, 
 				null,	// this.responseInputDeleteAfterRead, 
 				null,	// this.responseInputWaitTime,
-				null,
-				null);			
+				null,   // tokenPolicy
+				null, null, // apiKeyHeader,  apiKeyValue
+				null, null, // appIdHeader, appIdValue
+				null // listExtendedConnettore
+				);			
 		return regConnettore;
 	}
 

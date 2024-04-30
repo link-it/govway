@@ -35,10 +35,13 @@ import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
 import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
 import org.openspcoop2.monitor.engine.alarm.AlarmManager;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsRuntimeException;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.json.YamlSnakeLimits;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.security.ProviderUtils;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -109,7 +112,7 @@ public class Startup implements ServletContextListener {
 
 		}catch(Exception e){}
 		
-		if(Startup.initializedLog==false){
+		if(!Startup.initializedLog){
 			
 			try{
 				Startup.log = LoggerWrapperFactory.getLogger(Startup.class);
@@ -118,7 +121,7 @@ public class Startup implements ServletContextListener {
 				Startup.log = LoggerProperties.getLoggerCore();
 				
 			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 		}
 		
@@ -131,21 +134,21 @@ public class Startup implements ServletContextListener {
 	public static boolean initializedResources = false;
 	
 	public static synchronized void initResources(){
-		if(Startup.initializedResources==false){
+		if(!Startup.initializedResources){
 			
 			String confDir = Startup.initLog();
 			
 			Startup.log.info("Inizializzazione rs api config in corso...");
 			
-			if(ServerProperties.initialize(confDir,Startup.log)==false){
+			if(!ServerProperties.initialize(confDir,Startup.log)){
 				return;
 			}
 			
-			if(DatasourceProperties.initialize(confDir,Startup.log)==false){
+			if(!DatasourceProperties.initialize(confDir,Startup.log)){
 				return;
 			}
 			try {
-				if(org.openspcoop2.web.ctrlstat.config.DatasourceProperties.initialize(DatasourceProperties.getInstance().getPropertiesConsole(),Startup.log)==false){
+				if(!org.openspcoop2.web.ctrlstat.config.DatasourceProperties.initialize(DatasourceProperties.getInstance().getPropertiesConsole(),Startup.log)){
 					return;
 				}
 			}catch(Exception e) {
@@ -156,7 +159,7 @@ public class Startup implements ServletContextListener {
 			try{
 				ExtendedInfoManager.initialize(new Loader(), null, null, null);
 			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 			Startup.log.info("Inizializzazione ExtendedInfoManager effettuata con successo");
 						
@@ -190,7 +193,7 @@ public class Startup implements ServletContextListener {
 				ControlStationCore.setIsSoggettiApplicativiCredenzialiPrincipalPermitSameCredentialsApiMode(serverProperties.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials());
 				
 			} catch (Exception e) {
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 			Startup.log.info("Inizializzazione Risorse Statiche Console effettuata con successo");
 			
@@ -198,12 +201,12 @@ public class Startup implements ServletContextListener {
 			try{
 				Connettori.initialize(log, true, confDir, ServerProperties.getInstance().getProtocolloDefault());
 			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 			Startup.log.info("Inizializzazione Connettori effettuata con successo");
 			
 			try {
-				if(ServerProperties.getInstance().isConfigurazioneAllarmiEnabled()) {
+				if(ServerProperties.getInstance().isConfigurazioneAllarmiEnabled()!=null && ServerProperties.getInstance().isConfigurazioneAllarmiEnabled().booleanValue()) {
 					Startup.log.info("Inizializzazione Allarmi in corso...");
 					AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(log, ServerProperties.getInstance().getAllarmiConfigurazione(), ServerProperties.getInstance().getConfDirectory());
 					AlarmManager.setAlarmEngineConfig(alarmEngineConfig);
@@ -211,31 +214,49 @@ public class Startup implements ServletContextListener {
 					Startup.log.info("Inizializzazione Allarmi effettuata con successo");
 				}
 			} catch (Exception e) {
-				String msgErrore = "Errore durante l'inizializzazione degli allarmi: " + e.getMessage();
-				Startup.log.error(
-						//					throw new ServletException(
-						msgErrore,e);
-				throw new RuntimeException(msgErrore,e);
+				doError("Errore durante l'inizializzazione degli allarmi",e);
 			}
+				
+			Startup.log.info("Inizializzazione security provider...");
+			try {
+				ServerProperties serverProperties = ServerProperties.getInstance();
+				if(serverProperties.isSecurityLoadBouncyCastleProvider()) {
+					ProviderUtils.addBouncyCastleAfterSun(true);
+					Startup.log.info("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
+				}
+			} catch (Exception e) {
+				doError("Errore durante l'inizializzazione dei security provider",e);
+			}
+			Startup.log.info("Inizializzazione security provider effettuata con successo");
 			
 			Startup.log.info("Inizializzazione HSM in corso...");
 			try {
 				ServerProperties serverProperties = ServerProperties.getInstance();
-				
 				String hsmConfig = serverProperties.getHSMConfigurazione();
 				if(StringUtils.isNotEmpty(hsmConfig)) {
 					File f = new File(hsmConfig);
 					HSMManager.init(f, serverProperties.isHSMRequired(), log, false);
 				}
 			} catch (Exception e) {
-				String msgErrore = "Errore durante l'inizializzazione del manager HSM: " + e.getMessage();
-				Startup.log.error(
-						//					throw new ServletException(
-						msgErrore,e);
-				throw new RuntimeException(msgErrore,e);
+				doError("Errore durante l'inizializzazione del manager HSM",e);
 			}
 			Startup.log.info("Inizializzazione HSM effettuata con successo");
 			
+			Startup.log.info("Inizializzazione BYOK in corso...");
+			try {
+				ServerProperties serverProperties = ServerProperties.getInstance();
+				String byokConfig = serverProperties.getBYOKConfigurazione();
+				if(StringUtils.isNotEmpty(byokConfig)) {
+					File f = new File(byokConfig);
+					BYOKManager.init(f, serverProperties.isBYOKRequired(), log);
+					
+					ControlStationCore.setByokInternalConfigSecurityEngine(serverProperties.getBYOKInternalConfigSecurityEngine());
+					ControlStationCore.setByokInternalConfigRemoteSecurityEngine(serverProperties.getBYOKInternalConfigRemoteSecurityEngine());
+				}
+			} catch (Exception e) {
+				doError("Errore durante l'inizializzazione del manager BYOK",e);
+			}
+			Startup.log.info("Inizializzazione BYOK effettuata con successo");
 			
 			Startup.log.info("Inizializzazione OCSP in corso...");
 			try {
@@ -247,11 +268,7 @@ public class Startup implements ServletContextListener {
 					OCSPManager.init(f, serverProperties.isOCSPRequired(), serverProperties.isOCSPLoadDefault(), log);
 				}
 			} catch (Exception e) {
-				String msgErrore = "Errore durante l'inizializzazione del manager OCSP: " + e.getMessage();
-				Startup.log.error(
-						//					throw new ServletException(
-						msgErrore,e);
-				throw new RuntimeException(msgErrore,e);
+				doError("Errore durante l'inizializzazione del manager OCSP",e);
 			}
 			Startup.log.info("Inizializzazione OCSP effettuata con successo");
 			
@@ -261,4 +278,11 @@ public class Startup implements ServletContextListener {
 		}
 	}
 
+	private static void doError(String msg,Exception e) {
+		String msgErrore = msg+": " + e.getMessage();
+		Startup.log.error(
+				//					throw new ServletException(
+				msgErrore,e);
+		throw new UtilsRuntimeException(msgErrore,e);
+	}
 }
