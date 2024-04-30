@@ -17,8 +17,10 @@ della comunicazione http:
 
 -  *Autenticazione http*: tale funzionalità permette di impostare delle
    credenziali http basic (username e password).
-
+      
 -  *Autenticazione token*: tale funzionalità permette di inoltrate un Bearer Token.
+
+-  *Autenticazione API Key*: funzionalità che consente di inoltrare al backend una chiave di identificazione 'Api Key' veicolata all'interno di un header http 'X-API-KEY' (https://swagger.io/docs/specification/authentication/api-keys/). È possibile abilitare anche la modalità 'App ID' che prevede oltre all'ApiKey un identificatore dell'applicazione oltre a personalizzare i nomi degli header http utilizzati.
 
 -  *Autenticazione https*: se l'utente lo desidera può personalizzare
    tutti gli aspetti che riguardano una comunicazione sicura su https.
@@ -69,6 +71,7 @@ connettore built-in JMS e File.
         
         http
 	tokenPolicy
+        apikey
         https
 	https_override_jvm
         proxy
