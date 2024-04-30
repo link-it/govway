@@ -2021,5 +2021,7 @@ public class CostantiControlStation {
 			"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"+"[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	
 	public static final String VALORE_QUALSIASI_STAR = "*";
+	
+	public static final String NOTA_ELEMENTO_CIFRATO = "Elemento cifrato";
 
 }

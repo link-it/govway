@@ -63,6 +63,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
@@ -453,7 +454,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_PROTOCOL_PROPERTY));
 				saveAs.setDisabilitaAjaxStatus();
 				if(binaryConsoleItem.isLockedType()) {
-					saveAs.setNote("ELEMENTO CIFRATO");
+					saveAs.setConfirm(Costanti.TITOLO_FINESTRA_MODALE_DOWNLOAD_MESSAGE_WARNING, this.core.getByokWarningMessage(), Costanti.LABEL_MONITOR_BUTTON_CONFERMA);
 				}
 				dati.add(saveAs);
 			}
@@ -508,7 +509,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_PROTOCOL_PROPERTY));
 					saveAs.setDisabilitaAjaxStatus();
 					if(binaryConsoleItem.isLockedType()) {
-						saveAs.setNote("ELEMENTO CIFRATO");
+						saveAs.setConfirm(Costanti.TITOLO_FINESTRA_MODALE_DOWNLOAD_MESSAGE_WARNING, this.core.getByokWarningMessage(), Costanti.LABEL_MONITOR_BUTTON_CONFERMA);
 					}
 					dati.add(saveAs);
 				}
