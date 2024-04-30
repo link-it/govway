@@ -1590,19 +1590,21 @@ public class CostantiControlStation {
 	public static final String PUBLIC_DIR = "public";
 	public static final String OPERATIONS_DELIMITER = "\n--------------------------------------------\n\n";
 	
-	/** ICONE */
-	public static final String ICONA_FRECCIA_SU = "&#xE316;";
-	public static final String ICONA_FRECCIA_GIU = "&#xE313;";
-	public static final String ICONA_PLACEHOLDER = "&#160;&#160;&#160;&#160;&#160;";
+	/** ICONE 
+	 * La definizione delle icone e' stata spostata nel file {@link Costanti} per aver un unico punto dove sono definite.
+	 * */
+	public static final String ICONA_FRECCIA_SU = Costanti.ICONA_FRECCIA_SU;
+	public static final String ICONA_FRECCIA_GIU = Costanti.ICONA_FRECCIA_GIU;
+	public static final String ICONA_PLACEHOLDER = Costanti.ICONA_PLACEHOLDER;
 	
-	public static final String ICONA_CONTINUE = "&#xe5db;";
-	public static final String ICONA_BREAK = "&#xe5cd;";
+	public static final String ICONA_CONTINUE = Costanti.ICONA_CONTINUE;
+	public static final String ICONA_BREAK = Costanti.ICONA_BREAK;
 
-	public static final String ICONA_ALARM_ACTIVE = "&#xe855;";
-	public static final String ICONA_ALARM_PASSIVE = "&#xe857;";
+	public static final String ICONA_ALARM_ACTIVE = Costanti.ICONA_ALARM_ACTIVE;
+	public static final String ICONA_ALARM_PASSIVE = Costanti.ICONA_ALARM_PASSIVE;
 	
-	public static final String ICONA_SCHEDULE_ACTIVE = "&#xe889;";
-	public static final String ICONA_SCHEDULE_PASSIVE = "&#xf17d;";
+	public static final String ICONA_SCHEDULE_ACTIVE = Costanti.ICONA_SCHEDULE_ACTIVE;
+	public static final String ICONA_SCHEDULE_PASSIVE = Costanti.ICONA_SCHEDULE_PASSIVE;
 	
 	/** COSTANTI FILE TEMPORANEI */
 	public static final String TEMP_FILE_PREFIX = "__pddconsole__";
@@ -1968,16 +1970,19 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPI_VUOTI = "Non è stato selezionato nessun gruppo di metadati";
 	public static final String MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPO_VUOTO = "Non è stato selezionato nessun valore per il gruppo di metadati {0}";
 	
-	/** ICONE E TOOLTIP */
+	/** ICONE E TOOLTIP 
+	 *  La definizione delle icone e' stata spostata nel file {@link Costanti} per aver un unico punto dove sono definite
+	 * 
+	 * */
 	
-	public static final String ICONA_AGGIUNGI_DESCRIZIONE = "&#xE873;";
+	public static final String ICONA_AGGIUNGI_DESCRIZIONE = Costanti.ICONA_DESCRIZIONE;
 	public static final String AGGIUNGI_DESCRIZIONE_TOOLTIP_CON_PARAMETRO = "Aggiungi {0}";
 	
-	public static final String ICONA_MODIFICA_CONFIGURAZIONE = "&#xE3C9;";
+	public static final String ICONA_MODIFICA_CONFIGURAZIONE = Costanti.ICONA_EDIT;
 	public static final String ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP = "Modifica";
 	public static final String ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO = "Modifica {0}";
 	
-	public static final String ICONA_VISUALIZZA = "&#xE89E;";
+	public static final String ICONA_VISUALIZZA = Costanti.ICONA_VISUALIZZA;
 	public static final String ICONA_VISUALIZZA_TOOLTIP = "Visualizza";
 	public static final String ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO = "Visualizza {0}";
 	
@@ -1989,20 +1994,20 @@ public class CostantiControlStation {
 	public static final String ICONA_VERIFICA_CERTIFICATI_TOOLTIP = Costanti.ICONA_VERIFICA_CERTIFICATI_TOOLTIP;
 	public static final String ICONA_VERIFICA_CERTIFICATI_TOOLTIP_CON_PARAMETRO = Costanti.ICONA_VERIFICA_CERTIFICATI_TOOLTIP_CON_PARAMETRO;
 	
-	public static final String ICONA_MODIFICA_CONFIGURAZIONE_CONNETTORI_MULTIPLI = "&#xE8B8;";
+	public static final String ICONA_MODIFICA_CONFIGURAZIONE_CONNETTORI_MULTIPLI = Costanti.ICONA_SETTINGS;
 	public static final String ICONA_MODIFICA_CONFIGURAZIONE_CONNETTORI_MULTIPLI_TOOLTIP = "Configurazione Connettori Multipli";
 	public static final String ICONA_MODIFICA_CONFIGURAZIONE_CONNETTORI_MULTIPLI_TOOLTIP_CON_PARAMETRO = "Configurazione Connettori Multipli {0}";
 	
-	public static final String ICONA_ELENCO_CONNETTORI_MULTIPLI = "list_alt";
+	public static final String ICONA_ELENCO_CONNETTORI_MULTIPLI = Costanti.ICONA_ELENCO;
 	public static final String ICONA_ELENCO_CONNETTORI_MULTIPLI_TOOLTIP = "Elenco Connettori";
 	public static final String ICONA_ELENCO_CONNETTORI_MULTIPLI_TOOLTIP_CON_PARAMETRO = "Elenco Connettori {0}";
 	
-	public static final String ICONA_UPGRADE_CONFIGURAZIONE = "&#xE3CA;";
+	public static final String ICONA_UPGRADE_CONFIGURAZIONE = Costanti.ICONA_UPGRADE;
 	public static final String ICONA_UPGRADE_CONFIGURAZIONE_TOOLTIP = "Aggiorna";
 	public static final String ICONA_UPGRADE_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO = "Aggiorna {0}";
 	
-	public static final String ICONA_MODIFICA_TOGGLE_ON = "toggle_on";
-	public static final String ICONA_MODIFICA_TOGGLE_OFF = "toggle_off";
+	public static final String ICONA_MODIFICA_TOGGLE_ON = Costanti.ICONA_TOGGLE_ON;
+	public static final String ICONA_MODIFICA_TOGGLE_OFF = Costanti.ICONA_TOGGLE_OFF;
 	
 	public static final String ICONA_RESET_CACHE_ELEMENTO = Costanti.ICONA_RESET_CACHE_ELEMENTO;
 	public static final String ICONA_RESET_CACHE_ELEMENTO_TOOLTIP = Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP;

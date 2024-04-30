@@ -79,7 +79,6 @@ var path = '<%= request.getContextPath()%>';
 <link rel="stylesheet" href="css/ui.slider.css" type="text/css">
 <script type="text/javascript" src="js/ui.core.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/ui.dialog.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/ui.resizable.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/ui.slider.js" nonce="<%= randomNonce %>"></script>
 <link rel="stylesheet" href="css/bootstrap-tagsinput.css" type="text/css">
 <script type="text/javascript" src="js/jquery-on.js" nonce="<%= randomNonce %>"></script>
@@ -208,9 +207,9 @@ function CheckDati() {
         			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
         			console.log(idx);
         			if(idx) {
-        				var label = $("#hidden_title_pwd_"+ idx + "_lock_view").val();
-						var body = $("#hidden_body_pwd_"+ idx+ "_lock_view").val();
-						var url = $("#hidden_url_pwd_"+ idx+ "_lock_view").val();
+        				var label = $("#hidden_title_pwd_"+ idx + "_lock_copy").val();
+						var body = $("#hidden_body_pwd_"+ idx+ "_lock_copy").val();
+						var url = $("#hidden_url_pwd_"+ idx+ "_lock_copy").val();
 						var valore = $("#__lk__pwd_"+ idx+ "").val();
 						mostraAlertInformazioniCifrateModal(label,body,url,valore);
         			}

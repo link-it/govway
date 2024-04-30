@@ -441,13 +441,13 @@ for (int i = 0; i < dati.size(); i++) {
 							      		if(subtitle_<%= deName  %>_aperto){
 						      				$("#<%= titleDivId  %>").show();
 						      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
-						      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI__FIELDSET%>');
+						      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_FIELDSET%>');
 						      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
 						      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
 						      			} else {
 						      				$("#<%= titleDivId  %>").hide();
 						      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
-						      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA__FIELDSET%>');
+						      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_FIELDSET%>');
 						      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
 						      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
 						      			}
@@ -458,14 +458,14 @@ for (int i = 0; i < dati.size(); i++) {
 							      			if(subtitle_<%= deName  %>_aperto){
 							      				$("#<%= titleDivId  %>").show();
 							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
-							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI__FIELDSET%>');
+							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_FIELDSET%>');
 							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
 							      				inizializzaSelectSezione('<%= titleDivId  %>');
 							      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
 							      			} else {
 							      				$("#<%= titleDivId  %>").hide();
 							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
-							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA__FIELDSET%>');
+							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_FIELDSET%>');
 							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
 							      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
 							      			}
@@ -477,14 +477,14 @@ for (int i = 0; i < dati.size(); i++) {
 							      			if(subtitle_<%= deName  %>_aperto){
 							      				$("#<%= titleDivId  %>").show();
 							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
-							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI__FIELDSET%>');
+							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_FIELDSET%>');
 							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
 							      				inizializzaSelectSezione('<%= titleDivId  %>');
 							      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
 							      			} else {
 							      				$("#<%= titleDivId  %>").hide();
 							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
-							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA__FIELDSET%>');
+							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_FIELDSET%>');
 							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
 							      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
 							      			}
@@ -950,7 +950,7 @@ for (int i = 0; i < dati.size(); i++) {
 							          				if (!bottoneGeneraPassword && visualizzaIconaMostraPassword) {
 								          				%>
 								          					<span id="<%=idPwdEyeSpan %>" class="span-password-eye">
-														  		<i id="<%=idPwdEye %>" class="material-icons md-24">visibility</i>
+														  		<i id="<%=idPwdEye %>" class="material-icons md-24"><%= Costanti.ICON_VISIBILITY %></i>
 														  	</span>
 															<script type="text/javascript" nonce="<%= randomNonce %>">
 																$(document).ready(function(){
@@ -967,9 +967,9 @@ for (int i = 0; i < dati.size(); i++) {
 																		  // toggle the eye slash icon
 																	    const eyeIcon = $('#<%=idPwdEye %>');
 																	    if (x.type === 'password') {
-																	        eyeIcon.text('visibility');
+																	        eyeIcon.html('<%= Costanti.ICON_VISIBILITY %>');
 																	    } else {
-																	        eyeIcon.text('visibility_off');
+																	        eyeIcon.html('<%= Costanti.ICON_VISIBILITY_OFF %>');
 																	    }
 																	    
 																	});
@@ -1479,13 +1479,13 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							   						String idPwdEditSpan = "pwd_" + i + "_edit_span";
 			                        							   						String idPwdLock = "pwd_" + i + "_lock";
 			                        							   						String idPwdViewLock = "pwd_" + i + "_lock_view";
-			                        							   						String idPwdCopyLock = "pwd_" + i + "_lock_edit";
+			                        							   						String idPwdCopyLock = "pwd_" + i + "_lock_copy";
 			                        							   						String hiddenLockName = Costanti.PARAMETER_LOCK_PREFIX + deName;
 			                        							   						String hiddenLockId = Costanti.PARAMETER_LOCK_PREFIX + idPwd;
 			                        							   						boolean lockValuePresent = !de.getValue().equals(""); // e' gia' presente un valore
 			                        							   						String lockValue = lockValuePresent ? Costanti.PARAMETER_LOCK_DEFAULT_VALUE : de.getValue();
 			                        							   						String lockDisabled = lockValuePresent ? " disabled=\"disabled\"" : "";
-			                        							   						String lockIcon = lockValuePresent ? "lock" : "lock_open";
+			                        							   						String lockIcon = lockValuePresent ? Costanti.ICON_LOCK: Costanti.ICON_LOCK_OPEN;
 			                        							   						String dePwdType = !lockValuePresent ? "text" : "password";
 			                        							   						DataElementPassword dePwd = de.getPassword();
 			                        				                    				boolean visualizzaInformazioniCifrate = dePwd.isLockVisualizzaInformazioniCifrate();
@@ -1496,7 +1496,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							          				if (lockValuePresent && !lockReadOnly) {
 			                        								          				%>
 			                        								          					<span id="<%=idPwdEditSpan %>" class="span-password-eye">
-			                        														  		<i id="<%=idPwdEdit %>" class="material-icons md-24" title="Modifica">edit</i>
+			                        														  		<i id="<%=idPwdEdit %>" class="material-icons md-24" title="<%= Costanti.ICONA_EDIT_TOOLTIP %>"><%= Costanti.ICONA_EDIT %></i>
 			                        														  	</span>
 			                        															<script type="text/javascript" nonce="<%= randomNonce %>">
 			                        																$(document).ready(function(){
@@ -1516,7 +1516,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        																        
 			                        																        // sostituire l'icona lock con unlock
 			                        																		const lockIcon = $('#<%=idPwdLock %>');
-																										    lockIcon.text('lock_open');
+																										    lockIcon.html('<%= Costanti.ICON_LOCK_OPEN %>');
 			                        																	});
 			                        																});
 			                        															</script>
@@ -1534,14 +1534,17 @@ for (int i = 0; i < dati.size(); i++) {
 			                        															<% 
 			                        									      				if(visualizzaInformazioniCifrate){
 			                        									      				%>
-			                        											      			<input type="hidden" name="__i_hidden_title_<%= idPwdViewLock %>" id="hidden_title_<%= idPwdViewLock %>"  value="<%= Costanti.TITOLO_FINESTRA_MODALE_MESSAGE_WARNING %>"/>
+			                        											      			<input type="hidden" name="__i_hidden_title_<%= idPwdViewLock %>" id="hidden_title_<%= idPwdViewLock %>"  value="<%= Costanti.TITOLO_FINESTRA_MODALE_VISUALIZZA_MESSAGE_WARNING %>"/>
 			                        											      			<input type="hidden" name="__i_hidden_body_<%= idPwdViewLock %>" id="hidden_body_<%= idPwdViewLock %>"  value="<%= dePwd.getLockWarningMessage() %>"/>
 			                        											      			<input type="hidden" name="__i_hidden_url_<%= idPwdViewLock %>" id="hidden_url_<%= idPwdViewLock %>"  value="<%= de.getUrl() %>"/>
 			                        													      	<span class="spanIconInfoBox-viewLock">
-			                        																<i class="material-symbols-outlined md-24" id="<%=idPwdViewLock %>" title="Visualizza informazione cifrata">visibility_lock</i>
+			                        																<i class="material-symbols-outlined md-24" id="<%=idPwdViewLock %>" title="<%= Costanti.ICONA_VISIBILITY_LOCK_TOOLTIP %>"><%= Costanti.ICON_VISIBILITY_LOCK %></i>
 			                        															</span>
+			                        															<input type="hidden" name="__i_hidden_title_<%= idPwdCopyLock %>" id="hidden_title_<%= idPwdCopyLock %>"  value="<%= Costanti.TITOLO_FINESTRA_MODALE_COPIA_MESSAGE_WARNING %>"/>
+			                        											      			<input type="hidden" name="__i_hidden_body_<%= idPwdCopyLock %>" id="hidden_body_<%= idPwdCopyLock %>"  value="<%= dePwd.getLockWarningMessage() %>"/>
+			                        											      			<input type="hidden" name="__i_hidden_url_<%= idPwdCopyLock %>" id="hidden_url_<%= idPwdCopyLock %>"  value="<%= de.getUrl() %>"/>
 			                        															<span class="spanIconInfoBox-copyLock">
-			                        																<i class="material-icons md-24" id="<%=idPwdCopyLock %>" title="Copia informazione cifrata">content_copy</i>
+			                        																<i class="material-icons md-24" id="<%=idPwdCopyLock %>" title="<%= Costanti.ICONA_COPY_LOCK_TOOLTIP %>"><%= Costanti.ICON_COPY %></i>
 			                        															</span>
 			                        															
 			                        														<% } %>	

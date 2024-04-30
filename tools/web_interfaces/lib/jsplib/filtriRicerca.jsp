@@ -123,7 +123,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 									%>
 									<% if(mostraFormHeader) { %>
 										<span class="icon-box" id="iconaPanelListaSpan">
-											<i class="material-icons md-24" id="iconaPanelLista">&#xE8B6;</i>
+											<i class="material-icons md-24" id="iconaPanelLista"><%= Costanti.ICON_SEARCH %></i>
 										</span>
 									<% }%>
 								</div>
