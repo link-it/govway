@@ -290,7 +290,8 @@ public class Costanti {
 	
 	public static final String PARAMETER_LOCK_PREFIX = "__lk__";
 	public static final String PARAMETER_LOCK_DEFAULT_VALUE = "********";
-	public static final String TITOLO_FINESTRA_MODALE_VISUALIZZA_MESSAGE_WARNING = "Visualizza Informazione Cifrata";
+	public static final String TITOLO_FINESTRA_MODALE_DOWNLOAD_MESSAGE_WARNING = "Attenzione";
+	public static final String TITOLO_FINESTRA_MODALE_VISUALIZZA_MESSAGE_WARNING = "Attenzione";
 	public static final String TITOLO_FINESTRA_MODALE_COPIA_MESSAGE_WARNING = "Attenzione";
 	
 	/** PAGE DATA TITLE */

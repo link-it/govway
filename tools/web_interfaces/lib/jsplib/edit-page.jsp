@@ -73,17 +73,6 @@ String csrfTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
 if(csrfTokenFromSession == null)
 	csrfTokenFromSession = "";
 
-// cerco se è presente un lock
-boolean isLockPresent = false;
-for (int i = 0; i < dati.size(); i++) {
-	DataElement de = (DataElement) dati.get(i);
-  	String type = de.getType();
-  	if (type.equals("lock")) {
-  		isLockPresent = true;
-  		break;
-  	}
-}
-
 %>
 
 
@@ -99,15 +88,8 @@ for (int i = 0; i < dati.size(); i++) {
 			<%			
 		}
 		%>
-		
-		<%
-		if(isLockPresent){
-			%>
-			<input type="hidden" name="__i_hidden_lockurl_" id="__i_hidden_lockurl_"  value=""/>
-			<input type="hidden" name="__i_hidden_lockvalue_" id="__i_hidden_lockvalue_"  value=""/>
-			<%			
-		}
-		%>
+		<input type="hidden" name="__i_hidden_lockurl_" id="__i_hidden_lockurl_"  value=""/>
+		<input type="hidden" name="__i_hidden_lockvalue_" id="__i_hidden_lockvalue_"  value=""/>
 <%
 boolean elementsRequired = false;
 boolean elementsRequiredEnabled = true;
@@ -658,19 +640,43 @@ for (int i = 0; i < dati.size(); i++) {
 								de.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
 							}
 							String id = "form-link_" + i ;
+							
+							DataElementConfirm deConfirm = de.getConfirm();
+							boolean visualizzaConferma = deConfirm != null;
 	        				%>
 	            			<div class="prop prop-link">
 	            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabelLink %></label>
 	            				<div class="<%=classDivNoEdit %>"> 
-	            					<span class="<%=classSpanNoEdit %>"><a id="<%=id %>" href="<%= de.getUrl() %>" <%=deTarget %> ><%= de.getValue() %></a></span>
-	            					<% if (!de.getOnClick().equals("")) { %>
-		            					<script type="text/javascript" nonce="<%= randomNonce %>">
+	            					<% if (!visualizzaConferma) { %>
+		            					<span class="<%=classSpanNoEdit %>"><a id="<%=id %>" href="<%= de.getUrl() %>" <%=deTarget %> ><%= de.getValue() %></a></span>
+		            					<% if (!de.getOnClick().equals("")) { %>
+			            					<script type="text/javascript" nonce="<%= randomNonce %>">
+										      	 $(document).ready(function(){
+														$('#<%=id %>').click(function() {
+															<%= visualizzaAjaxStatus %><%= de.getOnClick() %>;
+														});
+													});
+											</script>
+										<%  } %>
+									<%  } else {%>
+										<span class="<%=classSpanNoEdit %>"><a id="<%=id %>" href="#"><%= de.getValue() %></a></span>
+										<input type="hidden" name="__i_hidden_title_<%= id %>" id="hidden_title_<%= id %>"  value="<%= deConfirm.getTitolo() %>"/>
+						      			<input type="hidden" name="__i_hidden_body_<%= id %>" id="hidden_body_<%= id %>"  value="<%= deConfirm.getBody() %>"/>
+						      			<input type="hidden" name="__i_hidden_azione_<%= id %>" id="hidden_azione_<%= id %>"  value="<%= deConfirm.getAzione() %>"/>
+						      			<input type="hidden" name="__i_hidden_url_<%= id %>" id="hidden_url_<%= id %>"  value="<%= de.getUrl() %>"/>
+										<script type="text/javascript" nonce="<%= randomNonce %>">
 									      	 $(document).ready(function(){
 													$('#<%=id %>').click(function() {
-														<%= visualizzaAjaxStatus %><%= de.getOnClick() %>;
+														// visualizza modale di conferma
+														var label = $("#hidden_title_<%=id %>").val();
+														var body = $("#hidden_body_<%=id %>").val();
+														var url = $("#hidden_url_<%=id %>").val();
+														var azione = $("#hidden_azione_<%=id %>").val();
+														mostraDownloadInformazioniCifrateModal(label,body,url,azione);
 													});
 												});
 										</script>
+									
 									<%  } %>
 	            				</div>
 	            				<% 
@@ -684,6 +690,9 @@ for (int i = 0; i < dati.size(); i++) {
 											<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 										</span>
 									</div>
+						      	<% } %>
+						      	<% if(!deNote.equals("")){ %>
+						      		<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 						      	<% } %>
 	            			</div>
 	            			<%
@@ -1488,7 +1497,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							   						String lockIcon = lockValuePresent ? Costanti.ICON_LOCK: Costanti.ICON_LOCK_OPEN;
 			                        							   						String dePwdType = !lockValuePresent ? "text" : "password";
 			                        							   						DataElementPassword dePwd = de.getPassword();
-			                        				                    				boolean visualizzaInformazioniCifrate = dePwd.isLockVisualizzaInformazioniCifrate();
+			                        				                    				boolean visualizzaInformazioniCifrate = lockValuePresent && dePwd.isLockVisualizzaInformazioniCifrate();
 			                        				                    				boolean lockReadOnly = dePwd.isLockReadOnly();
 			                        													%><input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= lockValue %>" <%=lockDisabled %>>
 			                        													  <input type="hidden" name="<%= hiddenLockName  %>" id="<%=hiddenLockId %>" value="<%= de.getValue()  %>">

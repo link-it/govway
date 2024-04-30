@@ -1,9 +1,3 @@
-package org.openspcoop2.web.lib.mvc;
-
-import java.io.Serializable;
-
-import org.openspcoop2.utils.crypt.PasswordGenerator;
-
 /*
  * GovWay - A customizable API Gateway 
  * https://govway.org
@@ -23,6 +17,12 @@ import org.openspcoop2.utils.crypt.PasswordGenerator;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+package org.openspcoop2.web.lib.mvc;
+
+import java.io.Serializable;
+
+import org.openspcoop2.utils.crypt.PasswordGenerator;
+
 
 /**
  * DataElementPassword

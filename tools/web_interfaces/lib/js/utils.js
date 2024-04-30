@@ -106,41 +106,7 @@
  	      width: "660px",
  	      modal: true,
  	      buttons: {
-			'Visualizza' : function(evt) {
-				// recupero la url
-				var urlLockDecoder = $("#__i_hidden_lockurl_").val();
-				var valToDecode = $("#__i_hidden_lockvalue_").val();
-				
-				// chiamata ajax
-				visualizzaAjaxStatus();
-				
-				$.ajax({
-					url : urlLockDecoder,
-					method: 'POST',
-					async : false,
-					data: {
-				        secret: valToDecode
-				    },
-				    contentType: 'application/x-www-form-urlencoded',
-					success: function(data, textStatus, jqXHR){
-						var valueToCopy = data;
-						
-						// inserimento del valore nella text area
-	    				$("textarea[id^='txtA_ne_dec']").val(data);
-	    				
-	    				// visualizzo il pulsante di copia
-	    				$("#iconCopy_dec").show();
-	    				
-	    				nascondiAjaxStatus();
-					},
-					error: function(data, textStatus, jqXHR){
-						nascondiAjaxStatus();
-					}
-				});
-				
-				// resetto i valori lock
-				resetValoriLock();
- 	 	        }
+			'Visualizza' : visualizzaValoreDecodificato
  	 	     ,
  	    	 'Chiudi' : function() {
  	 	          $( this ).dialog( "close" );
@@ -157,53 +123,166 @@
  	      width: 500,
  	      modal: true,
  	      buttons: {
- 	    	 'Copia' : function(evt) {
-				// recupero la url
-				var urlLockDecoder = $("#__i_hidden_lockurl_").val();
-				var valToDecode = $("#__i_hidden_lockvalue_").val();
-				
-				// chiamata ajax
-				visualizzaAjaxStatus();
-				
-				$.ajax({
-					url : urlLockDecoder,
-					method: 'POST',
-					async : false,
-					data: {
-				        secret: valToDecode
-				    },
-				    contentType: 'application/x-www-form-urlencoded',
-					success: function(data, textStatus, jqXHR){
-						var valueToCopy = data;
-						
-						// copio valore nella clipboard
-						var copiatoOK = copyTextToClipboard(valueToCopy);
-						
-						// inserimento del valore nella text area
-	    				//$("textarea[id^='idFinestraModale_<%=numeroLink %>_txtA']").val(data);
-	    				
-	    				nascondiAjaxStatus();
-	    				
-	    				if(copiatoOK) {
-        					showTooltipAndFadeOut(evt);
-        				}
-					},
-					error: function(data, textStatus, jqXHR){
-						nascondiAjaxStatus();
-					}
-				});
-				
-				// resetto i valori lock
-				resetValoriLock();
-				
-				// chiudo il dialog
- 	 	        $( this ).dialog( "close" );
- 	 	        }
+ 	    	 'Copia' : copiaValoreDecodificato
+ 	      }
+ 	    });
+ 	}
+ 	
+ 	if($( "#downloadInformazioniCifrateModal" ).length > 0){
+ 		$( "#downloadInformazioniCifrateModal" ).dialog({
+ 	      resizable: false,
+ 	      autoOpen: false,
+ 	      height: "auto",
+ 	      width: 500,
+ 	      modal: true,
+ 	      buttons: {
+ 	    	 'Download' : downloadValoreDecodificato
  	      }
  	    });
  	}
  
  });
+ 
+ function downloadValoreDecodificato(evt) {
+    // Recupero la URL e il valore da decodificare
+    var urlLockDecoder = $("#__i_hidden_lockurl_").val();
+    var valToDecode = $("#__i_hidden_lockvalue_").val();
+
+    // Chiamata AJAX per decodificare il valore
+    visualizzaAjaxStatus();
+
+    $.ajax({
+        url: urlLockDecoder,
+        method: 'GET',
+        async: false,
+        xhrFields: {
+            responseType: 'blob' // Set response type to Blob
+        },
+        success: function(data, textStatus, jqXHR) {
+			// Estrai il nome del file dall'header Content-Disposition
+            var filename = getFilenameFromContentDisposition(jqXHR);
+            
+            // Create a Blob from the response
+            var blob = new Blob([data], { type: jqXHR.getResponseHeader('Content-Type') });
+
+ 			saveBlobAsFile(blob, filename);
+            
+            // Nasconde lo stato AJAX dopo la copia
+            nascondiAjaxStatus();
+        },
+        error: function(data, textStatus, jqXHR) {
+            // Nasconde lo stato AJAX in caso di errore
+            nascondiAjaxStatus();
+        }
+    });
+
+    // Resettare i valori di lock dopo l'operazione
+    resetValoriLock();
+
+    // Chiude il dialog una volta completato il processo
+    $(this).dialog("close");
+}
+
+function saveBlobAsFile(blob, filename) {
+    if (window.navigator.msSaveOrOpenBlob) {
+        // Utilizza il metodo specifico di IE per salvare il Blob come file
+        window.navigator.msSaveOrOpenBlob(blob, filename);
+    } else {
+        // Fallback per altri browser che supportano FileSaver.js
+        var blobUrl = window.URL.createObjectURL(blob);
+        var downloadLink = $('<a>')
+            .attr('href', blobUrl)
+            .attr('download', filename)
+            .appendTo('body');
+        
+        downloadLink[0].click(); // Simula un click sul link di download
+        
+        // Pulisce e rimuove il link dopo il download
+        setTimeout(function() {
+            downloadLink.remove();
+            window.URL.revokeObjectURL(blobUrl);
+        }, 100);
+    }
+}
+ 
+ function visualizzaValoreDecodificato(evt) {
+	// recupero la url
+	var urlLockDecoder = $("#__i_hidden_lockurl_").val();
+	var valToDecode = $("#__i_hidden_lockvalue_").val();
+	
+	// chiamata ajax
+	visualizzaAjaxStatus();
+	
+	$.ajax({
+		url : urlLockDecoder,
+		method: 'POST',
+		async : false,
+		data: {
+	        secret: valToDecode
+	    },
+	    contentType: 'application/x-www-form-urlencoded',
+		success: function(data, textStatus, jqXHR){
+			var valueToCopy = data;
+			
+			// inserimento del valore nella text area
+			$("textarea[id^='txtA_ne_dec']").val(data);
+			
+			// visualizzo il pulsante di copia
+			$("#iconCopy_dec").show();
+			
+			nascondiAjaxStatus();
+		},
+		error: function(data, textStatus, jqXHR){
+			nascondiAjaxStatus();
+		}
+	});
+	
+	// resetto i valori lock
+	resetValoriLock();
+}
+ 
+ function copiaValoreDecodificato(evt) {
+    // Recupero la URL e il valore da decodificare
+    var urlLockDecoder = $("#__i_hidden_lockurl_").val();
+    var valToDecode = $("#__i_hidden_lockvalue_").val();
+
+    // Chiamata AJAX per decodificare il valore
+    visualizzaAjaxStatus();
+
+    $.ajax({
+        url: urlLockDecoder,
+        method: 'POST',
+        async: false,
+        data: {
+            secret: valToDecode
+        },
+        contentType: 'application/x-www-form-urlencoded',
+        success: function(data, textStatus, jqXHR) {
+            var valueToCopy = data;
+
+            // Copia il valore nella clipboard
+            var copiatoOK = copyTextToClipboard(valueToCopy);
+
+            // Nasconde lo stato AJAX dopo la copia
+            nascondiAjaxStatus();
+
+            // Mostra il tooltip se la copia è avvenuta con successo
+            if (copiatoOK) {
+                showTooltipAndFadeOut(evt);
+            }
+        },
+        error: function(data, textStatus, jqXHR) {
+            // Nasconde lo stato AJAX in caso di errore
+            nascondiAjaxStatus();
+        }
+    });
+
+    // Resettare i valori di lock dopo l'operazione
+    resetValoriLock();
+
+    // Chiude il dialog una volta completato il processo
+    $(this).dialog("close");
+}
  
 function showSlider(select){ 
         if(select.length > 0) {
@@ -339,5 +418,19 @@ function setValoriLock(url,valore){
 
 function resetValoriLock(){
 	setValoriLock('','');
+}
+
+// Funzione per estrarre il nome del file dall'header Content-Disposition
+function getFilenameFromContentDisposition(xhr) {
+    var contentDisposition = xhr.getResponseHeader('Content-Disposition');
+    var filename = '';
+    if (contentDisposition && contentDisposition.indexOf('attachment') !== -1) {
+        var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+        var matches = filenameRegex.exec(contentDisposition);
+        if (matches != null && matches[1]) {
+            filename = matches[1].replace(/['"]/g, ''); // Rimuovi eventuali apici o virgolette
+        }
+    }
+    return filename;
 }
 

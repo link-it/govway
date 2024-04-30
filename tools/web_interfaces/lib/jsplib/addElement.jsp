@@ -164,6 +164,15 @@ function CheckDati() {
 		$("#alertInformazioniCifrateModal").html(body);
 		$("#alertInformazioniCifrateModal").dialog("open");
 	}
+	
+	function mostraDownloadInformazioniCifrateModal(title,body,url,azione){
+		setValoriLock(url,'');
+		
+		$("#downloadInformazioniCifrateModal").prev().children('span').text(title);
+		$("#downloadInformazioniCifrateModal").html(body);
+		$("#downloadInformazioniCifrateModal").next().children('button').text(azione);
+		$("#downloadInformazioniCifrateModal").dialog("open");
+	}
 
         $(document).ready(function(){
         	
@@ -457,6 +466,9 @@ $(document).ready(function(){
 </div>
 <div id="alertInformazioniCifrateModal" title="Attenzione">
 	<div id="alertInformazioniCifrateModalBody" class="contenutoModal"></div>
+</div>
+<div id="downloadInformazioniCifrateModal" title="Attenzione">
+	<div id="downloadInformazioniCifrateModalBody" class="contenutoModal"></div>
 </div>
 <jsp:include page="/jsplib/conferma.jsp" flush="true" />
 </body>

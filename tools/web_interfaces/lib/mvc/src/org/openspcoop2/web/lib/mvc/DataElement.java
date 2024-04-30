@@ -133,6 +133,8 @@ public class DataElement implements Serializable {
 	
 	private Dialog dialog = null;
 	
+	private DataElementConfirm confirm = null;
+	
 	public String getIdToRemove() {
 		return this.idToRemove;
 	}
@@ -1065,4 +1067,18 @@ public class DataElement implements Serializable {
 		this.addStatus(tooltip, value, Costanti.ICON_PERSON);
 	}
 	
+	public DataElementConfirm getConfirm() {
+		return this.confirm;
+	}
+
+	public void setConfirm(DataElementConfirm confirm) {
+		this.confirm = confirm;
+	}
+	
+	public void setConfirm(String titolo, String messaggio, String testoBottoneAzione) {
+		this.confirm = new DataElementConfirm();
+		this.confirm.setTitolo(titolo);
+		this.confirm.setBody(messaggio);
+		this.confirm.setAzione(testoBottoneAzione);
+	}
 }
