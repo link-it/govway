@@ -1517,6 +1517,11 @@ for (int i = 0; i < dati.size(); i++) {
 			                        																        // sostituire l'icona lock con unlock
 			                        																		const lockIcon = $('#<%=idPwdLock %>');
 																										    lockIcon.html('<%= Costanti.ICON_LOCK_OPEN %>');
+																										    
+																										    // nascondere comandi copia
+																										    $('#<%=idPwdCopyLock%>').hide();
+																										    // nascondere comando visualizza
+																										    $('#<%=idPwdViewLock%>').hide();
 			                        																	});
 			                        																});
 			                        															</script>
