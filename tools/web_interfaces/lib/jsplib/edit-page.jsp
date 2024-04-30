@@ -441,13 +441,13 @@ for (int i = 0; i < dati.size(); i++) {
 							      		if(subtitle_<%= deName  %>_aperto){
 						      				$("#<%= titleDivId  %>").show();
 						      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
-						      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_FIELDSET%>');
+						      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_NASCONDI_FIELDSET%>');
 						      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
 						      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
 						      			} else {
 						      				$("#<%= titleDivId  %>").hide();
 						      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
-						      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_FIELDSET%>');
+						      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_FIELDSET%>');
 						      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
 						      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
 						      			}
@@ -458,14 +458,14 @@ for (int i = 0; i < dati.size(); i++) {
 							      			if(subtitle_<%= deName  %>_aperto){
 							      				$("#<%= titleDivId  %>").show();
 							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
-							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_FIELDSET%>');
+							      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_NASCONDI_FIELDSET%>');
 							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
 							      				inizializzaSelectSezione('<%= titleDivId  %>');
 							      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
 							      			} else {
 							      				$("#<%= titleDivId  %>").hide();
 							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
-							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_FIELDSET%>');
+							      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_FIELDSET%>');
 							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
 							      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
 							      			}
@@ -477,14 +477,14 @@ for (int i = 0; i < dati.size(); i++) {
 							      			if(subtitle_<%= deName  %>_aperto){
 							      				$("#<%= titleDivId  %>").show();
 							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
-							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_FIELDSET%>');
+							      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_NASCONDI_FIELDSET%>');
 							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
 							      				inizializzaSelectSezione('<%= titleDivId  %>');
 							      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
 							      			} else {
 							      				$("#<%= titleDivId  %>").hide();
 							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
-							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_FIELDSET%>');
+							      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_FIELDSET%>');
 							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
 							      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
 							      			}
@@ -563,14 +563,14 @@ for (int i = 0; i < dati.size(); i++) {
 				      		if(subtitle_<%= deName  %>_aperto){
 			      				$("#<%= subtitleDeId  %>").show();
 			      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
-			      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
+			      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
 			      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
 			      				$("#<%= deName  %>__divEsterno").removeClass('subtitleCollapsed');
 			      				$("#<%= deName  %>__divEsterno").addClass('subtitleOpen');
 			      			} else {
 			      				$("#<%= subtitleDeId  %>").hide();
 			      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
-			      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
+			      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
 			      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
 			      				$("#<%= deName  %>__divEsterno").removeClass('subtitleOpen');
 			      				$("#<%= deName  %>__divEsterno").addClass('subtitleCollapsed');
@@ -582,7 +582,7 @@ for (int i = 0; i < dati.size(); i++) {
 				      			if(subtitle_<%= deName  %>_aperto){
 				      				$("#<%= subtitleDeId  %>").show();
 				      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
-				      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
+				      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
 				      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
 				      				$("#<%= deName  %>__divEsterno").removeClass('subtitleCollapsed');
 				      				$("#<%= deName  %>__divEsterno").addClass('subtitleOpen');
@@ -590,7 +590,7 @@ for (int i = 0; i < dati.size(); i++) {
 				      			} else {
 				      				$("#<%= subtitleDeId  %>").hide();
 				      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
-				      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
+				      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
 				      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
 				      				$("#<%= deName  %>__divEsterno").removeClass('subtitleOpen');
 				      				$("#<%= deName  %>__divEsterno").addClass('subtitleCollapsed');
@@ -603,7 +603,7 @@ for (int i = 0; i < dati.size(); i++) {
 				      			if(subtitle_<%= deName  %>_aperto){
 				      				$("#<%= subtitleDeId  %>").show();
 				      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
-				      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
+				      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
 				      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
 				      				$("#<%= deName  %>__divEsterno").removeClass('subtitleCollapsed');
 				      				$("#<%= deName  %>__divEsterno").addClass('subtitleOpen');
@@ -611,7 +611,7 @@ for (int i = 0; i < dati.size(); i++) {
 				      			} else {
 				      				$("#<%= subtitleDeId  %>").hide();
 				      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
-				      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
+				      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
 				      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
 				      				$("#<%= deName  %>__divEsterno").removeClass('subtitleOpen');
 				      				$("#<%= deName  %>__divEsterno").addClass('subtitleCollapsed');
@@ -965,7 +965,7 @@ for (int i = 0; i < dati.size(); i++) {
 																		  }
 		
 																		  // toggle the eye slash icon
-																	    const eyeIcon = $('#<%=idPwdEye %>');
+																	    var eyeIcon = $('#<%=idPwdEye %>');
 																	    if (x.type === 'password') {
 																	        eyeIcon.html('<%= Costanti.ICON_VISIBILITY %>');
 																	    } else {
@@ -1515,7 +1515,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        																        $('#<%=idPwdEditSpan %>').remove();
 			                        																        
 			                        																        // sostituire l'icona lock con unlock
-			                        																		const lockIcon = $('#<%=idPwdLock %>');
+			                        																		var lockIcon = $('#<%=idPwdLock %>');
 																										    lockIcon.html('<%= Costanti.ICON_LOCK_OPEN %>');
 																										    
 																										    // nascondere comandi copia

@@ -447,8 +447,8 @@ $.extend(Datepicker.prototype, {
 		// MODIFICHE CSP
 		$('td[_td_select_data]').each(function() {
 			$(this).click(function() {
-				let attrVal = $(this).attr('_td_select_data');
-				let params = attrVal.split(',');
+				var attrVal = $(this).attr('_td_select_data');
+				var params = attrVal.split(',');
 				jQuery.datepicker._selectDay(params[0] , params[1] , params[2] , this);
 			});
 			
@@ -463,32 +463,32 @@ $.extend(Datepicker.prototype, {
 		
 		$('a[_changeFirstDay]').each(function() {
 			$(this).click(function() {
-				let attrVal = $(this).attr('_changeFirstDay');
+				var attrVal = $(this).attr('_changeFirstDay');
 				jQuery.datepicker._changeFirstDay(attrVal, this);
 			});
 		});	
 		
 		$('a[_can_adjust_month_plus]').each(function() {
 			$(this).click(function() {
-				let attrVal = $(this).attr('_can_adjust_month_plus');
-				let params = attrVal.split(',');
-				let offset = parseInt(params[1]);
+				var attrVal = $(this).attr('_can_adjust_month_plus');
+				var params = attrVal.split(',');
+				var offset = parseInt(params[1]);
 				jQuery.datepicker._adjustDate(params[0] , offset , params[2]);
 			});
 		});	
 		
 		$('a[_can_adjust_month_minus]').each(function() {
 			$(this).click(function() {
-				let attrVal = $(this).attr('_can_adjust_month_minus');
-				let params = attrVal.split(',');
-				let offset = parseInt(params[1]);
+				var attrVal = $(this).attr('_can_adjust_month_minus');
+				var params = attrVal.split(',');
+				var offset = parseInt(params[1]);
 				jQuery.datepicker._adjustDate(params[0] , -offset , params[2]);
 			});
 		});	
 			
 		$('a[_clear_date]').each(function() {
 			$(this).click(function() {
-				let attrVal = $(this).attr('_clear_date');
+				var attrVal = $(this).attr('_clear_date');
 				jQuery.datepicker._clearDate(attrVal);
 			});
 		});	
@@ -501,35 +501,35 @@ $.extend(Datepicker.prototype, {
 
 		$('a[_go_to_today]').each(function() {
 			$(this).click(function() {
-				let attrVal = $(this).attr('_go_to_today');
+				var attrVal = $(this).attr('_go_to_today');
 				jQuery.datepicker._gotoToday(attrVal);
 			});
 		});
 
 		$('select[_new_month]').each(function() {
 			$(this).change(function() {
-				let attrVal = $(this).attr('_new_month');
-				let params = attrVal.split(',');
+				var attrVal = $(this).attr('_new_month');
+				var params = attrVal.split(',');
 				jQuery.datepicker._selectMonthYear(params[0], this, params[1]);
 			});
 			
 			$(this).click(function() {
-				let attrVal = $(this).attr('_new_month');
-				let params = attrVal.split(',');
+				var attrVal = $(this).attr('_new_month');
+				var params = attrVal.split(',');
 				jQuery.datepicker._clickMonthYear(params[0]);
 			});
 		});
 
 		$('select[_new_year]').each(function() {
 			$(this).change(function() {
-				let attrVal = $(this).attr('_new_year');
-				let params = attrVal.split(',');
+				var attrVal = $(this).attr('_new_year');
+				var params = attrVal.split(',');
 				jQuery.datepicker._selectMonthYear(params[0], this, params[1]);
 			});
 			
 			$(this).click(function() {
-				let attrVal = $(this).attr('_new_year');
-				let params = attrVal.split(',');
+				var attrVal = $(this).attr('_new_year');
+				var params = attrVal.split(',');
 				jQuery.datepicker._clickMonthYear(params[0]);
 			});
 		});
