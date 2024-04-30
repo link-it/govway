@@ -137,11 +137,18 @@ public class ConnettoreJmsApiHelper extends AbstractConnettoreApiHelper<Connetto
         		null,	// responseInputFileNameHeaders,
         		null,	// responseInputDeleteAfterRead,
         		null,	// responseInputWaitTime,
-				false,
-				null,
-				listExtendedConnettore,
-        		false, // erogazioneServizioApplicativoServerEnabled, TODO quando si aggiunge applicativo server
-    			null // rogazioneServizioApplicativoServer
+        		false, // autenticazioneToken
+				null, // tokenPolicy
+				null, // autenticazioneApiKey
+				false, // useOAS3Names
+				false, // useAppId
+				null, // apiKeyHeader
+				null, // apiKey,
+				null, // appIdHeader,
+				null, // appId,
+				listExtendedConnettore, // listExtendedConnettore
+        		false, // erogazioneServizioApplicativoServerEnabled, 
+    			null // erogazioneServizioApplicativoServer
 			);
 	}
 
@@ -221,8 +228,10 @@ public class ConnettoreJmsApiHelper extends AbstractConnettoreApiHelper<Connetto
 				null,	// this.responseInputFileNameHeaders, 
 				null,	// this.responseInputDeleteAfterRead, 
 				null,	// this.responseInputWaitTime,
-				null,
-				listExtendedConnettore);			
+				null,   // tokenPolicy
+				null, null, // apiKeyHeader,  apiKeyValue
+				null, null, // appIdHeader, appIdValue
+				listExtendedConnettore);				
 		return regConnettore;
 	}
 
@@ -302,8 +311,10 @@ public class ConnettoreJmsApiHelper extends AbstractConnettoreApiHelper<Connetto
 				null,	// this.responseInputFileNameHeaders, 
 				null,	// this.responseInputDeleteAfterRead, 
 				null,	// this.responseInputWaitTime,
-				null,
-				listExtendedConnettore);			
+				null,   // tokenPolicy
+				null, null, // apiKeyHeader,  apiKeyValue
+				null, null, // appIdHeader, appIdValue
+				listExtendedConnettore);		
 		return regConnettore;
 	}
 

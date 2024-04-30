@@ -9646,7 +9646,6 @@ components:
           type: "string"
           example: "/path/to/truststore"
         truststore_password:
-          maxLength: 255
           type: "string"
           format: "password"
           example: "pwd"
@@ -9663,12 +9662,10 @@ components:
       type: "object"
       properties:
         keystore_password:
-          maxLength: 255
           type: "string"
           format: "password"
           example: "pwd"
         key_password:
-          maxLength: 255
           type: "string"
           description: "password della chiave privata"
           format: "password"
@@ -9712,10 +9709,25 @@ components:
           type: "string"
           example: "user"
         password:
-          maxLength: 255
           type: "string"
           format: "password"
           example: "pwd"
+      additionalProperties: false
+    ConnettoreConfigurazioneApiKey:
+      required:
+      - "api_key"
+      type: "object"
+      properties:
+        api_key:
+          type: "string"
+        api_key_header:
+          maxLength: 255
+          type: "string"
+        app_id:
+          type: "string"
+        app_id_header:
+          maxLength: 255
+          type: "string"
       additionalProperties: false
     ConnettoreConfigurazioneHttps:
       required:
@@ -9794,7 +9806,6 @@ components:
           type: "string"
           example: "user"
         password:
-          maxLength: 255
           type: "string"
           format: "password"
           example: "pwd"
@@ -9832,6 +9843,8 @@ components:
           example: "http://ente.it/servizio"
         autenticazione_http:
           $ref: "#/components/schemas/ConnettoreConfigurazioneHttpBasic"
+        autenticazione_apikey:
+          $ref: "#/components/schemas/ConnettoreConfigurazioneApiKey"
         autenticazione_https:
           $ref: "#/components/schemas/ConnettoreConfigurazioneHttps"
         proxy:
@@ -9936,7 +9949,6 @@ components:
           maxLength: 255
           type: "string"
         password:
-          maxLength: 255
           type: "string"
         jndi_initial_context:
           maxLength: 255

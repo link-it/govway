@@ -42,6 +42,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
+import org.openspcoop2.core.byok.BYOKUtilities;
 import org.openspcoop2.core.byok.BYOKWrappedValue;
 import org.openspcoop2.core.byok.IDriverBYOKConfig;
 import org.openspcoop2.core.commons.CoreException;
@@ -1207,12 +1208,30 @@ public class ControlStationCore {
 	}
 	
 	/** BYOK */
+
+	private static String byokInternalConfigSecurityEngineApiMode;
+	public static void setByokInternalConfigSecurityEngine(
+			String byokInternalConfigSecurityEngine) {
+		ControlStationCore.byokInternalConfigSecurityEngineApiMode = byokInternalConfigSecurityEngine;
+	}
+	private static String byokInternalConfigRemoteSecurityEngineApiMode;
+	public static void setByokInternalConfigRemoteSecurityEngine(
+			String byokInternalConfigRemoteSecurityEngine) {
+		ControlStationCore.byokInternalConfigRemoteSecurityEngineApiMode = byokInternalConfigRemoteSecurityEngine;
+	}
+
 	private String byokInternalConfigSecurityEngine = null;
 	private String byokInternalConfigRemoteSecurityEngine = null;
 	public String getByokInternalConfigSecurityEngine() {
+		if(ControlStationCore.isAPIMode() && byokInternalConfigSecurityEngineApiMode!=null) {
+			return byokInternalConfigSecurityEngineApiMode;
+		}
 		return this.byokInternalConfigSecurityEngine;
 	}
 	public String getByokInternalConfigRemoteSecurityEngine() {
+		if(ControlStationCore.isAPIMode() && byokInternalConfigRemoteSecurityEngineApiMode!=null) {
+			return byokInternalConfigRemoteSecurityEngineApiMode;
+		}
 		return this.byokInternalConfigRemoteSecurityEngine;
 	}
 	private boolean visualizzaInformazioniCifrate = false;
@@ -9076,6 +9095,27 @@ public class ControlStationCore {
 		}
 	}
 	
+	public boolean isWrapped(String value) {
+		try {
+			if(value==null || StringUtils.isEmpty(value) || !isEnabledBYOK()) {
+				return false;
+			}
+			String securityManagerPolicy = this.getByokInternalConfigSecurityEngine();
+			String driverSecurityManagerPolicy = this.getByokInternalConfigRemoteSecurityEngine();
+			if(driverSecurityManagerPolicy==null || StringUtils.isEmpty(driverSecurityManagerPolicy)) {
+				driverSecurityManagerPolicy = securityManagerPolicy;
+			}
+			
+			String prefix = BYOKUtilities.newPrefixWrappedValue(driverSecurityManagerPolicy);
+			return value.startsWith(prefix) && value.length()>prefix.length();
+			
+		}catch(Exception e) {
+			log.error("isWrapped failed ["+value+"]: "+e.getMessage(),e);
+			/**throw new DriverControlStationException(e.getMessage(),e);*/
+			return false; 
+		}
+	}
+	
 	public void lock(DataElement de, String value) throws DriverControlStationException {
 		lock(de, value, true);
 	}
@@ -9118,7 +9158,7 @@ public class ControlStationCore {
 		}
 	}
 	private void lockEngineWithBIOK(DataElement de, String value, boolean escapeHtml, boolean hidden, boolean readOnly ) throws DriverControlStationException {
-		String wrapValue = this.wrap(value);
+		String wrapValue = this.wrap(value); // viene lasciato il valore wrapped, non viene effettuato nuovamente il wrap
 		if(hidden) {
 			if(de.getType()==null || StringUtils.isEmpty(de.getType()) || !DataElementType.HIDDEN.toString().equals(de.getType())) {
 				de.setType(DataElementType.HIDDEN);
@@ -9126,7 +9166,24 @@ public class ControlStationCore {
 			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue);
 		}
 		else {
-			de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue, readOnly, this.isVisualizzaInformazioniCifrate(), this.getByokWarningMessage(), UtilsCostanti.SERVLET_NAME_SECRET_DECODER);
+			lockEngineWithBIOK(de, wrapValue, escapeHtml, readOnly );
 		}
+	}
+	private void lockEngineWithBIOK(DataElement de, String wrapValue, boolean escapeHtml, boolean readOnly) {
+		StringBuilder sb = new StringBuilder();
+		if(wrapValue!=null && StringUtils.isNotEmpty(wrapValue)) {
+			if(BYOKUtilities.isWrappedValue(wrapValue)) {
+				if(!isWrapped(wrapValue)) {
+					sb.append("<b>Attenzione</b>: credenziale cifrata con security policy differente");
+				}
+			}
+			else {
+				sb.append("<b>Attenzione</b>: credenziale in chiaro");
+			}
+		}
+		if(sb.length()>0) {
+			de.setNote(sb.toString());
+		}
+		de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue, readOnly, this.isVisualizzaInformazioniCifrate(), this.getByokWarningMessage(), UtilsCostanti.SERVLET_NAME_SECRET_DECODER);
 	}
 }

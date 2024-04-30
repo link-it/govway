@@ -268,6 +268,11 @@ Examples:
 |connettore_erogazione_file_response_headers.json|[file] /tmp/abc.txt|
 |connettore_erogazione_file_response_wait.json|[file] /tmp/abc.txt|
 |connettore_erogazione_file_response_permissions.json|[file] /tmp/abc.txt|
+|connettore_erogazione_apikey.json|https://ginovadifretta.it/petstore|
+|connettore_erogazione_apikey_appid.json|https://ginovadifretta.it/petstore|
+|connettore_erogazione_apikey_appid_custom.json|https://ginovadifretta.it/petstore|
+|connettore_erogazione_apikey_custom.json|https://ginovadifretta.it/petstore|
+
 
 
 @UpdateConnettore400

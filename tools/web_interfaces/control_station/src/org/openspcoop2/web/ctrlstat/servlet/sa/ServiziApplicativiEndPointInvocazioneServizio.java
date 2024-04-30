@@ -345,7 +345,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			// La lista degli SA viene filtrata per tipo se sono abilitati gli applicativiServer.
 			String filtroTipoSA = (isApplicativiServerEnabled && gestioneErogatori) ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER : null;
 
-			ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt, true);
+			ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
 			InvocazionePorta invocazionePorta = sa.getInvocazionePorta();
 			InvocazioneServizio is = sa.getInvocazioneServizio();

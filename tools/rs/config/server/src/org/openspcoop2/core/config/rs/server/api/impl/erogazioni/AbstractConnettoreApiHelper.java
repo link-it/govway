@@ -19,9 +19,14 @@
  */
 package org.openspcoop2.core.config.rs.server.api.impl.erogazioni;
 
+import static org.openspcoop2.utils.service.beans.utils.BaseHelper.evalnull;
+
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneHttpBasic;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreHttp;
 import org.openspcoop2.core.config.rs.server.model.OneOfApplicativoServerConnettore;
 import org.openspcoop2.core.config.rs.server.model.OneOfConnettoreErogazioneConnettore;
 import org.openspcoop2.core.config.rs.server.model.OneOfConnettoreFruizioneConnettore;
@@ -50,7 +55,21 @@ public abstract class AbstractConnettoreApiHelper<T> implements IConnettoreApiHe
 	
 	protected abstract T buildConnettore(Map<String, String> props, String tipo) throws Exception;
 	protected T buildConnettore(ServizioApplicativo sa) throws Exception {
-		return buildConnettore(sa.getInvocazioneServizio().getConnettore().getProperties(),sa.getInvocazioneServizio().getConnettore().getTipo());
+		T connettore = buildConnettore(sa.getInvocazioneServizio().getConnettore().getProperties(),sa.getInvocazioneServizio().getConnettore().getTipo());
+		if(sa.getInvocazioneServizio().getCredenziali()!=null && 
+				sa.getInvocazioneServizio().getCredenziali().getUser()!=null &&
+				sa.getInvocazioneServizio().getCredenziali().getPassword()!=null &&
+				connettore instanceof ConnettoreHttp) {
+			ConnettoreHttp c = (ConnettoreHttp) connettore;
+		
+			ConnettoreConfigurazioneHttpBasic http = new ConnettoreConfigurazioneHttpBasic();
+			http.setPassword(evalnull( () -> sa.getInvocazioneServizio().getCredenziali().getPassword())); 
+			http.setUsername(evalnull( () -> sa.getInvocazioneServizio().getCredenziali().getUser()));
+			if ( !StringUtils.isAllEmpty(http.getPassword(), http.getUsername()) ) {
+				c.setAutenticazioneHttp(http);
+			}
+		}
+		return connettore;
 	}
 
 	@Override

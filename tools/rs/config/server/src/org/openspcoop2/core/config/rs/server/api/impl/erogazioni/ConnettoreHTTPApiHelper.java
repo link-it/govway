@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.config.rs.server.api.impl.Enums;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneApiKey;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneHttpBasic;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneHttps;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneHttpsClient;
@@ -51,6 +52,7 @@ import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
@@ -70,7 +72,9 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 		final boolean proxy_enabled = conn.getProxy() != null;
 		final boolean tempiRisposta_enabled = conn.getTempiRisposta() != null; 
 		
-	    final ConnettoreConfigurazioneHttps httpsConf 	 = conn.getAutenticazioneHttps();
+		final ConnettoreConfigurazioneApiKey httpApiKey = conn.getAutenticazioneApikey();
+		boolean apiKey = (httpApiKey!=null && httpApiKey.getApiKey()!=null && StringUtils.isNotEmpty(httpApiKey.getApiKey()));
+		final ConnettoreConfigurazioneHttps httpsConf 	 = conn.getAutenticazioneHttps();
 	    final ConnettoreConfigurazioneHttpBasic	httpConf	 = conn.getAutenticazioneHttp();
 
 	    final String endpointtype = httpsConf != null ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome();
@@ -81,8 +85,8 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, env.apsHelper, 
 							parametersPOST, false, endpointtype);
 
-	    final ConnettoreConfigurazioneHttpsClient httpsClient = evalnull( () -> httpsConf.getClient() );
-	  	final ConnettoreConfigurazioneHttpsServer httpsServer = evalnull( () -> httpsConf.getServer() );
+	    final ConnettoreConfigurazioneHttpsClient httpsClient = httpsConf!=null ? evalnull( httpsConf::getClient ) : null;
+	  	final ConnettoreConfigurazioneHttpsServer httpsServer = httpsConf!=null ? evalnull( httpsConf::getServer ) : null;
 	  	final ConnettoreConfigurazioneProxy 	  proxy   	  = conn.getProxy();
 	  	final ConnettoreConfigurazioneTimeout	  timeoutConf = conn.getTempiRisposta();
 	  	final String tokenPolicy = conn.getTokenPolicy(); 
@@ -99,8 +103,8 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				conn.getEndpoint(),
 				null,	// nome
 				null,	// tipo
-				evalnull( () -> httpConf.getUsername() ),
-				evalnull( () -> httpConf.getPassword() ),
+				httpConf!=null ? evalnull( httpConf::getUsername ) : null,
+				httpConf!=null ? evalnull( httpConf::getPassword ) : null,
 				null,	// this.initcont, 
 				null,	// this.urlpgk,
 				null,	// provurl jms,
@@ -110,28 +114,28 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				evalnull( () -> httpsConf.getTipologia().toString() ),				// this.httpstipologia
 				BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),	// this.httpshostverify,
 				(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
-				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
+				httpsServer!=null ? evalnull( httpsServer::getTruststorePath ) : null,				// this.httpspath
 				evalnull( () -> getTruststoreType(httpsServer) ),	// this.httpstipo,
-				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
-				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
+				httpsServer!=null ? evalnull( httpsServer::getTruststorePassword ) : null,			// this.httpspwd,
+				httpsServer!=null ? evalnull( httpsServer::getAlgoritmo ) : null,					// this.httpsalgoritmo
 				httpsstato, 
 				httpskeystore,
 				"",																		// httpspwdprivatekeytrust, 
-				evalnull( () -> httpsClient.getKeystorePath() ),				// pathkey
+				httpsClient!=null ? evalnull( httpsClient::getKeystorePath ) : null,				// pathkey
 				evalnull( () -> getKeystoreType(httpsClient) ), 		// this.httpstipokey
-				evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
-				evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
-				evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey, 
-        		evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
-        		evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
-        		evalnull( () -> httpsServer.getTruststoreOcspPolicy()),					// httpsTrustStoreOCSPPolicy
+				httpsClient!=null ? evalnull( httpsClient::getKeystorePassword ) : null,			// this.httpspwdkey 
+				httpsClient!=null ? evalnull( httpsClient::getKeyPassword ) : null,				// this.httpspwdprivatekey,  
+				httpsClient!=null ? evalnull( httpsClient::getAlgoritmo ) : null,				// this.httpsalgoritmokey, 
+				httpsClient!=null ? evalnull( httpsClient::getKeyAlias ) : null,					// httpsKeyAlias
+        		httpsServer!=null ? evalnull( httpsServer::getTruststoreCrl ) : null,					// httpsTrustStoreCRLs
+        		httpsServer!=null ? evalnull( httpsServer::getTruststoreOcspPolicy) : null,					// httpsTrustStoreOCSPPolicy
 				null,																//	tipoconn (personalizzato)
 				ServletUtils.boolToCheckBoxStatus( http_stato ),										 	//autenticazioneHttp,
 				ServletUtils.boolToCheckBoxStatus( proxy_enabled ),	
-				evalnull( () -> proxy.getHostname() ),
+				proxy!=null ? evalnull( proxy::getHostname ) : null,
 				evalnull( () -> proxy.getPorta().toString() ),
-				evalnull( () -> proxy.getUsername() ),
-				evalnull( () -> proxy.getPassword() ),
+				proxy!=null ? evalnull( proxy::getUsername ) : null,
+				proxy!=null ? evalnull( proxy::getPassword ) : null,
 				ServletUtils.boolToCheckBoxStatus( tempiRisposta_enabled ),	
 				evalnull( () -> timeoutConf.getConnectionTimeout().toString()),	// this.tempiRisposta_connectionTimeout, 
 				evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()), //null,	// this.tempiRisposta_readTimeout, 
@@ -154,6 +158,22 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				null,	// this.responseInputWaitTime,
 				autenticazioneToken,
 				tokenPolicy,
+				
+				apiKey ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED, // autenticazioneApiKey
+				apiKey && 
+        				env.erogazioniHelper.isAutenticazioneApiKeyUseOAS3Names(
+        						evalnull(httpApiKey::getApiKeyHeader), 
+        						evalnull(httpApiKey::getAppIdHeader)
+        		), // useOAS3Names
+        		apiKey && 
+        			env.erogazioniHelper.isAutenticazioneApiKeyUseAppId(
+        					evalnull(httpApiKey::getAppId)
+        		), // useAppId
+        		httpApiKey!=null ? evalnull( httpApiKey::getApiKeyHeader ) : null, // apiKeyHeader
+        		httpApiKey!=null ? evalnull( httpApiKey::getApiKey ) : null, // apiKeyValue
+        		httpApiKey!=null ? evalnull( httpApiKey::getAppIdHeader ) : null, // appIdHeader
+        		httpApiKey!=null ? evalnull( httpApiKey::getAppId ) : null, // appIdValue				
+				
 				listExtendedConnettore,
         		false, // erogazioneServizioApplicativoServerEnabled,
     			null // rogazioneServizioApplicativoServer
@@ -166,7 +186,8 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 		final boolean proxy_enabled = conn.getProxy() != null;
 		final boolean tempiRisposta_enabled = conn.getTempiRisposta() != null; 
 		
-	    final ConnettoreConfigurazioneHttps httpsConf 	 = conn.getAutenticazioneHttps();
+		final ConnettoreConfigurazioneApiKey httpApiKey = conn.getAutenticazioneApikey();
+		final ConnettoreConfigurazioneHttps httpsConf 	 = conn.getAutenticazioneHttps();
 	    final ConnettoreConfigurazioneHttpBasic	httpConf	 = conn.getAutenticazioneHttp();
 
 	    final String endpointtype = httpsConf != null ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome();
@@ -177,8 +198,8 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, env.apsHelper, 
 							parametersPOST, false, endpointtype);
 
-	    final ConnettoreConfigurazioneHttpsClient httpsClient = evalnull( () -> httpsConf.getClient() );
-	  	final ConnettoreConfigurazioneHttpsServer httpsServer = evalnull( () -> httpsConf.getServer() );
+		final ConnettoreConfigurazioneHttpsClient httpsClient = httpsConf!=null ? evalnull( httpsConf::getClient ) : null;
+	  	final ConnettoreConfigurazioneHttpsServer httpsServer = httpsConf!=null ? evalnull( httpsConf::getServer ) : null;
 	  	final ConnettoreConfigurazioneProxy 	  proxy   	  = conn.getProxy();
 	  	final ConnettoreConfigurazioneTimeout	  timeoutConf = conn.getTempiRisposta();
 	  	final String tokenPolicy = conn.getTokenPolicy(); 
@@ -197,8 +218,8 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				conn.getEndpoint(),		// this.url,
 				null,	// this.nome,
 				null, 	// this.tipo,
-				evalnull( () -> httpConf.getUsername() ),
-				evalnull( () -> httpConf.getPassword() ),
+				httpConf!=null ? evalnull( httpConf::getUsername ) : null,
+				httpConf!=null ? evalnull( httpConf::getPassword ) : null,
 				null,	// this.initcont, 
 				null,	// this.urlpgk,
 				conn.getEndpoint(),	// this.url, 
@@ -208,27 +229,27 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				evalnull( () -> httpsConf.getTipologia().toString() ),				// this.httpstipologia
 				BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),	// this.httpshostverify,
 				(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
-				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
+				httpsServer!=null ? evalnull( httpsServer::getTruststorePath ) : null,				// this.httpspath
 				evalnull( () -> getTruststoreType(httpsServer) ),	// this.httpstipo,
-				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
-				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
+				httpsServer!=null ? evalnull( httpsServer::getTruststorePassword ) : null,			// this.httpspwd,
+				httpsServer!=null ? evalnull( httpsServer::getAlgoritmo ) : null,					// this.httpsalgoritmo
 				httpsstato,
 				httpskeystore,			// this.httpskeystore, 
 				"",																	//  this.httpspwdprivatekeytrust
-				evalnull( () -> httpsClient.getKeystorePath() ),				// pathkey
+				httpsClient!=null ? evalnull( httpsClient::getKeystorePath ) : null,				// pathkey
 				evalnull( () -> getKeystoreType(httpsClient) ), 		// this.httpstipokey
-				evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
-				evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
-				evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey,
-        		evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
-        		evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
-        		evalnull( () -> httpsServer.getTruststoreOcspPolicy()),				// httpsTrustStoreOCSPPolicy
+				httpsClient!=null ? evalnull( httpsClient::getKeystorePassword ) : null,			// this.httpspwdkey 
+				httpsClient!=null ? evalnull( httpsClient::getKeyPassword ) : null,				// this.httpspwdprivatekey,  
+				httpsClient!=null ? evalnull( httpsClient::getAlgoritmo ) : null,				// this.httpsalgoritmokey,
+				httpsClient!=null ? evalnull( httpsClient::getKeyAlias ) : null,					// httpsKeyAlias
+        		httpsServer!=null ? evalnull( httpsServer::getTruststoreCrl ) : null,					// httpsTrustStoreCRLs
+        		httpsServer!=null ? evalnull( httpsServer::getTruststoreOcspPolicy) : null,				// httpsTrustStoreOCSPPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( proxy_enabled ),	
-				evalnull( () -> proxy.getHostname() ),
+				proxy!=null ? evalnull( proxy::getHostname ) : null,
 				evalnull( () -> proxy.getPorta().toString() ),
-				evalnull( () -> proxy.getUsername() ),
-				evalnull( () -> proxy.getPassword() ),
+				proxy!=null ? evalnull( proxy::getUsername ) : null,
+				proxy!=null ? evalnull( proxy::getPassword ) : null,
 				
 				ServletUtils.boolToCheckBoxStatus( tempiRisposta_enabled ),	
 				evalnull( () -> timeoutConf.getConnectionTimeout().toString()),	// this.tempiRisposta_connectionTimeout, 
@@ -251,6 +272,12 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				null,	// this.responseInputDeleteAfterRead, 
 				null,	// this.responseInputWaitTime,
 				tokenPolicy,
+				
+				httpApiKey!=null ? evalnull( httpApiKey::getApiKeyHeader ) : null, // apiKeyHeader
+				httpApiKey!=null ? evalnull( httpApiKey::getApiKey ) : null, // apiKeyValue
+		        httpApiKey!=null ? evalnull( httpApiKey::getAppIdHeader ) : null, // appIdHeader
+		        httpApiKey!=null ? evalnull( httpApiKey::getAppId ) : null, // appIdValue	
+				
 				listExtendedConnettore);			
 		
 		return regConnettore;
@@ -264,7 +291,8 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 		final boolean proxy_enabled = conn.getProxy() != null;
 		final boolean tempiRisposta_enabled = conn.getTempiRisposta() != null; 
 		
-	    final ConnettoreConfigurazioneHttps httpsConf 	 = conn.getAutenticazioneHttps();
+		final ConnettoreConfigurazioneApiKey httpApiKey = conn.getAutenticazioneApikey();
+		final ConnettoreConfigurazioneHttps httpsConf 	 = conn.getAutenticazioneHttps();
 	    final ConnettoreConfigurazioneHttpBasic	httpConf	 = conn.getAutenticazioneHttp();
 
 	    final String endpointtype = httpsConf != null ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome();
@@ -275,8 +303,8 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, env.apsHelper, 
 							parametersPOST, false, endpointtype);
 
-	    final ConnettoreConfigurazioneHttpsClient httpsClient = evalnull( () -> httpsConf.getClient() );
-	  	final ConnettoreConfigurazioneHttpsServer httpsServer = evalnull( () -> httpsConf.getServer() );
+		final ConnettoreConfigurazioneHttpsClient httpsClient = httpsConf!=null ? evalnull( httpsConf::getClient ) : null;
+	  	final ConnettoreConfigurazioneHttpsServer httpsServer = httpsConf!=null ? evalnull( httpsConf::getServer ) : null;
 	  	final ConnettoreConfigurazioneProxy 	  proxy   	  = conn.getProxy();
 	  	final ConnettoreConfigurazioneTimeout	  timeoutConf = conn.getTempiRisposta();
 	  	final String tokenPolicy = conn.getTokenPolicy(); 
@@ -295,8 +323,8 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				conn.getEndpoint(),		// this.url,
 				null,	// this.nome,
 				null, 	// this.tipo,
-				evalnull( () -> httpConf.getUsername() ),
-				evalnull( () -> httpConf.getPassword() ),
+				httpConf!=null ? evalnull( httpConf::getUsername ) : null,
+				httpConf!=null ? evalnull( httpConf::getPassword ) : null,
 				null,	// this.initcont, 
 				null,	// this.urlpgk,
 				conn.getEndpoint(),	// this.url, 
@@ -306,27 +334,27 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				evalnull( () -> httpsConf.getTipologia().toString() ),				// this.httpstipologia
 				BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),	// this.httpshostverify,
 				(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
-				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
+				httpsServer!=null ? evalnull( httpsServer::getTruststorePath ) : null,				// this.httpspath
 				evalnull( () -> getTruststoreType(httpsServer) ),	// this.httpstipo,
-				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
-				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
+				httpsServer!=null ? evalnull( httpsServer::getTruststorePassword ) : null,			// this.httpspwd,
+				httpsServer!=null ? evalnull( httpsServer::getAlgoritmo ) : null,					// this.httpsalgoritmo
 				httpsstato,
 				httpskeystore,			// this.httpskeystore, 
 				"",																	//  this.httpspwdprivatekeytrust
-				evalnull( () -> httpsClient.getKeystorePath() ),				// pathkey
+				httpsClient!=null ? evalnull( httpsClient::getKeystorePath ) : null,				// pathkey
 				evalnull( () -> getKeystoreType(httpsClient) ), 		// this.httpstipokey
-				evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
-				evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
-				evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey,
-        		evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
-        		evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
-        		evalnull( () -> httpsServer.getTruststoreOcspPolicy()),				// httpsTrustStoreOCSPPolicy
+				httpsClient!=null ? evalnull( httpsClient::getKeystorePassword ) : null,			// this.httpspwdkey 
+				httpsClient!=null ? evalnull( httpsClient::getKeyPassword ) : null,				// this.httpspwdprivatekey,  
+				httpsClient!=null ? evalnull( httpsClient::getAlgoritmo ) : null,				// this.httpsalgoritmokey,
+				httpsClient!=null ? evalnull( httpsClient::getKeyAlias ) : null,					// httpsKeyAlias
+        		httpsServer!=null ? evalnull( httpsServer::getTruststoreCrl ) : null,					// httpsTrustStoreCRLs
+        		httpsServer!=null ? evalnull( httpsServer::getTruststoreOcspPolicy) : null,				// httpsTrustStoreOCSPPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( proxy_enabled ),	
-				evalnull( () -> proxy.getHostname() ),
+				proxy!=null ? evalnull( proxy::getHostname ) : null,
 				evalnull( () -> proxy.getPorta().toString() ),
-				evalnull( () -> proxy.getUsername() ),
-				evalnull( () -> proxy.getPassword() ),
+				proxy!=null ? evalnull( proxy::getUsername ) : null,
+				proxy!=null ? evalnull( proxy::getPassword ) : null,
 				
 				ServletUtils.boolToCheckBoxStatus( tempiRisposta_enabled ),	
 				evalnull( () -> timeoutConf.getConnectionTimeout().toString()),	// this.tempiRisposta_connectionTimeout, 
@@ -349,6 +377,12 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				null,	// this.responseInputDeleteAfterRead, 
 				null,	// this.responseInputWaitTime,
 				tokenPolicy,
+				
+				httpApiKey!=null ? evalnull( httpApiKey::getApiKeyHeader ) : null, // apiKeyHeader
+				httpApiKey!=null ? evalnull( httpApiKey::getApiKey ) : null, // apiKeyValue
+				httpApiKey!=null ? evalnull( httpApiKey::getAppIdHeader ) : null, // appIdHeader
+				httpApiKey!=null ? evalnull( httpApiKey::getAppId ) : null, // appIdValue	
+				
 				listExtendedConnettore);
 		return regConnettore;
 	}
@@ -367,6 +401,16 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 			c.setAutenticazioneHttp(http);
 		}
 	
+		String apiKey = props.get(CostantiDB.CONNETTORE_APIKEY);
+		if(apiKey!=null && StringUtils.isNotEmpty(apiKey.trim())) {
+			ConnettoreConfigurazioneApiKey apiKeyConf = new ConnettoreConfigurazioneApiKey();
+			apiKeyConf.setApiKey(apiKey.trim());
+			apiKeyConf.setApiKeyHeader(evalnull( () -> props.get(CostantiDB.CONNETTORE_APIKEY_HEADER).trim())); 
+			apiKeyConf.setAppId(evalnull( () -> props.get(CostantiDB.CONNETTORE_APIKEY_APPID).trim())); 
+			apiKeyConf.setAppIdHeader(evalnull( () -> props.get(CostantiDB.CONNETTORE_APIKEY_APPID_HEADER).trim())); 
+			c.setAutenticazioneApikey(apiKeyConf);
+		}
+		
 		ConnettoreConfigurazioneHttps https = new ConnettoreConfigurazioneHttps();
 		https.setHostnameVerifier( props.get(CostantiDB.CONNETTORE_HTTPS_HOSTNAME_VERIFIER) != null 
 				? Boolean.valueOf(props.get(CostantiDB.CONNETTORE_HTTPS_HOSTNAME_VERIFIER))
@@ -459,8 +503,8 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 			c.setAutenticazioneHttps(https);
 		}
 		
-		String proxy_type = evalnull( () -> props.get(CostantiDB.CONNETTORE_PROXY_TYPE).trim() );
-		if ( !StringUtils.isEmpty(proxy_type)) {
+		String proxyType = evalnull( () -> props.get(CostantiDB.CONNETTORE_PROXY_TYPE).trim() );
+		if ( !StringUtils.isEmpty(proxyType)) {
 			ConnettoreConfigurazioneProxy proxy = new ConnettoreConfigurazioneProxy();
 			c.setProxy(proxy);
 			

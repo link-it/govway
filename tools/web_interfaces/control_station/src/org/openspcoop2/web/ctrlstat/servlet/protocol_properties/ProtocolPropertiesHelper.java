@@ -443,7 +443,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 			}
 			
 			
-			if(id != null && !"".equals(id)){
+			if(id != null && !"".equals(id) && this.core.isVisualizzaInformazioniCifrate()){
 				DataElement saveAs = new DataElement();
 				saveAs.setValue(ProtocolPropertiesCostanti.LABEL_DOWNLOAD);
 				saveAs.setType(DataElementType.LINK);
@@ -452,6 +452,9 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, tipologiaDocumentoScaricare),
 						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_PROTOCOL_PROPERTY));
 				saveAs.setDisabilitaAjaxStatus();
+				if(binaryConsoleItem.isLockedType()) {
+					saveAs.setNote("ELEMENTO CIFRATO");
+				}
 				dati.add(saveAs);
 			}
 			
@@ -495,7 +498,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					}
 				}
 	
-				if(id != null && !"".equals(id)){
+				if(id != null && !"".equals(id) && this.core.isVisualizzaInformazioniCifrate()){
 					DataElement saveAs = new DataElement();
 					saveAs.setValue(ProtocolPropertiesCostanti.LABEL_DOWNLOAD);
 					saveAs.setType(DataElementType.LINK);
@@ -504,6 +507,9 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, tipologiaDocumentoScaricare),
 							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_PROTOCOL_PROPERTY));
 					saveAs.setDisabilitaAjaxStatus();
+					if(binaryConsoleItem.isLockedType()) {
+						saveAs.setNote("ELEMENTO CIFRATO");
+					}
 					dati.add(saveAs);
 				}
 	

@@ -1,3 +1,19 @@
+TODO
+
+	ALTER TABLE servizi_applicativi ADD COLUMN enc_passwordrisp TEXT;
+	ALTER TABLE servizi_applicativi ADD COLUMN enc_passwordinv TEXT;
+
+	ALTER TABLE connettori ADD COLUMN enc_password TEXT;
+	ALTER TABLE connettori ADD COLUMN enc_proxy_password TEXT;
+	ALTER TABLE connettori ADD COLUMN api_key TEXT;
+	ALTER TABLE connettori ADD COLUMN api_key_header VARCHAR(255);
+	ALTER TABLE connettori ADD COLUMN app_id TEXT;
+	ALTER TABLE connettori ADD COLUMN app_id_header VARCHAR(255);
+
+	ALTER TABLE connettori_custom ADD COLUMN enc_value TEXT;
+	
+	ALTER TABLE protocol_properties ADD COLUMN enc_value_string TEXT;
+
 2024-03-13  Andrea Poli <apoli@link.it>
 
 	Aggiunto nuovo esito che indica un tracciamento fallito

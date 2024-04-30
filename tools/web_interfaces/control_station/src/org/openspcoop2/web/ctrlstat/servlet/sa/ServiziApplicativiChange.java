@@ -461,7 +461,7 @@ public final class ServiziApplicativiChange extends Action {
 			saHelper.makeMenu();
 
 			// Prendo il nome e il provider del servizioApplicativo
-			ServizioApplicativo sa = saCore.getServizioApplicativo(idServizioApplicativoLong, true);
+			ServizioApplicativo sa = saCore.getServizioApplicativo(idServizioApplicativoLong);
 			String oldNome = sa.getNome();
 			IDSoggetto oldIdSoggetto = new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario());
 			IDServizioApplicativo oldIdServizioApplicativo = new IDServizioApplicativo();
