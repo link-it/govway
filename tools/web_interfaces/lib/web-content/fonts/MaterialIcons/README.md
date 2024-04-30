@@ -1,3 +1,9 @@
+Versione corrente 4.0.0 del progetto Material Icons.
+
+Le icone piu' nuove si trovano nel progetto Material Symbols.
+
+
+
 The recommended way to use the Material Icons font is by linking to the web font hosted on Google Fonts:
 
 ```html

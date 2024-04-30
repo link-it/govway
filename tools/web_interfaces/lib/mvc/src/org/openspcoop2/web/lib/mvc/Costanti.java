@@ -287,7 +287,8 @@ public class Costanti {
 	/** PARAMETRI LOCK **/
 	
 	public static final String PARAMETER_LOCK_PREFIX = "__lk__";
-	public static final String PARAMETER_LOCK_DEFAULT_VALUE = "********";  
+	public static final String PARAMETER_LOCK_DEFAULT_VALUE = "********";
+	public static final String TITOLO_FINESTRA_MODALE_MESSAGE_WARNING = "Visualizza Informazioni Cifrate";
 	
 	/** PAGE DATA TITLE */
 	

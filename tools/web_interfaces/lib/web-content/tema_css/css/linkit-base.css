@@ -220,6 +220,10 @@ textarea.inputLinkLong {
 	width: 412px !important;
 }
 
+.textAreaDec{
+	width: 600px !important;
+}
+
 div.txtA_div {
 	margin-left: 232px;
 }
@@ -1714,6 +1718,10 @@ div.propDialog label.labelLong{
 
 div.txtA_div_propDialog {
 	margin-left: 146px;
+}
+
+div.txtA_div_propDialog_dec {
+	margin-left: 0px;
 }
 
 .iconCopyBox{
