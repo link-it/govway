@@ -44,7 +44,7 @@
 		<xalan.version>2.7.3</xalan.version>
 		<xercesImpl.version>2.12.2</xercesImpl.version>
 		<xml-apis.version>1.4.01</xml-apis.version>
-		<xmlunit.version>2.9.0</xmlunit.version>
+		<xmlunit.version>2.10.0</xmlunit.version>
 		<xom.version>1.2.11</xom.version>
 		<ehcache.version>3.10.2</ehcache.version>
 		<rhino.version>1.7.14</rhino.version>
