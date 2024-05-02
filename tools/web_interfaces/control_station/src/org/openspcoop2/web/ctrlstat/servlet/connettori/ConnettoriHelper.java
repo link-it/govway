@@ -3034,12 +3034,22 @@ public class ConnettoriHelper extends ConsoleHelper {
 							postBackViaPost);
 				}
 				
+								
 				// Token Autenticazione
 				if (autenticazioneToken) {
 					this.addTokenPolicy(dati, tokenPolicy, forcePDND, forceOAuth, tipoOperazione,
 							postBackViaPost);
 				}
+			
 				
+				// ApiKey
+				if ( ServletUtils.isCheckBoxEnabled(autenticazioneApiKey)) {
+					this.addApiKeyToDati(dati, useOAS3Names, useAppId, 
+							apiKeyHeader, apiKeyValue,
+							appIdHeader, appIdValue,
+							postBackViaPost);
+				}
+			
 				
 				// Https
 				if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
@@ -4433,34 +4443,61 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 				
 				if(ServletUtils.isCheckBoxEnabled(autenticazioneApiKey)){
+					String prefix = "Autenticazione API Key: ";
 					if (apiKeyValue == null || "".equals(apiKeyValue)) {
-						this.pd.setMessage("Autenticazione API Key: valore non fornito");
+						this.pd.setMessage(prefix+"valore non fornito");
+						return false;
+					}
+					if(apiKeyValue.startsWith(" ")) {
+						this.pd.setMessage(prefix+"valore inizia con uno spazio");
+						return false;
+					}
+					if(apiKeyValue.endsWith(" ")) {
+						this.pd.setMessage(prefix+"valore termina con uno spazio");
+						return false;
+					}
+					if(apiKeyValue.contains("\n") || apiKeyValue.contains("\r")) {
+						this.pd.setMessage(prefix+"valore contiene ritorni a capo");
 						return false;
 					}
 					if(!useOAS3Names &&
 						(apiKeyHeader == null || "".equals(apiKeyHeader)) 
 						){
-						this.pd.setMessage("Autenticazione API Key: header http non fornito");
+						this.pd.setMessage(prefix+"header http non fornito");
 						return false;
 					}
-					if (apiKeyHeader != null && StringUtils.isNotEmpty(apiKeyHeader) &&
-						!this.checkLength255(nome, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_HEADER+" "+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_VALUE)) {
-						return false;
+					if (apiKeyHeader != null && StringUtils.isNotEmpty(apiKeyHeader)) {
+						if (apiKeyHeader.contains(" ") || apiKeyHeader.contains("\n") || apiKeyHeader.contains("\r")) {
+							this.pd.setMessage(prefix+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_HEADER+" contiene spazi");
+							return false;
+						}
+						if (!this.checkLength255(apiKeyHeader, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_HEADER+" "+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_VALUE)) {
+							return false;
+						}
 					}
 					if(useAppId) {
 						if (appIdValue == null || "".equals(appIdValue)) {
-							this.pd.setMessage("Autenticazione API Key: app id non fornita");
+							this.pd.setMessage(prefix+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE+" non fornito");
+							return false;
+						}
+						if (appIdValue.contains(" ") || appIdValue.contains("\n") || appIdValue.contains("\r")) {
+							this.pd.setMessage(prefix+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE+" fornito contiene spazi");
 							return false;
 						}
 						if(!useOAS3Names &&
 							(appIdHeader == null || "".equals(appIdHeader)) 
 							){
-							this.pd.setMessage("Autenticazione API Key: header http per l'app id non fornito");
+							this.pd.setMessage(prefix+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_APP_ID_HEADER+" "+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE+" non fornito");
 							return false;
 						}
-						if (appIdHeader != null && StringUtils.isNotEmpty(appIdHeader) &&
-							!this.checkLength255(nome, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_APP_ID_HEADER+" "+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE)) {
-							return false;
+						if (appIdHeader != null && StringUtils.isNotEmpty(appIdHeader)) {
+							if (appIdHeader.contains(" ") || appIdHeader.contains("\n") || appIdHeader.contains("\r")) {
+								this.pd.setMessage(prefix+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_APP_ID_HEADER+" "+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE+" contiene spazi");
+								return false;
+							}
+							if(!this.checkLength255(appIdHeader, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_APP_ID_HEADER+" "+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE)) {
+								return false;
+							}
 						}
 					}
 				}
