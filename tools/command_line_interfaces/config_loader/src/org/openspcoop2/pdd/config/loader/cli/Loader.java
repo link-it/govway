@@ -24,12 +24,16 @@ import java.io.File;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
@@ -53,9 +57,11 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveModeType;
 import org.openspcoop2.protocol.sdk.archive.IArchive;
 import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.security.ProviderUtils;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiveEngine;
@@ -73,41 +79,32 @@ import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 public class Loader {
 
 	private static Logger logCore = LoggerWrapperFactory.getLogger(Loader.class);
+	private static void logCoreDebug(String msg) {
+		logCore.debug(msg);
+	}
+	private static void logCoreInfo(String msg) {
+		logCore.info(msg);
+	}
 	private static Logger logSql = LoggerWrapperFactory.getLogger(Loader.class);
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws CoreException, SQLException {
 		
 		Connection connectionSQL = null;
 		try {
 		
 			// Logger
-			InputStream inPropLog4j = null;
-			Properties propertiesLog4j = new Properties();
-			try {
-				inPropLog4j = Loader.class.getResourceAsStream("/config_loader.cli.log4j2.properties");
-				propertiesLog4j.load(inPropLog4j);
-				LoggerWrapperFactory.setLogConfiguration(propertiesLog4j);
-			} catch(java.lang.Exception e) {
-				throw new Exception("Impossibile leggere i dati dal file 'config_loader.cli.log4j2.properties': "+e.getMessage());
-			} finally {
-				try {
-					if (inPropLog4j != null)
-						inPropLog4j.close();
-				} catch (Exception e) {
-					// close
-				}
-			}
+			initLogger();
 			logCore=LoggerWrapperFactory.getLogger("config_loader.core");	
 			logSql=LoggerWrapperFactory.getLogger("config_loader.sql");	
 			
 			
-			logCore.debug("Raccolta parametri in corso...");
+			logCoreDebug("Raccolta parametri in corso...");
 			
 			// costanti
 			ArchiveModeType modeType = org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_ARCHIVE_MODE_TYPE;
 			ArchiveMode mode = org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_ARCHIVE_MODE;
 			boolean validateDocuments = true;
-			MapPlaceholder importInformationMissing_globalPlaceholder = new MapPlaceholder();
+			MapPlaceholder importInformationMissingGlobalPlaceholder = new MapPlaceholder();
 			boolean showCorrelazioneAsincronaInAccordi = true;
 			boolean isShowGestioneWorkflowStatoDocumenti = false;
 			boolean isShowAccordiColonnaAzioni = false;
@@ -117,50 +114,38 @@ public class Loader {
 			LoaderProperties loaderProperties = LoaderProperties.getInstance();
 			String confDir = null; // non sembra servire
 			String protocolloDefault = loaderProperties.getProtocolloDefault();
-			String import_nomePddOperativa = loaderProperties.getNomePddOperativa();
-			String import_tipoPddArchivi = loaderProperties.getTipoPddArchivio();
+			String importNomePddOperativa = loaderProperties.getNomePddOperativa();
+			String importTipoPddArchivi = loaderProperties.getTipoPddArchivio();
 			String userLogin = loaderProperties.getUtente();
-			boolean importDeletePolicyConfig = loaderProperties.isPolicy_enable();
-			boolean importDeletePluginConfig = loaderProperties.isPlugin_enable();
-			boolean importCheckPluginReferences = loaderProperties.isPlugin_checkReferences();
-			boolean importConfig = loaderProperties.isConfigurazioneGenerale_enable();
+			boolean importDeletePolicyConfig = loaderProperties.isPolicyEnable();
+			boolean importDeletePluginConfig = loaderProperties.isPluginEnable();
+			boolean importCheckPluginReferences = loaderProperties.isPluginCheckReferences();
+			boolean importConfig = loaderProperties.isConfigurazioneGeneraleEnable();
 			boolean isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto = loaderProperties.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto();
 			boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto = loaderProperties.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto();
 			boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials = loaderProperties.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials();
 			boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials = loaderProperties.isSoggettiApplicativiCredenzialiSslPermitSameCredentials();
 			boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials = loaderProperties.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials();
-			CryptConfig utenzeCryptConfig = new CryptConfig(loaderProperties.getUtenze_password());
-			CryptConfig applicativiCryptConfig = new CryptConfig(loaderProperties.getApplicativi_password());
-			int applicativi_api_key_passwordGenerated_length=loaderProperties.getApplicativi_apiKey_passwordGenerated_length();
-			boolean applicativi_basic_password_enableConstraints=loaderProperties.isApplicativi_basic_password_enableConstraints();
-			CryptConfig soggettiCryptConfig = new CryptConfig(loaderProperties.getSoggetti_password());
-			int soggetti_api_key_passwordGenerated_length=loaderProperties.getSoggetti_apiKey_passwordGenerated_length();
-			boolean soggetti_basic_password_enableConstraints=loaderProperties.isSoggetti_basic_password_enableConstraints();
+
 			
 			// args
 			boolean delete = false;
 			boolean updateAbilitato = true;
 			String utilizzoErrato = "Usage error: Loader <operationType> <archivePath>";
 			if(args.length<2 || args[0]==null || args[1]==null) {
-				throw new Exception(utilizzoErrato);
+				throw new CoreException(utilizzoErrato);
 			}
-			LoaderOperationType opType = null;
-			try {
-				opType = LoaderOperationType.valueOf(args[0].trim());
-			}catch(Exception e) {
-				throw new Exception(utilizzoErrato+"\nIl tipo di operazione indicato ("+args[0].trim()+") non è gestito, valori ammessi: "+
-						LoaderOperationType.create+","+LoaderOperationType.createUpdate+","+LoaderOperationType.delete);
-			}
+			LoaderOperationType opType = parseOperationType(utilizzoErrato, args);
 			switch (opType) {
-			case create:
+			case CREATE:
 				delete=false;
 				updateAbilitato = false;
 				break;
-			case createUpdate:
+			case CREATE_UPDATE:
 				delete=false;
 				updateAbilitato = true;
 				break;
-			case delete:
+			case DELETE:
 				delete=true;
 				updateAbilitato = false;
 				break;
@@ -168,21 +153,22 @@ public class Loader {
 			
 			String filePath = args[1].trim();
 			File fFilePath = new File(filePath);
+			String prefix = "L'archivio indicato ("+fFilePath.getAbsolutePath()+") ";
 			if(!fFilePath.exists()) {
-				throw new Exception("L'archivio indicato ("+fFilePath.getAbsolutePath()+") non esiste");
+				throw new CoreException(prefix+"non esiste");
 			}
 			if(!fFilePath.canRead()) {
-				throw new Exception("L'archivio indicato ("+fFilePath.getAbsolutePath()+") non è accessibile");
+				throw new CoreException(prefix+"non è accessibile");
 			}
 			if(!fFilePath.isFile()) {
-				throw new Exception("L'archivio indicato ("+fFilePath.getAbsolutePath()+") non è un file");
+				throw new CoreException(prefix+"non è un file");
 			}
 			byte [] archiveFile = FileSystemUtilities.readBytesFromFile(fFilePath);
 			
-			logCore.debug("Raccolta parametri terminata");
+			logCoreDebug("Raccolta parametri terminata");
 			
 			
-			logCore.debug("Inizializzazione connessione database in corso...");
+			logCoreDebug("Inizializzazione connessione database in corso...");
 			
 			LoaderDatabaseProperties databaseProperties = LoaderDatabaseProperties.getInstance();
 			String tipoDatabase = databaseProperties.getTipoDatabase();
@@ -198,99 +184,55 @@ public class Loader {
 				connectionSQL = DriverManager.getConnection(connectionURL);
 			}
 			
-			//String subContext = "java:";
 			String jndiName = "org.govway.datasource.console";
 			DataSource ds = new SingleConnectionDataSource(connectionSQL, true); 
 			System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
 			System.setProperty(Context.URL_PKG_PREFIXES, "org.apache.naming");
-			InitialContext ic = new InitialContext();
-			try{
-				//ic.createSubcontext(subContext);
-				ic.bind(jndiName, ds);
-			}catch(javax.naming.NameAlreadyBoundException already){
-				//	capita in caso di più threads
-			}
+			bindDatasource(ds, jndiName);
 			
-			logCore.debug("Inizializzazione connessione database terminata");
+			logCoreDebug("Inizializzazione connessione database terminata");
 			
 			
 			
-			logCore.debug("Inizializzazione risorse libreria in corso...");
+			logCoreDebug("Inizializzazione risorse libreria in corso...");
 			
-			ConfigurazionePdD configPdD = null;
-			try {
-				configPdD = new ConfigurazionePdD();
-				configPdD.setAttesaAttivaJDBC(-1);
-				configPdD.setCheckIntervalJDBC(-1);
-				configPdD.setLoader(new org.openspcoop2.utils.resources.Loader(Loader.class.getClassLoader()));
-				configPdD.setLog(logCore);
-				ProtocolFactoryManager.initialize(logCore, configPdD,
-						protocolloDefault);
-			} catch (Exception e) {
-				throw new Exception("Errore (InitConfigurazione - ProtocolFactoryManager): "+e.getMessage(),e);
-			}
+			ConfigurazionePdD configPdD = initProtocolFactory(protocolloDefault);
 			
-			try{
-				ExtendedInfoManager.initialize(new org.openspcoop2.utils.resources.Loader(Loader.class.getClassLoader()), null, null, null);
-			}catch(Exception e){
-				throw new Exception("Inizializzazione [ExtendedInfoManager] fallita",e);
-			}
+			initExtendedInfoManager();
 			
-			try{
-				CorePluginLoader.initialize(configPdD.getLoader(), logSql,
-						PluginLoader.class,
-						new LoaderRegistroPluginsService(logSql),
-						loaderProperties.getPlugin_seconds());
-			}catch(Exception e){
-				throw new Exception("Inizializzazione [PluginManager] fallita",e);
-			}
+			initCorePluginLoader(configPdD, loaderProperties);
 			
 			Properties p = new Properties();
 			p.put("dataSource", jndiName);
 			p.put("tipoDatabase", tipoDatabase);
-			if(org.openspcoop2.web.ctrlstat.config.DatasourceProperties.initialize(p,logCore)==false){
-				throw new Exception("Inizializzazione fallita");
+			if(!org.openspcoop2.web.ctrlstat.config.DatasourceProperties.initialize(p,logCore)){
+				throw new CoreException("Inizializzazione fallita");
 			}
 		
-			try {
-				ControlStationCore.setUtenzePasswordEncryptEngineApiMode(utenzeCryptConfig);
-				
-				ControlStationCore.setApplicativiPasswordEncryptEngineApiMode(applicativiCryptConfig);
-				ControlStationCore.setApplicativiApiKeyPasswordGeneratedLengthApiMode(applicativi_api_key_passwordGenerated_length);
-				if(applicativi_basic_password_enableConstraints) {
-					PasswordVerifier applicativiPasswordVerifier = new PasswordVerifier("/org/openspcoop2/utils/crypt/consolePassword.properties");
-					ControlStationCore.setApplicativiPasswordVerifierEngineApiMode(applicativiPasswordVerifier);
-				}
-				
-				ControlStationCore.setSoggettiPasswordEncryptEngineApiMode(soggettiCryptConfig);
-				ControlStationCore.setSoggettiApiKeyPasswordGeneratedLengthApiMode(soggetti_api_key_passwordGenerated_length);
-				if(soggetti_basic_password_enableConstraints) {
-					PasswordVerifier soggettiPasswordVerifier = new PasswordVerifier("/org/openspcoop2/utils/crypt/consolePassword.properties");
-					ControlStationCore.setSoggettiPasswordVerifierEngineApiMode(soggettiPasswordVerifier);
-				}
-				
-			} catch (Exception e) {
-				throw new RuntimeException(e.getMessage(),e);
+			initUtenze(loaderProperties);
+			
+			initConnettori(confDir, protocolloDefault);
+			
+			if(loaderProperties.isSecurityLoadBouncyCastleProvider()) {
+				initBouncyCastle();
 			}
 			
-			try{
-				Connettori.initialize(logCore, true, confDir, protocolloDefault);
-			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
-			}
+			initBYOK(loaderProperties.getBYOKConfigurazione(), loaderProperties.isBYOKRequired());
 			
-			logCore.debug("Inizializzazione risorse libreria terminata");
+			logCoreDebug("Inizializzazione risorse libreria terminata");
 
 			
 
-			logCore.debug("Inizializzazione driver ...");
+			logCoreDebug("Inizializzazione driver ...");
 			
 			// istanzio il driver
 			DriverConfigurazioneDB driverConfigDB = new DriverConfigurazioneDB(connectionSQL, logSql, tipoDatabase);
 			DriverRegistroServiziDB driverRegistroDB = new DriverRegistroServiziDB(connectionSQL, logSql,tipoDatabase);
+						
+			// Reader
 			RegistryReader registryReader = new RegistryReader(driverRegistroDB,logSql);
 			ConfigIntegrationReader configReader = new ConfigIntegrationReader(driverConfigDB,logSql);
-			
+						
 			// istanzio driver per Plugins
 			ServiceManagerProperties propertiesPlugins = new ServiceManagerProperties();
 			propertiesPlugins.setDatabaseType(tipoDatabase);
@@ -312,6 +254,16 @@ public class Loader {
 			org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager jdbcServiceManagerAllarmi = 
 					new org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager(connectionSQL, propertiesAllarmi, logSql);
 
+			// BYOK
+			String securityRuntimePolicy = loaderProperties.getBYOKInternalConfigSecurityEngine();
+			if(securityRuntimePolicy!=null) {
+				logCoreDebug("Inizializzazione driver BYOK con configurazione ["+loaderProperties.getBYOKConfigurazione()+"]");
+				/**org.openspcoop2.pdd.core.byok.DriverBYOK driverBYOK = new org.openspcoop2.pdd.core.byok.DriverBYOK(logCore, securityRuntimePolicy);
+				driverConfigDB.initialize(driverBYOK, true, false);
+				driverRegistroDB.initialize(driverBYOK, true, false);*/
+				ControlStationCore.setByokInternalConfigSecurityEngine(loaderProperties.getBYOKInternalConfigSecurityEngine());
+			}
+			
 			// Istanzio ArchiviEngineControlStation
 			ControlStationCore core = new ControlStationCore(true, null, protocolloDefault);
 			ArchiviCore archiviCore = new ArchiviCore(core);
@@ -322,40 +274,40 @@ public class Loader {
 					jdbcServiceManagerAllarmi,
 					archiviCore, smista, userLogin);
 			
-			logCore.debug("Inizializzazione driver terminata");
+			logCoreDebug("Inizializzazione driver terminata");
 			
-			logCore.info("Inizializzazione engine terminata");			
+			logCoreInfo("Inizializzazione engine terminata");			
 			
 			
 			
 			// parsing
-			logCore.info("Lettura archivio ...");
+			logCoreInfo("Lettura archivio ...");
 			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolloDefault);
 			IArchive archiveEngine = pf.createArchive();
 			Archive archive = archiveEngine.importArchive(archiveFile, mode, modeType, registryReader, configReader,
-					validateDocuments, importInformationMissing_globalPlaceholder);
-			logCore.info("Lettura archivio effettuata");
+					validateDocuments, importInformationMissingGlobalPlaceholder);
+			logCoreInfo("Lettura archivio effettuata");
 			
 			
 			// validate
-			logCore.info("Validazione archivio ...");
+			logCoreInfo("Validazione archivio ...");
 			ArchiveValidator validator = new ArchiveValidator(registryReader);
 			ImportInformationMissingCollection importInformationMissingCollection = new ImportInformationMissingCollection();
 			validator.validateArchive(archive, protocolloDefault, validateDocuments, importInformationMissingCollection, userLogin, 
 					showCorrelazioneAsincronaInAccordi,delete);
-			logCore.info("Validazione archivio effettuata");
+			logCoreInfo("Validazione archivio effettuata");
 			
 			// finalize
-			logCore.info("Finalizzazione archivio ...");
+			logCoreInfo("Finalizzazione archivio ...");
 			archiveEngine.finalizeImportArchive(archive, mode, modeType, registryReader, configReader,
-					validateDocuments, importInformationMissing_globalPlaceholder);
-			logCore.info("Finalizzazione archivio effettuata");
+					validateDocuments, importInformationMissingGlobalPlaceholder);
+			logCoreInfo("Finalizzazione archivio effettuata");
 			
 			// store
 			String esito = null;
 			if(delete){
 				
-				logCore.info("Eliminazione in corso ...");
+				logCoreInfo("Eliminazione in corso ...");
 				
 				DeleterArchiveUtils deleterArchiveUtils = 
 						new DeleterArchiveUtils(importerEngine, logCore, userLogin,
@@ -366,14 +318,14 @@ public class Loader {
 				
 				esito = archiveEngine.toString(esitoDelete, mode);
 				
-				logCore.info("Eliminazione completata");
+				logCoreInfo("Eliminazione completata");
 				
 			}else{
 				
-				logCore.info("Importazione (aggiornamento:"+updateAbilitato+") in corso ...");
+				logCoreInfo("Importazione (aggiornamento:"+updateAbilitato+") in corso ...");
 				
 				ImporterArchiveUtils importerArchiveUtils = 
-						new ImporterArchiveUtils(importerEngine, logCore, userLogin, import_nomePddOperativa, import_tipoPddArchivi, 
+						new ImporterArchiveUtils(importerEngine, logCore, userLogin, importNomePddOperativa, importTipoPddArchivi, 
 								isShowGestioneWorkflowStatoDocumenti, updateAbilitato,
 								importDeletePolicyConfig, 
 								importDeletePluginConfig, importCheckPluginReferences,
@@ -389,17 +341,17 @@ public class Loader {
 				
 				esito = archiveEngine.toString(esitoImport, mode);
 				
-				logCore.info("Importazione (aggiornamento:"+updateAbilitato+") completata");
+				logCoreInfo("Importazione (aggiornamento:"+updateAbilitato+") completata");
 			}
 			
-			logCore.info("Operazione terminata con esito:\n"+esito);
+			logCoreInfo("Operazione terminata con esito:\n"+esito);
 			
 		}
-		catch(Throwable t) {
+		catch(Exception t) {
 			if(logCore!=null) {
 				logCore.error(t.getMessage(),t);
 			}
-			throw t;
+			throw new CoreException(t.getMessage(),t);
 		}
 		finally {
 			if(connectionSQL!=null) {
@@ -409,4 +361,121 @@ public class Loader {
 
 	}
 
+	private static void initLogger() throws CoreException {
+		Properties propertiesLog4j = new Properties();
+		try (InputStream inPropLog4j = Loader.class.getResourceAsStream("/config_loader.cli.log4j2.properties");){
+			propertiesLog4j.load(inPropLog4j);
+			LoggerWrapperFactory.setLogConfiguration(propertiesLog4j);
+		} catch(java.lang.Exception e) {
+			throw new CoreException("Impossibile leggere i dati dal file 'config_loader.cli.log4j2.properties': "+e.getMessage());
+		} 
+	}
+	private static LoaderOperationType parseOperationType(String utilizzoErrato,String [] args) throws CoreException{
+		LoaderOperationType opType = null;
+		try {
+			opType = LoaderOperationType.toEnumConstant(args[0].trim(), true);
+		}catch(Exception e) {
+			throw new CoreException(utilizzoErrato+"\nIl tipo di operazione indicato ("+args[0].trim()+") non è gestito, valori ammessi: "+
+					LoaderOperationType.CREATE.getValue()+","+LoaderOperationType.CREATE_UPDATE.getValue()+","+LoaderOperationType.DELETE.getValue());
+		}
+		return opType;
+	}
+	private static InitialContext bindDatasource(DataSource ds, String jndiName) throws NamingException {
+		InitialContext ic = new InitialContext();
+		try{
+			ic.bind(jndiName, ds);
+		}catch(javax.naming.NameAlreadyBoundException already){
+			//	capita in caso di più threads
+		}
+		return ic;
+	}
+	private static ConfigurazionePdD initProtocolFactory(String protocolloDefault) throws CoreException {
+		ConfigurazionePdD configPdD = null;
+		try {
+			configPdD = new ConfigurazionePdD();
+			configPdD.setAttesaAttivaJDBC(-1);
+			configPdD.setCheckIntervalJDBC(-1);
+			configPdD.setLoader(new org.openspcoop2.utils.resources.Loader(Loader.class.getClassLoader()));
+			configPdD.setLog(logCore);
+			ProtocolFactoryManager.initialize(logCore, configPdD,
+					protocolloDefault);
+		} catch (Exception e) {
+			throw new CoreException("Errore (InitConfigurazione - ProtocolFactoryManager): "+e.getMessage(),e);
+		}
+		return configPdD;
+	}
+	private static void initExtendedInfoManager() throws CoreException {
+		try{
+			ExtendedInfoManager.initialize(new org.openspcoop2.utils.resources.Loader(Loader.class.getClassLoader()), null, null, null);
+		}catch(Exception e){
+			throw new CoreException("Inizializzazione [ExtendedInfoManager] fallita",e);
+		}
+	}
+	private static void initCorePluginLoader(ConfigurazionePdD configPdD, LoaderProperties loaderProperties) throws CoreException {
+		try{
+			CorePluginLoader.initialize(configPdD.getLoader(), logSql,
+					PluginLoader.class,
+					new LoaderRegistroPluginsService(logSql),
+					loaderProperties.getPluginSeconds());
+		}catch(Exception e){
+			throw new CoreException("Inizializzazione [PluginManager] fallita",e);
+		}
+	}
+	private static void initUtenze(LoaderProperties loaderProperties) throws CoreException {
+		try {
+			CryptConfig utenzeCryptConfig = new CryptConfig(loaderProperties.getUtenzePassword());
+			CryptConfig applicativiCryptConfig = new CryptConfig(loaderProperties.getApplicativiPassword());
+			int applicativiApiKeyPasswordGeneratedLength=loaderProperties.getApplicativiApiKeyPasswordGeneratedLength();
+			boolean applicativiBasicPasswordEnableConstraints=loaderProperties.isApplicativiBasicPasswordEnableConstraints();
+			CryptConfig soggettiCryptConfig = new CryptConfig(loaderProperties.getSoggettiPassword());
+			int soggettiApiKeyPasswordGeneratedLength=loaderProperties.getSoggettiApiKeyPasswordGeneratedLength();
+			boolean soggettiBasicPasswordEnableConstraints=loaderProperties.isSoggettiBasicPasswordEnableConstraints();
+			
+			ControlStationCore.setUtenzePasswordEncryptEngineApiMode(utenzeCryptConfig);
+			
+			ControlStationCore.setApplicativiPasswordEncryptEngineApiMode(applicativiCryptConfig);
+			ControlStationCore.setApplicativiApiKeyPasswordGeneratedLengthApiMode(applicativiApiKeyPasswordGeneratedLength);
+			if(applicativiBasicPasswordEnableConstraints) {
+				PasswordVerifier applicativiPasswordVerifier = new PasswordVerifier("/org/openspcoop2/utils/crypt/consolePassword.properties");
+				ControlStationCore.setApplicativiPasswordVerifierEngineApiMode(applicativiPasswordVerifier);
+			}
+			
+			ControlStationCore.setSoggettiPasswordEncryptEngineApiMode(soggettiCryptConfig);
+			ControlStationCore.setSoggettiApiKeyPasswordGeneratedLengthApiMode(soggettiApiKeyPasswordGeneratedLength);
+			if(soggettiBasicPasswordEnableConstraints) {
+				PasswordVerifier soggettiPasswordVerifier = new PasswordVerifier("/org/openspcoop2/utils/crypt/consolePassword.properties");
+				ControlStationCore.setSoggettiPasswordVerifierEngineApiMode(soggettiPasswordVerifier);
+			}
+			
+		} catch (Exception e) {
+			throw new CoreException(e.getMessage(),e);
+		}
+	}
+	private static void initConnettori(String confDir, String protocolloDefault) throws CoreException {
+		try{
+			Connettori.initialize(logCore, true, confDir, protocolloDefault);
+		}catch(Exception e){
+			throw new CoreException(e.getMessage(),e);
+		}
+	}
+	private static void initBouncyCastle() throws CoreException {
+		try{
+			ProviderUtils.addBouncyCastleAfterSun(true);
+			logCoreInfo("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
+		}catch(Exception e){
+			throw new CoreException(e.getMessage(),e);
+		}
+	}
+	private static void initBYOK(String byokConfig, boolean required) throws CoreException {
+		try{
+			if(StringUtils.isNotEmpty(byokConfig)) {
+				File f = new File(byokConfig);
+				BYOKManager.init(f, required, logCore);
+				logCoreInfo("Inizializzato BYOK con configurazione '"+byokConfig+"'");
+			}
+		}catch(Exception e){
+			throw new CoreException(e.getMessage(),e);
+		}
+	}
+	
 }

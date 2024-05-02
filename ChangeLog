@@ -1,9 +1,14 @@
 Aggioungere a jenkins: +- 'autenticazione', verifica la funzionalità di inoltro di credenziali (basic, api-key) al backend
 +   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.autenticazione
 
+Aggiungere a jenkins la conf del loader:
+		byok.config=/etc/govway/byok.properties
+		byok.internalConfig.securityEngine=runtime
+
 documentare visualizza credenziali!!
 
 AGGIUNTO API KEY!!!
+
 
 2024-04-02  Andrea Poli <apoli@link.it>
 

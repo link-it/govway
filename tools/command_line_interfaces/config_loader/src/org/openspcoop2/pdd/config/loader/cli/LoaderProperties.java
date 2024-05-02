@@ -24,6 +24,8 @@ package org.openspcoop2.pdd.config.loader.cli;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.openspcoop2.core.commons.CoreException;
+
 /**
 * LoaderProperties
 *
@@ -34,30 +36,33 @@ import java.util.Properties;
 public class LoaderProperties {
 	
 	private static LoaderProperties staticInstance = null;
-	private static synchronized void init() throws Exception{
+	private static synchronized void init() throws CoreException{
 		if(LoaderProperties.staticInstance == null){
 			LoaderProperties.staticInstance = new LoaderProperties();
 		}
 	}
-	public static LoaderProperties getInstance() throws Exception{
+	public static LoaderProperties getInstance() throws CoreException{
 		if(LoaderProperties.staticInstance == null){
 			LoaderProperties.init();
 		}
 		return LoaderProperties.staticInstance;
 	}
 	
+	private static String getPropertyPrefix(String name) {
+		return "Property '"+name+"'"; 
+	}
 	
 	
 	
-	private static String PROPERTIES_FILE = "/config_loader.cli.properties";
+	private static final String PROPERTIES_FILE = "/config_loader.cli.properties";
 	
 	private String protocolloDefault = null;
 	
-	private boolean policy_enable = false;
-	private boolean plugin_enable = false;
-	private int plugin_seconds = 60;
-	private boolean plugin_checkReferences = false;
-	private boolean configurazioneGenerale_enable = false;
+	private boolean policyEnable = false;
+	private boolean pluginEnable = false;
+	private int pluginSeconds = 60;
+	private boolean pluginCheckReferences = false;
+	private boolean configurazioneGeneraleEnable = false;
 	
 	private String nomePddOperativa = null;
 	private String tipoPddArchivio = null;
@@ -71,36 +76,41 @@ public class LoaderProperties {
 
 	private String utente = null;
 		
-	private String utenze_password = null;
+	private String utenzePassword = null;
 
-	private String applicativi_password = null;
-	private int applicativi_apiKey_passwordGenerated_length = -1;
-	private boolean applicativi_basic_password_enableConstraints = false;
+	private String applicativiPassword = null;
+	private int applicativiApiKeyPasswordGeneratedLength = -1;
+	private boolean applicativiBasicPasswordEnableConstraints = false;
 	
-	private String soggetti_password = null;
-	private int soggetti_apiKey_passwordGenerated_length = -1;
-	private boolean soggetti_basic_password_enableConstraints = false;
+	private String soggettiPassword = null;
+	private int soggettiApiKeyPasswordGeneratedLength = -1;
+	private boolean soggettiBasicPasswordEnableConstraints = false;
 	
+	private boolean securityLoadBouncyCastleProvider = false;
 	
-	public LoaderProperties() throws Exception {
+	private String byokConfigurazione = null;
+	private boolean byokRequired = false;
+	private String byokInternalConfigSecurityEngine = null;
+	
+	public LoaderProperties() throws CoreException {
 
 		Properties props = new Properties();
 		try {
 			InputStream is = LoaderProperties.class.getResourceAsStream(LoaderProperties.PROPERTIES_FILE);
 			props.load(is);
 		} catch(Exception e) {
-			throw new Exception("Errore durante l'init delle properties", e);
+			throw new CoreException("Errore durante l'init delle properties", e);
 		}
 		
 		// PROPERTIES
 				
 		this.protocolloDefault = this.getProperty(props, "protocolloDefault", true);
 		
-		this.policy_enable = this.getBooleanProperty(props, "policy.enable", true);
-		this.plugin_enable = this.getBooleanProperty(props, "plugin.enable", true);
-		this.plugin_checkReferences = this.getBooleanProperty(props, "plugin.checkReferences", true);
-		this.plugin_seconds = this.getIntProperty(props, "plugin.seconds", true);
-		this.configurazioneGenerale_enable = this.getBooleanProperty(props, "configurazioneGenerale.enable", true);
+		this.policyEnable = this.getBooleanProperty(props, "policy.enable", true);
+		this.pluginEnable = this.getBooleanProperty(props, "plugin.enable", true);
+		this.pluginCheckReferences = this.getBooleanProperty(props, "plugin.checkReferences", true);
+		this.pluginSeconds = this.getIntProperty(props, "plugin.seconds", true);
+		this.configurazioneGeneraleEnable = this.getBooleanProperty(props, "configurazioneGenerale.enable", true);
 		
 		this.nomePddOperativa = this.getProperty(props, "nomePddOperativa", false);
 		this.tipoPddArchivio = this.getProperty(props, "tipoPddArchivio", true);
@@ -114,23 +124,29 @@ public class LoaderProperties {
 		this.isSoggettiApplicativiCredenzialiSslPermitSameCredentials = this.getBooleanProperty(props, "soggettiApplicativi.credenzialiSsl.permitSameCredentials", true);
 		this.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials = this.getBooleanProperty(props, "soggettiApplicativi.credenzialiPrincipal.permitSameCredentials", true);
 		
-		this.utenze_password = this.getProperty(props, "utenze.password", true);
+		this.utenzePassword = this.getProperty(props, "utenze.password", true);
 
-		this.applicativi_password = this.getProperty(props, "applicativi.password", true);
-		this.applicativi_apiKey_passwordGenerated_length = this.getIntProperty(props, "applicativi.api_key.passwordGenerated.length", true);
-		this.applicativi_basic_password_enableConstraints = this.getBooleanProperty(props, "applicativi.basic.password.enableConstraints", true);
+		this.applicativiPassword = this.getProperty(props, "applicativi.password", true);
+		this.applicativiApiKeyPasswordGeneratedLength = this.getIntProperty(props, "applicativi.api_key.passwordGenerated.length", true);
+		this.applicativiBasicPasswordEnableConstraints = this.getBooleanProperty(props, "applicativi.basic.password.enableConstraints", true);
 		
-		this.soggetti_password = this.getProperty(props, "soggetti.password", true);
-		this.soggetti_apiKey_passwordGenerated_length = this.getIntProperty(props, "soggetti.api_key.passwordGenerated.length", true);
-		this.soggetti_basic_password_enableConstraints = this.getBooleanProperty(props, "soggetti.basic.password.enableConstraints", true);
+		this.soggettiPassword = this.getProperty(props, "soggetti.password", true);
+		this.soggettiApiKeyPasswordGeneratedLength = this.getIntProperty(props, "soggetti.api_key.passwordGenerated.length", true);
+		this.soggettiBasicPasswordEnableConstraints = this.getBooleanProperty(props, "soggetti.basic.password.enableConstraints", true);
 
+		this.securityLoadBouncyCastleProvider = this.getBooleanProperty(props, "security.addBouncyCastleProvider", false);
+		
+		this.byokConfigurazione = this.getProperty(props, "byok.config", false);
+		this.byokRequired = this.getBooleanProperty(props, "byok.required", false);
+		this.byokInternalConfigSecurityEngine = this.getProperty(props, "byok.internalConfig.securityEngine", false);
+		
 	}
 	
-	private String getProperty(Properties props,String name,boolean required) throws Exception{
+	private String getProperty(Properties props,String name,boolean required) throws CoreException{
 		String tmp = props.getProperty(name);
 		if(tmp==null){
 			if(required){
-				throw new Exception("Property '"+name+"' not found");
+				throw new CoreException(getPropertyPrefix(name)+" not found");
 			}
 			else{
 				return null;
@@ -140,26 +156,26 @@ public class LoaderProperties {
 			return tmp.trim();
 		}
 	}
-	private boolean getBooleanProperty(Properties props,String name,boolean required) throws Exception{
+	private boolean getBooleanProperty(Properties props,String name,boolean required) throws CoreException{
 		String tmp = this.getProperty(props, name, required);
 		if(tmp!=null){
 			try{
 				return Boolean.parseBoolean(tmp);
 			}catch(Exception e){
-				throw new Exception("Property '"+name+"' wrong int format: "+e.getMessage());
+				throw new CoreException(getPropertyPrefix(name)+" wrong int format: "+e.getMessage());
 			}
 		}
 		else{
 			return false;
 		}
 	}
-	private int getIntProperty(Properties props,String name,boolean required) throws Exception{
+	private int getIntProperty(Properties props,String name,boolean required) throws CoreException{
 		String tmp = this.getProperty(props, name, required);
 		if(tmp!=null){
 			try{
 				return Integer.valueOf(tmp);
 			}catch(Exception e){
-				throw new Exception("Property '"+name+"' wrong int format: "+e.getMessage());
+				throw new CoreException(getPropertyPrefix(name)+" wrong int format: "+e.getMessage());
 			}
 		}
 		else{
@@ -172,20 +188,20 @@ public class LoaderProperties {
 		return this.protocolloDefault;
 	}
 	
-	public boolean isPolicy_enable() {
-		return this.policy_enable;
+	public boolean isPolicyEnable() {
+		return this.policyEnable;
 	}
-	public boolean isPlugin_enable() {
-		return this.plugin_enable;
+	public boolean isPluginEnable() {
+		return this.pluginEnable;
 	}
-	public boolean isPlugin_checkReferences() {
-		return this.plugin_checkReferences;
+	public boolean isPluginCheckReferences() {
+		return this.pluginCheckReferences;
 	}
-	public int getPlugin_seconds() {
-		return this.plugin_seconds;
+	public int getPluginSeconds() {
+		return this.pluginSeconds;
 	}
-	public boolean isConfigurazioneGenerale_enable() {
-		return this.configurazioneGenerale_enable;
+	public boolean isConfigurazioneGeneraleEnable() {
+		return this.configurazioneGeneraleEnable;
 	}
 	
 	public String getNomePddOperativa() {
@@ -216,25 +232,39 @@ public class LoaderProperties {
 		return this.utente;
 	}
 	
-	public String getUtenze_password() {
-		return this.utenze_password;
+	public String getUtenzePassword() {
+		return this.utenzePassword;
 	}
-	public String getApplicativi_password() {
-		return this.applicativi_password;
+	public String getApplicativiPassword() {
+		return this.applicativiPassword;
 	}
-	public int getApplicativi_apiKey_passwordGenerated_length() {
-		return this.applicativi_apiKey_passwordGenerated_length;
+	public int getApplicativiApiKeyPasswordGeneratedLength() {
+		return this.applicativiApiKeyPasswordGeneratedLength;
 	}
-	public boolean isApplicativi_basic_password_enableConstraints() {
-		return this.applicativi_basic_password_enableConstraints;
+	public boolean isApplicativiBasicPasswordEnableConstraints() {
+		return this.applicativiBasicPasswordEnableConstraints;
 	}
-	public String getSoggetti_password() {
-		return this.soggetti_password;
+	public String getSoggettiPassword() {
+		return this.soggettiPassword;
 	}
-	public int getSoggetti_apiKey_passwordGenerated_length() {
-		return this.soggetti_apiKey_passwordGenerated_length;
+	public int getSoggettiApiKeyPasswordGeneratedLength() {
+		return this.soggettiApiKeyPasswordGeneratedLength;
 	}
-	public boolean isSoggetti_basic_password_enableConstraints() {
-		return this.soggetti_basic_password_enableConstraints;
+	public boolean isSoggettiBasicPasswordEnableConstraints() {
+		return this.soggettiBasicPasswordEnableConstraints;
+	}
+
+	public boolean isSecurityLoadBouncyCastleProvider() {
+		return this.securityLoadBouncyCastleProvider;
+	}
+	
+	public String getBYOKConfigurazione() {
+		return this.byokConfigurazione;
+	}
+	public boolean isBYOKRequired() {
+		return this.byokRequired;
+	}
+	public String getBYOKInternalConfigSecurityEngine() {
+		return this.byokInternalConfigSecurityEngine;
 	}
 }

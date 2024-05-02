@@ -41,14 +41,17 @@ import org.slf4j.Logger;
 */
 public class LoaderRegistroPluginsService implements IRegistroPluginsReader {
 
-	private transient DriverConfigurazioneDB driverConfigDB = null;
+	private static final String ERROR_PREFIX = "Errore durante la creazione del Service: ";
+	
+	private DriverConfigurazioneDB driverConfigDB = null;
 		
 	public LoaderRegistroPluginsService(Logger log){
 		try{
-			this._init(null, null, log);
+			this.initEngine(null, null, log);
 			
 		}catch(Exception e){
-			log.error("Errore durante la creazione del Service: " + e.getMessage(),e);
+			String msgError = ERROR_PREFIX + e.getMessage();
+			log.error(msgError,e);
 		}
 	}
 	public LoaderRegistroPluginsService(Connection con, boolean autoCommit, Logger log){
@@ -56,13 +59,15 @@ public class LoaderRegistroPluginsService implements IRegistroPluginsReader {
 	}
 	public LoaderRegistroPluginsService(Connection con, boolean autoCommit, ServiceManagerProperties serviceManagerProperties, Logger log){
 		try{
-			this._init(con, serviceManagerProperties, log);
-			
+			if(autoCommit) {
+				// nop
+			}
+			this.initEngine(con, serviceManagerProperties, log);
 		}catch(Exception e){
-			log.error("Errore durante la creazione del Service: " + e.getMessage(),e);
+			log.error(ERROR_PREFIX + e.getMessage(),e);
 		}
 	}
-	private void _init(Connection con, ServiceManagerProperties serviceManagerProperties, Logger log) {
+	private void initEngine(Connection con, ServiceManagerProperties serviceManagerProperties, Logger log) {
 		try{
 			String tipoDatabase = null;
 			if(serviceManagerProperties!=null) {
@@ -83,7 +88,7 @@ public class LoaderRegistroPluginsService implements IRegistroPluginsReader {
 			}
 
 		}catch(Exception e){
-			log.error("Errore durante la creazione del Service: " + e.getMessage(),e);
+			log.error(ERROR_PREFIX + e.getMessage(),e);
 		}
 	}
 	
