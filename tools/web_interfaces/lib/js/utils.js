@@ -227,6 +227,9 @@ function saveBlobAsFile(blob, filename) {
 			// inserimento del valore nella text area
 			$("textarea[id^='txtA_ne_dec']").val(data);
 			
+			// visualizzo la text area 
+			$("#txtA_ne_dec").show();
+			
 			// visualizzo il pulsante di copia
 			$("#iconCopy_dec").show();
 			

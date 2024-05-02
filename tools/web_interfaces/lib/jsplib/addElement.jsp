@@ -151,6 +151,7 @@ function CheckDati() {
 		$("#txtA_ne_dec").val('');
 		$("#txtA_ne_dec").attr('style','');		
 		$("#iconCopy_dec").hide();
+		$("#txtA_ne_dec").hide();
 		
 		$("#visualizzaInformazioniCifrateModal").prev().children('span').text(title);
 		$("#visualizzaInformazioniCifrateModalBodyNotaSpan").html(body);

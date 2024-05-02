@@ -1548,12 +1548,6 @@ for (int i = 0; i < dati.size(); i++) {
 			                        															<% 
 			                        									      				if(visualizzaInformazioniCifrate){
 			                        									      				%>
-			                        											      			<input type="hidden" name="__i_hidden_title_<%= idPwdViewLock %>" id="hidden_title_<%= idPwdViewLock %>"  value="<%= Costanti.TITOLO_FINESTRA_MODALE_VISUALIZZA_MESSAGE_WARNING %>"/>
-			                        											      			<input type="hidden" name="__i_hidden_body_<%= idPwdViewLock %>" id="hidden_body_<%= idPwdViewLock %>"  value="<%= dePwd.getLockWarningMessage() %>"/>
-			                        											      			<input type="hidden" name="__i_hidden_url_<%= idPwdViewLock %>" id="hidden_url_<%= idPwdViewLock %>"  value="<%= de.getUrl() %>"/>
-			                        													      	<span class="spanIconInfoBox-viewLock">
-			                        																<i class="material-symbols-outlined md-24" id="<%=idPwdViewLock %>" title="<%= Costanti.ICONA_VISIBILITY_LOCK_TOOLTIP %>"><%= Costanti.ICON_VISIBILITY_LOCK %></i>
-			                        															</span>
 			                        															<input type="hidden" name="__i_hidden_title_<%= idPwdCopyLock %>" id="hidden_title_<%= idPwdCopyLock %>"  value="<%= Costanti.TITOLO_FINESTRA_MODALE_COPIA_MESSAGE_WARNING %>"/>
 			                        											      			<input type="hidden" name="__i_hidden_body_<%= idPwdCopyLock %>" id="hidden_body_<%= idPwdCopyLock %>"  value="<%= dePwd.getLockWarningMessage() %>"/>
 			                        											      			<input type="hidden" name="__i_hidden_url_<%= idPwdCopyLock %>" id="hidden_url_<%= idPwdCopyLock %>"  value="<%= de.getUrl() %>"/>
@@ -1561,6 +1555,12 @@ for (int i = 0; i < dati.size(); i++) {
 			                        																<i class="material-icons md-24" id="<%=idPwdCopyLock %>" title="<%= Costanti.ICONA_COPY_LOCK_TOOLTIP %>"><%= Costanti.ICON_COPY %></i>
 			                        															</span>
 			                        															
+																								<input type="hidden" name="__i_hidden_title_<%= idPwdViewLock %>" id="hidden_title_<%= idPwdViewLock %>"  value="<%= Costanti.TITOLO_FINESTRA_MODALE_VISUALIZZA_MESSAGE_WARNING %>"/>
+			                        											      			<input type="hidden" name="__i_hidden_body_<%= idPwdViewLock %>" id="hidden_body_<%= idPwdViewLock %>"  value="<%= dePwd.getLockWarningMessage() %>"/>
+			                        											      			<input type="hidden" name="__i_hidden_url_<%= idPwdViewLock %>" id="hidden_url_<%= idPwdViewLock %>"  value="<%= de.getUrl() %>"/>
+			                        													      	<span class="spanIconInfoBox-viewLock">
+			                        																<i class="material-symbols-outlined md-24" id="<%=idPwdViewLock %>" title="<%= Costanti.ICONA_VISIBILITY_LOCK_TOOLTIP %>"><%= Costanti.ICON_VISIBILITY_LOCK %></i>
+			                        															</span>			                        															
 			                        														<% } %>	
 			                        											      			                        											      	
 			                        											      		<% 
