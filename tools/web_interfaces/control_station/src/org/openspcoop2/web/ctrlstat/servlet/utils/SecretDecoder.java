@@ -89,7 +89,14 @@ public class SecretDecoder extends HttpServlet {
 			ServletOutputStream outputStream = response.getOutputStream();
 			outputStream.write(secretToUnwrap.getBytes());
 		}catch(Exception e){
-			ControlStationCore.logError("Errore durante la ricerca delle informazioni oggetto: "+e.getMessage(), e);
+			ControlStationCore.logError("Errore durante la decodifica: "+e.getMessage(), e);
+			response.setStatus(500);
+			try {
+				ServletOutputStream outputStream = response.getOutputStream();
+				outputStream.write(("Errore durante la decodifica: "+e.getMessage()).getBytes());
+			}catch(Exception eErr){
+				ControlStationCore.logError("Errore durante la serializzazione dell'errore di decodifica: "+e.getMessage(), e);
+			}
 		}
 	}
 }
