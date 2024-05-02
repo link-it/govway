@@ -173,6 +173,8 @@ Prerequisiti:
 		policy.enable=true
 		plugin.enable=true
 		configurazioneGenerale.enable=true
+		byok.config=/etc/govway/byok.properties
+		byok.internalConfig.securityEngine=runtime
 
 + Compilare i test con
 	ant build

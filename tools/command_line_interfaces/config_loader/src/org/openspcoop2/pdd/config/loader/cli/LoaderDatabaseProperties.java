@@ -24,6 +24,8 @@ package org.openspcoop2.pdd.config.loader.cli;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.openspcoop2.core.commons.CoreException;
+
 /**
 * LoaderDatabaseProperties
 *
@@ -34,12 +36,12 @@ import java.util.Properties;
 public class LoaderDatabaseProperties {
 	
 	private static LoaderDatabaseProperties staticInstance = null;
-	private static synchronized void init() throws Exception{
+	private static synchronized void init() throws CoreException{
 		if(LoaderDatabaseProperties.staticInstance == null){
 			LoaderDatabaseProperties.staticInstance = new LoaderDatabaseProperties();
 		}
 	}
-	public static LoaderDatabaseProperties getInstance() throws Exception{
+	public static LoaderDatabaseProperties getInstance() throws CoreException{
 		if(LoaderDatabaseProperties.staticInstance == null){
 			LoaderDatabaseProperties.init();
 		}
@@ -49,7 +51,7 @@ public class LoaderDatabaseProperties {
 	
 	
 	
-	private static String PROPERTIES_FILE = "/config_loader.cli.database.properties";
+	private static final String PROPERTIES_FILE = "/config_loader.cli.database.properties";
 	
 	private String tipoDatabase = null;
 	private String driver = null;
@@ -58,14 +60,14 @@ public class LoaderDatabaseProperties {
 	private String password = null;
 	
 	
-	public LoaderDatabaseProperties() throws Exception {
+	public LoaderDatabaseProperties() throws CoreException {
 
 		Properties props = new Properties();
 		try {
 			InputStream is = LoaderDatabaseProperties.class.getResourceAsStream(LoaderDatabaseProperties.PROPERTIES_FILE);
 			props.load(is);
 		} catch(Exception e) {
-			throw new Exception("Errore durante l'init delle properties", e);
+			throw new CoreException("Errore durante l'init delle properties", e);
 		}
 		
 		// PROPERTIES
@@ -79,11 +81,11 @@ public class LoaderDatabaseProperties {
 
 	}
 	
-	private String getProperty(Properties props,String name,boolean required) throws Exception{
+	private String getProperty(Properties props,String name,boolean required) throws CoreException{
 		String tmp = props.getProperty(name);
 		if(tmp==null){
 			if(required){
-				throw new Exception("Property '"+name+"' not found");
+				throw new CoreException("Property '"+name+"' not found");
 			}
 			else{
 				return null;

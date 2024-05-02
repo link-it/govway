@@ -1223,13 +1223,13 @@ public class ControlStationCore {
 	private String byokInternalConfigSecurityEngine = null;
 	private String byokInternalConfigRemoteSecurityEngine = null;
 	public String getByokInternalConfigSecurityEngine() {
-		if(ControlStationCore.isAPIMode() && byokInternalConfigSecurityEngineApiMode!=null) {
+		if(ControlStationCore.isAPIMode()){/** && byokInternalConfigSecurityEngineApiMode!=null) {*/
 			return byokInternalConfigSecurityEngineApiMode;
 		}
 		return this.byokInternalConfigSecurityEngine;
 	}
 	public String getByokInternalConfigRemoteSecurityEngine() {
-		if(ControlStationCore.isAPIMode() && byokInternalConfigRemoteSecurityEngineApiMode!=null) {
+		if(ControlStationCore.isAPIMode()){/**  && byokInternalConfigRemoteSecurityEngineApiMode!=null) { */
 			return byokInternalConfigRemoteSecurityEngineApiMode;
 		}
 		return this.byokInternalConfigRemoteSecurityEngine;
