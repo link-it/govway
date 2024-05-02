@@ -107,10 +107,6 @@
  	      modal: true,
  	      buttons: {
 			'Visualizza' : visualizzaValoreDecodificato
- 	 	     ,
- 	    	 'Chiudi' : function() {
- 	 	          $( this ).dialog( "close" );
- 	 	        }
  	      }
  	    });
  	}

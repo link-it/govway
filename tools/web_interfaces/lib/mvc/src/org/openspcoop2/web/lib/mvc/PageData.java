@@ -971,7 +971,7 @@ public class PageData implements Serializable {
 			Boolean resizable, Boolean draggable) {			
 		ServletUtils.addInUsoButton(servletName, this.getComandiAzioneBarraTitoloDettaglioElemento(), DataElementType.IMAGE, titolo, id, inUsoType,
 				tooltip, icon, headerRiga1, 
-				resizable, draggable);
+				resizable, draggable, true);
 	}
 
 	public void addComandoAggiornaRicercaButton(String servletName, List<Parameter> parameters) {
@@ -983,10 +983,14 @@ public class PageData implements Serializable {
 		parameters.add(new Parameter(Costanti.PARAMETRO_IS_POSTBACK, "true"));
 		parameters.add(new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME, Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS_POSTBACK));
 		
-		this.addAzioneBarraTitoloDettaglioElemento(this.getComandiAzioneBarraTitoloDettaglioElemento(), DataElementType.IMAGE, Costanti.ICONA_AGGIORNA_RICERCA_TOOLTIP, Costanti.ICONA_AGGIORNA_RICERCA, servletName,parameters);
+		this.addAzioneBarraTitoloDettaglioElemento(this.getComandiAzioneBarraTitoloDettaglioElemento(), DataElementType.IMAGE, Costanti.ICONA_AGGIORNA_RICERCA_TOOLTIP, Costanti.ICONA_AGGIORNA_RICERCA, servletName,parameters, false);
 	}
 	
 	private void addAzioneBarraTitoloDettaglioElemento(List<DataElement> e, DataElementType deType, String tooltip, String icon, String servletName, List<Parameter> parameters) {
+		this.addAzioneBarraTitoloDettaglioElemento(e, deType, tooltip, icon, servletName, parameters, true);
+	}
+	
+	private void addAzioneBarraTitoloDettaglioElemento(List<DataElement> e, DataElementType deType, String tooltip, String icon, String servletName, List<Parameter> parameters, boolean contextMenu) {
 		DataElement de = new DataElement();
 		de.setType(deType);
 		de.setToolTip(tooltip);
@@ -996,6 +1000,7 @@ public class PageData implements Serializable {
 			de.setUrl(servletName);
 		}
 		de.setIcon(icon);
+		de.setContextMenu(contextMenu);
 		
 		e.add(de);
 	}

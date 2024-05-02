@@ -135,6 +135,8 @@ public class DataElement implements Serializable {
 	
 	private DataElementConfirm confirm = null;
 	
+	private boolean contextMenu = false;
+	
 	public String getIdToRemove() {
 		return this.idToRemove;
 	}
@@ -168,6 +170,7 @@ public class DataElement implements Serializable {
 		this.labelRight = null;
 		this.labelLink = null;
 		this.dataAttributes = new HashMap<>();
+		this.contextMenu = false;
 	}
 
 	public void setId(int i) {
@@ -1080,5 +1083,13 @@ public class DataElement implements Serializable {
 		this.confirm.setTitolo(titolo);
 		this.confirm.setBody(messaggio);
 		this.confirm.setAzione(testoBottoneAzione);
+	}
+
+	public boolean isContextMenu() {
+		return this.contextMenu;
+	}
+
+	public void setContextMenu(boolean contextMenu) {
+		this.contextMenu = contextMenu;
 	}
 }

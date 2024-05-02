@@ -85,49 +85,9 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 							<span class="history"><%=titoloSezione %></span>
 						</td>
 						<% if(mostraComandiHeader) { %>
-							<td class="titoloSezione titoloSezione-right">
-								<div class="titoloSezioneDiv">
-									<% 
-										for(int idxLink =0; idxLink < listaComandi.size() ; idxLink ++ ){
-											DataElement de = (DataElement) listaComandi.get(idxLink);
-											String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
-											String classLink = "";
-											String deTarget = " ";
-									  		if (!de.getTarget().equals("")) {
-									  			deTarget = " target=\""+ de.getTarget() +"\"";
-									  		}
-									  		
-									  		if (!de.getUrl().equals("")) {
-												de.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
-											}
-									  		
-									  		String deVisualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
-											
-									  		String deIconName = de.getIcon(); 
-									  		String id = "pnlRicercaHeader_link_" + idxLink;
-									  		%>
-					    					<a id="<%=id %>" class="titoloSezioneAzioneLink <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" type="button">
-					    						<span class="icon-box">
-													<i class="material-icons md-24"><%= deIconName %></i>
-												</span>
-					    					</a>
-					    					<script type="text/javascript" nonce="<%= randomNonce %>">
-										      	 $(document).ready(function(){
-														$('#<%=id %>').click(function() {
-															<%= deVisualizzaAjaxStatus %>return true;
-														});
-													});
-											</script>
-										<% 
-										}
-									%>
-									<% if(mostraFormHeader) { %>
-										<span class="icon-box" id="iconaPanelListaSpan">
-											<i class="material-icons md-24" id="iconaPanelLista"><%= Costanti.ICON_SEARCH %></i>
-										</span>
-									<% }%>
-								</div>
-							</td>
+							<jsp:include page="/jsplib/comandi-header.jsp" flush="true" >
+								<jsp:param value="<%=mostraFormHeader %>" name="visualizzaComandoEspandiFormRicerca"/>
+							</jsp:include>
 						<% }%>
 					</tr>
 					</tbody>

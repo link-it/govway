@@ -22303,7 +22303,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		ServletUtils.addInUsoButton(UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO, e, deType, titolo, id, inUsoType.toString(),
 				tooltip, icon, headerRiga1, 
-				resizable, draggable);
+				resizable, draggable, true);
 		
 	}
 	
@@ -22354,7 +22354,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		ServletUtils.addInUsoButton(UtilsCostanti.SERVLET_NAME_PROPRIETA_OGGETTO, e, deType, titolo, id, inUsoType.toString(),
 				tooltip, icon, headerRiga1, 
-				resizable, draggable);
+				resizable, draggable, true);
 		
 	}
 	

@@ -774,11 +774,12 @@ public class ServletUtils {
 	
 	public static void addInUsoButton(String servletName, List<DataElement> e, DataElementType deType, String titolo, String id, String inUsoType,
 			String tooltip, String icon, String headerRiga1, 
-			Boolean resizable, Boolean draggable) {
+			Boolean resizable, Boolean draggable, boolean contextMenu) {
 		DataElement de = new DataElement();
 		de.setType(deType);
 		de.setToolTip(tooltip);
 		de.setWidthPx(15);	
+		de.setContextMenu(contextMenu);
 		Dialog deDialog = new Dialog();
 		deDialog.setIcona(icon);
 		deDialog.setTitolo(titolo);

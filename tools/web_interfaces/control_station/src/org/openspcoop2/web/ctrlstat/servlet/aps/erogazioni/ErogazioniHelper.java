@@ -72,6 +72,7 @@ import org.openspcoop2.core.registry.ProprietaOggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.beans.GruppoSintetico;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
@@ -1649,21 +1650,11 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		boolean showSoggettoFruitoreInFruizioni = gestioneFruitori &&  this.core.isMultitenant() && 
 				!this.isSoggettoMultitenantSelezionato();
 		
-		String uriASPS = this.idServizioFactory.getUriFromAccordo(asps);
-		
 		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
 		
 		IDSoggetto idSoggettoFruitore = null;
 		if(gestioneFruitori) {
 			idSoggettoFruitore = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
-		}
-		
-		String labelServizioConFruitore = null;
-		if(gestioneFruitori) {
-			labelServizioConFruitore = this.getLabelServizioFruizione(protocollo, idSoggettoFruitore, idServizio);
-		}
-		else {
-			labelServizioConFruitore = this.getLabelServizioErogazione(protocollo, idServizio);
 		}
 		
 		IDServizio idAps = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
@@ -1737,46 +1728,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		// sezione 1 riepilogo
 		List<DataElement> dati = datiPagina.get(0);
 		
-		String idServizioButton = gestioneFruitori ? uriASPS+"@"+fruitore.getTipo()+"/"+fruitore.getNome() : uriASPS;
+		ProprietaOggetto pOggetto = this.creaProprietaOggetto(asps, gestioneFruitori, fruitore, idServizio, idSoggettoFruitore);
 		
-		// In Uso Button
-		this.addComandoInUsoInfoButton(labelServizioConFruitore,
-				idServizioButton,
-				gestioneFruitori ? InUsoType.FRUIZIONE_INFO : InUsoType.EROGAZIONE_INFO);
-		
-		// Verifica Certificati
-		if(showVerificaCertificati) {
-			if(gestioneFruitori) {
-				this.pd.addComandoVerificaCertificatiElementoButton(ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI, listParametersServizioFruitoriModificaProfiloOrVerificaCertificati);
-			}
-			else {
-				this.pd.addComandoVerificaCertificatiElementoButton(ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI, listParametersServizioModificaProfiloOrVerificaCertificati);
-			}
-		}
-		
-		// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
-		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
-			this.pd.addComandoResetCacheElementoButton(ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, listaParametriChange);
-		}
-		
-		// Proprieta Button
-		ProprietaOggetto pOggetto = null;
-		if(gestioneFruitori) {
-			pOggetto = ProprietaOggettoRegistro.mergeProprietaOggetto(fruitore.getProprietaOggetto(), idServizio, idSoggettoFruitore, this.porteDelegateCore, this); 
-		}
-		else {
-			pOggetto = ProprietaOggettoRegistro.mergeProprietaOggetto(asps.getProprietaOggetto(), idServizio, this.porteApplicativeCore, this.saCore, this); 
-		}
-		if(gestioneFruitori
-				&& this.existsProprietaOggetto(pOggetto, fruitore.getDescrizione())) {
-			this.addComandoProprietaOggettoButton(labelServizioConFruitore, idServizioButton, 
-					InUsoType.FRUIZIONE);
-		}
-		else if(!gestioneFruitori &&	
-			this.existsProprietaOggetto(pOggetto, asps.getDescrizione())) {
-			this.addComandoProprietaOggettoButton(labelServizioConFruitore, idServizioButton, 
-					InUsoType.EROGAZIONE);
-		}
+		this.impostaComandiMenuContestuale(asps, protocollo, gestioneFruitori, fruitore,
+				showVerificaCertificati, listaParametriChange,
+				listParametersServizioModificaProfiloOrVerificaCertificati,
+				listParametersServizioFruitoriModificaProfiloOrVerificaCertificati, pOggetto);
 		
 		
 		// Titolo Servizio
@@ -2671,7 +2628,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 
 		return datiPagina;
 	}
-
+	
 	@SuppressWarnings("unused")
 	private void aggiungiListaConfigurazioni(List<List<DataElement>> datiPagina, ServiceBinding serviceBinding,
 			boolean gestioneErogatori, List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa,
