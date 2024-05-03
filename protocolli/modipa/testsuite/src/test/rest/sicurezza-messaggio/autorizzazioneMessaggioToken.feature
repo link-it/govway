@@ -19,8 +19,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header GovWay-TestSuite-GovWay-Application == '<username>'
 And match header GovWay-TestSuite-GovWay-Token-Application == '<username>'
 
@@ -41,8 +41,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 403
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |
@@ -62,8 +62,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 403
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |
@@ -82,8 +82,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 403
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |
@@ -102,8 +102,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 403
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |
@@ -124,8 +124,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header GovWay-TestSuite-GovWay-Application == '<username>'
 And match header GovWay-TestSuite-GovWay-Token-Application == '<username>'
 
@@ -147,8 +147,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 403
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |
@@ -167,8 +167,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header GovWay-TestSuite-GovWay-Application == '<username>'
 And match header GovWay-TestSuite-GovWay-Token-Application == '<username>'
 
@@ -189,8 +189,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 403
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |
@@ -209,8 +209,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 403
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |
@@ -229,8 +229,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header GovWay-TestSuite-GovWay-Application == '<username>'
 And match header GovWay-TestSuite-GovWay-Token-Application == '<username>'
 
@@ -251,8 +251,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header GovWay-TestSuite-GovWay-Application == '<username>'
 And match header GovWay-TestSuite-GovWay-Token-Application == '<username>'
 
@@ -273,8 +273,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 403
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |
@@ -294,8 +294,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header GovWay-TestSuite-GovWay-Application == '<username>'
 And match header GovWay-TestSuite-GovWay-Token-Application == '<username>'
 
@@ -317,8 +317,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header GovWay-TestSuite-GovWay-Application == '<username>'
 And match header GovWay-TestSuite-GovWay-Token-Application == '<username>'
 
@@ -340,8 +340,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 403
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |
@@ -367,8 +367,8 @@ And header simulazionepdnd-audience = 'DemoAutorizzazioneTokenOAuth-<tipo-api>/v
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header GovWay-TestSuite-GovWay-Application == '<application>'
 
 Examples:
@@ -401,8 +401,8 @@ And header simulazionepdnd-audience = 'DemoAutorizzazioneTokenOAuth-<tipo-api>/v
 When method post
 Then status 403
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | tipo-api | tipo-keystore-applicativo | fruitore | username | password | application | response |
@@ -429,8 +429,8 @@ And header simulazionepdnd-audience = 'DemoAutorizzazioneTokenOAuthIntegrity01/v
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | application |
@@ -452,8 +452,8 @@ And header simulazionepdnd-audience = 'DemoAutorizzazioneTokenOAuthIntegrity01/v
 When method post
 Then status 403
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |

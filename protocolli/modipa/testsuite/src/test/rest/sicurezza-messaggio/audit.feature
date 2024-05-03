@@ -51,10 +51,10 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_audit_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token'), "AGID")
 
 * def clientIdExpected = '<clientId>'
 * def subExpected = '<username>'
@@ -88,15 +88,15 @@ And match header Authorization == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 
@@ -127,11 +127,11 @@ And param govway_audit_loa = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
-* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_integrity_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Integrity-Token'), "AGID")
+* def client_audit_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token'), "AGID")
 
 * def request_digest = get client_integrity_token $.payload.signed_headers..digest
 
@@ -177,17 +177,17 @@ And match header Authorization == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_integrity_token.payload.jti })
 * call check_traccia_kid ({ tid: tid, tipo: 'Richiesta', token: client_integrity_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_integrity_richiesta, profilo_interazione: 'crud', traceMessageId:client_integrity_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_integrity_token.payload.jti })
 * call check_traccia_kid ({ tid: tid, tipo: 'Richiesta', token: client_integrity_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_integrity_richiesta, profilo_interazione: 'crud', traceMessageId:client_integrity_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_integrity_token.payload.jti
 
 
@@ -212,10 +212,10 @@ And header Authorization = call basic ({ username: '<username>', password: '<pas
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_audit_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token'), "AGID")
 
 * def clientIdExpected = '<clientId>'
 * def subExpected = '<username>'
@@ -250,15 +250,15 @@ And match header Authorization == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 
@@ -284,11 +284,11 @@ And header Authorization = call basic ({ username: '<username>', password: '<pas
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
-* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_integrity_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Integrity-Token'), "AGID")
+* def client_audit_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token'), "AGID")
 
 * def request_digest = get client_integrity_token $.payload.signed_headers..digest
 
@@ -340,17 +340,17 @@ And match header Authorization == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', traceMessageId:client_integrity_token.payload.jti })
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_integrity_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_integrity_richiesta, profilo_interazione: 'crud', traceMessageId:client_integrity_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', traceMessageId:client_integrity_token.payload.jti })
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_integrity_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_integrity_richiesta, profilo_interazione: 'crud', traceMessageId:client_integrity_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_integrity_token.payload.jti
 
 
@@ -383,10 +383,10 @@ And param govway_audit_user_Location = "ip-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_audit_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token'), "AGID")
 
 * def clientIdExpected = '<clientId>'
 * def subExpected = '<username>'
@@ -419,15 +419,15 @@ And match header Authorization == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 
@@ -463,8 +463,8 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/invalid-token-audit-signature-in-request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
 
 Examples:
@@ -497,9 +497,9 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def authorization_token_giro_ok = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+* def authorization_token_giro_ok = karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token')
 
 
 # Creo una nuova richiesta modificando i valori di audit (altrimenti viene usato quello della cache) e fornendo il precedente authorization da utilizzare nel proxy
@@ -521,8 +521,8 @@ And header old-authorization = authorization_token_giro_ok
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/invalid-audit-digest-in-authorization-request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
 
 Examples:
@@ -554,8 +554,8 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/audit-digest-in-authorization-request-senza-value.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
 
 Examples:
@@ -584,8 +584,8 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/audit-digest-in-authorization-request-senza-alg.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
 
 Examples:
@@ -614,8 +614,8 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/audit-digest-in-authorization-request-non-presente.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
 
 Examples:
@@ -645,8 +645,8 @@ And header GovWay-Audit-UserLocation = "ip-utente-token"
 And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
 
 Examples:
@@ -676,8 +676,8 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/audit-user-non-presente.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
 
 Examples:
@@ -707,8 +707,8 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/audit-user-location-non-presente.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
 
 Examples:
@@ -740,8 +740,8 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/audit-user-non-presente-erogazione.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
 
 Examples:
@@ -771,8 +771,8 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/audit-user-location-non-presente-erogazione.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
 
 Examples:
@@ -806,8 +806,8 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/audit-non-presente-erogazione.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
 
 Examples:
@@ -841,10 +841,10 @@ And header CUSTOM-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_audit_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token'), "AGID")
 
 * def clientIdExpected = '<clientId>'
 * def subExpected = '<username>'
@@ -878,15 +878,15 @@ And match header Authorization == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 
@@ -918,10 +918,10 @@ And header govWay-Audit-loa = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_audit_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token'), "AGID")
 
 * def clientIdExpected = '<clientId>'
 * def subExpected = '<username>'
@@ -952,15 +952,15 @@ And match header Authorization == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti  })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, profilo_audit_schema: 'Linee Guida ModI Optional', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti  })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, profilo_audit_schema: 'Linee Guida ModI Optional', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 
@@ -993,10 +993,10 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_audit_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token'), "AGID")
 
 * def clientIdExpected = '<clientId>'
 * def subExpected = '<username>'
@@ -1042,15 +1042,15 @@ And match header Authorization == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta_fruizione, profilo_interazione: 'crud' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta_erogazione, profilo_interazione: 'crud' })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 
@@ -1080,8 +1080,8 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/audit-audience-non-valida-erogazione.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
 
 Examples:
@@ -1109,8 +1109,8 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/audit-audience-non-valida-erogazione.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
 
 Examples:
@@ -1145,9 +1145,9 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def audit_token_giro_ok = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_giro_ok = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * java.lang.Thread.sleep(10000)
 
@@ -1171,8 +1171,8 @@ And header old-audit = audit_token_giro_ok
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/expired-audit-token.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
 
 Examples:
@@ -1205,9 +1205,9 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def audit_token_giro_ok = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_giro_ok = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * java.lang.Thread.sleep(5000)
 
@@ -1231,8 +1231,8 @@ And header old-audit = audit_token_giro_ok
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/token-audit-iat-oldest.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
 
 Examples:
@@ -1262,10 +1262,10 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_audit_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token'), "AGID")
 
 * def clientIdExpected = '<clientId>'
 * def subExpected = '<username>'
@@ -1299,15 +1299,15 @@ And match header Authorization == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 
@@ -1338,8 +1338,8 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 403
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/authorization-deny.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
 
 Examples:
@@ -1370,10 +1370,10 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_audit_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token'), "AGID")
 
 * def clientIdExpected = '<clientId>'
 * def subExpected = '<username>'
@@ -1407,15 +1407,15 @@ And match header Authorization == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 
@@ -1442,9 +1442,9 @@ And header simulazionepdnd-digest-mode = 'proxy'
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
 
 * def clientIdExpected = '<clientId>'
 * def subExpected = '<username>'
@@ -1471,13 +1471,13 @@ And match header Authorization == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 
@@ -1512,10 +1512,10 @@ And header GovWay-Audit-PurposeId = '<purposeId>'
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_audit_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token'), "AGID")
 
 * def clientIdExpected = '<clientId>'
 * def subExpected = '<username>'
@@ -1549,11 +1549,11 @@ And match header Authorization == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 # Viene usato l'id del client_audit_token perchè non e' un vero audit, ma un integrity custom che produce un token di audit
 * match tidMessaggio == client_audit_token.payload.jti
 
@@ -1587,8 +1587,8 @@ And header GovWay-Audit-PurposeId = '<purposeId>-differente'
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/purpose-id-differenti.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
 
 Examples:
@@ -1617,8 +1617,8 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/purpose-id-non-presente-audit.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
 
 Examples:
@@ -1653,11 +1653,11 @@ And header GovWay-Audit-TypeMixed2 = "<TypeMixed2>"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_audit_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token'), "AGID")
 
 * def clientIdExpected = '<clientId>'
 * def subExpected = '<username>'
@@ -1696,15 +1696,15 @@ And match header Agid-JWT-TrackingEvidence == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, profilo_audit_schema: 'Criteri di validazione custom', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, profilo_audit_schema: 'Criteri di validazione custom', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 
@@ -1739,8 +1739,8 @@ And header GovWay-Audit-TypeMixed2 = "<TypeMixed2>"
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<errore>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
 Examples:
 | tipo-test | tipo-test-minuscolo | nome-api-impl | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId | TypeINT | TypeBoolean | TypeStringRegExp | TypeINTRegExp | TypeListString | TypeListInt | TypeMixed1 | TypeMixed2 | errore |
@@ -1781,11 +1781,11 @@ And header GovWay-Audit-TypeMixed2 = "<TypeMixed2>"
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<errore>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_audit_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token'), "AGID")
 
 * def clientIdExpected = '<clientId>'
 * def subExpected = '<username>'
@@ -1824,15 +1824,15 @@ And match header Agid-JWT-TrackingEvidence == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, profilo_audit_schema: 'Criteri di validazione custom (senza validazione, per TEST)', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth_pa_error ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, profilo_audit_schema: 'Criteri di validazione custom', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 
@@ -1868,11 +1868,11 @@ And header GovWay-Audit-Type = "<Type>"
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<errore>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_audit_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token'), "AGID")
 
 * def clientIdExpected = '<clientId>'
 * def subExpected = '<username>'
@@ -1904,15 +1904,15 @@ And match header Agid-JWT-TrackingEvidence == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, profilo_audit_schema: 'Criteri custom; type not string', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth_pa_error ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, profilo_audit_schema: 'Criteri custom; type string', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 
@@ -1944,11 +1944,11 @@ And header GovWay-Audit-Type = "<Type>"
 When method post
 Then status 400
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<errore>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-TrackingEvidence == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-TrackingEvidence == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_audit_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token'), "AGID")
 
 * def clientIdExpected = '<clientId>'
 * def subExpected = '<username>'
@@ -1980,15 +1980,15 @@ And match header Agid-JWT-TrackingEvidence == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, profilo_audit_schema: 'Criteri custom; type string', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth_pa_error ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, profilo_audit_schema: 'Criteri custom; type not string', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 
@@ -2028,13 +2028,13 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
 
-* def audit_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -2058,13 +2058,13 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
 
-* def audit_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -2088,13 +2088,13 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
 
-* def audit_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_diverso_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -2118,13 +2118,13 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
 
-* def audit_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_terzo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -2148,13 +2148,13 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
 
-* def audit_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_diverso_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 
 
@@ -2202,18 +2202,18 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
 
-* def audit_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * def result = get_diagnostici_create_token_integrity(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'INTEGRITY\' della richiesta effettuata con successo'
 
-* def integrity_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0]
+* def integrity_token_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Integrity-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -2237,18 +2237,18 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
 
-* def audit_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * def result = get_diagnostici_create_token_integrity(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'INTEGRITY\' della richiesta effettuata con successo'
 
-* def integrity_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0]
+* def integrity_token_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Integrity-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -2272,18 +2272,18 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
 
-* def audit_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_diverso_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * def result = get_diagnostici_create_token_integrity(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'INTEGRITY\' della richiesta effettuata con successo'
 
-* def integrity_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0]
+* def integrity_token_diverso_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Integrity-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -2307,18 +2307,18 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
 
-* def audit_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_terzo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * def result = get_diagnostici_create_token_integrity(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'INTEGRITY\' della richiesta effettuata con successo'
 
-* def integrity_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0]
+* def integrity_token_terzo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Integrity-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -2342,18 +2342,18 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
 
-* def audit_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_diverso_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * def result = get_diagnostici_create_token_integrity(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'INTEGRITY\' della richiesta effettuata con successo'
 
-* def integrity_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0]
+* def integrity_token_diverso_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Integrity-Token')
 
 
 
@@ -2409,18 +2409,18 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
 
-* def audit_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * def result = get_diagnostici_create_token_authorization(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo'
 
-* def authorization_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+* def authorization_token_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -2444,18 +2444,18 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
 
-* def audit_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * def result = get_diagnostici_create_token_authorization(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo (in cache)'
 
-* def authorization_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+* def authorization_token_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -2479,18 +2479,18 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
 
-* def audit_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_diverso_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * def result = get_diagnostici_create_token_authorization(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo (in cache)'
 
-* def authorization_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+* def authorization_token_diverso_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -2514,18 +2514,18 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
 
-* def audit_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_terzo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * def result = get_diagnostici_create_token_authorization(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo (in cache)'
 
-* def authorization_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+* def authorization_token_terzo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -2549,18 +2549,18 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
 
-* def audit_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_diverso_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * def result = get_diagnostici_create_token_authorization(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo (in cache)'
 
-* def authorization_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+* def authorization_token_diverso_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token')
 
 
 
@@ -2614,18 +2614,18 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
 
-* def audit_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * def result = get_diagnostici_create_token_authorization(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo'
 
-* def authorization_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+* def authorization_token_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -2649,18 +2649,18 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
 
-* def audit_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * def result = get_diagnostici_create_token_authorization(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo'
 
-* def authorization_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+* def authorization_token_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -2684,18 +2684,18 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
 
-* def audit_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_diverso_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * def result = get_diagnostici_create_token_authorization(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo'
 
-* def authorization_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+* def authorization_token_diverso_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -2719,18 +2719,18 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
 
-* def audit_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_terzo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * def result = get_diagnostici_create_token_authorization(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo'
 
-* def authorization_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+* def authorization_token_terzo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -2754,18 +2754,18 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
 
-* def audit_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_diverso_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * def result = get_diagnostici_create_token_authorization(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo'
 
-* def authorization_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+* def authorization_token_diverso_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token')
 
 
 
@@ -2818,23 +2818,23 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
 
-* def audit_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * def result = get_diagnostici_create_token_authorization(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo'
 
-* def authorization_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+* def authorization_token_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token')
 
 * def result = get_diagnostici_create_token_integrity(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'INTEGRITY\' della richiesta effettuata con successo'
 
-* def integrity_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0]
+* def integrity_token_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Integrity-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -2858,23 +2858,23 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
 
-* def audit_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * def result = get_diagnostici_create_token_authorization(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo (in cache)'
 
-* def authorization_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+* def authorization_token_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token')
 
 * def result = get_diagnostici_create_token_integrity(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'INTEGRITY\' della richiesta effettuata con successo'
 
-* def integrity_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0]
+* def integrity_token_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Integrity-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -2898,23 +2898,23 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
 
-* def audit_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_diverso_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * def result = get_diagnostici_create_token_authorization(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo (in cache)'
 
-* def authorization_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+* def authorization_token_diverso_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token')
 
 * def result = get_diagnostici_create_token_integrity(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'INTEGRITY\' della richiesta effettuata con successo'
 
-* def integrity_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0]
+* def integrity_token_diverso_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Integrity-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -2938,23 +2938,23 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
 
-* def audit_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_terzo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * def result = get_diagnostici_create_token_authorization(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo (in cache)'
 
-* def authorization_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+* def authorization_token_terzo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token')
 
 * def result = get_diagnostici_create_token_integrity(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'INTEGRITY\' della richiesta effettuata con successo'
 
-* def integrity_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0]
+* def integrity_token_terzo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Integrity-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -2978,23 +2978,23 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
 
-* def audit_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_diverso_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 * def result = get_diagnostici_create_token_authorization(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo (in cache)'
 
-* def authorization_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+* def authorization_token_diverso_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token')
 
 * def result = get_diagnostici_create_token_integrity(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'INTEGRITY\' della richiesta effettuata con successo'
 
-* def integrity_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0]
+* def integrity_token_diverso_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Integrity-Token')
 
 
 
@@ -3060,13 +3060,13 @@ And header GovWay-Audit-Claim2 = "valore-claim2-required-test-cache"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
 
-* def audit_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -3089,13 +3089,13 @@ And header GovWay-Audit-Claim2 = "valore-claim2-required-test-cache"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
 
-* def audit_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -3118,13 +3118,13 @@ And header GovWay-Audit-Claim2 = "valore-claim2-differente-required-test-cache"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
 
-* def audit_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_diverso_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -3147,13 +3147,13 @@ And header GovWay-Audit-Claim2 = "valore-claim2-required-test-cache"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
 
-* def audit_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_terzo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -3176,13 +3176,13 @@ And header GovWay-Audit-Claim2 = "valore-claim2-differente-required-test-cache"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
 
-* def audit_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_diverso_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 
 
@@ -3225,13 +3225,13 @@ And header GovWay-Audit-Claim2 = "valore-claim2-required-test-cache"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
 
-* def audit_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -3253,13 +3253,13 @@ And header GovWay-Audit-Claim2 = "valore-claim2-required-test-cache"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
 
-* def audit_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -3281,13 +3281,13 @@ And header GovWay-Audit-Claim2 = "valore-claim2-differente-required-test-cache"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
 
-* def audit_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_diverso_primo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -3309,13 +3309,13 @@ And header GovWay-Audit-Claim2 = "valore-claim2-required-test-cache"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
 
-* def audit_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_terzo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 
 * java.lang.Thread.sleep(1000)
@@ -3337,13 +3337,13 @@ And header GovWay-Audit-Claim2 = "valore-claim2-differente-required-test-cache"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici_create_token_audit(tid) 
 * match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
 
-* def audit_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+* def audit_token_diverso_secondo_giro = karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token')
 
 
 
@@ -3379,8 +3379,8 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 
 
@@ -3398,8 +3398,8 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 
 
@@ -3425,10 +3425,10 @@ And header GovWay-TestSuite-Test-AudienceAudit = "[testsuite-audience-audit,altr
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_audit_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token'), "AGID")
 
 * def clientIdExpected = '<clientId>'
 * def subExpected = '<username>'
@@ -3476,15 +3476,15 @@ And match header Authorization == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta_audit, profilo_interazione: 'crud' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta_audit, profilo_interazione: 'crud' })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 
@@ -3516,11 +3516,11 @@ And header GovWay-TestSuite-Test-AudienceAudit = "[testsuite-audience-audit,altr
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
-* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_integrity_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Integrity-Token'), "AGID")
+* def client_audit_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token'), "AGID")
 
 * def request_digest = get client_integrity_token $.payload.signed_headers..digest
 
@@ -3581,17 +3581,17 @@ And match header Authorization == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_integrity_token.payload.jti })
 * call check_traccia_kid_no_audience ({ tid: tid, tipo: 'Richiesta', token: client_integrity_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_integrity_richiesta, profilo_interazione: 'crud', traceMessageId:client_integrity_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta_audit, profilo_interazione: 'crud' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_integrity_token.payload.jti })
 * call check_traccia_kid_no_audience ({ tid: tid, tipo: 'Richiesta', token: client_integrity_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_integrity_richiesta, profilo_interazione: 'crud', traceMessageId:client_integrity_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta_audit, profilo_interazione: 'crud' })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_integrity_token.payload.jti
 
 

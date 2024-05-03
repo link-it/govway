@@ -7,8 +7,8 @@ function get_traccia(id_transazione) {
         driverClassName: karate.properties['db_driverClassName']
      }
 
-    db_sleep_before_read = karate.properties['db_sleep_before_read']
-    
+    db_sleep_before_read = parseInt(karate.properties['db_sleep_before_read'], 10);
+        
     java.lang.Thread.sleep(db_sleep_before_read)
     DbUtils = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.DbUtils')
     db = new DbUtils(govwayDbConfig)

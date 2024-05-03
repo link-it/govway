@@ -4,8 +4,8 @@ Scenario: Verifica il tracciamento e la diagnostica con gli identificativi messa
 
 * def get_diagnostico = read('classpath:utils/get_diagnostico.js')
 * def get_ruolo_transazione = read('classpath:utils/get-ruolo-transazione.js')
-* def count_traccia = read('classpath:utils/get_traccia.js')
-* def exists_traccia = read('classpath:utils/get_traccia.js')
+* def count_traccia = read('classpath:utils/count_traccia.js')
+* def exists_traccia = read('classpath:utils/exists_traccia.js')
 
 
 
@@ -47,7 +47,7 @@ if ( tipo=='Risposta'  ) {
 	other_exists = ([{ rif_messaggio: requestMessageId }])
 }
 """
-* def exists_match = karate.append(exists_match, other_exists)
+* def temp_exists_match = exists_match.concat(other_exists)
 
 * karate.log("result_exists: ", result_exists)
 * karate.log("exists_match: ", exists_match)
@@ -61,7 +61,7 @@ if ( tipo=='Risposta'  ) {
 * def messaggio1 = 
 """
 if ( tipo=='Risposta'  ) {
-   if (ruolo.toString().contains('delegata')) {
+   if (JSON.stringify(ruolo).contains('delegata')) {
       messaggio1 = 'Ricevuto messaggio di cooperazione con identificativo ['+traceMessageId+'] inviato dalla parte mittente';
    }
    else {
@@ -69,7 +69,7 @@ if ( tipo=='Risposta'  ) {
    }
 }
 else{
-   if (ruolo.toString().contains('delegata')) {
+   if (JSON.stringify(ruolo).contains('delegata')) {
       messaggio1 = 'Invio Messaggio di cooperazione con identificativo ['+traceMessageId+'] in corso';
    }
    else {
@@ -89,7 +89,7 @@ if ( tipo=='Risposta'  ) {
    messaggio2 = messaggio1
 }
 else{
-   if (ruolo.toString().contains('delegata')) {
+   if (JSON.stringify(ruolo).contains('delegata')) {
       messaggio2 = 'Messaggio di cooperazione con identificativo ['+traceMessageId+'] inviato alla parte destinataria';
    }
    else {
@@ -109,7 +109,7 @@ if ( tipo=='Risposta'  ) {
    messaggio3 = messaggio1
 }
 else{
-   if (ruolo.toString().contains('delegata')) {
+   if (JSON.stringify(ruolo).contains('delegata')) {
       // non esiste un diagnostico che indica l'avvenuta ricezione
       messaggio3 = messaggio1
    }

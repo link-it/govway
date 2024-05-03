@@ -5,9 +5,7 @@ Background:
     * def isTest =
     """
     function(id) {
-        return karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]") == id ||
-               karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id ||
-               karate.get("requestHeaders['govway-testsuite-test-id'][0]") == id
+        return karate.get("karate.request.header('GovWay-TestSuite-Test-Id')") == id
     }
     """
 
@@ -40,7 +38,7 @@ Scenario: isTest('connettivita-base')
 
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01/v1')
 
-    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * def tidMessaggio = karate.response.header('GovWay-Message-ID')
     * match tidMessaggio == request_id
 
     * call check_server_token ({ from: "SoapBlockingIDAS01/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
@@ -106,7 +104,7 @@ Scenario: isTest('response-without-payload')
 
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01MultipleOP/v1')
 
-    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * def tidMessaggio = karate.response.header('GovWay-Message-ID')
     * match tidMessaggio == request_id
 
     # La signature non viene fatta su di una risposta vuota quindi non la controllo
@@ -116,7 +114,7 @@ Scenario: isTest('response-without-payload')
     * def check_traccia = read("classpath:test/soap/sicurezza-messaggio/check-tracce/check-traccia.feature")
     * xml client_request = client_request
 
-    * def tid = responseHeaders['GovWay-Transaction-ID'][0]
+    * def tid = karate.response.header('GovWay-Transaction-ID')
     * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
 
 
@@ -124,11 +122,11 @@ Scenario: isTest('response-without-payload')
 Scenario: isTest('disabled-security-on-action')
     * def c = request
 
-    * match c/Envelope/Header/Security/BinarySecurityToken == "#notpresent"
+    * match c/Envelope/Header/Security/BinarySecurityToken == "null"
     
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01MultipleOP/v1')
 
-    * match /Envelope/Header/Security/BinarySecurityToken == "#notpresent"
+    * match /Envelope/Header/Security/BinarySecurityToken == "null"
 
 ##
 # Controllo che la sicurezza sia abilitata puntualmente su una operazione,
@@ -148,7 +146,7 @@ Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequ
 
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01MultipleOPNoDefaultSecurity/v1')
 
-    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * def tidMessaggio = karate.response.header('GovWay-Message-ID')
     * match tidMessaggio == request_id
 
     * call check_server_token ({ from: "SoapBlockingIDAS01MultipleOPNoDefaultSecurity/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
@@ -161,11 +159,11 @@ Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequ
 
     * def c = request
 
-    * match c/Envelope/Header/Security/BinarySecurityToken == "#notpresent"
+    * match c/Envelope/Header/Security/BinarySecurityToken == "null"
     
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01MultipleOPNoDefaultSecurity/v1')
 
-    * match /Envelope/Header/Security/BinarySecurityToken == "#notpresent"
+    * match /Envelope/Header/Security/BinarySecurityToken == "null"
 
 
 Scenario: isTest('riferimento-x509-SKIKey-IssuerSerial')
@@ -477,7 +475,7 @@ Scenario: isTest('connettivita-base-truststore-ca-ocsp')
 
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01TrustStoreCAOCSP/v1')
 
-    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * def tidMessaggio = karate.response.header('GovWay-Message-ID')
     * match tidMessaggio == request_id
 
     * call check_server_token ({ from: "SoapBlockingIDAS01TrustStoreCAOCSP/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01_OCSP" })
@@ -513,7 +511,7 @@ Scenario: isTest('connettivita-base-idas02') || isTest('connettivita-base-idas02
 
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS02/v1')
 
-    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * def tidMessaggio = karate.response.header('GovWay-Message-ID')
     * match tidMessaggio == request_id
 
     * call check_server_token ({ from: "SoapBlockingIDAS02/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
@@ -523,18 +521,18 @@ Scenario: isTest('connettivita-base-idas02') || isTest('connettivita-base-idas02
 
 Scenario: isTest('riutilizzo-token-generato-auth-server')
 
-    * def request_token = decodeToken(requestHeaders['Authorization'][0])
+    * def request_token = decodeToken(karate.request.header('Authorization'))
     * def request_id = get request_token $.payload.jti
 
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS02TokenOAuth/v1')
 
-    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * def tidMessaggio = karate.response.header('GovWay-Message-ID')
     * match tidMessaggio == request_id
 
     * def newHeaders = 
     """
     ({
-	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0]
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': karate.request.header('Authorization')
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
@@ -597,7 +595,7 @@ Scenario: isTest('connettivita-base-idas03')
 
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS03/v1')
 
-    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * def tidMessaggio = karate.response.header('GovWay-Message-ID')
     * match tidMessaggio == request_id
 
     * call check_server_token ({ from: "SoapBlockingIDAS03/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
@@ -670,7 +668,7 @@ Scenario: isTest('connettivita-base-idas03-no-digest-richiesta')
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS03MultipleOp/v1')
     
     # Controllo nella risposta che non ci sia il digest della richiesta
-    * match /Envelope/Header/X-RequestDigest/Reference/DigestValue == '#notpresent'
+    * match /Envelope/Header/X-RequestDigest/Reference/DigestValue == null
 
     * call check_server_token ({ from: "SoapBlockingIDAS03MultipleOp/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
 
@@ -709,7 +707,7 @@ Scenario: isTest('response-without-payload-idas03')
     """
 
     * def x509sub_client1 = 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT'
-    * def tid = responseHeaders['GovWay-Transaction-ID'][0]
+    * def tid = karate.response.header('GovWay-Transaction-ID')
     * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: x509sub_client1, profilo_sicurezza: "IDAS0301", other_checks: checks_richiesta })
 
 
@@ -742,7 +740,7 @@ Scenario: isTest('response-without-payload-idas03-digest-richiesta')
     """
 
     * def x509sub_client1 = 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT'
-    * def tid = responseHeaders['GovWay-Transaction-ID'][0]
+    * def tid = karate.response.header('GovWay-Transaction-ID')
     * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: x509sub_client1, profilo_sicurezza: "IDAS0301", other_checks: checks_richiesta })
 
 
@@ -751,7 +749,7 @@ Scenario: isTest('no-informazioni-utente-at-erogazione')
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS03InfoUtente/v1')
     * match responseStatus == 500
     * match response == read('classpath:test/soap/sicurezza-messaggio/error-bodies/no-informazioni-utente-at-erogazione.xml')
-    * match responseHeaders['GovWay-Transaction-ErrorType'][0] == "InteroperabilityInvalidRequest"
+    * match karate.response.header('GovWay-Transaction-ErrorType') == "InteroperabilityInvalidRequest"
 
 
 Scenario: isTest('informazioni-utente-header') || isTest('informazioni-utente-query') || isTest('informazioni-utente-mixed')
@@ -905,7 +903,7 @@ Scenario: isTest('idas03-token-risposta')
     * def newHeaders = 
     """
     ({
-        'GovWay-TestSuite-GovWay-Message-ID': responseHeaders['GovWay-Message-ID'][0],
+        'GovWay-TestSuite-GovWay-Message-ID': karate.response.header('GovWay-Message-ID'),
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
@@ -981,7 +979,7 @@ Scenario: isTest('connettivita-base-idas0302')
 
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS0302/v1')
 
-    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * def tidMessaggio = karate.response.header('GovWay-Message-ID')
     * match tidMessaggio == request_id
 
     * call check_server_token ({ from: "SoapBlockingIDAS0302/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
@@ -1012,12 +1010,12 @@ Scenario: isTest('riutilizzo-token-generato-auth-server-idas0302')
     * def key = bodyPath('/Envelope/Header/Security/BinarySecurityToken/@Id')
     * match keyRef == '#' + key
 
-    * def request_token = decodeToken(requestHeaders['Authorization'][0])
+    * def request_token = decodeToken(karate.request.header('Authorization'))
     * def request_id = get request_token $.payload.jti
 
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS0302TokenOAuth/v1')
 
-    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * def tidMessaggio = karate.response.header('GovWay-Message-ID')
     * match tidMessaggio == request_id
 
     * call check_server_token_oauth ({ from: "SoapBlockingIDAS0302TokenOAuth/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", requestId: request_id })
@@ -1034,7 +1032,7 @@ Scenario: isTest('riutilizzo-token-generato-auth-server-idas0302')
     * def newHeaders = 
     """
     ({
-	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0]
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': karate.request.header('Authorization')
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
@@ -1262,17 +1260,17 @@ Scenario: isTest('audit-rest-jwk-01') ||
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer" })
 
-    * call checkTokenKid ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], match_to: client_token_audit_match, kind: "AGID" })
+    * call checkTokenKid ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID" })
 
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/'+audExpected+"/idar01.oauth")
     
     * def newHeaders = 
     """
     ({
-	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
-        'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0]
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': karate.request.header('Authorization'),
+        'GovWay-TestSuite-GovWay-Client-Audit-Token': karate.request.header('Agid-JWT-TrackingEvidence')
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
@@ -1320,20 +1318,20 @@ Scenario: isTest('audit-rest-x509-01')
     if (isTest('audit-rest-x509-01')) {
     client_token_audit_match = ({
         header: { 
-		kid: '#notpresent',
+		kid: null,
 	        x5c: '#present',
-                x5u: '#notpresent',
-               'x5t#S256': '#notpresent'
+                x5u: null,
+               'x5t#S256': null
 	},
         payload: { 
             aud: audExpectedAUDIT,
-            client_id: '#notpresent',
-            iss: '#notpresent',
-            sub: '#notpresent',
+            client_id: null,
+            iss: null,
+            sub: null,
 	    userID: 'utente-token-ridefinito', 
             userLocation: 'ip-utente-token-ridefinito', 
             LoA: 'livello-autenticazione-utente-token-ridefinito',
-	    dnonce: '#notpresent'
+	    dnonce: null
         }
     })
     }
@@ -1355,14 +1353,14 @@ Scenario: isTest('audit-rest-x509-01')
     * def key = bodyPath('/Envelope/Header/Security/BinarySecurityToken/@Id')
     * match keyRef == '#' + key
 
-    * call checkTokenAudit ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], match_to: client_token_audit_match, kind: "AGID" })
+    * call checkTokenAudit ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID" })
 
     * karate.proceed (govway_base_path + '/soap/in//DemoSoggettoErogatore/'+audExpected+'/idar01.locale')
     
     * def newHeaders = 
     """
     ({
-	'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0]
+	'GovWay-TestSuite-GovWay-Client-Audit-Token': karate.request.header('Agid-JWT-TrackingEvidence')
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
@@ -1413,20 +1411,20 @@ Scenario: isTest('audit-rest-x509-0301')
     if (isTest('audit-rest-x509-0301')) {
     client_token_audit_match = ({
         header: { 
-		kid: '#notpresent',
+		kid: null,
 	        x5c: '#present',
-                x5u: '#notpresent',
-               'x5t#S256': '#notpresent'
+                x5u: null,
+               'x5t#S256': null
 	},
         payload: { 
             aud: audExpectedAUDIT,
-            client_id: '#notpresent',
-            iss: '#notpresent',
-            sub: '#notpresent',
+            client_id: null,
+            iss: null,
+            sub: null,
 	    userID: 'utente-token-ridefinito', 
             userLocation: 'ip-utente-token-ridefinito', 
             LoA: 'livello-autenticazione-utente-token-ridefinito',
-	    dnonce: '#notpresent'
+	    dnonce: null
         }
     })
     }
@@ -1447,14 +1445,14 @@ Scenario: isTest('audit-rest-x509-0301')
 
     * call check_client_token ({ address: clientIdExpected, to: audExpected })
 
-    * call checkTokenAudit ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], match_to: client_token_audit_match, kind: "AGID" })
+    * call checkTokenAudit ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID" })
 
     * karate.proceed (govway_base_path + '/soap/in//DemoSoggettoErogatore/'+audExpected+'/idar03.locale')
     
     * def newHeaders = 
     """
     ({
-	'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0]
+	'GovWay-TestSuite-GovWay-Client-Audit-Token': karate.request.header('Agid-JWT-TrackingEvidence')
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)

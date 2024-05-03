@@ -35,8 +35,8 @@ Scenario: Test Fruizione con header location rimosso dal proxy
     And match header GovWay-Transaction-ErrorType == 'InvalidResponse'
 
 
-    * call check_traccia_richiesta ({tid: responseHeaders['GovWay-Transaction-ID'][0]})
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: null })
+    * call check_traccia_richiesta ({tid: karate.response.header('GovWay-Transaction-ID')})
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: null })
 
 
 @request-task-not-202
@@ -54,9 +54,9 @@ Scenario: Richiesta processamento con stato diverso da 202
     And match header GovWay-Transaction-ErrorType == 'InvalidResponse'
 
 
-    * call check_traccia_richiesta ({tid: responseHeaders['GovWay-Transaction-ID'][0]})
+    * call check_traccia_richiesta ({tid: karate.response.header('GovWay-Transaction-ID')})
 
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: 'Test-Status-Not-202' })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: 'Test-Status-Not-202' })
 
 
 
@@ -73,9 +73,9 @@ Scenario: Richiesta stato operazione con stato http diverso da 200 e 303
     And match header GovWay-Conversation-ID == task_id
     And match header GovWay-Transaction-ErrorType == 'InvalidResponse'
 
-    * call check_traccia_richiesta_stato ({tid: responseHeaders['GovWay-Transaction-ID'][0]})
+    * call check_traccia_richiesta_stato ({tid: karate.response.header('GovWay-Transaction-ID')})
 
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
 
 
 
@@ -102,9 +102,9 @@ Scenario: Richiesta stato operazione completata senza header location
     And match header GovWay-Conversation-ID == task_id
     And match header GovWay-Transaction-ErrorType == 'InvalidResponse'
 
-    * call check_traccia_richiesta_stato ({tid: responseHeaders['GovWay-Transaction-ID'][0]})
+    * call check_traccia_richiesta_stato ({tid: karate.response.header('GovWay-Transaction-ID')})
 
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
 
 @task-response-not-200
 Scenario: Ottenimento risorsa processata con stato diverso da 200 OK    
@@ -119,6 +119,6 @@ Scenario: Ottenimento risorsa processata con stato diverso da 200 OK
     And match header GovWay-Conversation-ID == task_id
     And match header GovWay-Transaction-ErrorType == 'InvalidResponse'
 
-    * call check_traccia_risposta ({tid: responseHeaders['GovWay-Transaction-ID'][0]})
+    * call check_traccia_risposta ({tid: karate.response.header('GovWay-Transaction-ID')})
 
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })

@@ -1,4 +1,8 @@
-function get_ruolo(id_transazione) {
+function count_traccia(id_transazione, id_messaggio, tipo_messaggio) {
+
+    if (!tipo_messaggio) {
+        tipo_messaggio = 'Richiesta'
+    }
 
     govwayDbConfig = { 
         username: karate.properties['db_username'],
@@ -7,12 +11,14 @@ function get_ruolo(id_transazione) {
         driverClassName: karate.properties['db_driverClassName']
      }
 
-    db_sleep_before_read = parseInt(karate.properties['db_sleep_before_read'], 10);
+    //db_sleep_before_read = karate.properties['db_sleep_before_read']
     
     java.lang.Thread.sleep(db_sleep_before_read)
     DbUtils = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.DbUtils')
     db = new DbUtils(govwayDbConfig)
-    dbquery = "select pdd_ruolo from transazioni where id ='"+id_transazione+"'"
-    karate.log("Query: " + dbquery)
+    dbquery = "select count(id) as count from tracce where id_transazione='"+id_transazione+"' and id_messaggio='"+id_messaggio+"' AND tipo_messaggio='"+tipo_messaggio+"'"
+    karate.log("QueryCountTraccia: " + dbquery)
     return db.readRows(dbquery);
+
 }
+

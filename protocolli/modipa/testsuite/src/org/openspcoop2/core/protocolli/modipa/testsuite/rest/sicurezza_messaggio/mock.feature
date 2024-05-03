@@ -9,13 +9,9 @@ Background:
     """
     function(id) {
 
-        karate.log("Mock test id (case A): ", karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]"))
-        karate.log("Mock test id (case B): ", karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]"))
-        karate.log("Mock test id (case C): ", karate.get("requestHeaders['govway-testsuite-test-id'][0]"))
+        karate.log("Mock test id (case A): ", karate.get("karate.request.header('GovWay-TestSuite-Test-Id')"))
 
-        return karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]") == id ||
-               karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id ||
-               karate.get("requestHeaders['govway-testsuite-test-id'][0]") == id
+        return karate.get("karate.request.header('GovWay-TestSuite-Test-Id')") == id 
     }
     """
 
@@ -23,7 +19,7 @@ Background:
     """
     function() { 
         return {
-            'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("requestHeaders['GovWay-Transaction-ID'][0]"),
+            'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("karate.request.header('GovWay-Transaction-ID')"),
             'Connection': 'close'
         }
     }
@@ -67,8 +63,8 @@ Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trust
 	isTest('keystore-definito-applicativo')
     
     # Controllo che al server non siano arrivate le informazioni di sicurezza
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-Signature') == null
     
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
@@ -98,30 +94,29 @@ Scenario: isTest('connettivita-base-no-sbustamento')
     """
     * def checkToken = read('check-token.feature')
 
-    * call checkToken ({token: getRequestHeader("Authorization"), match_to: client_token_match })
+    * call checkToken ({token: karate.request.header("Authorization"), match_to: client_token_match })
 
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 
 Scenario: isTest('response-without-payload')
-    * match requestHeaders['Authorization'] == '#notpresent'
+    * match karate.request.header('Authorization') == null
     * def responseStatus = 201
-    * def response = ''
+    * def response = null
     * def responseHeaders = ({ 'Content-Type': null })
 
 
 Scenario: isTest('request-without-payload')
-    * match requestHeaders['Authorization'] == '#notpresent'
+    * match karate.request.header('Authorization') == null
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/request.json')
 
 
 Scenario: isTest('request-response-without-payload')
-    * match requestHeaders['Authorization'] == '#notpresent'
+    * match karate.request.header('Authorization') == null
     * def responseStatus = 204
-    * def response = ''
-    * def responseHeaders = ({ 'Content-Type': null })
+    * def response = null
 
 
 Scenario: isTest('certificato-server-scaduto') || isTest('certificato-server-revocato') || isTest('certificato-server-revocato-ocsp')
@@ -131,19 +126,19 @@ Scenario: isTest('certificato-server-scaduto') || isTest('certificato-server-rev
 
 Scenario: isTest('risposta-not-200')
     # Controllo che al server non siano arrivate le informazioni di sicurezza
-    * match requestHeaders['Authorization'] == '#notpresent'
+    * match karate.request.header('Authorization') == null
     * def responseStatus = 301
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 
 Scenario: isTest('connettivita-base-header-agid')
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 
 Scenario: isTest('connettivita-base-idar02-header-agid')
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
@@ -157,7 +152,7 @@ Scenario: isTest('connettivita-base-idar03') ||
 	isTest('test-audience-as-array') || isTest('test-audience-as-array-multiple-values') ||
 	isTest('digest-hex-idar03') || isTest('manomissione-header-http-firmati-risposta')
 
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
     * def responseHeaders = { IDAR03TestHeader: "TestHeaderResponse" }
@@ -165,7 +160,7 @@ Scenario: isTest('connettivita-base-idar03') ||
 
 Scenario: isTest('connettivita-base-idar03-header-bearer')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
+    * match karate.request.header('Authorization') == null
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
@@ -177,21 +172,21 @@ Scenario: isTest('assenza-header-integrity-risposta') || isTest('assenza-header-
 
 
 Scenario: isTest('response-without-payload-idar03')  || isTest('response-without-payload-idar03-tampered-header')
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 201
-    * def response = ''
+    * def response = null
     * def responseHeaders = ({ 'Content-Type': null, 'IDAR03TestHeader': "TestHeaderResponse" })
 
 
 Scenario: isTest('response-without-payload-idar03-digest-richiesta')
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 201
-    * def response = ''
+    * def response = null
     * def responseHeaders = ({ 'Content-Type': null })
 
 
 Scenario: isTest('request-without-payload-idar03') || isTest('request-without-payload-idar03-digest-richiesta')
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 200
 
     * def response =
@@ -207,18 +202,17 @@ Scenario: isTest('request-without-payload-idar03') || isTest('request-without-pa
 
 
 Scenario: isTest('request-response-without-payload-idar03')
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 204
-    * def response = ''
+    * def response = null
     * def responseHeaders = ({ 'Content-Type': null, 'IDAR03TestHeader': "TestHeaderResponse" })
 
 
 Scenario: isTest('request-response-without-payload-idar03-digest-richiesta')
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 204
-    * def response = ''
     * def responseHeaders = ({ 'Content-Type': null })
-
+    * def response = null
 
 Scenario: isTest('informazioni-utente-header') || isTest('informazioni-utente-query') || isTest('informazioni-utente-mixed') || isTest('informazioni-utente-static') || isTest('informazioni-utente-custom')
 
@@ -229,7 +223,7 @@ Scenario: isTest('informazioni-utente-header') || isTest('informazioni-utente-qu
 Scenario: isTest('idar03-token-richiesta') || isTest('idar03-token-risposta') || isTest('check-authz-idar03') || 
 	isTest('check-authz-doppi-header-idar03') || isTest('check-authz-oauth2-doppi-header-idar03')
 
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
@@ -241,14 +235,14 @@ Scenario: isTest('idar03-token-azione-puntuale')
     #* def responseStatus = 200
     #* def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 201
-    * def response = ''
+    * def response = null
     * def responseHeaders = ({ 'Content-Type': null })
 
 Scenario: isTest('idar03-token-azione-puntuale-default') || isTest('idar03-token-criteri-personalizzati')
     
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 200
 
     * def response =
@@ -267,8 +261,8 @@ Scenario: isTest('doppi-header-idar03') || isTest('doppi-header-differenti-id-au
 	isTest('doppi-header-authorization-richiesta-integrity-risposta') ||
 	isTest('doppi-header-solo-authorization-richiesta')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
     * def responseHeaders = { IDAR03TestHeader: "TestHeaderResponse" }
@@ -276,8 +270,8 @@ Scenario: isTest('doppi-header-idar03') || isTest('doppi-header-differenti-id-au
 Scenario: isTest('doppi-header-solo-authorization-richiesta-risposta') ||
 	isTest('doppi-header-solo-authorization-richiesta-delete')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 204
     * def responseHeaders = { IDAR03TestHeader: "TestHeaderResponse" }
     
@@ -482,7 +476,7 @@ Scenario: isTest('doppi-header-idar03-security-token-trasformazione-integrity-pa
 
 Scenario: isTest('connettivita-base-idar0302') || isTest('manomissione-header-http-firmati-risposta-idar0302')
 
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
     * def responseHeaders = { IDAR03TestHeader: "TestHeaderResponse" }
@@ -497,22 +491,22 @@ Scenario: isTest('assenza-header-digest-risposta-idar0302') || isTest('riutilizz
 
 Scenario: isTest('connettivita-base-idar0302-header-bearer')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
+    * match karate.request.header('Authorization') == null
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 Scenario: isTest('multipart-request-form-data-idar0302') || isTest('multipart-request-dump-idar0302')
 
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['Authorization'] == '#notpresent'
+    * match karate.request.header('Agid-JWT-Signature') == null
+    * match karate.request.header('Authorization') == null
     * def responseStatus = 200
     * def responseHeaders = { Content-Type: 'multipart/form-data; boundary="----=_Part_0_1037475674.1651780088034"' }
     * def response = read('classpath:test/rest/sicurezza-messaggio/multipart-request.bin')
 
 Scenario: isTest('multipart-request-mixed-idar0302')
 
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['Authorization'] == '#notpresent'
+    * match karate.request.header('Agid-JWT-Signature') == null
+    * match karate.request.header('Authorization') == null
     * def responseStatus = 200
     * def responseHeaders = { Content-Type: 'multipart/mixed; boundary="----=_Part_0_1037475674.1651780088034"' }
     * def response = read('classpath:test/rest/sicurezza-messaggio/multipart-request.bin')
@@ -534,16 +528,16 @@ Scenario: isTest('idar03-custom-single-header') || isTest('idar03-custom-doppi-h
 
     * karate.log("Response: ", integration_header_base64)
 
-    * match requestHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['CustomTestSuiteDoppi-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Digest'] == '#notpresent'
+    * match karate.request.header('CustomTestSuite-JWT-Signature') == null
+    * match karate.request.header('CustomTestSuiteDoppi-JWT-Signature') == null
+    * match karate.request.header('Agid-JWT-Signature') == null
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Digest') == null
     * def responseStatus = 200
     * def newHeaders = 
     """
     ({
-       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("requestHeaders['GovWay-Transaction-ID'][0]"),
+       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("karate.request.header('GovWay-Transaction-ID')"),
        'GovWay-Integration': integration_header_base64
     })
     """
@@ -559,22 +553,22 @@ Scenario: isTest('idar03-custom-doppi-header-get-without-custom') ||
 
     * karate.log("Response: ", integration_header_base64)
 
-    * match requestHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['CustomTestSuiteDoppi-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Digest'] == '#notpresent'
+    * match karate.request.header('CustomTestSuite-JWT-Signature') == null
+    * match karate.request.header('CustomTestSuiteDoppi-JWT-Signature') == null
+    * match karate.request.header('Agid-JWT-Signature') == null
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Digest') == null
     * def responseStatus = 200
     * def newHeaders = 
     """
     ({
        'Content-Type': null, 
-       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("requestHeaders['GovWay-Transaction-ID'][0]"),
+       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("karate.request.header('GovWay-Transaction-ID')"),
        'GovWay-Integration': integration_header_base64
     })
     """
     * configure responseHeaders = newHeaders
-    * def response = ''
+    * def response = null
 
 Scenario: isTest('idar03-custom-doppi-header-get-with-custom')
 
@@ -583,22 +577,22 @@ Scenario: isTest('idar03-custom-doppi-header-get-with-custom')
 
     * karate.log("Response: ", integration_header_2_base64)
 
-    * match requestHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['CustomTestSuiteDoppi-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Digest'] == '#notpresent'
+    * match karate.request.header('CustomTestSuite-JWT-Signature') == null
+    * match karate.request.header('CustomTestSuiteDoppi-JWT-Signature') == null
+    * match karate.request.header('Agid-JWT-Signature') == null
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Digest') == null
     * def responseStatus = 200
     * def newHeaders = 
     """
     ({
        'Content-Type': null, 
-       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("requestHeaders['GovWay-Transaction-ID'][0]"),
+       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("karate.request.header('GovWay-Transaction-ID')"),
        'GovWay-Integration': integration_header_2_base64
     })
     """
     * configure responseHeaders = newHeaders
-    * def response = ''
+    * def response = null
 
 Scenario: isTest('idar03-custom-doppi-header-multipart')
 
@@ -607,16 +601,16 @@ Scenario: isTest('idar03-custom-doppi-header-multipart')
 
     * karate.log("Response: ", integration_header_base64)
 
-    * match requestHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['CustomTestSuiteDoppi-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Digest'] == '#notpresent'
+    * match karate.request.header('CustomTestSuite-JWT-Signature') == null
+    * match karate.request.header('CustomTestSuiteDoppi-JWT-Signature') == null
+    * match karate.request.header('Agid-JWT-Signature') == null
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Digest') == null
     * def responseStatus = 200
     * def newHeaders = 
     """
     ({
-       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("requestHeaders['GovWay-Transaction-ID'][0]"),
+       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("karate.request.header('GovWay-Transaction-ID')"),
        'Content-Type': 'multipart/mixed; boundary="----=_Part_1_1678144365.1610454048429"; type="text/xml"',
        'GovWay-Integration': integration_header_base64
     })
@@ -656,7 +650,7 @@ Scenario: isTest('connettivita-base-idar04-jwk-ApplicativoBlockingIDA01') ||
 		isTest('idar04-token-risposta-pdnd') ||
 		isTest('audience-differenti-ok-idar04-jwk') 
 
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
     * def responseHeaders = { IDAR04TestHeader: "TestHeaderResponse" }
@@ -667,32 +661,32 @@ Scenario: isTest('response-without-payload-idar04-jwk')  ||
 		isTest('response-without-payload-idar04-tampered-header-jwk') || 
 		isTest('response-without-payload-idar04-tampered-header-pdnd')
 
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 201
-    * def response = ''
+    * def response = null
     * def responseHeaders = ({ 'Content-Type': null, 'IDAR04TestHeader': "TestHeaderResponse" })
 
 
 Scenario: isTest('response-without-payload-idar04-digest-richiesta-jwk') ||
 		isTest('response-without-payload-idar04-digest-richiesta-pdnd')
 
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 201
-    * def response = ''
+    * def response = null
     * def responseHeaders = ({ 'Content-Type': null })
 
 Scenario: isTest('idar04-token-richiesta-jwk') ||
 		isTest('idar04-token-richiesta-pdnd')
 
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 Scenario: isTest('authorization-richiesta-integrity-risposta-idar04-jwk') ||
 		isTest('authorization-richiesta-integrity-risposta-idar04-pdnd')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
     * def responseHeaders = { IDAR04TestHeader: "TestHeaderResponse" }
@@ -700,10 +694,10 @@ Scenario: isTest('authorization-richiesta-integrity-risposta-idar04-jwk') ||
 Scenario: isTest('solo-authorization-richiesta-idar04-jwk') ||
 		isTest('solo-authorization-richiesta-idar04-pdnd')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 200
-    * def response = ''
+    * def response = null
     * def responseHeaders = ({ 'Content-Type': null })
 
 
@@ -719,7 +713,7 @@ Scenario: isTest('connettivita-base-idar0402-pdnd') ||
 		isTest('riutilizzo-token-idar0402-pdnd') ||
 		isTest('riutilizzo-token-idar0402-keypair')
 
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match karate.request.header('Agid-JWT-Signature') == null
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
@@ -738,15 +732,15 @@ Scenario: isTest('idar04-custom-header-pdnd')
 
     * karate.log("Response: ", integration_header_base64)
 
-    * match requestHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Digest'] == '#notpresent'
+    * match karate.request.header('CustomTestSuite-JWT-Signature') == null
+    * match karate.request.header('Agid-JWT-Signature') == null
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Digest') == null
     * def responseStatus = 200
     * def newHeaders = 
     """
     ({
-       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("requestHeaders['GovWay-Transaction-ID'][0]"),
+       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("karate.request.header('GovWay-Transaction-ID')"),
        'GovWay-Integration': integration_header_base64
     })
     """
@@ -760,15 +754,15 @@ Scenario: isTest('idar04-custom-header-pdnd-assenza-header-integrity-risposta')
 
     * karate.log("Response: ", integration_header_base64)
 
-    * match requestHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Digest'] == '#notpresent'
+    * match karate.request.header('CustomTestSuite-JWT-Signature') == null
+    * match karate.request.header('Agid-JWT-Signature') == null
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Digest') == null
     * def responseStatus = 200
     * def newHeaders = 
     """
     ({
-       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("requestHeaders['GovWay-Transaction-ID'][0]"),
+       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("karate.request.header('GovWay-Transaction-ID')"),
        'GovWay-Integration': integration_header_base64
     })
     """
@@ -784,16 +778,16 @@ Scenario: isTest('idar04-custom-header-pdnd-get-with-custom') ||
 
     * karate.log("Response: ", integration_header_base64)
 
-    * match requestHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Digest'] == '#notpresent'
+    * match karate.request.header('CustomTestSuite-JWT-Signature') == null
+    * match karate.request.header('Agid-JWT-Signature') == null
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Digest') == null
     * def responseStatus = 200
     * def newHeaders = 
     """
     ({
        'Content-Type': null, 
-       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("requestHeaders['GovWay-Transaction-ID'][0]"),
+       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("karate.request.header('GovWay-Transaction-ID')"),
        'GovWay-Integration': integration_header_base64
     })
     """
@@ -814,11 +808,11 @@ Scenario: isTest('audit-rest-jwk-01')  ||
 		isTest('audit-rest-jwk-01-differentAudienceAsArray') ||
 		isTest('audit-rest-jwk-0401-differentAudienceAsArray')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-UserID'][0] == 'utente-token'
-    * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token'
-    * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-TrackingEvidence') == null
+    * match karate.request.header('GovWay-Audit-UserID') == 'utente-token'
+    * match karate.request.header('GovWay-Audit-UserLocation') == 'ip-utente-token'
+    * match karate.request.header('GovWay-Audit-LoA') == 'livello-autenticazione-utente-token'
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
@@ -830,11 +824,11 @@ Scenario: isTest('audit-rest-jwk-01-verifica-cache-utente1') ||
 		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente1') ||
 		isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente1')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-UserID'][0] == 'utente-token-test-cache'
-    * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token'
-    * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-TrackingEvidence') == null
+    * match karate.request.header('GovWay-Audit-UserID') == 'utente-token-test-cache'
+    * match karate.request.header('GovWay-Audit-UserLocation') == 'ip-utente-token'
+    * match karate.request.header('GovWay-Audit-LoA') == 'livello-autenticazione-utente-token'
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
@@ -846,167 +840,167 @@ Scenario: isTest('audit-rest-jwk-01-verifica-cache-utente2') ||
 		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente2') ||
 		isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente2')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-UserID'][0] == 'utente-token-differente-test-cache'
-    * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token'
-    * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-TrackingEvidence') == null
+    * match karate.request.header('GovWay-Audit-UserID') == 'utente-token-differente-test-cache'
+    * match karate.request.header('GovWay-Audit-UserLocation') == 'ip-utente-token'
+    * match karate.request.header('GovWay-Audit-LoA') == 'livello-autenticazione-utente-token'
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 Scenario: isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente1') ||
 		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente1')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-Claim1'][0] == 'valore-claim1-required-test-cache'
-    * match requestHeaders['GovWay-Audit-Claim2'][0] == 'valore-claim2-required-test-cache'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-TrackingEvidence') == null
+    * match karate.request.header('GovWay-Audit-Claim1') == 'valore-claim1-required-test-cache'
+    * match karate.request.header('GovWay-Audit-Claim2') == 'valore-claim2-required-test-cache'
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 Scenario: isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente2') ||
 		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente2')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-Claim1'][0] == 'valore-claim1-differente-required-test-cache'
-    * match requestHeaders['GovWay-Audit-Claim2'][0] == 'valore-claim2-differente-required-test-cache'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-TrackingEvidence') == null
+    * match karate.request.header('GovWay-Audit-Claim1') == 'valore-claim1-differente-required-test-cache'
+    * match karate.request.header('GovWay-Audit-Claim2') == 'valore-claim2-differente-required-test-cache'
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 Scenario: isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente1')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-Claim1'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-Claim2'][0] == 'valore-claim2-required-test-cache'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-TrackingEvidence') == null
+    * match karate.request.header('GovWay-Audit-Claim1') == null
+    * match karate.request.header('GovWay-Audit-Claim2') == 'valore-claim2-required-test-cache'
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 Scenario: isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente2')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-Claim1'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-Claim2'][0] == 'valore-claim2-differente-required-test-cache'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-TrackingEvidence') == null
+    * match karate.request.header('GovWay-Audit-Claim1') == null
+    * match karate.request.header('GovWay-Audit-Claim2') == 'valore-claim2-differente-required-test-cache'
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 Scenario: isTest('audit-rest-jwk-mixed-01')  || 
 		isTest('audit-rest-jwk-mixed-02')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-UserID'][0] == 'utente-token'
-    * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token'
-    * match requestHeaders['GovWay-Audit-LoA'][0] == '#notpresent'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-TrackingEvidence') == null
+    * match karate.request.header('GovWay-Audit-UserID') == 'utente-token'
+    * match karate.request.header('GovWay-Audit-UserLocation') == 'ip-utente-token'
+    * match karate.request.header('GovWay-Audit-LoA') == null
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 Scenario: isTest('audit-rest-x509-01')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-UserID'][0] == 'utente-token-ridefinito'
-    * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token-ridefinito'
-    * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token-ridefinito'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-TrackingEvidence') == null
+    * match karate.request.header('GovWay-Audit-UserID') == 'utente-token-ridefinito'
+    * match karate.request.header('GovWay-Audit-UserLocation') == 'ip-utente-token-ridefinito'
+    * match karate.request.header('GovWay-Audit-LoA') == 'livello-autenticazione-utente-token-ridefinito'
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 Scenario: isTest('audit-rest-jwk-0401')  || 
 		isTest('audit-rest-jwk-0402')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-UserID'][0] == 'utente-token'
-    * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token'
-    * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-Signature') == null
+    * match karate.request.header('Agid-JWT-TrackingEvidence') == null
+    * match karate.request.header('GovWay-Audit-UserID') == 'utente-token'
+    * match karate.request.header('GovWay-Audit-UserLocation') == 'ip-utente-token'
+    * match karate.request.header('GovWay-Audit-LoA') == 'livello-autenticazione-utente-token'
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 Scenario: isTest('audit-rest-x509-0301')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-UserID'][0] == 'utente-token-ridefinito'
-    * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token-ridefinito'
-    * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token-ridefinito'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-Signature') == null
+    * match karate.request.header('Agid-JWT-TrackingEvidence') == null
+    * match karate.request.header('GovWay-Audit-UserID') == 'utente-token-ridefinito'
+    * match karate.request.header('GovWay-Audit-UserLocation') == 'ip-utente-token-ridefinito'
+    * match karate.request.header('GovWay-Audit-LoA') == 'livello-autenticazione-utente-token-ridefinito'
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 Scenario: isTest('audit-rest-jwk-notrace-noforward-default-01') ||
 		isTest('audit-rest-jwk-notrace-noforward-default-02')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-UserID'][0] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-UserLocation'][0] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-LoA'][0] == '#notpresent'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-TrackingEvidence') == null
+    * match karate.request.header('GovWay-Audit-UserID') == null
+    * match karate.request.header('GovWay-Audit-UserLocation') == null
+    * match karate.request.header('GovWay-Audit-LoA') == null
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 Scenario: isTest('audit-rest-jwk-customtrace-customforward-01')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-UserID'][0] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-UserLocation'][0] == '#notpresent'
-    * match requestHeaders['audit-custom-location'][0] == 'ip-utente-token'
-    * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-TrackingEvidence') == null
+    * match karate.request.header('GovWay-Audit-UserID') == null
+    * match karate.request.header('GovWay-Audit-UserLocation') == null
+    * match karate.request.header('audit-custom-location') == 'ip-utente-token'
+    * match karate.request.header('GovWay-Audit-LoA') == 'livello-autenticazione-utente-token'
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 Scenario: isTest('audit-rest-jwk-criteri-autorizzativi-ok-01')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-UserID'][0] == 'utente-token'
-    * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token'
-    * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token'
-    * match requestHeaders['audit-test-security-token-kid'][0] == 'KID-ApplicativoBlockingIDA01'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-TrackingEvidence') == null
+    * match karate.request.header('GovWay-Audit-UserID') == 'utente-token'
+    * match karate.request.header('GovWay-Audit-UserLocation') == 'ip-utente-token'
+    * match karate.request.header('GovWay-Audit-LoA') == 'livello-autenticazione-utente-token'
+    * match karate.request.header('audit-test-security-token-kid') == 'KID-ApplicativoBlockingIDA01'
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 Scenario: isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-noaudit') ||
 		isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-optionalaudit')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-UserID'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-UserLocation'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-LoA'] == '#notpresent'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-TrackingEvidence') == null
+    * match karate.request.header('GovWay-Audit-UserID') == null
+    * match karate.request.header('GovWay-Audit-UserLocation') == null
+    * match karate.request.header('GovWay-Audit-LoA') == null
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 Scenario: isTest('audit-rest-jwk-token-custom-01')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-TypeINT'][0] == '23'
-    * match requestHeaders['GovWay-Audit-TypeBoolean'][0] == 'true'
-    * match requestHeaders['GovWay-Audit-TypeStringRegExp'][0] == 'ABCDE'
-    * match requestHeaders['GovWay-Audit-TypeINTRegExp'][0] == '12'
-    * match requestHeaders['GovWay-Audit-TypeListString'][0] == 'Valore2'
-    * match requestHeaders['GovWay-Audit-TypeListInt'][0] == '10.3'
-    * match requestHeaders['GovWay-Audit-TypeMixed1'][0] == 'ZZ'
-    * match requestHeaders['GovWay-Audit-TypeMixed2'][0] == '23456'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-TrackingEvidence') == null
+    * match karate.request.header('GovWay-Audit-TypeINT') == '23'
+    * match karate.request.header('GovWay-Audit-TypeBoolean') == 'true'
+    * match karate.request.header('GovWay-Audit-TypeStringRegExp') == 'ABCDE'
+    * match karate.request.header('GovWay-Audit-TypeINTRegExp') == '12'
+    * match karate.request.header('GovWay-Audit-TypeListString') == 'Valore2'
+    * match karate.request.header('GovWay-Audit-TypeListInt') == '10.3'
+    * match karate.request.header('GovWay-Audit-TypeMixed1') == 'ZZ'
+    * match karate.request.header('GovWay-Audit-TypeMixed2') == '23456'
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 Scenario: isTest('audit-rest-jwk-token-custom-02')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-TypeINT'][0] == '99147483647'
-    * match requestHeaders['GovWay-Audit-TypeBoolean'][0] == 'false'
-    * match requestHeaders['GovWay-Audit-TypeStringRegExp'][0] == 'A'
-    * match requestHeaders['GovWay-Audit-TypeINTRegExp'][0] == '1'
-    * match requestHeaders['GovWay-Audit-TypeListString'][0] == 'Valore4'
-    * match requestHeaders['GovWay-Audit-TypeListInt'][0] == '45'
-    * match requestHeaders['GovWay-Audit-TypeMixed1'][0] == 'AA'
-    * match requestHeaders['GovWay-Audit-TypeMixed2'][0] == '22'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-TrackingEvidence') == null
+    * match karate.request.header('GovWay-Audit-TypeINT') == '99147483647'
+    * match karate.request.header('GovWay-Audit-TypeBoolean') == 'false'
+    * match karate.request.header('GovWay-Audit-TypeStringRegExp') == 'A'
+    * match karate.request.header('GovWay-Audit-TypeINTRegExp') == '1'
+    * match karate.request.header('GovWay-Audit-TypeListString') == 'Valore4'
+    * match karate.request.header('GovWay-Audit-TypeListInt') == '45'
+    * match karate.request.header('GovWay-Audit-TypeMixed1') == 'AA'
+    * match karate.request.header('GovWay-Audit-TypeMixed2') == '22'
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 

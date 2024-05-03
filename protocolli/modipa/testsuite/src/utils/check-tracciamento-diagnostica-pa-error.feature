@@ -4,8 +4,8 @@ Scenario: Verifica il tracciamento e la diagnostica con gli identificativi messa
 
 * def get_diagnostico = read('classpath:utils/get_diagnostico.js')
 * def get_ruolo_transazione = read('classpath:utils/get-ruolo-transazione.js')
-* def count_traccia = read('classpath:utils/get_traccia.js')
-* def exists_traccia = read('classpath:utils/get_traccia.js')
+* def count_traccia = read('classpath:utils/count_traccia.js')
+* def exists_traccia = read('classpath:utils/exists_traccia.js')
 
 
 

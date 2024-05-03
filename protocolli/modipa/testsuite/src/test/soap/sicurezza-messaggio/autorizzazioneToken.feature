@@ -20,8 +20,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 200
 And match response == read('requestConHeader.xml')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header GovWay-TestSuite-GovWay-Token-Application == '<application>'
 And match header GovWay-TestSuite-GovWay-Application == '<application>'
 
@@ -43,8 +43,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 500
 And match response == read('classpath:test/soap/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |
@@ -64,8 +64,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 200
 And match response == read('requestConHeader.xml')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header GovWay-TestSuite-GovWay-Token-Application == '<application>'
 And match header GovWay-TestSuite-GovWay-Application == '<application>'
 
@@ -89,8 +89,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 500
 And match response == read('classpath:test/soap/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |
@@ -112,8 +112,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 200
 And match response == read('requestConHeader.xml')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header GovWay-TestSuite-GovWay-Token-Application == '<applicativo>'
 And match header GovWay-TestSuite-GovWay-Application == '<applicativo>'
 
@@ -137,8 +137,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 500
 And match response == read('classpath:test/soap/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |
@@ -160,8 +160,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 500
 And match response == read('classpath:test/soap/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |
@@ -183,8 +183,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 200
 And match response == read('requestConHeader.xml')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header GovWay-TestSuite-GovWay-Token-Application == '<applicativo>'
 And match header GovWay-TestSuite-GovWay-Application == '<applicativo>'
 
@@ -208,8 +208,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 200
 And match response == read('requestConHeader.xml')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header GovWay-TestSuite-GovWay-Token-Application == '<applicativo>'
 And match header GovWay-TestSuite-GovWay-Application == '<applicativo>'
 
@@ -233,8 +233,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 500
 And match response == read('classpath:test/soap/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |
@@ -256,8 +256,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 200
 And match response == read('requestConHeader.xml')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header GovWay-TestSuite-GovWay-Token-Application == '<applicativo>'
 And match header GovWay-TestSuite-GovWay-Application == '<applicativo>'
 
@@ -282,8 +282,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 200
 And match response == read('requestConHeader.xml')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header GovWay-TestSuite-GovWay-Token-Application == '<applicativo>'
 And match header GovWay-TestSuite-GovWay-Application == '<applicativo>'
 
@@ -307,8 +307,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 500
 And match response == read('classpath:test/soap/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |
@@ -331,8 +331,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 200
 And match response == read('requestConHeader.xml')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header GovWay-TestSuite-GovWay-Token-Application == '<applicativo>'
 And match header GovWay-TestSuite-GovWay-Application == '<applicativo>'
 
@@ -356,8 +356,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 200
 And match response == read('requestConHeader.xml')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header GovWay-TestSuite-GovWay-Token-Application == '<applicativo>'
 And match header GovWay-TestSuite-GovWay-Application == '<applicativo>'
 
@@ -381,8 +381,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 500
 And match response == read('classpath:test/soap/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |
@@ -405,8 +405,8 @@ And header govway-testsuite-role = '<ruolo>'
 When method post
 Then status 200
 And match response == read('requestConHeader.xml')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header GovWay-TestSuite-GovWay-Token-Application == '<applicativo>'
 And match header GovWay-TestSuite-GovWay-Application == '<applicativo>'
 
@@ -435,8 +435,8 @@ And header govway-testsuite-role = '<ruolo>'
 When method post
 Then status 200
 And match response == read('requestConHeader.xml')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | ruolo |
@@ -457,8 +457,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 500
 And match response == read('classpath:test/soap/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |
@@ -481,8 +481,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 500
 And match response == read('classpath:test/soap/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |
@@ -501,8 +501,8 @@ And header govway-testsuite-role = '<ruolo>'
 When method post
 Then status 200
 And match response == read('requestConHeader.xml')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header GovWay-TestSuite-GovWay-Token-Application == '<applicativo>'
 And match header GovWay-TestSuite-GovWay-Application == '<applicativo>'
 
@@ -526,8 +526,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 500
 And match response == read('classpath:test/soap/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |
@@ -550,8 +550,8 @@ And header govway-testsuite-role = '<ruolo>'
 When method post
 Then status 200
 And match response == read('requestConHeader.xml')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | ruolo |
@@ -574,8 +574,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 500
 And match response == read('classpath:test/soap/sicurezza-messaggio/error-bodies/<response>')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test | fruitore | username | password | response |

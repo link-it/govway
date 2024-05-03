@@ -21,8 +21,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test |  username | password |
@@ -41,8 +41,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test |  username | password |
@@ -60,8 +60,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test |  username | password |
@@ -79,7 +79,7 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 503
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici(tid) 
 
 * match result[0].MESSAGGIO contains 'La modalità di generazione del Key Id (kid), indicata nella token policy \'MODI-NegoziazioneTokenPDND\', non è utilizzabile con l\'applicativo identificato \'ApplicativoBlockingIDA01ExampleClient2 (Soggetto: DemoSoggettoFruitore)\': nella configurazione dell\'applicativo non è stato definito un \'Key Id (kid) del Certificato\' nella sezione \'Authorization OAuth\''
@@ -100,7 +100,7 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 503
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici(tid) 
 
 * match result[0].MESSAGGIO contains 'Il tipo di keystore indicato nella token policy \'MODI-NegoziazioneTokenPDND\' non è utilizzabile: Il profilo di sicurezza richiesto \'Token Policy Negoziazione - Signed JWT\' non è applicabile poichè l\'applicativo mittente ApplicativoBlockingIDA01ExampleClientToken1 (DemoSoggettoFruitore) non possiede una configurazione dei parametri di sicurezza messaggio (Keystore)'
@@ -122,8 +122,8 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test |  username | password |
@@ -143,7 +143,7 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 503
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici(tid) 
 
 * match result[0].MESSAGGIO contains 'Il tipo di keystore indicato nella token policy \'MODI-NegoziazioneTokenPDND\' richiede l\'autenticazione e l\'identificazione di un applicativo fruitore:'
@@ -162,7 +162,7 @@ And header govway-testsuite-role = 'undefined'
 When method post
 Then status 503
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici(tid) 
 
 * match result[0].MESSAGGIO contains 'Il tipo di keystore indicato nella token policy \'MODI-NegoziazioneTokenPDND\' è utilizzabile solamente con il profilo di interoperabilità \'ModI\''
@@ -187,8 +187,8 @@ And header tiponegoziazionetest = 'Fruizione<tipo-test>'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test |
@@ -210,8 +210,8 @@ And header tiponegoziazionetest = 'Fruizione<tipo-test>'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test |
@@ -231,8 +231,8 @@ And header tiponegoziazionetest = 'Fruizione<tipo-test>'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test |
@@ -253,7 +253,7 @@ And header tiponegoziazionetest = 'Fruizione<tipo-test>'
 When method post
 Then status 400
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici(tid) 
 
 * match result[0].MESSAGGIO contains 'Configuration error; pattern \'idam0301\' require x509 certificate, found \'JWK Set\' key'
@@ -276,7 +276,7 @@ And header tiponegoziazionetest = 'Fruizione<tipo-test>'
 When method post
 Then status 400
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici(tid) 
 
 * match result[0].MESSAGGIO contains 'Configuration error; pattern \'idam0301\' require x509 certificate, found \'Key Pair\' key'
@@ -300,7 +300,7 @@ And header tiponegoziazionetest = 'Fruizione<tipo-test>'
 When method post
 Then status 503
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici(tid) 
 
 * match result[0].MESSAGGIO contains 'La modalità di generazione del Key Id (kid), indicata nella token policy \'MODI-NegoziazioneTokenPDND-datiInFruizione\', non è utilizzabile con la fruizione \'DemoSoggettoFruitore -> DemoNegoziazioneTokenFruizione<tipo-test>_noKID (Soggetto: DemoSoggettoErogatore)\': nella configurazione \'ModI\' non è stato definito un \'Key Id (kid) del Certificato\''
@@ -325,7 +325,7 @@ And header tiponegoziazionetest = 'Fruizione<tipo-test>'
 When method post
 Then status 503
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici(tid) 
 
 * match result[0].MESSAGGIO contains 'La modalità di generazione dell\'Issuer, indicata nella token policy \'MODI-NegoziazioneTokenPDND-datiInFruizione\', non è utilizzabile con la fruizione \'DemoSoggettoFruitore -> DemoNegoziazioneTokenFruizione<tipo-test>_noClientId (Soggetto: DemoSoggettoErogatore)\': nella configurazione \'ModI\' non è stato definito un \'Identificativo Token ClientId\''
@@ -352,7 +352,7 @@ And header tiponegoziazionetest = 'Fruizione<tipo-test>'
 When method post
 Then status 503
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici(tid) 
 
 * match result[0].MESSAGGIO contains 'La modalità di generazione del Key Id (kid), indicata nella token policy \'MODI-NegoziazioneTokenPDND-datiInFruizione\', non è utilizzabile con la fruizione \'DemoSoggettoFruitore -> DemoNegoziazioneTokenFruizioneSicurezzaMessaggio_noKeystoreFruizione (Soggetto: DemoSoggettoErogatore)\': nella configurazione \'ModI\' non è stato definito un \'Key Id (kid) del Certificato\''
@@ -371,8 +371,8 @@ And header tiponegoziazionetest = 'Fruizione<tipo-test>'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 Examples:
 | tipo-test |
@@ -395,7 +395,7 @@ And header tiponegoziazionetest = 'Fruizione<tipo-test>'
 When method post
 Then status 503
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici(tid) 
 
 * match result[0].MESSAGGIO contains 'Il tipo di keystore indicato nella token policy \'MODI-NegoziazioneTokenPDND-datiInFruizione\' è utilizzabile solamente con il profilo di interoperabilità \'ModI\''
@@ -419,8 +419,8 @@ And header tiponegoziazionetest = 'Fruizione03ViaTokenPolicy'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 
 
@@ -435,8 +435,8 @@ And header tiponegoziazionetest = 'Fruizione04ViaTokenPolicy'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 
 
@@ -451,8 +451,8 @@ And header tiponegoziazionetest = 'Fruizione04ViaTokenPolicyKeyPair'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 
 
@@ -467,8 +467,8 @@ And header tiponegoziazionetest = 'Fruizione04ViaTokenPolicyKeyPair-ClientIdKIDu
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 
 
@@ -483,7 +483,7 @@ And header tiponegoziazionetest = 'Fruizione04ViaTokenPolicyFruizioneErrore'
 When method post
 Then status 400
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici(tid) 
 
 * match result[0].MESSAGGIO contains 'Il profilo di sicurezza richiesto \'idam0401\' richiede l\'assegnazione di una token policy di negoziazione al connettore\; la policy indicata \'MODI-NegoziazioneTokenPDND-datiInPolicy-keystoreFruizione\' non è utilizzabile essendo configurata con una modalità di keystore \'Definito nella fruizione ModI\''
@@ -501,7 +501,7 @@ And header tiponegoziazionetest = 'Fruizione04ViaTokenPolicyApplicativoErrore'
 When method post
 Then status 400
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_diagnostici(tid) 
 
 * match result[0].MESSAGGIO contains 'Il profilo di sicurezza richiesto \'idam0401\' richiede l\'assegnazione di una token policy di negoziazione al connettore\; la policy indicata \'MODI-NegoziazioneTokenPDND-datiInPolicy-keystoreApplicativo\' non è utilizzabile essendo configurata con una modalità di keystore \'Definito nell\'applicativo ModI\''

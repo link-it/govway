@@ -31,11 +31,11 @@ Scenario: Richiesta processamento con stato 202 e senza Header Location
     Then status 502
     And match response == problem
 
-    * call check_traccia_richiesta ({tid: responseHeaders['GovWay-Transaction-ID'][0]})
-    * call check_traccia_richiesta ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]})
+    * call check_traccia_richiesta ({tid: karate.response.header('GovWay-Transaction-ID')})
+    * call check_traccia_richiesta ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')})
 
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: null })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: null })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: null })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: null })
 
 @request-task-not-202
 Scenario: Richiesta processamento con stato diverso da 202
@@ -50,11 +50,11 @@ Scenario: Richiesta processamento con stato diverso da 202
     Then status 502
     And match response == problem
 
-    * call check_traccia_richiesta ({tid: responseHeaders['GovWay-Transaction-ID'][0]})
-    * call check_traccia_richiesta ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]})
+    * call check_traccia_richiesta ({tid: karate.response.header('GovWay-Transaction-ID')})
+    * call check_traccia_richiesta ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')})
     
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: null })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: null })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: null })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: null })
 
 @invalid-status-from-request
 Scenario: Richiesta stato operazione con stato http diverso da 200 e 303
@@ -69,11 +69,11 @@ Scenario: Richiesta stato operazione con stato http diverso da 200 e 303
     Then status 502
     And match response == problem
 
-    * call check_traccia_richiesta_stato ({tid: responseHeaders['GovWay-Transaction-ID'][0]})
-    * call check_traccia_richiesta_stato ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]})
+    * call check_traccia_richiesta_stato ({tid: karate.response.header('GovWay-Transaction-ID')})
+    * call check_traccia_richiesta_stato ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')})
 
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: task_id })
 
 
 @no-location-from-status
@@ -89,11 +89,11 @@ Scenario: Richiesta stato operazione completata senza header location
     Then status 502
     And match response == problem
 
-    * call check_traccia_richiesta_stato ({tid: responseHeaders['GovWay-Transaction-ID'][0]})
-    * call check_traccia_richiesta_stato ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]})
+    * call check_traccia_richiesta_stato ({tid: karate.response.header('GovWay-Transaction-ID')})
+    * call check_traccia_richiesta_stato ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')})
 
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: task_id })
 
 @task-response-not-200
 Scenario: Ottenimento risorsa processata con stato diverso da 200 OK    
@@ -109,9 +109,9 @@ Scenario: Ottenimento risorsa processata con stato diverso da 200 OK
     Then status 502
     And match response == problem
 
-    * call check_traccia_risposta ({tid: responseHeaders['GovWay-Transaction-ID'][0]})
-    * call check_traccia_risposta ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]})
+    * call check_traccia_risposta ({tid: karate.response.header('GovWay-Transaction-ID')})
+    * call check_traccia_risposta ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')})
 
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: task_id })
 

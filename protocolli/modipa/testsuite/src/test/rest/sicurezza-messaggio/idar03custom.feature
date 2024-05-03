@@ -42,13 +42,13 @@ And header GovWay-Integration = integration_header_base64
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
-And match header CustomTestSuite-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
+And match header CustomTestSuite-JWT-Signature == null
 
 
-* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0], "AGID")
-* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0], "AGID")
+* def client_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Token'), "AGID")
+* def server_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Server-Token'), "AGID")
 
 * def other_checks_richiesta = 
 """
@@ -64,15 +64,15 @@ And match header CustomTestSuite-JWT-Signature == '#notpresent'
 ])
 """
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_richiesta })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_richiesta })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_token.payload.jti
 
 
@@ -122,15 +122,15 @@ And header GovWay-Integration = integration_header_base64
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
-And match header CustomTestSuite-JWT-Signature == '#notpresent'
-And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
+And match header CustomTestSuite-JWT-Signature == null
+And match header CustomTestSuiteDoppi-JWT-Signature == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
-* def server_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Authorization-Token'][0], "Bearer")
-* def server_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Integrity-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_integrity_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Integrity-Token'), "AGID")
+* def server_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Server-Authorization-Token'), "Bearer")
+* def server_integrity_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Server-Integrity-Token'), "AGID")
 
 * def other_checks_richiesta = 
 """
@@ -146,15 +146,15 @@ And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
 ])
 """
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 
@@ -172,15 +172,15 @@ And header GovWay-Integration = integration_header_base64
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
-And match header CustomTestSuite-JWT-Signature == '#notpresent'
-And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
-And match header CustomTestSuiteDoppiSoloRichiesta-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
+And match header CustomTestSuite-JWT-Signature == null
+And match header CustomTestSuiteDoppi-JWT-Signature == null
+And match header CustomTestSuiteDoppiSoloRichiesta-JWT-Signature == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
-* def server_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Integrity-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_integrity_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Integrity-Token'), "AGID")
+* def server_integrity_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Server-Integrity-Token'), "AGID")
 
 * def other_checks_richiesta = 
 """
@@ -196,15 +196,15 @@ And match header CustomTestSuiteDoppiSoloRichiesta-JWT-Signature == '#notpresent
 ])
 """
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 
@@ -222,15 +222,15 @@ And header GovWay-Integration = integration_header_base64
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
-And match header CustomTestSuite-JWT-Signature == '#notpresent'
-And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
-And match header CustomTestSuiteDoppiSoloRichiesta-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
+And match header CustomTestSuite-JWT-Signature == null
+And match header CustomTestSuiteDoppi-JWT-Signature == null
+And match header CustomTestSuiteDoppiSoloRichiesta-JWT-Signature == null
 
 
-* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0], "AGID")
-* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0], "AGID")
+* def client_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Token'), "AGID")
+* def server_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Server-Token'), "AGID")
 
 * def other_checks_richiesta = 
 """
@@ -246,15 +246,15 @@ And match header CustomTestSuiteDoppiSoloRichiesta-JWT-Signature == '#notpresent
 ])
 """
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', profilo_interazione: 'crud', other_checks: other_checks_richiesta })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', profilo_interazione: 'crud', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', profilo_interazione: 'crud', other_checks: other_checks_richiesta })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', profilo_interazione: 'crud', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_token.payload.jti
 
 
@@ -271,16 +271,16 @@ And header GovWay-Integration = integration_header_base64
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
-And match header CustomTestSuite-JWT-Signature == '#notpresent'
-And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
-And match header CustomTestSuiteDoppiSoloRichiesta-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
+And match header CustomTestSuite-JWT-Signature == null
+And match header CustomTestSuiteDoppi-JWT-Signature == null
+And match header CustomTestSuiteDoppiSoloRichiesta-JWT-Signature == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
-* def server_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Authorization-Token'][0], "Bearer")
-* def server_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Integrity-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_integrity_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Integrity-Token'), "AGID")
+* def server_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Server-Authorization-Token'), "Bearer")
+* def server_integrity_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Server-Integrity-Token'), "AGID")
 
 * def other_checks_richiesta = 
 """
@@ -296,15 +296,15 @@ And match header CustomTestSuiteDoppiSoloRichiesta-JWT-Signature == '#notpresent
 ])
 """
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', profilo_interazione: 'crud', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', profilo_interazione: 'crud', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', profilo_interazione: 'crud', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', profilo_interazione: 'crud', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 
@@ -322,15 +322,15 @@ And header GovWay-Integration = integration_header_base64
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
-And match header CustomTestSuite-JWT-Signature == '#notpresent'
-And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
-And match header CustomTestSuiteDoppiSoloRichiesta-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
+And match header CustomTestSuite-JWT-Signature == null
+And match header CustomTestSuiteDoppi-JWT-Signature == null
+And match header CustomTestSuiteDoppiSoloRichiesta-JWT-Signature == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
-* def server_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Integrity-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_integrity_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Integrity-Token'), "AGID")
+* def server_integrity_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Server-Integrity-Token'), "AGID")
 
 * def other_checks_richiesta = 
 """
@@ -346,15 +346,15 @@ And match header CustomTestSuiteDoppiSoloRichiesta-JWT-Signature == '#notpresent
 ])
 """
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', profilo_interazione: 'crud', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', profilo_interazione: 'crud', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', profilo_interazione: 'crud', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', profilo_interazione: 'crud', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 
@@ -454,15 +454,15 @@ And header GovWay-Integration = integration_header_2_base64
 When method get
 Then status 200
 And match response == ''
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
-And match header CustomTestSuite-JWT-Signature == '#notpresent'
-And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
+And match header CustomTestSuite-JWT-Signature == null
+And match header CustomTestSuiteDoppi-JWT-Signature == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
-* def server_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Authorization-Token'][0], "Bearer")
-* def server_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Integrity-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_integrity_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Integrity-Token'), "AGID")
+* def server_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Server-Authorization-Token'), "Bearer")
+* def server_integrity_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Server-Integrity-Token'), "AGID")
 
 * def other_checks_richiesta = 
 """
@@ -478,15 +478,15 @@ And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
 ])
 """
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 
@@ -508,23 +508,23 @@ And header GovWay-Integration = integration_header_base64
 When method get
 Then status 200
 And match response == ''
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
-And match header CustomTestSuite-JWT-Signature == '#notpresent'
-And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
+And match header CustomTestSuite-JWT-Signature == null
+And match header CustomTestSuiteDoppi-JWT-Signature == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def server_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Authorization-Token'][0], "Bearer")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def server_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Server-Authorization-Token'), "Bearer")
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', profilo_interazione: 'crud' })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', profilo_interazione: 'crud' })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 
@@ -543,18 +543,18 @@ And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', p
 And header GovWay-Integration = integration_header_base64
 When method post
 Then status 200
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
-And match header CustomTestSuite-JWT-Signature == '#notpresent'
-And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
-And match header CustomTestSuiteDoppiSoloRichiesta-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
+And match header CustomTestSuite-JWT-Signature == null
+And match header CustomTestSuiteDoppi-JWT-Signature == null
+And match header CustomTestSuiteDoppiSoloRichiesta-JWT-Signature == null
 #And match response == read('richiestaConAllegati.bin')
 #Non e' possibile verificare l'uguaglianza in un multipart structure
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
-* def server_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Authorization-Token'][0], "Bearer")
-* def server_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Integrity-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_integrity_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Integrity-Token'), "AGID")
+* def server_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Server-Authorization-Token'), "Bearer")
+* def server_integrity_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Server-Integrity-Token'), "AGID")
 
 * def other_checks_richiesta = 
 """
@@ -570,13 +570,13 @@ And match header CustomTestSuiteDoppiSoloRichiesta-JWT-Signature == '#notpresent
 ])
 """
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti

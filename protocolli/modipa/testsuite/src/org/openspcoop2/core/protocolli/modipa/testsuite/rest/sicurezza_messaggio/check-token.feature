@@ -5,7 +5,6 @@ Scenario:
 
     * def kind = karate.get('kind', 'Bearer')
     * def tokenDecoded = decodeToken(token, kind)
-
     * def tok_header =
     """
     {

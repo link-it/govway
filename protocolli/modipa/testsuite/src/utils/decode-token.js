@@ -1,11 +1,11 @@
 function(tok, kind) {
-
+karate.log("kind: ", kind)
     if (!kind) {
         kind = "Bearer"
     }
-
     if (kind == "Bearer") {
         var prefix = "Bearer"
+        karate.log("tok non parsato e non slice: ", tok)
         tok = tok.slice(prefix.length).trim()
     }
  

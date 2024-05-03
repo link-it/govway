@@ -7,6 +7,6 @@ Background:
 Scenario: methodIs('post')
     * karate.proceed(url_invocazione_erogazione)
 
-    * def result = get_traccia(responseHeaders['GovWay-Transaction-ID'][0]) 
+    * def result = get_traccia(karate.response.header('GovWay-Transaction-ID')) 
     #* set response.cacca = 4
     #* def response = { aga: "mennone"}

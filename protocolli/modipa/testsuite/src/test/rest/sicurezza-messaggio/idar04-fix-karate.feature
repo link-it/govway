@@ -53,13 +53,13 @@ And header simulazionepdnd-purposeId = '<purposeId>'
 And header simulazionepdnd-audience = 'RestBlockingIDAR04-<tipo-test>/v1'
 When method get
 Then status 200
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
-And match header GovWay-TestSuite-GovWay-Client-Integrity-Token == '#notpresent'
-And match header GovWay-TestSuite-GovWay-Server-Authorization-Token == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
+And match header GovWay-TestSuite-GovWay-Client-Integrity-Token == null
+And match header GovWay-TestSuite-GovWay-Server-Authorization-Token == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def server_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Integrity-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def server_integrity_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Server-Integrity-Token'), "AGID")
 
 * def response_digest = get server_integrity_token $.payload.signed_headers..digest
 
@@ -89,15 +89,15 @@ And match header GovWay-TestSuite-GovWay-Server-Authorization-Token == '#notpres
 
 * def kidRequest = '<kid>'
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: 'IDAR0401', other_checks: other_checks_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, kid: 'KID-ExampleServer', profilo_sicurezza: 'IDAR0401', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: 'IDAR0401', other_checks: other_checks_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, kid: 'KID-ExampleServer', profilo_sicurezza: 'IDAR0401', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 Examples:
@@ -126,14 +126,14 @@ And header simulazionepdnd-audience = 'RestBlockingIDAR04-<tipo-test>/v1'
 When method delete
 Then status 200
 And match response == ''
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
-And match header GovWay-TestSuite-GovWay-Client-Integrity-Token == '#notpresent'
-And match header GovWay-TestSuite-GovWay-Server-Integrity-Token == '#notpresent'
-And match header GovWay-TestSuite-GovWay-Server-Authorization-Token == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
+And match header GovWay-TestSuite-GovWay-Client-Integrity-Token == null
+And match header GovWay-TestSuite-GovWay-Server-Integrity-Token == null
+And match header GovWay-TestSuite-GovWay-Server-Authorization-Token == null
 
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
 
 * def other_checks_richiesta = 
 """
@@ -143,13 +143,13 @@ And match header GovWay-TestSuite-GovWay-Server-Authorization-Token == '#notpres
 
 * def kidRequest = '<kid>'
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: 'IDAR0401', other_checks: other_checks_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: 'IDAR0401', other_checks: other_checks_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 Examples:

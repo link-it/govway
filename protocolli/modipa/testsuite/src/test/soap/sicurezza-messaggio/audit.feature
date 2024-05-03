@@ -45,10 +45,10 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read("response.xml")
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
-* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+* def client_authorization_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
+* def client_audit_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token'), "AGID")
 
 * def clientIdExpected = '<clientId>'
 * def subExpected = '<username>'
@@ -82,15 +82,15 @@ And match header Authorization == '#notpresent'
 
 * def sicurezzaPattern = '<sicurezzaPattern>'
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'bloccante', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'bloccante' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'bloccante', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'bloccante' })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_authorization_token.payload.jti
 
 Examples:
@@ -116,12 +116,12 @@ And header Authorization = call basic ({ username: '<username>', password: '<pas
 When method post
 Then status 200
 And match response == read("response.xml")
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
 * def karateCache = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.KarateCache')
 * xml client_request = karateCache.get("Client-Request")
 
-* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+* def client_audit_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token'), "AGID")
 
 
 * def audExpected = '<nome-api-impl>-<tipo-test>-AUDIT/v1'
@@ -148,15 +148,15 @@ And match header Authorization == '#notpresent'
 
 * def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'bloccante' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'bloccante' })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_request_id
 
 
@@ -183,9 +183,9 @@ And header Authorization = call basic ({ username: '<username>', password: '<pas
 When method post
 Then status 200
 And match response == read("response.xml")
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
-* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+* def client_audit_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Audit-Token'), "AGID")
 
 * def karateCache = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.KarateCache')
 * xml client_request = karateCache.get("Client-Request")
@@ -227,15 +227,15 @@ And match header Authorization == '#notpresent'
 
 * def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: sicurezzaPattern, other_checks: checks_richiesta, requestMessageId:client_request_id })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'bloccante' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: sicurezzaPattern, other_checks: checks_richiesta, requestMessageId:client_request_id })
 * call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, other_checks: other_checks_richiesta, profilo_interazione: 'bloccante' })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_request_id
 
 
@@ -263,8 +263,8 @@ And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 When method post
 Then status 200
 And match response == read("request.xml")
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 
 
 

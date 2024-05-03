@@ -30,11 +30,11 @@ Scenario: Giro OK
     And match response == read("richiesta-applicativa-response.xml")
     And match header GovWay-Conversation-ID == task_id
 
-    * call check_traccia_richiesta ({tid: responseHeaders['GovWay-Transaction-ID'][0]})
-    * call check_traccia_richiesta ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]})
+    * call check_traccia_richiesta ({tid: karate.response.header('GovWay-Transaction-ID')})
+    * call check_traccia_richiesta ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')})
 
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: task_id })
 
     Given url url_validazione
     And request read("richiesta-stato-not-ready.xml")
@@ -43,11 +43,11 @@ Scenario: Giro OK
     And match response == read("richiesta-stato-not-ready-response.xml")
     And match header GovWay-Conversation-ID == task_id_not_ready
 
-    * call check_traccia_richiesta_stato ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id_not_ready })
-    * call check_traccia_richiesta_stato ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], cid: task_id_not_ready })
+    * call check_traccia_richiesta_stato ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id_not_ready })
+    * call check_traccia_richiesta_stato ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), cid: task_id_not_ready })
 
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id_not_ready })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: task_id_not_ready })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id_not_ready })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: task_id_not_ready })
 
 
     Given url url_validazione
@@ -57,11 +57,11 @@ Scenario: Giro OK
     And match response == read("richiesta-stato-ready-response.xml")
     And match header GovWay-Conversation-ID == task_id
 
-    * call check_traccia_richiesta_stato ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id })
-    * call check_traccia_richiesta_stato ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], cid: task_id })
+    * call check_traccia_richiesta_stato ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id })
+    * call check_traccia_richiesta_stato ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), cid: task_id })
 
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: task_id })
 
     Given url url_validazione
     And request read("recupero-risposta.xml")
@@ -70,11 +70,11 @@ Scenario: Giro OK
     And match response == read("recupero-risposta-response.xml")
     And match header GovWay-Conversation-ID == task_id
 
-    * call check_traccia_risposta ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id })
-    * call check_traccia_risposta ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], cid: task_id })
+    * call check_traccia_risposta ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id })
+    * call check_traccia_risposta ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), cid: task_id })
 
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: task_id })
 
 
 @generazione-header-conversation-id
@@ -91,11 +91,11 @@ Scenario: Verifica che la erogazione generi lo header GovWay-Conversation-ID
     And match response == read("richiesta-applicativa-response.xml")
     And match header GovWay-Conversation-ID == task_id
 
-    * call check_traccia_richiesta ({tid: responseHeaders['GovWay-Transaction-ID'][0]})
-    * call check_traccia_richiesta ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]})
+    * call check_traccia_richiesta ({tid: karate.response.header('GovWay-Transaction-ID')})
+    * call check_traccia_richiesta ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')})
 
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: task_id })
 
     Given url url_validazione
     And request read("richiesta-stato-not-ready.xml")
@@ -105,11 +105,11 @@ Scenario: Verifica che la erogazione generi lo header GovWay-Conversation-ID
     And match response == read("richiesta-stato-not-ready-response.xml")
     And match header GovWay-Conversation-ID == task_id_not_ready
 
-    * call check_traccia_richiesta_stato ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id_not_ready })
-    * call check_traccia_richiesta_stato ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], cid: task_id_not_ready })
+    * call check_traccia_richiesta_stato ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id_not_ready })
+    * call check_traccia_richiesta_stato ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), cid: task_id_not_ready })
 
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id_not_ready })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: task_id_not_ready })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id_not_ready })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: task_id_not_ready })
 
     Given url url_validazione
     And request read("richiesta-stato-ready.xml")
@@ -119,11 +119,11 @@ Scenario: Verifica che la erogazione generi lo header GovWay-Conversation-ID
     And match response == read("richiesta-stato-ready-response.xml")
     And match header GovWay-Conversation-ID == task_id
 
-    * call check_traccia_richiesta_stato ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id })
-    * call check_traccia_richiesta_stato ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], cid: task_id })
+    * call check_traccia_richiesta_stato ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id })
+    * call check_traccia_richiesta_stato ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), cid: task_id })
 
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: task_id })
 
     Given url url_validazione
     And request read("recupero-risposta.xml")
@@ -133,11 +133,11 @@ Scenario: Verifica che la erogazione generi lo header GovWay-Conversation-ID
     And match response == read("recupero-risposta-response.xml")
     And match header GovWay-Conversation-ID == task_id
 
-    * call check_traccia_risposta ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id })
-    * call check_traccia_risposta ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], cid: task_id })
+    * call check_traccia_risposta ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id })
+    * call check_traccia_risposta ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), cid: task_id })
 
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: task_id })
 
 
 # In questo caso l'erogazione aggiunge automaticamente lo header
@@ -155,8 +155,8 @@ Scenario: Richiesta applicativa senza X-Correlation-ID nella risposta con valida
     And match response == problem
     And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
 
-    * call check_traccia_richiesta ({tid: responseHeaders['GovWay-Transaction-ID'][0]})
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: null })
+    * call check_traccia_richiesta ({tid: karate.response.header('GovWay-Transaction-ID')})
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: null })
 
 
 @no-correlation-in-request-response
@@ -173,8 +173,8 @@ Scenario: Richiesta applicativa senza X-Correlation-ID nella risposta
     And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
 
 
-    * call check_traccia_richiesta ({tid: responseHeaders['GovWay-Transaction-ID'][0]})
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: null })
+    * call check_traccia_richiesta ({tid: karate.response.header('GovWay-Transaction-ID')})
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: null })
 
 
 @generazione-header-correlazione
@@ -188,13 +188,13 @@ Scenario: Generazione dello header quando questo manca nella risposta della rich
     And match /Envelope/Header/X-Correlation-ID != null
 
     # L'erogazione ha impostato come id correlazione l'id della transazione
-    * def task_id = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+    * def task_id = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 
-    * call check_traccia_richiesta ({tid: responseHeaders['GovWay-Transaction-ID'][0]})
-    * call check_traccia_richiesta ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]})
+    * call check_traccia_richiesta ({tid: karate.response.header('GovWay-Transaction-ID')})
+    * call check_traccia_richiesta ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')})
 
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: task_id })
 
 
 @no-correlation-in-soap-header-fruizione
@@ -232,8 +232,8 @@ Scenario: Testa che l'erogazione si arrabbi se non è presente lo header soap X-
 
 
     # Invece l'erogazione segna la transazione ma non scrive il correlation ID
-    * call check_traccia_richiesta_stato_no_cid ({tid: responseHeaders['GovWay-Transaction-ID'][0] })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: null })
+    * call check_traccia_richiesta_stato_no_cid ({tid: karate.response.header('GovWay-Transaction-ID') })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: null })
 
     Given url url_erogazione
     And request read("recupero-risposta-no-correlation.xml")
@@ -244,8 +244,8 @@ Scenario: Testa che l'erogazione si arrabbi se non è presente lo header soap X-
     And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
 
 
-    * call check_traccia_risposta_no_cid ({tid: responseHeaders['GovWay-Transaction-ID'][0]  })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: null })
+    * call check_traccia_risposta_no_cid ({tid: karate.response.header('GovWay-Transaction-ID')  })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: null })
 
 
 @iniezione-header-soap
@@ -262,8 +262,8 @@ Scenario: Test Iniezione header soap a partire dagli header http di integrazione
     Then status 200
     And match response == read('richiesta-stato-ready-response.xml')
 
-    * call check_traccia_richiesta_stato ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_traccia_richiesta_stato ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
 
     Given url url_validazione
     And request read("recupero-risposta-no-correlation.xml")
@@ -273,8 +273,8 @@ Scenario: Test Iniezione header soap a partire dagli header http di integrazione
     Then status 200
     And match response == read('recupero-risposta-response.xml')
 
-    * call check_traccia_risposta ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_traccia_risposta ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
 
 
 @iniezione-header-soap-id-collaborazione
@@ -290,8 +290,8 @@ Scenario: Test iniezione header soap per mezzo del parametro query o header http
     When method post
     Then status 200
 
-    * call check_traccia_richiesta_stato ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_traccia_richiesta_stato ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
 
     Given url url_helper_id_collaborazione
     And request read("richiesta-stato-no-correlation.xml")
@@ -300,8 +300,8 @@ Scenario: Test iniezione header soap per mezzo del parametro query o header http
     When method post
     Then status 200
 
-    * call check_traccia_richiesta_stato ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_traccia_richiesta_stato ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
 
     Given url url_helper_id_collaborazione
     And request read("recupero-risposta-no-correlation.xml")
@@ -310,8 +310,8 @@ Scenario: Test iniezione header soap per mezzo del parametro query o header http
     When method post
     Then status 200
 
-    * call check_traccia_risposta ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_traccia_risposta ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
 
     Given url url_helper_id_collaborazione
     And request read("recupero-risposta-no-correlation.xml")
@@ -320,8 +320,8 @@ Scenario: Test iniezione header soap per mezzo del parametro query o header http
     When method post
     Then status 200
 
-    * call check_traccia_risposta ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_traccia_risposta ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
 
 
 @iniezione-header-soap-riferimento-id-richiesta
@@ -337,8 +337,8 @@ Scenario: Test iniezione header soap per mezzo del parametro query o header http
     When method post
     Then status 200
 
-    * call check_traccia_richiesta_stato ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_traccia_richiesta_stato ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
 
     Given url url_helper_riferimento_id_richiesta
     And request read("richiesta-stato-no-correlation.xml")
@@ -347,8 +347,8 @@ Scenario: Test iniezione header soap per mezzo del parametro query o header http
     When method post
     Then status 200
 
-    * call check_traccia_richiesta_stato ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_traccia_richiesta_stato ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
 
     Given url url_helper_riferimento_id_richiesta
     And request read("recupero-risposta-no-correlation.xml")
@@ -357,8 +357,8 @@ Scenario: Test iniezione header soap per mezzo del parametro query o header http
     When method post
     Then status 200
 
-    * call check_traccia_risposta ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_traccia_risposta ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
 
     Given url url_helper_riferimento_id_richiesta
     And request read("recupero-risposta-no-correlation.xml")
@@ -367,6 +367,6 @@ Scenario: Test iniezione header soap per mezzo del parametro query o header http
     When method post
     Then status 200
 
-    * call check_traccia_risposta ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+    * call check_traccia_risposta ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
 

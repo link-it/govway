@@ -19,7 +19,7 @@ When method post
 Then status 200
 And match response == resp
 
-* call check_traccia ({ fruizione_tid: responseHeaders['GovWay-Transaction-ID'][0], erogazione_tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0] })
+* call check_traccia ({ fruizione_tid: karate.response.header('GovWay-Transaction-ID'), erogazione_tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID') })
 
 Scenario: IDAC02 Autenticazione Client Assente
 
@@ -69,5 +69,5 @@ And match /Envelope/Body/Fault/Detail == detail_error
 ]
 """
 
-* def result = get_traccia(responseHeaders['GovWay-Transaction-ID'][0]) 
+* def result = get_traccia(karate.response.header('GovWay-Transaction-ID')) 
 * match result contains deep traccia_to_match

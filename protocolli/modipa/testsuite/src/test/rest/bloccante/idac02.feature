@@ -18,7 +18,7 @@ When method post
 Then status 200
 And match response == resp
 
-* call check_traccia ({ fruizione_tid: responseHeaders['GovWay-Transaction-ID'][0], erogazione_tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0] })
+* call check_traccia ({ fruizione_tid: karate.response.header('GovWay-Transaction-ID'), erogazione_tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID') })
 
 
 @autenticazione-client-assente
@@ -43,7 +43,7 @@ Then status 401
     { name: 'ProfiloSicurezzaCanale', value: 'IDAC02' }
 ]
 """
-* def result = get_traccia(responseHeaders['GovWay-Transaction-ID'][0], 'Richiesta') 
+* def result = get_traccia(karate.response.header('GovWay-Transaction-ID'), 'Richiesta') 
 * match result contains deep traccia_to_match
 
 * def traccia_to_match = 
@@ -53,7 +53,7 @@ Then status 401
     { name: 'ProfiloSicurezzaCanale', value: 'IDAC02' }
 ]
 """
-* def result = get_traccia(responseHeaders['GovWay-Transaction-ID'][0], 'Risposta') 
+* def result = get_traccia(karate.response.header('GovWay-Transaction-ID'), 'Risposta') 
 * match result contains deep traccia_to_match
 
 
@@ -70,5 +70,5 @@ When method post
 Then status 200
 And match response == resp
 
-* call check_traccia ({ fruizione_tid: responseHeaders['GovWay-Transaction-ID'][0], erogazione_tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0] })
+* call check_traccia ({ fruizione_tid: karate.response.header('GovWay-Transaction-ID'), erogazione_tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID') })
 

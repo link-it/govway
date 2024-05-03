@@ -20,4 +20,4 @@ When method post
 Then status 200
 And match response == resp
 
-* call check_traccia ({ fruizione_tid: responseHeaders['GovWay-Transaction-ID'][0], erogazione_tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0] })    
+* call check_traccia ({ fruizione_tid: karate.response.header('GovWay-Transaction-ID'), erogazione_tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID') })    

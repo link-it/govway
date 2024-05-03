@@ -65,15 +65,15 @@ And match response == read("response.xml")
 
 * def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: x509sub_client1, profilo_sicurezza: "IDAS0302", other_checks: checks_richiesta })
 * call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: x509sub_server, profilo_sicurezza: "IDAS0302", other_checks: checks_risposta, requestMessageId:client_request_id })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: x509sub_client1, profilo_sicurezza: "IDAS0302", other_checks: checks_richiesta })
 * call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: x509sub_server, profilo_sicurezza: "IDAS0302", other_checks: checks_risposta, requestMessageId:client_request_id })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_request_id
 
 
@@ -227,9 +227,9 @@ When method post
 Then status 200
 And match response == read("response.xml")
 
-* def client_token_header = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+* def client_token_header = karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token')
 
-* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def client_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
 * def jti_token = get client_token $.payload.jti
 
 
@@ -240,11 +240,11 @@ And match response == read("response.xml")
 
 # Verifico che l'identificativo utilizzato sia quello di Authorization, per l'id della busta
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_id_messaggio ({ tid: tid, tipo: 'Richiesta', id_messaggio: jti_token })
 * call check_traccia_oauth ({ tid: tid, tipo: 'Richiesta', client_request_id: jti_token, profilo_sicurezza: 'IDAS0302' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_id_messaggio ({ tid: tid, tipo: 'Richiesta', id_messaggio: jti_token })
 * call check_traccia_oauth ({ tid: tid, tipo: 'Richiesta', client_request_id: jti_token, profilo_sicurezza: 'IDAS0302' })
 
@@ -320,15 +320,15 @@ And match response == read("response.xml")
 
 * def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleModIClient1HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud' })
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServerHSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud', requestMessageId:client_request_id })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleModIClient1HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud' })
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServerHSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud', requestMessageId:client_request_id })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_request_id
 
 
@@ -355,15 +355,15 @@ And match response == read("response.xml")
 
 * def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleModIClient2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud' })
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServerHSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud', requestMessageId:client_request_id })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleModIClient2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud' })
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServerHSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud', requestMessageId:client_request_id })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_request_id
 
 
@@ -391,15 +391,15 @@ And match response == read("response.xml")
 
 * def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleModIClient3HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud' })
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud', requestMessageId:client_request_id })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleModIClient3HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud' })
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud', requestMessageId:client_request_id })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_request_id
 
 
@@ -424,15 +424,15 @@ And match response == read("response.xml")
 
 * def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleModIClient1HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud' })
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServerHSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud', requestMessageId:client_request_id })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleModIClient1HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud' })
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServerHSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud', requestMessageId:client_request_id })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_request_id
 
 

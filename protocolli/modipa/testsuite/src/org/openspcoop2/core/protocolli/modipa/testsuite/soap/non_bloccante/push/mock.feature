@@ -5,9 +5,7 @@ Background:
     * def isTest =
     """
     function(id) {
-        return karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]") == id ||
-               karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id ||
-               karate.get("requestHeaders['govway-testsuite-test-id'][0]") == id
+        return karate.get("karate.request.header('GovWay-TestSuite-Test-Id')") == id
     }
     """
 
@@ -16,7 +14,7 @@ Background:
     function() { 
         return {
             'Content-type': "application/soap+xml",
-            'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("requestHeaders['GovWay-Transaction-ID'][0]")
+            'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("karate.request.header('GovWay-Transaction-ID')")
         }
     }
     """

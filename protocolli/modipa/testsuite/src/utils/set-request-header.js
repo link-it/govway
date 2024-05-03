@@ -1,7 +1,7 @@
 function(headerName,value) {
-   var ret = karate.get("requestHeaders['"+headerName+"']")
+   var ret = karate.get("karate.request.header('"+headerName+"')")
    if (!ret) {
-      ret = karate.get("requestHeaders['"+karate.lowerCase(headerName)+"']")
+      ret = karate.get("karate.request.header('"+karate.lowerCase(headerName)+"')")
    }
    if (ret) {
       ret[0]=value

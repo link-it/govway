@@ -33,8 +33,8 @@ Scenario: Richiesta applicativa senza X-Correlation-ID nella risposta
     And match header GovWay-Transaction-ErrorType == 'InvalidResponse'
 
 
-    * call check_traccia_richiesta ({tid: responseHeaders['GovWay-Transaction-ID'][0]})
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: null })
+    * call check_traccia_richiesta ({tid: karate.response.header('GovWay-Transaction-ID')})
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: null })
 
 # In questo caso l'erogazione aggiunge automaticamente lo header
 # quindi ha senso testare solo la fruizione.
@@ -49,8 +49,8 @@ Scenario: Richiesta applicativa senza X-Correlation-ID nella risposta con valida
     And match response == problem
     And match header GovWay-Transaction-ErrorType == 'InvalidResponse'
 
-    * call check_traccia_richiesta ({tid: responseHeaders['GovWay-Transaction-ID'][0]})
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: null })
+    * call check_traccia_richiesta ({tid: karate.response.header('GovWay-Transaction-ID')})
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: null })
 
 
 @no-correlation-in-soap-header-fruizione
@@ -87,8 +87,8 @@ Scenario: Testa che l'erogazione si arrabbi se non è presente lo header soap X-
 
     
     # Invece l'erogazione segna la transazione ma non scrive il correlation ID
-    * call check_traccia_richiesta_stato_no_cid ({tid: responseHeaders['GovWay-Transaction-ID'][0] })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: null })
+    * call check_traccia_richiesta_stato_no_cid ({tid: karate.response.header('GovWay-Transaction-ID') })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: null })
 
     Given url url_erogazione
     And request read("recupero-risposta-no-correlation.xml")
@@ -99,8 +99,8 @@ Scenario: Testa che l'erogazione si arrabbi se non è presente lo header soap X-
     And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
 
     
-    * call check_traccia_risposta_no_cid ({tid: responseHeaders['GovWay-Transaction-ID'][0]  })
-    * call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: null })
+    * call check_traccia_risposta_no_cid ({tid: karate.response.header('GovWay-Transaction-ID')  })
+    * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: null })
 
 
 

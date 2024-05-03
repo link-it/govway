@@ -13,8 +13,12 @@ Background:
     * def encode_base64_from_bytes = read('classpath:utils/encode-base64-from-bytes.js')
     * def no_key_base64 = encode_base64('KEY_UNDEFINED');
 
-    * def get_id_by_credenziale = read('classpath:utils/credenziale_mittente.js')
-    * def get_credenziale_by_refid = read('classpath:utils/credenziale_mittente.js')
+    * def get_id_by_credenziale = read('classpath:utils/get_id_by_credenziale.js')
+    * def get_credenziale_by_refid = read('classpath:utils/get_credenziale_by_refid.js')
+    * def get_credenziale_by_refid_greather_then_id = read('classpath:utils/get_credenziale_by_refid_greather_then_id.js')
+    * def get_remote_store_key_client_id_prefix = read('classpath:utils/get_remote_store_key_client_id_prefix.js')
+    
+    
 
     * def credenziale_max_feature = callonce read('classpath:utils/credenziale_mittente_max.feature')
 
@@ -47,8 +51,8 @@ And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDAuth/v1'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0001'
 
 # controlli cache pdnd
@@ -98,8 +102,8 @@ And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDAuth/v1'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0001'
 
 # controlli cache pdnd
@@ -168,8 +172,8 @@ And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDIntegrity/v1'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0002'
 
 # controlli cache pdnd
@@ -234,8 +238,8 @@ And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDIntegrity/v1'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0002'
 
 # controlli cache pdnd
@@ -326,8 +330,8 @@ And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDIntegrity/v1'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0003'
 
 # controlli cache pdnd
@@ -381,8 +385,8 @@ And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDIntegrity/v1'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0003'
 
 # controlli cache pdnd
@@ -451,8 +455,8 @@ And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDIntegrity/v1'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0003'
 
 # controlli cache pdnd
@@ -521,8 +525,8 @@ And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDIntegrity/v1'
 When method post
 Then status 200
 And match response == read('request.json')
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
 And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0003'
 
 # controlli cache pdnd
@@ -608,9 +612,9 @@ And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01Exampl
 And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDAuth/v1'
 When method post
 Then status 401
-And match header Authorization == '#notpresent'
-And match header Agid-JWT-Signature == '#notpresent'
-And match header PDND-ExternalId == '#notpresent'
+And match header Authorization == null
+And match header Agid-JWT-Signature == null
+And match header PDND-ExternalId == null
 
 
 

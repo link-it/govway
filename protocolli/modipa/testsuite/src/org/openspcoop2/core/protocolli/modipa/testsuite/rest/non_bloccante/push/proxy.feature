@@ -16,9 +16,9 @@ Background:
     * def isTest =
     """
     function(id) {
-        return karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]") == id ||
-               karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id ||
-               karate.get("requestHeaders['govway-testsuite-test-id'][0]") == id
+        return karate.get("karate.request.header('GovWay-TestSuite-Test-Id')") == id ||
+               karate.get("karate.request.header('GovWay-TestSuite-Test-ID')") == id ||
+               karate.get("karate.request.header('govway-testsuite-test-id')") == id
     }
     """
 
@@ -29,7 +29,7 @@ Background:
 Scenario: isTest('test-ok-richiesta-client')
 
 # Verifico che la fruizione abbia aggiornato lo header X-Reply-To con la url invocazione dell'erogazione lato client
-* match requestHeaders['X-ReplyTo'][0] == govway_base_path + "/rest/in/DemoSoggettoFruitore/RestNonBlockingPushClient/v1"
+* match karate.request.header('X-ReplyTo') == govway_base_path + "/rest/in/DemoSoggettoFruitore/RestNonBlockingPushClient/v1"
 * karate.proceed(url_erogazione_server_validazione)
 
 Scenario: isTest('test-ok-risposta-server')
@@ -43,7 +43,7 @@ Scenario: isTest('test-ok-risposta-server')
 Scenario: isTest('correlation-id-added-by-server')
 
 * karate.proceed(url_erogazione_server_validazione)
-* match responseHeaders['X-Correlation-ID'][0] == responseHeaders['GovWay-Transaction-ID'][0]
+* match karate.response.header('X-Correlation-ID') == karate.response.header('GovWay-Transaction-ID')
 
 
 # CorrelationID aggiunto dalla fruizione server sfruttando
@@ -53,14 +53,14 @@ Scenario: isTest('correlation-id-added-by-server')
 Scenario: isTest('iniezione-header-id-collaborazione')
 
 
-* match requestHeaders['X-Correlation-ID'][0] != null
-* match requestHeaders['X-Correlation-ID'][0] == requestHeaders['GovWay-Conversation-ID'][0]
+* match karate.request.header('X-Correlation-ID') != null
+* match karate.request.header('X-Correlation-ID') == karate.request.header('GovWay-Conversation-ID')
 * karate.proceed(url_erogazione_client_helper_collaborazione)
 
 Scenario: isTest('iniezione-header-id-collaborazione-query')
 
-* match requestHeaders['X-Correlation-ID'][0] != null
-* match requestHeaders['X-Correlation-ID'][0] == task_id
+* match karate.request.header('X-Correlation-ID') != null
+* match karate.request.header('X-Correlation-ID') == task_id
 * karate.proceed(url_erogazione_client_helper_collaborazione)
 
 
@@ -70,14 +70,14 @@ Scenario: isTest('iniezione-header-id-collaborazione-query')
 
 Scenario: isTest('iniezione-header-riferimento-id-richiesta')
 
-* match requestHeaders['X-Correlation-ID'][0] != null
-* match requestHeaders['X-Correlation-ID'][0] == requestHeaders['GovWay-Relates-To'][0]
+* match karate.request.header('X-Correlation-ID') != null
+* match karate.request.header('X-Correlation-ID') == karate.request.header('GovWay-Relates-To')
 * karate.proceed(url_erogazione_client_helper_riferimento)
 
 Scenario: isTest('iniezione-header-riferimento-id-richiesta-query')
 
-* match requestHeaders['X-Correlation-ID'][0] != null
-* match requestHeaders['X-Correlation-ID'][0] == task_id
+* match karate.request.header('X-Correlation-ID') != null
+* match karate.request.header('X-Correlation-ID') == task_id
 * karate.proceed(url_erogazione_client_helper_riferimento)
 
 

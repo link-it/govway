@@ -35,11 +35,11 @@ Then status 200
 And match response == read('client-request-response.xml')
 And match header GovWay-Conversation-ID == task_id
 
-* call check_traccia_richiesta ({tid: responseHeaders['GovWay-Transaction-ID'][0], reply_to: updated_reply_to, cid: task_id })
-* call check_traccia_richiesta ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], reply_to: updated_reply_to, cid: task_id })
+* call check_traccia_richiesta ({tid: karate.response.header('GovWay-Transaction-ID'), reply_to: updated_reply_to, cid: task_id })
+* call check_traccia_richiesta ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), reply_to: updated_reply_to, cid: task_id })
 
-* call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
-* call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+* call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
+* call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: task_id })
 
 Given url url_fruizione_server_validazione
 And header GovWay-TestSuite-Test-Id = 'test-ok-risposta-server'
@@ -51,11 +51,11 @@ Then status 200
 And match response == read('server-response-response.xml')
 And match header GovWay-Conversation-ID == task_id
 
-* call check_traccia_risposta ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id, api_correlata: 'SoapNonBlockingPushServer v1' })
-* call check_traccia_risposta ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], cid: task_id, api_correlata: 'SoapNonBlockingPushServer v1' })
+* call check_traccia_risposta ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id, api_correlata: 'SoapNonBlockingPushServer v1' })
+* call check_traccia_risposta ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), cid: task_id, api_correlata: 'SoapNonBlockingPushServer v1' })
 
-* call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
-* call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+* call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
+* call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: task_id })
 
 @correlation-id-added-by-server
 Scenario: L'erogazione del server deve aggiungere lo header X-Correlation-ID se non inserito dal backend
@@ -69,15 +69,15 @@ And header action = url_fruizione_client_validazione
 And request read('client-request.xml')
 When method post
 Then status 200
-And match /Envelope/Header/X-Correlation-ID == responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+And match /Envelope/Header/X-Correlation-ID == karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 
 
-* def task_id = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
-* call check_traccia_richiesta ({tid: responseHeaders['GovWay-Transaction-ID'][0], reply_to: updated_reply_to, cid: task_id })
-* call check_traccia_richiesta ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], reply_to: updated_reply_to, cid: task_id })
+* def task_id = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
+* call check_traccia_richiesta ({tid: karate.response.header('GovWay-Transaction-ID'), reply_to: updated_reply_to, cid: task_id })
+* call check_traccia_richiesta ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), reply_to: updated_reply_to, cid: task_id })
 
-* call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0] })
-* call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0] })
+* call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID') })
+* call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID') })
 
 
 @iniezione-header-id-collaborazione
@@ -96,11 +96,11 @@ Then status 200
 And match response == read('server-response-response.xml')
 And match header GovWay-Conversation-ID == task_id
 
-* call check_traccia_risposta ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id, api_correlata: 'SoapNonBlockingPushServerHelperCollaborazione v1' })
-* call check_traccia_risposta ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], cid: task_id, api_correlata: 'SoapNonBlockingPushServerHelperCollaborazione v1' })
+* call check_traccia_risposta ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id, api_correlata: 'SoapNonBlockingPushServerHelperCollaborazione v1' })
+* call check_traccia_risposta ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), cid: task_id, api_correlata: 'SoapNonBlockingPushServerHelperCollaborazione v1' })
 
-* call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
-* call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+* call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
+* call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: task_id })
 
 Given url url_fruizione_server_helper_collaborazione
 And header GovWay-TestSuite-Test-Id = 'iniezione-header-id-collaborazione-query'
@@ -113,11 +113,11 @@ Then status 200
 And match response == read('server-response-response.xml')
 And match header GovWay-Conversation-ID == task_id
 
-* call check_traccia_risposta ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id, api_correlata: 'SoapNonBlockingPushServerHelperCollaborazione v1' })
-* call check_traccia_risposta ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], cid: task_id, api_correlata: 'SoapNonBlockingPushServerHelperCollaborazione v1' })
+* call check_traccia_risposta ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id, api_correlata: 'SoapNonBlockingPushServerHelperCollaborazione v1' })
+* call check_traccia_risposta ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), cid: task_id, api_correlata: 'SoapNonBlockingPushServerHelperCollaborazione v1' })
 
-* call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
-* call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+* call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
+* call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: task_id })
 
 
 @iniezione-header-riferimento-id-richiesta
@@ -136,11 +136,11 @@ Then status 200
 And match response == read('server-response-response.xml')
 And match header GovWay-Conversation-ID == task_id
 
-* call check_traccia_risposta ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id, api_correlata: 'SoapNonBlockingPushServerHelperRiferimento v1' })
-* call check_traccia_risposta ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], cid: task_id, api_correlata: 'SoapNonBlockingPushServerHelperRiferimento v1' })
+* call check_traccia_risposta ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id, api_correlata: 'SoapNonBlockingPushServerHelperRiferimento v1' })
+* call check_traccia_risposta ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), cid: task_id, api_correlata: 'SoapNonBlockingPushServerHelperRiferimento v1' })
 
-* call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
-* call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+* call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
+* call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: task_id })
 
 Given url url_fruizione_server_helper_riferimento
 And header GovWay-TestSuite-Test-Id = 'iniezione-header-riferimento-id-richiesta-query'
@@ -153,11 +153,11 @@ Then status 200
 And match response == read('server-response-response.xml')
 And match header GovWay-Conversation-ID == task_id
 
-* call check_traccia_risposta ({tid: responseHeaders['GovWay-Transaction-ID'][0], cid: task_id, api_correlata: 'SoapNonBlockingPushServerHelperRiferimento v1' })
-* call check_traccia_risposta ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], cid: task_id, api_correlata: 'SoapNonBlockingPushServerHelperRiferimento v1' })
+* call check_traccia_risposta ({tid: karate.response.header('GovWay-Transaction-ID'), cid: task_id, api_correlata: 'SoapNonBlockingPushServerHelperRiferimento v1' })
+* call check_traccia_risposta ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), cid: task_id, api_correlata: 'SoapNonBlockingPushServerHelperRiferimento v1' })
 
-* call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: task_id })
-* call check_id_collaborazione ({tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0], id_collaborazione: task_id })
+* call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
+* call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: task_id })
 
 
 @no-correlation-id-in-client-request-response
@@ -187,11 +187,11 @@ And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRespons
     { name: 'ProfiloInterazioneAsincrona-ReplyTo', value: updated_reply_to }
 ])
 """
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * def result = get_traccia(tid, 'Richiesta') 
 * match result contains deep traccia_to_match
 
-* call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: null })
+* call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: null })
 
 
 @no-correlation-id-in-server-response-request
@@ -210,8 +210,8 @@ And match response == read('error-bodies/no-correlation-id-in-server-response-re
 And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
 
 
-* call check_traccia_risposta_no_cid ({tid: responseHeaders['GovWay-Transaction-ID'][0], api_correlata: 'SoapNonBlockingPushServerNoValidazione v1' })
-* call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: null })
+* call check_traccia_risposta_no_cid ({tid: karate.response.header('GovWay-Transaction-ID'), api_correlata: 'SoapNonBlockingPushServerNoValidazione v1' })
+* call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: null })
 
 * def url_fruizione_server_no_validazione = govway_base_path + "/soap/out/DemoSoggettoErogatore/DemoSoggettoFruitore/SoapNonBlockingPushClientNoValidazione/v1"
 
@@ -224,7 +224,7 @@ When method post
 Then status 500
 And match response == read('error-bodies/no-correlation-id-in-server-response-request-fruizione.xml')
 
-* call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: null })
+* call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: null })
 
 
 @no-x-reply-to-in-client-request
@@ -242,5 +242,5 @@ And match response == read('error-bodies/no-x-reply-to-in-client-request.xml')
 And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
 
 
-* call check_traccia_richiesta_no_reply_to ({tid: responseHeaders['GovWay-Transaction-ID'][0] })
-* call check_id_collaborazione ({tid: responseHeaders['GovWay-Transaction-ID'][0], id_collaborazione: null })
+* call check_traccia_richiesta_no_reply_to ({tid: karate.response.header('GovWay-Transaction-ID') })
+* call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: null })

@@ -8,9 +8,7 @@ Background:
     * def isTest =
     """
     function(id) {
-        return karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]") == id ||
-               karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id ||
-               karate.get("requestHeaders['govway-testsuite-test-id'][0]") == id
+        return karate.get("karate.request.header('GovWay-TestSuite-Test-Id')") == id
     }
     """
 
@@ -41,8 +39,8 @@ Scenario: isTest("generazione-header-correlazione")
 
 * karate.proceed(url_validazione)
 
-* match /Envelope/Header/X-Correlation-ID == responseHeaders['GovWay-Transaction-ID'][0]
-* match responseHeaders['GovWay-Transaction-ID'][0] == responseHeaders['GovWay-Conversation-ID'][0]
+* match /Envelope/Header/X-Correlation-ID == karate.response.header('GovWay-Transaction-ID')
+* match karate.response.header('GovWay-Transaction-ID') == karate.response.header('GovWay-Conversation-ID')
 
 
 # GENERAZIONE HEADER GovWay-Conversation-ID DA PARTE DELL'EROGAZIONE

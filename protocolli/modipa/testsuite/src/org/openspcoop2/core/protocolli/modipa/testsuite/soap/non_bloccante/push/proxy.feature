@@ -16,9 +16,7 @@ Background:
     * def isTest =
     """
     function(id) {
-        return karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]") == id ||
-               karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id ||
-               karate.get("requestHeaders['govway-testsuite-test-id'][0]") == id
+        return karate.get("karate.request.header('GovWay-TestSuite-Test-Id')") == id
     }
     """
 
@@ -36,13 +34,13 @@ Scenario: isTest('test-ok-richiesta-client')
 
     * karate.proceed(url_erogazione_server_validazione)
 
-    * match responseHeaders['GovWay-Conversation-ID'][0] == task_id
+    * match karate.response.header('GovWay-Conversation-ID') == task_id
 
 Scenario: isTest('test-ok-risposta-server')
 
     * karate.proceed(url_erogazione_client_validazione)
 
-    * match responseHeaders['GovWay-Conversation-ID'][0] == task_id
+    * match karate.response.header('GovWay-Conversation-ID') == task_id
 
 
 # ID Correlazione aggiunto dall'erogazione del server
@@ -58,7 +56,7 @@ Scenario: isTest('correlation-id-added-by-server')
 
 Scenario: isTest('iniezione-header-id-collaborazione')
 
-    * match request/Envelope/Header/X-Correlation-ID == requestHeaders['GovWay-Conversation-ID'][0]
+    * match request/Envelope/Header/X-Correlation-ID == karate.request.header('GovWay-Conversation-ID')
     * karate.proceed(url_erogazione_client_helper_collaborazione)
 
 Scenario: isTest('iniezione-header-id-collaborazione-query')
@@ -73,7 +71,7 @@ Scenario: isTest('iniezione-header-id-collaborazione-query')
 
 Scenario: isTest('iniezione-header-riferimento-id-richiesta')
 
-* match request/Envelope/Header/X-Correlation-ID == requestHeaders['GovWay-Relates-To'][0]
+* match request/Envelope/Header/X-Correlation-ID == karate.request.header('GovWay-Relates-To')
 * karate.proceed(url_erogazione_client_helper_riferimento)
 
 Scenario: isTest('iniezione-header-riferimento-id-richiesta-query')

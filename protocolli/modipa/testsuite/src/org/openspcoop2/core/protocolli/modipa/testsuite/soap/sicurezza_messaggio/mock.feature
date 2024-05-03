@@ -5,9 +5,7 @@ Background:
     * def isTest =
     """
     function(id) {
-        return karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]") == id ||
-               karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id ||
-               karate.get("requestHeaders['govway-testsuite-test-id'][0]") == id
+        return karate.get("karate.request.header('GovWay-TestSuite-Test-Id')") == id
     }
     """
 
@@ -18,7 +16,7 @@ Background:
     function() { 
         return {
             'Content-type': "application/soap+xml",
-            'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("requestHeaders['GovWay-Transaction-ID'][0]")
+            'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("karate.request.header('GovWay-Transaction-ID')")
         }
     }
     """
@@ -152,7 +150,7 @@ Scenario: isTest('idas03-token-richiesta')
 Scenario: isTest('idas03-token-risposta')
     
     * def c = request
-    * match c/Envelope/Header == '#notpresent'
+    * match c/Envelope/Header == null
 
     * def responseStatus = 200
     * def response = read('classpath:test/soap/sicurezza-messaggio/response.xml')
@@ -201,23 +199,23 @@ Scenario: isTest('manomissione-payload-risposta-idas0302') ||
 Scenario: isTest('audit-rest-jwk-01')  || 
 		isTest('audit-rest-pdnd-02') 
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-UserID'][0] == 'utente-token'
-    * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token'
-    * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-TrackingEvidence') == null
+    * match karate.request.header('GovWay-Audit-UserID') == 'utente-token'
+    * match karate.request.header('GovWay-Audit-UserLocation') == 'ip-utente-token'
+    * match karate.request.header('GovWay-Audit-LoA') == 'livello-autenticazione-utente-token'
     * def responseStatus = 200
     * def response = read('classpath:test/soap/sicurezza-messaggio/response.xml')
 
 Scenario: isTest('audit-rest-x509-01') ||
 		isTest('audit-rest-x509-0301')
 
-    * match requestHeaders['Authorization'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
-    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
-    * match requestHeaders['GovWay-Audit-UserID'][0] == 'utente-token-ridefinito'
-    * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token-ridefinito'
-    * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token-ridefinito'
+    * match karate.request.header('Authorization') == null
+    * match karate.request.header('Agid-JWT-Signature') == null
+    * match karate.request.header('Agid-JWT-TrackingEvidence') == null
+    * match karate.request.header('GovWay-Audit-UserID') == 'utente-token-ridefinito'
+    * match karate.request.header('GovWay-Audit-UserLocation') == 'ip-utente-token-ridefinito'
+    * match karate.request.header('GovWay-Audit-LoA') == 'livello-autenticazione-utente-token-ridefinito'
     * def responseStatus = 200
     * def response = read('classpath:test/soap/sicurezza-messaggio/response.xml')
 

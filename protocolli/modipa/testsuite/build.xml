@@ -21,7 +21,34 @@
 			<include name="picocli-4.2.0.jar"/>
 			<include name="logback-*.jar"/>
 			<include name="spring-jdbc-*.jar"/>
+                        <include name="thymeleaf-*.jar"/>
+                        <include name="attoparser-*.jar"/>
+			<include name="unbescape-*.jar"/>
+                        <include name="postgresql-*.jar"/>
+                        <include name="antlr4-runtime-*.jar"/>
+                        <include name="netty-transport-*.jar"/>
+                        <include name="netty-common-*.jar"/>
+                        <include name="micrometer-core-*.jar"/>
+                        <include name="micrometer-commons-*.jar"/>
+                        <include name="httpclient-*.jar"/>
+			<include name="graal-sdk-*"/>
+                        <include name="truffle-api-*"/>
+                        <include name="httpcore-*.jar"/>
+                        <include name="reactive-streams-*.jar"/>
+                        <include name="netty-codec-http2-*.jar"/>
+			<include name="netty-codec-*.jar"/>
+                        <include name="netty-transport-native-unix-common-*.jar"/>
+                        <include name="netty-handler-*.jar"/>
+                        <include name="netty-buffer-4.1.*.jar"/>
+			<include name="armeria-*.jar"/>
+                        <include name="netty-codec-http-*.jar"/>
+			<include name="js-*"/>
 		</fileset>
+
+		<fileset dir="${required_lib}/jackson" >
+                        <include name="*.jar"/>
+                </fileset>
+
 		<fileset dir="${dir_jdbc}" >
 			<include name="*.jar"/>
 		</fileset>
@@ -40,6 +67,8 @@
 		<fileset dir="${required_lib}/spring" >
 			<include name="*.jar"/>
 		</fileset>
+
+
                 <fileset dir="${required_lib}/shared" >
                         <include name="snakeyaml-2.1-gov4j-1.jar"/>
 			<include name="joda-time-2.12.5.jar"/>
@@ -50,6 +79,12 @@
                 <fileset dir="${openspcoop2.dist}" >
                         <include name="*.jar"/>
                 </fileset>
+
+<!-- prese dal build di java17 -->
+		<fileset dir="${required_lib}/swagger" >
+                        <include name="classgraph-*.jar"/>
+                                                <include name="*.jar"/>
+                </fileset> 
 	</path> 
 
 	<property name="src_testsuite" location="src" />

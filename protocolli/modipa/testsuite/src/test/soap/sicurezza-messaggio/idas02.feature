@@ -40,15 +40,15 @@ And match response == read("response.xml")
 
 * def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: client_x509_sub, profilo_sicurezza: 'IDAS02' })
 * call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02', requestMessageId:client_request_id })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: client_x509_sub, profilo_sicurezza: 'IDAS02' })
 * call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02', requestMessageId:client_request_id })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_request_id
 
 
@@ -73,15 +73,15 @@ And match response == read("responseConHeader.xml")
 
 * def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: client_x509_sub, profilo_sicurezza: 'IDAS02' })
 * call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02', requestMessageId:client_request_id })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: client_x509_sub, profilo_sicurezza: 'IDAS02' })
 * call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02', requestMessageId:client_request_id })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_request_id
 
 
@@ -106,15 +106,15 @@ And match response == read("responseConHeader.xml")
 
 * def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: client_x509_sub, profilo_sicurezza: 'IDAS02' })
 * call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02', requestMessageId:client_request_id })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: client_x509_sub, profilo_sicurezza: 'IDAS02' })
 * call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02', requestMessageId:client_request_id })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_request_id
 
 
@@ -202,19 +202,19 @@ When method post
 Then status 200
 And match response == read("response.xml")
 
-* def client_token_header = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+* def client_token_header = karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token')
 
-* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def client_token = decode_token(karate.response.header('GovWay-TestSuite-GovWay-Client-Authorization-Token'), "Bearer")
 * def jti_token = get client_token $.payload.jti
 
 
 # Verifico che l'identificativo utilizzato sia quello di Authorization, per l'id della busta
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia_id_messaggio ({ tid: tid, tipo: 'Richiesta', id_messaggio: jti_token })
 * call check_traccia_oauth ({ tid: tid, tipo: 'Richiesta', client_request_id: jti_token, profilo_sicurezza: 'IDAS02' })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia_id_messaggio ({ tid: tid, tipo: 'Richiesta', id_messaggio: jti_token })
 * call check_traccia_oauth ({ tid: tid, tipo: 'Richiesta', client_request_id: jti_token, profilo_sicurezza: 'IDAS02' })
 
@@ -262,13 +262,13 @@ And match response == read("response.xml")
 
 * def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
 
-* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-Transaction-ID')
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: client_x509_sub, profilo_sicurezza: 'IDAS02' })
 * call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02', requestMessageId:client_request_id })
 
-* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* def tid = karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID')
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: client_x509_sub, profilo_sicurezza: 'IDAS02' })
 * call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02', requestMessageId:client_request_id })
 
-* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* def tidMessaggio = karate.response.header('GovWay-Message-ID')
 * match tidMessaggio == client_request_id

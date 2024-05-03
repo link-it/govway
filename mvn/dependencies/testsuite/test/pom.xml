@@ -48,7 +48,91 @@
 	</properties>
 
 	<dependencies>
-	
+
+
+
+
+	<dependency>
+    		<groupId>com.linecorp.armeria</groupId>
+    		<artifactId>armeria</artifactId>
+    		<version>1.28.1</version>
+              		<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+    			<scope>test</scope>
+
+		</dependency>
+
+
+
+	<dependency>
+    		<groupId>org.reactivestreams</groupId>
+    		<artifactId>reactive-streams</artifactId>
+    		<version>1.0.4</version>
+	</dependency>
+
+
+	<dependency>
+   		 <groupId>io.micrometer</groupId>
+   		 <artifactId>micrometer-core</artifactId>
+   		 <version>1.12.5</version>
+                  	<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+    			<scope>test</scope>
+		</dependency>
+
+	<dependency>
+    		<groupId>io.micrometer</groupId>
+   		<artifactId>micrometer-commons</artifactId>
+    		<version>1.12.5</version>
+                 	<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+    		<scope>test</scope>
+	</dependency>
+
+
+
+
+	<dependency>
+    		<groupId>io.netty</groupId>
+    		<artifactId>netty-transport-native-unix-common</artifactId>
+    		<version>4.1.108.Final</version>
+              		<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+    		<scope>test</scope>
+	</dependency>
+
+
+	<dependency>
+    		<groupId>io.netty</groupId>
+    		<artifactId>netty-transport</artifactId>
+	   	<version>${netty.version}</version>
+             	     		<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+    		<scope>test</scope>
+	</dependency>
+
+
+
 	
 	<dependency>
    	 <groupId>org.postgresql</groupId>
@@ -497,6 +581,31 @@
            		</exclusions>
 		</dependency>
 		
+		<dependency>
+    <groupId>io.netty</groupId>
+    <artifactId>netty-codec-http2</artifactId>
+    <version>4.1.109.Final</version>
+            		<exclusions>
+                			<exclusion>
+              				<groupId>*</groupId>
+                   			 <artifactId>*</artifactId>
+          			</exclusion>
+           		</exclusions>
+</dependency>
+
+<dependency>
+    <groupId>io.netty</groupId>
+    <artifactId>netty-handler</artifactId>
+    <version>${netty.version}</version>
+                		<exclusions>
+                			<exclusion>
+              				<groupId>*</groupId>
+                   			 <artifactId>*</artifactId>
+          			</exclusion>
+           		</exclusions>
+</dependency>
+
+
 		
 		<dependency>
 			<groupId>io.netty</groupId>
