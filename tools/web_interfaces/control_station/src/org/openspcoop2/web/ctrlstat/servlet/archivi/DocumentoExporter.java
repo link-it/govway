@@ -74,6 +74,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.json.YAMLUtils;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.wsdl.WSDLUtilities;
 import org.openspcoop2.utils.xml.XMLException;
@@ -342,6 +343,7 @@ public class DocumentoExporter extends HttpServlet {
 						ProtocolProperty bp = ppCore.getProtocolPropertyBinaria(idAllegatoInt);
 						fileName = bp.getFile();
 						docBytes = bp.getByteFile();
+						docBytes = archiviCore.unwrap(docBytes); // se cifrato, viene decifrato
 					}else{
 						throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non gestito per il tipo archivio ["+tipoDocumento+"]");
 					}
@@ -1072,7 +1074,7 @@ public class DocumentoExporter extends HttpServlet {
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, fileName);
 
-			if(docBytes!=null) {
+			if(docBytes!=null) {				
 				OutputStream out = response.getOutputStream();	
 				out.write(docBytes);
 				out.flush();
