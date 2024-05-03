@@ -158,6 +158,9 @@
 			// Estrai il nome del file dall'header Content-Disposition
             var filename = getFilenameFromContentDisposition(jqXHR);
             
+            // Visualizza il contenuto di data nella console
+			console.log('Contenuto di data:', data);
+            
             // Create a Blob from the response
             var blob = new Blob([data], { type: jqXHR.getResponseHeader('Content-Type') });
 
@@ -232,6 +235,12 @@ function saveBlobAsFile(blob, filename) {
 			nascondiAjaxStatus();
 		},
 		error: function(data, textStatus, jqXHR){
+			// visualizzare errore ricevuto nel campo previsto
+			$("#visualizzaInformazioniCifrateModalHeaderDxRiga1Span").html(data.responseText);
+			
+			// visualizzo il dialog
+			$("#visualizzaInformazioniCifrateModalHeader").show();
+			
 			nascondiAjaxStatus();
 		}
 	});
@@ -271,6 +280,12 @@ function saveBlobAsFile(blob, filename) {
             }
         },
         error: function(data, textStatus, jqXHR) {
+			// visualizzare errore ricevuto nel campo previsto
+			$("#alertInformazioniCifrateModalHeaderDxRiga1Span").html(data.responseText);
+			
+			// visualizzo il dialog
+			$("#alertInformazioniCifrateModalHeader").show();
+			
             // Nasconde lo stato AJAX in caso di errore
             nascondiAjaxStatus();
         }

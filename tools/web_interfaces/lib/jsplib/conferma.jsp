@@ -388,3 +388,70 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 }
 %>
 
+<div id="dataElementInfoModal" title="Info">
+	<div id="dataElementInfoModalBody" class="contenutoModal"></div>
+</div>
+<div id="visualizzaInformazioniCifrateModal" title="Visualizza Informazioni Cifrate">
+	<div id="visualizzaInformazioniCifrateModalHeader" class="finestraDialogModalHeader">
+  		<div id="visualizzaInformazioniCifrateModalHeaderSx" class="finestraDialogModalHeaderSx">
+	  		<span class="icon-box">
+				<i class="material-icons md-48"><%= Costanti.ICON_DIALOG_HEADER %></i>
+			</span>
+		</div>
+		<div id="visualizzaInformazioniCifrateModalHeaderDx" class="finestraDialogModalHeaderDx">
+  			<div id="visualizzaInformazioniCifrateModalHeaderDxRiga1" class="finestraDialogModalHeaderDxRiga1">
+	  			<span class="finestraDialogModalHeaderDxRiga1" id="visualizzaInformazioniCifrateModalHeaderDxRiga1Span"></span>	
+			</div>
+		</div>
+	</div>
+	<div id="visualizzaInformazioniCifrateModalBody" class="contenutoModal">
+		<div class="propDialog">
+			<div class="txtA_div_propDialog_dec">
+				<textarea id="txtA_ne_dec" readonly rows="5" cols="" name="txtA_ne_dec" class="inputLinkLong textAreaDec"></textarea>
+			 	<div class="iconCopyBox" id="divIconInfo_dec">
+	      			<input type="hidden" name="__i_hidden_value_iconCopy_dec" id="hidden_value_iconCopy_dec"  value=""/>
+			      	<span class="spanIconCopyBox" title="Copia">
+						<i class="material-icons md-18" id="iconCopy_dec"><%= Costanti.ICON_COPY %></i>
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="propDialog">
+		<div id="visualizzaInformazioniCifrateModalBodyNota" class="finestraDialogModalNota">
+			<span class="finestraDialogModalBodyNota" id="visualizzaInformazioniCifrateModalBodyNotaSpan"></span>
+		</div>
+	</div>
+</div>
+<div id="alertInformazioniCifrateModal" title="Attenzione">
+	<div id="alertInformazioniCifrateModalHeader" class="finestraDialogModalHeader">
+  		<div id="alertInformazioniCifrateModalHeaderSx" class="finestraDialogModalHeaderSx">
+	  		<span class="icon-box">
+				<i class="material-icons md-48"><%= Costanti.ICON_DIALOG_HEADER %></i>
+			</span>
+		</div>
+		<div id="alertInformazioniCifrateModalHeaderDx" class="finestraDialogModalHeaderDx">
+  			<div id="alertInformazioniCifrateModalHeaderDxRiga1" class="finestraDialogModalHeaderDxRiga1">
+	  			<span class="finestraDialogModalHeaderDxRiga1" id="alertInformazioniCifrateModalHeaderDxRiga1Span"></span>	
+			</div>
+		</div>
+	</div>
+	<div id="alertInformazioniCifrateModalBody" class="contenutoModal">
+		<div class="propDialog">
+			<div id="alertInformazioniCifrateModalBodyNota" class="finestraDialogModalNota">
+				<span class="finestraDialogModalBodyNota" id="alertInformazioniCifrateModalBodyNotaSpan"></span>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="downloadInformazioniCifrateModal" title="Attenzione">
+	<div id="downloadInformazioniCifrateModalBody" class="contenutoModal">
+		<div class="propDialog">
+			<div id="downloadInformazioniCifrateModalBodyNota" class="finestraDialogModalNota">
+				<span class="finestraDialogModalBodyNota" id="downloadInformazioniCifrateModalBodyNotaSpan"></span>
+			</div>
+		</div>
+	</div>
+</div>
+
+

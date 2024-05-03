@@ -148,6 +148,8 @@ function CheckDati() {
 	function mostraInformazioniCifrateModal(title,body,url,valore){
 		setValoriLock(url,valore);
 		
+		$("#visualizzaInformazioniCifrateModalHeader").hide();
+		
 		$("#txtA_ne_dec").val('');
 		$("#txtA_ne_dec").attr('style','');		
 		$("#iconCopy_dec").hide();
@@ -161,8 +163,9 @@ function CheckDati() {
 	function mostraAlertInformazioniCifrateModal(title,body,url,valore){
 		setValoriLock(url,valore);
 		
+		$("#alertInformazioniCifrateModalHeader").hide();
 		$("#alertInformazioniCifrateModal").prev().children('span').text(title);
-		$("#alertInformazioniCifrateModal").html(body);
+		$("#alertInformazioniCifrateModalBodyNotaSpan").html(body);
 		$("#alertInformazioniCifrateModal").dialog("open");
 	}
 	
@@ -170,7 +173,7 @@ function CheckDati() {
 		setValoriLock(url,'');
 		
 		$("#downloadInformazioniCifrateModal").prev().children('span').text(title);
-		$("#downloadInformazioniCifrateModal").html(body);
+		$("#downloadInformazioniCifrateModalBodyNotaSpan").html(body);
 		$("#downloadInformazioniCifrateModal").next().children('button').text(azione);
 		$("#downloadInformazioniCifrateModal").dialog("open");
 	}
@@ -442,35 +445,6 @@ $(document).ready(function(){
 		<jsp:include page="/jsplib/templateFooter.jsp" flush="true" />
 	</tbody>
 </table>
-<div id="dataElementInfoModal" title="Info">
-	<div id="dataElementInfoModalBody" class="contenutoModal"></div>
-</div>
-<div id="visualizzaInformazioniCifrateModal" title="Visualizza Informazioni Cifrate">
-	<div id="visualizzaInformazioniCifrateModalBody" class="contenutoModal">
-		<div class="propDialog">
-			<div class="txtA_div_propDialog_dec">
-				<textarea id="txtA_ne_dec" readonly rows="5" cols="" name="txtA_ne_dec" class="inputLinkLong textAreaDec"></textarea>
-			 	<div class="iconCopyBox" id="divIconInfo_dec">
-	      			<input type="hidden" name="__i_hidden_value_iconCopy_dec" id="hidden_value_iconCopy_dec"  value=""/>
-			      	<span class="spanIconCopyBox" title="Copia">
-						<i class="material-icons md-18" id="iconCopy_dec"><%= Costanti.ICON_COPY %></i>
-					</span>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="propDialog">
-		<div id="visualizzaInformazioniCifrateModalBodyNota" class="finestraDialogModalNota">
-			<span class="finestraDialogModalBodyNota" id="visualizzaInformazioniCifrateModalBodyNotaSpan"></span>
-		</div>
-	</div>
-</div>
-<div id="alertInformazioniCifrateModal" title="Attenzione">
-	<div id="alertInformazioniCifrateModalBody" class="contenutoModal"></div>
-</div>
-<div id="downloadInformazioniCifrateModal" title="Attenzione">
-	<div id="downloadInformazioniCifrateModalBody" class="contenutoModal"></div>
-</div>
 <jsp:include page="/jsplib/conferma.jsp" flush="true" />
 </body>
 </html>

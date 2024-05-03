@@ -725,9 +725,6 @@ $(document).ready(function(){
  			<span>&Egrave; necessario selezionare almeno 1 elemento.</span>
  		</p>
 	</div>
-	<div id="dataElementInfoModal" title="Info">
-		<div id="dataElementInfoModalBody" class="contenutoModal"></div>
-	</div>
 <jsp:include page="/jsplib/conferma.jsp" flush="true" />
 </body>
 </html>
