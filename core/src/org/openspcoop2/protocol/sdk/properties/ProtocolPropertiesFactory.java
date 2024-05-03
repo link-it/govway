@@ -31,6 +31,8 @@ import org.openspcoop2.protocol.sdk.constants.ConsoleItemValueType;
  * @version $Rev$, $Date$
  */
 public class ProtocolPropertiesFactory {
+	
+	private ProtocolPropertiesFactory() {}
 
 	public static BaseConsoleItem newTitleItem(String id, String label) throws ProtocolException{
 		return new TitleConsoleItem(id, label);
