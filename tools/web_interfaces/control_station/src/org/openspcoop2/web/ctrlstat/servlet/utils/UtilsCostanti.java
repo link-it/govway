@@ -69,4 +69,5 @@ public class UtilsCostanti {
 	
 	
 	public static final String PARAMETRO_SECRET_TO_UNWRAP = "secret";
+	public static final String MESSAGGIO_ERRORE_UNWRAP = "Si &egrave; verificato un errore durante la decodifica. Si prega di riprovare pi&ugrave; tardi.";
 }

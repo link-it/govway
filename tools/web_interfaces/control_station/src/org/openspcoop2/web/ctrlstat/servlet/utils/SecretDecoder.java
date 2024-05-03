@@ -93,7 +93,7 @@ public class SecretDecoder extends HttpServlet {
 			response.setStatus(500);
 			try {
 				ServletOutputStream outputStream = response.getOutputStream();
-				outputStream.write(("Errore durante la decodifica: "+e.getMessage()).getBytes());
+				outputStream.write(UtilsCostanti.MESSAGGIO_ERRORE_UNWRAP.getBytes());
 			}catch(Exception eErr){
 				ControlStationCore.logError("Errore durante la serializzazione dell'errore di decodifica: "+e.getMessage(), e);
 			}

@@ -388,22 +388,110 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 }
 %>
 
+<script type="text/javascript" nonce="<%= randomNonce %>">
+	$(document).ready(function(){
+	 	
+	// copia contenuto della modale secret
+  	if($("#iconCopy_dec").length>0){
+		$("#iconCopy_dec").click(function(evt){
+ 				var valueToCopy = $("#txtA_ne_dec").val();
+ 				var copiatoOK = copyTextToClipboard(valueToCopy);
+ 				
+ 				if(copiatoOK) {
+ 					showTooltip(evt);
+ 				}
+			});
+  		
+		$("#iconCopy_dec").mouseout(function(){
+  			$('div.copyTooltip').remove();  
+  		});
+  	}
+  	
+  	// visualizza secrets
+  	if($(".spanIconInfoBox-viewLock").length>0){
+  		$(".spanIconInfoBox-viewLock").click(function(){
+  			var iconInfoBoxId = $(this).parent().attr('id');
+  			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
+  			console.log(idx);
+  			if(idx) {
+				var label = $("#hidden_title_pwd_"+ idx + "_lock_view").val();
+				var body = $("#hidden_body_pwd_"+ idx+ "_lock_view").val();
+				var url = $("#hidden_url_pwd_"+ idx+ "_lock_view").val();
+				var valore = $("#__lk__pwd_"+ idx+ "").val();
+				mostraInformazioniCifrateModal(label,body,url,valore);
+  			}
+			});
+  	}
+  	
+  	// copia secrets
+  	if($(".spanIconInfoBox-copyLock").length>0){
+  		$(".spanIconInfoBox-copyLock").click(function(){
+  			var iconInfoBoxId = $(this).parent().attr('id');
+  			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
+  			console.log(idx);
+  			if(idx) {
+  				var label = $("#hidden_title_pwd_"+ idx + "_lock_copy").val();
+				var body = $("#hidden_body_pwd_"+ idx+ "_lock_copy").val();
+				var url = $("#hidden_url_pwd_"+ idx+ "_lock_copy").val();
+				var valore = $("#__lk__pwd_"+ idx+ "").val();
+				mostraAlertInformazioniCifrateModal(label,body,url,valore);
+  			}
+			});
+  	}
+});
+	
+	function mostraDataElementInfoModal(title,body){
+		$("#dataElementInfoModal").prev().children('span').text(title);
+		$("#dataElementInfoModalBody").html(body);
+		$("#dataElementInfoModal").dialog("open");
+	}
+	
+	function mostraInformazioniCifrateModal(title,body,url,valore){
+		setValoriLock(url,valore);
+		
+		$("#txtA_ne_dec").val('');
+		$("#txtA_ne_dec").attr('style','');		
+		$("#iconCopy_dec").hide();
+		$("#txtA_ne_dec").hide();
+		
+		$("#visualizzaInformazioniCifrateModal").prev().children('span').text(title);
+		$("#visualizzaInformazioniCifrateModalBodyNotaSpan").html(body);
+		$("#visualizzaInformazioniCifrateModal").dialog("open");
+	}
+		
+	function mostraAlertInformazioniCifrateModal(title,body,url,valore){
+		setValoriLock(url,valore);
+		
+		$("#alertInformazioniCifrateModalHeader").hide();
+		$("#alertInformazioniCifrateModal").prev().children('span').text(title);
+		$("#alertInformazioniCifrateModalBodyNotaSpan").html(body);
+		$("#alertInformazioniCifrateModal").dialog("open");
+	}
+	
+	function mostraDownloadInformazioniCifrateModal(title,body,url,azione){
+		setValoriLock(url,'');
+		
+		$("#downloadInformazioniCifrateModal").prev().children('span').text(title);
+		$("#downloadInformazioniCifrateModalBodyNotaSpan").html(body);
+		$("#downloadInformazioniCifrateModal").next().children('button').text(azione);
+		$("#downloadInformazioniCifrateModal").dialog("open");
+	}
+	
+	function mostraErroreInformazioniCifrateModal(body){
+		// imposto il messaggio ricevuto dal server
+		$("#erroreInformazioniCifrateModalHeaderDxRiga1Span").html(body);
+		$("#erroreInformazioniCifrateModal").dialog("open");
+	}
+	
+	
+</script>
+
+
+
 <div id="dataElementInfoModal" title="Info">
 	<div id="dataElementInfoModalBody" class="contenutoModal"></div>
 </div>
 <div id="visualizzaInformazioniCifrateModal" title="Visualizza Informazioni Cifrate">
-	<div id="visualizzaInformazioniCifrateModalHeader" class="finestraDialogModalHeader">
-  		<div id="visualizzaInformazioniCifrateModalHeaderSx" class="finestraDialogModalHeaderSx">
-	  		<span class="icon-box">
-				<i class="material-icons md-48"><%= Costanti.ICON_DIALOG_HEADER %></i>
-			</span>
-		</div>
-		<div id="visualizzaInformazioniCifrateModalHeaderDx" class="finestraDialogModalHeaderDx">
-  			<div id="visualizzaInformazioniCifrateModalHeaderDxRiga1" class="finestraDialogModalHeaderDxRiga1">
-	  			<span class="finestraDialogModalHeaderDxRiga1" id="visualizzaInformazioniCifrateModalHeaderDxRiga1Span"></span>	
-			</div>
-		</div>
-	</div>
 	<div id="visualizzaInformazioniCifrateModalBody" class="contenutoModal">
 		<div class="propDialog">
 			<div class="txtA_div_propDialog_dec">
@@ -424,18 +512,6 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 	</div>
 </div>
 <div id="alertInformazioniCifrateModal" title="Attenzione">
-	<div id="alertInformazioniCifrateModalHeader" class="finestraDialogModalHeader">
-  		<div id="alertInformazioniCifrateModalHeaderSx" class="finestraDialogModalHeaderSx">
-	  		<span class="icon-box">
-				<i class="material-icons md-48"><%= Costanti.ICON_DIALOG_HEADER %></i>
-			</span>
-		</div>
-		<div id="alertInformazioniCifrateModalHeaderDx" class="finestraDialogModalHeaderDx">
-  			<div id="alertInformazioniCifrateModalHeaderDxRiga1" class="finestraDialogModalHeaderDxRiga1">
-	  			<span class="finestraDialogModalHeaderDxRiga1" id="alertInformazioniCifrateModalHeaderDxRiga1Span"></span>	
-			</div>
-		</div>
-	</div>
 	<div id="alertInformazioniCifrateModalBody" class="contenutoModal">
 		<div class="propDialog">
 			<div id="alertInformazioniCifrateModalBodyNota" class="finestraDialogModalNota">
@@ -449,6 +525,20 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 		<div class="propDialog">
 			<div id="downloadInformazioniCifrateModalBodyNota" class="finestraDialogModalNota">
 				<span class="finestraDialogModalBodyNota" id="downloadInformazioniCifrateModalBodyNotaSpan"></span>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="erroreInformazioniCifrateModal" title="Attenzione">
+	<div id="erroreInformazioniCifrateModalHeader" class="finestraDialogModalHeader">
+  		<div id="erroreInformazioniCifrateModalHeaderSx" class="finestraDialogModalHeaderSx">
+	  		<span class="icon-box">
+				<i class="material-icons md-48"><%= Costanti.ICON_DIALOG_HEADER %></i>
+			</span>
+		</div>
+		<div id="erroreInformazioniCifrateModalHeaderDx" class="finestraDialogModalHeaderDx">
+  			<div id="erroreInformazioniCifrateModalHeaderDxRiga1" class="finestraDialogModalHeaderDxRiga1">
+	  			<span class="finestraDialogModalHeaderDxRiga1" id="erroreInformazioniCifrateModalHeaderDxRiga1Span"></span>	
 			</div>
 		</div>
 	</div>

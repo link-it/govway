@@ -501,14 +501,28 @@ for (int i = 0; i < dati.size(); i++) {
 											</script>
 										<%  } %>
 									<%  } else {%>
-										<span class="<%=classSpanNoEdit %>"><a id="<%=id %>" href="#"><%= de.getValue() %></a></span>
+										<span class="<%=classSpanNoEdit %>"><a id="<%=id %>" href="<%= de.getUrl() %>"><%= de.getValue() %></a></span>
 										<input type="hidden" name="__i_hidden_title_<%= id %>" id="hidden_title_<%= id %>"  value="<%= deConfirm.getTitolo() %>"/>
 						      			<input type="hidden" name="__i_hidden_body_<%= id %>" id="hidden_body_<%= id %>"  value="<%= deConfirm.getBody() %>"/>
 						      			<input type="hidden" name="__i_hidden_azione_<%= id %>" id="hidden_azione_<%= id %>"  value="<%= deConfirm.getAzione() %>"/>
 						      			<input type="hidden" name="__i_hidden_url_<%= id %>" id="hidden_url_<%= id %>"  value="<%= de.getUrl() %>"/>
 										<script type="text/javascript" nonce="<%= randomNonce %>">
 									      	 $(document).ready(function(){
-													$('#<%=id %>').click(function() {
+													$('#<%=id %>').click(function(event) {
+														
+														// Evita l'azione predefinita dell'evento click (apertura del link)
+													    event.preventDefault();
+
+													    // Mostra la modale o finestra di conferma
+													    //$('#myModal').modal('show');
+
+													    // Aggiungi un listener per l'evento di conferma dalla modale
+													    //document.getElementById('confirmButton').addEventListener('click', function() {
+													        // Ripristina l'azione originale dell'evento click
+													   //     window.location.href = event.target.href;
+													    //});
+														
+														
 														// visualizza modale di conferma
 														var label = $("#hidden_title_<%=id %>").val();
 														var body = $("#hidden_body_<%=id %>").val();

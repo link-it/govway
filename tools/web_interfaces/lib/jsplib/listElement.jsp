@@ -658,12 +658,6 @@ function inizializzaSelectFiltro(){
 	}
 }
 
-function mostraDataElementInfoModal(title,body){
-	$("#dataElementInfoModal").prev().children('span').text(title);
-	$("#dataElementInfoModalBody").html(body);
-	$("#dataElementInfoModal").dialog("open");
-}
-
 	$(document).ready(function(){
 		// pannello ricerca che si apre e chiude iconaPanelLista
 		$("#panelListaRicercaHeader").click(function(){
