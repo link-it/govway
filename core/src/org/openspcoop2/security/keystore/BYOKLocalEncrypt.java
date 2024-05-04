@@ -270,7 +270,13 @@ public class BYOKLocalEncrypt {
 		
 		String algo = readKeyAlgo(config);
 		
-		PublicKeyStore publicKeyStore = GestoreKeystoreCache.getPublicKeyStore(this.requestInfo, config.getKeyPath(), algo);
+		PublicKeyStore publicKeyStore = null;
+		if(config.getKeyInline()!=null && StringUtils.isNotEmpty(config.getKeyInline())) {
+			publicKeyStore = GestoreKeystoreCache.getPublicKeyStore(this.requestInfo, config.getKeyInline().getBytes(), algo);
+		}
+		else {
+			publicKeyStore = GestoreKeystoreCache.getPublicKeyStore(this.requestInfo, config.getKeyPath(), algo);
+		}
 		if(publicKeyStore==null) {
 			throw new UtilsException(getKeyError(config));
 		}
@@ -293,7 +299,7 @@ public class BYOKLocalEncrypt {
 		
 		String algo = readKeyAlgo(config);
 		
-		KeyPairStore keyPairStore = GestoreKeystoreCache.getKeyPairStore(this.requestInfo, config.getKeyPath(), config.getPublicKeyPath(), config.getKeyPassword(), algo);
+		KeyPairStore keyPairStore = getKeyPairStore(algo, config);
 		if(keyPairStore==null) {
 			throw new UtilsException(getKeyError(config));
 		}
@@ -312,9 +318,35 @@ public class BYOKLocalEncrypt {
 			byokEncryptKey.jsonWebKeys = jwkSet.getJsonWebKeys();
 		}
 	}
+	private KeyPairStore getKeyPairStore(String algo, BYOKLocalConfig config) throws SecurityException {
+		KeyPairStore keyPairStore = null;
+		if(config.getKeyInline()!=null && StringUtils.isNotEmpty(config.getKeyInline())) {
+			if(config.getPublicKeyInline()!=null && StringUtils.isNotEmpty(config.getPublicKeyInline())) {
+				keyPairStore = GestoreKeystoreCache.getKeyPairStore(this.requestInfo, config.getKeyInline().getBytes(), config.getPublicKeyInline().getBytes(), config.getKeyPassword(), algo);
+			}
+			else {
+				keyPairStore = GestoreKeystoreCache.getKeyPairStore(this.requestInfo, config.getKeyInline().getBytes(), config.getPublicKeyPath(), config.getKeyPassword(), algo);
+			}
+		}
+		else {
+			if(config.getPublicKeyInline()!=null && StringUtils.isNotEmpty(config.getPublicKeyInline())) {
+				keyPairStore = GestoreKeystoreCache.getKeyPairStore(this.requestInfo, config.getKeyPath(), config.getPublicKeyInline().getBytes(), config.getKeyPassword(), algo);
+			}
+			else {
+				keyPairStore = GestoreKeystoreCache.getKeyPairStore(this.requestInfo, config.getKeyPath(), config.getPublicKeyPath(), config.getKeyPassword(), algo);
+			}
+		}
+		return keyPairStore;
+	}
 	private void readSecretKey(BYOKEncryptKey byokEncryptKey, BYOKLocalConfig config) throws UtilsException, SecurityException {
 		String algo = config.isJoseEngine() ? SymmetricKeyUtils.ALGO_AES : config.getKeyAlgorithm();
-		SecretKeyStore secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, config.getKeyPath(), algo);
+		SecretKeyStore secretKeyStore = null;
+		if(config.getKeyInline()!=null && StringUtils.isNotEmpty(config.getKeyInline())) {
+			secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, config.getKeyInline().getBytes(), algo);
+		}
+		else {
+			secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, config.getKeyPath(), algo);
+		}
 		if(secretKeyStore==null) {
 			throw new UtilsException(getKeyError(config));
 		}

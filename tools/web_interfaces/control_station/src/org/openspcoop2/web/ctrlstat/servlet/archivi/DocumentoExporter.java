@@ -1073,7 +1073,7 @@ public class DocumentoExporter extends HttpServlet {
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, fileName);
 
-			if(docBytes!=null) {				
+			if(docBytes!=null) {
 				OutputStream out = response.getOutputStream();	
 				out.write(docBytes);
 				out.flush();

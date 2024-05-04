@@ -2240,7 +2240,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			// inizializzo registri
 			DriverBYOK driverBYOK = null;
 			if(propertiesReader.getBYOKConfigInternalConfigSecurityEngine()!=null) {
-				driverBYOK = new DriverBYOK(logCore, propertiesReader.getBYOKConfigInternalConfigSecurityEngine());
+				driverBYOK = new DriverBYOK(logCore, propertiesReader.getBYOKConfigInternalConfigSecurityEngine(), propertiesReader.getBYOKConfigInternalConfigSecurityEngine());
 			}
 			boolean isInitializeRegistro = 
 				RegistroServiziReader.initialize(accessoRegistro,

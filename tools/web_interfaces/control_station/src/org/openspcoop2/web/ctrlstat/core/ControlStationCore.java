@@ -153,6 +153,8 @@ import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.byok.DriverBYOK;
+import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.pdd.core.keystore.RemoteStoreKeyEntry;
 import org.openspcoop2.pdd.core.keystore.RemoteStoreProviderDriverUtils;
@@ -8942,17 +8944,14 @@ public class ControlStationCore {
 		String securityManagerPolicy = this.getByokInternalConfigSecurityEngine();
 		if(securityManagerPolicy!=null && StringUtils.isNotEmpty(securityManagerPolicy)) {
 			Map<String, Object> dynamicMap = new HashMap<>();
+			DynamicInfo dynamicInfo = new  DynamicInfo();
+			DynamicUtils.fillDynamicMap(log, dynamicMap, dynamicInfo);
 			
 			if(isBYOKRemoteConfig(securityManagerPolicy)) {
 				initBYOKDynamicMap(dynamicMap, wrap, unwrap);
 			}
 			
-			String driverSecurityManagerPolicy = this.getByokInternalConfigRemoteSecurityEngine();
-			if(driverSecurityManagerPolicy==null || StringUtils.isEmpty(driverSecurityManagerPolicy)) {
-				driverSecurityManagerPolicy = securityManagerPolicy;
-			}
-			
-			return new DriverBYOK(ControlStationCore.log, driverSecurityManagerPolicy, dynamicMap, true);
+			return new DriverBYOK(ControlStationCore.log, securityManagerPolicy, this.getByokInternalConfigRemoteSecurityEngine(), dynamicMap, true);
 		}
 		return null;
 	}

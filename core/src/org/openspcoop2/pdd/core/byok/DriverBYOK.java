@@ -26,6 +26,8 @@ import java.util.Map;
 import org.openspcoop2.core.byok.BYOKUtilities;
 import org.openspcoop2.core.byok.BYOKWrappedValue;
 import org.openspcoop2.core.byok.IDriverBYOK;
+import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.BYOKLocalEncrypt;
@@ -37,6 +39,8 @@ import org.openspcoop2.utils.certificate.byok.BYOKMode;
 import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 import org.openspcoop2.utils.certificate.byok.BYOKSecurityConfig;
 import org.openspcoop2.utils.certificate.byok.BYOKSecurityConfigParameter;
+import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.io.HexBinaryUtilities;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
@@ -52,14 +56,23 @@ public class DriverBYOK implements IDriverBYOK {
 
 	private Logger log;
 	private String securityPolicy;
+	private String securityRemotePolicy;
 	private Map<String, Object> dynamicMap;
 	private boolean checkJmxPrefixOperazioneNonRiuscita;
-	public DriverBYOK(Logger log, String securityPolicy) {
-		this(log, securityPolicy, null, false);
+	
+	public DriverBYOK(Logger log, String securityPolicy, String securityRemotePolicy) {
+		this(log, securityPolicy, securityRemotePolicy, buildDynamicMap(log), false);
 	}
-	public DriverBYOK(Logger log, String securityPolicy, Map<String, Object> dynamicMapParam, boolean checkJmxPrefixOperazioneNonRiuscita) {
+	private static Map<String, Object> buildDynamicMap(Logger log){
+		Map<String, Object> dynamicMap = new HashMap<>();
+		DynamicInfo dynamicInfo = new  DynamicInfo();
+		DynamicUtils.fillDynamicMap(log, dynamicMap, dynamicInfo);
+		return dynamicMap;
+	}
+	public DriverBYOK(Logger log, String securityPolicy, String securityRemotePolicy, Map<String, Object> dynamicMapParam, boolean checkJmxPrefixOperazioneNonRiuscita) {
 		this.log = log;
 		this.securityPolicy = securityPolicy;
+		this.securityRemotePolicy = securityRemotePolicy;
 		this.dynamicMap = dynamicMapParam==null ? new HashMap<>() : dynamicMapParam;
 		this.checkJmxPrefixOperazioneNonRiuscita = checkJmxPrefixOperazioneNonRiuscita;
 	}
@@ -78,9 +91,15 @@ public class DriverBYOK implements IDriverBYOK {
 		}
 		
 		BYOKRequestParams p = getBYOKRequestParams(true, this.securityPolicy);
-		String prefix = BYOKUtilities.newPrefixWrappedValue(this.securityPolicy);
+		String prefix = BYOKUtilities.newPrefixWrappedValue((this.securityRemotePolicy!=null ? this.securityRemotePolicy : this.securityPolicy));
 		byte[]wrapped = process(getBYOKInstance(this.log,value.getBytes(),p));
-		return new BYOKWrappedValue(prefix+new String(wrapped), prefix);
+		
+		String wrappedValue = new String(wrapped);
+		if(!wrappedValue.startsWith(prefix)){
+			wrappedValue = prefix + wrappedValue;
+		}
+		
+		return new BYOKWrappedValue(wrappedValue, prefix);
 	}
 	@Override
 	public BYOKWrappedValue wrap(byte[] value) throws UtilsException {
@@ -96,9 +115,15 @@ public class DriverBYOK implements IDriverBYOK {
 		}
 		
 		BYOKRequestParams p = getBYOKRequestParams(true, this.securityPolicy);
-		String prefix = BYOKUtilities.newPrefixWrappedValue(this.securityPolicy);
+		String prefix = BYOKUtilities.newPrefixWrappedValue((this.securityRemotePolicy!=null ? this.securityRemotePolicy : this.securityPolicy));
 		byte[]wrapped = process(getBYOKInstance(this.log,value,p));
-		return new BYOKWrappedValue(prefix+new String(wrapped), prefix);
+		
+		String wrappedValue = new String(wrapped);
+		if(!wrappedValue.startsWith(prefix)){
+			wrappedValue = prefix + wrappedValue;
+		}
+		
+		return new BYOKWrappedValue(wrappedValue, prefix);
 	}
 
 	@Override
@@ -120,6 +145,9 @@ public class DriverBYOK implements IDriverBYOK {
 	}
 	@Override
 	public byte[] unwrap(String value) throws UtilsException {
+		return unwrap(value, null, false);
+	}
+	public byte[] unwrap(String value, String securityPolicy, boolean checkAppendPrefix) throws UtilsException {
 		if(BYOKUtilities.isWrappedValue(value)) {
 			if(this.securityPolicy==null) {
 				return value.getBytes();
@@ -129,7 +157,13 @@ public class DriverBYOK implements IDriverBYOK {
 			BYOKRequestParams p = getBYOKRequestParams(false, this.securityPolicy);
 			return process(getBYOKInstance(this.log,rawWrappedValue.getBytes(),p));
 		}
-		return value.getBytes();
+		else if(checkAppendPrefix){
+			String newWrappedValue = BYOKUtilities.newPrefixWrappedValue(securityPolicy)+value;
+			return this.unwrap(newWrappedValue);
+		}
+		else {
+			return value.getBytes();
+		}
 	}
 	
 	public String unwrapAsString(String value, String securityPolicy, boolean checkAppendPrefix) throws UtilsException{
@@ -203,27 +237,7 @@ public class DriverBYOK implements IDriverBYOK {
 			}
 			
 			if(instance.getHttpRequest()!=null) {
-				HttpResponse httpResponse = HttpUtilities.httpInvoke(instance.getHttpRequest());
-				if(httpResponse==null || httpResponse.getContent()==null) {
-					throw new UtilsException("Store '"+instance.getConfig().getLabel()+"' (endpoint:"+instance.getHttpRequest().getUrl()+") unavailable");
-				}
-				if(httpResponse.getResultHTTPOperation()!=200) {
-					throw new UtilsException("Retrieve store '"+instance.getConfig().getLabel()+"' (endpoint:"+instance.getHttpRequest().getUrl()+") failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
-				}
-				if(this.checkJmxPrefixOperazioneNonRiuscita) {
-					byte[] b = httpResponse.getContent();
-					if(b==null || b.length<=0) {
-						throw new UtilsException("Store '"+instance.getConfig().getLabel()+"' (endpoint:"+instance.getHttpRequest().getUrl()+") empty response");
-					}
-					String check = new String(b);
-					if(check.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)) {
-						throw new UtilsException("Retrieve store '"+instance.getConfig().getLabel()+"' (endpoint:"+instance.getHttpRequest().getUrl()+") failed (returnCode:"+httpResponse.getResultHTTPOperation()+"): "+check);
-					}
-					return b;
-				}
-				else {
-					return httpResponse.getContent();
-				}
+				return remoteProcess(instance);
 			}
 			else {
 				BYOKLocalEncrypt localEncrypt = new BYOKLocalEncrypt();
@@ -239,6 +253,41 @@ public class DriverBYOK implements IDriverBYOK {
 			throw new UtilsException(e.getMessage(),e);
 		}
 		
+	}
+	private byte[] remoteProcess(BYOKInstance instance) throws UtilsException{
+		String debugUrl = "'"+instance.getConfig().getLabel()+"' (endpoint:"+instance.getHttpRequest().getUrl()+")";
+		
+		HttpResponse httpResponse = HttpUtilities.httpInvoke(instance.getHttpRequest());
+		if(httpResponse==null || httpResponse.getContent()==null) {
+			throw new UtilsException("Store "+debugUrl+" unavailable");
+		}
+		if(httpResponse.getResultHTTPOperation()!=200) {
+			throw new UtilsException("Retrieve store "+debugUrl+" failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
+		}
+		byte [] content = null;
+		if(this.checkJmxPrefixOperazioneNonRiuscita) {
+			byte[] b = httpResponse.getContent();
+			if(b==null || b.length<=0) {
+				throw new UtilsException("Store "+debugUrl+" empty response");
+			}
+			String check = new String(b);
+			if(check.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)) {
+				throw new UtilsException("Retrieve store "+debugUrl+" failed (returnCode:"+httpResponse.getResultHTTPOperation()+"): "+check);
+			}
+			content = b;
+		}
+		else {
+			content = httpResponse.getContent();
+		}
+		if(content!=null && content.length>0) {
+			if(instance.getConfig().getRemoteConfig().isHttpResponseBase64Encoded()) {
+				content = Base64Utilities.decode(content);
+			}
+			else if(instance.getConfig().getRemoteConfig().isHttpResponseHexEncoded()) {
+				content = HexBinaryUtilities.decode(new String(content).toCharArray());
+			}
+		}
+		return content;
 	}
 	
 }

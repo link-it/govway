@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.Properties;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
@@ -52,6 +53,7 @@ public class BYOKLocalConfig implements Serializable {
 	protected String keystorePassword;
 	
 	protected String keyPath;
+	protected String keyInline;
 	protected String keyAlgorithm;
 	protected String keyAlias;
 	protected String keyPassword;
@@ -59,6 +61,7 @@ public class BYOKLocalConfig implements Serializable {
 	protected boolean keyWrap = false;
 	
 	protected String publicKeyPath;
+	protected String publicKeyInline;
 	
 	protected String contentAlgorithm;
 	
@@ -183,11 +186,13 @@ public class BYOKLocalConfig implements Serializable {
 	
 	private void initKeyEngine(String id, Properties p) throws UtilsException {
 		
-		this.keyPath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_PATH, true);
+		this.keyInline = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_INLINE, false);
+		this.keyPath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_PATH, (this.keyInline==null || StringUtils.isEmpty(this.keyInline)));
 		this.keyAlgorithm = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ALGORITHM, true);
 		
 		if(KeystoreType.KEY_PAIR.equals(this.keystoreType)) {
-			this.publicKeyPath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_PATH, true);
+			this.publicKeyInline = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_INLINE, false);
+			this.publicKeyPath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_PATH, (this.publicKeyInline==null || StringUtils.isEmpty(this.publicKeyInline)));
 			
 			this.keyPassword = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_PASSWORD, false);
 		}
@@ -221,6 +226,9 @@ public class BYOKLocalConfig implements Serializable {
 	public String getKeyPath() {
 		return this.keyPath;
 	}
+	public String getKeyInline() {
+		return this.keyInline;
+	}
 
 	public String getKeyAlgorithm() {
 		return this.keyAlgorithm;
@@ -250,6 +258,9 @@ public class BYOKLocalConfig implements Serializable {
 	
 	public String getPublicKeyPath() {
 		return this.publicKeyPath;
+	}
+	public String getPublicKeyInline() {
+		return this.publicKeyInline;
 	}
 	
 	public String getContentAlgorithm() {
