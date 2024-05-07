@@ -58,6 +58,9 @@ public class MultiKeystore implements Serializable  {
 	
 	private List<String> aliasesList = new ArrayList<>();
 	private Map<String, Serializable> keystores = new HashMap<>();
+	private Map<String, String> mappingAliasToKeystorePath = new HashMap<>();
+	private Map<String, String> mappingAliasToKeystorePassword = new HashMap<>();
+	private Map<String, String> mappingAliasToKeystoreType = new HashMap<>();
 	private Map<String, String> mappingAliasToKeyAlias = new HashMap<>();
 	private Map<String, String> mappingAliasToKeyPassword = new HashMap<>();
 	
@@ -132,6 +135,9 @@ public class MultiKeystore implements Serializable  {
 	private void addMerlinKeystore(String alias, String keyAlias, String keystoreType, String keystorePath, String keystorePassword, String keyPassword, BYOKRequestParams requestParams) {
 		try {
 			this.keystores.put(alias, new MerlinKeystore(keystorePath, keystoreType, keystorePassword, keyPassword, requestParams));
+			this.mappingAliasToKeystoreType.put(alias, keystoreType);
+			this.mappingAliasToKeystorePath.put(alias, keystorePath);
+			this.mappingAliasToKeystorePassword.put(alias, keystorePassword);
 		}catch(Exception e) {
 			String idKeystore = "!!! Errore durante il caricamento del MerlinKeystore !!! [keyAlias:"+keyAlias+"] ";
 			LoggerWrapperFactory.getLogger(MultiKeystore.class).error(idKeystore+e.getMessage(),e);
@@ -227,4 +233,58 @@ public class MultiKeystore implements Serializable  {
 			throw new SecurityException(e.getMessage(),e);
 		}
 	}
+	
+	public String getKeystorePath(String alias) throws SecurityException {
+		try{
+			if(!this.aliasesList.contains(alias)){
+				throw new SecurityException(getErrorAlias(alias));
+			}
+			
+			return this.mappingAliasToKeystorePath.get(alias);
+		}catch(Exception e){
+			throw new SecurityException(e.getMessage(),e);
+		}
+	}
+	
+	public String getKeystorePassword(String alias) throws SecurityException {
+		try{
+			if(!this.aliasesList.contains(alias)){
+				throw new SecurityException(getErrorAlias(alias));
+			}
+			
+			return this.mappingAliasToKeystorePassword.get(alias);
+		}catch(Exception e){
+			throw new SecurityException(e.getMessage(),e);
+		}
+	}
+	
+	public String getKeystoreType(String alias) throws SecurityException {
+		try{
+			if(!this.aliasesList.contains(alias)){
+				throw new SecurityException(getErrorAlias(alias));
+			}
+			
+			return this.mappingAliasToKeystoreType.get(alias);
+		}catch(Exception e){
+			throw new SecurityException(e.getMessage(),e);
+		}
+	}
+	
+	public String getInternalConfigAlias(String keyAlias) throws SecurityException {
+		try{
+			if(!this.mappingAliasToKeyAlias.containsValue(keyAlias)){
+				throw new SecurityException(getErrorAlias(keyAlias));
+			}
+			for (Map.Entry<String,String> entry : this.mappingAliasToKeyAlias.entrySet()) {
+				if(entry.getValue().equals(keyAlias)) {
+					return entry.getKey();
+				}
+			}
+			
+			throw new SecurityException(getErrorAlias(keyAlias));
+		}catch(Exception e){
+			throw new SecurityException(e.getMessage(),e);
+		}
+	}
+	
 }

@@ -654,28 +654,7 @@ public abstract class MessageSecurityContext{
     			}
     			
     			if(mapAliasToPassword.size()>0) {
-    				
-    				CallbackHandler pwCallbackHandler = new CallbackHandler() {
-    						
-						private HashMap<String, String> mapAliasToPasswordParam = mapAliasToPassword;
-						
-						@Override
-						public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-							 for (int i = 0; i < callbacks.length; i++) {
-								 if (callbacks[i] instanceof WSPasswordCallback) {
-						                WSPasswordCallback pc = (WSPasswordCallback) callbacks[i];
-						                if(this.mapAliasToPasswordParam.containsKey(pc.getIdentifier())) {
-						                	pc.setPassword(this.mapAliasToPasswordParam.get(pc.getIdentifier()));
-						                }
-						            } else {
-						                throw new UnsupportedCallbackException(callbacks[i],
-						                        "Unrecognized Callback");
-						            }
-						        }
-						}
-						
-					};
-    			
+    				CallbackHandler pwCallbackHandler = newCallbackHandler(mapAliasToPassword);
     				props.put(SecurityConstants.PASSWORD_CALLBACK_REF, pwCallbackHandler);
     			}
     		
@@ -685,6 +664,28 @@ public abstract class MessageSecurityContext{
     	}
     }
     
+    public static CallbackHandler newCallbackHandler(Map<String, String> mapAliasToPassword) {
+    	return new CallbackHandler() {
+			
+			private Map<String, String> mapAliasToPasswordParam = mapAliasToPassword;
+			
+			@Override
+			public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+				 for (int i = 0; i < callbacks.length; i++) {
+					 if (callbacks[i] instanceof WSPasswordCallback) {
+			                WSPasswordCallback pc = (WSPasswordCallback) callbacks[i];
+			                if(this.mapAliasToPasswordParam.containsKey(pc.getIdentifier())) {
+			                	pc.setPassword(this.mapAliasToPasswordParam.get(pc.getIdentifier()));
+			                }
+			            } else {
+			                throw new UnsupportedCallbackException(callbacks[i],
+			                        "Unrecognized Callback");
+			            }
+			        }
+			}
+			
+		};
+    }
     
     /** Utility per verificare l'esistenza di un header di sicurezza */
     public boolean existsSecurityHeader(OpenSPCoop2Message msg,String actor){

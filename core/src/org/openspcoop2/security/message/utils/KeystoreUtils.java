@@ -70,6 +70,7 @@ public class KeystoreUtils {
 			requestInfo = (RequestInfo) ctx.get(Costanti.REQUEST_INFO);
 		}
 		
+		MultiKeystore multiKeystore = null;
 		JWKSet encryptionJWKSet = null;
 		KeyStore encryptionKS = null;
 		KeyStore encryptionTrustStoreKS = null;
@@ -164,7 +165,7 @@ public class KeystoreUtils {
 		}
 		// 2. Multi Property
 		else if(multiEncryptionStore!=null){
-			MultiKeystore multiKeystore = GestoreKeystoreCache.getMultiKeystore(requestInfo, multiEncryptionStore);
+			multiKeystore = GestoreKeystoreCache.getMultiKeystore(requestInfo, multiEncryptionStore);
 			if(SecurityConstants.MULTI_USER_KEYWORD_FRUITORE.equals(aliasEncryptUser) && 
 					messageSecurityContext.getIdFruitore()!=null && messageSecurityContext.getIdFruitore().getNome()!=null){
 				String fruitore = messageSecurityContext.getIdFruitore().getNome();
@@ -270,6 +271,7 @@ public class KeystoreUtils {
 		bean.setUser(aliasEncryptUser);
 		bean.setPassword(aliasEncryptPassword);
 		bean.setEncryptionSimmetric(encryptionSymmetric);
+		bean.setMultiKeystore(multiKeystore);
 		
 		return bean;
 	}
@@ -284,6 +286,7 @@ public class KeystoreUtils {
 			requestInfo = (RequestInfo) ctx.get(Costanti.REQUEST_INFO);
 		}
 		
+		MultiKeystore multiKeystore = null;
 		JWKSet decryptionJWKSet = null;
 		KeyStore decryptionKS = null;
 		KeyStore decryptionTrustStoreKS = null;
@@ -378,7 +381,7 @@ public class KeystoreUtils {
 		}
 		// 2. Multi Property
 		else if(multiDecryptionStore!=null){
-			MultiKeystore multiKeystore = GestoreKeystoreCache.getMultiKeystore(requestInfo, multiDecryptionStore);
+			multiKeystore = GestoreKeystoreCache.getMultiKeystore(requestInfo, multiDecryptionStore);
 			if(SecurityConstants.MULTI_USER_KEYWORD_FRUITORE.equals(aliasDecryptUser) && 
 					messageSecurityContext.getIdFruitore()!=null && messageSecurityContext.getIdFruitore().getNome()!=null){
 				String fruitore = messageSecurityContext.getIdFruitore().getNome();
@@ -484,6 +487,7 @@ public class KeystoreUtils {
 		bean.setUser(aliasDecryptUser);
 		bean.setPassword(aliasDecryptPassword);
 		bean.setEncryptionSimmetric(decryptionSymmetric);
+		bean.setMultiKeystore(multiKeystore);
 
 		return bean;
 	}
@@ -499,6 +503,7 @@ public class KeystoreUtils {
 			requestInfo = (RequestInfo) ctx.get(Costanti.REQUEST_INFO);
 		}
 		
+		MultiKeystore multiKeystore = null;
 		JWKSet signatureJWKSet = null;
 		KeyStore signatureKS = null;
 		KeyStore signatureTrustStoreKS = null;
@@ -582,7 +587,7 @@ public class KeystoreUtils {
 		}
 		// 2. Multi Property
 		else if(multiSignatureStore!=null){
-			MultiKeystore multiKeystore = GestoreKeystoreCache.getMultiKeystore(requestInfo, multiSignatureStore);
+			multiKeystore = GestoreKeystoreCache.getMultiKeystore(requestInfo, multiSignatureStore);
 			if(SecurityConstants.MULTI_USER_KEYWORD_FRUITORE.equals(aliasSignatureUser) && 
 					messageSecurityContext.getIdFruitore()!=null && messageSecurityContext.getIdFruitore().getNome()!=null){
 				String fruitore = messageSecurityContext.getIdFruitore().getNome();
@@ -672,6 +677,7 @@ public class KeystoreUtils {
 		bean.setJwkSet(signatureJWKSet);
 		bean.setUser(aliasSignatureUser);
 		bean.setPassword(aliasSignaturePassword);
+		bean.setMultiKeystore(multiKeystore);
 		
 		return bean;
 
@@ -687,6 +693,7 @@ public class KeystoreUtils {
 			requestInfo = (RequestInfo) ctx.get(Costanti.REQUEST_INFO);
 		}
 		
+		MultiKeystore multiKeystore = null;
 		JWKSet signatureJWKSet = null;
 		KeyStore signatureKS = null;
 		KeyStore signatureTrustStoreKS = null;
@@ -772,7 +779,7 @@ public class KeystoreUtils {
 		}
 		// 2. Multi Property
 		else if(multiSignatureStore!=null){
-			MultiKeystore multiKeystore = GestoreKeystoreCache.getMultiKeystore(requestInfo, multiSignatureStore);
+			multiKeystore = GestoreKeystoreCache.getMultiKeystore(requestInfo, multiSignatureStore);
 			if(SecurityConstants.MULTI_USER_KEYWORD_FRUITORE.equals(aliasSignatureUser) && 
 					messageSecurityContext.getIdFruitore()!=null && messageSecurityContext.getIdFruitore().getNome()!=null){
 				String fruitore = messageSecurityContext.getIdFruitore().getNome();
@@ -866,6 +873,7 @@ public class KeystoreUtils {
 		bean.setUser(aliasSignatureUser);
 		bean.setPassword(aliasSignaturePassword);
 		bean.setCrlPath(crlPath);
+		bean.setMultiKeystore(multiKeystore);
 		
 		return bean;
 

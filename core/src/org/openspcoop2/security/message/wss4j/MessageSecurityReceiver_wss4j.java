@@ -22,17 +22,21 @@
 package org.openspcoop2.security.message.wss4j;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.net.URISyntaxException;
 import java.security.KeyStore;
 import java.security.Principal;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.security.auth.callback.CallbackHandler;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
 
@@ -76,8 +80,11 @@ import org.openspcoop2.security.message.engine.MessageUtilities;
 import org.openspcoop2.security.message.engine.WSSUtilities;
 import org.openspcoop2.security.message.utils.AttachmentProcessingPart;
 import org.openspcoop2.security.message.utils.AttachmentsConfigReaderUtils;
+import org.openspcoop2.security.message.utils.EncryptionBean;
+import org.openspcoop2.security.message.utils.KeystoreUtils;
 import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.id.IDUtilities;
 import org.openspcoop2.utils.transport.http.IOCSPValidator;
@@ -349,6 +356,14 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 		Properties pTrustStore = null;
 		boolean samlSigned = false;
 		if (wssIncomingProperties != null && wssIncomingProperties.size() > 0) {
+			
+			// preprocess per multipropfile
+			try {
+				preprocessMultipropFile(wssContext, msgCtx, wssIncomingProperties, requestInfo, ctx);
+			}catch(Exception e) {
+				throw new SecurityException(e.getMessage(),e);
+			}
+			
 			for (String key : wssIncomingProperties.keySet()) {
 				Object oValue = wssIncomingProperties.get(key);
 				String value = null;
@@ -513,6 +528,80 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 		}
     }
 
+	private void preprocessMultipropFile(MessageSecurityContext wssContext,SoapMessage msgCtx,Map<String,Object> wssIncomingProperties, RequestInfo requestInfo,org.openspcoop2.utils.Map<Object> ctx) throws FileNotFoundException, UtilsException, SecurityException, URISyntaxException {
+
+		Properties pTrustStoreSignatureVerification = null;
+		
+		String signatureCrls = null;
+		for (Map.Entry<String,Object> entry : wssIncomingProperties.entrySet()) {
+	    	if(SecurityConstants.SIGNATURE_CRL.equals(entry.getKey())) {
+	    		signatureCrls = (String) wssIncomingProperties.get(entry.getValue());
+	    		break;
+	    	}
+		}
+		
+		String forceDecryptionUser = null;
+		
+		for (Map.Entry<String,Object> entry : wssIncomingProperties.entrySet()) {
+			String key = entry.getKey();
+	    	if(SecurityConstants.SIGNATURE_TRUSTSTORE_PROPERTY_FILE.equals(key)) {
+	    		Object o = wssIncomingProperties.get(key);
+	    		if(o instanceof String) {
+	    			String path = (String) o;
+	    			MerlinTruststore merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(requestInfo, path);
+	    			
+	    			pTrustStoreSignatureVerification = new Properties();
+	    			pTrustStoreSignatureVerification.put(KeystoreConstants.PROPERTY_TRUSTSTORE_PATH, merlinTruststore.getPathStore());
+	    			pTrustStoreSignatureVerification.put(KeystoreConstants.PROPERTY_TRUSTSTORE_PASSWORD, merlinTruststore.getPasswordStore());
+	    			pTrustStoreSignatureVerification.put(KeystoreConstants.PROPERTY_TRUSTSTORE_TYPE, merlinTruststore.getTipoStore());
+	    			pTrustStoreSignatureVerification.put(KeystoreConstants.PROPERTY_PROVIDER, KeystoreConstants.PROVIDER_GOVWAY);
+	    			if(signatureCrls!=null) {
+	    				pTrustStoreSignatureVerification.put(KeystoreConstants.PROPERTY_CRL, signatureCrls);
+	    			}
+	    		}
+			}
+			else if(SecurityConstants.DECRYPTION_MULTI_PROPERTY_FILE.equals(key)) {
+				EncryptionBean bean = KeystoreUtils.getReceiverEncryptionBean(wssContext, ctx);
+				if(bean.getMultiKeystore()==null) {
+					throw new SecurityException("Multiproperty config not exists");
+				}
+				String keyAlias = bean.getUser();
+				String internalAlias = bean.getMultiKeystore().getInternalConfigAlias(keyAlias);
+				Properties p = new Properties();
+				p.put(KeystoreConstants.PROPERTY_KEYSTORE_PATH, bean.getMultiKeystore().getKeystorePath(internalAlias));
+				p.put(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD, bean.getMultiKeystore().getKeystorePassword(internalAlias));
+				p.put(KeystoreConstants.PROPERTY_KEYSTORE_TYPE, bean.getMultiKeystore().getKeystoreType(internalAlias));
+				p.put(KeystoreConstants.PROPERTY_PROVIDER, KeystoreConstants.PROVIDER_GOVWAY);
+				p.put(KeystoreConstants.PROPERTY_REQUEST_INFO, requestInfo);
+				String id = SecurityConstants.ENCRYPTION_PROPERTY_REF_ID +"_"+IDUtilities.getUniqueSerialNumber("wssSecurity.setOutgoingProperties");
+				msgCtx.put(SecurityConstants.ENCRYPTION_PROPERTY_REF_ID , id);
+				msgCtx.put(id, p);
+				
+				HashMap<String, String> mapAliasToPassword = new HashMap<>();
+				String password = bean.getPassword();
+				msgCtx.put(SecurityConstants.ENCRYPTION_PASSWORD, bean.getPassword());
+				mapAliasToPassword.put(keyAlias, password);
+				CallbackHandler pwCallbackHandler = MessageSecurityContext.newCallbackHandler(mapAliasToPassword);
+				msgCtx.put(SecurityConstants.PASSWORD_CALLBACK_REF, pwCallbackHandler);
+				
+				forceDecryptionUser = keyAlias;
+			}
+    	}
+		
+		if(pTrustStoreSignatureVerification!=null) {
+			wssIncomingProperties.put(SecurityConstants.SIGNATURE_VERIFICATION_PROPERTY_REF_ID, pTrustStoreSignatureVerification);
+			if(signatureCrls!=null) {
+				wssIncomingProperties.put(SecurityConstants.ENABLE_REVOCATION, SecurityConstants.TRUE);
+			}
+		}
+		
+    	if(forceDecryptionUser!=null) {
+    		wssIncomingProperties.remove(SecurityConstants.DECRYPTION_USER);
+    		wssIncomingProperties.put(SecurityConstants.DECRYPTION_USER, forceDecryptionUser);
+    	}
+    	
+	}
+	
 	private boolean examineResults(SoapMessage msgCtx, String actor) {
 				
 		boolean validateX509 = false;

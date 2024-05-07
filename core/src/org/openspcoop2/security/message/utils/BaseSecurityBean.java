@@ -21,6 +21,7 @@ package org.openspcoop2.security.message.utils;
 
 import java.util.Properties;
 
+import org.openspcoop2.security.keystore.MultiKeystore;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyStore;
 
@@ -39,6 +40,8 @@ public abstract class BaseSecurityBean {
 	private JWKSet jwkSet;
 	private String user;
 	private String password;
+	
+	private MultiKeystore multiKeystore; // per mantenere la configurazione multikeystpre
 	
 	public Properties getProperties() {
 		return this.properties;
@@ -87,5 +90,10 @@ public abstract class BaseSecurityBean {
 		this.password = password;
 	}
 	
-
+	public MultiKeystore getMultiKeystore() {
+		return this.multiKeystore;
+	}
+	public void setMultiKeystore(MultiKeystore multiKeystore) {
+		this.multiKeystore = multiKeystore;
+	}
 }

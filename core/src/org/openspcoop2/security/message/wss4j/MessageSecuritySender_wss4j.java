@@ -22,11 +22,15 @@
 package org.openspcoop2.security.message.wss4j;
 
 
+import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.security.auth.callback.CallbackHandler;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.cxf.binding.soap.SoapMessage;
@@ -55,7 +59,11 @@ import org.openspcoop2.security.message.saml.SAMLCallbackHandler;
 import org.openspcoop2.security.message.saml.SAMLUtilities;
 import org.openspcoop2.security.message.utils.AttachmentProcessingPart;
 import org.openspcoop2.security.message.utils.AttachmentsConfigReaderUtils;
+import org.openspcoop2.security.message.utils.EncryptionBean;
+import org.openspcoop2.security.message.utils.KeystoreUtils;
+import org.openspcoop2.security.message.utils.SignatureBean;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.id.IDUtilities;
 
 /**
@@ -106,7 +114,7 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 	        // ** Imposto configurazione nel messaggio **/
 	        // NOTA: farlo dopo getSecurityOnAttachments poichè si modifica la regola di quali attachments trattare.
 	        
-	        setOutgoingProperties(wssContext,msgCtx,messageParam,requestInfo);
+	        setOutgoingProperties(wssContext,msgCtx,messageParam,requestInfo,ctx);
 	        
 	        
 	        // ** Registro attachments da trattare **/
@@ -175,7 +183,7 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 		
     }
 
-    private void setOutgoingProperties(MessageSecurityContext wssContext,SoapMessage msgCtx,OpenSPCoop2Message message, RequestInfo requestInfo) throws Exception{
+    private void setOutgoingProperties(MessageSecurityContext wssContext,SoapMessage msgCtx,OpenSPCoop2Message message, RequestInfo requestInfo,org.openspcoop2.utils.Map<Object> ctx) throws Exception{
     	boolean mustUnderstand = false;
     	boolean signatureUser = false;
     	boolean user = false;
@@ -184,6 +192,9 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 			
 			// preprocess per SAML
 			SAMLUtilities.injectSignaturePropRefIdIntoSamlConfig(wssOutgoingProperties);
+			
+			// preprocess per multipropfile
+			preprocessMultipropFile(wssContext, msgCtx, wssOutgoingProperties, requestInfo, ctx);
 			
 			for (String key : wssOutgoingProperties.keySet()) {
 				Object oValue = wssOutgoingProperties.get(key);
@@ -270,6 +281,69 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 	        //        at org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor$WSS4JOutInterceptorInternal.handleMessage(WSS4JOutInterceptor.java:135) ~[cxf-rt-ws-security-3.2.6.jar:3.1.7]
 			msgCtx.put(SecurityConstants.USER, (String) msgCtx.get(SecurityConstants.SIGNATURE_USER));
 		}
+    }
+    
+    private void preprocessMultipropFile(MessageSecurityContext wssContext,SoapMessage msgCtx,Map<String,Object> wssOutgoingProperties, RequestInfo requestInfo,org.openspcoop2.utils.Map<Object> ctx) throws FileNotFoundException, UtilsException, SecurityException, URISyntaxException {
+    	
+    	String forceSignatureUser = null;
+    	String forceEncryptionUser = null;
+    	
+    	for (String key : wssOutgoingProperties.keySet()) {
+	    	if(SecurityConstants.SIGNATURE_MULTI_PROPERTY_FILE.equals(key)) {
+				SignatureBean bean = KeystoreUtils.getSenderSignatureBean(wssContext, ctx);
+				if(bean.getMultiKeystore()==null) {
+					throw new SecurityException("Multiproperty config not exists");
+				}
+				String keyAlias = bean.getUser();
+				String internalAlias = bean.getMultiKeystore().getInternalConfigAlias(keyAlias);
+				Properties p = new Properties();
+				p.put(KeystoreConstants.PROPERTY_KEYSTORE_PATH, bean.getMultiKeystore().getKeystorePath(internalAlias));
+				p.put(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD, bean.getMultiKeystore().getKeystorePassword(internalAlias));
+				p.put(KeystoreConstants.PROPERTY_KEYSTORE_TYPE, bean.getMultiKeystore().getKeystoreType(internalAlias));
+				p.put(KeystoreConstants.PROPERTY_PROVIDER, KeystoreConstants.PROVIDER_GOVWAY);
+				p.put(KeystoreConstants.PROPERTY_REQUEST_INFO, requestInfo);
+				String id = SecurityConstants.SIGNATURE_PROPERTY_REF_ID+"_"+IDUtilities.getUniqueSerialNumber("wssSecurity.setOutgoingProperties");
+				msgCtx.put(SecurityConstants.SIGNATURE_PROPERTY_REF_ID, id);
+				msgCtx.put(id, p);
+				
+				HashMap<String, String> mapAliasToPassword = new HashMap<>();
+				String password = bean.getPassword();
+				msgCtx.put(SecurityConstants.SIGNATURE_PASSWORD, bean.getPassword());
+				mapAliasToPassword.put(keyAlias, password);
+				CallbackHandler pwCallbackHandler = MessageSecurityContext.newCallbackHandler(mapAliasToPassword);
+				msgCtx.put(SecurityConstants.PASSWORD_CALLBACK_REF, pwCallbackHandler);
+				
+				forceSignatureUser = keyAlias;
+			}
+			else if(SecurityConstants.ENCRYPTION_MULTI_PROPERTY_FILE.equals(key)) {
+				EncryptionBean bean = KeystoreUtils.getSenderEncryptionBean(wssContext, ctx);
+				if(bean.getMultiKeystore()==null) {
+					throw new SecurityException("Multiproperty config not exists");
+				}
+				String keyAlias = bean.getUser();
+				String internalAlias = bean.getMultiKeystore().getInternalConfigAlias(keyAlias);
+				Properties p = new Properties();
+				p.put(KeystoreConstants.PROPERTY_KEYSTORE_PATH, bean.getMultiKeystore().getKeystorePath(internalAlias));
+				p.put(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD, bean.getMultiKeystore().getKeystorePassword(internalAlias));
+				p.put(KeystoreConstants.PROPERTY_KEYSTORE_TYPE, bean.getMultiKeystore().getKeystoreType(internalAlias));
+				p.put(KeystoreConstants.PROPERTY_PROVIDER, KeystoreConstants.PROVIDER_GOVWAY);
+				p.put(KeystoreConstants.PROPERTY_REQUEST_INFO, requestInfo);
+				String id = SecurityConstants.ENCRYPTION_PROPERTY_REF_ID +"_"+IDUtilities.getUniqueSerialNumber("wssSecurity.setOutgoingProperties");
+				msgCtx.put(SecurityConstants.ENCRYPTION_PROPERTY_REF_ID , id);
+				msgCtx.put(id, p);
+				
+				forceEncryptionUser = keyAlias;
+			}
+    	}
+    	
+    	if(forceSignatureUser!=null) {
+    		wssOutgoingProperties.remove(SecurityConstants.SIGNATURE_USER);
+    		wssOutgoingProperties.put(SecurityConstants.SIGNATURE_USER, forceSignatureUser);
+    	}
+    	if(forceEncryptionUser!=null) {
+    		wssOutgoingProperties.remove(SecurityConstants.ENCRYPTION_USER);
+    		wssOutgoingProperties.put(SecurityConstants.ENCRYPTION_USER, forceEncryptionUser);
+    	}
     }
     
     private String normalizeWss4jParts(String parts,OpenSPCoop2Message message){
