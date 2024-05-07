@@ -199,4 +199,15 @@ public class MerlinTruststore implements Serializable {
 		}
 	}
 
+	public String getTipoStore() {
+		return this.tipoStore;
+	}
+
+	public String getPathStore() {
+		return this.pathStore;
+	}
+
+	public String getPasswordStore() {
+		return this.passwordStore;
+	}
 }
