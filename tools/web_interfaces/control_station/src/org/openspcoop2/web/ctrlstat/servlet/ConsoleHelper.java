@@ -22420,14 +22420,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(utilizzaServizioCondiviso) {
 			String titoloModale = "";
 			String bodyModale = "";
-			this.addComandoVerificaConnettivitaCheUtilizzaServizioCondivisoButton(titoloModale, bodyModale, UtilsCostanti.SERVLET_NAME_VERIFICA_CERTIFICATI, parameters, inUsoType);
+			this.addComandoVerificaCertificatiCheUtilizzaServizioCondivisoButton(titoloModale, bodyModale, UtilsCostanti.SERVLET_NAME_VERIFICA_CERTIFICATI, parameters, inUsoType);
 		} else {
 			this.pd.addComandoVerificaCertificatiElementoButton(servletName, parameters);
 		}
 	}
 	
-	public void addComandoVerificaConnettivitaCheUtilizzaServizioCondivisoButton(String titoloModale, String bodyModale, String servletName, List<Parameter> parameters, InUsoType inUsoType) {
-		this.pd.addComandoElementoCheUtilizzaServizioCondivisoButton(Costanti.ICONA_VERIFICA, Costanti.ICONA_VERIFICA_CONNETTIVITA_TOOLTIP, titoloModale, bodyModale, servletName, parameters, inUsoType.toString());		
+	public void addComandoVerificaCertificatiCheUtilizzaServizioCondivisoButton(String titoloModale, String bodyModale, String servletName, List<Parameter> parameters, InUsoType inUsoType) {
+		this.pd.addComandoElementoCheUtilizzaServizioCondivisoButton(Costanti.ICONA_VERIFICA_CERTIFICATI, Costanti.ICONA_VERIFICA_CERTIFICATI_TOOLTIP, titoloModale, bodyModale, servletName, parameters, inUsoType.toString());		
 	}
 	
 	protected boolean existsProprietaOggetto(org.openspcoop2.core.registry.beans.ProprietaOggettoSintetico p, String descrizione) {

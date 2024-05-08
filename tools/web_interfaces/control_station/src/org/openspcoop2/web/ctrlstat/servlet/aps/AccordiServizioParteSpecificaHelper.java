@@ -10455,7 +10455,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 		}
 		
-		this.impostaComandiMenuContestuale(asps, protocollo, gestioneFruitori, fru, showVerificaCertificati, listaParametriChange, null, listParametersServizioFruitoriModificaProfiloOrVerificaCertificati, null, false);
+		this.impostaComandiMenuContestuale(asps, protocollo, gestioneFruitori, fru, showVerificaCertificati, listaParametriChange, null, listParametersServizioFruitoriModificaProfiloOrVerificaCertificati, null, true);
 	}
 	
 	private void impostaComandiMenuContestualePA(AccordoServizioParteSpecifica asps, String protocollo, Parameter pNomeServizio,
@@ -10477,6 +10477,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			listParametersServizioModificaProfiloOrVerificaCertificati.addAll(listaParametriChange);
 		}
 		
-		this.impostaComandiMenuContestuale(asps, protocollo, gestioneFruitori, null, showVerificaCertificati, listaParametriChange, listParametersServizioModificaProfiloOrVerificaCertificati, null, null, false);
+		this.impostaComandiMenuContestuale(asps, protocollo, gestioneFruitori, null, showVerificaCertificati, listaParametriChange, listParametersServizioModificaProfiloOrVerificaCertificati, null, null, true);
 	}
 }
