@@ -79,6 +79,12 @@ var path = '<%= request.getContextPath()%>';
 <link rel="stylesheet" href="css/ui.slider.css" type="text/css">
 <script type="text/javascript" src="js/ui.core.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/ui.dialog.js" nonce="<%= randomNonce %>"></script>
+<% if(
+		(customListViewName == null || "".equals(customListViewName))
+	|| (!"configurazione".equals(customListViewName) && !"connettoriMultipli".equals(customListViewName))
+	){ %>
+<script type="text/javascript" src="js/ui.resizable.js" nonce="<%= randomNonce %>"></script>
+<% }%>
 <script type="text/javascript" src="js/ui.slider.js" nonce="<%= randomNonce %>"></script>
 <link rel="stylesheet" href="css/bootstrap-tagsinput.css" type="text/css">
 <script type="text/javascript" src="js/jquery-on.js" nonce="<%= randomNonce %>"></script>

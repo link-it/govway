@@ -20,6 +20,9 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.web.lib.mvc.Costanti;
 
 /**
@@ -42,8 +45,27 @@ public class UtilsCostanti {
 	
 	public static final String SERVLET_NAME_SECRET_DECODER = "secretDecoder";
 	
+	public static final String SERVLET_NAME_VERIFICA_CERTIFICATI = "verificaCertificati";
+	
+	public static final String SERVLET_NAME_CACHE_MANAGER = "cacheManager";
+	
+	private static final List<String> SERVLET_UTILS = new ArrayList<>();
+	public static List<String> getServletUtils() {
+		return SERVLET_UTILS;
+	}
+	static{
+		SERVLET_UTILS.add(SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO);
+		SERVLET_UTILS.add(SERVLET_NAME_PROPRIETA_OGGETTO);
+		SERVLET_UTILS.add(SERVLET_NAME_SECRET_DECODER);
+		SERVLET_UTILS.add(SERVLET_NAME_VERIFICA_CERTIFICATI);
+		SERVLET_UTILS.add(SERVLET_NAME_CACHE_MANAGER);
+	}
 	
 	/* PARAMETRI */
+	
+	public static final String PARAMETRO_RESET_CACHE_TIPO_OGGETTO = Costanti.PARAMETRO_RESET_CACHE_TIPO_OGGETTO;
+	
+	public static final String PARAMETRO_VERIFICA_CERTIFICATI_TIPO_OGGETTO = Costanti.PARAMETRO_VERIFICA_CERTIFICATI_TIPO_OGGETTO;
 	
 	public static final String PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_URL = Costanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_URL;
 	public static final String PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_ID_OGGETTO = Costanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_ID_OGGETTO;
@@ -70,4 +92,11 @@ public class UtilsCostanti {
 	
 	public static final String PARAMETRO_SECRET_TO_UNWRAP = "secret";
 	public static final String MESSAGGIO_ERRORE_UNWRAP = "Si &egrave; verificato un errore durante la decodifica. Si prega di riprovare pi&ugrave; tardi.";
+	public static final String MESSAGGIO_ERRORE_ELIMINAZIONE_ELEMENTO_CACHE = "Si &egrave; verificato un errore durante la rimozione dell'elemento dalla cache. Si prega di riprovare pi&ugrave; tardi.";
+	public static final String MESSAGGIO_ERRORE_VERIFICA_CERTIFICATI = "Si &egrave; verificato un errore durante la verifica dei certificati. Si prega di riprovare pi&ugrave; tardi.";
+	public static final String MESSAGGIO_INFORMATIVO_VERIFICA_CERTIFICATI_NON_ESEGUITA = "Verifica dei certificati non eseguita";
+	
+	public static final String KEY_ESITO = Costanti.KEY_ESITO_JSON;
+	public static final String KEY_DETTAGLIO_ESITO = Costanti.KEY_DETTAGLIO_ESITO_JSON;
 }
+

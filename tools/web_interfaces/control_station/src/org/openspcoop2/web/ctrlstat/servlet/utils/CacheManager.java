@@ -30,12 +30,18 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
+import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniHelper;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
- * SecretDecoder
+ * CacheManager
  *
  * @author Andrea Poli (apoli@link.it)
  * @author Giuliano Pintori (giuliano.pintori@link.it)
@@ -43,7 +49,7 @@ import org.openspcoop2.web.lib.mvc.PageData;
  * @version $Rev$, $Date$
  *
  */
-public class SecretDecoder extends HttpServlet {
+public class CacheManager extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
@@ -67,7 +73,12 @@ public class SecretDecoder extends HttpServlet {
 	}
 
 	private void processRequest(HttpServletRequest request, HttpServletResponse response) {
-		String risposta = null;
+		String risposta = "";
+		String messaggioEsito = null;
+		String messageType = null;
+		response.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+
+
 		try(ByteArrayOutputStream baosPayload = new ByteArrayOutputStream();){
 			HttpRequestMethod httpRequestMethod = HttpRequestMethod.valueOf(request.getMethod().toUpperCase()); 
 
@@ -78,19 +89,32 @@ public class SecretDecoder extends HttpServlet {
 			HttpSession session = request.getSession(true);
 			PageData pd = new PageData();
 			UtilsHelper registroHelper = new UtilsHelper(request, pd, session);
-			ControlStationCore core = registroHelper.getCore();
-			
-			String secretToUnwrap = registroHelper.getParameter(UtilsCostanti.PARAMETRO_SECRET_TO_UNWRAP);
-			
-			if (core.isEnabledBYOK()) {
-				ControlStationCore.logInfo("SecretDecoder: secretToUnwrap: " + secretToUnwrap);
-				risposta = core.unwrap(secretToUnwrap);
+
+			String tipoOggetto = registroHelper.getParameter(UtilsCostanti.PARAMETRO_RESET_CACHE_TIPO_OGGETTO); 
+
+			InUsoType inUsoType = InUsoType.valueOf(tipoOggetto);
+
+			switch (inUsoType) {
+			case EROGAZIONE:
+			case FRUIZIONE:
+				ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
+				erogazioniHelper.eseguiResetCacheAspsOFruitore();
+
+				messaggioEsito = pd.getMessage();
+				messageType = pd.getMessageType();
+				break;
+			default:
+				throw new CoreException("TipoOggetto non gestito.");
 			}
+
+
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la decodifica: "+e.getMessage(), e);
 			response.setStatus(500);
-			risposta = UtilsCostanti.MESSAGGIO_ERRORE_UNWRAP;
+			messaggioEsito = UtilsCostanti.MESSAGGIO_ERRORE_ELIMINAZIONE_ELEMENTO_CACHE;
+			messageType = MessageType.ERROR.toString();
 		} finally {
+			risposta = ServletUtils.getJson(ServletUtils.getJsonPair(UtilsCostanti.KEY_ESITO, messageType), ServletUtils.getJsonPair(UtilsCostanti.KEY_DETTAGLIO_ESITO, messaggioEsito));
 			try {
 				ServletOutputStream outputStream = response.getOutputStream();
 				outputStream.write(risposta.getBytes());

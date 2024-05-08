@@ -153,7 +153,7 @@ boolean inserisciDivComandiAffiancati =
 					String numeroLink = numeroEntry + "_" + idxLink;
 					
 					// gestione link che visualizzano la finestra modale
-					if(de.getInfo() != null || de.getDialog() != null){
+					if(de.getInfo() != null || de.getDialog() != null || de.getConfirm() != null){
 						if(de.getInfo() != null) {
 							DataElementInfo deInfo = de.getInfo();
 							String idDivIconInfo = "divIconInfo_"+numeroLink;
@@ -185,6 +185,17 @@ boolean inserisciDivComandiAffiancati =
 						
 						<%	
 						}
+						
+						if(de.getConfirm() != null) {
+							DataElementConfirm deConfirm = de.getConfirm();
+							String idIconInfo = "iconAjax_"+numeroLink; 
+						%>
+						<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deConfirm.getTitolo() %>"/>
+	   					<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deConfirm.getBody() %>"/>
+	   					<input type="hidden" name="__i_hidden_url_<%= idIconInfo %>" id="hidden_url_<%= idIconInfo %>"  value="<%= de.getUrl() %>"/>
+	               
+		                <%						
+							}
 					} else { // link classico non sono necessarie risorse
 					}
 				}
@@ -204,7 +215,7 @@ boolean inserisciDivComandiAffiancati =
 								String numeroLink = numeroEntry + "_" + idxLink;
 								
 								
-								if(de.getInfo() != null || de.getDialog() != null){
+								if(de.getInfo() != null || de.getDialog() != null || de.getConfirm() != null){
 									
 									%>
 									// add third item with function
@@ -247,6 +258,40 @@ boolean inserisciDivComandiAffiancati =
 					    							},
 					    							error: function(data, textStatus, jqXHR){
 					    								<%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
+					    							}
+					    						}
+					    					);
+							    			<%
+						                }
+										
+										if(de.getConfirm() != null) {
+											DataElementConfirm deConfirm = de.getConfirm();
+											String idIconInfo = "iconAjax_"+numeroLink; 
+																						
+											%>
+											var urlD_<%= numeroLink %> = $("#hidden_url_iconAjax_<%= numeroLink %>").val();
+											
+											// addTabID
+											urlD_<%= numeroLink %> = addTabIdParam(urlD_<%= numeroLink %>,true);
+
+						    				// chiamata al servizio
+						    				<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
+						    				
+						    				$.ajax({
+					    							url : urlD_<%= numeroLink %>,
+					    							method: 'GET',
+					    							async : false,
+					    							dataType: 'json', 	
+					    							success: function(data, textStatus, jqXHR){
+									    				<%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
+
+									    				// visualizza modale di risultato ok
+									    				mostraEsitoOperazioneAjaxModal(data);
+					    							},
+					    							error: function(data, textStatus, jqXHR){
+					    								<%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
+					    								// visualizza messaggio di errore ricevuto dal server
+					    								mostraEsitoOperazioneAjaxModal(data);
 					    							}
 					    						}
 					    					);

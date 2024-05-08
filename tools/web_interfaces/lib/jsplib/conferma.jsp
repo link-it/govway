@@ -438,6 +438,30 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
   			}
 			});
   	}
+  	
+  	// resize text area
+  	var txtA_ne_dec_width = 0;
+  	var txtA_ne_dec_height = 0;
+  	if($("#txtA_ne_dec").length>0){
+  		$("#txtA_ne_dec").mousedown(function(evt){
+  			var ta = $(this);
+  			
+  			txtA_ne_dec_width = ta.width();
+  				txtA_ne_dec_height= ta.height();
+  		});
+  		
+		$("#txtA_ne_dec").mouseup(function(evt){
+			var ta = $(this);
+			
+			if(ta.width() != txtA_ne_dec_width || ta.height() != txtA_ne_dec_height){
+			    //do Something
+			    console.log('resized');
+			 // ripristino ombreggiatura
+// 				$("#visualizzaInformazioniCifrateModal").dialog("close");
+// 				$("#visualizzaInformazioniCifrateModal").dialog("open");
+			  }
+		});
+  	}
 });
 	
 	function mostraDataElementInfoModal(title,body){
@@ -453,6 +477,8 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 		$("#txtA_ne_dec").attr('style','');		
 		$("#iconCopy_dec").hide();
 		$("#txtA_ne_dec").hide();
+		$("#visualizzaInformazioniCifrateModalPropNota").show();
+		$("#visualizzaInformazioniCifrateModal").next().show();
 		
 		$("#visualizzaInformazioniCifrateModal").prev().children('span').text(title);
 		$("#visualizzaInformazioniCifrateModalBodyNotaSpan").html(body);
@@ -483,6 +509,24 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 		$("#erroreInformazioniCifrateModal").dialog("open");
 	}
 	
+	function mostraEsitoOperazioneAjaxModal(data){
+		var esito = data.<%=Costanti.KEY_ESITO_JSON %>;
+		var dettaglio = data.<%=Costanti.KEY_DETTAGLIO_ESITO_JSON %>;
+		
+		if(esito == '<%= MessageType.ERROR.toString() %>'){
+			$("#operazioneAjaxModalHeaderSxIconOk").hide();
+			$("#operazioneAjaxModalHeaderSxIconKo").show();
+			$("#operazioneAjaxModal").prev().children('span').text('<%= Costanti.TITOLO_FINESTRA_MODALE_COPIA_MESSAGE_WARNING %>');
+		} else {
+			$("#operazioneAjaxModalHeaderSxIconOk").show();
+			$("#operazioneAjaxModalHeaderSxIconKo").hide();
+			$("#operazioneAjaxModal").prev().children('span').text('<%= Costanti.MESSAGE_TYPE_INFO_TITLE %>');
+		}
+		
+		// imposto il messaggio ricevuto dal server
+		$("#operazioneAjaxModalHeaderDxRiga1Span").html(dettaglio);
+		$("#operazioneAjaxModal").dialog("open");
+	}
 	
 </script>
 
@@ -495,7 +539,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 	<div id="visualizzaInformazioniCifrateModalBody" class="contenutoModal">
 		<div class="propDialog">
 			<div class="txtA_div_propDialog_dec">
-				<textarea id="txtA_ne_dec" readonly rows="5" cols="" name="txtA_ne_dec" class="inputLinkLong textAreaDec"></textarea>
+				<textarea id="txtA_ne_dec" readonly rows="3" cols="62" name="txtA_ne_dec" class="inputLinkLong"></textarea>
 			 	<div class="iconCopyBox" id="divIconInfo_dec">
 	      			<input type="hidden" name="__i_hidden_value_iconCopy_dec" id="hidden_value_iconCopy_dec"  value=""/>
 			      	<span class="spanIconCopyBox" title="Copia">
@@ -505,7 +549,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 			</div>
 		</div>
 	</div>
-	<div class="propDialog">
+	<div class="propDialog" id="visualizzaInformazioniCifrateModalPropNota">
 		<div id="visualizzaInformazioniCifrateModalBodyNota" class="finestraDialogModalNota">
 			<span class="finestraDialogModalBodyNota" id="visualizzaInformazioniCifrateModalBodyNotaSpan"></span>
 		</div>
@@ -538,7 +582,22 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 		</div>
 		<div id="erroreInformazioniCifrateModalHeaderDx" class="finestraDialogModalHeaderDx">
   			<div id="erroreInformazioniCifrateModalHeaderDxRiga1" class="finestraDialogModalHeaderDxRiga1">
-	  			<span class="finestraDialogModalHeaderDxRiga1" id="erroreInformazioniCifrateModalHeaderDxRiga1Span"></span>	
+	  			<span class="" id="erroreInformazioniCifrateModalHeaderDxRiga1Span"></span>	
+			</div>
+		</div>
+	</div>
+</div>
+<div id="operazioneAjaxModal" title="Attenzione">
+	<div id="operazioneAjaxModalHeader" class="finestraDialogModalHeader">
+  		<div id="operazioneAjaxModalHeaderSx" class="finestraDialogModalHeaderSx">
+	  		<span class="icon-box">
+				<i id="operazioneAjaxModalHeaderSxIconKo" class="material-icons md-48"><%= Costanti.ICON_DIALOG_HEADER %></i>
+				<i id="operazioneAjaxModalHeaderSxIconOk" class="material-icons md-48"><%= Costanti.INFO_BUTTON_ICON_WHITE %></i>
+			</span>
+		</div>
+		<div id="operazioneAjaxModalHeaderDx" class="finestraDialogModalHeaderDx">
+  			<div id="operazioneAjaxModalHeaderDxRiga1" class="finestraDialogModalHeaderDxRiga1">
+	  			<span class="" id="operazioneAjaxModalHeaderDxRiga1Span"></span>	
 			</div>
 		</div>
 	</div>

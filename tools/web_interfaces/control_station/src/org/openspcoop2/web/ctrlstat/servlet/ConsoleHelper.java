@@ -14656,6 +14656,28 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 	}
 	
+	public String getLabelServizio(IDSoggetto idSoggettoFruitore, boolean gestioneFruitori, IDServizio idServizio, String tipoProtocollo) throws DriverControlStationException {
+		String labelServizio = null;
+		if(gestioneFruitori) {
+			labelServizio = this.getLabelServizioFruizione(tipoProtocollo, idSoggettoFruitore, idServizio);
+		}
+		else {
+			labelServizio = this.getLabelServizioErogazione(tipoProtocollo, idServizio);
+		}
+		return labelServizio;
+	}
+	
+	public String getLabelServizio(IDSoggetto idSoggettoFruitore, boolean gestioneFruitori, AccordoServizioParteSpecifica asps, String tipoProtocollo) throws DriverControlStationException {
+		String labelServizio = null;
+		if(gestioneFruitori) {
+			labelServizio = this.getLabelServizioFruizione(tipoProtocollo, idSoggettoFruitore, asps);
+		}
+		else {
+			labelServizio = this.getLabelServizioErogazione(tipoProtocollo, asps);
+		}
+		return labelServizio;
+	}
+	
 	// LABEL ACCORDI COOPERAZIONE
 	
 	public String getLabelIdAccordoCooperazione(AccordoCooperazione ac) throws DriverControlStationException{
@@ -22377,6 +22399,35 @@ public class ConsoleHelper implements IConsoleHelper {
 				titolo, id, inUsoType.toString(),
 				tooltip, icon, headerRiga1, 
 				resizable, draggable);
+	}
+	
+	public void addComandoResetCacheElementoButton(boolean utilizzaServizioCondiviso, String servletName, List<Parameter> parameters, InUsoType inUsoType) {
+		if(utilizzaServizioCondiviso) {
+			String titoloModale = "";
+			String bodyModale = "";
+			this.addComandoResetCacheCheUtilizzaServizioCondivisoButton(titoloModale, bodyModale, UtilsCostanti.SERVLET_NAME_CACHE_MANAGER, parameters, inUsoType);
+		} else {
+			this.pd.addComandoResetCacheElementoButton(servletName, parameters);
+		}
+	}
+	
+	public void addComandoResetCacheCheUtilizzaServizioCondivisoButton(String titoloModale, String bodyModale, String servletName, List<Parameter> parameters, InUsoType inUsoType) {
+		this.pd.addComandoElementoCheUtilizzaServizioCondivisoButton(Costanti.ICONA_RESET_CACHE_ELEMENTO, Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP, titoloModale, bodyModale, servletName, parameters, inUsoType.toString());		
+		
+	}
+	
+	public void addComandoVerificaCertificatiElementoButton(boolean utilizzaServizioCondiviso, String servletName, List<Parameter> parameters, InUsoType inUsoType) {
+		if(utilizzaServizioCondiviso) {
+			String titoloModale = "";
+			String bodyModale = "";
+			this.addComandoVerificaConnettivitaCheUtilizzaServizioCondivisoButton(titoloModale, bodyModale, UtilsCostanti.SERVLET_NAME_VERIFICA_CERTIFICATI, parameters, inUsoType);
+		} else {
+			this.pd.addComandoVerificaCertificatiElementoButton(servletName, parameters);
+		}
+	}
+	
+	public void addComandoVerificaConnettivitaCheUtilizzaServizioCondivisoButton(String titoloModale, String bodyModale, String servletName, List<Parameter> parameters, InUsoType inUsoType) {
+		this.pd.addComandoElementoCheUtilizzaServizioCondivisoButton(Costanti.ICONA_VERIFICA, Costanti.ICONA_VERIFICA_CONNETTIVITA_TOOLTIP, titoloModale, bodyModale, servletName, parameters, inUsoType.toString());		
 	}
 	
 	protected boolean existsProprietaOggetto(org.openspcoop2.core.registry.beans.ProprietaOggettoSintetico p, String descrizione) {

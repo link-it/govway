@@ -2127,13 +2127,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						
 			String tipoProtocollo = this.apsCore.getProtocolloAssociatoTipoServizio(asps.getTipo());
 			
-			String tmpTitle = null;
-			if(gestioneFruitori) {
-				tmpTitle = this.getLabelServizioFruizione(tipoProtocollo, idSoggettoFruitore, asps);
-			}
-			else {
-				tmpTitle = this.getLabelServizioErogazione(tipoProtocollo, asps);
-			}
+			String tmpTitle = this.getLabelServizio(idSoggettoFruitore, gestioneFruitori, asps, tipoProtocollo);
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<>();
@@ -10357,7 +10351,17 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			boolean showVerificaCertificati, List<Parameter> listaParametriChange,
 			List<Parameter> listParametersVerificaCertificati,
 			List<Parameter> listParametersFruitoriVerificaCertificati,
-			ProprietaOggetto pOggetto) throws DriverControlStationException, DriverRegistroServiziException {
+			ProprietaOggetto pOggetto, boolean visualizzaInUsoButton) throws DriverControlStationException, DriverRegistroServiziException {
+		this.impostaComandiMenuContestuale(asps, protocollo, gestioneFruitori, fruitore, showVerificaCertificati, listaParametriChange, 
+				listParametersVerificaCertificati, listParametersFruitoriVerificaCertificati, pOggetto, visualizzaInUsoButton, true);
+	}
+
+	protected void impostaComandiMenuContestuale(AccordoServizioParteSpecifica asps, String protocollo, boolean gestioneFruitori,
+			Fruitore fruitore,
+			boolean showVerificaCertificati, List<Parameter> listaParametriChange,
+			List<Parameter> listParametersVerificaCertificati,
+			List<Parameter> listParametersFruitoriVerificaCertificati,
+			ProprietaOggetto pOggetto, boolean visualizzaInUsoButton, boolean utilizzaServizioCondiviso) throws DriverControlStationException, DriverRegistroServiziException {
 		
 		String uriASPS = this.idServizioFactory.getUriFromAccordo(asps);
 		
@@ -10370,32 +10374,29 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		
 		String idServizioButton = gestioneFruitori ? uriASPS+"@"+fruitore.getTipo()+"/"+fruitore.getNome() : uriASPS;
 		
-		String labelServizioConFruitore = null;
-		if(gestioneFruitori) {
-			labelServizioConFruitore = this.getLabelServizioFruizione(protocollo, idSoggettoFruitore, idServizio);
-		}
-		else {
-			labelServizioConFruitore = this.getLabelServizioErogazione(protocollo, idServizio);
-		}
+		String labelServizioConFruitore = this.getLabelServizio(idSoggettoFruitore, gestioneFruitori, idServizio, protocollo); 
 		
 		// In Uso Button
-		this.addComandoInUsoInfoButton(labelServizioConFruitore,
+		if(visualizzaInUsoButton) {
+			this.addComandoInUsoInfoButton(labelServizioConFruitore,
 				idServizioButton,
 				gestioneFruitori ? InUsoType.FRUIZIONE_INFO : InUsoType.EROGAZIONE_INFO);
+		}
 		
 		// Verifica Certificati
 		if(showVerificaCertificati) {
 			if(gestioneFruitori) {
-				this.pd.addComandoVerificaCertificatiElementoButton(ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI, listParametersFruitoriVerificaCertificati);
+				this.addComandoVerificaCertificatiElementoButton(utilizzaServizioCondiviso, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI, listParametersFruitoriVerificaCertificati, InUsoType.FRUIZIONE);
 			}
 			else {
-				this.pd.addComandoVerificaCertificatiElementoButton(ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI, listParametersVerificaCertificati);
+				this.addComandoVerificaCertificatiElementoButton(utilizzaServizioCondiviso, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI, listParametersVerificaCertificati, InUsoType.EROGAZIONE);
 			}
 		}
 		
 		// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
 		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
-			this.pd.addComandoResetCacheElementoButton(ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, listaParametriChange);
+			this.addComandoResetCacheElementoButton(utilizzaServizioCondiviso, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, listaParametriChange,
+					gestioneFruitori ? InUsoType.FRUIZIONE : InUsoType.EROGAZIONE);
 		}
 		
 		// Proprieta Button
@@ -10429,7 +10430,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			Parameter pIdFruitore, Parameter pNomeServizio, Parameter pTipoServizio)
 			throws DriverRegistroServiziException, DriverControlStationException {
 		// visualizzo menu' contestuale
-		ProprietaOggetto pOggetto = this.creaProprietaOggetto(asps, gestioneFruitori, fru, IDServizioFactory.getInstance().getIDServizioFromAccordo(asps), idSoggettoFruitore);
 		
 		boolean showVerificaCertificati = this.core.isFruizioniVerificaCertificati();
 		List<Parameter> listaParametriChange = new ArrayList<>();		
@@ -10455,7 +10455,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 		}
 		
-		this.impostaComandiMenuContestuale(asps, protocollo, gestioneFruitori, fru, showVerificaCertificati, listaParametriChange, null, listParametersServizioFruitoriModificaProfiloOrVerificaCertificati, pOggetto);
+		this.impostaComandiMenuContestuale(asps, protocollo, gestioneFruitori, fru, showVerificaCertificati, listaParametriChange, null, listParametersServizioFruitoriModificaProfiloOrVerificaCertificati, null, false);
 	}
 	
 	private void impostaComandiMenuContestualePA(AccordoServizioParteSpecifica asps, String protocollo, Parameter pNomeServizio,
@@ -10463,7 +10463,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			throws DriverRegistroServiziException, DriverControlStationException {
 		// visualizzo menu' contestuale
 		boolean gestioneFruitori = false;
-		ProprietaOggetto pOggetto = this.creaProprietaOggetto(asps, gestioneFruitori, null, IDServizioFactory.getInstance().getIDServizioFromAccordo(asps), null);
 		
 		boolean showVerificaCertificati = this.core.isFruizioniVerificaCertificati();
 		List<Parameter> listaParametriChange = new ArrayList<>();		
@@ -10478,6 +10477,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			listParametersServizioModificaProfiloOrVerificaCertificati.addAll(listaParametriChange);
 		}
 		
-		this.impostaComandiMenuContestuale(asps, protocollo, gestioneFruitori, null, showVerificaCertificati, listaParametriChange, listParametersServizioModificaProfiloOrVerificaCertificati, null, pOggetto);
+		this.impostaComandiMenuContestuale(asps, protocollo, gestioneFruitori, null, showVerificaCertificati, listaParametriChange, listParametersServizioModificaProfiloOrVerificaCertificati, null, null, false);
 	}
 }

@@ -23,6 +23,9 @@ package org.openspcoop2.web.ctrlstat.servlet.login;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.Filter;
@@ -41,9 +44,9 @@ import org.openspcoop2.utils.transport.http.credential.IPrincipalReader;
 import org.openspcoop2.utils.transport.http.credential.PrincipalReaderException;
 import org.openspcoop2.utils.transport.http.credential.PrincipalReaderFactory;
 import org.openspcoop2.utils.transport.http.credential.PrincipalReaderType;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
-import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.gestori.GestoreConsistenzaDati;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -257,17 +260,18 @@ public final class AuthorizationFilter implements Filter {
 							}
 						}
 						
+						if(isRedirectToLoginAndSessioneScaduta(urlRichiesta)) {
 						
-						if (urlRichiesta.indexOf(".do") == -1 && urlRichiesta.indexOf(".js") == -1 
-								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_PACKAGE_EXPORT) == -1
-								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_MESSAGGI_DIAGNOSTICI_EXPORT) == -1
-								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_TRACCE_EXPORT) == -1
-								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT) == -1
-								&& urlRichiesta.indexOf("/"+ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER) == -1
-								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_RESOCONTO_EXPORT) == -1 
-								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO) == -1
-								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_PROPRIETA_OGGETTO) == -1
-								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_SECRET_DECODER) == -1) {
+//						if (urlRichiesta.indexOf(".do") == -1 && urlRichiesta.indexOf(".js") == -1 
+//								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_PACKAGE_EXPORT) == -1
+//								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_MESSAGGI_DIAGNOSTICI_EXPORT) == -1
+//								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_TRACCE_EXPORT) == -1
+//								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT) == -1
+//								&& urlRichiesta.indexOf("/"+ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER) == -1
+//								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_RESOCONTO_EXPORT) == -1 
+//								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO) == -1
+//								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_PROPRIETA_OGGETTO) == -1
+//								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_SECRET_DECODER) == -1) {
 	
 							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA,MessageType.ERROR_SINTETICO, this.filterConfig);
 							// return so that we do not chain to other filters
@@ -495,18 +499,19 @@ public final class AuthorizationFilter implements Filter {
 								return;
 							}
 						}
+	
+						if(isRedirectToLoginAndSessioneScaduta(urlRichiesta)) {
 						
-						
-						if (urlRichiesta.indexOf(".do") == -1 && urlRichiesta.indexOf(".js") == -1 
-								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_PACKAGE_EXPORT) == -1
-								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_MESSAGGI_DIAGNOSTICI_EXPORT) == -1
-								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_TRACCE_EXPORT) == -1
-								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT) == -1
-								&& urlRichiesta.indexOf("/"+ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER) == -1
-								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_RESOCONTO_EXPORT) == -1 
-								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO) == -1
-								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_PROPRIETA_OGGETTO) == -1
-								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_SECRET_DECODER) == -1) {
+//						if (urlRichiesta.indexOf(".do") == -1 && urlRichiesta.indexOf(".js") == -1 
+//								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_PACKAGE_EXPORT) == -1
+//								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_MESSAGGI_DIAGNOSTICI_EXPORT) == -1
+//								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_TRACCE_EXPORT) == -1
+//								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT) == -1
+//								&& urlRichiesta.indexOf("/"+ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER) == -1
+//								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_RESOCONTO_EXPORT) == -1 
+//								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO) == -1
+//								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_PROPRIETA_OGGETTO) == -1
+//								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_SECRET_DECODER) == -1) {
 	
 							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA,MessageType.ERROR_SINTETICO, this.filterConfig);
 							// return so that we do not chain to other filters
@@ -750,15 +755,32 @@ public final class AuthorizationFilter implements Filter {
 	
 	private boolean isGeneraNuovoTokenCSRF(HttpServletRequest request, LoginHelper loginHelper) throws Exception{
 		// token attuale viene invalidato e ne viene generato uno nuovo
-		// tranne che per le richieste verso la servlet informazioniUtilizzoOggettoRegistro e proprietaOggettoRegistro
+		// tranne che per le richieste verso le servlet utils
 		String urlRichiesta = request.getRequestURI();
-		if ((urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO) != -1)
-				|| (urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_PROPRIETA_OGGETTO) != -1)
-				|| (urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_SECRET_DECODER) != -1))  {
+		boolean containsServletName = UtilsCostanti.getServletUtils().stream().anyMatch(name -> urlRichiesta.contains("/" + name));
+		
+		if (containsServletName)  {
 			ControlStationCore.logDebug("Richiesta Risorsa ["+urlRichiesta+"], Token CSRF non verra' aggiornato.");
 			return false;
 		}
 		
 		return true;
+	}
+
+	// controlla se deve essere fatto il redirect alla pagina di login con messaggio sessione scaduta
+	private boolean isRedirectToLoginAndSessioneScaduta(String urlRichiesta) {
+		List<String> servletsToExclude = new ArrayList<>();
+		
+		servletsToExclude.add(ArchiviCostanti.SERVLET_NAME_PACKAGE_EXPORT);
+		servletsToExclude.add(ArchiviCostanti.SERVLET_NAME_MESSAGGI_DIAGNOSTICI_EXPORT);
+		servletsToExclude.add(ArchiviCostanti.SERVLET_NAME_TRACCE_EXPORT);
+		servletsToExclude.add(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT);
+		servletsToExclude.add(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER);
+		servletsToExclude.add(ArchiviCostanti.SERVLET_NAME_RESOCONTO_EXPORT);
+		servletsToExclude.addAll(UtilsCostanti.getServletUtils());
+
+		boolean shouldProcessRequest = servletsToExclude.stream().noneMatch(servlet -> urlRichiesta.indexOf("/"+ servlet) == -1);
+
+		return urlRichiesta.indexOf(".do") == -1 && urlRichiesta.indexOf(".js") == -1 && shouldProcessRequest;
 	}
 }
