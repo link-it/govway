@@ -88,6 +88,8 @@ public class BYOKCostanti {
 	public static final String PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT_KEY_ALIAS = "https.clientAuth.key.alias";
 	public static final String PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT_KEY_PASSWORD = "https.clientAuth.key.password";
 
+	public static final String PROPERTY_SUFFIX_HTTP_RESPONSE_BASE64_ENCODED = "http.response.base64Encoded";
+	public static final String PROPERTY_SUFFIX_HTTP_RESPONSE_HEX_ENCODED = "http.response.hexEncoded";
 	
 	
 	
@@ -102,6 +104,7 @@ public class BYOKCostanti {
 	public static final String PROPERTY_SUFFIX_LOCAL_KEYSTORE_PATH = "local.keystore.path";
 	public static final String PROPERTY_SUFFIX_LOCAL_KEYSTORE_PASSWORD = "local.keystore.password";
 	public static final String PROPERTY_SUFFIX_LOCAL_KEY_PATH = "local.key.path";
+	public static final String PROPERTY_SUFFIX_LOCAL_KEY_INLINE = "local.key.inline";
 	public static final String PROPERTY_SUFFIX_LOCAL_KEY_ALGORITHM = "local.key.algorithm";
 	public static final String PROPERTY_SUFFIX_LOCAL_KEY_ALIAS = "local.key.alias";
 	public static final String PROPERTY_SUFFIX_LOCAL_KEY_PASSWORD = "local.key.password";
@@ -109,6 +112,7 @@ public class BYOKCostanti {
 	public static final String PROPERTY_SUFFIX_LOCAL_KEY_WRAP = "local.key.wrap";
 	
 	public static final String PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_PATH = "local.publicKey.path";
+	public static final String PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_INLINE = "local.publicKey.inline";
 	
 	public static final String PROPERTY_SUFFIX_LOCAL_CONTENT_ALGORITHM = "local.algorithm";
 	

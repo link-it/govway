@@ -82,6 +82,8 @@ import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.io.HexBinaryUtilities;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.CharsetUtilities;
 import org.openspcoop2.utils.resources.MapReader;
@@ -101,6 +103,9 @@ import com.sun.xml.messaging.saaj.soap.SOAPDocumentImpl;
  */
 public class ConfigurazioneSistema extends NotificationBroadcasterSupport implements DynamicMBean {
 
+	private static final String LUNGHEZZA_PARAMETRI_ERRORE = "] Lunghezza parametri non corretta: ";
+	private static final String CHIAVE = "Chiave";
+	
 	/** Nomi metodi */
 	public static final String VERSIONE_PDD = "getVersionePdD";
 	public static final String VERSIONE_BASE_DATI = "getVersioneBaseDati";
@@ -127,7 +132,11 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	public static final String FILE_TRACE_CONFIG = "getFileTrace";
 	public static final String FILE_TRACE_UPDATE = "updateFileTrace";
 	public static final String BYOK_WRAP = "wrapKey";
+	public static final String BYOK_WRAP_BASE64 = "wrapBase64Key";
+	public static final String BYOK_WRAP_HEX = "wrapHexKey";
 	public static final String BYOK_UNWRAP = "unwrapKey";
+	public static final String BYOK_UNWRAP_BASE64 = "unwrapKeyAsBase64";
+	public static final String BYOK_UNWRAP_HEX = "unwrapKeyAsHex";
 
 	private static boolean includePassword = false;
 	public static boolean isIncludePassword() {
@@ -314,7 +323,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		else if(actionName.equals(BYOK_UNWRAP)){
 			
 			if(params.length != 1)
-				throw new MBeanException(new Exception("["+BYOK_UNWRAP+"] Lunghezza parametri non corretta: "+params.length));
+				throw new MBeanException(new Exception("["+BYOK_UNWRAP+LUNGHEZZA_PARAMETRI_ERRORE+params.length));
 			
 			String param1 = null;
 			if(params[0]!=null && !"".equals(params[0])){
@@ -324,10 +333,36 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			return this.byokUnwrap(param1);
 		}
 		
+		else if(actionName.equals(BYOK_UNWRAP_BASE64)){
+					
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+BYOK_UNWRAP_BASE64+LUNGHEZZA_PARAMETRI_ERRORE+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			return this.byokBase64Unwrap(param1);
+		}
+				
+		else if(actionName.equals(BYOK_UNWRAP_HEX)){
+			
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+BYOK_UNWRAP_HEX+LUNGHEZZA_PARAMETRI_ERRORE+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			return this.byokHexUnwrap(param1);
+		}
+		
 		else if(actionName.equals(BYOK_WRAP)){
 			
 			if(params.length != 1)
-				throw new MBeanException(new Exception("["+BYOK_UNWRAP+"] Lunghezza parametri non corretta: "+params.length));
+				throw new MBeanException(new Exception("["+BYOK_WRAP+LUNGHEZZA_PARAMETRI_ERRORE+params.length));
 			
 			String param1 = null;
 			if(params[0]!=null && !"".equals(params[0])){
@@ -335,6 +370,32 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			}
 			
 			return this.byokWrap(param1);
+		}
+		
+		else if(actionName.equals(BYOK_WRAP_BASE64)){
+			
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+BYOK_WRAP_BASE64+LUNGHEZZA_PARAMETRI_ERRORE+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			return this.byokWrapBase64Key(param1);
+		}
+		
+		else if(actionName.equals(BYOK_WRAP_HEX)){
+			
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+BYOK_WRAP_HEX+LUNGHEZZA_PARAMETRI_ERRORE+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			return this.byokWrapHexKey(param1);
 		}
 
 		throw new UnsupportedOperationException("Operazione "+actionName+" sconosciuta");
@@ -489,7 +550,23 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		// BYOK_UNWRAP
 		MBeanOperationInfo byokUnwrapOp = new MBeanOperationInfo(BYOK_UNWRAP,"Effettua l'unwrap della chiave fornita",
 				new MBeanParameterInfo[]{
-						new MBeanParameterInfo("key",String.class.getName(),"Chiave"),
+						new MBeanParameterInfo("key",String.class.getName(),CHIAVE),
+				},
+				String.class.getName(),
+				MBeanOperationInfo.ACTION);
+		
+		// BYOK_UNWRAP_BASE64
+		MBeanOperationInfo byokBase64UnwrapOp = new MBeanOperationInfo(BYOK_UNWRAP_BASE64,"Effettua l'unwrap della chiave fornita (ritorna codificata in base64)",
+				new MBeanParameterInfo[]{
+						new MBeanParameterInfo("key",String.class.getName(),CHIAVE),
+				},
+				String.class.getName(),
+				MBeanOperationInfo.ACTION);
+		
+		// BYOK_UNWRAP_HEX
+		MBeanOperationInfo byokHexUnwrapOp = new MBeanOperationInfo(BYOK_UNWRAP_HEX,"Effettua l'unwrap della chiave fornita (ritorna codificata in hex)",
+				new MBeanParameterInfo[]{
+						new MBeanParameterInfo("key",String.class.getName(),CHIAVE),
 				},
 				String.class.getName(),
 				MBeanOperationInfo.ACTION);
@@ -497,7 +574,23 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		// BYOK_WRAP
 		MBeanOperationInfo byokWrapOp = new MBeanOperationInfo(BYOK_WRAP,"Effettua il wrap della chiave fornita",
 				new MBeanParameterInfo[]{
-						new MBeanParameterInfo("key",String.class.getName(),"Chiave"),
+						new MBeanParameterInfo("key",String.class.getName(),CHIAVE),
+				},
+				String.class.getName(),
+				MBeanOperationInfo.ACTION);
+		
+		// BYOK_WRAP_BASE64
+		MBeanOperationInfo byokWrapBase64KeyOp = new MBeanOperationInfo(BYOK_WRAP_BASE64,"Effettua il wrap della chiave fornita codificata in base64",
+				new MBeanParameterInfo[]{
+						new MBeanParameterInfo("key",String.class.getName(),"Chiave codificata in base64"),
+				},
+				String.class.getName(),
+				MBeanOperationInfo.ACTION);
+		
+		// BYOK_WRAP_HEX
+		MBeanOperationInfo byokWrapHexKeyOp = new MBeanOperationInfo(BYOK_WRAP_HEX,"Effettua il wrap della chiave fornita codificata in esadecimale",
+				new MBeanParameterInfo[]{
+						new MBeanParameterInfo("key",String.class.getName(),"Chiave codificata in hex"),
 				},
 				String.class.getName(),
 				MBeanOperationInfo.ACTION);
@@ -520,7 +613,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				informazioniProprietaJavaAltroOp, informazioniProprietaSistemaOp,
 				messageFactoryOp,confDirectoryOp,protocolsOp,
 				fileTraceConfigOp, fileTraceUpdateOp,
-				byokUnwrapOp, byokWrapOp};
+				byokUnwrapOp, byokBase64UnwrapOp, byokHexUnwrapOp, 
+				byokWrapOp, byokWrapBase64KeyOp, byokWrapHexKeyOp};
 
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
 	}
@@ -1289,8 +1383,38 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		try {
 			String securityRuntimePolicy = this.openspcoopProperties.getBYOKConfigInternalConfigSecurityEngine();
 			if(securityRuntimePolicy!=null) {
-				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy);
+				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy, securityRuntimePolicy);
 				return driverBYOK.unwrapAsString(value, securityRuntimePolicy, true);
+			}
+			return value;
+		}catch(Exception e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String byokBase64Unwrap(String value){
+		try {
+			String securityRuntimePolicy = this.openspcoopProperties.getBYOKConfigInternalConfigSecurityEngine();
+			if(securityRuntimePolicy!=null) {
+				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy, securityRuntimePolicy);
+				byte [] c = driverBYOK.unwrap(value, securityRuntimePolicy, true);
+				return Base64Utilities.encodeAsString(c);
+			}
+			return value;
+		}catch(Exception e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String byokHexUnwrap(String value){
+		try {
+			String securityRuntimePolicy = this.openspcoopProperties.getBYOKConfigInternalConfigSecurityEngine();
+			if(securityRuntimePolicy!=null) {
+				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy, securityRuntimePolicy);
+				byte [] c = driverBYOK.unwrap(value, securityRuntimePolicy, true);
+				return HexBinaryUtilities.encodeAsString(c);
 			}
 			return value;
 		}catch(Exception e){
@@ -1303,8 +1427,52 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		try {
 			String securityRuntimePolicy = this.openspcoopProperties.getBYOKConfigInternalConfigSecurityEngine();
 			if(securityRuntimePolicy!=null) {
-				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy);
+				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy, securityRuntimePolicy);
 				BYOKWrappedValue v = driverBYOK.wrap(value);
+				if(v!=null) {
+					return v.getWrappedValue();
+				}
+				else {
+					return null;
+				}
+			}
+			return value;
+		}catch(Exception e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String byokWrapBase64Key(String value){
+		try {
+			byte[] decoded = Base64Utilities.decode(value);
+			
+			String securityRuntimePolicy = this.openspcoopProperties.getBYOKConfigInternalConfigSecurityEngine();
+			if(securityRuntimePolicy!=null) {
+				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy, securityRuntimePolicy);
+				BYOKWrappedValue v = driverBYOK.wrap(decoded);
+				if(v!=null) {
+					return v.getWrappedValue();
+				}
+				else {
+					return null;
+				}
+			}
+			return value;
+		}catch(Exception e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String byokWrapHexKey(String value){
+		try {
+			byte[] decoded = HexBinaryUtilities.decode(value);
+			
+			String securityRuntimePolicy = this.openspcoopProperties.getBYOKConfigInternalConfigSecurityEngine();
+			if(securityRuntimePolicy!=null) {
+				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy, securityRuntimePolicy);
+				BYOKWrappedValue v = driverBYOK.wrap(decoded);
 				if(v!=null) {
 					return v.getWrappedValue();
 				}

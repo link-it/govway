@@ -559,7 +559,7 @@ public class ConfigurazionePdD  {
 			if(this.driverConfigurazionePdD instanceof IDriverBYOKConfig) {
 				String securityRuntimePolicy = this.openspcoopProperties.getBYOKConfigInternalConfigSecurityEngine();
 				if(securityRuntimePolicy!=null) {
-					DriverBYOK driverBYOK = new DriverBYOK(this.logger, securityRuntimePolicy);
+					DriverBYOK driverBYOK = new DriverBYOK(this.logger, securityRuntimePolicy, securityRuntimePolicy);
 					IDriverBYOKConfig c = (IDriverBYOKConfig) this.driverConfigurazionePdD;
 					c.initialize(driverBYOK, false, true);
 				}
