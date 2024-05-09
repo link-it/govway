@@ -1653,7 +1653,9 @@ div.prop-slider{
 
 /* finestra modal di dialog messaggi con copia campi */
 
-#finestraDialogModalHeader {
+#finestraDialogModalHeader,
+#erroreInformazioniCifrateModalHeader,
+#operazioneAjaxModalHeader {
 	padding: 10px 0px 10px 0px;
 	display: flex;
 }
@@ -1666,15 +1668,21 @@ div.prop-slider{
 	padding: 10px 10px 10px 10px;
 }
 
-#finestraDialogModalHeaderSx {
+#finestraDialogModalHeaderSx,
+#erroreInformazioniCifrateModalHeaderSx,
+#operazioneAjaxModalHeaderSx {
 	padding: 10px 10px 10px	10px;
 }
 
-#finestraDialogModalHeaderDx {
+#finestraDialogModalHeaderDx,
+#erroreInformazioniCifrateModalHeaderDx,
+#operazioneAjaxModalHeaderDx {
 	padding: 10px 10px 10px 10px;
 }
 
-#finestraDialogModalHeaderDxRiga1 {
+#finestraDialogModalHeaderDxRiga1,
+#erroreInformazioniCifrateModalHeaderDxRiga1,
+#operazioneAjaxModalHeaderDxRiga1 {
 	padding: 10px 0px 10px 0px;
 }
 

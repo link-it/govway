@@ -142,6 +142,8 @@ public class PorteApplicativeWSResponsePropertiesConfig  extends Action {
 
 			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG + " " + configurazione.getLabel() ,null));
 
+			// imposta menu' contestuale
+			porteApplicativeHelper.impostaComandiMenuContestualePA(idsogg, idAsps);
 			
 			if(porteApplicativeHelper.isEditModeInProgress()){
 				// setto la barra del titolo

@@ -156,6 +156,9 @@ public final class PorteApplicativeAzioneList extends Action {
 			porteApplicativeHelper.preparePorteAzioneList(ricerca,
 					listaAzioni, idPorta, parentPA, lstParam, nomePorta, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE, 
 					listaParametriSessione, labelPerPorta, serviceBinding, aspc);
+			
+			// imposto menu' contestuale
+			porteApplicativeHelper.impostaComandiMenuContestualePA(idsogg, idAsps);
 	
 			if(mappingErogazione!=null && mappingErogazione.isDefault()) {
 				pd.setAddButton(false);

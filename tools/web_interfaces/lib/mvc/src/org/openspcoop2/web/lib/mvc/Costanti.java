@@ -100,6 +100,12 @@ public class Costanti {
 	public static final String VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_TEXT= "text";
 	public static final String VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_JSON = "json";
 	
+	/** CACHE MANAGER */
+	public static final String PARAMETRO_RESET_CACHE_TIPO_OGGETTO = PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_OGGETTO;
+	
+	/** VERIFICA CERTIFICATI */
+	public static final String PARAMETRO_VERIFICA_CERTIFICATI_TIPO_OGGETTO = PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_OGGETTO;
+	
 	/** FILTER */
 	
 	public static final String PARAMETRO_FILTER_NAME = "filterName_";
@@ -411,11 +417,11 @@ public class Costanti {
 	public static final String ICONA_FRECCIA_GIU = "&#xE313;"; // keyboard_arrow_down
 	public static final String ICONA_PLACEHOLDER = "&#160;&#160;&#160;&#160;&#160;"; // 5 spazi
 	
-	public static final String ICONA_CONTINUE = "&#xe5db;"; // arrow_downward
-	public static final String ICONA_BREAK = "&#xe5cd;"; // close
+	public static final String ICONA_CONTINUE = "&#xE5DB;"; // arrow_downward
+	public static final String ICONA_BREAK = "&#xE5CD;"; // close
 
-	public static final String ICONA_ALARM_ACTIVE = "&#xe855;"; // alarm
-	public static final String ICONA_ALARM_PASSIVE = "&#xe857;"; // alarm_off
+	public static final String ICONA_ALARM_ACTIVE = "&#xE855;"; // alarm
+	public static final String ICONA_ALARM_PASSIVE = "&#xE857;"; // alarm_off
 	
 	public static final String ICONA_SCHEDULE_ACTIVE = "&#xe889;"; // history
 	public static final String ICONA_SCHEDULE_PASSIVE = "&#xf17d;"; // history_toggle_off
@@ -446,4 +452,14 @@ public class Costanti {
 	
 	/* CSP */
 	public static final String REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE = "_csp_random_nonce";
+	
+	/* JSON */
+	public static final String CHAR_APERTURA_JSON = "{";
+	public static final String CHAR_CHIUSURA_JSON = "}";
+	public static final String CHAR_QUOTA_JSON = "\"";
+	public static final String CHAR_VIRGOLA_JSON = ",";
+	public static final String CHAR_DUE_PUNTI_JSON = ":";
+	public static final String NULL_VALUE_JSON = "null";
+	public static final String KEY_ESITO_JSON = "esito";
+	public static final String KEY_DETTAGLIO_ESITO_JSON = "dettaglioEsito";
 }

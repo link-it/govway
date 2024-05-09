@@ -152,6 +152,22 @@
  	      }
  	    });
  	}
+ 	
+ 	if($( "#operazioneAjaxModal" ).length > 0){
+ 		$( "#operazioneAjaxModal" ).dialog({
+ 	      resizable: false,
+ 	     dialogClass: "no-close",
+ 	     autoOpen: false,
+ 	     height: "auto",
+ 	     width: 660,
+ 	     modal: true,
+ 	     buttons: {
+ 	    	'Chiudi' : function() {
+ 	          $( this ).dialog( "close" );
+ 	        }
+ 	      }
+ 	    });
+ 	}
  
  });
  
@@ -194,6 +210,16 @@ function visualizzaValoreDecodificato(evt) {
 			
 			// visualizzo il pulsante di copia
 			$("#iconCopy_dec").show();
+			
+			// nascondo la nota
+			$("#visualizzaInformazioniCifrateModalPropNota").hide();
+			
+			// nascondo il tasto visualizza
+			$("#visualizzaInformazioniCifrateModal").next().hide();
+			
+			// ripristino ombreggiatura
+			$("#visualizzaInformazioniCifrateModal").dialog("close");
+			$("#visualizzaInformazioniCifrateModal").dialog("open");
 			
 			nascondiAjaxStatus();
 		},

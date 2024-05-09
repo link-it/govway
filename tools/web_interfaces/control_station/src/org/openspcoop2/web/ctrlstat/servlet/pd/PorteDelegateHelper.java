@@ -2657,6 +2657,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -2810,6 +2813,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -2931,6 +2937,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3050,6 +3059,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3166,6 +3178,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3397,6 +3412,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3512,6 +3530,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3663,6 +3684,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3775,6 +3799,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3929,6 +3956,52 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		return lstParam;
 	}
 	
+	public void impostaComandiMenuContestualePD(String idSoggFruitoreDelServizio, String idAsps, String idFruizione)	throws Exception, DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		if(idSoggFruitoreDelServizio==null) {
+			throw new Exception("Parameter idSoggettoFruitore is null");
+		}
+		
+		IDSoggetto idSoggettoFruitore = new IDSoggetto();
+		String tipoSoggettoFruitore = null;
+		String nomeSoggettoFruitore = null;
+		if(this.core.isRegistroServiziLocale()){
+			org.openspcoop2.core.registry.Soggetto soggettoFruitore = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggFruitoreDelServizio));
+			tipoSoggettoFruitore = soggettoFruitore.getTipo();
+			nomeSoggettoFruitore = soggettoFruitore.getNome();
+		}else{
+			org.openspcoop2.core.config.Soggetto soggettoFruitore = this.soggettiCore.getSoggetto(Integer.parseInt(idSoggFruitoreDelServizio));
+			tipoSoggettoFruitore = soggettoFruitore.getTipo();
+			nomeSoggettoFruitore = soggettoFruitore.getNome();
+		}
+		idSoggettoFruitore.setTipo(tipoSoggettoFruitore);
+		idSoggettoFruitore.setNome(nomeSoggettoFruitore);
+		
+		String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoFruitore);
+		
+		// Prendo il nome e il tipo del servizio
+		AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+		
+		Fruitore fru = null;
+		for (Fruitore fruCheck : asps.getFruitoreList()) {
+			if(fruCheck.getTipo().equals(idSoggettoFruitore.getTipo()) &&
+					fruCheck.getNome().equals(idSoggettoFruitore.getNome())) {
+				fru = fruCheck;
+				break;
+			}
+		}
+		
+		Parameter pIdFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idFruizione+ "");
+		Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
+		Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
+		Parameter pTipoSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE, tipoSoggettoFruitore);
+		Parameter pNomeSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE, nomeSoggettoFruitore);
+		Parameter pIdSoggettoErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, asps.getIdSoggetto()+"");
+		
+		this.impostaComandiMenuContestualePD(idSoggFruitoreDelServizio, pTipoSoggettoFruitore,
+				pNomeSoggettoFruitore, asps, protocollo, pIdSoggettoErogatore, fru,
+				pIdFruitore, pNomeServizio, pTipoServizio);
+	}
+	
 	public String getPortaDelegataAzioneIdentificazioneLabel(String pdAiString) {
 		if(pdAiString == null)
 			return "";
@@ -4026,6 +4099,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -4245,6 +4321,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			lstParam.add(new Parameter(labelPagLista,null));
 			
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// setto le label delle colonne
 			String[] labels = {
@@ -4426,6 +4505,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = this.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 			
 			String labelPerPorta = null;
 			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
@@ -4742,6 +4824,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// setto le label delle colonne
 			List<String> lstLabels = new ArrayList<>();
@@ -4999,6 +5084,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// setto le label delle colonne
 			String[] labels = { PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_HEADER_NOME,
@@ -5146,6 +5234,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// setto le label delle colonne
 			String[] labels = { PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_HEADER_NOME,
@@ -5292,6 +5383,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// setto le label delle colonne
 			String[] labels = { PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME,
@@ -5455,6 +5549,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -5669,6 +5766,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -5862,6 +5962,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -6055,6 +6158,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {

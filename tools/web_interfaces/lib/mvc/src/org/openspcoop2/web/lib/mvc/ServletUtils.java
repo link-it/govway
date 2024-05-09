@@ -817,6 +817,29 @@ public class ServletUtils {
 		e.add(de);
 	}
 	
+	public static void addAjaxButton(List<DataElement> e, DataElementType deType, String icon, String tooltip, String titolo, String body, boolean contextMenu, String servletName, List<Parameter> parameters, String inUsoType) {
+		DataElement de = new DataElement();
+		de.setType(deType);
+		de.setIcon(icon);
+		de.setToolTip(tooltip);
+		de.setWidthPx(15);	
+		de.setContextMenu(contextMenu);
+		if(parameters == null) {
+			parameters = new ArrayList<>();
+		}
+		parameters.add(new Parameter(Costanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_OGGETTO, inUsoType));
+		parameters.add(new Parameter(Costanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA, Costanti.VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_TEXT));
+		
+		de.setUrl(servletName, parameters.toArray(new Parameter[parameters.size()]));
+		
+		DataElementConfirm confirm = new DataElementConfirm();
+		confirm.setTitolo(titolo);
+		confirm.setBody(body);
+		de.setConfirm(confirm );
+		
+		e.add(de);
+	}
+	
 	public static void generaESalvaTokenCSRF(HttpServletRequest request, HttpSession session) {
 //		String tabId = (String) request.getAttribute(Costanti.PARAMETER_TAB_KEY);
 		String uuId = UUID.randomUUID().toString().replace("-", ""); 
@@ -858,5 +881,33 @@ public class ServletUtils {
 		}
 		
 		return true;
+	}
+	
+	public static String getJsonPair(String key, String val) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(Costanti.CHAR_QUOTA_JSON).append(key).append(Costanti.CHAR_QUOTA_JSON).append(Costanti.CHAR_DUE_PUNTI_JSON);
+		if(val != null) {
+			sb.append(Costanti.CHAR_QUOTA_JSON).append(val).append(Costanti.CHAR_QUOTA_JSON);
+		} else {
+			sb.append(Costanti.NULL_VALUE_JSON);
+		}
+		return sb.toString();
+	}
+	
+	public static String getJson(String ... pairs) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(Costanti.CHAR_APERTURA_JSON);
+		
+		if(pairs != null) {
+			for (int i = 0; i < pairs.length; i++) {
+				if(i > 0) {
+					sb.append(Costanti.CHAR_VIRGOLA_JSON);
+				}
+				sb.append(pairs[i]);
+			}
+		}
+		
+		sb.append(Costanti.CHAR_CHIUSURA_JSON);
+		return sb.toString();
 	}
 }

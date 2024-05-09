@@ -141,6 +141,9 @@ public class PorteDelegateValidazioneContenuti extends Action {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);
+			
+			// imposto menu' contestuale
+			porteDelegateHelper.impostaComandiMenuContestualePD(idSoggFruitore, idAsps, idFruizione);
 
 			if(	porteDelegateHelper.isEditModeInProgress() && !applicaModifica){
 

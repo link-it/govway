@@ -162,6 +162,9 @@ public class PorteApplicativeConnettoreRidefinito extends Action {
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);
 			
+			// imposta menu' contestuale
+			porteApplicativeHelper.impostaComandiMenuContestualePA(idsogg, idAsps);
+			
 			PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo = portaApplicativa.getServizioApplicativoList().get(0);
 			String servletConnettore = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT;
 			Parameter[] parametriServletConnettore = {

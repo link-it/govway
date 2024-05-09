@@ -953,6 +953,15 @@ public class PageData implements Serializable {
 				DataElementType.IMAGE, Costanti.ICONA_VERIFICA_CONNETTIVITA_TOOLTIP, Costanti.ICONA_VERIFICA, servletName,parameters);
 	}
 	
+	public void addComandoElementoCheUtilizzaServizioCondivisoButton(String iconaButton, String tooltipButton, String titoloModale, String bodyModale, String servletName, List<Parameter> parameters, String inUsoType) {
+		if(parameters == null) {
+			parameters = new ArrayList<>();
+		}
+		
+		ServletUtils.addAjaxButton(this.getComandiAzioneBarraTitoloDettaglioElemento(), DataElementType.IMAGE, 
+				iconaButton, tooltipButton, titoloModale, bodyModale, true, servletName, parameters, inUsoType);
+	}
+	
 	public void addComandoVisualizzaRuntimeElementoButton(String servletName, List<Parameter> parameters) {
 		if(parameters == null) {
 			parameters = new ArrayList<>();
