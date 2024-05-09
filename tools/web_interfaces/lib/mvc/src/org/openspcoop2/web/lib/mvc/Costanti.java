@@ -417,11 +417,11 @@ public class Costanti {
 	public static final String ICONA_FRECCIA_GIU = "&#xE313;"; // keyboard_arrow_down
 	public static final String ICONA_PLACEHOLDER = "&#160;&#160;&#160;&#160;&#160;"; // 5 spazi
 	
-	public static final String ICONA_CONTINUE = "&#xe5db;"; // arrow_downward
-	public static final String ICONA_BREAK = "&#xe5cd;"; // close
+	public static final String ICONA_CONTINUE = "&#xE5DB;"; // arrow_downward
+	public static final String ICONA_BREAK = "&#xE5CD;"; // close
 
-	public static final String ICONA_ALARM_ACTIVE = "&#xe855;"; // alarm
-	public static final String ICONA_ALARM_PASSIVE = "&#xe857;"; // alarm_off
+	public static final String ICONA_ALARM_ACTIVE = "&#xE855;"; // alarm
+	public static final String ICONA_ALARM_PASSIVE = "&#xE857;"; // alarm_off
 	
 	public static final String ICONA_SCHEDULE_ACTIVE = "&#xe889;"; // history
 	public static final String ICONA_SCHEDULE_PASSIVE = "&#xf17d;"; // history_toggle_off
@@ -463,4 +463,3 @@ public class Costanti {
 	public static final String KEY_ESITO_JSON = "esito";
 	public static final String KEY_DETTAGLIO_ESITO_JSON = "dettaglioEsito";
 }
-
