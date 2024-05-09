@@ -55,7 +55,9 @@ Di seguito vengono fornite tutte le direttive supportate:
   
      - *symm*: indica l'utilizzo di una chiave simmetrica fornita attraverso tramite la direttiva:
 
-            - *key.path*: path su filesystem ad una chiave simmetrica (es. Chiave AES dovà essere di 16, 24 o 32 byte);
+            - *key.inline*: chiave simmetrica (es. Chiave AES dovà essere di 16, 24 o 32 byte);
+            - *key.path*: [ignorata se presente 'key.inline'] path su filesystem ad una chiave simmetrica (es. Chiave AES dovà essere di 16, 24 o 32 byte);
+            - *key.encoding*: [optional; base64/hex] consente di indicare la codifica della chiave;
 
      - *jceks*: indica l'utilizzo di una chiave simmetrica presente in un keystore java di tipo JCEKS indirizzato tramite le seguenti direttive:
 
@@ -66,7 +68,9 @@ Di seguito vengono fornite tutte le direttive supportate:
 
      - *public*: indica l'utilizzo di una chiave pubblica asimmetrica fornita attraverso le seguenti direttive:
 
-            - *key.path*: path su filesystem ad una chiave pubblica asimmetrica in formato PEM o DER (sono supportati sia i formati pkcs1 che pkcs8);
+            - *key.inline*: chiave pubblica asimmetrica in formato PEM o DER (sono supportati sia i formati pkcs1 che pkcs8);
+            - *key.path*: [ignorata se presente 'key.inline'] path su filesystem ad una chiave pubblica asimmetrica in formato PEM o DER (sono supportati sia i formati pkcs1 che pkcs8);
+            - *key.encoding*: [optional; base64/hex] consente di indicare la codifica della chiave;
 	    - *key.wrap* [optional; mode=java; boolean true/false]: indicazione se la chiave pubblica debba essere utilizzata per cifrare direttamente i dati (key.wrap=false) o per cifrare una chiave simmetrica AES generata dinamicamente (key.wrap=true);
 
                .. note::

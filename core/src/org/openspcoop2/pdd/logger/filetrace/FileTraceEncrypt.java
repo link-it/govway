@@ -213,7 +213,42 @@ public class FileTraceEncrypt {
 		}
 		/**}*/
 	}
-	private void readPublicKey(FileTraceEncryptKey fileTraceEncryptKey, FileTraceEncryptConfig config) throws UtilsException, SecurityException {
+	
+	private byte[] readKeyInline(FileTraceEncryptConfig config) throws SecurityException {
+		String keyInLine = config.getKeyInline();
+		byte [] key = null;
+		if(config.isKeyBase64Encoding()) {
+			key = Base64Utilities.decode(keyInLine.getBytes());
+		}
+		else if(config.isKeyHexEncoding()) {
+			try {
+				key = HexBinaryUtilities.decode(keyInLine);
+			}catch(Exception e) {
+				throw new SecurityException(e.getMessage());
+			}
+		}
+		else {
+			key = keyInLine.getBytes();
+		}
+		return key;
+	}
+	private byte[] readEncodedKeyFromPath(FileTraceEncryptConfig config) throws SecurityException {
+		byte [] encodedKey = GestoreKeystoreCache.getExternalResource(this.requestInfo, config.getKeyPath(), null).getResource();
+		byte [] key = null;
+		if(config.isKeyBase64Encoding()) {
+			key = Base64Utilities.decode(encodedKey);
+		}
+		else {
+			try {
+				key = HexBinaryUtilities.decode(new String(encodedKey));
+			}catch(Exception e) {
+				throw new SecurityException(e.getMessage());
+			}
+		}
+		return key;
+	}
+	
+	private String readPublicKeyAlgo(FileTraceEncryptConfig config) {
 		String algo = config.getKeyAlgorithm();
 		if(config.isJoseEngine() || config.isKeyWrap()) {
 			if(config.getKeyAlgorithm().contains(KeyUtils.ALGO_RSA)) {
@@ -232,7 +267,25 @@ public class FileTraceEncrypt {
 				algo = KeyUtils.ALGO_RSA;
 			}
 		}
-		PublicKeyStore publicKeyStore = GestoreKeystoreCache.getPublicKeyStore(this.requestInfo, config.getKeyPath(), algo);
+		return algo;
+	}
+	private void readPublicKey(FileTraceEncryptKey fileTraceEncryptKey, FileTraceEncryptConfig config) throws UtilsException, SecurityException {
+		String algo = readPublicKeyAlgo(config);
+		
+		PublicKeyStore publicKeyStore = null;
+		if(config.getKeyInline()!=null && StringUtils.isNotEmpty(config.getKeyInline())) {
+			byte [] key = readKeyInline(config);
+			publicKeyStore = GestoreKeystoreCache.getPublicKeyStore(this.requestInfo, key, algo);
+		}
+		else {
+			if(config.isKeyBase64Encoding() || config.isKeyHexEncoding()) {
+				byte [] key = readEncodedKeyFromPath(config);
+				publicKeyStore = GestoreKeystoreCache.getPublicKeyStore(this.requestInfo, key, algo);
+			}
+			else {
+				publicKeyStore = GestoreKeystoreCache.getPublicKeyStore(this.requestInfo, config.getKeyPath(), algo);
+			}
+		}
 		if(publicKeyStore==null) {
 			throw new UtilsException(getKeyError(config));
 		}
@@ -253,8 +306,23 @@ public class FileTraceEncrypt {
 	}
 	private void readSecretKey(FileTraceEncryptKey fileTraceEncryptKey, FileTraceEncryptConfig config) throws UtilsException, SecurityException {
 		String algo = config.isJoseEngine() ? SymmetricKeyUtils.ALGO_AES : config.getKeyAlgorithm();
-		SecretKeyStore secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, config.getKeyPath(), algo,
-				getBYOKRequestParams(config));
+		SecretKeyStore secretKeyStore = null;
+		if(config.getKeyInline()!=null && StringUtils.isNotEmpty(config.getKeyInline())) {
+			byte [] key = readKeyInline(config);
+			secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, key, algo,
+					getBYOKRequestParams(config));
+		}
+		else {
+			if(config.isKeyBase64Encoding() || config.isKeyHexEncoding()) {
+				byte [] key = readEncodedKeyFromPath(config);
+				secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, key, algo,
+						getBYOKRequestParams(config));
+			}
+			else {
+				secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, config.getKeyPath(), algo,
+						getBYOKRequestParams(config));
+			}
+		}
 		if(secretKeyStore==null) {
 			throw new UtilsException(getKeyError(config));
 		}

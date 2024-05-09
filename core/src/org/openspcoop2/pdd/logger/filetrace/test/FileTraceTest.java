@@ -144,6 +144,10 @@ public class FileTraceTest {
 	private static final List<String> ENCRYPT_TEST = new ArrayList<>();
 	static {
 		ENCRYPT_TEST.add("encJavaSymm");
+		ENCRYPT_TEST.add("encJavaSymmHex");
+		ENCRYPT_TEST.add("encJavaSymmInline");
+		ENCRYPT_TEST.add("encJavaSymmBase64Inline");
+		
 		ENCRYPT_TEST.add("encJoseSymm");
 		ENCRYPT_TEST.add("encJoseSymmDirect");
 		
@@ -152,8 +156,10 @@ public class FileTraceTest {
 		ENCRYPT_TEST.add("encJoseJCEKSDirect");
 		
 		ENCRYPT_TEST.add("encJavaPublic");
+		ENCRYPT_TEST.add("encJavaPublicInline");
 		ENCRYPT_TEST.add("encJavaPublicWrapKey");
 		ENCRYPT_TEST.add("encJavaPublicWrapKeyHex");
+		ENCRYPT_TEST.add("encJavaPublicWrapKeyHexInline");
 		ENCRYPT_TEST.add("encJosePublic");
 		
 		ENCRYPT_TEST.add("encJavaJWKsSymm");
@@ -333,8 +339,10 @@ public class FileTraceTest {
 	public static void test(TipoPdD tipoPdD, boolean log4j, int esito, boolean requestWithPayload) throws Exception{
 		
 		File fSecret = null;
+		File fSecretHex = null;
 		File fKeystoreJCEKS = null;
 		File fPublic = null;
+		File fPublicHex = null;
 		File fPrivate = null;
 		File fJWKsSymm = null;
 		File fJWKsPub = null;
@@ -353,6 +361,12 @@ public class FileTraceTest {
 			fSecret = new File("/tmp/symmetric.secretkey");
 			FileSystemUtilities.writeFile(fSecret, SECRET_KEY.getBytes()); // test con 32
 			
+			fSecretHex = new File("/tmp/symmetric.hexSecretkey");
+			FileSystemUtilities.writeFile(fSecretHex, HexBinaryUtilities.encodeAsString(SECRET_KEY.getBytes()).getBytes()); // test con 32
+			
+			System.setProperty("SECRET_KEY_JAVA_SYMM_INLINE", SECRET_KEY);
+			System.setProperty("SECRET_KEY_JAVA_SYMM_BASE64_INLINE", Base64Utilities.encodeAsString(SECRET_KEY.getBytes()));
+			
 			try( InputStream isKeystoreJCEKS = EncryptTest.class.getResourceAsStream("/org/openspcoop2/utils/security/test/example.jceks")){
 				byte [] b = Utilities.getAsByteArray(isKeystoreJCEKS);
 				fKeystoreJCEKS = new File("/tmp/keystore.jceks");
@@ -362,6 +376,12 @@ public class FileTraceTest {
 			byte [] publicKey = Utilities.getAsByteArray(KeystoreTest.class.getResourceAsStream(KeystoreTest.PREFIX+"client-test.rsa.publicKey.pem"));
 			fPublic = new File("/tmp/publicKey.pem");
 			FileSystemUtilities.writeFile(fPublic, publicKey);
+			
+			fPublicHex = new File("/tmp/publicKeyHex.pem");
+			FileSystemUtilities.writeFile(fPublicHex, HexBinaryUtilities.encodeAsString(publicKey).getBytes());
+			
+			System.setProperty("PUBLIC_KEY_JAVA_INLINE", new String(publicKey));
+			System.setProperty("PUBLIC_KEY_JAVA_BASE64_INLINE", Base64Utilities.encodeAsString(publicKey));
 			
 			byte [] privateKey = Utilities.getAsByteArray(KeystoreTest.class.getResourceAsStream(KeystoreTest.PREFIX+"client-test.rsa.pkcs8.privateKey.der"));
 			fPrivate = new File("/tmp/privateKey.pem");
@@ -425,10 +445,12 @@ public class FileTraceTest {
 			Security.removeProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
 			
 			FileSystemUtilities.deleteFile(fSecret);
+			FileSystemUtilities.deleteFile(fSecretHex);
 			
 			FileSystemUtilities.deleteFile(fKeystoreJCEKS);
 			
 			FileSystemUtilities.deleteFile(fPublic);
+			FileSystemUtilities.deleteFile(fPublicHex);
 			FileSystemUtilities.deleteFile(fPrivate);
 			
 			FileSystemUtilities.deleteFile(fJWKsSymm);
@@ -1536,7 +1558,7 @@ public class FileTraceTest {
 	}
 	private static String getExpectedEncryptContent(String tipoTest, boolean requestWithPayload) {
 		
-		if("encJavaPublic".equals(tipoTest)) {
+		if("encJavaPublic".equals(tipoTest) || "encJavaPublicInline".equals(tipoTest)) {
 			// supporta solo una stringa corta di dati. Se troppo lunga si ottiene l'errore: 'too much data for RSA block'
 			return tipoTest+"|informazioneCorta";
 		}
@@ -1549,7 +1571,7 @@ public class FileTraceTest {
 		}
 	}
 	private static void verificaExpectedEncryptContent(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException, SecurityException, FileNotFoundException {
-		if("encJavaSymm".equals(tipoTest)) {
+		if("encJavaSymm".equals(tipoTest) || "encJavaSymmHex".equals(tipoTest) || "encJavaSymmInline".equals(tipoTest) || "encJavaSymmBase64Inline".equals(tipoTest)) {
 			verificaExpectedEncryptContentEncJavaSymm(tipoTest, requestWithPayload, trovato);
 		}
 		else if("encJoseSymm".equals(tipoTest) || "encJoseSymmDirect".equals(tipoTest)) {
@@ -1563,10 +1585,10 @@ public class FileTraceTest {
 			verificaExpectedEncryptContentEncJose(tipoTest, requestWithPayload, trovato);
 		}
 		
-		else if("encJavaPublic".equals(tipoTest)) {
+		else if("encJavaPublic".equals(tipoTest) || "encJavaPublicInline".equals(tipoTest)) {
 			verificaExpectedEncryptContentEncJavaPublic(tipoTest, requestWithPayload, trovato);
 		}
-		else if("encJavaPublicWrapKey".equals(tipoTest) || "encJavaPublicWrapKeyHex".equals(tipoTest)) {
+		else if("encJavaPublicWrapKey".equals(tipoTest) || "encJavaPublicWrapKeyHex".equals(tipoTest) || "encJavaPublicWrapKeyHexInline".equals(tipoTest)) {
 			verificaExpectedEncryptContentEncJavaPublicWrapKey(tipoTest, requestWithPayload, trovato);
 		}
 		else if("encJosePublic".equals(tipoTest)) {
@@ -1763,7 +1785,7 @@ public class FileTraceTest {
 		
 		boolean base64 = true;
 		String mode = "base64";
-		if("encJavaPublicWrapKeyHex".equals(tipoTest)) {
+		if("encJavaPublicWrapKeyHex".equals(tipoTest) || "encJavaPublicWrapKeyHexInline".equals(tipoTest)) {
 			base64 = false;
 			mode = "hex";
 		}

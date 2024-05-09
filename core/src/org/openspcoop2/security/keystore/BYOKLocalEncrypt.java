@@ -266,16 +266,91 @@ public class BYOKLocalEncrypt {
 		return algo;
 	}
 	
+	private byte[] readKeyInline(BYOKLocalConfig config) throws SecurityException {
+		String keyInLine = config.getKeyInline();
+		byte [] key = null;
+		if(config.isKeyBase64Encoding()) {
+			key = Base64Utilities.decode(keyInLine.getBytes());
+		}
+		else if(config.isKeyHexEncoding()) {
+			try {
+				key = HexBinaryUtilities.decode(keyInLine);
+			}catch(Exception e) {
+				throw new SecurityException(e.getMessage());
+			}
+		}
+		else {
+			key = keyInLine.getBytes();
+		}
+		return key;
+	}
+	private byte[] readEncodedKeyFromPath(BYOKLocalConfig config) throws SecurityException {
+		byte [] encodedKey = GestoreKeystoreCache.getExternalResource(this.requestInfo, config.getKeyPath(), null).getResource();
+		byte [] key = null;
+		if(config.isKeyBase64Encoding()) {
+			key = Base64Utilities.decode(encodedKey);
+		}
+		else {
+			try {
+				key = HexBinaryUtilities.decode(new String(encodedKey));
+			}catch(Exception e) {
+				throw new SecurityException(e.getMessage());
+			}
+		}
+		return key;
+	}
+	
+	private byte[] readPublicKeyInline(BYOKLocalConfig config) throws SecurityException {
+		String publicKeyInLine = config.getPublicKeyInline();
+		byte [] key = null;
+		if(config.isPublicKeyBase64Encoding()) {
+			key = Base64Utilities.decode(publicKeyInLine.getBytes());
+		}
+		else if(config.isPublicKeyHexEncoding()) {
+			try {
+				key = HexBinaryUtilities.decode(publicKeyInLine);
+			}catch(Exception e) {
+				throw new SecurityException(e.getMessage());
+			}
+		}
+		else {
+			key = publicKeyInLine.getBytes();
+		}
+		return key;
+	}
+	private byte[] readEncodedPublicKeyFromPath(BYOKLocalConfig config) throws SecurityException {
+		byte [] encodedKey = GestoreKeystoreCache.getExternalResource(this.requestInfo, config.getPublicKeyPath(), null).getResource();
+		byte [] key = null;
+		if(config.isPublicKeyBase64Encoding()) {
+			key = Base64Utilities.decode(encodedKey);
+		}
+		else {
+			try {
+				key = HexBinaryUtilities.decode(new String(encodedKey));
+			}catch(Exception e) {
+				throw new SecurityException(e.getMessage());
+			}
+		}
+		return key;
+	}
+	
 	private void readPublicKey(BYOKEncryptKey byokEncryptKey, BYOKLocalConfig config) throws UtilsException, SecurityException {
 		
 		String algo = readKeyAlgo(config);
 		
 		PublicKeyStore publicKeyStore = null;
 		if(config.getKeyInline()!=null && StringUtils.isNotEmpty(config.getKeyInline())) {
-			publicKeyStore = GestoreKeystoreCache.getPublicKeyStore(this.requestInfo, config.getKeyInline().getBytes(), algo);
+			byte [] key = readKeyInline(config);
+			publicKeyStore = GestoreKeystoreCache.getPublicKeyStore(this.requestInfo, key, algo);
 		}
 		else {
-			publicKeyStore = GestoreKeystoreCache.getPublicKeyStore(this.requestInfo, config.getKeyPath(), algo);
+			if(config.isKeyBase64Encoding() || config.isKeyHexEncoding()) {
+				byte [] key = readEncodedKeyFromPath(config);
+				publicKeyStore = GestoreKeystoreCache.getPublicKeyStore(this.requestInfo, key, algo);
+			}
+			else {
+				publicKeyStore = GestoreKeystoreCache.getPublicKeyStore(this.requestInfo, config.getKeyPath(), algo);
+			}
 		}
 		if(publicKeyStore==null) {
 			throw new UtilsException(getKeyError(config));
@@ -321,31 +396,84 @@ public class BYOKLocalEncrypt {
 	private KeyPairStore getKeyPairStore(String algo, BYOKLocalConfig config) throws SecurityException {
 		KeyPairStore keyPairStore = null;
 		if(config.getKeyInline()!=null && StringUtils.isNotEmpty(config.getKeyInline())) {
+			
+			byte [] key = readKeyInline(config);
+			
 			if(config.getPublicKeyInline()!=null && StringUtils.isNotEmpty(config.getPublicKeyInline())) {
-				keyPairStore = GestoreKeystoreCache.getKeyPairStore(this.requestInfo, config.getKeyInline().getBytes(), config.getPublicKeyInline().getBytes(), config.getKeyPassword(), algo);
+				byte [] publicKey = readPublicKeyInline(config);
+				keyPairStore = GestoreKeystoreCache.getKeyPairStore(this.requestInfo, key, publicKey, config.getKeyPassword(), algo);
 			}
 			else {
-				keyPairStore = GestoreKeystoreCache.getKeyPairStore(this.requestInfo, config.getKeyInline().getBytes(), config.getPublicKeyPath(), config.getKeyPassword(), algo);
+				if(config.isPublicKeyBase64Encoding() || config.isPublicKeyHexEncoding()) {
+					byte [] publicKey = readEncodedPublicKeyFromPath(config);
+					keyPairStore = GestoreKeystoreCache.getKeyPairStore(this.requestInfo, key, publicKey, config.getKeyPassword(), algo);
+				}
+				else {
+					keyPairStore = GestoreKeystoreCache.getKeyPairStore(this.requestInfo, key, config.getPublicKeyPath(), config.getKeyPassword(), algo);
+				}
 			}
 		}
 		else {
-			if(config.getPublicKeyInline()!=null && StringUtils.isNotEmpty(config.getPublicKeyInline())) {
-				keyPairStore = GestoreKeystoreCache.getKeyPairStore(this.requestInfo, config.getKeyPath(), config.getPublicKeyInline().getBytes(), config.getKeyPassword(), algo);
-			}
-			else {
-				keyPairStore = GestoreKeystoreCache.getKeyPairStore(this.requestInfo, config.getKeyPath(), config.getPublicKeyPath(), config.getKeyPassword(), algo);
-			}
+			keyPairStore = getKeyPairStoreFromPath(algo, config);
 		}
 		return keyPairStore;
+	}
+	private KeyPairStore getKeyPairStoreFromPath(String algo, BYOKLocalConfig config) throws SecurityException {
+		KeyPairStore keyPairStore = null;
+		if(config.isKeyBase64Encoding() || config.isKeyHexEncoding()) {
+			keyPairStore = getEncodedKeyPairStoreFromPath(algo, config);
+		}
+		else {
+		
+			if(config.getPublicKeyInline()!=null && StringUtils.isNotEmpty(config.getPublicKeyInline())) {
+				byte [] publicKey = readPublicKeyInline(config);
+				keyPairStore = GestoreKeystoreCache.getKeyPairStore(this.requestInfo, config.getKeyPath(), publicKey, config.getKeyPassword(), algo);
+			}
+			else {
+				if(config.isPublicKeyBase64Encoding() || config.isPublicKeyHexEncoding()) {
+					byte [] publicKey = readEncodedPublicKeyFromPath(config);
+					keyPairStore = GestoreKeystoreCache.getKeyPairStore(this.requestInfo, config.getKeyPath(), publicKey, config.getKeyPassword(), algo);
+				}
+				else {
+					keyPairStore = GestoreKeystoreCache.getKeyPairStore(this.requestInfo, config.getKeyPath(), config.getPublicKeyPath(), config.getKeyPassword(), algo);
+				}
+			}
+			
+		}
+		return keyPairStore;
+	}
+	private KeyPairStore getEncodedKeyPairStoreFromPath(String algo, BYOKLocalConfig config) throws SecurityException {
+		byte [] key = readEncodedKeyFromPath(config);
+		
+		if(config.getPublicKeyInline()!=null && StringUtils.isNotEmpty(config.getPublicKeyInline())) {
+			byte [] publicKey = readPublicKeyInline(config);
+			return GestoreKeystoreCache.getKeyPairStore(this.requestInfo, key, publicKey, config.getKeyPassword(), algo);
+		}
+		else {
+			if(config.isPublicKeyBase64Encoding() || config.isPublicKeyHexEncoding()) {
+				byte [] publicKey = readEncodedPublicKeyFromPath(config);
+				return GestoreKeystoreCache.getKeyPairStore(this.requestInfo, key, publicKey, config.getKeyPassword(), algo);
+			}
+			else {
+				return GestoreKeystoreCache.getKeyPairStore(this.requestInfo, key, config.getPublicKeyPath(), config.getKeyPassword(), algo);
+			}
+		}
 	}
 	private void readSecretKey(BYOKEncryptKey byokEncryptKey, BYOKLocalConfig config) throws UtilsException, SecurityException {
 		String algo = config.isJoseEngine() ? SymmetricKeyUtils.ALGO_AES : config.getKeyAlgorithm();
 		SecretKeyStore secretKeyStore = null;
 		if(config.getKeyInline()!=null && StringUtils.isNotEmpty(config.getKeyInline())) {
-			secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, config.getKeyInline().getBytes(), algo);
+			byte [] key = readKeyInline(config);
+			secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, key, algo);
 		}
 		else {
-			secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, config.getKeyPath(), algo);
+			if(config.isKeyBase64Encoding() || config.isKeyHexEncoding()) {
+				byte [] key = readEncodedKeyFromPath(config);
+				secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, key, algo);
+			}
+			else {
+				secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, config.getKeyPath(), algo);
+			}
 		}
 		if(secretKeyStore==null) {
 			throw new UtilsException(getKeyError(config));

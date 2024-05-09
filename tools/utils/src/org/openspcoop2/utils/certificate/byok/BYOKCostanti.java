@@ -105,6 +105,7 @@ public class BYOKCostanti {
 	public static final String PROPERTY_SUFFIX_LOCAL_KEYSTORE_PASSWORD = "local.keystore.password";
 	public static final String PROPERTY_SUFFIX_LOCAL_KEY_PATH = "local.key.path";
 	public static final String PROPERTY_SUFFIX_LOCAL_KEY_INLINE = "local.key.inline";
+	public static final String PROPERTY_SUFFIX_LOCAL_KEY_ENCODING = "local.key.encoding";
 	public static final String PROPERTY_SUFFIX_LOCAL_KEY_ALGORITHM = "local.key.algorithm";
 	public static final String PROPERTY_SUFFIX_LOCAL_KEY_ALIAS = "local.key.alias";
 	public static final String PROPERTY_SUFFIX_LOCAL_KEY_PASSWORD = "local.key.password";
@@ -113,6 +114,7 @@ public class BYOKCostanti {
 	
 	public static final String PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_PATH = "local.publicKey.path";
 	public static final String PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_INLINE = "local.publicKey.inline";
+	public static final String PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_ENCODING = "local.publicKey.encoding";
 	
 	public static final String PROPERTY_SUFFIX_LOCAL_CONTENT_ALGORITHM = "local.algorithm";
 	

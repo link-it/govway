@@ -54,6 +54,7 @@ public class BYOKLocalConfig implements Serializable {
 	
 	protected String keyPath;
 	protected String keyInline;
+	protected String keyEncoding;
 	protected String keyAlgorithm;
 	protected String keyAlias;
 	protected String keyPassword;
@@ -62,6 +63,7 @@ public class BYOKLocalConfig implements Serializable {
 	
 	protected String publicKeyPath;
 	protected String publicKeyInline;
+	protected String publicKeyEncoding;
 	
 	protected String contentAlgorithm;
 	
@@ -188,11 +190,26 @@ public class BYOKLocalConfig implements Serializable {
 		
 		this.keyInline = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_INLINE, false);
 		this.keyPath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_PATH, (this.keyInline==null || StringUtils.isEmpty(this.keyInline)));
+		
+		this.keyEncoding = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ENCODING, false);
+		if(this.keyEncoding!=null && StringUtils.isNotEmpty(this.keyEncoding) &&
+			!BYOKCostanti.PROPERTY_LOCAL_JAVA_ENCODING_BASE64.equals(this.keyEncoding) &&
+			!BYOKCostanti.PROPERTY_LOCAL_JAVA_ENCODING_HEX.equals(this.keyEncoding)) {
+			throw new UtilsException("Unsupported property '"+BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ENCODING+"' value '"+this.keyEncoding+"'");
+		}
+		
 		this.keyAlgorithm = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ALGORITHM, true);
 		
 		if(KeystoreType.KEY_PAIR.equals(this.keystoreType)) {
 			this.publicKeyInline = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_INLINE, false);
 			this.publicKeyPath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_PATH, (this.publicKeyInline==null || StringUtils.isEmpty(this.publicKeyInline)));
+			
+			this.publicKeyEncoding = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_ENCODING, false);
+			if(this.publicKeyEncoding!=null && StringUtils.isNotEmpty(this.publicKeyEncoding) &&
+				!BYOKCostanti.PROPERTY_LOCAL_JAVA_ENCODING_BASE64.equals(this.publicKeyEncoding) &&
+				!BYOKCostanti.PROPERTY_LOCAL_JAVA_ENCODING_HEX.equals(this.publicKeyEncoding)) {
+				throw new UtilsException("Unsupported property '"+BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_ENCODING+"' value '"+this.publicKeyEncoding+"'");
+			}
 			
 			this.keyPassword = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_PASSWORD, false);
 		}
@@ -229,6 +246,15 @@ public class BYOKLocalConfig implements Serializable {
 	public String getKeyInline() {
 		return this.keyInline;
 	}
+	public boolean isKeyBase64Encoding() {
+		return BYOKCostanti.PROPERTY_LOCAL_JAVA_ENCODING_BASE64.equals(this.keyEncoding);
+	}
+	public boolean isKeyHexEncoding() {
+		return BYOKCostanti.PROPERTY_LOCAL_JAVA_ENCODING_HEX.equals(this.keyEncoding);
+	}
+	public String getKeyEncoding() {
+		return this.keyEncoding;
+	}
 
 	public String getKeyAlgorithm() {
 		return this.keyAlgorithm;
@@ -261,6 +287,15 @@ public class BYOKLocalConfig implements Serializable {
 	}
 	public String getPublicKeyInline() {
 		return this.publicKeyInline;
+	}
+	public boolean isPublicKeyBase64Encoding() {
+		return BYOKCostanti.PROPERTY_LOCAL_JAVA_ENCODING_BASE64.equals(this.publicKeyEncoding);
+	}
+	public boolean isPublicKeyHexEncoding() {
+		return BYOKCostanti.PROPERTY_LOCAL_JAVA_ENCODING_HEX.equals(this.publicKeyEncoding);
+	}
+	public String getPublicKeyEncoding() {
+		return this.publicKeyEncoding;
 	}
 	
 	public String getContentAlgorithm() {

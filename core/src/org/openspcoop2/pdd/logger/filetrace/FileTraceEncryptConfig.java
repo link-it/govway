@@ -56,7 +56,9 @@ public class FileTraceEncryptConfig {
 	private String keystorePath;
 	private String keystorePassword;
 	
+	private String keyInline;
 	private String keyPath;
+	private String keyEncoding; 
 	private String keyAlgorithm;
 	private String keyAlias;
 	private String keyPassword;
@@ -91,6 +93,8 @@ public class FileTraceEncryptConfig {
 	private static final String KEYSTORE_PATH = ".keystore.path";
 	private static final String KEYSTORE_PASSWORD = ".keystore.password";
 	private static final String KEY_PATH = ".key.path";
+	private static final String KEY_INLINE = ".key.inline";
+	private static final String KEY_ENCODING = ".key.encoding";
 	private static final String KEY_ALGORITHM = ".key.algorithm";
 	private static final String KEY_ALIAS = ".key.alias";
 	private static final String KEY_PASSWORD = ".key.password";
@@ -114,7 +118,7 @@ public class FileTraceEncryptConfig {
 	public static Map<String, FileTraceEncryptConfig> parse(PropertiesReader reader) throws UtilsException{
 		
 		
-		Properties propertiesMap = reader.readProperties(PREFIX_ENCRYPT);
+		Properties propertiesMap = reader.readProperties_convertEnvProperties(PREFIX_ENCRYPT);
 		
 		Map<String, FileTraceEncryptConfig> result = new HashMap<>();
 		
@@ -309,13 +313,30 @@ public class FileTraceEncryptConfig {
 	}
 	private static void parseKey(String encMode, Properties propertiesMap, 
 			FileTraceEncryptConfig c) throws UtilsException {
-		String keyPathPName = encMode+KEY_PATH;
-		String keyPath = propertiesMap.getProperty(keyPathPName);
-		if(keyPath==null || StringUtils.isEmpty(keyPath.trim())) {
-			throw new UtilsException(DEBUG_PREFIX+keyPathPName+"'"+UNDEFINED);
+		
+		String keyInLinePName = encMode+KEY_INLINE;
+		String keyInLine = propertiesMap.getProperty(keyInLinePName);
+		if(keyInLine!=null && StringUtils.isNotEmpty(keyInLine.trim())) {
+			c.keyInline = keyInLine.trim();
 		}
-		c.keyPath = keyPath.trim();
-						
+		else {
+			String keyPathPName = encMode+KEY_PATH;
+			String keyPath = propertiesMap.getProperty(keyPathPName);
+			if(keyPath==null || StringUtils.isEmpty(keyPath.trim())) {
+				throw new UtilsException(DEBUG_PREFIX+keyPathPName+"'"+UNDEFINED);
+			}
+			c.keyPath = keyPath.trim();
+		}
+		
+		String keyEncodingPName = encMode+KEY_ENCODING;
+		String keyEncoding = propertiesMap.getProperty(keyEncodingPName);
+		if(keyEncoding!=null && StringUtils.isNotEmpty(keyEncoding.trim())) {
+			c.keyEncoding = keyEncoding.trim();
+			if(!JAVA_ENCODING_BASE64.equals(c.keyEncoding) &&
+					!JAVA_ENCODING_HEX.equals(c.keyEncoding)) {
+				throw new UtilsException(DEBUG_PREFIX+keyEncodingPName+"' with unsupported encryption mode '"+c.keyEncoding+"'");
+			}
+		}
 		
 		String keyAlgoPName = encMode+KEY_ALGORITHM;
 		String keyAlgo = propertiesMap.getProperty(keyAlgoPName);
@@ -394,8 +415,17 @@ public class FileTraceEncryptConfig {
 		return this.keystorePassword;
 	}
 
+	public String getKeyInline() {
+		return this.keyInline;
+	}
 	public String getKeyPath() {
 		return this.keyPath;
+	}
+	public boolean isKeyBase64Encoding() {
+		return JAVA_ENCODING_BASE64.equals(this.keyEncoding);
+	}
+	public boolean isKeyHexEncoding() {
+		return JAVA_ENCODING_HEX.equals(this.keyEncoding);
 	}
 
 	public String getKeyAlgorithm() {

@@ -90,9 +90,6 @@ public class EncryptTest {
 	
 	public static void main(String[] args) throws Exception {
 		
-		/*
-		TODO
-		*/
 		boolean runPKCS11SecretTest = false;
 		
 		TipoTest tipoTest = null;

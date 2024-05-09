@@ -164,6 +164,8 @@ public class BYOKInstance {
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_PATH, config.getLocalConfig().keyPath);
 		localConfig.keyInline = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_INLINE, config.getLocalConfig().keyInline);
+		localConfig.keyEncoding = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ENCODING, config.getLocalConfig().keyEncoding);
 		localConfig.keyAlgorithm = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ALGORITHM, config.getLocalConfig().keyAlgorithm);
 		localConfig.keyAlias = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
@@ -178,6 +180,8 @@ public class BYOKInstance {
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_PATH, config.getLocalConfig().publicKeyPath);
 		localConfig.publicKeyInline = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_INLINE, config.getLocalConfig().publicKeyInline);
+		localConfig.publicKeyEncoding = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_ENCODING, config.getLocalConfig().publicKeyEncoding);
 		
 		localConfig.contentAlgorithm = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_CONTENT_ALGORITHM, config.getLocalConfig().contentAlgorithm);
