@@ -139,6 +139,9 @@ public class PorteApplicativeValidazioneContenuti extends Action {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);
+			
+			// imposta menu' contestuale
+			porteApplicativeHelper.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			if(	porteApplicativeHelper.isEditModeInProgress() && !applicaModifica){
 

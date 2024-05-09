@@ -273,6 +273,9 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 			
 			ServletUtils.setPageDataTitle(pd, lstParam);
 			
+			// imposto menu' contestuale
+			porteDelegateHelper.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
+			
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento
 			// dati
 			if (porteDelegateHelper.isEditModeInProgress()) {

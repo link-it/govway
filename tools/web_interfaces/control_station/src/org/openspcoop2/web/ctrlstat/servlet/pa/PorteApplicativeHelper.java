@@ -2728,6 +2728,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -2840,6 +2843,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -2952,6 +2958,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3111,6 +3120,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
 
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3262,6 +3273,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3379,6 +3393,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3518,6 +3535,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
 
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
+						
 			// controllo eventuali risultati ricerca
 //			if (!search.equals("")) {
 //				this.pd.setSearch("on");
@@ -3675,6 +3695,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 //			if (!search.equals("")) {
@@ -4198,6 +4221,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -4314,6 +4340,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -4454,6 +4483,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -4570,6 +4602,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -4617,6 +4652,28 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	
+	public void impostaComandiMenuContestualePA(String idsogg, String idAsps) throws Exception {
+		if(idsogg==null) {
+			throw new Exception("Param idsogg is null");
+		}
+		String protocollo = null;
+		if(this.core.isRegistroServiziLocale()){
+			Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
+			protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(mySogg.getTipo());
+		}
+		else{
+			org.openspcoop2.core.config.Soggetto mySogg = this.soggettiCore.getSoggetto(Integer.parseInt(idsogg));
+			protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(mySogg.getTipo());
+		}
+		AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+		
+		Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
+		Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
+		Parameter pIdSoggettoErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, asps.getIdSoggetto()+"");
+		
+		this.impostaComandiMenuContestualePA(asps, protocollo, pNomeServizio, pTipoServizio, pIdSoggettoErogatore);
 	}
 	
 	public List<Parameter> getTitoloPA(Integer parentPA, String idsogg, String idAsps)	throws Exception, DriverRegistroServiziNotFound, DriverRegistroServiziException {
@@ -4796,6 +4853,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			lstParam.add(new Parameter(labelPagLista,null));
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// setto le label delle colonne
 			String[] labels = {
@@ -4991,6 +5051,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// setto le label delle colonne
 			String nomeColonnaAzione = null;
@@ -5361,6 +5424,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// setto le label delle colonne
 			List<String> lstLabels = new ArrayList<>();
@@ -5625,6 +5691,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// setto le label delle colonne
 			String[] labels = { PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_NOME,
@@ -5770,6 +5839,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// setto le label delle colonne
 			String[] labels = { PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_NOME,
@@ -5914,6 +5986,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// setto le label delle colonne
 			String[] labels = { PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME,
@@ -6083,6 +6158,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 	
 			// controllo eventuali risultati ricerca
 	//			if (!search.equals("")) {
@@ -6252,6 +6330,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 //				if (!search.equals("")) {
@@ -8430,6 +8511,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 //				ServletUtils.enabledPageDataSearch(this.pd, ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, search);
 //			}*/
 			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
+			
 			// preparo i dati
 			List<List<DataElement>> dati = new ArrayList<>();
 			
@@ -9970,6 +10054,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -10196,6 +10283,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -10580,6 +10670,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			lstParam.add(new Parameter(labelPagLista,null));
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			ServiceBinding serviceBinding = this.porteApplicativeCore.toMessageServiceBinding(as.getServiceBinding());
 			

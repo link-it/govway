@@ -287,6 +287,10 @@ public final class PorteApplicativeAzioneAdd extends Action {
 			listaParametriSessione.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
 			listaParametriSessione.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
 			lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
+			
+			// imposto menu' contestuale
+			porteApplicativeHelper.impostaComandiMenuContestualePA(idsogg, idAsps);
+						
 			porteApplicativeHelper.preparePorteAzioneList(ricerca,
 					listaAzioni, idPorta, parentPA, lstParam, nomePorta, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE, 
 					listaParametriSessione, labelPerPorta, serviceBinding, aspc);

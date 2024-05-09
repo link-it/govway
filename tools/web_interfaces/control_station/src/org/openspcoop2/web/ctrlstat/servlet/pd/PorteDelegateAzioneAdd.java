@@ -313,6 +313,10 @@ public final class PorteDelegateAzioneAdd extends Action {
 			listaParametriSessione.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE, portaDelegata.getTipoSoggettoProprietario()));
 			listaParametriSessione.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE, portaDelegata.getNomeSoggettoProprietario()));
 			lstParam =  porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
+			
+			// imposto menu' contestuale
+			porteDelegateHelper.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
+			
 			porteDelegateHelper.preparePorteAzioneList(ricerca,
 					listaAzioni, idPorta, parentPD, lstParam, nomePorta, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AZIONE, 
 					listaParametriSessione, labelPerPorta, serviceBinding, aspc);

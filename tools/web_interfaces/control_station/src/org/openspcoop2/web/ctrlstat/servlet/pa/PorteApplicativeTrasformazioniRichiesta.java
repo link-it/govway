@@ -268,6 +268,9 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 			
 			ServletUtils.setPageDataTitle(pd, lstParam);
 			
+			// imposta menu' contestuale
+			porteApplicativeHelper.impostaComandiMenuContestualePA(idsogg, idAsps);
+			
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento
 			// dati
 			if (porteApplicativeHelper.isEditModeInProgress()) {

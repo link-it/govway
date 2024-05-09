@@ -384,6 +384,9 @@ public class PorteDelegateConnettoreDefault extends Action {
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);
 			
+			// imposto menu' contestuale
+			porteDelegateHelper.impostaComandiMenuContestualePD(idSoggFruitore, idAsps, idFruizione);
+			
 			String servletConnettore = null;
 			Parameter[] parametriServletConnettore =null;
 			

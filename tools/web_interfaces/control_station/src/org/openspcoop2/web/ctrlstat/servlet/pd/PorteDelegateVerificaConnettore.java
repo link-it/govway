@@ -158,6 +158,9 @@ public class PorteDelegateVerificaConnettore extends Action {
 			
 			ServletUtils.setPageDataTitle(pd, lstParam);
 			
+			// imposto menu' contestuale
+			porteDelegateHelper.impostaComandiMenuContestualePD(idSoggFruitore, idAsps, idFruizione);
+			
 			// preparo i campi
 			List<DataElement> dati = new ArrayList<>();
 			dati.add(ServletUtils.getDataElementForEditModeFinished());

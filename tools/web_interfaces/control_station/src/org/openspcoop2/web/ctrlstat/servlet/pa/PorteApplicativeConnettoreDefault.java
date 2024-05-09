@@ -357,6 +357,9 @@ public class PorteApplicativeConnettoreDefault extends Action {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);
+			
+			// imposta menu' contestuale
+			porteApplicativeHelper.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			String servletConnettore = null;
 			Parameter[] parametriServletConnettore =null;
