@@ -24325,6 +24325,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			List<Parameter> listParametersFruitoriVerificaCertificati,
 			ProprietaOggetto pOggetto, boolean visualizzaInUsoButton, boolean utilizzaServizioCondiviso) throws DriverControlStationException, DriverRegistroServiziException {
 		
+		boolean root = pOggetto!=null;
+		
 		String uriASPS = this.idServizioFactory.getUriFromAccordo(asps);
 		
 		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
@@ -24363,13 +24365,15 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// Proprieta Button
 		
-		if(gestioneFruitori
-				&& this.existsProprietaOggetto(pOggetto, fruitore.getDescrizione())) {
+		if(gestioneFruitori &&
+				root &&
+				this.existsProprietaOggetto(pOggetto, fruitore.getDescrizione())) {
 			this.addComandoProprietaOggettoButton(labelServizioConFruitore, idServizioButton, 
 					InUsoType.FRUIZIONE);
 		}
-		else if(!gestioneFruitori &&	
-			this.existsProprietaOggetto(pOggetto, asps.getDescrizione())) {
+		else if(!gestioneFruitori &&
+				root &&	
+				this.existsProprietaOggetto(pOggetto, asps.getDescrizione())) {
 			this.addComandoProprietaOggettoButton(labelServizioConFruitore, idServizioButton, 
 					InUsoType.EROGAZIONE);
 		}
