@@ -283,6 +283,12 @@ public class FileTraceEncryptConfig {
 				throw new UtilsException(DEBUG_PREFIX+keystoreTypePName+"'"+UNDEFINED);
 			}
 		}
+		parseKestore(encMode, propertiesMap, 
+				c, keystoreTypePName, keystoreType);
+	}
+	private static void parseKestore(String encMode, Properties propertiesMap, 
+			FileTraceEncryptConfig c, String keystoreTypePName, String keystoreType) throws UtilsException {
+		String errorUnsupported = "' unsupported with "+encMode+MODE;
 		switch (c.keystoreType) {
 		case JKS:
 		case PKCS12:
@@ -291,7 +297,7 @@ public class FileTraceEncryptConfig {
 		case JCEKS:
 			
 			if(c.isOpenSSLEngine()) {
-				throw new UtilsException(DEBUG_PREFIX+keystoreTypePName+"' '"+keystoreType+"' unsupported with "+encMode+MODE+" '"+ENCRYPTIONT_ENGINE_OPENSSL+"'");
+				throw new UtilsException(DEBUG_PREFIX+keystoreTypePName+"' '"+keystoreType+errorUnsupported+" '"+ENCRYPTIONT_ENGINE_OPENSSL+"'");
 			}
 			
 			parseKeystore(encMode, propertiesMap, c);
@@ -301,7 +307,7 @@ public class FileTraceEncryptConfig {
 		case SYMMETRIC_KEY:
 			
 			if(c.isOpenSSLEngine()) {
-				throw new UtilsException(DEBUG_PREFIX+keystoreTypePName+"' '"+keystoreType+"' unsupported with "+encMode+MODE+" '"+ENCRYPTIONT_ENGINE_OPENSSL+"'");
+				throw new UtilsException(DEBUG_PREFIX+keystoreTypePName+"' '"+keystoreType+errorUnsupported+" '"+ENCRYPTIONT_ENGINE_OPENSSL+"'");
 			}
 			
 			parseKey(encMode, propertiesMap, c);
@@ -311,7 +317,7 @@ public class FileTraceEncryptConfig {
 		case PASSWORD_KEY_DERIVATION:
 			
 			if(c.isJoseEngine()) {
-				throw new UtilsException(DEBUG_PREFIX+keystoreTypePName+"' '"+keystoreType+"' unsupported with "+encMode+MODE+" '"+ENCRYPTIONT_ENGINE_JOSE+"'");
+				throw new UtilsException(DEBUG_PREFIX+keystoreTypePName+"' '"+keystoreType+errorUnsupported+" '"+ENCRYPTIONT_ENGINE_JOSE+"'");
 			}
 			
 			parsePassword(encMode, propertiesMap, c);

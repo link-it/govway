@@ -45,7 +45,7 @@ Di seguito vengono fornite tutte le direttive supportate:
 
      - *jose*: viene prodotto un token JSON Web Encryption (JWE) conforme al RFC 7516;
      - *java*: viene utilizzata la classe Cipher fornita dal package javax.crypto per cifrare i dati che poi verranno serializzati su file di log a seconda della direttiva '*encoding*' fornita;
-     - *openssl*: viene prodotto un cipher text che può essere decifrato utilizzando i comandi di encryption 'openssl'.
+     - *openssl*: viene prodotto un cipher text, attraverso una chiave derivata da una password, che può essere decifrato utilizzando i comandi di encryption 'openssl'; richiede un keystore di tipo 'pass'.
 
 - *encoding* [required; mode=java|openssl]: indica il tipo di codifica utilizzato per la rappresentazione dei dati cifrati:
 
@@ -60,7 +60,7 @@ Di seguito vengono fornite tutte le direttive supportate:
             - *key.path*: [ignorata se presente 'key.inline'] path su filesystem ad una chiave simmetrica (es. Chiave AES dovà essere di 16, 24 o 32 byte);
             - *key.encoding*: [optional; base64/hex] consente di indicare la codifica della chiave;
 
-     - *pass*: indica la generazione di una chiave derivata da una password attraverso le seguenti direttive:
+     - *pass*: indica la generazione di una chiave derivata da una password attraverso le seguenti direttive (non utilizzabile con la modalità 'jose'):
 
             - *password*: la password utilizzata per derivare la chiave;
             - *password.type*: [opzionale; default=openssl-pbkdf2-aes-256-cbc] consente di selezionare l’algoritmo di derivazione tra le seguenti opzioni disponibili:

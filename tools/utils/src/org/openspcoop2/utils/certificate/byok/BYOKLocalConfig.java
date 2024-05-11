@@ -160,6 +160,8 @@ public class BYOKLocalConfig implements Serializable {
 				throw new UtilsException(UNSUPPORTED_KEYSTORE_PREFIX+BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEYSTORE_TYPE+TYPE_SEPARATOR+tmpKeystoreType+"'");
 			}
 		}
+		String unsupportedError = UNSUPPORTED_KEYSTORE_PREFIX+BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEYSTORE_TYPE+TYPE_SEPARATOR+tmpKeystoreType+"' with "+
+				BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_IMPL+" '";
 		switch (this.keystoreType) {
 		case JKS:
 		case PKCS12:
@@ -168,8 +170,7 @@ public class BYOKLocalConfig implements Serializable {
 		case JCEKS:
 			
 			if(config!=null && config.getLocalConfig()!=null && config.getLocalConfig().isOpenSSLEngine()) {
-				throw new UtilsException(UNSUPPORTED_KEYSTORE_PREFIX+BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEYSTORE_TYPE+TYPE_SEPARATOR+tmpKeystoreType+"' with "+
-						BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_IMPL+" '"+BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_OPENSSL+"'");
+				throw new UtilsException(unsupportedError+BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_OPENSSL+"'");
 			}
 			
 			initKeystoreEngine(id, p, config);
@@ -179,8 +180,7 @@ public class BYOKLocalConfig implements Serializable {
 		case SYMMETRIC_KEY:
 			
 			if(config!=null && config.getLocalConfig()!=null && config.getLocalConfig().isOpenSSLEngine()) {
-				throw new UtilsException(UNSUPPORTED_KEYSTORE_PREFIX+BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEYSTORE_TYPE+TYPE_SEPARATOR+tmpKeystoreType+"' with "+
-						BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_IMPL+" '"+BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_OPENSSL+"'");
+				throw new UtilsException(unsupportedError+BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_OPENSSL+"'");
 			}
 			
 			initKeyEngine(id, p);
@@ -188,8 +188,7 @@ public class BYOKLocalConfig implements Serializable {
 		case PASSWORD_KEY_DERIVATION:
 			
 			if(BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_JOSE.equals(this.encryptionEngine)) {
-				throw new UtilsException(UNSUPPORTED_KEYSTORE_PREFIX+BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEYSTORE_TYPE+TYPE_SEPARATOR+tmpKeystoreType+"' with "+
-						BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_IMPL+" '"+BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_JOSE+"'");
+				throw new UtilsException(unsupportedError+BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_JOSE+"'");
 			}
 			
 			initPasswordEngine(id, p);
