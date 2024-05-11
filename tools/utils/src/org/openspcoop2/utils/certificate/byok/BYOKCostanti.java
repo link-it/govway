@@ -20,6 +20,9 @@
 
 package org.openspcoop2.utils.certificate.byok;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * BYOKCostanti
  *
@@ -95,14 +98,17 @@ public class BYOKCostanti {
 	
 	public static final String PROPERTY_LOCAL_ENCRYPTION_ENGINE_JAVA = "java";
 	public static final String PROPERTY_LOCAL_ENCRYPTION_ENGINE_JOSE = "jose";
+	public static final String PROPERTY_LOCAL_ENCRYPTION_ENGINE_OPENSSL = "openssl";
 	
-	public static final String PROPERTY_LOCAL_JAVA_ENCODING_BASE64 = "base64";
-	public static final String PROPERTY_LOCAL_JAVA_ENCODING_HEX = "hex";
+	public static final String PROPERTY_LOCAL_ENCODING_BASE64 = "base64";
+	public static final String PROPERTY_LOCAL_ENCODING_HEX = "hex";
 		
 	public static final String PROPERTY_SUFFIX_LOCAL_IMPL = "local.impl";
+	
 	public static final String PROPERTY_SUFFIX_LOCAL_KEYSTORE_TYPE = "local.keystore.type";
 	public static final String PROPERTY_SUFFIX_LOCAL_KEYSTORE_PATH = "local.keystore.path";
 	public static final String PROPERTY_SUFFIX_LOCAL_KEYSTORE_PASSWORD = "local.keystore.password";
+	
 	public static final String PROPERTY_SUFFIX_LOCAL_KEY_PATH = "local.key.path";
 	public static final String PROPERTY_SUFFIX_LOCAL_KEY_INLINE = "local.key.inline";
 	public static final String PROPERTY_SUFFIX_LOCAL_KEY_ENCODING = "local.key.encoding";
@@ -116,9 +122,43 @@ public class BYOKCostanti {
 	public static final String PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_INLINE = "local.publicKey.inline";
 	public static final String PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_ENCODING = "local.publicKey.encoding";
 	
+	public static final String PROPERTY_SUFFIX_LOCAL_PWD = "local.password";
+	public static final String PROPERTY_SUFFIX_LOCAL_PWD_TYPE = "local.password.type";
+	/**public static final String PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_128_CBC = "openssl-aes-128-cbc";
+	public static final String PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_192_CBC = "openssl-aes-192-cbc";*/
+	public static final String PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_256_CBC = "openssl-aes-256-cbc";
+	public static final String PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_128_CBC = "openssl-pbkdf2-aes-128-cbc";
+	public static final String PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_192_CBC = "openssl-pbkdf2-aes-192-cbc";
+	public static final String PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_256_CBC = "openssl-pbkdf2-aes-256-cbc";
+	private static final List<String> localPwdTypes = new ArrayList<>();
+	static {
+		/**localPwdTypes.add(PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_128_CBC);
+		localPwdTypes.add(PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_192_CBC);*/
+		localPwdTypes.add(PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_256_CBC);
+		localPwdTypes.add(PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_128_CBC);
+		localPwdTypes.add(PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_192_CBC);
+		localPwdTypes.add(PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_256_CBC);
+	}
+	public static List<String> getLocalPasswordTypes() {
+		return localPwdTypes;
+	}
+	public static boolean isOpenSSLPasswordDerivationKeyMode(String mode) {
+		return PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_256_CBC.equals(mode) ||
+				PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_128_CBC.equals(mode) ||
+				PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_192_CBC.equals(mode) ||
+				PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_256_CBC.equals(mode);
+	}
+	public static boolean isOpenSSLPBKDF2PasswordDerivationKeyMode(String mode) {
+		return PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_128_CBC.equals(mode) ||
+				PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_192_CBC.equals(mode) ||
+				PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_256_CBC.equals(mode);
+	}
+	public static final String PROPERTY_LOCAL_PWD_TYPE_DEFAULT = PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_256_CBC;
+	public static final String PROPERTY_SUFFIX_LOCAL_PWD_ITERATION = "local.password.iter";
+		
 	public static final String PROPERTY_SUFFIX_LOCAL_CONTENT_ALGORITHM = "local.algorithm";
 	
-	public static final String PROPERTY_SUFFIX_LOCAL_JAVA_ENCODING = "local.encoding";
+	public static final String PROPERTY_SUFFIX_LOCAL_ENCODING = "local.encoding";
 
 	public static final String PROPERTY_SUFFIX_LOCAL_JOSE_INCLUDE_CERT = "local.include.cert";
 	public static final String PROPERTY_SUFFIX_LOCAL_JOSE_INCLUDE_PUBLIC_KEY = "local.include.public.key";

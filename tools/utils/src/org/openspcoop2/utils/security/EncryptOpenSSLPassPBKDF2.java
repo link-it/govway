@@ -46,13 +46,13 @@ public class EncryptOpenSSLPassPBKDF2 extends AbstractCipher {
 	 /**
 	  * 
 	  * Openssl encrypts data using the following steps:
-	  * 1. salt = <8-byte cryptographically-strong random number>
+	  * 1. salt = 8-byte cryptographically-strong random number
 	  * 2. key = PBKDF2(password+salt)
 	  * 3. iv = derivated with PBKDF2
 	  * 4. cipherTextRaw = encrypt("aes256cbc", key, iv, textPlain)
 	  * 5. cipherText = "Salted__"+salt+cipherTextRaw
     */
-	private static CipherInfo buildCipherInfo(String password, Integer iterationCount, OpenSSLEncryptionMode mode) throws UtilsException {
+	public static CipherInfo buildCipherInfo(String password, Integer iterationCount, OpenSSLEncryptionMode mode) throws UtilsException {
 		
 		CipherInfo cipherInfo = new CipherInfo();
 		

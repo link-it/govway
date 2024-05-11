@@ -49,7 +49,7 @@ public class DecryptOpenSSLPass extends AbstractCipher {
 	  * 5. plainText = decrypt("aes256cbc", key, iv, bytes[16..end])
 	*/
 
-	private static CipherInfo buildCipherInfo(byte[] cipherBytes, String password, String digestAlgoParam, OpenSSLEncryptionMode mode) throws UtilsException {
+	public static CipherInfo buildCipherInfo(byte[] cipherBytes, String password, String digestAlgoParam, OpenSSLEncryptionMode mode) throws UtilsException {
 		
 		CipherInfo cipherInfo = new CipherInfo();
 		
@@ -71,6 +71,11 @@ public class DecryptOpenSSLPass extends AbstractCipher {
 		}
 	}
 	
+	public static byte[] extractCipherBytes(byte[] data) {
+		return Arrays.copyOfRange(
+				data, 16, data.length);
+	}
+	
 	
 	private OpenSSLEncryptionMode mode;
 	private String password;
@@ -89,8 +94,7 @@ public class DecryptOpenSSLPass extends AbstractCipher {
 		CipherInfo cipherInfo = buildCipherInfo(data, this.password, null, this.mode);
 		this.key = cipherInfo.getKey();
 		this.ivParameterSpec = cipherInfo.getIvParameterSpec();
-		byte[] cipherBytes = Arrays.copyOfRange(
-				data, 16, data.length);
+		byte[] cipherBytes = extractCipherBytes(data);
 		return super.process(cipherBytes, EncryptOpenSSLPass.getAlgorithm(this.mode));
 	}
 	

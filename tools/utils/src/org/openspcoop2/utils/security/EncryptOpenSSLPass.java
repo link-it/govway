@@ -47,13 +47,13 @@ public class EncryptOpenSSLPass extends AbstractCipher {
 	 /**
 	  * 
 	  * Openssl encrypts data using the following steps:
-	  * 1. salt = <8-byte cryptographically-strong random number>
+	  * 1. salt = 8-byte cryptographically-strong random number
 	  * 2. key = messageDigest("sha256", password+salt)
 	  * 3. iv = messageDigest(key+password+salt)[0,16)
 	  * 4. cipherTextRaw = encrypt("aes256cbc", key, iv, textPlain)
 	  * 5. cipherText = "Salted__"+salt+cipherTextRaw
     */
-	private static CipherInfo buildCipherInfo(String password, String digestAlgoParam, OpenSSLEncryptionMode mode) throws UtilsException {
+	public static CipherInfo buildCipherInfo(String password, String digestAlgoParam, OpenSSLEncryptionMode mode) throws UtilsException {
 		
 		CipherInfo cipherInfo = new CipherInfo();
 		
@@ -137,7 +137,7 @@ public class EncryptOpenSSLPass extends AbstractCipher {
 		return new IvParameterSpec(iv);
 	}
 
-	static byte[] formatOutput(byte [] salt, byte [] cipherText) throws UtilsException {
+	public static byte[] formatOutput(byte [] salt, byte [] cipherText) throws UtilsException {
 		try {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			bos.writeBytes("Salted__".getBytes());

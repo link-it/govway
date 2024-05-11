@@ -183,11 +183,16 @@ public class BYOKInstance {
 		localConfig.publicKeyEncoding = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_ENCODING, config.getLocalConfig().publicKeyEncoding);
 		
+		localConfig.password = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PWD, config.getLocalConfig().password);
+		localConfig.passwordType = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PWD_TYPE, config.getLocalConfig().passwordType);
+		
 		localConfig.contentAlgorithm = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_CONTENT_ALGORITHM, config.getLocalConfig().contentAlgorithm);
 		
-		localConfig.javaEncoding = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
-				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_JAVA_ENCODING, config.getLocalConfig().javaEncoding);
+		localConfig.encoding = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_ENCODING, config.getLocalConfig().encoding);
 
 		localConfig.joseIncludeCert = config.getLocalConfig().joseIncludeCert;
 		localConfig.joseIncludePublicKey = config.getLocalConfig().joseIncludePublicKey;

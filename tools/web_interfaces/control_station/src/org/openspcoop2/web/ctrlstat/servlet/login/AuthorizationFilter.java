@@ -24,7 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.login;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 

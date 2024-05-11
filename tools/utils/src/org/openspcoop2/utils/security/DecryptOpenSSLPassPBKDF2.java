@@ -21,8 +21,6 @@
 
 package org.openspcoop2.utils.security;
 
-import java.util.Arrays;
-
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.HexBinaryUtilities;
@@ -46,7 +44,7 @@ public class DecryptOpenSSLPassPBKDF2 extends AbstractCipher {
 	  * 5. plainText = decrypt("aes256cbc", key, iv, bytes[16..end])
 	*/
 
-	private static CipherInfo buildCipherInfo(byte[] cipherBytes, String password, Integer iterationCount, OpenSSLEncryptionMode mode) throws UtilsException {
+	public static CipherInfo buildCipherInfo(byte[] cipherBytes, String password, Integer iterationCount, OpenSSLEncryptionMode mode) throws UtilsException {
 		
 		CipherInfo cipherInfo = new CipherInfo();
 		
@@ -56,7 +54,6 @@ public class DecryptOpenSSLPassPBKDF2 extends AbstractCipher {
 		
 		return cipherInfo;
 	}
-	
 	
 	private OpenSSLEncryptionMode mode;
 	private String password;
@@ -83,8 +80,7 @@ public class DecryptOpenSSLPassPBKDF2 extends AbstractCipher {
 		CipherInfo cipherInfo = buildCipherInfo(data, this.password, this.iterationCount, this.mode);
 		this.key = cipherInfo.getKey();
 		this.ivParameterSpec = cipherInfo.getIvParameterSpec();
-		byte[] cipherBytes = Arrays.copyOfRange(
-				data, 16, data.length);
+		byte[] cipherBytes = DecryptOpenSSLPass.extractCipherBytes(data);
 		return super.process(cipherBytes, EncryptOpenSSLPass.getAlgorithm(this.mode));
 	}
 	

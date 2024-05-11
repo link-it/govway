@@ -34,6 +34,7 @@ import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.certificate.KeystoreType;
+import org.openspcoop2.utils.certificate.byok.BYOKCostanti;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.properties.PropertiesReader;
@@ -65,9 +66,13 @@ public class FileTraceEncryptConfig {
 	private String keyId;
 	private boolean keyWrap = false;
 	
+	private String password;
+	private String passwordType;
+	private Integer passwordIteration;
+	
 	private String contentAlgorithm;
 	
-	private String javaEncoding;
+	private String encoding;
 
 	private boolean joseIncludeCert;
 	private boolean joseIncludePublicKey;
@@ -78,20 +83,24 @@ public class FileTraceEncryptConfig {
 	private String ksmId;
 	private Map<String, String> ksmInput;
 	
-	private static final String ENCRYPTIONT_ENGINE_JAVA = "java";
-	private static final String ENCRYPTIONT_ENGINE_JOSE = "jose";
+	private static final String ENCRYPTIONT_ENGINE_JAVA = BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_JAVA;
+	private static final String ENCRYPTIONT_ENGINE_JOSE = BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_JOSE;
+	private static final String ENCRYPTIONT_ENGINE_OPENSSL = BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_OPENSSL;
 	
-	private static final String JAVA_ENCODING_BASE64 = "base64";
-	private static final String JAVA_ENCODING_HEX = "hex";
+	private static final String ENCODING_BASE64 = BYOKCostanti.PROPERTY_LOCAL_ENCODING_BASE64;
+	private static final String ENCODING_HEX = BYOKCostanti.PROPERTY_LOCAL_ENCODING_HEX;
 	
 	private static final String PREFIX_ENCRYPT = "encrypt.";
 	private static final String DEBUG_PREFIX = "Property '"+PREFIX_ENCRYPT;
 	private static final String UNDEFINED = " undefined";
+	private static final String INVALID = " invalid";
 	
 	private static final String MODE = ".mode";
+	
 	private static final String KEYSTORE_TYPE = ".keystore.type";
 	private static final String KEYSTORE_PATH = ".keystore.path";
 	private static final String KEYSTORE_PASSWORD = ".keystore.password";
+	
 	private static final String KEY_PATH = ".key.path";
 	private static final String KEY_INLINE = ".key.inline";
 	private static final String KEY_ENCODING = ".key.encoding";
@@ -101,9 +110,29 @@ public class FileTraceEncryptConfig {
 	private static final String KEY_ID = ".key.id";
 	private static final String KEY_WRAP = ".key.wrap";
 	
+	public static final String PWD = ".password";
+	public static final String PWD_TYPE = ".password.type";
+	/**public static final String PWD_TYPE_OPENSSL_AES_128_CBC = BYOKCostanti.PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_128_CBC;
+	public static final String PWD_TYPE_OPENSSL_AES_192_CBC = BYOKCostanti.PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_192_CBC;*/
+	public static final String PWD_TYPE_OPENSSL_AES_256_CBC = BYOKCostanti.PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_256_CBC;
+	public static final String PWD_TYPE_OPENSSL_PBKDF2_AES_128_CBC = BYOKCostanti.PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_128_CBC;
+	public static final String PWD_TYPE_OPENSSL_PBKDF2_AES_192_CBC = BYOKCostanti.PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_192_CBC;
+	public static final String PWD_TYPE_OPENSSL_PBKDF2_AES_256_CBC = BYOKCostanti.PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_256_CBC;
+	public static List<String> getLocalPasswordTypes() {
+		return BYOKCostanti.getLocalPasswordTypes();
+	}
+	public static boolean isOpenSSLPasswordDerivationKeyMode(String mode) {
+		return BYOKCostanti.isOpenSSLPasswordDerivationKeyMode(mode);
+	}
+	public static boolean isOpenSSLPBKDF2PasswordDerivationKeyMode(String mode) {
+		return BYOKCostanti.isOpenSSLPBKDF2PasswordDerivationKeyMode(mode);
+	}
+	public static final String PWD_TYPE_DEFAULT = BYOKCostanti.PROPERTY_LOCAL_PWD_TYPE_DEFAULT;
+	public static final String PWD_ITERATION = ".password.iter";
+	
 	private static final String CONTENT_ALGORITHM = ".algorithm";
 	
-	private static final String JAVA_ENCODING = ".encoding";
+	private static final String ENCODING_OUTPUT = ".encoding";
 
 	private static final String JOSE_INCLUDE_CERT = ".include.cert";
 	private static final String JOSE_INCLUDE_PUBLIC_KEY = ".include.public.key";
@@ -111,8 +140,8 @@ public class FileTraceEncryptConfig {
 	private static final String JOSE_INCLUDE_CERT_SHA1 = ".include.cert.sha1";
 	private static final String JOSE_INCLUDE_CERT_SHA256 = ".include.cert.sha256";
 	
-	private static final String JOSE_KSM = ".ksm";
-	private static final String JOSE_KSM_PARAM = ".ksm.param.";
+	private static final String KSM = ".ksm";
+	private static final String KSM_PARAM = ".ksm.param.";
 
 	
 	public static Map<String, FileTraceEncryptConfig> parse(PropertiesReader reader) throws UtilsException{
@@ -161,37 +190,55 @@ public class FileTraceEncryptConfig {
 		String modePName = encMode+MODE;
 		c.encryptionEngine = propertiesMap.getProperty(modePName);
 		if(!ENCRYPTIONT_ENGINE_JAVA.equals(c.encryptionEngine) &&
-				!ENCRYPTIONT_ENGINE_JOSE.equals(c.encryptionEngine)) {
+				!ENCRYPTIONT_ENGINE_JOSE.equals(c.encryptionEngine) &&
+				!ENCRYPTIONT_ENGINE_OPENSSL.equals(c.encryptionEngine)) {
 			throw new UtilsException(DEBUG_PREFIX+modePName+"' with unsupported engine mode '"+c.encryptionEngine+"'");
 		}
 		
 		String algoPName = encMode+CONTENT_ALGORITHM;
 		String algo = propertiesMap.getProperty(algoPName);
 		if(algo==null || StringUtils.isEmpty(algo.trim())) {
-			throw new UtilsException(DEBUG_PREFIX+algoPName+"'"+UNDEFINED);
+			if(!ENCRYPTIONT_ENGINE_OPENSSL.equals(c.encryptionEngine)) {
+				throw new UtilsException(DEBUG_PREFIX+algoPName+"'"+UNDEFINED);
+			}
 		}
-		c.contentAlgorithm = algo.trim();
+		else {
+			c.contentAlgorithm = algo.trim();
+		}
+		
+		if(ENCRYPTIONT_ENGINE_JAVA.equals(c.encryptionEngine) ||
+				ENCRYPTIONT_ENGINE_OPENSSL.equals(c.encryptionEngine)) {
+			parseEncoding(encMode, propertiesMap, c);
+		}
 		
 		if(ENCRYPTIONT_ENGINE_JAVA.equals(c.encryptionEngine)) {	
-			String encodingPName = encMode+JAVA_ENCODING;
-			String encoding = propertiesMap.getProperty(encodingPName);
-			if(encoding==null || StringUtils.isEmpty(encoding.trim())) {
-				throw new UtilsException(DEBUG_PREFIX+encodingPName+"'"+UNDEFINED);
-			}
-			c.javaEncoding = encoding.trim();
-			if(!JAVA_ENCODING_BASE64.equals(c.javaEncoding) &&
-					!JAVA_ENCODING_HEX.equals(c.javaEncoding)) {
-				throw new UtilsException(DEBUG_PREFIX+encodingPName+"' with unsupported encryption mode '"+c.javaEncoding+"'");
-			}
-			
 			String keyWrapPName = encMode+KEY_WRAP;
 			String keyWrap = propertiesMap.getProperty(keyWrapPName);
 			if(keyWrap!=null && StringUtils.isNotEmpty(keyWrap.trim())) {
 				c.keyWrap = "true".equalsIgnoreCase(keyWrap);
 			}
 		}
-		else if(ENCRYPTIONT_ENGINE_JOSE.equals(c.encryptionEngine)) {
+		
+		if(ENCRYPTIONT_ENGINE_JOSE.equals(c.encryptionEngine)) {
 			parseEngineJose(encMode, propertiesMap, c);
+		}
+	}
+	private static void parseEncoding(String encMode, Properties propertiesMap, 
+			FileTraceEncryptConfig c) throws UtilsException {
+		String encodingPName = encMode+ENCODING_OUTPUT;
+		String encoding = propertiesMap.getProperty(encodingPName);
+		if(encoding==null || StringUtils.isEmpty(encoding.trim())) {
+			/**if(ENCRYPTIONT_ENGINE_JAVA.equals(c.encryptionEngine)) {
+			 * In file trace e' sempre necessario produrre un output leggibile*/
+			throw new UtilsException(DEBUG_PREFIX+encodingPName+"'"+UNDEFINED);
+			/**}*/
+		}
+		else {
+			c.encoding = encoding.trim();
+			if(!ENCODING_BASE64.equals(c.encoding) &&
+					!ENCODING_HEX.equals(c.encoding)) {
+				throw new UtilsException(DEBUG_PREFIX+encodingPName+"' with unsupported encryption mode '"+c.encoding+"'");
+			}
 		}
 	}
 	private static void parseEngineJose(String encMode, Properties propertiesMap, 
@@ -243,13 +290,31 @@ public class FileTraceEncryptConfig {
 		case JWK_SET:
 		case JCEKS:
 			
+			if(c.isOpenSSLEngine()) {
+				throw new UtilsException(DEBUG_PREFIX+keystoreTypePName+"' '"+keystoreType+"' unsupported with "+encMode+MODE+" '"+ENCRYPTIONT_ENGINE_OPENSSL+"'");
+			}
+			
 			parseKeystore(encMode, propertiesMap, c);
 			
 			break;
 		case PUBLIC_KEY:
 		case SYMMETRIC_KEY:
 			
+			if(c.isOpenSSLEngine()) {
+				throw new UtilsException(DEBUG_PREFIX+keystoreTypePName+"' '"+keystoreType+"' unsupported with "+encMode+MODE+" '"+ENCRYPTIONT_ENGINE_OPENSSL+"'");
+			}
+			
 			parseKey(encMode, propertiesMap, c);
+			
+			break;
+			
+		case PASSWORD_KEY_DERIVATION:
+			
+			if(c.isJoseEngine()) {
+				throw new UtilsException(DEBUG_PREFIX+keystoreTypePName+"' '"+keystoreType+"' unsupported with "+encMode+MODE+" '"+ENCRYPTIONT_ENGINE_JOSE+"'");
+			}
+			
+			parsePassword(encMode, propertiesMap, c);
 			
 			break;
 		
@@ -332,8 +397,8 @@ public class FileTraceEncryptConfig {
 		String keyEncoding = propertiesMap.getProperty(keyEncodingPName);
 		if(keyEncoding!=null && StringUtils.isNotEmpty(keyEncoding.trim())) {
 			c.keyEncoding = keyEncoding.trim();
-			if(!JAVA_ENCODING_BASE64.equals(c.keyEncoding) &&
-					!JAVA_ENCODING_HEX.equals(c.keyEncoding)) {
+			if(!ENCODING_BASE64.equals(c.keyEncoding) &&
+					!ENCODING_HEX.equals(c.keyEncoding)) {
 				throw new UtilsException(DEBUG_PREFIX+keyEncodingPName+"' with unsupported encryption mode '"+c.keyEncoding+"'");
 			}
 		}
@@ -346,9 +411,42 @@ public class FileTraceEncryptConfig {
 		c.keyAlgorithm = keyAlgo.trim();
 	}
 	
+	private static void parsePassword(String encMode, Properties propertiesMap, 
+			FileTraceEncryptConfig c) throws UtilsException {
+		
+		String passwordPName = encMode+PWD;
+		String password = propertiesMap.getProperty(passwordPName);
+		if(password==null || StringUtils.isEmpty(password.trim())) {
+			throw new UtilsException(DEBUG_PREFIX+passwordPName+"'"+UNDEFINED);
+		}
+		c.password = password.trim();
+		
+		String passwordTypePName = encMode+PWD_TYPE;
+		String passwordType = propertiesMap.getProperty(passwordTypePName);
+		if(passwordType==null || StringUtils.isEmpty(passwordType.trim())) {
+			c.passwordType = PWD_TYPE_DEFAULT;
+		}
+		else {
+			c.passwordType = passwordType.trim();
+			if(!getLocalPasswordTypes().contains(c.passwordType)) {
+				throw new UtilsException(DEBUG_PREFIX+passwordTypePName+"'"+INVALID);
+			}
+		}
+		
+		String passwordIterationPName = encMode+PWD_ITERATION;
+		String passwordIteration = propertiesMap.getProperty(passwordIterationPName);
+		if(passwordIteration!=null && StringUtils.isNotEmpty(passwordIteration.trim())) {
+			try {
+				c.passwordIteration = Integer.valueOf(passwordIteration);
+			}catch(Exception e) {
+				throw new UtilsException(DEBUG_PREFIX+passwordIterationPName+"'"+INVALID+": "+e.getMessage());
+			}
+		}
+	}
+	
 	private static void parseKsm(String encMode, Properties propertiesMap, 
 			FileTraceEncryptConfig c) {
-		String ksmPName = encMode+JOSE_KSM;
+		String ksmPName = encMode+KSM;
 		String ksm = propertiesMap.getProperty(ksmPName);
 		if(ksm!=null && StringUtils.isNotEmpty(ksm.trim())) {
 			c.ksmId = ksm.trim();
@@ -359,7 +457,7 @@ public class FileTraceEncryptConfig {
 		if(!inputParams.isEmpty()) {
 			c.ksmInput = new HashMap<>();
 			for (String inputId : inputParams) {
-				String value = propertiesMap.getProperty(encMode+JOSE_KSM_PARAM+inputId);
+				String value = propertiesMap.getProperty(encMode+KSM_PARAM+inputId);
 				if(value!=null) {
 					c.ksmInput.put(inputId, value.trim());
 				}
@@ -367,7 +465,7 @@ public class FileTraceEncryptConfig {
 		}
 	}
 	private static void initKsmParamsInput(String encMode, Properties propertiesMap, List<String> idKeystore) {
-		String ksmParam = encMode+JOSE_KSM_PARAM;
+		String ksmParam = encMode+KSM_PARAM;
 		Enumeration<?> enKeys = propertiesMap.keys();
 		while (enKeys.hasMoreElements()) {
 			Object object = enKeys.nextElement();
@@ -398,6 +496,9 @@ public class FileTraceEncryptConfig {
 	public boolean isJoseEngine() {
 		return ENCRYPTIONT_ENGINE_JOSE.equals(this.encryptionEngine);
 	}
+	public boolean isOpenSSLEngine() {
+		return ENCRYPTIONT_ENGINE_OPENSSL.equals(this.encryptionEngine);
+	}
 	
 	public KeystoreType getKeystoreType() {
 		return this.keystoreType;
@@ -422,10 +523,10 @@ public class FileTraceEncryptConfig {
 		return this.keyPath;
 	}
 	public boolean isKeyBase64Encoding() {
-		return JAVA_ENCODING_BASE64.equals(this.keyEncoding);
+		return ENCODING_BASE64.equals(this.keyEncoding);
 	}
 	public boolean isKeyHexEncoding() {
-		return JAVA_ENCODING_HEX.equals(this.keyEncoding);
+		return ENCODING_HEX.equals(this.keyEncoding);
 	}
 
 	public String getKeyAlgorithm() {
@@ -454,15 +555,27 @@ public class FileTraceEncryptConfig {
 		return this.keyWrap;
 	}
 	
+	public String getPassword() {
+		return this.password;
+	}
+	
+	public String getPasswordType() {
+		return this.passwordType;
+	}
+	
+	public Integer getPasswordIteration() {
+		return this.passwordIteration;
+	}
+	
 	public String getContentAlgorithm() {
 		return this.contentAlgorithm;
 	}
 	
-	public boolean isJavaBase64Encoding() {
-		return JAVA_ENCODING_BASE64.equals(this.javaEncoding);
+	public boolean isBase64Encoding() {
+		return ENCODING_BASE64.equals(this.encoding);
 	}
-	public boolean isJavaHexEncoding() {
-		return JAVA_ENCODING_HEX.equals(this.javaEncoding);
+	public boolean isHexEncoding() {
+		return ENCODING_HEX.equals(this.encoding);
 	}
 
 	public JwtHeaders getJwtHeaders(KeyStore ks) throws UtilsException {

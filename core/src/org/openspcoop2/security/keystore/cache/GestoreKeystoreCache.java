@@ -43,6 +43,7 @@ import org.openspcoop2.security.keystore.RemoteStore;
 import org.openspcoop2.security.keystore.SSLConfigProps;
 import org.openspcoop2.security.keystore.SSLSocketFactory;
 import org.openspcoop2.security.keystore.SecretKeyStore;
+import org.openspcoop2.security.keystore.SecretPasswordKeyDerivationConfig;
 import org.openspcoop2.security.keystore.SymmetricKeystore;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.certificate.CertificateInfo;
@@ -762,6 +763,39 @@ public class GestoreKeystoreCache {
 				k = GestoreKeystoreCache.secretKeyStoreCache.getKeystoreAndCreateIfNotExists(secretKey, algorithm);
 			else
 				k = new SecretKeyStore(secretKey, algorithm);
+		}
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addSecretKeyStore(keyParam, k, requestInfo.getIdTransazione());
+		}
+		return k;
+	}
+	
+	public static SecretKeyStore getSecretKeyStore(RequestInfo requestInfo, SecretPasswordKeyDerivationConfig config) throws SecurityException{
+		return getSecretKeyStore(requestInfo, config,
+				(BYOKRequestParams) null);
+	}
+	public static SecretKeyStore getSecretKeyStore(RequestInfo requestInfo, SecretPasswordKeyDerivationConfig config, 
+			BYOKRequestParams requestParams) throws SecurityException{
+		String keyParam = config.toKey();
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && config!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getSecretKeyStore(keyParam);
+			if(o instanceof SecretKeyStore) {
+				return (SecretKeyStore) o;
+			}
+		}
+		SecretKeyStore k = null;
+		if(requestParams!=null) {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.secretKeyStoreCache.getKeystoreAndCreateIfNotExists(keyParam, config, requestParams);
+			else
+				k = new SecretKeyStore(config, requestParams);
+		}
+		else {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.secretKeyStoreCache.getKeystoreAndCreateIfNotExists(keyParam, config);
+			else
+				k = new SecretKeyStore(config);
 		}
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addSecretKeyStore(keyParam, k, requestInfo.getIdTransazione());
