@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.core.byok;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.byok.BYOKUtilities;
 import org.openspcoop2.core.byok.BYOKWrappedValue;
 import org.openspcoop2.core.byok.IDriverBYOK;
@@ -86,7 +87,7 @@ public class DriverBYOK implements IDriverBYOK {
 			return new BYOKWrappedValue(value, BYOKUtilities.extractPrefixWrappedValue(value));
 		}
 		
-		if(this.securityPolicy==null) {
+		if(this.securityPolicy==null || StringUtils.isEmpty(value)) {
 			return null;
 		}
 		

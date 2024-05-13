@@ -33,7 +33,7 @@ public abstract class PropertiesReader {
 	
 	protected Logger log;
 	
-	public PropertiesReader(Logger log) {
+	protected PropertiesReader(Logger log) {
 		this.log = log;
 	}
 	
@@ -52,7 +52,7 @@ public abstract class PropertiesReader {
 	
 	public boolean isNotEmpty(String nome) throws DynamicException {
 		String v = read(nome);
-		return v!=null && "".equals(v);
+		return v!=null && !"".equals(v);
 	}
 	
 	public abstract String read(String nome) throws DynamicException;
