@@ -32,6 +32,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.SequenceInputStream;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -1386,5 +1387,24 @@ public class Utilities {
 			}
 			return f.toPath();
 		}
+	}
+	
+	
+	
+	
+	// ** ENV **
+	
+	public static void setEnvProperty(String key, String value) throws UtilsException {
+	    try {
+	        Map<String, String> env = System.getenv();
+	        Class<?> c = env.getClass();
+	        Field field = c.getDeclaredField("m");
+	        field.setAccessible(true);
+	        @SuppressWarnings("unchecked")
+			Map<String, String> wEnv = (Map<String, String>) field.get(env);
+	        wEnv.put(key, value);
+	    } catch (Exception e) {
+	        throw new UtilsException("setEnvProperty '"+key+"' failed: "+e.getMessage(), e);
+	    }
 	}
 }

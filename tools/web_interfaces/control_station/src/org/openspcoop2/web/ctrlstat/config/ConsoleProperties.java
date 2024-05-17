@@ -650,6 +650,14 @@ public class ConsoleProperties {
 		return parse(b, false);
 	}
 
+	public String getEnvMapConfig() throws UtilsException{
+		return this.readProperty(false, "env.map.config");
+	}
+	public boolean isEnvMapConfigRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "env.map.required");
+		return parse(b, false);
+	}
+	
 	public String getHSMConfigurazione() throws UtilsException{
 		return this.readProperty(false, "hsm.config");
 	}
@@ -662,10 +670,10 @@ public class ConsoleProperties {
 		return parse(b, false);
 	}
 	
-	public String getBYOKConfigurazione() throws UtilsException{
+	public String getBYOKConfig() throws UtilsException{
 		return this.readProperty(false, "byok.config");
 	}
-	public boolean isBYOKRequired() throws UtilsException{
+	public boolean isBYOKConfigRequired() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(false, "byok.required");
 		return parse(b, false);
 	}
@@ -674,6 +682,13 @@ public class ConsoleProperties {
 	}
 	public String getBYOKInternalConfigRemoteSecurityEngine() throws UtilsException{
 		return this.readProperty(false, "byok.internalConfig.securityEngine.remote");
+	}
+	public String getBYOKEnvSecretsConfig() throws UtilsException{
+		return this.readProperty(false, "byok.env.secrets.config");
+	}
+	public boolean isBYOKEnvSecretsConfigRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "byok.env.secrets.required");
+		return parse(b, false);
 	}
 	public boolean isVisualizzaInformazioniCifrate() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(false, "console.visualizzaInformazioniCifrate.enabled");

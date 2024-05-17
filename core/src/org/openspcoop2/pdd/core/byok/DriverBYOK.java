@@ -64,7 +64,7 @@ public class DriverBYOK implements IDriverBYOK {
 	public DriverBYOK(Logger log, String securityPolicy, String securityRemotePolicy) {
 		this(log, securityPolicy, securityRemotePolicy, buildDynamicMap(log), false);
 	}
-	private static Map<String, Object> buildDynamicMap(Logger log){
+	public static Map<String, Object> buildDynamicMap(Logger log){
 		Map<String, Object> dynamicMap = new HashMap<>();
 		DynamicInfo dynamicInfo = new  DynamicInfo();
 		DynamicUtils.fillDynamicMap(log, dynamicMap, dynamicInfo);
@@ -207,7 +207,31 @@ public class DriverBYOK implements IDriverBYOK {
 		if(ksmId==null) {
 			throw new UtilsException("BYOK security configuration '"+securityPolicy+"' without "+(wrap ?  "wrap" : "unwrap")+" ksm id");
 		}
+				
+		Map<String, String> inputMap = new HashMap<>();
+		if(secConfig.getInputParameters()!=null && !secConfig.getInputParameters().isEmpty()) {
+			for (BYOKSecurityConfigParameter sec : secConfig.getInputParameters()) {
+				inputMap.put(sec.getName(), sec.getValue());
+			}
+		}
 		
+		return getBYOKRequestParamsByKsmId(ksmId, manager, 
+				inputMap, this.dynamicMap);
+	}
+	
+	public static BYOKRequestParams getBYOKRequestParamsByKsmId(String ksmId, 
+			Map<String, String> inputMap, Map<String, Object> dynamicMap) throws UtilsException {
+		
+		BYOKManager manager = BYOKManager.getInstance();
+		if(manager==null) {
+			throw new UtilsException("BYOKManager not initialized");
+		}
+		
+		return getBYOKRequestParamsByKsmId(ksmId, manager, 
+				inputMap, dynamicMap);
+	}
+	public static BYOKRequestParams getBYOKRequestParamsByKsmId(String ksmId, BYOKManager manager, 
+			Map<String, String> inputMap, Map<String, Object> dynamicMap) throws UtilsException {
 		BYOKConfig bconfig = manager.getKSMConfigByType(ksmId);
 		if(bconfig==null) {
 			throw new UtilsException("BYOK configuration for ksm id '"+ksmId+"' not found");
@@ -215,15 +239,9 @@ public class DriverBYOK implements IDriverBYOK {
 		BYOKRequestParams req = new BYOKRequestParams();
 		req.setConfig(bconfig);
 			
-		Map<String, String> inputMap = new HashMap<>();
-		if(secConfig.getInputParameters()!=null && !secConfig.getInputParameters().isEmpty()) {
-			for (BYOKSecurityConfigParameter sec : secConfig.getInputParameters()) {
-				inputMap.put(sec.getName(), sec.getValue());
-			}
-		}
 		req.setInputMap(inputMap);
 		
-		req.setDynamicMap(this.dynamicMap);
+		req.setDynamicMap(dynamicMap);
 		
 		req.setKeyIdentity(ksmId);
 		
@@ -231,6 +249,9 @@ public class DriverBYOK implements IDriverBYOK {
 	}
 	
 	private byte[] process(BYOKInstance instance) throws UtilsException{
+		return processInstance(instance, this.checkJmxPrefixOperazioneNonRiuscita);
+	}
+	public static byte[] processInstance(BYOKInstance instance, boolean checkJmxPrefixOperazioneNonRiuscita) throws UtilsException{
 		
 		try{
 			if(instance==null){
@@ -238,7 +259,7 @@ public class DriverBYOK implements IDriverBYOK {
 			}
 			
 			if(instance.getHttpRequest()!=null) {
-				return remoteProcess(instance);
+				return remoteProcess(instance, checkJmxPrefixOperazioneNonRiuscita);
 			}
 			else {
 				BYOKLocalEncrypt localEncrypt = new BYOKLocalEncrypt();
@@ -255,7 +276,7 @@ public class DriverBYOK implements IDriverBYOK {
 		}
 		
 	}
-	private byte[] remoteProcess(BYOKInstance instance) throws UtilsException{
+	private static byte[] remoteProcess(BYOKInstance instance, boolean checkJmxPrefixOperazioneNonRiuscita) throws UtilsException{
 		String debugUrl = "'"+instance.getConfig().getLabel()+"' (endpoint:"+instance.getHttpRequest().getUrl()+")";
 		
 		HttpResponse httpResponse = HttpUtilities.httpInvoke(instance.getHttpRequest());
@@ -266,7 +287,7 @@ public class DriverBYOK implements IDriverBYOK {
 			throw new UtilsException("Retrieve store "+debugUrl+" failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
 		}
 		byte [] content = null;
-		if(this.checkJmxPrefixOperazioneNonRiuscita) {
+		if(checkJmxPrefixOperazioneNonRiuscita) {
 			byte[] b = httpResponse.getContent();
 			if(b==null || b.length<=0) {
 				throw new UtilsException("Store "+debugUrl+" empty response");

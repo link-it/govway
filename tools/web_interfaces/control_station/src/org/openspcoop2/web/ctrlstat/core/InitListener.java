@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -45,6 +47,9 @@ import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntimeProperties;
+import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
+import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceGovWayState;
 import org.openspcoop2.protocol.basic.archive.BasicArchive;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -57,6 +62,7 @@ import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.json.YamlSnakeLimits;
+import org.openspcoop2.utils.properties.MapProperties;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.security.ProviderUtils;
 import org.openspcoop2.utils.xml.XMLDiffImplType;
@@ -267,6 +273,136 @@ public class InitListener implements ServletContextListener {
 			InitListener.log.info("Inizializzazione resources (properties) govwayConsole effettuata con successo.");
 	
 			
+			// Map (environment)
+			try {
+				String mapConfig = consoleProperties.getEnvMapConfig();
+				if(StringUtils.isNotEmpty(mapConfig)) {
+					InitListener.log.info("Inizializzazione environment in corso...");
+					MapProperties.initialize(InitListener.log, mapConfig, consoleProperties.isEnvMapConfigRequired());
+					MapProperties mapProperties = MapProperties.getInstance();
+					mapProperties.initEnvironment();
+					String msgInit = "Environment inizializzato con le variabili definite nel file '"+mapConfig+"'"+
+							"\n\tJavaProperties: "+mapProperties.getJavaMap().keys()+
+							"\n\tEnvProperties: "+mapProperties.getEnvMap().keys()+
+							"\n\tObfuscateMode: "+mapProperties.getObfuscateModeDescription()+
+							"\n\tObfuscatedJavaKeys: "+mapProperties.getObfuscatedJavaKeys()+
+							"\n\tObfuscatedEnvKeys: "+mapProperties.getObfuscatedEnvKeys();
+					InitListener.log.info(msgInit);
+				}
+			} catch (Exception e) {
+				InitListener.log.error("Inizializzazione ambiente non riuscita: "+e.getMessage(),e);
+				return;
+			}
+			
+			// Load Security Provider
+			try {
+				if(consoleProperties.isSecurityLoadBouncyCastle()) {
+					ProviderUtils.addBouncyCastleAfterSun(true);
+					InitListener.logInfo("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
+				}
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'aggiunta dei security provider: " + e.getMessage();
+				InitListener.logError(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
+			}
+						
+			// inizializzo HSM Manager
+			try {
+				String hsmConfig = consoleProperties.getHSMConfigurazione();
+				if(StringUtils.isNotEmpty(hsmConfig)) {
+					InitListener.log.info("Inizializzazione HSM in corso...");
+					File f = new File(hsmConfig);
+					HSMManager.init(f, consoleProperties.isHSMRequired(), log, false);
+					HSMUtils.setHsmConfigurableKeyPassword(consoleProperties.isHSMKeyPasswordConfigurable());
+					InitListener.log.info("Inizializzazione HSM effettuata con successo");
+				}
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'inizializzazione del manager HSM: " + e.getMessage();
+				InitListener.logError(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
+			}
+					
+			// inizializzo OCSP Manager
+			try {
+				String ocspConfig = consoleProperties.getOCSPConfigurazione();
+				if(StringUtils.isNotEmpty(ocspConfig)) {
+					InitListener.log.info("Inizializzazione OCSP in corso...");
+					File f = new File(ocspConfig);
+					OCSPManager.init(f, consoleProperties.isOCSPRequired(), consoleProperties.isOCSPLoadDefault(), log);
+					InitListener.log.info("Inizializzazione OCSP effettuata con successo");
+				}
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'inizializzazione del manager OCSP: " + e.getMessage();
+				InitListener.logError(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
+			}
+			
+			// inizializzo BYOK Manager
+			BYOKManager byokManager = null;
+			try {
+				String byokConfig = consoleProperties.getBYOKConfig();
+				if(StringUtils.isNotEmpty(byokConfig)) {
+					InitListener.log.info("Inizializzazione BYOK in corso...");
+					File f = new File(byokConfig);
+					BYOKManager.init(f, consoleProperties.isBYOKConfigRequired(), log);
+					byokManager = BYOKManager.getInstance();
+					InitListener.log.info("Inizializzazione BYOK effettuata con successo");
+				}
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'inizializzazione del manager BYOK: " + e.getMessage();
+				InitListener.logError(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
+			}
+						
+			// Secrets (environment)
+			boolean reInitSecretMaps = false;
+			try {
+				String secretsConfig = consoleProperties.getBYOKEnvSecretsConfig();
+				if(byokManager!=null && StringUtils.isNotEmpty(secretsConfig)) {
+					InitListener.log.info("Inizializzazione secrets in corso...");
+					String securityPolicy = consoleProperties.getBYOKInternalConfigSecurityEngine();
+					String securityRemotePolicy = consoleProperties.getBYOKInternalConfigRemoteSecurityEngine();
+					
+					Map<String, Object> dynamicMap = new HashMap<>();
+					DynamicInfo dynamicInfo = new  DynamicInfo();
+					DynamicUtils.fillDynamicMap(log, dynamicMap, dynamicInfo);
+					if(byokManager.isBYOKRemoteGovWayNodeUnwrapConfig(securityPolicy)) {
+						// i secrets cifrati verranno riletti quando i nodi sono attivi (verificato in InitRuntimeConfigReader)
+						reInitSecretMaps = true;
+						securityPolicy = null;
+						securityRemotePolicy = null;
+					}
+					
+					BYOKMapProperties.initialize(InitListener.log, secretsConfig, consoleProperties.isBYOKEnvSecretsConfigRequired(), 
+							securityPolicy, securityRemotePolicy, 
+							dynamicMap, true);
+					BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
+					secretsProperties.initEnvironment();
+					String msgInit = "Environment inizializzato con i secrets definiti nel file '"+secretsConfig+"'"+
+							"\n\tJavaProperties: "+secretsProperties.getJavaMap().keys()+
+							"\n\tEnvProperties: "+secretsProperties.getEnvMap().keys()+
+							"\n\tObfuscateMode: "+secretsProperties.getObfuscateModeDescription();
+					InitListener.log.info(msgInit);
+				}
+			} catch (Exception e) {
+				InitListener.log.error("Inizializzazione ambiente (secrets) non riuscita: "+e.getMessage(),e);
+				return;
+			}		
+			
+			// inizializza nodi runtime
+			// !!NOTA!!: eventuali secrets riferiti nella ConfigurazioneNodiRuntimeProperties devono essere definiti tramite ksm o tramite security che non invocano i nodi govway run
+			InitListener.log.info("Inizializzazione NodiRuntime in corso...");
+			try {
+				ConfigurazioneNodiRuntimeProperties backwardCompatibility = new ConfigurazioneNodiRuntimeProperties(consoleProperties.getJmxPdDBackwardCompatibilityPrefix(), 
+						consoleProperties.getJmxPdDBackwardCompatibilityProperties());
+				ConfigurazioneNodiRuntime.initialize(consoleProperties.getJmxPdDExternalConfiguration(), backwardCompatibility);
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'inizializzazione del gestore dei nodi run: " + e.getMessage();
+				InitListener.logError(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
+			}
+			InitListener.log.info("Inizializzazione NodiRuntime effettuata con successo");
+			
 			InitListener.log.info("Inizializzazione ExtendedInfoManager in corso...");
 			try{
 				ExtendedInfoManager.initialize(new Loader(), 
@@ -406,20 +542,7 @@ public class InitListener implements ServletContextListener {
 					}
 				}
 			}
-			
-			// inizializza nodi runtime
-			try {
-				ConfigurazioneNodiRuntimeProperties backwardCompatibility = new ConfigurazioneNodiRuntimeProperties(consoleProperties.getJmxPdDBackwardCompatibilityPrefix(), 
-						consoleProperties.getJmxPdDBackwardCompatibilityProperties());
-				ConfigurazioneNodiRuntime.initialize(consoleProperties.getJmxPdDExternalConfiguration(), backwardCompatibility);
-			} catch (Exception e) {
-				String msgErrore = "Errore durante l'inizializzazione del gestore dei nodi run: " + e.getMessage();
-				InitListener.logError(
-						//					throw new ServletException(
-						msgErrore,e);
-				throw new UtilsRuntimeException(msgErrore,e);
-			}
-				
+							
 			// inizializza il repository dei plugin
 			try {
 				if(consoleProperties.isConfigurazionePluginsEnabled()!=null && consoleProperties.isConfigurazionePluginsEnabled().booleanValue()) {
@@ -436,66 +559,6 @@ public class InitListener implements ServletContextListener {
 				}
 			} catch (Exception e) {
 				String msgErrore = "Errore durante l'inizializzazione del loader dei plugins: " + e.getMessage();
-				InitListener.logError(
-						//					throw new ServletException(
-						msgErrore,e);
-				throw new UtilsRuntimeException(msgErrore,e);
-			}
-			
-			// Load Security Provider
-			try {
-				if(consoleProperties.isSecurityLoadBouncyCastle()) {
-					ProviderUtils.addBouncyCastleAfterSun(true);
-					InitListener.logInfo("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
-				}
-			} catch (Exception e) {
-				String msgErrore = "Errore durante l'aggiunta dei security provider: " + e.getMessage();
-				InitListener.logError(
-						//					throw new ServletException(
-						msgErrore,e);
-				throw new UtilsRuntimeException(msgErrore,e);
-			}
-			
-			// inizializzo HSM Manager
-			try {
-				String hsmConfig = consoleProperties.getHSMConfigurazione();
-				if(StringUtils.isNotEmpty(hsmConfig)) {
-					File f = new File(hsmConfig);
-					HSMManager.init(f, consoleProperties.isHSMRequired(), log, false);
-					HSMUtils.setHsmConfigurableKeyPassword(consoleProperties.isHSMKeyPasswordConfigurable());
-				}
-			} catch (Exception e) {
-				String msgErrore = "Errore durante l'inizializzazione del manager HSM: " + e.getMessage();
-				InitListener.logError(
-						//					throw new ServletException(
-						msgErrore,e);
-				throw new UtilsRuntimeException(msgErrore,e);
-			}
-			
-			// inizializzo BYOK Manager
-			try {
-				String byokConfig = consoleProperties.getBYOKConfigurazione();
-				if(StringUtils.isNotEmpty(byokConfig)) {
-					File f = new File(byokConfig);
-					BYOKManager.init(f, consoleProperties.isBYOKRequired(), log);
-				}
-			} catch (Exception e) {
-				String msgErrore = "Errore durante l'inizializzazione del manager BYOK: " + e.getMessage();
-				InitListener.logError(
-						//					throw new ServletException(
-						msgErrore,e);
-				throw new UtilsRuntimeException(msgErrore,e);
-			}
-			
-			// inizializzo OCSP Manager
-			try {
-				String ocspConfig = consoleProperties.getOCSPConfigurazione();
-				if(StringUtils.isNotEmpty(ocspConfig)) {
-					File f = new File(ocspConfig);
-					OCSPManager.init(f, consoleProperties.isOCSPRequired(), consoleProperties.isOCSPLoadDefault(), log);
-				}
-			} catch (Exception e) {
-				String msgErrore = "Errore durante l'inizializzazione del manager OCSP: " + e.getMessage();
 				InitListener.logError(
 						//					throw new ServletException(
 						msgErrore,e);
@@ -525,9 +588,9 @@ public class InitListener implements ServletContextListener {
 				throw new UtilsRuntimeException(msgErrore,e);
 			}
 			
-			// fileTraceGovWayState
+			// InitRuntimeConfigReader
 			try{
-				this.initRuntimeConfigReader = new InitRuntimeConfigReader(consoleProperties);
+				this.initRuntimeConfigReader = new InitRuntimeConfigReader(consoleProperties, reInitSecretMaps);
 				this.initRuntimeConfigReader.start();
 				InitListener.log.info("RuntimeConfigReader avviato con successo.");
 			} catch (Exception e) {

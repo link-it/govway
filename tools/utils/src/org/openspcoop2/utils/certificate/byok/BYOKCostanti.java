@@ -178,4 +178,12 @@ public class BYOKCostanti {
 	
 	public static final String VARIABILE_KSM = "ksm";
 	public static final String VARIABILE_KSM_KEY_PREFIX = "${ksm:";
+	
+	
+	
+	public static final String GOVWAY_RUNTIME_CONTEXT="govway-runtime";
+	public static final String GOVWAY_RUNTIME_ENDPOINT_WRAP="endpoint-wrap";
+	public static final String GOVWAY_RUNTIME_ENDPOINT_UNWRAP="endpoint-unwrap";
+	public static final String GOVWAY_RUNTIME_USERNAME="username";
+	public static final String GOVWAY_RUNTIME_PASSWORD="password";
 }

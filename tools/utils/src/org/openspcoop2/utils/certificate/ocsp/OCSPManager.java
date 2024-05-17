@@ -55,7 +55,7 @@ public class OCSPManager {
 		return staticInstance;
 	}
 	
-	private HashMap<String, OCSPConfig> hsmOCSPConfigMapIDtoConfig = new HashMap<String, OCSPConfig>();
+	private HashMap<String, OCSPConfig> hsmOCSPConfigMapIDtoConfig = new HashMap<>();
 	
 	private HashMap<String, String> hsmOCSPConfigMapTypeToID = new HashMap<>();
 	private HashMap<String, String> hsmOCSPConfigMapLabelToID = new HashMap<>();

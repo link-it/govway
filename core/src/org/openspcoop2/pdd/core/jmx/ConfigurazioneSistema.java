@@ -68,6 +68,7 @@ import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
 import org.openspcoop2.pdd.core.byok.DriverBYOK;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceConfig;
@@ -85,6 +86,7 @@ import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.HexBinaryUtilities;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
+import org.openspcoop2.utils.properties.MapProperties;
 import org.openspcoop2.utils.resources.CharsetUtilities;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.transport.http.SSLConstants;
@@ -1062,21 +1064,50 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			if(!ll.isEmpty()) {
 				bf.append("\n"); // Separo security manager
 			}
-			for (String key : ll) {
-				if(bf.length()>0){
-					bf.append("\n");
-				}
-				bf.append(key).append("=").append(p.get(key));
-			}
+			
+			printProprietaJava(ll, bf, p);
 			
 			if(bf.length()<=0){
 				throw new CoreException("Non sono disponibili proprietà java");
 			}else{
 				return bf.toString();
 			}
+			
 		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	private void printProprietaJava(List<String> ll, StringBuilder bf, Properties p) throws UtilsException {
+		MapProperties mapProperties = MapProperties.getInstance();
+		List<String> mapObfuscateKey = null;
+		if(mapProperties.isObfuscatedModeEnabled()) {
+			mapObfuscateKey = mapProperties.getObfuscatedJavaKeys();
+		}
+		
+		BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
+		List<String> secretsObfuscateKey = null;
+		if(secretsProperties.isObfuscatedModeEnabled()) {
+			/**secretsObfuscateKey = secretsProperties.getObfuscatedJavaKeys(); Tutte le variabili definite in secrets sono da offuscare*/
+			secretsObfuscateKey = secretsProperties.getJavaMap().keys();
+		}
+		
+		for (String key : ll) {
+			
+			Object value = p.get(key);
+			if(value instanceof String) {
+				if(mapObfuscateKey!=null && mapObfuscateKey.contains(key)) {
+					value = mapProperties.obfuscate((String)value);
+				}
+				else if(secretsObfuscateKey!=null && secretsObfuscateKey.contains(key)) {
+					value = secretsProperties.obfuscate((String)value);
+				}
+			}
+			
+			if(bf.length()>0){
+				bf.append("\n");
+			}
+			bf.append(key).append("=").append(value);
 		}
 	}
 	private void addInformazioniProprietaJava(boolean allNetwork, boolean includeNetwork, boolean includeNotNetwork, boolean includePassword,
@@ -1146,12 +1177,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			if(!ll.isEmpty()) {
 				bf.append("\n"); // Separo security manager
 			}
-			for (String key : ll) {
-				if(bf.length()>0){
-					bf.append("\n");
-				}
-				bf.append(key).append("=").append(map.get(key));
-			}
+			
+			printProprietaSistema(ll, bf, map);
 			
 			if(bf.length()<=0){
 				throw new CoreException("Non sono disponibili proprietà di sistema");
@@ -1161,6 +1188,36 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	private void printProprietaSistema(List<String> ll, StringBuilder bf, Map<String, String> map) throws UtilsException {
+		MapProperties mapProperties = MapProperties.getInstance();
+		List<String> mapObfuscateKey = null;
+		if(mapProperties.isObfuscatedModeEnabled()) {
+			mapObfuscateKey = mapProperties.getObfuscatedEnvKeys();
+		}
+		
+		BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
+		List<String> secretsObfuscateKey = null;
+		if(secretsProperties.isObfuscatedModeEnabled()) {
+			/**secretsObfuscateKey = secretsProperties.getObfuscatedEnvKeys(); Tutte le variabili definite in secrets sono da offuscare*/
+			secretsObfuscateKey = secretsProperties.getEnvMap().keys();
+		}
+		
+		for (String key : ll) {
+			
+			String value = map.get(key);
+			if(mapObfuscateKey!=null && mapObfuscateKey.contains(key)) {
+				value = mapProperties.obfuscate(value);
+			}
+			else if(secretsObfuscateKey!=null && secretsObfuscateKey.contains(key)) {
+				value = secretsProperties.obfuscate(value);
+			}
+			
+			if(bf.length()>0){
+				bf.append("\n");
+			}
+			bf.append(key).append("=").append(value);
 		}
 	}
 	

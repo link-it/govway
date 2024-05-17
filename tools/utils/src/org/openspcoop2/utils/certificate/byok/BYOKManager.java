@@ -344,4 +344,63 @@ public class BYOKManager {
 		}
 		return c;
 	}
+	
+	/**public boolean isBYOKRemoteConfig(String securityManagerPolicy) throws UtilsException {
+		BYOKSecurityConfig bsc = this.getKSMSecurityConfig(securityManagerPolicy);
+		
+		BYOKConfig c = this.getKSMConfigByType(bsc.getWrapId());
+		if(BYOKEncryptionMode.REMOTE.equals(c.getEncryptionMode())) {
+			return true;
+		}
+		
+		c = this.getKSMConfigByType(bsc.getUnwrapId());
+		return BYOKEncryptionMode.REMOTE.equals(c.getEncryptionMode());
+		
+	}*/
+	
+	public boolean isBYOKRemoteGovWayNodeUnwrapConfig(String securityManagerPolicy) throws UtilsException {
+		return isBYOKRemoteGovWayNodeConfig(securityManagerPolicy, false, true);
+	}
+	public boolean isBYOKRemoteGovWayNodeWrapConfig(String securityManagerPolicy) throws UtilsException {
+		return isBYOKRemoteGovWayNodeConfig(securityManagerPolicy, true, false);
+		
+	}
+	public boolean isBYOKRemoteGovWayNodeConfig(String securityManagerPolicy) throws UtilsException {
+		return isBYOKRemoteGovWayNodeConfig(securityManagerPolicy, true, true);
+	}
+	public boolean isBYOKRemoteGovWayNodeConfig(String securityManagerPolicy, boolean wrap, boolean unwrap) throws UtilsException {
+		BYOKSecurityConfig secConfig = this.getKSMSecurityConfig(securityManagerPolicy);
+		
+		boolean govwayRuntime = false;
+		if(secConfig.getInputParameters()!=null && !secConfig.getInputParameters().isEmpty()) {
+			for (BYOKSecurityConfigParameter sec : secConfig.getInputParameters()) {
+				if(sec.getValue().contains(("${"+BYOKCostanti.GOVWAY_RUNTIME_CONTEXT+":"))) {
+					govwayRuntime = true;
+					break;
+				}
+			}
+		}
+		if(!govwayRuntime) {
+			return false;
+		}
+		
+		// ne basta uno
+		
+		if(wrap) {
+			BYOKConfig c = this.getKSMConfigByType(secConfig.getWrapId());
+			if(BYOKEncryptionMode.REMOTE.equals(c.getEncryptionMode())) {
+				return true;
+			}
+		}
+		
+		if(unwrap) {
+			BYOKConfig c = this.getKSMConfigByType(secConfig.getUnwrapId());
+			if(BYOKEncryptionMode.REMOTE.equals(c.getEncryptionMode())) {
+				return true;
+			}
+		}
+		
+		return false;
+		
+	}
 }

@@ -79,7 +79,6 @@ import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.TracciamentoConfigurazione;
-import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione;
@@ -145,6 +144,7 @@ import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
 import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
+import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntimeBYOKRemoteConfig;
 import org.openspcoop2.pdd.config.ConfigurazionePriorita;
 import org.openspcoop2.pdd.config.InvokerNodiRuntime;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
@@ -178,10 +178,7 @@ import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.VersionUtilities;
-import org.openspcoop2.utils.certificate.byok.BYOKConfig;
-import org.openspcoop2.utils.certificate.byok.BYOKEncryptionMode;
 import org.openspcoop2.utils.certificate.byok.BYOKManager;
-import org.openspcoop2.utils.certificate.byok.BYOKSecurityConfig;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.crypt.CryptFactory;
 import org.openspcoop2.utils.crypt.CryptType;
@@ -193,7 +190,6 @@ import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.resources.ScriptInvoker;
-import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -8919,11 +8915,7 @@ public class ControlStationCore {
 	}
 	
 	
-	private static final String GOVWAY_RUNTIME_CONTEXT="govway-runtime";
-	private static final String GOVWAY_RUNTIME_ENDPOINT_WRAP="endpoint-wrap";
-	private static final String GOVWAY_RUNTIME_ENDPOINT_UNWRAP="endpoint-unwrap";
-	private static final String GOVWAY_RUNTIME_USERNAME="username";
-	private static final String GOVWAY_RUNTIME_PASSWORD="password";
+
 
 	protected void activeBYOK(DriverControlStationDB driver, boolean wrap, boolean unwrap) throws UtilsException{
 		DriverBYOK driverBYOK = getDriverBYOK(wrap, unwrap);
@@ -8947,87 +8939,29 @@ public class ControlStationCore {
 			DynamicInfo dynamicInfo = new  DynamicInfo();
 			DynamicUtils.fillDynamicMap(log, dynamicMap, dynamicInfo);
 			
-			if(isBYOKRemoteConfig(securityManagerPolicy)) {
-				initBYOKDynamicMap(dynamicMap, wrap, unwrap);
+			if(isBYOKRemoteGovWayNodeConfig(securityManagerPolicy, wrap, unwrap)) {
+				initBYOKDynamicMapRemoteGovWayNode(dynamicMap, wrap, unwrap);
 			}
 			
 			return new DriverBYOK(ControlStationCore.log, securityManagerPolicy, this.getByokInternalConfigRemoteSecurityEngine(), dynamicMap, true);
 		}
 		return null;
 	}
-	private boolean isActiveNode(String alias) {
-		try {
-			String value = this.getInvoker().readJMXAttribute(alias, this.getJmxPdDConfigurazioneSistemaType(alias), 
-					this.getJmxPdDConfigurazioneSistemaNomeRisorsaStatoServiziPdD(alias), 
-					this.getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegata(alias));
-			return value!=null && !"".equals(value) && !value.startsWith("[httpCode ") && 
-					(CostantiConfigurazione.ABILITATO.getValue().equals(value) || CostantiConfigurazione.DISABILITATO.getValue().equals(value));
-		}catch(Exception e) {
-			log.debug("Non 'alias' non attivo?: "+e.getMessage(),e);
-			return false;
-		}
-	}
-	private boolean isBYOKRemoteConfig(String securityManagerPolicy) throws UtilsException {
+
+	private boolean isBYOKRemoteGovWayNodeConfig(String securityManagerPolicy, boolean wrap, boolean unwrap) throws UtilsException {
 		BYOKManager byokManager = BYOKManager.getInstance();
 		if(byokManager!=null) {
-			BYOKSecurityConfig bsc = byokManager.getKSMSecurityConfig(securityManagerPolicy);
-			
-			BYOKConfig c = byokManager.getKSMConfigByType(bsc.getWrapId());
-			if(BYOKEncryptionMode.REMOTE.equals(c.getEncryptionMode())) {
-				return true;
-			}
-			
-			c = byokManager.getKSMConfigByType(bsc.getUnwrapId());
-			if(BYOKEncryptionMode.REMOTE.equals(c.getEncryptionMode())) {
-				return true;
-			}
+			return byokManager.isBYOKRemoteGovWayNodeConfig(securityManagerPolicy, wrap, unwrap);
 		}
 		return false;
 	}
-	private void initBYOKDynamicMap(Map<String, Object> dynamicMap, boolean wrap, boolean unwrap) throws UtilsException {
-		List<String> aliases = this.getJmxPdDAliases();
-		if(aliases!=null && !aliases.isEmpty()){
-			// prendo il primo nodo funzionante
-			for (String alias : aliases) {
-				if(isActiveNode(alias) &&
-					this.configurazioneNodiRuntime.getResourceUrl(alias)!=null && !"".equals(this.configurazioneNodiRuntime.getResourceUrl(alias))
-					&& !"locale".equals(this.configurazioneNodiRuntime.getResourceUrl(alias))
-						){
-					initBYOKDynamicMap(dynamicMap, wrap, unwrap, alias);
-					break;
-				}
-			}
-		}
-	}
-	private void initBYOKDynamicMap(Map<String, Object> dynamicMap, boolean wrap, boolean unwrap, String alias) throws UtilsException {
-		String remoteUrl = this.configurazioneNodiRuntime.getResourceUrl(alias);
+	private void initBYOKDynamicMapRemoteGovWayNode(Map<String, Object> dynamicMap, boolean wrap, boolean unwrap) {
 		
-		Map<String, String> govwayContext = new HashMap<>();
-		dynamicMap.put(GOVWAY_RUNTIME_CONTEXT, govwayContext);
+		ConfigurazioneNodiRuntimeBYOKRemoteConfig remoteConfig = new ConfigurazioneNodiRuntimeBYOKRemoteConfig();
+		this.configurazioneNodiRuntime.initBYOKDynamicMapRemoteGovWayNode(log,dynamicMap, wrap, unwrap, remoteConfig);
 		
-		Map<String, List<String>> p = new HashMap<>();
-		TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, this.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias));
-		if(wrap) {
-			TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_METHOD_NAME, this.getJmxPdDConfigurazioneSistemaNomeMetodoWrapKey(alias));
-			String urlWrap = TransportUtils.buildUrlWithParameters(p, remoteUrl);
-			govwayContext.put(GOVWAY_RUNTIME_ENDPOINT_WRAP, urlWrap);
-		}
-		if(unwrap) {
-			TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_METHOD_NAME, this.getJmxPdDConfigurazioneSistemaNomeMetodoUnwrapKey(alias));
-			String urlUnwrap = TransportUtils.buildUrlWithParameters(p, remoteUrl);
-			govwayContext.put(GOVWAY_RUNTIME_ENDPOINT_UNWRAP, urlUnwrap);
-		}
-
-		String username = this.configurazioneNodiRuntime.getUsername(alias);
-		if(username!=null) {
-			govwayContext.put(GOVWAY_RUNTIME_USERNAME, username);
-		}
-		String password = this.configurazioneNodiRuntime.getPassword(alias);
-		if(password!=null) {
-			govwayContext.put(GOVWAY_RUNTIME_PASSWORD, password);
-		}
 	}
-	
+		
 	public String wrap(String value) throws DriverControlStationException {
 		try {
 			if(value==null || StringUtils.isEmpty(value)) {
