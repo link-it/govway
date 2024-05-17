@@ -31,6 +31,7 @@ import org.openspcoop2.utils.mime.MimeTypeConstants;
  *
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -57,6 +58,7 @@ public class HttpConstants {
 	/** Content Transfer Encoding */
 	public static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
 	public static final String CONTENT_TRANSFER_ENCODING_VALUE_BINARY = "binary";
+	public static final String CONTENT_TRANSFER_ENCODING_VALUE_BASE64 = "base64";
 	
 	/** Content Encoding */
 	public static final String CONTENT_ENCODING = "Content-Encoding";
