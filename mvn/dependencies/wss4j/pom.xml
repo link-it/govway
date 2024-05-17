@@ -17,7 +17,8 @@
 
 		<jar.group.name>wss4j</jar.group.name>
 		
-		<wss4j.version>3.0.1</wss4j.version>
+		<wss4j.version>3.0.3</wss4j.version>
+		<wss4j.gov4j.version>3.0.3-gov4j-1</wss4j.gov4j.version>
 
 	</properties>
 
@@ -59,7 +60,7 @@
 		<dependency>
 			<groupId>org.apache.wss4j</groupId>
 			<artifactId>wss4j-ws-security-common</artifactId>
-			<version>${wss4j.version}</version>
+			<version>${wss4j.gov4j.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -70,7 +71,7 @@
 		<dependency>
 			<groupId>org.apache.wss4j</groupId>
 			<artifactId>wss4j-ws-security-dom</artifactId>
-			<version>${wss4j.version}</version>
+			<version>${wss4j.gov4j.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
