@@ -596,7 +596,7 @@ public class SecurityConstants {
     public static final String POST_BASE64_ENCODING_ATTACHMENT_TRUE = "true";
     public static final String POST_BASE64_ENCODING_ATTACHMENT_FALSE = "false";
     public static final boolean POST_BASE64_ENCODING_ATTACHMENT_DEFAULT = Boolean.parseBoolean(POST_BASE64_ENCODING_ATTACHMENT_FALSE);
-    public static final String POST_BASE64_ENCODING_ATTACHMENT = "postBase64DecodingAttachment";
+    public static final String POST_BASE64_ENCODING_ATTACHMENT = "postBase64EncodingAttachment";
 
     /**
      * Decodifica la rappresentazione base64 dell'attachment (dopo la validazione della sicurezza)
@@ -611,7 +611,7 @@ public class SecurityConstants {
      */
     public static final String ADD_ATTACHMENT_ID_BRACKETS_FALSE = "false";
     public static final String ADD_ATTACHMENT_ID_BRACKETS_TRUE = "true";
-    public static final String ADD_ATTACHMENT_ID_BRACKETS = "addAttachmentIdBrackets";
     public static final boolean ADD_ATTACHMENT_ID_BRACKETS_DEFAULT = Boolean.parseBoolean(ADD_ATTACHMENT_ID_BRACKETS_FALSE);
+    public static final String ADD_ATTACHMENT_ID_BRACKETS = "addAttachmentIdBrackets";
     
 }

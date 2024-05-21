@@ -310,7 +310,8 @@ public class WSSUtilities {
 				}
 				else{
 					try{
-						InputStreamDataSource isds = new InputStreamDataSource(attachmentPart.getId(), dh.getContentType(), dh.getInputStream());
+						InputStream ins = (InputStream) postProcessAttachment(dh.getInputStream(), msgCtx);
+						InputStreamDataSource isds = new InputStreamDataSource(attachmentPart.getId(), dh.getContentType(), ins);
 						DataHandler dhNEW = new DataHandler(isds);
 						message.updateAttachmentPart(ap, dhNEW);
 					}catch(javax.activation.UnsupportedDataTypeException edtx){
