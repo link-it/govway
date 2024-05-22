@@ -525,6 +525,34 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 		}
 	}
 	
+	public String getSoapTestWSSecurityWSS4Jext(){
+		try{
+			return this.reader.getProperty("org.openspcoop2.testsuite.files.testWSSecurityWSS4Jext").trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.testWSSecurityWSS4Jext':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return null;
+		}
+	}
+	public String getSoapTestWSSecurityWSS4JextAllegatoXml(){
+		try{
+			return this.reader.getProperty("org.openspcoop2.testsuite.files.testWSSecurityWSS4Jext.allegatoXml").trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.testWSSecurityWSS4Jext.allegatoXml':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return null;
+		}
+	}
+	public String getSoapTestWSSecurityWSS4JextAllegatoBinario(){
+		try{
+			return this.reader.getProperty("org.openspcoop2.testsuite.files.testWSSecurityWSS4Jext.allegatoBin").trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.testWSSecurityWSS4Jext.allegatoBin':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return null;
+		}
+	}
+	
 	
 	
 	public String getSoapTestSOAPScorretto_erroreInCima(){

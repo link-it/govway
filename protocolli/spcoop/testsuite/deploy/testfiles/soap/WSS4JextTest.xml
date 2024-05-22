@@ -1,0 +1,14 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<soapenv:Header xmlns:prova="http://prova.openspcoop2.org">
+	<a:example1 xmlns:a="http://www.openspcoop2.org" soapenv:actor="http://www.prova.it" soapenv:mustUnderstand="0" >prova</a:example1>
+        <b:example2 xmlns:b="http://www.openspcoop2.org" soapenv:actor="http://www.prova.it" soapenv:mustUnderstand="0" >prova2</b:example2>
+	</soapenv:Header>
+	<soapenv:Body>
+		<prova:contenuto xmlns:prova="http://www.openspcoop.org/example">
+			<prova:DatoSensibile1>
+				<prova:contenuto>ESEMPIO DI CONTENUTO</prova:contenuto>
+			</prova:DatoSensibile1>
+			<prova:DatoSensibile2>ESEMPIO 2 DI CONTENUTO</prova:DatoSensibile2>
+		</prova:contenuto>
+	</soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,42 @@
+
+Comandi:
+#genera le chiavi simmetriche
+keytool -genseckey -alias 'symmetric' -keyalg 'DESede' -keystore WSS4Jext_encrypt.jceks -storepass 'WSS4Jextjks' -keypass 'WSS4Jextkey' -storetype JCEKS
+
+#genera il keystore delle coppie di chiavi e poi i truststore per le chiavi pubbliche di "pd"
+keytool -genkey -alias WSS4Jextpd -keyalg RSA -sigalg SHA256withRSA -keystore WSS4Jext_pd_signature_keystore.jks -keysize 2048 -storepass WSS4Jextpdjks -keypass WSS4Jextpdkey -dname 'CN=WSS4Jextpd, O=openspcoop.org, C=IT, EMAILADDRESS=info@openspcoop.org' -storetype JKS -validity 365000
+keytool -export -alias WSS4Jextpd -file /tmp/pd.cer -keystore WSS4Jext_pd_signature_keystore.jks -storepass WSS4Jextpdjks
+keytool -import -v -trustcacerts -alias WSS4Jextpa -file /tmp/pd.cer -keystore WSS4Jext_pa_signature_truststore.jks -storepass WSS4Jextpajks -noprompt -storetype JKS
+
+#genera il keystore delle coppie di chiavi e poi i truststore per le chiavi pubbliche di "pa"
+keytool -genkey -alias WSS4Jextpa -keyalg RSA -sigalg SHA256withRSA -keystore WSS4Jext_pa_signature_keystore.jks -keysize 2048 -storepass WSS4Jextpajks -keypass WSS4Jextpakey -dname 'CN=WSS4Jextpa, O=openspcoop.org, C=IT, EMAILADDRESS=info@openspcoop.org' -storetype JKS -validity 365000
+keytool -export -alias WSS4Jextpa -file /tmp/pa.cer -keystore WSS4Jext_pa_signature_keystore.jks -storepass WSS4Jextpajks
+keytool -import -v -trustcacerts -alias WSS4Jextpd -file /tmp/pa.cer -keystore WSS4Jext_pd_signature_truststore.jks -storepass WSS4Jextpdjks -noprompt -storetype JKS
+
+Keystore:
+- WSS4Jext_encrypt.jceks
+- WSS4Jext_pd_signature_keystore.jks
+- WSS4Jext_pa_signature_keystore.jks
+- WSS4Jext_pd_signature_truststore.jks
+- WSS4Jext_pa_signature_truststore.jks
+
+Alias:
+- symmetric (chiave simmetrica)
+- WSS4Jextpd (coppia di chiavi) 
+- WSS4Jextpa (coppia di chiavi)
+- WSS4Jextpa (certificato pa)
+- WSS4Jextpd (certificato pd)
+
+Password chiavi private:
+- WSS4Jextkey
+- WSS4Jextpdkey
+- WSS4Jextpakey
+- non ci sono chiavi private
+- non ci sono chiavi private
+
+PasswordKeystore
+- WSS4Jextjks
+- WSS4Jextpdjks
+- WSS4Jextpajks
+- WSS4Jextpdjks
+- WSS4Jextpajks

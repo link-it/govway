@@ -184,6 +184,17 @@
 	<azione nome="WSSSoapBoxFirmataAttachments"/>
 	<azione nome="WSSSoapBoxFirmataAttachmentsSignatureEngineXmlSec"/>
 	<azione nome="WSSSoapBoxFirmataAttachmentsSignatureEngineSun"/>
+	<!-- Test WSS4Jext -->
+	<azione nome="WSSWSS4JextCifrataFirmata"/>
+	<azione nome="WSSWSS4JextFirmataCifrata"/>
+	<azione nome="WSSWSS4JextCifrata"/>
+	<azione nome="WSSWSS4JextFirmata"/>
+	<azione nome="WSSWSS4JextCifrataFirmataAttachments"/>
+	<azione nome="WSSWSS4JextFirmataCifrataAttachments"/>
+	<azione nome="WSSWSS4JextCifrataAttachments"/>
+	<azione nome="WSSWSS4JextFirmataAttachments"/>
+	<azione nome="WSSWSS4JextFirmataAttachmentsSignatureEngineXmlSec"/>
+	<azione nome="WSSWSS4JextFirmataAttachmentsSignatureEngineSun"/>
         <!-- Test Bug #18 -->
         <azione nome="stateful"/>
         <azione nome="testConnettoreErratoApplicativoStateless"/>
@@ -772,6 +783,12 @@
 
     <porta-dominio nome="PdDEsempioSoapBoxFruitore" descrizione="PdD per EsempioSoapBox"
         client-auth="disabilitato"/>
+        
+    <porta-dominio nome="PdDEsempioWSS4JextErogatore" descrizione="PdD per Esempio WSS4Jext"
+        client-auth="disabilitato"/>
+
+    <porta-dominio nome="PdDEsempioWSS4JextFruitore" descrizione="PdD per Esempio WSS4Jext"
+        client-auth="disabilitato"/>
 
 
     <!-- Soggetti SPCoop in  supporto per l'autorizzazione anti-spoofing -->
@@ -840,6 +857,25 @@
 
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento" accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
             <!-- <fruitore tipo="spc" nome="SoggettoEsempioSoapBoxFruitore"/> -->
+        </accordo-servizio-parte-specifica>
+
+    </soggetto>
+    
+    <!-- Soggetto per esempio WSS4Jext -->
+
+    <soggetto tipo="spc" nome="SoggettoEsempioWSS4JextFruitore" porta-dominio="PdDEsempioWSS4JextFruitore">
+        <connettore tipo="http" nome="PdDEsempioWSS4Jext">
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
+        </connettore>
+    </soggetto>
+
+    <soggetto tipo="spc" nome="SoggettoEsempioWSS4JextErogatore" porta-dominio="PdDEsempioWSS4JextErogatore">
+        <connettore tipo="http" nome="PdDEsempioWSS4Jext">
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
+        </connettore>
+
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento" accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
+            <!-- <fruitore tipo="spc" nome="SoggettoEsempioWSS4JextFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
     </soggetto>

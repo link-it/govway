@@ -191,6 +191,11 @@ public class WSSUtilities {
 			MimeHeader hdr = hdrs.next();
 			at.setHeader(hdr.getName(), hdr.getValue());
 		}
+		
+		if (encodeBase64) {
+			at.setHeader(HttpConstants.CONTENT_TRANSFER_ENCODING, HttpConstants.CONTENT_TRANSFER_ENCODING_VALUE_BASE64);
+		}
+		
 		at.setDataHandler(dhNEW);
 		return at;
 	}
