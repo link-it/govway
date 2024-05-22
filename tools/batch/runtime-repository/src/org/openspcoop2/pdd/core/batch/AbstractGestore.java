@@ -31,6 +31,7 @@ import org.openspcoop2.generic_project.beans.IProjectInfo;
 import org.openspcoop2.protocol.engine.driver.repository.GestoreRepositoryFactory;
 import org.openspcoop2.protocol.engine.driver.repository.IGestoreRepository;
 import org.openspcoop2.utils.SortedMap;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.slf4j.Logger;
@@ -51,6 +52,21 @@ public abstract class AbstractGestore {
 	protected boolean debug;
 	protected boolean logQuery;
 	protected Logger logCore;
+	protected void logCoreDebug(String msg) {
+		if(this.logCore!=null) {
+			this.logCore.debug(msg);
+		}
+	}
+	protected void logCoreError(String msg) {
+		if(this.logCore!=null) {
+			this.logCore.error(msg);
+		}
+	}
+	protected void logCoreError(String msg, Throwable e) {
+		if(this.logCore!=null) {
+			this.logCore.error(msg,e);
+		}
+	}
 	protected Logger logSql;
 	protected int finestraSecondi;
 	
@@ -64,11 +80,11 @@ public abstract class AbstractGestore {
 	private Date lastDate;
 	private Connection connection;
 	
-	public AbstractGestore(TipoRuntimeRepository tipoRuntimeRepository,
+	protected AbstractGestore(TipoRuntimeRepository tipoRuntimeRepository,
 			boolean debug, boolean logQuery,
 			Logger logCore, Logger logSql,
 			int finestraSecondi, int refreshConnection,
-			String tipoRepositoryBuste) throws Exception {
+			String tipoRepositoryBuste) throws UtilsException {
 		
 		this.tipoRuntimeRepository = tipoRuntimeRepository;
 		
@@ -78,42 +94,59 @@ public abstract class AbstractGestore {
 		this.logSql = logSql;
 		this.finestraSecondi = finestraSecondi;
 		if(this.debug) {
-			this.logCore.debug("finestraSecondi: "+this.finestraSecondi);
+			this.logCoreDebug("finestraSecondi: "+this.finestraSecondi);
 		}
 		
 		this.refreshConnection = refreshConnection;
 		if(this.debug) {
-			this.logCore.debug("refreshConnection: "+this.refreshConnection);
+			this.logCoreDebug("refreshConnection: "+this.refreshConnection);
 		}
 		
-		DAOFactoryProperties daoFactoryProperties = DAOFactoryProperties.getInstance(logCore);
+		DAOFactoryProperties daoFactoryProperties = null;
+		try {
+			daoFactoryProperties = DAOFactoryProperties.getInstance(logCore);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 		IProjectInfo tipoDAO = new ProjectInfo();
 		
-		this.tipoDatabase = daoFactoryProperties.getTipoDatabase(tipoDAO);
+		try {
+			this.tipoDatabase = daoFactoryProperties.getTipoDatabase(tipoDAO);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 		if(this.debug) {
-			this.logCore.debug("tipoDatabase: "+this.tipoDatabase);
+			this.logCoreDebug("tipoDatabase: "+this.tipoDatabase);
 		}
-				
-		if(daoFactoryProperties.isTipoAccessoTramiteConnection(tipoDAO)) {
-			this.connectionUrl = daoFactoryProperties.getConnectionUrl(tipoDAO);
-			this.driverJdbc = daoFactoryProperties.getConnectionDriverJDBC(tipoDAO);
-			this.connectionUsername = daoFactoryProperties.getConnectionAuthUsername(tipoDAO);
-			this.connectionPassword = daoFactoryProperties.getConnectionAuthPassword(tipoDAO);
-			if(this.debug) {
-				this.logCore.debug("connectionUrl: "+this.connectionUrl);
-				this.logCore.debug("driverJdbc: "+this.driverJdbc);
-				this.logCore.debug("connectionUsername: "+this.connectionUsername);
-				//this.logCore.debug("connectionPassword: "+this.connectionPassword);
+		
+		try {
+			if(daoFactoryProperties.isTipoAccessoTramiteConnection(tipoDAO)) {
+				this.connectionUrl = daoFactoryProperties.getConnectionUrl(tipoDAO);
+				this.driverJdbc = daoFactoryProperties.getConnectionDriverJDBC(tipoDAO);
+				this.connectionUsername = daoFactoryProperties.getConnectionAuthUsername(tipoDAO);
+				this.connectionPassword = daoFactoryProperties.getConnectionAuthPassword(tipoDAO);
+				if(this.debug) {
+					this.logCoreDebug("connectionUrl: "+this.connectionUrl);
+					this.logCoreDebug("driverJdbc: "+this.driverJdbc);
+					this.logCoreDebug("connectionUsername: "+this.connectionUsername);
+					/**this.logCoreDebug("connectionPassword: "+this.connectionPassword);*/
+				}
+				Class.forName(this.driverJdbc);
 			}
-			Class.forName(this.driverJdbc);
-		}
-		else {
-			throw new Exception("Tipo di configurazione (datasource) non supportata");
+			else {
+				throw new UtilsException("Tipo di configurazione (datasource) non supportata");
+			}
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
 		}
 		
 		String tipoRealeRepositoryBuste = tipoRepositoryBuste;
 		if(CostantiConfigurazione.REPOSITORY_BUSTE_AUTO_BYTEWISE.equals(tipoRepositoryBuste)){
-			tipoRealeRepositoryBuste = GestoreRepositoryFactory.getTipoRepositoryBuste(this.tipoDatabase);
+			try {
+				tipoRealeRepositoryBuste = GestoreRepositoryFactory.getTipoRepositoryBuste(this.tipoDatabase);
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(),e);
+			}
 		}
 		if(CostantiConfigurazione.REPOSITORY_BUSTE_DEFAULT.equalsIgnoreCase(tipoRealeRepositoryBuste)) {
 			this.repository = new org.openspcoop2.protocol.engine.driver.repository.GestoreRepositoryDefault();
@@ -128,11 +161,11 @@ public abstract class AbstractGestore {
 			this.repository = new org.openspcoop2.protocol.engine.driver.repository.GestoreRepositoryBitOrAndFunction();
 		}
 		else {
-			throw new Exception("Tipo di repository buste indicato '"+tipoRealeRepositoryBuste+"' sconosciuto");
+			throw new UtilsException("Tipo di repository buste indicato '"+tipoRealeRepositoryBuste+"' sconosciuto");
 		}
 	}
 	
-	public abstract void process() throws Exception;
+	public abstract void process() throws UtilsException;
 		
 	protected String format(SortedMap<Integer> map) {
 		StringBuilder sb = new StringBuilder();
@@ -157,42 +190,45 @@ public abstract class AbstractGestore {
 				Date now = DateManager.getDate();
 				Date scaduta = new Date(now.getTime() - (this.refreshConnection*1000));
 				if(scaduta.after(this.lastDate)) {
-					if(this.debug) {
-						this.logCore.debug("Rilevata connessione presa in data '"+DateUtils.getSimpleDateFormatMs().format(this.lastDate)+"' su cui effettuare il refresh (refresh time seconds: "+this.refreshConnection+", scadenza:"+DateUtils.getSimpleDateFormatMs().format(scaduta)+")");
-						this.logCore.debug("Chiusura connessione ...");
-					}
-					try {
-						this.connection.close();
-						if(this.debug) {
-							this.logCore.debug("Chiusura connessione completata");
-						}
-					}catch(Throwable t) {
-						this.logCore.error("Chiusura connessione fallita: "+t.getMessage(),t);
-					}
-					if(this.debug) {
-						this.logCore.debug("Apertura nuova connessione ...");
-					}
-					this.connection = DriverManager.getConnection(this.connectionUrl,this.connectionUsername,this.connectionPassword);
-					this.lastDate = DateManager.getDate();
-					if(this.debug) {
-						this.logCore.debug("Apertura nuova connessione completata");
-					}
+					refresh(scaduta); 
 				}
 			}
 		}
 		else {
 			if(this.debug) {
-				this.logCore.debug("Apertura nuova connessione ...");
+				this.logCoreDebug("Apertura nuova connessione ...");
 			}
 			this.connection = DriverManager.getConnection(this.connectionUrl,this.connectionUsername,this.connectionPassword);
 			this.lastDate = DateManager.getDate();
 			if(this.debug) {
-				this.logCore.debug("Apertura nuova connessione completata");
+				this.logCoreDebug("Apertura nuova connessione completata");
 			}
 		}
 		
 		return this.connection;
 		
+	}
+	private void refresh(Date scaduta) throws SQLException {
+		if(this.debug) {
+			this.logCoreDebug("Rilevata connessione presa in data '"+DateUtils.getSimpleDateFormatMs().format(this.lastDate)+"' su cui effettuare il refresh (refresh time seconds: "+this.refreshConnection+", scadenza:"+DateUtils.getSimpleDateFormatMs().format(scaduta)+")");
+			this.logCoreDebug("Chiusura connessione ...");
+		}
+		try {
+			this.connection.close();
+			if(this.debug) {
+				this.logCoreDebug("Chiusura connessione completata");
+			}
+		}catch(Exception t) {
+			this.logCoreError("Chiusura connessione fallita: "+t.getMessage(),t);
+		}
+		if(this.debug) {
+			this.logCoreDebug("Apertura nuova connessione ...");
+		}
+		this.connection = DriverManager.getConnection(this.connectionUrl,this.connectionUsername,this.connectionPassword);
+		this.lastDate = DateManager.getDate();
+		if(this.debug) {
+			this.logCoreDebug("Apertura nuova connessione completata");
+		}
 	}
 	
 	protected void closeConnection() throws SQLException {
@@ -202,16 +238,16 @@ public abstract class AbstractGestore {
 				this.connection = null;
 				this.lastDate = null;
 				if(this.debug) {
-					this.logCore.debug("Chiusura connessione completata");
+					this.logCoreDebug("Chiusura connessione completata");
 				}
 			}
 			else {
 				if(this.debug) {
-					this.logCore.debug("Connessione non inizializzata; chiusura non necessaria");
+					this.logCoreDebug("Connessione non inizializzata; chiusura non necessaria");
 				}
 			}
-		}catch(Throwable t) {
-			this.logCore.error("Chiusura connessione fallita: "+t.getMessage(),t);
+		}catch(Exception t) {
+			this.logCoreError("Chiusura connessione fallita: "+t.getMessage(),t);
 		}
 	}
 	

@@ -192,6 +192,57 @@
 			<param name="value" value="${work_dir}/govway.nodirun.properties"/>
 		</antcall>
 		
+		<!-- BouncyCastle -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="security.addBouncyCastleProvider"/>
+			<param name="value" value="true"/>
+		</antcall>
+		
+		<!-- MAP -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="env.map.config"/>
+			<param name="value" value="${work_dir}/govway.map.properties"/>
+		</antcall>
+	
+		<!-- HSM CONFIG DIR -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="hsm.config"/>
+			<param name="value" value="${work_dir}/hsm.properties"/>
+		</antcall>
+		
+		<!-- BYOK -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="byok.config"/>
+			<param name="value" value="${work_dir}/byok.properties"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="byok.internalConfig.securityEngine"/>
+			<param name="value" value="runtime"/>
+		</antcall>
+		<!-- Per adesso si assume che la chiave sia su tutti gli ambienti run e manager
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="byok.internalConfig.securityEngine"/>
+			<param name="value" value="manager"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="byok.internalConfig.securityEngine.remote"/>
+			<param name="value" value="runtime"/>
+		</antcall>  -->
+		
+		<!-- Secrets -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="byok.env.secrets.config"/>
+			<param name="value" value="${work_dir}/govway.secrets.properties"/>
+		</antcall>
+		
 		<!-- OTHER -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>

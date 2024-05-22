@@ -244,6 +244,13 @@
 			<param name="value" value="${work_dir}/https/erogazioni"/>
 		</antcall>
 
+		<!-- MAP -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.env.map.config"/>
+			<param name="value" value="${work_dir}/govway.map.properties"/>
+		</antcall>
+
 		<!-- HSM -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
@@ -256,6 +263,25 @@
 		    <param name="file" value="${file}"/>
 			<param name="token" value="org.openspcoop2.pdd.ocsp.config"/>
 			<param name="value" value="${work_dir}/ocsp.properties"/>
+		</antcall>
+		
+		<!-- BYOK -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.byok.config"/>
+			<param name="value" value="${work_dir}/byok.properties"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.byok.internalConfig.securityEngine"/>
+			<param name="value" value="runtime"/>
+		</antcall>
+		
+		<!-- Secrets -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.byok.env.secrets.config"/>
+			<param name="value" value="${work_dir}/govway.secrets.properties"/>
 		</antcall>
 
 		<!-- ApacheXMLDSig, BouncyCastle e SecureRandom -->

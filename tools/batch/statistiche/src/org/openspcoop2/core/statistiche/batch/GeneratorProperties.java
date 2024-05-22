@@ -26,6 +26,9 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.openspcoop2.monitor.engine.statistic.StatisticsForceIndexConfig;
+import org.openspcoop2.utils.BooleanNullable;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.properties.PropertiesReader;
 
 /**
 * GeneratorProperties
@@ -37,12 +40,12 @@ import org.openspcoop2.monitor.engine.statistic.StatisticsForceIndexConfig;
 public class GeneratorProperties {
 	
 	private static GeneratorProperties staticInstance = null;
-	private static synchronized void init() throws Exception{
+	private static synchronized void init() throws UtilsException{
 		if(GeneratorProperties.staticInstance == null){
 			GeneratorProperties.staticInstance = new GeneratorProperties();
 		}
 	}
-	public static GeneratorProperties getInstance() throws Exception{
+	public static GeneratorProperties getInstance() throws UtilsException{
 		if(GeneratorProperties.staticInstance == null){
 			GeneratorProperties.init();
 		}
@@ -52,11 +55,9 @@ public class GeneratorProperties {
 	
 	
 	
-	private static String PROPERTIES_FILE = "/batch-statistiche.properties";
+	private static final String PROPERTIES_FILE = "/batch-statistiche.properties";
 	
 	private String protocolloDefault = null;
-	
-	private boolean statisticheGenerazioneDebug=false;
 	
 	private boolean statisticheGenerazioneBaseOrariaGestioneUltimaOra=false;
 	private boolean statisticheGenerazioneBaseGiornalieraGestioneUltimoGiorno=false;
@@ -76,53 +77,60 @@ public class GeneratorProperties {
 
 	private File pddMonitorFrameworkRepositoryJars = null;
 	
-
+	private PropertiesReader props;
 	
 	
-	public GeneratorProperties() throws Exception {
+	public GeneratorProperties() throws UtilsException {
 
-		Properties props = new Properties();
+		Properties pr = new Properties();
 		try {
 			InputStream is = GeneratorProperties.class.getResourceAsStream(GeneratorProperties.PROPERTIES_FILE);
-			props.load(is);
+			pr.load(is);
 		} catch(Exception e) {
-			throw new Exception("Errore durante l'init delle properties", e);
+			throw new UtilsException("Errore durante l'init delle properties", e);
 		}
+		this.props = new PropertiesReader(pr, true);
+		
+		try {
+			this.statisticheGenerazioneForceIndexConfig = new StatisticsForceIndexConfig(pr);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+		
+	}
+	
+	public void initProperties() throws UtilsException {
 		
 		// PROPERTIES
 				
-		this.protocolloDefault = this.getProperty(props, "protocolloDefault", true);
+		this.protocolloDefault = this.getProperty("protocolloDefault", true);
 		
-		this.statisticheGenerazioneDebug = this.getBooleanProperty(props, "statistiche.generazione.debug", true);
-		
-		this.statisticheGenerazioneBaseOrariaGestioneUltimaOra = this.getBooleanProperty(props, "statistiche.generazione.baseOraria.gestioneUltimaOra", true);
-		this.statisticheGenerazioneBaseGiornalieraGestioneUltimoGiorno = this.getBooleanProperty(props, "statistiche.generazione.baseGiornaliera.gestioneUltimoGiorno", true);
-		this.statisticheGenerazioneBaseSettimanaleGestioneUltimaSettimana = this.getBooleanProperty(props, "statistiche.generazione.baseSettimanale.gestioneUltimaSettimana", true);
-		this.statisticheGenerazioneBaseMensileGestioneUltimoMese = this.getBooleanProperty(props, "statistiche.generazione.baseMensile.gestioneUltimoMese", true);
+		this.statisticheGenerazioneBaseOrariaGestioneUltimaOra = this.getBooleanProperty("statistiche.generazione.baseOraria.gestioneUltimaOra", true);
+		this.statisticheGenerazioneBaseGiornalieraGestioneUltimoGiorno = this.getBooleanProperty("statistiche.generazione.baseGiornaliera.gestioneUltimoGiorno", true);
+		this.statisticheGenerazioneBaseSettimanaleGestioneUltimaSettimana = this.getBooleanProperty("statistiche.generazione.baseSettimanale.gestioneUltimaSettimana", true);
+		this.statisticheGenerazioneBaseMensileGestioneUltimoMese = this.getBooleanProperty("statistiche.generazione.baseMensile.gestioneUltimoMese", true);
 	
-		String p = this.getProperty(props, "statistiche.generazione.tradeOffSeconds", false);
+		String p = this.getProperty("statistiche.generazione.tradeOffSeconds", false);
 		this.waitMsBeforeNextInterval = p!=null ? Long.parseLong(p) : -1l;
 				
-		this.waitStatiInConsegna = this.getBooleanProperty(props, "statistiche.generazione.attendiCompletamentoTransazioniInFasiIntermedie", false);
+		this.waitStatiInConsegna = this.getBooleanProperty("statistiche.generazione.attendiCompletamentoTransazioniInFasiIntermedie", false);
+				
+		this.generazioneStatisticheUseUnionForLatency = this.getBooleanProperty("statistiche.generazione.useUnionForLatency", true);
 		
-		this.statisticheGenerazioneForceIndexConfig = new StatisticsForceIndexConfig(props);
+		this.generazioneStatisticheCustom = this.getBooleanProperty("statistiche.generazione.custom.enabled", true);
+		this.analisiTransazioniCustom = this.getBooleanProperty("statistiche.generazione.custom.transazioniSdk.enabled", true);
 		
-		this.generazioneStatisticheUseUnionForLatency = this.getBooleanProperty(props, "statistiche.generazione.useUnionForLatency", true);
-		
-		this.generazioneStatisticheCustom = this.getBooleanProperty(props, "statistiche.generazione.custom.enabled", true);
-		this.analisiTransazioniCustom = this.getBooleanProperty(props, "statistiche.generazione.custom.transazioniSdk.enabled", true);
-		
-		String tmp = this.getProperty(props, "statistiche.pddmonitorframework.sdk.repositoryJars", false);
+		String tmp = this.getProperty("statistiche.pddmonitorframework.sdk.repositoryJars", false);
 		if(tmp!=null){
 			this.pddMonitorFrameworkRepositoryJars = new File(tmp);
 		}
 	}
 	
-	private String getProperty(Properties props,String name,boolean required) throws Exception{
-		String tmp = props.getProperty(name);
+	private String getProperty(String name,boolean required) throws UtilsException{
+		String tmp = this.props.getValue_convertEnvProperties(name);
 		if(tmp==null){
 			if(required){
-				throw new Exception("Property '"+name+"' not found");
+				throw new UtilsException("Property '"+name+"' not found");
 			}
 			else{
 				return null;
@@ -132,18 +140,35 @@ public class GeneratorProperties {
 			return tmp.trim();
 		}
 	}
-	private boolean getBooleanProperty(Properties props,String name,boolean required) throws Exception{
-		String tmp = this.getProperty(props, name, required);
+	public String readProperty(boolean required,String property) throws UtilsException{
+		return getProperty(property, required);
+	}
+	
+	private boolean getBooleanProperty(String name,boolean required) throws UtilsException{
+		String tmp = this.getProperty(name, required);
 		if(tmp!=null){
 			try{
 				return Boolean.parseBoolean(tmp);
 			}catch(Exception e){
-				throw new Exception("Property '"+name+"' wrong int format: "+e.getMessage());
+				throw new UtilsException("Property '"+name+"' wrong int format: "+e.getMessage());
 			}
 		}
 		else{
 			return false;
 		}
+	}
+	private BooleanNullable readBooleanProperty(boolean required,String property) throws UtilsException{
+		String tmp = this.getProperty(property, required);
+		if(tmp==null && !required) {
+			return BooleanNullable.NULL(); // se e' required viene sollevata una eccezione dal metodo readProperty
+		}
+		if(!"true".equalsIgnoreCase(tmp) && !"false".equalsIgnoreCase(tmp)){
+			throw new UtilsException("Property ["+property+"] with uncorrect value ["+tmp+"] (true/value expected)");
+		}
+		return Boolean.parseBoolean(tmp) ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
+	}
+	private boolean parse(BooleanNullable b, boolean defaultValue) {
+		return (b!=null && b.getValue()!=null) ? b.getValue() : defaultValue;
 	}
 	
 	
@@ -151,8 +176,8 @@ public class GeneratorProperties {
 		return this.protocolloDefault;
 	}
 	
-	public boolean isStatisticheGenerazioneDebug() {
-		return this.statisticheGenerazioneDebug;
+	public boolean isStatisticheGenerazioneDebug() throws UtilsException {
+		return this.getBooleanProperty("statistiche.generazione.debug", true);
 	}
 
 	public boolean isStatisticheGenerazioneBaseOrariaGestioneUltimaOra() {
@@ -193,4 +218,54 @@ public class GeneratorProperties {
 	public boolean isGenerazioneAttendiCompletamentoTransazioniInFasiIntermedie() {	
 		return this.waitStatiInConsegna;
 	}
+	
+	public boolean isSecurityLoadBouncyCastleProvider() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "security.addBouncyCastleProvider");
+		return parse(b, false);
+	}
+	
+	
+	public String getEnvMapConfig() throws UtilsException{
+		return this.readProperty(false, "env.map.config");
+	}
+	public boolean isEnvMapConfigRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "env.map.required");
+		return this.parse(b, false);
+	}
+	
+	
+	public String getHSMConfigurazione() throws UtilsException {
+		return this.readProperty(false, "hsm.config");
+	}
+	public boolean isHSMRequired() throws UtilsException {
+		return Boolean.parseBoolean(this.readProperty(true, "hsm.required"));
+	}
+	public boolean isHSMKeyPasswordConfigurable() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "hsm.keyPassword");
+		return this.parse(b, false);
+	}
+	
+	
+	
+	public String getBYOKConfigurazione() throws UtilsException{
+		return this.readProperty(false, "byok.config");
+	}
+	public boolean isBYOKRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "byok.required");
+		return parse(b, false);
+	}
+	public String getBYOKInternalConfigSecurityEngine() throws UtilsException{
+		return this.readProperty(false, "byok.internalConfig.securityEngine");
+	}
+	public String getBYOKInternalConfigRemoteSecurityEngine() throws UtilsException{
+		return this.readProperty(false, "byok.internalConfig.securityEngine.remote");
+	}
+	public String getBYOKEnvSecretsConfig() throws UtilsException{
+		return this.readProperty(false, "byok.env.secrets.config");
+	}
+	public boolean isBYOKEnvSecretsConfigRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "byok.env.secrets.required");
+		return this.parse(b, false);
+	}
+	
 }

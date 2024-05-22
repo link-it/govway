@@ -19,14 +19,18 @@
  */
 package org.openspcoop2.web.monitor.core.listener;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.dao.DAOFactoryInstanceProperties;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.transazioni.utils.DumpUtils;
@@ -34,17 +38,26 @@ import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntimeProperties;
+import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
+import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheJMXUtils;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
+import org.openspcoop2.utils.certificate.hsm.HSMManager;
+import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.properties.CollectionProperties;
+import org.openspcoop2.utils.properties.MapProperties;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.security.ProviderUtils;
 import org.openspcoop2.web.monitor.core.config.ApplicationProperties;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceCache;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceCacheJmxDatiConfigurazione;
@@ -64,7 +77,40 @@ import org.slf4j.Logger;
  */
 public abstract class AbstractConsoleStartupListener implements ServletContextListener{
 
-	protected static Logger log = LoggerWrapperFactory.getLogger(AbstractConsoleStartupListener.class); 
+	protected static Logger log = LoggerWrapperFactory.getLogger(AbstractConsoleStartupListener.class);
+	public static Logger getLog() {
+		return log;
+	}
+	protected static void logDebug(String msg) {
+		if(AbstractConsoleStartupListener.log!=null) {
+			AbstractConsoleStartupListener.log.debug(msg);
+		}
+	}
+	protected static void logDebug(String msg, Throwable e) {
+		if(AbstractConsoleStartupListener.log!=null) {
+			AbstractConsoleStartupListener.log.debug(msg, e);
+		}
+	}
+	protected static void logInfo(String msg) {
+		if(AbstractConsoleStartupListener.log!=null) {
+			AbstractConsoleStartupListener.log.info(msg);
+		}
+	}
+	protected static void logWarn(String msg) {
+		if(AbstractConsoleStartupListener.log!=null) {
+			AbstractConsoleStartupListener.log.warn(msg);
+		}
+	}
+	protected static void logError(String msg) {
+		if(AbstractConsoleStartupListener.log!=null) {
+			AbstractConsoleStartupListener.log.error(msg);
+		}
+	}
+	protected static void logError(String msg, Throwable e) {
+		if(AbstractConsoleStartupListener.log!=null) {
+			AbstractConsoleStartupListener.log.error(msg,e);
+		}
+	}
 
 	public static boolean initializedLog = false;
 
@@ -213,9 +259,11 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 	}
 	
 	
+	private boolean reInitSecretMaps = false;
+	public boolean isReInitSecretMaps() {
+		return this.reInitSecretMaps;
+	}
 	
-
-
 	private String getStringInitParameter(ServletContext ctx,String name){
 		String value = ctx.getInitParameter(name);
 		if(value==null || "".equals(value)){
@@ -244,10 +292,8 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 		}catch (Exception e) {
 			String msgErrore = "Errore durante l'inizializzazione del ApplicationProperties: "
 					+ e.getMessage();
-			AbstractConsoleStartupListener.log.error(
-					//					throw new ServletException(
-					msgErrore,e);
-			throw new RuntimeException(msgErrore,e);
+			AbstractConsoleStartupListener.logError(msgErrore,e);
+			throw new UtilsRuntimeException(msgErrore,e);
 		}
 
 
@@ -266,8 +312,8 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 			this.setLocalLogPropertyName(getStringInitParameter(ctx, "localLogPropertyName"));
 
 			// leggo properties
-			//System.out.println("SET FILE CONF ["+fileConf+"]");
-			//System.out.println("INIT ["+getLocalDefaultLoggerName()+"]");
+			/**System.out.println("SET FILE CONF ["+fileConf+"]");
+			System.out.println("INIT ["+getLocalDefaultLoggerName()+"]");*/
 			InputStream is = AbstractConsoleStartupListener.class
 					.getResourceAsStream(getLoggerProperties());
 			Properties loggerProperties = new Properties();
@@ -295,7 +341,7 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 				System.out.println("[govwayMonitor] Attendo inizializzazione GovWay prima di appender la configurazione Log4J ...");
 				int i=0;
 				int limit = 60;
-				while(OpenSPCoop2Startup.initialize==false && i<limit){
+				while(!OpenSPCoop2Startup.initialize && i<limit){
 					Utilities.sleep(1000);
 					i++;
 					if(i%10==0){
@@ -303,7 +349,7 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 					}
 				}
 				
-				if(OpenSPCoop2Startup.initialize==false){
+				if(!OpenSPCoop2Startup.initialize){
 					throw new UtilsException("[govwayMonitor] Inizializzazione GovWay non rilevata");
 				}
 				
@@ -318,24 +364,130 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 		} catch (Exception e) {
 			String msgErrore = "Errore durante il caricamento del file di logging "
 					+ getLoggerProperties()+": "+e.getMessage();
-			AbstractConsoleStartupListener.log.error(
-					//					throw new ServletException(
-					msgErrore,e);
-			throw new RuntimeException(msgErrore,e);
+			AbstractConsoleStartupListener.logError(msgErrore,e);
+			throw new UtilsRuntimeException(msgErrore,e);
 		}
 
 
 		
+		
+		// Map (environment)
+		try {
+			String mapConfig = appProperties.getEnvMapConfig();
+			if(StringUtils.isNotEmpty(mapConfig)) {
+				AbstractConsoleStartupListener.logInfo("Inizializzazione environment in corso...");
+				MapProperties.initialize(AbstractConsoleStartupListener.log, mapConfig, appProperties.isEnvMapConfigRequired());
+				MapProperties mapProperties = MapProperties.getInstance();
+				mapProperties.initEnvironment();
+				String msgInit = "Environment inizializzato con le variabili definite nel file '"+mapConfig+"'"+
+						"\n\tJavaProperties: "+mapProperties.getJavaMap().keys()+
+						"\n\tEnvProperties: "+mapProperties.getEnvMap().keys()+
+						"\n\tObfuscateMode: "+mapProperties.getObfuscateModeDescription()+
+						"\n\tObfuscatedJavaKeys: "+mapProperties.getObfuscatedJavaKeys()+
+						"\n\tObfuscatedEnvKeys: "+mapProperties.getObfuscatedEnvKeys();
+				AbstractConsoleStartupListener.logInfo(msgInit);
+			}
+		} catch (Exception e) {
+			String msgErrore = "Inizializzazione ambiente non riuscita: "+e.getMessage();
+			AbstractConsoleStartupListener.logError(msgErrore,e);
+			throw new UtilsRuntimeException(msgErrore,e);
+		}
+		
+		
+		// Load Security Provider
+		try {
+			if(appProperties.isSecurityLoadBouncyCastle()) {
+				ProviderUtils.addBouncyCastleAfterSun(true);
+				AbstractConsoleStartupListener.logInfo("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
+			}
+		} catch (Exception e) {
+			String msgErrore = "Errore durante l'aggiunta dei security provider: " + e.getMessage();
+			AbstractConsoleStartupListener.logError(msgErrore,e);
+			throw new UtilsRuntimeException(msgErrore,e);
+		}
+					
+		// inizializzo HSM Manager
+		try {
+			String hsmConfig = appProperties.getHSMConfigurazione();
+			if(StringUtils.isNotEmpty(hsmConfig)) {
+				AbstractConsoleStartupListener.logInfo("Inizializzazione HSM in corso...");
+				File f = new File(hsmConfig);
+				HSMManager.init(f, appProperties.isHSMRequired(), log, false);
+				HSMUtils.setHsmConfigurableKeyPassword(appProperties.isHSMKeyPasswordConfigurable());
+				AbstractConsoleStartupListener.logInfo("Inizializzazione HSM effettuata con successo");
+			}
+		} catch (Exception e) {
+			String msgErrore = "Errore durante l'inizializzazione del manager HSM: " + e.getMessage();
+			AbstractConsoleStartupListener.logError(msgErrore,e);
+			throw new UtilsRuntimeException(msgErrore,e);
+		}
+		
+		// inizializzo BYOK Manager
+		BYOKManager byokManager = null;
+		try {
+			String byokConfig = appProperties.getBYOKConfig();
+			if(StringUtils.isNotEmpty(byokConfig)) {
+				AbstractConsoleStartupListener.logInfo("Inizializzazione BYOK in corso...");
+				File f = new File(byokConfig);
+				BYOKManager.init(f, appProperties.isBYOKConfigRequired(), log);
+				byokManager = BYOKManager.getInstance();
+				AbstractConsoleStartupListener.logInfo("Inizializzazione BYOK effettuata con successo");
+			}
+		} catch (Exception e) {
+			String msgErrore = "Errore durante l'inizializzazione del manager BYOK: " + e.getMessage();
+			AbstractConsoleStartupListener.logError(msgErrore,e);
+			throw new UtilsRuntimeException(msgErrore,e);
+		}
+					
+		// Secrets (environment)
+		try {
+			String secretsConfig = appProperties.getBYOKEnvSecretsConfig();
+			if(byokManager!=null && StringUtils.isNotEmpty(secretsConfig)) {
+				AbstractConsoleStartupListener.logInfo("Inizializzazione secrets in corso...");
+				String securityPolicy = appProperties.getBYOKInternalConfigSecurityEngine();
+				String securityRemotePolicy = appProperties.getBYOKInternalConfigRemoteSecurityEngine();
+				
+				Map<String, Object> dynamicMap = new HashMap<>();
+				DynamicInfo dynamicInfo = new  DynamicInfo();
+				DynamicUtils.fillDynamicMap(log, dynamicMap, dynamicInfo);
+				if(byokManager.isBYOKRemoteGovWayNodeUnwrapConfig(securityPolicy)) {
+					// i secrets cifrati verranno riletti quando i nodi sono attivi (verificato in InitRuntimeConfigReader)
+					this.reInitSecretMaps = true;
+					securityPolicy = null;
+					securityRemotePolicy = null;
+				}
+				
+				BYOKMapProperties.initialize(AbstractConsoleStartupListener.log, secretsConfig, appProperties.isBYOKEnvSecretsConfigRequired(), 
+						securityPolicy, securityRemotePolicy, 
+						dynamicMap, true);
+				BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
+				secretsProperties.initEnvironment();
+				String msgInit = "Environment inizializzato con i secrets definiti nel file '"+secretsConfig+"'"+
+						"\n\tJavaProperties: "+secretsProperties.getJavaMap().keys()+
+						"\n\tEnvProperties: "+secretsProperties.getEnvMap().keys()+
+						"\n\tObfuscateMode: "+secretsProperties.getObfuscateModeDescription();
+				AbstractConsoleStartupListener.logInfo(msgInit);
+			}
+		} catch (Exception e) {
+			String msgErrore = "Inizializzazione ambiente (secrets) non riuscita: "+e.getMessage();
+			AbstractConsoleStartupListener.logError(msgErrore,e);
+			throw new UtilsRuntimeException(msgErrore,e);
+		}		
+		
+		
+		
+		
+		
 		// *** CACHE PROPERTIES ***
 
 		boolean isInitializeCache = false;
-		boolean cacheEnabled_datiConfigurazione = false;
-		boolean cacheEnabled_ricercheConfigurazione = false;
+		boolean cacheEnabledDatiConfigurazione = false;
+		boolean cacheEnabledRicercheConfigurazione = false;
 		Logger logCore = LoggerManager.getPddMonitorCoreLogger();
 		try {
-			cacheEnabled_datiConfigurazione = appProperties.isAbilitataCache_datiConfigurazione();
-			cacheEnabled_ricercheConfigurazione = appProperties.isAbilitataCache_ricercheConfigurazione();
-			if(cacheEnabled_datiConfigurazione || cacheEnabled_ricercheConfigurazione) {
+			cacheEnabledDatiConfigurazione = appProperties.isAbilitataCache_datiConfigurazione();
+			cacheEnabledRicercheConfigurazione = appProperties.isAbilitataCache_ricercheConfigurazione();
+			if(cacheEnabledDatiConfigurazione || cacheEnabledRicercheConfigurazione) {
 			
 				this.setCacheProperties(getStringInitParameter(ctx, "cacheProperties"));
 				this.setLocalCacheProperties(getStringInitParameter(ctx, "localCacheProperties"));
@@ -349,20 +501,16 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 		} catch (Exception e) {
 			String msgErrore = "Errore durante l'inizializzazione della cache "
 					+ getCacheProperties()+": "+e.getMessage();
-			AbstractConsoleStartupListener.log.error(
-					//					throw new ServletException(
-					msgErrore,e);
-			throw new RuntimeException(msgErrore,e);
+			AbstractConsoleStartupListener.logError(msgErrore,e);
+			throw new UtilsRuntimeException(msgErrore,e);
 		}
-		if((cacheEnabled_datiConfigurazione || cacheEnabled_ricercheConfigurazione) && isInitializeCache == false){
+		if((cacheEnabledDatiConfigurazione || cacheEnabledRicercheConfigurazione) && isInitializeCache == false){
 			String msgErrore = "Errore durante l'inizializzazione della cache "
 					+ getCacheProperties()+": cache non inizializzata";
-			AbstractConsoleStartupListener.log.error(
-					//					throw new ServletException(
-					msgErrore);
-			throw new RuntimeException(msgErrore);
+			AbstractConsoleStartupListener.logError(msgErrore);
+			throw new UtilsRuntimeException(msgErrore);
 		}
-		if(cacheEnabled_datiConfigurazione) {
+		if(cacheEnabledDatiConfigurazione) {
 			try {
 				debugCache_datiConfigurazione = appProperties.isDebugCache_datiConfigurazione();
 				
@@ -376,13 +524,13 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 			} catch (Exception e) {
 				String msgErrore = "Errore durante la creazione della cache "
 						+ getCacheProperties()+": "+e.getMessage();
-				AbstractConsoleStartupListener.log.error(
+				AbstractConsoleStartupListener.logError(
 						//					throw new ServletException(
 						msgErrore,e);
-				throw new RuntimeException(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
 			}
 		}
-		if(cacheEnabled_ricercheConfigurazione) {
+		if(cacheEnabledRicercheConfigurazione) {
 			try {
 				debugCache_ricercheConfigurazione = appProperties.isDebugCache_ricercheConfigurazione();
 				
@@ -396,10 +544,10 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 			} catch (Exception e) {
 				String msgErrore = "Errore durante la creazione della cache "
 						+ getCacheProperties()+": "+e.getMessage();
-				AbstractConsoleStartupListener.log.error(
+				AbstractConsoleStartupListener.logError(
 						//					throw new ServletException(
 						msgErrore,e);
-				throw new RuntimeException(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
 			}
 		}
 		
@@ -421,10 +569,8 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 		} catch (Throwable e) {
 			String msgErrore = "Errore durante l'inizializzazione del ProtocolFactoryManager: "
 					+ e.getMessage();
-			AbstractConsoleStartupListener.log.error(
-					//					throw new ServletException(
-					msgErrore,e);
-			throw new RuntimeException(msgErrore,e);
+			AbstractConsoleStartupListener.logError(msgErrore,e);
+			throw new UtilsRuntimeException(msgErrore,e);
 		}
 		
 		
@@ -437,10 +583,8 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 
 		} catch (Exception e) {
 			String msgErrore = "Errore durante l'inizializzazione del ExtendedInfoManager: " + e.getMessage();
-			AbstractConsoleStartupListener.log.error(
-					//					throw new ServletException(
-					msgErrore,e);
-			throw new RuntimeException(msgErrore,e);
+			AbstractConsoleStartupListener.logError(msgErrore,e);
+			throw new UtilsRuntimeException(msgErrore,e);
 		}
 		
 		
@@ -451,10 +595,8 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 			ConfigurazioneNodiRuntime.initialize(appProperties.getJmxPdD_externalConfiguration(), backwardCompatibility);
 		} catch (Exception e) {
 			String msgErrore = "Errore durante l'inizializzazione del gestore dei nodi run: " + e.getMessage();
-			AbstractConsoleStartupListener.log.error(
-					//					throw new ServletException(
-					msgErrore,e);
-			throw new RuntimeException(msgErrore,e);
+			AbstractConsoleStartupListener.logError(msgErrore,e);
+			throw new UtilsRuntimeException(msgErrore,e);
 		}
 		
 		
@@ -468,10 +610,8 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 			}
 		} catch (Exception e) {
 			String msgErrore = "Errore durante l'inizializzazione del loader dei plugins: " + e.getMessage();
-			AbstractConsoleStartupListener.log.error(
-					//					throw new ServletException(
-					msgErrore,e);
-			throw new RuntimeException(msgErrore,e);
+			AbstractConsoleStartupListener.logError(msgErrore,e);
+			throw new UtilsRuntimeException(msgErrore,e);
 		}
 
 		
@@ -481,10 +621,8 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 			org.openspcoop2.utils.date.DateManager.initializeDataManager(org.openspcoop2.utils.date.SystemDate.class.getName(),null,log);
 		} catch (Exception e) {
 			String msgErrore = "Errore durante l'inizializzazione del DataManager: " + e.getMessage();
-			AbstractConsoleStartupListener.log.error(
-					//					throw new ServletException(
-					msgErrore,e);
-			throw new RuntimeException(msgErrore,e);
+			AbstractConsoleStartupListener.logError(msgErrore,e);
+			throw new UtilsRuntimeException(msgErrore,e);
 		}
 
 		
@@ -493,15 +631,13 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 			DumpUtils.setThreshold_readInMemory(appProperties.getTransazioniDettaglioVisualizzazioneMessaggiThreshold());
 		} catch (Exception e) {
 			String msgErrore = "Errore durante l'inizializzazione del threshold per l'accesso ai dump: " + e.getMessage();
-			AbstractConsoleStartupListener.log.error(
-					//					throw new ServletException(
-					msgErrore,e);
-			throw new RuntimeException(msgErrore,e);
+			AbstractConsoleStartupListener.logError(msgErrore,e);
+			throw new UtilsRuntimeException(msgErrore,e);
 		}
 		
 		
 
-		AbstractConsoleStartupListener.log.debug("PddMonitor Console avviata correttamente.");
+		AbstractConsoleStartupListener.logDebug("PddMonitor Console avviata correttamente.");
 		
 	}
 
@@ -511,7 +647,7 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
 		if(AbstractConsoleStartupListener.log!=null)
-			AbstractConsoleStartupListener.log.info("Undeploy govwayMonitor Console in corso...");
+			AbstractConsoleStartupListener.logInfo("Undeploy govwayMonitor Console in corso...");
 
 		if(dynamicUtilsServiceCache_datiConfigurazione!=null || dynamicUtilsServiceCache_ricercheConfigurazione!=null) {
 			CacheJMXUtils.unregister();
@@ -523,12 +659,12 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 		} catch (Throwable e) {
 			if(AbstractConsoleStartupListener.log!=null) {
 				String msgErrore = "Errore durante la chiusura del loader dei plugins: " + e.getMessage();
-				AbstractConsoleStartupListener.log.error(msgErrore,e);
+				AbstractConsoleStartupListener.logError(msgErrore,e);
 			}
 		}
 		
 		if(AbstractConsoleStartupListener.log!=null)
-			AbstractConsoleStartupListener.log.info("Undeploy govwayMonitor Console effettuato.");
+			AbstractConsoleStartupListener.logInfo("Undeploy govwayMonitor Console effettuato.");
 
 	}
 

@@ -21,6 +21,7 @@ package org.openspcoop2.web.monitor.core.core;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.dao.DAOFactoryException;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.generic_project.beans.IProjectInfo;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
@@ -39,6 +41,7 @@ import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.monitor.core.config.ApplicationProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -86,20 +89,20 @@ public class PddMonitorProperties {
 	public Enumeration<?> keys(){
 		return this.appProperties.keys();
 	}
-	public String getProperty(String name,boolean required,boolean convertEnvProperty) throws Exception{
+	public String getProperty(String name,boolean required,boolean convertEnvProperty) throws UtilsException{
 		return this.appProperties.getProperty(name, required, convertEnvProperty);
 	}
 
 	
-	public String getConfDirectory() throws Exception{
+	public String getConfDirectory() throws UtilsException{
 		return this.appProperties.getProperty("confDirectory", true, true);
 	}
 	
-	public String getPddMonitorTitle() throws Exception{
+	public String getPddMonitorTitle() throws UtilsException{
 		return this.appProperties.getProperty("appTitle", true, true);
 	}
 
-	public boolean isAttivoModuloTransazioniBase() throws Exception{
+	public boolean isAttivoModuloTransazioniBase() throws UtilsException{
 		String tmp = this.appProperties.getProperty("modules.transazioni_base", false, true);
 		if(tmp!=null && !"".equals(tmp)) {
 			return "true".equalsIgnoreCase(tmp);
@@ -108,7 +111,7 @@ public class PddMonitorProperties {
 			return true; // default
 		}
 	}
-	public boolean isAttivoModuloTransazioniPersonalizzate() throws Exception{
+	public boolean isAttivoModuloTransazioniPersonalizzate() throws UtilsException{
 		String tmp = this.appProperties.getProperty("modules.transazioni_personalizzate", false, true);
 		if(tmp!=null && !"".equals(tmp)) {
 			return "true".equalsIgnoreCase(tmp);
@@ -117,7 +120,7 @@ public class PddMonitorProperties {
 			return false; // default
 		}
 	}
-	public boolean isAttivoModuloRicerchePersonalizzate() throws Exception{
+	public boolean isAttivoModuloRicerchePersonalizzate() throws UtilsException{
 		String tmp = this.appProperties.getProperty("modules.ricerche_personalizzate", false, true);
 		if(tmp!=null && !"".equals(tmp)) {
 			return "true".equalsIgnoreCase(tmp);
@@ -126,7 +129,7 @@ public class PddMonitorProperties {
 			return false; // default
 		}
 	}
-	public boolean isAttivoModuloTransazioniStatisticheBase() throws Exception{
+	public boolean isAttivoModuloTransazioniStatisticheBase() throws UtilsException{
 		String tmp = this.appProperties.getProperty("modules.statistiche_base", false, true);
 		if(tmp!=null && !"".equals(tmp)) {
 			return "true".equalsIgnoreCase(tmp);
@@ -135,7 +138,7 @@ public class PddMonitorProperties {
 			return true; // default
 		}
 	}
-	public boolean isAttivoModuloTransazioniStatistichePersonalizzate() throws Exception{
+	public boolean isAttivoModuloTransazioniStatistichePersonalizzate() throws UtilsException{
 		String tmp = this.appProperties.getProperty("modules.statistiche_personalizzate", false, true);
 		if(tmp!=null && !"".equals(tmp)) {
 			return "true".equalsIgnoreCase(tmp);
@@ -144,7 +147,7 @@ public class PddMonitorProperties {
 			return false; // default
 		}
 	}
-//	public boolean isAttivoModuloAllarmi() throws Exception{
+//	public boolean isAttivoModuloAllarmi() throws UtilsException{
 //		String tmp = this.appProperties.getProperty("modules.allarmi", false, true);
 //		if(tmp!=null && !"".equals(tmp)) {
 //			return "true".equalsIgnoreCase(tmp);
@@ -153,7 +156,7 @@ public class PddMonitorProperties {
 //			return false; // default
 //		}
 //	}
-	public boolean isAttivoModuloProcessi() throws Exception{
+	public boolean isAttivoModuloProcessi() throws UtilsException{
 		String tmp = this.appProperties.getProperty("modules.processi", false, true);
 		if(tmp!=null && !"".equals(tmp)) {
 			return "true".equalsIgnoreCase(tmp);
@@ -162,7 +165,7 @@ public class PddMonitorProperties {
 			return false; // default
 		}
 	}
-	public boolean isAttivoModuloSonde() throws Exception{
+	public boolean isAttivoModuloSonde() throws UtilsException{
 		String tmp = this.appProperties.getProperty("modules.sonde", false, true);
 		if(tmp!=null && !"".equals(tmp)) {
 			return "true".equalsIgnoreCase(tmp);
@@ -171,7 +174,7 @@ public class PddMonitorProperties {
 			return false; // default
 		}
 	}
-	public boolean isAttivoModuloEventi() throws Exception{
+	public boolean isAttivoModuloEventi() throws UtilsException{
 		String tmp = this.appProperties.getProperty("modules.eventi", false, true);
 		if(tmp!=null && !"".equals(tmp)) {
 			return "true".equalsIgnoreCase(tmp);
@@ -180,7 +183,7 @@ public class PddMonitorProperties {
 			return true; // default
 		}
 	}
-	public boolean isAttivoModuloReports() throws Exception{
+	public boolean isAttivoModuloReports() throws UtilsException{
 		String tmp = this.appProperties.getProperty("modules.reports", false, true);
 		if(tmp!=null && !"".equals(tmp)) {
 			return "true".equalsIgnoreCase(tmp);
@@ -189,44 +192,44 @@ public class PddMonitorProperties {
 			return false; // default
 		}
 	}
-	public boolean isAttivoLiveRuoloOperatore() throws Exception{
+	public boolean isAttivoLiveRuoloOperatore() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.live.ruoloOperatore.enabled", true, true));
 	}
-	public boolean isAttivoTransazioniIntegrationManager() throws Exception{
+	public boolean isAttivoTransazioniIntegrationManager() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni_im_enabled", true, true));
 	}
-	public boolean isAttivoTransazioniEsitoMessageBoxIntegrationManager() throws Exception{
+	public boolean isAttivoTransazioniEsitoMessageBoxIntegrationManager() throws UtilsException{
 		String v = this.appProperties.getProperty("transazioni.esitoMessageBox.enabled", false, true);
 		if(v!=null) {
 			return "true".equalsIgnoreCase(v);
 		}
 		return false;
 	}
-	public boolean isAttivoSqlFilterTransazioniIntegrationManager() throws Exception{
+	public boolean isAttivoSqlFilterTransazioniIntegrationManager() throws UtilsException{
 		return this.isAttivoTransazioniIntegrationManager() || "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni_sql_im_enabled", true, true));
 	}
-	public boolean isAttivoTransazioniEsitiLive() throws Exception{
+	public boolean isAttivoTransazioniEsitiLive() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.esitiLiveEnabled", true, true));
 	}
-	public boolean isAttivoTransazioniExportHeader() throws Exception{
+	public boolean isAttivoTransazioniExportHeader() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.export.enableHeaderInfo", true, true));
 	}
-	public boolean isAttivoTransazioniExportConsegneMultiple() throws Exception{
+	public boolean isAttivoTransazioniExportConsegneMultiple() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.export.enableConsegneMultipleInfo", true, true));
 	}
-	public boolean isAttivoTransazioniExportHeaderAsProperties() throws Exception{
+	public boolean isAttivoTransazioniExportHeaderAsProperties() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.export.headers.asProperties", true, true));
 	}
-	public boolean isAttivoTransazioniExportContenutiAsProperties() throws Exception{
+	public boolean isAttivoTransazioniExportContenutiAsProperties() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.export.contenuti.asProperties", true, true));
 	}
-	public boolean isTransazioniDownloadThrowExceptionMimeTypeNotFound() throws Exception{
+	public boolean isTransazioniDownloadThrowExceptionMimeTypeNotFound() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.download.mime.throwExceptionIfMappingNotFound", true, true));
 	}
-	public boolean isTransazioniAllegatiDecodeBase64() throws Exception{
+	public boolean isTransazioniAllegatiDecodeBase64() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.allegati.decodeBase64", true, true));
 	}
-	public List<String> getTransazioniAllegatiDecodeBase64_noDecodeList() throws Exception{
+	public List<String> getTransazioniAllegatiDecodeBase64_noDecodeList() throws UtilsException{
 		String tmp = this.appProperties.getProperty("transazioni.allegati.decodeBase64.noDecode", true, true);
 		String [] tmpList = tmp.split(",");
 		List<String> l = new ArrayList<>();
@@ -236,7 +239,7 @@ public class PddMonitorProperties {
 		return l;
 	}
 	
-	public Integer getTransazioniLiveUltimiGiorni() throws Exception{
+	public Integer getTransazioniLiveUltimiGiorni() throws UtilsException{
 		String tmp = this.appProperties.getProperty("transazioni.live.ultimiGiorni", false, true);
 		if(tmp!=null){
 			return Integer.parseInt(tmp.trim());
@@ -244,11 +247,11 @@ public class PddMonitorProperties {
 		return null;
 	}
 	
-	public boolean isAttivoTransazioniDataAccettazione() throws Exception{
+	public boolean isAttivoTransazioniDataAccettazione() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.dataAccettazione.enabled", true, true));
 	}
 	
-	public boolean isAttivoTransazioniUtilizzoSondaPdDListAsClusterId() throws Exception{
+	public boolean isAttivoTransazioniUtilizzoSondaPdDListAsClusterId() throws UtilsException{
 		String p = this.appProperties.getProperty("transazioni.idCluster.useSondaPdDList", false, true);
 		if(p==null){
 			return false; // default
@@ -256,7 +259,7 @@ public class PddMonitorProperties {
 		return "true".equalsIgnoreCase(p);
 	}
 	
-	public Properties getExternalForceIndexRepository() throws Exception{
+	public Properties getExternalForceIndexRepository() throws UtilsException, IOException{
 		InputStream is = null;
 		try {
 			String s = this.appProperties.getProperty("forceIndex.repository", false, true);
@@ -287,91 +290,91 @@ public class PddMonitorProperties {
 		return null;
 	}
 	
-	public List<String> getTransazioniForceIndexAndamentoTemporaleFindAll(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexAndamentoTemporaleFindAll(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.andamentoTemporale.findAll", externalRepository);
 	}
-	public List<String> getTransazioniForceIndexAndamentoTemporaleCount(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexAndamentoTemporaleCount(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.andamentoTemporale.count", externalRepository);
 	}
 	
-	public List<String> getTransazioniForceIndexIdApplicativoBaseRichiestaFindAll(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexIdApplicativoBaseRichiestaFindAll(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.idApplicativo.base.richiesta.findAll", externalRepository);
 	}
-	public List<String> getTransazioniForceIndexIdApplicativoBaseRichiestaCount(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexIdApplicativoBaseRichiestaCount(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.idApplicativo.base.richiesta.count", externalRepository);
 	}
 	
-	public List<String> getTransazioniForceIndexIdApplicativoBaseRispostaFindAll(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexIdApplicativoBaseRispostaFindAll(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.idApplicativo.base.risposta.findAll", externalRepository);
 	}
-	public List<String> getTransazioniForceIndexIdApplicativoBaseRispostaCount(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexIdApplicativoBaseRispostaCount(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.idApplicativo.base.risposta.count", externalRepository);
 	}
 	
-	public List<String> getTransazioniForceIndexIdApplicativoAvanzataFindAll(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexIdApplicativoAvanzataFindAll(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.idApplicativo.avanzata.findAll", externalRepository);
 	}
-	public List<String> getTransazioniForceIndexIdApplicativoAvanzataCount(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexIdApplicativoAvanzataCount(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.idApplicativo.avanzata.count", externalRepository);
 	}
 	
-	public List<String> getTransazioniForceIndexIdMessaggioRichiestaFindAll(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexIdMessaggioRichiestaFindAll(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.idMessaggio.richiesta.findAll", externalRepository);
 	}
-	public List<String> getTransazioniForceIndexIdMessaggioRichiestaCount(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexIdMessaggioRichiestaCount(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.idMessaggio.richiesta.count", externalRepository);
 	}
 	
-	public List<String> getTransazioniForceIndexIdMessaggioRispostaFindAll(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexIdMessaggioRispostaFindAll(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.idMessaggio.risposta.findAll", externalRepository);
 	}
-	public List<String> getTransazioniForceIndexIdMessaggioRispostaCount(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexIdMessaggioRispostaCount(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.idMessaggio.risposta.count", externalRepository);
 	}
 	
-	public List<String> getTransazioniForceIndexIdCollaborazioneFindAll(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexIdCollaborazioneFindAll(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.idCollaborazione.findAll", externalRepository);
 	}
-	public List<String> getTransazioniForceIndexIdCollaborazioneCount(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexIdCollaborazioneCount(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.idCollaborazione.count", externalRepository);
 	}
 	
-	public List<String> getTransazioniForceIndexRiferimentoIdRichiestaFindAll(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexRiferimentoIdRichiestaFindAll(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.riferimentoIdRichiesta.findAll", externalRepository);
 	}
-	public List<String> getTransazioniForceIndexRiferimentoIdRichiestaCount(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexRiferimentoIdRichiestaCount(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.riferimentoIdRichiesta.count", externalRepository);
 	}
 	
-	public List<String> getTransazioniForceIndexIdTransazioneFindAll(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexIdTransazioneFindAll(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.idTransazione.findAll", externalRepository);
 	}
-	public List<String> getTransazioniForceIndexIdTransazioneCount(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexIdTransazioneCount(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.idTransazione.count", externalRepository);
 	}
 	
-	public List<String> getTransazioniForceIndexLiveFindAll(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexLiveFindAll(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.live.findAll", externalRepository);
 	}
 	
-	public List<String> getTransazioniForceIndexEsitiCount(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexEsitiCount(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.esiti.count", externalRepository);
 	}
 	
-	public List<String> getTransazioniForceIndexGetByIdTransazione(Properties externalRepository) throws Exception{
+	public List<String> getTransazioniForceIndexGetByIdTransazione(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.getByIdTransazione", externalRepository);
 	}
 	
-	public List<String> getEventiForceIndexFindAll(Properties externalRepository) throws Exception{
+	public List<String> getEventiForceIndexFindAll(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("eventi.forceIndex.findAll", externalRepository);
 	}
-	public List<String> getEventiForceIndexCount(Properties externalRepository) throws Exception{
+	public List<String> getEventiForceIndexCount(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("eventi.forceIndex.count", externalRepository);
 	}
 	
 
 	
-	public List<String> getStatisticheForceIndexAndamentoTemporaleGroupBy(StatisticType tipologia, Properties externalRepository) throws Exception{
+	public List<String> getStatisticheForceIndexAndamentoTemporaleGroupBy(StatisticType tipologia, Properties externalRepository) throws UtilsException{
 		switch (tipologia) {
 		case ORARIA:
 			return this.getIndexList("statistiche.forceIndex.andamentoTemporale.orarie.groupBy", externalRepository);
@@ -384,7 +387,7 @@ public class PddMonitorProperties {
 		}
 		return null;
 	}
-	public List<String> getStatisticheForceIndexAndamentoTemporaleCount(StatisticType tipologia, Properties externalRepository) throws Exception{
+	public List<String> getStatisticheForceIndexAndamentoTemporaleCount(StatisticType tipologia, Properties externalRepository) throws UtilsException{
 		switch (tipologia) {
 		case ORARIA:
 			return this.getIndexList("statistiche.forceIndex.andamentoTemporale.orarie.count", externalRepository);
@@ -398,7 +401,7 @@ public class PddMonitorProperties {
 		return null;
 	}
 	
-	public List<String> getStatisticheForceIndexEsitiLiveGroupBy(StatisticType tipologia, Properties externalRepository) throws Exception{
+	public List<String> getStatisticheForceIndexEsitiLiveGroupBy(StatisticType tipologia, Properties externalRepository) throws UtilsException{
 		switch (tipologia) {
 		case ORARIA:
 			return this.getIndexList("statistiche.forceIndex.orarie.esiti.groupBy", externalRepository);
@@ -412,42 +415,42 @@ public class PddMonitorProperties {
 		return null;
 	}
 	
-	public List<String> getStatisticheForceIndexDistribuzioneErroriGroupBy(Properties externalRepository) throws Exception{
+	public List<String> getStatisticheForceIndexDistribuzioneErroriGroupBy(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("statistiche.forceIndex.distribuzioneErrori.groupBy", externalRepository);
 	}
-	public List<String> getStatisticheForceIndexDistribuzioneErroriCount(Properties externalRepository) throws Exception{
+	public List<String> getStatisticheForceIndexDistribuzioneErroriCount(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("statistiche.forceIndex.distribuzioneErrori.count", externalRepository);
 	}
 	
-	public List<String> getStatisticheForceIndexDistribuzioneSoggettoGroupBy(Properties externalRepository) throws Exception{
+	public List<String> getStatisticheForceIndexDistribuzioneSoggettoGroupBy(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("statistiche.forceIndex.distribuzioneSoggetto.groupBy", externalRepository);
 	}
-	public List<String> getStatisticheForceIndexDistribuzioneSoggettoCount(Properties externalRepository) throws Exception{
+	public List<String> getStatisticheForceIndexDistribuzioneSoggettoCount(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("statistiche.forceIndex.distribuzioneSoggetto.count", externalRepository);
 	}
 	
-	public List<String> getStatisticheForceIndexDistribuzioneServizioGroupBy(Properties externalRepository) throws Exception{
+	public List<String> getStatisticheForceIndexDistribuzioneServizioGroupBy(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("statistiche.forceIndex.distribuzioneServizio.groupBy", externalRepository);
 	}
-	public List<String> getStatisticheForceIndexDistribuzioneServizioCount(Properties externalRepository) throws Exception{
+	public List<String> getStatisticheForceIndexDistribuzioneServizioCount(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("statistiche.forceIndex.distribuzioneServizio.count", externalRepository);
 	}
 	
-	public List<String> getStatisticheForceIndexDistribuzioneAzioneGroupBy(Properties externalRepository) throws Exception{
+	public List<String> getStatisticheForceIndexDistribuzioneAzioneGroupBy(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("statistiche.forceIndex.distribuzioneAzione.groupBy", externalRepository);
 	}
-	public List<String> getStatisticheForceIndexDistribuzioneAzioneCount(Properties externalRepository) throws Exception{
+	public List<String> getStatisticheForceIndexDistribuzioneAzioneCount(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("statistiche.forceIndex.distribuzioneAzione.count", externalRepository);
 	}
 	
-	public List<String> getStatisticheForceIndexDistribuzioneServizioApplicativoGroupBy(Properties externalRepository) throws Exception{
+	public List<String> getStatisticheForceIndexDistribuzioneServizioApplicativoGroupBy(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("statistiche.forceIndex.distribuzioneServizioApplicativo.groupBy", externalRepository);
 	}
-	public List<String> getStatisticheForceIndexDistribuzioneServizioApplicativoCount(Properties externalRepository) throws Exception{
+	public List<String> getStatisticheForceIndexDistribuzioneServizioApplicativoCount(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("statistiche.forceIndex.distribuzioneServizioApplicativo.count", externalRepository);
 	}
 	
-	public List<String> getStatisticheForceIndexPersonalizzataAndamentoTemporaleGroupBy(StatisticType tipologia, Properties externalRepository) throws Exception{
+	public List<String> getStatisticheForceIndexPersonalizzataAndamentoTemporaleGroupBy(StatisticType tipologia, Properties externalRepository) throws UtilsException{
 		switch (tipologia) {
 		case ORARIA:
 			return this.getIndexList("statistiche.forceIndex.personalizzate.andamentoTemporale.orarie.groupBy", externalRepository);
@@ -460,7 +463,7 @@ public class PddMonitorProperties {
 		}
 		return null;
 	}
-	public List<String> getStatisticheForceIndexPersonalizzataAndamentoTemporaleCount(StatisticType tipologia, Properties externalRepository) throws Exception{
+	public List<String> getStatisticheForceIndexPersonalizzataAndamentoTemporaleCount(StatisticType tipologia, Properties externalRepository) throws UtilsException{
 		switch (tipologia) {
 		case ORARIA:
 			return this.getIndexList("statistiche.forceIndex.personalizzate.andamentoTemporale.orarie.count", externalRepository);
@@ -474,7 +477,7 @@ public class PddMonitorProperties {
 		return null;
 	}
 	
-	public List<String> getStatisticheForceIndexPersonalizzataDistribuzioneGroupBy(StatisticType tipologia, Properties externalRepository) throws Exception{
+	public List<String> getStatisticheForceIndexPersonalizzataDistribuzioneGroupBy(StatisticType tipologia, Properties externalRepository) throws UtilsException{
 		switch (tipologia) {
 		case ORARIA:
 			return this.getIndexList("statistiche.forceIndex.personalizzate.andamentoTemporale.orarie.groupBy", externalRepository);
@@ -487,7 +490,7 @@ public class PddMonitorProperties {
 		}
 		return null;
 	}
-	public List<String> getStatisticheForceIndexPersonalizzataDistribuzioneCount(StatisticType tipologia, Properties externalRepository) throws Exception{
+	public List<String> getStatisticheForceIndexPersonalizzataDistribuzioneCount(StatisticType tipologia, Properties externalRepository) throws UtilsException{
 		switch (tipologia) {
 		case ORARIA:
 			return this.getIndexList("statistiche.forceIndex.personalizzate.distribuzione.orarie.count", externalRepository);
@@ -501,7 +504,7 @@ public class PddMonitorProperties {
 		return null;
 	}
 	
-	public List<String> getIndexList(String propertyName,Properties externalRepository) throws Exception{
+	public List<String> getIndexList(String propertyName,Properties externalRepository) throws UtilsException{
 		
 		String s = null;
 		if(externalRepository!=null){
@@ -531,33 +534,33 @@ public class PddMonitorProperties {
 		return null;
 	}
 	
-	public ITracciaDriver getDriverTracciamento() throws Exception{
+	public ITracciaDriver getDriverTracciamento() throws DAOFactoryException {
 		Logger log =  LoggerManager.getPddMonitorSqlLogger();
 		return (ITracciaDriver) DAOFactory.getInstance(log).getServiceManager(org.openspcoop2.core.tracciamento.utils.ProjectInfo.getInstance(), log);	
 	}
-	public ITracciaDriver getDriverTracciamento(Connection con) throws Exception{
+	public ITracciaDriver getDriverTracciamento(Connection con) throws DAOFactoryException{
 		Logger log =  LoggerManager.getPddMonitorSqlLogger();
 		return (ITracciaDriver) DAOFactory.getInstance(log).getServiceManager(org.openspcoop2.core.tracciamento.utils.ProjectInfo.getInstance(), con, log);
 	}
-	public ITracciaDriver getDriverTracciamento(Connection con, ServiceManagerProperties serviceManagerProperties) throws Exception{
+	public ITracciaDriver getDriverTracciamento(Connection con, ServiceManagerProperties serviceManagerProperties) throws DAOFactoryException{
 		Logger log =  LoggerManager.getPddMonitorSqlLogger();
 		return (ITracciaDriver) DAOFactory.getInstance(log).getServiceManager(org.openspcoop2.core.tracciamento.utils.ProjectInfo.getInstance(), con, serviceManagerProperties, log);
 	}
 	
-	public IDiagnosticDriver getDriverMsgDiagnostici() throws Exception{
+	public IDiagnosticDriver getDriverMsgDiagnostici() throws DAOFactoryException{
 		Logger log =  LoggerManager.getPddMonitorSqlLogger();
 		return (IDiagnosticDriver) DAOFactory.getInstance(log).getServiceManager(org.openspcoop2.core.diagnostica.utils.ProjectInfo.getInstance(), log);
 	}
-	public IDiagnosticDriver getDriverMsgDiagnostici(Connection con) throws Exception{
+	public IDiagnosticDriver getDriverMsgDiagnostici(Connection con) throws DAOFactoryException{
 		Logger log =  LoggerManager.getPddMonitorSqlLogger();
 		return (IDiagnosticDriver) DAOFactory.getInstance(log).getServiceManager(org.openspcoop2.core.diagnostica.utils.ProjectInfo.getInstance(), con, log);
 	}
-	public IDiagnosticDriver getDriverMsgDiagnostici(Connection con, ServiceManagerProperties serviceManagerProperties) throws Exception{
+	public IDiagnosticDriver getDriverMsgDiagnostici(Connection con, ServiceManagerProperties serviceManagerProperties) throws DAOFactoryException{
 		Logger log =  LoggerManager.getPddMonitorSqlLogger();
 		return (IDiagnosticDriver) DAOFactory.getInstance(log).getServiceManager(org.openspcoop2.core.diagnostica.utils.ProjectInfo.getInstance(), con, serviceManagerProperties, log);
 	}
 
-	public TipiDatabase  tipoDatabase() throws Exception{
+	public TipiDatabase  tipoDatabase() throws Exception {
 		DAOFactoryProperties daoFactoryProperties = DAOFactoryProperties.getInstance(this.log);
 		return daoFactoryProperties.getTipoDatabaseEnum(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
 	}
@@ -568,7 +571,7 @@ public class PddMonitorProperties {
 	}
 	// configurazioni jmx
 	
-	private String _getJmxPdD_value(boolean required, String alias, String prop) throws Exception{
+	private String _getJmxPdD_value(boolean required, String alias, String prop) throws UtilsException{
 		String tmp = this.getProperty(alias+"."+prop ,false, true);
 		if(tmp==null || "".equals(tmp)){
 			tmp = this.getProperty(prop ,required, true);
@@ -606,14 +609,14 @@ public class PddMonitorProperties {
 
 	
 	
-	public String getJmxPdD_cache_type(String alias) throws Exception {
+	public String getJmxPdD_cache_type(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "configurazioni.risorseJmxPdd.cache.tipo");
 	}
-	public String getJmxPdD_cache_nomeMetodo_resetCache(String alias) throws Exception {
+	public String getJmxPdD_cache_nomeMetodo_resetCache(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "configurazioni.risorseJmxPdd.cache.nomeMetodo.resetCache");
 	}
 	
-	public String getJmxPdD_cache_nomeRisorsa_dumpApplicativo(String alias) throws Exception {
+	public String getJmxPdD_cache_nomeRisorsa_dumpApplicativo(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "configurazioni.risorseJmxPdd.cache.dump.nomeRisorsa");
 	}
 
@@ -622,86 +625,86 @@ public class PddMonitorProperties {
 
 	// statistiche
 
-	public boolean isAttivoStatisticheVisualizzazioneDimensione() throws Exception{
+	public boolean isAttivoStatisticheVisualizzazioneDimensione() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.abilitaVisualizzaPerDimensione", true, true));
 	}
 
-	public String getOrientamentoDefaultLabelGrafici() throws Exception{
+	public String getOrientamentoDefaultLabelGrafici() throws UtilsException{
 		return this.appProperties.getProperty("statistiche.orientamentoLabelGraficiDefault", true, true);
 	}
 	
-	public boolean isStatisticheAttivoServizioEsportazioneReport() throws Exception{
+	public boolean isStatisticheAttivoServizioEsportazioneReport() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.service.reportExporter", true, true));
 	}
 	
-	public Integer getNumeroLabelDefaultDistribuzioneTemporale() throws Exception{
+	public Integer getNumeroLabelDefaultDistribuzioneTemporale() throws UtilsException{
 		return Integer.parseInt(this.appProperties.getProperty("statistiche.distribuzioneTemporale.numeroLabel", true, true));
 	}
 	
-	public boolean isNascondiComandoNumeroLabelSeInferioreAlNumeroRisultati() throws Exception{
+	public boolean isNascondiComandoNumeroLabelSeInferioreAlNumeroRisultati() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.distribuzioneTemporale.nascondiComandoSelezioneNumeroLabel", true, true));
 	}
 	
-	public boolean isMostraUnitaTempoDistribuzioneNonTemporale() throws Exception{
+	public boolean isMostraUnitaTempoDistribuzioneNonTemporale() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.distribuzioneNonTemporale.mostraUnitaTempo", true, true));
 	}
 	
-	public boolean isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato() throws Exception{
+	public boolean isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.distribuzioneNonTemporale.periodoPersonalizzato.mostraUnitaTempo", true, true));
 	}
 	
-	public boolean isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato() throws Exception{
+	public boolean isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.distribuzioneToken.clientIdConInformazioniPDND.export.aggiuntiInformazioneApplicativoRegistrato", false, true));
 	}
 	
-	public Integer getIntervalloTimeoutRicercaStatistiche() throws Exception{
+	public Integer getIntervalloTimeoutRicercaStatistiche() throws UtilsException{
 		String timeoutS = this.appProperties.getProperty("statistiche.timeoutRicercaStatistiche", false, true);
 		return StringUtils.isNotBlank(timeoutS) ? Integer.parseInt(timeoutS) : null;
 	}
 	
-	public boolean isStatisticheLatenzaPortaEnabled() throws Exception{
+	public boolean isStatisticheLatenzaPortaEnabled() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.latenzaPorta.enabled", true, true));
 	}
 
-	public boolean isStatisticheVisualizzaValoriNelleCelleDelGraficoHeatmap() throws Exception{
+	public boolean isStatisticheVisualizzaValoriNelleCelleDelGraficoHeatmap() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.graficoHeatmap.visualizzaValoriNelleCelle.enabled", false, true));
 	}
 	
-	public boolean isStatisticheVisualizzaValoreZeroNelGraficoHeatmap() throws Exception{
+	public boolean isStatisticheVisualizzaValoreZeroNelGraficoHeatmap() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.graficoHeatmap.visualizzaValoreZero.enabled", false, true));
 	}
 
 	
 	// periodo refresh live
 	
-	public String getIntervalloRefreshTransazioniLive() throws Exception{
+	public String getIntervalloRefreshTransazioniLive() throws UtilsException{
 		return this.appProperties.getProperty("transazioni.intervalloRefreshTransazioniLive", true, true);
 	}
 	
-	public String getIntervalloRefreshEsitiLive() throws Exception{
+	public String getIntervalloRefreshEsitiLive() throws UtilsException{
 		return this.appProperties.getProperty("transazioni.intervalloRefreshEsitiLive", true, true);
 	}
 	
-	public Integer getTempoMassimoRefreshLive() throws Exception{
+	public Integer getTempoMassimoRefreshLive() throws UtilsException{
 		return Integer.parseInt(this.appProperties.getProperty("transazioni.tempoMassimoRefreshLive", true, true));
 	}
 	
-	public Integer getIntervalloTimeoutRicercaTransazioniLive() throws Exception{
+	public Integer getIntervalloTimeoutRicercaTransazioniLive() throws UtilsException{
 		String timeoutS = this.appProperties.getProperty("transazioni.live.timeoutRicercaTransazioni", false, true);
 		return StringUtils.isNotBlank(timeoutS) ? Integer.parseInt(timeoutS) : null;
 	}
 	
 	// status pdd
 	
-	public boolean isStatusPdDEnabled() throws Exception{
+	public boolean isStatusPdDEnabled() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statoPdD.enabled", true, true));
 	}
 	
-	public String getIntervalloRefreshStatusPdD() throws Exception{
+	public String getIntervalloRefreshStatusPdD() throws UtilsException{
 		return this.appProperties.getProperty("statoPdD.refresh_interval", this.isStatusPdDEnabled(), true);
 	}
 	
-	public List<String> getListaPdDMonitorate_StatusPdD() throws Exception{
+	public List<String> getListaPdDMonitorate_StatusPdD() throws UtilsException{
 		List<String> lista = new ArrayList<>();
 		String tmp = this.appProperties.getProperty("statoPdD.sonde.standard.nodi", this.isStatusPdDEnabled(), true);
 		if(tmp!=null && !"".equals(tmp)){
@@ -734,7 +737,7 @@ public class PddMonitorProperties {
 		return lista;
 	}
 
-	public List<String> getListaSondePdd() throws Exception{
+	public List<String> getListaSondePdd() throws UtilsException{
 		List<String> lista = new ArrayList<>();
 		String tmp = this.appProperties.getProperty("statoPdD.sonde", this.isStatusPdDEnabled(), true);
 		if(tmp!=null && !"".equals(tmp)){
@@ -746,7 +749,7 @@ public class PddMonitorProperties {
 		return lista;
 	}
 
-	public Properties getPropertiesSonda(String nomeSondaPdd) throws Exception{
+	public Properties getPropertiesSonda(String nomeSondaPdd) throws UtilsException{
 		String prefix = "statoPdD.sonde." + nomeSondaPdd+".";
 		
 		Properties p = this.appProperties.readProperties(prefix);
@@ -756,13 +759,13 @@ public class PddMonitorProperties {
 	
 	
 	// Numero thread ricerche con timeout
-	public Integer getDimensionePoolRicercheConTimeout() throws Exception{
+	public Integer getDimensionePoolRicercheConTimeout() throws UtilsException{
 		return Integer.parseInt(this.appProperties.getProperty("console.search.numeroThreadGestioneTimeout", true, true));
 	}
 	
 	// Visualizza idPdd
 	
-	public boolean isVisualizzaIdPdDEnabled() throws Exception{
+	public boolean isVisualizzaIdPdDEnabled() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("visualizzaIdPdD.enabled", true, true));
 	}
 	
@@ -771,17 +774,17 @@ public class PddMonitorProperties {
 	
 	// controllo abilitazione dei grafici svg
 	
-	public boolean isGraficiSvgEnabled() throws Exception{
+	public boolean isGraficiSvgEnabled() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("grafici.visualizzazioneSvg.enabled", true, true));
 	}
 	
 	// Abilita il caching delle richieste multipart
-	public boolean isMultipartRequestCache() throws Exception{
+	public boolean isMultipartRequestCache() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("abilitaMultipartRequestCache.enabled", true, true));
 	}
 	
 	// Abilita il cluster dinamico
-	public boolean isClusterDinamico() throws Exception{
+	public boolean isClusterDinamico() throws UtilsException{
 		ConfigurazioneNodiRuntime config = getConfigurazioneNodiRuntime();
 		if(config!=null) {
 			return config.isClusterDinamico();
@@ -792,7 +795,7 @@ public class PddMonitorProperties {
 			return "true".equalsIgnoreCase(this.appProperties.getProperty("cluster_dinamico.enabled", true, true));
 		}
 	}
-	public int getClusterDinamicoRefresh() throws Exception{
+	public int getClusterDinamicoRefresh() throws UtilsException{
 		if(this.isClusterDinamico()) {
 			return Integer.valueOf(this.appProperties.getProperty("cluster_dinamico.refresh", true, true));
 		}
@@ -800,19 +803,19 @@ public class PddMonitorProperties {
 	}
 	
 	// properties per la gestione del login
-	public String getLoginTipo() throws Exception{
+	public String getLoginTipo() throws UtilsException{
 		return this.appProperties.getProperty("login.tipo", true, true);
 	}
 
-	public boolean isLoginApplication() throws Exception{
+	public boolean isLoginApplication() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("login.application", true, true));
 	}
 
-	public Properties getLoginProperties() throws Exception{
+	public Properties getLoginProperties() throws UtilsException{
 		return this.appProperties.readProperties("login.props.");
 	}
 	
-	public boolean isCheckPasswordExpire(PasswordVerifier passwordVerifier) throws Exception { 
+	public boolean isCheckPasswordExpire(PasswordVerifier passwordVerifier) throws UtilsException { 
 		if(passwordVerifier != null) {
 			return this.isLoginApplication() && passwordVerifier.isCheckPasswordExpire();
 		}
@@ -825,7 +828,7 @@ public class PddMonitorProperties {
 	private String consoleFontFamilyName = null;
 	private int consoleFontStyle = -1;
 	
-	public String getConsoleFont() throws Exception{
+	public String getConsoleFont() throws UtilsException{
 		return this.appProperties.getProperty("console.font", true, true);
 	}
 	
@@ -852,7 +855,7 @@ public class PddMonitorProperties {
 		this.consoleFontStyle = consoleFontStyle;
 	}
 	
-	public Locale getConsoleLocale() throws Exception {
+	public Locale getConsoleLocale() throws UtilsException {
 		String localeLang = this.appProperties.getProperty("console.locale.lang", false, true);
 		String localeCountry = this.appProperties.getProperty("console.locale.country", false, true);
 		
@@ -865,75 +868,75 @@ public class PddMonitorProperties {
 		return null;
 	}
 
-	public String getLoginUtenteNonAutorizzatoRedirectUrl() throws Exception{
+	public String getLoginUtenteNonAutorizzatoRedirectUrl() throws UtilsException{
 		if(this.isLoginApplication()) {
 			return "";
 		}
 		return this.appProperties.getProperty("login.utenteNonAutorizzato.redirectUrl", true, true);
 	}
 
-	public String getLoginUtenteNonValidoRedirectUrl() throws Exception{
+	public String getLoginUtenteNonValidoRedirectUrl() throws UtilsException{
 		if(this.isLoginApplication()) {
 			return "";
 		}
 		return this.appProperties.getProperty("login.utenteNonValido.redirectUrl", true, true);
 	}
 	
-	public String getLoginErroreInternoRedirectUrl() throws Exception{
+	public String getLoginErroreInternoRedirectUrl() throws UtilsException{
 		if(this.isLoginApplication()) {
 			return "";
 		}
 		return this.appProperties.getProperty("login.erroreInterno.redirectUrl", true, true);
 	}
 
-	public String getLoginSessioneScadutaRedirectUrl() throws Exception{
+	public String getLoginSessioneScadutaRedirectUrl() throws UtilsException{
 		if(this.isLoginApplication()) {
 			return "";
 		}
 		return this.appProperties.getProperty("login.sessioneScaduta.redirectUrl", true, true);
 	}
 
-	public boolean isMostraButtonLogout() throws Exception{
+	public boolean isMostraButtonLogout() throws UtilsException{
 		if(this.isLoginApplication()) {
 			return true;
 		}
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("logout.mostraButton.enabled", true, true));
 	}
 
-	public String getLogoutUrlDestinazione() throws Exception{
+	public String getLogoutUrlDestinazione() throws UtilsException{
 		if(this.isLoginApplication()) {
 			return "";
 		}
 		return this.appProperties.getProperty("logout.urlDestinazione", true, true);
 	}
 	
-	public boolean isGestionePasswordUtentiAttiva() throws Exception{
+	public boolean isGestionePasswordUtentiAttiva() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("utenti.gestionePassword.enabled", true, true));
 	}
 	
-	public String getUtentiPassword() throws Exception{
+	public String getUtentiPassword() throws UtilsException{
 		return this.appProperties.getProperty("utenti.password", true, true);
 	}
 	
-	public boolean isRuoloConfiguratoreAttivo() throws Exception{
+	public boolean isRuoloConfiguratoreAttivo() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("utenti.ruoloConfiguratore.enabled", true, true));
 	}
 	
-	public boolean isModificaProfiloUtenteDaLinkAggiornaDB() throws Exception{
+	public boolean isModificaProfiloUtenteDaLinkAggiornaDB() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("utenti.modificaProfiloUtenteDaLink.aggiornaInfoSuDb", true, true));
 	}
 	
-	public boolean isModificaProfiloUtenteDaFormAggiornaSessione() throws Exception{
+	public boolean isModificaProfiloUtenteDaFormAggiornaSessione() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("utenti.modificaProfiloUtenteDaForm.aggiornaInfoInSessione", true, true));
 	}
 	
 	// Gestore Filtri
 	
-	public boolean isGestoreFiltriEnabled() throws Exception{
+	public boolean isGestoreFiltriEnabled() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("gestoreFiltri.enabled", true, true));
 	}
 	
-	public List<String> getListaFiltri(String tipo) throws Exception{
+	public List<String> getListaFiltri(String tipo) throws UtilsException{
 		List<String> lista = new ArrayList<>();
 		String tmp = this.appProperties.getProperty(("gestoreFiltri.filters."+tipo), this.isGestoreFiltriEnabled(), true);
 		if(tmp!=null && !"".equals(tmp)){
@@ -945,13 +948,13 @@ public class PddMonitorProperties {
 		return lista;
 	}
 	
-	public String getClassNameFiltro(String tipo,String nomeFiltro) throws Exception{
+	public String getClassNameFiltro(String tipo,String nomeFiltro) throws UtilsException{
 		String className = "gestoreFiltri.filters."+tipo +"." + nomeFiltro+".class";
 		
 		return this.appProperties.getProperty(className, this.isGestoreFiltriEnabled(), true);
 	}
 	
-	public Properties getPropertiesFiltro(String tipo,String nomeFiltro) throws Exception{
+	public Properties getPropertiesFiltro(String tipo,String nomeFiltro) throws UtilsException{
 		String prefix = "gestoreFiltri.filters."+tipo +"." + nomeFiltro+".props.";
 		
 		Properties p = this.appProperties.readProperties(prefix);
@@ -959,126 +962,126 @@ public class PddMonitorProperties {
 		return p;
 	}
 	
-	public String getLogoHeaderImage() throws Exception{
+	public String getLogoHeaderImage() throws UtilsException{
 		return this.appProperties.getProperty("console.header.logo.image", false, true);
 	}
 
-	public String getLogoHeaderTitolo() throws Exception{
+	public String getLogoHeaderTitolo() throws UtilsException{
 		return this.appProperties.getProperty("console.header.logo.titolo", false, true);
 	}
 
-	public String getLogoHeaderLink() throws Exception{
+	public String getLogoHeaderLink() throws UtilsException{
 		return this.appProperties.getProperty("console.header.logo.link", false, true);
 	}
 	
 	
-	public Integer getIntervalloTimeoutRicercaTransazioniStorico() throws Exception{
+	public Integer getIntervalloTimeoutRicercaTransazioniStorico() throws UtilsException{
 		String timeoutS = this.appProperties.getProperty("transazioni.storico.timeoutRicercaTransazioni", false, true);
 		return StringUtils.isNotBlank(timeoutS) ? Integer.parseInt(timeoutS) : null;
 	}
 
-	public boolean isAttivoUtilizzaVisualizzazioneCustomTransazioni() throws Exception{
+	public boolean isAttivoUtilizzaVisualizzazioneCustomTransazioni() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.utilizzaVisualizzazioneCustom.enabled", true, true));
 	}
 	
-	public boolean isAttivoVisualizzaColonnaRuoloTransazioneVisualizzazioneCustomTransazioni() throws Exception{
+	public boolean isAttivoVisualizzaColonnaRuoloTransazioneVisualizzazioneCustomTransazioni() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.utilizzaVisualizzazioneCustom.visualizzaColonnaRuoloTransazione.enabled", true, true));
 	}
 	
-	public boolean isAttivoUtilizzaVisualizzazioneCustomLive() throws Exception{
+	public boolean isAttivoUtilizzaVisualizzazioneCustomLive() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.live.utilizzaVisualizzazioneCustom.enabled", true, true));
 	}
 	
-	public boolean isAttivoVisualizzaColonnaRuoloTransazioneVisualizzazioneCustomLive() throws Exception{
+	public boolean isAttivoVisualizzaColonnaRuoloTransazioneVisualizzazioneCustomLive() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.live.utilizzaVisualizzazioneCustom.visualizzaColonnaRuoloTransazione.enabled", true, true));
 	}
 	
-	public boolean isAttivoUtilizzaVisualizzazioneCustomConsegneMultiple() throws Exception{
+	public boolean isAttivoUtilizzaVisualizzazioneCustomConsegneMultiple() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.dettaglio.utilizzaVisualizzazioneCustomConsegneMultiple.enabled", true, true));
 	}
 	
 	// Acceduta da ApplicationProperties
 	@Deprecated
-	public int getTransazioniDettaglioVisualizzazioneMessaggiThreshold() throws Exception{
+	public int getTransazioniDettaglioVisualizzazioneMessaggiThreshold() throws UtilsException{
 		return Integer.valueOf(this.appProperties.getProperty("transazioni.dettaglio.visualizzazioneMessaggi.threshold", true, true));
 	}
 	
-	public int getTransazioniDettaglioAnalisiMultipartThreshold() throws Exception{
+	public int getTransazioniDettaglioAnalisiMultipartThreshold() throws UtilsException{
 		return Integer.valueOf(this.appProperties.getProperty("transazioni.dettaglio.analisiMultipart.threshold", true, true));
 	}
 	
-	public boolean isDataUscitaRispostaUseDateAfterResponseSent() throws Exception{
+	public boolean isDataUscitaRispostaUseDateAfterResponseSent() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.dataUscitaRisposta.useDateAfterResponseSent", true, true));
 	}
 	
-	public boolean isTransazioniLatenzaPortaEnabled() throws Exception{
+	public boolean isTransazioniLatenzaPortaEnabled() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.latenzaPorta.enabled", true, true));
 	}
 	
-	public boolean escludiRichiesteScartateDefaultValue() throws Exception{
+	public boolean escludiRichiesteScartateDefaultValue() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.escludiRichiesteScartate.defaultValue", true, true));
 	}
 	
 	/* Properties gestione finestra di export transazioni */
 	
-	public boolean isExportTransazioniZipTracceDefaultValue() throws Exception{
+	public boolean isExportTransazioniZipTracceDefaultValue() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.export.zip.tracce.defaultValue", true, true));
 	}
 	
-	public boolean isExportTransazioniZipDiagnosticiDefaultValue() throws Exception{
+	public boolean isExportTransazioniZipDiagnosticiDefaultValue() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.export.zip.diagnostici.defaultValue", true, true));
 	}
 	
-	public boolean isExportTransazioniZipContenutiDefaultValue() throws Exception{
+	public boolean isExportTransazioniZipContenutiDefaultValue() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.export.zip.contenuti.defaultValue", true, true));
 	}
 	
-	public boolean isExportTransazioniCsvTracceDefaultValue() throws Exception{
+	public boolean isExportTransazioniCsvTracceDefaultValue() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.export.csv.tracce.defaultValue", true, true));
 	}
 	
-	public boolean isExportTransazioniCsvDiagnosticiDefaultValue() throws Exception{
+	public boolean isExportTransazioniCsvDiagnosticiDefaultValue() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.export.csv.diagnostici.defaultValue", true, true));
 	}
 	
-	public boolean isExportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti() throws Exception{
+	public boolean isExportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.export.csv.visualizzaCheckBoxSelezioneContenuti.enabled", true, true));
 	}
 	
 	/* Properties gestione della paginazione delle liste con le count */
 	
-	public boolean isAttivoUtilizzaCountStoricoTransazioni() throws Exception{
+	public boolean isAttivoUtilizzaCountStoricoTransazioni() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.utilizzaCount.enabled", true, true));
 	}
 			
-	public boolean isAttivoUtilizzaCountListaEventi() throws Exception{
+	public boolean isAttivoUtilizzaCountListaEventi() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("eventi.lista.utilizzaCount.enabled", true, true));
 	}
 
-	public boolean isAttivoUtilizzaCountListaAllarmi() throws Exception{
+	public boolean isAttivoUtilizzaCountListaAllarmi() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.lista.utilizzaCount.enabled", true, false));
 	}
 	
-	public boolean isAttivoVisualizzazioneConfigurazioneEventiTimeout() throws Exception{
+	public boolean isAttivoVisualizzazioneConfigurazioneEventiTimeout() throws UtilsException{
 		String p = this.appProperties.getProperty("eventi.timeout.viewConfigurazione", false, true);
 		return "true".equalsIgnoreCase(p);
 	}
 	
-	public boolean isAttivoUtilizzaCountStatisticheListaConfigurazioni() throws Exception{
+	public boolean isAttivoUtilizzaCountStatisticheListaConfigurazioni() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.configurazioni.lista.utilizzaCount.enabled", true, true));
 	}
 	
-	public boolean isUseStatisticheGiornaliereCalcoloDistribuzioneSettimanale() throws Exception{
+	public boolean isUseStatisticheGiornaliereCalcoloDistribuzioneSettimanale() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.distribuzioneSettimanale.usaStatisticheGiornaliere", true, true));
 	}
-	public boolean isUseStatisticheGiornaliereCalcoloDistribuzioneMensile() throws Exception{
+	public boolean isUseStatisticheGiornaliereCalcoloDistribuzioneMensile() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.distribuzioneMensile.usaStatisticheGiornaliere", true, true));
 	}
-	public boolean isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere() throws Exception{
+	public boolean isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.distribuzioneSettimanaleMensile.usaStatisticheGiornaliere.latenza.mediaPesata", true, true));
 	}
 	
-	public boolean visualizzaPaginaAboutExtendedInfo() throws Exception{
+	public boolean visualizzaPaginaAboutExtendedInfo() throws UtilsException{
 		String tmp = this.appProperties.getProperty("console.extendedInfo.enabled", false, true);
 		if(tmp!=null && !"".equals(tmp)) {
 			return "true".equalsIgnoreCase(tmp);
@@ -1088,82 +1091,97 @@ public class PddMonitorProperties {
 		}
 	}
 	
-	public String getExtendedInfoAuthorizationClass() throws Exception{
+	public String getExtendedInfoAuthorizationClass() throws UtilsException{
 		return this.appProperties.getProperty("console.extendedInfoAuthorizationClass", false, true);
 	}
 	
 	/* Properties che pilotano la visualizzazione dei filtri di ricerca per soggetti, servizi e azioni */
 	
-	public boolean isVisualizzaFiltroSoggettiSelectList() throws Exception{
+	public boolean isVisualizzaFiltroSoggettiSelectList() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("console.filtri.soggetti.selectList.enabled", true, true));
 	}
 	
-	public boolean isVisualizzaFiltroGruppiSelectList() throws Exception{
+	public boolean isVisualizzaFiltroGruppiSelectList() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("console.filtri.gruppi.selectList.enabled", true, true));
 	}
 	
-	public boolean isVisualizzaFiltroServiziSelectList() throws Exception{
+	public boolean isVisualizzaFiltroServiziSelectList() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("console.filtri.servizi.selectList.enabled", true, true));
 	}
 	
-	public boolean isVisualizzaFiltroAzioniSelectList() throws Exception{
+	public boolean isVisualizzaFiltroAzioniSelectList() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("console.filtri.azioni.selectList.enabled", true, true));
 	}
 	
-	public boolean isVisualizzaVoceEntrambiFiltroRuolo() throws Exception{
+	public boolean isVisualizzaVoceEntrambiFiltroRuolo() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("console.filtri.ruolo.selectList.visualizzaVoceEntrambi", true, true));
 	}
 	
-	public boolean isVisualizzaFiltroRuoloSummary() throws Exception{
+	public boolean isVisualizzaFiltroRuoloSummary() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("console.filtri.summary.ruolo.enabled", true, true));
 	}
 	
-	public boolean isVisualizzaVoceEntrambiFiltroRuoloSummary() throws Exception{
+	public boolean isVisualizzaVoceEntrambiFiltroRuoloSummary() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("console.filtri.summary.ruolo.selectList.visualizzaVoceEntrambi", true, true));
 	}
 	
-	public Integer getNumeroMassimoSoggettiOperativiMenuUtente() throws Exception{
+	public Integer getNumeroMassimoSoggettiOperativiMenuUtente() throws UtilsException{
 		return Integer.valueOf(this.appProperties.getProperty("console.selectListSoggettiOperativi.numeroMassimoSoggettiVisualizzati",true,true));
 	}
 	
-	public Integer getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente() throws Exception{
+	public Integer getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente() throws UtilsException{
 		return Integer.valueOf(this.appProperties.getProperty("console.selectListSoggettiOperativi.lunghezzaMassimaLabel",true,true));
 	}
 	
-//	public Integer getLunghezzaMassimaLabelButtonSoggettiOperativiMenuUtente() throws Exception{
-//		return Integer.valueOf(this.appProperties.getProperty("console.buttonMenuSoggettiOperativi.lunghezzaMassimaLabel",true,true));
-//	}
+	/**public Integer getLunghezzaMassimaLabelButtonSoggettiOperativiMenuUtente() throws UtilsException{
+		return Integer.valueOf(this.appProperties.getProperty("console.buttonMenuSoggettiOperativi.lunghezzaMassimaLabel",true,true));
+	}*/
 
-	public boolean isSearchFormEsitoConsegnaMultiplaEnabled() throws Exception{
+	public boolean isSearchFormEsitoConsegnaMultiplaEnabled() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("console.searchForm.esiti.consegnaMultiplaEnabled", true, true));
 	}
 	
-	public Integer getSearchFormLimit() throws Exception{
+	public Integer getSearchFormLimit() throws UtilsException{
 		return Integer.valueOf(this.appProperties.getProperty("console.searchForm.limit",true,true));
 	}
+
+	// Impostazioni sicurezza
 	
-	public Integer getValiditaTokenCsrf() throws Exception{
+	public String getBYOKInternalConfigSecurityEngine() throws UtilsException{
+		return this.appProperties.getBYOKInternalConfigSecurityEngine();
+	}
+	public String getBYOKInternalConfigRemoteSecurityEngine() throws UtilsException{
+		return this.appProperties.getBYOKInternalConfigRemoteSecurityEngine();
+	}
+	public String getBYOKEnvSecretsConfig() throws UtilsException{
+		return this.appProperties.getBYOKEnvSecretsConfig();
+	}
+	public boolean isBYOKEnvSecretsConfigRequired() throws UtilsException{
+		return this.appProperties.isBYOKEnvSecretsConfigRequired();
+	}
+	
+	public Integer getValiditaTokenCsrf() throws UtilsException{
 		return Integer.valueOf(this.appProperties.getProperty("console.csrf.token.validita", true, true));
 	}
 	
-	public String getCspHeaderValue() throws Exception {
+	public String getCspHeaderValue() throws UtilsException {
 		return this.appProperties.getProperty("console.csp.header.value", true, true);
 	}
 	
 	// allarmi
 	
-	public boolean isAllarmiEnabled() throws Exception{
+	public boolean isAllarmiEnabled() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.enabled", true, true));
 	}
 	
-	public String getAllarmiConfigurazione() throws Exception{
+	public String getAllarmiConfigurazione() throws UtilsException{
 		return this.appProperties.getProperty("allarmi.configurazione", true, true);
 	}
 	
 	
 	// Eventi
 	
-	public Integer getIntervalloTimeoutRicercaEventi() throws Exception{
+	public Integer getIntervalloTimeoutRicercaEventi() throws UtilsException{
 		String timeoutS = this.appProperties.getProperty("eventi.lista.timeoutRicercaEventi", false, true);
 		return StringUtils.isNotBlank(timeoutS) ? Integer.parseInt(timeoutS) : null;
 	}

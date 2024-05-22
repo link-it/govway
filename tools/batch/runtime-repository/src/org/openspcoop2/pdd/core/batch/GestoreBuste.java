@@ -20,10 +20,13 @@
 
 package org.openspcoop2.pdd.core.batch;
 
+import java.sql.SQLException;
 import java.util.Date;
 
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.SortedMap;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateUtils;
 import org.slf4j.Logger;
 
@@ -41,24 +44,32 @@ public class GestoreBuste extends AbstractGestore {
 	public GestoreBuste(boolean debug, boolean logQuery,
 			Logger logCore, Logger logSql,
 			int finestraSecondi, int refreshConnection,
-			String tipoRepositoryBuste, boolean useDataRegistrazione) throws Exception {
+			String tipoRepositoryBuste, boolean useDataRegistrazione) throws UtilsException {
 		super(TipoRuntimeRepository.BUSTE, debug, logQuery, logCore, logSql, finestraSecondi, refreshConnection, tipoRepositoryBuste);
 		
 		this.useDataRegistrazione = useDataRegistrazione;
 	}
 	
 	@Override
-	public void process() throws Exception {
+	public void process() throws UtilsException {
 		
 		// NOTA: prima le scadute per favorire un minDate più basso e quindi effettuare meno ricerche iterando per le varie finestre
 		
-		_process(true);
+		try {
+			processEngine(true);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(), e);
+		}
 		
-		_process(false);
+		try {
+			processEngine(false);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(), e);
+		}
 		
 	}
 		
-	private void _process(boolean scaduti) throws Exception {
+	private void processEngine(boolean scaduti) throws UtilsException, SQLException {
 		
 		try{
 			
@@ -81,7 +92,7 @@ public class GestoreBuste extends AbstractGestore {
 				
 				if(minDate==null || maxDate==null) {
 					if(this.debug) {
-						this.logCore.debug("Non esistono buste da eliminare");
+						this.logCoreDebug("Non esistono buste da eliminare");
 						return;
 					}
 				}
@@ -117,8 +128,8 @@ public class GestoreBuste extends AbstractGestore {
 			
 		}catch(Throwable e){
 			String msgErrore = "Errore durante la gestione del repository '"+this.tipoRuntimeRepository.getValue()+"': "+e.getMessage();
-			this.logCore.error(msgErrore,e );
-			throw new Exception(msgErrore,e);
+			this.logCoreError(msgErrore,e );
+			throw new UtilsException(msgErrore,e);
 		}finally {
 			this.closeConnection();
 		}
@@ -126,7 +137,7 @@ public class GestoreBuste extends AbstractGestore {
 	}
 	
 
-	private void cleanBusteInutili(Date leftInterval, Date rightInterval) throws Exception {
+	private void cleanBusteInutili(Date leftInterval, Date rightInterval) throws ProtocolException, SQLException {
 
 		String periodo = null;
 		if(this.debug) {
@@ -151,81 +162,81 @@ public class GestoreBuste extends AbstractGestore {
 		// INBOX
 		
 		if(this.debug) {
-			this.logCore.debug(periodo+"Ricerca buste da eliminare in 'INBOX' ...");
+			this.logCoreDebug(periodo+"Ricerca buste da eliminare in 'INBOX' ...");
 		}
 		int count = RepositoryBuste.countBusteInutiliIntoInBox(this.refreshConnection(), this.tipoDatabase, this.logQuery, this.logSql, this.repository, leftInterval, rightInterval, this.useDataRegistrazione);
 		if(this.debug) {
-			this.logCore.debug(periodo+"Trovate "+count+" buste da eliminare in 'INBOX'");
+			this.logCoreDebug(periodo+"Trovate "+count+" buste da eliminare in 'INBOX'");
 		}
 		if(count>0) {
 			if(this.debug) {
-				this.logCore.debug(periodo+"Eliminazione "+count+" buste in 'INBOX' ...");
+				this.logCoreDebug(periodo+"Eliminazione "+count+" buste in 'INBOX' ...");
 			}
 			SortedMap<Integer> eliminati = RepositoryBuste.deleteBusteInutiliIntoInBox(this.refreshConnection(), this.tipoDatabase, this.logQuery, this.logSql, this.repository, leftInterval, rightInterval, this.useDataRegistrazione);
 			if(this.debug) {
-				this.logCore.debug(periodo+"Eliminazione "+count+" buste in 'INBOX' completata ("+format(eliminati)+")");
+				this.logCoreDebug(periodo+"Eliminazione "+count+" buste in 'INBOX' completata ("+format(eliminati)+")");
 			}
 		}
 
 		// OUTBOX
 		
 		if(this.debug) {
-			this.logCore.debug(periodo+"Ricerca buste da eliminare in 'OUTBOX' ...");
+			this.logCoreDebug(periodo+"Ricerca buste da eliminare in 'OUTBOX' ...");
 		}
 		count = RepositoryBuste.countBusteInutiliIntoOutBox(this.refreshConnection(), this.tipoDatabase, this.logQuery, this.logSql, this.repository, leftInterval, rightInterval, this.useDataRegistrazione);
 		if(this.debug) {
-			this.logCore.debug(periodo+"Trovate "+count+" buste da eliminare in 'OUTBOX'");
+			this.logCoreDebug(periodo+"Trovate "+count+" buste da eliminare in 'OUTBOX'");
 		}
 		if(count>0) {
 			if(this.debug) {
-				this.logCore.debug(periodo+"Eliminazione "+count+" buste in 'OUTBOX' ...");
+				this.logCoreDebug(periodo+"Eliminazione "+count+" buste in 'OUTBOX' ...");
 			}
 			SortedMap<Integer> eliminati = RepositoryBuste.deleteBusteInutiliIntoOutBox(this.refreshConnection(), this.tipoDatabase, this.logQuery, this.logSql, this.repository, leftInterval, rightInterval, this.useDataRegistrazione);
 			if(this.debug) {
-				this.logCore.debug(periodo+"Eliminazione "+count+" buste in 'OUTBOX' completata ("+format(eliminati)+")");
+				this.logCoreDebug(periodo+"Eliminazione "+count+" buste in 'OUTBOX' completata ("+format(eliminati)+")");
 			}
 		}
 		
 	}
 	
 	
-	private void cleanBusteScadute() throws Exception {
+	private void cleanBusteScadute() throws ProtocolException, SQLException {
 		
 		// INBOX
 		
 		if(this.debug) {
-			this.logCore.debug("Ricerca buste scadute in 'INBOX' ...");
+			this.logCoreDebug("Ricerca buste scadute in 'INBOX' ...");
 		}
 		int count = RepositoryBuste.countBusteScaduteIntoInBox(this.refreshConnection(), this.tipoDatabase, this.logQuery, this.logSql, this.repository);
 		if(this.debug) {
-			this.logCore.debug("Trovate "+count+" buste scadute in 'INBOX'");
+			this.logCoreDebug("Trovate "+count+" buste scadute in 'INBOX'");
 		}
 		if(count>0) {
 			if(this.debug) {
-				this.logCore.debug("Eliminazione "+count+" buste scadute in 'INBOX' ...");
+				this.logCoreDebug("Eliminazione "+count+" buste scadute in 'INBOX' ...");
 			}
 			SortedMap<Integer> eliminati = RepositoryBuste.deleteBusteScaduteIntoInBox(this.refreshConnection(), this.tipoDatabase, this.logQuery, this.logSql, this.repository);
 			if(this.debug) {
-				this.logCore.debug("Eliminazione "+count+" buste scadute in 'INBOX' completata ("+format(eliminati)+")");
+				this.logCoreDebug("Eliminazione "+count+" buste scadute in 'INBOX' completata ("+format(eliminati)+")");
 			}
 		}
 
 		// OUTBOX
 		
 		if(this.debug) {
-			this.logCore.debug("Ricerca buste scadute in 'OUTBOX' ...");
+			this.logCoreDebug("Ricerca buste scadute in 'OUTBOX' ...");
 		}
 		count = RepositoryBuste.countBusteScaduteIntoOutBox(this.refreshConnection(), this.tipoDatabase, this.logQuery, this.logSql, this.repository);
 		if(this.debug) {
-			this.logCore.debug("Trovate "+count+" buste scadute in 'OUTBOX'");
+			this.logCoreDebug("Trovate "+count+" buste scadute in 'OUTBOX'");
 		}
 		if(count>0) {
 			if(this.debug) {
-				this.logCore.debug("Eliminazione "+count+" buste scadute in 'OUTBOX' ...");
+				this.logCoreDebug("Eliminazione "+count+" buste scadute in 'OUTBOX' ...");
 			}
 			SortedMap<Integer> eliminati = RepositoryBuste.deleteBusteScaduteIntoOutBox(this.refreshConnection(), this.tipoDatabase, this.logQuery, this.logSql, this.repository);
 			if(this.debug) {
-				this.logCore.debug("Eliminazione "+count+" buste scadute in 'OUTBOX' completata ("+format(eliminati)+")");
+				this.logCoreDebug("Eliminazione "+count+" buste scadute in 'OUTBOX' completata ("+format(eliminati)+")");
 			}
 		}
 		

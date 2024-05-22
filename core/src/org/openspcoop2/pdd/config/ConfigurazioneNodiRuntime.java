@@ -590,7 +590,7 @@ public class ConfigurazioneNodiRuntime {
 			return value!=null && !"".equals(value) && !value.startsWith(InvokerNodiRuntime.PREFIX_HTTP_CODE) && 
 					(CostantiConfigurazione.ABILITATO.getValue().equals(value) || CostantiConfigurazione.DISABILITATO.getValue().equals(value));
 		}catch(Exception e) {
-			log.debug("Non '"+alias+"' non attivo?: "+e.getMessage(),e);
+			log.debug("Nodo '"+alias+"' non non attivo?: "+e.getMessage(),e);
 			return false;
 		}
 	}

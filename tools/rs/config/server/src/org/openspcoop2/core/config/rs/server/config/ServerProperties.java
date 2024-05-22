@@ -279,11 +279,24 @@ public class ServerProperties  {
 	}
 	
 	
+	public String getEnvMapConfig() throws UtilsException{
+		return this.readProperty(false, "env.map.config");
+	}
+	public boolean isEnvMapConfigRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "env.map.required");
+		return this.parse(b, false);
+	}
+	
+	
 	public String getHSMConfigurazione() throws UtilsException {
 		return this.readProperty(false, "hsm.config");
 	}
 	public boolean isHSMRequired() throws UtilsException {
 		return Boolean.parseBoolean(this.readProperty(true, "hsm.required"));
+	}
+	public boolean isHSMKeyPasswordConfigurable() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "hsm.keyPassword");
+		return this.parse(b, false);
 	}
 	
 	
@@ -300,6 +313,13 @@ public class ServerProperties  {
 	}
 	public String getBYOKInternalConfigRemoteSecurityEngine() throws UtilsException{
 		return this.readProperty(false, "byok.internalConfig.securityEngine.remote");
+	}
+	public String getBYOKEnvSecretsConfig() throws UtilsException{
+		return this.readProperty(false, "byok.env.secrets.config");
+	}
+	public boolean isBYOKEnvSecretsConfigRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "byok.env.secrets.required");
+		return this.parse(b, false);
 	}
 	
 	
@@ -318,6 +338,11 @@ public class ServerProperties  {
 		return true;
 	}	
 
+	
+	public String getConfigurazioneNodiRuntime() throws UtilsException{
+		return this.readProperty(false, "configurazioni.configurazioneNodiRun");
+	}
+	
 	
 	
 	public String getSoggettoDefault(String protocollo) throws UtilsException {

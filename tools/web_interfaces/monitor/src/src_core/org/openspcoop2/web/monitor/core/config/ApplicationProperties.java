@@ -24,6 +24,8 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.utils.BooleanNullable;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.slf4j.Logger;
 
@@ -112,21 +114,30 @@ public class ApplicationProperties {
 	
 	/* ********  P R O P E R T I E S  ******** */
 
+	private String getPropertyPrefix(String property) {
+		return "Property ["+property+"] ";
+	}
+	private String getMessageUncorrectValue(String tmp) {
+		return "with uncorrect value ["+tmp+"]"; 
+	}
+	
 	public Enumeration<?> keys(){
 		return this.reader.propertyNames();
 	}
 	
-	public String getProperty(String name,boolean required, boolean convertEnvProperty) throws Exception{
+	public String readProperty(boolean required,String property) throws UtilsException{
+		return getProperty(property, required, true);
+	}
+	public String getProperty(String name,boolean required, boolean convertEnvProperty) throws UtilsException{
 		String tmp = null;
 		if(convertEnvProperty){
 			tmp = this.reader.getValueConvertEnvProperties(name);
 		}else{
 			tmp = this.reader.getValue(name);
 		}
-		if(tmp==null){
-			if(required){
-				throw new Exception("Property ["+name+"] not found");
-			}
+		if(tmp==null &&
+			required){
+			throw new UtilsException(getPropertyPrefix(name)+"not found");
 		}
 		if(tmp!=null){
 			return tmp.trim();
@@ -135,19 +146,55 @@ public class ApplicationProperties {
 		}
 	}
 	
-	public Properties readProperties(String prefix) throws Exception{
+	public BooleanNullable readBooleanProperty(boolean required,String property) throws UtilsException{
+		String tmp = this.getProperty(property,required,true);
+		if(tmp==null && !required) {
+			return BooleanNullable.NULL(); // se e' required viene sollevata una eccezione dal metodo readProperty
+		}
+		if(!"true".equalsIgnoreCase(tmp) && !"false".equalsIgnoreCase(tmp)){
+			throw new UtilsException(getPropertyPrefix(property)+getMessageUncorrectValue(tmp)+" (true/value expected)");
+		}
+		return Boolean.parseBoolean(tmp) ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
+	}
+	public boolean parse(BooleanNullable b, boolean defaultValue) {
+		return (b!=null && b.getValue()!=null) ? b.getValue() : defaultValue;
+	}
+	
+	public Properties readProperties(String prefix) throws UtilsException{
 		return this.reader.readPropertiesConvertEnvProperties(prefix);
 	}
-	 
+	
+	public Integer readIntegerProperty(boolean required,String property) throws UtilsException{
+		String tmp = this.getProperty(property,required,true);
+		if(tmp==null && !required) {
+			return null; // se e' required viene sollevata una eccezione dal metodo readProperty
+		}
+		try{
+			return Integer.parseInt(tmp);
+		}catch(Exception e){
+			throw new UtilsException(getPropertyPrefix(property)+getMessageUncorrectValue(tmp)+" (int value expected)");
+		}
+	}
+	public Long readLongProperty(boolean required,String property) throws UtilsException{
+		String tmp = this.getProperty(property,required,true);
+		if(tmp==null && !required) {
+			return null; // se e' required viene sollevata una eccezione dal metodo readProperty
+		}
+		try{
+			return Long.parseLong(tmp);
+		}catch(Exception e){
+			throw new UtilsException(getPropertyPrefix(property)+getMessageUncorrectValue(tmp)+" (long value expected)");
+		}
+	}
 
 	
-	public String getConfigurationDir() throws Exception{
+	public String getConfigurationDir() throws UtilsException{
 		return this.getProperty("confDirectory", true, true);
 	}
-	public String getProtocolloDefault() throws Exception{
+	public String getProtocolloDefault() throws UtilsException{
 		return this.getProperty("protocolloDefault", false, true);
 	}
-	public File getRepositoryJars() throws Exception{
+	public File getRepositoryJars() throws UtilsException{
 		String tmp = this.getProperty("repositoryJars", false, true);
 		if(tmp!=null){
 			return new File(tmp);
@@ -155,20 +202,20 @@ public class ApplicationProperties {
 		return null;
 	}
 	
-	public boolean isAbilitataCache_datiConfigurazione() throws Exception{
+	public boolean isAbilitataCache_datiConfigurazione() throws UtilsException{
 		String cacheEnabled = this.getProperty("cache.datiConfigurazione.enable", true, true);
 		return "true".equalsIgnoreCase(cacheEnabled);
 	}
-	public boolean isAbilitataJmxCache_datiConfigurazione() throws Exception{
+	public boolean isAbilitataJmxCache_datiConfigurazione() throws UtilsException{
 		String cacheEnabled = this.getProperty("cache.datiConfigurazione.jmx.enable", false, true);
 		return "true".equalsIgnoreCase(cacheEnabled);
 	}
-	public boolean isDebugCache_datiConfigurazione() throws Exception{
+	public boolean isDebugCache_datiConfigurazione() throws UtilsException{
 		String cacheEnabled = this.getProperty("cache.datiConfigurazione.debug", false, true);
 		return "true".equalsIgnoreCase(cacheEnabled);
 	}
 	
-	public CacheAlgorithm getAlgoritmoCache_datiConfigurazione() throws Exception{
+	public CacheAlgorithm getAlgoritmoCache_datiConfigurazione() throws UtilsException{
 		String cacheV = this.getProperty("cache.datiConfigurazione.algoritmo", false, true);
 		if(cacheV!=null && StringUtils.isNotEmpty(cacheV)) {
 			return CacheAlgorithm.valueOf(cacheV.toUpperCase());
@@ -176,31 +223,31 @@ public class ApplicationProperties {
 		return null;
 	}
 	
-	public Integer getDimensioneCache_datiConfigurazione() throws Exception{
+	public Integer getDimensioneCache_datiConfigurazione() throws UtilsException{
 		return _getIntegerValueCache("cache.datiConfigurazione.dimensione");
 	}
-	public Integer getItemIdleTimeCache_datiConfigurazione() throws Exception{
+	public Integer getItemIdleTimeCache_datiConfigurazione() throws UtilsException{
 		return _getIntegerValueCache("cache.datiConfigurazione.itemIdleTime");
 	}
-	public Integer getItemLifeSecondCache_datiConfigurazione() throws Exception{
+	public Integer getItemLifeSecondCache_datiConfigurazione() throws UtilsException{
 		return _getIntegerValueCache("cache.datiConfigurazione.itemLifeSecond");
 	}
 	
 	
-	public boolean isAbilitataCache_ricercheConfigurazione() throws Exception{
+	public boolean isAbilitataCache_ricercheConfigurazione() throws UtilsException{
 		String cacheEnabled = this.getProperty("cache.ricercheConfigurazione.enable", true, true);
 		return "true".equalsIgnoreCase(cacheEnabled);
 	}
-	public boolean isAbilitataJmxCache_ricercheConfigurazione() throws Exception{
+	public boolean isAbilitataJmxCache_ricercheConfigurazione() throws UtilsException{
 		String cacheEnabled = this.getProperty("cache.ricercheConfigurazione.jmx.enable", false, true);
 		return "true".equalsIgnoreCase(cacheEnabled);
 	}
-	public boolean isDebugCache_ricercheConfigurazione() throws Exception{
+	public boolean isDebugCache_ricercheConfigurazione() throws UtilsException{
 		String cacheEnabled = this.getProperty("cache.ricercheConfigurazione.debug", false, true);
 		return "true".equalsIgnoreCase(cacheEnabled);
 	}
 	
-	public CacheAlgorithm getAlgoritmoCache_ricercheConfigurazione() throws Exception{
+	public CacheAlgorithm getAlgoritmoCache_ricercheConfigurazione() throws UtilsException{
 		String cacheV = this.getProperty("cache.ricercheConfigurazione.algoritmo", false, true);
 		if(cacheV!=null && StringUtils.isNotEmpty(cacheV)) {
 			return CacheAlgorithm.valueOf(cacheV.toUpperCase());
@@ -208,18 +255,18 @@ public class ApplicationProperties {
 		return null;
 	}
 	
-	public Integer getDimensioneCache_ricercheConfigurazione() throws Exception{
+	public Integer getDimensioneCache_ricercheConfigurazione() throws UtilsException{
 		return _getIntegerValueCache("cache.ricercheConfigurazione.dimensione");
 	}
-	public Integer getItemIdleTimeCache_ricercheConfigurazione() throws Exception{
+	public Integer getItemIdleTimeCache_ricercheConfigurazione() throws UtilsException{
 		return _getIntegerValueCache("cache.ricercheConfigurazione.itemIdleTime");
 	}
-	public Integer getItemLifeSecondCache_ricercheConfigurazione() throws Exception{
+	public Integer getItemLifeSecondCache_ricercheConfigurazione() throws UtilsException{
 		return _getIntegerValueCache("cache.ricercheConfigurazione.itemLifeSecond");
 	}
 	
 	
-	private Integer _getIntegerValueCache(String name) throws Exception{
+	private Integer _getIntegerValueCache(String name) throws UtilsException{
 		String cacheV = this.getProperty(name, false, true);
 		if(cacheV!=null && StringUtils.isNotEmpty(cacheV)) {
 			Integer i = Integer.valueOf(cacheV);
@@ -230,7 +277,7 @@ public class ApplicationProperties {
 		return null;
 	}
 	
-	public String getJmxPdD_externalConfiguration() throws Exception{
+	public String getJmxPdD_externalConfiguration() throws UtilsException{
 		return this.getProperty("configurazioni.risorseJmxPdd.configurazioneNodiRun",false,true);
 	}
 	
@@ -238,15 +285,15 @@ public class ApplicationProperties {
 		return "configurazioni.risorseJmxPdd.";
 	}
 	
-	public Properties getJmxPdD_backwardCompatibilityProperties() throws Exception{
+	public Properties getJmxPdD_backwardCompatibilityProperties() throws UtilsException{
 		
 		String prefix = getJmxPdD_backwardCompatibilityPrefix();
 		
 		Properties p = new Properties();
 		Enumeration<?> en = this.reader.propertyNames();
 		while (en.hasMoreElements()) {
-			Object object = (Object) en.nextElement();
-			if(object !=null && object instanceof String) {
+			Object object = en.nextElement();
+			if(object instanceof String) {
 				String key = (String) object;
 				if(key.contains(prefix)) {
 					String newKey = key.replace(prefix, "");
@@ -259,11 +306,11 @@ public class ApplicationProperties {
 	}
 	
 	
-	public boolean isPluginsEnabled() throws Exception{
+	public boolean isPluginsEnabled() throws UtilsException{
 		String cacheEnabled = this.getProperty("plugins.enabled", true, true);
 		return "true".equalsIgnoreCase(cacheEnabled);
 	}
-	public Integer getPluginsSeconds() throws Exception{
+	public Integer getPluginsSeconds() throws UtilsException{
 		String cacheV = this.getProperty("plugins.seconds", false, true);
 		if(cacheV!=null && StringUtils.isNotEmpty(cacheV)) {
 			Integer i = Integer.valueOf(cacheV);
@@ -275,7 +322,54 @@ public class ApplicationProperties {
 	}
 	
 	
-	public int getTransazioniDettaglioVisualizzazioneMessaggiThreshold() throws Exception{
+	public int getTransazioniDettaglioVisualizzazioneMessaggiThreshold() throws UtilsException{
 		return Integer.valueOf(this.getProperty("transazioni.dettaglio.visualizzazioneMessaggi.threshold", true, true));
+	}
+	
+	
+	public boolean isSecurityLoadBouncyCastle() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "security.addBouncyCastleProvider");
+		return this.parse(b, false);
+	}
+
+	public String getEnvMapConfig() throws UtilsException{
+		return this.readProperty(false, "env.map.config");
+	}
+	public boolean isEnvMapConfigRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "env.map.required");
+		return this.parse(b, false);
+	}
+	
+	public String getHSMConfigurazione() throws UtilsException{
+		return this.readProperty(false, "hsm.config");
+	}
+	public boolean isHSMRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "hsm.required");
+		return this.parse(b, false);
+	}
+	public boolean isHSMKeyPasswordConfigurable() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "hsm.keyPassword");
+		return this.parse(b, false);
+	}
+	
+	public String getBYOKConfig() throws UtilsException{
+		return this.readProperty(false, "byok.config");
+	}
+	public boolean isBYOKConfigRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "byok.required");
+		return this.parse(b, false);
+	}
+	public String getBYOKInternalConfigSecurityEngine() throws UtilsException{
+		return this.readProperty(false, "byok.internalConfig.securityEngine");
+	}
+	public String getBYOKInternalConfigRemoteSecurityEngine() throws UtilsException{
+		return this.readProperty(false, "byok.internalConfig.securityEngine.remote");
+	}
+	public String getBYOKEnvSecretsConfig() throws UtilsException{
+		return this.readProperty(false, "byok.env.secrets.config");
+	}
+	public boolean isBYOKEnvSecretsConfigRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "byok.env.secrets.required");
+		return this.parse(b, false);
 	}
 }
