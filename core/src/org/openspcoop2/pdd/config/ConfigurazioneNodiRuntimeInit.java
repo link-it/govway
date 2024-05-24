@@ -76,13 +76,13 @@ public class ConfigurazioneNodiRuntimeInit extends BaseThread {
 			try{
 				finish = analyze();
 			} catch (Exception e) {
-				String msgErrore = "Errore durante l'inizializzazione della configurazione (file trace, secrets): " + e.getMessage();
+				String msgErrore = "Errore durante l'inizializzazione della configurazione ("+getDescrizione()+"): " + e.getMessage();
 				this.log.error(msgErrore,e);
 				//throw new UtilsRuntimeException(msgErrore,e); non sollevo l'eccezione, e' solo una informazione informativa, non voglio mettere un vincolo che serve per forza un nodo acceso
 			}
 		
 			if(!finish) {
-				String msg = "Non è stato possibile ottenere informazioni sulla configurazione (file trace, secrets) da nessun nodo runtime (prossimo controllo tra 30 secondi)";
+				String msg = "Non è stato possibile ottenere informazioni sulla configurazione ("+getDescrizione()+") da nessun nodo runtime (prossimo controllo tra 30 secondi)";
 				if(this.first) {
 					this.log.debug(msg);
 					this.first = false;
@@ -92,10 +92,18 @@ public class ConfigurazioneNodiRuntimeInit extends BaseThread {
 				}
 				Utilities.sleep(30000); // riprovo dopo 10 secondi
 			}
+			else {
+				String msg = "Configurazione ("+getDescrizione()+") completata con successo";
+				this.log.info(msg);
+			}
 		}
 		
 		this.setStop(true);
 		
+	}
+	
+	protected String getDescrizione() {
+		return "secrets";
 	}
 	
 	private boolean analyze() {
@@ -128,7 +136,9 @@ public class ConfigurazioneNodiRuntimeInit extends BaseThread {
 	}
 	
 	protected boolean isCompleted(String alias) {
-		// nop
+		if(alias!=null) {
+			// usato nei metodi implementati
+		}
 		return true;
 	}
 	

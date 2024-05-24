@@ -211,7 +211,8 @@ public class GeneratorProperties {
 		return this.readProperty(false, "hsm.config");
 	}
 	public boolean isHSMRequired() throws UtilsException {
-		return Boolean.parseBoolean(this.readProperty(true, "hsm.required"));
+		BooleanNullable b = this.readBooleanProperty(false, "hsm.required");
+		return this.parse(b, false);
 	}
 	public boolean isHSMKeyPasswordConfigurable() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(false, "hsm.keyPassword");
@@ -226,12 +227,6 @@ public class GeneratorProperties {
 	public boolean isBYOKRequired() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(false, "byok.required");
 		return parse(b, false);
-	}
-	public String getBYOKInternalConfigSecurityEngine() throws UtilsException{
-		return this.readProperty(false, "byok.internalConfig.securityEngine");
-	}
-	public String getBYOKInternalConfigRemoteSecurityEngine() throws UtilsException{
-		return this.readProperty(false, "byok.internalConfig.securityEngine.remote");
 	}
 	public String getBYOKEnvSecretsConfig() throws UtilsException{
 		return this.readProperty(false, "byok.env.secrets.config");

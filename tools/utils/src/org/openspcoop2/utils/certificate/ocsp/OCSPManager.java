@@ -32,8 +32,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.utils.SortedMap;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.properties.PropertiesReader;
 import org.slf4j.Logger;
 
 /**
@@ -141,7 +141,8 @@ public class OCSPManager {
 			
 			for (String idK : idKeystore) {
 				String prefix = OCSPCostanti.PROPERTY_PREFIX + idK + ".";
-				Properties pKeystore = Utilities.readProperties(prefix, p);
+				PropertiesReader pReader = new PropertiesReader(p, true);
+				Properties pKeystore = pReader.readProperties_convertEnvProperties(prefix);
 				OCSPConfig ocspConfig = new OCSPConfig(idK, pKeystore, log);
 				
 				// type (value è id del ocsp.properties)

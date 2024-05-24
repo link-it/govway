@@ -2,8 +2,19 @@ Aggioungere a jenkins: +- 'autenticazione', verifica la funzionalità di inoltro
 +   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.autenticazione
 
 Aggiungere a jenkins la conf del loader:
-		byok.config=/etc/govway/byok.properties
-		byok.internalConfig.securityEngine=runtime
+		
+		- Impostare in /etc/govway/byok.properties il file protocolli/trasparente/testsuite/karate/byok/byok.properties
+		- Impostare in /etc/govway/byok.properties il file protocolli/modipa/testsuite/byok/byok.properties
+
+		- Modificare le properties del config_loader in modo che vengano caricate le policy utente e le regole di proxy pass.
+			Impostare in <.../distrib/properties/config_loader.cli.properties>
+
+				policy.enable=true
+				plugin.enable=true
+				configurazioneGenerale.enable=true
+		
+				verificare il puntamento file 'byok.config' all'interno del file config_loader.cli.properties
+		
 
 documentare visualizza credenziali!!
 

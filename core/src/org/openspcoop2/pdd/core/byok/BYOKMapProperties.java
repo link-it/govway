@@ -95,8 +95,12 @@ public class BYOKMapProperties extends MapProperties {
 	public BYOKMapProperties(Logger log, String fileName, boolean throwNotFound, String securityPolicy, String securityRemotePolicy, 
 			Map<String, Object> dynamicMapParam, boolean checkJmxPrefixOperazioneNonRiuscita) throws UtilsException {
 		super(log, fileName, throwNotFound);
-		this.securityPolicy = securityPolicy;
-		this.securityRemotePolicy = securityRemotePolicy;
+		if(securityPolicy!=null && StringUtils.isNotEmpty(securityPolicy)) {
+			this.securityPolicy = securityPolicy;
+		}
+		if(securityRemotePolicy!=null && StringUtils.isNotEmpty(securityRemotePolicy)) {
+			this.securityRemotePolicy = securityRemotePolicy;
+		}
 		this.dynamicMap = dynamicMapParam;
 		this.checkJmxPrefixOperazioneNonRiuscita = checkJmxPrefixOperazioneNonRiuscita;
 	}
@@ -224,6 +228,9 @@ public class BYOKMapProperties extends MapProperties {
 	}
 	
 	private boolean isWrapped(boolean javaProperty, String key) throws UtilsException {
+		if(this.reader==null) {
+			return false; // non inizializzato
+		}
 		String prefix = javaProperty ? JAVA_WRAPPED_PREFIX : ENV_WRAPPED_PREFIX;
 		String tmp = this.reader.getValue_convertEnvProperties(prefix+key);
 		if(tmp!=null && StringUtils.isNotEmpty(tmp.trim())) {
@@ -242,7 +249,19 @@ public class BYOKMapProperties extends MapProperties {
 		}
 	}
 	
+	@Override
+	protected boolean obfuscate(boolean java, String key) {
+		try {
+			return isWrapped(java, key);
+		}catch(Exception e) {
+			return true;
+		}
+	}
+	
 	private boolean isWrappedBySecurity(boolean javaProperty, String key) throws UtilsException {
+		if(this.reader==null) {
+			return false; // non inizializzato
+		}
 		String pSecurityName = javaProperty ? JAVA_SECURITY_PREFIX : ENV_SECURITY_PREFIX;
 		String tmp = this.reader.getValue_convertEnvProperties(pSecurityName+key);
 		if(tmp!=null && StringUtils.isNotEmpty(tmp.trim())) {
@@ -265,6 +284,9 @@ public class BYOKMapProperties extends MapProperties {
 	}
 	
 	private String getUnwrapId(boolean javaProperty, String key) throws UtilsException {
+		if(this.reader==null) {
+			return null; // non inizializzato
+		}
 		String pSecurityName = javaProperty ? JAVA_SECURITY_PREFIX : ENV_SECURITY_PREFIX;
 		String tmp = this.reader.getValue_convertEnvProperties(pSecurityName+key);
 		if(tmp!=null && StringUtils.isNotEmpty(tmp.trim())) {

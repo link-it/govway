@@ -22,6 +22,7 @@ package org.openspcoop2.web.monitor.core.listener;
 
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntimeInit;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 
 /**
@@ -39,7 +40,7 @@ public class InitRuntimeConfigReader extends ConfigurazioneNodiRuntimeInit {
 		super(AbstractConsoleStartupListener.getLog(), monitorProperties.getConfigurazioneNodiRuntime(), 
 				reInitSecretMaps, 
 				monitorProperties.getBYOKEnvSecretsConfig(), monitorProperties.isBYOKEnvSecretsConfigRequired(), 
-				monitorProperties.getBYOKInternalConfigSecurityEngine(), monitorProperties.getBYOKInternalConfigRemoteSecurityEngine());
+				BYOKManager.getSecurityEngineGovWayInstance(), BYOKManager.getSecurityRemoteEngineGovWayInstance());
 	}
 	
 }

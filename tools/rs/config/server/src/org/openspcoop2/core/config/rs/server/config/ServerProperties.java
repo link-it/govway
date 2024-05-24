@@ -71,7 +71,7 @@ public class ServerProperties  {
 			}
 			propertiesReader.load(properties);
 		}catch(Exception e) {
-			String errorMsg = "Riscontrato errore durante la lettura del file 'rs-api-config.properties': \n\n"+e.getMessage();
+			String errorMsg = "Riscontrato errore durante la lettura del file 'rs-api-config.properties': "+e.getMessage();
 			this.log.error(errorMsg,e);
 		    throw new CoreException("RS Api ConfigProperties initialize error: "+e.getMessage(), e);
 		}finally{
@@ -307,12 +307,6 @@ public class ServerProperties  {
 	public boolean isBYOKRequired() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(false, "byok.required");
 		return parse(b, false);
-	}
-	public String getBYOKInternalConfigSecurityEngine() throws UtilsException{
-		return this.readProperty(false, "byok.internalConfig.securityEngine");
-	}
-	public String getBYOKInternalConfigRemoteSecurityEngine() throws UtilsException{
-		return this.readProperty(false, "byok.internalConfig.securityEngine.remote");
 	}
 	public String getBYOKEnvSecretsConfig() throws UtilsException{
 		return this.readProperty(false, "byok.env.secrets.config");

@@ -28,8 +28,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.properties.PropertiesReader;
 import org.slf4j.Logger;
 
 /**
@@ -49,6 +51,18 @@ public class BYOKManager {
 	}
 	public static BYOKManager getInstance() {
 		return staticInstance;
+	}
+	public static String getSecurityEngineGovWayInstance() {
+		if(staticInstance!=null) {
+			return staticInstance.getSecurityEngineGovWay();
+		}
+		return null;
+	}
+	public static String getSecurityRemoteEngineGovWayInstance() {
+		if(staticInstance!=null) {
+			return staticInstance.getSecurityRemoteEngineGovWay();
+		}
+		return null;
 	}
 	
 	/*
@@ -104,7 +118,7 @@ public class BYOKManager {
      *
      * Configurazioni per ksm locale:
      * 
-     * ksm.<idKSM>.TODO
+     * ksm.<idKSM>.TERMINARE
 	 * 
 	 **/
 	
@@ -122,6 +136,9 @@ public class BYOKManager {
 	private static final String UNKNOWN = "unknown";
 	
 	private HashMap<String, BYOKSecurityConfig> securityMapIDtoConfig = new HashMap<>();
+	
+	private String securityEngineGovWay = null;
+	private String securityRemoteEngineGovWay = null;
 	
 	private BYOKManager(File f, boolean throwNotExists, Logger log) throws UtilsException {
 		String prefixFile = "File '"+f.getAbsolutePath()+"'";
@@ -174,6 +191,8 @@ public class BYOKManager {
 		else {
 			log.warn("La configurazione fornita per KSM non contiene alcun security manager");
 		}
+		
+		initSecurityGovWay(p);
 	}
 	private void init(Properties p, List<String> idKeystore, List<String> securityKeystore) {
 		Enumeration<?> enKeys = p.keys();
@@ -264,6 +283,20 @@ public class BYOKManager {
 		log.info(d);	
 	}
 	
+	private void initSecurityGovWay(Properties p) throws UtilsException {
+		
+		PropertiesReader pReader = new PropertiesReader(p, true);
+		
+		this.securityEngineGovWay = pReader.getValue_convertEnvProperties(BYOKCostanti.PROPERTY_GOVWAY_SECURITY);
+		if(this.securityEngineGovWay!=null && StringUtils.isEmpty(this.securityEngineGovWay)) {
+			this.securityEngineGovWay = null;
+		}
+		
+		this.securityRemoteEngineGovWay = pReader.getValue_convertEnvProperties(BYOKCostanti.PROPERTY_GOVWAY_SECURITY_RUNTIME);
+		if(this.securityRemoteEngineGovWay!=null && StringUtils.isEmpty(this.securityRemoteEngineGovWay)) {
+			this.securityRemoteEngineGovWay = null;
+		}
+	}
 	
 	public BYOKConfig getKSMConfigByType(String type) throws UtilsException {
 		if(!this.ksmKeystoreMapTypeToID.containsKey(type)) {
@@ -369,6 +402,11 @@ public class BYOKManager {
 		return isBYOKRemoteGovWayNodeConfig(securityManagerPolicy, true, true);
 	}
 	public boolean isBYOKRemoteGovWayNodeConfig(String securityManagerPolicy, boolean wrap, boolean unwrap) throws UtilsException {
+		
+		if(securityManagerPolicy==null || StringUtils.isEmpty(securityManagerPolicy)) {
+			return false;
+		}
+		
 		BYOKSecurityConfig secConfig = this.getKSMSecurityConfig(securityManagerPolicy);
 		
 		boolean govwayRuntime = false;
@@ -384,6 +422,9 @@ public class BYOKManager {
 			return false;
 		}
 		
+		return isBYOKRemoteGovWayNodeConfig(secConfig, wrap, unwrap);		
+	}
+	private boolean isBYOKRemoteGovWayNodeConfig(BYOKSecurityConfig secConfig, boolean wrap, boolean unwrap) throws UtilsException {
 		// ne basta uno
 		
 		if(wrap) {
@@ -401,6 +442,12 @@ public class BYOKManager {
 		}
 		
 		return false;
-		
+	}
+	
+	public String getSecurityEngineGovWay() {
+		return this.securityEngineGovWay;
+	}
+	public String getSecurityRemoteEngineGovWay() {
+		return this.securityRemoteEngineGovWay;
 	}
 }

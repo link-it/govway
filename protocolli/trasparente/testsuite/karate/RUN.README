@@ -133,14 +133,16 @@
   Questo perchè di base govway controlla i tempi medi risposta sulla finestra di tempo precedente per evitare di bloccare il sistema quando
 	una sola richiesta ha fatto superare il tempo medio risposta.
 
+- Impostare in /etc/govway/byok.properties il file protocolli/trasparente/testsuite/karate/byok/byok.properties
+
 - Modificare le properties del config_loader in modo che vengano caricate le policy utente e le regole di proxy pass.
 	Impostare in <.../distrib/properties/config_loader.cli.properties>
 
 		policy.enable=true
 		plugin.enable=true
 		configurazioneGenerale.enable=true
-		byok.config=/etc/govway/byok.properties
-		byok.internalConfig.securityEngine=runtime
+		
+		verificare il puntamento file 'byok.config' all'interno del file config_loader.cli.properties
 
 - Per variare il ritardo con cui vengono scritti gli eventi sul database:
 	In <govway_local.properties>:

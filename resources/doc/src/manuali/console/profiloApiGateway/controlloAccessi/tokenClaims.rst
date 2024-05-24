@@ -40,6 +40,7 @@ Le espressioni utilizzabili come parti dinamiche, risolte a runtime dal gateway,
 - ${system:NAME}: valore associato alla proprietà di sistema, indicata nella configurazione generale, con nome 'NAME'
 - ${env:NAME}: valore associato alla variabile di sistema con nome 'NAME'
 - ${java:NAME}: valore associato alla variabile java con nome 'NAME'
+- ${envj:NAME}: valore associato alla variabile di sistema o java con nome 'NAME'; la variabile viene cercata prima come variabile di sistema e se non presente come variabile della jvm
 
 Di seguito alcuni esempi:
 

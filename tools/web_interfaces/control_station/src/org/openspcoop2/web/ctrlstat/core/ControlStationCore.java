@@ -1207,31 +1207,6 @@ public class ControlStationCore {
 	
 	/** BYOK */
 
-	private static String byokInternalConfigSecurityEngineApiMode;
-	public static void setByokInternalConfigSecurityEngine(
-			String byokInternalConfigSecurityEngine) {
-		ControlStationCore.byokInternalConfigSecurityEngineApiMode = byokInternalConfigSecurityEngine;
-	}
-	private static String byokInternalConfigRemoteSecurityEngineApiMode;
-	public static void setByokInternalConfigRemoteSecurityEngine(
-			String byokInternalConfigRemoteSecurityEngine) {
-		ControlStationCore.byokInternalConfigRemoteSecurityEngineApiMode = byokInternalConfigRemoteSecurityEngine;
-	}
-
-	private String byokInternalConfigSecurityEngine = null;
-	private String byokInternalConfigRemoteSecurityEngine = null;
-	public String getByokInternalConfigSecurityEngine() {
-		if(ControlStationCore.isAPIMode()){/** && byokInternalConfigSecurityEngineApiMode!=null) {*/
-			return byokInternalConfigSecurityEngineApiMode;
-		}
-		return this.byokInternalConfigSecurityEngine;
-	}
-	public String getByokInternalConfigRemoteSecurityEngine() {
-		if(ControlStationCore.isAPIMode()){/**  && byokInternalConfigRemoteSecurityEngineApiMode!=null) { */
-			return byokInternalConfigRemoteSecurityEngineApiMode;
-		}
-		return this.byokInternalConfigRemoteSecurityEngine;
-	}
 	private boolean visualizzaInformazioniCifrate = false;
 	public boolean isVisualizzaInformazioniCifrate() {
 		return this.visualizzaInformazioniCifrate;
@@ -2694,8 +2669,6 @@ public class ControlStationCore {
 		this.isClusterDinamicoEnabled = core.isClusterDinamicoEnabled;
 		
 		/** BYOK **/
-		this.byokInternalConfigSecurityEngine = core.byokInternalConfigSecurityEngine;
-		this.byokInternalConfigRemoteSecurityEngine = core.byokInternalConfigRemoteSecurityEngine;
 		this.visualizzaInformazioniCifrate = core.visualizzaInformazioniCifrate;
 		this.byokWarningMessage = core.byokWarningMessage;
 		
@@ -3142,8 +3115,6 @@ public class ControlStationCore {
 			}
 			this.isRegistrazioneMessaggiMultipartPayloadParsingEnabled = consoleProperties.isRegistrazioneMessaggiMultipartPayloadParsingEnabled();
 			this.isClusterDinamicoEnabled = consoleProperties.isClusterDinamicoEnabled();
-			this.byokInternalConfigSecurityEngine = consoleProperties.getBYOKInternalConfigSecurityEngine();
-			this.byokInternalConfigRemoteSecurityEngine = consoleProperties.getBYOKInternalConfigRemoteSecurityEngine();
 			this.visualizzaInformazioniCifrate = consoleProperties.isVisualizzaInformazioniCifrate();
 			this.byokWarningMessage = consoleProperties.getVisualizzaInformazioniCifrateWarningMessage();
 			this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = consoleProperties.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata();
@@ -8929,11 +8900,11 @@ public class ControlStationCore {
 		}
 	}
 	public boolean isEnabledBYOK() {
-		String securityManagerPolicy = this.getByokInternalConfigSecurityEngine();
+		String securityManagerPolicy = BYOKManager.getSecurityEngineGovWayInstance();
 		return securityManagerPolicy!=null && StringUtils.isNotEmpty(securityManagerPolicy);
 	}
 	protected DriverBYOK getDriverBYOK(boolean wrap, boolean unwrap) throws UtilsException{
-		String securityManagerPolicy = this.getByokInternalConfigSecurityEngine();
+		String securityManagerPolicy = BYOKManager.getSecurityEngineGovWayInstance();
 		if(securityManagerPolicy!=null && StringUtils.isNotEmpty(securityManagerPolicy)) {
 			Map<String, Object> dynamicMap = new HashMap<>();
 			DynamicInfo dynamicInfo = new  DynamicInfo();
@@ -8943,7 +8914,7 @@ public class ControlStationCore {
 				initBYOKDynamicMapRemoteGovWayNode(dynamicMap, wrap, unwrap);
 			}
 			
-			return new DriverBYOK(ControlStationCore.log, securityManagerPolicy, this.getByokInternalConfigRemoteSecurityEngine(), dynamicMap, true);
+			return new DriverBYOK(ControlStationCore.log, securityManagerPolicy, BYOKManager.getSecurityRemoteEngineGovWayInstance(), dynamicMap, true);
 		}
 		return null;
 	}
@@ -9033,8 +9004,8 @@ public class ControlStationCore {
 			if(value==null || StringUtils.isEmpty(value) || !isEnabledBYOK()) {
 				return false;
 			}
-			String securityManagerPolicy = this.getByokInternalConfigSecurityEngine();
-			String driverSecurityManagerPolicy = this.getByokInternalConfigRemoteSecurityEngine();
+			String securityManagerPolicy = BYOKManager.getSecurityEngineGovWayInstance();
+			String driverSecurityManagerPolicy = BYOKManager.getSecurityRemoteEngineGovWayInstance();
 			if(driverSecurityManagerPolicy==null || StringUtils.isEmpty(driverSecurityManagerPolicy)) {
 				driverSecurityManagerPolicy = securityManagerPolicy;
 			}

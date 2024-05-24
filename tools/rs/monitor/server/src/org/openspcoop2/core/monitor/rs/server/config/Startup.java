@@ -107,8 +107,11 @@ public class Startup implements ServletContextListener {
 	
 	// LOG
 	
-	public static boolean initializedLog = false;
-	
+	private static boolean initializedLog = false;
+	public static boolean isInitializedLog() {
+		return initializedLog;
+	}
+
 	public static synchronized String initLog(){
 		
 		String confDir = null;
@@ -156,7 +159,7 @@ public class Startup implements ServletContextListener {
 	
 	// RESOURCES
 	
-	public static boolean initializedResources = false;
+	private static boolean initializedResources = false;
 	
 	public static synchronized void initResources(){
 		if(!Startup.initializedResources){
@@ -243,8 +246,8 @@ public class Startup implements ServletContextListener {
 				String secretsConfig = serverProperties.getBYOKEnvSecretsConfig();
 				if(byokManager!=null && StringUtils.isNotEmpty(secretsConfig)) {
 					Startup.log.info("Inizializzazione secrets in corso...");
-					String securityPolicy = serverProperties.getBYOKInternalConfigSecurityEngine();
-					String securityRemotePolicy = serverProperties.getBYOKInternalConfigRemoteSecurityEngine();
+					String securityPolicy = BYOKManager.getSecurityEngineGovWayInstance();
+					String securityRemotePolicy = BYOKManager.getSecurityRemoteEngineGovWayInstance();
 					
 					Map<String, Object> dynamicMap = new HashMap<>();
 					DynamicInfo dynamicInfo = new  DynamicInfo();
@@ -386,26 +389,29 @@ public class Startup implements ServletContextListener {
 			}catch(DriverRegistroServiziNotFound notFound) {	
 				// ignore
 			}
-			if(idsPdd!=null && !idsPdd.isEmpty()) {
-				for (String idPdd : idsPdd) {
-					FiltroRicercaSoggetti filtroSoggetti = new FiltroRicercaSoggetti();
-					filtroSoggetti.setNomePdd(idPdd);
-					List<IDSoggetto> idsSoggetti = null;
-					try {
-						idsSoggetti = driverDB.getAllIdSoggetti(filtroSoggetti);
-					}catch(DriverRegistroServiziNotFound notFound) {	
-						// ignore
-					}
-					if(idsSoggetti!=null && !idsSoggetti.isEmpty()) {
-						for (IDSoggetto idSoggetto : idsSoggetti) {
-							Utility.putIdentificativoPorta(idSoggetto.getTipo(), idSoggetto.getNome(), driverDB.getSoggetto(idSoggetto).getIdentificativoPorta());
-						}
-					}
-				}
-			}
+			initPdd(idsPdd, driverDB);
 			
 		} finally {
 			dbManager.releaseConnectionConfig(connection);
+		}
+	}
+	private static void initPdd(List<String> idsPdd, DriverRegistroServiziDB driverDB) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		if(idsPdd!=null && !idsPdd.isEmpty()) {
+			for (String idPdd : idsPdd) {
+				FiltroRicercaSoggetti filtroSoggetti = new FiltroRicercaSoggetti();
+				filtroSoggetti.setNomePdd(idPdd);
+				List<IDSoggetto> idsSoggetti = null;
+				try {
+					idsSoggetti = driverDB.getAllIdSoggetti(filtroSoggetti);
+				}catch(DriverRegistroServiziNotFound notFound) {	
+					// ignore
+				}
+				if(idsSoggetti!=null && !idsSoggetti.isEmpty()) {
+					for (IDSoggetto idSoggetto : idsSoggetti) {
+						Utility.putIdentificativoPorta(idSoggetto.getTipo(), idSoggetto.getNome(), driverDB.getSoggetto(idSoggetto).getIdentificativoPorta());
+					}
+				}
+			}
 		}
 	}
 	

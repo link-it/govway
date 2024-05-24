@@ -471,6 +471,10 @@ public class DynamicUtils {
 		dynamicMap.put(Costanti.MAP_JAVA_PROPERTY, javaPropertiesReader);
 		dynamicMap.put(Costanti.MAP_JAVA_PROPERTY.toLowerCase(), javaPropertiesReader);
 		
+		EnvironmentJavaPropertiesReader envJavaPropertiesReader = new EnvironmentJavaPropertiesReader(log);
+		dynamicMap.put(Costanti.MAP_ENV_JAVA_PROPERTY, envJavaPropertiesReader);
+		dynamicMap.put(Costanti.MAP_ENV_JAVA_PROPERTY.toLowerCase(), envJavaPropertiesReader);
+		
 		// questi sottostanti, non sono disponnibili sul connettore
 		if(dynamicInfo!=null && dynamicInfo.getUrl()!=null) {
 			URLRegExpExtractor urle = new URLRegExpExtractor(dynamicInfo.getUrl(), log);
@@ -796,6 +800,16 @@ public class DynamicUtils {
 				forceStartWithDollaro, response,
 				onlyValidate);
 		
+		// conversione env_java properties
+		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
+				TemplateType.ENV_JAVA,
+				forceStartWithDollaro, request,
+				onlyValidate);
+		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
+				TemplateType.ENV_JAVA,
+				forceStartWithDollaro, response,
+				onlyValidate);
+		
 		return tmp;
 	}
 	
@@ -834,6 +848,10 @@ public class DynamicUtils {
 		case JAVA:
 			istruzione = Costanti.MAP_JAVA_PROPERTY;
 			prefix = Costanti.MAP_JAVA_PROPERTY_PREFIX;
+			break;
+		case ENV_JAVA:
+			istruzione = Costanti.MAP_ENV_JAVA_PROPERTY;
+			prefix = Costanti.MAP_ENV_JAVA_PROPERTY_PREFIX;
 			break;
 		}
 		
@@ -916,54 +934,11 @@ public class DynamicUtils {
 				pattern = pattern.substring(0,positionChiusura);
 				
 				String complete = tmp.substring(indexOfStart, positionChiusura+indexOfStart+prefix.length()+1);
-				String value = null;
-				if(!onlyValidate) {
-					Object o = dynamicMap.get(istruzione);
-					if(o==null) {
-						throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+"non utilizzabile in questo contesto");
-					}
-					switch (templateType) {
-					case XML:
-					case JSON:
-						if( !(o instanceof PatternExtractor) ) {
-							throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+NON_UTILIZZABILE_IN_QUESTO_CONTESTO+buildExtractorWrongClassMsg(o));
-						}
-						PatternExtractor patternExtractor = (PatternExtractor) o;
-						value = patternExtractor.read(pattern);
-						break;
-					case URL:
-						if( !(o instanceof URLRegExpExtractor) ) {
-							throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+NON_UTILIZZABILE_IN_QUESTO_CONTESTO+buildExtractorWrongClassMsg(o));
-						}
-						URLRegExpExtractor urlExtractor = (URLRegExpExtractor) o;
-						value = urlExtractor.read(pattern);
-						break;
-					case SYSTEM:
-						if( !(o instanceof SystemPropertiesReader) ) {
-							throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+NON_UTILIZZABILE_IN_QUESTO_CONTESTO+buildReaderWrongClassMsg(o));
-						}
-						SystemPropertiesReader systemPropertiesReader = (SystemPropertiesReader) o;
-						value = systemPropertiesReader.read(pattern);
-						break;
-					case ENV:
-						if( !(o instanceof EnvironmentPropertiesReader) ) {
-							throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+NON_UTILIZZABILE_IN_QUESTO_CONTESTO+buildReaderWrongClassMsg(o));
-						}
-						EnvironmentPropertiesReader environmentPropertiesReader = (EnvironmentPropertiesReader) o;
-						value = environmentPropertiesReader.read(pattern);
-						break;
-					case JAVA:
-						if( !(o instanceof JavaPropertiesReader) ) {
-							throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+NON_UTILIZZABILE_IN_QUESTO_CONTESTO+buildReaderWrongClassMsg(o));
-						}
-						JavaPropertiesReader javaPropertiesReader = (JavaPropertiesReader) o;
-						value = javaPropertiesReader.read(pattern);
-						break;
-					}
-				}
-				if(value==null) {
-					value = "";
-				}
+				String value = getValue(dynamicMap, 
+						templateType, 
+						onlyValidate,
+						istruzione,
+						pattern);
 				tmp = tmp.replace(complete, value);
 				tmpLowerCase = tmp.toLowerCase();
 				maxIteration--;
@@ -973,6 +948,80 @@ public class DynamicUtils {
 		return tmp;
 	}
 	
+	private static String getValue(Map<String,Object> dynamicMap, 
+			TemplateType templateType, 
+			boolean onlyValidate,
+			String istruzione,
+			String pattern) throws DynamicException {
+		String value = null;
+		if(!onlyValidate) {
+			Object o = dynamicMap.get(istruzione);
+			if(o==null) {
+				throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+"non utilizzabile in questo contesto");
+			}
+			switch (templateType) {
+			case XML:
+			case JSON:
+				if( !(o instanceof PatternExtractor) ) {
+					throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+NON_UTILIZZABILE_IN_QUESTO_CONTESTO+buildExtractorWrongClassMsg(o));
+				}
+				PatternExtractor patternExtractor = (PatternExtractor) o;
+				value = patternExtractor.read(pattern);
+				break;
+			case URL:
+				if( !(o instanceof URLRegExpExtractor) ) {
+					throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+NON_UTILIZZABILE_IN_QUESTO_CONTESTO+buildExtractorWrongClassMsg(o));
+				}
+				URLRegExpExtractor urlExtractor = (URLRegExpExtractor) o;
+				value = urlExtractor.read(pattern);
+				break;
+			case SYSTEM:
+				value = getSystemProperty(o, istruzione, pattern);
+				break;
+			case ENV:
+				value = getEnvProperty(o, istruzione, pattern);
+				break;
+			case JAVA:
+				value = getJavaProperty(o, istruzione, pattern);
+				break;
+			case ENV_JAVA:
+				value = getEnvJavaProperty(o, istruzione, pattern);
+				break;
+			}
+		}
+		if(value==null) {
+			value = "";
+		}
+		return value;
+	}
+	private static String getSystemProperty(Object o, String istruzione, String pattern) throws DynamicException {
+		if( !(o instanceof SystemPropertiesReader) ) {
+			throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+NON_UTILIZZABILE_IN_QUESTO_CONTESTO+buildReaderWrongClassMsg(o));
+		}
+		SystemPropertiesReader systemPropertiesReader = (SystemPropertiesReader) o;
+		return systemPropertiesReader.read(pattern);
+	}
+	private static String getEnvProperty(Object o, String istruzione, String pattern) throws DynamicException {
+		if( !(o instanceof EnvironmentPropertiesReader) ) {
+			throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+NON_UTILIZZABILE_IN_QUESTO_CONTESTO+buildReaderWrongClassMsg(o));
+		}
+		EnvironmentPropertiesReader environmentPropertiesReader = (EnvironmentPropertiesReader) o;
+		return environmentPropertiesReader.read(pattern);
+	}
+	private static String getJavaProperty(Object o, String istruzione, String pattern) throws DynamicException {
+		if( !(o instanceof JavaPropertiesReader) ) {
+			throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+NON_UTILIZZABILE_IN_QUESTO_CONTESTO+buildReaderWrongClassMsg(o));
+		}
+		JavaPropertiesReader javaPropertiesReader = (JavaPropertiesReader) o;
+		return javaPropertiesReader.read(pattern);
+	}
+	private static String getEnvJavaProperty(Object o, String istruzione, String pattern) throws DynamicException {
+		if( !(o instanceof EnvironmentJavaPropertiesReader) ) {
+			throw new DynamicException(buildPrefixIstruzioneMsgError(istruzione)+NON_UTILIZZABILE_IN_QUESTO_CONTESTO+buildReaderWrongClassMsg(o));
+		}
+		EnvironmentJavaPropertiesReader envJavaPropertiesReader = (EnvironmentJavaPropertiesReader) o;
+		return envJavaPropertiesReader.read(pattern);
+	}
 	private static String buildPrefixIstruzioneMsgError(String istruzione) {
 		return "Trovata istruzione '"+istruzione+"' ";
 	}
@@ -1423,6 +1472,6 @@ public class DynamicUtils {
 
 enum TemplateType {
 	
-	XML, JSON, URL, SYSTEM, ENV, JAVA; 
+	XML, JSON, URL, SYSTEM, ENV, JAVA, ENV_JAVA; 
 	
 }

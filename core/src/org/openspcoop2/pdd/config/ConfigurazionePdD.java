@@ -122,6 +122,7 @@ import org.openspcoop2.utils.cache.CacheResponse;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -557,7 +558,7 @@ public class ConfigurazionePdD  {
 			}
 
 			if(this.driverConfigurazionePdD instanceof IDriverBYOKConfig) {
-				String securityRuntimePolicy = this.openspcoopProperties.getBYOKConfigInternalConfigSecurityEngine();
+				String securityRuntimePolicy = BYOKManager.getSecurityEngineGovWayInstance();
 				if(securityRuntimePolicy!=null) {
 					DriverBYOK driverBYOK = new DriverBYOK(this.logger, securityRuntimePolicy, securityRuntimePolicy);
 					IDriverBYOKConfig c = (IDriverBYOKConfig) this.driverConfigurazionePdD;

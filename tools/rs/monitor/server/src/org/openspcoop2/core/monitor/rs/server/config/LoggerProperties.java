@@ -136,7 +136,7 @@ public class LoggerProperties {
 
 	
 	public static Logger getLoggerCore(){
-		if(!Startup.initializedLog){
+		if(!Startup.isInitializedLog()){
 			Startup.initLog();
 		}
 		return LoggerWrapperFactory.getLogger("monitor.core");

@@ -364,8 +364,8 @@ public class InitListener implements ServletContextListener {
 				String secretsConfig = consoleProperties.getBYOKEnvSecretsConfig();
 				if(byokManager!=null && StringUtils.isNotEmpty(secretsConfig)) {
 					InitListener.logInfo("Inizializzazione secrets in corso...");
-					String securityPolicy = consoleProperties.getBYOKInternalConfigSecurityEngine();
-					String securityRemotePolicy = consoleProperties.getBYOKInternalConfigRemoteSecurityEngine();
+					String securityPolicy = BYOKManager.getSecurityEngineGovWayInstance();
+					String securityRemotePolicy = BYOKManager.getSecurityRemoteEngineGovWayInstance();
 					
 					Map<String, Object> dynamicMap = new HashMap<>();
 					DynamicInfo dynamicInfo = new  DynamicInfo();

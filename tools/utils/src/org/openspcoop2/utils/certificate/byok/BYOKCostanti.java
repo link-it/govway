@@ -186,4 +186,8 @@ public class BYOKCostanti {
 	public static final String GOVWAY_RUNTIME_ENDPOINT_UNWRAP="endpoint-unwrap";
 	public static final String GOVWAY_RUNTIME_USERNAME="username";
 	public static final String GOVWAY_RUNTIME_PASSWORD="password";
+	
+	
+	public static final String PROPERTY_GOVWAY_SECURITY = "govway.security";
+	public static final String PROPERTY_GOVWAY_SECURITY_RUNTIME = "govway.security.runtime";
 }

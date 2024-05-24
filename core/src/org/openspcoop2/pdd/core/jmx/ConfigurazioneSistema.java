@@ -79,6 +79,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsMultiException;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
@@ -1020,7 +1021,28 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		}
 	}
 	
-	private boolean isPasswordProperty(String key) {
+	private boolean isPasswordProperty(String key, boolean java) {
+		
+		try {
+			MapProperties mapProperties = MapProperties.getInstance();
+			if(mapProperties!=null && !MapProperties.OBFUSCATED_MODE_NON_INIZIALIZZATO.equals(mapProperties.getObfuscateModeDescription())) {
+				List<String> mapObfuscateKey = java ? mapProperties.getJavaMap().keys() : mapProperties.getEnvMap().keys();
+				if(mapObfuscateKey.contains(key)) {
+					return false; // gestione effettuata dentro il file govway.map
+				}
+			}
+			
+			BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
+			if(secretsProperties!=null && !MapProperties.OBFUSCATED_MODE_NON_INIZIALIZZATO.equals(secretsProperties.getObfuscateModeDescription())) {
+				List<String> secretsObfuscateKey = java ? secretsProperties.getJavaMap().keys() : secretsProperties.getEnvMap().keys();
+				if(secretsObfuscateKey.contains(key)) {
+					return false; // gestione effettuata dentro il file govway.secrets
+				}
+			}
+		}catch(Exception e) {
+			// ignore
+		}
+		
 		return key.toLowerCase().contains("password");
 	}
 	private boolean isNetworkProperties(boolean allNetwork, String key) {
@@ -1097,10 +1119,10 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			Object value = p.get(key);
 			if(value instanceof String) {
 				if(mapObfuscateKey!=null && mapObfuscateKey.contains(key)) {
-					value = mapProperties.obfuscate((String)value);
+					value = mapProperties.obfuscateJavaProperty(key, (String)value);
 				}
 				else if(secretsObfuscateKey!=null && secretsObfuscateKey.contains(key)) {
-					value = secretsProperties.obfuscate((String)value);
+					value = secretsProperties.obfuscateJavaProperty(key, (String)value);
 				}
 			}
 			
@@ -1130,7 +1152,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		}
 		else if(includeNetwork && !includeNotNetwork) {
 			if(this.isNetworkProperties(allNetwork, key)&&
-				(includePassword || !isPasswordProperty(key)) 
+				(includePassword || !isPasswordProperty(key, true)) 
 				){
 				ll.add(key);
 			}
@@ -1141,7 +1163,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			addInformazioniProprietaJavaIncludeNotNetwork(ll, key);
 		}
 		else {
-			if(includePassword || !isPasswordProperty(key)) {
+			if(includePassword || !isPasswordProperty(key, true)) {
 				ll.add(key);
 			}
 		}
@@ -1149,7 +1171,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	private void addInformazioniProprietaJavaIncludeNotNetwork(List<String> ll, String key) {
 		if( 
 				(!this.isNetworkProperties(true, key)) &&
-				(includePassword || !isPasswordProperty(key)) 
+				(includePassword || !isPasswordProperty(key, true)) 
 			){
 			ll.add(key);
 		}
@@ -1208,10 +1230,10 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			
 			String value = map.get(key);
 			if(mapObfuscateKey!=null && mapObfuscateKey.contains(key)) {
-				value = mapProperties.obfuscate(value);
+				value = mapProperties.obfuscateEnvProperty(key, value);
 			}
 			else if(secretsObfuscateKey!=null && secretsObfuscateKey.contains(key)) {
-				value = secretsProperties.obfuscate(value);
+				value = secretsProperties.obfuscateEnvProperty(key, value);
 			}
 			
 			if(bf.length()>0){
@@ -1438,7 +1460,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String byokUnwrap(String value){
 		try {
-			String securityRuntimePolicy = this.openspcoopProperties.getBYOKConfigInternalConfigSecurityEngine();
+			String securityRuntimePolicy = BYOKManager.getSecurityEngineGovWayInstance();
 			if(securityRuntimePolicy!=null) {
 				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy, securityRuntimePolicy);
 				return driverBYOK.unwrapAsString(value, securityRuntimePolicy, true);
@@ -1452,7 +1474,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String byokBase64Unwrap(String value){
 		try {
-			String securityRuntimePolicy = this.openspcoopProperties.getBYOKConfigInternalConfigSecurityEngine();
+			String securityRuntimePolicy = BYOKManager.getSecurityEngineGovWayInstance();
 			if(securityRuntimePolicy!=null) {
 				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy, securityRuntimePolicy);
 				byte [] c = driverBYOK.unwrap(value, securityRuntimePolicy, true);
@@ -1467,7 +1489,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String byokHexUnwrap(String value){
 		try {
-			String securityRuntimePolicy = this.openspcoopProperties.getBYOKConfigInternalConfigSecurityEngine();
+			String securityRuntimePolicy = BYOKManager.getSecurityEngineGovWayInstance();
 			if(securityRuntimePolicy!=null) {
 				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy, securityRuntimePolicy);
 				byte [] c = driverBYOK.unwrap(value, securityRuntimePolicy, true);
@@ -1482,7 +1504,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String byokWrap(String value){
 		try {
-			String securityRuntimePolicy = this.openspcoopProperties.getBYOKConfigInternalConfigSecurityEngine();
+			String securityRuntimePolicy = BYOKManager.getSecurityEngineGovWayInstance();
 			if(securityRuntimePolicy!=null) {
 				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy, securityRuntimePolicy);
 				BYOKWrappedValue v = driverBYOK.wrap(value);
@@ -1504,7 +1526,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		try {
 			byte[] decoded = Base64Utilities.decode(value);
 			
-			String securityRuntimePolicy = this.openspcoopProperties.getBYOKConfigInternalConfigSecurityEngine();
+			String securityRuntimePolicy = BYOKManager.getSecurityEngineGovWayInstance();
 			if(securityRuntimePolicy!=null) {
 				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy, securityRuntimePolicy);
 				BYOKWrappedValue v = driverBYOK.wrap(decoded);
@@ -1526,7 +1548,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		try {
 			byte[] decoded = HexBinaryUtilities.decode(value);
 			
-			String securityRuntimePolicy = this.openspcoopProperties.getBYOKConfigInternalConfigSecurityEngine();
+			String securityRuntimePolicy = BYOKManager.getSecurityEngineGovWayInstance();
 			if(securityRuntimePolicy!=null) {
 				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy, securityRuntimePolicy);
 				BYOKWrappedValue v = driverBYOK.wrap(decoded);

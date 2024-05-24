@@ -1147,12 +1147,6 @@ public class PddMonitorProperties {
 
 	// Impostazioni sicurezza
 	
-	public String getBYOKInternalConfigSecurityEngine() throws UtilsException{
-		return this.appProperties.getBYOKInternalConfigSecurityEngine();
-	}
-	public String getBYOKInternalConfigRemoteSecurityEngine() throws UtilsException{
-		return this.appProperties.getBYOKInternalConfigRemoteSecurityEngine();
-	}
 	public String getBYOKEnvSecretsConfig() throws UtilsException{
 		return this.appProperties.getBYOKEnvSecretsConfig();
 	}

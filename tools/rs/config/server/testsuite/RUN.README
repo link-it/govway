@@ -15,7 +15,7 @@ Configurare l'ambiente di esecuzione dei test:
 
 	- cp tools/utils/src/org/openspcoop2/utils/certificate/test/govway_test_hsm.properties  /etc/govway/hsm.properties
 
-	- ATTENZIONE!!! Non abilitare il byok tramite la proprietà 'byok.internalConfig.securityEngine' altrimenti i test di comparazione falliscono
+	- ATTENZIONE!!! Non abilitare il byok tramite la proprietà 'govway.security' nel file 'byok.properties' altrimenti i test di comparazione falliscono
 
 	- Riavviare GovWay e procedere con i test
 

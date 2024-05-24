@@ -51,7 +51,7 @@ public class ServerProperties  {
 	private static ServerProperties serverProperties = null;
 	
 	
-	public ServerProperties(String confDir,Logger log) throws Exception {
+	public ServerProperties(String confDir,Logger log) throws UtilsException {
 
 		if(log!=null)
 			this.log = log;
@@ -64,17 +64,18 @@ public class ServerProperties  {
 		try{  
 			properties = DatasourceProperties.class.getResourceAsStream("/rs-api-monitor.properties");
 			if(properties==null){
-				throw new Exception("File '/rs-api-monitor.properties' not found");
+				throw new UtilsException("File '/rs-api-monitor.properties' not found");
 			}
 			propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'rs-api-monitor.properties': \n\n"+e.getMessage());
-		    throw new Exception("RS Api MonitorProperties initialize error: "+e.getMessage());
+			String error="Riscontrato errore durante la lettura del file 'rs-api-monitor.properties': "+e.getMessage();
+			this.log.error(error);
+		    throw new UtilsException("RS Api MonitorProperties initialize error: "+e.getMessage());
 		}finally{
 		    try{
 				if(properties!=null)
 				    properties.close();
-		    }catch(Throwable er){
+		    }catch(Exception er){
 		    	// close
 		    }
 		}
@@ -275,7 +276,8 @@ public class ServerProperties  {
 		return this.readProperty(false, "hsm.config");
 	}
 	public boolean isHSMRequired() throws UtilsException {
-		return Boolean.parseBoolean(this.readProperty(true, "hsm.required"));
+		BooleanNullable b = this.readBooleanProperty(false, "hsm.required");
+		return parse(b, false);
 	}
 	public boolean isHSMKeyPasswordConfigurable() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(false, "hsm.keyPassword");
@@ -290,12 +292,6 @@ public class ServerProperties  {
 	public boolean isBYOKRequired() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(false, "byok.required");
 		return parse(b, false);
-	}
-	public String getBYOKInternalConfigSecurityEngine() throws UtilsException{
-		return this.readProperty(false, "byok.internalConfig.securityEngine");
-	}
-	public String getBYOKInternalConfigRemoteSecurityEngine() throws UtilsException{
-		return this.readProperty(false, "byok.internalConfig.securityEngine.remote");
 	}
 	public String getBYOKEnvSecretsConfig() throws UtilsException{
 		return this.readProperty(false, "byok.env.secrets.config");

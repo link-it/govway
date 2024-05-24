@@ -677,12 +677,6 @@ public class ConsoleProperties {
 		BooleanNullable b = this.readBooleanProperty(false, "byok.required");
 		return parse(b, false);
 	}
-	public String getBYOKInternalConfigSecurityEngine() throws UtilsException{
-		return this.readProperty(false, "byok.internalConfig.securityEngine");
-	}
-	public String getBYOKInternalConfigRemoteSecurityEngine() throws UtilsException{
-		return this.readProperty(false, "byok.internalConfig.securityEngine.remote");
-	}
 	public String getBYOKEnvSecretsConfig() throws UtilsException{
 		return this.readProperty(false, "byok.env.secrets.config");
 	}

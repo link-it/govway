@@ -186,22 +186,6 @@
 			<param name="token" value="byok.config"/>
 			<param name="value" value="${work_dir}/byok.properties"/>
 		</antcall>
-		<antcall target="set_property">
-		    <param name="file" value="${file}"/>
-			<param name="token" value="byok.internalConfig.securityEngine"/>
-			<param name="value" value="runtime"/>
-		</antcall>
-		<!-- Per adesso si assume che la chiave sia su tutti gli ambienti run e manager
-		<antcall target="set_property">
-		    <param name="file" value="${file}"/>
-			<param name="token" value="byok.internalConfig.securityEngine"/>
-			<param name="value" value="manager"/>
-		</antcall>
-		<antcall target="set_property">
-		    <param name="file" value="${file}"/>
-			<param name="token" value="byok.internalConfig.securityEngine.remote"/>
-			<param name="value" value="runtime"/>
-		</antcall>  -->
 		
 		<!-- Secrets -->
 		<antcall target="set_property">

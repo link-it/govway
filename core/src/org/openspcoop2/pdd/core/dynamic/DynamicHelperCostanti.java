@@ -138,6 +138,7 @@ public class DynamicHelperCostanti {
 	public static final String LABEL_CONFIGURAZIONE_INFO_OBJECT_SYSTEM = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SYSTEM_PROPERTY+"</b>: permette di accedere alle proprietà di sistema indicate nella configurazione generale ("+org.openspcoop2.pdd.core.dynamic.Costanti.getTypeSystemProperty()+")";
 	public static final String LABEL_CONFIGURAZIONE_INFO_OBJECT_ENV = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ENV_PROPERTY+"</b>: permette di accedere alle variabili di sistema ("+org.openspcoop2.pdd.core.dynamic.Costanti.getTypeEnvProperty()+")";
 	public static final String LABEL_CONFIGURAZIONE_INFO_OBJECT_JAVA = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_JAVA_PROPERTY+"</b>: permette di accedere alle variabili della jvm ("+org.openspcoop2.pdd.core.dynamic.Costanti.getTypeJavaProperty()+")";
+	public static final String LABEL_CONFIGURAZIONE_INFO_OBJECT_ENV_JAVA = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ENV_JAVA_PROPERTY+"</b>: permette di recuperare una variabile cercandola prima come variabile di sistema e se non presente come variabile della jvm ("+org.openspcoop2.pdd.core.dynamic.Costanti.getTypeEnvJavaProperty()+")";
 	public static final String LABEL_CONFIGURAZIONE_INFO_OBJECT_ERROR_HANDLER = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ERROR_HANDLER_OBJECT+"</b>: permette di generare risposte personalizzate che segnalano l'impossibilità di proseguire la trasformazione ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ERROR_HANDLER_OBJECT+")");
 	public static final String LABEL_CONFIGURAZIONE_INFO_OBJECT_CLASS_FREEMARKER = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_CLASS_LOAD_STATIC+"</b>: permette di definire classi (es. class[\"org.apache.commons.lang.StringUtils\"] ).");
 	public static final String LABEL_CONFIGURAZIONE_INFO_OBJECT_NEW_INSTANCE_FREEMARKER = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_CLASS_NEW_INSTANCE+"</b>: permette di istanziare una classe (es. new(\"java.lang.StringBuilder\",\"Commento Iniziale\") ).");
@@ -190,6 +191,7 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_SYSTEM);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_ENV);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_JAVA);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_ENV_JAVA);
 	}
 	private static final List<String> LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI = new ArrayList<>();
 	static {
@@ -322,6 +324,7 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_SYSTEM);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_ENV);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_JAVA);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_ENV_JAVA);
 	}
 	private static final List<String> LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE = new ArrayList<>();
 	static {
@@ -456,7 +459,8 @@ public class DynamicHelperCostanti {
 	public static final String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SYSTEM = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SYSTEM_PROPERTY+":NAME}</b>: valore associato alla proprietà di sistema, indicata nella configurazione generale, con nome 'NAME'";
 	public static final String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_ENV = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ENV_PROPERTY+":NAME}</b>: valore associato alla variabile di sistema con nome 'NAME'";
 	public static final String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_JAVA = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_JAVA_PROPERTY+":NAME}</b>: valore associato alla variabile java con nome 'NAME'";
-	
+	public static final String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_ENV_JAVA = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ENV_JAVA_PROPERTY+":NAME}</b>: valore associato alla variabile di sistema o java con nome 'NAME'; la variabile viene cercata prima come variabile di sistema e se non presente come variabile della jvm";
+		
 	public static final String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_DATA = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_DATE_OBJECT+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+":FORMAT}</b>: data di elaborazione del messaggio di risposta; il formato fornito deve essere conforme a quanto richiesto dalla classe java 'java.text.SimpleDateFormat' (es. ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_DATE_OBJECT+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+":yyyyMMdd_HHmmssSSS})";
 	public static final String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_HEADER = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_HEADER+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+":NAME}</b>: valore presente nell'header http della risposta che possiede il nome 'NAME'";
 	public static final String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_HEADER_VALUES = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_HEADER_RESPONSE_VALUES+":NAME}</b>: valori presenti negli header http della risposta che possiedono il nome 'NAME'";
@@ -500,6 +504,7 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SYSTEM);
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_ENV);
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_JAVA);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_ENV_JAVA);
 	}
 	
 	// NOTA: usato anche in ModIConsoleCostanti
@@ -607,6 +612,7 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SYSTEM);
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_ENV);
 		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_JAVA);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_ENV_JAVA);
 	}
 	
 	private static final List<String> LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE = new ArrayList<>();
@@ -767,6 +773,7 @@ public class DynamicHelperCostanti {
 	public static final String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SYSTEM = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SYSTEM_PROPERTY+":NAME}</b>: valore associato alla proprietà di sistema, indicata nella configurazione generale, con nome 'NAME'";
 	public static final String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_ENV = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ENV_PROPERTY+":NAME}</b>: valore associato alla variabile di sistema con nome 'NAME'";
 	public static final String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_JAVA = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_JAVA_PROPERTY+":NAME}</b>: valore associato alla variabile java con nome 'NAME'";
+	public static final String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_ENV_JAVA = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ENV_JAVA_PROPERTY+":NAME}</b>: valore associato alla variabile di sistema o java con nome 'NAME'; la variabile viene cercata prima come variabile di sistema e se non presente come variabile della jvm";
 	
 	private static final List<String> LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_REST_VALORI = new ArrayList<>();
 	static {
@@ -795,6 +802,7 @@ public class DynamicHelperCostanti {
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SYSTEM);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_ENV);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_JAVA);
+		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_ENV_JAVA);
 	}
 	public static List<String> getLABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_REST_VALORI(boolean modi, boolean fruizione) {
 		if(!modi || fruizione) {
@@ -837,6 +845,7 @@ public class DynamicHelperCostanti {
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SYSTEM);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_ENV);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_JAVA);
+		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_ENV_JAVA);
 	}
 	public static List<String> getLABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SOAP_VALORI(boolean modi, boolean fruizione) {
 		if(!modi || fruizione) {
@@ -904,6 +913,7 @@ public class DynamicHelperCostanti {
 	public static final String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CLAIMS_SYSTEM = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SYSTEM_PROPERTY+":NAME}</b>: valore associato alla proprietà di sistema, indicata nella configurazione generale, con nome 'NAME'";
 	public static final String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CLAIMS_ENV = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ENV_PROPERTY+":NAME}</b>: valore associato alla variabile di sistema con nome 'NAME'";
 	public static final String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CLAIMS_JAVA = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_JAVA_PROPERTY+":NAME}</b>: valore associato alla variabile java con nome 'NAME'";
+	public static final String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CLAIMS_ENV_JAVA = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ENV_JAVA_PROPERTY+":NAME}</b>: valore associato alla variabile di sistema o java con nome 'NAME'; la variabile viene cercata prima come variabile di sistema e se non presente come variabile della jvm";
 		
 	private static final List<String> LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_REST_VALORI = new ArrayList<>();
 	static {
@@ -934,6 +944,7 @@ public class DynamicHelperCostanti {
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CLAIMS_SYSTEM);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CLAIMS_ENV);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CLAIMS_JAVA);
+		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_REST_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CLAIMS_ENV_JAVA);
 	}
 	public static List<String> getLABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_REST_VALORI(boolean modi, boolean fruizione) {
 		if(!modi || fruizione) {
@@ -978,6 +989,7 @@ public class DynamicHelperCostanti {
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CLAIMS_SYSTEM);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CLAIMS_ENV);
 		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CLAIMS_JAVA);
+		LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOAP_VALORI.add(LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CLAIMS_ENV_JAVA);
 	}
 	public static List<String> getLABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOAP_VALORI(boolean modi, boolean fruizione) {
 		if(!modi || fruizione) {

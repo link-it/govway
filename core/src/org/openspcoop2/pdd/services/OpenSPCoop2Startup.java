@@ -627,7 +627,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try {
 				String secretsConfig = propertiesReader.getBYOKEnvSecretsConfig();
 				if(byokManager!=null && StringUtils.isNotEmpty(secretsConfig)) {
-					String securityPolicy = propertiesReader.getBYOKConfigInternalConfigSecurityEngine();
+					String securityPolicy = BYOKManager.getSecurityEngineGovWayInstance();
 					BYOKMapProperties.initialize(OpenSPCoop2Startup.log, secretsConfig, propertiesReader.isBYOKEnvSecretsConfigRequired(), 
 							securityPolicy, securityPolicy, 
 							null, false);
@@ -2394,8 +2394,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 			// inizializzo registri
 			DriverBYOK driverBYOK = null;
-			if(propertiesReader.getBYOKConfigInternalConfigSecurityEngine()!=null) {
-				driverBYOK = new DriverBYOK(logCore, propertiesReader.getBYOKConfigInternalConfigSecurityEngine(), propertiesReader.getBYOKConfigInternalConfigSecurityEngine());
+			if(BYOKManager.getSecurityEngineGovWayInstance()!=null) {
+				driverBYOK = new DriverBYOK(logCore, BYOKManager.getSecurityEngineGovWayInstance(), BYOKManager.getSecurityEngineGovWayInstance());
 			}
 			boolean isInitializeRegistro = 
 				RegistroServiziReader.initialize(accessoRegistro,

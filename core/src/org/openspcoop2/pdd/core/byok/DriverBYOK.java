@@ -72,8 +72,12 @@ public class DriverBYOK implements IDriverBYOK {
 	}
 	public DriverBYOK(Logger log, String securityPolicy, String securityRemotePolicy, Map<String, Object> dynamicMapParam, boolean checkJmxPrefixOperazioneNonRiuscita) {
 		this.log = log;
-		this.securityPolicy = securityPolicy;
-		this.securityRemotePolicy = securityRemotePolicy;
+		if(securityPolicy!=null && StringUtils.isNotEmpty(securityPolicy)) {
+			this.securityPolicy = securityPolicy;
+		}
+		if(securityRemotePolicy!=null && StringUtils.isNotEmpty(securityRemotePolicy)) {
+			this.securityRemotePolicy = securityRemotePolicy;
+		}
 		this.dynamicMap = dynamicMapParam==null ? new HashMap<>() : dynamicMapParam;
 		this.checkJmxPrefixOperazioneNonRiuscita = checkJmxPrefixOperazioneNonRiuscita;
 	}

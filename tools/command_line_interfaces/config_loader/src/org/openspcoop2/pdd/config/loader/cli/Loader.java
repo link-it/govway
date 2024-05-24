@@ -25,6 +25,8 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.naming.Context;
@@ -40,6 +42,9 @@ import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
+import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
+import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.protocol.basic.registry.ConfigIntegrationReader;
 import org.openspcoop2.protocol.basic.registry.RegistryReader;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -58,8 +63,11 @@ import org.openspcoop2.protocol.sdk.archive.IArchive;
 import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.certificate.byok.BYOKManager;
+import org.openspcoop2.utils.certificate.hsm.HSMManager;
+import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
+import org.openspcoop2.utils.properties.MapProperties;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.security.ProviderUtils;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
@@ -84,6 +92,9 @@ public class Loader {
 	}
 	private static void logCoreInfo(String msg) {
 		logCore.info(msg);
+	}
+	private static void logCoreError(String msg, Exception e) {
+		logCore.error(msg,e);
 	}
 	private static Logger logSql = LoggerWrapperFactory.getLogger(Loader.class);
 	
@@ -168,6 +179,24 @@ public class Loader {
 			logCoreDebug("Raccolta parametri terminata");
 			
 			
+			// Map (environment)
+			initMap(loaderProperties);
+			
+			// Load Security Provider
+			if(loaderProperties.isSecurityLoadBouncyCastleProvider()) {
+				initBouncyCastle();
+			}
+			
+			// inizializzo HSM Manager
+			initHsm(loaderProperties);
+			
+			// inizializzo BYOK Manager
+			BYOKManager byokManager = initBYOK(loaderProperties);
+			
+			// Secrets (environment)
+			initSecrets(loaderProperties, byokManager);
+			
+			
 			logCoreDebug("Inizializzazione connessione database in corso...");
 			
 			LoaderDatabaseProperties databaseProperties = LoaderDatabaseProperties.getInstance();
@@ -212,13 +241,7 @@ public class Loader {
 			initUtenze(loaderProperties);
 			
 			initConnettori(confDir, protocolloDefault);
-			
-			if(loaderProperties.isSecurityLoadBouncyCastleProvider()) {
-				initBouncyCastle();
-			}
-			
-			initBYOK(loaderProperties.getBYOKConfigurazione(), loaderProperties.isBYOKRequired());
-			
+						
 			logCoreDebug("Inizializzazione risorse libreria terminata");
 
 			
@@ -255,13 +278,13 @@ public class Loader {
 					new org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager(connectionSQL, propertiesAllarmi, logSql);
 
 			// BYOK
-			String securityRuntimePolicy = loaderProperties.getBYOKInternalConfigSecurityEngine();
+			String securityRuntimePolicy = BYOKManager.getSecurityEngineGovWayInstance();
 			if(securityRuntimePolicy!=null) {
 				logCoreDebug("Inizializzazione driver BYOK con configurazione ["+loaderProperties.getBYOKConfigurazione()+"]");
 				/**org.openspcoop2.pdd.core.byok.DriverBYOK driverBYOK = new org.openspcoop2.pdd.core.byok.DriverBYOK(logCore, securityRuntimePolicy);
 				driverConfigDB.initialize(driverBYOK, true, false);
 				driverRegistroDB.initialize(driverBYOK, true, false);*/
-				ControlStationCore.setByokInternalConfigSecurityEngine(loaderProperties.getBYOKInternalConfigSecurityEngine());
+				// Automatico
 			}
 			
 			// Istanzio ArchiviEngineControlStation
@@ -389,6 +412,93 @@ public class Loader {
 		}
 		return ic;
 	}
+	private static void initBouncyCastle() throws CoreException {
+		try{
+			ProviderUtils.addBouncyCastleAfterSun(true);
+			logCoreInfo("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
+		}catch(Exception e){
+			throw new CoreException(e.getMessage(),e);
+		}
+	}
+	private static void initMap(LoaderProperties loaderProperties) throws CoreException {
+		try {
+			String mapConfig = loaderProperties.getEnvMapConfig();
+			if(StringUtils.isNotEmpty(mapConfig)) {
+				logCoreInfo("Inizializzazione environment in corso...");
+				MapProperties.initialize(logCore, mapConfig, loaderProperties.isEnvMapConfigRequired());
+				MapProperties mapProperties = MapProperties.getInstance();
+				mapProperties.initEnvironment();
+				String msgInit = "Environment inizializzato con le variabili definite nel file '"+mapConfig+"'"+
+						"\n\tJavaProperties: "+mapProperties.getJavaMap().keys()+
+						"\n\tEnvProperties: "+mapProperties.getEnvMap().keys()+
+						"\n\tObfuscateMode: "+mapProperties.getObfuscateModeDescription()+
+						"\n\tObfuscatedJavaKeys: "+mapProperties.getObfuscatedJavaKeys()+
+						"\n\tObfuscatedEnvKeys: "+mapProperties.getObfuscatedEnvKeys();
+				logCoreInfo(msgInit);
+			}
+		} catch (Exception e) {
+			doError("Errore durante l'inizializzazione dell'ambiente",e);
+		}
+	}
+	private static void initHsm(LoaderProperties loaderProperties) throws CoreException {
+		// inizializzo HSM Manager
+		try {
+			String hsmConfig = loaderProperties.getHSMConfigurazione();
+			if(StringUtils.isNotEmpty(hsmConfig)) {
+				logCoreInfo("Inizializzazione HSM in corso...");
+				File f = new File(hsmConfig);
+				HSMManager.init(f, loaderProperties.isHSMRequired(), logCore, false);
+				HSMUtils.setHsmConfigurableKeyPassword(loaderProperties.isHSMKeyPasswordConfigurable());
+				logCoreInfo("Inizializzazione HSM effettuata con successo");
+			}
+		} catch (Exception e) {
+			doError("Errore durante l'inizializzazione del manager HSM",e);
+		}
+	}
+	private static BYOKManager initBYOK(LoaderProperties loaderProperties) throws CoreException {
+		BYOKManager byokManager = null;
+		try {
+			String byokConfig = loaderProperties.getBYOKConfigurazione();
+			if(StringUtils.isNotEmpty(byokConfig)) {
+				logCoreInfo("Inizializzazione BYOK in corso...");
+				File f = new File(byokConfig);
+				BYOKManager.init(f, loaderProperties.isBYOKRequired(), logCore);
+				byokManager = BYOKManager.getInstance();
+				
+				logCoreInfo("Inizializzazione BYOK effettuata con successo");
+			}
+		} catch (Exception e) {
+			doError("Errore durante l'inizializzazione del manager BYOK",e);
+		}
+		return byokManager;
+	}
+	private static void initSecrets(LoaderProperties loaderProperties, BYOKManager byokManager) throws CoreException {
+		try {
+			String secretsConfig = loaderProperties.getBYOKEnvSecretsConfig();
+			if(byokManager!=null && StringUtils.isNotEmpty(secretsConfig)) {
+				logCoreInfo("Inizializzazione secrets in corso...");
+				String securityPolicy = BYOKManager.getSecurityEngineGovWayInstance();
+				String securityRemotePolicy = BYOKManager.getSecurityRemoteEngineGovWayInstance();
+				
+				Map<String, Object> dynamicMap = new HashMap<>();
+				DynamicInfo dynamicInfo = new  DynamicInfo();
+				DynamicUtils.fillDynamicMap(logCore, dynamicMap, dynamicInfo);
+				
+				BYOKMapProperties.initialize(logCore, secretsConfig, loaderProperties.isBYOKEnvSecretsConfigRequired(), 
+						securityPolicy, securityRemotePolicy, 
+						dynamicMap, true);
+				BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
+				secretsProperties.initEnvironment();
+				String msgInit = "Environment inizializzato con i secrets definiti nel file '"+secretsConfig+"'"+
+						"\n\tJavaProperties: "+secretsProperties.getJavaMap().keys()+
+						"\n\tEnvProperties: "+secretsProperties.getEnvMap().keys()+
+						"\n\tObfuscateMode: "+secretsProperties.getObfuscateModeDescription();
+				logCoreInfo(msgInit);
+			}
+		} catch (Exception e) {
+			doError("Errore durante l'inizializzazione dell'ambiente (secrets)",e);
+		}	
+	}
 	private static ConfigurazionePdD initProtocolFactory(String protocolloDefault) throws CoreException {
 		ConfigurazionePdD configPdD = null;
 		try {
@@ -458,24 +568,10 @@ public class Loader {
 			throw new CoreException(e.getMessage(),e);
 		}
 	}
-	private static void initBouncyCastle() throws CoreException {
-		try{
-			ProviderUtils.addBouncyCastleAfterSun(true);
-			logCoreInfo("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
-		}catch(Exception e){
-			throw new CoreException(e.getMessage(),e);
-		}
+
+	private static void doError(String msg,Exception e) throws CoreException {
+		String msgErrore = msg+": " + e.getMessage();
+		logCoreError(msgErrore,e);
+		throw new CoreException(msgErrore,e);
 	}
-	private static void initBYOK(String byokConfig, boolean required) throws CoreException {
-		try{
-			if(StringUtils.isNotEmpty(byokConfig)) {
-				File f = new File(byokConfig);
-				BYOKManager.init(f, required, logCore);
-				logCoreInfo("Inizializzato BYOK con configurazione '"+byokConfig+"'");
-			}
-		}catch(Exception e){
-			throw new CoreException(e.getMessage(),e);
-		}
-	}
-	
 }

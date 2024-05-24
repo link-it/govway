@@ -444,8 +444,8 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 			String secretsConfig = appProperties.getBYOKEnvSecretsConfig();
 			if(byokManager!=null && StringUtils.isNotEmpty(secretsConfig)) {
 				AbstractConsoleStartupListener.logInfo("Inizializzazione secrets in corso...");
-				String securityPolicy = appProperties.getBYOKInternalConfigSecurityEngine();
-				String securityRemotePolicy = appProperties.getBYOKInternalConfigRemoteSecurityEngine();
+				String securityPolicy = BYOKManager.getSecurityEngineGovWayInstance();
+				String securityRemotePolicy = BYOKManager.getSecurityRemoteEngineGovWayInstance();
 				
 				Map<String, Object> dynamicMap = new HashMap<>();
 				DynamicInfo dynamicInfo = new  DynamicInfo();

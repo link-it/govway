@@ -62,6 +62,7 @@ public class MapProperties {
 	public static final String OBFUSCATED_JAVA_KEYS = "obfuscated.java.keys";
 	
 	public static final String OBFUSCATED_MODE = "obfuscated.mode";
+	public static final String OBFUSCATED_MODE_NON_INIZIALIZZATO = "not initialized";
 	public static final String OBFUSCATED_MODE_NONE = "none";
 	public static final String OBFUSCATED_MODE_DIGEST = "digest";
 	public static final String OBFUSCATED_MODE_STATIC = "static";
@@ -256,6 +257,9 @@ public class MapProperties {
 	}
 	private List<String> getObfuscatedKeys(String pName) throws UtilsException{
 		List<String> l = new ArrayList<>();
+		if(this.reader==null) {
+			return l; // non inizializzato
+		}
 		if(isObfuscatedModeEnabled()) {
 			String value = this.reader.getValue_convertEnvProperties(pName);
 			if(value!=null && StringUtils.isNotEmpty(value.trim())) {
@@ -282,6 +286,9 @@ public class MapProperties {
 	}
 	
 	public boolean isObfuscatedModeEnabled() throws UtilsException {
+		if(this.reader==null) {
+			return false; // non inizializzato
+		}
 		String value = this.reader.getValue_convertEnvProperties(OBFUSCATED_MODE);
 		if(value!=null && StringUtils.isNotEmpty(value.trim())) {
 			value = value.trim();
@@ -301,6 +308,9 @@ public class MapProperties {
 	}
 	
 	public String getObfuscateModeDescription() throws UtilsException {
+		if(this.reader==null) {
+			return OBFUSCATED_MODE_NON_INIZIALIZZATO; // non inizializzato
+		}
 		String obfuscateMode = OBFUSCATED_MODE_NONE;
 		if(this.isObfuscatedModeStatic()) {
 			obfuscateMode = OBFUSCATED_MODE_STATIC+" ("+this.getObfuscatedModeStaticValue()+")";
@@ -315,6 +325,9 @@ public class MapProperties {
 		return getObfuscatedModeStaticValue()!=null;
 	}
 	public String getObfuscatedModeStaticValue() throws UtilsException {
+		if(this.reader==null) {
+			return null; // non inizializzato
+		}
 		String value = this.reader.getValue_convertEnvProperties(OBFUSCATED_MODE);
 		if(value!=null && StringUtils.isNotEmpty(value.trim())) {
 			value = value.trim();
@@ -343,6 +356,9 @@ public class MapProperties {
 		return getObfuscatedModeDigestAlgo()!=null;
 	}
 	public String getObfuscatedModeDigestAlgo() throws UtilsException {
+		if(this.reader==null) {
+			return null; // non inizializzato
+		}
 		String value = this.reader.getValue_convertEnvProperties(OBFUSCATED_MODE);
 		if(value!=null && StringUtils.isNotEmpty(value.trim())) {
 			value = value.trim();
@@ -367,7 +383,23 @@ public class MapProperties {
 		}
 	}
 
-	public String obfuscate(String value) throws UtilsException {
+	protected boolean obfuscate(boolean java, String key) {
+		if(java || key!=null) {
+			// parametri forniti nel caso venga re-implementato il metodo
+		}
+		return true;
+	}
+	
+	public String obfuscateJavaProperty(String key, String value) throws UtilsException {
+		return obfuscate(true, key, value);
+	}
+	public String obfuscateEnvProperty(String key, String value) throws UtilsException {
+		return obfuscate(false, key, value);
+	}
+	protected String obfuscate(boolean java, String key, String value) throws UtilsException {
+		if(!this.obfuscate(java, key)) {
+			return value;
+		}
 		if(!isObfuscatedModeEnabled() || value==null || StringUtils.isEmpty(value)) {
 			return value;
 		}

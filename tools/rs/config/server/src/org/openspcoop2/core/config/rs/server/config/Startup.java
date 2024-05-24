@@ -100,8 +100,12 @@ public class Startup implements ServletContextListener {
 
 	// LOG
 	
-	public static boolean initializedLog = false;
+	private static boolean initializedLog = false;
 	
+	public static boolean isInitializedLog() {
+		return initializedLog;
+	}
+
 	public static synchronized String initLog(){
 		
 		String confDir = null;
@@ -149,7 +153,7 @@ public class Startup implements ServletContextListener {
 	
 	// RESOURCES
 	
-	public static boolean initializedResources = false;
+	private static boolean initializedResources = false;
 	
 	public static synchronized void initResources(){
 		if(!Startup.initializedResources){
@@ -224,8 +228,6 @@ public class Startup implements ServletContextListener {
 					BYOKManager.init(f, serverProperties.isBYOKRequired(), log);
 					byokManager = BYOKManager.getInstance();
 					
-					ControlStationCore.setByokInternalConfigSecurityEngine(serverProperties.getBYOKInternalConfigSecurityEngine());
-					ControlStationCore.setByokInternalConfigRemoteSecurityEngine(serverProperties.getBYOKInternalConfigRemoteSecurityEngine());
 					Startup.log.info("Inizializzazione BYOK effettuata con successo");
 				}
 			} catch (Exception e) {
@@ -251,8 +253,8 @@ public class Startup implements ServletContextListener {
 				String secretsConfig = serverProperties.getBYOKEnvSecretsConfig();
 				if(byokManager!=null && StringUtils.isNotEmpty(secretsConfig)) {
 					Startup.log.info("Inizializzazione secrets in corso...");
-					String securityPolicy = serverProperties.getBYOKInternalConfigSecurityEngine();
-					String securityRemotePolicy = serverProperties.getBYOKInternalConfigRemoteSecurityEngine();
+					String securityPolicy = BYOKManager.getSecurityEngineGovWayInstance();
+					String securityRemotePolicy = BYOKManager.getSecurityRemoteEngineGovWayInstance();
 					
 					Map<String, Object> dynamicMap = new HashMap<>();
 					DynamicInfo dynamicInfo = new  DynamicInfo();

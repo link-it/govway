@@ -88,9 +88,17 @@ public class LoaderProperties {
 	
 	private boolean securityLoadBouncyCastleProvider = false;
 	
+	private String envMapConfig = null;
+	private boolean envMapConfigRequired = false;
+	
+	private String hsmConfig = null;
+	private boolean hsmRequired = false;
+	private boolean hsmKeyPasswordConfigurable = false;
+	
 	private String byokConfigurazione = null;
 	private boolean byokRequired = false;
-	private String byokInternalConfigSecurityEngine = null;
+	private String byokEnvSecretsConfig = null;
+	private boolean byokEnvSecretsConfigRequired = false;
 	
 	public LoaderProperties() throws CoreException {
 
@@ -136,9 +144,17 @@ public class LoaderProperties {
 
 		this.securityLoadBouncyCastleProvider = this.getBooleanProperty(props, "security.addBouncyCastleProvider", false);
 		
+		this.envMapConfig = this.getProperty(props, "env.map.config", false);
+		this.envMapConfigRequired = this.getBooleanProperty(props, "env.map.required", false);
+		
+		this.hsmConfig = this.getProperty(props, "hsm.config", false);
+		this.hsmRequired = this.getBooleanProperty(props, "hsm.required", false);
+		this.hsmKeyPasswordConfigurable = this.getBooleanProperty(props, "hsm.keyPassword", false);
+		
 		this.byokConfigurazione = this.getProperty(props, "byok.config", false);
 		this.byokRequired = this.getBooleanProperty(props, "byok.required", false);
-		this.byokInternalConfigSecurityEngine = this.getProperty(props, "byok.internalConfig.securityEngine", false);
+		this.byokEnvSecretsConfig = this.getProperty(props, "byok.env.secrets.config", false);
+		this.byokEnvSecretsConfigRequired = this.getBooleanProperty(props, "byok.env.secrets.required", false);
 		
 	}
 	
@@ -258,13 +274,33 @@ public class LoaderProperties {
 		return this.securityLoadBouncyCastleProvider;
 	}
 	
+	public String getEnvMapConfig() {
+		return this.envMapConfig;
+	}
+	public boolean isEnvMapConfigRequired(){
+		return this.envMapConfigRequired;
+	}
+	
+	public String getHSMConfigurazione() {
+		return this.hsmConfig;
+	}
+	public boolean isHSMRequired() {
+		return this.hsmRequired;
+	}
+	public boolean isHSMKeyPasswordConfigurable() {
+		return this.hsmKeyPasswordConfigurable;
+	}
+	
 	public String getBYOKConfigurazione() {
 		return this.byokConfigurazione;
 	}
 	public boolean isBYOKRequired() {
 		return this.byokRequired;
 	}
-	public String getBYOKInternalConfigSecurityEngine() {
-		return this.byokInternalConfigSecurityEngine;
+	public String getBYOKEnvSecretsConfig() {
+		return this.byokEnvSecretsConfig;
+	}
+	public boolean isBYOKEnvSecretsConfigRequired() {
+		return this.byokEnvSecretsConfigRequired;
 	}
 }
