@@ -350,7 +350,12 @@ public class InitListener implements ServletContextListener {
 					File f = new File(byokConfig);
 					BYOKManager.init(f, consoleProperties.isBYOKConfigRequired(), log);
 					byokManager = BYOKManager.getInstance();
-					InitListener.logInfo("Inizializzazione BYOK effettuata con successo");
+					String msgInit = "Gestore BYOK inizializzato;"+
+							"\n\tHSM registrati: "+byokManager.getKeystoreTypes()+
+							"\n\tSecurityEngine registrati: "+byokManager.getSecurityEngineTypes()+
+							"\n\tGovWaySecurityEngine: "+byokManager.getSecurityEngineGovWayDescription()+
+							"\n\tVisualizza informazioni cifrate: "+consoleProperties.isVisualizzaInformazioniCifrate();
+					InitListener.logInfo(msgInit);
 				}
 			} catch (Exception e) {
 				String msgErrore = "Errore durante l'inizializzazione del manager BYOK: " + e.getMessage();

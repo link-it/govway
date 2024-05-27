@@ -464,8 +464,11 @@ public class Loader {
 				File f = new File(byokConfig);
 				BYOKManager.init(f, loaderProperties.isBYOKRequired(), logCore);
 				byokManager = BYOKManager.getInstance();
-				
-				logCoreInfo("Inizializzazione BYOK effettuata con successo");
+				String msgInit = "Gestore BYOK inizializzato;"+
+						"\n\tHSM registrati: "+byokManager.getKeystoreTypes()+
+						"\n\tSecurityEngine registrati: "+byokManager.getSecurityEngineTypes()+
+						"\n\tGovWaySecurityEngine: "+byokManager.getSecurityEngineGovWayDescription();
+				logCoreInfo(msgInit);
 			}
 		} catch (Exception e) {
 			doError("Errore durante l'inizializzazione del manager BYOK",e);

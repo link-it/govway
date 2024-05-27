@@ -610,7 +610,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					File f = new File(byokConfig);
 					BYOKManager.init(f, propertiesReader.isBYOKConfigRequired(), OpenSPCoop2Startup.log);
 					byokManager = BYOKManager.getInstance();
-					String msgInit = "Gestore BYOK inizializzato; keystore registrati: "+byokManager.getKeystoreTypes();
+					String msgInit = "Gestore BYOK inizializzato;"+
+							"\n\tHSM registrati: "+byokManager.getKeystoreTypes()+
+							"\n\tSecurityEngine registrati: "+byokManager.getSecurityEngineTypes()+
+							"\n\tGovWaySecurityEngine: "+byokManager.getSecurityEngineGovWayDescription();
 					OpenSPCoop2Startup.log.info(msgInit);
 				}
 			} catch (Exception e) {
@@ -618,7 +621,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 			
-			
+	
 			
 			
 			

@@ -377,6 +377,15 @@ public class BYOKManager {
 		}
 		return c;
 	}
+	public List<String> getSecurityEngineTypes() {
+		List<String> l = new ArrayList<>();
+		if(!this.securityMapIDtoConfig.isEmpty()) {
+			for (String type : this.securityMapIDtoConfig.keySet()) {
+				l.add(type);
+			}
+		}
+		return l;
+	}
 	
 	/**public boolean isBYOKRemoteConfig(String securityManagerPolicy) throws UtilsException {
 		BYOKSecurityConfig bsc = this.getKSMSecurityConfig(securityManagerPolicy);
@@ -445,9 +454,28 @@ public class BYOKManager {
 	}
 	
 	public String getSecurityEngineGovWay() {
+		if(this.securityEngineGovWay==null || StringUtils.isEmpty(this.securityEngineGovWay)) {
+			return null;
+		}
 		return this.securityEngineGovWay;
 	}
 	public String getSecurityRemoteEngineGovWay() {
+		if(this.securityRemoteEngineGovWay==null || StringUtils.isEmpty(this.securityRemoteEngineGovWay)) {
+			return null;
+		}
 		return this.securityRemoteEngineGovWay;
+	}
+	public String getSecurityEngineGovWayDescription() {
+		if(this.securityEngineGovWay==null || StringUtils.isEmpty(this.securityEngineGovWay)) {
+			return "unactive";
+		}
+		else {
+			StringBuilder sb = new StringBuilder(this.securityEngineGovWay);
+			if(this.securityRemoteEngineGovWay!=null && StringUtils.isNotEmpty(this.securityRemoteEngineGovWay) && 
+					!this.securityEngineGovWay.equals(this.securityRemoteEngineGovWay)) {
+				sb.append(" (remote:").append(this.securityRemoteEngineGovWay).append(")");
+			}
+			return sb.toString();
+		}
 	}
 }

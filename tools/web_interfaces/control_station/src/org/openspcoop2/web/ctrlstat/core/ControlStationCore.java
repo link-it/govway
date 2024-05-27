@@ -9005,10 +9005,11 @@ public class ControlStationCore {
 				return false;
 			}
 			String securityManagerPolicy = BYOKManager.getSecurityEngineGovWayInstance();
-			String driverSecurityManagerPolicy = BYOKManager.getSecurityRemoteEngineGovWayInstance();
+			/**String driverSecurityManagerPolicy = BYOKManager.getSecurityRemoteEngineGovWayInstance();
 			if(driverSecurityManagerPolicy==null || StringUtils.isEmpty(driverSecurityManagerPolicy)) {
 				driverSecurityManagerPolicy = securityManagerPolicy;
-			}
+			}*/
+			String driverSecurityManagerPolicy = securityManagerPolicy;
 			
 			String prefix = BYOKUtilities.newPrefixWrappedValue(driverSecurityManagerPolicy);
 			return value.startsWith(prefix) && value.length()>prefix.length();
@@ -9078,7 +9079,7 @@ public class ControlStationCore {
 		if(wrapValue!=null && StringUtils.isNotEmpty(wrapValue)) {
 			if(BYOKUtilities.isWrappedValue(wrapValue)) {
 				if(!isWrapped(wrapValue)) {
-					sb.append("<b>Attenzione</b>: credenziale cifrata con security policy differente");
+					appendErrorMessageSecurityPolicyDifferente(sb, wrapValue);
 				}
 			}
 			else {
@@ -9089,5 +9090,17 @@ public class ControlStationCore {
 			de.setNote(sb.toString());
 		}
 		de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue, readOnly, this.isVisualizzaInformazioniCifrate(), this.getByokWarningMessage(), UtilsCostanti.SERVLET_NAME_SECRET_DECODER);
+	}
+	private void appendErrorMessageSecurityPolicyDifferente(StringBuilder sb, String wrapValue) {
+		String suffix ="";
+		try {
+			String old = BYOKUtilities.getPolicy(wrapValue);
+			if(old!=null && StringUtils.isNotEmpty(old)) {
+				suffix = ": '"+old+"'";
+			}
+		}catch(Exception ignore) {
+			// ignore
+		}
+		sb.append("<b>Attenzione</b>: credenziale cifrata con security policy differente").append(suffix);
 	}
 }

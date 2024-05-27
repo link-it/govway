@@ -431,7 +431,11 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 				File f = new File(byokConfig);
 				BYOKManager.init(f, appProperties.isBYOKConfigRequired(), log);
 				byokManager = BYOKManager.getInstance();
-				AbstractConsoleStartupListener.logInfo("Inizializzazione BYOK effettuata con successo");
+				String msgInit = "Gestore BYOK inizializzato;"+
+						"\n\tHSM registrati: "+byokManager.getKeystoreTypes()+
+						"\n\tSecurityEngine registrati: "+byokManager.getSecurityEngineTypes()+
+						"\n\tGovWaySecurityEngine: "+byokManager.getSecurityEngineGovWayDescription();
+				AbstractConsoleStartupListener.logInfo(msgInit);
 			}
 		} catch (Exception e) {
 			String msgErrore = "Errore durante l'inizializzazione del manager BYOK: " + e.getMessage();

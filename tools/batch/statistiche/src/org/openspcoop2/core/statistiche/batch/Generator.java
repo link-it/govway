@@ -177,8 +177,11 @@ public class Generator {
 				File f = new File(byokConfig);
 				BYOKManager.init(f, generatorProperties.isBYOKRequired(), logCore);
 				byokManager = BYOKManager.getInstance();
-				
-				logCore.info("Inizializzazione BYOK effettuata con successo");
+				String msgInit = "Gestore BYOK inizializzato;"+
+						"\n\tHSM registrati: "+byokManager.getKeystoreTypes()+
+						"\n\tSecurityEngine registrati: "+byokManager.getSecurityEngineTypes()+
+						"\n\tGovWaySecurityEngine: "+byokManager.getSecurityEngineGovWayDescription();
+				logCore.info(msgInit);
 			}
 		} catch (Exception e) {
 			doError(logCore, "Errore durante l'inizializzazione del manager BYOK",e);

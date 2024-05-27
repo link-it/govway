@@ -233,8 +233,11 @@ public class Startup implements ServletContextListener {
 					File f = new File(byokConfig);
 					BYOKManager.init(f, serverProperties.isBYOKRequired(), log);
 					byokManager = BYOKManager.getInstance();
-					
-					Startup.log.info("Inizializzazione BYOK effettuata con successo");
+					String msgInit = "Gestore BYOK inizializzato;"+
+							"\n\tHSM registrati: "+byokManager.getKeystoreTypes()+
+							"\n\tSecurityEngine registrati: "+byokManager.getSecurityEngineTypes()+
+							"\n\tGovWaySecurityEngine: "+byokManager.getSecurityEngineGovWayDescription();
+					Startup.log.info(msgInit);
 				}
 			} catch (Exception e) {
 				doError("Errore durante l'inizializzazione del manager BYOK",e);
