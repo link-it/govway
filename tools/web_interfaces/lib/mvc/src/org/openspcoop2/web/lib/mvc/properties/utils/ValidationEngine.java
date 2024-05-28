@@ -151,6 +151,7 @@ public class ValidationEngine {
 				validaCheckBox(item);
 				break;
 			case HIDDEN:
+			case LOCK_HIDDEN:
 				validaHidden(item);
 				break;
 			case NUMBER:

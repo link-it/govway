@@ -70,6 +70,7 @@ public class ItemBean extends BaseItemBean<Item>{
 				this.value = this.getItem().getDefaultSelected() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
 				break;
 			case HIDDEN:
+			case LOCK_HIDDEN:
 				this.value = this.getItem().getValue();
 				break;
 			case NUMBER:
@@ -87,9 +88,7 @@ public class ItemBean extends BaseItemBean<Item>{
 				else {
 					this.value = null;
 				}
-				/**if(ItemType.LOCK.equals(this.getItem().getType())) {
-					System.out.println("init default ["+this.name+"] value '"+this.value+"'");
-				}*/
+				/**System.out.println("init default ["+this.name+"] value '"+this.value+"'");*/
 				break;
 			}
 		} else {
@@ -103,11 +102,10 @@ public class ItemBean extends BaseItemBean<Item>{
 			case TEXT:
 			case TEXTAREA:
 			case LOCK:
+			case LOCK_HIDDEN:
 			default:
 				this.value = value;
-				/**if(ItemType.LOCK.equals(this.getItem().getType())) {
-					System.out.println("init ["+this.name+"] value '"+this.value+"'");
-				}*/
+				/**System.out.println("init ["+this.name+"] value '"+this.value+"'");*/
 				break;
 			}
 		}
@@ -173,10 +171,16 @@ public class ItemBean extends BaseItemBean<Item>{
 				de.setRows(3);
 			}
 			break;
+		case LOCK_HIDDEN:
+			/**System.out.println("DATAELEMENT LOCK_HIDDEN ["+this.name+"] value '"+this.value+"'");*/
+			try {
+				lockUtilities.lockHidden(de, this.value);
+			}catch(Exception e) {
+				throw new ProviderException(e.getMessage(),e);
+			}
+			break;
 		case LOCK:
-			/**if(ItemType.LOCK.equals(this.getItem().getType())) {
-				System.out.println("DATAELEMENT ["+this.name+"] value '"+this.value+"'");
-			}*/
+			/**System.out.println("DATAELEMENT LOCK ["+this.name+"] value '"+this.value+"'");*/
 			try {
 				lockUtilities.lock(de, this.value);
 			}catch(Exception e) {
@@ -234,6 +238,7 @@ public class ItemBean extends BaseItemBean<Item>{
 		else {
 			switch(this.getItem().getType()) {
 			case HIDDEN:
+			case LOCK_HIDDEN:
 				this.value = (parameterValue == null && this.getSaveProperty().isForce()) ? this.getItem().getValue() : parameterValue;
 				break;
 			case CHECKBOX:
@@ -243,15 +248,14 @@ public class ItemBean extends BaseItemBean<Item>{
 			case TEXTAREA:
 			case LOCK:
 			default:
-				/**if(ItemType.LOCK.equals(this.getItem().getType())) {
-					System.out.println("setValueFromRequest ["+this.name+"] value '"+parameterValue+"'");
-				}*/
+				/**System.out.println("setValueFromRequest ["+this.name+"] value '"+parameterValue+"'");*/
 				this.value = parameterValue;
 				break;
 			}
 		}
 		
-		if(ItemType.LOCK.equals(this.getItem().getType())) {
+		if(ItemType.LOCK.equals(this.getItem().getType()) ||
+				ItemType.LOCK_HIDDEN.equals(this.getItem().getType())) {
 			try {
 				this.value = lockUtilities.getDriverBYOKUtilities().wrap(this.value);
 			}catch(Exception e) {
@@ -267,6 +271,7 @@ public class ItemBean extends BaseItemBean<Item>{
 			this.value = this.getItem().getDefaultSelected() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
 			break;
 		case HIDDEN:
+		case LOCK_HIDDEN:
 			this.value = this.getItem().getValue();
 			break;
 		case NUMBER:
@@ -284,9 +289,7 @@ public class ItemBean extends BaseItemBean<Item>{
 			else {
 				this.value = null;
 			}
-			/**if(ItemType.LOCK.equals(this.getItem().getType())) {
-				System.out.println("setDefaultValueFromRequest ["+this.name+"] value '"+this.value+"'");
-			}*/
+			/**System.out.println("setDefaultValueFromRequest ["+this.name+"] value '"+this.value+"'");*/
 			break;
 		}
 	}
@@ -302,6 +305,7 @@ public class ItemBean extends BaseItemBean<Item>{
 		case CHECKBOX:
 			return getCheckboxPropertyValue();
 		case HIDDEN:
+		case LOCK_HIDDEN:
 			return this.getSaveProperty().isForce() ? this.getItem().getValue() : this.value;
 		case NUMBER:
 		case SELECT:
@@ -467,6 +471,7 @@ public class ItemBean extends BaseItemBean<Item>{
 				}
 				break;
 			case LOCK:
+			case LOCK_HIDDEN:
 			case CHECKBOX:
 			case HIDDEN:
 				break;

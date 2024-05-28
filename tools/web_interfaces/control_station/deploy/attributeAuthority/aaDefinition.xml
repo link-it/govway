@@ -63,7 +63,7 @@
 				</conditions>
 			      	<property name="policy.endpoint.basic.username" />
 			</item>
-			<item type="text" name="autenticazioneEndpointBasicPassword" label="Password" required="true">
+			<item type="lock" name="autenticazioneEndpointBasicPassword" label="Password" required="true">
 				<conditions>
 					<condition and="true">
 						<selected name="autenticazioneEndpointBasic"/>
@@ -71,7 +71,7 @@
 				</conditions>
 			      	<property name="policy.endpoint.basic.password" />
 			</item>
-			<item type="textarea" name="autenticazioneEndpointBearerToken" label="Token" required="true">
+			<item type="lock" name="autenticazioneEndpointBearerToken" label="Token" required="true">
 				<conditions>
 					<condition and="true">
 						<selected name="autenticazioneEndpointBearer"/>
@@ -127,7 +127,7 @@
 				</conditions>
 				<property name="trustStoreLocation" properties="sslConfig" />
 			</item>
-			<item type="text" name="endpointHttpsTruststorePassword" label="Password" required="true">
+			<item type="lock" name="endpointHttpsTruststorePassword" label="Password" required="true">
 				<conditions>
 					<condition and="false">
 						<selected name="endpointHttpsTrustAllCerts"/>
@@ -185,7 +185,7 @@
 				</conditions>
 			    <property name="keyStoreLocation" properties="sslClientConfig" />
 			</item>
-			<item type="text" name="endpointHttpsClientKeystorePassword" label="Password" required="true">
+			<item type="lock" name="endpointHttpsClientKeystorePassword" label="Password" required="true">
 				<conditions>
 					<condition and="true">
 						<equals name="endpointHttpsClientMode" value="ridefinito"/>
@@ -193,7 +193,7 @@
 				</conditions>
 			    <property name="keyStorePassword" properties="sslClientConfig" />
 			</item>
-			<item type="text" name="endpointHttpsClientPasswordChiavePrivata" label="Password Chiave Privata" required="true">
+			<item type="lock" name="endpointHttpsClientPasswordChiavePrivata" label="Password Chiave Privata" required="true">
 				<property name="keyPassword" properties="sslClientConfig" />
 			</item>
 			<item type="text" name="endpointHttpsClientAliasChiavePrivata" label="Alias Chiave Privata" required="false">
@@ -227,7 +227,7 @@
 		<item type="text" name="endpointProxyUsername" label="Username" required="false">
 			<property name="proxyUsername" properties="endpointConfig" />
 		</item>
-		<item type="text" name="endpointProxyPassword" label="Password" required="false">
+		<item type="lock" name="endpointProxyPassword" label="Password" required="false">
 			<property name="proxyPassword" properties="endpointConfig" />
 		</item>
 		
@@ -383,7 +383,7 @@
 				</conditions>
 				<property name="policy.attributeAuthority.request.jws.keystore.file.algorithm" />
 			</item>
-			<item type="text" name="aaJWSKeystorePassword" label="Password" required="true">
+			<item type="lock" name="aaJWSKeystorePassword" label="Password" required="true">
 				<conditions>
 					<condition not="true" and="false">
 						<equals name="aaJWSKeystoreType" value="jwk"/>
@@ -400,7 +400,7 @@
 				</conditions>
 				<property name="policy.attributeAuthority.request.jws.key.alias" />
 			</item>
-			<item type="text" name="aaJWSKeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			<item type="lock" name="aaJWSKeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
 				<conditions and="true">
 					<condition not="true" and="false">
 						<equals name="aaJWSKeystoreType" value="jwk"/>
@@ -409,7 +409,7 @@
 				</conditions>	
 				<property name="policy.attributeAuthority.request.jws.key.password" />
 			</item>
-			<item type="text" name="aaJWSKeystorePrivateKeyPasswordOpzionale" label="Password Chiave Privata" required="false">
+			<item type="lock" name="aaJWSKeystorePrivateKeyPasswordOpzionale" label="Password Chiave Privata" required="false">
 				<conditions and="true">
 					<condition and="false">
 						<equals name="aaJWSKeystoreType" value="keys"/>
@@ -753,7 +753,7 @@
 				</conditions>
 				<property name="rs.security.keystore.file.algorithm" properties="signatureVerifyPropRefId" />
 			</item>
-			<item type="text" name="aaJWSTruststorePassword" label="Password" required="true">
+			<item type="lock" name="aaJWSTruststorePassword" label="Password" required="true">
 				<conditions>
 					<condition not="true" and="false">
 						<equals name="aaJWSTruststoreType" value="jwk"/>
@@ -818,7 +818,7 @@
 				</conditions>
 				<property name="rs.security.keystore.alias" properties="signatureVerifyPropRefId" />
 			</item>
-			<item type="text" name="keystoreSecretKeyPassword" label="Password Chiave Segreta" required="true">
+			<item type="lock" name="keystoreSecretKeyPassword" label="Password Chiave Segreta" required="true">
 				<conditions>
 					<condition and="true">
 						<equals name="aaJWSTruststoreType" value="jceks"/>

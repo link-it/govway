@@ -15937,7 +15937,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				o.setOldVisible(oldItemVisible); 
 				try {
 					String parameterValue = null;
-					if(ItemType.LOCK.equals(o.getItemType())) {
+					if(ItemType.LOCK.equals(o.getItemType()) || ItemType.LOCK_HIDDEN.equals(o.getItemType())) {
 						parameterValue = this.getLockedParameter(key);
 					}
 					else {

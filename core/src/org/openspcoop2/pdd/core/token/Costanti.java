@@ -293,13 +293,13 @@ public class Costanti {
 	public static final String POLICY_RETRIEVE_TOKEN_RESPONSE_TYPE = "policy.retrieveToken.responseType";
 	public static final String POLICY_RETRIEVE_TOKEN_AUTH_BASIC_STATO = "policy.retrieveToken.endpoint.basic.stato";
 	public static final String POLICY_RETRIEVE_TOKEN_AUTH_BASIC_USERNAME = "policy.retrieveToken.endpoint.basic.username";
-	public static final String POLICY_RETRIEVE_TOKEN_AUTH_BASIC_PASSWORD = "policy.retrieveToken.endpoint.basic.password";
+	public static final String POLICY_RETRIEVE_TOKEN_AUTH_BASIC_PASSWORD = CostantiProprieta.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_PASSWORD;
 	public static final String POLICY_RETRIEVE_TOKEN_AUTH_BASIC_AS_AUTHORIZATION_HEADER = "policy.retrieveToken.endpoint.basic.asAuthorizationHeader";
 	public static final String POLICY_RETRIEVE_TOKEN_AUTH_BEARER_STATO = "policy.retrieveToken.endpoint.bearer.stato";
-	public static final String POLICY_RETRIEVE_TOKEN_AUTH_BEARER_TOKEN = "policy.retrieveToken.endpoint.bearer.token";
+	public static final String POLICY_RETRIEVE_TOKEN_AUTH_BEARER_TOKEN = CostantiProprieta.POLICY_RETRIEVE_TOKEN_AUTH_BEARER_TOKEN;
 	public static final String POLICY_RETRIEVE_TOKEN_AUTH_SSL_STATO = "policy.retrieveToken.endpoint.https.stato";
 	public static final String POLICY_RETRIEVE_TOKEN_USERNAME = "policy.retrieveToken.username";
-	public static final String POLICY_RETRIEVE_TOKEN_PASSWORD = "policy.retrieveToken.password";
+	public static final String POLICY_RETRIEVE_TOKEN_PASSWORD = CostantiProprieta.POLICY_RETRIEVE_TOKEN_PASSWORD;
 	public static final String POLICY_RETRIEVE_TOKEN_SCOPES = "policy.retrieveToken.scope";
 	public static final String POLICY_RETRIEVE_TOKEN_AUDIENCE = "policy.retrieveToken.audience";
 	public static final String POLICY_RETRIEVE_TOKEN_FORM_CLIENT_ID = "policy.retrieveToken.formClientId";
@@ -317,7 +317,7 @@ public class Costanti {
 	public static final String POLICY_RETRIEVE_TOKEN_SAVE_ERROR_IN_CACHE = "policy.retrieveToken.saveErrorInCache";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID_MODE= "policy.retrieveToken.jwt.clientId.mode";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID= "policy.retrieveToken.jwt.clientId";
-	public static final String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET= "policy.retrieveToken.jwt.clientSecret";
+	public static final String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET= CostantiProprieta.POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET;
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_ISSUER= "policy.retrieveToken.jwt.issuer";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_ISSUER_MODE= "policy.retrieveToken.jwt.issuer.mode";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SUBJECT= "policy.retrieveToken.jwt.subject";
@@ -350,9 +350,9 @@ public class Costanti {
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_FILE= "policy.retrieveToken.jwt.signature.keystoreFile";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_FILE_PUBLIC_KEY= "policy.retrieveToken.jwt.signature.keystoreFilePublicKey";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYPAIR_ALGORITHM= "policy.retrieveToken.jwt.signature.keyPairAlgorithm";
-	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD= "policy.retrieveToken.jwt.signature.keystorePassword";
+	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD= CostantiProprieta.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD;
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_ALIAS= "policy.retrieveToken.jwt.signature.keyAlias";
-	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD= "policy.retrieveToken.jwt.signature.keyPassword";
+	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD= CostantiProprieta.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD;
 	
 	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_MODE = "policy.tokenForward.mode";
 	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_MODE_RFC6750_HEADER = "RFC6750_header";

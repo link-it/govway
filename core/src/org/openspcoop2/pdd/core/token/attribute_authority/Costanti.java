@@ -21,6 +21,7 @@
 package org.openspcoop2.pdd.core.token.attribute_authority;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.constants.CostantiProprieta;
 
 /**     
  * Costanti
@@ -39,9 +40,9 @@ public class Costanti {
 	
 	public static final String AA_AUTH_BASIC_STATO = "policy.endpoint.basic.stato";
 	public static final String AA_AUTH_BASIC_USERNAME = "policy.endpoint.basic.username";
-	public static final String AA_AUTH_BASIC_PASSWORD = "policy.endpoint.basic.password";
+	public static final String AA_AUTH_BASIC_PASSWORD = CostantiProprieta.AA_AUTH_BASIC_PASSWORD;
 	public static final String AA_AUTH_BEARER_STATO = "policy.endpoint.bearer.stato";
-	public static final String AA_AUTH_BEARER_TOKEN = "policy.endpoint.bearer.token";
+	public static final String AA_AUTH_BEARER_TOKEN = CostantiProprieta.AA_AUTH_BEARER_TOKEN;
 	public static final String AA_AUTH_SSL_STATO = "policy.endpoint.https.stato";
 	public static final String AA_AUTH_SSL_CLIENT_STATO = "policy.endpoint.https.client.stato";
 	
@@ -93,9 +94,9 @@ public class Costanti {
 	public static final String AA_REQUEST_JWT_SIGN_KEYSTORE_FILE = "policy.attributeAuthority.request.jws.keystore.file";
 	public static final String AA_REQUEST_JWT_SIGN_KEYSTORE_FILE_PUBLIC = "policy.attributeAuthority.request.jws.keystore.file.public";
 	public static final String AA_REQUEST_JWT_SIGN_KEYSTORE_FILE_ALGORITHM = "policy.attributeAuthority.request.jws.keystore.file.algorithm";
-	public static final String AA_REQUEST_JWT_SIGN_KEYSTORE_PASSWORD = "policy.attributeAuthority.request.jws.keystore.password";
+	public static final String AA_REQUEST_JWT_SIGN_KEYSTORE_PASSWORD = CostantiProprieta.AA_REQUEST_JWT_SIGN_KEYSTORE_PASSWORD;
 	public static final String AA_REQUEST_JWT_SIGN_KEY_ALIAS = "policy.attributeAuthority.request.jws.key.alias";
-	public static final String AA_REQUEST_JWT_SIGN_KEY_PASSWORD = "policy.attributeAuthority.request.jws.key.password";
+	public static final String AA_REQUEST_JWT_SIGN_KEY_PASSWORD = CostantiProprieta.AA_REQUEST_JWT_SIGN_KEY_PASSWORD;
 	
 	public static final String AA_RESPONSE_TYPE = CostantiConfigurazione.AA_RESPONSE_TYPE; 
 	public static final String AA_RESPONSE_TYPE_VALUE_JSON = CostantiConfigurazione.AA_RESPONSE_TYPE_VALUE_JSON;

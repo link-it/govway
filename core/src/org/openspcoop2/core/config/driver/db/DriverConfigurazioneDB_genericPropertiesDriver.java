@@ -71,7 +71,46 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 	public static boolean isConfidentialProperty(String tipo, String nome) {
 		List<String> l = propertiesConfidentials.get(tipo);
 		if(l!=null) {
-			return l.contains(nome);
+			return  isConfidentialProperty(l, nome);
+		}
+		return false;
+	}
+	private static boolean isConfidentialProperty(List<String> l, String nome) {
+		if(l.isEmpty()) {
+			return false;
+		}
+		if(l.contains(nome)) {
+			return true;
+		}
+		
+		if(nome.contains(CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR)) {
+			return isConfidentialPropertyCustomSeparator(l, nome);
+		}
+		else if(nome.contains(CostantiProprieta.KEY_PROPERTIES_DEFAULT_SEPARATOR)) {
+			return isConfidentialPropertyDefaultSeparator(l, nome);
+		}
+		
+		return false;
+	}
+	private static boolean isConfidentialPropertyCustomSeparator(List<String> l, String nome) {
+		String [] tmp = nome.split(CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR);
+		if(tmp!=null && tmp.length>1 && tmp[1]!=null){
+			for (String s : l) {
+				if(tmp[1].equals(s)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	private static boolean isConfidentialPropertyDefaultSeparator(List<String> l, String nome) {
+		String [] tmp = nome.split(CostantiProprieta.KEY_PROPERTIES_DEFAULT_SEPARATOR);
+		if(tmp!=null && tmp.length>1 && tmp[1]!=null){
+			for (String s : l) {
+				if(tmp[1].equals(s)) {
+					return true;
+				}
+			}
 		}
 		return false;
 	}

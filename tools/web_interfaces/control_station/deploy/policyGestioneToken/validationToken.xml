@@ -659,7 +659,7 @@
 			<item type="hidden" name="validazioneJwtTruststoreFileGoogleSSL" value="/Token.jks">
 			    <property name="rs.security.keystore.file.ssl" properties="signatureVerificationPropRefId" />
 			</item>
-			<item type="hidden" name="validazioneJwtTruststorePasswordGoogleSSL" value="123456">
+			<item type="lock_hidden" name="validazioneJwtTruststorePasswordGoogleSSL" value="123456">
 			    <property name="rs.security.keystore.password.ssl" properties="signatureVerificationPropRefId" />
 			</item>
 
@@ -1671,7 +1671,7 @@
 			<item type="hidden" name="endpointHttpsTruststoreFileGOOGLE" value="/Token.jks">
 			    <property name="trustStoreLocation" properties="sslConfig" />
 			</item>
-			<item type="hidden" name="endpointHttpsTruststorePasswordGOOGLE" value="123456">
+			<item type="lock_hidden" name="endpointHttpsTruststorePasswordGOOGLE" value="123456">
 			      	<property name="trustStorePassword" properties="sslConfig" />
 			</item>
 			<item type="hidden" name="endpointHttpsTruststoreAlgoritmoGOOGLE" value="PKIX">

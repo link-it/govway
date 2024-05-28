@@ -142,7 +142,13 @@ public class ReadPropertiesUtilities {
 			throw new ProviderException("Config undefined");
 		}
 		
-		if(configurazione.getId()!=null && ItemType.LOCK.equals(item.getType()) && item.getProperty()!=null &&  item.getProperty().getName()!=null) {
+		if( 
+				(ItemType.LOCK.equals(item.getType()) || ItemType.LOCK_HIDDEN.equals(item.getType()))   
+				&&
+				configurazione.getId()!=null 
+				&& 
+				item.getProperty()!=null && item.getProperty().getName()!=null
+		) {
 			DriverConfigurazioneDB_genericPropertiesDriver.addConfidentialProperty(configurazione.getId(), item.getProperty().getName());
 		}
 		

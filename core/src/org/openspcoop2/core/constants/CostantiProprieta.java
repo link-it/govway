@@ -33,9 +33,14 @@ public class CostantiProprieta {
 	
 	private CostantiProprieta() {}
 
+	// mvc
+	public static final String KEY_PROPERTIES_CUSTOM_SEPARATOR = "_@@@_";
+	public static final String KEY_PROPERTIES_DEFAULT_SEPARATOR = "_@@_";
+	
 	// commons
 	public static final String RS_SECURITY_KEYSTORE_PASSWORD = "rs.security.keystore.password";
 	public static final String RS_SECURITY_KEY_PASSWORD = "rs.security.key.password";
+	public static final String RS_SECURITY_KEYSTORE_TLS_PASSWORD = "rs.security.keystore.password.ssl";
 	
 	
 	
@@ -68,6 +73,7 @@ public class CostantiProprieta {
 		tokenValidationProperties.add(POLICY_INTROSPECTION_AUTH_BEARER_TOKEN);
 		tokenValidationProperties.add(RS_SECURITY_KEYSTORE_PASSWORD);
 		tokenValidationProperties.add(RS_SECURITY_KEY_PASSWORD);
+		tokenValidationProperties.add(RS_SECURITY_KEYSTORE_TLS_PASSWORD);
 		tokenValidationProperties.add(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
 		tokenValidationProperties.add(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 		tokenValidationProperties.add(CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD);
@@ -79,23 +85,54 @@ public class CostantiProprieta {
 	
 	public static final String TOKEN_NEGOZIAZIONE_ID = "retrieveToken";
 	
+	public static final String POLICY_RETRIEVE_TOKEN_PASSWORD = "policy.retrieveToken.password";
+	public static final String POLICY_RETRIEVE_TOKEN_AUTH_BASIC_PASSWORD = "policy.retrieveToken.endpoint.basic.password";
+	public static final String POLICY_RETRIEVE_TOKEN_AUTH_BEARER_TOKEN = "policy.retrieveToken.endpoint.bearer.token";
+	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD = "policy.retrieveToken.jwt.signature.keystorePassword";
+	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD = "policy.retrieveToken.jwt.signature.keyPassword";
+	public static final String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET= "policy.retrieveToken.jwt.clientSecret";
+	
 	private static List<String> tokenRetrieveProperties = new ArrayList<>();
 	public static List<String> getTokenRetrieveProperties() {
 		return tokenRetrieveProperties;
 	}
 	static {
-		//tokenRetrieveProperties.add(POLICY_INTROSPECTION_AUTH_BASIC_PASSWORD);
+		tokenRetrieveProperties.add(POLICY_RETRIEVE_TOKEN_PASSWORD);
+		tokenRetrieveProperties.add(POLICY_RETRIEVE_TOKEN_AUTH_BASIC_PASSWORD);
+		tokenRetrieveProperties.add(POLICY_RETRIEVE_TOKEN_AUTH_BEARER_TOKEN);
+		tokenRetrieveProperties.add(POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD);
+		tokenRetrieveProperties.add(POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD);
+		tokenRetrieveProperties.add(POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET);
+		tokenRetrieveProperties.add(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+		tokenRetrieveProperties.add(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
+		tokenRetrieveProperties.add(CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD);
+		tokenRetrieveProperties.add(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD);
 	}
 	
 	
 	
 	public static final String ATTRIBUTE_AUTHORITY_ID = "attributeAuthority";
 	
+	public static final String AA_AUTH_BASIC_PASSWORD = "policy.endpoint.basic.password";
+	public static final String AA_AUTH_BEARER_TOKEN = "policy.endpoint.bearer.token";
+	public static final String AA_REQUEST_JWT_SIGN_KEYSTORE_PASSWORD = "policy.attributeAuthority.request.jws.keystore.password";
+	public static final String AA_REQUEST_JWT_SIGN_KEY_PASSWORD = "policy.attributeAuthority.request.jws.key.password";
+
 	private static List<String> attributeAuthorityProperties = new ArrayList<>();
 	public static List<String> getAttributeAuthorityProperties() {
 		return attributeAuthorityProperties;
 	}
 	static {
-		//attributeAuthorityProperties.add(POLICY_INTROSPECTION_AUTH_BASIC_PASSWORD);
+		attributeAuthorityProperties.add(AA_AUTH_BASIC_PASSWORD);
+		attributeAuthorityProperties.add(AA_AUTH_BEARER_TOKEN);
+		attributeAuthorityProperties.add(AA_REQUEST_JWT_SIGN_KEYSTORE_PASSWORD);
+		attributeAuthorityProperties.add(AA_REQUEST_JWT_SIGN_KEY_PASSWORD);
+		attributeAuthorityProperties.add(RS_SECURITY_KEYSTORE_PASSWORD);
+		attributeAuthorityProperties.add(RS_SECURITY_KEY_PASSWORD);
+		attributeAuthorityProperties.add(RS_SECURITY_KEYSTORE_TLS_PASSWORD);
+		attributeAuthorityProperties.add(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+		attributeAuthorityProperties.add(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
+		attributeAuthorityProperties.add(CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD);
+		attributeAuthorityProperties.add(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD);
 	}
 }

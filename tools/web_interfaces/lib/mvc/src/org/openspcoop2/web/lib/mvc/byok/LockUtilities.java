@@ -111,10 +111,15 @@ public class LockUtilities {
 	}
 	private void lockEngineWithBIOK(DataElement de, String wrapValue, String originalValue, boolean escapeHtml, boolean readOnly) {
 		StringBuilder sb = new StringBuilder();
-		if(originalValue!=null && StringUtils.isNotEmpty(originalValue)) {
-			if(BYOKUtilities.isWrappedValue(originalValue)) {
-				if(!this.driverBYOKUtilities.isWrapped(originalValue)) {
-					appendErrorMessageSecurityPolicyDifferente(sb, originalValue);
+		if(originalValue!=null) {
+			// non viene usato per i motivi sotto indicati
+		}
+		/**String checkValue = originalValue;*/ // il valore viene decifrato tramite le chiamate getLockedParameter, quindi questo controllo non può essere implementato.
+		String checkValue = wrapValue; // viene verificato sempre il wrapValue, il quale se già cifrato non viene nuovamente cifrato e quindi permane la vecchia security policy.
+		if(checkValue!=null && StringUtils.isNotEmpty(checkValue)) {
+			if(BYOKUtilities.isWrappedValue(checkValue)) {
+				if(!this.driverBYOKUtilities.isWrapped(checkValue)) {
+					appendErrorMessageSecurityPolicyDifferente(sb, checkValue);
 				}
 			}
 			else if(this.messaggioInformativoInformazioneNonCifrata!=null && StringUtils.isNotEmpty(this.messaggioInformativoInformazioneNonCifrata)) {

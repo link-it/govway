@@ -70,6 +70,7 @@
 			<xsd:enumeration value="checkbox"/>
 			<xsd:enumeration value="number"/>
 			<xsd:enumeration value="lock"/>
+			<xsd:enumeration value="lock_hidden"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	
