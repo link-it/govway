@@ -25,12 +25,13 @@
 			<include name="junit-jupiter-5.9.3.jar"/>
 			<include name="junit-jupiter-api-5.9.3.jar"/>
 			<include name="junit-jupiter-engine-5.9.3.jar"/>
-			<include name="junit-platform-engine-5.9.3.jar"/>
+			<include name="junit-platform-engine-*.jar"/>
 			<include name="junit-platform-launcher-*.jar"/>
 			<include name="junit-platform-console-*.jar"/>
 			<include name="junit-platform-reporting-*.jar"/>
 			<include name="junit-platform-commons*.jar"/>
 			<include name="junit-jupiter-api*.jar"/>
+			<include name="opentest4j-*.jar">
 			<include name="apiguardian-api*.jar"/>
 			<include name="picocli-*.jar"/>
 			<include name="logback-*.jar"/>

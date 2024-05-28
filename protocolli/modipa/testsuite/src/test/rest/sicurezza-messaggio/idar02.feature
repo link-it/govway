@@ -43,6 +43,7 @@ And match header Authorization == null
 Scenario: Riutilizzo dello stesso token, che deve far arrabiare erogazione e fruizione
 
 # Prima facciamo un giro ok per far generare il token alla fruizione e alla erogazione
+# Fra ha RestBlockingIDAR02 invece che RestBlockingIDAR02RiutilizzoToken
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR02RiutilizzoToken/v1"
 And path 'resources', 1, 'M'
 And request read('request.json')

@@ -1,4 +1,4 @@
-function get_diagnostici_create_token_audit(id_transazione) {
+function get_max_id_credenziale() {
     var getDbConfig = read('classpath:utils/get_db_config.js');
 
     var govwayDbConfig = getDbConfig()
@@ -9,7 +9,10 @@ function get_diagnostici_create_token_audit(id_transazione) {
 
     DbUtils = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.DbUtils')
     db = new DbUtils(govwayDbConfig)
-    dbquery = "select * from msgdiagnostici where id_transazione='"+id_transazione+"' and messaggio LIKE 'Creazione security token ModI %INTEGRITY% della richiesta effettuata con successo%'"
-    //karate.log("Query: " + dbquery)
-    return db.readRows(dbquery);
+    dbquery = "select max(id) from credenziale_mittente"
+    karate.log("Query 'get_max_id_credenziale': " + dbquery)
+    var res = db.readValue(dbquery);
+    karate.log("Query 'get_max_id_credenziale': RESULT" + res)
+    return res;
 }
+

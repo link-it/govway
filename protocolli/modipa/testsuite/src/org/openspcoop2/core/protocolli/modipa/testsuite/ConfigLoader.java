@@ -20,6 +20,9 @@
 
 package org.openspcoop2.core.protocolli.modipa.testsuite;
 
+import java.util.Map;
+import java.util.HashMap;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -56,7 +59,6 @@ public class ConfigLoader {
             } else {
                 throw new FileNotFoundException("property file '" + propFileName + "' not found in the classpath");
             }
-            
             System.setProperty("govway_base_path", prop.getProperty("govway_base_path"));
             System.setProperty("connect_timeout", prop.getProperty("connect_timeout"));
             System.setProperty("read_timeout", prop.getProperty("read_timeout"));
@@ -144,5 +146,13 @@ public class ConfigLoader {
         scriptInvoker.run(new File(configLoaderPath), modipaBundle);
 
     }
+    
+    
+public static Map<String, Object> getConfig() {
+    Map<String, Object> configMap = new HashMap<>();
+    prop.forEach((key, value) -> configMap.put(String.valueOf(key), value));
+    return configMap;
+}
 
 }
+

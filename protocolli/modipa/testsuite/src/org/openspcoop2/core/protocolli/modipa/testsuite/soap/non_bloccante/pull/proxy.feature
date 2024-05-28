@@ -12,8 +12,9 @@ Background:
     }
     """
 
+# marcodel non è la prima volta che commentare questa configure nei proxy soap fa funzionare i test non so perchè
 
-* configure responseHeaders = { 'Content-type': "application/soap+xml" }
+# configure responseHeaders = { 'Content-type': "application/soap+xml" }
 
 # NO-CORRELATION-IN-REQUEST
 #
@@ -74,7 +75,10 @@ Scenario: isTest("generazione-header-conversation-id-risposta")
 #   di collaborazione prendendolo da alcuni campi della richiesta originaria.
 #
 Scenario: isTest("iniezione-header-soap")
+# così i test funzionano ma è orribile, il prossimo test che viene aggiunto darà errore perchè la configure è globale
 
+
+* configure responseHeaders = { 'Content-type': "application/soap+xml" }
 * match bodyPath('/Envelope/Header/X-Correlation-ID') == 'd2f49459-1624-4710-b80c-15e33d64b608'
 * def responseStatus = 200
 * def response = read('classpath:src/test/soap/non-bloccante/pull/richiesta-stato-ready-response.xml')

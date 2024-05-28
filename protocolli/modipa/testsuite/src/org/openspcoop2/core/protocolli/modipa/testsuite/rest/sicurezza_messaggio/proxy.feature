@@ -1,11 +1,12 @@
 Feature: Server proxy per il testing sicurezza messaggio
 
 Background: 
-    * def getRequestHeader = read('classpath:utils/get-request-header.js')
-    * def setRequestHeader = read('classpath:utils/set-request-header.js')
+
+    * def setHeader = read('classpath:utils/set-header-case-insensitive.js')
     * def get_traccia = read('classpath:utils/get_traccia.js')
     * def get_diagnostici = read('classpath:utils/get_diagnostici.js')
-
+    * def rmHeader = read('classpath:utils/rm-header.js')
+    
     * def isTest =
     """
     function(id) {
@@ -612,8 +613,9 @@ Scenario: isTest('manomissione-token-richiesta')
 
 
 Scenario: isTest('manomissione-token-richiesta-no-disclosure')
-    * def tamperedToken = tamper_token(karate.response.header('Authorization'))
-    * def responseHeaders = { Authorization: '#(tamperedToken)'}
+
+    * def tamperedToken = tamper_token(karate.request.header('Authorization'))
+    * def requestHeaders = { Authorization: '#(tamperedToken)'}
     * karate.proceed(govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01NoValidazione/v1')
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/interoperability-invalid-request.json')
@@ -622,7 +624,6 @@ Scenario: isTest('manomissione-token-richiesta-no-disclosure')
 Scenario: isTest('manomissione-token-risposta')
 
     * karate.proceed(govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01NoValidazione/v1')
-    
     * def tamperedToken = tamper_token(karate.response.header('Authorization'))
     * def responseHeaders = { Authorization: '#(tamperedToken)'}
 
@@ -1075,6 +1076,8 @@ Scenario: isTest('connettivita-base-idar02')
     """
     * call checkToken ({token: karate.response.header('Authorization'), match_to: server_token_match, kind: 'Bearer'  })
 
+
+
     * def newHeaders = 
     """
     ({
@@ -1087,20 +1090,24 @@ Scenario: isTest('connettivita-base-idar02')
 
 Scenario: isTest('riutilizzo-token')
 
-    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR02RiutilizzoToken/v1')    
-    
-    * def newHeaders = 
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR02RiutilizzoToken/v1')
+
+        * def newHeaders = 
     """
     ({
         'GovWay-TestSuite-GovWay-Client-Token': karate.request.header('Authorization'),
         'GovWay-TestSuite-GovWay-Server-Token': karate.response.header('Authorization'),
     })
     """
+
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
 
 Scenario: isTest('riutilizzo-token-risposta')
 
-    * def responseHeaders =  ({ 'Authorization': getRequestHeader("GovWay-TestSuite-Server-Token") })
+    * def responseHeaders =  ({ 'Authorization': karate.request.header("GovWay-TestSuite-Server-Token") })
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
@@ -1567,8 +1574,10 @@ Scenario: isTest('digest-hex-idar03')
 
 
 Scenario: isTest('manomissione-token-richiesta-idar03')
-
-    * karate.configure('headers', {Agid-JWT-Signature: tamper_token_agid(karate.request.header('Agid-JWT-Signature'))})
+#marcodel
+# così passa come falso positivo
+# set requestHeaders Agid-JWT-Signature = tamper_token_agid(karate.request.header('Agid-JWT-Signature')
+    * set requestHeaders Agid-JWT-Signature = tamper_token_agid(karate.request.header('Agid-JWT-Signature'))
     * karate.proceed(govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03/v1')
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/invalid-token-signature-in-request.json')
@@ -1578,8 +1587,9 @@ Scenario: isTest('manomissione-token-richiesta-idar03')
 Scenario: isTest('manomissione-token-risposta-idar03')
 
     * karate.proceed(govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03/v1')
-    
-    * set karate.response.header('Agid-JWT-Signature') = tamper_token_agid(karate.response.header('Agid-JWT-Signature'))
+
+    * def responseHeaders = {'Agid-JWT-Signature': tamper_token_agid(karate.response.header('Agid-JWT-Signature'))}
+
 
 
 Scenario: isTest('manomissione-payload-richiesta')
@@ -1601,8 +1611,7 @@ Scenario: isTest('manomissione-payload-risposta')
     * set response.nuovo_campo = "pippa"
 
 Scenario: isTest('manomissione-header-http-firmati-richiesta')
-
-    * setRequestHeader("IDAR03TestHeader","tampered_content")
+    * setHeader(requestHeaders, 'IDAR03TestHeader','tampered_content')
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03/v1')
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/manomissione-header-http-firmati-richiesta.json')
@@ -1613,13 +1622,17 @@ Scenario: isTest('manomissione-header-http-firmati-risposta')
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03/v1')
     * match responseStatus == 200
-    * set karate.response.header('IDAR03TestHeader') = 'tampered_content'
 
+    * setHeader(responseHeaders, 'IDAR03TestHeader','tampered_content')
 
 
 Scenario: isTest('assenza-header-integrity-richiesta')
 
-    * remove karate.request.header('Agid-JWT-Signature')
+
+
+
+    * rmHeader(requestHeaders, 'Agid-JWT-Signature')
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03/v1')
     
     * match responseStatus == 400
@@ -1628,16 +1641,16 @@ Scenario: isTest('assenza-header-integrity-richiesta')
 
 
 Scenario: isTest('assenza-header-integrity-risposta')
-    
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03/v1')
-    * remove karate.response.header('Agid-JWT-Signature')
 
-
+    * rmHeader(responsetHeaders, 'Agid-JWT-Signature')
 
 
 Scenario: isTest('assenza-header-digest-richiesta')
 
-    * remove karate.request.header('Digest')
+    * rmHeader(requestHeaders, 'Digest')
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03/v1')
     
     * match responseStatus == 400
@@ -1646,10 +1659,9 @@ Scenario: isTest('assenza-header-digest-richiesta')
 
 
 Scenario: isTest('assenza-header-digest-risposta')
-    
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03/v1')
-    * remove karate.response.header('Digest')
 
+    * rmHeader(responseHeaders, 'Digest')
 
 Scenario: isTest('response-without-payload-idar03')
 
@@ -1753,7 +1765,7 @@ Scenario: isTest('response-without-payload-idar03-tampered-header')
         'GovWay-TestSuite-GovWay-Client-Token': karate.request.header('Agid-JWT-Signature'),
         'GovWay-TestSuite-GovWay-Server-Token': karate.response.header('Agid-JWT-Signature'),
         'Content-Type': null,
-        'IDAR03TestHeader': 'tampered_header'
+        'idar03testheader': 'tampered_header'
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
@@ -1831,7 +1843,7 @@ Scenario: isTest('request-without-payload-idar03-tampered-header')
 
     * def url_invocazione_erogazione = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CRUD/v1'
 
-    * setRequestHeader("IDAR03TestHeader","tampered_header")
+    * setHeader(requestHeaders, 'IDAR03TestHeader','tampered_content')        
     * karate.proceed(url_invocazione_erogazione)
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/manomissione-header-http-firmati-richiesta.json')
@@ -2329,8 +2341,8 @@ Scenario: isTest('idar03-token-richiesta')
 
     * match karate.request.header('Digest') == request_digest[0]
 
-    * match karate.response.header('Agid-JWT-Signature') == "#notpresent"
-    * match karate.response.header('Digest') == "#notpresent"
+    * match karate.response.header('Agid-JWT-Signature') == null
+    * match karate.response.header('Digest') == null
 
     * def newHeaders = 
     """
@@ -2419,7 +2431,7 @@ Scenario: isTest('idar03-token-azione-puntuale')
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
-
+    * def response = null
 
 Scenario: isTest('idar03-token-azione-puntuale-default')
 
@@ -2673,7 +2685,8 @@ Scenario: isTest('doppi-header-manomissione-payload-risposta')
 
 Scenario: isTest('doppi-header-assenza-header-digest-richiesta')
 
-    * remove karate.request.header('Digest')
+    * rmHeader(requestHeaders, 'Digest')
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati/v1')
     
     * match responseStatus == 400
@@ -2683,11 +2696,12 @@ Scenario: isTest('doppi-header-assenza-header-digest-richiesta')
 Scenario: isTest('doppi-header-assenza-header-digest-risposta')
     
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati/v1')
-    * remove karate.response.header('Digest')
 
+    * rmHeader(responseHeaders, 'Digest')
+        
 Scenario: isTest('doppi-header-assenza-header-authorization-richiesta')
+    * rmHeader(requestHeaders, 'Authorization')
 
-    * remove karate.request.header('Authorization')
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati/v1')
     
     * match responseStatus == 400
@@ -2697,11 +2711,13 @@ Scenario: isTest('doppi-header-assenza-header-authorization-richiesta')
 Scenario: isTest('doppi-header-assenza-header-authorization-risposta')
     
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati/v1')
-    * remove karate.response.header('Authorization')
+    
+    * rmHeader(responseHeaders, 'Authorization')
     
 Scenario: isTest('doppi-header-assenza-header-agid-jwt-signature-richiesta')
 
-    * remove karate.request.header('Agid-JWT-Signature')
+    * rmHeader(requestHeaders, 'Agid-JWT-Signature')
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati/v1')
     
     * match responseStatus == 400
@@ -2711,7 +2727,9 @@ Scenario: isTest('doppi-header-assenza-header-agid-jwt-signature-richiesta')
 Scenario: isTest('doppi-header-assenza-header-agid-jwt-signature-risposta')
     
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati/v1')
-    * remove karate.response.header('Agid-JWT-Signature')
+
+    * rmHeader(responseHeaders, 'Agid-JWT-Signature')
+
 
 Scenario: isTest('doppi-header-solo-integrity-risposta')
 
@@ -2876,7 +2894,7 @@ Scenario: isTest('doppi-header-solo-authorization-richiesta')
     """
     ({
         header: { kid: 'ExampleClient1' },
-        payload: { 
+        payload: {
             aud: 'testsuite',
             client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
             iss: 'DemoSoggettoFruitore',
@@ -3480,7 +3498,7 @@ Scenario: isTest('doppi-header-audience-richiesta-stesso-valore')
 		"""
 
 		* def tid = karate.response.header('GovWay-Transaction-ID')
-		* def result = get_traccia(tid,'Richiesta') 
+		* def result = get_traccia(tid,'Richiesta')
 		* match result contains deep other_checks_richiesta	
 		
 		
@@ -4442,8 +4460,9 @@ Scenario: isTest('doppi-header-idar03-security-token-trasformazione-authorizatio
         }
     })
     """
+        
     * call checkToken ({token: karate.response.header('Authorization'), match_to: server_token_authorization_match, kind: "Bearer"  })
-    
+
     * def server_token_authorization = decodeToken(karate.response.header('Authorization'), "Bearer")
     
     * def response_digest = get server_token_authorization $.payload.signed_headers..digest
@@ -4603,7 +4622,7 @@ Scenario: isTest('connettivita-base-idar0302')
 
 Scenario: isTest('manomissione-token-richiesta-idar0302')
 
-    * karate.configure('headers', {Agid-JWT-Signature: tamper_token_agid(karate.request.header('Agid-JWT-Signature'))})
+    * setHeader(requestHeaders, 'Agid-JWT-Signature', tamper_token_agid(karate.request.header('Agid-JWT-Signature')))
     * karate.proceed(govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0302/v1')
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/invalid-token-signature-in-request.json')
@@ -4614,7 +4633,7 @@ Scenario: isTest('manomissione-token-risposta-idar0302')
 
     * karate.proceed(govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0302/v1')
     
-    * set karate.response.header('Agid-JWT-Signature') = tamper_token_agid(karate.response.header('Agid-JWT-Signature'))
+    * setHeader(responseHeaders, 'Agid-JWT-Signature', tamper_token_agid(karate.response.header('Agid-JWT-Signature')))
 
 
 Scenario: isTest('manomissione-payload-richiesta-idar0302')
@@ -4638,7 +4657,7 @@ Scenario: isTest('manomissione-payload-risposta-idar0302')
 
 Scenario: isTest('manomissione-header-http-firmati-richiesta-idar0302')
 
-    * setRequestHeader("IDAR03TestHeader","tampered_content")
+    * setHeader(requestHeaders, 'IDAR03TestHeader', 'tampered_content')
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0302/v1')
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/manomissione-header-http-firmati-richiesta.json')
@@ -4649,12 +4668,12 @@ Scenario: isTest('manomissione-header-http-firmati-risposta-idar0302')
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0302/v1')
     * match responseStatus == 200
-    * set karate.response.header('IDAR03TestHeader') = 'tampered_content'
-
+    * setHeader(responseHeaders, 'IDAR03TestHeader', 'tampered_content')
 
 Scenario: isTest('assenza-header-digest-richiesta-idar0302')
 
-    * remove karate.request.header('Digest')
+    * rmHeader(requestHeaders, 'Digest')
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0302/v1')
     
     * match responseStatus == 400
@@ -4663,12 +4682,11 @@ Scenario: isTest('assenza-header-digest-richiesta-idar0302')
 
 
 Scenario: isTest('assenza-header-digest-risposta-idar0302')
-    
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0302/v1')
-    * remove karate.response.header('Digest')
 
+    * rmHeader(responseHeaders, 'Digest')
+        
 Scenario: isTest('riutilizzo-token-idar0302')
-
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0302/v1')
     
     * def newHeaders = 
@@ -4682,7 +4700,7 @@ Scenario: isTest('riutilizzo-token-idar0302')
 
 Scenario: isTest('riutilizzo-token-risposta-idar0302')
 
-    * def responseHeaders =  ({ 'Agid-JWT-Signature': getRequestHeader("GovWay-TestSuite-Server-Token"), 'Digest': getRequestHeader("GovWay-TestSuite-Digest") })
+    * def responseHeaders =  ({ 'Agid-JWT-Signature': karate.request.header('GovWay-TestSuite-Server-Token'), 'Digest': karate.request.header('GovWay-TestSuite-Digest') })
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
@@ -5238,7 +5256,7 @@ Scenario: isTest('idar03-custom-single-header') || isTest('idar0302-custom-singl
     * call checkToken ({token: karate.response.header('CustomTestSuite-JWT-Signature'), match_to: server_token_match, kind: "AGID"  })
 
     * def response_token = decodeToken(karate.response.header('CustomTestSuite-JWT-Signature'), "AGID")
-    * match response_token.payload.signed_headers == "null"
+    * match response_token.payload.signed_headers == null
     
     * match karate.response.header('Digest') == null
     * match karate.response.header('Authorization') == null
@@ -5257,7 +5275,8 @@ Scenario: isTest('idar03-custom-single-header') || isTest('idar0302-custom-singl
 
 Scenario: isTest('idar03-custom-single-header-assenza-header-integrity-richiesta')
 
-    * remove karate.request.header('CustomTestSuite-JWT-Signature')
+    * rmHeader(requestHeaders, 'CustomTestSuite-JWT-Signature')
+    
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03Custom/v1')
     
     * match responseStatus == 400
@@ -5268,7 +5287,8 @@ Scenario: isTest('idar03-custom-single-header-assenza-header-integrity-richiesta
 Scenario: isTest('idar03-custom-single-header-assenza-header-integrity-risposta')
     
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03Custom/v1')
-    * remove karate.response.header('CustomTestSuite-JWT-Signature')
+
+    * rmHeader(responseHeaders, 'CustomTestSuite-JWT-Signature')
 
 
 Scenario: isTest('idar03-custom-doppi-header') || isTest('idar0302-custom-doppi-header') || 
@@ -5375,8 +5395,8 @@ Scenario: isTest('idar03-custom-doppi-header') || isTest('idar0302-custom-doppi-
     * def client_token_integrity_exp = get client_token_integrity $.payload.exp
     * match client_token_authorization_exp == client_token_integrity_exp
 
-    * match client_token_authorization.payload.signed_headers == "null"
-    * match client_token_integrity.payload.signed_headers == "null"
+    * match client_token_authorization.payload.signed_headers == null
+    * match client_token_integrity.payload.signed_headers == null
 
     * def request_id = get client_token_authorization $.payload.jti
 
@@ -5470,8 +5490,8 @@ Scenario: isTest('idar03-custom-doppi-header') || isTest('idar0302-custom-doppi-
     * def server_token_integrity_exp = get server_token_integrity $.payload.exp
     * match server_token_authorization_exp == server_token_integrity_exp
 
-    * match server_token_authorization.payload.signed_headers == "null"
-    * match server_token_integrity.payload.signed_headers == "null"
+    * match server_token_authorization.payload.signed_headers == null
+    * match server_token_integrity.payload.signed_headers == null
     
     * match karate.response.header('Digest') == null
     * match karate.response.header('Agid-JWT-Signature') == null
@@ -5577,8 +5597,8 @@ Scenario: isTest('idar03-custom-doppi-header-solo-richiesta') || isTest('idar030
     * def client_token_integrity_exp = get client_token_integrity $.payload.exp
     * match client_token_authorization_exp == client_token_integrity_exp
 
-    * match client_token_authorization.payload.signed_headers == "null"
-    * match client_token_integrity.payload.signed_headers == "null"
+    * match client_token_authorization.payload.signed_headers == null
+    * match client_token_integrity.payload.signed_headers == null
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1')
     
@@ -5601,7 +5621,7 @@ Scenario: isTest('idar03-custom-doppi-header-solo-richiesta') || isTest('idar030
 
     * def server_token_integrity = decodeToken(karate.response.header('CustomTestSuiteDoppiSoloRichiesta-JWT-Signature'), "AGID")
     
-    * match server_token_integrity.payload.signed_headers == "null"
+    * match server_token_integrity.payload.signed_headers == null
     
     * match karate.response.header('Authorization') == null
     * match karate.response.header('Digest') == null
@@ -5620,9 +5640,10 @@ Scenario: isTest('idar03-custom-doppi-header-solo-richiesta') || isTest('idar030
 
 Scenario: isTest('idar03-custom-doppi-header-assenza-header-integrity-richiesta')
 
-    * remove karate.request.header('CustomTestSuiteDoppi-JWT-Signature')
-    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1')
+    * rmHeader(requestHeaders, 'CustomTestSuiteDoppi-JWT-Signature')
     
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1')
+
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/idar03-custom-doppi-header-assenza-header-integrity-richiesta.json')
     * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
@@ -5631,7 +5652,8 @@ Scenario: isTest('idar03-custom-doppi-header-assenza-header-integrity-richiesta'
 Scenario: isTest('idar03-custom-doppi-header-assenza-header-integrity-risposta')
     
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1')
-    * remove karate.response.header('CustomTestSuiteDoppi-JWT-Signature')
+    * rmHeader(responseHeaders,'CustomTestSuiteDoppi-JWT-Signature')
+
 
 
 Scenario: isTest('idar03-custom-doppi-header-assenza-header-integrity-richiesta-metodo-get-senza-payload') ||
@@ -5693,7 +5715,7 @@ Scenario: isTest('idar03-custom-doppi-header-get-without-custom')
 
     * def client_token_authorization = decodeToken(karate.request.header('Authorization'), "Bearer")
     
-    * match client_token_authorization.payload.signed_headers == "null"
+    * match client_token_authorization.payload.signed_headers == null
 
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1')
@@ -5734,7 +5756,7 @@ Scenario: isTest('idar03-custom-doppi-header-get-without-custom')
     
     * def server_token_authorization = decodeToken(karate.response.header('Authorization'), "Bearer")
     
-    * match server_token_authorization.payload.signed_headers == "null"
+    * match server_token_authorization.payload.signed_headers == null
     
     * match karate.response.header('CustomTestSuiteDoppi-JWT-Signature') == null
 
@@ -5812,8 +5834,8 @@ Scenario: isTest('idar03-custom-doppi-header-multipart')
     * def client_token_integrity_exp = get client_token_integrity $.payload.exp
     * match client_token_authorization_exp == client_token_integrity_exp
 
-    * match client_token_authorization.payload.signed_headers == "null"
-    * match client_token_integrity.payload.signed_headers == "null"
+    * match client_token_authorization.payload.signed_headers == null
+    * match client_token_integrity.payload.signed_headers == null
 
     * setRequestHeader("Content-Type","multipart/mixed; boundary=----=_Part_1_1678144365.1610454048429; type=text/xml")
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicatiMultipart/v1')
@@ -5878,8 +5900,8 @@ Scenario: isTest('idar03-custom-doppi-header-multipart')
     * def server_token_integrity_exp = get server_token_integrity $.payload.exp
     * match server_token_authorization_exp == server_token_integrity_exp
 
-    * match server_token_authorization.payload.signed_headers == "null"
-    * match server_token_integrity.payload.signed_headers == "null"
+    * match server_token_authorization.payload.signed_headers == null
+    * match server_token_integrity.payload.signed_headers == null
     
     * match karate.response.header('Digest') == null
     * match karate.response.header('Agid-JWT-Signature') == null
@@ -5919,6 +5941,7 @@ Scenario: isTest('connettivita-base-idar04-jwk-ApplicativoBlockingIDA01') ||
 		isTest('connettivita-base-idar04-pdnd-ApplicativoBlockingKeyPair')
 
     * def tipoTest = 'N.D.'
+
     * eval
     """
     if (isTest('connettivita-base-idar04-jwk-ApplicativoBlockingIDA01') ||
@@ -5940,7 +5963,7 @@ Scenario: isTest('connettivita-base-idar04-jwk-ApplicativoBlockingIDA01') ||
     if (isTest('connettivita-base-idar04-pdnd-ApplicativoBlockingIDA01') ||
 		isTest('connettivita-base-idar04-pdnd-ApplicativoBlockingJWK') ||
 		isTest('connettivita-base-idar04-pdnd-ApplicativoBlockingKeyPair')) {
-      tipoTest = 'PDND'
+                tipoTest = 'PDND'
     }
     """
 
@@ -5959,6 +5982,7 @@ Scenario: isTest('connettivita-base-idar04-jwk-ApplicativoBlockingIDA01') ||
       subExpected = 'ApplicativoBlockingIDA01'
     }
     """
+
     * eval
     """
     if (isTest('connettivita-base-idar04-jwk-ApplicativoBlockingJWK') ||
@@ -6011,15 +6035,15 @@ Scenario: isTest('connettivita-base-idar04-jwk-ApplicativoBlockingIDA01') ||
         }
     })
     """
-
-    * karate.log("Ret: ", requestHeaders)
-
     * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer" })
-
+    
+    # call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer", tipoTest: tipoTest })
     * call checkTokenKid ({token: karate.request.header('Agid-JWT-Signature'), match_to: client_token_match, kind: "AGID" })
 
     * def request_token = decodeToken(karate.request.header('Agid-JWT-Signature'), "AGID")
-    * def request_id = get request_token $.payload.jti
+    # def request_id = get request_token $.payload.jti
+    * def request_id = request_token.payload.jti
+
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
     
@@ -6062,7 +6086,7 @@ Scenario: isTest('connettivita-base-idar04-jwk-ApplicativoBlockingIDA01') ||
     ({
 	'GovWay-TestSuite-GovWay-Client-Authorization-Token': karate.request.header('Authorization'),
         'GovWay-TestSuite-GovWay-Client-Token': karate.request.header('Agid-JWT-Signature'),
-        'GovWay-TestSuite-GovWay-Server-Token': karate.response.header('Agid-JWT-Signature'),
+        'GovWay-TestSuite-GovWay-Server-Token': karate.response.header('Agid-JWT-Signature')
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
@@ -6221,7 +6245,7 @@ Scenario: isTest('manomissione-token-richiesta-idar04-jwk')
     }
     """
 
-    * karate.configure('headers', {Agid-JWT-Signature: tamper_token_agid(karate.request.header('Agid-JWT-Signature'))})
+    # karate.configure('headers', {Agid-JWT-Signature: tamper_token_agid(karate.request.header('Agid-JWT-Signature'))})
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/invalid-token-signature-in-request.json')
@@ -6237,7 +6261,7 @@ Scenario: isTest('manomissione-token-richiesta-idar04-pdnd')
     }
     """
 
-    * karate.configure('headers', {Agid-JWT-Signature: tamper_token_agid(karate.request.header('Agid-JWT-Signature'))})
+    # karate.configure('headers', {Agid-JWT-Signature: tamper_token_agid(karate.request.header('Agid-JWT-Signature'))})
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/invalid-token-signature-in-request-pdnd.json')
@@ -6358,7 +6382,6 @@ Scenario: isTest('manomissione-payload-risposta-vuota-idar04-jwk')
 
 Scenario: isTest('manomissione-header-http-firmati-richiesta-idar04-jwk') ||
 		isTest('manomissione-header-http-firmati-richiesta-idar04-pdnd')
-
     * def tipoTest = 'N.D.'
     * eval
     """
@@ -6373,7 +6396,8 @@ Scenario: isTest('manomissione-header-http-firmati-richiesta-idar04-jwk') ||
     }
     """
 
-    * setRequestHeader("IDAR04TestHeader","tampered_content")
+    * setHeader(requestHeaders,'IDAR04TestHeader','tampered_content')
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/manomissione-header-http-firmati-richiesta-idar04.json')
@@ -6398,10 +6422,8 @@ Scenario: isTest('manomissione-header-http-firmati-risposta-idar04-jwk') ||
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
     * match responseStatus == 200
-    * set karate.response.header('IDAR04TestHeader') = 'tampered_content'
 
-
-
+    * setHeader(requestHeaders,'IDAR04TestHeader','tampered_content')
 
 Scenario: isTest('assenza-header-integrity-richiesta-idar04-jwk') ||
 		isTest('assenza-header-integrity-richiesta-idar04-pdnd')
@@ -6420,7 +6442,8 @@ Scenario: isTest('assenza-header-integrity-richiesta-idar04-jwk') ||
     }
     """
 
-    * remove karate.request.header('Agid-JWT-Signature')
+    * rmHeader(requestHeaders, 'Agid-JWT-Signature')
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
     
     * match responseStatus == 400
@@ -6445,8 +6468,8 @@ Scenario: isTest('assenza-header-integrity-risposta-idar04-jwk') ||
     """
     
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
-    * remove karate.response.header('Agid-JWT-Signature')
 
+    * rmHeader(responseHeaders, 'Agid-JWT-Signature')
 
 
 
@@ -6470,7 +6493,8 @@ Scenario: isTest('assenza-header-digest-richiesta-idar04-jwk') ||
     }
     """
 
-    * remove karate.request.header('Digest')
+    * rmHeader(requestHeaders, 'Digest')
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
     
     * match responseStatus == 400
@@ -6495,12 +6519,12 @@ Scenario: isTest('assenza-header-digest-risposta-idar04-jwk') ||
     """
     
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
-    * remove karate.response.header('Digest')
+
+    * rmHeader(responseHeaders, 'Digest')
 
 
 Scenario: isTest('response-without-payload-idar04-jwk') ||
 		isTest('response-without-payload-idar04-pdnd')
-
    * def tipoTest = 'N.D.'
     * eval
     """
@@ -6514,7 +6538,6 @@ Scenario: isTest('response-without-payload-idar04-jwk') ||
       tipoTest = 'PDND'
     }
     """
-
     * def clientIdExpected = 'N.D.'
     * def subExpected = 'N.D.'
     * def kidExpected = 'N.D.'
@@ -6547,11 +6570,11 @@ Scenario: isTest('response-without-payload-idar04-jwk') ||
         }
     })
     """
-
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkTokenKid ({token: karate.request.header('Agid-JWT-Signature'), match_to: client_token_match, kind: "AGID" })
+    * def tok = karate.request.header('Agid-JWT-Signature')
 
+    * call checkTokenKid ({token: tok, match_to: client_token_match, kind: "AGID", tipoTest: tipoTest , clientIdExpected: clientIdExpected})
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
 
     * def request_token = decodeToken(karate.request.header('Agid-JWT-Signature'), "AGID")
@@ -6559,7 +6582,7 @@ Scenario: isTest('response-without-payload-idar04-jwk') ||
 
     * match karate.request.header('Digest') == request_digest[0]
 
-    * karate.log("Ret: ", responseHeaders)
+     #  karate.log("Ret: ", responseHeaders)
 
     * def server_token_match =
     """
@@ -6577,8 +6600,8 @@ Scenario: isTest('response-without-payload-idar04-jwk') ||
         }
     })
     """
-    * call checkTokenKid ({token: karate.response.header('Agid-JWT-Signature'), match_to: server_token_match, kind: "AGID"  })
-
+    * def tokRes = karate.response.header('Agid-JWT-Signature')
+    * call checkTokenKid ({token: tokRes, match_to: server_token_match, kind: "AGID",tipoTest: tipoTest, clientIdExpected: clientIdExpected, })
   
     * def newHeaders = 
     """
@@ -6644,7 +6667,7 @@ Scenario: isTest('response-without-payload-idar04-tampered-header-jwk') ||
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkTokenKid ({token: karate.request.header('Agid-JWT-Signature'), match_to: client_token_match, kind: "AGID" })
+    * call checkTokenKid ({token: karate.request.header('Agid-JWT-Signature'), match_to: client_token_match, kind: "AGID",tipoTest: tipoTest,clientIdExpected: clientIdExpected })
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
 
@@ -6678,12 +6701,12 @@ Scenario: isTest('response-without-payload-idar04-tampered-header-jwk') ||
     ({
         'GovWay-TestSuite-GovWay-Client-Token': karate.request.header('Agid-JWT-Signature'),
         'GovWay-TestSuite-GovWay-Server-Token': karate.response.header('Agid-JWT-Signature'),
-        'Content-Type': null,
-        'IDAR04TestHeader': 'tampered_header'
+        'Content-Type': null
     })
     """
-    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+    * setHeader(responseHeaders,'IDAR04TestHeader','tampered_content')
 
 
 
@@ -6740,7 +6763,7 @@ Scenario: isTest('response-without-payload-idar04-digest-richiesta-jwk') ||
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkTokenKid ({token: karate.request.header('Agid-JWT-Signature'), match_to: client_token_match, kind: "AGID" })
+    * call checkTokenKid ({token: karate.request.header('Agid-JWT-Signature'), match_to: client_token_match, kind: "AGID", tipoTest: tipoTest })
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
 
@@ -6818,7 +6841,7 @@ Scenario: isTest('idar04-token-richiesta-jwk') ||
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkTokenKid ({token: karate.request.header('Agid-JWT-Signature'), match_to: client_token_match, kind: "AGID" })
+    * call checkTokenKid ({token: karate.request.header('Agid-JWT-Signature'), match_to: client_token_match, kind: "AGID",tipoTest: tipoTest })
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
 
@@ -6828,8 +6851,8 @@ Scenario: isTest('idar04-token-richiesta-jwk') ||
 
     * match karate.request.header('Digest') == request_digest[0]
 
-    * match karate.response.header('Agid-JWT-Signature') == "null"
-    * match karate.response.header('Digest') == "null"
+    * match karate.response.header('Agid-JWT-Signature') == null
+    * match karate.response.header('Digest') == null
 
     * def newHeaders = 
     """
@@ -7121,7 +7144,7 @@ Scenario: isTest('audience-differenti-ok-idar04-jwk')
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer" })
+    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer", tipoTest: tipoTest, clientIdExpected: clientIdExpected })
 
     * call checkTokenKid ({token: karate.request.header('Agid-JWT-Signature'), match_to: client_token_match, kind: "AGID" })
 
@@ -7230,7 +7253,7 @@ Scenario: isTest('audience-differenti-ko-auth-claim-deny-idar04-jwk')
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer" })
+    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer",tipoTest: tipoTest })
 
     * call checkTokenKid ({token: karate.request.header('Agid-JWT-Signature'), match_to: client_token_match, kind: "AGID" })
 
@@ -7611,7 +7634,7 @@ Scenario: isTest('riutilizzo-token-idar0402-pdnd') ||
     ({
         'GovWay-TestSuite-GovWay-Client-Authorization-Token': karate.request.header('Authorization'),
         'GovWay-TestSuite-GovWay-Client-Agid-Token': karate.request.header('Agid-JWT-Signature'),
-        'GovWay-TestSuite-GovWay-Server-Agid-Token': karate.response.header('Agid-JWT-Signature'),
+        'GovWay-TestSuite-GovWay-Server-Agid-Token': karate.response.header('Agid-JWT-Signature')
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
@@ -7645,6 +7668,7 @@ Scenario: isTest('riutilizzo-token-risposta-idar0402-pdnd') ||
 ########################
 #       IDAR04 (CUSTOM)#
 ########################
+
 
 Scenario: isTest('idar04-custom-header-pdnd') ||
 		isTest('idar04-custom-header-pdnd-get-with-custom')
@@ -7757,7 +7781,7 @@ Scenario: isTest('idar04-custom-header-pdnd') ||
    
     * def request_token = decodeToken(karate.request.header('CustomTestSuite-JWT-Signature'), "AGID")
     * karate.log("Ret: ", request_token)
-    * match request_token.payload.signed_headers == "null"
+    * match request_token.payload.signed_headers == null
     
     * match karate.request.header('Digest') == null
     * match karate.request.header('Authorization') == '#present'
@@ -7839,7 +7863,7 @@ Scenario: isTest('idar04-custom-header-pdnd') ||
     * call checkTokenKid ({token: karate.response.header('CustomTestSuite-JWT-Signature'), match_to: server_token_match, kind: "AGID"  })
 
     * def response_token = decodeToken(karate.response.header('CustomTestSuite-JWT-Signature'), "AGID")
-    * match response_token.payload.signed_headers == "null"
+    * match response_token.payload.signed_headers == null
     
     * match karate.response.header('Digest') == null
     * match karate.response.header('Authorization') == null
@@ -7859,7 +7883,7 @@ Scenario: isTest('idar04-custom-header-pdnd') ||
 
 Scenario: isTest('idar04-custom-header-pdnd-assenza-header-integrity-richiesta')
 
-    * remove karate.request.header('CustomTestSuite-JWT-Signature')
+    * rmHeader(requestHeaders, 'CustomTestSuite-JWT-Signature')
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04Custom-PDND/v1')
     
     * match responseStatus == 400
@@ -7870,8 +7894,7 @@ Scenario: isTest('idar04-custom-header-pdnd-assenza-header-integrity-richiesta')
 Scenario: isTest('idar04-custom-header-pdnd-assenza-header-integrity-risposta')
     
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04Custom-PDND/v1')
-    * remove karate.response.header('CustomTestSuite-JWT-Signature')
-
+    * rmHeader(responseHeaders, 'CustomTestSuite-JWT-Signature')
 
 Scenario: isTest('idar04-custom-header-pdnd-assenza-header-integrity-richiesta-metodo-get-senza-payload')
 
@@ -8008,6 +8031,7 @@ Scenario: isTest('audit-rest-jwk-01') ||
 		isTest('audit-rest-jwk-custom-01') || 
 		isTest('audit-rest-jwk-custom-02') ||
 		isTest('audit-rest-jwk-notrace-noforward-default-01') ||
+				isTest('audit-rest-jwk-notrace-noforward-default-02') ||
 		isTest('audit-rest-jwk-token-optional-01') ||
 		isTest('audit-rest-jwk-01-verifica-cache-utente1') ||
 		isTest('audit-rest-jwk-01-verifica-cache-utente2') ||
@@ -8061,8 +8085,10 @@ Scenario: isTest('audit-rest-jwk-01') ||
     """
     if (isTest('audit-rest-jwk-notrace-noforward-default-02')) {
       audExpected = 'RestBlockingAuditRest02Optional-'+tipoTest+'/v1'
+	karate.set('audExpected', 'RestBlockingAuditRest02Optional-'+tipoTest+'/v1');
     }
     """
+    
     * eval
     """
     if (isTest('audit-rest-jwk-token-optional-01')) {
@@ -8085,7 +8111,6 @@ Scenario: isTest('audit-rest-jwk-01') ||
       audExpected = 'RestBlockingAuditRest01TokenAuditClaimOptionalNotCacheable-'+tipoTest+'/v1'
     }
     """
-
 
     * def clientIdExpected = 'N.D.'
     * def issExpected = 'N.D.'
@@ -8305,7 +8330,7 @@ Scenario: isTest('audit-rest-jwk-01') ||
             aud: audExpected,
             client_id: '#notpresent',
             iss: issExpected,
-            sub:  '#notpresent',
+            sub: '#notpresent',
 	    userID: userIdToken, 
             userLocation: 'ip-utente-token', 
             LoA: 'livello-autenticazione-utente-token',
@@ -8422,8 +8447,7 @@ Scenario: isTest('audit-rest-jwk-01') ||
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer" })
-
+    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer", client_token_audit_match: client_token_audit_match, audExpected: audExpected })
     * call checkTokenKid ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID" })
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
@@ -8617,7 +8641,7 @@ Scenario: isTest('audit-rest-jwk-01-verifica-cache-integrity-utente1') ||
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer" })
+    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer",client_token_audit_match:client_token_audit_match,audExpected:audExpected })
 
     * call checkTokenKid ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID" })
 
@@ -8803,7 +8827,7 @@ Scenario: isTest('audit-rest-jwk-01-verifica-cache-locale-utente1') ||
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkToken ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer" })
+    * call checkToken ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer",audExpected: audExpected,client_token_audit_match: client_token_audit_match })
 
     * call checkToken ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID" })
 
@@ -8967,7 +8991,7 @@ Scenario: isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente1') ||
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkToken ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer" })
+    * call checkToken ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer",client_token_audit_match: client_token_audit_match,audExpected: audExpected })
 
     * call checkToken ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID" })
 
@@ -9176,7 +9200,7 @@ Scenario: isTest('audit-rest-jwk-0401') ||
 
     * karate.log("Ret (idTransazione: "+karate.request.header('GovWay-Transaction-ID')+"): ", requestHeaders)
 
-    * call checkTokenKid ({token: karate.request.header('Authorization'), id_transazione: karate.request.header('GovWay-Transaction-ID'), match_to: client_token_authorization_match, kind: "Bearer" })
+    * call checkTokenKid ({token: karate.request.header('Authorization'), id_transazione: karate.request.header('GovWay-Transaction-ID'), match_to: client_token_authorization_match, kind: "Bearer",client_token_audit_match:client_token_audit_match,audExpected: audExpected })
 
     * call checkTokenKid ({token: karate.request.header('Agid-JWT-Signature'), id_transazione: karate.request.header('GovWay-Transaction-ID'), match_to: client_token_integrity_match, kind: "AGID" })
 
@@ -9292,7 +9316,7 @@ Scenario: isTest('audit-rest-x509-01')
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkToken ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer" })
+    * call checkToken ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer",client_token_audit_match: client_token_audit_match, audExpected: audExpected })
 
     * call checkToken ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID" })
 
@@ -9433,9 +9457,9 @@ Scenario: isTest('audit-rest-x509-0301')
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkToken ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer" })
+    * call checkToken ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer", client_token_audit_match: client_token_audit_match, audExpected: audExpected })
 
-    * call checkToken ({token: karate.request.header('Agid-JWT-Signature'), match_to: client_token_integrity_match, kind: "AGID" })
+    * call checkToken ({token: karate.request.header('Agid-JWT-Signature'), match_to: client_token_integrity_match, kind: "AGID", client_token_audit_match: client_token_audit_match, audExpected: audExpected })
 
     * call checkToken ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID" })
 
@@ -9482,7 +9506,8 @@ Scenario: isTest('audit-rest-jwk-manomissione-firma-01') ||
     }
     """
 
-    * set requestHeaders['Agid-JWT-TrackingEvidence'][0] = tamper_token_audit(requestHeaders['Agid-JWT-TrackingEvidence'][0])
+    * setHeader(requestHeaders,'Agid-JWT-TrackingEvidence',tamper_token_audit(karate.request.header('Agid-JWT-TrackingEvidence'))
+    
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/invalid-token-audit-signature-in-request.json')
@@ -9513,7 +9538,7 @@ Scenario: isTest('audit-rest-jwk-manomissione-digest-authorization-02')
 
     * def old_authz = karate.request.header('old-authorization')
     * karate.log("old: ", old_authz);
-    * set requestHeaders['Authorization'][0] = old_authz
+    * setHeader(requestHeaders, 'Authorization' , 'old_authz')
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/invalid-audit-digest-in-authorization-request.json')
@@ -9816,7 +9841,7 @@ Scenario: isTest('audit-rest-jwk-audit-non-fornito-erogazione-01') ||
     }
     """
 
-    * remove karate.request.header('Agid-JWT-TrackingEvidence')
+    * rmHeader(requestHeaders, 'Agid-JWT-TrackingEvidence')
 
     * karate.log("req: ", requestHeaders);
 
@@ -9887,7 +9912,7 @@ Scenario: isTest('audit-rest-jwk-token-audit-scaduto-01')
 
     * def old_audit = karate.request.header('old-audit')
     * karate.log("old: ", old_audit);
-    * karate.configure('headers', {Agid-JWT-TrackingEvidence: old_audit})
+    * setHeader(requestHeaders, 'Agid-JWT-TrackingEvidence', old_audit)
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
     * match responseStatus == 400
@@ -9916,8 +9941,7 @@ Scenario: isTest('audit-rest-jwk-token-audit-iat-oldest-01')
     * karate.log("req: ", requestHeaders);
 
     * def old_audit = karate.request.header('old-audit')
-    * karate.log("old: ", old_audit);
-    * karate.configure('headers', {Agid-JWT-TrackingEvidence: old_audit})
+    * setHeader(requestHeaders,'Agid-JWT-TrackingEvidence', old_audit)
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
     * match responseStatus == 400
@@ -10027,7 +10051,7 @@ Scenario: isTest('audit-rest-jwk-criteri-autorizzativi-ok-01')
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer" })
+    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer", client_token_audit_match: client_token_audit_match, tipoTest: tipoTest })
 
     * call checkTokenKid ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID" })
 
@@ -10091,7 +10115,7 @@ Scenario: isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-noaudi
     }
     """
 
-    * match karate.request.header('Agid-JWT-TrackingEvidence') == "null"
+    * match karate.request.header('Agid-JWT-TrackingEvidence') == null
 
 
     * def clientIdExpected = 'N.D.'
@@ -10151,12 +10175,10 @@ Scenario: isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-noaudi
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer" })
-
+    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer", tipoTest: tipoTest, audExpected: audExpected })
     * def requestUri = isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-noaudit') ? '/idar01/oauth-noaudit' : '/idar01/oauth'
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
-    
     * def newHeaders = 
     """
     ({
@@ -10270,7 +10292,7 @@ Scenario: isTest('audit-rest-jwk-purpose-id-uguali') ||
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer" })
+    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer", client_token_audit_match: client_token_audit_match, audExpected: audExpected })
 
     * call checkTokenKid ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID" })
 
@@ -10427,7 +10449,7 @@ Scenario: isTest('audit-rest-jwk-token-custom-01') ||
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer" })
+    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer",client_token_audit_match: client_token_audit_match, audExpected: audExpected })
 
     * call checkTokenKid ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID" })
 
@@ -10728,7 +10750,7 @@ Scenario: isTest('audit-rest-jwk-token-custom-validazione-fallita-01') ||
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer" })
+    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer",client_token_audit_match: client_token_audit_match, forwardContextUrl: forwardContextUrl })
 
     * call checkTokenKid ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID" })
 
@@ -10904,7 +10926,7 @@ Scenario: isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer" })
+    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer",client_token_audit_match: client_token_audit_match , forwardContextUrl: forwardContextUrl})
 
     * call checkTokenKid ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID" })
 
@@ -11078,7 +11100,7 @@ Scenario: isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-01'
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer" })
+    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer",client_token_audit_match: client_token_audit_match,forwardContextUrl: forwardContextUrl })
 
     * call checkTokenKid ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID" })
 
@@ -11211,9 +11233,9 @@ Scenario: isTest('audit-rest-jwk-01-differentAudienceAsArray')
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer" })
+    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer",client_token_audit_match: client_token_audit_match,tipoTest: tipoTest })
 
-    * call checkTokenKid ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID" })
+    * call checkTokenKid ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID",tipoTest: tipoTest })
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingAuditRest01-'+tipoTest+'-DifferentAudienceAsArray/v1')
     
@@ -11359,7 +11381,7 @@ Scenario: isTest('audit-rest-jwk-0401-differentAudienceAsArray')
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer" })
+    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer",client_token_audit_match: client_token_audit_match,tipoTest: tipoTest })
 
     * call checkToken ({token: karate.request.header('Agid-JWT-Signature'), match_to: client_token_integrity_match, kind: "AGID" })
 
@@ -11401,7 +11423,7 @@ Scenario: isTest('tengo-da-parte')
     * def payload_base64 = encode_base64(payload);
     * karate.log("Payload base64: ", payload_base64);
 
-    * karate.configure('headers', {Authorization: tamper_token_authorization_digest_value(karate.request.header('Authorization'),payload_base64)})
+    # karate.configure('headers', {Authorization: tamper_token_authorization_digest_value(karate.request.header('Authorization'),payload_base64)})
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/invalid-token-signature-in-request.json')

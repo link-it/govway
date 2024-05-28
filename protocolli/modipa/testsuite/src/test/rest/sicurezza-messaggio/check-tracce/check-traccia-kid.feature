@@ -10,6 +10,9 @@ Scenario: Controllo traccia IDAR01 con kid
 * def other_checks = karate.get('other_checks', [])
 
 
+
+* def uniqueAppend = read('classpath:utils/unique-append.js')
+
 * def get_traccia = read('classpath:utils/get_traccia.js')
 * def traccia_to_match = 
 """
@@ -29,7 +32,8 @@ Scenario: Controllo traccia IDAR01 con kid
 ])
 """
 
-* def traccia_to_match = karate.append(traccia_to_match, other_checks)
+# * def traccia_to_match = karate.append(traccia_to_match, other_checks)
+* def traccia_to_match = uniqueAppend(traccia_to_match, other_checks)
 
 * def result = get_traccia(tid,tipo) 
 * match result contains deep traccia_to_match

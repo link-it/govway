@@ -1,0 +1,2 @@
+org.openspcoop2.connettore.http=org.openspcoop2.core.protocolli.modipa.testsuite.connettori.ConnettoreHTTPMock
+org.openspcoop2.connettore.https=org.openspcoop2.core.protocolli.modipa.testsuite.connettori.ConnettoreHTTPSMock

@@ -49,7 +49,7 @@ import com.intuit.karate.resource.ResourceUtils;
 
 public class BloccanteRestSicurezzaMessaggioFixKarateRispostaVuotaTest extends ConfigLoader {
     
-	private static MockServer server;
+    private static MockServer server;
     private static MockServer proxy;
     
     @SuppressWarnings({ "unchecked", "rawtypes" })

@@ -12,6 +12,9 @@ Scenario: Controllo traccia AUDIT_REST con kid
 
 
 * def get_traccia = read('classpath:utils/get_traccia.js')
+* def uniqueAppend = read('classpath:utils/unique-append.js')
+
+
 * def traccia_to_match = 
 """
 ([
@@ -28,7 +31,7 @@ Scenario: Controllo traccia AUDIT_REST con kid
 """
 
 
-* def traccia_to_match = karate.append(traccia_to_match, other_checks)
+* def traccia_to_match = uniqueAppend(traccia_to_match, other_checks)
 
 * def result = get_traccia(tid,tipo) 
 * match result contains deep traccia_to_match

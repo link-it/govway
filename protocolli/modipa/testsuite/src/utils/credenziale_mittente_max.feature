@@ -3,13 +3,7 @@ Feature:
 Background:
 * configure callSingleCache = { enabled: false }
 * def calcolaValore =
-"""
-function() {
-  var result = karate.callSingle('classpath:utils/credenziale_mittente.js', 'get_max_id_credenziale');
-  karate.log('Risultato calcolato MAX:', result);
-  return result;
-}
-"""
+* def get_max_id_credenziale = read('classpath:utils/get_max_id_credenziale.js')
 
 Scenario:
-* def max_id_credenziale = calcolaValore()
+* def max_id_credenziale = get_max_id_credenziale()

@@ -13,15 +13,24 @@ Background:
     * def result = callonce read('classpath:utils/jmx-enable-error-disclosure.feature')
     * configure afterFeature = function(){ karate.call('classpath:utils/jmx-disable-error-disclosure.feature'); }
 
-	  * def formatDate =
-		"""
-		function(time) {
-			var TokenUtils = Java.type("org.openspcoop2.pdd.core.token.parser.TokenUtils");
-		  var date = TokenUtils.parseTimeInSecond(time);
-		  var DateUtils = Java.type("org.openspcoop2.utils.date.DateUtils");
-		  return DateUtils.getSimpleDateFormatMs().format(date);
-		} 
-		"""
+
+
+* def formatDate =
+  """
+  function(time) {
+      var TokenUtils = Java.type("org.openspcoop2.pdd.core.token.parser.TokenUtils");
+      // Convert time to String if it's not already a String
+      var timeAsString = typeof time === 'number' ? String(time) : time;
+      var date = TokenUtils.parseTimeInSecond(timeAsString);
+      var DateUtils = Java.type("org.openspcoop2.utils.date.DateUtils");
+      return DateUtils.getSimpleDateFormatMs().format(date);
+  } 
+  """
+
+
+
+
+
 
 
 @connettivita-base

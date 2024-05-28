@@ -90,7 +90,11 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 	
 	/** acceptOnlyReturnCode_202_200 SOAP */
 	protected boolean acceptOnlyReturnCode_202_200 = true;
-			
+	
+	protected void checkResponse() throws Exception{
+		// nop
+	}
+	
 	protected void normalizeInputStreamResponse(int timeout, boolean configurazioneGlobale) throws Exception{
 		//Se non e' null, controllo che non sia vuoto.
 		if(this.isResponse!=null){
@@ -99,6 +103,8 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		else{
 			this.logger.info("Stream di risposta (return-code:"+this.codice+") is null",true);
 		}
+		
+		checkResponse();
 		
 		if(this.isResponse!=null && this.useLimitedInputStream) {
 			if(this.limitBytes!=null && this.limitBytes.getSogliaKb()>0) {

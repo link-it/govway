@@ -46,13 +46,14 @@ Scenario: isTest('riutilizzo-token-generato-auth-server')
 
 Scenario: isTest('connettivita-base-idas02-richiesta-con-header')
     
-    * match bodyPath('/Envelope/Header') == '<soap:Header><t:elementoTest xmlns:t="http://test">PROVA</t:elementoTest></soap:Header>'
+    * def headerXml = <soap:Header xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><t:elementoTest xmlns:t="http://test">PROVA</t:elementoTest></soap:Header>
+    * match bodyPath('/Envelope/Header') == headerXml
     * def responseStatus = 200
     * def response = read('classpath:test/soap/sicurezza-messaggio/responseConHeader.xml')
 
 Scenario: isTest('connettivita-base-idas02-richiesta-con-header-e-trasformazione')
-    
-    * match bodyPath('/Envelope/Header') == '<soap:Header><t:elementoTest xmlns:t="http://test">PROVA</t:elementoTest><t2:elementoTest2 xmlns:t2="http://test">PROVA2</t2:elementoTest2></soap:Header>'
+    * def headerXml =  <soap:Header><t:elementoTest xmlns:t="http://test">PROVA</t:elementoTest><t2:elementoTest2 xmlns:t2="http://test">PROVA2</t2:elementoTest2></soap:Header>
+    * match bodyPath('/Envelope/Header') == headerXml
     * def responseStatus = 200
     * def response = read('classpath:test/soap/sicurezza-messaggio/responseConHeader.xml')
 
@@ -128,7 +129,6 @@ Scenario: isTest('connettivita-base-idas03-no-digest-richiesta')
 
 
 Scenario: isTest('response-without-payload-idas03') || isTest('response-without-payload-idas03-digest-richiesta')
-    
     * match bodyPath('/Envelope/Header') == ''
     * def responseStatus = 200
     * def response = ''
@@ -150,7 +150,8 @@ Scenario: isTest('idas03-token-richiesta')
 Scenario: isTest('idas03-token-risposta')
     
     * def c = request
-    * match c/Envelope/Header == null
+    
+    * match c/Envelope/Header == '#notpresent'
 
     * def responseStatus = 200
     * def response = read('classpath:test/soap/sicurezza-messaggio/response.xml')

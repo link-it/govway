@@ -1,15 +1,13 @@
 function get_remote_store_key(kid) {
 
-    govwayDbConfig = { 
-        username: karate.properties['db_username'],
-        password: karate.properties['db_password'],
-        url: karate.properties['db_url'],
-        driverClassName: karate.properties['db_driverClassName']
-     }
+    var getDbConfig = read('classpath:utils/get_db_config.js');
 
-//    db_sleep_before_read = karate.properties['db_sleep_before_read']
-        db_sleep_before_read = parseInt(karate.properties['db_sleep_before_read'], 10);
+    var govwayDbConfig = getDbConfig()
+
+    db_sleep_before_read = govwayDbConfig.sleep_before_read
+
     java.lang.Thread.sleep(db_sleep_before_read)
+
     DbUtils = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.DbUtils')
     db = new DbUtils(govwayDbConfig)
     dbquery = "select * from remote_store_key where kid='"+kid+"'"

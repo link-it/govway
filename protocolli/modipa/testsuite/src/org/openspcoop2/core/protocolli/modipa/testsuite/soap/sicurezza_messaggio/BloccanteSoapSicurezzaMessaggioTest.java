@@ -1,3 +1,4 @@
+
 /*
  * GovWay - A customizable API Gateway 
  * https://govway.org
@@ -19,8 +20,7 @@
  */
 
 
-package org.openspcoop2.core.protocolli.modipa.testsuite.rest.sicurezza_messaggio;
-
+package org.openspcoop2.core.protocolli.modipa.testsuite.soap.sicurezza_messaggio;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -32,6 +32,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader;
+import org.openspcoop2.utils.certificate.ocsp.test.OpenSSLThread;
 
 import com.intuit.karate.Results;
 import com.intuit.karate.Runner;
@@ -49,8 +50,10 @@ import com.intuit.karate.resource.ResourceUtils;
 
 public class BloccanteSoapSicurezzaMessaggioTest extends ConfigLoader {
     
-	private static MockServer server;
+    private static MockServer server;
     private static MockServer proxy;
+    private static OpenSSLThread sslThread_case2;
+    private static OpenSSLThread sslThread_case3;
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	@BeforeClass
@@ -68,22 +71,51 @@ public class BloccanteSoapSicurezzaMessaggioTest extends ConfigLoader {
     			.args(new HashMap<String,Object>((Map) prop))
     			.http(Integer.valueOf(prop.getProperty("http_port")))
     			.build();
+    	String opensslCommand = prop.getProperty("ocsp.opensslCommand");
+    	int waitStartupServer = Integer.valueOf(prop.getProperty("ocsp.waitStartupServer"));
+    	try {
+    		sslThread_case2 = OpenSSLThread.newOpenSSLThread_case2(opensslCommand, waitStartupServer);
+    	}catch(Throwable t) {
+    		t.printStackTrace(System.out);
+    	}
+    	try {
+    		sslThread_case3 = OpenSSLThread.newOpenSSLThread_case3(opensslCommand, waitStartupServer);
+    	}catch(Throwable t) {
+    		t.printStackTrace(System.out);
+    	}
     }
-    
     
     @Test
     public void test() {
     	Results results = Runner.path(Arrays.asList( 
-    		    "classpath:test/rest/sicurezza-messaggio/idar-fix-karate.feature"))    		        			
-    			.parallel(1);
+    "classpath:test/soap/sicurezza-messaggio/idas01.feature",
+    "classpath:test/soap/sicurezza-messaggio/idas01-no-disclosure.feature",
+    "classpath:test/soap/sicurezza-messaggio/idas02.feature",
+    "classpath:test/soap/sicurezza-messaggio/idas03.feature",
+    "classpath:test/soap/sicurezza-messaggio/idas0302.feature",
+    "classpath:test/soap/sicurezza-messaggio/autorizzazioneMessaggio.feature",
+    "classpath:test/soap/sicurezza-messaggio/autorizzazioneToken.feature"
+//,
+//    "classpath:test/soap/sicurezza-messaggio/autorizzazioneMessaggioToken.feature"
+ )).parallel(1);
     	assertEquals(0, results.getFailCount());
     }
-        
         
     @AfterClass
     public static void afterClass() {
         proxy.stop();
         server.stop();
+        int waitStopServer = Integer.valueOf(prop.getProperty("ocsp.waitStopServer"));
+        try {
+        	OpenSSLThread.stopOpenSSLThread(sslThread_case2, waitStopServer);
+    	}catch(Throwable t) {
+    		t.printStackTrace(System.out);
+    	}
+        try {
+        	OpenSSLThread.stopOpenSSLThread(sslThread_case3, waitStopServer);
+    	}catch(Throwable t) {
+    		t.printStackTrace(System.out);
+    	}
     }     
     
 }

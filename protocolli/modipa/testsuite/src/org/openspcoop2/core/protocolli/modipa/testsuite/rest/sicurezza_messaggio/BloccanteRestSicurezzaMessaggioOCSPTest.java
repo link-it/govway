@@ -49,7 +49,7 @@ import com.intuit.karate.resource.ResourceUtils;
 
 public class BloccanteRestSicurezzaMessaggioOCSPTest extends ConfigLoader {
     
-	private static MockServer server;
+    private static MockServer server;
     private static MockServer proxy;
     private static OpenSSLThread sslThread_case2;
     private static OpenSSLThread sslThread_case3;
@@ -83,6 +83,15 @@ public class BloccanteRestSicurezzaMessaggioOCSPTest extends ConfigLoader {
     		t.printStackTrace(System.out);
     	}
     }
+
+    @Test
+    public void test() {
+    	Results results = Runner.path(Arrays.asList( 
+    		    "classpath:test/rest/sicurezza-messaggio/idar01-ocsp.feature"))
+    			.parallel(1);
+    	assertEquals(0, results.getFailCount());
+    }
+
         
     @AfterClass
     public static void afterClass() {

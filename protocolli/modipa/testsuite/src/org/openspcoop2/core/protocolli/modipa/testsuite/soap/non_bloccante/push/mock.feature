@@ -11,10 +11,10 @@ Background:
 
     * def confHeaders = 
     """
-    function() { 
+    function() {
         return {
-            'Content-type': "application/soap+xml",
-            'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("karate.request.header('GovWay-Transaction-ID')")
+            'Content-type': 'application/soap+xml',
+            'GovWay-TestSuite-GovWay-Transaction-ID': karate.request.header('GovWay-Transaction-ID')
         }
     }
     """
@@ -26,16 +26,14 @@ Background:
 #
 #
 Scenario: isTest('test-ok-richiesta-client')
-
     # Controllo che l'erogazione del client abbia aggiornato lo header X-ReplyTo
     # con la url invocazione della fruizione del server    
     * match request/Envelope/Header/X-ReplyTo == govway_base_path + "/soap/out/DemoSoggettoErogatore/DemoSoggettoFruitore/SoapNonBlockingPushClient/v1"
 
     * def responseStatus = 200
     * def response = read('classpath:src/test/soap/non-bloccante/push/client-request-response.xml')
-
+        
 Scenario: isTest('test-ok-risposta-server')
-
     * def responseStatus = 200
     * def response = read('classpath:src/test/soap/non-bloccante/push/server-response-response.xml')
 
@@ -94,7 +92,7 @@ Scenario: isTest('iniezione-header-riferimento-id-richiesta-query')
 
 # Catch all
 Scenario: 
-    karate.fail("Nessuno scenario matcahto")
+    karate.fail("Nessuno scenario matchato")
 
 # 
 # * def response = read('classpath:src/test/soap/non-bloccante/pull/richiesta-applicativa-response.xml')

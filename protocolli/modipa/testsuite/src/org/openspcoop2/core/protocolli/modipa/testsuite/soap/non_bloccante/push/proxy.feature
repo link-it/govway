@@ -2,7 +2,11 @@ Feature: Server proxy contattato dalla fruizione
 
 Background:
 
-* configure responseHeaders = { 'Content-type': "application/soap+xml" }
+# configure responseHeaders = { 'Content-type': "application/soap+xml" }
+# se commentato funzionano i test NonBloccantePushSoapTest, serviva ad altri test ? serviva a questi e c'è qualcosa che non va ?
+# questo è l'errore che avevo prima: <type>https://govway.org/handling-errors/502/UnprocessableResponseContent.html</type><title>UnprocessableResponseContent</title><status>502</status><detail>Il contenuto applicativo della risposta ricevuta non è processabile: Content-Type 'application/soap+xml,application/
+# soap+xml' presente nella risposta non valido: In parameter list &lt;,application/soap+xml&gt;, expected ';', got ","
+
 
 * def url_erogazione_server_validazione = govway_base_path + "/soap/in/DemoSoggettoErogatore/SoapNonBlockingPushServer/v1"
 * def url_erogazione_client_validazione = govway_base_path + "/soap/in/DemoSoggettoFruitore/SoapNonBlockingPushClient/v1"
@@ -27,7 +31,6 @@ Background:
 #
 
 Scenario: isTest('test-ok-richiesta-client')
-
     # Controllo che la fruizione client abbia aggiornato lo header x-replyTo con la url
     # invocazione dell'erogazione lato client
     * match request/Envelope/Header/X-ReplyTo == url_erogazione_client_validazione 

@@ -17,7 +17,7 @@ Background:
     * def get_credenziale_by_refid = read('classpath:utils/get_credenziale_by_refid.js')
     * def get_credenziale_by_refid_greather_then_id = read('classpath:utils/get_credenziale_by_refid_greather_then_id.js')
     * def get_remote_store_key_client_id_prefix = read('classpath:utils/get_remote_store_key_client_id_prefix.js')
-    
+    * def clean_remote_store_key_client_id_prefix = read('classpath:utils/clean_remote_store_key_client_id_prefix.js')
     
 
     * def credenziale_max_feature = callonce read('classpath:utils/credenziale_mittente_max.feature')

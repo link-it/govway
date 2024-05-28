@@ -37,7 +37,6 @@ And match header GovWay-Conversation-ID == task_id
 
 * call check_traccia_richiesta ({tid: karate.response.header('GovWay-Transaction-ID'), reply_to: updated_reply_to, cid: task_id })
 * call check_traccia_richiesta ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), reply_to: updated_reply_to, cid: task_id })
-
 * call check_id_collaborazione ({tid: karate.response.header('GovWay-Transaction-ID'), id_collaborazione: task_id })
 * call check_id_collaborazione ({tid: karate.response.header('GovWay-TestSuite-GovWay-Transaction-ID'), id_collaborazione: task_id })
 

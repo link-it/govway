@@ -32,7 +32,6 @@ Scenario:
         'sub': '#string'
     }
     """
-
     * def tok_header = karate.merge(tok_header, match_to.header)
     * def tok_payload = karate.merge(tok_payload, match_to.payload)
     

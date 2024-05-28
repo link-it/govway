@@ -122,11 +122,11 @@ Scenario: isTest('response-without-payload')
 Scenario: isTest('disabled-security-on-action')
     * def c = request
 
-    * match c/Envelope/Header/Security/BinarySecurityToken == "null"
+    * match c/Envelope/Header/Security/BinarySecurityToken == '#notpresent'
     
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01MultipleOP/v1')
 
-    * match /Envelope/Header/Security/BinarySecurityToken == "null"
+    * match /Envelope/Header/Security/BinarySecurityToken ==  '#notpresent'
 
 ##
 # Controllo che la sicurezza sia abilitata puntualmente su una operazione,
@@ -134,8 +134,7 @@ Scenario: isTest('disabled-security-on-action')
 #
 #
 
-Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequestOp') != ''
-    
+Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequestOp') != null
     * xmlstring client_request = bodyPath('/')
     * eval karateCache.add("Client-Request", client_request)
 
@@ -155,15 +154,17 @@ Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequ
     * eval karateCache.add("Server-Response", server_response)
 
 
-Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequestOp1') != ''
+
+Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequestOp1') != null
 
     * def c = request
 
-    * match c/Envelope/Header/Security/BinarySecurityToken == "null"
+    * match c/Envelope/Header/Security/BinarySecurityToken == '#notpresent'
     
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01MultipleOPNoDefaultSecurity/v1')
 
-    * match /Envelope/Header/Security/BinarySecurityToken == "null"
+    * match /Envelope/Header/Security/BinarySecurityToken == '#notpresent'	
+
 
 
 Scenario: isTest('riferimento-x509-SKIKey-IssuerSerial')
@@ -668,7 +669,7 @@ Scenario: isTest('connettivita-base-idas03-no-digest-richiesta')
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS03MultipleOp/v1')
     
     # Controllo nella risposta che non ci sia il digest della richiesta
-    * match /Envelope/Header/X-RequestDigest/Reference/DigestValue == null
+    * match /Envelope/Header/X-RequestDigest/Reference/DigestValue == '#notpresent'
 
     * call check_server_token ({ from: "SoapBlockingIDAS03MultipleOp/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
 
@@ -887,7 +888,7 @@ Scenario: isTest('idas03-token-risposta')
     * match /Envelope/Header/From/Address == "SoapBlockingIDAS03TokenRisposta/v1"
     * match /Envelope/Header/MessageID == "#uuid"
     * match /Envelope/Header/ReplyTo/Address == "http://www.w3.org/2005/08/addressing/anonymous"
-    * match /Envelope/Header/RelatesTo == "#notpresent"
+    * match /Envelope/Header/RelatesTo == '#notpresent'
 
     * def body = response 
     * call check_signature [ {element: 'To'}, {element: 'From'}, {element: 'MessageID'}, {element: 'ReplyTo'} ]
@@ -1260,7 +1261,7 @@ Scenario: isTest('audit-rest-jwk-01') ||
 
     * karate.log("Ret: ", requestHeaders)
 
-    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer" })
+    * call checkTokenKid ({token: karate.request.header('Authorization'), match_to: client_token_authorization_match, kind: "Bearer", client_token_audit_match: client_token_audit_match, audExpected: audExpected })
 
     * call checkTokenKid ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID" })
 
@@ -1318,20 +1319,20 @@ Scenario: isTest('audit-rest-x509-01')
     if (isTest('audit-rest-x509-01')) {
     client_token_audit_match = ({
         header: { 
-		kid: null,
+		kid: '#notpresent',
 	        x5c: '#present',
-                x5u: null,
-               'x5t#S256': null
+                x5u: '#notpresent',
+               'x5t#S256': '#notpresent'
 	},
         payload: { 
             aud: audExpectedAUDIT,
-            client_id: null,
-            iss: null,
-            sub: null,
+            client_id: '#notpresent',
+            iss: '#notpresent',
+            sub: '#notpresent',
 	    userID: 'utente-token-ridefinito', 
             userLocation: 'ip-utente-token-ridefinito', 
             LoA: 'livello-autenticazione-utente-token-ridefinito',
-	    dnonce: null
+	    dnonce: '#notpresent'
         }
     })
     }
@@ -1346,14 +1347,14 @@ Scenario: isTest('audit-rest-x509-01')
     * xmlstring client_request = bodyPath('/')
     * eval karateCache.add("Client-Request", client_request)
 
-    * call check_client_token ({ address: clientIdExpected, to: audExpected })
+    * call check_client_token ({ address: clientIdExpected, to: audExpected, client_token_audit_match: client_token_audit_match, audExpected: audExpected})
 
     # Siccome abbiamo un Riferimento X509 DirectReference, controllo che KeyInfo riferisca il BinarySecurityToken
     * def keyRef = bodyPath('/Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/Reference/@URI')
     * def key = bodyPath('/Envelope/Header/Security/BinarySecurityToken/@Id')
     * match keyRef == '#' + key
 
-    * call checkTokenAudit ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID" })
+    * call checkTokenAudit ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID"  })
 
     * karate.proceed (govway_base_path + '/soap/in//DemoSoggettoErogatore/'+audExpected+'/idar01.locale')
     
@@ -1411,20 +1412,20 @@ Scenario: isTest('audit-rest-x509-0301')
     if (isTest('audit-rest-x509-0301')) {
     client_token_audit_match = ({
         header: { 
-		kid: null,
+		kid: '#notpresent',
 	        x5c: '#present',
-                x5u: null,
-               'x5t#S256': null
+                x5u: '#notpresent',
+               'x5t#S256': '#notpresent'
 	},
         payload: { 
             aud: audExpectedAUDIT,
-            client_id: null,
-            iss: null,
-            sub: null,
+            client_id: '#notpresent',
+            iss: '#notpresent',
+            sub: '#notpresent',
 	    userID: 'utente-token-ridefinito', 
             userLocation: 'ip-utente-token-ridefinito', 
             LoA: 'livello-autenticazione-utente-token-ridefinito',
-	    dnonce: null
+	    dnonce: '#notpresent'
         }
     })
     }
@@ -1443,9 +1444,9 @@ Scenario: isTest('audit-rest-x509-0301')
     * match keyRef == '#' + key
 
 
-    * call check_client_token ({ address: clientIdExpected, to: audExpected })
+    * call check_client_token ({ address: clientIdExpected, to: audExpected, client_token_audit_match:client_token_audit_match, audExpected: audExpected })
 
-    * call checkTokenAudit ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID" })
+    * call checkTokenAudit ({token: karate.request.header('Agid-JWT-TrackingEvidence'), match_to: client_token_audit_match, kind: "AGID"})
 
     * karate.proceed (govway_base_path + '/soap/in//DemoSoggettoErogatore/'+audExpected+'/idar03.locale')
     

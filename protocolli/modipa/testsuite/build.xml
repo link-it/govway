@@ -24,7 +24,10 @@
                         <include name="thymeleaf-*.jar"/>
                         <include name="attoparser-*.jar"/>
 			<include name="unbescape-*.jar"/>
+<!-- -->
+
                         <include name="postgresql-*.jar"/>
+
                         <include name="antlr4-runtime-*.jar"/>
                         <include name="netty-transport-*.jar"/>
                         <include name="netty-common-*.jar"/>
@@ -35,12 +38,20 @@
                         <include name="truffle-api-*"/>
                         <include name="httpcore-*.jar"/>
                         <include name="reactive-streams-*.jar"/>
+
+
                         <include name="netty-codec-http2-*.jar"/>
 			<include name="netty-codec-*.jar"/>
                         <include name="netty-transport-native-unix-common-*.jar"/>
+
+
                         <include name="netty-handler-*.jar"/>
                         <include name="netty-buffer-4.1.*.jar"/>
+
+
+
 			<include name="armeria-*.jar"/>
+<!-- -->
                         <include name="netty-codec-http-*.jar"/>
 			<include name="js-*"/>
 		</fileset>

@@ -174,6 +174,10 @@ Prerequisiti:
 		plugin.enable=true
 		configurazioneGenerale.enable=true
 
++ Copiare il jar 'govway_modi_testsuite_connettore_karate.jar' in govway.ear/lib
+  Inoltre aggiungere (crearlo se non esiste) nel file '/etc/govway/govway_local.classRegistry.properties' il contenuto presente in src/configurazioni-govway/govway_local.classRegistry.properties.adjunct
+
+
 + Compilare i test con
 	ant build
 

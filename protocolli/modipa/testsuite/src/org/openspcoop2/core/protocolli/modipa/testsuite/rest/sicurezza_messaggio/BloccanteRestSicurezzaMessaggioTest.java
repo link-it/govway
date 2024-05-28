@@ -48,7 +48,7 @@ import com.intuit.karate.resource.ResourceUtils;
 
 public class BloccanteRestSicurezzaMessaggioTest extends ConfigLoader {
     
-	private static MockServer server;
+    private static MockServer server;
     private static MockServer proxy;
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -64,7 +64,7 @@ public class BloccanteRestSicurezzaMessaggioTest extends ConfigLoader {
         file = ResourceUtils.getFileRelativeTo(BloccanteRestSicurezzaMessaggioTest.class, "proxy.feature");
         proxy = MockServer
     			.feature(file)
-    			.args(new HashMap<String,Object>((Map) prop))
+    			.args(ConfigLoader.getConfig())
     			.http(Integer.valueOf(prop.getProperty("http_port")))
     			.build();
     }

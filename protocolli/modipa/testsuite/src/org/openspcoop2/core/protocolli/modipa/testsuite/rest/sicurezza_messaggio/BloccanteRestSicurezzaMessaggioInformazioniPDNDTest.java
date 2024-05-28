@@ -49,20 +49,20 @@ import com.intuit.karate.resource.ResourceUtils;
 
 public class BloccanteRestSicurezzaMessaggioInformazioniPDNDTest extends ConfigLoader {
     
-	private static MockServer server;
+    private static MockServer server;
     private static MockServer proxy;
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	@BeforeClass
     public static void beforeClass() {       
-        File file = ResourceUtils.getFileRelativeTo(BloccanteRestSicurezzaMessaggioFixKarateTest.class, "mock.feature");
+        File file = ResourceUtils.getFileRelativeTo(BloccanteRestSicurezzaMessaggioTest.class, "mock.feature");
         server = MockServer
                 .feature(file)
                 .args(new HashMap<String,Object>((Map) prop))
                 .http(Integer.valueOf(prop.getProperty("http_mock_port")))
                 .build();
 
-        file = ResourceUtils.getFileRelativeTo(BloccanteRestSicurezzaMessaggioFixKarateTest.class, "proxy.feature");
+        file = ResourceUtils.getFileRelativeTo(BloccanteRestSicurezzaMessaggioTest.class, "proxy.feature");
         proxy = MockServer
     			.feature(file)
     			.args(new HashMap<String,Object>((Map) prop))
@@ -73,7 +73,7 @@ public class BloccanteRestSicurezzaMessaggioInformazioniPDNDTest extends ConfigL
     @Test
     public void test() {
     	Results results = Runner.path(Arrays.asList( 
-    		    "classpath:test/rest/sicurezza-messaggio/idar-fix2-karate.feature"))
+    		    "classpath:test/rest/sicurezza-messaggio/getInformazioniPdnd.feature"))
     			.parallel(1);
     	assertEquals(0, results.getFailCount());
     }

@@ -1,4 +1,5 @@
-function fn() {    
+
+function fn() {
   var env = karate.env; // get system property 'karate.env'
   karate.log('karate.env system property was:', env);
   if (!env) {
@@ -16,17 +17,17 @@ function fn() {
 
   karate.configure('connectTimeout',  connect_timeout);
   karate.configure('readTimeout', read_timeout);
-  
-  return { 
+
+  return {
     govway_base_path: karate.properties["govway_base_path"],
     jmx_username: karate.properties["jmx_username"],
     jmx_password: karate.properties["jmx_password"],
-    govwayDbConfig: { 
+//    govwayDbConfig: {
       username: karate.properties['db_username'],
       password: karate.properties['db_password'],
       url: karate.properties['db_url'],
-      driverClassName: karate.properties['db_driverClassName']
-    },
+      driverClassName: karate.properties['db_driverClassName'],
+//    },
     db_sleep_before_read: karate.properties['db_sleep_before_read']
   }
 }

@@ -49,7 +49,7 @@ import com.intuit.karate.resource.ResourceUtils;
 
 public class BloccanteSoapSicurezzaMessaggioAuditTest extends ConfigLoader {
     
-	private static MockServer server;
+    private static MockServer server;
     private static MockServer proxy;
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -74,7 +74,7 @@ public class BloccanteSoapSicurezzaMessaggioAuditTest extends ConfigLoader {
     @Test
     public void test() {
     	Results results = Runner.path(Arrays.asList( 
-    		    "classpath:test/rest/sicurezza-messaggio/idar-fix-karate.feature"))    		        			
+    		    "classpath:test/soap/sicurezza-messaggio/audit.feature"))    		        			
     			.parallel(1);
     	assertEquals(0, results.getFailCount());
     }

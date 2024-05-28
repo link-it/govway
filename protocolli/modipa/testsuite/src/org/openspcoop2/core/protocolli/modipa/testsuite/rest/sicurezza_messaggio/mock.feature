@@ -295,15 +295,16 @@ Scenario: isTest('doppi-header-idar03-security-token-trasformazione-authorizatio
     })
     """
     * def checkToken = read('check-token.feature')
-
-    * call checkToken ({token: getRequestHeader("Authorization"), match_to: client_token_match, kind: 'Bearer' })
-    * match getRequestHeader("Authorization") == ('Bearer ' + getRequestHeader("X-Verifica-Req-Authorization"))
-    * call checkToken ({token: getRequestHeader("X-Verifica-Req-Authorization"), match_to: client_token_match, kind: 'AGID' })
+	
+	
+    * call checkToken ({token: karate.request.header("Authorization"), match_to: client_token_match, kind: 'Bearer' })
+    * match karate.request.header("Authorization") == ('Bearer ' + karate.request.header("X-Verifica-Req-Authorization"))
+    * call checkToken ({token: karate.request.header("X-Verifica-Req-Authorization"), match_to: client_token_match, kind: 'AGID' })
     
-    * match getRequestHeader("X-Verifica-Req-Authorization-CertCN") == 'ExampleClient1'
-    * match getRequestHeader("X-Verifica-Req-Authorization-CertO") == 'Example'
-    * match getRequestHeader("X-Verifica-Req-Authorization-HeaderClaim") == 'RS256'
-    * match getRequestHeader("X-Verifica-Req-Authorization-PayloadClaim") == 'testsuite'
+    * match karate.request.header("X-Verifica-Req-Authorization-CertCN") == 'ExampleClient1'
+    * match karate.request.header("X-Verifica-Req-Authorization-CertO") == 'Example'
+    * match karate.request.header("X-Verifica-Req-Authorization-HeaderClaim") == 'RS256'
+    * match karate.request.header("X-Verifica-Req-Authorization-PayloadClaim") == 'testsuite'
 
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
@@ -327,12 +328,12 @@ Scenario: isTest('doppi-header-idar03-security-token-trasformazione-authorizatio
     })
     """
     * def checkToken = read('check-token.feature')
-    * call checkToken ({token: getRequestHeader("Authorization"), match_to: client_token_match, kind: 'Bearer' })
+    * call checkToken ({token: karate.request.header("Authorization"), match_to: client_token_match, kind: 'Bearer' })
 
     * def splitToken = read('classpath:utils/split-token.js')
-    * def tokenS = splitToken(getRequestHeader("Authorization"), 'Bearer')
+    * def tokenS = splitToken(karate.request.header("Authorization"), 'Bearer')
 
-    * match tokenS.header == getRequestHeader("X-Verifica-Req-Authorization-Header")
+    * match tokenS.header == karate.request.header("X-Verifica-Req-Authorization-Header")
 
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
@@ -356,12 +357,12 @@ Scenario: isTest('doppi-header-idar03-security-token-trasformazione-authorizatio
     })
     """
     * def checkToken = read('check-token.feature')
-    * call checkToken ({token: getRequestHeader("Authorization"), match_to: client_token_match, kind: 'Bearer' })
+    * call checkToken ({token: karate.request.header("Authorization"), match_to: client_token_match, kind: 'Bearer' })
 
     * def splitToken = read('classpath:utils/split-token.js')
-    * def tokenS = splitToken(getRequestHeader("Authorization"), 'Bearer')
+    * def tokenS = splitToken(karate.request.header("Authorization"), 'Bearer')
 
-    * match tokenS.payload == getRequestHeader("X-Verifica-Req-Authorization-Payload")   
+    * match tokenS.payload == karate.request.header("X-Verifica-Req-Authorization-Payload")   
 
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
@@ -369,8 +370,8 @@ Scenario: isTest('doppi-header-idar03-security-token-trasformazione-authorizatio
 
 Scenario: isTest('doppi-header-idar03-security-token-trasformazione-authorization-custom')
 
-    * match getRequestHeader("Authorization") == 'Bearer TOKENVALUETEST'
-    * match getRequestHeader("X-Verifica-Req-Authorization-Custom") == '#present'
+    * match karate.request.header("Authorization") == 'Bearer TOKENVALUETEST'
+    * match karate.request.header("X-Verifica-Req-Authorization-Custom") == '#present'
 
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
@@ -395,15 +396,15 @@ Scenario: isTest('doppi-header-idar03-security-token-trasformazione-integrity-to
     """
 
     * def checkToken = read('check-token.feature')
-    * call checkToken ({token: getRequestHeader("Agid-JWT-Signature"), match_to: client_token_integrity_match,  kind: "AGID" })
+    * call checkToken ({token: karate.request.header("Agid-JWT-Signature"), match_to: client_token_integrity_match,  kind: "AGID" })
 
-    * match getRequestHeader("Agid-JWT-Signature") == getRequestHeader("X-Verifica-Req-Integrity")
-    * call checkToken ({token: getRequestHeader("X-Verifica-Req-Integrity"), match_to: client_token_integrity_match, kind: 'AGID' })
+    * match karate.request.header("Agid-JWT-Signature") == karate.request.header("X-Verifica-Req-Integrity")
+    * call checkToken ({token: karate.request.header("X-Verifica-Req-Integrity"), match_to: client_token_integrity_match, kind: 'AGID' })
     
-    * match getRequestHeader("X-Verifica-Req-Integrity-CertCN") == 'ExampleClient1'
-    * match getRequestHeader("X-Verifica-Req-Integrity-CertO") == 'Example'
-    * match getRequestHeader("X-Verifica-Req-Integrity-HeaderClaim") == 'RS256'
-    * match getRequestHeader("X-Verifica-Req-Integrity-PayloadClaim") == 'testsuite'
+    * match karate.request.header("X-Verifica-Req-Integrity-CertCN") == 'ExampleClient1'
+    * match karate.request.header("X-Verifica-Req-Integrity-CertO") == 'Example'
+    * match karate.request.header("X-Verifica-Req-Integrity-HeaderClaim") == 'RS256'
+    * match karate.request.header("X-Verifica-Req-Integrity-PayloadClaim") == 'testsuite'
 
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
@@ -428,12 +429,12 @@ Scenario: isTest('doppi-header-idar03-security-token-trasformazione-integrity-he
     """
 
     * def checkToken = read('check-token.feature')
-    * call checkToken ({token: getRequestHeader("Agid-JWT-Signature"), match_to: client_token_integrity_match,  kind: "AGID" })
+    * call checkToken ({token: karate.request.header("Agid-JWT-Signature"), match_to: client_token_integrity_match,  kind: "AGID" })
 
     * def splitToken = read('classpath:utils/split-token.js')
-    * def tokenS = splitToken(getRequestHeader("Agid-JWT-Signature"), 'AGID')
+    * def tokenS = splitToken(karate.request.header("Agid-JWT-Signature"), 'AGID')
 
-    * match tokenS.header == getRequestHeader("X-Verifica-Req-Integrity-Header")
+    * match tokenS.header == karate.request.header("X-Verifica-Req-Integrity-Header")
 
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
@@ -458,12 +459,12 @@ Scenario: isTest('doppi-header-idar03-security-token-trasformazione-integrity-pa
     """
 
     * def checkToken = read('check-token.feature')
-    * call checkToken ({token: getRequestHeader("Agid-JWT-Signature"), match_to: client_token_integrity_match,  kind: "AGID" })
+    * call checkToken ({token: karate.request.header("Agid-JWT-Signature"), match_to: client_token_integrity_match,  kind: "AGID" })
 
     * def splitToken = read('classpath:utils/split-token.js')
-    * def tokenS = splitToken(getRequestHeader("Agid-JWT-Signature"), 'AGID')
+    * def tokenS = splitToken(karate.request.header("Agid-JWT-Signature"), 'AGID')
 
-    * match tokenS.payload == getRequestHeader("X-Verifica-Req-Integrity-Payload")
+    * match tokenS.payload == karate.request.header("X-Verifica-Req-Integrity-Payload")
 
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
