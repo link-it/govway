@@ -24,8 +24,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.SearchUtils;
@@ -34,6 +38,7 @@ import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.CostantiProprieta;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -49,6 +54,29 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
  */
 public class DriverConfigurazioneDB_genericPropertiesDriver {
 
+	private static Map<String, List<String>> propertiesConfidentials = new HashMap<>();
+	static {
+		propertiesConfidentials.put(CostantiProprieta.MESSAGE_SECURITY_ID, CostantiProprieta.getMessageSecurityProperties());
+		propertiesConfidentials.put(CostantiProprieta.TOKEN_VALIDATION_ID, CostantiProprieta.getTokenValidationProperties());
+		propertiesConfidentials.put(CostantiProprieta.TOKEN_NEGOZIAZIONE_ID, CostantiProprieta.getTokenRetrieveProperties());
+		propertiesConfidentials.put(CostantiProprieta.ATTRIBUTE_AUTHORITY_ID, CostantiProprieta.getAttributeAuthorityProperties());
+	}
+	public static void addConfidentialProperty(String tipo, String nome){
+		List<String> l = propertiesConfidentials.computeIfAbsent(tipo, k -> new ArrayList<>());
+
+		if(!l.contains(nome)) {
+			l.add(nome);
+		}
+	}
+	public static boolean isConfidentialProperty(String tipo, String nome) {
+		List<String> l = propertiesConfidentials.get(tipo);
+		if(l!=null) {
+			return l.contains(nome);
+		}
+		return false;
+	}
+	
+	
 	private DriverConfigurazioneDB driver = null;
 	private DriverConfigurazioneDBUtils utilsDriver = null;
 	
@@ -271,7 +299,7 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 
 		try {
 			this.driver.logDebug("CRUDGenericPropertiesPdD type = 1");
-			DriverConfigurazioneDB_configLIB.CRUDGenericProperties(1, genericProperties, con);
+			DriverConfigurazioneDB_configLIB.CRUDGenericProperties(1, genericProperties, con, this.driver.getDriverWrapBYOK());
 
 		} catch (Exception qe) {
 			error = true;
@@ -308,7 +336,7 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 
 		try {
 			this.driver.logDebug("updateGenericProperties type = 2");
-			DriverConfigurazioneDB_configLIB.CRUDGenericProperties(2, genericProperties, con);
+			DriverConfigurazioneDB_configLIB.CRUDGenericProperties(2, genericProperties, con, this.driver.getDriverWrapBYOK());
 
 		} catch (Exception qe) {
 			error = true;
@@ -346,7 +374,7 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 
 		try {
 			this.driver.logDebug("deleteGenericProperties type = 3");
-			DriverConfigurazioneDB_configLIB.CRUDGenericProperties(3, genericProperties, con);
+			DriverConfigurazioneDB_configLIB.CRUDGenericProperties(3, genericProperties, con, this.driver.getDriverWrapBYOK());
 
 		} catch (Exception qe) {
 			error = true;
@@ -421,7 +449,22 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 					//proprieta
 					genericProperty.setId(rs2.getLong("id"));
 					genericProperty.setNome(rs2.getString("nome"));
-					genericProperty.setValore(rs2.getString("valore"));
+					
+					String plainValue = rs2.getString("valore");
+					String encValue = rs2.getString("enc_value");
+					if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+						IDriverBYOK driverBYOK = this.driver.getDriverUnwrapBYOK();
+						if(driverBYOK!=null) {
+							genericProperty.setValore(driverBYOK.unwrapAsString(encValue));
+						}
+						else {
+							genericProperty.setValore(encValue);
+						}
+					}
+					else {
+						genericProperty.setValore(plainValue);
+					}
+
 					genericProperties.addProperty(genericProperty);
 				}
 				rs2.close();

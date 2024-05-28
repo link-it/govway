@@ -57,7 +57,7 @@ public abstract class AbstractSecurityProvider implements IProvider {
 	
 	private OCSPProvider ocspProvider;
 
-	public AbstractSecurityProvider() {
+	protected AbstractSecurityProvider() {
 		this.ocspProvider = new OCSPProvider();
 	}
 	
@@ -69,40 +69,43 @@ public abstract class AbstractSecurityProvider implements IProvider {
 
 	@Override
 	public List<String> getValues(String id) throws ProviderException {
+		List<String> l = null;
 		if(SecurityConstants.KEYSTORE_TYPE.equals(id)) {
-			return SecurityConstants.getTipologieKeystoreValues(this.asTruststore);
+			l = SecurityConstants.getTipologieKeystoreValues(this.asTruststore);
 		}
 		else if(SecurityConstants.SECRETKEYSTORE_TYPE.equals(id)) {
-			return SecurityConstants.getTipologieSecretKeystoreValues();
+			l = SecurityConstants.getTipologieSecretKeystoreValues();
 		}
 		else if(SecurityConstants.TRUSTSTORE_TYPE.equals(id)) {
-			return SecurityConstants.getTipologieKeystoreValues(true);
+			l = SecurityConstants.getTipologieKeystoreValues(true);
 		}
 		else if(SecurityConstants.TRUSTSTORE_OCSP_POLICY.equals(id) ||
 				SecurityConstants.KEYSTORE_OCSP_POLICY.equals(id)) {
-			return this.ocspProvider.getValues();
+			l = this.ocspProvider.getValues();
 		}
-		
-		return null;
+		return l;
 	}
 
 	@Override
 	public List<String> getLabels(String id) throws ProviderException {
+		List<String> l = null;
 		if(SecurityConstants.KEYSTORE_TYPE.equals(id)) {
-			return SecurityConstants.getTipologieKeystoreLabels(this.asTruststore);
+			l = SecurityConstants.getTipologieKeystoreLabels(this.asTruststore);
 		}
 		else if(SecurityConstants.SECRETKEYSTORE_TYPE.equals(id)) {
-			return SecurityConstants.getTipologieSecretKeystoreLabels();
+			l = SecurityConstants.getTipologieSecretKeystoreLabels();
 		}
 		else if(SecurityConstants.TRUSTSTORE_TYPE.equals(id)) {
-			return SecurityConstants.getTipologieKeystoreLabels(true);
+			l = SecurityConstants.getTipologieKeystoreLabels(true);
 		}
 		else if(SecurityConstants.TRUSTSTORE_OCSP_POLICY.equals(id) ||
 				SecurityConstants.KEYSTORE_OCSP_POLICY.equals(id)) {
-			return this.ocspProvider.getLabels();
+			l = this.ocspProvider.getLabels();
 		}
-		
-		return this.getValues(id);
+		else {
+			l = this.getValues(id);
+		}
+		return l;
 	}
 	
 	@Override
@@ -168,7 +171,7 @@ public abstract class AbstractSecurityProvider implements IProvider {
 		String value = null;
 		if(items!=null && !items.isEmpty()) {
 			for (Object itemCheck : items) {
-				//System.out.println("CHECK ["+itemCheck.getClass().getName()+"]");
+				/**System.out.println("CHECK ["+itemCheck.getClass().getName()+"]");*/
 				if(itemCheck instanceof Item) {
 					Item listItem = (Item) itemCheck;
 					
@@ -185,7 +188,7 @@ public abstract class AbstractSecurityProvider implements IProvider {
 	public static String processStoreFile(String type, List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
 		if(items!=null && !items.isEmpty()) {
 			for (Object itemCheck : items) {
-				//System.out.println("CHECK ["+itemCheck.getClass().getName()+"]");
+				/**System.out.println("CHECK ["+itemCheck.getClass().getName()+"]");*/
 				if(itemCheck instanceof Item) {
 					Item listItem = (Item) itemCheck;
 					
@@ -197,29 +200,32 @@ public abstract class AbstractSecurityProvider implements IProvider {
 					}
 											
 					if(find) {
-						//System.out.println("TROVATO TYPE ["+mapNameValue.get(SecurityConstants.KEYSTORE_TYPE)+"]");
-						if(value!=null && HSMUtils.isKeystoreHSM((String)value)) {
-							//System.out.println("SET HIDDEN ["+HSMUtils.KEYSTORE_HSM_PREFIX+value+"]");
-							item.setValue(HSMUtils.KEYSTORE_HSM_PREFIX+value);
-							item.setType(ItemType.HIDDEN);
-							return item.getValue();
-						}
-						else {
-							item.setValue(actualValue);
-							item.setType(ItemType.TEXTAREA);
-							return item.getValue();
-						}
-						//break;
+						/**System.out.println("TROVATO TYPE ["+mapNameValue.get(SecurityConstants.KEYSTORE_TYPE)+"]");*/
+						return processStoreFile(value, item, actualValue);
 					}
 				}
 			}
 		}
 		return actualValue;
 	}
+	private static String processStoreFile(String value, Item item, String actualValue) {
+		if(value!=null && HSMUtils.isKeystoreHSM(value)) {
+			/**System.out.println("SET HIDDEN ["+HSMUtils.KEYSTORE_HSM_PREFIX+value+"]");*/
+			item.setValue(HSMUtils.KEYSTORE_HSM_PREFIX+value);
+			item.setType(ItemType.HIDDEN);
+			return item.getValue();
+		}
+		else {
+			item.setValue(actualValue);
+			item.setType(ItemType.TEXTAREA);
+			return item.getValue();
+		}
+	}
+	
 	public static String processStorePassword(String type, List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
 		if(items!=null && !items.isEmpty()) {
 			for (Object itemCheck : items) {
-				//System.out.println("CHECK ["+itemCheck.getClass().getName()+"]");
+				/**System.out.println("CHECK ["+itemCheck.getClass().getName()+"]");*/
 				if(itemCheck instanceof Item) {
 					Item listItem = (Item) itemCheck;
 					boolean find = false;
@@ -230,29 +236,32 @@ public abstract class AbstractSecurityProvider implements IProvider {
 					}
 											
 					if(find) {
-						//System.out.println("TROVATO TYPE ["+mapNameValue.get(SecurityConstants.KEYSTORE_TYPE)+"]");
-						if(value!=null && HSMUtils.isKeystoreHSM((String)value)) {
-							//System.out.println("SET HIDDEN ["+HSMUtils.KEYSTORE_HSM_PREFIX+value+"]");
-							item.setValue(HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED);
-							item.setType(ItemType.HIDDEN);
-							return item.getValue();
-						}
-						else {
-							item.setValue(actualValue);
-							item.setType(ItemType.TEXT);
-							return item.getValue();
-						}
-						//break;
+						/**System.out.println("TROVATO TYPE ["+mapNameValue.get(SecurityConstants.KEYSTORE_TYPE)+"]");*/
+						return processStorePassword(value, item, actualValue);
 					}
 				}
 			}
 		}
 		return actualValue;
 	}
+	private static String processStorePassword(String value, Item item, String actualValue) {
+		if(value!=null && HSMUtils.isKeystoreHSM(value)) {
+			/**System.out.println("SET HIDDEN ["+HSMUtils.KEYSTORE_HSM_PREFIX+value+"]");*/
+			item.setValue(HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED);
+			item.setType(ItemType.HIDDEN);
+			return item.getValue();
+		}
+		else {
+			item.setValue(actualValue);
+			item.setType(ItemType.LOCK);
+			return item.getValue();
+		}
+	}
+	
 	public static String processStoreKeyPassword(String type, List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
 		if(items!=null && !items.isEmpty()) {
 			for (Object itemCheck : items) {
-				//System.out.println("CHECK ["+itemCheck.getClass().getName()+"]");
+				/**System.out.println("CHECK ["+itemCheck.getClass().getName()+"]");*/
 				if(itemCheck instanceof Item) {
 					Item listItem = (Item) itemCheck;
 					boolean find = false;
@@ -263,23 +272,25 @@ public abstract class AbstractSecurityProvider implements IProvider {
 					}
 											
 					if(find) {
-						//System.out.println("TROVATO TYPE ["+mapNameValue.get(SecurityConstants.KEYSTORE_TYPE)+"]");
-						if(value!=null && HSMUtils.isKeystoreHSM((String)value)) {
-							//System.out.println("SET HIDDEN ["+HSMUtils.KEYSTORE_HSM_PREFIX+value+"]");
-							item.setValue(HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED);
-							item.setType(ItemType.HIDDEN);
-							return item.getValue();
-						}
-						else {
-							item.setValue(actualValue);
-							item.setType(ItemType.TEXT);
-							return item.getValue();
-						}
-						//break;
+						/**System.out.println("TROVATO TYPE ["+mapNameValue.get(SecurityConstants.KEYSTORE_TYPE)+"]");*/
+						return processStoreKeyPassword(value, item, actualValue);
 					}
 				}
 			}
 		}
 		return actualValue;
+	}
+	private static String processStoreKeyPassword(String value, Item item, String actualValue) {
+		if(value!=null && HSMUtils.isKeystoreHSM(value)) {
+			/**System.out.println("SET HIDDEN ["+HSMUtils.KEYSTORE_HSM_PREFIX+value+"]");*/
+			item.setValue(HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED);
+			item.setType(ItemType.HIDDEN);
+			return item.getValue();
+		}
+		else {
+			item.setValue(actualValue);
+			item.setType(ItemType.LOCK);
+			return item.getValue();
+		}
 	}
 }

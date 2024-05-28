@@ -26,11 +26,13 @@ import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_genericPropertiesDriver;
 import org.openspcoop2.core.mvc.properties.Collection;
 import org.openspcoop2.core.mvc.properties.Config;
 import org.openspcoop2.core.mvc.properties.Item;
 import org.openspcoop2.core.mvc.properties.Section;
 import org.openspcoop2.core.mvc.properties.Subsection;
+import org.openspcoop2.core.mvc.properties.constants.ItemType;
 import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
@@ -132,6 +134,18 @@ public class ReadPropertiesUtilities {
 	
 	
 	public static void addItemBean(ConfigBean configurazione, Item item, Map<String, Properties> propertiesMap, ExternalResources externalResources) throws ProviderException, ValidationException {
+		
+		if(item==null) {
+			throw new ProviderException("Item undefined");
+		}
+		if(configurazione==null) {
+			throw new ProviderException("Config undefined");
+		}
+		
+		if(configurazione.getId()!=null && ItemType.LOCK.equals(item.getType()) && item.getProperty()!=null &&  item.getProperty().getName()!=null) {
+			DriverConfigurazioneDB_genericPropertiesDriver.addConfidentialProperty(configurazione.getId(), item.getProperty().getName());
+		}
+		
 		ItemBean itemBean = new ItemBean(item, item.getName(), configurazione.getProvider()); 
 		String name = item.getProperty() != null ? item.getProperty().getName() : item.getName();
 		
@@ -143,6 +157,17 @@ public class ReadPropertiesUtilities {
 		String propertyValue = getPropertyValue(propertiesMap, name, collectionName);
 /**		System.out.println("READ -> Item: Name ["+item.getName()+"]-----------------");*/  
 		
+		addItemBean(item, propertiesMap, externalResources, 
+				propertyValue,
+				name, itemBean,
+				collectionName);
+		
+		configurazione.addItem(itemBean);
+	}
+	private static void addItemBean(Item item, Map<String, Properties> propertiesMap, ExternalResources externalResources, 
+			String propertyValue,
+			String name, ItemBean itemBean,
+			String collectionName) throws ProviderException {
 		// Lettura di un valore aggregato
 		if(item.getProperty() != null && item.getProperty().isAppend()) {
 			// estraggo il valore della property che contiene la sequenza delle chiavi salvate
@@ -175,9 +200,8 @@ public class ReadPropertiesUtilities {
 /**		System.out.println("READ -> INIT -> Item: Name ["+item.getName()+"] Value ["+itemBean.getValue()+"]");  
 		
 //		System.out.println("----------------------------------------\n");*/
-		configurazione.addItem(itemBean);
-	}
 
+	}
 
 
 

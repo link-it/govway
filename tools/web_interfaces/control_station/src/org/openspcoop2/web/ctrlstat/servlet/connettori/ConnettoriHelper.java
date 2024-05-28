@@ -1091,7 +1091,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 	
 	public List<DataElement> addProxyToDati(List<DataElement> dati,
 			String proxyHostname, String proxyPort, String proxyUsername, String proxyPassword,
-			boolean postBackViaPost) throws DriverControlStationException{
+			boolean postBackViaPost) throws UtilsException{
 		
 		if(postBackViaPost) {
 			// unused
@@ -1133,7 +1133,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
-		this.core.lock(de, proxyPassword);
+		this.core.getLockUtilities().lock(de, proxyPassword);
 		de.setSize(this.getSize());
 		de.setRequired(false);
 		dati.add(de);
@@ -1142,7 +1142,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 	}
 	
 	public List<DataElement> addProxyToDatiAsHidden(List<DataElement> dati,
-			String proxyEnabled, String proxyHostname, String proxyPort, String proxyUsername, String proxyPassword) throws DriverControlStationException{
+			String proxyEnabled, String proxyHostname, String proxyPort, String proxyUsername, String proxyPassword) throws UtilsException{
 		
 		DataElement de = new DataElement();
 		de.setValue(proxyEnabled);
@@ -1171,7 +1171,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de = new DataElement();
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
-		this.core.lockHidden(de, proxyPassword);
+		this.core.getLockUtilities().lockHidden(de, proxyPassword);
 		dati.add(de);
 		
 		return dati;
@@ -1216,7 +1216,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 	public List<DataElement> addApiKeyToDati(List<DataElement> dati, boolean useOAS3Names, boolean useAppId, 
 			String apiKeyHeader, String apiKeyValue,
 			String appIdHeader, String appIdValue,
-			boolean postBackViaPost) throws DriverControlStationException {
+			boolean postBackViaPost) throws UtilsException {
 				
 		DataElement de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_API_KEY);
@@ -1273,7 +1273,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de = new DataElement();
 		de.setLabel(!useSubSections ? ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_VALUE : ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_NON_STANDARD_VALUE);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_VALUE);
-		this.core.lock(de, apiKeyValue);
+		this.core.getLockUtilities().lock(de, apiKeyValue);
 		de.setRequired(true);
 		dati.add(de);
 		
@@ -1310,7 +1310,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 	}
 	public List<DataElement> addApiKeyToDatiHidden(List<DataElement> dati, boolean useOAS3Names, boolean useAppId, 
 			String apiKeyHeader, String apiKeyValue,
-			String appIdHeader, String appIdValue) throws DriverControlStationException {
+			String appIdHeader, String appIdValue) throws UtilsException {
 				
 		// useOAS3Names				
 		DataElement de = new DataElement();
@@ -1336,7 +1336,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		}
 		de = new DataElement();
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_VALUE);
-		this.core.lockHidden(de, apiKeyValue);
+		this.core.getLockUtilities().lockHidden(de, apiKeyValue);
 		dati.add(de);
 		
 		// APP ID
@@ -1704,7 +1704,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setType(DataElementType.TEXT_EDIT);
 				if(connettore){
 					de.setName(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-					this.core.lock(de, password);
+					this.core.getLockUtilities().lock(de, password);
 				}
 				else{
 					
@@ -3717,7 +3717,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			boolean autenticazioneToken, String tokenPolicy,
-			String autenticazioneApiKey, boolean useOAS3Names, boolean useAppId, String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue) throws DriverControlStationException {
+			String autenticazioneApiKey, boolean useOAS3Names, boolean useAppId, String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue) throws DriverControlStationException, UtilsException {
 
 		if(tipo!=null || servletChiamante!=null) {
 			// nop
@@ -3927,7 +3927,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 				de.setType(DataElementType.HIDDEN);
-				this.core.lockHidden(de, password);
+				this.core.getLockUtilities().lockHidden(de, password);
 				dati.add(de);
 			}
 		}
@@ -4323,7 +4323,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						return false;
 					}
 					if(proxyPassword!=null && !"".equals(proxyPassword) &&
-						!this.core.isWrapped(proxyPassword) &&
+						!this.core.getDriverBYOKUtilities().isWrapped(proxyPassword) &&
 						!this.checkLength255(proxyPassword, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PASSWORD)) {
 						return false;
 					}
@@ -4417,7 +4417,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					if(!this.checkLength255(user, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME)) {
 						return false;
 					}
-					if(!this.core.isWrapped(password) && 
+					if(!this.core.getDriverBYOKUtilities().isWrapped(password) && 
 							!this.checkLength255(password, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD)) {
 						return false;
 					}
@@ -4724,7 +4724,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 							this.pd.setMessage("La password del TrustStore è necessaria per l'Autenticazione Server");
 							return false;
 						}
-						if(!this.core.isWrapped(httpspwd) && 
+						if(!this.core.getDriverBYOKUtilities().isWrapped(httpspwd) && 
 								!this.checkLength255(httpspwd, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD)) {
 							return false;
 						}
@@ -4774,7 +4774,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 								this.pd.setMessage("La password della chiave privata è necessaria in caso di Autenticazione Client abilitata");
 								return false;
 							}
-							if(!this.core.isWrapped(httpspwdprivatekeytrust) && 
+							if(!this.core.getDriverBYOKUtilities().isWrapped(httpspwdprivatekeytrust) && 
 									!this.checkLength255(httpspwdprivatekeytrust, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE)) {
 								return false;
 							}
@@ -4815,7 +4815,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 								this.pd.setMessage("La password del KeyStore è necessaria per l'Autenticazione Client, in caso di dati di accesso al KeyStore ridefiniti");
 								return false;
 							}
-							if(!this.core.isWrapped(httpspwdkey) && 
+							if(!this.core.getDriverBYOKUtilities().isWrapped(httpspwdkey) && 
 									!this.checkLength255(httpspwdkey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD)) {
 								return false;
 							}
@@ -4824,7 +4824,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 								this.pd.setMessage("La password della chiave privata è necessaria in caso di Autenticazione Client abilitata");
 								return false;
 							}
-							if(!this.core.isWrapped(httpspwdprivatekey) && 
+							if(!this.core.getDriverBYOKUtilities().isWrapped(httpspwdprivatekey) && 
 									!this.checkLength255(httpspwdprivatekey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE)) {
 								return false;
 							}

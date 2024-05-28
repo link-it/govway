@@ -48,20 +48,16 @@ public class ConfigurazioneNodiRuntimeInit extends BaseThread {
 	private boolean reInitSecretMaps = false;
 	private String secretsConfig;
 	private boolean secretsConfigRequired;
-	private String securityPolicy;
-	private String securityRemotePolicy;
 	
 	private boolean first = true;
 	
 	public ConfigurazioneNodiRuntimeInit(Logger log, ConfigurazioneNodiRuntime configurazioneNodiRuntime, 
-			boolean reInitSecretMaps, String secretsConfig, boolean secretsConfigRequired, String securityPolicy, String securityRemotePolicy) {
+			boolean reInitSecretMaps, String secretsConfig, boolean secretsConfigRequired) {
 		this.log = log;
 		this.configurazioneNodiRuntime = configurazioneNodiRuntime;
 		this.reInitSecretMaps = reInitSecretMaps;
 		this.secretsConfig = secretsConfig;
 		this.secretsConfigRequired = secretsConfigRequired;
-		this.securityPolicy = securityPolicy;
-		this.securityRemotePolicy = securityRemotePolicy;
 	}
 	
 	@Override
@@ -150,7 +146,7 @@ public class ConfigurazioneNodiRuntimeInit extends BaseThread {
 			configurazioneNodiRuntime.initBYOKDynamicMapRemoteGovWayNode(this.log,dynamicMap, false, true, remoteConfig);
 					
 			BYOKMapProperties.initialize(this.log, this.secretsConfig, this.secretsConfigRequired, 
-					this.securityPolicy, this.securityRemotePolicy, 
+					true,
 					dynamicMap, true);
 			BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
 			secretsProperties.initEnvironment();

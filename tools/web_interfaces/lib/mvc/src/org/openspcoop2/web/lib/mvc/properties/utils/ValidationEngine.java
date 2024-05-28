@@ -161,6 +161,7 @@ public class ValidationEngine {
 				break;
 			case TEXT:
 			case TEXTAREA:
+			case LOCK:
 				validaText(item,metadata, externalResources);
 				break;
 			}

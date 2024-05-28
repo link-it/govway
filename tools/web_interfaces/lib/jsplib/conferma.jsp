@@ -478,7 +478,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 		$("#iconCopy_dec").hide();
 		$("#txtA_ne_dec").hide();
 		$("#visualizzaInformazioniCifrateModalPropNota").show();
-		$("#visualizzaInformazioniCifrateModal").next().show();
+		$("#visualizzaInformazioniCifrateModal").parent().children('.ui-dialog-buttonpane').show();
 		
 		$("#visualizzaInformazioniCifrateModal").prev().children('span').text(title);
 		$("#visualizzaInformazioniCifrateModalBodyNotaSpan").html(body);

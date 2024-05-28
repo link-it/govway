@@ -691,6 +691,12 @@ public class ConsoleProperties {
 	public String getVisualizzaInformazioniCifrateWarningMessage() throws UtilsException {
 		return this.readProperty(false, "console.visualizzaInformazioniCifrate.warningMessage");
 	}
+	public String getNotaInformativaInformazioneMemorizzataInChiaro() throws UtilsException {
+		return this.readProperty(false, "console.informazioniCifrate.memorizzataInChiaro.nota");
+	}
+	public String getNotaInformativaInformazioneCifrataSecurityPolicyDifferente() throws UtilsException {
+		return this.readProperty(false, "console.informazioniCifrate.cifrataConSecurityPolicyDifferente.nota");
+	}
 	
 	
 	public Integer getVerificaCertificatiWarningExpirationDays() throws UtilsException{

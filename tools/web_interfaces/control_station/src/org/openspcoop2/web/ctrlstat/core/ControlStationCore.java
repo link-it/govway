@@ -38,12 +38,9 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
-import org.openspcoop2.core.byok.BYOKUtilities;
-import org.openspcoop2.core.byok.BYOKWrappedValue;
 import org.openspcoop2.core.byok.IDriverBYOKConfig;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
@@ -144,7 +141,6 @@ import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
 import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
-import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntimeBYOKRemoteConfig;
 import org.openspcoop2.pdd.config.ConfigurazionePriorita;
 import org.openspcoop2.pdd.config.InvokerNodiRuntime;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
@@ -153,8 +149,7 @@ import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.byok.DriverBYOK;
-import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
-import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.core.byok.DriverBYOKUtilities;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.pdd.core.keystore.RemoteStoreKeyEntry;
 import org.openspcoop2.pdd.core.keystore.RemoteStoreProviderDriverUtils;
@@ -178,7 +173,6 @@ import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.VersionUtilities;
-import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.crypt.CryptFactory;
 import org.openspcoop2.utils.crypt.CryptType;
@@ -229,10 +223,9 @@ import org.openspcoop2.web.lib.audit.dao.Filtro;
 import org.openspcoop2.web.lib.audit.log.constants.Stato;
 import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
 import org.openspcoop2.web.lib.mvc.Costanti;
-import org.openspcoop2.web.lib.mvc.DataElement;
-import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.byok.LockUtilities;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.mvc.properties.exception.ValidationException;
 import org.openspcoop2.web.lib.mvc.properties.utils.ReadPropertiesUtilities;
@@ -1215,6 +1208,14 @@ public class ControlStationCore {
 	public String getByokWarningMessage() {
 		return this.byokWarningMessage;
 	}
+	private String notaInformativaInformazioneMemorizzataInChiaro = null;
+	public String getNotaInformativaInformazioneMemorizzataInChiaro() {
+		return this.notaInformativaInformazioneMemorizzataInChiaro;
+	}
+	private String notaInformativaInformazioneCifrataSecurityPolicyDifferente = null;
+	public String getNotaInformativaInformazioneCifrataSecurityPolicyDifferente() {
+		return this.notaInformativaInformazioneCifrataSecurityPolicyDifferente;
+	}
 
 	/** OCSP */
 	private boolean isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = false;
@@ -1641,6 +1642,8 @@ public class ControlStationCore {
 	private boolean isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus = false;
 	private InvokerNodiRuntime invoker = null;
 	private ConfigurazioneNodiRuntime configurazioneNodiRuntime = null;
+	private DriverBYOKUtilities driverBYOKUtilities = null;
+	private LockUtilities lockUtilities = null;
 	private List<String> jmxPdDAliases = new ArrayList<>();
 	private Map<String,List<String>>  jmxPdDGruppiAliases = new HashMap<>();
 	private Map<String, String> jmxPdDDescrizioni = new HashMap<>();
@@ -1792,6 +1795,13 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdDCacheNomeMetodoStatoCache = new HashMap<>();
 	private Map<String, String> jmxPdDCacheNomeMetodoResetCache = new HashMap<>();
 	private Map<String, String> jmxPdDCacheNomeMetodoPrefillCache = new HashMap<>();
+	
+	public DriverBYOKUtilities getDriverBYOKUtilities() {
+		return this.driverBYOKUtilities;
+	}
+	public LockUtilities getLockUtilities() {
+		return this.lockUtilities;
+	}
 	
 	public boolean isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus() {
 		return this.isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus;
@@ -2671,6 +2681,8 @@ public class ControlStationCore {
 		/** BYOK **/
 		this.visualizzaInformazioniCifrate = core.visualizzaInformazioniCifrate;
 		this.byokWarningMessage = core.byokWarningMessage;
+		this.notaInformativaInformazioneMemorizzataInChiaro = core.notaInformativaInformazioneMemorizzataInChiaro;
+		this.notaInformativaInformazioneCifrataSecurityPolicyDifferente = core.notaInformativaInformazioneCifrataSecurityPolicyDifferente;
 		
 		/** OCSP */
 		this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = core.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata; 
@@ -2783,6 +2795,8 @@ public class ControlStationCore {
 		/** Opzioni Accesso JMX della PdD */
 		this.invoker = core.invoker;
 		this.configurazioneNodiRuntime = core.configurazioneNodiRuntime;
+		this.driverBYOKUtilities = core.driverBYOKUtilities;
+		this.lockUtilities = core.lockUtilities;
 		this.isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus = core.isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus;
 		this.jmxPdDAliases = core.jmxPdDAliases;
 		this.jmxPdDGruppiAliases = core.jmxPdDGruppiAliases;
@@ -3117,6 +3131,8 @@ public class ControlStationCore {
 			this.isClusterDinamicoEnabled = consoleProperties.isClusterDinamicoEnabled();
 			this.visualizzaInformazioniCifrate = consoleProperties.isVisualizzaInformazioniCifrate();
 			this.byokWarningMessage = consoleProperties.getVisualizzaInformazioniCifrateWarningMessage();
+			this.notaInformativaInformazioneMemorizzataInChiaro = consoleProperties.getNotaInformativaInformazioneMemorizzataInChiaro();
+			this.notaInformativaInformazioneCifrataSecurityPolicyDifferente = consoleProperties.getNotaInformativaInformazioneCifrataSecurityPolicyDifferente();
 			this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = consoleProperties.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata();
 			this.verificaCertificatiWarningExpirationDays = consoleProperties.getVerificaCertificatiWarningExpirationDays();
 			this.verificaCertificatiSceltaClusterId = consoleProperties.isVerificaCertificatiSceltaClusterId();
@@ -3300,6 +3316,12 @@ public class ControlStationCore {
 			
 			this.configurazioneNodiRuntime = consoleProperties.getConfigurazioneNodiRuntime();
 			this.invoker = new InvokerNodiRuntime(log, this.configurazioneNodiRuntime);
+			
+			this.driverBYOKUtilities = new DriverBYOKUtilities(false, log, this.configurazioneNodiRuntime);
+			
+			this.lockUtilities = new LockUtilities(this.driverBYOKUtilities,
+					this.isVisualizzaInformazioniCifrate(), this.getByokWarningMessage(), UtilsCostanti.SERVLET_NAME_SECRET_DECODER,
+					this.getNotaInformativaInformazioneMemorizzataInChiaro(), this.getNotaInformativaInformazioneCifrataSecurityPolicyDifferente());
 			
 			this.isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus = consoleProperties.isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus();
 			this.jmxPdDAliases = consoleProperties.getJmxPdDAliases();
@@ -8889,7 +8911,7 @@ public class ControlStationCore {
 
 
 	protected void activeBYOK(DriverControlStationDB driver, boolean wrap, boolean unwrap) throws UtilsException{
-		DriverBYOK driverBYOK = getDriverBYOK(wrap, unwrap);
+		DriverBYOK driverBYOK = this.driverBYOKUtilities.getDriverBYOKManagerNode(wrap, unwrap);
 		if(driverBYOK!=null && driver.getDriverConfigurazioneDB() instanceof IDriverBYOKConfig) {
 			IDriverBYOKConfig c = driver.getDriverConfigurazioneDB();
 			c.initialize(driverBYOK, wrap, unwrap);
@@ -8899,208 +8921,5 @@ public class ControlStationCore {
 			c.initialize(driverBYOK, wrap, unwrap);
 		}
 	}
-	public boolean isEnabledBYOK() {
-		String securityManagerPolicy = BYOKManager.getSecurityEngineGovWayInstance();
-		return securityManagerPolicy!=null && StringUtils.isNotEmpty(securityManagerPolicy);
-	}
-	protected DriverBYOK getDriverBYOK(boolean wrap, boolean unwrap) throws UtilsException{
-		String securityManagerPolicy = BYOKManager.getSecurityEngineGovWayInstance();
-		if(securityManagerPolicy!=null && StringUtils.isNotEmpty(securityManagerPolicy)) {
-			Map<String, Object> dynamicMap = new HashMap<>();
-			DynamicInfo dynamicInfo = new  DynamicInfo();
-			DynamicUtils.fillDynamicMap(log, dynamicMap, dynamicInfo);
-			
-			if(isBYOKRemoteGovWayNodeConfig(securityManagerPolicy, wrap, unwrap)) {
-				initBYOKDynamicMapRemoteGovWayNode(dynamicMap, wrap, unwrap);
-			}
-			
-			return new DriverBYOK(ControlStationCore.log, securityManagerPolicy, BYOKManager.getSecurityRemoteEngineGovWayInstance(), dynamicMap, true);
-		}
-		return null;
-	}
-
-	private boolean isBYOKRemoteGovWayNodeConfig(String securityManagerPolicy, boolean wrap, boolean unwrap) throws UtilsException {
-		BYOKManager byokManager = BYOKManager.getInstance();
-		if(byokManager!=null) {
-			return byokManager.isBYOKRemoteGovWayNodeConfig(securityManagerPolicy, wrap, unwrap);
-		}
-		return false;
-	}
-	private void initBYOKDynamicMapRemoteGovWayNode(Map<String, Object> dynamicMap, boolean wrap, boolean unwrap) {
 		
-		ConfigurazioneNodiRuntimeBYOKRemoteConfig remoteConfig = new ConfigurazioneNodiRuntimeBYOKRemoteConfig();
-		this.configurazioneNodiRuntime.initBYOKDynamicMapRemoteGovWayNode(log,dynamicMap, wrap, unwrap, remoteConfig);
-		
-	}
-		
-	public String wrap(String value) throws DriverControlStationException {
-		try {
-			if(value==null || StringUtils.isEmpty(value)) {
-				return value;
-			}
-			DriverBYOK driverBYOK = getDriverBYOK(true, false);
-			if(driverBYOK==null) {
-				return value;
-			}
-			BYOKWrappedValue v = driverBYOK.wrap(value);
-			if(v!=null && v.getWrappedValue()!=null) {
-				return v.getWrappedValue();
-			}
-			throw new UtilsException("Wrap value failed");
-		}catch(Exception e) {
-			throw new DriverControlStationException(e.getMessage(),e);
-		}
-	}
-	public String unwrap(String value) throws DriverControlStationException {
-		try {
-			if(value==null || StringUtils.isEmpty(value)) {
-				return value;
-			}
-			DriverBYOK driverBYOK = getDriverBYOK(false, true);
-			if(driverBYOK==null) {
-				return value;
-			}
-			return driverBYOK.unwrapAsString(value);
-		}catch(Exception e) {
-			throw new DriverControlStationException(e.getMessage(),e);
-		}
-	}
-	
-	public byte[] wrap(byte[] value) throws DriverControlStationException {
-		try {
-			if(value==null || value.length<=0) {
-				return value;
-			}
-			DriverBYOK driverBYOK = getDriverBYOK(true, false);
-			if(driverBYOK==null) {
-				return value;
-			}
-			BYOKWrappedValue v = driverBYOK.wrap(value);
-			if(v!=null && v.getWrappedValue()!=null) {
-				return v.getWrappedValue().getBytes();
-			}
-			throw new UtilsException("Wrap value failed");
-		}catch(Exception e) {
-			throw new DriverControlStationException(e.getMessage(),e);
-		}
-	}
-	public byte[] unwrap(byte[] value) throws DriverControlStationException {
-		try {
-			if(value==null || value.length<=0) {
-				return value;
-			}
-			DriverBYOK driverBYOK = getDriverBYOK(false, true);
-			if(driverBYOK==null) {
-				return value;
-			}
-			return driverBYOK.unwrap(value);
-		}catch(Exception e) {
-			throw new DriverControlStationException(e.getMessage(),e);
-		}
-	}
-	
-	public boolean isWrapped(String value) {
-		try {
-			if(value==null || StringUtils.isEmpty(value) || !isEnabledBYOK()) {
-				return false;
-			}
-			String securityManagerPolicy = BYOKManager.getSecurityEngineGovWayInstance();
-			/**String driverSecurityManagerPolicy = BYOKManager.getSecurityRemoteEngineGovWayInstance();
-			if(driverSecurityManagerPolicy==null || StringUtils.isEmpty(driverSecurityManagerPolicy)) {
-				driverSecurityManagerPolicy = securityManagerPolicy;
-			}*/
-			String driverSecurityManagerPolicy = securityManagerPolicy;
-			
-			String prefix = BYOKUtilities.newPrefixWrappedValue(driverSecurityManagerPolicy);
-			return value.startsWith(prefix) && value.length()>prefix.length();
-			
-		}catch(Exception e) {
-			log.error("isWrapped failed ["+value+"]: "+e.getMessage(),e);
-			/**throw new DriverControlStationException(e.getMessage(),e);*/
-			return false; 
-		}
-	}
-	
-	public void lock(DataElement de, String value) throws DriverControlStationException {
-		lock(de, value, true);
-	}
-	public void lock(DataElement de, String value, boolean escapeHtml) throws DriverControlStationException {
-		lockEngine(de, value, escapeHtml, false, false);
-	}
-	public void lockReadOnly(DataElement de, String value) throws DriverControlStationException {
-		lockReadOnly(de, value, true);
-	}
-	public void lockReadOnly(DataElement de, String value, boolean escapeHtml) throws DriverControlStationException {
-		lockEngine(de, value, escapeHtml, false, true);
-	}
-	public void lockHidden(DataElement de, String value) throws DriverControlStationException {
-		lockHidden(de, value, true);
-	}
-	public void lockHidden(DataElement de, String value, boolean escapeHtml) throws DriverControlStationException {
-		lockEngine(de, value, escapeHtml, true, false);
-	}
-	private void lockEngine(DataElement de, String value, boolean escapeHtml, boolean hidden, boolean readOnly) throws DriverControlStationException {
-		if(this.isEnabledBYOK()) {
-			lockEngineWithBIOK(de, value, escapeHtml, hidden, readOnly);
-		}
-		else {
-			if(hidden &&
-					(de.getType()==null || StringUtils.isEmpty(de.getType()) || !DataElementType.HIDDEN.toString().equals(de.getType())) 
-					){
-				de.setType(DataElementType.HIDDEN);
-			}
-			else if(readOnly &&
-					(de.getType()==null || StringUtils.isEmpty(de.getType()) || !DataElementType.TEXT.toString().equals(de.getType())) 
-					){
-				de.setType(DataElementType.TEXT);
-			}
-			else if( de.getType()==null || StringUtils.isEmpty(de.getType()) || 
-					( (!DataElementType.TEXT_EDIT.toString().equals(de.getType())) && (!DataElementType.TEXT_AREA.toString().equals(de.getType())) )
-					){
-				de.setType(DataElementType.TEXT_EDIT);
-			}
-			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml(value) : value);
-		}
-	}
-	private void lockEngineWithBIOK(DataElement de, String value, boolean escapeHtml, boolean hidden, boolean readOnly ) throws DriverControlStationException {
-		String wrapValue = this.wrap(value); // viene lasciato il valore wrapped, non viene effettuato nuovamente il wrap
-		if(hidden) {
-			if(de.getType()==null || StringUtils.isEmpty(de.getType()) || !DataElementType.HIDDEN.toString().equals(de.getType())) {
-				de.setType(DataElementType.HIDDEN);
-			}
-			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue);
-		}
-		else {
-			lockEngineWithBIOK(de, wrapValue, escapeHtml, readOnly );
-		}
-	}
-	private void lockEngineWithBIOK(DataElement de, String wrapValue, boolean escapeHtml, boolean readOnly) {
-		StringBuilder sb = new StringBuilder();
-		if(wrapValue!=null && StringUtils.isNotEmpty(wrapValue)) {
-			if(BYOKUtilities.isWrappedValue(wrapValue)) {
-				if(!isWrapped(wrapValue)) {
-					appendErrorMessageSecurityPolicyDifferente(sb, wrapValue);
-				}
-			}
-			else {
-				sb.append("<b>Attenzione</b>: credenziale in chiaro");
-			}
-		}
-		if(sb.length()>0) {
-			de.setNote(sb.toString());
-		}
-		de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue, readOnly, this.isVisualizzaInformazioniCifrate(), this.getByokWarningMessage(), UtilsCostanti.SERVLET_NAME_SECRET_DECODER);
-	}
-	private void appendErrorMessageSecurityPolicyDifferente(StringBuilder sb, String wrapValue) {
-		String suffix ="";
-		try {
-			String old = BYOKUtilities.getPolicy(wrapValue);
-			if(old!=null && StringUtils.isNotEmpty(old)) {
-				suffix = ": '"+old+"'";
-			}
-		}catch(Exception ignore) {
-			// ignore
-		}
-		sb.append("<b>Attenzione</b>: credenziale cifrata con security policy differente").append(suffix);
-	}
 }

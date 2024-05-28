@@ -52,17 +52,21 @@ public class BYOKManager {
 	public static BYOKManager getInstance() {
 		return staticInstance;
 	}
-	public static String getSecurityEngineGovWayInstance() {
+	public static String getSecurityEngineGovWayPolicy() {
 		if(staticInstance!=null) {
 			return staticInstance.getSecurityEngineGovWay();
 		}
 		return null;
 	}
-	public static String getSecurityRemoteEngineGovWayInstance() {
+	public static String getSecurityRemoteEngineGovWayPolicy() {
 		if(staticInstance!=null) {
 			return staticInstance.getSecurityRemoteEngineGovWay();
 		}
 		return null;
+	}
+	public static boolean isEnabledBYOK() {
+		String securityManagerPolicy = BYOKManager.getSecurityEngineGovWayPolicy();
+		return securityManagerPolicy!=null && StringUtils.isNotEmpty(securityManagerPolicy);
 	}
 	
 	/*
@@ -387,18 +391,26 @@ public class BYOKManager {
 		return l;
 	}
 	
-	/**public boolean isBYOKRemoteConfig(String securityManagerPolicy) throws UtilsException {
-		BYOKSecurityConfig bsc = this.getKSMSecurityConfig(securityManagerPolicy);
-		
-		BYOKConfig c = this.getKSMConfigByType(bsc.getWrapId());
-		if(BYOKEncryptionMode.REMOTE.equals(c.getEncryptionMode())) {
-			return true;
+	public boolean existsSecurityEngineByType(String type) {
+		if(type==null) {
+			return false;
 		}
+		for (String i : this.securityMapIDtoConfig.keySet()) {
+			if(type.equalsIgnoreCase(i)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	public boolean isBYOKRemoteGovWayNodeUnwrapConfig() throws UtilsException {
+		return isBYOKRemoteGovWayNodeConfig(BYOKManager.getSecurityEngineGovWayPolicy(), false, true);
+	}
+	public boolean isBYOKRemoteGovWayNodeWrapConfig() throws UtilsException {
+		return isBYOKRemoteGovWayNodeConfig(BYOKManager.getSecurityEngineGovWayPolicy(), true, false);
 		
-		c = this.getKSMConfigByType(bsc.getUnwrapId());
-		return BYOKEncryptionMode.REMOTE.equals(c.getEncryptionMode());
-		
-	}*/
+	}
 	
 	public boolean isBYOKRemoteGovWayNodeUnwrapConfig(String securityManagerPolicy) throws UtilsException {
 		return isBYOKRemoteGovWayNodeConfig(securityManagerPolicy, false, true);
@@ -453,13 +465,13 @@ public class BYOKManager {
 		return false;
 	}
 	
-	public String getSecurityEngineGovWay() {
+	private String getSecurityEngineGovWay() {
 		if(this.securityEngineGovWay==null || StringUtils.isEmpty(this.securityEngineGovWay)) {
 			return null;
 		}
 		return this.securityEngineGovWay;
 	}
-	public String getSecurityRemoteEngineGovWay() {
+	private String getSecurityRemoteEngineGovWay() {
 		if(this.securityRemoteEngineGovWay==null || StringUtils.isEmpty(this.securityRemoteEngineGovWay)) {
 			return null;
 		}

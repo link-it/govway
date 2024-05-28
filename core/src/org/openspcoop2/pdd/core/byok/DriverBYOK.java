@@ -70,7 +70,7 @@ public class DriverBYOK implements IDriverBYOK {
 		DynamicUtils.fillDynamicMap(log, dynamicMap, dynamicInfo);
 		return dynamicMap;
 	}
-	public DriverBYOK(Logger log, String securityPolicy, String securityRemotePolicy, Map<String, Object> dynamicMapParam, boolean checkJmxPrefixOperazioneNonRiuscita) {
+	DriverBYOK(Logger log, String securityPolicy, String securityRemotePolicy, Map<String, Object> dynamicMapParam, boolean checkJmxPrefixOperazioneNonRiuscita) {
 		this.log = log;
 		if(securityPolicy!=null && StringUtils.isNotEmpty(securityPolicy)) {
 			this.securityPolicy = securityPolicy;
@@ -131,6 +131,24 @@ public class DriverBYOK implements IDriverBYOK {
 		return new BYOKWrappedValue(wrappedValue, prefix);
 	}
 
+	private String getSecPolicyIdForUnwrap(String check) throws UtilsException {
+		// Serve per decodificare valori cifrati con security policy differente da quella impostata per la gestione della cifratura
+		// Il comportamento serve a supportare eventuali valori cifrati dopo un cambio della policy senza un aggiornamento delle informazioni sensibili
+		String secPolicy = this.securityPolicy;
+		String wrapPolicy = BYOKUtilities.getPolicy(check);
+		if(!secPolicy.equals(wrapPolicy)) {
+			// dato cifrato con altra policy
+			// verifico che comunque esista
+			if(BYOKManager.getInstance().existsSecurityEngineByType(wrapPolicy)){
+				secPolicy = wrapPolicy;
+			}
+			else {
+				throw new UtilsException("Security policy '"+wrapPolicy+"' unknown");
+			}
+		}
+		return secPolicy;
+	}
+	
 	@Override
 	public byte[] unwrap(byte[] value) throws UtilsException {
 		if(value==null || value.length<=0) {
@@ -143,7 +161,8 @@ public class DriverBYOK implements IDriverBYOK {
 			}
 			
 			String rawWrappedValue =  BYOKUtilities.getRawWrappedValue(check);
-			BYOKRequestParams p = getBYOKRequestParams(false, this.securityPolicy);
+			
+			BYOKRequestParams p = getBYOKRequestParams(false, getSecPolicyIdForUnwrap(check));
 			return process(getBYOKInstance(this.log,rawWrappedValue.getBytes(),p));
 		}
 		return value;
@@ -152,6 +171,11 @@ public class DriverBYOK implements IDriverBYOK {
 	public byte[] unwrap(String value) throws UtilsException {
 		return unwrap(value, null, false);
 	}
+	public byte[] unwrap(String value, boolean checkAppendPrefix) throws UtilsException{
+		return unwrap(value, 
+				this.securityRemotePolicy!=null ? this.securityRemotePolicy : this.securityPolicy, 
+				checkAppendPrefix);
+	}
 	public byte[] unwrap(String value, String securityPolicy, boolean checkAppendPrefix) throws UtilsException {
 		if(BYOKUtilities.isWrappedValue(value)) {
 			if(this.securityPolicy==null) {
@@ -159,7 +183,7 @@ public class DriverBYOK implements IDriverBYOK {
 			}
 			
 			String rawWrappedValue =  BYOKUtilities.getRawWrappedValue(value);
-			BYOKRequestParams p = getBYOKRequestParams(false, this.securityPolicy);
+			BYOKRequestParams p = getBYOKRequestParams(false, getSecPolicyIdForUnwrap(value));
 			return process(getBYOKInstance(this.log,rawWrappedValue.getBytes(),p));
 		}
 		else if(checkAppendPrefix){
@@ -171,6 +195,11 @@ public class DriverBYOK implements IDriverBYOK {
 		}
 	}
 	
+	public String unwrapAsString(String value, boolean checkAppendPrefix) throws UtilsException{
+		return unwrapAsString(value, 
+				this.securityRemotePolicy!=null ? this.securityRemotePolicy : this.securityPolicy, 
+				checkAppendPrefix);
+	}
 	public String unwrapAsString(String value, String securityPolicy, boolean checkAppendPrefix) throws UtilsException{
 		if(BYOKUtilities.isWrappedValue(value)) {
 			return this.unwrapAsString(value);

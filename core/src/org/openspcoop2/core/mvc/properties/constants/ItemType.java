@@ -47,7 +47,9 @@ public enum ItemType implements IEnumeration , Serializable , Cloneable {
 	@javax.xml.bind.annotation.XmlEnumValue("checkbox")
 	CHECKBOX ("checkbox"),
 	@javax.xml.bind.annotation.XmlEnumValue("number")
-	NUMBER ("number");
+	NUMBER ("number"),
+	@javax.xml.bind.annotation.XmlEnumValue("lock")
+	LOCK ("lock");
 	
 	
 	/** Value */

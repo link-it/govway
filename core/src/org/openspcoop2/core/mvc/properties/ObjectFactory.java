@@ -53,80 +53,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ItemValue }
-     */
-    public ItemValue createItemValue() {
-        return new ItemValue();
-    }
-
-    /**
-     * Create an instance of {@link Compatibility }
-     */
-    public Compatibility createCompatibility() {
-        return new Compatibility();
-    }
-
-    /**
-     * Create an instance of {@link Subsection }
-     */
-    public Subsection createSubsection() {
-        return new Subsection();
-    }
-
-    /**
-     * Create an instance of {@link ItemValues }
-     */
-    public ItemValues createItemValues() {
-        return new ItemValues();
-    }
-
-    /**
-     * Create an instance of {@link Condition }
-     */
-    public Condition createCondition() {
-        return new Condition();
-    }
-
-    /**
-     * Create an instance of {@link Tags }
-     */
-    public Tags createTags() {
-        return new Tags();
-    }
-
-    /**
-     * Create an instance of {@link Selected }
-     */
-    public Selected createSelected() {
-        return new Selected();
-    }
-
-    /**
      * Create an instance of {@link Conditions }
      */
     public Conditions createConditions() {
         return new Conditions();
-    }
-
-    /**
-     * Create an instance of {@link Item }
-     */
-    public Item createItem() {
-        return new Item();
-    }
-
-    /**
-     * Create an instance of {@link Equals }
-     */
-    public Equals createEquals() {
-        return new Equals();
-    }
-
-    /**
-     * Create an instance of {@link Defined }
-     */
-    public Defined createDefined() {
-        return new Defined();
     }
 
     /**
@@ -137,6 +67,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Config }
+     */
+    public Config createConfig() {
+        return new Config();
+    }
+
+    /**
      * Create an instance of {@link Section }
      */
     public Section createSection() {
@@ -144,10 +81,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Property }
+     * Create an instance of {@link Defined }
      */
-    public Property createProperty() {
-        return new Property();
+    public Defined createDefined() {
+        return new Defined();
     }
 
     /**
@@ -158,10 +95,73 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Config }
+     * Create an instance of {@link Compatibility }
      */
-    public Config createConfig() {
-        return new Config();
+    public Compatibility createCompatibility() {
+        return new Compatibility();
+    }
+
+    /**
+     * Create an instance of {@link Condition }
+     */
+    public Condition createCondition() {
+        return new Condition();
+    }
+
+    /**
+     * Create an instance of {@link ItemValues }
+     */
+    public ItemValues createItemValues() {
+        return new ItemValues();
+    }
+
+    /**
+     * Create an instance of {@link Selected }
+     */
+    public Selected createSelected() {
+        return new Selected();
+    }
+
+    /**
+     * Create an instance of {@link Property }
+     */
+    public Property createProperty() {
+        return new Property();
+    }
+
+    /**
+     * Create an instance of {@link Equals }
+     */
+    public Equals createEquals() {
+        return new Equals();
+    }
+
+    /**
+     * Create an instance of {@link Tags }
+     */
+    public Tags createTags() {
+        return new Tags();
+    }
+
+    /**
+     * Create an instance of {@link Item }
+     */
+    public Item createItem() {
+        return new Item();
+    }
+
+    /**
+     * Create an instance of {@link Subsection }
+     */
+    public Subsection createSubsection() {
+        return new Subsection();
+    }
+
+    /**
+     * Create an instance of {@link ItemValue }
+     */
+    public ItemValue createItemValue() {
+        return new ItemValue();
     }
 
 

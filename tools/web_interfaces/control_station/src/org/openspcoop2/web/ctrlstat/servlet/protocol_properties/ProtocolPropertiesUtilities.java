@@ -341,7 +341,7 @@ public class ProtocolPropertiesUtilities {
 		if(DataElementType.LOCK.equals(type)) {
 			// imposto il tipo insieme al valore
 			try {
-				consoleHelper.getCore().lock(de, value);
+				consoleHelper.getCore().getLockUtilities().lock(de, value);
 			}catch(Exception e) {
 				throw new ProtocolException(e.getMessage(),e);
 			}
@@ -616,7 +616,7 @@ public class ProtocolPropertiesUtilities {
 		if(item.isLockedType()) {
 			// imposto il tipo insieme al valore
 			try {
-				consoleHelper.getCore().lockHidden(de, value);
+				consoleHelper.getCore().getLockUtilities().lockHidden(de, value);
 			}catch(Exception e) {
 				throw new ProtocolException(e.getMessage(),e);
 			}

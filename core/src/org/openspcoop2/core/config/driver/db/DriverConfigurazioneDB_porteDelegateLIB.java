@@ -30,6 +30,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.openspcoop2.core.byok.BYOKWrappedValue;
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.IExtendedInfo;
 import org.openspcoop2.core.config.AttributeAuthority;
@@ -66,6 +68,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.constants.CRUDType;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.CostantiProprieta;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -90,7 +93,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 	 * @param con
 	 * @throws DriverConfigurazioneException
 	 */
-	public static long CRUDPortaDelegata(int type, PortaDelegata aPD, Connection con) throws DriverConfigurazioneException {
+	public static long CRUDPortaDelegata(int type, PortaDelegata aPD, Connection con, IDriverBYOK driverBYOK) throws DriverConfigurazioneException {
 
 		if (aPD == null)
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDPortaDelegata] Porta Delegata non valida.");
@@ -862,6 +865,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
 					sqlQueryObject.addInsertField("valore", "?");
+					sqlQueryObject.addInsertField("enc_value", "?");
 					sqlQuery = sqlQueryObject.createSQLInsert();
 					stm = con.prepareStatement(sqlQuery);
 
@@ -870,9 +874,21 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						MessageSecurityFlow flow = messageSecurity.getRequestFlow();
 						for (i = 0; i < flow.sizeParameterList(); i++) {
 							reqParam = flow.getParameter(i);
-							stm.setLong(1, idPortaDelegata);
-							stm.setString(2, reqParam.getNome());
-							stm.setString(3, reqParam.getValore());
+							int indexSec = 1;
+							stm.setLong(indexSec++, idPortaDelegata);
+							stm.setString(indexSec++, reqParam.getNome());
+							
+							String plainValue = reqParam.getValore();
+							String encValue = null;
+							if(driverBYOK!=null && DriverConfigurazioneDB_genericPropertiesDriver.isConfidentialProperty(CostantiProprieta.MESSAGE_SECURITY_ID, reqParam.getNome())) {
+								BYOKWrappedValue byokValue = driverBYOK.wrap(plainValue);
+								if(byokValue!=null) {
+									encValue = byokValue.getWrappedValue();
+									plainValue = byokValue.getWrappedPlainValue();
+								}
+							}
+							stm.setString(indexSec++, plainValue);
+							stm.setString(indexSec++, encValue);
 
 							stm.executeUpdate();
 						}	
@@ -886,6 +902,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
 					sqlQueryObject.addInsertField("valore", "?");
+					sqlQueryObject.addInsertField("enc_value", "?");
 					sqlQuery = sqlQueryObject.createSQLInsert();
 					stm = con.prepareStatement(sqlQuery);
 					
@@ -894,9 +911,21 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						MessageSecurityFlow flow = messageSecurity.getResponseFlow();
 						for (i = 0; i < flow.sizeParameterList(); i++) {
 							resParam = flow.getParameter(i);
-							stm.setLong(1, idPortaDelegata);
-							stm.setString(2, resParam.getNome());
-							stm.setString(3, resParam.getValore());
+							int indexSec = 1;
+							stm.setLong(indexSec++, idPortaDelegata);
+							stm.setString(indexSec++, resParam.getNome());
+							
+							String plainValue = resParam.getValore();
+							String encValue = null;
+							if(driverBYOK!=null && DriverConfigurazioneDB_genericPropertiesDriver.isConfidentialProperty(CostantiProprieta.MESSAGE_SECURITY_ID, resParam.getNome())) {
+								BYOKWrappedValue byokValue = driverBYOK.wrap(plainValue);
+								if(byokValue!=null) {
+									encValue = byokValue.getWrappedValue();
+									plainValue = byokValue.getWrappedPlainValue();
+								}
+							}
+							stm.setString(indexSec++, plainValue);
+							stm.setString(indexSec++, encValue);
 	
 							stm.executeUpdate();
 						}
@@ -1843,6 +1872,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
 					sqlQueryObject.addInsertField("valore", "?");
+					sqlQueryObject.addInsertField("enc_value", "?");
 					sqlQuery = sqlQueryObject.createSQLInsert();
 					stm = con.prepareStatement(sqlQuery);
 
@@ -1851,9 +1881,22 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						MessageSecurityFlow flow = messageSecurity.getRequestFlow();
 						for (i = 0; i < flow.sizeParameterList(); i++) {
 							reqParam = flow.getParameter(i);
-							stm.setLong(1, idPortaDelegata);
-							stm.setString(2, reqParam.getNome());
-							stm.setString(3, reqParam.getValore());
+							int indexSec = 1;
+							stm.setLong(indexSec++, idPortaDelegata);
+							stm.setString(indexSec++, reqParam.getNome());
+							
+							String plainValue = reqParam.getValore();
+							String encValue = null;
+							if(driverBYOK!=null && DriverConfigurazioneDB_genericPropertiesDriver.isConfidentialProperty(CostantiProprieta.MESSAGE_SECURITY_ID, reqParam.getNome())) {
+								BYOKWrappedValue byokValue = driverBYOK.wrap(plainValue);
+								if(byokValue!=null) {
+									encValue = byokValue.getWrappedValue();
+									plainValue = byokValue.getWrappedPlainValue();
+								}
+							}
+							stm.setString(indexSec++, plainValue);
+							stm.setString(indexSec++, encValue);
+							
 							stm.executeUpdate();
 						}
 					}
@@ -1866,6 +1909,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
 					sqlQueryObject.addInsertField("valore", "?");
+					sqlQueryObject.addInsertField("enc_value", "?");
 					sqlQuery = sqlQueryObject.createSQLInsert();
 					stm = con.prepareStatement(sqlQuery);
 					
@@ -1874,9 +1918,22 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						MessageSecurityFlow flow = messageSecurity.getResponseFlow();
 						for (i = 0; i < flow.sizeParameterList(); i++) {
 							resParam = flow.getParameter(i);
-							stm.setLong(1, idPortaDelegata);
-							stm.setString(2, resParam.getNome());
-							stm.setString(3, resParam.getValore());
+							int indexSec = 1;
+							stm.setLong(indexSec++, idPortaDelegata);
+							stm.setString(indexSec++, resParam.getNome());
+							
+							String plainValue = resParam.getValore();
+							String encValue = null;
+							if(driverBYOK!=null && DriverConfigurazioneDB_genericPropertiesDriver.isConfidentialProperty(CostantiProprieta.MESSAGE_SECURITY_ID, resParam.getNome())) {
+								BYOKWrappedValue byokValue = driverBYOK.wrap(plainValue);
+								if(byokValue!=null) {
+									encValue = byokValue.getWrappedValue();
+									plainValue = byokValue.getWrappedPlainValue();
+								}
+							}
+							stm.setString(indexSec++, plainValue);
+							stm.setString(indexSec++, encValue);
+							
 							stm.executeUpdate();
 						}
 					}

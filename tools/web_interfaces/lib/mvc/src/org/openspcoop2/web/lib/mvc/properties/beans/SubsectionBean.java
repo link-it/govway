@@ -21,6 +21,7 @@ package org.openspcoop2.web.lib.mvc.properties.beans;
 
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
+import org.openspcoop2.web.lib.mvc.byok.LockUtilities;
 import org.openspcoop2.web.lib.mvc.properties.exception.UserInputValidationException;
 
 import java.util.Map;
@@ -48,7 +49,7 @@ public class SubsectionBean extends BaseItemBean<Subsection>{
 	}
 
 	@Override
-	public DataElement toDataElement(ConfigBean config, Map<String, String> mapNameValue, ExternalResources externalResources) {
+	public DataElement toDataElement(ConfigBean config, Map<String, String> mapNameValue, ExternalResources externalResources, LockUtilities lockUtilities) {
 		DataElement de = new DataElement();
 		de.setName(this.getName());
 		de.setLabel(this.getItem().getLabel()); 
@@ -65,7 +66,9 @@ public class SubsectionBean extends BaseItemBean<Subsection>{
 	}
 
 	@Override
-	public void setValueFromRequest(String parameterValue, ExternalResources externalResources) {}
+	public void setValueFromRequest(String parameterValue, ExternalResources externalResources, LockUtilities lockUtilities) {
+		// nop
+	}
 
 	@Override
 	public Property getSaveProperty() {	return null; }
@@ -74,7 +77,9 @@ public class SubsectionBean extends BaseItemBean<Subsection>{
 	public String getPropertyValue() { return null;	}
 	
 	@Override
-	public void init(String value, ExternalResources externalResources) {}
+	public void init(String value, ExternalResources externalResources) {
+		// nop
+	}
 	
 	@Override
 	public Conditions getConditions() {
@@ -93,5 +98,6 @@ public class SubsectionBean extends BaseItemBean<Subsection>{
 	
 	@Override
 	public void validate(ExternalResources externalResources) throws UserInputValidationException {
+		// nop
 	}
 }

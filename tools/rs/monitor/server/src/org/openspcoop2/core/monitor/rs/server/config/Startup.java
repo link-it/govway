@@ -249,21 +249,19 @@ public class Startup implements ServletContextListener {
 				String secretsConfig = serverProperties.getBYOKEnvSecretsConfig();
 				if(byokManager!=null && StringUtils.isNotEmpty(secretsConfig)) {
 					Startup.log.info("Inizializzazione secrets in corso...");
-					String securityPolicy = BYOKManager.getSecurityEngineGovWayInstance();
-					String securityRemotePolicy = BYOKManager.getSecurityRemoteEngineGovWayInstance();
 					
+					boolean useSecurityEngine = true;
 					Map<String, Object> dynamicMap = new HashMap<>();
 					DynamicInfo dynamicInfo = new  DynamicInfo();
 					DynamicUtils.fillDynamicMap(log, dynamicMap, dynamicInfo);
-					if(byokManager.isBYOKRemoteGovWayNodeUnwrapConfig(securityPolicy)) {
+					if(byokManager.isBYOKRemoteGovWayNodeUnwrapConfig()) {
 						// i secrets cifrati verranno riletti quando i nodi sono attivi (verificato in InitRuntimeConfigReader)
 						reInitSecretMaps = true;
-						securityPolicy = null;
-						securityRemotePolicy = null;
+						useSecurityEngine = false;
 					}
 					
 					BYOKMapProperties.initialize(Startup.log, secretsConfig, serverProperties.isBYOKEnvSecretsConfigRequired(), 
-							securityPolicy, securityRemotePolicy, 
+							useSecurityEngine, 
 							dynamicMap, true);
 					BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
 					secretsProperties.initEnvironment();

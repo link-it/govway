@@ -93,16 +93,17 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.DBMappingUtils;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.plugins.IdPlugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
-import org.openspcoop2.core.plugins.IdPlugin;
-import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.dynamic.IRegistroPluginsReader;
 import org.openspcoop2.monitor.sdk.alarm.AlarmStatus;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.byok.DriverBYOK;
+import org.openspcoop2.pdd.core.byok.DriverBYOKUtilities;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.pdd.core.dynamic.TemplateSource;
@@ -117,12 +118,11 @@ import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
-import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.cache.CacheResponse;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
-import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -558,9 +558,8 @@ public class ConfigurazionePdD  {
 			}
 
 			if(this.driverConfigurazionePdD instanceof IDriverBYOKConfig) {
-				String securityRuntimePolicy = BYOKManager.getSecurityEngineGovWayInstance();
-				if(securityRuntimePolicy!=null) {
-					DriverBYOK driverBYOK = new DriverBYOK(this.logger, securityRuntimePolicy, securityRuntimePolicy);
+				DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(this.logger, false, true);
+				if(driverBYOK!=null) {
 					IDriverBYOKConfig c = (IDriverBYOKConfig) this.driverConfigurazionePdD;
 					c.initialize(driverBYOK, false, true);
 				}

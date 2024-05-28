@@ -27,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.certificate.byok.BYOKInstance;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.certificate.byok.BYOKMode;
 import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 import org.openspcoop2.utils.properties.MapProperties;
@@ -110,10 +111,14 @@ public class BYOKMapProperties extends MapProperties {
 	 *
 	 * 
 	 */
-	public static boolean initialize(Logger log, String fileName, boolean throwNotFound, String securityPolicy, String securityRemotePolicy, 
+	public static boolean initialize(Logger log, String fileName, boolean throwNotFound,  
+			boolean useSecurityEngine,
 			Map<String, Object> dynamicMapParam, boolean checkJmxPrefixOperazioneNonRiuscita){
 
 		try {
+			String securityPolicy = useSecurityEngine ? BYOKManager.getSecurityEngineGovWayPolicy() : null;
+			String securityRemotePolicy = useSecurityEngine ? BYOKManager.getSecurityRemoteEngineGovWayPolicy() : null;
+			
 			BYOKMapProperties.secretsProperties = new BYOKMapProperties(log, fileName, throwNotFound, securityPolicy, securityRemotePolicy, 
 					dynamicMapParam, checkJmxPrefixOperazioneNonRiuscita);	
 		    return true;

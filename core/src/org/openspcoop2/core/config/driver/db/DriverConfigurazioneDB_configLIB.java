@@ -31,6 +31,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.byok.BYOKWrappedValue;
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.IExtendedInfo;
 import org.openspcoop2.core.config.AccessoConfigurazione;
@@ -811,7 +813,7 @@ public class DriverConfigurazioneDB_configLIB {
 	
 	
 	
-	public static void CRUDGenericProperties(int type, GenericProperties genericProperties, Connection con) throws DriverConfigurazioneException {
+	public static void CRUDGenericProperties(int type, GenericProperties genericProperties, Connection con, IDriverBYOK driverBYOK) throws DriverConfigurazioneException {
 		if (genericProperties == null)
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDGenericProperties] Le configurazioni per le generic properties non possono essere NULL");
 		PreparedStatement updateStmt = null;
@@ -949,11 +951,26 @@ public class DriverConfigurazioneDB_configLIB {
 					sqlQueryObject.addInsertField("id_props", "?");
 					sqlQueryObject.addInsertField("nome", "?");
 					sqlQueryObject.addInsertField("valore", "?");
+					sqlQueryObject.addInsertField("enc_value", "?");
 					updateQuery = sqlQueryObject.createSQLInsert();
 					updateStmt = con.prepareStatement(updateQuery);
-					updateStmt.setLong(1, idProperties);
-					updateStmt.setString(2, genericProperties.getProperty(l).getNome());
-					updateStmt.setString(3, genericProperties.getProperty(l).getValore());
+					int index = 1;
+					updateStmt.setLong(index++, idProperties);
+					updateStmt.setString(index++, genericProperties.getProperty(l).getNome());
+					
+					String plainValue = genericProperties.getProperty(l).getValore();
+					String encValue = null;
+					if(driverBYOK!=null && DriverConfigurazioneDB_genericPropertiesDriver.isConfidentialProperty(genericProperties.getTipo(), genericProperties.getProperty(l).getNome())) {
+						BYOKWrappedValue byokValue = driverBYOK.wrap(plainValue);
+						if(byokValue!=null) {
+							encValue = byokValue.getWrappedValue();
+							plainValue = byokValue.getWrappedPlainValue();
+						}
+					}
+					
+					updateStmt.setString(index++, plainValue);
+					updateStmt.setString(index++, encValue);
+					
 					updateStmt.executeUpdate();
 					updateStmt.close();
 				}

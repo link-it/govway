@@ -441,6 +441,7 @@ CREATE TABLE pd_security_request
 	id_porta NUMBER NOT NULL,
 	nome VARCHAR2(255) NOT NULL,
 	valore CLOB NOT NULL,
+	enc_value CLOB,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints
@@ -471,6 +472,7 @@ CREATE TABLE pd_security_response
 	id_porta NUMBER NOT NULL,
 	nome VARCHAR2(255) NOT NULL,
 	valore CLOB NOT NULL,
+	enc_value CLOB,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints

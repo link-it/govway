@@ -69,6 +69,7 @@
 			<xsd:enumeration value="select"/>
 			<xsd:enumeration value="checkbox"/>
 			<xsd:enumeration value="number"/>
+			<xsd:enumeration value="lock"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	

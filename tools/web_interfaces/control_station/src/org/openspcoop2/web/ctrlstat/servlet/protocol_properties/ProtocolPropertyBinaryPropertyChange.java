@@ -263,12 +263,12 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 							AbstractProperty<?> pp = strutsBean.protocolProperties.getProperty(i);
 							if(pp instanceof BinaryProperty) {
 								BinaryProperty bp = (BinaryProperty) pp;
-								BinaryProperty bpCloned = ProtocolPropertiesFactory.newProperty(bp.getId(), ppCore.unwrap(bp.getValue()), bp.getFileName(), bp.getFileId());
+								BinaryProperty bpCloned = ProtocolPropertiesFactory.newProperty(bp.getId(), ppCore.getDriverBYOKUtilities().unwrap(bp.getValue()), bp.getFileName(), bp.getFileId());
 								protocolPropertiesCloned.addProperty(bpCloned);
 							}
 							else if(pp instanceof StringProperty) {
 								StringProperty sp = (StringProperty) pp;
-								StringProperty spCloned = ProtocolPropertiesFactory.newProperty(sp.getId(), ppCore.unwrap(sp.getValue()));
+								StringProperty spCloned = ProtocolPropertiesFactory.newProperty(sp.getId(), ppCore.getDriverBYOKUtilities().unwrap(sp.getValue()));
 								protocolPropertiesCloned.addProperty(spCloned);
 							}
 							else if(pp instanceof BooleanProperty) {

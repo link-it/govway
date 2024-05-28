@@ -25,6 +25,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
@@ -1662,7 +1663,15 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 
 				wsreq.setId(risultato.getLong("id_porta"));
 				wsreq.setNome(risultato.getString("nome"));
-				wsreq.setValore(risultato.getString("valore"));
+				
+				String plainValue = risultato.getString("valore");
+				String encValue = risultato.getString("enc_value");
+				if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+					wsreq.setValore(encValue);
+				}
+				else {
+					wsreq.setValore(plainValue);
+				}
 
 				lista.add(wsreq);
 			}
@@ -1783,7 +1792,15 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 
 				wsresp.setId(risultato.getLong("id_porta"));
 				wsresp.setNome(risultato.getString("nome"));
-				wsresp.setValore(risultato.getString("valore"));
+				
+				String plainValue = risultato.getString("valore");
+				String encValue = risultato.getString("enc_value");
+				if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+					wsresp.setValore(encValue);
+				}
+				else {
+					wsresp.setValore(plainValue);
+				}
 
 				lista.add(wsresp);
 			}

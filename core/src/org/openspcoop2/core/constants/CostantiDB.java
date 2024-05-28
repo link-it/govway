@@ -620,26 +620,31 @@ public final class CostantiDB {
     public static final String PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_COLUMN_ID_PORTA = "id_porta";
     public static final String PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_COLUMN_NOME = "nome";
     public static final String PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_COLUMN_VALORE = "valore";
+    public static final String PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_COLUMN_ENC_VALUE = "enc_value";
         
     /*COLONNE TABELLA PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE */
     public static final String PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_COLUMN_ID_PORTA = "id_porta";
     public static final String PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_COLUMN_NOME = "nome";
     public static final String PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_COLUMN_VALORE = "valore";
+    public static final String PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_COLUMN_ENC_VALUE = "enc_value";
 
     /*COLONNE TABELLA PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST */
     public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_ID_PORTA = "id_porta";
     public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_NOME = "nome";
     public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_VALORE = "valore";
+    public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_ENC_VALUE = "enc_value";
     
     /*COLONNE TABELLA PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE */
     public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_ID_PORTA = "id_porta";
     public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_NOME = "nome";
     public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_VALORE = "valore";
+    public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_ENC_VALUE = "enc_value";
     
     /*COLONNE TABELLA CONFIG_GENERIC_PROPERTY */
     public static final String CONFIG_GENERIC_PROPERTY_COLUMN_ID_PROPS = "id_props";
     public static final String CONFIG_GENERIC_PROPERTY_COLUMN_NOME = "nome";
     public static final String CONFIG_GENERIC_PROPERTY_COLUMN_VALORE = "valore";
+    public static final String CONFIG_GENERIC_PROPERTY_COLUMN_ENC_VALUE = "enc_value";
 
     /**
      * PROPRIETA SICUREZZA

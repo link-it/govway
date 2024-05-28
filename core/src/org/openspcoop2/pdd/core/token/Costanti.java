@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.constants.CostantiProprieta;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.MapKey;
@@ -206,9 +207,9 @@ public class Costanti {
 	public static final String POLICY_INTROSPECTION_CLAIMS_PARSER_PLUGIN_TYPE = CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_PLUGIN_TYPE; 
 	public static final String POLICY_INTROSPECTION_AUTH_BASIC_STATO = "policy.introspection.endpoint.basic.stato";
 	public static final String POLICY_INTROSPECTION_AUTH_BASIC_USERNAME = "policy.introspection.endpoint.basic.username";
-	public static final String POLICY_INTROSPECTION_AUTH_BASIC_PASSWORD = "policy.introspection.endpoint.basic.password";
+	public static final String POLICY_INTROSPECTION_AUTH_BASIC_PASSWORD = CostantiProprieta.POLICY_INTROSPECTION_AUTH_BASIC_PASSWORD;
 	public static final String POLICY_INTROSPECTION_AUTH_BEARER_STATO = "policy.introspection.endpoint.bearer.stato";
-	public static final String POLICY_INTROSPECTION_AUTH_BEARER_TOKEN = "policy.introspection.endpoint.bearer.token";
+	public static final String POLICY_INTROSPECTION_AUTH_BEARER_TOKEN = CostantiProprieta.POLICY_INTROSPECTION_AUTH_BEARER_TOKEN;
 	public static final String POLICY_INTROSPECTION_AUTH_SSL_STATO = "policy.introspection.endpoint.https.stato";
 	
 	public static final String POLICY_USER_INFO_STATO = "policy.userInfo.stato";
@@ -227,9 +228,9 @@ public class Costanti {
 	public static final String POLICY_USER_INFO_CLAIMS_PARSER_PLUGIN_TYPE = CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_PLUGIN_TYPE; 
 	public static final String POLICY_USER_INFO_AUTH_BASIC_STATO = "policy.userInfo.endpoint.basic.stato";
 	public static final String POLICY_USER_INFO_AUTH_BASIC_USERNAME = "policy.userInfo.endpoint.basic.username";
-	public static final String POLICY_USER_INFO_AUTH_BASIC_PASSWORD = "policy.userInfo.endpoint.basic.password";
+	public static final String POLICY_USER_INFO_AUTH_BASIC_PASSWORD = CostantiProprieta.POLICY_USER_INFO_AUTH_BASIC_PASSWORD;
 	public static final String POLICY_USER_INFO_AUTH_BEARER_STATO = "policy.userInfo.endpoint.bearer.stato";
-	public static final String POLICY_USER_INFO_AUTH_BEARER_TOKEN = "policy.userInfo.endpoint.bearer.token";
+	public static final String POLICY_USER_INFO_AUTH_BEARER_TOKEN = CostantiProprieta.POLICY_USER_INFO_AUTH_BEARER_TOKEN;
 	public static final String POLICY_USER_INFO_AUTH_SSL_STATO = "policy.userInfo.endpoint.https.stato";
 	
 	public static final String POLICY_TOKEN_FORWARD_STATO = "policy.tokenForward.stato";

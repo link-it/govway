@@ -585,6 +585,7 @@ CREATE TABLE generic_property
 	id_props BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore VARCHAR(4000) NOT NULL,
+	enc_value VARCHAR(max),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints

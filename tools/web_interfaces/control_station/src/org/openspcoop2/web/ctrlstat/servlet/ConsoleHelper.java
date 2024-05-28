@@ -151,6 +151,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.mvc.properties.Config;
+import org.openspcoop2.core.mvc.properties.constants.ItemType;
 import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
@@ -1467,19 +1468,19 @@ public class ConsoleHelper implements IConsoleHelper {
 		return toRet;
 	}
 	
-	public String getLockedParameter(String parameterName) throws DriverControlStationException {
+	public String getLockedParameter(String parameterName) throws UtilsException, DriverControlStationException {
 		// 1. leggo il valore del parametro associato all'elemento di tipo password
 		String inputValue = this.getParameter(parameterName);
 		
 		// 2. pwd puo' essere null se non c'e' oppure se e' postback, se viene fatta la submit e' impostata e se corrisponde alla costante allora provo a leggere il valore del parametro hidden associato
-		if( this.core.isEnabledBYOK()
+		if( this.core.getDriverBYOKUtilities().isEnabledBYOK()
 				&&
 				(inputValue == null || Costanti.PARAMETER_LOCK_DEFAULT_VALUE.equals(inputValue)) 
 				) {
 			String lockHiddenValue = this.getParameter(Costanti.PARAMETER_LOCK_PREFIX + parameterName);
 			
 			// 3. unwrap
-			return this.core.unwrap(lockHiddenValue);
+			return this.core.getDriverBYOKUtilities().unwrap(lockHiddenValue);
 		}
 				
 		return inputValue;				
@@ -1649,7 +1650,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 
 	public ProtocolProperties estraiProtocolPropertiesDaRequest(ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
-			String propertyId, BinaryParameter contenutoDocumentoParameter) throws DriverControlStationException {
+			String propertyId, BinaryParameter contenutoDocumentoParameter) throws DriverControlStationException, UtilsException {
 		
 		this.checkErrorInit();
 		
@@ -1678,7 +1679,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						} else {
 							bp.setName(item.getId()); 
 						}
-						byte [] binValue = item.isLockedType() ? this.core.unwrap(bp.getValue()) : bp.getValue(); 
+						byte [] binValue = item.isLockedType() ? this.core.getDriverBYOKUtilities().unwrap(bp.getValue()) : bp.getValue(); 
 						BinaryProperty binaryProperty = ProtocolPropertiesFactory.newProperty(bp.getName(), binValue, bp.getFilename(), bp.getId());
 						properties.addProperty(binaryProperty); 
 						break;
@@ -1737,7 +1738,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 		return properties;
 	}
-	public ProtocolProperties estraiProtocolPropertiesDaRequest(ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType) throws DriverControlStationException {
+	public ProtocolProperties estraiProtocolPropertiesDaRequest(ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType) throws DriverControlStationException, UtilsException {
 		
 		this.checkErrorInit();
 				
@@ -15931,9 +15932,18 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 			for (String key : configurazione.getListakeys()) {
 				Boolean oldItemVisible = oldConfigurazione != null ? oldConfigurazione.getItem(key).getVisible() : null;
-				configurazione.getItem(key).setOldVisible(oldItemVisible); 
+				
+				BaseItemBean<?> o = configurazione.getItem(key);
+				o.setOldVisible(oldItemVisible); 
 				try {
-					configurazione.getItem(key).setValueFromRequest(this.getParameter(key), externalResources);
+					String parameterValue = null;
+					if(ItemType.LOCK.equals(o.getItemType())) {
+						parameterValue = this.getLockedParameter(key);
+					}
+					else {
+						parameterValue = this.getParameter(key);
+					}
+					o.setValueFromRequest(parameterValue, externalResources, this.confCore.getLockUtilities());
 				}catch(Exception e) {
 					throw new DriverControlStationException(e.getMessage(),e);
 				}
@@ -15967,7 +15977,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				for (BaseItemBean<?> item : configurazioneBean.getListaItem()) {
 					if(item.isVisible()) {
 						try {
-							dati.add(item.toDataElement(configurazioneBean, mapNameValue, externalResources));
+							dati.add(item.toDataElement(configurazioneBean, mapNameValue, externalResources, this.confCore.getLockUtilities()));
 						}catch(Exception e) {
 							throw new DriverControlStationException(e.getMessage(),e);
 						}

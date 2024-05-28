@@ -82,9 +82,12 @@ public class SecretDecoder extends HttpServlet {
 			
 			String secretToUnwrap = registroHelper.getParameter(UtilsCostanti.PARAMETRO_SECRET_TO_UNWRAP);
 			
-			if (core.isEnabledBYOK()) {
+			if (core.getDriverBYOKUtilities().isEnabledBYOK()) {
 				ControlStationCore.logInfo("SecretDecoder: secretToUnwrap: " + secretToUnwrap);
-				risposta = core.unwrap(secretToUnwrap);
+				risposta = core.getDriverBYOKUtilities().unwrap(secretToUnwrap);
+			}
+			else {
+				risposta = "ERROR: BYOK Unitialized";
 			}
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la decodifica: "+e.getMessage(), e);
@@ -92,8 +95,10 @@ public class SecretDecoder extends HttpServlet {
 			risposta = UtilsCostanti.MESSAGGIO_ERRORE_UNWRAP;
 		} finally {
 			try {
-				ServletOutputStream outputStream = response.getOutputStream();
-				outputStream.write(risposta.getBytes());
+				if(risposta!=null) {
+					ServletOutputStream outputStream = response.getOutputStream();
+					outputStream.write(risposta.getBytes());
+				}
 			}catch(Exception eErr){
 				ControlStationCore.logError("Errore durante la serializzazione dell'errore di decodifica: "+eErr.getMessage(), eErr);
 			}

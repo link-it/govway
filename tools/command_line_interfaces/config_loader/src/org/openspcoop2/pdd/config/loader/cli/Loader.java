@@ -276,16 +276,6 @@ public class Loader {
 			propertiesAllarmi.setShowSql(true);
 			org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager jdbcServiceManagerAllarmi = 
 					new org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager(connectionSQL, propertiesAllarmi, logSql);
-
-			// BYOK
-			String securityRuntimePolicy = BYOKManager.getSecurityEngineGovWayInstance();
-			if(securityRuntimePolicy!=null) {
-				logCoreDebug("Inizializzazione driver BYOK con configurazione ["+loaderProperties.getBYOKConfigurazione()+"]");
-				/**org.openspcoop2.pdd.core.byok.DriverBYOK driverBYOK = new org.openspcoop2.pdd.core.byok.DriverBYOK(logCore, securityRuntimePolicy);
-				driverConfigDB.initialize(driverBYOK, true, false);
-				driverRegistroDB.initialize(driverBYOK, true, false);*/
-				// Automatico
-			}
 			
 			// Istanzio ArchiviEngineControlStation
 			ControlStationCore core = new ControlStationCore(true, null, protocolloDefault);
@@ -480,15 +470,13 @@ public class Loader {
 			String secretsConfig = loaderProperties.getBYOKEnvSecretsConfig();
 			if(byokManager!=null && StringUtils.isNotEmpty(secretsConfig)) {
 				logCoreInfo("Inizializzazione secrets in corso...");
-				String securityPolicy = BYOKManager.getSecurityEngineGovWayInstance();
-				String securityRemotePolicy = BYOKManager.getSecurityRemoteEngineGovWayInstance();
 				
 				Map<String, Object> dynamicMap = new HashMap<>();
 				DynamicInfo dynamicInfo = new  DynamicInfo();
 				DynamicUtils.fillDynamicMap(logCore, dynamicMap, dynamicInfo);
 				
 				BYOKMapProperties.initialize(logCore, secretsConfig, loaderProperties.isBYOKEnvSecretsConfigRequired(), 
-						securityPolicy, securityRemotePolicy, 
+						true, 
 						dynamicMap, true);
 				BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
 				secretsProperties.initEnvironment();

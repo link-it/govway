@@ -215,7 +215,7 @@ function visualizzaValoreDecodificato(evt) {
 			$("#visualizzaInformazioniCifrateModalPropNota").hide();
 			
 			// nascondo il tasto visualizza
-			$("#visualizzaInformazioniCifrateModal").next().hide();
+			$("#visualizzaInformazioniCifrateModal").parent().children('.ui-dialog-buttonpane').hide();
 			
 			// ripristino ombreggiatura
 			$("#visualizzaInformazioniCifrateModal").dialog("close");

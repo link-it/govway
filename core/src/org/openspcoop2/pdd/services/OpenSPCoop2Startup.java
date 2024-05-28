@@ -122,6 +122,7 @@ import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.GestoreLoadBalancerCaching;
 import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
 import org.openspcoop2.pdd.core.byok.DriverBYOK;
+import org.openspcoop2.pdd.core.byok.DriverBYOKUtilities;
 import org.openspcoop2.pdd.core.cache.GestoreCacheCleaner;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneGatewayControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
@@ -630,9 +631,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try {
 				String secretsConfig = propertiesReader.getBYOKEnvSecretsConfig();
 				if(byokManager!=null && StringUtils.isNotEmpty(secretsConfig)) {
-					String securityPolicy = BYOKManager.getSecurityEngineGovWayInstance();
 					BYOKMapProperties.initialize(OpenSPCoop2Startup.log, secretsConfig, propertiesReader.isBYOKEnvSecretsConfigRequired(), 
-							securityPolicy, securityPolicy, 
+							true,
 							null, false);
 					BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
 					secretsProperties.initEnvironment();
@@ -2397,8 +2397,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 			// inizializzo registri
 			DriverBYOK driverBYOK = null;
-			if(BYOKManager.getSecurityEngineGovWayInstance()!=null) {
-				driverBYOK = new DriverBYOK(logCore, BYOKManager.getSecurityEngineGovWayInstance(), BYOKManager.getSecurityEngineGovWayInstance());
+			try{
+				driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(logCore, false, true);
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Inizializzazione driver BYOK fallita");
+				return;
 			}
 			boolean isInitializeRegistro = 
 				RegistroServiziReader.initialize(accessoRegistro,

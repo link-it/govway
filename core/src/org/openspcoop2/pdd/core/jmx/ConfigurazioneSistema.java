@@ -70,6 +70,7 @@ import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
 import org.openspcoop2.pdd.core.byok.DriverBYOK;
+import org.openspcoop2.pdd.core.byok.DriverBYOKUtilities;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceConfig;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceGovWayState;
@@ -79,7 +80,6 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsMultiException;
-import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
@@ -1460,10 +1460,9 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String byokUnwrap(String value){
 		try {
-			String securityRuntimePolicy = BYOKManager.getSecurityEngineGovWayInstance();
-			if(securityRuntimePolicy!=null) {
-				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy, securityRuntimePolicy);
-				return driverBYOK.unwrapAsString(value, securityRuntimePolicy, true);
+			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(this.log, false, true);
+			if(driverBYOK!=null) {
+				return driverBYOK.unwrapAsString(value, true);
 			}
 			return value;
 		}catch(Exception e){
@@ -1474,10 +1473,9 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String byokBase64Unwrap(String value){
 		try {
-			String securityRuntimePolicy = BYOKManager.getSecurityEngineGovWayInstance();
-			if(securityRuntimePolicy!=null) {
-				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy, securityRuntimePolicy);
-				byte [] c = driverBYOK.unwrap(value, securityRuntimePolicy, true);
+			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(this.log, false, true);
+			if(driverBYOK!=null) {
+				byte [] c = driverBYOK.unwrap(value, true);
 				return Base64Utilities.encodeAsString(c);
 			}
 			return value;
@@ -1489,10 +1487,9 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String byokHexUnwrap(String value){
 		try {
-			String securityRuntimePolicy = BYOKManager.getSecurityEngineGovWayInstance();
-			if(securityRuntimePolicy!=null) {
-				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy, securityRuntimePolicy);
-				byte [] c = driverBYOK.unwrap(value, securityRuntimePolicy, true);
+			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(this.log, false, true);
+			if(driverBYOK!=null) {
+				byte [] c = driverBYOK.unwrap(value, true);
 				return HexBinaryUtilities.encodeAsString(c);
 			}
 			return value;
@@ -1504,9 +1501,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String byokWrap(String value){
 		try {
-			String securityRuntimePolicy = BYOKManager.getSecurityEngineGovWayInstance();
-			if(securityRuntimePolicy!=null) {
-				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy, securityRuntimePolicy);
+			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(this.log, true, false);
+			if(driverBYOK!=null) {
 				BYOKWrappedValue v = driverBYOK.wrap(value);
 				if(v!=null) {
 					return v.getWrappedValue();
@@ -1526,9 +1522,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		try {
 			byte[] decoded = Base64Utilities.decode(value);
 			
-			String securityRuntimePolicy = BYOKManager.getSecurityEngineGovWayInstance();
-			if(securityRuntimePolicy!=null) {
-				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy, securityRuntimePolicy);
+			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(this.log, true, false);
+			if(driverBYOK!=null) {
 				BYOKWrappedValue v = driverBYOK.wrap(decoded);
 				if(v!=null) {
 					return v.getWrappedValue();
@@ -1548,9 +1543,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		try {
 			byte[] decoded = HexBinaryUtilities.decode(value);
 			
-			String securityRuntimePolicy = BYOKManager.getSecurityEngineGovWayInstance();
-			if(securityRuntimePolicy!=null) {
-				DriverBYOK driverBYOK = new DriverBYOK(this.log, securityRuntimePolicy, securityRuntimePolicy);
+			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(this.log, true, false);
+			if(driverBYOK!=null) {
 				BYOKWrappedValue v = driverBYOK.wrap(decoded);
 				if(v!=null) {
 					return v.getWrappedValue();

@@ -27,12 +27,12 @@ import javax.net.ssl.TrustManagerFactory;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPProvider;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
-import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -376,7 +376,7 @@ public class ConnettoreHTTPSUtils {
 			ControlStationCore core,ConsoleHelper consoleHelper, int pageSize, boolean addUrlParameter,
 			String prefix, boolean forceHttpsClient,
 			boolean modi, boolean fruizione, boolean forceNoSec,
-			boolean postBackViaPost) throws DriverControlStationException {
+			boolean postBackViaPost) throws UtilsException {
 		
 		// default
 		if(httpsalgoritmo==null || "".equals(httpsalgoritmo)){
@@ -543,14 +543,14 @@ public class ConnettoreHTTPSUtils {
 			}
 			else if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
 				de.setRequired(true);	
-				core.lock(de, httpspwd);
+				core.getLockUtilities().lock(de, httpspwd);
 			}else{
-				core.lockReadOnly(de, httpspwd);
+				core.getLockUtilities().lockReadOnly(de, httpspwd);
 			}
 			de.setSize(pageSize);
 		}
 		else {
-			core.lockHidden(de, httpspwd);
+			core.getLockUtilities().lockHidden(de, httpspwd);
 		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
 		dati.add(de);
@@ -717,12 +717,12 @@ public class ConnettoreHTTPSUtils {
 				(httpskeystore == null || "".equals(httpskeystore) || httpskeystore.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT))){
 			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
 				de.setRequired(true);	
-				core.lock(de, httpspwdprivatekeytrust);
+				core.getLockUtilities().lock(de, httpspwdprivatekeytrust);
 			}else{
-				core.lockReadOnly(de, httpspwdprivatekeytrust);
+				core.getLockUtilities().lockReadOnly(de, httpspwdprivatekeytrust);
 			}
 		}else {
-			core.lockHidden(de, httpspwdprivatekeytrust);
+			core.getLockUtilities().lockHidden(de, httpspwdprivatekeytrust);
 		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
 		de.setSize(pageSize);
@@ -809,12 +809,12 @@ public class ConnettoreHTTPSUtils {
 			}
 			else if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
 				de.setRequired(true);	
-				core.lock(de, httpspwdkey);
+				core.getLockUtilities().lock(de, httpspwdkey);
 			}else{
-				core.lockReadOnly(de, httpspwdkey);
+				core.getLockUtilities().lockReadOnly(de, httpspwdkey);
 			}
 		}else {
-			core.lockHidden(de, httpspwdkey);
+			core.getLockUtilities().lockHidden(de, httpspwdkey);
 		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 		de.setSize(pageSize);
@@ -830,12 +830,12 @@ public class ConnettoreHTTPSUtils {
 			}
 			else if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
 				de.setRequired(true);
-				core.lock(de, httpspwdprivatekey);
+				core.getLockUtilities().lock(de, httpspwdprivatekey);
 			}else{
-				core.lockReadOnly(de, httpspwdprivatekey);
+				core.getLockUtilities().lockReadOnly(de, httpspwdprivatekey);
 			}
 		}else {
-			core.lockHidden(de, httpspwdprivatekey);
+			core.getLockUtilities().lockHidden(de, httpspwdprivatekey);
 		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 		de.setSize(pageSize);

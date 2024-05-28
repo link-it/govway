@@ -319,6 +319,7 @@ CREATE TABLE pd_security_request
 	id_porta BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore CLOB NOT NULL,
+	enc_value CLOB,
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- fk/pk keys constraints
@@ -336,6 +337,7 @@ CREATE TABLE pd_security_response
 	id_porta BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore CLOB NOT NULL,
+	enc_value CLOB,
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- fk/pk keys constraints

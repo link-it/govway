@@ -24,7 +24,6 @@ import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntimeInit;
 import org.openspcoop2.pdd.config.InvokerNodiRuntime;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceGovWayState;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 
 /**
@@ -43,8 +42,7 @@ public class InitRuntimeConfigReader extends ConfigurazioneNodiRuntimeInit {
 	public InitRuntimeConfigReader(ConsoleProperties consoleProperties, boolean reInitSecretMaps) throws UtilsException {
 		super(InitListener.getLog(), consoleProperties.getConfigurazioneNodiRuntime(), 
 				reInitSecretMaps, 
-				consoleProperties.getBYOKEnvSecretsConfig(), consoleProperties.isBYOKEnvSecretsConfigRequired(),
-				BYOKManager.getSecurityEngineGovWayInstance(), BYOKManager.getSecurityRemoteEngineGovWayInstance());
+				consoleProperties.getBYOKEnvSecretsConfig(), consoleProperties.isBYOKEnvSecretsConfigRequired());
 		this.consoleProperties = consoleProperties;
 	}
 	

@@ -192,15 +192,13 @@ public class Generator {
 			String secretsConfig = generatorProperties.getBYOKEnvSecretsConfig();
 			if(byokManager!=null && StringUtils.isNotEmpty(secretsConfig)) {
 				logCore.info("Inizializzazione secrets in corso...");
-				String securityPolicy = BYOKManager.getSecurityEngineGovWayInstance();
-				String securityRemotePolicy = BYOKManager.getSecurityRemoteEngineGovWayInstance();
 				
 				Map<String, Object> dynamicMap = new HashMap<>();
 				DynamicInfo dynamicInfo = new  DynamicInfo();
 				DynamicUtils.fillDynamicMap(logCore, dynamicMap, dynamicInfo);
 
 				BYOKMapProperties.initialize(logCore, secretsConfig, generatorProperties.isBYOKEnvSecretsConfigRequired(), 
-						securityPolicy, securityRemotePolicy, 
+						true, 
 						dynamicMap, true);
 				BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
 				secretsProperties.initEnvironment();

@@ -627,6 +627,7 @@ CREATE TABLE generic_property
 	id_props BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore VARCHAR(4000) NOT NULL,
+	enc_value TEXT,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_generic_property') NOT NULL,
 	-- unique constraints

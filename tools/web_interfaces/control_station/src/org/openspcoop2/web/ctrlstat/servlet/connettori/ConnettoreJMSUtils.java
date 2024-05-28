@@ -23,8 +23,8 @@ import java.util.List;
 
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -152,7 +152,7 @@ public class ConnettoreJMSUtils {
 			String provurl, String connfact, String sendas, String objectName, TipoOperazione tipoOperazione,
 			String stato,
 			ControlStationCore core,ConsoleHelper consoleHelper,int pageSize,
-			boolean postBackViaPost) throws DriverControlStationException{
+			boolean postBackViaPost) throws UtilsException{
 		
 		if(postBackViaPost || objectName!=null || tipoOperazione!=null) {
 			// unused
@@ -222,7 +222,7 @@ public class ConnettoreJMSUtils {
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PASSWORD);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
-		core.lock(de, password);
+		core.getLockUtilities().lock(de, password);
 		de.setSize(pageSize);
 		dati.add(de);
 
@@ -263,7 +263,7 @@ public class ConnettoreJMSUtils {
 			String user, String password, String initcont, String urlpgk,
 			String provurl, String connfact, String sendas, String objectName, TipoOperazione tipoOperazione,
 			String stato,
-			ControlStationCore core,int pageSize) throws DriverControlStationException{
+			ControlStationCore core,int pageSize) throws UtilsException{
 		
 		if(tipoOperazione!=null && stato!=null) {
 			 // nop
@@ -300,7 +300,7 @@ public class ConnettoreJMSUtils {
 			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PASSWORD);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
-			core.lockHidden(de, password);
+			core.getLockUtilities().lockHidden(de, password);
 			de.setSize(pageSize);
 			dati.add(de);
 		}
