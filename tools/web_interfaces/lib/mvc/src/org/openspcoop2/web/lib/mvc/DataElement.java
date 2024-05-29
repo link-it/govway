@@ -285,6 +285,14 @@ public class DataElement implements Serializable {
 		this.setUrl(decoderServletName, parameter);
 	}
 	
+	public void forceLockVisualizzazioneInputUtente() {
+		if(this.password!=null) {
+			this.password.setLockForzaVisualizzazioneInputUtente(true);
+			this.password.setLockVisualizzaInformazioniCifrate(false);
+			this.password.setLockUtilizzaInputPassword(false);
+		}
+	}
+	
 	public boolean isRequired() {
 		return this.required;
 	}

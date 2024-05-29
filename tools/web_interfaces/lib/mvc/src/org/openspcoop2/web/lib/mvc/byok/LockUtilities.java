@@ -58,6 +58,37 @@ public class LockUtilities {
 		this.visualizzaCampiPasswordComeLock = visualizzaCampiPasswordComeLock;
 	}
 	
+	
+	public void lockProperty(DataElement de, String value) {
+		lockProperty(de, value, true);
+	}
+	public void lockProperty(DataElement de, String value, boolean escapeHtml) {
+		lockPropertyEngine(de, value, escapeHtml, false, false);
+	}
+	public void lockPropertyReadOnly(DataElement de, String value) {
+		lockPropertyReadOnly(de, value, true);
+	}
+	public void lockPropertyReadOnly(DataElement de, String value, boolean escapeHtml) {
+		lockPropertyEngine(de, value, escapeHtml, false, true);
+	}
+	public void lockPropertyHidden(DataElement de, String value) {
+		lockPropertyHidden(de, value, true);
+	}
+	public void lockPropertyHidden(DataElement de, String value, boolean escapeHtml) {
+		lockPropertyEngine(de, value, escapeHtml, true, false);
+	}
+	private void lockPropertyEngine(DataElement de, String value, boolean escapeHtml, boolean hidden, boolean readOnly) {
+		if(BYOKManager.isEnabledBYOK()) {
+			lockEngineWithBIOK(de, value, escapeHtml, hidden, readOnly, 
+					value); // non viene effettuato qual il wrap del valore, ma dovrà essere effettuato dalla servlet chiamante, in seguito alla chiamata dell'utente.
+		}
+		else {
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setValue(value);
+		}
+	}
+	
+	
 	public void lock(DataElement de, String value) throws UtilsException {
 		lock(de, value, true);
 	}
@@ -81,38 +112,48 @@ public class LockUtilities {
 			lockEngineWithBIOK(de, value, escapeHtml, hidden, readOnly);
 		}
 		else {
-			if(hidden &&
-					(de.getType()==null || StringUtils.isEmpty(de.getType()) || !DataElementType.HIDDEN.toString().equals(de.getType())) 
-					){
-				de.setType(DataElementType.HIDDEN);
-			}
-			else if(readOnly &&
-					(de.getType()==null || StringUtils.isEmpty(de.getType()) || !DataElementType.TEXT.toString().equals(de.getType())) 
-					){
-				if(this.visualizzaCampiPasswordComeLock) {
-					this.lockEngineWithoutBIOK(de, value, escapeHtml, readOnly);
-				} else {
-					de.setType(DataElementType.TEXT);
-				}
-			}
-			else if( de.getType()==null || StringUtils.isEmpty(de.getType()) || 
-					( (!DataElementType.TEXT_EDIT.toString().equals(de.getType())) && (!DataElementType.TEXT_AREA.toString().equals(de.getType())) )
-					){
-				if(this.visualizzaCampiPasswordComeLock) {
-					this.lockEngineWithoutBIOK(de, value, escapeHtml, readOnly);
-				} else {
-					de.setType(DataElementType.TEXT_EDIT);
-				}
-			} else {
-				if(this.visualizzaCampiPasswordComeLock) {
-					this.lockEngineWithoutBIOK(de, value, escapeHtml, readOnly);
-				} 
-			}
-			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml(value) : value);
+			processByByokDisabled(de, value, escapeHtml, hidden, readOnly);
 		}
+	}
+	private void processByByokDisabled(DataElement de, String value, boolean escapeHtml, boolean hidden, boolean readOnly) {
+		if(isForceHidden(de, hidden)){
+			de.setType(DataElementType.HIDDEN);
+		}
+		else if(isForceReadOnly(de, readOnly)){
+			if(this.visualizzaCampiPasswordComeLock) {
+				this.lockEngineWithoutBIOK(de, value, escapeHtml, readOnly);
+			} else {
+				de.setType(DataElementType.TEXT);
+			}
+		}
+		else if( de.getType()==null || StringUtils.isEmpty(de.getType()) || 
+				( (!DataElementType.TEXT_EDIT.toString().equals(de.getType())) && (!DataElementType.TEXT_AREA.toString().equals(de.getType())) )
+				){
+			if(this.visualizzaCampiPasswordComeLock) {
+				this.lockEngineWithoutBIOK(de, value, escapeHtml, readOnly);
+			} else {
+				de.setType(DataElementType.TEXT_EDIT);
+			}
+		} else {
+			if(this.visualizzaCampiPasswordComeLock) {
+				this.lockEngineWithoutBIOK(de, value, escapeHtml, readOnly);
+			} 
+		}
+		de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml(value) : value);
+	}
+	private boolean isForceHidden(DataElement de, boolean hidden) {
+		return hidden &&
+				(de.getType()==null || StringUtils.isEmpty(de.getType()) || !DataElementType.HIDDEN.toString().equals(de.getType())) ;
+	}
+	private boolean isForceReadOnly(DataElement de, boolean readOnly) {
+		return readOnly &&
+				(de.getType()==null || StringUtils.isEmpty(de.getType()) || !DataElementType.TEXT.toString().equals(de.getType())) ;
 	}
 	private void lockEngineWithBIOK(DataElement de, String value, boolean escapeHtml, boolean hidden, boolean readOnly ) throws UtilsException {
 		String wrapValue = this.driverBYOKUtilities.wrap(value); // viene lasciato il valore wrapped, non viene effettuato nuovamente il wrap
+		lockEngineWithBIOK(de, value, escapeHtml, hidden, readOnly, wrapValue);
+	}
+	private void lockEngineWithBIOK(DataElement de, String value, boolean escapeHtml, boolean hidden, boolean readOnly, String wrapValue) {
 		if(hidden) {
 			if(de.getType()==null || StringUtils.isEmpty(de.getType()) || !DataElementType.HIDDEN.toString().equals(de.getType())) {
 				de.setType(DataElementType.HIDDEN);
@@ -124,9 +165,14 @@ public class LockUtilities {
 		}
 	}
 	private void lockEngineWithBIOK(DataElement de, String wrapValue, String originalValue, boolean escapeHtml, boolean readOnly) {
+		lockEngineWithBIOK(de, wrapValue, originalValue, escapeHtml, readOnly, 
+				// il valore viene decifrato tramite le chiamate getLockedParameter, quindi questo controllo non può essere implementato.
+				false); 
+	}
+	private void lockEngineWithBIOK(DataElement de, String wrapValue, String originalValue, boolean escapeHtml, boolean readOnly, boolean checkOriginalValue) {
 		StringBuilder sb = new StringBuilder();
 		if(originalValue!=null) {
-			// non viene usato per i motivi sotto indicati
+			// nop
 		}
 		/**String checkValue = originalValue;*/ // il valore viene decifrato tramite le chiamate getLockedParameter, quindi questo controllo non può essere implementato.
 		String checkValue = wrapValue; // viene verificato sempre il wrapValue, il quale se già cifrato non viene nuovamente cifrato e quindi permane la vecchia security policy.
@@ -136,7 +182,7 @@ public class LockUtilities {
 					appendErrorMessageSecurityPolicyDifferente(sb, checkValue);
 				}
 			}
-			else if(this.messaggioInformativoInformazioneNonCifrata!=null && StringUtils.isNotEmpty(this.messaggioInformativoInformazioneNonCifrata)) {
+			else if(checkOriginalValue && this.messaggioInformativoInformazioneNonCifrata!=null && StringUtils.isNotEmpty(this.messaggioInformativoInformazioneNonCifrata)) {
 				sb.append(this.messaggioInformativoInformazioneNonCifrata);
 			}
 		}

@@ -252,6 +252,7 @@ import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
@@ -2807,6 +2808,44 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.add(de);
 
 		return dati;
+	}
+	
+	public List<DataElement> addNomeValoreProprietaCifrataToDati( TipoOperazione tipoOp,List<DataElement> dati, String nome, String valore, boolean enableUpdate) throws UtilsException {
+		DataElement de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+		de.setValue(nome);
+		if (tipoOp.equals(TipoOperazione.ADD) || enableUpdate) {
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setRequired(true);
+		} else {
+			de.setType(DataElementType.TEXT);
+		}
+		de.setName(CostantiControlStation.PARAMETRO_NOME);
+		de.setSize(this.getSize());
+		dati.add(de);
+		
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
+		de.setName(CostantiControlStation.PARAMETRO_VALORE);
+		de.setSize(this.getSize());
+		this.core.getLockUtilities().lockProperty(de, valore);
+		de.setRequired(true);
+		if(valore!=null && StringUtils.isNotEmpty(valore) && !this.core.getDriverBYOKUtilities().isWrapped(valore)) {
+			de.forceLockVisualizzazioneInputUtente();
+		}
+		dati.add(de);
+
+		return dati;
+	}
+	
+	public String wrapValoreProprieta(String valore) throws DriverControlStationException, UtilsException {
+		if(valore!=null && StringUtils.isNotEmpty(valore) &&
+			BYOKManager.isEnabledBYOK() &&
+			CostantiControlStation.PARAMETRO_VALORE.equals(this.getPostBackElementName())) {
+			// è stata richiesta la cifratura
+			return this.core.getDriverBYOKUtilities().wrap(valore);
+		}
+		return valore;
 	}
 		
 	public List<DataElement> addHiddenFieldsToDati(TipoOperazione tipoOp, String id, String idsogg, String idPorta,

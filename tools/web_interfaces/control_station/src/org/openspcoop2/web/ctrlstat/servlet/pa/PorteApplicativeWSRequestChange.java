@@ -40,7 +40,9 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -86,6 +88,9 @@ public final class PorteApplicativeWSRequestChange extends Action {
 			String idAsps = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
 			if(idAsps == null) 
 				idAsps = "";
+			
+			// Wrap value
+			valore = porteApplicativeHelper.wrapValoreProprieta(valore);
 			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
@@ -144,7 +149,12 @@ public final class PorteApplicativeWSRequestChange extends Action {
 				List<DataElement> dati = new ArrayList<>();
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addNomeValoreToDati(TipoOperazione.CHANGE, dati, nome, valore, false);
+				DataElement dataElement = new DataElement();
+				dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA);
+				dataElement.setType(DataElementType.TITLE);
+				dati.add(dataElement);
+				
+				dati = porteApplicativeHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.CHANGE, dati, nome, valore, false);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg,idPorta, idAsps, dati);
 				
@@ -167,7 +177,12 @@ public final class PorteApplicativeWSRequestChange extends Action {
 
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addNomeValoreToDati(TipoOperazione.CHANGE, dati, nome, valore,  false);
+				DataElement dataElement = new DataElement();
+				dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA);
+				dataElement.setType(DataElementType.TITLE);
+				dati.add(dataElement);
+				
+				dati = porteApplicativeHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.CHANGE, dati, nome, valore,  false);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg,idPorta, idAsps, dati);
 

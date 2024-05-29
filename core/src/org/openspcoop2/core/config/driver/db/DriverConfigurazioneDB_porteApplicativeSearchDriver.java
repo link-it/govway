@@ -1630,6 +1630,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 				sqlQueryObject.addSelectField("id_porta");
 				sqlQueryObject.addSelectField("nome");
 				sqlQueryObject.addSelectField("valore");
+				sqlQueryObject.addSelectField("enc_value");
 				sqlQueryObject.addWhereCondition("id_porta = ?");
 				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
 				sqlQueryObject.setANDLogicOperator(true);
@@ -1645,6 +1646,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 				sqlQueryObject.addSelectField("id_porta");
 				sqlQueryObject.addSelectField("nome");
 				sqlQueryObject.addSelectField("valore");
+				sqlQueryObject.addSelectField("enc_value");
 				sqlQueryObject.addWhereCondition("id_porta = ?");
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.setSortType(true);
@@ -1759,6 +1761,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 				sqlQueryObject.addSelectField("id_porta");
 				sqlQueryObject.addSelectField("nome");
 				sqlQueryObject.addSelectField("valore");
+				sqlQueryObject.addSelectField("enc_value");
 				sqlQueryObject.addWhereCondition("id_porta = ?");
 				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
 				sqlQueryObject.setANDLogicOperator(true);
@@ -1774,6 +1777,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 				sqlQueryObject.addSelectField("id_porta");
 				sqlQueryObject.addSelectField("nome");
 				sqlQueryObject.addSelectField("valore");
+				sqlQueryObject.addSelectField("enc_value");
 				sqlQueryObject.addWhereCondition("id_porta = ?");
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.setSortType(true);
