@@ -89,6 +89,9 @@ public final class PorteDelegateWSRequestAdd extends Action {
 			if(idAsps == null)
 				idAsps = "";
 			
+			// Wrap value
+			valore = porteDelegateHelper.wrapValoreProprieta(valore);
+			
 			String idFruizione = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
 			if(idFruizione == null)
 				idFruizione = "";

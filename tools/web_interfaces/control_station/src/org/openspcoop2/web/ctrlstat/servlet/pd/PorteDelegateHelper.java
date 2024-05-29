@@ -86,6 +86,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -3095,7 +3096,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					e.add(de);
 
 					de = new DataElement();
-					de.setValue(wsrfp.getValore());
+					if(wsrfp.getValore()!=null && StringUtils.isNotEmpty(wsrfp.getValore()) &&
+							BYOKManager.isEnabledBYOK() &&
+							this.core.getDriverBYOKUtilities().isWrapped(wsrfp.getValore())) {
+						de.setValue(CostantiControlStation.VALORE_CIFRATO);
+					}
+					else {
+						de.setValue(wsrfp.getValore());
+					}
 					e.add(de);
 
 					dati.add(e);
@@ -3447,7 +3455,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					e.add(de);
 
 					de = new DataElement();
-					de.setValue(wsrfp.getValore());
+					if(wsrfp.getValore()!=null && StringUtils.isNotEmpty(wsrfp.getValore()) &&
+							BYOKManager.isEnabledBYOK() &&
+							this.core.getDriverBYOKUtilities().isWrapped(wsrfp.getValore())) {
+						de.setValue(CostantiControlStation.VALORE_CIFRATO);
+					}
+					else {
+						de.setValue(wsrfp.getValore());
+					}
 					e.add(de);
 
 					dati.add(e);
