@@ -1340,12 +1340,13 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							          			if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 			                        													%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%= Costanti.PARAMETER_LOCK_DEFAULT_VALUE  %></span></div><%
 			                        							   					} else {
-			                        							   						String idPwdEdit = "pwd_" + i + "_edit";
-			                        							   						String idPwdEditSpan = "pwd_" + i + "_edit_span";
-			                        							   						String idPwdLock = "pwd_" + i + "_lock";
-			                        							   						String idPwdLockOpen = "pwd_" + i + "_lock_open";
-			                        							   						String idPwdViewLock = "pwd_" + i + "_lock_view";
-			                        							   						String idPwdCopyLock = "pwd_" + i + "_lock_copy";
+			                        							   						String idPwdEdit = idPwd + "_edit";
+			                        							   						String idPwdEditSpan = idPwd + "_edit_span";
+			                        							   						String idPwdLock = idPwd + "_lock";
+			                        							   						String idPwdLockOpen = idPwd + "_lock_open";
+			                        							   						String idPwdViewLock = idPwd + "_lock_view";
+			                        							   						String idPwdCopyLock = idPwd + "_lock_copy";
+			                        							   						String idPwdViewInnerLock = idPwd + "_lock_view_inner";
 			                        							   						String hiddenLockName = Costanti.PARAMETER_LOCK_PREFIX + deName;
 			                        							   						String hiddenLockId = Costanti.PARAMETER_LOCK_PREFIX + idPwd;
 			                        							   						boolean lockValuePresent = !de.getValue().equals(""); // e' gia' presente un valore
@@ -1353,20 +1354,54 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							   						String lockDisabled = lockValuePresent ? " disabled=\"disabled\"" : "";
 			                        							   						String dePwdType = !lockValuePresent ? "text" : "password";
 			                        							   						DataElementPassword dePwd = de.getPassword();
+			                        							   						boolean utilizzaInputPassword = dePwd.isLockUtilizzaInputPassword();
+			                        							   						if(utilizzaInputPassword) { // in questa modalita' l'input e' sempre di tipo password
+			                        							   							dePwdType = "password";
+			                        							   						}
 			                        				                    				boolean visualizzaInformazioniCifrate = lockValuePresent && dePwd.isLockVisualizzaInformazioniCifrate();
 			                        				                    				boolean visualizzaIconLucchetto = dePwd.isLockVisualizzaIconaLucchetto();
 			                        				                    				boolean lockReadOnly = dePwd.isLockReadOnly();
 			                        				                    				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+			                        				                    				boolean visualizzaComandiInternoInput = !lockReadOnly;
+			                        				                    				if(!utilizzaInputPassword) {
+			                        				                    					visualizzaComandiInternoInput = lockValuePresent && !lockReadOnly;
+			                        				                    				}
+			                        				                    				boolean visualizzaOpenLock = !lockValuePresent || dePwd.isLockForzaVisualizzazioneInputUtente();
+			                        				                    				
 			                        													%><input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= lockValue %>" <%=lockDisabled %>>
 			                        													  <input type="hidden" name="<%= hiddenLockName  %>" id="<%=hiddenLockId %>" value="<%= de.getValue()  %>">
 			                        													<%
-			                        							          				if (lockValuePresent && !lockReadOnly) {
+			                        							          				if (visualizzaComandiInternoInput) {
 			                        								          				%>
 			                        								          					<span id="<%=idPwdEditSpan %>" class="span-password-eye">
 			                        														  		<i id="<%=idPwdEdit %>" class="material-icons md-24" title="<%= Costanti.ICONA_EDIT_TOOLTIP %>"><%= Costanti.ICONA_EDIT %></i>
+			                        														  		<i id="<%=idPwdViewInnerLock %>" class="material-icons md-24"><%= Costanti.ICON_VISIBILITY %></i>
 			                        														  	</span>
 			                        															<script type="text/javascript" nonce="<%= randomNonce %>">
 			                        																$(document).ready(function(){
+			                        																	
+			                        																	<% 
+		    			                        									      				if(lockValuePresent){
+		    			                        									      				%>
+		    			                        									      					// icona visualizza contenuto nascosta
+			                        																		$('#<%=idPwdViewInnerLock%>').hide();
+
+		    			                        									      					// visualizza icona modifica contentuto
+			                        																        $('#<%=idPwdEdit%>').show();
+																									    <% } else { 
+																										    	if(utilizzaInputPassword){
+																											    	%>
+																												 	// icona visualizza contenuto visibile	
+				                        																			$('#<%=idPwdViewInnerLock%>').show();
+																												 	
+				                        																			// nascondi icona modifica contentuto
+					                        																        $('#<%=idPwdEdit%>').hide();
+																											    <% }
+				                        																	}
+			                        																	%>
+			                        																	
+			                        																	
+			                        																	
 			                        																	$('#<%=idPwdEdit %>').click(function() {
 			                        																		
 			                        																		// Abilita l'input di tipo password
@@ -1376,10 +1411,9 @@ for (int i = 0; i < dati.size(); i++) {
 			                        																        // convertire l'elemento in un text
 			                        																        // toggle the type attribute
 																											var x = document.getElementById("<%=idPwd %>");
-																										    x.type = "text";
 			                        																        
 			                        																        // eliminare il comando di edit
-			                        																        $('#<%=idPwdEditSpan %>').remove();
+			                        																        $('#<%=idPwdEdit %>').remove();
 			                        																        
 			                        																    	<% 
 			    			                        									      				if(visualizzaIconLucchetto){
@@ -1395,7 +1429,42 @@ for (int i = 0; i < dati.size(); i++) {
 																											    // nascondere comando visualizza
 																											    $('#<%=idPwdViewLock%>').hide();
 																										    <% } %>
+																										    
+																										    <% 
+			    			                        									      				if(utilizzaInputPassword){
+			    			                        									      				%>
+			    			                        									      				 	x.type = "password";
+				                        																        // visualizza icona visualizza contentuto
+				                        																        $('#<%=idPwdViewInnerLock%>').show();
+																										    <% } else { %>
+																										    	x.type = "text";
+																										    <% } %>
 			                        																	});
+			                        																	
+			                        																	<% 
+		    			                        									      				if(utilizzaInputPassword){
+		    			                        									      				%>
+			                        																		$('#<%=idPwdViewInnerLock %>').click(function() {
+			                        																			
+			                        																			// toggle the type attribute
+			                        																			var x = document.getElementById("<%=idPwd %>");
+			                        																			  if (x.type === "password") {
+			                        																			    x.type = "text";
+			                        																			  } else {
+			                        																			    x.type = "password";
+			                        																			  }
+			                        			
+			                        																			  // toggle the eye slash icon
+			                        																		    var eyeIcon = $('#<%=idPwdViewInnerLock %>');
+			                        																		    if (x.type === 'password') {
+			                        																		        eyeIcon.html('<%= Costanti.ICON_VISIBILITY %>');
+			                        																		    } else {
+			                        																		        eyeIcon.html('<%= Costanti.ICON_VISIBILITY_OFF %>');
+			                        																		    }
+			                        																		    
+			                        																		});
+		                        																		 <% } %>
+			                        																	
 			                        																});
 			                        															</script>
 			                        							     					<% 
@@ -1421,7 +1490,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        															<script type="text/javascript" nonce="<%= randomNonce %>">
 			                        																$(document).ready(function(){
 			                        																	<% 
-						                        									      				if(lockValuePresent){
+						                        									      				if(!visualizzaOpenLock){
 						                        									      				%>
 						                        									      				 	$('#<%=idPwdLock%>').show();
 			                        																        $('#<%=idPwdLockOpen%>').hide();

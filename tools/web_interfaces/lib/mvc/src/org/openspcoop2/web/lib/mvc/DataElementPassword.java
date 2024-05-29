@@ -48,6 +48,8 @@ public class DataElementPassword implements Serializable {
 	private boolean lockVisualizzaInformazioniCifrate = false;
 	private boolean lockReadOnly = false;
 	private boolean lockVisualizzaIconaLucchetto = true;
+	private boolean lockUtilizzaInputPassword = true;
+	private boolean lockForzaVisualizzazioneInputUtente = false;
 	private String lockWarningMessage = null;
 	
 	public DataElementPassword() {
@@ -62,6 +64,8 @@ public class DataElementPassword implements Serializable {
 		this.setLockReadOnly(false);
 		this.setLockWarningMessage(null);
 		this.setLockVisualizzaIconaLucchetto(true);
+		this.setLockUtilizzaInputPassword(true);
+		this.setLockForzaVisualizzazioneInputUtente(false);
 	}
 
 	public boolean isVisualizzaBottoneGeneraPassword() {
@@ -150,4 +154,21 @@ public class DataElementPassword implements Serializable {
 	public void setLockVisualizzaIconaLucchetto(boolean lockVisualizzaIconaLucchetto) {
 		this.lockVisualizzaIconaLucchetto = lockVisualizzaIconaLucchetto;
 	}
+
+	public boolean isLockUtilizzaInputPassword() {
+		return this.lockUtilizzaInputPassword;
+	}
+
+	public void setLockUtilizzaInputPassword(boolean lockUtilizzaInputPassword) {
+		this.lockUtilizzaInputPassword = lockUtilizzaInputPassword;
+	}
+
+	public boolean isLockForzaVisualizzazioneInputUtente() {
+		return this.lockForzaVisualizzazioneInputUtente;
+	}
+
+	public void setLockForzaVisualizzazioneInputUtente(boolean lockForzaVisualizzazioneInputUtente) {
+		this.lockForzaVisualizzazioneInputUtente = lockForzaVisualizzazioneInputUtente;
+	}
+
 }
