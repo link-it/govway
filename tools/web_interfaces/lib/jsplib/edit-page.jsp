@@ -1354,6 +1354,8 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							   						String lockDisabled = lockValuePresent ? " disabled=\"disabled\"" : "";
 			                        							   						String dePwdType = !lockValuePresent ? "text" : "password";
 			                        							   						DataElementPassword dePwd = de.getPassword();
+			                        							   						boolean forzaVisualizzazioneInputUtente = dePwd.isLockForzaVisualizzazioneInputUtente();
+			                        							   						
 			                        							   						boolean utilizzaInputPassword = dePwd.isLockUtilizzaInputPassword();
 			                        							   						if(utilizzaInputPassword) { // in questa modalita' l'input e' sempre di tipo password
 			                        							   							dePwdType = "password";
@@ -1366,7 +1368,11 @@ for (int i = 0; i < dati.size(); i++) {
 			                        				                    				if(!utilizzaInputPassword) {
 			                        				                    					visualizzaComandiInternoInput = lockValuePresent && !lockReadOnly;
 			                        				                    				}
-			                        				                    				boolean visualizzaOpenLock = !lockValuePresent || dePwd.isLockForzaVisualizzazioneInputUtente();
+			                        				                    				boolean visualizzaOpenLock = !lockValuePresent || forzaVisualizzazioneInputUtente;
+			                        				                    				
+			                        				                    				if(forzaVisualizzazioneInputUtente){
+			                        				                    					lockValue = de.getValue();
+			                        				                    				}
 			                        				                    				
 			                        													%><input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= lockValue %>" <%=lockDisabled %>>
 			                        													  <input type="hidden" name="<%= hiddenLockName  %>" id="<%=hiddenLockId %>" value="<%= de.getValue()  %>">
