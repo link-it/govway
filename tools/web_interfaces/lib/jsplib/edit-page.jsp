@@ -1381,26 +1381,32 @@ for (int i = 0; i < dati.size(); i++) {
 			                        																$(document).ready(function(){
 			                        																	
 			                        																	<% 
-		    			                        									      				if(lockValuePresent){
+		    			                        									      				if(utilizzaInputPassword){
 		    			                        									      				%>
-		    			                        									      					// icona visualizza contenuto nascosta
+			    			                        									      			// icona visualizza contenuto visibile	
+		                        																			$('#<%=idPwdViewInnerLock%>').show();
+																										 	
+		                        																			// nascondi icona modifica contentuto
+			                        																        $('#<%=idPwdEdit%>').hide();
+																									    <% } else {
+																									    	if(lockValuePresent){
+	                        																			%>
+		                        																			// icona visualizza contenuto nascosta
 			                        																		$('#<%=idPwdViewInnerLock%>').hide();
-
+	
 		    			                        									      					// visualizza icona modifica contentuto
 			                        																        $('#<%=idPwdEdit%>').show();
-																									    <% } else { 
-																										    	if(utilizzaInputPassword){
-																											    	%>
-																												 	// icona visualizza contenuto visibile	
-				                        																			$('#<%=idPwdViewInnerLock%>').show();
-																												 	
-				                        																			// nascondi icona modifica contentuto
-					                        																        $('#<%=idPwdEdit%>').hide();
-																											    <% }
-				                        																	}
-			                        																	%>
-			                        																	
-			                        																	
+	                        																			   <% } else {
+	                        																				   %>
+			                        																			// icona visualizza contenuto nascosta
+				                        																		$('#<%=idPwdViewInnerLock%>').hide();
+		
+				                        																		// nascondi icona modifica contentuto
+				                        																        $('#<%=idPwdEdit%>').hide();
+		                        																			   <%
+	                        																			   }
+																									    }
+	                        																			%>
 			                        																	
 			                        																	$('#<%=idPwdEdit %>').click(function() {
 			                        																		
