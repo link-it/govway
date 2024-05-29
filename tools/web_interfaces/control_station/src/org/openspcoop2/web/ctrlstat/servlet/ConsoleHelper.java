@@ -1470,6 +1470,9 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public String getLockedParameter(String parameterName) throws UtilsException, DriverControlStationException {
+		return getLockedParameter(parameterName, true) ;
+	}
+	public String getLockedParameter(String parameterName, boolean unwrap) throws UtilsException, DriverControlStationException {
 		// 1. leggo il valore del parametro associato all'elemento di tipo password
 		String inputValue = this.getParameter(parameterName);
 		
@@ -1481,7 +1484,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			String lockHiddenValue = this.getParameter(Costanti.PARAMETER_LOCK_PREFIX + parameterName);
 			
 			// 3. unwrap
-			return this.core.getDriverBYOKUtilities().unwrap(lockHiddenValue);
+			if(unwrap) {
+				return this.core.getDriverBYOKUtilities().unwrap(lockHiddenValue);
+			}
+			else {
+				return lockHiddenValue;
+			}
 		}
 				
 		return inputValue;				
@@ -2830,9 +2838,6 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setSize(this.getSize());
 		this.core.getLockUtilities().lockProperty(de, valore);
 		de.setRequired(true);
-		if(valore!=null && StringUtils.isNotEmpty(valore) && !this.core.getDriverBYOKUtilities().isWrapped(valore)) {
-			de.forceLockVisualizzazioneInputUtente();
-		}
 		dati.add(de);
 
 		return dati;

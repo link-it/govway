@@ -81,6 +81,7 @@ public class LockUtilities {
 		if(BYOKManager.isEnabledBYOK()) {
 			lockEngineWithBIOK(de, value, escapeHtml, hidden, readOnly, 
 					value); // non viene effettuato qual il wrap del valore, ma dovrà essere effettuato dalla servlet chiamante, in seguito alla chiamata dell'utente.
+			de.forceLockVisualizzazioneInputUtente(this.driverBYOKUtilities.isWrapped(value),this.visualizzaInformazioniCifrate);
 		}
 		else {
 			de.setType(DataElementType.TEXT_EDIT);

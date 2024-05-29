@@ -285,11 +285,18 @@ public class DataElement implements Serializable {
 		this.setUrl(decoderServletName, parameter);
 	}
 	
-	public void forceLockVisualizzazioneInputUtente() {
+	public void forceLockVisualizzazioneInputUtente(boolean isWrapped, boolean visualizzaInformazioniCifrate) {
 		if(this.password!=null) {
-			this.password.setLockForzaVisualizzazioneInputUtente(true);
-			this.password.setLockVisualizzaInformazioniCifrate(false);
-			this.password.setLockUtilizzaInputPassword(false);
+			if(isWrapped) {
+				this.password.setLockForzaVisualizzazioneInputUtente(false);
+				this.password.setLockVisualizzaInformazioniCifrate(visualizzaInformazioniCifrate);
+				this.password.setLockUtilizzaInputPassword(false);
+			}
+			else {
+				this.password.setLockForzaVisualizzazioneInputUtente(true);
+				this.password.setLockVisualizzaInformazioniCifrate(false);
+				this.password.setLockUtilizzaInputPassword(false);
+			}
 		}
 	}
 	
