@@ -1362,7 +1362,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							   						String lockDisabled = lockValuePresent ? " disabled=\"disabled\"" : "";
 			                        							   						// 1. decido il valore da inserire nell'input e la visualizzazione readonly del campo
 			                        							   						// se devo visualizzare l'input come password o forzare l'input dell'utente  visualizzo gli asterischi
-			                        							   						if(forzaVisualizzazioneInputUtente || utilizzaInputPassword){
+			                        							   						if(forzaVisualizzazioneInputUtente || (utilizzaInputPassword && !dePwd.isLockVisualizzaInformazioniCifrate())){
 			                        							   							lockValue = de.getValue();
 			                        							   						}
 			                        							   						
