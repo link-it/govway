@@ -2613,3 +2613,10 @@ div.txtA_div_propDialogInfoUso {
     color: ${p.note.color};
 }
 
+.span-password-eye-2 {
+	margin-left: -64px;
+    cursor: pointer;
+    vertical-align: bottom;
+    color: ${p.note.color};
+}
+

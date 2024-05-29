@@ -1349,37 +1349,53 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							   						String idPwdViewInnerLock = idPwd + "_lock_view_inner";
 			                        							   						String hiddenLockName = Costanti.PARAMETER_LOCK_PREFIX + deName;
 			                        							   						String hiddenLockId = Costanti.PARAMETER_LOCK_PREFIX + idPwd;
+			                        							   						String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+			                        							   						DataElementPassword dePwd = de.getPassword();
+			                        							   						boolean lockReadOnly = dePwd.isLockReadOnly();
+			                        							   						boolean forzaVisualizzazioneInputUtente = dePwd.isLockForzaVisualizzazioneInputUtente();
+			                        							   						boolean utilizzaInputPassword = dePwd.isLockUtilizzaInputPassword();
+			                        							   						boolean visualizzaIconLucchetto = dePwd.isLockVisualizzaIconaLucchetto();
 			                        							   						boolean lockValuePresent = !de.getValue().equals(""); // e' gia' presente un valore
+			                        							   						boolean visualizzaInformazioniCifrate = lockValuePresent && dePwd.isLockVisualizzaInformazioniCifrate();
+			                        							   						
 			                        							   						String lockValue = lockValuePresent ? Costanti.PARAMETER_LOCK_DEFAULT_VALUE : de.getValue();
 			                        							   						String lockDisabled = lockValuePresent ? " disabled=\"disabled\"" : "";
-			                        							   						String dePwdType = !lockValuePresent ? "text" : "password";
-			                        							   						DataElementPassword dePwd = de.getPassword();
-			                        							   						boolean forzaVisualizzazioneInputUtente = dePwd.isLockForzaVisualizzazioneInputUtente();
+			                        							   						// 1. decido il valore da inserire nell'input e la visualizzazione readonly del campo
+			                        							   						// se devo visualizzare l'input come password o forzare l'input dell'utente  visualizzo gli asterischi
+			                        							   						if(forzaVisualizzazioneInputUtente || utilizzaInputPassword){
+			                        							   							lockValue = de.getValue();
+			                        							   						}
 			                        							   						
-			                        							   						boolean utilizzaInputPassword = dePwd.isLockUtilizzaInputPassword();
+			                        							   						// 2. Tipo del campo, text quando e' vuoto o password quando e' valorizzato
+			                        							   						String dePwdType = !lockValuePresent ? "text" : "password";
 			                        							   						if(utilizzaInputPassword) { // in questa modalita' l'input e' sempre di tipo password
 			                        							   							dePwdType = "password";
 			                        							   						}
-			                        				                    				boolean visualizzaInformazioniCifrate = lockValuePresent && dePwd.isLockVisualizzaInformazioniCifrate();
-			                        				                    				boolean visualizzaIconLucchetto = dePwd.isLockVisualizzaIconaLucchetto();
-			                        				                    				boolean lockReadOnly = dePwd.isLockReadOnly();
-			                        				                    				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
-			                        				                    				boolean visualizzaComandiInternoInput = !lockReadOnly;
-			                        				                    				if(!utilizzaInputPassword) {
-			                        				                    					visualizzaComandiInternoInput = lockValuePresent && !lockReadOnly;
-			                        				                    				}
+			                        							   						// 3. se il lock e' readonly il campo input sara' disabilitato
+			                        							   						if(lockReadOnly) {
+			                        							   							lockDisabled = " disabled=\"disabled\"";
+			                        							   						}
+			                        				                    						     
+			                        							   						// 4. Comando Edit visualizzato se presente un valore e il campo e' modificabile
+			                        							   						boolean visualizzaComandoEdit = lockValuePresent && !lockReadOnly;
+			                        							   						
+			                        							   						// 5. Comando Eye visualizzato quando si utilizza il campo password e c'e' un valore o non si devono utilizzare i servizi remoti di decodifica
+			                        							   						boolean visualizzaComandoEye = utilizzaInputPassword && (!lockValuePresent || !dePwd.isLockVisualizzaInformazioniCifrate());
+			                        							   						
+			                        							   						// 6. Comando all'interno dell'input visualizzato se almeno uno dei due comandi qui su e' abilitato
+			                        				                    				boolean visualizzaComandiInternoInput = visualizzaComandoEdit || visualizzaComandoEye;
+
+			                        							   						// 7. Comando lock aperto visualizzato se non c'e un valore oppure si forza la visualizzazione dell'input utente.
 			                        				                    				boolean visualizzaOpenLock = !lockValuePresent || forzaVisualizzazioneInputUtente;
-			                        				                    				
-			                        				                    				if(forzaVisualizzazioneInputUtente){
-			                        				                    					lockValue = de.getValue();
-			                        				                    				}
+			                        							   						
+			                        							   						String spanComaniInternoInputClass = (visualizzaComandoEdit && visualizzaComandoEye) ? "span-password-eye-2" : "span-password-eye";
 			                        				                    				
 			                        													%><input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= lockValue %>" <%=lockDisabled %>>
 			                        													  <input type="hidden" name="<%= hiddenLockName  %>" id="<%=hiddenLockId %>" value="<%= de.getValue()  %>">
 			                        													<%
 			                        							          				if (visualizzaComandiInternoInput) {
 			                        								          				%>
-			                        								          					<span id="<%=idPwdEditSpan %>" class="span-password-eye">
+			                        								          					<span id="<%=idPwdEditSpan %>" class="<%= spanComaniInternoInputClass %>">
 			                        														  		<i id="<%=idPwdEdit %>" class="material-icons md-24" title="<%= Costanti.ICONA_EDIT_TOOLTIP %>"><%= Costanti.ICONA_EDIT %></i>
 			                        														  		<i id="<%=idPwdViewInnerLock %>" class="material-icons md-24"><%= Costanti.ICON_VISIBILITY %></i>
 			                        														  	</span>
@@ -1387,30 +1403,28 @@ for (int i = 0; i < dati.size(); i++) {
 			                        																$(document).ready(function(){
 			                        																	
 			                        																	<% 
-		    			                        									      				if(utilizzaInputPassword){
+		    			                        									      				if(visualizzaComandoEdit){
 		    			                        									      				%>
-			    			                        									      			// icona visualizza contenuto visibile	
-		                        																			$('#<%=idPwdViewInnerLock%>').show();
-																										 	
 		                        																			// nascondi icona modifica contentuto
-			                        																        $('#<%=idPwdEdit%>').hide();
-																									    <% } else {
-																									    	if(lockValuePresent){
-	                        																			%>
-		                        																			// icona visualizza contenuto nascosta
-			                        																		$('#<%=idPwdViewInnerLock%>').hide();
-	
-		    			                        									      					// visualizza icona modifica contentuto
 			                        																        $('#<%=idPwdEdit%>').show();
-	                        																			   <% } else {
+																									    <% } else {
 	                        																				   %>
-			                        																			// icona visualizza contenuto nascosta
-				                        																		$('#<%=idPwdViewInnerLock%>').hide();
-		
 				                        																		// nascondi icona modifica contentuto
 				                        																        $('#<%=idPwdEdit%>').hide();
 		                        																			   <%
-	                        																			   }
+																									    }
+	                        																			%>
+	                        																			
+	                        																			<% 
+		    			                        									      				if(visualizzaComandoEye){
+		    			                        									      				%>
+			    			                        									      				// icona visualizza contenuto visibile	
+		                        																			$('#<%=idPwdViewInnerLock%>').show();
+																									    <% } else {
+	                        																				   %>
+	                        																					// icona visualizza contenuto nascosta
+				                        																		$('#<%=idPwdViewInnerLock%>').hide();
+		                        																			   <%
 																									    }
 	                        																			%>
 			                        																	
@@ -1418,14 +1432,20 @@ for (int i = 0; i < dati.size(); i++) {
 			                        																		
 			                        																		// Abilita l'input di tipo password
 			                        																        $('#<%=idPwd %>').attr('disabled', false);
-			                        																        // Svuota l'input di tipo password
-			                        																        $('#<%=idPwd %>').val('');
+			                        																        <% 
+			    			                        									      				if(!(visualizzaComandoEdit && visualizzaComandoEye)){
+			    			                        									      				%>
+				                        																        // Svuota l'input di tipo password
+				                        																        $('#<%=idPwd %>').val('');
+			                        																        <% } %>
+			                        																        
 			                        																        // convertire l'elemento in un text
 			                        																        // toggle the type attribute
 																											var x = document.getElementById("<%=idPwd %>");
 			                        																        
 			                        																        // eliminare il comando di edit
 			                        																        $('#<%=idPwdEdit %>').remove();
+			                        																        $('#<%=idPwdEditSpan%>').removeClass('span-password-eye-2').addClass('span-password-eye');
 			                        																        
 			                        																    	<% 
 			    			                        									      				if(visualizzaIconLucchetto){
