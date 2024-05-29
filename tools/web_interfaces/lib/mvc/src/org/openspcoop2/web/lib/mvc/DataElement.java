@@ -274,13 +274,14 @@ public class DataElement implements Serializable {
 		return DataElement.checkNull(this.type);
 	}
 	
-	public void setLock(String value, boolean readOnly, boolean visualizzaInformazioniCifrate, String warningMessage, String decoderServletName,Parameter ... parameter) {
+	public void setLock(String value, boolean readOnly, boolean visualizzaInformazioniCifrate, boolean visualizzaIconaLucchetto, String warningMessage, String decoderServletName,Parameter ... parameter) {
 		this.setValue(value);
 		this.type = DataElementType.LOCK.toString();
 		this.password = new DataElementPassword();
 		this.password.setLockReadOnly(readOnly);
 		this.password.setLockVisualizzaInformazioniCifrate(visualizzaInformazioniCifrate);
 		this.password.setLockWarningMessage(warningMessage);
+		this.password.setLockVisualizzaIconaLucchetto(visualizzaIconaLucchetto); 
 		this.setUrl(decoderServletName, parameter);
 	}
 	

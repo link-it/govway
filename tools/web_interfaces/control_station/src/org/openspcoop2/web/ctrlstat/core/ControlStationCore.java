@@ -1216,6 +1216,10 @@ public class ControlStationCore {
 	public String getNotaInformativaInformazioneCifrataSecurityPolicyDifferente() {
 		return this.notaInformativaInformazioneCifrataSecurityPolicyDifferente;
 	}
+	private boolean visualizzaCampiPasswordComeLock = false;
+	public boolean isVisualizzaCampiPasswordComeLock() {
+		return this.visualizzaCampiPasswordComeLock;
+	}
 
 	/** OCSP */
 	private boolean isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = false;
@@ -2683,6 +2687,7 @@ public class ControlStationCore {
 		this.byokWarningMessage = core.byokWarningMessage;
 		this.notaInformativaInformazioneMemorizzataInChiaro = core.notaInformativaInformazioneMemorizzataInChiaro;
 		this.notaInformativaInformazioneCifrataSecurityPolicyDifferente = core.notaInformativaInformazioneCifrataSecurityPolicyDifferente;
+		this.visualizzaCampiPasswordComeLock = core.visualizzaCampiPasswordComeLock;
 		
 		/** OCSP */
 		this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = core.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata; 
@@ -3133,6 +3138,7 @@ public class ControlStationCore {
 			this.byokWarningMessage = consoleProperties.getVisualizzaInformazioniCifrateWarningMessage();
 			this.notaInformativaInformazioneMemorizzataInChiaro = consoleProperties.getNotaInformativaInformazioneMemorizzataInChiaro();
 			this.notaInformativaInformazioneCifrataSecurityPolicyDifferente = consoleProperties.getNotaInformativaInformazioneCifrataSecurityPolicyDifferente();
+			this.visualizzaCampiPasswordComeLock = consoleProperties.isVisualizzaCampiPasswordComeLock();
 			this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = consoleProperties.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata();
 			this.verificaCertificatiWarningExpirationDays = consoleProperties.getVerificaCertificatiWarningExpirationDays();
 			this.verificaCertificatiSceltaClusterId = consoleProperties.isVerificaCertificatiSceltaClusterId();
@@ -3321,7 +3327,7 @@ public class ControlStationCore {
 			
 			this.lockUtilities = new LockUtilities(this.driverBYOKUtilities,
 					this.isVisualizzaInformazioniCifrate(), this.getByokWarningMessage(), UtilsCostanti.SERVLET_NAME_SECRET_DECODER,
-					this.getNotaInformativaInformazioneMemorizzataInChiaro(), this.getNotaInformativaInformazioneCifrataSecurityPolicyDifferente());
+					this.getNotaInformativaInformazioneMemorizzataInChiaro(), this.getNotaInformativaInformazioneCifrataSecurityPolicyDifferente(), this.isVisualizzaCampiPasswordComeLock());
 			
 			this.isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus = consoleProperties.isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus();
 			this.jmxPdDAliases = consoleProperties.getJmxPdDAliases();

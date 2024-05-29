@@ -1343,6 +1343,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							   						String idPwdEdit = "pwd_" + i + "_edit";
 			                        							   						String idPwdEditSpan = "pwd_" + i + "_edit_span";
 			                        							   						String idPwdLock = "pwd_" + i + "_lock";
+			                        							   						String idPwdLockOpen = "pwd_" + i + "_lock_open";
 			                        							   						String idPwdViewLock = "pwd_" + i + "_lock_view";
 			                        							   						String idPwdCopyLock = "pwd_" + i + "_lock_copy";
 			                        							   						String hiddenLockName = Costanti.PARAMETER_LOCK_PREFIX + deName;
@@ -1350,11 +1351,12 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							   						boolean lockValuePresent = !de.getValue().equals(""); // e' gia' presente un valore
 			                        							   						String lockValue = lockValuePresent ? Costanti.PARAMETER_LOCK_DEFAULT_VALUE : de.getValue();
 			                        							   						String lockDisabled = lockValuePresent ? " disabled=\"disabled\"" : "";
-			                        							   						String lockIcon = lockValuePresent ? Costanti.ICON_LOCK: Costanti.ICON_LOCK_OPEN;
 			                        							   						String dePwdType = !lockValuePresent ? "text" : "password";
 			                        							   						DataElementPassword dePwd = de.getPassword();
 			                        				                    				boolean visualizzaInformazioniCifrate = lockValuePresent && dePwd.isLockVisualizzaInformazioniCifrate();
+			                        				                    				boolean visualizzaIconLucchetto = dePwd.isLockVisualizzaIconaLucchetto();
 			                        				                    				boolean lockReadOnly = dePwd.isLockReadOnly();
+			                        				                    				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 			                        													%><input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= lockValue %>" <%=lockDisabled %>>
 			                        													  <input type="hidden" name="<%= hiddenLockName  %>" id="<%=hiddenLockId %>" value="<%= de.getValue()  %>">
 			                        													<%
@@ -1379,14 +1381,20 @@ for (int i = 0; i < dati.size(); i++) {
 			                        																        // eliminare il comando di edit
 			                        																        $('#<%=idPwdEditSpan %>').remove();
 			                        																        
-			                        																        // sostituire l'icona lock con unlock
-			                        																		var lockIcon = $('#<%=idPwdLock %>');
-																										    lockIcon.html('<%= Costanti.ICON_LOCK_OPEN %>');
-																										    
-																										    // nascondere comandi copia
-																										    $('#<%=idPwdCopyLock%>').hide();
-																										    // nascondere comando visualizza
-																										    $('#<%=idPwdViewLock%>').hide();
+			                        																    	<% 
+			    			                        									      				if(visualizzaIconLucchetto){
+			    			                        									      				%>
+				                        																        // sostituire l'icona lock con unlock
+				                        																        $('#<%=idPwdLock%>').hide();
+				                        																        $('#<%=idPwdLockOpen%>').show();
+				                        																        // ripristino cursore con puntatore
+				                        																        $('#<%=idPwdLockOpen%>').parent().removeClass('spanIconInfoBox-lock').addClass('spanIconInfoBox');
+																											    
+																											    // nascondere comandi copia
+																											    $('#<%=idPwdCopyLock%>').hide();
+																											    // nascondere comando visualizza
+																											    $('#<%=idPwdViewLock%>').hide();
+																										    <% } %>
 			                        																	});
 			                        																});
 			                        															</script>
@@ -1396,11 +1404,43 @@ for (int i = 0; i < dati.size(); i++) {
 			                        									      			String idDivIconInfo = "divIconInfo_"+i;
 			                        									      			String idIconInfo = "iconInfo_"+i; 
 			                        									      			
+			                        									      			if(visualizzaIconLucchetto || visualizzaInformazioniCifrate || deInfo != null){
 			                        											      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
-			                        											      		<span class="spanIconInfoBox-lock">
-			                        																<i class="material-icons md-24 md-nohover" id="<%=idPwdLock %>"><%=lockIcon %></i>
+			                        											      	
+			                        											      	<% 
+			                        									      				if(visualizzaIconLucchetto){
+			                        									      					String chiamataEventoPostback = Costanti.POSTBACK_VIA_POST_FUNCTION_PREFIX;
+			                        									      					chiamataEventoPostback+=Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_START;
+			                        									      					chiamataEventoPostback+=de.getName();
+			                        									      					chiamataEventoPostback+=Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_END;
+			                        									      				%>
+			                        											      			<span class="spanIconInfoBox-lock">
+			                        																<i class="material-icons md-24" id="<%=idPwdLockOpen %>" title="<%= Costanti.ICON_LOCK_OPEN_TOOLTIP %>" ><%=Costanti.ICON_LOCK_OPEN %></i>
+			                        																<i class="material-icons md-24 md-nohover" id="<%=idPwdLock %>"><%=Costanti.ICON_LOCK %></i>
 			                        															</span>
-			                        															
+			                        															<script type="text/javascript" nonce="<%= randomNonce %>">
+			                        																$(document).ready(function(){
+			                        																	<% 
+						                        									      				if(lockValuePresent){
+						                        									      				%>
+						                        									      				 	$('#<%=idPwdLock%>').show();
+			                        																        $('#<%=idPwdLockOpen%>').hide();
+			                        																     	// ripristino cursore senza puntatore
+			                        																        $('#<%=idPwdLockOpen%>').parent().removeClass('spanIconInfoBox').addClass('spanIconInfoBox-lock');
+						                        									      				<% } else { %>
+						                        									      				 	$('#<%=idPwdLock%>').hide();
+			                        																        $('#<%=idPwdLockOpen%>').show();
+			                        																     	// ripristino cursore con puntatore
+			                        																        $('#<%=idPwdLockOpen%>').parent().removeClass('spanIconInfoBox-lock').addClass('spanIconInfoBox');
+						                        									      				<% } %>
+						                        									      				
+						                        									      				// lancio il postback
+				                        																$('#<%=idPwdLockOpen %>').click(function() {
+				                        																	<%= visualizzaAjaxStatus %><%= chiamataEventoPostback %>;
+				                        																});
+			                        																});
+			                        															</script>
+		                        															<% } %>
 			                        															<% 
 			                        									      				if(visualizzaInformazioniCifrate){
 			                        									      				%>
@@ -1431,7 +1471,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        														<% } %>	
 			                        														</div>
 			                        											      	<% 
-			                        							   					
+			                        							   					}
 			                        						     					%>
 			                        						     					<% if(!deNote.equals("")){ %>
 			                        									      			<p class="note <%= labelStyleClass %>"><%=deNote %></p>

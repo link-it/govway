@@ -53,7 +53,7 @@ public class Test {
 			System.out.println("TEST CONFIG 1");
 			
 			DriverBYOKUtilities driverBYOKUtilities = new DriverBYOKUtilities(false, null, null);
-			LockUtilities lockUtilities = new LockUtilities(driverBYOKUtilities, false, null, null, null, null);
+			LockUtilities lockUtilities = new LockUtilities(driverBYOKUtilities, false, null, null, null, null, false);
 			
 			File f = new File(Test.class.getResource("Test.xml").toURI());
 			

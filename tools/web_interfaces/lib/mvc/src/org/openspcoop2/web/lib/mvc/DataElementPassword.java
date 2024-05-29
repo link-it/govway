@@ -47,6 +47,7 @@ public class DataElementPassword implements Serializable {
 	private boolean visualizzaIconaMostraPassword = true;
 	private boolean lockVisualizzaInformazioniCifrate = false;
 	private boolean lockReadOnly = false;
+	private boolean lockVisualizzaIconaLucchetto = true;
 	private String lockWarningMessage = null;
 	
 	public DataElementPassword() {
@@ -60,6 +61,7 @@ public class DataElementPassword implements Serializable {
 		this.setLockVisualizzaInformazioniCifrate(false);
 		this.setLockReadOnly(false);
 		this.setLockWarningMessage(null);
+		this.setLockVisualizzaIconaLucchetto(true);
 	}
 
 	public boolean isVisualizzaBottoneGeneraPassword() {
@@ -139,5 +141,13 @@ public class DataElementPassword implements Serializable {
 
 	public void setLockVisualizzaInformazioniCifrate(boolean lockVisualizzaInformazioniCifrate) {
 		this.lockVisualizzaInformazioniCifrate = lockVisualizzaInformazioniCifrate;
+	}
+
+	public boolean isLockVisualizzaIconaLucchetto() {
+		return this.lockVisualizzaIconaLucchetto;
+	}
+
+	public void setLockVisualizzaIconaLucchetto(boolean lockVisualizzaIconaLucchetto) {
+		this.lockVisualizzaIconaLucchetto = lockVisualizzaIconaLucchetto;
 	}
 }

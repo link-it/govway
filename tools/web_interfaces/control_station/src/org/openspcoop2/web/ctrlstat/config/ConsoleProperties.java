@@ -697,6 +697,10 @@ public class ConsoleProperties {
 	public String getNotaInformativaInformazioneCifrataSecurityPolicyDifferente() throws UtilsException {
 		return this.readProperty(false, "console.informazioniCifrate.cifrataConSecurityPolicyDifferente.nota");
 	}
+	public boolean isVisualizzaCampiPasswordComeLock() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "console.visualizzaCampiPasswordComeLock.enabled");
+		return parse(b, false);
+	}
 	
 	
 	public Integer getVerificaCertificatiWarningExpirationDays() throws UtilsException{

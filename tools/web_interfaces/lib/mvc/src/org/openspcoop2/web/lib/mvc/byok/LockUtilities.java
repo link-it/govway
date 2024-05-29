@@ -39,6 +39,7 @@ public class LockUtilities {
 
 	private DriverBYOKUtilities driverBYOKUtilities;
 	private boolean visualizzaInformazioniCifrate;
+	private boolean visualizzaCampiPasswordComeLock;
 	private String warningMessage;
 	private String servletNameSecretDecoder;
 	private String messaggioInformativoInformazioneNonCifrata;
@@ -47,13 +48,14 @@ public class LockUtilities {
 	
 	public LockUtilities(DriverBYOKUtilities driverBYOKUtilities, boolean visualizzaInformazioniCifrate,
 			String warningMessage, String servletNameSecretDecoder,
-			String messaggioInformativoInformazioneNonCifrata, String messaggioInformativoInformazioneCifrataDifferenteSecurityPolicy) {
+			String messaggioInformativoInformazioneNonCifrata, String messaggioInformativoInformazioneCifrataDifferenteSecurityPolicy, boolean visualizzaCampiPasswordComeLock) {
 		this.driverBYOKUtilities = driverBYOKUtilities;
 		this.visualizzaInformazioniCifrate = visualizzaInformazioniCifrate;
 		this.warningMessage = warningMessage;
 		this.servletNameSecretDecoder = servletNameSecretDecoder;
 		this.messaggioInformativoInformazioneNonCifrata = messaggioInformativoInformazioneNonCifrata; 
 		this.messaggioInformativoInformazioneCifrataDifferenteSecurityPolicy = messaggioInformativoInformazioneCifrataDifferenteSecurityPolicy; 
+		this.visualizzaCampiPasswordComeLock = visualizzaCampiPasswordComeLock;
 	}
 	
 	public void lock(DataElement de, String value) throws UtilsException {
@@ -87,12 +89,24 @@ public class LockUtilities {
 			else if(readOnly &&
 					(de.getType()==null || StringUtils.isEmpty(de.getType()) || !DataElementType.TEXT.toString().equals(de.getType())) 
 					){
-				de.setType(DataElementType.TEXT);
+				if(this.visualizzaCampiPasswordComeLock) {
+					this.lockEngineWithoutBIOK(de, value, escapeHtml, readOnly);
+				} else {
+					de.setType(DataElementType.TEXT);
+				}
 			}
 			else if( de.getType()==null || StringUtils.isEmpty(de.getType()) || 
 					( (!DataElementType.TEXT_EDIT.toString().equals(de.getType())) && (!DataElementType.TEXT_AREA.toString().equals(de.getType())) )
 					){
-				de.setType(DataElementType.TEXT_EDIT);
+				if(this.visualizzaCampiPasswordComeLock) {
+					this.lockEngineWithoutBIOK(de, value, escapeHtml, readOnly);
+				} else {
+					de.setType(DataElementType.TEXT_EDIT);
+				}
+			} else {
+				if(this.visualizzaCampiPasswordComeLock) {
+					this.lockEngineWithoutBIOK(de, value, escapeHtml, readOnly);
+				} 
 			}
 			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml(value) : value);
 		}
@@ -129,7 +143,10 @@ public class LockUtilities {
 		if(sb.length()>0) {
 			de.setNote(sb.toString());
 		}
-		de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue, readOnly, this.visualizzaInformazioniCifrate, this.warningMessage, this.servletNameSecretDecoder);
+		de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue, readOnly, this.visualizzaInformazioniCifrate, true, this.warningMessage, this.servletNameSecretDecoder);
+	}
+	private void lockEngineWithoutBIOK(DataElement de, String wrapValue, boolean escapeHtml, boolean readOnly) {
+		de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue, readOnly, false, false, null, null);
 	}
 	private void appendErrorMessageSecurityPolicyDifferente(StringBuilder sb, String wrapValue) {
 		if(this.messaggioInformativoInformazioneCifrataDifferenteSecurityPolicy!=null && StringUtils.isNotEmpty(this.messaggioInformativoInformazioneCifrataDifferenteSecurityPolicy)) {

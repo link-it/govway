@@ -402,6 +402,7 @@ public class Costanti {
 	
 	public static final String ICON_LOCK = "&#xE897;"; // lock
 	public static final String ICON_LOCK_OPEN = "&#xE898;"; // lock_open
+	public static final String ICON_LOCK_OPEN_TOOLTIP = "Proteggi informazione";
 	
 	public static final String ICON_VISIBILITY = "&#xE8F4;"; // visibility
 	public static final String ICON_VISIBILITY_OFF = "&#xE8F5;"; // visibility_off
