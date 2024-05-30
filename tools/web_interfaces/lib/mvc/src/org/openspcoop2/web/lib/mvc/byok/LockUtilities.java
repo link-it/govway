@@ -122,7 +122,7 @@ public class LockUtilities {
 		}
 		else if(isForceReadOnly(de, readOnly)){
 			if(this.visualizzaCampiPasswordComeLock) {
-				this.lockEngineWithoutBIOK(de, value, escapeHtml, readOnly);
+				this.lockEngineWithoutBIOK(de, value, escapeHtml, hidden, readOnly);
 			} else {
 				de.setType(DataElementType.TEXT);
 			}
@@ -131,14 +131,26 @@ public class LockUtilities {
 				( (!DataElementType.TEXT_EDIT.toString().equals(de.getType())) && (!DataElementType.TEXT_AREA.toString().equals(de.getType())) )
 				){
 			if(this.visualizzaCampiPasswordComeLock) {
-				this.lockEngineWithoutBIOK(de, value, escapeHtml, readOnly);
+				this.lockEngineWithoutBIOK(de, value, escapeHtml, hidden, readOnly);
 			} else {
-				de.setType(DataElementType.TEXT_EDIT);
+				if(hidden) {
+					de.setType(DataElementType.HIDDEN);
+				}
+				else {
+					de.setType(DataElementType.TEXT_EDIT);
+				}
 			}
 		} else {
 			if(this.visualizzaCampiPasswordComeLock) {
-				this.lockEngineWithoutBIOK(de, value, escapeHtml, readOnly);
-			} 
+				this.lockEngineWithoutBIOK(de, value, escapeHtml, hidden, readOnly);
+			} else {
+				if(hidden) {
+					de.setType(DataElementType.HIDDEN);
+				}
+				else {
+					de.setType(DataElementType.TEXT_EDIT);
+				}
+			}
 		}
 		de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml(value) : value);
 	}
@@ -192,8 +204,16 @@ public class LockUtilities {
 		}
 		de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue, readOnly, this.visualizzaInformazioniCifrate, true, this.warningMessage, this.servletNameSecretDecoder);
 	}
-	private void lockEngineWithoutBIOK(DataElement de, String wrapValue, boolean escapeHtml, boolean readOnly) {
-		de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue, readOnly, false, false, null, null);
+	private void lockEngineWithoutBIOK(DataElement de, String wrapValue, boolean escapeHtml, boolean hidden, boolean readOnly) {
+		if(hidden) {
+			if(de.getType()==null || StringUtils.isEmpty(de.getType()) || !DataElementType.HIDDEN.toString().equals(de.getType())) {
+				de.setType(DataElementType.HIDDEN);
+			}
+			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue);
+		}
+		else {
+			de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue, readOnly, false, false, null, null);
+		}
 	}
 	private void appendErrorMessageSecurityPolicyDifferente(StringBuilder sb, String wrapValue) {
 		if(this.messaggioInformativoInformazioneCifrataDifferenteSecurityPolicy!=null && StringUtils.isNotEmpty(this.messaggioInformativoInformazioneCifrataDifferenteSecurityPolicy)) {

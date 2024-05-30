@@ -1477,14 +1477,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		String inputValue = this.getParameter(parameterName);
 		
 		// 2. pwd puo' essere null se non c'e' oppure se e' postback, se viene fatta la submit e' impostata e se corrisponde alla costante allora provo a leggere il valore del parametro hidden associato
-		if( this.core.getDriverBYOKUtilities().isEnabledBYOK()
-				&&
-				(inputValue == null || Costanti.PARAMETER_LOCK_DEFAULT_VALUE.equals(inputValue)) 
-				) {
+		if( inputValue == null || Costanti.PARAMETER_LOCK_DEFAULT_VALUE.equals(inputValue)) {
 			String lockHiddenValue = this.getParameter(Costanti.PARAMETER_LOCK_PREFIX + parameterName);
 			
 			// 3. unwrap
-			if(unwrap) {
+			if(this.core.getDriverBYOKUtilities().isEnabledBYOK() && unwrap) {
 				return this.core.getDriverBYOKUtilities().unwrap(lockHiddenValue);
 			}
 			else {
