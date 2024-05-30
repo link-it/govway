@@ -27,19 +27,51 @@ function aggiungiComandoMostraPassword(inputPasswordId){
 	
 	 // Estrai gli elementi dal DOM
     const passwordInput = document.getElementById(inputPasswordId);
+    const parent = passwordInput.parentNode;
     const spanId = inputPasswordId + '_eye_span';
     const iconId = inputPasswordId + '_eye';
     const jQueryIconId = '#' + iconId;
     
     const iconVisibility = 'visibility';
+    const iconVisibilityTooltip = 'Mostra';
     const iconVisibilityOff = 'visibility_off';
+    const iconVisibilityOffTooltip = 'Nascondi';
+    
+    const firstParagraph = parent.querySelector('p');
+    
+    if(firstParagraph) {
+		// Sgancia firstP dal parent
+    	parent.removeChild(firstParagraph);
+	}
+
+	// Crea il div esterno
+    const divEsterno = document.createElement("div");
+	divEsterno.className = "lock-container";
+	
+	// Crea il div interno
+    const divInterno = document.createElement("div");
+	divInterno.className = "lock-input-container";
+	divEsterno.appendChild(divInterno);
+	
+    // Appendi divEsterno al posto di passwordInput
+    parent.appendChild(divEsterno);
+    
+    // Sgancia passwordInput dal parent
+    parent.removeChild(passwordInput);
+		
+	// appendi passwordInput a divInterno
+	divInterno.appendChild(passwordInput);
+	
+	 if(firstParagraph) {
+		// ripristino firstP nel parent
+    	parent.appendChild(firstParagraph);
+	}
 
     // Crea lo span che conterrà l'icona dell'occhio
     const span = document.createElement("span");
     span.id = spanId;
-    span.className = "span-password-eye";
-    passwordInput.parentNode.insertBefore(span, passwordInput.nextSibling);
-//    passwordInput.parentNode.appendChild(span);
+    span.className = "lock-span-comandi-input";
+    divInterno.appendChild(span);
 
     // Crea l'icona dell'occhio
     const eyeIcon = document.createElement("i");
@@ -55,5 +87,8 @@ function aggiungiComandoMostraPassword(inputPasswordId){
 
       // toggle the eye slash icon
       jQuery(this).text(passwordInput.type === 'password' ? iconVisibility : iconVisibilityOff);
+      var tooltip = passwordInput.type === "password" ? iconVisibilityTooltip : iconVisibilityOffTooltip;
+      jQuery(this).attr('title', tooltip);
+      
     });
 }
