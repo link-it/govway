@@ -2616,7 +2616,6 @@ div.txtA_div_propDialogInfoUso {
 }
 
 .lock-iconInfoBox {
-/* 	margin-left: 422px; */
 	padding-left: 8px;
     display: inline;
     cursor: pointer;
@@ -2632,9 +2631,6 @@ div.txtA_div_propDialogInfoUso {
     right: 0px;
     top: 0px;
     height: 26.100px;
-/*     top: 50%; */
-/*     transform: translateY(-50%); */
-/*     height: 26.800px; */
     display: inline-block;
     width: 27px;
     color: ${p.note.color};

@@ -810,93 +810,104 @@ for (int i = 0; i < dati.size(); i++) {
 							   					} else {
 							   						String idPwdEye = "pwd_" + i + "_eye";
 							   						String idPwdEyeSpan = "pwd_" + i + "_eye_span";
-													%><input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= de.getValue()  %>">
-													<%
-							          				if (!bottoneGeneraPassword && visualizzaIconaMostraPassword) {
-								          				%>
-								          					<span id="<%=idPwdEyeSpan %>" class="span-password-eye">
-														  		<i id="<%=idPwdEye %>" class="material-icons md-24"><%= Costanti.ICON_VISIBILITY %></i>
-														  	</span>
-															<script type="text/javascript" nonce="<%= randomNonce %>">
-																$(document).ready(function(){
-																	$('#<%=idPwdEye %>').click(function() {
-																		
-																		// toggle the type attribute
-																		var x = document.getElementById("<%=idPwd %>");
-																		  if (x.type === "password") {
-																		    x.type = "text";
-																		  } else {
-																		    x.type = "password";
-																		  }
-		
-																		  // toggle the eye slash icon
-																	    var eyeIcon = $('#<%=idPwdEye %>');
-																	    if (x.type === 'password') {
-																	        eyeIcon.html('<%= Costanti.ICON_VISIBILITY %>');
-																	    } else {
-																	        eyeIcon.html('<%= Costanti.ICON_VISIBILITY_OFF %>');
-																	    }
-																	    
-																	});
-																});
-															</script>
-							     					<% 
-								   					}
-									      		if(deInfo != null || bottoneGeneraPassword){
-									      			String idDivIconInfo = "divIconInfo_"+i;
-									      			String idIconInfo = "iconInfo_"+i; 
-									      			
-											      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
-											      		<% 
-									      				if(bottoneGeneraPassword){
-									      					PasswordGenerator pwdGen = dePwd.getPasswordGenerator();
-									      					String id = "form-gen-pass-link_" + i;
-									      				%>
-									      					<script type="text/javascript" nonce="<%= randomNonce %>">
-									      						var pwdGenerate_<%= deName %>_idx = 0;
-									      						var pwdGenerate_<%= deName %> = [];
-									      					
-									      						<% 
-									      							for(int iPwd = 0; iPwd < dePwd.getNumeroSample(); iPwd ++){
-									      								String pwTmp = pwdGen.generate();
-									      								%> pwdGenerate_<%= deName %>.push('<%= pwTmp  %>'); <%
-									      							}
-									      						%>
-									      						
-									      						function generaPwd(inputElement){
-									      							pwdGenerate_<%= deName %>_idx = pwdGenerate_<%= deName %>_idx % pwdGenerate_<%= deName %>.length;
-									      							
-									      							var newValue = pwdGenerate_<%= deName %> [pwdGenerate_<%= deName %>_idx];
-									      							$('input[name="'+ inputElement+'"]').val(newValue);
-									      							
-									      							pwdGenerate_<%= deName %>_idx ++;
-									      						}
-									      					</script>
-									      					<span class="spanButtonGeneraBox">
-								      							<input id="<%=id %>" class="buttonGeneraPassword" type="button" title="<%=dePwd.getTooltipButtonGeneraPassword() %>" value="<%=dePwd.getLabelButtonGeneraPassword() %>">
-								      							<script type="text/javascript" nonce="<%= randomNonce %>">
-															      	 $(document).ready(function(){
-																			$('#<%=id %>').click(function() {
-																				<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>generaPwd('<%= deName  %>');<%= Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>;
+													%>
+													<div class="lock-container">
+														<div class="lock-input-container">
+															<input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= de.getValue()  %>">
+															<%
+									          				if (!bottoneGeneraPassword && visualizzaIconaMostraPassword) {
+										          				%>
+										          					<span id="<%=idPwdEyeSpan %>" class="lock-span-comandi-input">
+																  		<i id="<%=idPwdEye %>" class="material-icons md-24" title="<%= Costanti.ICON_VISIBILITY_TOOLTIP %>"><%= Costanti.ICON_VISIBILITY %></i>
+																  	</span>
+																	<script type="text/javascript" nonce="<%= randomNonce %>">
+																		$(document).ready(function(){
+																			$('#<%=idPwdEye %>').click(function() {
+																				
+																				// toggle the type attribute
+																				var x = document.getElementById("<%=idPwd %>");
+																				  if (x.type === "password") {
+																				    x.type = "text";
+																				  } else {
+																				    x.type = "password";
+																				  }
+				
+																				  // toggle the eye slash icon
+																			    var eyeIcon = $('#<%=idPwdEye %>');
+																			    if (x.type === 'password') {
+																			        eyeIcon.html('<%= Costanti.ICON_VISIBILITY %>');
+																			        eyeIcon.attr('title', '<%= Costanti.ICON_VISIBILITY_TOOLTIP %>');
+																			    } else {
+																			        eyeIcon.html('<%= Costanti.ICON_VISIBILITY_OFF %>');
+																			        eyeIcon.attr('title', '<%= Costanti.ICON_VISIBILITY_OFF_TOOLTIP %>');
+																			    }
+																			    
 																			});
 																		});
-																</script>
-									      					</span>
-									      				<% } %>	
-											      		<% 
-									      				if(deInfo != null){
-									      				%>
-											      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
-											      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
-													      	<span class="spanIconInfoBox">
-																<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
-															</span>
+																	</script>
+									     					<% 
+										   					}
 															
-														<% } %>	
+															%>
 														</div>
-											      	<% 
-							   					}
-						     					%>
+														<%
+														
+										      		if(deInfo != null || bottoneGeneraPassword){
+										      			String idDivIconInfo = "divIconInfo_"+i;
+										      			String idIconInfo = "iconInfo_"+i; 
+										      			
+												      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
+												      		<% 
+										      				if(bottoneGeneraPassword){
+										      					PasswordGenerator pwdGen = dePwd.getPasswordGenerator();
+										      					String id = "form-gen-pass-link_" + i;
+										      				%>
+										      					<script type="text/javascript" nonce="<%= randomNonce %>">
+										      						var pwdGenerate_<%= deName %>_idx = 0;
+										      						var pwdGenerate_<%= deName %> = [];
+										      					
+										      						<% 
+										      							for(int iPwd = 0; iPwd < dePwd.getNumeroSample(); iPwd ++){
+										      								String pwTmp = pwdGen.generate();
+										      								%> pwdGenerate_<%= deName %>.push('<%= pwTmp  %>'); <%
+										      							}
+										      						%>
+										      						
+										      						function generaPwd(inputElement){
+										      							pwdGenerate_<%= deName %>_idx = pwdGenerate_<%= deName %>_idx % pwdGenerate_<%= deName %>.length;
+										      							
+										      							var newValue = pwdGenerate_<%= deName %> [pwdGenerate_<%= deName %>_idx];
+										      							$('input[name="'+ inputElement+'"]').val(newValue);
+										      							
+										      							pwdGenerate_<%= deName %>_idx ++;
+										      						}
+										      					</script>
+										      					<span class="spanButtonGeneraBox">
+									      							<input id="<%=id %>" class="buttonGeneraPassword" type="button" title="<%=dePwd.getTooltipButtonGeneraPassword() %>" value="<%=dePwd.getLabelButtonGeneraPassword() %>">
+									      							<script type="text/javascript" nonce="<%= randomNonce %>">
+																      	 $(document).ready(function(){
+																				$('#<%=id %>').click(function() {
+																					<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>generaPwd('<%= deName  %>');<%= Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>;
+																				});
+																			});
+																	</script>
+										      					</span>
+										      				<% } %>	
+												      		<% 
+										      				if(deInfo != null){
+										      				%>
+												      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+												      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+														      	<span class="spanIconInfoBox">
+																	<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																</span>
+																
+															<% } %>	
+															</div>
+												      	<% 
+								   					}
+							     					%>
+						     					</div>
 						     					<% if(!deNote.equals("")){ %>
 									      			<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 									      		<% } %>
@@ -1398,6 +1409,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							   						
 			                        							   						String spanComaniInternoInputClass = visualizzaTuttiComandiInternoInput ? "lock-span-comandi-input lock-span-comandi-input-x2" : "lock-span-comandi-input";
 			                        				                    				
+			                        							   						String titleIconaModifica = visualizzaTuttiComandiInternoInput ? Costanti.ICONA_EDIT_TOOLTIP : Costanti.ICONA_REIMPOSTA_TOOLTIP;
 			                        													%>
 			                        													<div class="lock-container">
 			                        													<%
@@ -1411,8 +1423,8 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							          				if (visualizzaComandiInternoInput) {
 			                        								          				%>
 			                        								          					<span id="<%=idPwdEditSpan %>" class="<%= spanComaniInternoInputClass %>">
-			                        														  		<i id="<%=idPwdEdit %>" class="material-icons md-24" title="<%= Costanti.ICONA_EDIT_TOOLTIP %>"><%= Costanti.ICONA_EDIT %></i>
-			                        														  		<i id="<%=idPwdViewInnerLock %>" class="material-icons md-24"><%= Costanti.ICON_VISIBILITY %></i>
+			                        														  		<i id="<%=idPwdEdit %>" class="material-icons md-24" title="<%= titleIconaModifica %>"><%=  Costanti.ICONA_EDIT %></i>
+			                        														  		<i id="<%=idPwdViewInnerLock %>" class="material-icons md-24" title="<%= Costanti.ICON_VISIBILITY_TOOLTIP %>"><%= Costanti.ICON_VISIBILITY %></i>
 			                        														  	</span>
 			                        															<script type="text/javascript" nonce="<%= randomNonce %>">
 			                        																$(document).ready(function(){
@@ -1496,7 +1508,7 @@ for (int i = 0; i < dati.size(); i++) {
 																										    <% 
 			    			                        									      				if(utilizzaInputPassword){
 			    			                        									      				%>
-			    			                        									      				 	x.type = "password";
+			    			                        									      				 	//x.type = "password";
 				                        																        // visualizza icona visualizza contentuto
 				                        																        $('#<%=idPwdViewInnerLock%>').show();
 																										    <% } else { %>
@@ -1521,8 +1533,10 @@ for (int i = 0; i < dati.size(); i++) {
 			                        																		    var eyeIcon = $('#<%=idPwdViewInnerLock %>');
 			                        																		    if (x.type === 'password') {
 			                        																		        eyeIcon.html('<%= Costanti.ICON_VISIBILITY %>');
+			                        																		        eyeIcon.attr('title', '<%= Costanti.ICON_VISIBILITY_TOOLTIP %>');
 			                        																		    } else {
 			                        																		        eyeIcon.html('<%= Costanti.ICON_VISIBILITY_OFF %>');
+			                        																		        eyeIcon.attr('title', '<%= Costanti.ICON_VISIBILITY_OFF_TOOLTIP %>');
 			                        																		    }
 			                        																		    
 			                        																		});

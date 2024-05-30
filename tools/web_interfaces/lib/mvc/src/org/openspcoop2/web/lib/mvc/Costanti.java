@@ -399,13 +399,16 @@ public class Costanti {
 	
 	public static final String ICONA_EDIT = "&#xE3C9;"; // "edit"
 	public static final String ICONA_EDIT_TOOLTIP = "Modifica";
+	public static final String ICONA_REIMPOSTA_TOOLTIP = "Reimposta";
 	
 	public static final String ICON_LOCK = "&#xE897;"; // lock
 	public static final String ICON_LOCK_OPEN = "&#xE898;"; // lock_open
 	public static final String ICON_LOCK_OPEN_TOOLTIP = "Proteggi informazione";
 	
 	public static final String ICON_VISIBILITY = "&#xE8F4;"; // visibility
+	public static final String ICON_VISIBILITY_TOOLTIP = "Mostra";
 	public static final String ICON_VISIBILITY_OFF = "&#xE8F5;"; // visibility_off
+	public static final String ICON_VISIBILITY_OFF_TOOLTIP = "Nascondi";
 	
 	public static final String ICON_SEARCH = "&#xE8B6;"; // search
 	
