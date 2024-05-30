@@ -1114,6 +1114,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			secretsObfuscateKey = secretsProperties.getJavaMap().keys();
 		}
 		
+		List<String> govwayEncryptedProperties = getGovwayEncryptedProperties();
+		
 		for (String key : ll) {
 			
 			Object value = p.get(key);
@@ -1123,6 +1125,9 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				}
 				else if(secretsObfuscateKey!=null && secretsObfuscateKey.contains(key)) {
 					value = secretsProperties.obfuscateJavaProperty(key, (String)value);
+				}
+				else if(govwayEncryptedProperties!=null && govwayEncryptedProperties.contains(key)) {
+					value = obfuscateGovWayEncryptedProperty(mapProperties, key, (String)value);
 				}
 			}
 			
@@ -1215,16 +1220,18 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	private void printProprietaSistema(List<String> ll, StringBuilder bf, Map<String, String> map) throws UtilsException {
 		MapProperties mapProperties = MapProperties.getInstance();
 		List<String> mapObfuscateKey = null;
-		if(mapProperties.isObfuscatedModeEnabled()) {
+		if(mapProperties!=null && mapProperties.isObfuscatedModeEnabled()) {
 			mapObfuscateKey = mapProperties.getObfuscatedEnvKeys();
 		}
 		
 		BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
 		List<String> secretsObfuscateKey = null;
-		if(secretsProperties.isObfuscatedModeEnabled()) {
+		if(secretsProperties!=null && secretsProperties.isObfuscatedModeEnabled()) {
 			/**secretsObfuscateKey = secretsProperties.getObfuscatedEnvKeys(); Tutte le variabili definite in secrets sono da offuscare*/
 			secretsObfuscateKey = secretsProperties.getEnvMap().keys();
 		}
+		
+		/** Vengono impostate come proprieta java List<String> govwayEncryptedProperties = getGovwayEncryptedProperties();*/
 		
 		for (String key : ll) {
 			
@@ -1235,12 +1242,44 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			else if(secretsObfuscateKey!=null && secretsObfuscateKey.contains(key)) {
 				value = secretsProperties.obfuscateEnvProperty(key, value);
 			}
+			/** Vengono impostate come proprieta java else if(govwayEncryptedProperties!=null && govwayEncryptedProperties.contains(key)) {
+				value = obfuscateGovWayEncryptedProperty(mapProperties, key, value);
+			}*/
 			
 			if(bf.length()>0){
 				bf.append("\n");
 			}
 			bf.append(key).append("=").append(value);
 		}
+	}
+	
+	private List<String> getGovwayEncryptedProperties() throws UtilsException{
+		List<String> govwayEncryptedProperties = null;
+		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance();
+		if(configurazionePdDManager!=null) {
+			try {
+				govwayEncryptedProperties = configurazionePdDManager.getEncryptedSystemPropertiesPdD();
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(),e);
+			}
+		}
+		return govwayEncryptedProperties;
+	}	
+	private String obfuscateGovWayEncryptedProperty(MapProperties mapProperties, String key, String value) throws UtilsException {
+		if(mapProperties!=null && mapProperties.isObfuscatedModeEnabled()) {
+			value = mapProperties.obfuscateEnvProperty(key, value); 
+		}
+		else {
+			try {
+				value = MapProperties.obfuscateByDigest(value);
+			}catch(Exception e) {
+				if(this.log!=null) {
+					this.log.error(e.getMessage(),e);
+				}
+				value = "---***---***";
+			}
+		}
+		return value;
 	}
 	
 	public String getMessageFactory(){

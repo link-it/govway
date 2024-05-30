@@ -187,6 +187,7 @@ import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
@@ -1407,11 +1408,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 
 	// Controlla i dati del system properties
-	public boolean systemPropertiesCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean systemPropertiesCheckData(TipoOperazione tipoOp) throws DriverControlStationException {
 		try {
-			//String id = this.getParameter("id");
 			String nome = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME);
-			String valore = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALORE);
+			String valore = this.getLockedParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALORE, false);
 
 			// Campi obbligatori
 			if (nome.equals("") || valore.equals("")) {
@@ -1431,21 +1431,22 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
-			//if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
 			if ((nome.indexOf(" ") != -1) ) {
 				this.pd.setMessage("Non inserire spazi nei nomi");
 				return false;
 			}
-			if(valore.startsWith(" ") || valore.endsWith(" ")){
-				this.pd.setMessage("Non inserire spazi all'inizio o alla fine dei valori");
+			if(!this.checkLength255(nome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME)) {
 				return false;
 			}
 			
-			if(this.checkLength255(nome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME)==false) {
-				return false;
-			}
-			if(this.checkLength255(valore, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_VALORE)==false) {
-				return false;
+			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore) ){
+				if(valore.startsWith(" ") || valore.endsWith(" ")){
+					this.pd.setMessage("Non inserire spazi all'inizio o alla fine dei valori");
+					return false;
+				}
+				if(!this.checkLength255(valore, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_VALORE)) {
+					return false;
+				}
 			}
 
 			// Se tipoOp = add, controllo che non sia gia' stato
@@ -1542,7 +1543,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					e.add(de);
 
 					de = new DataElement();
-					de.setValue(sp.getValore());
+					if(sp.getValore()!=null && StringUtils.isNotEmpty(sp.getValore()) &&
+							BYOKManager.isEnabledBYOK() &&
+							this.core.getDriverBYOKUtilities().isWrapped(sp.getValore())) {
+						de.setValue(CostantiControlStation.VALORE_CIFRATO);
+					}
+					else {
+						de.setValue(sp.getValore());
+					}
 					e.add(de);
 
 					dati.add(e);

@@ -16,6 +16,8 @@ TODO
 	
 	ALTER TABLE generic_property ADD COLUMN enc_value TEXT;
 	
+	ALTER TABLE pdd_sys_props ADD COLUMN enc_value TEXT;
+	
 	ALTER TABLE pa_security_request ADD COLUMN enc_value TEXT;
 	ALTER TABLE pa_security_response ADD COLUMN enc_value TEXT;
 	ALTER TABLE pd_security_request ADD COLUMN enc_value TEXT;

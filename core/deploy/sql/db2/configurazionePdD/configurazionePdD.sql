@@ -542,6 +542,7 @@ CREATE TABLE pdd_sys_props
 (
 	nome VARCHAR(255) NOT NULL,
 	valore VARCHAR(255) NOT NULL,
+	enc_value CLOB,
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- unique constraints

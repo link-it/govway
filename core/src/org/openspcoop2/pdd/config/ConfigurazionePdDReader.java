@@ -8279,6 +8279,9 @@ public class ConfigurazionePdDReader {
 		}
 	}
 
+	protected List<String> getEncryptedSystemPropertiesPdD() throws DriverConfigurazioneException{
+		return this.configurazionePdD.getEncryptedSystemPropertiesPdD();
+	}
 	protected SystemProperties getSystemPropertiesPdD() throws DriverConfigurazioneException{
 		try{
 			return this.configurazionePdD.getSystemPropertiesPdD();

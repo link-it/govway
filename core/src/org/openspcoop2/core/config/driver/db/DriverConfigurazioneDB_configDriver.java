@@ -23,9 +23,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.byok.BYOKUtilities;
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.IExtendedInfo;
 import org.openspcoop2.core.config.AccessoConfigurazione;
@@ -1507,6 +1510,10 @@ public class DriverConfigurazioneDB_configDriver {
 	 * 
 	 */
 	protected SystemProperties getSystemPropertiesPdD() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		IDriverBYOK driverBYOK = this.driver.getDriverUnwrapBYOK();
+		return getSystemPropertiesPdDEngine(driverBYOK);
+	}
+	private SystemProperties getSystemPropertiesPdDEngine(IDriverBYOK driverBYOK) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		Connection con = null;
 		PreparedStatement stm = null;
@@ -1547,11 +1554,24 @@ public class DriverConfigurazioneDB_configDriver {
 				long id = rs.getLong("id");
 
 				String nome = rs.getString("nome");
-				String valore = rs.getString("valore");
-
+				
 				Property sp = new Property();
 				sp.setNome(nome);
-				sp.setValore(valore);
+								
+				String plainValue = rs.getString("valore");
+				String encValue = rs.getString("enc_value");
+				if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+					if(driverBYOK!=null) {
+						sp.setValore(driverBYOK.unwrapAsString(encValue));
+					}
+					else {
+						sp.setValore(encValue);
+					}
+				}
+				else {
+					sp.setValore(plainValue);
+				}
+
 				sp.setId(id);
 				systemProperties.addSystemProperty(sp);
 
@@ -1578,6 +1598,22 @@ public class DriverConfigurazioneDB_configDriver {
 		}
 
 	}
+	protected List<String> getEncryptedSystemPropertiesPdD() throws DriverConfigurazioneException {
+		List<String> l = new ArrayList<>();
+		try {
+			SystemProperties s = getSystemPropertiesPdDEngine(null);
+			if(s!=null && s.sizeSystemPropertyList()>0) {
+				for (Property p : s.getSystemPropertyList()) {
+					if(p.getValore()!=null && StringUtils.isNotEmpty(p.getValore()) && BYOKUtilities.isWrappedValue(p.getValore())) {
+						l.add(p.getNome());
+					}
+				}
+			}
+		}catch(DriverConfigurazioneNotFound notFound) {
+			// ignore
+		}
+		return l;
+	}
 	
 	protected void createSystemPropertiesPdD(SystemProperties systemProperties) throws DriverConfigurazioneException{
 		Connection con = null;
@@ -1599,7 +1635,7 @@ public class DriverConfigurazioneDB_configDriver {
 
 		try {
 			this.driver.logDebug("createSystemPropertiesPdD type = 1");
-			DriverConfigurazioneDB_configLIB.CRUDSystemPropertiesPdD(1, systemProperties, con);
+			DriverConfigurazioneDB_configLIB.CRUDSystemPropertiesPdD(1, systemProperties, con, this.driver.getDriverWrapBYOK());
 
 		} catch (Exception qe) {
 			error = true;
@@ -1636,7 +1672,7 @@ public class DriverConfigurazioneDB_configDriver {
 
 		try {
 			this.driver.logDebug("updateSystemPropertiesPdD type = 2");
-			DriverConfigurazioneDB_configLIB.CRUDSystemPropertiesPdD(2, systemProperties, con);
+			DriverConfigurazioneDB_configLIB.CRUDSystemPropertiesPdD(2, systemProperties, con, this.driver.getDriverWrapBYOK());
 
 		} catch (Exception qe) {
 			error = true;
@@ -1674,7 +1710,7 @@ public class DriverConfigurazioneDB_configDriver {
 
 		try {
 			this.driver.logDebug("deleteSystemPropertiesPdD type = 3");
-			DriverConfigurazioneDB_configLIB.CRUDSystemPropertiesPdD(3, systemProperties, con);
+			DriverConfigurazioneDB_configLIB.CRUDSystemPropertiesPdD(3, systemProperties, con, this.driver.getDriverWrapBYOK());
 
 		} catch (Exception qe) {
 			error = true;

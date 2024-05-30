@@ -25,6 +25,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
@@ -80,7 +81,7 @@ public class DriverConfigurazioneDB_configSearchDriver {
 		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<Property> lista = new ArrayList<Property>();
+		ArrayList<Property> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
@@ -128,6 +129,7 @@ public class DriverConfigurazioneDB_configSearchDriver {
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addSelectField("nome");
 				sqlQueryObject.addSelectField("valore");
+				sqlQueryObject.addSelectField("enc_value");
 				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome");
@@ -142,6 +144,7 @@ public class DriverConfigurazioneDB_configSearchDriver {
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addSelectField("nome");
 				sqlQueryObject.addSelectField("valore");
+				sqlQueryObject.addSelectField("enc_value");
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
@@ -158,7 +161,15 @@ public class DriverConfigurazioneDB_configSearchDriver {
 
 				sp.setId(risultato.getLong("id"));
 				sp.setNome(risultato.getString("nome"));
-				sp.setValore(risultato.getString("valore"));
+				
+				String plainValue = risultato.getString("valore");
+				String encValue = risultato.getString("enc_value");
+				if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+					sp.setValore(encValue);
+				}
+				else {
+					sp.setValore(plainValue);
+				}
 
 				lista.add(sp);
 			}

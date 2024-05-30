@@ -4974,6 +4974,9 @@ public class ConfigurazionePdD  {
 		}
 	} 
 	
+	public List<String> getEncryptedSystemPropertiesPdD() throws DriverConfigurazioneException{
+		return this.driverConfigurazionePdD.getEncryptedSystemPropertiesPdD();
+	}
 	public SystemProperties getSystemPropertiesPdD() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.driverConfigurazionePdD.getSystemPropertiesPdD();
 	}
