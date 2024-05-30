@@ -95,13 +95,13 @@
 			<item type="textarea" name="secretkeystoreFile" label="File" required="true">
 			    <property name="org.apache.ws.security.crypto.merlin.file" properties="encryptionPropRefId" />
 			</item>
-			<item type="text" name="secretkeystorePassword" label="Password" required="true">
+			<item type="lock" name="secretkeystorePassword" label="Password" required="true">
 			    <property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="encryptionPropRefId" />
 			</item>
 			<item type="text" name="secretkeystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
 			    <property name="encryptionUser" /> 
 			</item>
-			<item type="text" name="secretkeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			<item type="lock" name="secretkeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
 			    <property name="encryptionPassword" />
 			</item>
 
@@ -120,7 +120,7 @@
 			<item type="textarea" name="truststoreFile" label="File" required="true">
 			    <property name="org.apache.ws.security.crypto.merlin.file" properties="encryptionTrustStorePropRefId" />
 			</item>
-			<item type="text" name="truststorePassword" label="Password" required="true">
+			<item type="lock" name="truststorePassword" label="Password" required="true">
 			    <property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="encryptionTrustStorePropRefId" />
 			</item>
 			<item type="text" name="keystoreCertificateAlias" label="Alias Certificato" required="true">

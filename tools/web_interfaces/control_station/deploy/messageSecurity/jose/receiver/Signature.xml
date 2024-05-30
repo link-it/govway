@@ -111,7 +111,7 @@
 			<item type="textarea" name="truststoreFile" label="File" required="true">
 			    <property name="rs.security.keystore.file" properties="signaturePropRefId" />
 			</item>
-			<item type="text" name="truststorePassword" label="Password" required="true">
+			<item type="lock" name="truststorePassword" label="Password" required="true">
 				<conditions>
 					<condition not="true" and="true">
 						<equals name="truststoreType" value="jwk"/>
@@ -144,7 +144,7 @@
 				</conditions>
 			    <property name="rs.security.keystore.alias" properties="signaturePropRefId" />
 			</item>
-			<item type="text" name="keystoreSecretKeyPassword" label="Password Chiave Segreta" required="true">
+			<item type="lock" name="keystoreSecretKeyPassword" label="Password Chiave Segreta" required="true">
 				<conditions>
 					<condition and="true">
 						<equals name="truststoreType" value="jceks"/>
@@ -217,7 +217,7 @@
 			<item type="textarea" name="joseUseHeaders.ssl.file" label="File" required="false">
 			    <property name="rs.security.keystore.file.ssl" />
 			</item>
-			<item type="text" name="joseUseHeaders.ssl.password" label="Password" required="false">
+			<item type="lock" name="joseUseHeaders.ssl.password" label="Password" required="false">
 			    <property name="rs.security.keystore.password.ssl" />
 			</item>
 
@@ -278,7 +278,7 @@
 			<item type="textarea" name="joseUseHeaders.truststore.file" label="File" required="false">
 			    <property name="joseUseHeaders.truststore.file" />
 			</item>
-			<item type="text" name="joseUseHeaders.truststore.password" label="Password" required="false">
+			<item type="lock" name="joseUseHeaders.truststore.password" label="Password" required="false">
 			    <property name="joseUseHeaders.truststore.password" />
 			</item>
 

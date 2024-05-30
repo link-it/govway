@@ -68,7 +68,7 @@ provider="org.openspcoop2.security.message.wss4j.WSS4JSecurityProvider">
            	</conditions>
 			<property name="passwordType" />
 		</item>
-		<item type="text" name="usernameTokenPassword" label="Password" required="true">
+		<item type="lock" name="usernameTokenPassword" label="Password" required="true">
 		    <conditions>
 	            <condition not="true">
 	                    <equals name="passwordType" value="PasswordNone" />

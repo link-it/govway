@@ -59,13 +59,13 @@
 			<item type="textarea" name="secretkeystoreFile" label="File" required="true">
 			    <property name="org.apache.ws.security.crypto.merlin.file" properties="decryptionPropRefId" />
 			</item>
-			<item type="text" name="secretkeystorePassword" label="Password" required="true">
+			<item type="lock" name="secretkeystorePassword" label="Password" required="true">
 			    <property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="decryptionPropRefId" />
 			</item>
 			<item type="text" name="secretkeystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
 			    <property name="decryptionUser" /> 
 			</item>
-			<item type="text" name="secretkeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			<item type="lock" name="secretkeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
 			    <property name="decryptionPassword" />
 			</item>
 
@@ -85,13 +85,13 @@
 			<item type="textarea" name="keystoreFile" label="File" required="true">
 			    <property name="org.apache.ws.security.crypto.merlin.file" properties="decryptionPropRefId" />
 			</item>
-			<item type="text" name="keystorePassword" label="Password" required="true">
+			<item type="lock" name="keystorePassword" label="Password" required="true">
 			    <property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="decryptionPropRefId" />
 			</item>
 			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
 			    <property name="decryptionUser" /> 
 			</item>
-			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			<item type="lock" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
 			    <property name="decryptionPassword" />
 			</item>
 
