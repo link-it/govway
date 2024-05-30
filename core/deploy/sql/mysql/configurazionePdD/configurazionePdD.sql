@@ -542,6 +542,7 @@ CREATE TABLE pdd_sys_props
 (
 	nome VARCHAR(255) NOT NULL,
 	valore VARCHAR(255) NOT NULL,
+	enc_value TEXT,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- unique constraints

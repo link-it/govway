@@ -80,8 +80,10 @@ public final class ConfigurazioneSystemPropertiesChange extends Action {
 			String id = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID);
 			int idInt = Integer.parseInt(id);
 			String nome = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME);
-			String valore = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALORE);
+			String valore = confHelper.getLockedParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALORE,false);
 
+			// Wrap value
+			valore = confHelper.wrapValoreProprieta(valore);
 
 			// Preparo il menu
 			confHelper.makeMenu();
@@ -93,9 +95,9 @@ public final class ConfigurazioneSystemPropertiesChange extends Action {
 
 			// Se valore = null, devo visualizzare la pagina per la
 			// modifica dati
-			if (valore == null) {
+			if (confHelper.isEditModeInProgress()) {
 
-				if(systemProperties!=null){
+				if(valore==null && systemProperties!=null){
 					for (int i = 0; i < systemProperties.sizeSystemPropertyList(); i++) {
 						Property sp = systemProperties.getSystemProperty(i);
 						if (idInt == sp.getId() ) {
@@ -126,7 +128,7 @@ public final class ConfigurazioneSystemPropertiesChange extends Action {
 				dataElement.setType(DataElementType.TITLE);
 				dati.add(dataElement);
 				
-				dati = confHelper.addNomeValoreToDati(TipoOperazione.CHANGE, dati, nome, valore,  false);
+				dati = confHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.CHANGE, dati, nome, valore,  false);
 
 				dati = confHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, null, null, dati);
 
@@ -163,7 +165,7 @@ public final class ConfigurazioneSystemPropertiesChange extends Action {
 				dataElement.setType(DataElementType.TITLE);
 				dati.add(dataElement);
 				
-				dati = confHelper.addNomeValoreToDati(TipoOperazione.CHANGE, dati, nome, valore, false);
+				dati = confHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.CHANGE, dati, nome, valore, false);
 
 				dati = confHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, null, null, dati);
 

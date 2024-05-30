@@ -80,8 +80,11 @@ public final class ConfigurazioneSystemPropertiesAdd extends Action {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 
 			String nome = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME);
-			String valore = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALORE);
+			String valore = confHelper.getLockedParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALORE,false);
 
+			// Wrap value
+			valore = confHelper.wrapValoreProprieta(valore);
+			
 			// Preparo il menu
 			confHelper.makeMenu();
 
@@ -113,7 +116,7 @@ public final class ConfigurazioneSystemPropertiesAdd extends Action {
 				dataElement.setType(DataElementType.TITLE);
 				dati.add(dataElement);
 				
-				dati = confHelper.addNomeValoreToDati(TipoOperazione.ADD, dati, "", "",  false);
+				dati = confHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.ADD, dati, nome, valore,  false);
 
 				pd.setDati(dati);
 
@@ -147,7 +150,7 @@ public final class ConfigurazioneSystemPropertiesAdd extends Action {
 				dataElement.setType(DataElementType.TITLE);
 				dati.add(dataElement);
 				
-				dati = confHelper.addNomeValoreToDati(TipoOperazione.ADD,dati, nome, valore, false);
+				dati = confHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.ADD,dati, nome, valore, false);
 
 				pd.setDati(dati);
 

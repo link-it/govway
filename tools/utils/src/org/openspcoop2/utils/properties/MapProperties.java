@@ -417,4 +417,12 @@ public class MapProperties {
 			throw new UtilsException("["+OBFUSCATED_MODE+"] unsupported mode");
 		}
 	}
+	
+	public static String obfuscateByDigest(String value) throws UtilsException {
+		try {
+			return Base64Utilities.encodeAsString(MessageDigest.getInstance(OBFUSCATED_DIGEST_DEFAULT).digest(value.getBytes()));
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
 }

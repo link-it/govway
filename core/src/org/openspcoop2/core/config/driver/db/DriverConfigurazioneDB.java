@@ -2328,6 +2328,17 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	}
 	
 	/**
+	 * Restituisce i nomi delle proprieta' di sistema cifrate
+	 *
+	 * @return proprieta' di sistema
+	 * 
+	 */
+	@Override
+	public List<String> getEncryptedSystemPropertiesPdD() throws DriverConfigurazioneException{
+		return this.configDriver.getEncryptedSystemPropertiesPdD();
+	}
+	
+	/**
 	 * Crea le informazioni sulle proprieta' di sistema utilizzate dalla PdD
 	 * 
 	 * @param systemProperties

@@ -31,6 +31,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.byok.BYOKUtilities;
 import org.openspcoop2.core.byok.BYOKWrappedValue;
 import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.DBUtils;
@@ -719,7 +720,7 @@ public class DriverConfigurazioneDB_configLIB {
 	
 	
 	
-	public static void CRUDSystemPropertiesPdD(int type, SystemProperties systemProperties, Connection con) throws DriverConfigurazioneException {
+	public static void CRUDSystemPropertiesPdD(int type, SystemProperties systemProperties, Connection con, IDriverBYOK driverBYOK) throws DriverConfigurazioneException {
 		if (systemProperties == null)
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDSystemPropertiesPdD] Le configurazioni per le system properties non possono essere NULL");
 		PreparedStatement updateStmt = null;
@@ -748,7 +749,6 @@ public class DriverConfigurazioneDB_configLIB {
 				
 					Property sp = systemProperties.getSystemProperty(i);
 					String nome = sp.getNome();
-					String valore = sp.getValore();
 					
 					// Riga
 					// registro componente
@@ -756,12 +756,28 @@ public class DriverConfigurazioneDB_configLIB {
 					sqlQueryObject.addInsertTable(CostantiDB.SYSTEM_PROPERTIES_PDD);
 					sqlQueryObject.addInsertField("nome", "?");
 					sqlQueryObject.addInsertField("valore", "?");
+					sqlQueryObject.addInsertField("enc_value", "?");
 					updateQuery = sqlQueryObject.createSQLInsert();
 					updateStmt = con.prepareStatement(updateQuery);
+
+					int index = 1;
+					updateStmt.setString(index++, nome);
+					
+					String plainValue = sp.getValore();
+					String encValue = null;
+					if(driverBYOK!=null && BYOKUtilities.isWrappedValue(plainValue) ) {
+						BYOKWrappedValue byokValue = driverBYOK.wrap(plainValue);
+						if(byokValue!=null) {
+							encValue = byokValue.getWrappedValue();
+							plainValue = byokValue.getWrappedPlainValue();
+						}
+					}
+					
+					updateStmt.setString(index++, plainValue);
+					updateStmt.setString(index++, encValue);
+					
 					DriverConfigurazioneDBLib.logDebug("eseguo query INSERT INTO " + CostantiDB.SYSTEM_PROPERTIES_PDD + "(nome, valore) VALUES ('"+
-							nome+"', "+valore+")");
-					updateStmt.setString(1, nome);
-					updateStmt.setString(2, valore);
+							nome+"', "+plainValue+")");
 					updateStmt.executeUpdate();
 					updateStmt.close();
 					
@@ -775,14 +791,14 @@ public class DriverConfigurazioneDB_configLIB {
 					sqlQueryObject.addWhereCondition("valore=?");
 					updateQuery = sqlQueryObject.createSQLQuery();
 					selectStmt = con.prepareStatement(updateQuery);
-					DriverConfigurazioneDBLib.logDebug("eseguo query ["+updateQuery+"] per la prop nome["+nome+"] valore["+valore+"]");
+					DriverConfigurazioneDBLib.logDebug("eseguo query ["+updateQuery+"] per la prop nome["+nome+"] valore["+plainValue+"]");
 					selectStmt.setString(1, nome);
-					selectStmt.setString(2, valore);
+					selectStmt.setString(2, plainValue);
 					selectRS = selectStmt.executeQuery();
 					if(selectRS.next()){
 						idComponente = selectRS.getLong("id");
 					}else{
-						throw new Exception("Query ["+updateQuery+"] per la prop nome["+nome+"] valore["+valore+"] non ha ritornato risultati");
+						throw new DriverConfigurazioneException("Query ["+updateQuery+"] per la prop nome["+nome+"] valore["+plainValue+"] non ha ritornato risultati");
 					}
 					selectRS.close();
 					selectStmt.close();

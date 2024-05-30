@@ -584,6 +584,7 @@ CREATE TABLE pdd_sys_props
 (
 	nome VARCHAR(255) NOT NULL,
 	valore VARCHAR(255) NOT NULL,
+	enc_value TEXT,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_pdd_sys_props') NOT NULL,
 	-- unique constraints

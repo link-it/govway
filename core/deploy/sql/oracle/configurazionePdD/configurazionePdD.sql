@@ -832,6 +832,7 @@ CREATE TABLE pdd_sys_props
 (
 	nome VARCHAR2(255) NOT NULL,
 	valore VARCHAR2(255) NOT NULL,
+	enc_value CLOB,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
