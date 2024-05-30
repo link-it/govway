@@ -45,7 +45,7 @@ public class CostantiProprieta {
 	
 	
 	
-	public static final String MESSAGE_SECURITY_ID = "messageSecurity";
+	/**public static final String MESSAGE_SECURITY_ID = "messageSecurity";
 	
 	private static List<String> messageSecurityProperties = new ArrayList<>();
 	public static List<String> getMessageSecurityProperties() {
@@ -53,7 +53,7 @@ public class CostantiProprieta {
 	}
 	static {
 		//messageSecurityProperties.add(POLICY_INTROSPECTION_AUTH_BASIC_PASSWORD);
-	}
+	}*/
 	
 	
 	

@@ -56,7 +56,7 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 
 	private static Map<String, List<String>> propertiesConfidentials = new HashMap<>();
 	static {
-		propertiesConfidentials.put(CostantiProprieta.MESSAGE_SECURITY_ID, CostantiProprieta.getMessageSecurityProperties());
+		/**propertiesConfidentials.put(CostantiProprieta.MESSAGE_SECURITY_ID, CostantiProprieta.getMessageSecurityProperties());*/
 		propertiesConfidentials.put(CostantiProprieta.TOKEN_VALIDATION_ID, CostantiProprieta.getTokenValidationProperties());
 		propertiesConfidentials.put(CostantiProprieta.TOKEN_NEGOZIAZIONE_ID, CostantiProprieta.getTokenRetrieveProperties());
 		propertiesConfidentials.put(CostantiProprieta.ATTRIBUTE_AUTHORITY_ID, CostantiProprieta.getAttributeAuthorityProperties());
@@ -69,6 +69,9 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 		}
 	}
 	public static boolean isConfidentialProperty(String tipo, String nome) {
+		if(tipo==null || nome==null) {
+			return false;
+		}
 		List<String> l = propertiesConfidentials.get(tipo);
 		if(l!=null) {
 			return  isConfidentialProperty(l, nome);

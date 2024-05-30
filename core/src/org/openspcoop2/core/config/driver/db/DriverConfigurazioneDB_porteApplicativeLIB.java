@@ -31,6 +31,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.byok.BYOKUtilities;
 import org.openspcoop2.core.byok.BYOKWrappedValue;
 import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.CoreException;
@@ -73,7 +74,6 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.constants.CRUDType;
 import org.openspcoop2.core.constants.CostantiDB;
-import org.openspcoop2.core.constants.CostantiProprieta;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -822,7 +822,13 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 							
 							String plainValue = reqParam.getValore();
 							String encValue = null;
-							if(driverBYOK!=null && DriverConfigurazioneDB_genericPropertiesDriver.isConfidentialProperty(CostantiProprieta.MESSAGE_SECURITY_ID, reqParam.getNome())) {
+							if(driverBYOK!=null && 
+									(
+											DriverConfigurazioneDB_genericPropertiesDriver.isConfidentialProperty(securityRequestMode, reqParam.getNome())
+											||
+											BYOKUtilities.isWrappedValue(plainValue)
+									)
+							) {
 								BYOKWrappedValue byokValue = driverBYOK.wrap(plainValue);
 								if(byokValue!=null) {
 									encValue = byokValue.getWrappedValue();
@@ -859,7 +865,13 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 							
 							String plainValue = resParam.getValore();
 							String encValue = null;
-							if(driverBYOK!=null && DriverConfigurazioneDB_genericPropertiesDriver.isConfidentialProperty(CostantiProprieta.MESSAGE_SECURITY_ID, resParam.getNome())) {
+							if(driverBYOK!=null && 
+									(
+											DriverConfigurazioneDB_genericPropertiesDriver.isConfidentialProperty(securityResponseMode, resParam.getNome())
+											||
+											BYOKUtilities.isWrappedValue(plainValue)
+									)
+							) {
 								BYOKWrappedValue byokValue = driverBYOK.wrap(plainValue);
 								if(byokValue!=null) {
 									encValue = byokValue.getWrappedValue();
@@ -2048,7 +2060,13 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 							
 							String plainValue = reqParam.getValore();
 							String encValue = null;
-							if(driverBYOK!=null && DriverConfigurazioneDB_genericPropertiesDriver.isConfidentialProperty(CostantiProprieta.MESSAGE_SECURITY_ID, reqParam.getNome())) {
+							if(driverBYOK!=null && 
+									(
+											DriverConfigurazioneDB_genericPropertiesDriver.isConfidentialProperty(securityRequestMode, reqParam.getNome())
+											||
+											BYOKUtilities.isWrappedValue(plainValue)
+									)
+							) {
 								BYOKWrappedValue byokValue = driverBYOK.wrap(plainValue);
 								if(byokValue!=null) {
 									encValue = byokValue.getWrappedValue();
@@ -2085,7 +2103,13 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 							
 							String plainValue = resParam.getValore();
 							String encValue = null;
-							if(driverBYOK!=null && DriverConfigurazioneDB_genericPropertiesDriver.isConfidentialProperty(CostantiProprieta.MESSAGE_SECURITY_ID, resParam.getNome())) {
+							if(driverBYOK!=null && 
+									(
+											DriverConfigurazioneDB_genericPropertiesDriver.isConfidentialProperty(securityResponseMode, resParam.getNome())
+											||
+											BYOKUtilities.isWrappedValue(plainValue)
+									)
+							) {
 								BYOKWrappedValue byokValue = driverBYOK.wrap(plainValue);
 								if(byokValue!=null) {
 									encValue = byokValue.getWrappedValue();

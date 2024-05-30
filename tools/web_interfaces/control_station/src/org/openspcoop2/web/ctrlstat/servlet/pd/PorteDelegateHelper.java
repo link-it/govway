@@ -89,6 +89,7 @@ import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
@@ -962,7 +963,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 //							localForwardShow = false; 
 //						}
 //					}catch(Exception dNot){
-//						this.log.error(dNot.getMessage(), dNot);
+//						this.logError(dNot.getMessage(), dNot);
 //					}
 //				}
 			}
@@ -1723,13 +1724,12 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 	}
 
 	// Controlla i dati del message-security response-flow della porta delegata
-	public boolean porteDelegateMessageSecurityResponseCheckData(TipoOperazione tipoOp)
-			throws Exception {
+	public boolean porteDelegateMessageSecurityResponseCheckData(TipoOperazione tipoOp) throws ControlStationCoreException {
 		try {
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(id);
 			String nome = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-			String valore = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE);
+			String valore = this.getLockedParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE, false);
 
 			// Campi obbligatori
 			if (nome.equals("") || valore.equals("")) {
@@ -1749,16 +1749,19 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
-			//if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
 			if ((nome.indexOf(" ") != -1) ) {
 				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_NOMI);
 				return false;
 			}
-			if(valore.startsWith(" ") || valore.endsWith(" ")){
+			if( 
+					(!this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore))
+					&&
+					(valore.startsWith(" ") || valore.endsWith(" "))
+				){
 				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_ALL_INIZIO_O_ALLA_FINE_DEI_VALORI);
 				return false;
 			}
-			if(this.checkLength255(nome, PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME)==false) {
+			if(!this.checkLength255(nome, PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME)) {
 				return false;
 			}
 
@@ -1770,14 +1773,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				String nomeporta = pde.getNome();
 				MessageSecurity messageSecurity = pde.getMessageSecurity();
 
-				if(messageSecurity!=null){
-					if(messageSecurity.getResponseFlow()!=null){
-						for (int i = 0; i < messageSecurity.getResponseFlow().sizeParameterList(); i++) {
-							MessageSecurityFlowParameter tmpMessageSecurity =messageSecurity.getResponseFlow().getParameter(i);
-							if (nome.equals(tmpMessageSecurity.getNome())) {
-								giaRegistrato = true;
-								break;
-							}
+				if(messageSecurity!=null &&
+					messageSecurity.getResponseFlow()!=null){
+					for (int i = 0; i < messageSecurity.getResponseFlow().sizeParameterList(); i++) {
+						MessageSecurityFlowParameter tmpMessageSecurity =messageSecurity.getResponseFlow().getParameter(i);
+						if (nome.equals(tmpMessageSecurity.getNome())) {
+							giaRegistrato = true;
+							break;
 						}
 					}
 				}
@@ -1791,8 +1793,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -2153,8 +2155,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -2228,8 +2230,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -2553,8 +2555,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				}
 			} 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -2710,8 +2712,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -2861,8 +2863,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -2985,8 +2987,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3114,8 +3116,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3272,13 +3274,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
 	// Controlla i dati del message-security request-flow della porta delegata
-	public boolean porteDelegateMessageSecurityRequestCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean porteDelegateMessageSecurityRequestCheckData(TipoOperazione tipoOp) throws ControlStationCoreException {
 		try {
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(id);
@@ -3303,16 +3305,19 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
-			//if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
 			if ((nome.indexOf(" ") != -1) ) {
 				this.pd.setMessage("Non inserire spazi nei nomi");
 				return false;
 			}
-			if(valore.startsWith(" ") || valore.endsWith(" ")){
+			if( 
+				(!this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore))
+				&&
+				(valore.startsWith(" ") || valore.endsWith(" "))
+			){
 				this.pd.setMessage("Non inserire spazi all'inizio o alla fine dei valori");
 				return false;
 			}
-			if(this.checkLength255(nome, PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME)==false) {
+			if(!this.checkLength255(nome, PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME)) {
 				return false;
 			}
 
@@ -3324,14 +3329,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				String nomeporta = pde.getNome();
 				MessageSecurity messageSecurity = pde.getMessageSecurity();
 
-				if(messageSecurity!=null){
-					if(messageSecurity.getRequestFlow()!=null){
-						for (int i = 0; i < messageSecurity.getRequestFlow().sizeParameterList(); i++) {
-							MessageSecurityFlowParameter tmpMessageSecurity =messageSecurity.getRequestFlow().getParameter(i);
-							if (nome.equals(tmpMessageSecurity.getNome())) {
-								giaRegistrato = true;
-								break;
-							}
+				if(messageSecurity!=null &&
+					messageSecurity.getRequestFlow()!=null){
+					for (int i = 0; i < messageSecurity.getRequestFlow().sizeParameterList(); i++) {
+						MessageSecurityFlowParameter tmpMessageSecurity =messageSecurity.getRequestFlow().getParameter(i);
+						if (nome.equals(tmpMessageSecurity.getNome())) {
+							giaRegistrato = true;
+							break;
 						}
 					}
 				}
@@ -3345,8 +3349,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3473,8 +3477,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3625,8 +3629,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3739,8 +3743,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3855,8 +3859,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -4158,8 +4162,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -4261,8 +4265,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -4407,8 +4411,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -4461,8 +4465,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 		
@@ -4749,8 +4753,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -4986,8 +4990,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -5152,8 +5156,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -5301,8 +5305,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -5450,8 +5454,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -5611,8 +5615,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -5705,8 +5709,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -5823,8 +5827,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -5901,8 +5905,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -6019,8 +6023,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -6097,8 +6101,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -6215,8 +6219,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -6293,8 +6297,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 }

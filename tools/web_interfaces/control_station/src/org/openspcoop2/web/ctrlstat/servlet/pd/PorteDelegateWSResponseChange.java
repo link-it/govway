@@ -82,10 +82,13 @@ public final class PorteDelegateWSResponseChange extends Action {
 			int idInt = Integer.parseInt(id);
 			String idsogg = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			String nome = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-			String valore = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE);
+			String valore = porteDelegateHelper.getLockedParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE,false);
 			String idAsps = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
 			if(idAsps == null)
 				idAsps = "";
+			
+			// Wrap value
+			valore = porteDelegateHelper.wrapValoreProprieta(valore);
 			
 			String idFruizione = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
 			if(idFruizione == null)
@@ -132,14 +135,16 @@ public final class PorteDelegateWSResponseChange extends Action {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
-				MessageSecurity ws = pde.getMessageSecurity();
-				if(ws.getResponseFlow()!=null){
-					List<MessageSecurityFlowParameter> wsrfpArray = ws.getResponseFlow().getParameterList();
-					for (int i = 0; i < wsrfpArray.size(); i++) {
-						MessageSecurityFlowParameter wsrfp = wsrfpArray.get(i);
-						if (nome.equals(wsrfp.getNome())) {
-							valore = wsrfp.getValore();
-							break;
+				if(valore==null) {
+					MessageSecurity ws = pde.getMessageSecurity();
+					if(ws.getResponseFlow()!=null){
+						List<MessageSecurityFlowParameter> wsrfpArray = ws.getResponseFlow().getParameterList();
+						for (int i = 0; i < wsrfpArray.size(); i++) {
+							MessageSecurityFlowParameter wsrfp = wsrfpArray.get(i);
+							if (nome.equals(wsrfp.getNome())) {
+								valore = wsrfp.getValore();
+								break;
+							}
 						}
 					}
 				}
@@ -149,7 +154,7 @@ public final class PorteDelegateWSResponseChange extends Action {
 
 				dati.add(ServletUtils.getDataElementForEditModeFinished()); 
 
-				dati = porteDelegateHelper.addNomeValoreToDati(TipoOperazione.CHANGE, dati, nome, valore, false);
+				dati = porteDelegateHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.CHANGE, dati, nome, valore, false);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
@@ -173,7 +178,7 @@ public final class PorteDelegateWSResponseChange extends Action {
 
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteDelegateHelper.addNomeValoreToDati(TipoOperazione.CHANGE,dati, nome, valore,false);
+				dati = porteDelegateHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.CHANGE,dati, nome, valore,false);
 
 				porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);

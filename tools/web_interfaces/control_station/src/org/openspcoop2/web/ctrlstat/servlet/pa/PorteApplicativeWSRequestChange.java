@@ -133,14 +133,16 @@ public final class PorteApplicativeWSRequestChange extends Action {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
-				MessageSecurity ws = pa.getMessageSecurity();
-				if(ws.getRequestFlow()!=null){
-					List<MessageSecurityFlowParameter> wsrfpArray = ws.getRequestFlow().getParameterList();
-					for (int i = 0; i < wsrfpArray.size(); i++) {
-						MessageSecurityFlowParameter wsrfp = wsrfpArray.get(i);
-						if (nome.equals(wsrfp.getNome())) {
-							valore = wsrfp.getValore();
-							break;
+				if(valore==null) {
+					MessageSecurity ws = pa.getMessageSecurity();
+					if(ws.getRequestFlow()!=null){
+						List<MessageSecurityFlowParameter> wsrfpArray = ws.getRequestFlow().getParameterList();
+						for (int i = 0; i < wsrfpArray.size(); i++) {
+							MessageSecurityFlowParameter wsrfp = wsrfpArray.get(i);
+							if (nome.equals(wsrfp.getNome())) {
+								valore = wsrfp.getValore();
+								break;
+							}
 						}
 					}
 				}

@@ -82,10 +82,13 @@ public final class PorteApplicativeWSResponseAdd extends Action {
 			int idInt = Integer.parseInt(idPorta);
 			String idsogg = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 			String nome = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-			String valore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE);
+			String valore = porteApplicativeHelper.getLockedParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE,false);
 			String idAsps = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
 			if(idAsps == null) 
 				idAsps = "";
+			
+			// Wrap value
+			valore = porteApplicativeHelper.wrapValoreProprieta(valore);
 			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
@@ -131,7 +134,7 @@ public final class PorteApplicativeWSResponseAdd extends Action {
 				List<DataElement> dati = new ArrayList<>();
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addNomeValoreToDati(TipoOperazione.ADD, dati, "", "",false);
+				dati = porteApplicativeHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.ADD, dati, nome, valore,false);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg,idPorta, idAsps, dati);
 
@@ -154,7 +157,7 @@ public final class PorteApplicativeWSResponseAdd extends Action {
 
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addNomeValoreToDati(TipoOperazione.ADD,dati, nome, valore,false);
+				dati = porteApplicativeHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.ADD,dati, nome, valore,false);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg,idPorta, idAsps, dati);
 

@@ -129,6 +129,7 @@ import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
@@ -656,8 +657,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -741,8 +742,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -811,8 +812,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -846,8 +847,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -920,13 +921,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
 	// Controlla i dati del message-security request-flow della porta applicativa
-	public boolean porteAppMessageSecurityRequestCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean porteAppMessageSecurityRequestCheckData(TipoOperazione tipoOp) throws ControlStationCoreException {
 		try {
 			String idPorta = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			int idInt = Integer.parseInt(idPorta);
@@ -951,16 +952,19 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
-			//if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
 			if ((nome.indexOf(" ") != -1) ) {
 				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_NOMI);
 				return false;
 			}
-			if(valore.startsWith(" ") || valore.endsWith(" ")){
+			if( 
+					(!this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore))
+					&&
+					(valore.startsWith(" ") || valore.endsWith(" "))
+				){
 				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_ALL_INIZIO_O_ALLA_FINE_DEI_VALORI);
 				return false;
 			}
-			if(this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)==false) {
+			if(!this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)) {
 				return false;
 			}
 
@@ -972,14 +976,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				String nomeporta = pa.getNome();
 				MessageSecurity messageSecurity = pa.getMessageSecurity();
 
-				if(messageSecurity!=null){
-					if(messageSecurity.getRequestFlow()!=null){
-						for (int i = 0; i < messageSecurity.getRequestFlow().sizeParameterList(); i++) {
-							MessageSecurityFlowParameter tmpMessageSecurity =messageSecurity.getRequestFlow().getParameter(i);
-							if (nome.equals(tmpMessageSecurity.getNome())) {
-								giaRegistrato = true;
-								break;
-							}
+				if(messageSecurity!=null &&
+					messageSecurity.getRequestFlow()!=null){
+					for (int i = 0; i < messageSecurity.getRequestFlow().sizeParameterList(); i++) {
+						MessageSecurityFlowParameter tmpMessageSecurity =messageSecurity.getRequestFlow().getParameter(i);
+						if (nome.equals(tmpMessageSecurity.getNome())) {
+							giaRegistrato = true;
+							break;
 						}
 					}
 				}
@@ -993,13 +996,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
 	// Controlla i dati del message-security response-flow della porta applicativa
-	public boolean porteAppMessageSecurityResponseCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean porteAppMessageSecurityResponseCheckData(TipoOperazione tipoOp) throws ControlStationCoreException {
 		try {
 			String idPorta = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			int idInt = Integer.parseInt(idPorta);
@@ -1024,16 +1027,19 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
-			//if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
 			if ((nome.indexOf(" ") != -1) ) {
 				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_NOMI);
 				return false;
 			}
-			if(valore.startsWith(" ") || valore.endsWith(" ")){
+			if( 
+					(!this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore))
+					&&
+					(valore.startsWith(" ") || valore.endsWith(" "))
+				){
 				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_ALL_INIZIO_O_ALLA_FINE_DEI_VALORI);
 				return false;
 			}
-			if(this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)==false) {
+			if(!this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)) {
 				return false;
 			}
 
@@ -1045,14 +1051,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				String nomeporta = pa.getNome();
 				MessageSecurity messageSecurity = pa.getMessageSecurity();
 
-				if(messageSecurity!=null){
-					if(messageSecurity.getResponseFlow()!=null){
-						for (int i = 0; i < messageSecurity.getResponseFlow().sizeParameterList(); i++) {
-							MessageSecurityFlowParameter tmpMessageSecurity =messageSecurity.getResponseFlow().getParameter(i);
-							if (nome.equals(tmpMessageSecurity.getNome())) {
-								giaRegistrato = true;
-								break;
-							}
+				if(messageSecurity!=null &&
+					messageSecurity.getResponseFlow()!=null){
+					for (int i = 0; i < messageSecurity.getResponseFlow().sizeParameterList(); i++) {
+						MessageSecurityFlowParameter tmpMessageSecurity =messageSecurity.getResponseFlow().getParameter(i);
+						if (nome.equals(tmpMessageSecurity.getNome())) {
+							giaRegistrato = true;
+							break;
 						}
 					}
 				}
@@ -1067,8 +1072,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -2665,8 +2670,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			} 
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -2777,8 +2782,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -2885,8 +2890,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3045,8 +3050,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3203,8 +3208,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3330,8 +3335,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3456,8 +3461,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -3598,8 +3603,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3781,8 +3786,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -4279,8 +4284,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -4399,8 +4404,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -4545,8 +4550,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -4664,8 +4669,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -4939,8 +4944,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -4993,8 +4998,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -5356,8 +5361,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -5595,8 +5600,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -5762,8 +5767,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -5909,8 +5914,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -6056,8 +6061,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -6228,8 +6233,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 	
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -6389,8 +6394,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -6475,8 +6480,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -6509,8 +6514,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -6618,8 +6623,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -6688,8 +6693,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -6798,8 +6803,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -6868,8 +6873,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -6977,8 +6982,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -7047,8 +7052,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -9058,8 +9063,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setRemoveButton(pa.sizeServizioApplicativoList() > 1);
 			
 		}  catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -9867,7 +9872,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 									labelErogazione = labelErogazione+" (gruppo:"+mappingPA.getDescrizione()+")";
 								}
 							}catch(Throwable t) {
-								this.log.error("Errore durante l'identificazione dell'erogazione: "+t.getMessage(),t);
+								this.logError("Errore durante l'identificazione dell'erogazione: "+t.getMessage(),t);
 							}
 						}
 						this.pd.setMessage("L'erogazione "+labelErogazione+" possiede già l'utente (http-basic) indicato per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
@@ -9878,8 +9883,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 		return true;
 	}
@@ -9909,8 +9914,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 		return true;
 	}	
@@ -10109,8 +10114,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -10165,8 +10170,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -10339,8 +10344,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -10409,8 +10414,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -10726,8 +10731,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	public List<DataElement> addAzioneConnettoriMultipliConfigToDati(List<DataElement> dati, TipoOperazione tipoOp, String protocollo, ServiceBinding serviceBinding,
@@ -12356,8 +12361,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 		return true;
 	}
