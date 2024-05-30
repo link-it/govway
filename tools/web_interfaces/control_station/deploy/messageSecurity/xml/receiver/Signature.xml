@@ -40,7 +40,7 @@
 			<item type="textarea" name="truststoreFile" label="File" required="true">
 			    <property name="org.apache.ws.security.crypto.merlin.file" properties="signatureTrustStorePropRefId" />
 			</item>
-			<item type="text" name="truststorePassword" label="Password" required="true">
+			<item type="lock" name="truststorePassword" label="Password" required="true">
 			    <property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="signatureTrustStorePropRefId" />
 			</item>
 			<item type="text" name="keystoreCertificateAlias" label="Alias Certificato" required="true">

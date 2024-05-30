@@ -56,10 +56,15 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 
 	private static Map<String, List<String>> propertiesConfidentials = new HashMap<>();
 	static {
-		/**propertiesConfidentials.put(CostantiProprieta.MESSAGE_SECURITY_ID, CostantiProprieta.getMessageSecurityProperties());*/
 		propertiesConfidentials.put(CostantiProprieta.TOKEN_VALIDATION_ID, CostantiProprieta.getTokenValidationProperties());
 		propertiesConfidentials.put(CostantiProprieta.TOKEN_NEGOZIAZIONE_ID, CostantiProprieta.getTokenRetrieveProperties());
 		propertiesConfidentials.put(CostantiProprieta.ATTRIBUTE_AUTHORITY_ID, CostantiProprieta.getAttributeAuthorityProperties());
+		List<String> messageSecurityIds = CostantiProprieta.getMessageSecurityIds();
+		if(messageSecurityIds!=null && !messageSecurityIds.isEmpty()) {
+			for (String id : messageSecurityIds) {
+				propertiesConfidentials.put(id, CostantiProprieta.getMessageSecurityProperties(id));
+			}
+		}
 	}
 	public static void addConfidentialProperty(String tipo, String nome){
 		List<String> l = propertiesConfidentials.computeIfAbsent(tipo, k -> new ArrayList<>());

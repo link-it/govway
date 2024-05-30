@@ -235,13 +235,13 @@
 			<item type="textarea" name="keystoreFile" label="File" required="true">
 			      	<property name="org.apache.ws.security.crypto.merlin.file" properties="signaturePropRefId" />
 			</item>
-			<item type="text" name="keystorePassword" label="Password" required="true">
+			<item type="lock" name="keystorePassword" label="Password" required="true">
 			      	<property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="signaturePropRefId" />
 			</item>
 			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
 			      	<property name="signatureUser" />
 			</item>
-			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			<item type="lock" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
 			      	<property name="signaturePassword" />
 			</item>
 			<item type="hidden" name="keystorePrivateKeyPasswordCallback" value="true">
