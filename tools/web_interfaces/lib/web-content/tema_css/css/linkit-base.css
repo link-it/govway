@@ -2608,6 +2608,7 @@ div.txtA_div_propDialogInfoUso {
 
 .span-password-eye {
 	margin-left: -32px;
+	margin-right: 4px;
     cursor: pointer;
     vertical-align: bottom;
     color: ${p.note.color};
@@ -2615,6 +2616,7 @@ div.txtA_div_propDialogInfoUso {
 
 .span-password-eye-2 {
 	margin-left: -64px;
+	margin-right: 4px;
     cursor: pointer;
     vertical-align: bottom;
     color: ${p.note.color};

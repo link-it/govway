@@ -1373,6 +1373,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							   						}
 			                        							   						if(forzaVisualizzazioneInputUtente) { // in questa modalita' l'input e' sempre di tipo text
 			                        							   							dePwdType = "text";
+			                        							   							lockDisabled = "";
 			                        							   						}
 			                        							   						
 			                        							   						// 3. se il lock e' readonly il campo input sara' disabilitato
@@ -1381,7 +1382,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							   						}
 			                        				                    						     
 			                        							   						// 4. Comando Edit visualizzato se presente un valore e il campo e' modificabile
-			                        							   						boolean visualizzaComandoEdit = lockValuePresent && !lockReadOnly;
+			                        							   						boolean visualizzaComandoEdit = !forzaVisualizzazioneInputUtente && lockValuePresent && !lockReadOnly;
 			                        							   						
 			                        							   						// 5. Comando Eye visualizzato quando si utilizza il campo password e c'e' un valore o non si devono utilizzare i servizi remoti di decodifica
 			                        							   						boolean visualizzaComandoEye = utilizzaInputPassword && (!lockValuePresent || !dePwd.isLockVisualizzaInformazioniCifrate());
@@ -1450,14 +1451,19 @@ for (int i = 0; i < dati.size(); i++) {
 			                        																        // toggle the type attribute
 																											var x = document.getElementById("<%=idPwd %>");
 			                        																        
-			                        																        // eliminare il comando di edit
-			                        																        $('#<%=idPwdEdit %>').remove();
+			                        																        
 			                        																        <% 
 			    			                        									      				if(visualizzaTuttiComandiInternoInput){
+			    			                        									      					// eliminare il comando di edit
 			    			                        									      				%>
+			    			                        									      					
+			                        																        	$('#<%=idPwdEdit %>').remove();
 			    			                        									      					$('#<%=idPwdEditSpan%>').removeClass('span-password-eye-2').addClass('span-password-eye');
+			                        																        <% } else { 
+			                        																        	// eliminare il comando di edit (rimuovo tutto il div)
+			                        																        	%>
+		                        																        		$('#<%=idPwdEditSpan %>').remove();
 			                        																        <% } %>
-			                        																        
 			                        																    	<% 
 			    			                        									      				if(visualizzaIconLucchetto){
 			    			                        									      				%>
