@@ -2615,22 +2615,29 @@ div.txtA_div_propDialogInfoUso {
     display: inline-block;
 }
 
+.lock-input-container input[type="text"],
+.lock-input-container input[type="password"] {
+	height: 20px;
+}
+
 .lock-iconInfoBox {
 	padding-left: 8px;
     display: inline;
     cursor: pointer;
     position: absolute;
+    padding-top: 2px;
 }
 
 .lock-span-comandi-input {
 	padding-left: 4px;
 	padding-right: 2px;
+	padding-top: 2px;
     cursor: pointer;
     vertical-align: bottom;
     position: absolute;
     right: 0px;
     top: 0px;
-    height: 26.100px;
+    height: 26px;
     display: inline-block;
     width: 27px;
     color: ${p.note.color};
