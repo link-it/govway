@@ -2606,16 +2606,50 @@ div.txtA_div_propDialogInfoUso {
 	height:1px;
 }
 
-.span-password-eye {
-	margin-left: -32px;
-	margin-right: 4px;
-    cursor: pointer;
-    vertical-align: bottom;
-    color: ${p.note.color};
+.lock-container {
+	
 }
 
-.span-password-eye-2 {
-	margin-left: -64px;
+.lock-input-container {
+	position: relative;
+    display: inline-block;
+}
+
+.lock-iconInfoBox {
+/* 	margin-left: 422px; */
+	padding-left: 8px;
+    display: inline;
+    cursor: pointer;
+    position: absolute;
+}
+
+.lock-span-comandi-input {
+	padding-left: 4px;
+	padding-right: 2px;
+    cursor: pointer;
+    vertical-align: bottom;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    height: 26.100px;
+/*     top: 50%; */
+/*     transform: translateY(-50%); */
+/*     height: 26.800px; */
+    display: inline-block;
+    width: 27px;
+    color: ${p.note.color};
+    background-color: ${input.background.color} ;	
+	background-image: none !important;
+	border: 1px solid ${input.border.color} ;
+}
+
+.lock-span-comandi-input-x2 {
+	width: 54px;
+}
+
+
+.span-password-eye {
+	margin-left: -32px;
 	margin-right: 4px;
     cursor: pointer;
     vertical-align: bottom;

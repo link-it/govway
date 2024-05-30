@@ -1396,10 +1396,17 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							   						
 			                        							   						
 			                        							   						
-			                        							   						String spanComaniInternoInputClass = visualizzaTuttiComandiInternoInput ? "span-password-eye-2" : "span-password-eye";
+			                        							   						String spanComaniInternoInputClass = visualizzaTuttiComandiInternoInput ? "lock-span-comandi-input lock-span-comandi-input-x2" : "lock-span-comandi-input";
 			                        				                    				
-			                        													%><input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= lockValue %>" <%=lockDisabled %>>
-			                        													  <input type="hidden" name="<%= hiddenLockName  %>" id="<%=hiddenLockId %>" value="<%= de.getValue()  %>">
+			                        													%>
+			                        													<div class="lock-container">
+			                        													<%
+			                        							          				if (visualizzaComandiInternoInput) {
+			                        								          				%>
+			                        														<div class="lock-input-container">
+			                        													<% } %>
+				                        													<input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= lockValue %>" <%=lockDisabled %> autocomplete="new-password">
+				                        													<input type="hidden" name="<%= hiddenLockName  %>" id="<%=hiddenLockId %>" value="<%= de.getValue()  %>">
 			                        													<%
 			                        							          				if (visualizzaComandiInternoInput) {
 			                        								          				%>
@@ -1440,6 +1447,11 @@ for (int i = 0; i < dati.size(); i++) {
 			                        																		
 			                        																		// Abilita l'input di tipo password
 			                        																        $('#<%=idPwd %>').attr('disabled', false);
+			                        																		
+				                        																     // convertire l'elemento in un text
+			                        																        // toggle the type attribute
+																											var x = document.getElementById("<%=idPwd %>");
+			                        																     
 			                        																        <% 
 			    			                        									      				if(!(visualizzaComandoEdit && visualizzaComandoEye)){
 			    			                        									      				%>
@@ -1447,22 +1459,24 @@ for (int i = 0; i < dati.size(); i++) {
 				                        																        $('#<%=idPwd %>').val('');
 			                        																        <% } %>
 			                        																        
-			                        																        // convertire l'elemento in un text
-			                        																        // toggle the type attribute
-																											var x = document.getElementById("<%=idPwd %>");
-			                        																        
-			                        																        
 			                        																        <% 
 			    			                        									      				if(visualizzaTuttiComandiInternoInput){
 			    			                        									      					// eliminare il comando di edit
 			    			                        									      				%>
 			    			                        									      					
 			                        																        	$('#<%=idPwdEdit %>').remove();
-			    			                        									      					$('#<%=idPwdEditSpan%>').removeClass('span-password-eye-2').addClass('span-password-eye');
+			    			                        									      					$('#<%=idPwdEditSpan%>').removeClass('lock-span-comandi-input-x2');
 			                        																        <% } else { 
 			                        																        	// eliminare il comando di edit (rimuovo tutto il div)
 			                        																        	%>
-		                        																        		$('#<%=idPwdEditSpan %>').remove();
+			                        																        	<% 
+				    			                        									      				if(utilizzaInputPassword){
+				    			                        									      				%>
+				    			                        									      					$('#<%=idPwdEdit %>').remove();
+					                        																        $('#<%=idPwdViewInnerLock%>').show();
+																											    <% } else { %>
+																											    	$('#<%=idPwdEditSpan %>').remove();
+																											    <% } %>
 			                        																        <% } %>
 			                        																    	<% 
 			    			                        									      				if(visualizzaIconLucchetto){
@@ -1516,14 +1530,16 @@ for (int i = 0; i < dati.size(); i++) {
 			                        																	
 			                        																});
 			                        															</script>
+			                        														</div>
 			                        							     					<% 
 			                        								   					}
+			                        															                        													
 			                        									      		
 			                        									      			String idDivIconInfo = "divIconInfo_"+i;
 			                        									      			String idIconInfo = "iconInfo_"+i; 
 			                        									      			
 			                        									      			if(visualizzaIconLucchetto || visualizzaInformazioniCifrate || deInfo != null){
-			                        											      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
+			                        											      	%> 	<div class="lock-iconInfoBox" id="<%=idDivIconInfo %>">
 			                        											      	
 			                        											      	<% 
 			                        									      				if(visualizzaIconLucchetto){
@@ -1591,6 +1607,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        											      	<% 
 			                        							   					}
 			                        						     					%>
+			                        						     					</div>
 			                        						     					<% if(!deNote.equals("")){ %>
 			                        									      			<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 			                        									      		<% } %>
