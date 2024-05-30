@@ -1371,6 +1371,10 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							   						if(utilizzaInputPassword) { // in questa modalita' l'input e' sempre di tipo password
 			                        							   							dePwdType = "password";
 			                        							   						}
+			                        							   						if(forzaVisualizzazioneInputUtente) { // in questa modalita' l'input e' sempre di tipo text
+			                        							   							dePwdType = "text";
+			                        							   						}
+			                        							   						
 			                        							   						// 3. se il lock e' readonly il campo input sara' disabilitato
 			                        							   						if(lockReadOnly) {
 			                        							   							lockDisabled = " disabled=\"disabled\"";
@@ -1384,11 +1388,14 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							   						
 			                        							   						// 6. Comando all'interno dell'input visualizzato se almeno uno dei due comandi qui su e' abilitato
 			                        				                    				boolean visualizzaComandiInternoInput = visualizzaComandoEdit || visualizzaComandoEye;
+			                        				                    				boolean visualizzaTuttiComandiInternoInput = visualizzaComandoEdit && visualizzaComandoEye;
 
 			                        							   						// 7. Comando lock aperto visualizzato se non c'e un valore oppure si forza la visualizzazione dell'input utente.
 			                        				                    				boolean visualizzaOpenLock = !lockValuePresent || forzaVisualizzazioneInputUtente;
 			                        							   						
-			                        							   						String spanComaniInternoInputClass = (visualizzaComandoEdit && visualizzaComandoEye) ? "span-password-eye-2" : "span-password-eye";
+			                        							   						
+			                        							   						
+			                        							   						String spanComaniInternoInputClass = visualizzaTuttiComandiInternoInput ? "span-password-eye-2" : "span-password-eye";
 			                        				                    				
 			                        													%><input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= lockValue %>" <%=lockDisabled %>>
 			                        													  <input type="hidden" name="<%= hiddenLockName  %>" id="<%=hiddenLockId %>" value="<%= de.getValue()  %>">
@@ -1445,7 +1452,11 @@ for (int i = 0; i < dati.size(); i++) {
 			                        																        
 			                        																        // eliminare il comando di edit
 			                        																        $('#<%=idPwdEdit %>').remove();
-			                        																        $('#<%=idPwdEditSpan%>').removeClass('span-password-eye-2').addClass('span-password-eye');
+			                        																        <% 
+			    			                        									      				if(visualizzaTuttiComandiInternoInput){
+			    			                        									      				%>
+			    			                        									      					$('#<%=idPwdEditSpan%>').removeClass('span-password-eye-2').addClass('span-password-eye');
+			                        																        <% } %>
 			                        																        
 			                        																    	<% 
 			    			                        									      				if(visualizzaIconLucchetto){
