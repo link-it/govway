@@ -32,6 +32,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+import org.openspcoop2.core.byok.BYOKUtilities;
+import org.openspcoop2.core.byok.BYOKWrappedValue;
 import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
@@ -572,12 +574,26 @@ public class DriverRegistroServiziDB_soggettiLIB {
 						sqlQueryObject.addInsertField("id_soggetto", "?");
 						sqlQueryObject.addInsertField("nome", "?");
 						sqlQueryObject.addInsertField("valore", "?");
+						sqlQueryObject.addInsertField("enc_value", "?");
 						updateQuery = sqlQueryObject.createSQLInsert();
 						updateStmt = con.prepareStatement(updateQuery);
 						
-						updateStmt.setLong(1, idSoggetto);
-						updateStmt.setString(2, proprieta.getNome());
-						updateStmt.setString(3, proprieta.getValore());
+						int indexP = 1;
+						updateStmt.setLong(indexP++, idSoggetto);
+						updateStmt.setString(indexP++, proprieta.getNome());
+						
+						String plainValue = proprieta.getValore();
+						String encValue = null;
+						if(driverBYOK!=null && BYOKUtilities.isWrappedValue(plainValue) ) {
+							BYOKWrappedValue byokValue = driverBYOK.wrap(plainValue);
+							if(byokValue!=null) {
+								encValue = byokValue.getWrappedValue();
+								plainValue = byokValue.getWrappedPlainValue();
+							}
+						}
+						
+						updateStmt.setString(indexP++, plainValue);
+						updateStmt.setString(indexP++, encValue);
 						
 						int r= updateStmt.executeUpdate();
 						n++;
@@ -887,12 +903,26 @@ public class DriverRegistroServiziDB_soggettiLIB {
 						sqlQueryObject.addInsertField("id_soggetto", "?");
 						sqlQueryObject.addInsertField("nome", "?");
 						sqlQueryObject.addInsertField("valore", "?");
+						sqlQueryObject.addInsertField("enc_value", "?");
 						updateQuery = sqlQueryObject.createSQLInsert();
 						updateStmt = con.prepareStatement(updateQuery);
 						
-						updateStmt.setLong(1, idSoggetto);
-						updateStmt.setString(2, proprieta.getNome());
-						updateStmt.setString(3, proprieta.getValore());
+						int indexP = 1;
+						updateStmt.setLong(indexP++, idSoggetto);
+						updateStmt.setString(indexP++, proprieta.getNome());
+
+						String plainValue = proprieta.getValore();
+						String encValue = null;
+						if(driverBYOK!=null && BYOKUtilities.isWrappedValue(plainValue) ) {
+							BYOKWrappedValue byokValue = driverBYOK.wrap(plainValue);
+							if(byokValue!=null) {
+								encValue = byokValue.getWrappedValue();
+								plainValue = byokValue.getWrappedPlainValue();
+							}
+						}
+						
+						updateStmt.setString(indexP++, plainValue);
+						updateStmt.setString(indexP++, encValue);
 						
 						int r= updateStmt.executeUpdate();
 						n++;

@@ -28,6 +28,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
@@ -248,7 +249,6 @@ public class DriverRegistroServiziDB_soggettiSearchDriver {
 				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.SOGGETTI_PROPS+".id_soggetto");
 				sqlQueryObject.addWhereLikeCondition(CostantiDB.SOGGETTI_PROPS+".nome", search, true, true);	
 				
-				sqlQueryObject.setSelectDistinct(true);
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -259,7 +259,6 @@ public class DriverRegistroServiziDB_soggettiSearchDriver {
 				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id=?");
 				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.SOGGETTI_PROPS+".id_soggetto");
 
-				sqlQueryObject.setSelectDistinct(true);
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			}
@@ -282,11 +281,11 @@ public class DriverRegistroServiziDB_soggettiSearchDriver {
 				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_PROPS+".id");
 				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_PROPS+".nome");
 				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_PROPS+".valore");
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_PROPS+".enc_value");
 				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id=?");
 				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.SOGGETTI_PROPS+".id_soggetto");
 				sqlQueryObject.addWhereLikeCondition(CostantiDB.SOGGETTI_PROPS+".nome", search, true, true);	
 				
-				sqlQueryObject.setSelectDistinct(true);
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI_PROPS+".nome");
 				sqlQueryObject.setSortType(true);
@@ -301,10 +300,10 @@ public class DriverRegistroServiziDB_soggettiSearchDriver {
 				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_PROPS+".id");
 				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_PROPS+".nome");
 				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_PROPS+".valore");
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_PROPS+".enc_value");
 				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id=?");
 				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.SOGGETTI_PROPS+".id_soggetto");
 				
-				sqlQueryObject.setSelectDistinct(true);
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI_PROPS+".nome");
 				sqlQueryObject.setSortType(true);
@@ -324,7 +323,16 @@ public class DriverRegistroServiziDB_soggettiSearchDriver {
 				proprieta.setNome(risultato.getString("nome"));
 				proprieta.setValore(risultato.getString("valore"));
 				
-				lista.add(proprieta );
+				String plainValue = risultato.getString("valore");
+				String encValue = risultato.getString("enc_value");
+				if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+					proprieta.setValore(encValue);
+				}
+				else {
+					proprieta.setValore(plainValue);
+				}
+				
+				lista.add(proprieta);
 			}
 
 		} catch (Exception qe) {

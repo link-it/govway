@@ -1,5 +1,10 @@
 TODO
 
+	ATTENZIONE QUESTA PATCH RIGUARD IL registro in core/deploy/sql e tools/web_interfaces/control_station/deploy/sql/postgresql/govwayConsole_Soggetti.sql
+	es. anche in tools/web_interfaces/control_station/deploy/sql/patch/mysql/2021-04-15-patch.sql
+	Invece per la resource vedere come esempio: resources/sql_upgrade/upgrade_3.3.3_to_3.3.4/mysql/2021-04-15-registroServizi-patch.sql -> ../../../../core/deploy/sql/patch/mysql/registroServizi/2021-04-15-patch.sql
+	ALTER TABLE soggetti_properties ADD COLUMN enc_value TEXT;
+
 	ALTER TABLE servizi_applicativi ADD COLUMN enc_passwordrisp TEXT;
 	ALTER TABLE servizi_applicativi ADD COLUMN enc_passwordinv TEXT;
 

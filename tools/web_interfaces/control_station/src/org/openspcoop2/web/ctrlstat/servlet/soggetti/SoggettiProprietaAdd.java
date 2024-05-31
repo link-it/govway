@@ -38,6 +38,7 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -76,15 +77,14 @@ public final class SoggettiProprietaAdd extends Action {
 			
 			String id = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			long idSoggettoLong = Long.parseLong(id);
-			String nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
-			String tipoprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
 			
-			String protocollo = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO);
-
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
 			String nome = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_NOME);
-			String valore = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_VALORE);   
+			String valore = soggettiHelper.getLockedParameter(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_VALORE, false);   
+			
+			// Wrap value
+			valore = soggettiHelper.wrapValoreProprieta(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_VALORE, valore);
 			
 			// Preparo il menu
 			soggettiHelper.makeMenu();
@@ -96,11 +96,13 @@ public final class SoggettiProprietaAdd extends Action {
 			
 			soggettoRegistry = soggettiCore.getSoggettoRegistro(idSoggettoLong);
 			if(soggettoRegistry==null) {
-				throw new Exception("Soggetto non trovato con id '"+idSoggettoLong+"'");
+				throw new DriverControlStationException("Soggetto non trovato con id '"+idSoggettoLong+"'");
 			}
 			
 			soggettoConfig = soggettiCore.getSoggetto(idSoggettoLong);// core.getSoggetto(new
 			
+			String nomeprov = null;
+			String tipoprov = null;
 			if(soggettiCore.isRegistroServiziLocale()){
 				nomeprov = soggettoRegistry.getNome();
 				tipoprov = soggettoRegistry.getTipo();
@@ -110,7 +112,7 @@ public final class SoggettiProprietaAdd extends Action {
 				tipoprov = soggettoConfig.getTipo();
 			}
 
-			protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
 			
 			List<Parameter> parametersServletSoggettoChange = new ArrayList<>();
 			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id);

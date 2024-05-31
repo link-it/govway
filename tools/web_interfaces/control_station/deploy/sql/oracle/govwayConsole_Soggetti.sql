@@ -138,6 +138,7 @@ CREATE TABLE soggetti_properties
 	id_soggetto NUMBER NOT NULL,
 	nome VARCHAR2(255) NOT NULL,
 	valore VARCHAR2(4000) NOT NULL,
+	enc_value CLOB,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

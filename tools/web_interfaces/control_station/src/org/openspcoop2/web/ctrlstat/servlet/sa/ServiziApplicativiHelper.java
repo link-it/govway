@@ -4918,7 +4918,6 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				return false;
 			}
 
-			// Controllo che non ci siano spazi nei campi di testo
 			if (nome.indexOf(" ") != -1) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;

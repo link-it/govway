@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -376,7 +377,22 @@ public class DriverRegistroServiziDB_soggettiDriver {
 					
 					Proprieta proprieta = new Proprieta();
 					proprieta.setNome(rs.getString("nome"));
-					proprieta.setValore(rs.getString("valore"));
+					
+					String plainValue = rs.getString("valore");
+					String encValue = rs.getString("enc_value");
+					if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+						IDriverBYOK driverBYOK = this.driver.getDriverUnwrapBYOK();
+						if(driverBYOK!=null) {
+							proprieta.setValore(driverBYOK.unwrapAsString(encValue));
+						}
+						else {
+							proprieta.setValore(encValue);
+						}
+					}
+					else {
+						proprieta.setValore(plainValue);
+					}
+					
 					soggetto.addProprieta(proprieta);
 
 				}
