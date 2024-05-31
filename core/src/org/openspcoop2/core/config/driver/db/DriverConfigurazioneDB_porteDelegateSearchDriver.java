@@ -473,7 +473,7 @@ public class DriverConfigurazioneDB_porteDelegateSearchDriver {
 		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<Proprieta> lista = new ArrayList<Proprieta>();
+		ArrayList<Proprieta> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
@@ -525,6 +525,7 @@ public class DriverConfigurazioneDB_porteDelegateSearchDriver {
 				sqlQueryObject.addSelectField("id_porta");
 				sqlQueryObject.addSelectField("nome");
 				sqlQueryObject.addSelectField("valore");
+				sqlQueryObject.addSelectField("enc_value");
 				sqlQueryObject.addWhereCondition("id_porta = ?");
 				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
 				sqlQueryObject.setANDLogicOperator(true);
@@ -541,6 +542,7 @@ public class DriverConfigurazioneDB_porteDelegateSearchDriver {
 				sqlQueryObject.addSelectField("id_porta");
 				sqlQueryObject.addSelectField("nome");
 				sqlQueryObject.addSelectField("valore");
+				sqlQueryObject.addSelectField("enc_value");
 				sqlQueryObject.addWhereCondition("id_porta = ?");
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.setSortType(true);
@@ -559,7 +561,15 @@ public class DriverConfigurazioneDB_porteDelegateSearchDriver {
 
 				prop.setId(risultato.getLong("id"));
 				prop.setNome(risultato.getString("nome"));
-				prop.setValore(risultato.getString("valore"));
+				
+				String plainValue = risultato.getString("valore");
+				String encValue = risultato.getString("enc_value");
+				if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+					prop.setValore(encValue);
+				}
+				else {
+					prop.setValore(plainValue);
+				}
 
 				lista.add(prop);
 			}
@@ -594,7 +604,7 @@ public class DriverConfigurazioneDB_porteDelegateSearchDriver {
 		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<Proprieta> lista = new ArrayList<Proprieta>();
+		ArrayList<Proprieta> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
@@ -646,6 +656,7 @@ public class DriverConfigurazioneDB_porteDelegateSearchDriver {
 				sqlQueryObject.addSelectField("id_porta");
 				sqlQueryObject.addSelectField("nome");
 				sqlQueryObject.addSelectField("valore");
+				sqlQueryObject.addSelectField("enc_value");
 				sqlQueryObject.addWhereCondition("id_porta = ?");
 				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
 				sqlQueryObject.setANDLogicOperator(true);
@@ -662,6 +673,7 @@ public class DriverConfigurazioneDB_porteDelegateSearchDriver {
 				sqlQueryObject.addSelectField("id_porta");
 				sqlQueryObject.addSelectField("nome");
 				sqlQueryObject.addSelectField("valore");
+				sqlQueryObject.addSelectField("enc_value");
 				sqlQueryObject.addWhereCondition("id_porta = ?");
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.setSortType(true);
@@ -680,7 +692,15 @@ public class DriverConfigurazioneDB_porteDelegateSearchDriver {
 
 				prop.setId(risultato.getLong("id"));
 				prop.setNome(risultato.getString("nome"));
-				prop.setValore(risultato.getString("valore"));
+				
+				String plainValue = risultato.getString("valore");
+				String encValue = risultato.getString("enc_value");
+				if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+					prop.setValore(encValue);
+				}
+				else {
+					prop.setValore(plainValue);
+				}
 
 				lista.add(prop);
 			}
@@ -713,7 +733,7 @@ public class DriverConfigurazioneDB_porteDelegateSearchDriver {
 		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<Proprieta> lista = new ArrayList<Proprieta>();
+		ArrayList<Proprieta> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
@@ -765,6 +785,7 @@ public class DriverConfigurazioneDB_porteDelegateSearchDriver {
 				sqlQueryObject.addSelectField("id_porta");
 				sqlQueryObject.addSelectField("nome");
 				sqlQueryObject.addSelectField("valore");
+				sqlQueryObject.addSelectField("enc_value");
 				sqlQueryObject.addWhereCondition("id_porta = ?");
 				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
 				sqlQueryObject.setANDLogicOperator(true);
@@ -781,6 +802,7 @@ public class DriverConfigurazioneDB_porteDelegateSearchDriver {
 				sqlQueryObject.addSelectField("id_porta");
 				sqlQueryObject.addSelectField("nome");
 				sqlQueryObject.addSelectField("valore");
+				sqlQueryObject.addSelectField("enc_value");
 				sqlQueryObject.addWhereCondition("id_porta = ?");
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.setSortType(true);
@@ -799,7 +821,15 @@ public class DriverConfigurazioneDB_porteDelegateSearchDriver {
 
 				prop.setId(risultato.getLong("id"));
 				prop.setNome(risultato.getString("nome"));
-				prop.setValore(risultato.getString("valore"));
+				
+				String plainValue = risultato.getString("valore");
+				String encValue = risultato.getString("enc_value");
+				if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+					prop.setValore(encValue);
+				}
+				else {
+					prop.setValore(plainValue);
+				}
 
 				lista.add(prop);
 			}
@@ -832,7 +862,7 @@ public class DriverConfigurazioneDB_porteDelegateSearchDriver {
 		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<Proprieta> lista = new ArrayList<Proprieta>();
+		ArrayList<Proprieta> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
@@ -884,6 +914,7 @@ public class DriverConfigurazioneDB_porteDelegateSearchDriver {
 				sqlQueryObject.addSelectField("id_porta");
 				sqlQueryObject.addSelectField("nome");
 				sqlQueryObject.addSelectField("valore");
+				sqlQueryObject.addSelectField("enc_value");
 				sqlQueryObject.addWhereCondition("id_porta = ?");
 				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
 				sqlQueryObject.setANDLogicOperator(true);
@@ -900,6 +931,7 @@ public class DriverConfigurazioneDB_porteDelegateSearchDriver {
 				sqlQueryObject.addSelectField("id_porta");
 				sqlQueryObject.addSelectField("nome");
 				sqlQueryObject.addSelectField("valore");
+				sqlQueryObject.addSelectField("enc_value");
 				sqlQueryObject.addWhereCondition("id_porta = ?");
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.setSortType(true);
@@ -918,7 +950,15 @@ public class DriverConfigurazioneDB_porteDelegateSearchDriver {
 
 				prop.setId(risultato.getLong("id"));
 				prop.setNome(risultato.getString("nome"));
-				prop.setValore(risultato.getString("valore"));
+				
+				String plainValue = risultato.getString("valore");
+				String encValue = risultato.getString("enc_value");
+				if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+					prop.setValore(encValue);
+				}
+				else {
+					prop.setValore(plainValue);
+				}
 
 				lista.add(prop);
 			}

@@ -1049,13 +1049,29 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				sqlQueryObject.addInsertField("id_porta", "?");
 				sqlQueryObject.addInsertField("nome", "?");
 				sqlQueryObject.addInsertField("valore", "?");
+				sqlQueryObject.addInsertField("enc_value", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = con.prepareStatement(sqlQuery);
 				for (i = 0; i < aPD.sizeProprietaAutenticazioneList(); i++) {
 					Proprieta propProtocollo = aPD.getProprietaAutenticazione(i);
-					stm.setLong(1, aPD.getId());
-					stm.setString(2, propProtocollo.getNome());
-					stm.setString(3, propProtocollo.getValore());
+
+					int indexP = 1;
+					stm.setLong(indexP++, aPD.getId());
+					stm.setString(indexP++, propProtocollo.getNome());
+					
+					String plainValueP = propProtocollo.getValore();
+					String encValueP = null;
+					if(driverBYOK!=null && BYOKUtilities.isWrappedValue(plainValueP) ) {
+						BYOKWrappedValue byokValue = driverBYOK.wrap(plainValueP);
+						if(byokValue!=null) {
+							encValueP = byokValue.getWrappedValue();
+							plainValueP = byokValue.getWrappedPlainValue();
+						}
+					}
+					
+					stm.setString(indexP++, plainValueP);
+					stm.setString(indexP++, encValueP);
+					
 					stm.executeUpdate();
 				}
 				stm.close();
@@ -1068,13 +1084,29 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				sqlQueryObject.addInsertField("id_porta", "?");
 				sqlQueryObject.addInsertField("nome", "?");
 				sqlQueryObject.addInsertField("valore", "?");
+				sqlQueryObject.addInsertField("enc_value", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = con.prepareStatement(sqlQuery);
 				for (i = 0; i < aPD.sizeProprietaAutorizzazioneList(); i++) {
 					Proprieta propProtocollo = aPD.getProprietaAutorizzazione(i);
-					stm.setLong(1, aPD.getId());
-					stm.setString(2, propProtocollo.getNome());
-					stm.setString(3, propProtocollo.getValore());
+
+					int indexP = 1;
+					stm.setLong(indexP++, aPD.getId());
+					stm.setString(indexP++, propProtocollo.getNome());
+					
+					String plainValueP = propProtocollo.getValore();
+					String encValueP = null;
+					if(driverBYOK!=null && BYOKUtilities.isWrappedValue(plainValueP) ) {
+						BYOKWrappedValue byokValue = driverBYOK.wrap(plainValueP);
+						if(byokValue!=null) {
+							encValueP = byokValue.getWrappedValue();
+							plainValueP = byokValue.getWrappedPlainValue();
+						}
+					}
+					
+					stm.setString(indexP++, plainValueP);
+					stm.setString(indexP++, encValueP);
+					
 					stm.executeUpdate();
 				}
 				stm.close();
@@ -1087,13 +1119,29 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				sqlQueryObject.addInsertField("id_porta", "?");
 				sqlQueryObject.addInsertField("nome", "?");
 				sqlQueryObject.addInsertField("valore", "?");
+				sqlQueryObject.addInsertField("enc_value", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = con.prepareStatement(sqlQuery);
 				for (i = 0; i < aPD.sizeProprietaAutorizzazioneContenutoList(); i++) {
 					Proprieta propProtocollo = aPD.getProprietaAutorizzazioneContenuto(i);
-					stm.setLong(1, aPD.getId());
-					stm.setString(2, propProtocollo.getNome());
-					stm.setString(3, propProtocollo.getValore());
+					
+					int indexP = 1;
+					stm.setLong(indexP++, aPD.getId());
+					stm.setString(indexP++, propProtocollo.getNome());
+					
+					String plainValueP = propProtocollo.getValore();
+					String encValueP = null;
+					if(driverBYOK!=null && BYOKUtilities.isWrappedValue(plainValueP) ) {
+						BYOKWrappedValue byokValue = driverBYOK.wrap(plainValueP);
+						if(byokValue!=null) {
+							encValueP = byokValue.getWrappedValue();
+							plainValueP = byokValue.getWrappedPlainValue();
+						}
+					}
+					
+					stm.setString(indexP++, plainValueP);
+					stm.setString(indexP++, encValueP);
+					
 					stm.executeUpdate();
 				}
 				stm.close();
@@ -1129,13 +1177,29 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				sqlQueryObject.addInsertField("id_porta", "?");
 				sqlQueryObject.addInsertField("nome", "?");
 				sqlQueryObject.addInsertField("valore", "?");
+				sqlQueryObject.addInsertField("enc_value", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = con.prepareStatement(sqlQuery);
 				for (i = 0; i < aPD.sizeProprietaList(); i++) {
 					Proprieta propProtocollo = aPD.getProprieta(i);
-					stm.setLong(1, aPD.getId());
-					stm.setString(2, propProtocollo.getNome());
-					stm.setString(3, propProtocollo.getValore());
+					
+					int indexP = 1;
+					stm.setLong(indexP++, aPD.getId());
+					stm.setString(indexP++, propProtocollo.getNome());
+					
+					String plainValueP = propProtocollo.getValore();
+					String encValueP = null;
+					if(driverBYOK!=null && BYOKUtilities.isWrappedValue(plainValueP) ) {
+						BYOKWrappedValue byokValue = driverBYOK.wrap(plainValueP);
+						if(byokValue!=null) {
+							encValueP = byokValue.getWrappedValue();
+							plainValueP = byokValue.getWrappedPlainValue();
+						}
+					}
+					
+					stm.setString(indexP++, plainValueP);
+					stm.setString(indexP++, encValueP);
+					
 					stm.executeUpdate();
 				}
 				stm.close();
@@ -2126,12 +2190,27 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
 					sqlQueryObject.addInsertField("valore", "?");
+					sqlQueryObject.addInsertField("enc_value", "?");
 					sqlQuery = sqlQueryObject.createSQLInsert();
 					stm = con.prepareStatement(sqlQuery);
 
-					stm.setLong(1, idPortaDelegata);
-					stm.setString(2, propProtocollo.getNome());
-					stm.setString(3, propProtocollo.getValore());
+					int indexP = 1;
+					stm.setLong(indexP++, idPortaDelegata);
+					stm.setString(indexP++, propProtocollo.getNome());
+					
+					String plainValueP = propProtocollo.getValore();
+					String encValueP = null;
+					if(driverBYOK!=null && BYOKUtilities.isWrappedValue(plainValueP) ) {
+						BYOKWrappedValue byokValue = driverBYOK.wrap(plainValueP);
+						if(byokValue!=null) {
+							encValueP = byokValue.getWrappedValue();
+							plainValueP = byokValue.getWrappedPlainValue();
+						}
+					}
+					
+					stm.setString(indexP++, plainValueP);
+					stm.setString(indexP++, encValueP);
+					
 					stm.executeUpdate();
 					stm.close();
 					newProps++;
@@ -2163,12 +2242,27 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
 					sqlQueryObject.addInsertField("valore", "?");
+					sqlQueryObject.addInsertField("enc_value", "?");
 					sqlQuery = sqlQueryObject.createSQLInsert();
 					stm = con.prepareStatement(sqlQuery);
 
-					stm.setLong(1, idPortaDelegata);
-					stm.setString(2, propProtocollo.getNome());
-					stm.setString(3, propProtocollo.getValore());
+					int indexP = 1;
+					stm.setLong(indexP++, idPortaDelegata);
+					stm.setString(indexP++, propProtocollo.getNome());
+					
+					String plainValueP = propProtocollo.getValore();
+					String encValueP = null;
+					if(driverBYOK!=null && BYOKUtilities.isWrappedValue(plainValueP) ) {
+						BYOKWrappedValue byokValue = driverBYOK.wrap(plainValueP);
+						if(byokValue!=null) {
+							encValueP = byokValue.getWrappedValue();
+							plainValueP = byokValue.getWrappedPlainValue();
+						}
+					}
+					
+					stm.setString(indexP++, plainValueP);
+					stm.setString(indexP++, encValueP);
+					
 					stm.executeUpdate();
 					stm.close();
 					newProps++;
@@ -2201,12 +2295,27 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
 					sqlQueryObject.addInsertField("valore", "?");
+					sqlQueryObject.addInsertField("enc_value", "?");
 					sqlQuery = sqlQueryObject.createSQLInsert();
 					stm = con.prepareStatement(sqlQuery);
 
-					stm.setLong(1, idPortaDelegata);
-					stm.setString(2, propProtocollo.getNome());
-					stm.setString(3, propProtocollo.getValore());
+					int indexP = 1;
+					stm.setLong(indexP++, idPortaDelegata);
+					stm.setString(indexP++, propProtocollo.getNome());
+					
+					String plainValueP = propProtocollo.getValore();
+					String encValueP = null;
+					if(driverBYOK!=null && BYOKUtilities.isWrappedValue(plainValueP) ) {
+						BYOKWrappedValue byokValue = driverBYOK.wrap(plainValueP);
+						if(byokValue!=null) {
+							encValueP = byokValue.getWrappedValue();
+							plainValueP = byokValue.getWrappedPlainValue();
+						}
+					}
+					
+					stm.setString(indexP++, plainValueP);
+					stm.setString(indexP++, encValueP);
+					
 					stm.executeUpdate();
 					stm.close();
 					newProps++;
@@ -2280,12 +2389,27 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("nome", "?");
 					sqlQueryObject.addInsertField("valore", "?");
+					sqlQueryObject.addInsertField("enc_value", "?");
 					sqlQuery = sqlQueryObject.createSQLInsert();
 					stm = con.prepareStatement(sqlQuery);
 
-					stm.setLong(1, idPortaDelegata);
-					stm.setString(2, propProtocollo.getNome());
-					stm.setString(3, propProtocollo.getValore());
+					int indexP = 1;
+					stm.setLong(indexP++, idPortaDelegata);
+					stm.setString(indexP++, propProtocollo.getNome());
+					
+					String plainValueP = propProtocollo.getValore();
+					String encValueP = null;
+					if(driverBYOK!=null && BYOKUtilities.isWrappedValue(plainValueP) ) {
+						BYOKWrappedValue byokValue = driverBYOK.wrap(plainValueP);
+						if(byokValue!=null) {
+							encValueP = byokValue.getWrappedValue();
+							plainValueP = byokValue.getWrappedPlainValue();
+						}
+					}
+					
+					stm.setString(indexP++, plainValueP);
+					stm.setString(indexP++, encValueP);
+					
 					stm.executeUpdate();
 					stm.close();
 					newProps++;

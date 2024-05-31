@@ -21532,10 +21532,9 @@ public class ConsoleHelper implements IConsoleHelper {
 
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
-		de.setType(DataElementType.TEXT_EDIT);
-		de.setRequired(true);
 		de.setName(CostantiControlStation.PARAMETRO_VALORE);
-		de.setValue(valore);
+		this.core.getLockUtilities().lockProperty(de, valore);
+		de.setRequired(true);
 		de.setSize(this.getSize());
 		dati.add(de);
 
@@ -21565,10 +21564,9 @@ public class ConsoleHelper implements IConsoleHelper {
 
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
-		de.setType(DataElementType.TEXT_EDIT);
-		de.setRequired(true);
 		de.setName(CostantiControlStation.PARAMETRO_VALORE);
-		de.setValue(valore);
+		this.core.getLockUtilities().lockProperty(de, valore);
+		de.setRequired(true);
 		de.setSize(this.getSize());
 		dati.add(de);
 

@@ -856,12 +856,12 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 
 	// Controlla i dati della property della porta applicativa
-	public boolean porteAppPropCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean porteAppPropCheckData(TipoOperazione tipoOp) throws ControlStationCoreException {
 		try {
 			String idPorta = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			int idInt = Integer.parseInt(idPorta);
 			String nome = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-			String valore = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE);
+			String valore = this.getLockedParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE, false);
 
 			// Campi obbligatori
 			if (nome.equals("") || valore.equals("")) {
@@ -880,19 +880,22 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				return false;
 			}
 
-			// Controllo che non ci siano spazi nei campi di testo
-			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
+			if (nome.indexOf(" ") != -1) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
-
-			
-			// Check Lunghezza
-			if(this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)==false) {
+			if(!this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)) {
 				return false;
 			}
-			if(this.checkLength255(valore, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE)==false) {
-				return false;
+			
+			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore) ){
+				if (valore.indexOf(" ") != -1) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+					return false;
+				}
+				if(!this.checkLength255(valore, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE)) {
+					return false;
+				}
 			}
 			
 			// Se tipoOp = add, controllo che la property non sia gia'
@@ -2679,6 +2682,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	public void preparePorteAppPropList(String nomePorta, ISearch ricerca, List<Proprieta> lista)
 			throws Exception {
 		try {
+			if(nomePorta!=null) {
+				// nop
+			}
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session, this.request);
 
@@ -2770,8 +2777,16 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					e.add(de);
 
 					de = new DataElement();
-					if(ssp.getValore()!=null)
-						de.setValue(ssp.getValore().toString());
+					if(ssp.getValore()!=null) {
+						if(StringUtils.isNotEmpty(ssp.getValore()) &&
+								BYOKManager.isEnabledBYOK() &&
+								this.core.getDriverBYOKUtilities().isWrapped(ssp.getValore())) {
+							de.setValue(CostantiControlStation.VALORE_CIFRATO);
+						}
+						else {
+							de.setValue(ssp.getValore());
+						}
+					}
 					e.add(de);
 
 					dati.add(e);
@@ -4161,10 +4176,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
-		de.setType(DataElementType.TEXT_EDIT);
-		de.setRequired(true);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE);
-		de.setValue(valore);
+		this.core.getLockUtilities().lockProperty(de, valore);
+		de.setRequired(true);
 		de.setSize(size);
 		dati.add(de);
 
@@ -6521,6 +6535,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	
 	public void preparePorteApplicativeAutenticazioneCustomPropList(String nomePorta, ISearch ricerca, List<Proprieta> lista) throws Exception {
 		try {
+			if(nomePorta!=null) {
+				// nop
+			}
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session, this.request);
 			String idAsps = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
@@ -6612,7 +6630,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					e.add(de);
 					
 					de = new DataElement();
-					de.setValue(proprieta.getValore());
+					if(StringUtils.isNotEmpty(proprieta.getValore()) &&
+							BYOKManager.isEnabledBYOK() &&
+							this.core.getDriverBYOKUtilities().isWrapped(proprieta.getValore())) {
+						de.setValue(CostantiControlStation.VALORE_CIFRATO);
+					}
+					else {
+						de.setValue(proprieta.getValore());
+					}
 					e.add(de);
 		
 					dati.add(e);
@@ -6628,7 +6653,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		}
 	}
 	
-	public boolean proprietaAutenticazioneCheckData(TipoOperazione tipoOp, String idPorta, String nome,String valore) throws Exception {
+	public boolean proprietaAutenticazioneCheckData(TipoOperazione tipoOp, String idPorta, String nome,String valore) throws ControlStationCoreException {
 		try {
 			// Campi obbligatori
 			if (nome.equals("") || valore.equals("")) {
@@ -6647,11 +6672,19 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				return false;
 			}
 			
-			// Check Lunghezza
-			if(this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)==false) {
+			if (nome.indexOf(" ") != -1) {
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
-			if(this.checkLength255(valore, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE)==false) {
+			if(!this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)) {
+				return false;
+			}
+			
+			if( 
+					( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore) ) 
+					&&
+					(!this.checkLength255(valore, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE)) 
+				){
 				return false;
 			}
 			
@@ -6701,6 +6734,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	
 	public void preparePorteApplicativeAutorizzazioneCustomPropList(String nomePorta, ISearch ricerca, List<Proprieta> lista) throws Exception {
 		try {
+			if(nomePorta!=null) {
+				// nop
+			}
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session, this.request);
 			String idAsps = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
@@ -6792,7 +6829,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					e.add(de);
 					
 					de = new DataElement();
-					de.setValue(proprieta.getValore());
+					if(StringUtils.isNotEmpty(proprieta.getValore()) &&
+							BYOKManager.isEnabledBYOK() &&
+							this.core.getDriverBYOKUtilities().isWrapped(proprieta.getValore())) {
+						de.setValue(CostantiControlStation.VALORE_CIFRATO);
+					}
+					else {
+						de.setValue(proprieta.getValore());
+					}
 					e.add(de);
 		
 					dati.add(e);
@@ -6808,7 +6852,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		}
 	}
 	
-	public boolean proprietaAutorizzazioneCheckData(TipoOperazione tipoOp, String idPorta, String nome,String valore) throws Exception {
+	public boolean proprietaAutorizzazioneCheckData(TipoOperazione tipoOp, String idPorta, String nome,String valore) throws ControlStationCoreException {
 		try {
 			// Campi obbligatori
 			if (nome.equals("") || valore.equals("")) {
@@ -6827,11 +6871,19 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				return false;
 			}
 			
-			// Check Lunghezza
-			if(this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)==false) {
+			if (nome.indexOf(" ") != -1) {
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
-			if(this.checkLength255(valore, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE)==false) {
+			if(!this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)) {
+				return false;
+			}
+			
+			if( 
+					( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore) ) 
+					&&
+					(!this.checkLength255(valore, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE)) 
+				){
 				return false;
 			}
 			
@@ -6880,6 +6932,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	
 	public void preparePorteApplicativeAutorizzazioneContenutoCustomPropList(String nomePorta, ISearch ricerca, List<Proprieta> lista) throws Exception {
 		try {
+			if(nomePorta!=null) {
+				// nop
+			}
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session, this.request);
 			String idAsps = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
@@ -6971,7 +7027,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					e.add(de);
 					
 					de = new DataElement();
-					de.setValue(proprieta.getValore());
+					if(StringUtils.isNotEmpty(proprieta.getValore()) &&
+							BYOKManager.isEnabledBYOK() &&
+							this.core.getDriverBYOKUtilities().isWrapped(proprieta.getValore())) {
+						de.setValue(CostantiControlStation.VALORE_CIFRATO);
+					}
+					else {
+						de.setValue(proprieta.getValore());
+					}
 					e.add(de);
 		
 					dati.add(e);
@@ -6987,7 +7050,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		}
 	}
 	
-	public boolean proprietaAutorizzazioneContenutoCheckData(TipoOperazione tipoOp, String idPorta, String nome,String valore) throws Exception {
+	public boolean proprietaAutorizzazioneContenutoCheckData(TipoOperazione tipoOp, String idPorta, String nome,String valore) throws ControlStationCoreException {
 		try {
 			// Campi obbligatori
 			if (nome.equals("") || valore.equals("")) {
@@ -7006,11 +7069,19 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				return false;
 			}
 			
-			// Check Lunghezza
-			if(this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)==false) {
+			if (nome.indexOf(" ") != -1) {
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
-			if(this.checkLength255(valore, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE)==false) {
+			if(!this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)) {
+				return false;
+			}
+			
+			if( 
+				( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore) ) 
+				&&
+				(!this.checkLength255(valore, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE)) 
+			){
 				return false;
 			}
 			

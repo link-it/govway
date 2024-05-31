@@ -185,6 +185,7 @@ CREATE TABLE pd_auth_properties
 	id_porta BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore VARCHAR(255) NOT NULL,
+	enc_value VARCHAR(max),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints
@@ -204,6 +205,7 @@ CREATE TABLE pd_authz_properties
 	id_porta BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore VARCHAR(255) NOT NULL,
+	enc_value VARCHAR(max),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints
@@ -223,6 +225,7 @@ CREATE TABLE pd_authzc_properties
 	id_porta BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore VARCHAR(255) NOT NULL,
+	enc_value VARCHAR(max),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints
@@ -262,6 +265,7 @@ CREATE TABLE pd_properties
 	id_porta BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore VARCHAR(255) NOT NULL,
+	enc_value VARCHAR(max),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints

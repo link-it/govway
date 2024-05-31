@@ -1303,7 +1303,22 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 					prop = new Proprieta();
 					prop.setId(rs.getLong("id"));
 					prop.setNome(rs.getString("nome"));
-					prop.setValore(rs.getString("valore"));
+					
+					String plainValue = rs.getString("valore");
+					String encValue = rs.getString("enc_value");
+					if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+						IDriverBYOK driverBYOK = this.driver.getDriverUnwrapBYOK();
+						if(driverBYOK!=null) {
+							prop.setValore(driverBYOK.unwrapAsString(encValue));
+						}
+						else {
+							prop.setValore(encValue);
+						}
+					}
+					else {
+						prop.setValore(plainValue);
+					}
+					
 					pd.addProprietaAutenticazione(prop);
 				}
 				rs.close();
@@ -1325,7 +1340,22 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 					prop = new Proprieta();
 					prop.setId(rs.getLong("id"));
 					prop.setNome(rs.getString("nome"));
-					prop.setValore(rs.getString("valore"));
+					
+					String plainValue = rs.getString("valore");
+					String encValue = rs.getString("enc_value");
+					if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+						IDriverBYOK driverBYOK = this.driver.getDriverUnwrapBYOK();
+						if(driverBYOK!=null) {
+							prop.setValore(driverBYOK.unwrapAsString(encValue));
+						}
+						else {
+							prop.setValore(encValue);
+						}
+					}
+					else {
+						prop.setValore(plainValue);
+					}
+					
 					pd.addProprietaAutorizzazione(prop);
 				}
 				rs.close();
@@ -1346,7 +1376,22 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 					prop = new Proprieta();
 					prop.setId(rs.getLong("id"));
 					prop.setNome(rs.getString("nome"));
-					prop.setValore(rs.getString("valore"));
+					
+					String plainValue = rs.getString("valore");
+					String encValue = rs.getString("enc_value");
+					if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+						IDriverBYOK driverBYOK = this.driver.getDriverUnwrapBYOK();
+						if(driverBYOK!=null) {
+							prop.setValore(driverBYOK.unwrapAsString(encValue));
+						}
+						else {
+							prop.setValore(encValue);
+						}
+					}
+					else {
+						prop.setValore(plainValue);
+					}
+					
 					pd.addProprietaAutorizzazioneContenuto(prop);
 				}
 				rs.close();
@@ -1378,7 +1423,7 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 				
 				
 				
-				// pd.addSetProperty(setProperty); .....
+				// properties
 				prop = null;
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_PROP);
@@ -1392,7 +1437,22 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 					prop = new Proprieta();
 					prop.setId(rs.getLong("id"));
 					prop.setNome(rs.getString("nome"));
-					prop.setValore(rs.getString("valore"));
+					
+					String plainValue = rs.getString("valore");
+					String encValue = rs.getString("enc_value");
+					if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+						IDriverBYOK driverBYOK = this.driver.getDriverUnwrapBYOK();
+						if(driverBYOK!=null) {
+							prop.setValore(driverBYOK.unwrapAsString(encValue));
+						}
+						else {
+							prop.setValore(encValue);
+						}
+					}
+					else {
+						prop.setValore(plainValue);
+					}
+					
 					pd.addProprieta(prop);
 				}
 				rs.close();

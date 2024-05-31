@@ -29,6 +29,16 @@ TODO
 	ALTER TABLE pa_security_response ADD COLUMN enc_value TEXT;
 	ALTER TABLE pd_security_request ADD COLUMN enc_value TEXT;
 	ALTER TABLE pd_security_response ADD COLUMN enc_value TEXT;
+	
+	ALTER TABLE pd_auth_properties ADD COLUMN enc_value TEXT;
+	ALTER TABLE pd_authz_properties ADD COLUMN enc_value TEXT;
+	ALTER TABLE pd_authzc_properties ADD COLUMN enc_value TEXT;
+	ALTER TABLE pd_properties ADD COLUMN enc_value TEXT;
+
+	ALTER TABLE pa_auth_properties ADD COLUMN enc_value TEXT;
+	ALTER TABLE pa_authz_properties ADD COLUMN enc_value TEXT;
+	ALTER TABLE pa_authzc_properties ADD COLUMN enc_value TEXT;
+	ALTER TABLE pa_properties ADD COLUMN enc_value TEXT;
 
 2024-03-13  Andrea Poli <apoli@link.it>
 

@@ -4057,6 +4057,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 	public void preparePorteDelPropList(String nomePorta, ConsoleSearch ricerca, List<Proprieta> lista) throws Exception {
 		try {
+			if(nomePorta!=null) {
+				// nop
+			}
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
@@ -4150,8 +4154,16 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					e.add(de);
 
 					de = new DataElement();
-					if(ssp.getValore()!=null)
-						de.setValue(ssp.getValore().toString());
+					if(ssp.getValore()!=null) {
+						if(StringUtils.isNotEmpty(ssp.getValore()) &&
+								BYOKManager.isEnabledBYOK() &&
+								this.core.getDriverBYOKUtilities().isWrapped(ssp.getValore())) {
+							de.setValue(CostantiControlStation.VALORE_CIFRATO);
+						}
+						else {
+							de.setValue(ssp.getValore());
+						}
+					}
 					e.add(de);
 
 					dati.add(e);
@@ -4190,10 +4202,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
-		de.setType(DataElementType.TEXT_EDIT);
-		de.setRequired(true);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE);
-		de.setValue(valore);
+		this.core.getLockUtilities().lockProperty(de, valore);
+		de.setRequired(true);
 		de.setSize(size);
 		dati.add(de);
 
@@ -4201,12 +4212,12 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		
 	}
 
-	public boolean porteAppPropCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean porteAppPropCheckData(TipoOperazione tipoOp) throws ControlStationCoreException {
 		try {
 			String idPorta = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(idPorta);
 			String nome = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-			String valore = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE);
+			String valore = this.getLockedParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE, false);
 
 			// Campi obbligatori
 			if (nome.equals("") || valore.equals("")) {
@@ -4225,18 +4236,22 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				return false;
 			}
 
-			// Controllo che non ci siano spazi nei campi di testo
-			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
+			if (nome.indexOf(" ") != -1) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
-			
-			// Check Lunghezza
-			if(this.checkLength255(nome, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)==false) {
+			if(!this.checkLength255(nome, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)) {
 				return false;
 			}
-			if(this.checkLength255(valore, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE)==false) {
-				return false;
+			
+			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore) ){
+				if (valore.indexOf(" ") != -1) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+					return false;
+				}
+				if(!this.checkLength255(valore, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE)) {
+					return false;
+				}
 			}
 
 			// Se tipoOp = add, controllo che la property non sia gia'
@@ -5716,6 +5731,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 	
 	public void preparePorteDelegateAutorizzazioneCustomPropList(String nomePorta, ConsoleSearch ricerca, List<Proprieta> lista) throws Exception {
 		try {
+			if(nomePorta!=null) {
+				// nop
+			}
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
@@ -5816,7 +5835,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					e.add(de);
 
 					de = new DataElement();
-					de.setValue(ssp.getValore());
+					if(StringUtils.isNotEmpty(ssp.getValore()) &&
+							BYOKManager.isEnabledBYOK() &&
+							this.core.getDriverBYOKUtilities().isWrapped(ssp.getValore())) {
+						de.setValue(CostantiControlStation.VALORE_CIFRATO);
+					}
+					else {
+						de.setValue(ssp.getValore());
+					}
 					e.add(de);
 
 					dati.add(e);
@@ -5832,7 +5858,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		}
 	}
 
-	public boolean proprietaAutorizzazioneCheckData(TipoOperazione tipoOp, String idPorta, String nome, String valore ) throws Exception {
+	public boolean proprietaAutorizzazioneCheckData(TipoOperazione tipoOp, String idPorta, String nome, String valore ) throws ControlStationCoreException {
 		try {
 			int idInt = Integer.parseInt(idPorta);
 
@@ -5853,18 +5879,22 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				return false;
 			}
 
-			// Controllo che non ci siano spazi nei campi di testo
-			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
+			if (nome.indexOf(" ") != -1) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
-			
-			// Check Lunghezza
-			if(this.checkLength255(nome, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)==false) {
+			if(!this.checkLength255(nome, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)) {
 				return false;
 			}
-			if(this.checkLength255(valore, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE)==false) {
-				return false;
+			
+			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore) ){
+				if (valore.indexOf(" ") != -1) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+					return false;
+				}
+				if(!this.checkLength255(valore, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE)) {
+					return false;
+				}
 			}
 
 			// Se tipoOp = add, controllo che la property non sia gia'
@@ -5912,6 +5942,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 	
 	public void preparePorteDelegateAutorizzazioneContenutoCustomPropList(String nomePorta, ConsoleSearch ricerca, List<Proprieta> lista) throws Exception {
 		try {
+			if(nomePorta!=null) {
+				// nop
+			}
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
@@ -6012,7 +6046,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					e.add(de);
 
 					de = new DataElement();
-					de.setValue(ssp.getValore());
+					if(StringUtils.isNotEmpty(ssp.getValore()) &&
+							BYOKManager.isEnabledBYOK() &&
+							this.core.getDriverBYOKUtilities().isWrapped(ssp.getValore())) {
+						de.setValue(CostantiControlStation.VALORE_CIFRATO);
+					}
+					else {
+						de.setValue(ssp.getValore());
+					}
 					e.add(de);
 
 					dati.add(e);
@@ -6028,7 +6069,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		}
 	}
 
-	public boolean proprietaAutorizzazioneContenutoCheckData(TipoOperazione tipoOp, String idPorta, String nome, String valore ) throws Exception {
+	public boolean proprietaAutorizzazioneContenutoCheckData(TipoOperazione tipoOp, String idPorta, String nome, String valore ) throws ControlStationCoreException {
 		try {
 			int idInt = Integer.parseInt(idPorta);
 
@@ -6049,20 +6090,24 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				return false;
 			}
 
-			// Controllo che non ci siano spazi nei campi di testo
-			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
+			if (nome.indexOf(" ") != -1) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
+			if(!this.checkLength255(nome, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)) {
+				return false;
+			}
 			
-			// Check Lunghezza
-			if(this.checkLength255(nome, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)==false) {
-				return false;
+			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore) ){
+				if (valore.indexOf(" ") != -1) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+					return false;
+				}
+				if(!this.checkLength255(valore, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE)) {
+					return false;
+				}
 			}
-			if(this.checkLength255(valore, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE)==false) {
-				return false;
-			}
-
+				
 			// Se tipoOp = add, controllo che la property non sia gia'
 			// stata
 			// registrata per la porta applicativa
@@ -6108,6 +6153,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 	
 	public void preparePorteDelegateAutenticazioneCustomPropList(String nomePorta, ConsoleSearch ricerca, List<Proprieta> lista) throws Exception {
 		try {
+			if(nomePorta!=null) {
+				// nop
+			}
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
@@ -6208,7 +6257,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					e.add(de);
 
 					de = new DataElement();
-					de.setValue(ssp.getValore());
+					if(StringUtils.isNotEmpty(ssp.getValore()) &&
+							BYOKManager.isEnabledBYOK() &&
+							this.core.getDriverBYOKUtilities().isWrapped(ssp.getValore())) {
+						de.setValue(CostantiControlStation.VALORE_CIFRATO);
+					}
+					else {
+						de.setValue(ssp.getValore());
+					}
 					e.add(de);
 
 					dati.add(e);
@@ -6224,7 +6280,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		}
 	}
 
-	public boolean proprietaAutenticazioneCheckData(TipoOperazione tipoOp, String idPorta, String nome, String valore ) throws Exception {
+	public boolean proprietaAutenticazioneCheckData(TipoOperazione tipoOp, String idPorta, String nome, String valore ) throws ControlStationCoreException {
 		try {
 			int idInt = Integer.parseInt(idPorta);
 
@@ -6245,18 +6301,21 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				return false;
 			}
 
-			// Controllo che non ci siano spazi nei campi di testo
-			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
+			if (nome.indexOf(" ") != -1) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
-			
-			// Check Lunghezza
-			if(this.checkLength255(nome, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)==false) {
+			if(!this.checkLength255(nome, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)) {
 				return false;
 			}
-			if(this.checkLength255(valore, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE)==false) {
-				return false;
+			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore) ){
+				if (valore.indexOf(" ") != -1) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+					return false;
+				}
+				if(!this.checkLength255(valore, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE)) {
+					return false;
+				}
 			}
 
 			// Se tipoOp = add, controllo che la property non sia gia'
