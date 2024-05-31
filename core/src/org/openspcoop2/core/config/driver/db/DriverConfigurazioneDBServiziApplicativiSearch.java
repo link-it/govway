@@ -25,6 +25,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
@@ -2563,7 +2564,6 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.COLUMN_ID+"="+CostantiDB.SERVIZI_APPLICATIVI_PROPS+"."+CostantiDB.SERVIZI_APPLICATIVI_PROPS_ID_SERVIZIO_APPLICATIVO_REF);
 				sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI_PROPS+"."+CostantiDB.SERVIZI_APPLICATIVI_PROPS_COLUMN_NOME, search, true, true);	
 				
-				sqlQueryObject.setSelectDistinct(true);
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -2574,7 +2574,6 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.COLUMN_ID+"=?");
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.COLUMN_ID+"="+CostantiDB.SERVIZI_APPLICATIVI_PROPS+"."+CostantiDB.SERVIZI_APPLICATIVI_PROPS_ID_SERVIZIO_APPLICATIVO_REF);
 
-				sqlQueryObject.setSelectDistinct(true);
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			}
@@ -2596,12 +2595,12 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI_PROPS+"."+CostantiDB.SERVIZI_APPLICATIVI_PROPS_COLUMN_NOME);
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI_PROPS+".valore");
+				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI_PROPS+".enc_value");
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI_PROPS+"."+CostantiDB.COLUMN_ID);
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.COLUMN_ID+"=?");
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.COLUMN_ID+"="+CostantiDB.SERVIZI_APPLICATIVI_PROPS+"."+CostantiDB.SERVIZI_APPLICATIVI_PROPS_ID_SERVIZIO_APPLICATIVO_REF);
 				sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI_PROPS+"."+CostantiDB.SERVIZI_APPLICATIVI_PROPS_COLUMN_NOME, search, true, true);	
 				
-				sqlQueryObject.setSelectDistinct(true);
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy(CostantiDB.SERVIZI_APPLICATIVI_PROPS+"."+CostantiDB.SERVIZI_APPLICATIVI_PROPS_COLUMN_NOME);
 				sqlQueryObject.setSortType(true);
@@ -2615,11 +2614,11 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI_PROPS+"."+CostantiDB.SERVIZI_APPLICATIVI_PROPS_COLUMN_NOME);
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI_PROPS+".valore");
+				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI_PROPS+".enc_value");
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI_PROPS+"."+CostantiDB.COLUMN_ID);
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.COLUMN_ID+"=?");
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+"."+CostantiDB.COLUMN_ID+"="+CostantiDB.SERVIZI_APPLICATIVI_PROPS+"."+CostantiDB.SERVIZI_APPLICATIVI_PROPS_ID_SERVIZIO_APPLICATIVO_REF);
 				
-				sqlQueryObject.setSelectDistinct(true);
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy(CostantiDB.SERVIZI_APPLICATIVI_PROPS+"."+CostantiDB.SERVIZI_APPLICATIVI_PROPS_COLUMN_NOME);
 				sqlQueryObject.setSortType(true);
@@ -2638,7 +2637,16 @@ public class DriverConfigurazioneDBServiziApplicativiSearch {
 				Proprieta proprieta = new Proprieta();
 				proprieta.setId(risultato.getLong("id"));
 				proprieta.setNome(risultato.getString("nome"));
-				proprieta.setValore(risultato.getString("valore"));
+				
+				String plainValue = risultato.getString("valore");
+				String encValue = risultato.getString("enc_value");
+				if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+					proprieta.setValore(encValue);
+				}
+				else {
+					proprieta.setValore(plainValue);
+				}
+
 				lista.add(proprieta );
 
 			}

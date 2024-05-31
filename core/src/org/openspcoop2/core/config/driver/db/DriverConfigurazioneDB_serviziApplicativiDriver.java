@@ -1107,7 +1107,22 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					
 					Proprieta proprieta = new Proprieta();
 					proprieta.setNome(rs.getString("nome"));
-					proprieta.setValore(rs.getString("valore"));
+					
+					String plainValue = rs.getString("valore");
+					String encValue = rs.getString("enc_value");
+					if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+						IDriverBYOK driverBYOK = this.driver.getDriverUnwrapBYOK();
+						if(driverBYOK!=null) {
+							proprieta.setValore(driverBYOK.unwrapAsString(encValue));
+						}
+						else {
+							proprieta.setValore(encValue);
+						}
+					}
+					else {
+						proprieta.setValore(plainValue);
+					}
+					
 					sa.addProprieta(proprieta);
 				
 				}

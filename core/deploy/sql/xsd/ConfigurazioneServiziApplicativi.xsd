@@ -889,6 +889,17 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="enc_value" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="enc_value" text="true"/>
+                                <linkit:sql-ddl-column-comment>Valore cifrato associato alla proprietà</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                 </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>

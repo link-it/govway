@@ -2841,9 +2841,12 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public String wrapValoreProprieta(String valore) throws DriverControlStationException, UtilsException {
+		return wrapValoreProprieta(CostantiControlStation.PARAMETRO_VALORE, valore);
+	}
+	public String wrapValoreProprieta(String nomeParametro, String valore) throws DriverControlStationException, UtilsException {
 		if(valore!=null && StringUtils.isNotEmpty(valore) &&
 			BYOKManager.isEnabledBYOK() &&
-			CostantiControlStation.PARAMETRO_VALORE.equals(this.getPostBackElementName())) {
+			nomeParametro.equals(this.getPostBackElementName())) {
 			// è stata richiesta la cifratura
 			return this.core.getDriverBYOKUtilities().wrap(valore);
 		}

@@ -80,6 +80,7 @@ import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.KeystoreParams;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.crypt.PasswordGenerator;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
@@ -4884,22 +4885,21 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
-		de.setType(DataElementType.TEXT_EDIT);
-		de.setRequired(true);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE);
-		de.setValue(valore);
+		this.core.getLockUtilities().lockProperty(de, valore);
+		de.setRequired(true);
 		de.setSize(size);
 		dati.add(de);
 
 		return dati;
 	}
 	
-	public boolean serviziApplicativiProprietaCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean serviziApplicativiProprietaCheckData(TipoOperazione tipoOp) throws DriverControlStationException {
 		try {
 			String id = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
 			int idServizioApplicativo = Integer.parseInt(id);
 			String nome = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_NOME);
-			String valore = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE);
+			String valore = this.getLockedParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE, false);
 
 			// Campi obbligatori
 			if (nome.equals("") || valore.equals("")) {
@@ -4919,17 +4919,22 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
-			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
+			if (nome.indexOf(" ") != -1) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
-			
-			// Check Lunghezza
-			if(this.checkLength255(nome, ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROP_NOME)==false) {
+			if(!this.checkLength255(nome, ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROP_NOME)) {
 				return false;
 			}
-			if(this.checkLength4000(valore, ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE)==false) {
-				return false;
+			
+			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore) ){
+				if (valore.indexOf(" ") != -1) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+					return false;
+				}
+				if(!this.checkLength4000(valore, ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE)) {
+					return false;
+				}
 			}
 
 			// Se tipoOp = add, controllo che la property non sia gia'
@@ -4959,11 +4964,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			return true;
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e.getMessage(),e);
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
 	}
 	
-	public void prepareServiziApplicativiProprietaList(ServizioApplicativo sa, ConsoleSearch ricerca, List<Proprieta> lista) throws Exception{
+	public void prepareServiziApplicativiProprietaList(ServizioApplicativo sa, ConsoleSearch ricerca, List<Proprieta> lista) throws DriverControlStationException {
 		try {
 			boolean modalitaCompleta = this.isModalitaCompleta();
 			
@@ -4988,7 +4993,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				parametersServletSAChange.add(pDominio);
 			}
 			
-			if(useIdSogg){
+			if(useIdSogg!=null && useIdSogg.booleanValue()){
 				Parameter pProvider = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, idProvider); 
 				List<Parameter> parametersServletSAChangeProvider = new ArrayList<>();
 				parametersServletSAChangeProvider.add(pProvider);
@@ -5010,7 +5015,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String tmpTitle = null;
 			String protocolloSoggetto = null;
 			boolean supportAsincroni = true;
-			if(useIdSogg){
+			if(useIdSogg!=null && useIdSogg.booleanValue()){
 				if(this.core.isRegistroServiziLocale()){
 					Soggetto tmpSogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idProvider));
 					protocolloSoggetto = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tmpSogg.getTipo());
@@ -5027,17 +5032,19 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 							|| this.core.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocolloSoggetto, serviceBinding, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO);
 				}
 				
-				if(supportAsincroni==false){
-					if (this.isModalitaAvanzata()){
-						supportAsincroni = this.core.isElenchiSAAsincroniNonSupportatiVisualizzaRispostaAsincrona();
-					}
+				if(!supportAsincroni &&
+					this.isModalitaAvanzata()){
+					supportAsincroni = this.core.isElenchiSAAsincroniNonSupportatiVisualizzaRispostaAsincrona();
 				}
+			}
+			if(supportAsincroni) {
+				// nop
 			}
 			
 			// setto la barra del titolo
 			String labelApplicativi = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
 			String labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI;
-			if(modalitaCompleta==false) {
+			if(!modalitaCompleta) {
 				labelApplicativi = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
 				labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_APPLICATIVI_DI;
 			}
@@ -5099,8 +5106,16 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					e.add(de);
 
 					de = new DataElement();
-					if(ssp.getValore()!=null)
-						de.setValue(ssp.getValore().toString());
+					if(ssp.getValore()!=null) {
+						if(StringUtils.isNotEmpty(ssp.getValore()) &&
+								BYOKManager.isEnabledBYOK() &&
+								this.core.getDriverBYOKUtilities().isWrapped(ssp.getValore())) {
+							de.setValue(CostantiControlStation.VALORE_CIFRATO);
+						}
+						else {
+							de.setValue(ssp.getValore());
+						}
+					}
 					e.add(de);
 
 					dati.add(e);
@@ -5112,7 +5127,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e.getMessage(),e);
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
 	}
 

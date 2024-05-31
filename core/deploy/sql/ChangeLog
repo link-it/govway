@@ -3,6 +3,8 @@ TODO
 	ALTER TABLE servizi_applicativi ADD COLUMN enc_passwordrisp TEXT;
 	ALTER TABLE servizi_applicativi ADD COLUMN enc_passwordinv TEXT;
 
+	ALTER TABLE sa_properties ADD COLUMN enc_value TEXT;
+
 	ALTER TABLE connettori ADD COLUMN enc_password TEXT;
 	ALTER TABLE connettori ADD COLUMN enc_proxy_password TEXT;
 	ALTER TABLE connettori ADD COLUMN api_key TEXT;
