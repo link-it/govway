@@ -175,8 +175,8 @@
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>	
-				<include name="xmlunit-legacy-2.9.0.jar" />
-				<include name="xmlunit-core-2.9.0.jar" />
+				<include name="xmlunit-legacy-2.10.0.jar" />
+				<include name="xmlunit-core-2.10.0.jar" />
 				<include name="snakeyaml-1.33-gov4j-1.jar" />
 				<include name="freemarker-2.3.31.jar" />
 				<include name="jakarta.activation-1.2.2.jar" />
@@ -225,9 +225,9 @@
 			<lib dir="${required_lib}/security">
 				<include name="xmlsec-2.3.4-gov4j-1.jar"/>
 				<include name="neethi-3.2.0.jar" />
-				<include name="bcpkix-jdk18on-1.77.jar"/>
-				<include name="bcprov-ext-jdk18on-1.77.jar"/>
-				<include name="bcutil-jdk18on-1.77.jar"/>
+				<include name="bcpkix-jdk18on-1.78.1.jar"/>
+				<include name="bcprov-jdk18on-1.78.1.jar"/>
+				<include name="bcutil-jdk18on-1.78.1.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 				<include name="nimbus-jose-jwt-9.37.3.jar"/>
 			</lib>
