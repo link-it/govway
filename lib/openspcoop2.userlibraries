@@ -182,9 +182,9 @@
 	<!-- security -->
         <archive path="/op2_3.4.dev/lib/security/xmlsec-3.0.3-gov4j-1.jar"/>
         <archive path="/op2_3.4.dev/lib/security/neethi-3.2.0.jar"/>
-        <archive path="/op2_3.4.dev/lib/security/bcprov-ext-jdk18on-1.77.jar"/>
-	<archive path="/op2_3.4.dev/lib/security/bcpkix-jdk18on-1.77.jar"/>
-	<archive path="/op2_3.4.dev/lib/security/bcutil-jdk18on-1.77.jar"/>
+        <archive path="/op2_3.4.dev/lib/security/bcprov-jdk18on-1.78.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/security/bcpkix-jdk18on-1.78.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/security/bcutil-jdk18on-1.78.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/security/herasaf-xacml-core-3.0.2.jar"/>
 	<archive path="/op2_3.4.dev/lib/security/nimbus-jose-jwt-9.37.3.jar"/>
 	<archive path="/op2_3.4.dev/lib/security/jasypt-1.9.3.jar"/>
@@ -207,8 +207,8 @@
         <archive path="/op2_3.4.dev/lib/shared/serializer-2.7.3.jar"/>
         <archive path="/op2_3.4.dev/lib/shared/xercesImpl-2.12.2.jar"/>
 	<!-- <archive path="/op2_3.4.dev/lib/shared/xml-apis-1.4.01.jar"/> The package org.w3c.dom is accessible from more than one module: <unnamed>, java.xml -->
-	<archive path="/op2_3.4.dev/lib/shared/xmlunit-legacy-2.9.1.jar"/>
-	<archive path="/op2_3.4.dev/lib/shared/xmlunit-core-2.9.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/xmlunit-legacy-2.10.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/xmlunit-core-2.10.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/ehcache-3.10.8.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/rhino-1.7.14.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/hazelcast-5.3.5.jar"/>

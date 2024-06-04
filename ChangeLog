@@ -1,3 +1,13 @@
+2024-06-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2024-34447, CVE-2024-30172, CVE-2024-30171, CVE-2024-29857:
+                      aggiornata libreria 'org.bouncycastle:bcprov-ext-jdk18on' alla versione 1.78.1 (migrazione verso bcprov-jdk18on)
+                      aggiornata libreria 'org.bouncycastle:bcpkix-jdk18on' alla versione 1.78.1
+                      aggiornata libreria 'org.bouncycastle:bcutil-jdk18on' alla versione 1.78.1
+	- CVE-2024-31573: aggiornata libreria 'org.xmlunit:*' alla versione 2.10.0
+
 2024-04-26  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
