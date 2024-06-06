@@ -48,6 +48,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
+import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.state.OpenSPCoopState;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
@@ -379,6 +380,7 @@ public class LocalForwardEngine {
 						String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getOutgoingProperties());
 						this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
 						this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRichiestaInCorso");					
+						DynamicMapBuilderUtils.injectDynamicMap(this.busta, this.requestInfo, pddContext, this.localForwardParameter.getLog());
 						if(messageSecurityContext.processOutgoing(requestMessage,this.localForwardParameter.getPddContext(),
 								getTransactionNullable()!=null ? getTransactionNullable().getTempiElaborazione() : null) == false){
 							msgErrore = messageSecurityContext.getMsgErrore();
@@ -622,6 +624,7 @@ public class LocalForwardEngine {
 					String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getIncomingProperties());
 					this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
 					this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRichiestaInCorso");					
+					DynamicMapBuilderUtils.injectDynamicMap(this.busta, this.requestInfo, this.localForwardParameter.getPddContext(), this.localForwardParameter.getLog());
 					if(messageSecurityContext.processIncoming(requestMessage,this.busta,this.localForwardParameter.getPddContext(),
 							getTransactionNullable()!=null ? getTransactionNullable().getTempiElaborazione() : null) == false){  
 						if(messageSecurityContext.getListaSubCodiceErrore()!=null && messageSecurityContext.getListaSubCodiceErrore().size()>0){
@@ -932,6 +935,7 @@ public class LocalForwardEngine {
 					this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
 					this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRispostaInCorso");					
 					messageSecurityApply = true;
+					DynamicMapBuilderUtils.injectDynamicMap(this.busta, this.requestInfo, pddContext, this.localForwardParameter.getLog());
 					if(messageSecurityContext.processOutgoing(responseMessage,this.localForwardParameter.getPddContext(),
 							getTransactionNullable()!=null ? getTransactionNullable().getTempiElaborazione() : null) == false){
 						msgErrore = messageSecurityContext.getMsgErrore();
@@ -1114,6 +1118,7 @@ public class LocalForwardEngine {
 						String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getIncomingProperties());
 						this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
 						this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRispostaInCorso");					
+						DynamicMapBuilderUtils.injectDynamicMap(this.busta, this.requestInfo, this.localForwardParameter.getPddContext(), this.localForwardParameter.getLog());
 						if(messageSecurityContext.processIncoming(responseMessage,this.busta,this.localForwardParameter.getPddContext(),
 								getTransactionNullable()!=null ? getTransactionNullable().getTempiElaborazione() : null) == false){
 							msgErrore = messageSecurityContext.getMsgErrore();

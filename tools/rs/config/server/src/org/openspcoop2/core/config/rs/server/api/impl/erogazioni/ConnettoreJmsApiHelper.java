@@ -110,6 +110,7 @@ public class ConnettoreJmsApiHelper extends AbstractConnettoreApiHelper<Connetto
 				null,	// httpsKeyAlias
 				null,	// httpsTrustStoreCRLs
         		null,	// httpsTrustStoreOCSPPolicy
+        		null,	// httpsKeyStoreBYOKPolicy
 				null,																//	tipoconn (personalizzato)
 				ServletUtils.boolToCheckBoxStatus(false),										 	//autenticazioneHttp,
 				ServletUtils.boolToCheckBoxStatus(false),	
@@ -202,6 +203,7 @@ public class ConnettoreJmsApiHelper extends AbstractConnettoreApiHelper<Connetto
 				null,  //httpsKeyAlias
 				null,  //httpsTrustStoreCRLs
         		null,  //httpsTrustStoreOCSPPolicy
+        		null,  //httpsKeyStoreBYOKPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( false ),	
 				null,
@@ -285,6 +287,7 @@ public class ConnettoreJmsApiHelper extends AbstractConnettoreApiHelper<Connetto
 				null,  //httpsKeyAlias
 				null,  //httpsTrustStoreCRLs
         		null,  //httpsTrustStoreOCSPPolicy
+        		null,  //httpsKeyStoreBYOKPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( false ),	
 				null,

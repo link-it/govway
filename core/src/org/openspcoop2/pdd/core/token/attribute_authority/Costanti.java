@@ -95,6 +95,7 @@ public class Costanti {
 	public static final String AA_REQUEST_JWT_SIGN_KEYSTORE_FILE_PUBLIC = "policy.attributeAuthority.request.jws.keystore.file.public";
 	public static final String AA_REQUEST_JWT_SIGN_KEYSTORE_FILE_ALGORITHM = "policy.attributeAuthority.request.jws.keystore.file.algorithm";
 	public static final String AA_REQUEST_JWT_SIGN_KEYSTORE_PASSWORD = CostantiProprieta.AA_REQUEST_JWT_SIGN_KEYSTORE_PASSWORD;
+	public static final String AA_REQUEST_JWT_SIGN_KEYSTORE_BYOK_POLICY = "policy.attributeAuthority.request.jws.keystore.byok";
 	public static final String AA_REQUEST_JWT_SIGN_KEY_ALIAS = "policy.attributeAuthority.request.jws.key.alias";
 	public static final String AA_REQUEST_JWT_SIGN_KEY_PASSWORD = CostantiProprieta.AA_REQUEST_JWT_SIGN_KEY_PASSWORD;
 	

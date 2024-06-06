@@ -28,15 +28,19 @@ import org.openspcoop2.core.byok.BYOKUtilities;
 import org.openspcoop2.core.byok.BYOKWrappedValue;
 import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
+import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
+import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.BYOKLocalEncrypt;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.certificate.byok.BYOKConfig;
 import org.openspcoop2.utils.certificate.byok.BYOKInstance;
 import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.certificate.byok.BYOKMode;
+import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 import org.openspcoop2.utils.certificate.byok.BYOKSecurityConfig;
 import org.openspcoop2.utils.certificate.byok.BYOKSecurityConfigParameter;
@@ -252,33 +256,24 @@ public class DriverBYOK implements IDriverBYOK {
 				inputMap, this.dynamicMap);
 	}
 	
+	public static BYOKRequestParams getBYOKRequestParamsByUnwrapBYOKPolicy(String ksmId,
+			Busta busta, RequestInfo requestInfo, Context context, Logger log) throws UtilsException {
+		if(BYOKProvider.isPolicyDefined(ksmId)){
+			Map<String,Object> dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(busta, requestInfo, context, log);
+			return BYOKProvider.getBYOKRequestParamsByUnwrapBYOKPolicy(ksmId, dynamicMap);
+		}
+		return null;
+	}
+	
 	public static BYOKRequestParams getBYOKRequestParamsByKsmId(String ksmId, 
 			Map<String, String> inputMap, Map<String, Object> dynamicMap) throws UtilsException {
-		
-		BYOKManager manager = BYOKManager.getInstance();
-		if(manager==null) {
-			throw new UtilsException("BYOKManager not initialized");
-		}
-		
-		return getBYOKRequestParamsByKsmId(ksmId, manager, 
-				inputMap, dynamicMap);
+		return BYOKRequestParams.getBYOKRequestParamsByKsmId(ksmId, 
+				inputMap,dynamicMap);
 	}
 	public static BYOKRequestParams getBYOKRequestParamsByKsmId(String ksmId, BYOKManager manager, 
 			Map<String, String> inputMap, Map<String, Object> dynamicMap) throws UtilsException {
-		BYOKConfig bconfig = manager.getKSMConfigByType(ksmId);
-		if(bconfig==null) {
-			throw new UtilsException("BYOK configuration for ksm id '"+ksmId+"' not found");
-		}
-		BYOKRequestParams req = new BYOKRequestParams();
-		req.setConfig(bconfig);
-			
-		req.setInputMap(inputMap);
-		
-		req.setDynamicMap(dynamicMap);
-		
-		req.setKeyIdentity(ksmId);
-		
-		return req;
+		return BYOKRequestParams.getBYOKRequestParamsByKsmId(ksmId, manager, 
+				inputMap, dynamicMap);
 	}
 	
 	private byte[] process(BYOKInstance instance) throws UtilsException{

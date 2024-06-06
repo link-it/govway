@@ -129,6 +129,7 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				httpsClient!=null ? evalnull( httpsClient::getKeyAlias ) : null,					// httpsKeyAlias
         		httpsServer!=null ? evalnull( httpsServer::getTruststoreCrl ) : null,					// httpsTrustStoreCRLs
         		httpsServer!=null ? evalnull( httpsServer::getTruststoreOcspPolicy) : null,					// httpsTrustStoreOCSPPolicy
+                httpsClient!=null ? evalnull( httpsClient::getKeystoreByokPolicy) : null,				// httpsKeyStoreBYOKPolicy
 				null,																//	tipoconn (personalizzato)
 				ServletUtils.boolToCheckBoxStatus( http_stato ),										 	//autenticazioneHttp,
 				ServletUtils.boolToCheckBoxStatus( proxy_enabled ),	
@@ -244,6 +245,7 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				httpsClient!=null ? evalnull( httpsClient::getKeyAlias ) : null,					// httpsKeyAlias
         		httpsServer!=null ? evalnull( httpsServer::getTruststoreCrl ) : null,					// httpsTrustStoreCRLs
         		httpsServer!=null ? evalnull( httpsServer::getTruststoreOcspPolicy) : null,				// httpsTrustStoreOCSPPolicy
+                httpsClient!=null ? evalnull( httpsClient::getKeystoreByokPolicy) : null,				// httpsKeyStoreBYOKPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( proxy_enabled ),	
 				proxy!=null ? evalnull( proxy::getHostname ) : null,
@@ -349,6 +351,7 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				httpsClient!=null ? evalnull( httpsClient::getKeyAlias ) : null,					// httpsKeyAlias
         		httpsServer!=null ? evalnull( httpsServer::getTruststoreCrl ) : null,					// httpsTrustStoreCRLs
         		httpsServer!=null ? evalnull( httpsServer::getTruststoreOcspPolicy) : null,				// httpsTrustStoreOCSPPolicy
+                httpsClient!=null ? evalnull( httpsClient::getKeystoreByokPolicy) : null,				// httpsKeyStoreBYOKPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( proxy_enabled ),	
 				proxy!=null ? evalnull( proxy::getHostname ) : null,

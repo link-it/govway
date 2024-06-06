@@ -747,6 +747,7 @@ public class ErogazioniApiHelper {
         		httpsClient!=null ? evalnull( httpsClient::getKeyAlias ) : null,					// httpsKeyAlias
         		httpsServer!=null ? evalnull( httpsServer::getTruststoreCrl ) : null,					// httpsTrustStoreCRLs
         		httpsServer!=null ? evalnull( httpsServer::getTruststoreOcspPolicy) : null,				// httpsTrustStoreOCSPPolicy
+        		httpsClient!=null ? evalnull( httpsClient::getKeystoreByokPolicy) : null,				// httpsKeyStoreBYOKPolicy
         		null, 								// tipoconn Da debug = null.	
         		as.getVersione().toString(), 		// Versione aspc
         		false,								// validazioneDocumenti Da debug = false
@@ -1546,6 +1547,7 @@ public class ErogazioniApiHelper {
         		httpsClient!=null ? evalnull( httpsClient::getKeyAlias ) : null,					// httpsKeyAlias
         		httpsServer!=null ? evalnull( httpsServer::getTruststoreCrl ) : null,					// httpsTrustStoreCRLs
         		httpsServer!=null ? evalnull( httpsServer::getTruststoreOcspPolicy) : null,				// httpsTrustStoreOCSPPolicy
+                httpsClient!=null ? evalnull( httpsClient::getKeystoreByokPolicy) : null,				// httpsKeyStoreBYOKPolicy
         		null, 								// tipoconn Da debug = null.	
         		asps.getVersione().toString(), //as.getVersione().toString(), 		// Versione aspc
         		false,								// validazioneDocumenti Da debug = false
@@ -1713,6 +1715,7 @@ public class ErogazioniApiHelper {
 				httpsClient!=null ? evalnull( httpsClient::getKeyAlias ) : null,					// httpsKeyAlias
 				httpsServer!=null ? evalnull( httpsServer::getTruststoreCrl ) : null,					// httpsTrustStoreCRLs
 				httpsServer!=null ? evalnull( httpsServer::getTruststoreOcspPolicy) : null,				// httpsTrustStoreOCSPPolicy
+		        httpsClient!=null ? evalnull( httpsClient::getKeystoreByokPolicy) : null,				// httpsKeyStoreBYOKPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( proxy_enabled ),	
 				proxy!=null ? evalnull( proxy::getHostname ) : null,

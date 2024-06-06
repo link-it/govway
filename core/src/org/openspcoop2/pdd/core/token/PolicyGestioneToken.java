@@ -258,7 +258,18 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 	}
 	
 	public boolean isEndpointHttps() {
-		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_ENDPOINT_HTTPS_STATO);	
+		return isEndpointHttps(true, true);
+	}
+	public boolean isEndpointHttps(boolean checkIntrospection, boolean checkUserInfo) {
+		// Devo considerare anche la possibilità che sia abilitato solamente con clientAuth su introspection o userinfo
+		boolean enabled = TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_ENDPOINT_HTTPS_STATO);
+		if(!enabled && checkIntrospection && TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_INTROSPECTION_AUTH_SSL_STATO)) {
+			enabled = true;
+		}
+		if(!enabled && checkUserInfo && TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_USER_INFO_AUTH_SSL_STATO)) {
+			enabled = true;
+		}
+		return enabled;
 	}
 	
 	

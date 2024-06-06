@@ -44,7 +44,10 @@ import org.openspcoop2.pdd.core.token.parser.ClaimsNegoziazione;
 import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
+import org.openspcoop2.utils.UtilsRuntimeException;
+import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.certificate.ocsp.OCSPProvider;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -59,6 +62,20 @@ import org.openspcoop2.utils.transport.http.SSLUtilities;
  */
 public class NegoziazioneTokenProvider implements IProvider {
 
+	private OCSPProvider ocspProvider;
+	private BYOKProvider byokProvider;
+
+	public NegoziazioneTokenProvider() {
+		this.ocspProvider = new OCSPProvider();
+		try {
+			this.byokProvider = BYOKProvider.getUnwrapInstance();
+		}catch(Exception e) {
+			throw new UtilsRuntimeException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
 	@Override
 	public void validate(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
 		
@@ -548,6 +565,13 @@ public class NegoziazioneTokenProvider implements IProvider {
 		else if(Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)) {
 			return TokenUtilities.getTokenPluginValues(externalResources, TipoPlugin.TOKEN_NEGOZIAZIONE);
 		}
+		else if(Costanti.ID_HTTPS_TRUSTSTORE_OCSP_POLICY.equals(id)) {
+			return this.ocspProvider.getValues();
+		}
+		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_BYOK_POLICY.equals(id) ||
+				Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(id)) {
+			return this.byokProvider.getValues();
+		}
 		return values;
 	}
 	private List<String> getValuesSignatureAlgorithm(String id) {
@@ -597,6 +621,13 @@ public class NegoziazioneTokenProvider implements IProvider {
 		}
 		else if(Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)) {
 			return TokenUtilities.getTokenPluginLabels(externalResources, TipoPlugin.TOKEN_NEGOZIAZIONE);
+		}
+		else if(Costanti.ID_HTTPS_TRUSTSTORE_OCSP_POLICY.equals(id)) {
+			return this.ocspProvider.getLabels();
+		}
+		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_BYOK_POLICY.equals(id) ||
+				Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(id)) {
+			return this.byokProvider.getLabels();
 		}
 		return this.getValues(id); // torno uguale ai valori negli altri casi
 	}
@@ -825,19 +856,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 			return dynamicUpdateStoreKeyPassword(items, mapNameValue, item, actualValue);	
 		}
 		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_ALIAS_PRIVATE_KEY.equals(item.getName()) ) {
-			
-			String type = Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE;
-			
-			String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
-			if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
-				item.setValue("-");
-				item.setType(ItemType.HIDDEN);
-				return item.getValue();
-			}
-			else {
-				item.setType(ItemType.TEXT);
-			}
-			
+			return dynamicUpdateStoreKeyAlias(items, mapNameValue, item, actualValue);
 		}		
 		else if(Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE.equals(item.getName())) {
 			return TokenUtilities.dynamicUpdateTokenPluginChoice(externalResources, TipoPlugin.TOKEN_NEGOZIAZIONE, item, actualValue);
@@ -846,6 +865,16 @@ public class NegoziazioneTokenProvider implements IProvider {
 			return TokenUtilities.dynamicUpdateTokenPluginClassName(externalResources, TipoPlugin.TOKEN_NEGOZIAZIONE, 
 					items, mapNameValue, item, 
 					Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE, actualValue);			
+		}
+		else if(Costanti.ID_HTTPS_TRUSTSTORE_OCSP_POLICY.equals(item.getName())) {
+			if(!this.ocspProvider.isOcspEnabled()) {
+				item.setValue("");
+				item.setType(ItemType.HIDDEN);
+			}
+		}
+		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_BYOK_POLICY.equals(item.getName()) ||
+				Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(item.getName())) {
+			return dynamicUpdateByok(items, mapNameValue, item, actualValue);
 		}
 		
 		return actualValue;
@@ -906,5 +935,49 @@ public class NegoziazioneTokenProvider implements IProvider {
 		}
 		
 		return AbstractSecurityProvider.processStoreKeyPassword(type, items, mapNameValue, item, actualValue);
+	}
+	private String dynamicUpdateStoreKeyAlias(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		String type = Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE;
+		
+		String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
+		if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
+			item.setValue("-");
+			item.setType(ItemType.HIDDEN);
+			return item.getValue();
+		}
+		else {
+			item.setType(ItemType.TEXT);
+			return actualValue;
+		}
+	}
+	private String dynamicUpdateByok(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {		
+		if(!this.byokProvider.isByokEnabled()) {
+			item.setValue("");
+			item.setType(ItemType.HIDDEN);
+			return actualValue;
+		}
+		else {
+			return dynamicUpdateByokPolicy(items, mapNameValue, item, actualValue);
+		}
+	}
+	private String dynamicUpdateByokPolicy(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		String type = null;
+		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_BYOK_POLICY.equals(item.getName())) {
+			type = Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE;
+		}
+		else if(Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(item.getName())) {
+			type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
+		}
+		
+		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
+			String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
+			if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
+				item.setValue(typeValue);
+				item.setType(ItemType.HIDDEN);
+				return item.getValue();
+			}
+		}
+		
+		return AbstractSecurityProvider.processStoreByokPolicy(type, items, mapNameValue, item, actualValue);
 	}
 }

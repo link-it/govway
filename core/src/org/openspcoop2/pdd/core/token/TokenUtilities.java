@@ -278,6 +278,7 @@ public class TokenUtilities {
 			keystoreParams.setPassword(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_PSWD));
 			keystoreParams.setKeyAlias(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS));
 			keystoreParams.setKeyPassword(p.getProperty(RSSecurityConstants.RSSEC_KEY_PSWD));
+			keystoreParams.setByokPolicy(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE+".byok"));
 			
 			fillKeyPairParamters(keystoreParams, type, p);
 			
@@ -522,12 +523,15 @@ public class TokenUtilities {
 			throw new TokenException("JWT Signature key password undefined");
 		}
 		
+		String keystoreByokPolicy = policy.getJwtSignKeystoreByokPolicy();
+		
 		KeystoreParams keystoreParams = new KeystoreParams();
 		keystoreParams.setPath(keystoreFile);
 		keystoreParams.setType(keystoreType);
 		keystoreParams.setPassword(keystorePassword);
 		keystoreParams.setKeyAlias(keyAlias);
 		keystoreParams.setKeyPassword(keyPassword);
+		keystoreParams.setByokPolicy(keystoreByokPolicy);
 		
 		fillKeyPairParamters(keystoreParams, keystoreType, policy);
 		

@@ -280,6 +280,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			strutsBean.httpsKeyAlias = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
 			strutsBean.httpsTrustStoreCRLs = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			strutsBean.httpsTrustStoreOCSPPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+			strutsBean.httpsKeyStoreBYOKPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
 			if(TipiConnettore.HTTPS.toString().equals(strutsBean.endpointtype)){
 				strutsBean.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				strutsBean.password = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -1552,7 +1553,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								strutsBean.httpspwdprivatekeytrust, strutsBean.httpspathkey,
 								strutsBean.httpstipokey, strutsBean.httpspwdkey, 
 								strutsBean.httpspwdprivatekey, strutsBean.httpsalgoritmokey,
-								strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy,
+								strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy, strutsBean.httpsKeyStoreBYOKPolicy,
 								strutsBean.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
 								null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
@@ -1629,7 +1630,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					strutsBean.httpspathkey, strutsBean.httpstipokey,
 					strutsBean.httpspwdkey, strutsBean.httpspwdprivatekey,
 					strutsBean.httpsalgoritmokey,
-					strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy,
+					strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy, strutsBean.httpsKeyStoreBYOKPolicy,
 					strutsBean.tipoconn,strutsBean.versione,strutsBean.validazioneDocumenti,null,strutsBean.autenticazioneHttp,
 					strutsBean.proxyEnabled, strutsBean.proxyHostname, strutsBean.proxyPort, strutsBean.proxyUsername, strutsBean.proxyPassword,
 					strutsBean.tempiRispostaEnabled, strutsBean.tempiRispostaConnectionTimeout, strutsBean.tempiRispostaReadTimeout, strutsBean.tempiRispostaTempoMedioRisposta,
@@ -1774,7 +1775,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								strutsBean.httpspathkey, strutsBean.httpstipokey,
 								strutsBean.httpspwdkey, strutsBean.httpspwdprivatekey,
 								strutsBean.httpsalgoritmokey, 
-								strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy,
+								strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy, strutsBean.httpsKeyStoreBYOKPolicy,
 								strutsBean.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
 								null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
@@ -1918,7 +1919,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						strutsBean.httpspathkey, strutsBean.httpstipokey,
 						strutsBean.httpspwdkey, strutsBean.httpspwdprivatekey,
 						strutsBean.httpsalgoritmokey,
-						strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy,
+						strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy, strutsBean.httpsKeyStoreBYOKPolicy,
 						strutsBean.proxyEnabled, strutsBean.proxyHostname, strutsBean.proxyPort, strutsBean.proxyUsername, strutsBean.proxyPassword,
 						strutsBean.tempiRispostaEnabled, strutsBean.tempiRispostaConnectionTimeout, strutsBean.tempiRispostaReadTimeout, strutsBean.tempiRispostaTempoMedioRisposta,
 						strutsBean.opzioniAvanzate, strutsBean.transferMode, strutsBean.transferModeChunkSize, strutsBean.redirectMode, strutsBean.redirectMaxHop,
@@ -2041,7 +2042,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								strutsBean.httpspathkey, strutsBean.httpstipokey,
 								strutsBean.httpspwdkey, strutsBean.httpspwdprivatekey,
 								strutsBean.httpsalgoritmokey, 
-								strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy,
+								strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy, strutsBean.httpsKeyStoreBYOKPolicy,
 								strutsBean.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
 								null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, 

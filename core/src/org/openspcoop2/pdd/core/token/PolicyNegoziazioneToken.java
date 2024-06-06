@@ -27,8 +27,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.mvc.properties.provider.ProviderException;
-import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.token.parser.BasicNegoziazioneTokenParser;
 import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
@@ -101,14 +99,15 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_URL);
 	}
 	
-	public boolean isEndpointHttps() throws ProviderException, ProviderValidationException{
-		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_ENDPOINT_HTTPS_STATO);	
+	public boolean isEndpointHttps() {
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_ENDPOINT_HTTPS_STATO) 
+				|| isHttpsAuthentication(); // anche solo se è abilitato httpsAuthentication, di fatto è abilitato https	
 	}
-	public boolean isHttpsAuthentication() throws ProviderException, ProviderValidationException{
+	public boolean isHttpsAuthentication() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_RETRIEVE_TOKEN_AUTH_SSL_STATO);	
 	}
 	
-	public boolean isBasicAuthentication() throws ProviderException, ProviderValidationException{
+	public boolean isBasicAuthentication() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_STATO);	
 	}
 	public String getBasicAuthenticationUsername() {
@@ -117,11 +116,11 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	public String getBasicAuthenticationPassword() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_PASSWORD);
 	}
-	public boolean isBasicAuthenticationAsAuthorizationHeader() throws ProviderException, ProviderValidationException{
+	public boolean isBasicAuthenticationAsAuthorizationHeader() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_AS_AUTHORIZATION_HEADER);	
 	}
 	
-	public boolean isBearerAuthentication() throws ProviderException, ProviderValidationException{
+	public boolean isBearerAuthentication() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BEARER_STATO);	
 	}
 	public String getBeareAuthenticationToken() {
@@ -251,7 +250,7 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_HTTP_PAYLOAD);
 	}
 	
-	public boolean isSaveErrorInCache() throws ProviderException, ProviderValidationException{
+	public boolean isSaveErrorInCache() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_RETRIEVE_TOKEN_SAVE_ERROR_IN_CACHE);	
 	}
 	
@@ -398,6 +397,9 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	}
 	public String getJwtSignKeyPassword() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD);
+	}
+	public String getJwtSignKeystoreByokPolicy() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_BYOK_POLICY);
 	}
 
 }

@@ -9675,6 +9675,9 @@ components:
           type: "string"
           description: "alias della chiave privata"
           example: "pwd"
+        keystore_byok_policy:
+          maxLength: 255
+          type: "string"
     BaseKeyStoreFile:
       type: "object"
       allOf:

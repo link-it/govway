@@ -202,6 +202,7 @@ public final class SoggettiEndPoint extends Action {
 			String httpsKeyAlias = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
 			String httpsTrustStoreCRLs = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			String httpsTrustStoreOCSPPolicy = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+			String httpsKeyStoreBYOKPolicy = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				password = soggettiHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -473,6 +474,7 @@ public final class SoggettiEndPoint extends Action {
 					httpsKeyAlias = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_ALIAS);
 					httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLS);
 					httpsTrustStoreOCSPPolicy = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+					httpsKeyStoreBYOKPolicy = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
 					if (httpspathkey == null) {
 						httpsstato = false;
 						httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
@@ -568,7 +570,7 @@ public final class SoggettiEndPoint extends Action {
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, 
 						httpspwdprivatekey, httpsalgoritmokey,
-						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 						tipoconn, SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT, id, nomeprov,
 						tipoprov, null, null, null, null, null, true, 
 						isConnettoreCustomUltimaImmagineSalvata, 
@@ -623,7 +625,7 @@ public final class SoggettiEndPoint extends Action {
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, 
 						httpspwdprivatekey,	httpsalgoritmokey,
-						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 						tipoconn, SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT, id, nomeprov,
 						tipoprov, null, null, null, null, null, true,
 						isConnettoreCustomUltimaImmagineSalvata, 
@@ -661,7 +663,7 @@ public final class SoggettiEndPoint extends Action {
 					httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, 
 					httpspwdprivatekey,	httpsalgoritmokey,
-					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
 					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,

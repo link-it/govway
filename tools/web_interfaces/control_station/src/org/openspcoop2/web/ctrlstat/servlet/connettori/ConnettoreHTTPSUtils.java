@@ -28,6 +28,7 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPProvider;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
@@ -57,7 +58,7 @@ public class ConnettoreHTTPSUtils {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
-			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy){
+			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy, String httpsKeyStoreBYOKPolicy){
 		
 		connettore.setCustom(true);
 		
@@ -196,6 +197,13 @@ public class ConnettoreHTTPSUtils {
 				prop.setValore(httpsKeyAlias);
 				connettore.addProperty(prop);
 			}
+			
+			if(httpsKeyStoreBYOKPolicy!=null && !"".equals(httpsKeyStoreBYOKPolicy)) {
+				prop = new org.openspcoop2.core.config.Property();
+				prop.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
+				prop.setValore(httpsKeyStoreBYOKPolicy);
+				connettore.addProperty(prop);
+			}
 		}
 	}
 	
@@ -206,7 +214,7 @@ public class ConnettoreHTTPSUtils {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
-			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy,
+			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy, String httpsKeyStoreBYOKPolicy,
 			String user, String pwd){
 		
 		connettore.setCustom(true);
@@ -361,6 +369,13 @@ public class ConnettoreHTTPSUtils {
 				prop.setValore(httpsKeyAlias);
 				connettore.addProperty(prop);
 			}
+			
+			if(httpsKeyStoreBYOKPolicy!=null && !"".equals(httpsKeyStoreBYOKPolicy)) {
+				prop = new org.openspcoop2.core.registry.Property();
+				prop.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
+				prop.setValore(httpsKeyStoreBYOKPolicy);
+				connettore.addProperty(prop);
+			}
 		}
 	}
 	
@@ -371,7 +386,7 @@ public class ConnettoreHTTPSUtils {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey, 
-			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy,
+			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy, String httpsKeyStoreBYOKPolicy,
 			String stato,
 			ControlStationCore core,ConsoleHelper consoleHelper, int pageSize, boolean addUrlParameter,
 			String prefix, boolean forceHttpsClient,
@@ -871,6 +886,64 @@ public class ConnettoreHTTPSUtils {
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 		de.setSize(pageSize);
 		dati.add(de);
+		
+		
+		
+		
+		
+		BYOKProvider byokProvider = BYOKProvider.getUnwrapInstance();
+		boolean byokEnabled = byokProvider.isUnwrapByokKeystoreEnabled();
+		List<String> byokTypes = byokProvider.getValues();
+		List<String> byokLabels = byokProvider.getLabels();
+		
+		de = new DataElement();
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
+		if(byokEnabled && httpsstato && !keystoreHsm) {
+			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
+				de.setType(DataElementType.SELECT);
+				de.setValues(byokTypes);
+				de.setLabels(byokLabels);
+				if(postBackViaPost) {
+					de.setPostBack_viaPOST(true);
+				}
+				else {
+					de.setPostBack(true);
+				}
+				if(httpsKeyStoreBYOKPolicy==null) {
+					httpsKeyStoreBYOKPolicy = "";
+				}	
+				de.setSelected(httpsKeyStoreBYOKPolicy);
+			}else{
+				de.setType(DataElementType.HIDDEN);
+				
+				if(httpsKeyStoreBYOKPolicy!=null &&
+						!"".equals(httpsKeyStoreBYOKPolicy)){
+					
+					String label = null;
+					for (int i = 0; i < byokTypes.size(); i++) {
+						String type = byokTypes.get(i);
+						if(type!=null && type.equals(httpsKeyStoreBYOKPolicy)) {
+							label = byokLabels.get(i);
+						}
+					}
+					if(label!=null) {
+						DataElement deLABEL = new DataElement();
+						de.setType(DataElementType.TEXT);
+						deLABEL.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
+						deLABEL.setValue(label);
+						deLABEL.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
+						dati.add(deLABEL);
+					}
+				}
+			}
+			de.setSize(pageSize);
+			de.setValue(httpsKeyStoreBYOKPolicy);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+		}
+		dati.add(de);
 	}
 	
 	public static void addHTTPSDatiAsHidden(List<DataElement> dati,
@@ -880,9 +953,13 @@ public class ConnettoreHTTPSUtils {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
-			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy,
+			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy, String httpsKeyStoreBYOKPolicy,
 			String stato,
 			ControlStationCore core,int pageSize){
+		
+		if(stato!=null && core!=null) {
+			// nop
+		}
 		
 		DataElement de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL);
@@ -1041,6 +1118,15 @@ public class ConnettoreHTTPSUtils {
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 		de.setSize(pageSize);
 		dati.add(de);
+				
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
+		de.setValue(httpsKeyStoreBYOKPolicy);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
+		de.setSize(pageSize);
+		dati.add(de);
+		
 	}
 	
 }

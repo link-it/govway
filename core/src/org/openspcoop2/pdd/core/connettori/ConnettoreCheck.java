@@ -52,6 +52,8 @@ import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
+import org.openspcoop2.pdd.core.byok.BYOKUnwrapPolicyUtilities;
+import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
@@ -71,6 +73,7 @@ import org.openspcoop2.utils.regexp.RegExpUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.utils.transport.http.IBYOKUnwrapManager;
 import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 import org.openspcoop2.utils.transport.http.WrappedLogSSLSocketFactory;
@@ -792,11 +795,15 @@ public class ConnettoreCheck {
 	private static void _checkHTTP(TipiConnettore tipoConnettore, Connettore connettore, Logger log) throws ConnettoreException, UtilsException, MalformedURLException {
 		
 		SSLConfig sslContextProperties = null;
+		Map<String,Object> dynamicMap = null;
 		
 		Map<String,String> properties = connettore.getProperties();
 		
 		if(TipiConnettore.HTTPS.equals(tipoConnettore)){
 			sslContextProperties = ConnettoreHTTPSProperties.readProperties(properties);
+			dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(null, null, null, 
+					log);
+			sslContextProperties.setDynamicMap(dynamicMap);
 		}
 		
 		Proxy.Type proxyType = null;
@@ -883,9 +890,18 @@ public class ConnettoreCheck {
 					ocspValidator = new OCSPValidatorImpl(lb, crlInputConfig, policyType, ocspResourceReader);
 				}
 			}
-			
+
+			IBYOKUnwrapManager byokManager = null;
+			if(sslContextProperties.getKeyStoreLocation()!=null) {
+				try {
+					byokManager = BYOKUnwrapPolicyUtilities.getBYOKUnwrapManager(sslContextProperties.getKeyStoreBYOKPolicy(), dynamicMap);
+				}catch(Exception e) {
+					throw new UtilsException(e.getMessage(),e);
+				}
+			}
+				
 			StringBuilder bfSSLConfig = new StringBuilder();
-			sslContext = SSLUtilities.generateSSLContext(sslContextProperties, ocspValidator, bfSSLConfig);
+			sslContext = SSLUtilities.generateSSLContext(sslContextProperties, ocspValidator, byokManager, bfSSLConfig);
 			
 		}
 		

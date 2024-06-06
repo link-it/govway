@@ -732,6 +732,7 @@ public final class CostantiDB {
     public static final String CONNETTORE_HTTPS_KEY_STORE_PASSWORD = CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD;
     public static final String CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM = CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM;
     public static final String CONNETTORE_HTTPS_KEY_STORE_TYPE = CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_TYPE;
+    public static final String CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY = CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY;
     public static final String CONNETTORE_HTTPS_KEY_PASSWORD = CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD;
     public static final String CONNETTORE_HTTPS_KEY_ALIAS = CostantiConnettori.CONNETTORE_HTTPS_KEY_ALIAS;
     public static final String CONNETTORE_HTTPS_HOSTNAME_VERIFIER = CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER;
@@ -897,6 +898,8 @@ public final class CostantiDB {
     public static final String MODIPA_KEYSTORE_KEY_ALGORITHM = "modipaKeystoreKeyPairAlgo";
     
     public static final String MODIPA_KEYSTORE_PASSWORD = "modipaKeystorePassword";
+    
+    public static final String MODIPA_KEYSTORE_BYOK_POLICY = "modipaKeystoreByokPolicy";
     
     public static final String MODIPA_KEYSTORE_ARCHIVE = "modipaKeystoreArchive";
     public static final String MODIPA_KEYSTORE_CERTIFICATE = "modipaKeystoreCertificate";

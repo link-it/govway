@@ -23,12 +23,15 @@ package org.openspcoop2.utils.certificate.byok;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.PropertiesReader;
@@ -258,7 +261,7 @@ public class BYOKManager {
 			}
 		}
 		if(alreadyExists) {
-			throw new UtilsException("Same type found for ksm '"+this.ksmKeystoreMapTypeToID.get(ksmKeystore.getLabel())+"' e '"+idK+"'");
+			throw new UtilsException("Same type found for ksm '"+this.ksmKeystoreMapTypeToID.get(ksmKeystore.getType())+"' e '"+idK+"'");
 		}
 		this.ksmKeystoreMapTypeToID.put(ksmKeystore.getType(), idK);
 		
@@ -332,6 +335,60 @@ public class BYOKManager {
 			}
 		}
 		return l;
+	}
+	
+	public SortedMap<String> getKeystoreWrapConfigTypesLabels() throws UtilsException {
+		return getKeystoreConfigTypesLabels(true);
+	}
+	public SortedMap<String> getKeystoreUnwrapConfigTypesLabels() throws UtilsException {
+		return getKeystoreConfigTypesLabels(false);
+	}
+	private SortedMap<String> getKeystoreConfigTypesLabels(boolean wrap) throws UtilsException {
+		
+		SortedMap<String> sMap = new SortedMap<>();
+		
+		List<String> types = wrap ? this.wrapTypes : this.unwrapTypes;
+		List<String> labels = wrap ? this.wrapLabels : this.unwrapLabels;
+		
+		// SortedMap by label
+		if(types!=null && !types.isEmpty()) {
+			List<String> labelsDaOrdinare = new ArrayList<>(); 
+			Map<String, String> m = new HashMap<>();
+			for (int i = 0; i < types.size(); i++) {
+				String type = types.get(i);
+				String label = labels.get(i);
+				m.put(label, type);
+				labelsDaOrdinare.add(label);
+			}
+			
+			Collections.sort(labelsDaOrdinare);
+			for (String l : labelsDaOrdinare) {
+				sMap.add(m.get(l), l);	
+			}
+		}
+		
+		return sMap;
+	}
+	
+	public boolean isKSMUsedInSecurityWrapConfig(String id, StringBuilder securityId) {
+		return isKSMUsedInSecurityConfig(true, id, securityId);
+	}
+	public boolean isKSMUsedInSecurityUnwrapConfig(String id, StringBuilder securityId) {
+		return isKSMUsedInSecurityConfig(false, id, securityId	);
+	}
+	private boolean isKSMUsedInSecurityConfig(boolean wrap, String id, StringBuilder securityId) {
+		if(!this.securityMapIDtoConfig.isEmpty()) {
+			for (Map.Entry<String,BYOKSecurityConfig> entry : this.securityMapIDtoConfig.entrySet()) {
+				String confKsmId = wrap ? entry.getValue().getWrapId() : entry.getValue().getUnwrapId();
+				if(id.equals(confKsmId)){
+					if(securityId!=null) {
+						securityId.append(entry.getKey());
+					}
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	public boolean existsKSMConfigByType(String type) {

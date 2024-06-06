@@ -22,6 +22,7 @@
 package org.openspcoop2.security.message.jose;
 
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.core.constants.Costanti;
@@ -144,7 +145,8 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 				if(bean!=null) {
 					Properties signatureProperties = bean.getProperties();
 					boolean throwError = true;
-    				JOSEUtils.injectKeystore(requestInfo, signatureProperties, messageSecurityContext.getLog(), throwError); // serve per leggere il keystore dalla cache
+					Map<String,Object> dynamicMap = Costanti.readDynamicMap(ctx);
+    				JOSEUtils.injectKeystore(requestInfo, dynamicMap, signatureProperties, messageSecurityContext.getLog(), throwError); // serve per leggere il keystore dalla cache
 					JwtHeaders jwtHeaders = JOSEUtils.getJwtHeaders(messageSecurityContext.getOutgoingProperties(), messageParam); // la configurazione per kid, jwk e x5c viene configurata via properties
 					jsonSignature = new JsonSignature(signatureProperties, jwtHeaders, jwsOptions);	
 				}
@@ -261,7 +263,8 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 				if(bean!=null) {
 					Properties encryptionProperties = bean.getProperties();
 					boolean throwError = true;
-    				JOSEUtils.injectKeystore(requestInfo, encryptionProperties, messageSecurityContext.getLog(), throwError); // serve per leggere il keystore dalla cache
+					Map<String,Object> dynamicMap = Costanti.readDynamicMap(ctx);
+    				JOSEUtils.injectKeystore(requestInfo, dynamicMap, encryptionProperties, messageSecurityContext.getLog(), throwError); // serve per leggere il keystore dalla cache
 					JwtHeaders jwtHeaders = JOSEUtils.getJwtHeaders(messageSecurityContext.getOutgoingProperties(), messageParam); // la configurazione per kid, jwk e x5c viene configurata via properties
 					jsonEncrypt = new JsonEncrypt(encryptionProperties, jwtHeaders, jweOptions); 
 				}

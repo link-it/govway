@@ -171,14 +171,16 @@ public class GestioneToken {
 	
 	public void forwardToken(AbstractDatiInvocazione datiInvocazione, EsitoPresenzaTokenPortaApplicativa esitoPresenzaToken,
 			EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo,
-			InformazioniToken informazioniTokenNormalizzate) throws TokenException {
+			InformazioniToken informazioniTokenNormalizzate,
+			Busta busta) throws TokenException {
 		try {
         	
     		GestoreToken.forwardToken(this.log, this.idTransazione,
     				datiInvocazione, esitoPresenzaToken, 
     				esitoValidazioneJWT, esitoIntrospection, esitoUserInfo,
     				informazioniTokenNormalizzate,
-    				GestoreToken.PORTA_APPLICATIVA);
+    				GestoreToken.PORTA_APPLICATIVA,
+    				this.pddContext, busta);
     		
     	}catch(Exception e) {
     		throw new TokenException(e.getMessage(),e); // errore di processamento

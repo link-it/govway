@@ -258,6 +258,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			String httpsKeyAlias = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
 			String httpsTrustStoreCRLs = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			String httpsTrustStoreOCSPPolicy = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+			String httpsKeyStoreBYOKPolicy = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				password = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -738,6 +739,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					httpsKeyAlias = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_ALIAS);
 					httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLS);
 					httpsTrustStoreOCSPPolicy = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+					httpsKeyStoreBYOKPolicy = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
 					if (httpspathkey == null) {
 						httpsstato = false;
 						httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
@@ -836,7 +838,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, 
 						httpspwdprivatekey, httpsalgoritmokey,
-						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 						tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,
 						nomeservizioApplicativo, idsil, null, null, null, null,
 						null, null, true,
@@ -898,7 +900,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, 
 						httpspwdprivatekey, httpsalgoritmokey,
-						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 						tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,
 						nomeservizioApplicativo, idsil, null, null, null, null,
 						null, null, true,
@@ -982,7 +984,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					httpspathkey, httpstipokey,
 					httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey,
-					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
 					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,

@@ -46,6 +46,8 @@ import org.openspcoop2.message.soap.wsaddressing.WSAddressingValue;
 import org.openspcoop2.message.xml.MessageDynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.byok.BYOKUnwrapPolicyUtilities;
+import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.ModIKeystoreConfig;
@@ -72,6 +74,7 @@ import org.openspcoop2.security.message.saml.SAMLBuilderConfigConstants;
 import org.openspcoop2.security.message.wss4j.MessageSecuritySender_wss4j;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.openspcoop2.utils.xml.XPathNotFoundException;
@@ -537,6 +540,11 @@ public class ModIImbustamentoSoap {
 				throw new ProtocolException("Keystore di tipo '"+CostantiLabel.KEYSTORE_TYPE_KEY_PAIR+"' non utilizzabile su API SOAP");
 			}
 			pKeystore.put(KeystoreConstants.PROPERTY_KEYSTORE_PATH, keystoreConfig.getSecurityMessageKeystorePath());
+			
+			if(!keystoreConfig.isSecurityMessageKeystoreHSM() && keystoreConfig.getSecurityMessageKeystoreByokPolicy()!=null) {
+				DynamicMapBuilderUtils.injectDynamicMap(busta, requestInfo, context, this.log);
+				pKeystore.put(KeystoreConstants.PROPERTY_KEYSTORE_PATH_BYOK, keystoreConfig.getSecurityMessageKeystoreByokPolicy());
+			}
 		}
 		else {
 			pKeystore.put(KeystoreConstants.PROPERTY_KEYSTORE_ARCHIVE, keystoreConfig.getSecurityMessageKeystoreArchive());
@@ -566,8 +574,17 @@ public class ModIImbustamentoSoap {
 		KeyStore ks = null;
 		if(keystoreConfig.getSecurityMessageKeystorePath()!=null) {
 			try {
+				String keystoreByokPolicy = keystoreConfig.getSecurityMessageKeystoreByokPolicy();
+				BYOKRequestParams byokParams = null;
+				try {
+					byokParams = BYOKUnwrapPolicyUtilities.getBYOKRequestParams(keystoreByokPolicy, dynamicMap);
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
+				
 				MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keystoreConfig.getSecurityMessageKeystorePath(), keystoreConfig.getSecurityMessageKeystoreType(), 
-						keystoreConfig.getSecurityMessageKeystorePassword());
+						keystoreConfig.getSecurityMessageKeystorePassword(),
+						byokParams);
 				if(merlinKs==null) {
 					throw new ProtocolException("Accesso al keystore '"+keystoreConfig.getSecurityMessageKeystorePath()+"' non riuscito");
 				}

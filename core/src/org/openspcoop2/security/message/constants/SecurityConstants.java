@@ -575,6 +575,7 @@ public class SecurityConstants {
     public static final String KEYSTORE_PASSWORD = "keystorePassword";
     public static final String KEYSTORE_PRIVATE_KEY_PASSWORD = "keystorePrivateKeyPassword";
     public static final String KEYSTORE_OCSP_POLICY = "keystoreOcspPolicy";
+    public static final String KEYSTORE_BYOK_POLICY = "keystoreByokPolicy";
      
     public static final String TRUSTSTORE_TYPE = "truststoreType";
     public static final String TRUSTSTORE_FILE = "truststoreFile";

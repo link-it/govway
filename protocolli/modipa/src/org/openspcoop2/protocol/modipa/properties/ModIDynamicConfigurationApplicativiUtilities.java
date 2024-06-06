@@ -426,6 +426,11 @@ public class ModIDynamicConfigurationApplicativiUtilities {
 					keystoreTypeMODIItemValue.setValue(null);
 				}
 				
+				StringProperty keystoreByokPolicyMODIItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_BYOK_POLICY_ID);
+				if(keystoreByokPolicyMODIItemValue!=null) {
+					keystoreByokPolicyMODIItemValue.setValue(null);
+				}
+				
 				AbstractConsoleItem<?> profiloSicurezzaMessaggioAudienceItem = ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_ID);
 				if(profiloSicurezzaMessaggioAudienceItem!=null) {
 					profiloSicurezzaMessaggioAudienceItem.setType(ConsoleItemType.HIDDEN);

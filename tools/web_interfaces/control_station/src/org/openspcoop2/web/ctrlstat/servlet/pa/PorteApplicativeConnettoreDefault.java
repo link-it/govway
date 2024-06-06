@@ -240,6 +240,7 @@ public class PorteApplicativeConnettoreDefault extends Action {
 			String httpsKeyAlias = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
 			String httpsTrustStoreCRLs = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			String httpsTrustStoreOCSPPolicy = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+			String httpsKeyStoreBYOKPolicy = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				password = porteApplicativeHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -480,7 +481,7 @@ public class PorteApplicativeConnettoreDefault extends Action {
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey, 
 							httpspwdprivatekey, httpsalgoritmokey,
-							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 							tipoconn, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT, null, null,
 							null, null, null, null, null, null, false,
 							isConnettoreCustomUltimaImmagineSalvata, 
@@ -522,7 +523,7 @@ public class PorteApplicativeConnettoreDefault extends Action {
 						httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, 
 						httpspwdprivatekey, httpsalgoritmokey,
-						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 						tipoconn,autenticazioneHttp,
 						proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
@@ -560,7 +561,7 @@ public class PorteApplicativeConnettoreDefault extends Action {
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey, 
 							httpspwdprivatekey, httpsalgoritmokey, 
-							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 							tipoconn, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT, null, null,
 							null, null, null, null, null, null, false,
 							isConnettoreCustomUltimaImmagineSalvata, 
@@ -605,7 +606,7 @@ public class PorteApplicativeConnettoreDefault extends Action {
 					httpspathkey, httpstipokey,
 					httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey,
-					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
 					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,

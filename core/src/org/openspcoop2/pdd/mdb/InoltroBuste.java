@@ -105,6 +105,7 @@ import org.openspcoop2.pdd.core.connettori.InfoConnettoreUscita;
 import org.openspcoop2.pdd.core.connettori.RepositoryConnettori;
 import org.openspcoop2.pdd.core.controllo_traffico.ConnettoreUtilities;
 import org.openspcoop2.pdd.core.controllo_traffico.DatiTempiRisposta;
+import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.InResponseContext;
@@ -1712,6 +1713,7 @@ public class InoltroBuste extends GenericLib{
 						}
 						
 						msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaInCorso");
+						DynamicMapBuilderUtils.injectDynamicMap(bustaRichiesta, requestInfo, pddContext, this.log);
 						if(messageSecurityContext.processOutgoing(requestMessageTrasformato,pddContext,
 								transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null) == false){
 							msgErrore = messageSecurityContext.getMsgErrore();
@@ -1976,12 +1978,14 @@ public class InoltroBuste extends GenericLib{
 				tokenForward = (TokenForward) oTokenForward;
 			}
 			if(tokenForward!=null) {
+				/**Vengono inviati header doppi se non iniziano con GovWay-
 				if(tokenForward.getTrasporto()!=null && tokenForward.getTrasporto().size()>0) {
 					propertiesTrasporto.putAll(tokenForward.getTrasporto());
 				}
 				if(tokenForward.getUrl()!=null && tokenForward.getUrl().size()>0) {
 					propertiesUrlBased.putAll(tokenForward.getUrl());
-				}
+				}*/
+				tokenForward.add(requestMessageTrasformato);
 			}
 			
 			// Risposte del connettore
@@ -3416,6 +3420,7 @@ public class InoltroBuste extends GenericLib{
 							msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaInCorso");
 							
 							StringBuilder bfErroreSecurity = new StringBuilder();
+							DynamicMapBuilderUtils.injectDynamicMap(bustaRichiesta, requestInfo, pddContext, this.log);
 							presenzaRispostaProtocollo = validatore.validazioneSemantica_messageSecurity_process(messageSecurityContext, bfErroreSecurity,
 									transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null,
 											false);

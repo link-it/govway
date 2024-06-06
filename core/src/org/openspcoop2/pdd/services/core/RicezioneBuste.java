@@ -105,6 +105,7 @@ import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiConfigurationException;
 import org.openspcoop2.pdd.core.credenziali.IGestoreCredenziali;
+import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.InRequestContext;
@@ -4125,6 +4126,7 @@ public class RicezioneBuste {
 						msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaInCorso");
 						
 						StringBuilder bfErroreSecurity = new StringBuilder();
+						DynamicMapBuilderUtils.injectDynamicMap(bustaRichiesta, requestInfo, pddContext, logCore);
 						presenzaRichiestaProtocollo = validatore.validazioneSemantica_messageSecurity_process(messageSecurityContext, bfErroreSecurity,
 								transaction!=null ? transaction.getTempiElaborazione() : null,
 										true);
@@ -7266,6 +7268,7 @@ public class RicezioneBuste {
 							responseMessage = responseMessage.normalizeToSaajImpl();
 						}
 						
+						DynamicMapBuilderUtils.injectDynamicMap(bustaRichiesta, requestInfo, pddContext, logCore);
 						if(messageSecurityContext.processOutgoing(responseMessage,pddContext,
 								transaction!=null ? transaction.getTempiElaborazione() : null) == false){
 							

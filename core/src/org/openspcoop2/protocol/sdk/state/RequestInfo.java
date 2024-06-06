@@ -20,6 +20,8 @@
 
 package org.openspcoop2.protocol.sdk.state;
 
+import java.util.Map;
+
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
@@ -57,6 +59,7 @@ public class RequestInfo implements java.io.Serializable {
 	private transient RequestConfig requestConfig;
 	private transient RequestRateLimitingConfig requestRateLimitingConfig;
 	private transient RequestThreadContext requestThreadContext;
+	private Map<String,Object> dynamicMap;
 	
 	public RequestThreadContext getRequestThreadContext() {
 		return this.requestThreadContext;
@@ -153,6 +156,12 @@ public class RequestInfo implements java.io.Serializable {
 	}
 	public void setIdServizio(IDServizio idServizio) {
 		this.idServizio = idServizio;
+	}
+	public Map<String, Object> getDynamicMap() {
+		return this.dynamicMap;
+	}
+	public void setDynamicMap(Map<String, Object> dynamicMap) {
+		this.dynamicMap = dynamicMap;
 	}
 	
 	@Override

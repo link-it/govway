@@ -35,6 +35,7 @@ public class KeystoreParams {
 	private String password;
 	private String crls;
 	private String ocspPolicy;
+	private String byokPolicy;
 	private String keyAlias;
 	private String keyPassword;
 	
@@ -77,6 +78,12 @@ public class KeystoreParams {
 	}
 	public void setOcspPolicy(String ocspPolicy) {
 		this.ocspPolicy = ocspPolicy;
+	}
+	public String getByokPolicy() {
+		return this.byokPolicy;
+	}
+	public void setByokPolicy(String byokPolicy) {
+		this.byokPolicy = byokPolicy;
 	}
 	public String getKeyAlias() {
 		return this.keyAlias;

@@ -54,6 +54,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -546,6 +547,19 @@ public class ConnettoreUtils {
 					sb.append(CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEY_ALIAS);
 					sb.append(separator);
 					sb.append(keyAlias);
+				}
+				
+				String keyBYOK = getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY, connettore.getPropertyList());
+				if(keyBYOK!=null) {
+					sb.append(newLine);
+					sb.append(CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE_BYOK_POLICY);
+					sb.append(separator);
+					try {
+						String label = BYOKManager.getInstance().getKSMConfigByType(keyBYOK).getLabel();
+						sb.append((label!=null && StringUtils.isNotEmpty(label)) ? label : keyBYOK);
+					}catch(Exception t) {
+						sb.append(keyBYOK);	
+					}
 				}
 			}
 		}

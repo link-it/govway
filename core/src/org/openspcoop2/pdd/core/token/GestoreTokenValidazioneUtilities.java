@@ -383,7 +383,7 @@ public class GestoreTokenValidazioneUtilities {
 		// serve per leggere il keystore dalla cache
 		TokenKeystoreInjectUtilities inject = new TokenKeystoreInjectUtilities(log, datiInvocazione.getRequestInfo() ,
 				datiInvocazione.getRequestInfo()!=null ? datiInvocazione.getRequestInfo().getProtocolFactory() : null, 
-				context, datiInvocazione.getState());
+				context, datiInvocazione.getState(), busta);
 		if(datiInvocazione instanceof DatiInvocazionePortaApplicativa) {
 			DatiInvocazionePortaApplicativa dati = (DatiInvocazionePortaApplicativa) datiInvocazione;
 			inject.initTokenPolicyValidazioneJwt(policyGestioneToken.getName(), portaDelegata, dati.getPd(), dati.getPa(), p);
@@ -516,7 +516,7 @@ public class GestoreTokenValidazioneUtilities {
 		// serve per leggere il keystore dalla cache
 		TokenKeystoreInjectUtilities inject = new TokenKeystoreInjectUtilities(log, datiInvocazione.getRequestInfo() ,
 				datiInvocazione.getRequestInfo()!=null ? datiInvocazione.getRequestInfo().getProtocolFactory() : null, 
-				context, datiInvocazione.getState());
+				context, datiInvocazione.getState(), busta);
 		if(datiInvocazione instanceof DatiInvocazionePortaApplicativa) {
 			DatiInvocazionePortaApplicativa dati = (DatiInvocazionePortaApplicativa) datiInvocazione;
 			inject.initTokenPolicyValidazioneJwt(policyGestioneToken.getName(), portaDelegata, dati.getPd(), dati.getPa(), p);
@@ -1752,7 +1752,20 @@ public class GestoreTokenValidazioneUtilities {
 			prefixConnettore = prefixConnettore+GestoreToken.getMessageViaProxy(hostProxy, portProxy);
 		}
 		
-		boolean https = policyGestioneToken.isEndpointHttps();
+		boolean https = false;
+		if(!https) {
+			switch (httpType) {
+			case DYNAMIC_DISCOVERY:
+				https = policyGestioneToken.isEndpointHttps(false, false);
+				break;
+			case INTROSPECTION:
+				https = policyGestioneToken.isEndpointHttps(true, false);
+				break;
+			case USER_INFO:
+				https = policyGestioneToken.isEndpointHttps(false, true);
+				break;
+			}
+		}
 		boolean httpsClient = false;
 		Properties sslConfig = null;
 		Properties sslClientConfig = null;

@@ -24177,6 +24177,26 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 				}
 				
+				if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY)) {
+					
+					de = new DataElement();
+					de.setType(DataElementType.TEXT);
+					de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE_BYOK_POLICY);
+					String byokPolicy = connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
+					String value = null;
+					try {
+						if(byokPolicy!=null) {
+							String label = BYOKManager.getInstance().getKSMConfigByType(byokPolicy).getLabel();
+							value = ((label!=null && StringUtils.isNotEmpty(label)) ? label : byokPolicy);
+						}
+					}catch(Exception t) {
+						value = byokPolicy;	
+					}
+					de.setValue(value);
+					dati.add(de);
+					
+				}
+				
 			}
 		}
 		

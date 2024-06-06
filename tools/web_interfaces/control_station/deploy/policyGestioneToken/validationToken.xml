@@ -1574,13 +1574,21 @@
 				</conditions>
 				<property name="trustManagementAlgorithm" properties="sslConfig" />
 			</item>
-			<item type="textarea" name="endpointHttpsTrustStoreCRLs" label="CRL File(s)" required="false" note="Elencare più file separandoli con la ','">
-			      	<conditions>
+			<item type="select" name="endpointHttpsTrustStoreOcspPolicy" label="OCSP Policy" default="" reloadOnChange="true">
+				<conditions>
 					<condition and="false">
 						<selected name="endpointHttpsTrustAllCerts"/>
 					</condition>	
 				</conditions>
-				<property name="trustStoreCRLs" properties="sslConfig" />
+				<property name="trustStoreOCSPPolicy" properties="sslConfig" />
+			</item>
+			<item type="textarea" name="endpointHttpsTrustStoreCRLs" label="CRL File(s)" required="false" note="Elencare più file separandoli con la ','">
+				<conditions>
+					<condition and="false">
+						<selected name="endpointHttpsTrustAllCerts"/>
+					</condition>
+				</conditions>
+			      	<property name="trustStoreCRLs" properties="sslConfig" />
 			</item>
 			
 		</subsection>
@@ -1633,6 +1641,9 @@
 			</item>
 			<item type="text" name="endpointHttpsClientAlgoritmo" label="Algoritmo" default="SunX509" required="true">
 				<property name="keyManagementAlgorithm" properties="sslClientConfig" />
+			</item>
+			<item type="select" name="endpointHttpsByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="keyStoreBYOKPolicy" properties="sslClientConfig" />
 			</item>
 		
 		</subsection>
@@ -2171,6 +2182,9 @@
 				</conditions>				
 				<property name="rs.security.key.password" properties="signaturePropRefId" />
 			</item>
+			<item type="select" name="tokenForwardInfoRaccolteModeJWSKeystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="rs.security.keystore.file.byok" properties="signaturePropRefId" />
+			</item>
 
 		</subsection>
 		
@@ -2220,6 +2234,9 @@
 					</condition>
 				</conditions>
 			    <property name="rs.security.key.password" properties="encryptionPropRefId" />
+			</item>
+			<item type="select" name="tokenForwardInfoRaccolteModeJWEContentKeystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="rs.security.keystore.file.byok" properties="encryptionPropRefId" />
 			</item>
 
 		</subsection>

@@ -58,6 +58,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.certificate.byok.BYOKManager;
+import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
@@ -350,11 +351,13 @@ public class InitListener implements ServletContextListener {
 					File f = new File(byokConfig);
 					BYOKManager.init(f, consoleProperties.isBYOKConfigRequired(), log);
 					byokManager = BYOKManager.getInstance();
+					BYOKProvider.setUnwrapKeystoreFileEnabled(consoleProperties.isConsoleBYOKShowUnwrapPolicy());
 					String msgInit = "Gestore BYOK inizializzato;"+
 							"\n\tHSM registrati: "+byokManager.getKeystoreTypes()+
 							"\n\tSecurityEngine registrati: "+byokManager.getSecurityEngineTypes()+
 							"\n\tGovWaySecurityEngine: "+byokManager.getSecurityEngineGovWayDescription()+
-							"\n\tVisualizza informazioni cifrate: "+consoleProperties.isVisualizzaInformazioniCifrate();
+							"\n\tVisualizza informazioni cifrate: "+consoleProperties.isVisualizzaInformazioniCifrate()+
+							"\n\tVisualizza policy unwrap: "+consoleProperties.isConsoleBYOKShowUnwrapPolicy();
 					InitListener.logInfo(msgInit);
 				}
 			} catch (Exception e) {

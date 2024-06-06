@@ -40,15 +40,16 @@ import javax.management.MBeanParameterInfo;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ReflectionException;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.pdd.config.BYOKUnwrapFactory;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.registry.CertificateCheck;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
+import org.slf4j.Logger;
 
 
 /**
@@ -825,12 +826,14 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 		}
 	}
 	
+	
+	
 	public String checkCertificatiConnettoreHttpsById(long idConnettore, int sogliaWarningGiorni) {
 		try{
 			boolean addCertificateDetails = true;
 			String separator = ": ";
 			String newLine = "\n";
-			CertificateCheck statoCheck = RegistroServiziManager.getInstance().checkCertificatiConnettoreHttpsByIdWithoutCache(idConnettore, sogliaWarningGiorni, 
+			CertificateCheck statoCheck = RegistroServiziManager.getInstance().checkCertificatiConnettoreHttpsByIdWithoutCache(idConnettore, sogliaWarningGiorni, new BYOKUnwrapFactory(),
 					addCertificateDetails, separator, newLine);
 			return statoCheck.toString(newLine);
 		}catch(Exception e){
@@ -885,7 +888,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 			boolean addCertificateDetails = true;
 			String separator = ": ";
 			String newLine = "\n";
-			CertificateCheck statoCheck = RegistroServiziManager.getInstance().checkCertificatiModIErogazioneByIdWithoutCache(idErogazione, sogliaWarningGiorni, 
+			CertificateCheck statoCheck = RegistroServiziManager.getInstance().checkCertificatiModIErogazioneByIdWithoutCache(idErogazione, sogliaWarningGiorni, new BYOKUnwrapFactory(),
 					addCertificateDetails, separator, newLine);
 			return statoCheck.toString(newLine);
 		}catch(Exception e){
@@ -899,7 +902,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 			boolean addCertificateDetails = true;
 			String separator = ": ";
 			String newLine = "\n";
-			CertificateCheck statoCheck = RegistroServiziManager.getInstance().checkCertificatiModIFruizioneByIdWithoutCache(idFruizione, sogliaWarningGiorni, 
+			CertificateCheck statoCheck = RegistroServiziManager.getInstance().checkCertificatiModIFruizioneByIdWithoutCache(idFruizione, sogliaWarningGiorni, new BYOKUnwrapFactory(),
 					addCertificateDetails, separator, newLine);
 			return statoCheck.toString(newLine);
 		}catch(Exception e){

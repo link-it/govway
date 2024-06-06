@@ -124,6 +124,7 @@ public class ConnettoreMessageBoxApiHelper extends AbstractConnettoreApiHelper<C
 				null,					// httpsKeyAlias
         		null,					// httpsTrustStoreCRLs
         		null,					// httpsTrustStoreOCSPPolicy
+        		null,					// httpsKeyStoreBYOKPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( false ),	
 				null,
@@ -199,6 +200,7 @@ public class ConnettoreMessageBoxApiHelper extends AbstractConnettoreApiHelper<C
 				null,					// httpsKeyAlias
         		null,					// httpsTrustStoreCRLs
         		null,					// httpsTrustStoreOCSPPolicy
+        		null,					// httpsKeyStoreBYOKPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( false ),	
 				null,

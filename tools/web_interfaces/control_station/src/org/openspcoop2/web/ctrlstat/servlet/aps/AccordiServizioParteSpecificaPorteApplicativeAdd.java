@@ -306,6 +306,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String httpsKeyAlias = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
 			String httpsTrustStoreCRLs = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			String httpsTrustStoreOCSPPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+			String httpsKeyStoreBYOKPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				password = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -755,7 +756,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 								httpspwdprivatekeytrust, httpspathkey,
 								httpstipokey, httpspwdkey, 
 								httpspwdprivatekey, httpsalgoritmokey,
-								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_ADD, null, null,
 								null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
@@ -795,7 +796,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, 
 						httpspwdprivatekey, httpsalgoritmokey,
-						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 						tipoconn,autenticazioneHttp,
 						proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
@@ -852,7 +853,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey, 
 							httpspwdprivatekey, httpsalgoritmokey,
-							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 							tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_ADD, null, null,
 							null, null, null, null, null, null, true,
 							isConnettoreCustomUltimaImmagineSalvata, 
@@ -1008,7 +1009,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey,
 					httpspwdprivatekey, httpsalgoritmokey,
-					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
 					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,

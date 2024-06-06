@@ -84,12 +84,15 @@ public class AttributeAuthorityUtilities {
 			throw new TokenException("JWS Signature key password undefined");
 		}
 		
+		String keystoreByokPolicy = policy.getRequestJwtSignKeystoreByokPolicy();
+		
 		KeystoreParams keystoreParams = new KeystoreParams();
 		keystoreParams.setPath(keystoreFile);
 		keystoreParams.setType(keystoreType);
 		keystoreParams.setPassword(keystorePassword);
 		keystoreParams.setKeyAlias(keyAlias);
 		keystoreParams.setKeyPassword(keyPassword);
+		keystoreParams.setByokPolicy(keystoreByokPolicy);
 		
 		fillKeyPairParamters(keystoreParams, keystoreType, policy);
 		

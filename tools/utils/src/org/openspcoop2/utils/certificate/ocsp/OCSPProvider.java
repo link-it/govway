@@ -39,41 +39,41 @@ public class OCSPProvider {
 	public boolean isOcspEnabled() {
 		return this.ocsp;
 	}
-	private List<String> ocsp_types = new ArrayList<>();
-	private List<String> ocsp_labels = new ArrayList<>();
-	private static String NO_OCSP = "--no_ocsp--";
-	private static List<String> no_ocsp = new ArrayList<>();
-	{
-		no_ocsp.add(NO_OCSP);	
+	private List<String> ocspTypes = new ArrayList<>();
+	private List<String> ocspLabels = new ArrayList<>();
+	private static final String NO_OCSP = "--no_ocsp--";
+	private static List<String> noOCSP = new ArrayList<>();
+	static{
+		noOCSP.add(NO_OCSP);	
 	}
 	public OCSPProvider() {
-		SortedMap<String> _ocsp = OCSPManager.getInstance().getOCSPConfigTypesLabels();
-		this.ocsp = _ocsp!=null && !_ocsp.isEmpty();
+		SortedMap<String> ocspSortedMap = OCSPManager.getInstance().getOCSPConfigTypesLabels();
+		this.ocsp = ocspSortedMap!=null && !ocspSortedMap.isEmpty();
 		if(this.ocsp) {
-			List<String> _ocsp_types = new ArrayList<>();
-			List<String> _ocsp_labels = new ArrayList<>();
-			if(_ocsp!=null && !_ocsp.isEmpty()) {
-				for (String type : _ocsp.keys()) {
-					_ocsp_types.add(type);
-					_ocsp_labels.add(_ocsp.get(type));
+			List<String> ocspTypesAdd = new ArrayList<>();
+			List<String> ocspLabelsAdd = new ArrayList<>();
+			if(!ocspSortedMap.isEmpty()) {
+				for (String type : ocspSortedMap.keys()) {
+					ocspTypesAdd.add(type);
+					ocspLabelsAdd.add(ocspSortedMap.get(type));
 				}
 			}
-			boolean ocspEnabled = _ocsp_types!=null && !_ocsp_types.isEmpty();
+			boolean ocspEnabled = !ocspTypesAdd.isEmpty();
 			if(ocspEnabled) {
-				this.ocsp_types.add("");
-				this.ocsp_types.addAll(_ocsp_types);
-				this.ocsp_labels.add("-");
-				this.ocsp_labels.addAll(_ocsp_labels);
+				this.ocspTypes.add("");
+				this.ocspTypes.addAll(ocspTypesAdd);
+				this.ocspLabels.add("-");
+				this.ocspLabels.addAll(ocspLabelsAdd);
 			}
 		}
 	}
 	
 	public List<String> getValues() {
-		return this.ocsp ? this.ocsp_types : no_ocsp;
+		return this.ocsp ? this.ocspTypes : noOCSP;
 	}
 
 	public List<String> getLabels() {
-		return this.ocsp ? this.ocsp_labels : no_ocsp;
+		return this.ocsp ? this.ocspLabels : noOCSP;
 	}
 	
 }

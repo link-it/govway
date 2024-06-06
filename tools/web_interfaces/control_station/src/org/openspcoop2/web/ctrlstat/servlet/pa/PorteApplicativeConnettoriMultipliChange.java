@@ -283,6 +283,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			String httpsKeyAlias = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
 			String httpsTrustStoreCRLs = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			String httpsTrustStoreOCSPPolicy = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+			String httpsKeyStoreBYOKPolicy = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				password = porteApplicativeHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -537,6 +538,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								httpsKeyAlias = null;
 								httpsTrustStoreCRLs = null;
 								httpsTrustStoreOCSPPolicy = null;
+								httpsKeyStoreBYOKPolicy = null;
 	
 								// file
 								requestOutputFileName = null;
@@ -1142,6 +1144,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						httpsKeyAlias = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_ALIAS);
 						httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLS);
 						httpsTrustStoreOCSPPolicy = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+						httpsKeyStoreBYOKPolicy = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
 						if (httpspathkey == null) {
 							httpsstato = false;
 							httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
@@ -1275,7 +1278,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey, 
 							httpspwdprivatekey, httpsalgoritmokey,
-							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 							tipoconn, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE, 
 							idPorta, // elem1 
 							idsogg, // elem2
@@ -1323,7 +1326,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey,
 							httpspwdprivatekey, httpsalgoritmokey,
-							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 							tipoconn, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE, 
 							idPorta, // elem1 
 							idsogg, // elem2
@@ -1365,7 +1368,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, 
 						httpspwdprivatekey, httpsalgoritmokey,
-						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 						tipoconn,autenticazioneHttp,
 						proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
@@ -1420,7 +1423,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey, 
 							httpspwdprivatekey, httpsalgoritmokey,
-							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 							tipoconn, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,
 							idPorta, // elem1 
 							idsogg, // elem2
@@ -1468,7 +1471,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey,
 							httpspwdprivatekey, httpsalgoritmokey,
-							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 							tipoconn, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,
 							idPorta, // elem1 
 							idsogg, // elem2
@@ -1799,7 +1802,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								httpspathkey, httpstipokey,
 								httpspwdkey, httpspwdprivatekey,
 								httpsalgoritmokey,
-								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 								proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 								tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
 								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
@@ -1923,7 +1926,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								httpspathkey, httpstipokey,
 								httpspwdkey, httpspwdprivatekey,
 								httpsalgoritmokey,
-								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 								proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 								tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
 								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,

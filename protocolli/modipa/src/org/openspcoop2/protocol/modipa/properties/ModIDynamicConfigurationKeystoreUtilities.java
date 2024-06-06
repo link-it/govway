@@ -48,6 +48,7 @@ import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeystoreUtils;
+import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPProvider;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
@@ -157,6 +158,15 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 		keyPasswordItem.setRequired(requiredValue);
 		configuration.addConsoleItem(keyPasswordItem);
 
+		AbstractConsoleItem<?> keystoreByokPolicyItem = 
+				ProtocolPropertiesFactory.newConsoleItem(
+						ConsoleItemValueType.STRING,
+						ConsoleItemType.HIDDEN,
+						ModIConsoleCostanti.MODIPA_KEYSTORE_BYOK_POLICY_ID, 
+						ModIConsoleCostanti.MODIPA_KEYSTORE_BYOK_POLICY_LABEL);
+		keystoreByokPolicyItem.setRequired(false);
+		configuration.addConsoleItem(keystoreByokPolicyItem);
+		
 		AbstractConsoleItem<?> certificateItem = 
 				ProtocolPropertiesFactory.newConsoleItem(
 						ConsoleItemValueType.BINARY,
@@ -270,6 +280,7 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 				
 		boolean permitCertificate = false;
 		boolean hsm = false;
+		boolean archive = false;
 		String modalita = ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_DEFAULT_VALUE;
 		if(selectModeItemValue!=null && selectModeItemValue.getValue()!=null && !"".equals(selectModeItemValue.getValue())) {
 			modalita = selectModeItemValue.getValue();
@@ -321,8 +332,15 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 				if(keystorePasswordMODIItemValue!=null) {
 					keystorePasswordMODIItemValue.setValue(null);
 				}
+				
+				StringProperty keystoreByokPolicyMODIItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_BYOK_POLICY_ID);
+				if(keystoreByokPolicyMODIItemValue!=null) {
+					keystoreByokPolicyMODIItemValue.setValue(null);
+				}
 			}
 			else if(ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(modalita)) {
+				
+				archive = true;
 				
 				archiveItem.setType(ConsoleItemType.FILE);
 				archiveItem.setRequired(requiredValue);
@@ -566,6 +584,37 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 			}
 		}
 		
+		AbstractConsoleItem<?> keystoreByokItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_KEYSTORE_BYOK_POLICY_ID);
+		if(keystoreByokItem!=null) {
+			BYOKProvider byokProvider = null;
+			try {
+				byokProvider = BYOKProvider.getUnwrapInstance();
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+			if(ridefinisci && !hsm && !archive && byokProvider.isByokEnabled()) {
+				
+				List<String> ocspTypes = byokProvider.getValues();
+				List<String> ocspLabels = byokProvider.getLabels();
+				for (int i = 0; i < ocspTypes.size(); i++) {
+					String type = ocspTypes.get(i);
+					String label = ocspLabels.get(i);
+					((StringConsoleItem)keystoreByokItem).addLabelValue(label, type);
+				}
+				
+				keystoreByokItem.setType(ConsoleItemType.SELECT);
+			}
+			else {
+				keystoreByokItem.setType(ConsoleItemType.HIDDEN);
+				
+				StringProperty keystoreByokPolicyItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_BYOK_POLICY_ID);
+				if(keystoreByokPolicyItemValue!=null) {
+					keystoreByokPolicyItemValue.setValue(null);
+				}
+			}
+		}
+		
 		AbstractConsoleItem<?> keyAliasItem = 	
 				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_KEY_ALIAS_ID);
 		if(keyAliasItem!=null) {
@@ -644,6 +693,7 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 					
 			StringProperty keystoreTypeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_ID);
 			StringProperty keystorePasswordItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_ID);
+			StringProperty keystoreByokPolicyItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_BYOK_POLICY_ID);
 			StringProperty keyAliasItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_ALIAS_ID);
 			StringProperty keyPasswordItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_PASSWORD_ID);
 			if(keystoreTypeItemValue!=null && keystorePasswordItemValue!=null && keyAliasItemValue!=null && keyPasswordItemValue!=null) {
@@ -666,6 +716,9 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 				}
 				else {
 					// Il PATH o HSM indicato non e' disponibile nella macchina dove gira la console.
+					if(keystoreByokPolicyItemValue!=null) {
+						// nop: path non viene acceduto
+					}
 	/**				StringProperty pathItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_PATH_ID);
 	//				if(pathItemValue!=null && pathItemValue.getValue()!=null && !"".equals(pathItemValue.getValue())) {
 	//					archive = org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(pathItemValue.getValue());

@@ -240,6 +240,9 @@
 				</conditions>				
 				<property name="policy.retrieveToken.jwt.signature.keyPassword" />
 			</item>
+			<item type="select" name="jwtByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="policy.retrieveToken.jwt.signature.byok" />
+			</item>
 
 		</subsection>
 
@@ -1086,6 +1089,14 @@
 				</conditions>
 			      	<property name="trustManagementAlgorithm" properties="sslConfig" />
 			</item>
+			<item type="select" name="endpointHttpsTrustStoreOcspPolicy" label="OCSP Policy" default="" reloadOnChange="true">
+				<conditions>
+					<condition and="false">
+						<selected name="endpointHttpsTrustAllCerts"/>
+					</condition>	
+				</conditions>
+				<property name="trustStoreOCSPPolicy" properties="sslConfig" />
+			</item>
 			<item type="textarea" name="endpointHttpsTrustStoreCRLs" label="CRL File(s)" required="false" note="Elencare più file separandoli con la ','">
 				<conditions>
 					<condition and="false">
@@ -1144,6 +1155,9 @@
 			</item>
 			<item type="text" name="endpointHttpsClientAlgoritmo" label="Algoritmo" default="SunX509" required="true">
 				<property name="keyManagementAlgorithm" properties="sslClientConfig" />
+			</item>
+			<item type="select" name="endpointHttpsByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="keyStoreBYOKPolicy" properties="sslClientConfig" />
 			</item>
 		
 		</subsection>

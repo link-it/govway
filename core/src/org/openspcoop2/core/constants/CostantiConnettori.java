@@ -121,6 +121,7 @@ public class CostantiConnettori {
     public static final String CONNETTORE_HTTPS_KEY_STORE_PASSWORD = "keyStorePassword";
     public static final String CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM = "keyManagementAlgorithm";
     public static final String CONNETTORE_HTTPS_KEY_STORE_TYPE = "keyStoreType";
+    public static final String CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY = "keyStoreBYOKPolicy";
     public static final String CONNETTORE_HTTPS_KEY_PASSWORD = "keyPassword";
     public static final String CONNETTORE_HTTPS_KEY_ALIAS = "keyAlias";
     public static final String CONNETTORE_HTTPS_HOSTNAME_VERIFIER = "hostnameVerifier";

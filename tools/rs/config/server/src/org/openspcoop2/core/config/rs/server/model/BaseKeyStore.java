@@ -41,6 +41,9 @@ public class BaseKeyStore  {
    * alias della chiave privata  
   **/
   private String keyAlias = null;
+  
+  @Schema(description = "")
+  private String keystoreByokPolicy = null;
  /**
    * Get keystorePassword
    * @return keystorePassword
@@ -100,6 +103,25 @@ public class BaseKeyStore  {
     return this;
   }
 
+ /**
+   * Get keystoreByokPolicy
+   * @return keystoreByokPolicy
+  **/
+  @JsonProperty("keystore_byok_policy")
+  @Valid
+ @Size(max=255)  public String getKeystoreByokPolicy() {
+    return this.keystoreByokPolicy;
+  }
+
+  public void setKeystoreByokPolicy(String keystoreByokPolicy) {
+    this.keystoreByokPolicy = keystoreByokPolicy;
+  }
+
+  public BaseKeyStore keystoreByokPolicy(String keystoreByokPolicy) {
+    this.keystoreByokPolicy = keystoreByokPolicy;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -109,6 +131,7 @@ public class BaseKeyStore  {
     sb.append("    keystorePassword: ").append(BaseKeyStore.toIndentedString(this.keystorePassword)).append("\n");
     sb.append("    keyPassword: ").append(BaseKeyStore.toIndentedString(this.keyPassword)).append("\n");
     sb.append("    keyAlias: ").append(BaseKeyStore.toIndentedString(this.keyAlias)).append("\n");
+    sb.append("    keystoreByokPolicy: ").append(BaseKeyStore.toIndentedString(this.keystoreByokPolicy)).append("\n");
     sb.append("}");
     return sb.toString();
   }

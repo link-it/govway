@@ -86,6 +86,7 @@ public class ConnettoreEchoApiHelper extends AbstractConnettoreApiHelper<Connett
 				null,					// httpsKeyAlias
         		null,					// httpsTrustStoreCRLs
         		null,					// httpsTrustStoreOCSPPolicy
+        		null,					// httpsKeyStoreBYOKPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( false ),	
 				null,
@@ -162,6 +163,7 @@ public class ConnettoreEchoApiHelper extends AbstractConnettoreApiHelper<Connett
 				null,					// httpsKeyAlias
         		null,					// httpsTrustStoreCRLs
         		null,					// httpsTrustStoreOCSPPolicy
+        		null,					// httpsKeyStoreBYOKPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( false ),	
 				null,

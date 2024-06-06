@@ -701,7 +701,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
-			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy,
+			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy, String httpsKeyStoreBYOKPolicy,
 			String tipoconn, String servletChiamante, String elem1, String elem2, String elem3,
 			String elem4, String elem5, String elem6, String elem7, String elem8,
 			boolean showSectionTitle,
@@ -725,7 +725,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 				httpstipokey, httpspwdkey, 
 				httpspwdprivatekey, httpsalgoritmokey, 
-				httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+				httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 				tipoconn, servletChiamante, elem1, elem2, elem3,
 				elem4, elem5, elem6, elem7, elem8, null, showSectionTitle,
 				isConnettoreCustomUltimaImmagineSalvata,
@@ -2580,7 +2580,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
-			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy,
+			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy, String httpsKeyStoreBYOKPolicy,
 			String tipoconn, String servletChiamante, String elem1, String elem2, String elem3,
 			String elem4, String elem5, String elem6, String elem7, String elem8,
 			String stato,
@@ -2710,7 +2710,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 						url, nome, tipo, user, password, initcont, urlpgk, provurl, connfact, sendas, objectName, tipoOperazione, 
 						httpsurl, httpstipologia, httpshostverify, 
 						httpsTrustVerifyCert, httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato, 
-						httpskeystore, httpspwdprivatekeytrust, httpspathkey, httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+						httpskeystore, httpspwdprivatekeytrust, httpspathkey, httpstipokey, httpspwdkey, 
+						httpspwdprivatekey, httpsalgoritmokey, 
+						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 						tipoconn, servletChiamante, elem1, elem2, elem3, elem4, elem5, elem6, elem7, stato, 
 						proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword, 
 						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta, 
@@ -3056,7 +3058,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					ConnettoreHTTPSUtils.addHTTPSDati(dati, httpsurl, httpstipologia, httpshostverify, httpsTrustVerifyCert, httpspath, httpstipo, 
 							httpspwd, httpsalgoritmo, httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, 
 							httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, 
-							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 							stato, 
 							this.core, this, this.getSize(), false, prefix,
 							forceHttpsClient,
@@ -3617,7 +3619,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				if (TipiConnettore.HTTPS.toString().equals(endpointtype)) {
 					ConnettoreHTTPSUtils.addHTTPSDati(dati, httpsurl, httpstipologia, httpshostverify, httpsTrustVerifyCert, httpspath, httpstipo, httpspwd, httpsalgoritmo, 
 							httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, 
-							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 							stato,
 							this.core, this, this.getSize(), false, prefix,
 							forceHttpsClient,
@@ -3707,7 +3709,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
-			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy,
+			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy, String httpsKeyStoreBYOKPolicy,
 			String tipoconn, String servletChiamante, String elem1, String elem2, String elem3,
 			String elem4, String elem5, String elem6, String elem7, String stato,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
@@ -3867,7 +3869,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
 			ConnettoreHTTPSUtils.addHTTPSDatiAsHidden(dati, httpsurl, httpstipologia, httpshostverify, httpsTrustVerifyCert, httpspath, httpstipo, httpspwd, 
 					httpsalgoritmo, httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, 
-					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 					stato,
 					this.core,this.getSize());
 			
@@ -4031,6 +4033,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpsKeyAlias = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
 			String httpsTrustStoreCRLs = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			String httpsTrustStoreOCSPPolicy = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+			String httpsKeyStoreBYOKPolicy = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
 			
 			if(ServletUtils.isCheckBoxEnabled(autenticazioneHttp)){
 				user = this.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
@@ -4062,7 +4065,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, 
 					httpspwdprivatekey, httpsalgoritmokey,
-					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 					tipoconn, autenticazioneHttp,
 					proxyEnabled,proxyHostname,proxyPort,proxyUsername,proxyPassword,
 					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
@@ -4091,7 +4094,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
-			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy,
+			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy, String httpsKeyStoreBYOKPolicy,
 			String tipoconn, String autenticazioneHttp,
 			String proxyEnabled, String proxyHostname, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRispostaEnabled, String tempiRispostaConnectionTimeout, String tempiRispostaReadTimeout, String tempiRispostaTempoMedioRisposta,
@@ -4162,6 +4165,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 					httpsTrustStoreCRLs = "";
 				if (httpsTrustStoreOCSPPolicy == null)
 					httpsTrustStoreOCSPPolicy = "";
+				if (httpsKeyStoreBYOKPolicy == null)
+					httpsKeyStoreBYOKPolicy = "";
 				if (tipoconn == null)
 					tipoconn = "";	
 				if (proxyEnabled == null)
@@ -5029,7 +5034,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
-			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy,
+			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy, String httpsKeyStoreBYOKPolicy,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRispostaEnabled, String tempiRispostaConnectionTimeout, String tempiRispostaReadTimeout, String tempiRispostaTempoMedioRisposta,
 			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop,
@@ -5114,7 +5119,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				ConnettoreHTTPSUtils.fillConnettoreRegistry(connettore, httpsurl, httpstipologia, httpshostverify, httpsTrustVerifyCert, httpspath, 
 						httpstipo, httpspwd, httpsalgoritmo, httpsstato, httpskeystore, httpspwdprivatekeytrust, 
 						httpspathkey, httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
-						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 						user, pwd);
 			} else if (tipoConnettore.equals(TipiConnettore.FILE.getNome())) {
 				ConnettoreFileUtils.fillConnettoreRegistry(connettore, 
@@ -5306,7 +5311,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
-			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy,
+			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy, String httpsKeyStoreBYOKPolicy,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRispostaEnabled, String tempiRispostaConnectionTimeout, String tempiRispostaReadTimeout, String tempiRispostaTempoMedioRisposta,
 			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop,
@@ -5377,7 +5382,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				ConnettoreHTTPSUtils.fillConnettoreConfig(connettore, httpsurl, httpstipologia, httpshostverify, httpsTrustVerifyCert, httpspath, httpstipo, 
 						httpspwd, httpsalgoritmo, httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, httpstipokey, 
 						httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
-						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy);
+						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy);
 			} else if (tipoConnettore.equals(TipiConnettore.FILE.getNome())) {
 				ConnettoreFileUtils.fillConnettoreConfig(connettore, 
 						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,

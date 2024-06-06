@@ -40,6 +40,7 @@ import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.security.keystore.BYOKUnwrapManager;
 import org.openspcoop2.security.keystore.CRLCertstore;
 import org.openspcoop2.security.keystore.HttpStore;
 import org.openspcoop2.security.keystore.KeyPairStore;
@@ -54,6 +55,8 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.certificate.KeystoreUtils;
+import org.openspcoop2.utils.certificate.byok.BYOKProvider;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 import org.openspcoop2.utils.certificate.remote.IRemoteStoreProvider;
 import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
@@ -732,14 +735,14 @@ public class JOSEUtils {
 	public static final String HTTP_PROTOCOL = "http";
 	public static final String HTTPS_PROTOCOL = "https";
 	
-	public static void injectKeystore(RequestInfo requestInfo, Properties properties, Logger log) {
+	public static void injectKeystore(RequestInfo requestInfo, Map<String, Object> dynamicMap, Properties properties, Logger log) {
 		try {
-			injectKeystore(requestInfo, properties, log, false);
+			injectKeystore(requestInfo, dynamicMap, properties, log, false);
 		}catch(SecurityException e) {
 			// ignore per default
 		}
 	}
-	public static void injectKeystore(RequestInfo requestInfo, Properties properties, Logger log, boolean throwError) throws SecurityException {
+	public static void injectKeystore(RequestInfo requestInfo, Map<String, Object> dynamicMap, Properties properties, Logger log, boolean throwError) throws SecurityException {
 		
 		if(log==null) {
 			log = LoggerWrapperFactory.getLogger(JOSEUtils.class);
@@ -754,6 +757,24 @@ public class JOSEUtils {
 			}
 			String password = properties.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_PSWD);
 			boolean passwordDefined = (password!=null && !"".equals(password));
+			
+			String byokPropertyName =  RSSecurityConstants.RSSEC_KEY_STORE_FILE+".byok";
+			String byokProperty = properties.getProperty(byokPropertyName);
+			BYOKRequestParams byokParams = null;
+			BYOKUnwrapManager byokManager = null;
+			if(BYOKProvider.isPolicyDefined(byokProperty)){
+				try {
+					byokParams = BYOKProvider.getBYOKRequestParamsByUnwrapBYOKPolicy(byokProperty, 
+							dynamicMap!=null ? dynamicMap : new HashMap<>() );
+					byokManager = new BYOKUnwrapManager(byokProperty, byokParams);
+				}catch(Exception e) {
+					String error = "Errore durante istanziazione del byok unwrap manager '"+byokProperty+"': "+e.getMessage();
+					log.error(error,e);
+					if(throwError) {
+						throw new SecurityException(error, e);
+					}
+				}
+			}
 			
 			if(file!=null && !"".equals(file) ) {
 				
@@ -791,7 +812,7 @@ public class JOSEUtils {
 							}
 							
 							try {
-								keyPair = new KeyPairStore(privateKey, publicKey, privateKeyPassword, algorithmProperty);
+								keyPair = new KeyPairStore(privateKey, publicKey, privateKeyPassword, algorithmProperty, byokParams);
 							}catch(Exception e) {
 								String error = "Errore durante istanziazione del keyPair (http resource) '"+file+"'/'"+publicKeyProperty+"': "+e.getMessage();
 								log.error(error,e);
@@ -802,7 +823,7 @@ public class JOSEUtils {
 						}
 						else {
 							try {
-								keyPair = GestoreKeystoreCache.getKeyPairStore(requestInfo, file, publicKeyProperty, privateKeyPassword, algorithmProperty);
+								keyPair = GestoreKeystoreCache.getKeyPairStore(requestInfo, file, publicKeyProperty, privateKeyPassword, algorithmProperty, byokParams);
 							}catch(Exception e) {
 								String error = "Errore durante istanziazione del keyPair '"+file+"'/'"+publicKeyProperty+"': "+e.getMessage();
 								log.error(error,e);
@@ -898,6 +919,19 @@ public class JOSEUtils {
 					if(file.startsWith(HTTP_PROTOCOL) || file.startsWith(HTTPS_PROTOCOL)) {
 						
 						byte[]content = readHttpStore(properties, requestInfo, file, log, throwError);
+						
+						if(byokManager!=null) {
+							try {
+								content = byokManager.unwrap(content);
+							}catch(Exception e) {
+								String error = "Errore durante l'unwrap del keystore ottenuto via http '"+file+"': "+e.getMessage();
+								log.error(error,e);
+								if(throwError) {
+									throw new SecurityException(error, e);
+								}
+							}
+						}
+						
 						if(content!=null) {
 							if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(type)) {
 								properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
@@ -929,7 +963,7 @@ public class JOSEUtils {
 						if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(type)) {
 							String jwkSet = null;
 							try {
-								jwkSet = GestoreKeystoreCache.getJwkSetStore(requestInfo, file).getJwkSetContent();
+								jwkSet = GestoreKeystoreCache.getJwkSetStore(requestInfo, file, byokParams).getJwkSetContent();
 							}catch(Exception e) {
 								String error = "Errore durante l'accesso al jwk set '"+file+"': "+e.getMessage();
 								log.error(error,e);
@@ -946,7 +980,7 @@ public class JOSEUtils {
 						else {
 							java.security.KeyStore keystore = null;
 							try {
-								MerlinKeystore merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, file, type, password);
+								MerlinKeystore merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, file, type, password, byokParams);
 								if(merlinKeystore==null) {
 									throw new SecurityException("Keystore '"+file+"' undefined");
 								}

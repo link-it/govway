@@ -46,6 +46,8 @@ import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
+import org.openspcoop2.utils.UtilsRuntimeException;
+import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPProvider;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
@@ -62,9 +64,15 @@ import org.openspcoop2.utils.transport.http.SSLUtilities;
 public class AttributeAuthorityProvider implements IProvider {
 	
 	private OCSPProvider ocspProvider;
+	private BYOKProvider byokProvider;
 
 	public AttributeAuthorityProvider() {
 		this.ocspProvider = new OCSPProvider();
+		try {
+			this.byokProvider = BYOKProvider.getUnwrapInstance();
+		}catch(Exception e) {
+			throw new UtilsRuntimeException(e.getMessage(),e);
+		}
 	}
 	
 	@Override
@@ -326,8 +334,13 @@ public class AttributeAuthorityProvider implements IProvider {
 		else if(Costanti.ID_AA_JWS_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY.equals(id)) {
 			return Costanti.getIdValidazioneJwtTruststoreTypeSelectJwkPublicKeyValues();
 		}
-		else if(Costanti.ID_AA_JWS_TRUSTSTORE_OCSP_POLICY.equals(id)) {
+		else if(Costanti.ID_AA_JWS_TRUSTSTORE_OCSP_POLICY.equals(id) ||
+				Costanti.ID_HTTPS_TRUSTSTORE_OCSP_POLICY.equals(id)) {
 			return this.ocspProvider.getValues();
+		}
+		else if(Costanti.ID_AA_JWS_KEYSTORE_BYOK_POLICY.equals(id) ||
+				Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(id)) {
+			return this.byokProvider.getValues();
 		}
 		else if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_PARSER_TOKEN_CUSTOM_PLUGIN_CHOICE.equals(id)) {
 			return TokenUtilities.getTokenPluginValues(externalResources, TipoPlugin.ATTRIBUTE_AUTHORITY);
@@ -369,8 +382,13 @@ public class AttributeAuthorityProvider implements IProvider {
 		else if(Costanti.ID_AA_JWS_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY.equals(id)) {
 			return Costanti.getIdValidazioneJwtTruststoreTypeSelectJwkPublicKeyLabels();
 		}
-		else if(Costanti.ID_AA_JWS_TRUSTSTORE_OCSP_POLICY.equals(id)) {
+		else if(Costanti.ID_AA_JWS_TRUSTSTORE_OCSP_POLICY.equals(id) ||
+				Costanti.ID_HTTPS_TRUSTSTORE_OCSP_POLICY.equals(id)) {
 			return this.ocspProvider.getLabels();
+		}
+		else if(Costanti.ID_AA_JWS_KEYSTORE_BYOK_POLICY.equals(id) ||
+				Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(id)) {
+			return this.byokProvider.getLabels();
 		}
 		else if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_PARSER_TOKEN_CUSTOM_PLUGIN_CHOICE.equals(id)) {
 			return TokenUtilities.getTokenPluginLabels(externalResources, TipoPlugin.ATTRIBUTE_AUTHORITY);
@@ -568,29 +586,28 @@ public class AttributeAuthorityProvider implements IProvider {
 				Costanti.ID_AA_JWS_KEYSTORE_FILE.equals(item.getName()) ||
 				Costanti.ID_HTTPS_TRUSTSTORE_FILE.equals(item.getName()) ||
 				Costanti.ID_HTTPS_KEYSTORE_FILE.equals(item.getName())) {
-			dynamicUpdateStoreFile(items, mapNameValue, item, actualValue);
+			return dynamicUpdateStoreFile(items, mapNameValue, item, actualValue);
 		}
 		else if(Costanti.ID_AA_JWS_TRUSTSTORE_PASSWORD.equals(item.getName()) ||
 				Costanti.ID_AA_JWS_KEYSTORE_PASSWORD.equals(item.getName()) ||
 				Costanti.ID_HTTPS_TRUSTSTORE_PASSWORD.equals(item.getName()) ||
 				Costanti.ID_HTTPS_KEYSTORE_PASSWORD.equals(item.getName())) {
-			dynamicUpdateStorePassword(items, mapNameValue, item, actualValue);	
+			return dynamicUpdateStorePassword(items, mapNameValue, item, actualValue);	
 		}
 		else if(Costanti.ID_AA_JWS_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName()) ||
 				Costanti.ID_HTTPS_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName()) ) {
-			
-			String type = Costanti.ID_AA_JWS_KEYSTORE_TYPE;
-			if(Costanti.ID_HTTPS_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName())) {
-				type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
-			}
-			
-			return AbstractSecurityProvider.processStoreKeyPassword(type, items, mapNameValue, item, actualValue);
+			return dynamicUpdateStoreKeyPassword(items, mapNameValue, item, actualValue);
 		}
-		else if(Costanti.ID_AA_JWS_TRUSTSTORE_OCSP_POLICY.equals(item.getName())) {
+		else if(Costanti.ID_AA_JWS_TRUSTSTORE_OCSP_POLICY.equals(item.getName()) ||
+				Costanti.ID_HTTPS_TRUSTSTORE_OCSP_POLICY.equals(item.getName())) {
 			if(!this.ocspProvider.isOcspEnabled()) {
 				item.setValue("");
 				item.setType(ItemType.HIDDEN);
 			}
+		}
+		else if(Costanti.ID_AA_JWS_KEYSTORE_BYOK_POLICY.equals(item.getName()) ||
+				Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(item.getName())) {
+			return dynamicUpdateByok(items, mapNameValue, item, actualValue);
 		}
 		else if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_PARSER_TOKEN_CUSTOM_PLUGIN_CHOICE.equals(item.getName())) {
 			return TokenUtilities.dynamicUpdateTokenPluginChoice(externalResources, TipoPlugin.ATTRIBUTE_AUTHORITY, item, actualValue);
@@ -630,6 +647,34 @@ public class AttributeAuthorityProvider implements IProvider {
 		}
 		
 		return AbstractSecurityProvider.processStorePassword(type, items, mapNameValue, item, actualValue);
+	}
+	private String dynamicUpdateStoreKeyPassword(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		String type = Costanti.ID_AA_JWS_KEYSTORE_TYPE;
+		if(Costanti.ID_HTTPS_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName())) {
+			type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
+		}
+		return AbstractSecurityProvider.processStoreKeyPassword(type, items, mapNameValue, item, actualValue);
+	}
+	private String dynamicUpdateByok(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {		
+		if(!this.byokProvider.isByokEnabled()) {
+			item.setValue("");
+			item.setType(ItemType.HIDDEN);
+			return actualValue;
+		}
+		else {
+			return dynamicUpdateByokPolicy(items, mapNameValue, item, actualValue);
+		}
+	}
+	private String dynamicUpdateByokPolicy(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		String type = null;
+		if(Costanti.ID_AA_JWS_KEYSTORE_BYOK_POLICY.equals(item.getName())) {
+			type = Costanti.ID_AA_JWS_KEYSTORE_TYPE;
+		}
+		else if(Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(item.getName())) {
+			type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
+		}
+		
+		return AbstractSecurityProvider.processStoreByokPolicy(type, items, mapNameValue, item, actualValue);
 	}
 
 }

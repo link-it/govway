@@ -3909,7 +3909,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					boolean forwardToJwt = policyToken.isForwardToken();
 					
 					if(httpsDynamicDiscovery &&
-						!policyToken.isEndpointHttps()) {
+						!policyToken.isEndpointHttps(false, false)) {
 						httpsDynamicDiscovery = false;
 						
 						String endpoint = policyToken.getDynamicDiscoveryEndpoint();
@@ -3919,7 +3919,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						}
 					}
 					if(httpsValidazioneJwt &&
-						!policyToken.isEndpointHttps()) {
+						!policyToken.isEndpointHttps(false, false)) {
 						httpsValidazioneJwt = false;
 						
 						String endpoint = policyToken.getValidazioneJWTLocation();
@@ -3929,7 +3929,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						}
 					}
 					if(httpsIntrospection &&
-						!policyToken.isEndpointHttps()) {
+						!policyToken.isEndpointHttps(true,false)) {
 						httpsIntrospection = false;
 						
 						String endpoint = policyToken.getIntrospectionEndpoint();
@@ -3939,7 +3939,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						}
 					}
 					if(httpsUserInfo &&
-						!policyToken.isEndpointHttps()) {
+						!policyToken.isEndpointHttps(false,true)) {
 						httpsUserInfo = false;
 						
 						String endpoint = policyToken.getUserInfoEndpoint();

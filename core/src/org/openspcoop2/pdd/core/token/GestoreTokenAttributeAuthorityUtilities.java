@@ -67,6 +67,7 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPS;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.controllo_traffico.PolicyTimeoutConfig;
+import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.dynamic.MessageContent;
@@ -100,6 +101,8 @@ import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.byok.BYOKProvider;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
@@ -170,7 +173,7 @@ public class GestoreTokenAttributeAuthorityUtilities {
 						request,
 						state, portaDelegata, idModulo, pa, pd,
 						idDominio, idServizio,
-						requestInfo);
+						busta, requestInfo);
 				risposta = httpResponse.getContent();
 				httpResponseCode = httpResponse.getResultHTTPOperation();
 			}catch(Exception e) {
@@ -196,7 +199,7 @@ public class GestoreTokenAttributeAuthorityUtilities {
 	    				// serve per leggere il keystore dalla cache
 	    				TokenKeystoreInjectUtilities inject = new TokenKeystoreInjectUtilities(log, requestInfo ,
 	    						protocolFactory, 
-	    						context, state);
+	    						context, state, busta);
 	    				inject.initAttributeAuthorityValidazioneRispostaJwt(policyAttributeAuthority.getName(), portaDelegata, pd, pa, p);
 	    				inject.inject(p);
 	    				
@@ -725,7 +728,7 @@ public class GestoreTokenAttributeAuthorityUtilities {
 			String request,
 			IState state, boolean delegata, String idModulo, PortaApplicativa pa, PortaDelegata pd,
 			IDSoggetto idDominio, IDServizio idServizio,
-			RequestInfo requestInfo) throws Exception {
+			Busta busta, RequestInfo requestInfo) throws Exception {
 		
 		// *** Raccola Parametri ***
 		
@@ -850,7 +853,9 @@ public class GestoreTokenAttributeAuthorityUtilities {
 		
 		String requestPayload = request;
 		if(policyAttributeAuthority.isRequestJws()) {
-			requestPayload = signAAJwt(policyAttributeAuthority, request, contentType, requestInfo);
+			requestPayload = signAAJwt(policyAttributeAuthority, request, contentType, 
+					dynamicParameters,
+					busta, requestInfo, log);
 		}
 		if(policyAttributeAuthority.isRequestPositionBearer()) {
 			if(transportRequestContext.getHeaders()==null) {
@@ -947,7 +952,8 @@ public class GestoreTokenAttributeAuthorityUtilities {
 	}
 	
 	private static String signAAJwt(PolicyAttributeAuthority policyAttributeAuthority, String payload, String contentType,
-			RequestInfo requestInfo) throws TokenException, SecurityException, UtilsException {
+			AttributeAuthorityDynamicParameters dynamicParameters,
+			Busta busta, RequestInfo requestInfo, Logger log) throws TokenException, SecurityException, UtilsException {
 		
 		String signAlgo = policyAttributeAuthority.getRequestJwtSignAlgorithm();
 		if(signAlgo==null) {
@@ -1003,21 +1009,31 @@ public class GestoreTokenAttributeAuthorityUtilities {
 		
 		String keyPassword = policyAttributeAuthority.getRequestJwtSignKeyPassword();
 		if(keyPassword==null && 
-				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) &&
+				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType)) {
 			throw new TokenException(GestoreToken.KEY_PASSWORD_UNDEFINED);
 		}
-				
+		
+		String keystoreByokPolicy = policyAttributeAuthority.getRequestJwtSignKeystoreByokPolicy();
+		BYOKRequestParams byokParams = null;
+		if(BYOKProvider.isPolicyDefined(keystoreByokPolicy)) {
+			Map<String, Object> dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(busta, 
+					requestInfo, dynamicParameters.getPddContext(), log);
+			byokParams = BYOKProvider.getBYOKRequestParamsByUnwrapBYOKPolicy(keystoreByokPolicy, 
+					dynamicMap );
+		}
+		
 		KeyStore ks = null;
 		KeyPairStore keyPairStore = null;
 		JWKSetStore jwtStore = null;
 		if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
-			keyPairStore = GestoreKeystoreCache.getKeyPairStore(requestInfo, keystoreFile, keystoreFilePublicKey, keyPassword, keyPairAlgorithm);
+			keyPairStore = GestoreKeystoreCache.getKeyPairStore(requestInfo, keystoreFile, keystoreFilePublicKey, keyPassword, keyPairAlgorithm, byokParams);
 		}
 		else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType)) {
-			jwtStore = GestoreKeystoreCache.getJwkSetStore(requestInfo, keystoreFile);
+			jwtStore = GestoreKeystoreCache.getJwkSetStore(requestInfo, keystoreFile, byokParams);
 		}
 		else {
-			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keystoreFile, keystoreType, keystorePassword);
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keystoreFile, keystoreType, keystorePassword, byokParams);
 			if(merlinKs==null) {
 				throw new TokenException("Accesso al keystore '"+keystoreFile+"' non riuscito");
 			}

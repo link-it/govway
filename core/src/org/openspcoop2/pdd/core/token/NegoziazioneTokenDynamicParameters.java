@@ -40,6 +40,7 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.byok.BYOKUnwrapPolicyUtilities;
 import org.openspcoop2.pdd.core.dynamic.DynamicException;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.Template;
@@ -56,6 +57,8 @@ import org.openspcoop2.security.keystore.JWKSetStore;
 import org.openspcoop2.security.keystore.KeyPairStore;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
+import org.openspcoop2.utils.certificate.byok.BYOKProvider;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
 /**
@@ -982,7 +985,10 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	public String getTipoKeystoreApplicativoModI() {
 		return this.keystoreApplicativoModI.getSecurityMessageKeystoreType();
 	}
-	public KeyPairStore getKeyPairStoreApplicativoModI() throws TokenException, SecurityException{
+	public boolean isByokPolicyDefinedApplicativoModI() {
+		return BYOKProvider.isPolicyDefined(this.keystoreApplicativoModI.getSecurityMessageKeystoreByokPolicy());
+	}
+	public KeyPairStore getKeyPairStoreApplicativoModI(Map<String,Object> dynamicMap) throws TokenException, SecurityException{
 		
 		String keystoreFile = this.keystoreApplicativoModI.getSecurityMessageKeystorePath();
 		if(keystoreFile==null) {
@@ -999,21 +1005,34 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 		
 		String keyPassword = this.keystoreApplicativoModI.getSecurityMessageKeyPassword();
 		
-		return GestoreKeystoreCache.getKeyPairStore(this.getRequestInfo(), keystoreFile, keystoreFilePublicKey, keyPassword, keyPairAlgorithm);
+		String keystoreByokPolicy = this.keystoreApplicativoModI.getSecurityMessageKeystoreByokPolicy();
+		BYOKRequestParams byokParams = getBYOKRequestParams(keystoreByokPolicy, dynamicMap);
+		
+		return GestoreKeystoreCache.getKeyPairStore(this.getRequestInfo(), keystoreFile, keystoreFilePublicKey, keyPassword, keyPairAlgorithm, byokParams);
 	}
-	public JWKSetStore getJWKSetStoreApplicativoModI() throws TokenException, SecurityException{
+	public JWKSetStore getJWKSetStoreApplicativoModI(Map<String,Object> dynamicMap) throws TokenException, SecurityException{
 		
 		String keystoreFile = this.keystoreApplicativoModI.getSecurityMessageKeystorePath();
 		if(keystoreFile==null) {
 			throw new TokenException("JWT Signature keystore file undefined");
 		}
 		
-		return GestoreKeystoreCache.getJwkSetStore(this.getRequestInfo(), keystoreFile);
+		String keystoreByokPolicy = this.keystoreApplicativoModI.getSecurityMessageKeystoreByokPolicy();
+		BYOKRequestParams byokParams = getBYOKRequestParams(keystoreByokPolicy, dynamicMap);
+		
+		return GestoreKeystoreCache.getJwkSetStore(this.getRequestInfo(), keystoreFile, byokParams);
 	}
-	public org.openspcoop2.utils.certificate.KeyStore getKeystoreApplicativoModI() throws TokenException, SecurityException{
+	public org.openspcoop2.utils.certificate.KeyStore getKeystoreApplicativoModI(Map<String,Object> dynamicMap) throws TokenException, SecurityException{
 		if(this.keystoreApplicativoModI.getSecurityMessageKeystorePath()!=null || this.keystoreApplicativoModI.isSecurityMessageKeystoreHSM()) {
+			
+			String keystoreByokPolicy = this.keystoreApplicativoModI.getSecurityMessageKeystoreByokPolicy();
+			BYOKRequestParams byokParams = null;
+			if(this.keystoreApplicativoModI.getSecurityMessageKeystorePath()!=null) {
+				byokParams = getBYOKRequestParams(keystoreByokPolicy, dynamicMap);
+			}
+			
 			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(this.getRequestInfo(), this.keystoreApplicativoModI.getSecurityMessageKeystorePath(), this.keystoreApplicativoModI.getSecurityMessageKeystoreType(), 
-					this.keystoreApplicativoModI.getSecurityMessageKeystorePassword());
+					this.keystoreApplicativoModI.getSecurityMessageKeystorePassword(), byokParams);
 			if(merlinKs==null) {
 				throw new TokenException("Accesso al keystore '"+this.keystoreApplicativoModI.getSecurityMessageKeystorePath()+"' non riuscito");
 			}
@@ -1044,7 +1063,10 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	public String getTipoKeystoreFruizioneModI() {
 		return this.keystoreFruizioneModI.getSecurityMessageKeystoreType();
 	}
-	public KeyPairStore getKeyPairStoreFruizioneModI() throws TokenException, SecurityException{
+	public boolean isByokPolicyDefinedFruizioneModI() {
+		return BYOKProvider.isPolicyDefined(this.keystoreFruizioneModI.getSecurityMessageKeystoreByokPolicy());
+	}
+	public KeyPairStore getKeyPairStoreFruizioneModI(Map<String,Object> dynamicMap) throws TokenException, SecurityException{
 		
 		String keystoreFile = this.keystoreFruizioneModI.getSecurityMessageKeystorePath();
 		if(keystoreFile==null) {
@@ -1061,21 +1083,34 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 		
 		String keyPassword = this.keystoreFruizioneModI.getSecurityMessageKeyPassword();
 		
-		return GestoreKeystoreCache.getKeyPairStore(this.getRequestInfo(), keystoreFile, keystoreFilePublicKey, keyPassword, keyPairAlgorithm);
+		String keystoreByokPolicy = this.keystoreFruizioneModI.getSecurityMessageKeystoreByokPolicy();
+		BYOKRequestParams byokParams = getBYOKRequestParams(keystoreByokPolicy, dynamicMap);
+		
+		return GestoreKeystoreCache.getKeyPairStore(this.getRequestInfo(), keystoreFile, keystoreFilePublicKey, keyPassword, keyPairAlgorithm, byokParams);
 	}
-	public JWKSetStore getJWKSetStoreFruizioneModI() throws TokenException, SecurityException{
+	public JWKSetStore getJWKSetStoreFruizioneModI(Map<String,Object> dynamicMap) throws TokenException, SecurityException{
 		
 		String keystoreFile = this.keystoreFruizioneModI.getSecurityMessageKeystorePath();
 		if(keystoreFile==null) {
 			throw new TokenException("JWT Signature keystore file undefined");
 		}
 		
-		return GestoreKeystoreCache.getJwkSetStore(this.getRequestInfo(), keystoreFile);
+		String keystoreByokPolicy = this.keystoreFruizioneModI.getSecurityMessageKeystoreByokPolicy();
+		BYOKRequestParams byokParams = getBYOKRequestParams(keystoreByokPolicy, dynamicMap);
+		
+		return GestoreKeystoreCache.getJwkSetStore(this.getRequestInfo(), keystoreFile, byokParams);
 	}
-	public org.openspcoop2.utils.certificate.KeyStore getKeystoreFruizioneModI() throws TokenException, SecurityException{
+	public org.openspcoop2.utils.certificate.KeyStore getKeystoreFruizioneModI(Map<String,Object> dynamicMap) throws TokenException, SecurityException{
 		if(this.keystoreFruizioneModI.getSecurityMessageKeystorePath()!=null || this.keystoreFruizioneModI.isSecurityMessageKeystoreHSM()) {
+			
+			String keystoreByokPolicy = this.keystoreFruizioneModI.getSecurityMessageKeystoreByokPolicy();
+			BYOKRequestParams byokParams = null;
+			if(this.keystoreFruizioneModI.getSecurityMessageKeystorePath()!=null) {
+				byokParams = getBYOKRequestParams(keystoreByokPolicy, dynamicMap);
+			}
+			
 			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(this.getRequestInfo(), this.keystoreFruizioneModI.getSecurityMessageKeystorePath(), this.keystoreFruizioneModI.getSecurityMessageKeystoreType(), 
-					this.keystoreFruizioneModI.getSecurityMessageKeystorePassword());
+					this.keystoreFruizioneModI.getSecurityMessageKeystorePassword(), byokParams);
 			if(merlinKs==null) {
 				throw new TokenException("Accesso al keystore '"+this.keystoreFruizioneModI.getSecurityMessageKeystorePath()+"' non riuscito");
 			}
@@ -1097,4 +1132,8 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 		return this.keystoreFruizioneModI.getSecurityMessageKeyPassword();
 	}
 	
+	
+	private BYOKRequestParams getBYOKRequestParams(String keystoreByokPolicy, Map<String,Object> dynamicMap) throws SecurityException {
+		return BYOKUnwrapPolicyUtilities.getBYOKRequestParams(keystoreByokPolicy, dynamicMap);
+	}
 }

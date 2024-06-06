@@ -190,6 +190,10 @@ public class ConnettoreHTTPSProperties extends SSLConfig implements Serializable
 		}else{
 			propertiesHTTPS.setKeyStoreType(KeyStore.getDefaultType()); // JKS
 		}
+		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY)!=null){
+			tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY).trim();
+			propertiesHTTPS.setKeyStoreBYOKPolicy(tmp);
+		}
 	}
 	private static void readSecureRandomConfig(java.util.Map<String,String> properties, ConnettoreHTTPSProperties propertiesHTTPS) throws CoreException {
 		String tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_SECURE_RANDOM).trim();

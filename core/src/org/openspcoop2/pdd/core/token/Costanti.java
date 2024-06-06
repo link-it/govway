@@ -353,6 +353,7 @@ public class Costanti {
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD= CostantiProprieta.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD;
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_ALIAS= "policy.retrieveToken.jwt.signature.keyAlias";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD= CostantiProprieta.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD;
+	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_BYOK_POLICY= "policy.retrieveToken.jwt.signature.byok";
 	
 	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_MODE = "policy.tokenForward.mode";
 	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_MODE_RFC6750_HEADER = "RFC6750_header";
@@ -548,21 +549,25 @@ public class Costanti {
 	public static final String ID_HTTPS_TRUSTSTORE_TYPE = "endpointHttpsTruststoreType";
 	public static final String ID_HTTPS_TRUSTSTORE_FILE = "endpointHttpsTruststoreFile";
 	public static final String ID_HTTPS_TRUSTSTORE_PASSWORD = "endpointHttpsTruststorePassword";
+	public static final String ID_HTTPS_TRUSTSTORE_OCSP_POLICY = "endpointHttpsTrustStoreOcspPolicy";
 	
 	public static final String ID_HTTPS_KEYSTORE_TYPE = "endpointHttpsClientKeystoreType";
 	public static final String ID_HTTPS_KEYSTORE_FILE = "endpointHttpsClientKeystoreFile";
 	public static final String ID_HTTPS_KEYSTORE_PASSWORD = "endpointHttpsClientKeystorePassword";
 	public static final String ID_HTTPS_KEYSTORE_PASSWORD_PRIVATE_KEY = "endpointHttpsClientPasswordChiavePrivata";
+	public static final String ID_HTTPS_KEYSTORE_BYOK_POLICY = "endpointHttpsByokPolicy";
 	
 	public static final String ID_TOKEN_FORWARD_JWS_KEYSTORE_TYPE = "tokenForwardInfoRaccolteModeJWSKeystoreType";
 	public static final String ID_TOKEN_FORWARD_JWS_KEYSTORE_FILE = "tokenForwardInfoRaccolteModeJWSKeystoreFile";
 	public static final String ID_TOKEN_FORWARD_JWS_KEYSTORE_PASSWORD = "tokenForwardInfoRaccolteModeJWSKeystorePassword";
 	public static final String ID_TOKEN_FORWARD_JWS_KEYSTORE_PASSWORD_PRIVATE_KEY = "tokenForwardInfoRaccolteModeJWSKeystorePrivateKeyPassword";
+	public static final String ID_TOKEN_FORWARD_JWS_KEYSTORE_BYOK_POLICY = "tokenForwardInfoRaccolteModeJWSKeystoreByokPolicy";
 	
 	public static final String ID_TOKEN_FORWARD_JWE_KEYSTORE_TYPE = "tokenForwardInfoRaccolteModeJWEContentKeystoreType";
 	public static final String ID_TOKEN_FORWARD_JWE_KEYSTORE_FILE = "tokenForwardInfoRaccolteModeJWEContentKeystoreFile";
 	public static final String ID_TOKEN_FORWARD_JWE_KEYSTORE_PASSWORD = "tokenForwardInfoRaccolteModeJWEContentKeystorePassword";
 	public static final String ID_TOKEN_FORWARD_JWE_KEYSTORE_PASSWORD_PRIVATE_KEY = "tokenForwardInfoRaccolteModeJWEContentKeystorePrivateKeyPassword";
+	public static final String ID_TOKEN_FORWARD_JWE_KEYSTORE_BYOK_POLICY = "tokenForwardInfoRaccolteModeJWEContentKeystoreByokPolicy";
 	
 	public static final String ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CLASSNAME = "discoveryParserCustom";
 	public static final String ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CLASSNAME = "validazioneJwtParserCustom";
@@ -582,6 +587,7 @@ public class Costanti {
 	public static final String ID_NEGOZIAZIONE_JWT_KEYSTORE_ALIAS_PRIVATE_KEY = "jwtAliasChiavePrivata";
 	public static final String ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY = "jwtPasswordChiavePrivata";
 	public static final String ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY_OPZIONALE = "jwtPasswordChiavePrivataOpzionale";
+	public static final String ID_NEGOZIAZIONE_JWT_KEYSTORE_BYOK_POLICY = "jwtByokPolicy";
 		
 	public static final String ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CLASSNAME = "customTokenParserCustomPlugin";
 	public static final String ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE = "customTokenParserCustomPluginChoice";
@@ -590,6 +596,7 @@ public class Costanti {
 	public static final String ID_AA_JWS_KEYSTORE_FILE = "aaJWSKeystoreFile";
 	public static final String ID_AA_JWS_KEYSTORE_PASSWORD = "aaJWSKeystorePassword";
 	public static final String ID_AA_JWS_KEYSTORE_PASSWORD_PRIVATE_KEY = "aaJWSKeystorePrivateKeyPassword";
+	public static final String ID_AA_JWS_KEYSTORE_BYOK_POLICY = "aaJWSKeystoreByokPolicy";
 	
 	public static final String ID_AA_JWS_TRUSTSTORE_TYPE = "aaJWSTruststoreType";
 	public static final String ID_AA_JWS_TRUSTSTORE_FILE = "aaJWSTruststoreFile";

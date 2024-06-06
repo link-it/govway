@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.message.OpenSPCoop2Message;
+
 /**     
  * TokenForward
  *
@@ -54,5 +56,21 @@ public class TokenForward implements Serializable {
 	}
 	public void setUrl(Map<String, List<String>> url) {
 		this.url = url;
+	}
+	
+	public void add(OpenSPCoop2Message msg) {
+		if(msg==null) {
+			return;
+		}
+		if(this.trasporto!=null && this.trasporto.size()>0) {
+			for (Map.Entry<String,List<String>> entry : this.trasporto.entrySet()) {
+				msg.forceTransportHeader(entry.getKey(), entry.getValue());
+			}
+		}
+		if(this.url!=null && this.url.size()>0) {
+			for (Map.Entry<String,List<String>> entry : this.url.entrySet()) {
+				msg.forceUrlProperty(entry.getKey(), entry.getValue());
+			}
+		}
 	}
 }

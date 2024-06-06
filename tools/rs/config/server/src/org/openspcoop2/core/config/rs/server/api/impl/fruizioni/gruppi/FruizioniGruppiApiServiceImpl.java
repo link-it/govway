@@ -272,6 +272,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 	        		null,							// httpsKeyAlias
 	        		null,							// httpsTrustStoreCRLs
 	        		null,							// httpsTrustStoreOCSPPolicy
+	        		null,							// httpsKeyStoreBYOKPolicy
 					null,							// proxy_enabled, 
 					null,							// proxy_hostname, 
 					null,							// proxy_port, 

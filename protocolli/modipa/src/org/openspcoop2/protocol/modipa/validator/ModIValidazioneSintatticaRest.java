@@ -39,6 +39,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.keystore.RemoteStoreProvider;
 import org.openspcoop2.pdd.core.token.Costanti;
@@ -633,6 +634,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				}
 			}
 			messageSecurityContext.setIncomingProperties(secProperties, false);
+			DynamicMapBuilderUtils.injectDynamicMap(busta, this.requestInfo, this.context, this.log);
 			joseSignature.process(messageSecurityContext, msgToken, busta, this.context);
 			joseSignature.detachSecurity(messageSecurityContext, msgToken.castAsRest());
 			

@@ -684,6 +684,10 @@ public class ConsoleProperties {
 		BooleanNullable b = this.readBooleanProperty(false, "byok.env.secrets.required");
 		return parse(b, false);
 	}
+	public boolean isConsoleBYOKShowUnwrapPolicy() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "console.byok.showUnwrapPolicy");
+		return parse(b, true);
+	}
 	public boolean isVisualizzaInformazioniCifrate() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(false, "console.visualizzaInformazioniCifrate.enabled");
 		return parse(b, false);

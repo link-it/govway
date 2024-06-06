@@ -114,7 +114,8 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 	}
 	
 	public boolean isEndpointHttps() {
-		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.AA_AUTH_SSL_STATO);	
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.AA_AUTH_SSL_STATO)
+				|| isHttpsAuthentication(); // anche solo se è abilitato httpsAuthentication, di fatto è abilitato https	
 	}
 	public boolean isHttpsAuthentication() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.AA_AUTH_SSL_CLIENT_STATO);	
@@ -275,6 +276,9 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 	}
 	public String getRequestJwtSignKeystorePassword() {
 		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_KEYSTORE_PASSWORD);
+	}
+	public String getRequestJwtSignKeystoreByokPolicy() {
+		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_KEYSTORE_BYOK_POLICY);
 	}
 	public String getRequestJwtSignKeyAlias() {
 		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_KEY_ALIAS);
