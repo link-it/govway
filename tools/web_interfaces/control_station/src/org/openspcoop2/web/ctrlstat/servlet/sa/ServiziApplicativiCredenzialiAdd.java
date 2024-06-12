@@ -48,6 +48,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -95,6 +96,7 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 			saHelper.makeMenu();
 			
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
+			SoggettiCore soggettiCore = new SoggettiCore();
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
 			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session, request);
@@ -185,6 +187,8 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 			oldIdServizioApplicativo.setNome(oldNome);
 			int idProv = sa.getIdSoggetto().intValue();
 						
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
+			
 			String postBackElementName = saHelper.getPostBackElementName();
 			String labelButtonSalva = Costanti.LABEL_MONITOR_BUTTON_INVIA;
 
@@ -493,7 +497,7 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = saHelper.servizioApplicativoCredenzialiCertificatiCheckData(TipoOperazione.CHANGE, idProv, sa, 0);
+			boolean isOk = saHelper.servizioApplicativoCredenzialiCertificatiCheckData(TipoOperazione.CHANGE, idProv, sa, 0, protocollo, -1);
 			
 			if (!isOk) {
 				

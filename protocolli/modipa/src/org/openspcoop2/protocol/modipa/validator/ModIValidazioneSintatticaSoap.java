@@ -50,6 +50,7 @@ import org.openspcoop2.message.xml.MessageDynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.modipa.builder.ModIImbustamentoSoap;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
@@ -216,7 +217,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			Busta busta, List<Eccezione> erroriValidazione,
 			ModITruststoreConfig trustStoreCertificati, ModISecurityConfig securityConfig,
 			boolean buildSecurityTokenInRequest,
-			Map<String, Object> dynamicMapParameter, Busta datiRichiesta, RequestInfo requestInfo) throws ProtocolException {
+			Map<String, Object> dynamicMapParameter, Busta datiRichiesta, RequestInfo requestInfo, MsgDiagnostico msgDiag) throws ProtocolException {
 		
 		if(msg==null) {
 			throw new ProtocolException("Param msg is null");
@@ -564,7 +565,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 					// Il token rappresenta un integrity
 				}
 				else {
-					identificazioneApplicativoMittente(x509,msg,busta);
+					identificazioneApplicativoMittente(x509,msg,busta,msgDiag);
 				}
 			}
 		}

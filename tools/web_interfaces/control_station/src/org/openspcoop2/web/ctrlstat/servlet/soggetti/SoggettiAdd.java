@@ -638,7 +638,7 @@ public final class SoggettiAdd extends Action {
 
 			// Controlli sui campi immessi
 			boolean isOk = soggettiHelper.soggettiCheckData(tipoOp, null, strutsBean.tipoprov, strutsBean.nomeprov, strutsBean.codiceIpa, strutsBean.pdUrlPrefixRewriter, strutsBean.paUrlPrefixRewriter,
-					null, false, strutsBean.descr);
+					null, false, strutsBean.descr, strutsBean.pdd);
 
 			// updateDynamic
 			if(isOk) {

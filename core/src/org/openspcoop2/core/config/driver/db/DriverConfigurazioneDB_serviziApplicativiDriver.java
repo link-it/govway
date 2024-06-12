@@ -63,6 +63,7 @@ import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
@@ -113,8 +114,10 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
             		null,
             		null,
             		false, false,
-            		null, null, false);
+            		null, null, false,
+            		null, false, false, false);
     }
+    
     protected ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String aUser,String aPassword, CryptConfig config) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
             return this.getEngineServizioApplicativo(null, aUser, aPassword, 
             		null, null, null, false,
@@ -122,8 +125,21 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
             		null,
             		config,
             		false, false,
-            		null, null, false);
+            		null, null, false,
+            		null, false, false, false);
     }
+    protected ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String aUser,String aPassword, CryptConfig config,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+        return this.getEngineServizioApplicativo(null, aUser, aPassword, 
+        		null, null, null, false,
+        		null, 
+        		null,
+        		config,
+        		false, false,
+        		null, null, false,
+        		tipiSoggetto, false, false, false);
+}
+    
     protected ServizioApplicativo getServizioApplicativoByCredenzialiApiKey(String aUser,String aPassword, boolean appId, CryptConfig config) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
             return this.getEngineServizioApplicativo(null, aUser, aPassword, 
             		null, null, null, false,
@@ -131,8 +147,21 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
             		null,
             		config,
             		true, appId,
-            		null, null, false);
+            		null, null, false,
+            		null, false, false, false);
     }
+    protected ServizioApplicativo getServizioApplicativoByCredenzialiApiKey(String aUser,String aPassword, boolean appId, CryptConfig config,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+        return this.getEngineServizioApplicativo(null, aUser, aPassword, 
+        		null, null, null, false,
+        		null, 
+        		null,
+        		config,
+        		true, appId,
+        		null, null, false,
+        		tipiSoggetto, false, false, false);
+    }
+    
     protected ServizioApplicativo getServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId, boolean tokenWithHttpsEnabled) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
             return this.getEngineServizioApplicativo(null, null, null, 
             		null, null, null, false,
@@ -140,8 +169,21 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
             		null,
             		null,
             		false, false,
-            		tokenPolicy, tokenClientId, tokenWithHttpsEnabled);
+            		tokenPolicy, tokenClientId, tokenWithHttpsEnabled,
+            		null, false, false, false);
     }
+    protected ServizioApplicativo getServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId, boolean tokenWithHttpsEnabled,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+        return this.getEngineServizioApplicativo(null, null, null, 
+        		null, null, null, false,
+        		null, 
+        		null,
+        		null,
+        		false, false,
+        		tokenPolicy, tokenClientId, tokenWithHttpsEnabled,
+        		tipiSoggetto, false, false, false);
+    }
+    
     protected ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject, String aIssuer) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
             return this.getEngineServizioApplicativo(null, null, null, 
             		aSubject, aIssuer, null, false,
@@ -149,8 +191,32 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
             		null,
             		null,
             		false, false,
-            		null, null, false);
+            		null, null, false,
+            		null, false, false, false);
     }
+    protected ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject, String aIssuer,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+        return this.getEngineServizioApplicativo(null, null, null, 
+        		aSubject, aIssuer, null, false,
+        		null, 
+        		null,
+        		null,
+        		false, false,
+        		null, null, false,
+        		tipiSoggetto, false, false, false);
+    }
+    protected ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject, String aIssuer,
+    		List<String> tipiSoggetto, boolean includiApplicativiNonModI,boolean includiApplicativiModIEsterni,boolean includiApplicativiModIInterni) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+        return this.getEngineServizioApplicativo(null, null, null, 
+        		aSubject, aIssuer, null, false,
+        		null, 
+        		null,
+        		null,
+        		false, false,
+        		null, null, false,
+        		tipiSoggetto, includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
+    }
+    
     protected ServizioApplicativo getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
     	 return this.getEngineServizioApplicativo(null, null, null, 
          		null, null, certificate, strictVerifier,
@@ -158,8 +224,32 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
          		null,
          		null,
          		false, false,
-        		null, null, false);
+        		null, null, false,
+        		null, false, false, false);
     }
+    protected ServizioApplicativo getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+   	 return this.getEngineServizioApplicativo(null, null, null, 
+        		null, null, certificate, strictVerifier,
+        		null, 
+        		null,
+        		null,
+        		false, false,
+       		null, null, false,
+       		tipiSoggetto, false, false, false);
+    }
+    protected ServizioApplicativo getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier,
+    		List<String> tipiSoggetto, boolean includiApplicativiNonModI,boolean includiApplicativiModIEsterni,boolean includiApplicativiModIInterni) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+   	 return this.getEngineServizioApplicativo(null, null, null, 
+        		null, null, certificate, strictVerifier,
+        		null, 
+        		null,
+        		null,
+        		false, false,
+       		null, null, false,
+       		tipiSoggetto, includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
+    }
+    
     protected ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(String principal) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
     	return this.getEngineServizioApplicativo(null, null, null, 
     			null, null, null, false,
@@ -167,8 +257,21 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
     			null,
     			null,
     			false, false,
-        		null, null, false);
+        		null, null, false,
+        		null, false, false, false);
     }
+    protected ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(String principal,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+    	return this.getEngineServizioApplicativo(null, null, null, 
+    			null, null, null, false,
+    			principal, 
+    			null,
+    			null,
+    			false, false,
+        		null, null, false,
+        		tipiSoggetto, false, false, false);
+    }
+    
     protected ServizioApplicativo getServizioApplicativo(long idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
             return this.getEngineServizioApplicativo(null, null, null, 
             		null, null, null, false,
@@ -176,7 +279,8 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
             		idServizioApplicativo,
             		null,
             		false, false,
-            		null, null, false);
+            		null, null, false,
+            		null, false, false, false);
     }
 
     private ServizioApplicativo getEngineServizioApplicativo(IDServizioApplicativo idServizioApplicativoObject, 
@@ -186,7 +290,8 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
     		Long idServizioApplicativo, 
     		CryptConfig config,
     		boolean apiKey, boolean appId,
-    		String tokenPolicy, String tokenClientId, boolean tokenWithHttpsEnabled) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+    		String tokenPolicy, String tokenClientId, boolean tokenWithHttpsEnabled,
+    		List<String> tipiSoggetto, boolean includiApplicativiNonModI,boolean includiApplicativiModIEsterni,boolean includiApplicativiModIInterni) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 
 		Connection con = null;
 		PreparedStatement stm = null;
@@ -306,20 +411,25 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				//cerco un servizio applicativo che contenga utente e password con autenticazione basi
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
-				sqlQueryObject.addSelectField("*");
+				if(tipiSoggetto!=null && !tipiSoggetto.isEmpty()) {
+					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				}
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI+".id","saId");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI+".password","saPwd");
 				sqlQueryObject.addWhereCondition("tipoauth = ?");
 				sqlQueryObject.addWhereCondition("utente = ?");
-				//sqlQueryObject.addWhereCondition("password = ?");
 				if(apiKey) {
 					sqlQueryObject.addWhereCondition("issuer = ?");
+				}
+				if(tipiSoggetto!=null && !tipiSoggetto.isEmpty()) {
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
+					sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipiSoggetto.toArray(new String[1]));
 				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQuery = sqlQueryObject.createSQLQuery();
 				stm = con.prepareStatement(sqlQuery);
-				//stm.setString(1, nome_sa);
 				stm.setString(1, tipoCredenziale);
 				stm.setString(2, aUser);
-				//stm.setString(3, aPassord);
 				if(apiKey) {
 					stm.setString(3, CostantiDB.getIssuerApiKey(appId));
 				}
@@ -335,7 +445,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				long idSA = -1;
 				while(rs.next()){
 					
-					String passwordDB =  rs.getString("password");
+					String passwordDB =  rs.getString("saPwd");
 					
 					boolean found = false;
 					if(testInChiaro) {
@@ -346,14 +456,14 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					}
 					
 					if( found ) {
-						idSA = rs.getLong("id");
+						idSA = rs.getLong("saId");
 						break;
 					}
 
 				}
 				rs.close();
 				stm.close();
-				//System.out.println("TROVATO["+idSA+"]");
+				/**System.out.println("TROVATO["+idSA+"]");*/
 				if(idSA<=0){
 					throw new DriverConfigurazioneNotFound("Nessun Servizio Applicativo trovato.");
 				}
@@ -379,6 +489,9 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				if(tipiSoggetto!=null && !tipiSoggetto.isEmpty()) {
+					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				}
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "id", "saIdentificativo");
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "subject", "saSubject");
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "issuer", "saIssuer");
@@ -407,6 +520,18 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				}
 				else {
 					sqlQueryObject.addWhereIsNullCondition(CostantiDB.SERVIZI_APPLICATIVI+".issuer");
+				}
+				
+				if(tipiSoggetto!=null && !tipiSoggetto.isEmpty()) {
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
+					
+					if(includiApplicativiNonModI || includiApplicativiModIEsterni || includiApplicativiModIInterni) {
+						ISQLQueryObject object =  buildFiltroApplicativiTls(sqlQueryObject, tipiSoggetto,
+					    		includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
+						sqlQueryObject.addWhereCondition(object.createSQLConditions());
+					} else {
+						sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipiSoggetto.toArray(new String[1]));
+					}
 				}
 
 				sqlQueryObject.setANDLogicOperator(true);
@@ -454,6 +579,9 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
+					if(tipiSoggetto!=null && !tipiSoggetto.isEmpty()) {
+						sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+					}
 					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "id", "saIdentificativo");
 					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI, "subject", "saSubject");
 					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI, "issuer", "saIssuer");
@@ -484,6 +612,17 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					}
 					else {
 						sqlQueryObject.addWhereIsNullCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".issuer");
+					}
+					
+					if(tipiSoggetto!=null && !tipiSoggetto.isEmpty()) {
+						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
+						if(includiApplicativiNonModI || includiApplicativiModIEsterni || includiApplicativiModIInterni) {
+							ISQLQueryObject object =  buildFiltroApplicativiTls(sqlQueryObject, tipiSoggetto,
+						    		includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
+							sqlQueryObject.addWhereCondition(object.createSQLConditions());
+						} else {
+							sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipiSoggetto.toArray(new String[1]));
+						}
 					}
 
 					sqlQueryObject.setANDLogicOperator(true);
@@ -547,6 +686,9 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				if(tipiSoggetto!=null && !tipiSoggetto.isEmpty()) {
+					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				}
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "id", "saIdentificativo");
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "cn_subject", "saCNSubject");
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "cn_issuer", "saCNIssuer");
@@ -561,6 +703,17 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				// in futuro se serve gestire il boolean tokenWithHttpsEnabled anche per l'autenticazione https
 				if(!tokenWithHttpsEnabled){
 					sqlQueryObject.addWhereIsNullCondition(CostantiDB.SERVIZI_APPLICATIVI+".token_policy");
+				}
+				
+				if(tipiSoggetto!=null && !tipiSoggetto.isEmpty()) {
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
+					if(includiApplicativiNonModI || includiApplicativiModIEsterni || includiApplicativiModIInterni) {
+						ISQLQueryObject object =  buildFiltroApplicativiTls(sqlQueryObject, tipiSoggetto,
+					    		includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
+						sqlQueryObject.addWhereCondition(object.createSQLConditions());
+					} else {
+						sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipiSoggetto.toArray(new String[1]));
+					}
 				}
 
 				sqlQueryObject.setANDLogicOperator(true);
@@ -610,6 +763,9 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
+					if(tipiSoggetto!=null && !tipiSoggetto.isEmpty()) {
+						sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+					}
 					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "id", "saIdentificativo");
 					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI, "cn_subject", "saCNSubject");
 					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI, "cn_issuer", "saCNIssuer");
@@ -626,6 +782,18 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					if(!tokenWithHttpsEnabled){
 						sqlQueryObject.addWhereIsNullCondition(CostantiDB.SERVIZI_APPLICATIVI+".token_policy");
 					}
+					
+					if(tipiSoggetto!=null && !tipiSoggetto.isEmpty()) {
+						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
+						if(includiApplicativiNonModI || includiApplicativiModIEsterni || includiApplicativiModIInterni) {
+							ISQLQueryObject object =  buildFiltroApplicativiTls(sqlQueryObject, tipiSoggetto,
+						    		includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
+							sqlQueryObject.addWhereCondition(object.createSQLConditions());
+						} else {
+							sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipiSoggetto.toArray(new String[1]));
+						}
+					}
+					
 					sqlQueryObject.setANDLogicOperator(true);
 					sqlQuery = sqlQueryObject.createSQLQuery();
 
@@ -687,9 +855,16 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				//cerco un servizio applicativo che contenga utente e password con autenticazione basi
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				if(tipiSoggetto!=null && !tipiSoggetto.isEmpty()) {
+					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				}
 				sqlQueryObject.addSelectField("*");
 				sqlQueryObject.addWhereCondition("tipoauth = ?");
 				sqlQueryObject.addWhereCondition("utente = ?");
+				if(tipiSoggetto!=null && !tipiSoggetto.isEmpty()) {
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
+					sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipiSoggetto.toArray(new String[1]));
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQuery = sqlQueryObject.createSQLQuery();
 				stm = con.prepareStatement(sqlQuery);
@@ -705,6 +880,9 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				//cerco un servizio applicativo che contenga l'autenticazione token
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				if(tipiSoggetto!=null && !tipiSoggetto.isEmpty()) {
+					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				}
 				sqlQueryObject.addSelectField("*");
 				
 				List<FiltroRicercaProtocolPropertyConfig> modiFilter = null; 
@@ -730,6 +908,11 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					sqlQueryObject.addWhereCondition("token_policy = ?");
 					sqlQueryObject.addWhereCondition("utente = ?");
 					sqlQueryObject.setANDLogicOperator(true);
+				}
+				
+				if(tipiSoggetto!=null && !tipiSoggetto.isEmpty()) {
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
+					sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipiSoggetto.toArray(new String[1]));
 				}
 
 				sqlQuery = sqlQueryObject.createSQLQuery();
@@ -1137,6 +1320,52 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				list, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO);
     }
     
+    private ISQLQueryObject buildFiltroApplicativiTls(ISQLQueryObject sqlQueryObject, List<String> tipiSoggetto,
+    		boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni) throws SQLQueryObjectException {
+    	ISQLQueryObject object = null;
+    	if(includiApplicativiNonModI || includiApplicativiModIEsterni || includiApplicativiModIInterni) {
+			object = sqlQueryObject.newSQLQueryObject();
+			object.setANDLogicOperator(false);
+			if(includiApplicativiNonModI) {
+				ISQLQueryObject notModI = sqlQueryObject.newSQLQueryObject();
+				notModI.setANDLogicOperator(true);
+				notModI.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipiSoggetto.toArray(new String[1]));
+				notModI.setNOTBeforeConditions(true);
+				object.addWhereCondition(notModI.createSQLConditions());
+			}
+			
+			ISQLQueryObject modIEsterniPdd = null;
+			if(includiApplicativiModIEsterni || includiApplicativiModIInterni) {
+				modIEsterniPdd = sqlQueryObject.newSQLQueryObject();
+				modIEsterniPdd.addFromTable(CostantiDB.SOGGETTI); // di servizio, non viene usata in createSQLConditions
+				modIEsterniPdd.setANDLogicOperator(false);
+				
+				modIEsterniPdd.addWhereIsNullCondition(CostantiDB.SOGGETTI+".server");
+				
+				if(!TipiDatabase.ORACLE.toString().equals(sqlQueryObject.getTipoDatabase())) {
+					modIEsterniPdd.addWhereIsEmptyCondition(CostantiDB.SOGGETTI+".server");
+				}
+				
+				ISQLQueryObject modIEsterniPddQuery = sqlQueryObject.newSQLQueryObject();
+				modIEsterniPddQuery.addFromTable(CostantiDB.PDD);
+				modIEsterniPddQuery.setANDLogicOperator(true);
+				modIEsterniPddQuery.addSelectAliasField(CostantiDB.PDD, "nome", "nomeServer");
+				modIEsterniPddQuery.addWhereCondition(CostantiDB.SOGGETTI+".server="+CostantiDB.PDD+".nome");
+				modIEsterniPddQuery.addWhereCondition(CostantiDB.PDD+".tipo='esterno'");
+				modIEsterniPdd.addWhereExistsCondition(false, modIEsterniPddQuery);
+				
+				modIEsterniPdd.setNOTBeforeConditions(!includiApplicativiModIEsterni);
+				
+				ISQLQueryObject modIEsterniP= sqlQueryObject.newSQLQueryObject();
+				modIEsterniP.setANDLogicOperator(true);
+				modIEsterniP.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipiSoggetto.toArray(new String[1]));
+				modIEsterniP.addWhereCondition(modIEsterniPdd.createSQLConditions());
+				object.addWhereCondition(modIEsterniP.createSQLConditions());
+			}
+    	}
+    	return object;
+    }
+    
 	/**
 	 * 
 	 * @param aSA
@@ -1411,7 +1640,9 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		}
 	}
 
-	protected List<ServizioApplicativo> servizioApplicativoWithCredenzialiSslList(String subject, String issuer) throws DriverConfigurazioneException {
+	protected List<ServizioApplicativo> servizioApplicativoWithCredenzialiSslList(String subject, String issuer,
+			List<String> tipiSoggetto,
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni) throws DriverConfigurazioneException {
 		String nomeMetodo = "servizioApplicativoWithCredenzialiSslList";
 		String queryString;
 
@@ -1419,7 +1650,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<ServizioApplicativo> lista = new ArrayList<ServizioApplicativo>();
+		ArrayList<ServizioApplicativo> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
@@ -1449,16 +1680,29 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				if(tipiSoggetto!=null) {
+					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				}
 				if(i>0) {
 					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
 				}
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "id", "saIdentificativo");
-				//sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "nome", "saNome");
-				//sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "id_soggetto", "saIdentificativoSoggetto");
+				/**sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "nome", "saNome");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "id_soggetto", "saIdentificativoSoggetto");*/
 				sqlQueryObject.addSelectAliasField(tabella, "subject", "saSubject");
 				sqlQueryObject.addSelectAliasField(tabella, "issuer", "saIssuer");
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "tipoauth", "saTipoAuth");
 				
+				if(tipiSoggetto!=null) {
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
+					if(includiApplicativiNonModI || includiApplicativiModIEsterni || includiApplicativiModIInterni) {
+						ISQLQueryObject object =  buildFiltroApplicativiTls(sqlQueryObject, tipiSoggetto,
+					    		includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
+						sqlQueryObject.addWhereCondition(object.createSQLConditions());
+					} else {
+						sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipiSoggetto.toArray(new String[1]));
+					}
+				}
 				if(i>0) {
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".id_servizio_applicativo="+CostantiDB.SERVIZI_APPLICATIVI+".id");
 				}
@@ -1549,7 +1793,9 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		}
 	}
 	
-	protected List<ServizioApplicativo> servizioApplicativoWithCredenzialiSslList(CertificateInfo certificate, boolean strictVerifier) throws DriverConfigurazioneException {
+	protected List<ServizioApplicativo> servizioApplicativoWithCredenzialiSslList(CertificateInfo certificate, boolean strictVerifier,
+			List<String> tipiSoggetto,
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni) throws DriverConfigurazioneException {
 		String nomeMetodo = "servizioApplicativoWithCredenzialiSslList";
 		String queryString;
 
@@ -1557,7 +1803,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<ServizioApplicativo> lista = new ArrayList<ServizioApplicativo>();
+		ArrayList<ServizioApplicativo> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
@@ -1588,17 +1834,30 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				if(tipiSoggetto!=null) {
+					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				}
 				if(i>0) {
 					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
 				}
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "id", "saIdentificativo");
-				//sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "nome", "saNome");
-				//sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "id_soggetto", "saIdentificativoSoggetto");
+				/**sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "nome", "saNome");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "id_soggetto", "saIdentificativoSoggetto");*/
 				sqlQueryObject.addSelectAliasField(tabella, "cn_subject", "saCNSubject");
 				sqlQueryObject.addSelectAliasField(tabella, "cn_issuer", "saCNIssuer");
 				sqlQueryObject.addSelectAliasField(tabella, "cert_strict_verification", "saCertStrictVerificationr");
 				sqlQueryObject.addSelectAliasField(tabella, "certificate", "saCertificate");
 				
+				if(tipiSoggetto!=null) {
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
+					if(includiApplicativiNonModI || includiApplicativiModIEsterni || includiApplicativiModIInterni) {
+						ISQLQueryObject object =  buildFiltroApplicativiTls(sqlQueryObject, tipiSoggetto,
+					    		includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
+						sqlQueryObject.addWhereCondition(object.createSQLConditions());
+					} else {
+						sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipiSoggetto.toArray(new String[1]));
+					}
+				}
 				if(i>0) {
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".id_servizio_applicativo="+CostantiDB.SERVIZI_APPLICATIVI+".id");
 				}
@@ -1611,7 +1870,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				}
 				sqlQueryObject.addWhereCondition(tabella+".cn_subject = ?");
 				sqlQueryObject.addWhereCondition(tabella+".cn_issuer = ?");
-				//sqlQueryObject.addWhereCondition(tabella+".cert_strict_verification = ?");
+				/**sqlQueryObject.addWhereCondition(tabella+".cert_strict_verification = ?");*/
 				
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
@@ -1624,12 +1883,12 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				stmt.setString(indexStmt++, cnIssuer);
 				// Il controllo serve ad evitare di caricare piu' applicativi con stesso certificato medesimo (indipendentemente dallo strict)
 				// Se quindi sto creando un entita con strict abilitato, verifichero sotto tra i vari certificati la corrispondenza esatta, altrimenti una corrispondenza non esatta
-	//			if(strictVerifier) {
-	//				stmt.setInt(indexStmt++, CostantiDB.TRUE);
-	//			}
-	//			else {
-	//				stmt.setInt(indexStmt++, CostantiDB.FALSE);
-	//			}
+				/**if(strictVerifier) {
+					stmt.setInt(indexStmt++, CostantiDB.TRUE);
+				}
+				else {
+					stmt.setInt(indexStmt++, CostantiDB.FALSE);
+				}*/
 				risultato = stmt.executeQuery();
 	
 				ServizioApplicativo sa;
@@ -1640,8 +1899,8 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					
 					byte[] certificatoBytes = jdbcAdapter.getBinaryData(risultato, "saCertificate");
 					Certificate certificato = ArchiveLoader.load(ArchiveType.CER, certificatoBytes, 0, null);
-					//int tmpStrict = rs.getInt("cert_strict_verification");
-					//boolean strict = tmpStrict == CostantiDB.TRUE;
+					/**int tmpStrict = rs.getInt("cert_strict_verification");
+					boolean strict = tmpStrict == CostantiDB.TRUE;*/
 					
 					if(!certificate.equals(certificato.getCertificate(),strictVerifier)) {
 						continue;

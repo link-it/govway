@@ -35,7 +35,9 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.Proprieta;
 import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.utils.RegistroServiziUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -1609,6 +1611,22 @@ public class ModIUtils {
 			}
 		}
 		return b;
+	}
+	
+	public static final String PROPRIETA_INTERMEDIARIO = "intermediario";
+	public static boolean isSoggettoCanaleIntermediario(Soggetto soggettoCanale, Logger log) {
+		try {
+			if(soggettoCanale.sizeProprietaList()>0) {
+				for (Proprieta proprieta :soggettoCanale.getProprieta()) {
+					if(PROPRIETA_INTERMEDIARIO.equals(proprieta.getNome())) {
+						return "true".equalsIgnoreCase(proprieta.getValore());
+					}
+				}
+			}
+		}catch(Exception e) {
+			log.error("[isSoggettoCanaleIntermediario] Process failed: "+e.getMessage(),e);
+		}
+		return false;
 	}
 	
 	public static String getMessaggioErroreDominioCanaleDifferenteDominioApplicativo(IDServizioApplicativo idServizioApplicativoMessaggio, IDSoggetto idSoggettoMittenteCanale) {

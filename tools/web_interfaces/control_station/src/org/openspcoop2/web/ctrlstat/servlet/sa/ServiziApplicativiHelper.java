@@ -72,6 +72,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.engine.ConfigurazioneFiltroServiziApplicativi;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
@@ -1641,6 +1642,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			idSA.setNome(nome);
 			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(idSA.getIdSoggettoProprietario().getTipo());
 			
+			boolean dominioEsternoModI = this.isProfiloModIPA(protocollo) && this.pddCore.isPddEsterna(portaDominioSoggetto);
+			
 			// Se tipoOp = add, controllo che il servizioApplicativo non sia
 			// gia'
 			// stato registrato
@@ -2092,8 +2095,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				Certificate cSelezionato = null;
 				boolean strictVerifier = false;
 				
+				
+				
 				if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE)) { 
-					saList = this.saCore.servizioApplicativoWithCredenzialiSslList(subject,issuer);
+					saList = this.saCore.servizioApplicativoWithCredenzialiSslList(subject,issuer,
+							dominioEsternoModI ? ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiModIFirma() : ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiHttps());
 					tipoSsl = "subject/issuer";
 				}
 				else {
@@ -2123,9 +2129,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					}else {
 						cSelezionato = ArchiveLoader.load(tipoCredenzialiSSLTipoArchivio, archivio, tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLFileCertificatoPassword);
 					}
-					saList = this.saCore.servizioApplicativoWithCredenzialiSslList(cSelezionato.getCertificate(), strictVerifier);
-					if(!strictVerifier && saList!=null && saList.size()>0) {
-						List<ServizioApplicativo> saListCheck = this.saCore.servizioApplicativoWithCredenzialiSslList(cSelezionato.getCertificate(), true);
+					saList = this.saCore.servizioApplicativoWithCredenzialiSslList(cSelezionato.getCertificate(), strictVerifier,
+							dominioEsternoModI ? ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiModIFirma() : ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiHttps());
+					if(!strictVerifier && saList!=null && !saList.isEmpty()) {
+						List<ServizioApplicativo> saListCheck = this.saCore.servizioApplicativoWithCredenzialiSslList(cSelezionato.getCertificate(), true,
+								dominioEsternoModI ? ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiModIFirma() : ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiHttps());
 						if(saListCheck==null || saListCheck.isEmpty() ) {
 							details=ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_DETAILS;
 						}
@@ -2183,42 +2191,42 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					}
 				}
 
-				if(!tokenWithHttpsEnabledByConfigSA) {  // se e' abilitato il token non deve essere controllata l'univocita' del certificato)
-					if(!this.soggettiCore.isSoggettiApplicativiCredenzialiSslPermitSameCredentials()) {
-						// Verifico soggetti
-					
-						details = "";
-						Soggetto soggettoAutenticato = null;
-						tipoSsl = null;
-						if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE)) { 
-					
-							// recupero soggetto con stesse credenziali
-							soggettoAutenticato = this.soggettiCore.getSoggettoRegistroAutenticatoSsl(subject, issuer);
-							tipoSsl = "subject/issuer";
-					
-						} else {
-							
-							/**soggettoAutenticato = this.soggettiCore.getSoggettoRegistroAutenticatoSsl(cSelezionato.getCertificate(), strictVerifier);*/
-							// Fix: usando il metodo sopra e' permesso caricare due soggetti con lo stesso certificato (anche serial number) uno in strict e uno no, e questo e' sbagliato.
-							List<org.openspcoop2.core.registry.Soggetto> soggettiAutenticati = this.soggettiCore.soggettoWithCredenzialiSslList(cSelezionato.getCertificate(), strictVerifier);
-							if(soggettiAutenticati!=null && soggettiAutenticati.size()>0) {
-								soggettoAutenticato = soggettiAutenticati.get(0);
-								if(!strictVerifier) {
-									List<org.openspcoop2.core.registry.Soggetto> soggettiAutenticatiCheck = this.soggettiCore.soggettoWithCredenzialiSslList(cSelezionato.getCertificate(), true);
-									if(soggettiAutenticatiCheck==null || soggettiAutenticatiCheck.isEmpty() ) {
-										details=ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_DETAILS;
-									}
+				if(!tokenWithHttpsEnabledByConfigSA &&  // se e' abilitato il token non deve essere controllata l'univocita' del certificato)
+					!this.soggettiCore.isSoggettiApplicativiCredenzialiSslPermitSameCredentials() &&
+					!dominioEsternoModI
+					) {
+					// Verifico soggetti
+				
+					details = "";
+					Soggetto soggettoAutenticato = null;
+					if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE)) { 
+				
+						// recupero soggetto con stesse credenziali
+						soggettoAutenticato = this.soggettiCore.getSoggettoRegistroAutenticatoSsl(subject, issuer);
+						tipoSsl = "subject/issuer";
+				
+					} else {
+						
+						/**soggettoAutenticato = this.soggettiCore.getSoggettoRegistroAutenticatoSsl(cSelezionato.getCertificate(), strictVerifier);*/
+						// Fix: usando il metodo sopra e' permesso caricare due soggetti con lo stesso certificato (anche serial number) uno in strict e uno no, e questo e' sbagliato.
+						List<org.openspcoop2.core.registry.Soggetto> soggettiAutenticati = this.soggettiCore.soggettoWithCredenzialiSslList(cSelezionato.getCertificate(), strictVerifier);
+						if(soggettiAutenticati!=null && !soggettiAutenticati.isEmpty()) {
+							soggettoAutenticato = soggettiAutenticati.get(0);
+							if(!strictVerifier) {
+								List<org.openspcoop2.core.registry.Soggetto> soggettiAutenticatiCheck = this.soggettiCore.soggettoWithCredenzialiSslList(cSelezionato.getCertificate(), true);
+								if(soggettiAutenticatiCheck==null || soggettiAutenticatiCheck.isEmpty() ) {
+									details=ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_DETAILS;
 								}
 							}
-							tipoSsl = "certificato";
 						}
-						
-						// Messaggio di errore
-						if(soggettoAutenticato!=null){
-							String labelSoggettoAutenticato = this.getLabelNomeSoggetto(new IDSoggetto(soggettoAutenticato.getTipo(), soggettoAutenticato.getNome()));
-							this.pd.setMessage("Il soggetto "+labelSoggettoAutenticato+" possiede già le credenziali ssl ("+tipoSsl+") indicate."+details);
-							return false;
-						}
+						tipoSsl = "certificato";
+					}
+					
+					// Messaggio di errore
+					if(soggettoAutenticato!=null){
+						String labelSoggettoAutenticato = this.getLabelNomeSoggetto(new IDSoggetto(soggettoAutenticato.getTipo(), soggettoAutenticato.getNome()));
+						this.pd.setMessage("Il soggetto "+labelSoggettoAutenticato+" possiede già le credenziali ssl ("+tipoSsl+") indicate."+details);
+						return false;
 					}
 				}
 				
@@ -4631,14 +4639,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		return dati;
 	}
 	
-	public boolean servizioApplicativoCredenzialiCertificatiCheckData(TipoOperazione tipoOperazione, long idProvOld, ServizioApplicativo saOld, int idxCertificato) throws Exception {
+	public boolean servizioApplicativoCredenzialiCertificatiCheckData(TipoOperazione tipoOperazione, long idProvOld, ServizioApplicativo saOld, int idxCertificato, String protocollo, int idxCredenziale) throws Exception {
 		try {
 			String nome = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME);
 			String provider = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			int newProv = 0;
-			if (provider == null) {
-				provider = "";
-			} else {
+			if (provider != null) {
 				newProv = Integer.parseInt(provider);
 			}
 			String tipoCredenzialiSSLSorgente = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL);
@@ -4665,6 +4671,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}
 			}
 			
+			boolean dominioEsternoModI = false;
+			if(saOld!=null) {
+				Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(saOld.getIdSoggetto());
+				dominioEsternoModI = this.isProfiloModIPA(protocollo) && this.pddCore.isPddEsterna(soggetto.getPortaDominio());
+			}
 			
 			String details = "";
 			List<ServizioApplicativo> saList = null;
@@ -4672,7 +4683,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			Certificate cSelezionato = null;
 			boolean strictVerifier = false;
 			if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE)) {
-				saList = this.saCore.servizioApplicativoWithCredenzialiSslList(subject,issuer);
+				saList = this.saCore.servizioApplicativoWithCredenzialiSslList(subject,issuer,
+						dominioEsternoModI ? ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiModIFirma() : ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiHttps());
 				tipoSsl = "subject/issuer";
 			}
 			else {
@@ -4701,9 +4713,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}else {
 					cSelezionato = ArchiveLoader.load(tipoCredenzialiSSLTipoArchivio, archivio, tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLFileCertificatoPassword);
 				}
-				saList = this.saCore.servizioApplicativoWithCredenzialiSslList(cSelezionato.getCertificate(), strictVerifier);
-				if(!strictVerifier && saList!=null && saList.size()>0) {
-					List<ServizioApplicativo> saListCheck = this.saCore.servizioApplicativoWithCredenzialiSslList(cSelezionato.getCertificate(), true);
+				saList = this.saCore.servizioApplicativoWithCredenzialiSslList(cSelezionato.getCertificate(), strictVerifier,
+						dominioEsternoModI ? ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiModIFirma() : ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiHttps());
+				if(!strictVerifier && saList!=null && !saList.isEmpty()) {
+					List<ServizioApplicativo> saListCheck = this.saCore.servizioApplicativoWithCredenzialiSslList(cSelezionato.getCertificate(), true,
+							dominioEsternoModI ? ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiModIFirma() : ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiHttps());
 					if(saListCheck==null || saListCheck.isEmpty() ) {
 						details=ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_DETAILS;
 					}
@@ -4725,8 +4739,6 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				for (int i = 0; i < saList.size(); i++) {
 					ServizioApplicativo sa = saList.get(i);
 	
-					//String tipoNomeSoggetto = null;
-	
 					if(!this.core.isSinglePdD()){
 	
 						// bugfix #66
@@ -4735,16 +4747,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						// avere stesse credenziali
 						// Raccolgo informazioni soggetto
 						Soggetto tmpSoggettoProprietarioSa = this.soggettiCore.getSoggettoRegistro(sa.getIdSoggetto());
-						//tipoNomeSoggetto = tmpSoggettoProprietarioSa.getTipo() + "/" + tmpSoggettoProprietarioSa.getNome();
 	
 						// se appartengono a nal diversi allora va bene continuo
 						if (!portaDominio.equals(tmpSoggettoProprietarioSa.getPortaDominio()))
 							continue;
-	
-					}else{
-	
-						//org.openspcoop2.core.config.Soggetto tmpSoggettoProprietarioSa = this.soggettiCore.getSoggetto(sa.getIdSoggetto());
-						//tipoNomeSoggetto = tmpSoggettoProprietarioSa.getTipo() + "/" + tmpSoggettoProprietarioSa.getNome();
 	
 					}
 	
@@ -4765,43 +4771,42 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 			
 			
-			if(!tokenWithHttpsEnabledByConfigSA) {  // se e' abilitato il token non deve essere controllata l'univocita' del certificato)
-				if(!this.soggettiCore.isSoggettiApplicativiCredenzialiSslPermitSameCredentials()) {
-					// Verifico soggetti
+			if(!tokenWithHttpsEnabledByConfigSA && // se e' abilitato il token non deve essere controllata l'univocita' del certificato)
+				!this.soggettiCore.isSoggettiApplicativiCredenzialiSslPermitSameCredentials() &&
+				!dominioEsternoModI) {
+				// Verifico soggetti
+				
+				details = "";
+				Soggetto soggettoAutenticato = null;
+				List<org.openspcoop2.core.registry.Soggetto> soggettiAutenticati = null;
+				if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE)) { 
+			
+					// recupero soggetto con stesse credenziali
+					soggettoAutenticato = this.soggettiCore.getSoggettoRegistroAutenticatoSsl(subject, issuer);
+					tipoSsl = "subject/issuer";
+			
+				} else {
 					
-					details = "";
-					Soggetto soggettoAutenticato = null;
-					tipoSsl = null;
-					List<org.openspcoop2.core.registry.Soggetto> soggettiAutenticati = null;
-					if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE)) { 
-				
-						// recupero soggetto con stesse credenziali
-						soggettoAutenticato = this.soggettiCore.getSoggettoRegistroAutenticatoSsl(subject, issuer);
-						tipoSsl = "subject/issuer";
-				
-					} else {
-						
-						soggettiAutenticati = this.soggettiCore.soggettoWithCredenzialiSslList(cSelezionato.getCertificate(), strictVerifier);
-						if(soggettiAutenticati!=null && soggettiAutenticati.size()>0) {
-							soggettoAutenticato = soggettiAutenticati.get(0);
-							if(!strictVerifier) {
-								List<org.openspcoop2.core.registry.Soggetto> soggettiAutenticatiCheck = this.soggettiCore.soggettoWithCredenzialiSslList(cSelezionato.getCertificate(), true);
-								if(soggettiAutenticatiCheck==null || soggettiAutenticatiCheck.isEmpty() ) {
-									details=ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_DETAILS;
-								}
+					soggettiAutenticati = this.soggettiCore.soggettoWithCredenzialiSslList(cSelezionato.getCertificate(), strictVerifier);
+					if(soggettiAutenticati!=null && !soggettiAutenticati.isEmpty()) {
+						soggettoAutenticato = soggettiAutenticati.get(0);
+						if(!strictVerifier) {
+							List<org.openspcoop2.core.registry.Soggetto> soggettiAutenticatiCheck = this.soggettiCore.soggettoWithCredenzialiSslList(cSelezionato.getCertificate(), true);
+							if(soggettiAutenticatiCheck==null || soggettiAutenticatiCheck.isEmpty() ) {
+								details=ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_DETAILS;
 							}
 						}
-						tipoSsl = "certificato";
 					}
-					
-					// Messaggio di errore
-					if(soggettoAutenticato!=null){
-						String labelSoggettoAutenticato = this.getLabelNomeSoggetto(new IDSoggetto(soggettoAutenticato.getTipo(), soggettoAutenticato.getNome()));
-						this.pd.setMessage("Il soggetto "+labelSoggettoAutenticato+" possiede già le credenziali ssl ("+tipoSsl+") indicate."+details);
-						return false;
-					}
-				
+					tipoSsl = "certificato";
 				}
+				
+				// Messaggio di errore
+				if(soggettoAutenticato!=null){
+					String labelSoggettoAutenticato = this.getLabelNomeSoggetto(new IDSoggetto(soggettoAutenticato.getTipo(), soggettoAutenticato.getNome()));
+					this.pd.setMessage("Il soggetto "+labelSoggettoAutenticato+" possiede già le credenziali ssl ("+tipoSsl+") indicate."+details);
+					return false;
+				}
+				
 			}
 			
 			
@@ -4816,16 +4821,21 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String aggiornatoCertificatoPrecaricatoTmp = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_MULTI_AGGIORNA);
 			boolean aggiornatoCertificatoPrecaricato = ServletUtils.isCheckBoxEnabled(aggiornatoCertificatoPrecaricatoTmp);
 			
-			if(!promuoviInCorso && !aggiornatoCertificatoPrecaricato && cSelezionato!=null && saList!=null && saList.size()>0) {
+			if(!promuoviInCorso && !aggiornatoCertificatoPrecaricato && cSelezionato!=null &&
+					/**saList!=null && !saList.isEmpty()) {*/
+					saOld!=null
+					) {
 				// dovrebbe essere 1 grazie al precedente controllo
-				ServizioApplicativo saCheck = saList.get(0);
+				ServizioApplicativo saCheck = saOld; /** saList.get(0);*/ 
 				if(saCheck.getInvocazionePorta()!=null && saCheck.getInvocazionePorta().sizeCredenzialiList()>0) {
+					int i = 0;
 					for (Credenziali c : saCheck.getInvocazionePorta().getCredenzialiList()) {
 						Certificate check = ArchiveLoader.load(c.getCertificate());
-						if(check.getCertificate().equals(cSelezionato.getCertificate())) {
+						if(check.getCertificate().equals(cSelezionato.getCertificate()) && i!=idxCredenziale) {
 							this.pd.setMessage("Il certificato selezionato risulta già associato all'applicativo");
 							return false;
 						}
+						i++;
 					}
 				}
 			}

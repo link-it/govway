@@ -49,6 +49,8 @@ import org.openspcoop2.pdd.core.handlers.InRequestContext;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
+import org.openspcoop2.pdd.core.transazioni.TransactionDeletedException;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.Tracciamento;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
@@ -58,6 +60,7 @@ import org.openspcoop2.protocol.engine.validator.Validatore;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.BustaRawContent;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
@@ -405,29 +408,41 @@ public class RicezioneBusteGestioneAutenticazione {
 								if(esito.isClientIdentified()) {
 									this.soggettoAutenticato = true;
 									IDSoggetto idSoggettoFruitoreIdentificato = esito.getIdSoggetto();
+									boolean intermediarioModi = false;
 									if(this.soggettoFruitore!=null &&  this.soggettoFruitore.getNome()!=null && this.soggettoFruitore.getTipo()!=null
 										&&	
-										!this.soggettoFruitore.equals(idSoggettoFruitoreIdentificato)
-										) {
-										erroreMissmatchSoggettoProtocolloConCredenziali = true;
-										if(Costanti.MODIPA_PROTOCOL_NAME.equals(this.protocolFactory.getProtocol()) && this.bustaRichiesta!=null && this.bustaRichiesta.getServizioApplicativoFruitore()!=null) {
-											// Sul profilo ModI entrambi le autenticazioni hanno avuto successo, e si tratta di un discorso di autorizzazione
-											// poichè non viene concesso di ricevere un applicativo di un soggetto differente da quello del canale
-											this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
-											erroreMissmatchSoggettoProtocolloConCredenzialiAuthorization = true;
-											IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
-											idServizioApplicativo.setNome(this.bustaRichiesta.getServizioApplicativoFruitore());
-											idServizioApplicativo.setIdSoggettoProprietario(this.soggettoFruitore);
-											String msgError = ModIUtils.getMessaggioErroreDominioCanaleDifferenteDominioApplicativo(idServizioApplicativo, idSoggettoFruitoreIdentificato);
-											eMissmatchSoggettoProtocolloConCredenziali = new Exception(msgError);
+										!this.soggettoFruitore.equals(idSoggettoFruitoreIdentificato)) {
+										if(Costanti.MODIPA_PROTOCOL_NAME.equals(this.protocolFactory.getProtocol())) {
+											Soggetto soggettoCanale = RegistroServiziManager.getInstance(this.openspcoopstate!=null ? this.openspcoopstate.getStatoRichiesta(): null).
+												getSoggetto(idSoggettoFruitoreIdentificato, null, this.requestInfo);
+											intermediarioModi= ModIUtils.isSoggettoCanaleIntermediario(soggettoCanale, this.logCore);
+										}
+										if(intermediarioModi) {
+											registraIntermediario(idSoggettoFruitoreIdentificato, this.msgDiag, this.idTransazione, this.transaction, this.pddContext);
+										}
+										else {
+											erroreMissmatchSoggettoProtocolloConCredenziali = true;
+											if(Costanti.MODIPA_PROTOCOL_NAME.equals(this.protocolFactory.getProtocol()) && this.bustaRichiesta!=null && this.bustaRichiesta.getServizioApplicativoFruitore()!=null) {
+												// Sul profilo ModI entrambi le autenticazioni hanno avuto successo, e si tratta di un discorso di autorizzazione
+												// poichè non viene concesso di ricevere un applicativo di un soggetto differente da quello del canale
+												this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
+												erroreMissmatchSoggettoProtocolloConCredenzialiAuthorization = true;
+												IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+												idServizioApplicativo.setNome(this.bustaRichiesta.getServizioApplicativoFruitore());
+												idServizioApplicativo.setIdSoggettoProprietario(this.soggettoFruitore);
+												String msgError = ModIUtils.getMessaggioErroreDominioCanaleDifferenteDominioApplicativo(idServizioApplicativo, idSoggettoFruitoreIdentificato);
+												eMissmatchSoggettoProtocolloConCredenziali = new Exception(msgError);
+												throw eMissmatchSoggettoProtocolloConCredenziali;
+											}
+											this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
+											eMissmatchSoggettoProtocolloConCredenziali = new Exception(IDENTIFICAZIONE_SOGGETTO_TRAMITE_PROFILO+this.soggettoFruitore
+													+"' differente da quello identificato tramite il processo di autenticazione '"+idSoggettoFruitoreIdentificato+"'");
 											throw eMissmatchSoggettoProtocolloConCredenziali;
 										}
-										this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
-										eMissmatchSoggettoProtocolloConCredenziali = new Exception(IDENTIFICAZIONE_SOGGETTO_TRAMITE_PROFILO+this.soggettoFruitore
-												+"' differente da quello identificato tramite il processo di autenticazione '"+idSoggettoFruitoreIdentificato+"'");
-										throw eMissmatchSoggettoProtocolloConCredenziali;
 									}
-									this.soggettoFruitore = 	idSoggettoFruitoreIdentificato;
+									if(!intermediarioModi) {
+										this.soggettoFruitore = idSoggettoFruitoreIdentificato;
+									}
 									if(esito.getIdServizioApplicativo()!=null) {
 										this.servizioApplicativoFruitore = esito.getIdServizioApplicativo().getNome();
 										this.parametriGenerazioneBustaErrore.setServizioApplicativoFruitore(this.servizioApplicativoFruitore);
@@ -1314,5 +1329,25 @@ public class RicezioneBusteGestioneAutenticazione {
 	private static final String PROCESSO_AUTENTICAZIONE = "] processo di autenticazione [";
 	private static final String PROCESSO_FALLITO = "] fallito";
 	private static final String DESCRIZIONE_ERROR = "getDescrizione Error:";
+	
+	public static void registraIntermediario(IDSoggetto idSoggettoCanale, MsgDiagnostico msgDiag, String idTransazione, Transaction transaction, Context context) throws TransactionDeletedException {
+		if(msgDiag!=null) {
+			msgDiag.addKeyword(CostantiPdD.KEY_INTERMEDIARIO,idSoggettoCanale.getNome());
+			msgDiag.logPersonalizzato("soggettoIntermediario");
+		}
+		if(transaction==null && idTransazione!=null) {
+			try{
+				transaction = TransactionContext.getTransaction(idTransazione);
+			}catch(Exception e){
+				// ignore per ModI
+			}
+		}
+		if(transaction!=null) {
+			transaction.addEventoGestione("intermediario="+idSoggettoCanale.getNome());
+		}
+		if(context!=null) {
+			context.put(CostantiPdD.INTERMEDIARIO, idSoggettoCanale);
+		}
+	}
 }
 

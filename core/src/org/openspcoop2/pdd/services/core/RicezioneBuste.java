@@ -4272,6 +4272,29 @@ public class RicezioneBuste {
 		
 		
 		
+		/* ------------ Riconciliazione Mittente per caso intermediario ------------- */
+		if(Costanti.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol()) &&
+				pddContext.containsKey(CostantiPdD.INTERMEDIARIO)) {
+				Object o = pddContext.get(CostantiPdD.INTERMEDIARIO);
+				if(o instanceof IDSoggetto) {
+					IDSoggetto intermediario = (IDSoggetto) o;
+					if(soggettoFruitore!=null && soggettoFruitore.equals(intermediario) && bustaRichiesta!=null &&
+							bustaRichiesta.getMittente()!=null && !bustaRichiesta.getMittente().equals(intermediario.getNome())) {
+						soggettoFruitore.setNome(bustaRichiesta.getMittente());
+						soggettoFruitore.setCodicePorta(bustaRichiesta.getIdentificativoPortaMittente());
+						if(msgDiag!=null) {
+							msgDiag.setFruitore(soggettoFruitore);
+						}
+						if(this.msgContext!=null && this.msgContext.getProtocol()!=null) {
+							this.msgContext.getProtocol().setFruitore(soggettoFruitore);
+						}
+					}
+				}
+		}
+		
+		
+		
+		
 		
 		/* ------------ Riconciliazione ID Messaggio con quello ricevuto nel token oAuth ------------- */
 		

@@ -1067,7 +1067,7 @@ public final class SoggettiChange extends Action {
 					org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE,
 					oldnomeprov, oldtipoprov, strutsBean.privato,
 					tipoOp, strutsBean.id, strutsBean.tipoprov, strutsBean.nomeprov, strutsBean.codiceIpa, strutsBean.pd_url_prefix_rewriter, strutsBean.pa_url_prefix_rewriter,
-					soggettoRegistry, isSupportatoAutenticazioneSoggetti, strutsBean.descr);
+					soggettoRegistry, isSupportatoAutenticazioneSoggetti, strutsBean.descr, strutsBean.pdd);
 
 			// updateDynamic
 			if(isOk) {

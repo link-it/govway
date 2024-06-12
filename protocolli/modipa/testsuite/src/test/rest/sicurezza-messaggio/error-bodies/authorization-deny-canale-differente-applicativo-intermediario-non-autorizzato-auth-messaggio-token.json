@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/403/AuthorizationDeny.html",
+    "title": "AuthorizationDeny",
+    "status": 403,
+    "detail": "Il soggetto modipa/DemoSoggettoFruitoreEsternoIntermediario2 non è autorizzato ad invocare il servizio modipa/DemoAutorizzazioneModITokenRest (versione:1) erogato da modipa/DemoSoggettoErogatore",
+    "govway_id": "#string"
+}

@@ -98,7 +98,9 @@ import org.openspcoop2.core.registry.wsdl.RegistroOpenSPCoopUtilities;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.MessageXMLUtils;
+import org.openspcoop2.protocol.engine.ConfigurazioneFiltroServiziApplicativi;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -1311,18 +1313,44 @@ public class ImporterArchiveUtils {
 								c = credenziali.getUser();
 								break;
 							case SSL:
+								
+								boolean dominioEsternoModI = false;
+								if(Costanti.MODIPA_PROTOCOL_NAME.equals(archiveSoggetto.getSoggettoRegistro().getTipo())) {
+									Soggetto s = archiveSoggetto.getSoggettoRegistro();
+									List<String> listPdDoperative = null;
+									if (s.getPortaDominio()!=null && (!s.getPortaDominio().equals("")) && (!s.getPortaDominio().equals("-")) ) {
+										FiltroRicerca filtroPdDoperative = new FiltroRicerca();
+										filtroPdDoperative.setTipo(PddTipologia.OPERATIVO.toString());
+										try{
+											listPdDoperative = this.importerEngine.getAllIdPorteDominio(filtroPdDoperative);
+										}catch(DriverRegistroServiziNotFound notFound){
+											// ignore
+										}
+										if(listPdDoperative==null){
+											listPdDoperative = new ArrayList<>();
+										}
+									}
+									boolean pddEsterna = false;
+									if( (listPdDoperative==null) || !listPdDoperative.contains(s.getPortaDominio())){
+										pddEsterna = true;
+									}
+									dominioEsternoModI = pddEsterna;
+								}
+								
 								if(credenziali.getCertificate()!=null && credenziali.getCertificate().length>0) {
 									soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getCertificate(), credenziali.isCertificateStrictVerification());
 									c = "X.509";
 									if(!isSoggettiApplicativiCredenzialiSslPermitSameCredentials) {
-										saFound = this.importerEngine.getServizioApplicativoCredenzialiSsl(credenziali.getCertificate(), credenziali.isCertificateStrictVerification());
+										saFound = this.importerEngine.getServizioApplicativoCredenzialiSsl(credenziali.getCertificate(), credenziali.isCertificateStrictVerification(),
+												dominioEsternoModI ? ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiModIFirma() : ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiHttps());
 									}
 								}
 								else {
 									soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getSubject(), credenziali.getIssuer());
 									c = credenziali.getSubject();
 									if(!isSoggettiApplicativiCredenzialiSslPermitSameCredentials) {
-										saFound = this.importerEngine.getServizioApplicativoCredenzialiSsl(credenziali.getSubject(), credenziali.getIssuer());
+										saFound = this.importerEngine.getServizioApplicativoCredenzialiSsl(credenziali.getSubject(), credenziali.getIssuer(),
+												dominioEsternoModI ? ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiModIFirma() : ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiHttps());
 									}
 								}
 								break;
@@ -1582,15 +1610,44 @@ public class ImporterArchiveUtils {
 								tipo = org.openspcoop2.core.config.constants.CredenzialeTipo.TOKEN;
 							}
 							else {
+								boolean dominioEsternoModI = false;
+								if(Costanti.MODIPA_PROTOCOL_NAME.equals(protocollo)) {
+									Soggetto s = null;
+									try {
+										s = this.importerEngine.getSoggettoRegistro(idSoggettoProprietario);
+									}catch(DriverRegistroServiziNotFound notFound){
+										// ignore
+									}
+									List<String> listPdDoperative = null;
+									if (s!=null && s.getPortaDominio()!=null && (!s.getPortaDominio().equals("")) && (!s.getPortaDominio().equals("-")) ) {
+										FiltroRicerca filtroPdDoperative = new FiltroRicerca();
+										filtroPdDoperative.setTipo(PddTipologia.OPERATIVO.toString());
+										try{
+											listPdDoperative = this.importerEngine.getAllIdPorteDominio(filtroPdDoperative);
+										}catch(DriverRegistroServiziNotFound notFound){
+											// ignore
+										}
+										if(listPdDoperative==null){
+											listPdDoperative = new ArrayList<>();
+										}
+									}
+									boolean pddEsterna = false;
+									if( (listPdDoperative==null) || !listPdDoperative.contains(s.getPortaDominio())){
+										pddEsterna = true;
+									}
+									dominioEsternoModI = pddEsterna;
+								}
 								if(credenziali.getCertificate()!=null && credenziali.getCertificate().length>0) {
-									saFound = this.importerEngine.getServizioApplicativoCredenzialiSsl(credenziali.getCertificate(), credenziali.isCertificateStrictVerification());
+									saFound = this.importerEngine.getServizioApplicativoCredenzialiSsl(credenziali.getCertificate(), credenziali.isCertificateStrictVerification(),
+											dominioEsternoModI ? ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiModIFirma() : ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiHttps());
 									c = "X.509";
 									if(!isSoggettiApplicativiCredenzialiSslPermitSameCredentials) {
 										soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getCertificate(), credenziali.isCertificateStrictVerification());
 									}
 								}
 								else {
-									saFound = this.importerEngine.getServizioApplicativoCredenzialiSsl(credenziali.getSubject(), credenziali.getIssuer());
+									saFound = this.importerEngine.getServizioApplicativoCredenzialiSsl(credenziali.getSubject(), credenziali.getIssuer(),
+											dominioEsternoModI ? ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiModIFirma() : ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiHttps());
 									c = credenziali.getSubject();
 									if(!isSoggettiApplicativiCredenzialiSslPermitSameCredentials) {
 										soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getSubject(), credenziali.getIssuer());

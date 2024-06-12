@@ -166,11 +166,11 @@ public class SoggettiUtilities {
 			String newLine,
 			String oldnomeprov, String oldtipoprov, boolean privato,
 			TipoOperazione tipoOp, String id, String tipoprov, String nomeprov, String codiceIpa, String pdUrlPrefixRewriter, String paUrlPrefixRewriter,
-			Soggetto soggettoOld, boolean isSupportatoAutenticazioneSoggetti, String descrizione) throws Exception {
+			Soggetto soggettoOld, boolean isSupportatoAutenticazioneSoggetti, String descrizione, String portaDominio) throws Exception {
 		
 		// Controlli sui campi immessi
 		boolean isOk = soggettiHelper.soggettiCheckData(tipoOp, id, tipoprov, nomeprov, codiceIpa, pdUrlPrefixRewriter, paUrlPrefixRewriter,
-				soggettoOld, isSupportatoAutenticazioneSoggetti, descrizione);
+				soggettoOld, isSupportatoAutenticazioneSoggetti, descrizione, portaDominio);
 
 		if(isOk){
 			// check change tipo/nome con gestione workflow abilitata

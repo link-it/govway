@@ -60,8 +60,22 @@ public interface IConfigIntegrationReader extends IConfigIntegrationReaderInUso 
 	public boolean existsServizioApplicativoByCredenzialiSsl(String subject, String aIssuer);
 	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String subject, String aIssuer) throws RegistryNotFound,RegistryException;
 	
+	public boolean existsServizioApplicativoByCredenzialiSsl(String subject, String aIssuer,
+			List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni);
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String subject, String aIssuer,
+			List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni) throws RegistryNotFound,RegistryException;
+		
 	public boolean existsServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier);
 	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws RegistryNotFound,RegistryException;
+	
+	public boolean existsServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier,
+			List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni);
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier,
+			List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni) throws RegistryNotFound,RegistryException;
 	
 	public boolean existsServizioApplicativoByCredenzialiPrincipal(String principal);
 	public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(String principal) throws RegistryNotFound,RegistryException;

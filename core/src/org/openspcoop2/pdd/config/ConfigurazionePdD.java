@@ -105,7 +105,9 @@ import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfigura
 import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.pdd.core.dynamic.TemplateSource;
 import org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione;
+import org.openspcoop2.protocol.engine.ConfigurazioneFiltroServiziApplicativi;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -931,7 +933,7 @@ public class ConfigurazionePdD  {
 									for (Credenziali credenziale : sa.getInvocazionePorta().getCredenzialiList()) {
 										if(CredenzialeTipo.BASIC.equals(credenziale.getTipo())){
 											try{
-												this.cache.remove(_getKey_getServizioApplicativoByCredenzialiBasic(credenziale.getUser(), credenziale.getPassword()));
+												this.cache.remove(_getKey_getServizioApplicativoByCredenzialiBasic(credenziale.getUser(), credenziale.getPassword(), null));
 												this.getServizioApplicativoByCredenzialiBasic(connectionPdD, credenziale.getUser(), credenziale.getPassword(), configApplicativi);
 											}
 											catch(DriverConfigurazioneNotFound notFound){
@@ -941,7 +943,7 @@ public class ConfigurazionePdD  {
 										}
 										else if(CredenzialeTipo.APIKEY.equals(credenziale.getTipo())){
 											try{
-												this.cache.remove(_getKey_getServizioApplicativoByCredenzialiApiKey(credenziale.getUser(), credenziale.getPassword(), credenziale.isCertificateStrictVerification()));
+												this.cache.remove(_getKey_getServizioApplicativoByCredenzialiApiKey(credenziale.getUser(), credenziale.getPassword(), credenziale.isCertificateStrictVerification(), null));
 												this.getServizioApplicativoByCredenzialiApiKey(connectionPdD, credenziale.getUser(), credenziale.getPassword(), credenziale.isCertificateStrictVerification(), configApplicativi);
 											}
 											catch(DriverConfigurazioneNotFound notFound){
@@ -952,8 +954,23 @@ public class ConfigurazionePdD  {
 										else if(CredenzialeTipo.SSL.equals(credenziale.getTipo())){
 											if(credenziale.getSubject()!=null) {
 												try{
-													this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(credenziale.getSubject(), credenziale.getIssuer()));
-													this.getServizioApplicativoByCredenzialiSsl(connectionPdD, credenziale.getSubject(), credenziale.getIssuer());
+													if(Costanti.MODIPA_PROTOCOL_NAME.equals(sa.getTipoSoggettoProprietario())) {
+														ConfigurazioneFiltroServiziApplicativi filtroFirma = ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiModIFirma();
+														this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(credenziale.getSubject(), credenziale.getIssuer(), 
+																filtroFirma.getTipiSoggetti(), filtroFirma.isIncludiApplicativiNonModI(), filtroFirma.isIncludiApplicativiModIEsterni(), filtroFirma.isIncludiApplicativiModIInterni()));
+														this.getServizioApplicativoByCredenzialiSsl(connectionPdD, credenziale.getSubject(), credenziale.getIssuer(), 
+																filtroFirma.getTipiSoggetti(), filtroFirma.isIncludiApplicativiNonModI(), filtroFirma.isIncludiApplicativiModIEsterni(), filtroFirma.isIncludiApplicativiModIInterni());
+													}
+												} catch(DriverConfigurazioneNotFound notFound){
+													// ignore
+												}
+												catch(Exception e){this.logError("[prefill] errore"+e.getMessage(),e);}	
+												try {
+													ConfigurazioneFiltroServiziApplicativi filtroHttps = ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiHttps();
+													this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(credenziale.getSubject(), credenziale.getIssuer(), 
+															filtroHttps.getTipiSoggetti(), filtroHttps.isIncludiApplicativiNonModI(), filtroHttps.isIncludiApplicativiModIEsterni(), filtroHttps.isIncludiApplicativiModIInterni()));
+													this.getServizioApplicativoByCredenzialiSsl(connectionPdD, credenziale.getSubject(), credenziale.getIssuer(), 
+															filtroHttps.getTipiSoggetti(), filtroHttps.isIncludiApplicativiNonModI(), filtroHttps.isIncludiApplicativiModIEsterni(), filtroHttps.isIncludiApplicativiModIInterni());
 												}
 												catch(DriverConfigurazioneNotFound notFound){
 													// ignore
@@ -963,8 +980,25 @@ public class ConfigurazionePdD  {
 											if(credenziale.getCertificate()!=null) {
 												try{
 													CertificateInfo certificato = ArchiveLoader.load(ArchiveType.CER, credenziale.getCertificate(), 0, null).getCertificate();
-													this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(certificato, credenziale.isCertificateStrictVerification()));
-													this.getServizioApplicativoByCredenzialiSsl(connectionPdD, certificato, credenziale.isCertificateStrictVerification());
+													if(Costanti.MODIPA_PROTOCOL_NAME.equals(sa.getTipoSoggettoProprietario())) {
+														ConfigurazioneFiltroServiziApplicativi filtroFirma = ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiModIFirma();
+														this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(certificato, credenziale.isCertificateStrictVerification(), 
+																filtroFirma.getTipiSoggetti(), filtroFirma.isIncludiApplicativiNonModI(), filtroFirma.isIncludiApplicativiModIEsterni(), filtroFirma.isIncludiApplicativiModIInterni()));
+														this.getServizioApplicativoByCredenzialiSsl(connectionPdD, certificato, credenziale.isCertificateStrictVerification(), 
+																filtroFirma.getTipiSoggetti(), filtroFirma.isIncludiApplicativiNonModI(), filtroFirma.isIncludiApplicativiModIEsterni(), filtroFirma.isIncludiApplicativiModIInterni());
+													}
+												}
+												catch(DriverConfigurazioneNotFound notFound){
+													// ignore
+												}
+												catch(Exception e){this.logError("[prefill] errore"+e.getMessage(),e);}	
+												try {
+													CertificateInfo certificato = ArchiveLoader.load(ArchiveType.CER, credenziale.getCertificate(), 0, null).getCertificate();
+													ConfigurazioneFiltroServiziApplicativi filtroHttps = ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiHttps();
+													this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(certificato, credenziale.isCertificateStrictVerification(), 
+															filtroHttps.getTipiSoggetti(), filtroHttps.isIncludiApplicativiNonModI(), filtroHttps.isIncludiApplicativiModIEsterni(), filtroHttps.isIncludiApplicativiModIInterni()));
+													this.getServizioApplicativoByCredenzialiSsl(connectionPdD, certificato, credenziale.isCertificateStrictVerification(), 
+															filtroHttps.getTipiSoggetti(), filtroHttps.isIncludiApplicativiNonModI(), filtroHttps.isIncludiApplicativiModIEsterni(), filtroHttps.isIncludiApplicativiModIInterni());
 												}
 												catch(DriverConfigurazioneNotFound notFound){
 													// ignore
@@ -974,7 +1008,7 @@ public class ConfigurazionePdD  {
 										}
 										else if(CredenzialeTipo.PRINCIPAL.equals(credenziale.getTipo())){
 											try{
-												this.cache.remove(_getKey_getServizioApplicativoByCredenzialiPrincipal(credenziale.getUser()));
+												this.cache.remove(_getKey_getServizioApplicativoByCredenzialiPrincipal(credenziale.getUser(), null));
 												this.getServizioApplicativoByCredenzialiPrincipal(connectionPdD, credenziale.getUser());
 											}
 											catch(DriverConfigurazioneNotFound notFound){
@@ -984,7 +1018,7 @@ public class ConfigurazionePdD  {
 										}
 										else if(CredenzialeTipo.TOKEN.equals(credenziale.getTipo())){
 											try{
-												this.cache.remove(_getKey_getServizioApplicativoByCredenzialiToken(credenziale.getTokenPolicy(), credenziale.getUser()));
+												this.cache.remove(_getKey_getServizioApplicativoByCredenzialiToken(credenziale.getTokenPolicy(), credenziale.getUser(), null));
 												this.getServizioApplicativoByCredenzialiToken(connectionPdD, credenziale.getTokenPolicy(), credenziale.getUser());
 											}
 											catch(DriverConfigurazioneNotFound notFound){
@@ -1239,7 +1273,7 @@ public class ConfigurazionePdD  {
 						for (Credenziali credenziale : sa.getInvocazionePorta().getCredenzialiList()) {
 							if(CredenzialeTipo.BASIC.equals(credenziale.getTipo())){
 								try{
-									this.cache.remove(_getKey_getServizioApplicativoByCredenzialiBasic(credenziale.getUser(), credenziale.getPassword()));
+									this.cache.remove(_getKey_getServizioApplicativoByCredenzialiBasic(credenziale.getUser(), credenziale.getPassword(), null));
 									this.getServizioApplicativoByCredenzialiBasic(connectionPdD, credenziale.getUser(), credenziale.getPassword(), configApplicativi);
 								}
 								catch(DriverConfigurazioneNotFound notFound){
@@ -1249,7 +1283,7 @@ public class ConfigurazionePdD  {
 							}
 							else if(CredenzialeTipo.APIKEY.equals(credenziale.getTipo())){
 								try{
-									this.cache.remove(_getKey_getServizioApplicativoByCredenzialiApiKey(credenziale.getUser(), credenziale.getPassword(), credenziale.isCertificateStrictVerification()));
+									this.cache.remove(_getKey_getServizioApplicativoByCredenzialiApiKey(credenziale.getUser(), credenziale.getPassword(), credenziale.isCertificateStrictVerification(), null));
 									this.getServizioApplicativoByCredenzialiApiKey(connectionPdD, credenziale.getUser(), credenziale.getPassword(), credenziale.isCertificateStrictVerification(), configApplicativi);
 								}
 								catch(DriverConfigurazioneNotFound notFound){
@@ -1260,8 +1294,23 @@ public class ConfigurazionePdD  {
 							else if(CredenzialeTipo.SSL.equals(credenziale.getTipo())){
 								if(credenziale.getSubject()!=null) {
 									try{
-										this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(credenziale.getSubject(), credenziale.getIssuer()));
-										this.getServizioApplicativoByCredenzialiSsl(connectionPdD, credenziale.getSubject(), credenziale.getIssuer());
+										if(Costanti.MODIPA_PROTOCOL_NAME.equals(sa.getTipoSoggettoProprietario())) {
+											ConfigurazioneFiltroServiziApplicativi filtroFirma = ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiModIFirma();
+											this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(credenziale.getSubject(), credenziale.getIssuer(), 
+													filtroFirma.getTipiSoggetti(), filtroFirma.isIncludiApplicativiNonModI(), filtroFirma.isIncludiApplicativiModIEsterni(), filtroFirma.isIncludiApplicativiModIInterni()));
+											this.getServizioApplicativoByCredenzialiSsl(connectionPdD, credenziale.getSubject(), credenziale.getIssuer(), 
+													filtroFirma.getTipiSoggetti(), filtroFirma.isIncludiApplicativiNonModI(), filtroFirma.isIncludiApplicativiModIEsterni(), filtroFirma.isIncludiApplicativiModIInterni());
+										}
+									} catch(DriverConfigurazioneNotFound notFound){
+										// ignore
+									}
+									catch(Exception e){this.logError("[prefill] errore"+e.getMessage(),e);}	
+									try {
+										ConfigurazioneFiltroServiziApplicativi filtroHttps = ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiHttps();
+										this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(credenziale.getSubject(), credenziale.getIssuer(), 
+												filtroHttps.getTipiSoggetti(), filtroHttps.isIncludiApplicativiNonModI(), filtroHttps.isIncludiApplicativiModIEsterni(), filtroHttps.isIncludiApplicativiModIInterni()));
+										this.getServizioApplicativoByCredenzialiSsl(connectionPdD, credenziale.getSubject(), credenziale.getIssuer(), 
+												filtroHttps.getTipiSoggetti(), filtroHttps.isIncludiApplicativiNonModI(), filtroHttps.isIncludiApplicativiModIEsterni(), filtroHttps.isIncludiApplicativiModIInterni());
 									}
 									catch(DriverConfigurazioneNotFound notFound){
 										// ignore
@@ -1271,8 +1320,25 @@ public class ConfigurazionePdD  {
 								if(credenziale.getCertificate()!=null) {
 									try{
 										CertificateInfo certificato = ArchiveLoader.load(ArchiveType.CER, credenziale.getCertificate(), 0, null).getCertificate();
-										this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(certificato, credenziale.isCertificateStrictVerification()));
-										this.getServizioApplicativoByCredenzialiSsl(connectionPdD, certificato, credenziale.isCertificateStrictVerification());
+										if(Costanti.MODIPA_PROTOCOL_NAME.equals(sa.getTipoSoggettoProprietario())) {
+											ConfigurazioneFiltroServiziApplicativi filtroFirma = ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiModIFirma();
+											this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(certificato, credenziale.isCertificateStrictVerification(), 
+													filtroFirma.getTipiSoggetti(), filtroFirma.isIncludiApplicativiNonModI(), filtroFirma.isIncludiApplicativiModIEsterni(), filtroFirma.isIncludiApplicativiModIInterni()));
+											this.getServizioApplicativoByCredenzialiSsl(connectionPdD, certificato, credenziale.isCertificateStrictVerification(), 
+													filtroFirma.getTipiSoggetti(), filtroFirma.isIncludiApplicativiNonModI(), filtroFirma.isIncludiApplicativiModIEsterni(), filtroFirma.isIncludiApplicativiModIInterni());
+										}
+									}
+									catch(DriverConfigurazioneNotFound notFound){
+										// ignore
+									}
+									catch(Exception e){this.logError("[prefill] errore"+e.getMessage(),e);}	
+									try {
+										CertificateInfo certificato = ArchiveLoader.load(ArchiveType.CER, credenziale.getCertificate(), 0, null).getCertificate();
+										ConfigurazioneFiltroServiziApplicativi filtroHttps = ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiHttps();
+										this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(certificato, credenziale.isCertificateStrictVerification(), 
+												filtroHttps.getTipiSoggetti(), filtroHttps.isIncludiApplicativiNonModI(), filtroHttps.isIncludiApplicativiModIEsterni(), filtroHttps.isIncludiApplicativiModIInterni()));
+										this.getServizioApplicativoByCredenzialiSsl(connectionPdD, certificato, credenziale.isCertificateStrictVerification(), 
+												filtroHttps.getTipiSoggetti(), filtroHttps.isIncludiApplicativiNonModI(), filtroHttps.isIncludiApplicativiModIEsterni(), filtroHttps.isIncludiApplicativiModIInterni());
 									}
 									catch(DriverConfigurazioneNotFound notFound){
 										// ignore
@@ -1282,7 +1348,7 @@ public class ConfigurazionePdD  {
 							}
 							else if(CredenzialeTipo.PRINCIPAL.equals(credenziale.getTipo())){
 								try{
-									this.cache.remove(_getKey_getServizioApplicativoByCredenzialiPrincipal(credenziale.getUser()));
+									this.cache.remove(_getKey_getServizioApplicativoByCredenzialiPrincipal(credenziale.getUser(), null));
 									this.getServizioApplicativoByCredenzialiPrincipal(connectionPdD, credenziale.getUser());
 								}
 								catch(DriverConfigurazioneNotFound notFound){
@@ -1292,7 +1358,7 @@ public class ConfigurazionePdD  {
 							}
 							else if(CredenzialeTipo.TOKEN.equals(credenziale.getTipo())){
 								try{
-									this.cache.remove(_getKey_getServizioApplicativoByCredenzialiToken(credenziale.getTokenPolicy(), credenziale.getUser()));
+									this.cache.remove(_getKey_getServizioApplicativoByCredenzialiToken(credenziale.getTokenPolicy(), credenziale.getUser(), null));
 									this.getServizioApplicativoByCredenzialiToken(connectionPdD, credenziale.getTokenPolicy(), credenziale.getUser());
 								}
 								catch(DriverConfigurazioneNotFound notFound){
@@ -2350,6 +2416,12 @@ public class ConfigurazionePdD  {
 				}else if(classArgoments.length==4){
 					Method method =  this.configurazionePdD_controlloTraffico.getClass().getMethod(methodName, Connection.class, classArgoments[0],classArgoments[1],classArgoments[2],classArgoments[3]);
 					obj = method.invoke(this.configurazionePdD_controlloTraffico, connectionPdD,values[0],values[1],values[2],values[3]);
+				}else if(classArgoments.length==5){
+					Method method =  this.configurazionePdD_controlloTraffico.getClass().getMethod(methodName, Connection.class, classArgoments[0],classArgoments[1],classArgoments[2],classArgoments[3],classArgoments[4]);
+					obj = method.invoke(this.configurazionePdD_controlloTraffico, connectionPdD,values[0],values[1],values[2],values[3],values[4]);
+				}else if(classArgoments.length==6){
+					Method method =  this.configurazionePdD_controlloTraffico.getClass().getMethod(methodName, Connection.class, classArgoments[0],classArgoments[1],classArgoments[2],classArgoments[3],classArgoments[4],classArgoments[5]);
+					obj = method.invoke(this.configurazionePdD_controlloTraffico, connectionPdD,values[0],values[1],values[2],values[3],values[4],values[5]);
 				}else
 					throw new Exception("Troppi argomenti per gestire la chiamata del metodo");
 				break;
@@ -2374,6 +2446,12 @@ public class ConfigurazionePdD  {
 				}else if(classArgoments.length==4){
 					Method method =  this.configurazionePdD_plugins.getClass().getMethod(methodName, Connection.class, classArgoments[0],classArgoments[1],classArgoments[2],classArgoments[3]);
 					obj = method.invoke(this.configurazionePdD_plugins, connectionPdD,values[0],values[1],values[2],values[3]);
+				}else if(classArgoments.length==5){
+					Method method =  this.configurazionePdD_plugins.getClass().getMethod(methodName, Connection.class, classArgoments[0],classArgoments[1],classArgoments[2],classArgoments[3],classArgoments[4]);
+					obj = method.invoke(this.configurazionePdD_plugins, connectionPdD,values[0],values[1],values[2],values[3],values[4]);
+				}else if(classArgoments.length==6){
+					Method method =  this.configurazionePdD_plugins.getClass().getMethod(methodName, Connection.class, classArgoments[0],classArgoments[1],classArgoments[2],classArgoments[3],classArgoments[4],classArgoments[5]);
+					obj = method.invoke(this.configurazionePdD_plugins, connectionPdD,values[0],values[1],values[2],values[3],values[4],values[5]);
 				}else
 					throw new Exception("Troppi argomenti per gestire la chiamata del metodo");
 				break;
@@ -2399,6 +2477,12 @@ public class ConfigurazionePdD  {
 				}else if(classArgoments.length==4){
 					Method method =  this.configurazionePdD_allarmi.getClass().getMethod(methodName, Connection.class, classArgoments[0],classArgoments[1],classArgoments[2],classArgoments[3]);
 					obj = method.invoke(this.configurazionePdD_allarmi, connectionPdD,values[0],values[1],values[2],values[3]);
+				}else if(classArgoments.length==5){
+					Method method =  this.configurazionePdD_allarmi.getClass().getMethod(methodName, Connection.class, classArgoments[0],classArgoments[1],classArgoments[2],classArgoments[3],classArgoments[4]);
+					obj = method.invoke(this.configurazionePdD_allarmi, connectionPdD,values[0],values[1],values[2],values[3],values[4]);
+				}else if(classArgoments.length==6){
+					Method method =  this.configurazionePdD_allarmi.getClass().getMethod(methodName, Connection.class, classArgoments[0],classArgoments[1],classArgoments[2],classArgoments[3],classArgoments[4],classArgoments[5]);
+					obj = method.invoke(this.configurazionePdD_allarmi, connectionPdD,values[0],values[1],values[2],values[3],values[4],values[5]);
 				}else
 					throw new Exception("Troppi argomenti per gestire la chiamata del metodo");
 				break;
@@ -2421,6 +2505,12 @@ public class ConfigurazionePdD  {
 				}else if(classArgoments.length==4){
 					Method method =  driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1],classArgoments[2],classArgoments[3]);
 					obj = method.invoke(driver,values[0],values[1],values[2],values[3]);
+				}else if(classArgoments.length==5){
+					Method method =  driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1],classArgoments[2],classArgoments[3],classArgoments[4]);
+					obj = method.invoke(driver,values[0],values[1],values[2],values[3],values[4]);
+				}else if(classArgoments.length==6){
+					Method method =  driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1],classArgoments[2],classArgoments[3],classArgoments[4],classArgoments[5]);
+					obj = method.invoke(driver,values[0],values[1],values[2],values[3],values[4],values[5]);
 				}else
 					throw new Exception("Troppi argomenti per gestire la chiamata del metodo");
 				break;
@@ -4009,12 +4099,20 @@ public class ConfigurazionePdD  {
 	protected static String _toKey_getServizioApplicativoByCredenzialiBasicPrefix(){
 		return "getServizioApplicativoByCredenzialiBasic";
 	}
-	private String _getKey_getServizioApplicativoByCredenzialiBasic(String aUser,String aPassword){
+	private String _getKey_getServizioApplicativoByCredenzialiBasic(String aUser,String aPassword,
+    		List<String> tipiSoggetto){
 		String key = _toKey_getServizioApplicativoByCredenzialiBasicPrefix();
 		key = key +"_"+aUser+"_"+aPassword;
+		if(tipiSoggetto!=null && !tipiSoggetto.isEmpty()) {
+			key = key +"_"+tipiSoggetto.toString();
+		}
 		return key;
 	}
 	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(Connection connectionPdD,String aUser,String aPassword, CryptConfig config)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return getServizioApplicativoByCredenzialiBasic(connectionPdD, aUser, aPassword, config, null);
+	}
+	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(Connection connectionPdD,String aUser,String aPassword, CryptConfig config,
+    		List<String> tipiSoggetto)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Raccolta dati
 		if(aUser == null)
@@ -4025,7 +4123,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getServizioApplicativoByCredenzialiBasic(aUser, aPassword);
+			key = this._getKey_getServizioApplicativoByCredenzialiBasic(aUser, aPassword, tipiSoggetto);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -4042,10 +4140,19 @@ public class ConfigurazionePdD  {
 
 		// Algoritmo CACHE
 		ServizioApplicativo s = null;
-		if(this.cache!=null){
-			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiBasic",connectionPdD,ConfigurazionePdDType.config,aUser,aPassword, config);
-		}else{
-			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiBasic",connectionPdD,ConfigurazionePdDType.config,aUser,aPassword, config);
+		if(tipiSoggetto!=null) {
+			if(this.cache!=null){
+				s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiBasic",connectionPdD,ConfigurazionePdDType.config,aUser,aPassword, config, tipiSoggetto);
+			}else{
+				s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiBasic",connectionPdD,ConfigurazionePdDType.config,aUser,aPassword, config, tipiSoggetto);
+			}
+		}
+		else {
+			if(this.cache!=null){
+				s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiBasic",connectionPdD,ConfigurazionePdDType.config,aUser,aPassword, config);
+			}else{
+				s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiBasic",connectionPdD,ConfigurazionePdDType.config,aUser,aPassword, config);
+			}
 		}
 
 		if(s!=null)
@@ -4057,12 +4164,20 @@ public class ConfigurazionePdD  {
 	protected static String _toKey_getServizioApplicativoByCredenzialiApiKeyPrefix(boolean appId){
 		return (appId ? "getServizioApplicativoByCredenzialiMultipleApiKey_" : "getServizioApplicativoByCredenzialiApiKey_");
 	}
-	private String _getKey_getServizioApplicativoByCredenzialiApiKey(String aUser,String aPassword, boolean appId){
+	private String _getKey_getServizioApplicativoByCredenzialiApiKey(String aUser,String aPassword, boolean appId,
+    		List<String> tipiSoggetto){
 		String key = _toKey_getServizioApplicativoByCredenzialiApiKeyPrefix(appId);
 		key = key +"_"+aUser+"_"+aPassword;
+		if(tipiSoggetto!=null && !tipiSoggetto.isEmpty()) {
+			key = key +"_"+tipiSoggetto.toString();
+		}
 		return key;
 	}
 	public ServizioApplicativo getServizioApplicativoByCredenzialiApiKey(Connection connectionPdD,String aUser,String aPassword, boolean appId, CryptConfig config)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return getServizioApplicativoByCredenzialiApiKey(connectionPdD, aUser, aPassword, appId, config, null);
+	}
+	public ServizioApplicativo getServizioApplicativoByCredenzialiApiKey(Connection connectionPdD,String aUser,String aPassword, boolean appId, CryptConfig config,
+    		List<String> tipiSoggetto)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Raccolta dati
 		if(aUser == null)
@@ -4073,7 +4188,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getServizioApplicativoByCredenzialiApiKey(aUser, aPassword, appId);
+			key = this._getKey_getServizioApplicativoByCredenzialiApiKey(aUser, aPassword, appId, tipiSoggetto);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -4090,10 +4205,19 @@ public class ConfigurazionePdD  {
 
 		// Algoritmo CACHE
 		ServizioApplicativo s = null;
-		if(this.cache!=null){
-			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiApiKey",connectionPdD,ConfigurazionePdDType.config,aUser,aPassword, appId, config);
-		}else{
-			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiApiKey",connectionPdD,ConfigurazionePdDType.config,aUser,aPassword, appId, config);
+		if(tipiSoggetto!=null) {
+			if(this.cache!=null){
+				s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiApiKey",connectionPdD,ConfigurazionePdDType.config,aUser,aPassword, appId, config, tipiSoggetto);
+			}else{
+				s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiApiKey",connectionPdD,ConfigurazionePdDType.config,aUser,aPassword, appId, config, tipiSoggetto);
+			}
+		}
+		else {
+			if(this.cache!=null){
+				s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiApiKey",connectionPdD,ConfigurazionePdDType.config,aUser,aPassword, appId, config);
+			}else{
+				s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiApiKey",connectionPdD,ConfigurazionePdDType.config,aUser,aPassword, appId, config);
+			}
 		}
 
 		if(s!=null)
@@ -4105,7 +4229,9 @@ public class ConfigurazionePdD  {
 	protected static String _toKey_getServizioApplicativoByCredenzialiSslPrefix(boolean separator){
 		return "getServizioApplicativoByCredenzialiSsl"+(separator?"_":"");
 	}
-	private String _getKey_getServizioApplicativoByCredenzialiSsl(String aSubject, String Issuer){
+	private String _getKey_getServizioApplicativoByCredenzialiSsl(String aSubject, String Issuer,
+    		List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni){
 		String key = _toKey_getServizioApplicativoByCredenzialiSslPrefix(false);
 		key = key +"_subject:"+aSubject;
 		if(Issuer!=null) {
@@ -4114,9 +4240,27 @@ public class ConfigurazionePdD  {
 		else {
 			key = key +"_issuer:nonDefinito";
 		}
+		if(tipiSoggetto!=null && !tipiSoggetto.isEmpty()) {
+			key = key +"_"+tipiSoggetto.toString();
+			key = key +"_noModi:"+includiApplicativiNonModI;
+			key = key +"_modiExt:"+includiApplicativiModIEsterni;
+			key = key +"_modiInt:"+includiApplicativiModIInterni;
+		}
 		return key;
 	}
 	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(Connection connectionPdD,String aSubject, String aIssuer)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return getServizioApplicativoByCredenzialiSsl(connectionPdD, aSubject, aIssuer, 
+				null);
+	}
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(Connection connectionPdD,String aSubject, String aIssuer,
+    		List<String> tipiSoggetto)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return getServizioApplicativoByCredenzialiSsl(connectionPdD, aSubject, aIssuer, 
+				tipiSoggetto, 
+				false, false, false);
+	}
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(Connection connectionPdD,String aSubject, String aIssuer,
+    		List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Raccolta dati
 		if(aSubject == null)
@@ -4125,7 +4269,8 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getServizioApplicativoByCredenzialiSsl(aSubject, aIssuer);
+			key = this._getKey_getServizioApplicativoByCredenzialiSsl(aSubject, aIssuer, tipiSoggetto, 
+					includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -4141,8 +4286,22 @@ public class ConfigurazionePdD  {
 		}
 
 		// Algoritmo CACHE
-		Class<?>[] classArguments = new Class[] {String.class, String.class};
-		Object[]values = new Object[] {aSubject , aIssuer}; // passo gli argomenti tramite array poich' aIssuer puo' essere null
+		Class<?>[] classArguments = null;
+		Object[]values = null;
+		if(tipiSoggetto!=null) {
+			if(includiApplicativiNonModI || includiApplicativiModIEsterni || includiApplicativiModIInterni) {
+				classArguments = new Class[] {String.class, String.class, List.class, boolean.class, boolean.class, boolean.class};
+				values = new Object[] {aSubject , aIssuer, tipiSoggetto, includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni}; // passo gli argomenti tramite array poich' aIssuer puo' essere null
+			}
+			else {
+				classArguments = new Class[] {String.class, String.class, List.class};
+				values = new Object[] {aSubject , aIssuer, tipiSoggetto}; // passo gli argomenti tramite array poich' aIssuer puo' essere null
+			}
+		}
+		else {
+			classArguments = new Class[] {String.class, String.class};
+			values = new Object[] {aSubject , aIssuer}; // passo gli argomenti tramite array poich' aIssuer puo' essere null
+		}
 		ServizioApplicativo s = null;
 		if(this.cache!=null){
 			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiSsl",connectionPdD,ConfigurazionePdDType.config,classArguments, values);
@@ -4159,17 +4318,37 @@ public class ConfigurazionePdD  {
 	protected static String _toKey_getServizioApplicativoByCredenzialiSslCertPrefix(boolean separator){
 		return "getServizioApplicativoByCredenzialiSslCert"+(separator?"_":"");
 	}
-	private String _getKey_getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws DriverConfigurazioneException{
+	private String _getKey_getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier,
+    		List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni) throws DriverConfigurazioneException{
 		try {
 			String key = _toKey_getServizioApplicativoByCredenzialiSslCertPrefix(false);
 			key = key +"_cert:"+certificate.digestBase64Encoded();
 			key = key +"_strictVerifier:"+strictVerifier;
+			if(tipiSoggetto!=null && !tipiSoggetto.isEmpty()) {
+				key = key +"_"+tipiSoggetto.toString();
+				key = key +"_noModi:"+includiApplicativiNonModI;
+				key = key +"_modiExt:"+includiApplicativiModIEsterni;
+				key = key +"_modiInt:"+includiApplicativiModIInterni;
+			}
 			return key;
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
 	}
 	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(Connection connectionPdD, CertificateInfo certificate, boolean strictVerifier) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return getServizioApplicativoByCredenzialiSsl(connectionPdD, certificate, strictVerifier, 
+				null);
+	}
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(Connection connectionPdD, CertificateInfo certificate, boolean strictVerifier,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return getServizioApplicativoByCredenzialiSsl(connectionPdD, certificate, strictVerifier, 
+				tipiSoggetto, 
+				false, false, false);
+	}
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(Connection connectionPdD, CertificateInfo certificate, boolean strictVerifier,
+    		List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		
 		// Raccolta dati
 		if(certificate == null)
@@ -4178,7 +4357,8 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getServizioApplicativoByCredenzialiSsl(certificate, strictVerifier);
+			key = this._getKey_getServizioApplicativoByCredenzialiSsl(certificate, strictVerifier, tipiSoggetto, 
+					includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -4194,8 +4374,22 @@ public class ConfigurazionePdD  {
 		}
 
 		// Algoritmo CACHE
-		Class<?>[] classArguments = new Class[] {CertificateInfo.class, boolean.class};
-		Object[]values = new Object[] {certificate , strictVerifier};
+		Class<?>[] classArguments = null;
+		Object[]values = null;
+		if(tipiSoggetto!=null) {
+			if(includiApplicativiNonModI || includiApplicativiModIEsterni || includiApplicativiModIInterni) {
+				classArguments = new Class[] {CertificateInfo.class, boolean.class, List.class, boolean.class, boolean.class, boolean.class};
+				values = new Object[] {certificate , strictVerifier, tipiSoggetto, includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni};
+			}
+			else {
+				classArguments = new Class[] {CertificateInfo.class, boolean.class, List.class};
+				values = new Object[] {certificate , strictVerifier, tipiSoggetto};
+			}
+		}
+		else {
+			classArguments = new Class[] {CertificateInfo.class, boolean.class};
+			values = new Object[] {certificate , strictVerifier};
+		}
 		ServizioApplicativo s = null;
 		if(this.cache!=null){
 			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiSsl",connectionPdD,ConfigurazionePdDType.config, classArguments, values);
@@ -4212,12 +4406,20 @@ public class ConfigurazionePdD  {
 	protected static String _toKey_getServizioApplicativoByCredenzialiPrincipalPrefix(){
 		return "getServizioApplicativoByCredenzialiPrincipal";
 	}
-	private String _getKey_getServizioApplicativoByCredenzialiPrincipal(String principal){
+	private String _getKey_getServizioApplicativoByCredenzialiPrincipal(String principal,
+    		List<String> tipiSoggetto){
 		String key = _toKey_getServizioApplicativoByCredenzialiPrincipalPrefix();
 		key = key +"_"+principal;
+		if(tipiSoggetto!=null && !tipiSoggetto.isEmpty()) {
+			key = key +"_"+tipiSoggetto.toString();
+		}
 		return key;
 	}
 	public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(Connection connectionPdD,String principal)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return getServizioApplicativoByCredenzialiPrincipal(connectionPdD, principal, null);
+	}
+	public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(Connection connectionPdD,String principal,
+    		List<String> tipiSoggetto)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Raccolta dati
 		if(principal == null)
@@ -4226,7 +4428,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getServizioApplicativoByCredenzialiPrincipal(principal);
+			key = this._getKey_getServizioApplicativoByCredenzialiPrincipal(principal, tipiSoggetto);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -4243,10 +4445,19 @@ public class ConfigurazionePdD  {
 
 		// Algoritmo CACHE
 		ServizioApplicativo s = null;
-		if(this.cache!=null){
-			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiPrincipal",connectionPdD,ConfigurazionePdDType.config,principal);
-		}else{
-			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiPrincipal",connectionPdD,ConfigurazionePdDType.config,principal);
+		if(tipiSoggetto!=null) {
+			if(this.cache!=null){
+				s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiPrincipal",connectionPdD,ConfigurazionePdDType.config,principal,tipiSoggetto);
+			}else{
+				s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiPrincipal",connectionPdD,ConfigurazionePdDType.config,principal,tipiSoggetto);
+			}
+		}
+		else {
+			if(this.cache!=null){
+				s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiPrincipal",connectionPdD,ConfigurazionePdDType.config,principal);
+			}else{
+				s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiPrincipal",connectionPdD,ConfigurazionePdDType.config,principal);
+			}
 		}
 
 		if(s!=null)
@@ -4258,12 +4469,20 @@ public class ConfigurazionePdD  {
 	protected static String _toKey_getServizioApplicativoByCredenzialiTokenPrefix(){
 		return "getServizioApplicativoByCredenzialiToken";
 	}
-	private String _getKey_getServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId) throws DriverConfigurazioneException{
+	private String _getKey_getServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException{
 		String key = _toKey_getServizioApplicativoByCredenzialiTokenPrefix();
 		key = key +"_"+tokenPolicy+"@[https:"+this.isTokenWithHttpsEnabled()+"]"+tokenClientId;
+		if(tipiSoggetto!=null && !tipiSoggetto.isEmpty()) {
+			key = key +"_"+tipiSoggetto.toString();
+		}
 		return key;
 	}
 	public ServizioApplicativo getServizioApplicativoByCredenzialiToken(Connection connectionPdD,String tokenPolicy, String tokenClientId)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return getServizioApplicativoByCredenzialiToken(connectionPdD, tokenPolicy, tokenClientId, null);
+	}
+	public ServizioApplicativo getServizioApplicativoByCredenzialiToken(Connection connectionPdD,String tokenPolicy, String tokenClientId,
+    		List<String> tipiSoggetto)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Raccolta dati
 		if(tokenPolicy == null)
@@ -4274,7 +4493,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getServizioApplicativoByCredenzialiToken(tokenPolicy, tokenClientId);
+			key = this._getKey_getServizioApplicativoByCredenzialiToken(tokenPolicy, tokenClientId,tipiSoggetto);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -4291,10 +4510,19 @@ public class ConfigurazionePdD  {
 
 		// Algoritmo CACHE
 		ServizioApplicativo s = null;
-		if(this.cache!=null){
-			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiToken",connectionPdD,ConfigurazionePdDType.config,tokenPolicy, tokenClientId, this.isTokenWithHttpsEnabled());
-		}else{
-			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiToken",connectionPdD,ConfigurazionePdDType.config,tokenPolicy, tokenClientId, this.isTokenWithHttpsEnabled());
+		if(tipiSoggetto!=null) {
+			if(this.cache!=null){
+				s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiToken",connectionPdD,ConfigurazionePdDType.config,tokenPolicy, tokenClientId, this.isTokenWithHttpsEnabled(), tipiSoggetto);
+			}else{
+				s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiToken",connectionPdD,ConfigurazionePdDType.config,tokenPolicy, tokenClientId, this.isTokenWithHttpsEnabled(), tipiSoggetto);
+			}
+		}
+		else {
+			if(this.cache!=null){
+				s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiToken",connectionPdD,ConfigurazionePdDType.config,tokenPolicy, tokenClientId, this.isTokenWithHttpsEnabled());
+			}else{
+				s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiToken",connectionPdD,ConfigurazionePdDType.config,tokenPolicy, tokenClientId, this.isTokenWithHttpsEnabled());
+			}
 		}
 
 		if(s!=null)

@@ -44,6 +44,7 @@ import org.openspcoop2.pdd.core.keystore.RemoteStoreProvider;
 import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.pdd.core.token.parser.TokenUtils;
+import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.modipa.config.ModIAuditClaimConfig;
 import org.openspcoop2.protocol.modipa.config.ModIAuditConfig;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
@@ -418,7 +419,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			ModITruststoreConfig trustStoreCertificati, ModITruststoreConfig trustStoreSsl, ModISecurityConfig securityConfig,
 			boolean buildSecurityTokenInRequest, ModIHeaderType headerType, boolean integritaCustom, boolean securityHeaderObbligatorio,
 			Map<String, Object> dynamicMapParameter, Busta datiRichiesta,
-			IDSoggetto idSoggetto) throws ProtocolException {
+			IDSoggetto idSoggetto, MsgDiagnostico msgDiag) throws ProtocolException {
 		
 		if(msg==null) {
 			throw new ProtocolException("Param msg is null");
@@ -853,7 +854,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 						//   Se per caso risultasse corretto non è un problema
 					}
 					else {
-						identificazioneApplicativoMittente(x509,msg,busta);
+						identificazioneApplicativoMittente(x509,msg,busta,msgDiag);
 					}
 				}
 			}

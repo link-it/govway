@@ -23,6 +23,7 @@ package org.openspcoop2.protocol.modipa.validator;
 import java.security.cert.X509Certificate;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
@@ -60,9 +61,9 @@ public class AbstractModIValidazioneSintatticaCommons {
 		this.validazioneUtils = validazioneUtils;
 	}
 	
-	protected void identificazioneApplicativoMittente(X509Certificate x509, OpenSPCoop2Message msg, Busta busta) throws ProtocolException {
+	protected void identificazioneApplicativoMittente(X509Certificate x509, OpenSPCoop2Message msg, Busta busta, MsgDiagnostico msgDiag) throws ProtocolException {
 		// invocato in ModIValidazioneSintatticaRest e ModIValidazioneSintatticaSoap durante il trattamento del token di sicurezza
-		IdentificazioneApplicativoMittenteUtils.identificazioneApplicativoMittenteByX509(this.log, this.state, x509, msg, busta, this.context, this.factory, this.requestInfo);
+		IdentificazioneApplicativoMittenteUtils.identificazioneApplicativoMittenteByX509(this.log, this.state, x509, msg, busta, this.context, this.factory, this.requestInfo, msgDiag);
 	}
 		
 }

@@ -1504,25 +1504,69 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
     public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String aUser,String aPassword, CryptConfig config) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
     	return this.serviziApplicativiDriver.getServizioApplicativoByCredenzialiBasic(aUser, aPassword, config);
     }
+    public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String aUser,String aPassword, CryptConfig config,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+    	return this.serviziApplicativiDriver.getServizioApplicativoByCredenzialiBasic(aUser, aPassword, config,
+        		tipiSoggetto);
+    }
     @Override
     public ServizioApplicativo getServizioApplicativoByCredenzialiApiKey(String aUser,String aPassword, boolean appId, CryptConfig config) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
     	return this.serviziApplicativiDriver.getServizioApplicativoByCredenzialiApiKey(aUser, aPassword, appId, config);
+    }
+    public ServizioApplicativo getServizioApplicativoByCredenzialiApiKey(String aUser,String aPassword, boolean appId, CryptConfig config,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+    	return this.serviziApplicativiDriver.getServizioApplicativoByCredenzialiApiKey(aUser, aPassword, appId, config,
+        		tipiSoggetto);
     }
     @Override
     public ServizioApplicativo getServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId, boolean tokenWithHttpsEnabled) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
     	return this.serviziApplicativiDriver.getServizioApplicativoByCredenzialiToken(tokenPolicy, tokenClientId, tokenWithHttpsEnabled);
     }
+    public ServizioApplicativo getServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId, boolean tokenWithHttpsEnabled,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+    	return this.serviziApplicativiDriver.getServizioApplicativoByCredenzialiToken(tokenPolicy, tokenClientId, tokenWithHttpsEnabled,
+        		tipiSoggetto);
+    }
     @Override
     public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject, String aIssuer) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
     	return this.serviziApplicativiDriver.getServizioApplicativoByCredenzialiSsl(aSubject, aIssuer);
+    }
+    public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject, String aIssuer,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+    	return this.serviziApplicativiDriver.getServizioApplicativoByCredenzialiSsl(aSubject, aIssuer,
+        		tipiSoggetto);
+    }
+    public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject, String aIssuer,
+    		List<String> tipiSoggetto,
+    		boolean includiApplicativiNonModI,boolean includiApplicativiModIEsterni,boolean includiApplicativiModIInterni) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+    	return this.serviziApplicativiDriver.getServizioApplicativoByCredenzialiSsl(aSubject, aIssuer,
+        		tipiSoggetto,
+        		includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
     }
     @Override
     public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
     	return this.serviziApplicativiDriver.getServizioApplicativoByCredenzialiSsl(certificate, strictVerifier);
     }
+    public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+    	return this.serviziApplicativiDriver.getServizioApplicativoByCredenzialiSsl(certificate, strictVerifier,
+        		tipiSoggetto);
+    }
+    public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier,
+    		List<String> tipiSoggetto,
+    		boolean includiApplicativiNonModI,boolean includiApplicativiModIEsterni,boolean includiApplicativiModIInterni) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+    	return this.serviziApplicativiDriver.getServizioApplicativoByCredenzialiSsl(certificate, strictVerifier,
+        		tipiSoggetto,
+        		includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
+    }
     @Override
     public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(String principal) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
     	return this.serviziApplicativiDriver.getServizioApplicativoByCredenzialiPrincipal(principal);
+    }
+    public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(String principal,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+    	return this.serviziApplicativiDriver.getServizioApplicativoByCredenzialiPrincipal(principal,
+        		tipiSoggetto);
     }
     public ServizioApplicativo getServizioApplicativo(long idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
     	return this.serviziApplicativiDriver.getServizioApplicativo(idServizioApplicativo);
@@ -1577,12 +1621,20 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		return this.serviziApplicativiDriver.servizioApplicativoWithCredenzialiApiKeyList(utente, appId);
 	}
 
-	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiSslList(String subject, String issuer) throws DriverConfigurazioneException {
-		return this.serviziApplicativiDriver.servizioApplicativoWithCredenzialiSslList(subject, issuer);
+	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiSslList(String subject, String issuer,
+			List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni) throws DriverConfigurazioneException {
+		return this.serviziApplicativiDriver.servizioApplicativoWithCredenzialiSslList(subject, issuer,
+				tipiSoggetto,
+				includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
 	}
 	
-	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiSslList(CertificateInfo certificate, boolean strictVerifier) throws DriverConfigurazioneException {
-		return this.serviziApplicativiDriver.servizioApplicativoWithCredenzialiSslList(certificate, strictVerifier);
+	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiSslList(CertificateInfo certificate, boolean strictVerifier,
+			List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni) throws DriverConfigurazioneException {
+		return this.serviziApplicativiDriver.servizioApplicativoWithCredenzialiSslList(certificate, strictVerifier,
+				tipiSoggetto,
+				includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
 	}
 	
 	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiPrincipalList(String principal) throws DriverConfigurazioneException {

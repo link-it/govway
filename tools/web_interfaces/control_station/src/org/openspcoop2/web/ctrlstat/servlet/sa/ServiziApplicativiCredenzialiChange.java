@@ -183,6 +183,8 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 			oldIdServizioApplicativo.setNome(oldNome);
 			int idProv = sa.getIdSoggetto().intValue();
 
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
+			
 			InvocazionePorta ip = sa.getInvocazionePorta();
 			Credenziali credenziali = null;
 			Credenziali oldCredenziali = null;
@@ -621,7 +623,7 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = saHelper.servizioApplicativoCredenzialiCertificatiCheckData(TipoOperazione.CHANGE, idProv, sa, idxCredenziale);
+			boolean isOk = saHelper.servizioApplicativoCredenzialiCertificatiCheckData(TipoOperazione.CHANGE, idProv, sa, idxCredenziale, protocollo, idxCredenziale);
 					
 			if (!isOk) {
 				

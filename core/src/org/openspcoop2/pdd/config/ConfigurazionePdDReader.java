@@ -4213,11 +4213,20 @@ public class ConfigurazionePdDReader {
 	}
 
 	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiBasic(Connection connectionPdD,String aUser,String aPassword, CryptConfig config) throws DriverConfigurazioneException{
+		return getIdServizioApplicativoByCredenzialiBasic(connectionPdD, aUser, aPassword, config, null);
+	}
+	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiBasic(Connection connectionPdD,String aUser,String aPassword, CryptConfig config,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException{
 		ServizioApplicativo servizioApplicativo = null;
 		try{
-			servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiBasic(connectionPdD, aUser, aPassword, config);
+			if(tipiSoggetto!=null) {
+				servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiBasic(connectionPdD, aUser, aPassword, config, tipiSoggetto);
+			}
+			else {
+				servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiBasic(connectionPdD, aUser, aPassword, config);
+			}
 		}catch(DriverConfigurazioneNotFound e){
-			//this.logDebug("autenticazioneHTTP (not found): "+e.getMessage());
+			/**this.logDebug("autenticazioneHTTP (not found): "+e.getMessage());*/
 		}
 
 		if(servizioApplicativo!=null){
@@ -4233,11 +4242,20 @@ public class ConfigurazionePdDReader {
 	}
 	
 	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiApiKey(Connection connectionPdD,String aUser,String aPassword, boolean appId, CryptConfig config) throws DriverConfigurazioneException{
+		return getIdServizioApplicativoByCredenzialiApiKey(connectionPdD, aUser, aPassword, appId, config, null);
+	}
+	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiApiKey(Connection connectionPdD,String aUser,String aPassword, boolean appId, CryptConfig config,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException{
 		ServizioApplicativo servizioApplicativo = null;
 		try{
-			servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiApiKey(connectionPdD, aUser, aPassword, appId, config);
+			if(tipiSoggetto!=null) {
+				servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiApiKey(connectionPdD, aUser, aPassword, appId, config, tipiSoggetto);
+			}
+			else {
+				servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiApiKey(connectionPdD, aUser, aPassword, appId, config);
+			}
 		}catch(DriverConfigurazioneNotFound e){
-			//this.logDebug("autenticazioneHTTP (not found): "+e.getMessage());
+			/**this.logDebug("autenticazioneHTTP (not found): "+e.getMessage());*/
 		}
 
 		if(servizioApplicativo!=null){
@@ -4253,11 +4271,34 @@ public class ConfigurazionePdDReader {
 	}
 
 	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiSsl(Connection connectionPdD,String aSubject, String aIssuer) throws DriverConfigurazioneException{
+		return getIdServizioApplicativoByCredenzialiSsl(connectionPdD, aSubject, aIssuer, 
+				null);
+	}
+	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiSsl(Connection connectionPdD,String aSubject, String aIssuer,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException{
+		return getIdServizioApplicativoByCredenzialiSsl(connectionPdD, aSubject, aIssuer, 
+				tipiSoggetto,
+				false, false, false);
+	}
+	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiSsl(Connection connectionPdD,String aSubject, String aIssuer,
+    		List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni) throws DriverConfigurazioneException{
 		ServizioApplicativo servizioApplicativo = null;
 		try{
-			servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiSsl(connectionPdD, aSubject, aIssuer);
+			if(tipiSoggetto!=null) {
+				if(includiApplicativiNonModI || includiApplicativiModIEsterni || includiApplicativiModIInterni) {
+					servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiSsl(connectionPdD, aSubject, aIssuer, tipiSoggetto, 
+							includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
+				}
+				else {
+					servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiSsl(connectionPdD, aSubject, aIssuer, tipiSoggetto);
+				}
+			}
+			else {
+				servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiSsl(connectionPdD, aSubject, aIssuer);
+			}
 		}catch(DriverConfigurazioneNotFound e){
-			//this.logDebug("autenticazioneHTTP (not found): "+e.getMessage());
+			/**this.logDebug("autenticazioneHTTP (not found): "+e.getMessage());*/
 		}
 
 		if(servizioApplicativo!=null){
@@ -4273,11 +4314,34 @@ public class ConfigurazionePdDReader {
 	}
 
 	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiSsl(Connection connectionPdD,CertificateInfo certificate, boolean strictVerifier) throws DriverConfigurazioneException{
+		return getIdServizioApplicativoByCredenzialiSsl(connectionPdD, certificate, strictVerifier, 
+				null);
+	}
+	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiSsl(Connection connectionPdD,CertificateInfo certificate, boolean strictVerifier,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException{
+		return getIdServizioApplicativoByCredenzialiSsl(connectionPdD, certificate, strictVerifier, 
+				tipiSoggetto,
+				false, false, false);
+	}
+	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiSsl(Connection connectionPdD,CertificateInfo certificate, boolean strictVerifier,
+    		List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni) throws DriverConfigurazioneException{
 		ServizioApplicativo servizioApplicativo = null;
 		try{
-			servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiSsl(connectionPdD, certificate, strictVerifier);
+			if(tipiSoggetto!=null) {
+				if(includiApplicativiNonModI || includiApplicativiModIEsterni || includiApplicativiModIInterni) {
+					servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiSsl(connectionPdD, certificate, strictVerifier, tipiSoggetto, 
+							includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
+				}
+				else {
+					servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiSsl(connectionPdD, certificate, strictVerifier, tipiSoggetto);
+				}
+			}
+			else {
+				servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiSsl(connectionPdD, certificate, strictVerifier);
+			}
 		}catch(DriverConfigurazioneNotFound e){
-			//this.logDebug("autenticazioneHTTP (not found): "+e.getMessage());
+			/**this.logDebug("autenticazioneHTTP (not found): "+e.getMessage());*/
 		}
 
 		if(servizioApplicativo!=null){
@@ -4293,11 +4357,20 @@ public class ConfigurazionePdDReader {
 	}
 
 	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiPrincipal(Connection connectionPdD,String principal) throws DriverConfigurazioneException{
+		return getIdServizioApplicativoByCredenzialiPrincipal(connectionPdD, principal, null);
+	}
+	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiPrincipal(Connection connectionPdD,String principal,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException{
 		ServizioApplicativo servizioApplicativo = null;
 		try{
-			servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiPrincipal(connectionPdD, principal);
+			if(tipiSoggetto!=null) {
+				servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiPrincipal(connectionPdD, principal, tipiSoggetto);
+			}
+			else {
+				servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiPrincipal(connectionPdD, principal);
+			}
 		}catch(DriverConfigurazioneNotFound e){
-			//this.logDebug("autenticazioneHTTP (not found): "+e.getMessage());
+			/**this.logDebug("autenticazioneHTTP (not found): "+e.getMessage());*/
 		}
 
 		if(servizioApplicativo!=null){
@@ -4313,11 +4386,20 @@ public class ConfigurazionePdDReader {
 	}
 	
 	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiToken(Connection connectionPdD,String tokenPolicy, String tokenClientId) throws DriverConfigurazioneException{
+		return getIdServizioApplicativoByCredenzialiToken(connectionPdD, tokenPolicy, tokenClientId, null);
+	}
+	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiToken(Connection connectionPdD,String tokenPolicy, String tokenClientId,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException{
 		ServizioApplicativo servizioApplicativo = null;
 		try{
-			servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiToken(connectionPdD, tokenPolicy, tokenClientId);
+			if(tipiSoggetto!=null) {
+				servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiToken(connectionPdD, tokenPolicy, tokenClientId, tipiSoggetto);
+			}
+			else {
+				servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiToken(connectionPdD, tokenPolicy, tokenClientId);
+			}
 		}catch(DriverConfigurazioneNotFound e){
-			//this.logDebug("autenticazioneHTTP (not found): "+e.getMessage());
+			/**this.logDebug("autenticazioneHTTP (not found): "+e.getMessage());*/
 		}
 
 		if(servizioApplicativo!=null){

@@ -590,7 +590,7 @@ public final class SoggettiCredenzialiChange extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = soggettiHelper.soggettiCredenzialiCertificatiCheckData(tipoOperazione, id, soggettoRegistry, idxCredenziale);
+			boolean isOk = soggettiHelper.soggettiCredenzialiCertificatiCheckData(tipoOperazione, id, soggettoRegistry, idxCredenziale, protocollo);
 
 			if (!isOk) {
 
