@@ -26,6 +26,7 @@ import java.security.cert.CertStore;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -38,6 +39,8 @@ import org.openspcoop2.pdd.core.autenticazione.WWWAuthenticateConfig;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.keystore.GestoreKeystoreCaching;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.engine.ConfigurazioneFiltroServiziApplicativi;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
@@ -111,7 +114,7 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     		boolean checkValid = false;
     		boolean trustStore = false;
     		KeyStore trustStoreCertificatiX509 = null;
-    		CertStore trustStoreCertificatiX509_crls = null;
+    		CertStore trustStoreCertificatiX509crls = null;
     		IOCSPValidator ocspValidator = null;
     		try {
     			checkValid = CostantiProprieta.isAutenticazioneHttpsValidityCheck(proprieta, op2Properties.isAutenticazioneHttpsPortaApplicativaValidityCheck());
@@ -126,7 +129,7 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     	    						type, 
     								password).getTrustStore();
     					}catch(Exception e){
-    						throw new Exception("Errore durante la lettura del truststore indicato ("+path+"): "+e.getMessage());
+    						throw new CoreException("Errore durante la lettura del truststore indicato ("+path+"): "+e.getMessage());
     					}
     				}
     				
@@ -148,7 +151,7 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     									ocspPolicy, 
     									ocspResourceReader);
     						}catch(Exception e){
-    							throw new Exception("Errore durante l'inizializzazione del gestore della policy OCSP ("+ocspPolicy+"): "+e.getMessage());
+    							throw new CoreException("Errore durante l'inizializzazione del gestore della policy OCSP ("+ocspPolicy+"): "+e.getMessage());
     						}
     						if(ocspValidator!=null) {
     							GestoreOCSPValidator gOcspValidator = (GestoreOCSPValidator) ocspValidator;
@@ -160,9 +163,9 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     					
     					if(crl!=null && !crlByOcsp) {
     						try {
-    							trustStoreCertificatiX509_crls = GestoreKeystoreCaching.getCRLCertstore(requestInfo, crl).getCertStore();
+    							trustStoreCertificatiX509crls = GestoreKeystoreCaching.getCRLCertstore(requestInfo, crl).getCertStore();
     						}catch(Exception e){
-    							throw new Exception("Errore durante la lettura delle CRLs ("+crl+"): "+e.getMessage());
+    							throw new CoreException("Errore durante la lettura delle CRLs ("+crl+"): "+e.getMessage());
     						}
     					}
     				}
@@ -179,7 +182,7 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     		
     		if(checkValid 
     				&&
-    				trustStoreCertificatiX509_crls==null) { // altrimenti la validita' viene verificata insieme alle CRL
+    				trustStoreCertificatiX509crls==null) { // altrimenti la validita' viene verificata insieme alle CRL
 	    		try {
 	    			certificate.checkValid();
 	    		}catch(Exception e) {
@@ -197,13 +200,13 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     		if(trustStoreCertificatiX509!=null) {
 	    		try {
 		    		if(certificate.isVerified(trustStoreCertificatiX509, true)==false) {
-						throw new Exception("Certificato non verificabile rispetto alle CA conosciute");
+						throw new CoreException("Certificato non verificabile rispetto alle CA conosciute");
 					}
-					if(trustStoreCertificatiX509_crls!=null) {
+					if(trustStoreCertificatiX509crls!=null) {
 						try {
-							certificate.checkValid(trustStoreCertificatiX509_crls, trustStoreCertificatiX509);
+							certificate.checkValid(trustStoreCertificatiX509crls, trustStoreCertificatiX509);
 						}catch(Throwable t) {
-							throw new Exception("Certificato non valido: "+t.getMessage());
+							throw new CoreException("Certificato non valido: "+t.getMessage());
 						}
 					}
 	    		}catch(Exception e) {
@@ -257,14 +260,13 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 					notFoundExceptions.add(notFound);
 				}
 			}
-			if(idSoggetto==null) {
+			if(idSoggetto==null &&
 				// 2. Poi per certificato no strict
-				if(certificate!=null) {
-					try{
-						idSoggetto = registroServiziManager.getIdSoggettoByCredenzialiSsl(certificate, false, null); // all registry
-					}catch(DriverRegistroServiziNotFound notFound){
-						notFoundExceptions.add(notFound);
-					}
+				certificate!=null) {
+				try{
+					idSoggetto = registroServiziManager.getIdSoggettoByCredenzialiSsl(certificate, false, null); // all registry
+				}catch(DriverRegistroServiziNotFound notFound){
+					notFoundExceptions.add(notFound);
 				}	
 			}
 			if(idSoggetto==null) {
@@ -284,7 +286,7 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 				}
 			}
 			
-			if(idSoggetto==null && notFoundExceptions.size()>0) {
+			if(idSoggetto==null && !notFoundExceptions.isEmpty()) {
 				throw new UtilsMultiException(notFoundExceptions.toArray(new Throwable[1]));
 			}
 		}
@@ -305,29 +307,37 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 		
 		IDServizioApplicativo idServizioApplicativo = null;
 		try {
-			if(idSoggetto==null && this.getProtocolFactory().createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni()) {
+			if(idSoggetto==null && this.getProtocolFactory().createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni()
+					&& 
+					!Costanti.MODIPA_PROTOCOL_NAME.equals(this.getProtocolFactory().getProtocol())  // su ModI i certificati vengono associati per le firme
+					) {
 				
 				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(datiInvocazione.getState());
 				
 				// NOTA: il fatto di essersi registrati come strict o come non strict è insito nella registrazione dell'applicativo
 				
+				ConfigurazioneFiltroServiziApplicativi filtroHttps = ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiHttps();
+				
 				// 1. Prima si cerca per certificato strict
 				if(certificate!=null) {
-					idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(certificate, true);
+					idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(certificate, true,
+							filtroHttps.getTipiSoggetti(), filtroHttps.isIncludiApplicativiNonModI(), filtroHttps.isIncludiApplicativiModIEsterni(), filtroHttps.isIncludiApplicativiModIInterni());
 				}
-				if(idServizioApplicativo==null) {
+				if(idServizioApplicativo==null &&
 					// 2. Poi per certificato no strict
-					if(certificate!=null) {
-						idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(certificate, false);
-					}	
+					certificate!=null) {
+					idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(certificate, false,
+							filtroHttps.getTipiSoggetti(), filtroHttps.isIncludiApplicativiNonModI(), filtroHttps.isIncludiApplicativiModIEsterni(), filtroHttps.isIncludiApplicativiModIInterni());
 				}
 				if(idServizioApplicativo==null) {
 					// 3. per subject/issuer
-					idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(subject, issuer);	
+					idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(subject, issuer,
+							filtroHttps.getTipiSoggetti(), filtroHttps.isIncludiApplicativiNonModI(), filtroHttps.isIncludiApplicativiModIEsterni(), filtroHttps.isIncludiApplicativiModIInterni());	
 				}
 				if(idServizioApplicativo==null) {
 					// 4. solo per subject
-					idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(subject, null);	
+					idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(subject, null,
+							filtroHttps.getTipiSoggetti(), filtroHttps.isIncludiApplicativiNonModI(), filtroHttps.isIncludiApplicativiModIEsterni(), filtroHttps.isIncludiApplicativiModIInterni());	
 				}
 
 				if(idServizioApplicativo!=null) {
@@ -355,7 +365,7 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 		
 		if(idSoggetto == null){
 			// L'identificazione in ssl non e' obbligatoria
-			// esito.setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCooperazione());
+			/** esito.setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCooperazione());*/
 			esito.setClientIdentified(false);
 			return esito;
 		}

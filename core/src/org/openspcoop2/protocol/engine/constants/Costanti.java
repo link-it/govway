@@ -22,6 +22,9 @@
 
 package org.openspcoop2.protocol.engine.constants;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.CostantiLabel;
 
@@ -159,6 +162,13 @@ public class Costanti {
     
     public static final String MODIPA_PROTOCOL_NAME = CostantiLabel.MODIPA_PROTOCOL_NAME;
     public static final String MODIPA_PROTOCOL_LABEL = CostantiLabel.MODIPA_PROTOCOL_LABEL;
+    private static List<String> tipiSoggettoModI = new ArrayList<>();
+	static {
+    	tipiSoggettoModI.add(CostantiLabel.MODIPA_PROTOCOL_NAME); // tipo soggetto uguale al protocollo
+    }
+	public static List<String> getTipiSoggettoModI() {
+		return tipiSoggettoModI;
+	}
     
     public static final String SDI_PROTOCOL_NAME = CostantiLabel.SDI_PROTOCOL_NAME;
     public static final String SDI_PROTOCOL_LABEL = CostantiLabel.SDI_PROTOCOL_LABEL;

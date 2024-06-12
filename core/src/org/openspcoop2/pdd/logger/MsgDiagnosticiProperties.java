@@ -1201,6 +1201,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"gestioneTokenInCorso.dynamicDiscovery.inCache",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"gestioneTokenInCorso.dynamicDiscovery.fallita",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"gestioneTokenInCorso.dynamicDiscovery.disabilitata",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"soggettoIntermediario",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"ricezioneBustaErrore",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"ricezioneBusta.eccezioniNonGravi",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"validazioneNonRiuscita",

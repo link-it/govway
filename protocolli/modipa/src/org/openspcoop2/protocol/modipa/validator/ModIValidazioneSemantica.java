@@ -532,7 +532,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 					IDServizioApplicativo idSAbyToken = null;
 					StringBuilder sbError = new StringBuilder();
 					try {
-						idSAbyToken = IdentificazioneApplicativoMittenteUtils.identificazioneApplicativoMittenteByToken(this.log, state, busta, this.context, requestInfo, sbError);
+						idSAbyToken = IdentificazioneApplicativoMittenteUtils.identificazioneApplicativoMittenteByToken(this.log, state, busta, this.context, requestInfo, msgDiag, sbError);
 					}catch(Exception e) {
 						if(sbError!=null && sbError.length()>0) {
 							this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);

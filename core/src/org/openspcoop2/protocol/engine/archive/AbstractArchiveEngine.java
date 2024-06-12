@@ -96,6 +96,7 @@ import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
+import org.openspcoop2.protocol.engine.ConfigurazioneFiltroServiziApplicativi;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -574,21 +575,27 @@ public abstract class AbstractArchiveEngine {
 		}
 		return null;
 	}
-	public org.openspcoop2.core.config.ServizioApplicativo getServizioApplicativoCredenzialiSsl(String subject, String issuer) throws DriverConfigurazioneException{
-		List<org.openspcoop2.core.config.ServizioApplicativo> l = this.driverConfigurazione.servizioApplicativoWithCredenzialiSslList(subject, issuer);
+	public org.openspcoop2.core.config.ServizioApplicativo getServizioApplicativoCredenzialiSsl(String subject, String issuer,
+			ConfigurazioneFiltroServiziApplicativi filtro) throws DriverConfigurazioneException{
+		List<org.openspcoop2.core.config.ServizioApplicativo> l = this.driverConfigurazione.servizioApplicativoWithCredenzialiSslList(subject, issuer,
+				filtro.getTipiSoggetti(), 
+				filtro.isIncludiApplicativiNonModI(), filtro.isIncludiApplicativiModIEsterni(), filtro.isIncludiApplicativiModIInterni());
 		if(l!=null && !l.isEmpty()) {
 			return l.get(0);
 		}
 		return null;
 	}
-	public org.openspcoop2.core.config.ServizioApplicativo getServizioApplicativoCredenzialiSsl(byte[]archivio, boolean strictVerifier) throws DriverConfigurazioneException{
+	public org.openspcoop2.core.config.ServizioApplicativo getServizioApplicativoCredenzialiSsl(byte[]archivio, boolean strictVerifier,
+			ConfigurazioneFiltroServiziApplicativi filtro) throws DriverConfigurazioneException{
 		Certificate cSelezionato = null;
 		try {
 			cSelezionato = ArchiveLoader.load(archivio);
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
-		List<org.openspcoop2.core.config.ServizioApplicativo> l = this.driverConfigurazione.servizioApplicativoWithCredenzialiSslList(cSelezionato.getCertificate(), strictVerifier);
+		List<org.openspcoop2.core.config.ServizioApplicativo> l = this.driverConfigurazione.servizioApplicativoWithCredenzialiSslList(cSelezionato.getCertificate(), strictVerifier,
+				filtro.getTipiSoggetti(), 
+				filtro.isIncludiApplicativiNonModI(), filtro.isIncludiApplicativiModIEsterni(), filtro.isIncludiApplicativiModIInterni());
 		if(l!=null && !l.isEmpty()) {
 			return l.get(0);
 		}

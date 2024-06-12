@@ -1606,25 +1606,69 @@ public class ConfigurazionePdDManager {
 	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiBasic(String aUser,String aPassword, CryptConfig config) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiBasic(this.getConnection(), aUser, aPassword, config);
 	}
+	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiBasic(String aUser,String aPassword, CryptConfig config,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiBasic(this.getConnection(), aUser, aPassword, config,
+	    		tipiSoggetto);
+	}
 	
 	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiApiKey(String aUser,String aPassword, boolean appId, CryptConfig config) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiApiKey(this.getConnection(), aUser, aPassword, appId, config);
+	}
+	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiApiKey(String aUser,String aPassword, boolean appId, CryptConfig config,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiApiKey(this.getConnection(), aUser, aPassword, appId, config,
+	    		tipiSoggetto);
 	}
 
 	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiSsl(String aSubject, String aIssuer) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiSsl(this.getConnection(), aSubject, aIssuer);
 	}
+	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiSsl(String aSubject, String aIssuer,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiSsl(this.getConnection(), aSubject, aIssuer,
+	    		tipiSoggetto);
+	}
+	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiSsl(String aSubject, String aIssuer,
+    		List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiSsl(this.getConnection(), aSubject, aIssuer,
+	    		tipiSoggetto, 
+				includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
+	}
 
 	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiSsl(this.getConnection(), certificate, strictVerifier);
+	}
+	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiSsl(this.getConnection(), certificate, strictVerifier,
+	    		tipiSoggetto);
+	}
+	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier,
+    		List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiSsl(this.getConnection(), certificate, strictVerifier,
+	    		tipiSoggetto, 
+				includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
 	}
 
 	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiPrincipal(String principal) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiPrincipal(this.getConnection(), principal);
 	}
+	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiPrincipal(String principal,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiPrincipal(this.getConnection(), principal,
+	    		tipiSoggetto);
+	}
 	
 	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiToken(this.getConnection(), tokenPolicy, tokenClientId);
+	}
+	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId,
+    		List<String> tipiSoggetto) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiToken(this.getConnection(), tokenPolicy, tokenClientId,
+	    		tipiSoggetto);
 	}
 
 	public boolean autorizzazione(PortaDelegata pd, String servizio) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 

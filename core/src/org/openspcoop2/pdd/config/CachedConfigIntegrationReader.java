@@ -146,6 +146,34 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
+	public boolean existsServizioApplicativoByCredenzialiSsl(String subject, String aIssuer,
+			List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni) {
+		try{
+			return this.configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(subject,aIssuer,
+					tipiSoggetto, 
+					includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni)!=null;
+		} catch(Exception e){
+			return false;
+		}
+	}
+	@Override
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String subject, String aIssuer,
+			List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni) throws RegistryNotFound,RegistryException{
+		try{
+			IDServizioApplicativo idSA = this.configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(subject,aIssuer,
+					tipiSoggetto, 
+					includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
+			return this.configurazionePdDManager.getServizioApplicativo(idSA, this.requestInfo);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
 	public boolean existsServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier){
 		try{
 			return this.configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(certificate,strictVerifier)!=null;
@@ -158,6 +186,35 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws RegistryNotFound,RegistryException{
 		try{
 			IDServizioApplicativo idSA = this.configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(certificate,strictVerifier);
+			return this.configurazionePdDManager.getServizioApplicativo(idSA, this.requestInfo);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public boolean existsServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier,
+			List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni){
+		try{
+			return this.configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(certificate,strictVerifier,
+					tipiSoggetto, 
+					includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni)!=null;
+		} catch(Exception e){
+			return false;
+		}
+	}
+	
+	@Override
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier,
+			List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni) throws RegistryNotFound,RegistryException{
+		try{
+			IDServizioApplicativo idSA = this.configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(certificate,strictVerifier,
+					tipiSoggetto, 
+					includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
 			return this.configurazionePdDManager.getServizioApplicativo(idSA, this.requestInfo);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);

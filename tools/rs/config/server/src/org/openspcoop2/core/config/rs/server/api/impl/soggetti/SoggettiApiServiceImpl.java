@@ -142,7 +142,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 					soggettoRegistro.getCodiceIpa(),
 					null,	//pd_url_prefix_rewriter,
 					null,	//pa_url_prefix_rewriter,
-					null, false, soggettoRegistro.getDescrizione());
+					null, false, soggettoRegistro.getDescrizione(), soggettoRegistro.getPortaDominio());
 			
 			if (!isOk)
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
@@ -414,7 +414,8 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 					null, // this.pa_url_prefix_rewriter,
 					oldSoggetto,
 					false,	//IsSupportatoAutenticazione
-					newSoggetto.getDescrizione()
+					newSoggetto.getDescrizione(),
+					newSoggetto.getPortaDominio()
 				);
 			
 			if (!isOk)
@@ -529,7 +530,8 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 					null, // this.pa_url_prefix_rewriter,
 					oldSoggetto,
 					false,	//IsSupportatoAutenticazione
-					newSoggetto.getDescrizione()
+					newSoggetto.getDescrizione(),
+					newSoggetto.getPortaDominio()
 				);
 			
 			if (!isOk)

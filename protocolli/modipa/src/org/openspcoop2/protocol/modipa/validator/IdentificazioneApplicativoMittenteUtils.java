@@ -40,6 +40,9 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.core.GestoreRichieste;
+import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.pdd.services.core.RicezioneBusteGestioneAutenticazione;
+import org.openspcoop2.protocol.engine.ConfigurazioneFiltroServiziApplicativi;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
@@ -47,6 +50,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServiziApplicativi;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -80,7 +84,7 @@ public class IdentificazioneApplicativoMittenteUtils {
 	
 	// invocato in AbstractModIValidazioneSintatticaCommons e di conseguenza in ModIValidazioneSintatticaRest e ModIValidazioneSintatticaSoap durante il trattamento del token di sicurezza
 	public static IDServizioApplicativo identificazioneApplicativoMittenteByX509(Logger log, IState state, X509Certificate x509, OpenSPCoop2Message msg, Busta busta, 
-			Context context, IProtocolFactory<?> factory, RequestInfo requestInfo) throws ProtocolException {
+			Context context, IProtocolFactory<?> factory, RequestInfo requestInfo, MsgDiagnostico msgDiag) throws ProtocolException {
 		try {
 			
 			/** SICUREZZA MESSAGGIO **/
@@ -91,6 +95,8 @@ public class IdentificazioneApplicativoMittenteUtils {
 			}
 			
 			IDServizioApplicativo idServizioApplicativo = null;
+			
+			boolean rilevatoSoggettoIntermediario = false;
 			
 			if(x509!=null) {
 				
@@ -121,8 +127,21 @@ public class IdentificazioneApplicativoMittenteUtils {
 					}
 					// Non ha senso poter identificare entrambi con le stesse credenziali
 					else if(!idServizioApplicativo.getIdSoggettoProprietario().equals(idSoggettoMittente)) {
-						String msgError = ModIUtils.getMessaggioErroreDominioCanaleDifferenteDominioApplicativo(idServizioApplicativo, idSoggettoMittente);
-						throw new ProtocolException(msgError);
+						Soggetto soggettoCanale = RegistroServiziManager.getInstance(state).getSoggetto(idSoggettoMittente, null, requestInfo);
+						if(ModIUtils.isSoggettoCanaleIntermediario(soggettoCanale, log)) {
+							String idTransazione = null;
+							if(context.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
+								idTransazione = (String) context.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+							}
+							RicezioneBusteGestioneAutenticazione.registraIntermediario(idSoggettoMittente, msgDiag, idTransazione, null, context);
+							// assegno ad idSoggettoMittente il soggetto dell'applicativo
+							idSoggettoMittente = idServizioApplicativo.getIdSoggettoProprietario();
+							rilevatoSoggettoIntermediario = true;
+						}
+						else {
+							String msgError = ModIUtils.getMessaggioErroreDominioCanaleDifferenteDominioApplicativo(idServizioApplicativo, idSoggettoMittente);
+							throw new ProtocolException(msgError);
+						}
 					}
 				}
 				
@@ -202,7 +221,7 @@ public class IdentificazioneApplicativoMittenteUtils {
 	    	/** IMPOSTAZIONI */
 	    	
 	    	setInformazioniInBustaAndContext(log, state, busta, context, requestInfo,
-	    			idSoggettoMittente, idServizioApplicativo);
+	    			rilevatoSoggettoIntermediario, idSoggettoMittente, idServizioApplicativo);
 			
 	    	return idServizioApplicativo;
 	    	
@@ -231,53 +250,60 @@ public class IdentificazioneApplicativoMittenteUtils {
 			
 			// NOTA: il fatto di essersi registrati come strict o come non strict è insito nella registrazione dell'applicativo
 			
+			// FIX: cerco solo applicativi del profilo ModI esterno
+			ConfigurazioneFiltroServiziApplicativi filtroFirma = ConfigurazioneFiltroServiziApplicativi.getFiltroApplicativiModIFirma();
+			
 			// 1. Prima si cerca per certificato strict
 			if(certificate!=null) {
-				idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(certificate, true);
+				idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(certificate, true, 
+						filtroFirma.getTipiSoggetti(), filtroFirma.isIncludiApplicativiNonModI(), filtroFirma.isIncludiApplicativiModIEsterni(), filtroFirma.isIncludiApplicativiModIInterni());
 			}
-			if(idServizioApplicativo==null) {
+			if(idServizioApplicativo==null &&
 				// 2. Poi per certificato no strict
-				if(certificate!=null) {
-					idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(certificate, false);
-				}	
+				certificate!=null) {
+				idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(certificate, false, 
+						filtroFirma.getTipiSoggetti(), filtroFirma.isIncludiApplicativiNonModI(), filtroFirma.isIncludiApplicativiModIEsterni(), filtroFirma.isIncludiApplicativiModIInterni());
 			}
 			if(idServizioApplicativo==null) {
 				// 3. per subject/issuer
-				idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(subject, issuer);	
+				idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(subject, issuer, 
+						filtroFirma.getTipiSoggetti(), filtroFirma.isIncludiApplicativiNonModI(), filtroFirma.isIncludiApplicativiModIEsterni(), filtroFirma.isIncludiApplicativiModIInterni());	
 			}
 			if(idServizioApplicativo==null) {
 				// 4. solo per subject
-				idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(subject, null);	
+				idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(subject, null, 
+						filtroFirma.getTipiSoggetti(), filtroFirma.isIncludiApplicativiNonModI(), filtroFirma.isIncludiApplicativiModIEsterni(), filtroFirma.isIncludiApplicativiModIInterni());	
 			}
-			if(idServizioApplicativo==null) {
+			if(idServizioApplicativo==null &&
 				// 5. provare a vedere se si tratta di un applicativo interno (multi-tenant)
 				
-				if(StatoFunzionalita.ABILITATO.equals(configurazionePdDManager.getConfigurazioneMultitenant().getStato()) &&
+				StatoFunzionalita.ABILITATO.equals(configurazionePdDManager.getConfigurazioneMultitenant().getStato()) &&
 						!PortaApplicativaSoggettiFruitori.SOGGETTI_ESTERNI.equals(configurazionePdDManager.getConfigurazioneMultitenant().getErogazioneSceltaSoggettiFruitori())) {
 					
-					ProtocolFiltroRicercaServiziApplicativi filtro = createFilter(subject, issuer);
-									
-					List<IDServizioApplicativo> list = null;
-					try {
-						list = configurazionePdDManager.getAllIdServiziApplicativi(filtro);
-					}catch(DriverConfigurazioneNotFound notFound) {}
-					if(list!=null) {
-						for (IDServizioApplicativo idServizioApplicativoSubjectIssuerCheck : list) {
-							// Possono esistere piu' sil che hanno un CN con subject e issuer.
-							
-							ServizioApplicativo sa = configurazionePdDManager.getServizioApplicativo(idServizioApplicativoSubjectIssuerCheck, requestInfo);
+				ProtocolFiltroRicercaServiziApplicativi filtro = createFilter(subject, issuer);
 								
-							java.security.cert.Certificate certificatoCheck = readServizioApplicativoByCertificate(sa, requestInfo);
-	
-							if(
-								/**if(certificate.equals(certificatoCheck.getCertificate(),true)) {*/
-								certificatoCheck instanceof java.security.cert.X509Certificate &&
-								certificate!=null && certificate.equals(((java.security.cert.X509Certificate)certificatoCheck),true)) {
-								idServizioApplicativo = idServizioApplicativoSubjectIssuerCheck;
-								break;
-							}
+				List<IDServizioApplicativo> list = null;
+				try {
+					list = configurazionePdDManager.getAllIdServiziApplicativi(filtro);
+				}catch(DriverConfigurazioneNotFound notFound) {
+					// ignore
+				}
+				if(list!=null) {
+					for (IDServizioApplicativo idServizioApplicativoSubjectIssuerCheck : list) {
+						// Possono esistere piu' sil che hanno un CN con subject e issuer.
+						
+						ServizioApplicativo sa = configurazionePdDManager.getServizioApplicativo(idServizioApplicativoSubjectIssuerCheck, requestInfo);
 							
+						java.security.cert.Certificate certificatoCheck = readServizioApplicativoByCertificate(sa, requestInfo);
+
+						if(
+							/**if(certificate.equals(certificatoCheck.getCertificate(),true)) {*/
+							certificatoCheck instanceof java.security.cert.X509Certificate &&
+							certificate!=null && certificate.equals(((java.security.cert.X509Certificate)certificatoCheck),true)) {
+							idServizioApplicativo = idServizioApplicativoSubjectIssuerCheck;
+							break;
 						}
+						
 					}
 				}
 	
@@ -291,7 +317,7 @@ public class IdentificazioneApplicativoMittenteUtils {
 	}
 			
 			
-	public static IDServizioApplicativo identificazioneApplicativoMittenteByToken(Logger log, IState state, Busta busta, Context context, RequestInfo requestInfo, StringBuilder errorDetails) throws ProtocolException {
+	public static IDServizioApplicativo identificazioneApplicativoMittenteByToken(Logger log, IState state, Busta busta, Context context, RequestInfo requestInfo, MsgDiagnostico msgDiag, StringBuilder errorDetails) throws ProtocolException {
 		try {	
 			
 			// letto tramite la sicurezza messaggio nella validazione sintattica
@@ -307,7 +333,9 @@ public class IdentificazioneApplicativoMittenteUtils {
 				idServizioApplicativo.setNome(busta.getServizioApplicativoFruitore());
 				idServizioApplicativo.setIdSoggettoProprietario(idSoggettoMittente);
 			}
-
+			
+			boolean rilevatoSoggettoIntermediario = false;
+			
 			
 			/** SICUREZZA TOKEN **/
 			
@@ -320,9 +348,22 @@ public class IdentificazioneApplicativoMittenteUtils {
 				}
 				// Non ha senso poter identificare entrambi con le stesse credenziali
 				else if(!idServizioApplicativoToken.getIdSoggettoProprietario().equals(idSoggettoMittente)) {
-					String msgError = ModIUtils.getMessaggioErroreDominioCanaleDifferenteDominioApplicativo(idServizioApplicativoToken, idSoggettoMittente);
-					errorDetails.append(msgError);
-					throw new ProtocolException(msgError);
+					Soggetto soggettoCanale = RegistroServiziManager.getInstance(state).getSoggetto(idSoggettoMittente, null, requestInfo);
+					if(ModIUtils.isSoggettoCanaleIntermediario(soggettoCanale, log)) {
+						String idTransazione = null;
+						if(context.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
+							idTransazione = (String) context.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+						}
+						RicezioneBusteGestioneAutenticazione.registraIntermediario(idSoggettoMittente, msgDiag, idTransazione, null, context);
+						// assegno ad idSoggettoMittente il soggetto dell'applicativo
+						idSoggettoMittente = idServizioApplicativoToken.getIdSoggettoProprietario();
+						rilevatoSoggettoIntermediario = true;
+					}
+					else {
+						String msgError = ModIUtils.getMessaggioErroreDominioCanaleDifferenteDominioApplicativo(idServizioApplicativoToken, idSoggettoMittente);
+						errorDetails.append(msgError);
+						throw new ProtocolException(msgError);
+					}		
 				}
 	    		
 	    		if(idServizioApplicativo!=null) {
@@ -348,7 +389,7 @@ public class IdentificazioneApplicativoMittenteUtils {
 	    	/** IMPOSTAZIONI */
 	    	
 	    	setInformazioniInBustaAndContext(log, state, busta, context, requestInfo,
-	    			idSoggettoMittente, idServizioApplicativo);
+	    			rilevatoSoggettoIntermediario, idSoggettoMittente, idServizioApplicativo);
 	    	
 	    	return idServizioApplicativo;
 			
@@ -463,12 +504,29 @@ public class IdentificazioneApplicativoMittenteUtils {
 	
 	
 	public static void setInformazioniInBustaAndContext(Logger log, IState state, Busta busta, Context context, RequestInfo requestInfo,
-			IDSoggetto idSoggettoMittente, IDServizioApplicativo idServizioApplicativo) throws ProtocolException {
+			boolean rilevatoSoggettoIntermediario, IDSoggetto idSoggettoMittente, IDServizioApplicativo idServizioApplicativo) throws ProtocolException {
 		try {
 						
 	    	if(idSoggettoMittente!=null) {
 	    		busta.setTipoMittente(idSoggettoMittente.getTipo());
 	    		busta.setMittente(idSoggettoMittente.getNome());
+	    		
+	    		if(rilevatoSoggettoIntermediario) {
+	    			// devo aggiornare anche altri campi della busta
+	    			try {
+	    				RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(state);
+	    				Soggetto soggetto = registroServiziManager.getSoggetto(idSoggettoMittente, null, requestInfo);
+	    				busta.setIdentificativoPortaMittente(soggetto.getIdentificativoPorta());
+	    				if(busta.sizeListaTrasmissioni()==1) {
+	    					Trasmissione tr = busta.getTrasmissione(0);
+	    					tr.setTipoOrigine(idSoggettoMittente.getTipo());
+	    					tr.setOrigine(idSoggettoMittente.getNome());
+	    					tr.setIdentificativoPortaOrigine(soggetto.getIdentificativoPorta());
+	    				}
+	    			}catch(Exception t) {
+						// ignore
+					}
+	    		}
 	    		
 				try {
 					if(!context.containsKey(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE)) {

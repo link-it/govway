@@ -157,6 +157,38 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
+	public boolean existsServizioApplicativoByCredenzialiSsl(String subject, String issuer,
+			List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni) {
+		try{
+			return this.getServizioApplicativoByCredenzialiSsl(subject, issuer,
+					tipiSoggetto, 
+					includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni)!=null;
+		}catch(Exception e){
+			return false;
+		}	
+	}
+	@Override
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String subject, String issuer,
+			List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni) throws RegistryNotFound,RegistryException{
+		try{
+			if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
+				return ((DriverConfigurazioneDB)this.driverConfigurazioneGET).getServizioApplicativoByCredenzialiSsl(subject, issuer,
+						tipiSoggetto, 
+						includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni);
+			}
+			else {
+				throw new RegistryException("Unsupported");
+			}
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
 	public boolean existsServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier){
 		try{
 			return this.driverConfigurazioneGET.getServizioApplicativoByCredenzialiSsl(certificate, strictVerifier)!=null;
@@ -169,6 +201,36 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws RegistryNotFound,RegistryException{
 		try{
 			return this.driverConfigurazioneGET.getServizioApplicativoByCredenzialiSsl(certificate, strictVerifier);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public boolean existsServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier,
+			List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni) {
+		try{
+			return this.getServizioApplicativoByCredenzialiSsl(certificate, strictVerifier,
+					tipiSoggetto, 
+					includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni)!=null;
+		}catch(Exception e){
+			return false;
+		}	
+	}
+	@Override
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier,
+			List<String> tipiSoggetto, 
+			boolean includiApplicativiNonModI, boolean includiApplicativiModIEsterni, boolean includiApplicativiModIInterni) throws RegistryNotFound,RegistryException{
+		try{
+			if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
+				return ((DriverConfigurazioneDB)this.driverConfigurazioneGET).getServizioApplicativoByCredenzialiSsl(certificate, strictVerifier);
+			}
+			else {
+				throw new RegistryException("Unsupported");
+			}
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){

@@ -27,7 +27,9 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziServizioNotFound;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.registry.EsitoAutorizzazioneRegistro;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
@@ -61,18 +63,25 @@ public class AutorizzazioneAuthenticated extends AbstractAutorizzazioneBase {
     			}
     		}
     		
-    		IDServizioApplicativo idSA = datiInvocazione.getIdentitaServizioApplicativoFruitore();
+    		IDServizioApplicativo idSA = null;
     		String identitaServizioApplicativoFruitore = null;
+    		if(!Costanti.MODIPA_PROTOCOL_NAME.equals(this.getProtocolFactory().getProtocol())) {  // su ModI la verifica di autorizzazione viene fatta tramite la validazione semantica
+    			idSA = datiInvocazione.getIdentitaServizioApplicativoFruitore();
+    		}
     		if(idSA!=null){
     			identitaServizioApplicativoFruitore = idSA.getNome();
     		}
     		
     		IDSoggetto idSoggetto = datiInvocazione.getIdSoggettoFruitore();
+    		if(Costanti.MODIPA_PROTOCOL_NAME.equals(this.getProtocolFactory().getProtocol()) && this.getPddContext()!=null && this.getPddContext().containsKey(CostantiPdD.INTERMEDIARIO)) { 
+    			idSoggetto = (IDSoggetto) this.getPddContext().get(CostantiPdD.INTERMEDIARIO);
+    		}
     		IDServizio idServizio = datiInvocazione.getIdServizio();
     		
     		boolean autorizzazioneSoggettiMittenti = config.autorizzazione(datiInvocazione.getPa(), idSoggetto);
     		boolean autorizzazioneApplicativiMittenti = false;
-    		if(this.getProtocolFactory().createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni()) {
+    		if(this.getProtocolFactory().createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni() && 
+					!Costanti.MODIPA_PROTOCOL_NAME.equals(this.getProtocolFactory().getProtocol())) {  // su ModI la verifica di autorizzazione viene fatta tramite la validazione semantica
     			autorizzazioneApplicativiMittenti = config.autorizzazione(datiInvocazione.getPa(), datiInvocazione.getIdentitaServizioApplicativoFruitore());
     		}
     		
@@ -96,7 +105,7 @@ public class AutorizzazioneAuthenticated extends AbstractAutorizzazioneBase {
     				// VERIFICARE ANTI-SPOOFING (Tramite PDD)
     				
 		    		EsitoAutorizzazioneRegistro esitoAutorizzazione = reg.isFruitoreServizioAutorizzato(pdd, identitaServizioApplicativoFruitore, idSoggetto, idServizio);
-		    		if(esitoAutorizzazione.isServizioAutorizzato()==false){
+		    		if(!esitoAutorizzazione.isServizioAutorizzato()){
 		    			String errore = AbstractAutorizzazioneBase.getErrorString(idSA, idSoggetto, idServizio);
 		    			if(esitoAutorizzazione.getDetails()!=null){
 		    				errore = errore + " ("+esitoAutorizzazione.getDetails()+")";

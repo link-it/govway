@@ -40,6 +40,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.pdd.core.autenticazione.ApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
+import org.openspcoop2.protocol.engine.ConfigurazioneFiltroServiziApplicativi;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -293,7 +294,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 
 	}
 
-	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiSslList(String subject, String issuer) throws DriverConfigurazioneException {
+	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiSslList(String subject, String issuer,
+			ConfigurazioneFiltroServiziApplicativi filtro) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "servizioApplicativoWithCredenzialiSslList";
 		DriverControlStationDB driver = null;
@@ -304,7 +306,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().servizioApplicativoWithCredenzialiSslList(subject, issuer);
+			return driver.getDriverConfigurazioneDB().servizioApplicativoWithCredenzialiSslList(subject, issuer,
+					filtro.getTipiSoggetti(), filtro.isIncludiApplicativiNonModI(), filtro.isIncludiApplicativiModIEsterni(), filtro.isIncludiApplicativiModIInterni());
 
 		} catch (Exception e) {
 			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
@@ -314,7 +317,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 		}
 
 	}
-	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiSslList(CertificateInfo certificate, boolean strictVerifier) throws DriverConfigurazioneException {
+	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiSslList(CertificateInfo certificate, boolean strictVerifier,
+			ConfigurazioneFiltroServiziApplicativi filtro) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "servizioApplicativoWithCredenzialiSslList";
 		DriverControlStationDB driver = null;
@@ -325,7 +329,8 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().servizioApplicativoWithCredenzialiSslList(certificate, strictVerifier);
+			return driver.getDriverConfigurazioneDB().servizioApplicativoWithCredenzialiSslList(certificate, strictVerifier,
+					filtro.getTipiSoggetti(), filtro.isIncludiApplicativiNonModI(), filtro.isIncludiApplicativiModIEsterni(), filtro.isIncludiApplicativiModIInterni());
 
 		} catch (Exception e) {
 			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);

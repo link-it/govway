@@ -769,6 +769,12 @@ public class CostantiPdD {
     public static final String KEY_IDENTITA_GESTORE_CREDENZIALI = "@IDENTITA_GESTORE_CREDENZIALI@";
     /** Costante che indica il tipo di validazione */
     public static final String KEY_TIPO_VALIDAZIONE_BUSTA = "@TIPO_VALIDAZIONE_BUSTA@";
+    
+    /** Costante che identifica un soggetto intermediario.  */
+    public static final String KEY_INTERMEDIARIO = "@SOGGETTO_INTERMEDIARIO@";
+    
+    /** Costante che identifica un soggetto intermediario.  */
+    public static final MapKey<String> INTERMEDIARIO = Map.newMapKey("SOGGETTO_INTERMEDIARIO");
 
     public static final MapKey<String> SALVA_CONTESTO_IDENTIFICATIVO_MESSAGGIO_NOTIFICA = Map.newMapKey("SALVA_CONTESTO_IDENTIFICATIVO_MESSAGGIO_NOTIFICA");
     public static final MapKey<String> CONTESTO_RICHIESTA_MESSAGGIO_NOTIFICA = Map.newMapKey("CONTESTO_RICHIESTA_MESSAGGIO_NOTIFICA");

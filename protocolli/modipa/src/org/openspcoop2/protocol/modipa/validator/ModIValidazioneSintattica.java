@@ -550,7 +550,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 											erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
 											buildSecurityTokenInRequest, ModIHeaderType.SINGLE, integritaCustom, securityHeaderObbligatorio,
 											dynamicMap, datiRichiesta,
-											idSoggetto);
+											idSoggetto, msgDiag);
 									
 									if(token==null && !sorgenteLocale) {
 										// non c'era un token di integrita nonostante ne sia stato configurato (es. per GET) e sia stato indicato di utilizzarlo come identificativo messaggio.
@@ -649,7 +649,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 											erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
 											buildSecurityTokenInRequest, ModIHeaderType.BOTH_AUTH, integritaCustom, securityHeaderObbligatorio,
 											dynamicMap, datiRichiesta,
-											idSoggetto);
+											idSoggetto, msgDiag);
 									
 									String audAuthorization = null;
 									if(tokenAuthorization!=null &&
@@ -711,7 +711,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 											erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfigIntegrity,
 											buildSecurityTokenInRequest, ModIHeaderType.BOTH_INTEGRITY, integritaCustom, securityHeaderIntegrityObbligatorio,
 											null, null,
-											idSoggetto); // gia' inizializzato sopra
+											idSoggetto, msgDiag); // gia' inizializzato sopra
 												
 									if(tokenIntegrity==null) {
 										// non c'era un token di integrita nonostante ne sia stato configurato (es. per GET) e sia stato indicato di utilizzarlo come identificativo messaggio.
@@ -811,7 +811,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								SOAPEnvelope token = validatoreSintatticoSoap.validateSecurityProfile(msg, request, securityMessageProfile, corniceSicurezzaLegacySoap, includiRequestDigest, signAttachments, bustaRitornata, 
 										erroriValidazione, trustStoreCertificati, securityConfig,
 										buildSecurityTokenInRequest,
-										dynamicMap, datiRichiesta, requestInfo );
+										dynamicMap, datiRichiesta, requestInfo, msgDiag );
 								
 								if(token!=null) {
 									
@@ -899,7 +899,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 									erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfigAudit,
 									buildSecurityTokenInRequest, ModIHeaderType.SINGLE, integritaCustom, securityHeaderObbligatorio,
 									dynamicMap, datiRichiesta,
-									idSoggetto);
+									idSoggetto, msgDiag);
 							
 							if(tokenAudit!=null){
 								String audExpected = securityConfig.getCorniceSicurezzaAudience();
