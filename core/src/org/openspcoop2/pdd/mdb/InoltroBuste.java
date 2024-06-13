@@ -2368,7 +2368,7 @@ public class InoltroBuste extends GenericLib{
 				}
 				
 				// se il tracciamento lo prevedo emetto un log
-				registraTracciaOutRequest(outRequestContext, this.log, msgDiag);
+				registraTracciaOutRequest(transactionNullable, outRequestContext, this.log, msgDiag);
 				
 				// utilizzo connettore
 				ejbUtils.setSpedizioneMsgIngresso(new Timestamp(outRequestContext.getDataElaborazioneMessaggio().getTime()));
@@ -5505,10 +5505,15 @@ public class InoltroBuste extends GenericLib{
 		return integrationFunctionError;
 	}
 	
-	private void registraTracciaOutRequest(OutRequestContext outRequestContext, Logger log, MsgDiagnostico msgDiag) throws CoreException, HandlerException, ProtocolException {
+	private void registraTracciaOutRequest(Transaction transactionNullable, OutRequestContext outRequestContext, Logger log, MsgDiagnostico msgDiag) throws CoreException, HandlerException, ProtocolException {
 
 		try {
 		
+			if(transactionNullable==null) {
+				// comunicazione statefull
+				return;
+			}
+			
 			TracciamentoManager tracciamentoManager = new TracciamentoManager(FaseTracciamento.OUT_REQUEST);
 			if(!tracciamentoManager.isTransazioniEnabled()) {
 				return;
