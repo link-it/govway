@@ -2427,7 +2427,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				
 				// se il tracciamento lo prevedo emetto un log
 				if(transazioneApplicativoServer==null) {
-					registraTracciaOutRequest(outRequestContext, this.log, msgDiag);
+					registraTracciaOutRequest(transactionNullable, outRequestContext, this.log, msgDiag);
 				}
 				
 				// utilizzo connettore
@@ -4697,10 +4697,15 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		return serviziApplicativiAbilitatiForwardTo;
 	}
 	
-	private void registraTracciaOutRequest(OutRequestContext outRequestContext, Logger log, MsgDiagnostico msgDiag) throws HandlerException {
+	private void registraTracciaOutRequest(Transaction transactionNullable, OutRequestContext outRequestContext, Logger log, MsgDiagnostico msgDiag) throws HandlerException {
 
 		try {
 		
+			if(transactionNullable==null) {
+				// comunicazione statefull
+				return;
+			}
+			
 			TracciamentoManager tracciamentoManager = new TracciamentoManager(FaseTracciamento.OUT_REQUEST);
 			if(!tracciamentoManager.isTransazioniEnabled()) {
 				return;

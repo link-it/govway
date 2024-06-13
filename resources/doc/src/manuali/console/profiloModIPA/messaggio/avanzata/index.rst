@@ -24,6 +24,8 @@ La gestione dei pattern di sicurezza messaggio possono essere personalizzati su 
 
 - :ref:`modipa_sicurezza_avanzate_fruizione_purposeId_scenari`: l'identificativo univoco della finalità, ottenuto dalla PDND, per cui si intende fruire di un servizio è configurabile in diverse modalità a seconda dello scenario che si desidera supportare.
 
+- :ref:`modipa_sicurezza_avanzate_intermediario`: è possibile indicare un soggetto come intermediario. Questo consente di autorizzare una richiesta proveniente da un soggetto identificato sul canale (l'intermediario), che risulta differente dal soggetto a cui appartiene l'applicativo identificato tramite token di sicurezza.
+
 
 .. toctree::
         :maxdepth: 2
@@ -37,4 +39,5 @@ La gestione dei pattern di sicurezza messaggio possono essere personalizzati su 
 	sbustamento
 	fruizione_scenari/index
 	purposeId
+	intermediario
 
