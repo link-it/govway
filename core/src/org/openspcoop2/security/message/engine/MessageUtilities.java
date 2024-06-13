@@ -99,6 +99,10 @@ public class MessageUtilities {
 	public static Map<QName, QName> checkEncryptSignatureParts(MessageSecurityContext messageSecurityContext,List<Reference> elementsToClean, OpenSPCoop2SoapMessage message,
 			List<SubErrorCodeSecurity> codiciErrore, QName qnameSecurity) throws SecurityException {
 		
+		Map<String, Object> properties = messageSecurityContext.getIncomingProperties();
+		boolean addAttachmentIdBrackets = properties.containsKey(SecurityConstants.ADD_ATTACHMENT_ID_BRACKETS) ?
+				properties.get(SecurityConstants.ADD_ATTACHMENT_ID_BRACKETS).equals(SecurityConstants.ADD_ATTACHMENT_ID_BRACKETS_TRUE) :
+					SecurityConstants.ADD_ATTACHMENT_ID_BRACKETS_DEFAULT;
 		try{
 			int numAttachmentsInMsg = message.countAttachments();
 			List<String> cidAttachments = new ArrayList<>();
@@ -106,7 +110,11 @@ public class MessageUtilities {
 				Iterator<?> itAttach = message.getAttachments();
 				while (itAttach.hasNext()) {
 					AttachmentPart ap = (AttachmentPart) itAttach.next();
-					cidAttachments.add(ap.getContentId());
+					String cid = ap.getContentId();
+					if (!addAttachmentIdBrackets) {
+						cid = cid.replaceAll("(^<)|(>$)", "");
+					}
+					cidAttachments.add(cid);
 				}
 			}
 		

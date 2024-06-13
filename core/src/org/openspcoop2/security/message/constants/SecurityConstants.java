@@ -614,4 +614,12 @@ public class SecurityConstants {
     public static final boolean ADD_ATTACHMENT_ID_BRACKETS_DEFAULT = Boolean.parseBoolean(ADD_ATTACHMENT_ID_BRACKETS_FALSE);
     public static final String ADD_ATTACHMENT_ID_BRACKETS = "addAttachmentIdBrackets";
     
+    /**
+     * Cifra gli headers degli attachment 
+     */
+    public static final String ENCRYPT_ATTACHMENT_HEADERS_FALSE = "false";
+    public static final String ENCRYPT_ATTACHMENT_HEADERS_TRUE = "true";
+    public static final boolean ENCRYPT_ATTACHMENT_HEADERS_DEFAULT = Boolean.parseBoolean(ENCRYPT_ATTACHMENT_HEADERS_FALSE);
+    public static final String ENCRYPT_ATTACHMENT_HEADERS = "encryptAttachmentHeaders";
+    
 }

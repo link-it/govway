@@ -186,10 +186,15 @@ public class WSSUtilities {
 		}
 
 		AttachmentImpl at = new AttachmentImpl(StringEscapeUtils.escapeXml(id));
-		Iterator<MimeHeader> hdrs = ap.getAllMimeHeaders();
-		while (hdrs.hasNext()) {
-			MimeHeader hdr = hdrs.next();
-			at.setHeader(hdr.getName(), hdr.getValue());
+		boolean encryptAttachmentsHeader = msgCtx.containsKey(SecurityConstants.ENCRYPT_ATTACHMENT_HEADERS) ?
+				msgCtx.get(SecurityConstants.ENCRYPT_ATTACHMENT_HEADERS).equals(SecurityConstants.ENCRYPT_ATTACHMENT_HEADERS_TRUE) :
+					SecurityConstants.ENCRYPT_ATTACHMENT_HEADERS_DEFAULT;
+		if (encryptAttachmentsHeader) {
+			Iterator<MimeHeader> headers = ap.getAllMimeHeaders();
+			while (headers.hasNext()) {
+				MimeHeader header = headers.next();
+				at.setHeader(header.getName(), header.getValue());
+			}
 		}
 		
 		if (encodeBase64) {
@@ -231,7 +236,6 @@ public class WSSUtilities {
 					SecurityConstants.POST_BASE64_ENCODING_ATTACHMENT_DEFAULT;
 
 			for (Attachment attachmentPart : listAttachments) {
-
 				MimeHeaders mhs = new MimeHeaders();
 				mhs.addHeader(HttpConstants.CONTENT_ID, StringEscapeUtils.unescapeXml(attachmentPart.getId()));
 
@@ -350,7 +354,6 @@ public class WSSUtilities {
 						message.updateAttachmentPart(ap, dhNEW);
 					}
 				}
-
 			}
 		}
 	}
