@@ -288,7 +288,9 @@ public class RicezioneBusteGestioneAutenticazione {
 			
 			org.openspcoop2.pdd.core.autenticazione.pa.DatiInvocazionePortaApplicativa datiInvocazioneAutenticazione = new org.openspcoop2.pdd.core.autenticazione.pa.DatiInvocazionePortaApplicativa();
 			datiInvocazioneAutenticazione.setInfoConnettoreIngresso(this.inRequestContext.getConnettore());
-			datiInvocazioneAutenticazione.setState(this.openspcoopstate.getStatoRichiesta());
+			if(this.openspcoopstate!=null) {
+				datiInvocazioneAutenticazione.setState(this.openspcoopstate.getStatoRichiesta());
+			}
 			datiInvocazioneAutenticazione.setIdPA(this.idPA);
 			datiInvocazioneAutenticazione.setPa(this.pa);	
 			datiInvocazioneAutenticazione.setIdPD(this.idPD);
@@ -679,7 +681,9 @@ public class RicezioneBusteGestioneAutenticazione {
 								
 								updateCredenzialiSafe(credenzialeTrasporto, tipoAutenticazione, null);
 								
-								this.openspcoopstate.releaseResource();
+								if(this.openspcoopstate!=null) {
+									this.openspcoopstate.releaseResource();
+								}
 								return false;
 								
 							}
@@ -844,7 +848,9 @@ public class RicezioneBusteGestioneAutenticazione {
 						
 						updateCredenzialiSafe(credenzialeTrasporto, tipoAutenticazione, null);
 						
-						this.openspcoopstate.releaseResource();
+						if(this.openspcoopstate!=null) {
+							this.openspcoopstate.releaseResource();
+						}
 						return false;
 						
 					}
@@ -1007,7 +1013,9 @@ public class RicezioneBusteGestioneAutenticazione {
 						
 						updateCredenzialiSafe(credenzialeTrasporto, tipoAutenticazione, informazioniTokenNormalizzate);
 						
-						this.openspcoopstate.releaseResource();
+						if(this.openspcoopstate!=null) {
+							this.openspcoopstate.releaseResource();
+						}
 						return false;
 					}
 				}
@@ -1065,7 +1073,9 @@ public class RicezioneBusteGestioneAutenticazione {
 						ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 
 					}
-					this.openspcoopstate.releaseResource();
+					if(this.openspcoopstate!=null) {
+						this.openspcoopstate.releaseResource();
+					}
 					return false;
 					
 				}

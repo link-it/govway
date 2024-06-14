@@ -357,7 +357,28 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_WSS_Actor_SIGNATURE="WSSSignature_MustUnderstand0_ActorOpenSPCoop";
 	/** Porte Delegate per WS-Security: WSS Annidato*/
 	public static final String PORTA_DELEGATA_WSS_Annidamento="CooperazioneAsincronaSimmetricaWSSAnnidamento";
-		
+	
+	/** Porte Delegate per WS-Security: WSS4Jext_CifrataFirmata */
+	public static final String PORTA_DELEGATA_WSS_WSS4JEXT_ENCRYPT_SIGNATURE="WSS4Jext_CifrataFirmata";
+	/** Porte Delegate per WS-Security: WSS4Jext_FirmataCifrata */
+	public static final String PORTA_DELEGATA_WSS_WSS4JEXT_SIGNATURE_ENCRYPT="WSS4Jext_FirmataCifrata";
+	/** Porte Delegate per WS-Security: WSS4Jext_Cifrata */
+	public static final String PORTA_DELEGATA_WSS_WSS4JEXT_ENCRYPT="WSS4Jext_Cifrata";
+	/** Porte Delegate per WS-Security: WSS4Jext_Firmata */
+	public static final String PORTA_DELEGATA_WSS_WSS4JEXT_SIGNATURE="WSS4Jext_Firmata";
+	
+	/** Porte Delegate per WS-Security: WSS4Jext_CifrataFirmataAttachments */
+	public static final String PORTA_DELEGATA_WSS_WSS4JEXT_ENCRYPT_SIGNATURE_ATTACHMENTS="WSS4Jext_CifrataFirmataAttachments";
+	/** Porte Delegate per WS-Security: WSS4Jext_FirmataCifrataAttachments */
+	public static final String PORTA_DELEGATA_WSS_WSS4JEXT_SIGNATURE_ENCRYPT_ATTACHMENTS="WSS4Jext_FirmataCifrataAttachments";
+	/** Porte Delegate per WS-Security: WSS4Jext_CifrataAttachments */
+	public static final String PORTA_DELEGATA_WSS_WSS4JEXT_ENCRYPT_ATTACHMENTS="WSS4Jext_CifrataAttachments";
+	/** Porte Delegate per WS-Security: WSS4Jext_FirmataAttachments */
+	public static final String PORTA_DELEGATA_WSS_WSS4JEXT_SIGNATURE_ATTACHMENTS="WSS4Jext_FirmataAttachments";
+
+	/** Porte Delegate per WS-Security: WSS4Jext_FirmataAttachments SignatureEngineXmlSec */
+	public static final String PORTA_DELEGATA_WSS_WSS4JEXT_SIGNATURE_ATTACHMENTS_ENGINE_XMLSEC="WSS4Jext_FirmataAttachments_SignatureEngineXmlSec";
+
 	/** Porte Delegate per Performance test: ConnettoreNULL con OneWay */
 	public static final String PORTA_DELEGATA_PD_ONEWAY_CONNETTORE_NULL = "ConnettorePDOneWayNULL";
 	/** Porte Delegate per Performance test: ConnettoreNULL con Sincrono */
@@ -895,6 +916,27 @@ public class CostantiTestSuite {
 	public static final IDSoggetto SPCOOP_SOGGETTO_EROGATORE_LINEE_GUIDA_11 = new IDSoggetto(CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE_LINEE_GUIDA_11, 
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE_LINEE_GUIDA_11, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_EROGATORE_LINEE_GUIDA_11);
 
+	/** ENTITA SPCOOP: Tipo Soggetto Fruitore */
+	public static final String SPCOOP_TIPO_SOGGETTO_FRUITORE_WSS4JEXT="spc";
+	/** ENTITA SPCOOP: Nome Soggetto Fruitore */
+	public static final String SPCOOP_NOME_SOGGETTO_FRUITORE_WSS4JEXT="SoggettoEsempioWSS4JextFruitore";
+	/** ENTITA SPCOOP: IdPorta Soggetto Fruitore */
+	public static final String SPCOOP_IDPORTA_SOGGETTO_FRUITORE_WSS4JEXT="SoggettoEsempioWSS4JextFruitoreSPCoopIT";
+	/** ENTITA SPCOOP: IDSoggetto */
+	public static final IDSoggetto SPCOOP_SOGGETTO_FRUITORE_WSS4JEXT = new IDSoggetto(CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_FRUITORE_WSS4JEXT, 
+			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_WSS4JEXT, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_FRUITORE_WSS4JEXT);
+	
+	/** ENTITA SPCOOP: Tipo Soggetto Erogatore */
+	public static final String SPCOOP_TIPO_SOGGETTO_EROGATORE_WSS4JEXT="spc";
+	/** ENTITA SPCOOP: Nome Soggetto Erogatore */
+	public static final String SPCOOP_NOME_SOGGETTO_EROGATORE_WSS4JEXT="SoggettoEsempioWSS4JextErogatore";
+	/** ENTITA SPCOOP: IdPorta Soggetto Erogatore */
+	public static final String SPCOOP_IDPORTA_SOGGETTO_EROGATORE_WSS4JEXT="SoggettoEsempioWSS4JextErogatoreSPCoopIT";
+	/** ENTITA SPCOOP: IDSoggetto */
+	public static final IDSoggetto SPCOOP_SOGGETTO_EROGATORE_WSS4JEXT = new IDSoggetto(CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE_WSS4JEXT, 
+			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE_WSS4JEXT, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_EROGATORE_WSS4JEXT);
+
+	
 	/** ENTITA SPCOOP: Tipo Soggetto TMP */
 	public static final String SPCOOP_TIPO_SOGGETTO_TMP="spc";
 	/** ENTITA SPCOOP: Nome Soggetto TMP */
@@ -1377,6 +1419,26 @@ public class CostantiTestSuite {
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_USERNAME_TOKEN_NO_PASSWORD="WSSUsernameTokenNoPassword";
     /** ENTITA SPCOOP: Nome Azione WSSUsernameTokenSignature del Servizio RichiestaStatoAvanzamento */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_USERNAME_TOKEN_SIGNATURE="WSSUsernameTokenSignature";   
+    /** ENTITA SPCOOP: Nome Azione WSSWSS4JextCifrataFirmata del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_WSS4JEXT_ENCRYPT_SIGNATURE="WSSWSS4JextCifrataFirmata";
+    /** ENTITA SPCOOP: Nome Azione WSSWSS4JextFirmataCifrata del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_WSS4JEXT_SIGNATURE_ENCRYPT="WSSWSS4JextFirmataCifrata";
+    /** ENTITA SPCOOP: Nome Azione WSSWSS4JextCifrata del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_WSS4JEXT_ENCRYPT="WSSWSS4JextCifrata";
+    /** ENTITA SPCOOP: Nome Azione WSSWSS4JextFirmata del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_WSS4JEXT_SIGNATURE="WSSWSS4JextFirmata";    
+    /** ENTITA SPCOOP: Nome Azione WSSWSS4JextCifrataFirmataAttachments del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_WSS4JEXT_ENCRYPT_SIGNATURE_ATTACHMENTS="WSSWSS4JextCifrataFirmataAttachments";
+    /** ENTITA SPCOOP: Nome Azione WSSWSS4JextFirmataCifrataAttachments del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_WSS4JEXT_SIGNATURE_ENCRYPT_ATTACHMENTS="WSSWSS4JextFirmataCifrataAttachments";
+    /** ENTITA SPCOOP: Nome Azione WSSWSS4JextCifrataAttachments del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_WSS4JEXT_ENCRYPT_ATTACHMENTS="WSSWSS4JextCifrataAttachments";
+    /** ENTITA SPCOOP: Nome Azione WSSWSS4JextFirmataAttachments del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_WSS4JEXT_SIGNATURE_ATTACHMENTS="WSSWSS4JextFirmataAttachments";    
+    /** ENTITA SPCOOP: Nome Azione WSSWSS4JextFirmataAttachmentsSignatureEngineSun del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_WSS4JEXT_SIGNATURE_ATTACHMENTS_SIGNATURE_ENGINE_SUN="WSSWSS4JextFirmataAttachmentsSignatureEngineSun";
+    /** ENTITA SPCOOP: Nome Azione WSSWSS4JextFirmataAttachmentsSignatureEngineXmlSec del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_WSS4JEXT_SIGNATURE_ATTACHMENTS_SIGNATURE_ENGINE_XMLSEC="WSSWSS4JextFirmataAttachmentsSignatureEngineXmlSec";
     /** ENTITA SPCOOP: Nome Azione del Servizio sincrono per SoapFault */
 	public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_SOAP_FAULT_SA="testSoapFaultApplicativo";
 	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per connettore errato SA */

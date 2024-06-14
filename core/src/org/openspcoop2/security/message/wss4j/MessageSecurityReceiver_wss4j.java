@@ -95,6 +95,7 @@ import org.openspcoop2.utils.transport.http.IOCSPValidator;
  * Classe per la gestione della WS-Security (WSDoAllReceiver).
  *
  * @author Lorenzo Nardi (nardi@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  * 
@@ -146,10 +147,10 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 	        	// Alcune implementazioni modificano l'ordine degli attachments una volta applicata la sicurezza
 	        	if(app.isAllAttachments()==false){
 	        		List<String> cidAttachmentsForSecurity = AttachmentsConfigReaderUtils.getListCIDAttachmentsForSecurity(wssContext);
-	        		listAttachments = org.openspcoop2.security.message.wss4j.WSSUtilities.readAttachments(cidAttachmentsForSecurity, message);
+	        		listAttachments = org.openspcoop2.security.message.wss4j.WSSUtilities.readAttachments(cidAttachmentsForSecurity, message, msgCtx);
 	        	}
 	        	else{
-	        		listAttachments = org.openspcoop2.security.message.wss4j.WSSUtilities.readAttachments(app, message);
+	        		listAttachments = org.openspcoop2.security.message.wss4j.WSSUtilities.readAttachments(app, message, msgCtx);
 	        	}
 	        	if(listAttachments!=null && listAttachments.size()>0){
 	        		msgCtx.setAttachments(listAttachments);
@@ -167,7 +168,7 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 			
 			// ** Riporto modifica degli attachments **/
 			
-			org.openspcoop2.security.message.wss4j.WSSUtilities.updateAttachments(listAttachments, message);
+			org.openspcoop2.security.message.wss4j.WSSUtilities.updateAttachments(listAttachments, message, msgCtx);
 			
 			
 			// ** Lettura Subject Certificato e informazioni relative al processamento effettuato **/
@@ -573,13 +574,13 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 				p.put(KeystoreConstants.PROPERTY_KEYSTORE_TYPE, bean.getMultiKeystore().getKeystoreType(internalAlias));
 				p.put(KeystoreConstants.PROPERTY_PROVIDER, KeystoreConstants.PROVIDER_GOVWAY);
 				p.put(KeystoreConstants.PROPERTY_REQUEST_INFO, requestInfo);
-				String id = SecurityConstants.ENCRYPTION_PROPERTY_REF_ID +"_"+IDUtilities.getUniqueSerialNumber("wssSecurity.setOutgoingProperties");
-				msgCtx.put(SecurityConstants.ENCRYPTION_PROPERTY_REF_ID , id);
+				String id = SecurityConstants.DECRYPTION_PROPERTY_REF_ID +"_"+IDUtilities.getUniqueSerialNumber("wssSecurity.setOutgoingProperties");
+				msgCtx.put(SecurityConstants.DECRYPTION_PROPERTY_REF_ID , id);
 				msgCtx.put(id, p);
 				
 				HashMap<String, String> mapAliasToPassword = new HashMap<>();
 				String password = bean.getPassword();
-				msgCtx.put(SecurityConstants.ENCRYPTION_PASSWORD, bean.getPassword());
+				msgCtx.put(SecurityConstants.DECRYPTION_PASSWORD, bean.getPassword());
 				mapAliasToPassword.put(keyAlias, password);
 				CallbackHandler pwCallbackHandler = MessageSecurityContext.newCallbackHandler(mapAliasToPassword);
 				msgCtx.put(SecurityConstants.PASSWORD_CALLBACK_REF, pwCallbackHandler);

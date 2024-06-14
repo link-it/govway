@@ -1,3 +1,15 @@
+2024-06-14  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1726
+	Introdotte opzioni aggiuntive che consentono di modificare alcuni aspetti relativi alla sicurezza del messaggio attuata tramite la libreria 'wss4j':
+	- encoding in base64 dell'attachment prima o dopo aver applicato la sicurezza;
+	- gestione dell'elemento 'InclusiveNamespace' in presenza di lista di prefissi vuota e all'interno dell'elemento 'CanonicalizationMethod';
+	- gestione dell'elemento 'KeyInfo' presente all'interno dell'elemento 'EncryptedData';
+	- aggiunta o meno delle parentesi uncinate ('<' e '>') nei riferimenti agli allegati;
+	- aggiunta dell'header di un attachment all'interno del messaggio cifrato;
+	- aggiunto il supporto per lo scambio di chiavi simmetriche di cifratura usando un'altra chiave simmetrica condivisa, tramite la gestione di keystore di tipo 'jceks'."
+
 2024-06-12  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

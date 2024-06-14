@@ -39,6 +39,7 @@ import org.openspcoop2.utils.digest.Constants;
  * WSSConstants
  *
  * @author Andrea Poli (apoli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -576,5 +577,45 @@ public class SecurityConstants {
     public static final String TRUSTSTORE_FILE = "truststoreFile";
     public static final String TRUSTSTORE_PASSWORD = "truststorePassword";
     public static final String TRUSTSTORE_OCSP_POLICY = "truststoreOcspPolicy";
+
+    /**
+     * Produce l'encoding in base64 dell'attachment (prima di applicare la sicurezza)
+     */
+    public static final String PRE_BASE64_ENCODING_ATTACHMENT_TRUE = "true";
+    public static final String PRE_BASE64_ENCODING_ATTACHMENT_FALSE= "false";
+    public static final boolean PRE_BASE64_ENCODING_ATTACHMENT_DEFAULT = Boolean.parseBoolean(PRE_BASE64_ENCODING_ATTACHMENT_FALSE);
+    public static final String PRE_BASE64_ENCODING_ATTACHMENT = "preBase64EncodingAttachment";
+
+    /**
+     * Produce l'encoding in base64 dell'attachment (dopo aver applicato la sicurezza)
+     */
+    public static final String POST_BASE64_ENCODING_ATTACHMENT_TRUE = "true";
+    public static final String POST_BASE64_ENCODING_ATTACHMENT_FALSE = "false";
+    public static final boolean POST_BASE64_ENCODING_ATTACHMENT_DEFAULT = Boolean.parseBoolean(POST_BASE64_ENCODING_ATTACHMENT_FALSE);
+    public static final String POST_BASE64_ENCODING_ATTACHMENT = "postBase64EncodingAttachment";
+
+    /**
+     * Decodifica la rappresentazione base64 dell'attachment (dopo la validazione della sicurezza)
+     */
+    public static final String POST_BASE64_DECODING_ATTACHMENT_TRUE = "true";
+    public static final String POST_BASE64_DECODING_ATTACHMENT_FALSE = "false";
+    public static final boolean POST_BASE64_DECODING_ATTACHMENT_DEFAULT = Boolean.parseBoolean(POST_BASE64_DECODING_ATTACHMENT_FALSE);
+    public static final String POST_BASE64_DECODING_ATTACHMENT = "postBase64DecodingAttachment";
+
+    /**
+     * Aggiunge le parentesi uncinate all'id degli attachment
+     */
+    public static final String ADD_ATTACHMENT_ID_BRACKETS_FALSE = "false";
+    public static final String ADD_ATTACHMENT_ID_BRACKETS_TRUE = "true";
+    public static final boolean ADD_ATTACHMENT_ID_BRACKETS_DEFAULT = Boolean.parseBoolean(ADD_ATTACHMENT_ID_BRACKETS_FALSE);
+    public static final String ADD_ATTACHMENT_ID_BRACKETS = "addAttachmentIdBrackets";
+    
+    /**
+     * Cifra gli headers degli attachment 
+     */
+    public static final String ENCRYPT_ATTACHMENT_HEADERS_FALSE = "false";
+    public static final String ENCRYPT_ATTACHMENT_HEADERS_TRUE = "true";
+    public static final boolean ENCRYPT_ATTACHMENT_HEADERS_DEFAULT = Boolean.parseBoolean(ENCRYPT_ATTACHMENT_HEADERS_FALSE);
+    public static final String ENCRYPT_ATTACHMENT_HEADERS = "encryptAttachmentHeaders";
     
 }

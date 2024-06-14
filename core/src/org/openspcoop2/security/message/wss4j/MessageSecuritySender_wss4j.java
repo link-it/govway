@@ -71,6 +71,7 @@ import org.openspcoop2.utils.id.IDUtilities;
  * Classe per la gestione della WS-Security (WSDoAllSender).
  *
  * @author Lorenzo Nardi (nardi@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -122,7 +123,7 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 	        
 	        List<Attachment> listAttachments = null;
 	        if(app!=null){
-	        	listAttachments = org.openspcoop2.security.message.wss4j.WSSUtilities.readAttachments(app, message);
+	        	listAttachments = org.openspcoop2.security.message.wss4j.WSSUtilities.readAttachments(app, message, msgCtx);
 	        	if(listAttachments!=null && listAttachments.size()>0){
 	        		msgCtx.setAttachments(listAttachments);
 	        	}
@@ -138,7 +139,7 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 			
 			// ** Riporto modifica degli attachments **/
 			
-			org.openspcoop2.security.message.wss4j.WSSUtilities.updateAttachments(listAttachments, message);
+			org.openspcoop2.security.message.wss4j.WSSUtilities.updateAttachments(listAttachments, message, msgCtx);
 					
 		}
 		catch(Exception e){
@@ -289,6 +290,7 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
     	String forceSignatureUser = null;
     	String forceEncryptionUser = null;
     	
+        HashMap<String, String> mapAliasToPassword = new HashMap<>();
     	for (String key : wssOutgoingProperties.keySet()) {
 	    	if(SecurityConstants.SIGNATURE_MULTI_PROPERTY_FILE.equals(key)) {
 				SignatureBean bean = KeystoreUtils.getSenderSignatureBean(wssContext, ctx);
@@ -307,13 +309,10 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 				msgCtx.put(SecurityConstants.SIGNATURE_PROPERTY_REF_ID, id);
 				msgCtx.put(id, p);
 				
-				HashMap<String, String> mapAliasToPassword = new HashMap<>();
 				String password = bean.getPassword();
 				msgCtx.put(SecurityConstants.SIGNATURE_PASSWORD, bean.getPassword());
 				mapAliasToPassword.put(keyAlias, password);
-				CallbackHandler pwCallbackHandler = MessageSecurityContext.newCallbackHandler(mapAliasToPassword);
-				msgCtx.put(SecurityConstants.PASSWORD_CALLBACK_REF, pwCallbackHandler);
-				
+
 				forceSignatureUser = keyAlias;
 			}
 			else if(SecurityConstants.ENCRYPTION_MULTI_PROPERTY_FILE.equals(key)) {
@@ -333,10 +332,18 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 				msgCtx.put(SecurityConstants.ENCRYPTION_PROPERTY_REF_ID , id);
 				msgCtx.put(id, p);
 				
+				String password = bean.getPassword();
+				mapAliasToPassword.put(keyAlias, password);
+
 				forceEncryptionUser = keyAlias;
 			}
     	}
     	
+        if (!mapAliasToPassword.isEmpty()) {
+            CallbackHandler pwCallbackHandler = MessageSecurityContext.newCallbackHandler(mapAliasToPassword);
+            msgCtx.put(SecurityConstants.PASSWORD_CALLBACK_REF, pwCallbackHandler);
+        }
+
     	if(forceSignatureUser!=null) {
     		wssOutgoingProperties.remove(SecurityConstants.SIGNATURE_USER);
     		wssOutgoingProperties.put(SecurityConstants.SIGNATURE_USER, forceSignatureUser);
