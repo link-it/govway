@@ -35,6 +35,7 @@ import org.w3c.dom.Node;
  * XMLSecAttachmentTextXMLContentTransform
  *
  * @author Andrea Poli (apoli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -60,10 +61,12 @@ public class XMLSecAttachmentTextXMLContentTransform extends TransformC14NExclus
 	        canonicalizer20010315exclomitcomments.engineCanonicalize(xmlsignatureinput, s, bout, secureValidation);
 	        bout.flush();
 	        bout.close();
-	        byte abyte0[] = bout.toByteArray();
+	        byte[] abyte0 = bout.toByteArray();
 	        xmlsignatureinput1 = new XMLSignatureInput(abyte0);
-	        if(outputstream != null)
+	        if(outputstream != null) {
+	            outputstream.write(abyte0);
 	            xmlsignatureinput1.setOutputStream(outputstream);
+	        }
 	        return xmlsignatureinput1;
 		}catch(Exception e){
 			throw new CanonicalizationException(e);

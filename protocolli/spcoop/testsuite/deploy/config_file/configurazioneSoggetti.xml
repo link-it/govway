@@ -10423,6 +10423,1112 @@
         
     </soggetto>
     
+    <!-- Soggetti per i test per wss4j estesi -->
+    <soggetto tipo="spc" nome="SoggettoEsempioWSS4JextFruitore" >
+        
+        <!-- **** WSSecurity (WSS4Jext) **** -->
+        
+        <!-- WSSecurity (WSS4Jext) Cifrata e Firmata -->
+        <porta-delegata
+            nome="WSS4Jext_CifrataFirmata"
+            autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap"
+            stateless="abilitato">
+            <soggetto-erogatore tipo="spc" nome="SoggettoEsempioWSS4JextErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextCifrataFirmata" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="encryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="encryptionUser" valore="#MultiPropUsePddErogatoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2"/>
+                    <parameter nome="encryptionSymmetricKey" valore="true"/>
+                    <parameter nome="encryptionKeyTransportAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#kw-tripledes"/>
+                    <parameter nome="encryptionSymAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/>
+                    <parameter nome="encryptionKeySize" valore="168"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
+                    <parameter nome="signatureDigestAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                    <parameter nome="signatureC14nAlgorithm"
+                        valore="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                    <parameter nome="signatureAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="decryptionSymmetricKey" valore="true"/>
+                    <parameter nome="decryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="decryptionUser" valore="#MultiPropUsePddErogatoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+        
+        
+        <!-- WSSecurity (WSS4Jext) Firmata e Cifrata -->
+        <porta-delegata
+            nome="WSS4Jext_FirmataCifrata"
+            autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap"
+            stateless="abilitato">
+            <soggetto-erogatore tipo="spc" nome="SoggettoEsempioWSS4JextErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextFirmataCifrata" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature Encrypt"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="encryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="encryptionUser" valore="#MultiPropUsePddErogatoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2"/>
+                    <parameter nome="encryptionSymmetricKey" valore="true"/>
+                    <parameter nome="encryptionKeyTransportAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#kw-tripledes"/>
+                    <parameter nome="encryptionSymAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/>
+                    <parameter nome="encryptionKeySize" valore="168"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
+                    <parameter nome="signatureDigestAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                    <parameter nome="signatureC14nAlgorithm"
+                        valore="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                    <parameter nome="signatureAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature Encrypt"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="decryptionSymmetricKey" valore="true"/>
+                    <parameter nome="decryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="decryptionUser" valore="#MultiPropUsePddErogatoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+        
+        
+        <!-- WSSecurity (WSS4Jext) Cifrata -->
+        <porta-delegata
+            nome="WSS4Jext_Cifrata"
+            autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap"
+            stateless="abilitato">
+            <soggetto-erogatore tipo="spc" nome="SoggettoEsempioWSS4JextErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextCifrata" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="encryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="encryptionUser" valore="#MultiPropUsePddErogatoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2"/>
+                    <parameter nome="encryptionSymmetricKey" valore="true"/>
+                    <parameter nome="encryptionKeyTransportAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#kw-tripledes"/>
+                    <parameter nome="encryptionSymAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/>
+                    <parameter nome="encryptionKeySize" valore="168"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="decryptionSymmetricKey" valore="true"/>
+                    <parameter nome="decryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="decryptionUser" valore="#MultiPropUsePddErogatoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2"/>
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+        
+        <!-- WSSecurity (WSS4Jext) Firmata -->
+        <porta-delegata
+            nome="WSS4Jext_Firmata"
+            autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap"
+            stateless="abilitato">
+            <soggetto-erogatore tipo="spc" nome="SoggettoEsempioWSS4JextErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextFirmata" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
+                    <parameter nome="signatureDigestAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                    <parameter nome="signatureC14nAlgorithm"
+                        valore="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                    <parameter nome="signatureAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+        
+        
+        <!-- WSSecurity (WSS4Jext) Cifrata e Firmata con Attachments -->
+        <porta-delegata
+            nome="WSS4Jext_CifrataFirmataAttachments"
+            autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap"
+            stateless="abilitato" gestione-manifest="disabilitato">
+            <soggetto-erogatore tipo="spc" nome="SoggettoEsempioWSS4JextErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextCifrataFirmataAttachments" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="encryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="encryptionUser" valore="#MultiPropUsePddErogatoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2;{Content}{Attach}{*}"/>
+                    <parameter nome="encryptionSymmetricKey" valore="true"/>
+                    <parameter nome="encryptionKeyTransportAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#kw-tripledes"/>
+                    <parameter nome="encryptionSymAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/>
+                    <parameter nome="encryptionKeySize" valore="168"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
+                    <parameter nome="signatureDigestAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                    <parameter nome="signatureC14nAlgorithm"
+                        valore="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                    <parameter nome="signatureAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="preBase64EncodingAttachment" valore="true"/>
+                    <parameter nome="postBase64EncodingAttachment" valore="true"/>
+                    <parameter nome="omitAttachmentKeyInfo" valore="true"/>
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="decryptionSymmetricKey" valore="true"/>
+                    <parameter nome="decryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="decryptionUser" valore="#MultiPropUsePddErogatoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2;{Content}{Attach}{*}"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                	<!-- optional params for retrocompatibility -->
+                	<parameter nome="postBase64DecodingAttachment" valore="true"/>
+                    <parameter nome="addAttachmentIdBrackets" valore="true"/>
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+        
+        <!-- WSSecurity (WSS4Jext) Firmata e Cifrata con Attachments -->
+        <porta-delegata
+            nome="WSS4Jext_FirmataCifrataAttachments"
+            autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap"
+            stateless="abilitato" gestione-manifest="disabilitato">
+            <soggetto-erogatore tipo="spc" nome="SoggettoEsempioWSS4JextErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextFirmataCifrataAttachments" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature Encrypt"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="encryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="encryptionUser" valore="#MultiPropUsePddErogatoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2;{Content}{Attach}{*}"/>
+                    <parameter nome="encryptionSymmetricKey" valore="true"/>
+                    <parameter nome="encryptionKeyTransportAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#kw-tripledes"/>
+                    <parameter nome="encryptionSymAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/>
+                    <parameter nome="encryptionKeySize" valore="168"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
+                    <parameter nome="signatureDigestAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                    <parameter nome="signatureC14nAlgorithm"
+                        valore="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                    <parameter nome="signatureAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="postBase64EncodingAttachment" valore="true"/>
+                    <parameter nome="omitAttachmentKeyInfo" valore="true"/>
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature Encrypt"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="decryptionSymmetricKey" valore="true"/>
+                    <parameter nome="decryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="decryptionUser" valore="#MultiPropUsePddErogatoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2;{Content}{Attach}{*}"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                    <parameter nome="addAttachmentIdBrackets" valore="true"/>
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+        
+        <!-- WSSecurity (WSS4Jext) Cifrata con Attachments -->
+        <porta-delegata
+            nome="WSS4Jext_CifrataAttachments"
+            autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap"
+            stateless="abilitato" gestione-manifest="disabilitato">
+            <soggetto-erogatore tipo="spc" nome="SoggettoEsempioWSS4JextErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextCifrataAttachments" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="encryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="encryptionUser" valore="#MultiPropUsePddErogatoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2;{Content}{Attach}{*}"/>
+                    <parameter nome="encryptionSymmetricKey" valore="true"/>
+                    <parameter nome="encryptionKeyTransportAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#kw-tripledes"/>
+                    <parameter nome="encryptionSymAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/>
+                    <parameter nome="encryptionKeySize" valore="168"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="preBase64EncodingAttachment" valore="true"/>
+                    <parameter nome="postBase64EncodingAttachment" valore="true"/>
+                    <parameter nome="omitAttachmentKeyInfo" valore="true"/>
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="decryptionSymmetricKey" valore="true"/>
+                    <parameter nome="decryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="decryptionUser" valore="#MultiPropUsePddErogatoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2;{Content}{Attach}{*}"/>
+                	<!-- optional params for retrocompatibility -->
+                	<parameter nome="postBase64DecodingAttachment" valore="true"/>
+                    <parameter nome="addAttachmentIdBrackets" valore="true"/>
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+        
+        <!-- WSSecurity (WSS4Jext) Firmata con Attachments -->
+        <porta-delegata
+            nome="WSS4Jext_FirmataAttachments"
+            autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap"
+            stateless="abilitato" gestione-manifest="disabilitato">
+            <soggetto-erogatore tipo="spc" nome="SoggettoEsempioWSS4JextErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextFirmataAttachments" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
+                    <parameter nome="signatureDigestAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                    <parameter nome="signatureC14nAlgorithm"
+                        valore="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                    <parameter nome="signatureAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                    <parameter nome="addAttachmentIdBrackets" valore="true"/>
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+        
+        
+        <!-- WSSecurity (WSS4Jext) Firmata con Attachments (SignatureEngine definito impostato a 'xmlSec') -->
+        <porta-delegata
+            nome="WSS4Jext_FirmataAttachments_SignatureEngineXmlSec"
+            autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap"
+            stateless="abilitato" gestione-manifest="disabilitato">
+            <soggetto-erogatore tipo="spc" nome="SoggettoEsempioWSS4JextErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextFirmataAttachmentsSignatureEngineXmlSec" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- signature -->
+                    <parameter nome="signatureEngine" valore="xmlSec"/>
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
+                    <parameter nome="signatureDigestAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                    <parameter nome="signatureC14nAlgorithm"
+                        valore="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                    <parameter nome="signatureAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- signature -->
+                    <parameter nome="signatureEngine" valore="xmlSec"/>
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                    <parameter nome="addAttachmentIdBrackets" valore="true"/>
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+        
+    </soggetto>
+    
+    
+    <soggetto tipo="spc" nome="SoggettoEsempioWSS4JextErogatore" >
+        
+        <!-- **** WSSecurity (WSS4Jext) **** -->
+        
+        <!-- WSSecurity (WSS4Jext) Cifrata e Firmata -->
+        <porta-applicativa nome="WSS4Jext_CifrataFirmata" autenticazione="none" stateless="abilitato">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextCifrataFirmata"/>
+            <servizio-applicativo nome="govwayTestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="SoggettoEsempioWSS4JextFruitore"/>
+	    </soggetti> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="decryptionSymmetricKey" valore="true"/>
+                    <parameter nome="decryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="decryptionUser" valore="#MultiPropUsePddFruitoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="encryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="encryptionUser" valore="#MultiPropUsePddFruitoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2"/>
+                    <parameter nome="encryptionSymmetricKey" valore="true"/>
+                    <parameter nome="encryptionKeyTransportAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#kw-tripledes"/>
+                    <parameter nome="encryptionSymAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/>
+                    <parameter nome="encryptionKeySize" valore="168"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pa"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                    
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
+                    <parameter nome="signatureDigestAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                    <parameter nome="signatureC14nAlgorithm"
+                        valore="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                    <parameter nome="signatureAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+        
+        <!-- WSSecurity (WSS4Jext) Firmata e Cifrata -->
+        <porta-applicativa nome="WSS4Jext_FirmataCifrata" autenticazione="none" stateless="abilitato">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextFirmataCifrata"/>
+            <servizio-applicativo nome="govwayTestSuite" /> 
+            <soggetti>
+		<soggetto tipo="spc" nome="SoggettoEsempioWSS4JextFruitore"/>
+	    </soggetti> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature Encrypt"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="decryptionSymmetricKey" valore="true"/>
+                    <parameter nome="decryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="decryptionUser" valore="#MultiPropUsePddFruitoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature Encrypt"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="encryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="encryptionUser" valore="#MultiPropUsePddFruitoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2"/>
+                    <parameter nome="encryptionSymmetricKey" valore="true"/>
+                    <parameter nome="encryptionKeyTransportAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#kw-tripledes"/>
+                    <parameter nome="encryptionSymAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/>
+                    <parameter nome="encryptionKeySize" valore="168"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pa"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                    
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
+                    <parameter nome="signatureDigestAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                    <parameter nome="signatureC14nAlgorithm"
+                        valore="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                    <parameter nome="signatureAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+        
+        <!-- WSSecurity (WSS4Jext) Cifrata -->
+        <porta-applicativa nome="WSS4Jext_Cifrata" autenticazione="none" stateless="abilitato">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextCifrata"/>
+            <servizio-applicativo nome="govwayTestSuite" /> 
+            <soggetti>
+		<soggetto tipo="spc" nome="SoggettoEsempioWSS4JextFruitore"/>
+	    </soggetti> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="decryptionSymmetricKey" valore="true"/>
+                    <parameter nome="decryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="decryptionUser" valore="#MultiPropUsePddFruitoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2"/>
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="encryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="encryptionUser" valore="#MultiPropUsePddFruitoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2"/>
+                    <parameter nome="encryptionSymmetricKey" valore="true"/>
+                    <parameter nome="encryptionKeyTransportAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#kw-tripledes"/>
+                    <parameter nome="encryptionSymAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/>
+                    <parameter nome="encryptionKeySize" valore="168"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+        
+        
+        <!-- WSSecurity (WSS4Jext) Firmata -->
+        <porta-applicativa nome="WSS4Jext_Firmata" autenticazione="none" stateless="abilitato">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextFirmata"/>
+            <servizio-applicativo nome="govwayTestSuite" /> 
+            <soggetti>
+		<soggetto tipo="spc" nome="SoggettoEsempioWSS4JextFruitore"/>
+	    </soggetti> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pa"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                    
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
+                    <parameter nome="signatureDigestAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                    <parameter nome="signatureC14nAlgorithm"
+                        valore="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                    <parameter nome="signatureAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+        
+        
+        <!-- WSSecurity (WSS4Jext) Cifrata e Firmata con Attachments -->
+        <porta-applicativa nome="WSS4Jext_CifrataFirmataAttachments" autenticazione="none" stateless="abilitato" gestione-manifest="disabilitato">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextCifrataFirmataAttachments"/>
+            <servizio-applicativo nome="govwayTestSuite" /> 
+            <soggetti>
+		<soggetto tipo="spc" nome="SoggettoEsempioWSS4JextFruitore"/>
+	    </soggetti> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="decryptionSymmetricKey" valore="true"/>
+                    <parameter nome="decryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="decryptionUser" valore="#MultiPropUsePddFruitoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2;{Content}{Attach}{*}"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                	<!-- optional params for retrocompatibility -->
+                	<parameter nome="postBase64DecodingAttachment" valore="true"/>
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="encryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="encryptionUser" valore="#MultiPropUsePddFruitoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2;{Content}{Attach}{*}"/>
+                    <parameter nome="encryptionSymmetricKey" valore="true"/>
+                    <parameter nome="encryptionKeyTransportAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#kw-tripledes"/>
+                    <parameter nome="encryptionSymAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/>
+                    <parameter nome="encryptionKeySize" valore="168"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pa"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                    
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
+                    <parameter nome="signatureDigestAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                    <parameter nome="signatureC14nAlgorithm"
+                        valore="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                    <parameter nome="signatureAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="preBase64EncodingAttachment" valore="true"/>
+                    <parameter nome="postBase64EncodingAttachment" valore="true"/>
+                    <parameter nome="omitAttachmentKeyInfo" valore="true"/>
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                    <parameter nome="encryptAttachmentHeaders" valore="true"/>
+                    <parameter nome="addAttachmentIdBrackets" valore="true"/>
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+        
+        <!-- WSSecurity (WSS4Jext) Firmata e Cifrata con Attachments -->
+        <porta-applicativa nome="WSS4Jext_FirmataCifrataAttachments" autenticazione="none" stateless="abilitato" gestione-manifest="disabilitato">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextFirmataCifrataAttachments"/>
+            <servizio-applicativo nome="govwayTestSuite" /> 
+            <soggetti>
+		<soggetto tipo="spc" nome="SoggettoEsempioWSS4JextFruitore"/>
+	    </soggetti> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature Encrypt"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="decryptionSymmetricKey" valore="true"/>
+                    <parameter nome="decryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="decryptionUser" valore="#MultiPropUsePddFruitoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2;{Content}{Attach}{*}"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature Encrypt"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="encryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="encryptionUser" valore="#MultiPropUsePddFruitoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2;{Content}{Attach}{*}"/>
+                    <parameter nome="encryptionSymmetricKey" valore="true"/>
+                    <parameter nome="encryptionKeyTransportAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#kw-tripledes"/>
+                    <parameter nome="encryptionSymAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/>
+                    <parameter nome="encryptionKeySize" valore="168"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pa"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                    
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
+                    <parameter nome="signatureDigestAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                    <parameter nome="signatureC14nAlgorithm"
+                        valore="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                    <parameter nome="signatureAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="postBase64EncodingAttachment" valore="true"/>
+                    <parameter nome="omitAttachmentKeyInfo" valore="true"/>
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                    <parameter nome="encryptAttachmentHeaders" valore="true"/>
+                    <parameter nome="addAttachmentIdBrackets" valore="true"/>
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+        
+        <!-- WSSecurity (WSS4Jext) Cifrata con Attachments -->
+        <porta-applicativa nome="WSS4Jext_CifrataAttachments" autenticazione="none" stateless="abilitato" gestione-manifest="disabilitato">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextCifrataAttachments"/>
+            <servizio-applicativo nome="govwayTestSuite" /> 
+            <soggetti>
+		<soggetto tipo="spc" nome="SoggettoEsempioWSS4JextFruitore"/>
+	    </soggetti> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="decryptionSymmetricKey" valore="true"/>
+                    <parameter nome="decryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="decryptionUser" valore="#MultiPropUsePddFruitoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2;{Content}{Attach}{*}"/>
+                	<!-- optional params for retrocompatibility -->
+                	<parameter nome="postBase64DecodingAttachment" valore="true"/>
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- encrypt -->
+                    <parameter nome="encryptionMultiPropFile" valore="/etc/govway/properties/WSS4Jext_encrypt.properties"/>
+                    <parameter nome="encryptionUser" valore="#MultiPropUsePddFruitoreAsAlias#"/>
+                    <parameter nome="encryptionParts"
+                        valore="{Element}{http://www.openspcoop.org/example}DatoSensibile1;{Content}{http://www.openspcoop.org/example}DatoSensibile2;{Content}{Attach}{*}"/>
+                    <parameter nome="encryptionSymmetricKey" valore="true"/>
+                    <parameter nome="encryptionKeyTransportAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#kw-tripledes"/>
+                    <parameter nome="encryptionSymAlgorithm"
+                        valore="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/>
+                    <parameter nome="encryptionKeySize" valore="168"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="preBase64EncodingAttachment" valore="true"/>
+                    <parameter nome="postBase64EncodingAttachment" valore="true"/>
+                    <parameter nome="omitAttachmentKeyInfo" valore="true"/>
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                    <parameter nome="encryptAttachmentHeaders" valore="true"/>
+                    <parameter nome="addAttachmentIdBrackets" valore="true"/>
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+        
+        <!-- WSSecurity (WSS4Jext) Firmata con Attachments -->
+        <porta-applicativa nome="WSS4Jext_FirmataAttachments" autenticazione="none" stateless="abilitato" gestione-manifest="disabilitato">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextFirmataAttachments"/>
+            <servizio-applicativo nome="govwayTestSuite" /> 
+            <soggetti>
+		<soggetto tipo="spc" nome="SoggettoEsempioWSS4JextFruitore"/>
+	    </soggetti> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pa"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                    
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
+                    <parameter nome="signatureDigestAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                    <parameter nome="signatureC14nAlgorithm"
+                        valore="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                    <parameter nome="signatureAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                    <parameter nome="addAttachmentIdBrackets" valore="true"/>
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+        
+ 
+        <!-- WSSecurity (WSS4Jext) Firmata con Attachments (Signature engine impostato a 'xmlSec') -->
+        <porta-applicativa nome="WSS4Jext_FirmataAttachments_SignatureEngineXmlSec" autenticazione="none" stateless="abilitato" gestione-manifest="disabilitato">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextFirmataAttachmentsSignatureEngineXmlSec"/>
+            <servizio-applicativo nome="govwayTestSuite" /> 
+            <soggetti>
+		<soggetto tipo="spc" nome="SoggettoEsempioWSS4JextFruitore"/>
+	    </soggetti> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- signature -->
+                    <parameter nome="signatureEngine" valore="xmlSec"/>
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- signature -->
+                    <parameter nome="signatureEngine" valore="xmlSec"/>
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pa"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                    
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
+                    <parameter nome="signatureDigestAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                    <parameter nome="signatureC14nAlgorithm"
+                        valore="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                    <parameter nome="signatureAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                    <parameter nome="addAttachmentIdBrackets" valore="true"/>
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+        
+        <!-- TestSuite Server -->
+        <servizio-applicativo nome="govwayTestSuite" > 
+            <invocazione-servizio>
+                <connettore tipo="http" nome="testSuiteOpenSPCoop">
+                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/server"/>
+                </connettore>
+            </invocazione-servizio>  
+        </servizio-applicativo>
+        
+    </soggetto>
+    
     <soggetto tipo="spc" nome="SoggettoConnettoreNULL" > 
         
         <!-- Risposta Asincrona Simmetrica --> 

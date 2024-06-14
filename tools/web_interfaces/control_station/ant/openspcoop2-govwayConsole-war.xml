@@ -484,7 +484,7 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/wss4j">
-				<include name="wss4j-ws-security-common-2.4.1.jar"/>
+				<include name="wss4j-ws-security-common-2.4.1-gov4j-1.jar"/>
 			</lib>
 			<lib dir="${dist_govwayConsole}">
 				<include name="openspcoop2*.jar" />

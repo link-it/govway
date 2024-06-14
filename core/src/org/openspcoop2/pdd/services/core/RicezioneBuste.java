@@ -4285,7 +4285,7 @@ public class RicezioneBuste {
 						if(msgDiag!=null) {
 							msgDiag.setFruitore(soggettoFruitore);
 						}
-						if(this.msgContext!=null && this.msgContext.getProtocol()!=null) {
+						if(this.msgContext.getProtocol()!=null) {
 							this.msgContext.getProtocol().setFruitore(soggettoFruitore);
 						}
 					}

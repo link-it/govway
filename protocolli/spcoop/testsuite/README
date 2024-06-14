@@ -194,6 +194,15 @@ Batterie di test che verificano funzionalita' di sicurezza della Porta.
    (NOTA2: Provarlo anche con MultipartParsing abilitato + DumpBinarioBinarioAbilitato:soloSuFile)
    (NOTA3: Su Tomcat se si installano due war differenti, govwar.war e govwaySec.ear con la signature degli attachments si ottiene un errore simile al seguente:
 	java.security.InvalidAlgorithmParameterException: Expected AttachmentTransformParameterSpec)
+- 'WSSecurityWSS4Jext' vengono provate le seguenti funzionalità aggiuntive di WSSecurity:
+        postBase64EncodingAttachment [value: boolean, default false]: Produce l'encoding in base64 dell'attachment (dopo aver applicato la sicurezza)
+        preBase64EncodingAttachment [value: boolean, default false]: Produce l'encoding in base64 dell'attachment (prima di applicare la sicurezza)
+        postBase64DecodingAttachment [value: boolean, default false]: Decodifica la rappresentazione base64 dell'attachment (dopo la validazione della sicurezza)
+        explicitAttachmentInclusiveNamespace [value: boolean, default false]: Inserisce gli elementi "InclusiveNamespace" anche se la lista dei prefissi nella trasformazione degli attachment e' vuota
+        omitAttachmentKeyInfo [value: boolean, default false]: Non inserisce all'interno della EncryptedData dell'attachment l'elemento "KeyInfo"
+        omitCanonicalizationInclusiveNamespace [value: boolean, default false]: Non inserisce l'elemento "InclusiveNamespace" all'interno dell'elemento "CanonicalizationMethod"
+        addAttachmentIdBrackets [value: boolean, default false]: Aggiunge all'id di riferimento degli allegati delle parentesi unicinate 
+        encryptAttachmentHeaders [value: boolean, default false]: Aggiunge gli header dell'Attachment all'interno del messaggio cifrato
 - 'WSSecuritySoapBox' vengono provate alcune funzionalità di WSSecurity tramite libreria 'soapbox', in particolar modo firma e cifratura degli attachments
 !! Pre-requisiti!!
 Il test richiede l'installazione di diversi keystore in /etc/govway/keys:
@@ -210,12 +219,24 @@ Il test richiede l'installazione di diversi keystore in /etc/govway/keys:
    - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/jks/soapbox_pa_signature_truststore.jks
    - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/jks/soapbox_pd_signature_keystore.jks
    - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/jks/soapbox_pd_signature_truststore.jks
+   - protocolli/spcoop/testsuite/deploy/wss_WSS4J_examples/jks/WSS4Jext_encrypt.jceks
+   - protocolli/spcoop/testsuite/deploy/wss_WSS4J_examples/jks/WSS4Jext_pa_signature_keystore.jks
+   - protocolli/spcoop/testsuite/deploy/wss_WSS4J_examples/jks/WSS4Jext_pa_signature_truststore.jks
+   - protocolli/spcoop/testsuite/deploy/wss_WSS4J_examples/jks/WSS4Jext_pd_signature_keystore.jks
+   - protocolli/spcoop/testsuite/deploy/wss_WSS4J_examples/jks/WSS4Jext_pd_signature_truststore.jks
+
 Il test inoltre richiede l'installazione dei seguenti file di properties in /etc/govway/properties:
    - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/properties/soapbox_encrypt.properties
    - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/properties/soapbox_pa_signature_keystore.properties
    - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/properties/soapbox_pa_signature_truststore.properties
    - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/properties/soapbox_pd_signature_keystore.properties
    - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/properties/soapbox_pd_signature_truststore.properties
+   - protocolli/spcoop/testsuite/deploy/wss_WSS4J_examples/properties/WSS4Jext_encrypt.properties
+   - protocolli/spcoop/testsuite/deploy/wss_WSS4J_examples/properties/WSS4Jext_pa_signature_keystore.properties
+   - protocolli/spcoop/testsuite/deploy/wss_WSS4J_examples/properties/WSS4Jext_pa_signature_truststore.properties
+   - protocolli/spcoop/testsuite/deploy/wss_WSS4J_examples/properties/WSS4Jext_pd_signature_keystore.properties
+   - protocolli/spcoop/testsuite/deploy/wss_WSS4J_examples/properties/WSS4Jext_pd_signature_truststore.properties
+
 Infine il test richiede l'installazione delle configurazioni relative a SAML:
    - copia in /etc/govway/properties dei files presenti in protocolli/spcoop/testsuite/deploy/saml_examples/saml20
    - copia all'interno dell'archivio della PdD dei files presenti in protocolli/spcoop/testsuite/deploy/saml_examples/saml11
