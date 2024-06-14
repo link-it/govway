@@ -68,6 +68,9 @@
 			<item type="lock" name="secretkeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
 			    <property name="decryptionPassword" />
 			</item>
+			<item type="select" name="secretkeystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="org.apache.ws.security.crypto.merlin.file.byok" properties="decryptionPropRefId" />
+			</item>
 
 		</subsection>
 
@@ -93,6 +96,9 @@
 			</item>
 			<item type="lock" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
 			    <property name="decryptionPassword" />
+			</item>
+			<item type="select" name="keystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="org.apache.ws.security.crypto.merlin.file.byok" properties="decryptionPropRefId" />
 			</item>
 
 		</subsection>

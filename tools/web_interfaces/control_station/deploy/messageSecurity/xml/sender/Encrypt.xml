@@ -104,6 +104,9 @@
 			<item type="lock" name="secretkeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
 			    <property name="encryptionPassword" />
 			</item>
+			<item type="select" name="secretkeystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="org.apache.ws.security.crypto.merlin.file.byok" properties="encryptionPropRefId" />
+			</item>
 
 		</subsection>
 		

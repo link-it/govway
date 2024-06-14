@@ -91,7 +91,8 @@ public abstract class AbstractSecurityProvider implements IProvider {
 				SecurityConstants.KEYSTORE_OCSP_POLICY.equals(id)) {
 			l = this.ocspProvider.getValues();
 		}
-		else if(SecurityConstants.KEYSTORE_BYOK_POLICY.equals(id)) {
+		else if(SecurityConstants.KEYSTORE_BYOK_POLICY.equals(id) ||
+				SecurityConstants.SECRETKEYSTORE_BYOK_POLICY.equals(id)) {
 			l = this.byokProvider.getValues();
 		}
 		return l;
@@ -113,7 +114,8 @@ public abstract class AbstractSecurityProvider implements IProvider {
 				SecurityConstants.KEYSTORE_OCSP_POLICY.equals(id)) {
 			l = this.ocspProvider.getLabels();
 		}
-		else if(SecurityConstants.KEYSTORE_BYOK_POLICY.equals(id)) {
+		else if(SecurityConstants.KEYSTORE_BYOK_POLICY.equals(id) ||
+				SecurityConstants.SECRETKEYSTORE_BYOK_POLICY.equals(id)) {
 			l = this.byokProvider.getLabels();
 		}
 		else {
@@ -151,7 +153,8 @@ public abstract class AbstractSecurityProvider implements IProvider {
 				item.setType(ItemType.HIDDEN);
 			}
 		}
-		else if(SecurityConstants.KEYSTORE_BYOK_POLICY.equals(item.getName())) {
+		else if(SecurityConstants.KEYSTORE_BYOK_POLICY.equals(item.getName()) ||
+				SecurityConstants.SECRETKEYSTORE_BYOK_POLICY.equals(item.getName())) {
 			return dynamicUpdateByok(items, mapNameValue, item, actualValue);
 		}
 		
@@ -202,12 +205,12 @@ public abstract class AbstractSecurityProvider implements IProvider {
 		}
 	}
 	private String dynamicUpdateByokPolicy(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
-		String type = SecurityConstants.KEYSTORE_TYPE;
-		if(SecurityConstants.SECRETKEYSTORE_FILE.equals(item.getName())) {
+		String type = null;
+		if(SecurityConstants.SECRETKEYSTORE_BYOK_POLICY.equals(item.getName())) {
 			type = SecurityConstants.SECRETKEYSTORE_TYPE;
 		}
-		else if(SecurityConstants.TRUSTSTORE_FILE.equals(item.getName())) {
-			type = SecurityConstants.TRUSTSTORE_TYPE;
+		else if(SecurityConstants.KEYSTORE_BYOK_POLICY.equals(item.getName())) {
+			type = SecurityConstants.KEYSTORE_TYPE;
 		}
 		
 		return AbstractSecurityProvider.processStoreByokPolicy(type, items, mapNameValue, item, actualValue);

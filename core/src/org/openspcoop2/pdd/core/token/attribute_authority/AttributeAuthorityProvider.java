@@ -27,8 +27,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.cxf.rs.security.jose.common.JoseConstants;
-import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.mvc.properties.Item;
@@ -274,9 +272,9 @@ public class AttributeAuthorityProvider implements IProvider {
 			throw new ProviderValidationException("La validazione di una risposta JWS richiede una configurazione del TrustStore; configurazione non riscontrata");
 		}
 		
-		if(!p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE) && !p.containsKey(JoseConstants.RSSEC_KEY_STORE_JWKSET)) {
+		if(!p.containsKey(SecurityConstants.JOSE_KEYSTORE) && !p.containsKey(SecurityConstants.JOSE_KEYSTORE_JWKSET)) {
 			// altrimenti è stato fatto inject del keystore
-			String file = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+			String file = p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE);
 			InputValidationUtils.validateTextAreaInput(file, "Risposta - TrustStore - File");
 		}
 		

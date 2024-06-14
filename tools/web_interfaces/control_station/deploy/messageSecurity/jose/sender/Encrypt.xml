@@ -91,6 +91,14 @@
 				</conditions>
 			    <property name="rs.security.key.password" properties="encryptionPropRefId" />
 			</item>
+			<item type="select" name="keystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<conditions>
+					<condition not="false">
+						<equals name="keystoreType" value="jceks"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.file.byok" properties="encryptionPropRefId" />
+			</item>
 
 		</subsection>
 

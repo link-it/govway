@@ -160,6 +160,14 @@
 				</conditions>
 		      	<property name="rs.security.signature.algorithm" properties="signaturePropRefId" />
 			</item>
+			<item type="select" name="keystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<conditions>
+					<condition and="true">
+						<equals name="truststoreType" value="jceks"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.file.byok" properties="signaturePropRefId" />
+			</item>
 
 		</subsection>
 		

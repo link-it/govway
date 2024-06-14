@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.crypto.SecretKey;
+
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.StatoCheck;
@@ -717,8 +719,30 @@ public class CertificateUtils {
 		if(aliasesForCheck!=null && !aliasesForCheck.isEmpty()) {
 			for (String aliasVerify : aliasesForCheck) {
 				
+				boolean secret = KeystoreType.JCEKS.getNome().equalsIgnoreCase(store.getKeystoreType());
+				
 				java.security.cert.X509Certificate cert = (java.security.cert.X509Certificate) store.getCertificate(aliasVerify);
-				if(cert==null) {
+				SecretKey secretKey = null;
+				if(cert==null && secret && store.existsAlias(aliasKey)) {
+					// provo a vedere se si tratta di una chiave segreta
+					String errorKey = null;
+					try {
+						secretKey = store.getSecretKey(aliasVerify, passwordKey);
+					}catch(Exception e) {
+						errorKey = e.getMessage();
+					}
+					if(secretKey==null) {
+						esito = new CertificateCheck();
+						esito.setStatoCheck(StatoCheck.ERROR);
+						esito.addError(storePath, "Nel "+
+								CostantiLabel.KEYSTORE+
+								" la chiave segreta "+
+								" con alias '"+aliasVerify+"' non è accessibile"+
+								(errorKey!=null ? ": "+errorKey : ""), storeDetails);
+						return esito;
+					}
+				}
+				if(cert==null && secretKey==null) {
 					esito = new CertificateCheck();
 					esito.setStatoCheck(StatoCheck.ERROR);
 					esito.addError(storePath, "Nel "+
@@ -729,7 +753,7 @@ public class CertificateUtils {
 					return esito;
 				}
 				
-				if(keystore) {
+				if(keystore && secretKey==null) {
 					PrivateKey privateKey = null;
 					String errorKey = null;
 					try {
@@ -749,24 +773,26 @@ public class CertificateUtils {
 					}
 				}
 				
-				java.security.cert.Certificate[] baseCertChain = store.getCertificateChain(aliasVerify);
-				List<java.security.cert.X509Certificate> certChain = null;
-				if(baseCertChain!=null && baseCertChain.length>0) {
-					for (int i = 0; i < baseCertChain.length; i++) {
-						java.security.cert.Certificate check = baseCertChain[i];
-						if(check instanceof X509Certificate) {
-							if(certChain==null) {
-								certChain = new ArrayList<>();
+				if(secretKey==null) {
+					java.security.cert.Certificate[] baseCertChain = store.getCertificateChain(aliasVerify);
+					List<java.security.cert.X509Certificate> certChain = null;
+					if(baseCertChain!=null && baseCertChain.length>0) {
+						for (int i = 0; i < baseCertChain.length; i++) {
+							java.security.cert.Certificate check = baseCertChain[i];
+							if(check instanceof X509Certificate) {
+								if(certChain==null) {
+									certChain = new ArrayList<>();
+								}
+								certChain.add((X509Certificate) check);
 							}
-							certChain.add((X509Certificate) check);
 						}
 					}
+									
+					Certificate certificate = new Certificate(aliasVerify, 
+							cert, 
+							certChain );
+					listCertificate.add(certificate);
 				}
-								
-				Certificate certificate = new Certificate(aliasVerify, 
-						cert, 
-						certChain );
-				listCertificate.add(certificate);
 			}
 		}
 				

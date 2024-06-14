@@ -155,6 +155,9 @@
 				</conditions>
 			    <property name="rs.security.key.password" properties="signaturePropRefId" />
 			</item>
+			<item type="select" name="keystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="rs.security.keystore.file.byok" properties="signaturePropRefId" />
+			</item>
 
 		</subsection>
 
@@ -198,6 +201,9 @@
 			</item>
 			<item type="lock" name="secretkeystorePrivateKeyPassword" label="Password Chiave Segreta" required="true">
 			    <property name="rs.security.key.password" properties="signaturePropRefId" />
+			</item>
+			<item type="select" name="secretkeystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="rs.security.keystore.file.byok" properties="signaturePropRefId" />
 			</item>
 
 		</subsection>		

@@ -27,8 +27,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.cxf.rs.security.jose.common.JoseConstants;
-import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.mvc.properties.Item;
@@ -254,10 +252,10 @@ public class TokenProvider implements IProvider {
 			throw new ProviderValidationException("Non è stata fornita una configurazione per effettuare la validazione JWS");
 		}
 		
-		if(!p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE) && !p.containsKey(JoseConstants.RSSEC_KEY_STORE_JWKSET)) {
+		if(!p.containsKey(SecurityConstants.JOSE_KEYSTORE) && !p.containsKey(SecurityConstants.JOSE_KEYSTORE_JWKSET)) {
 			// altrimenti è stato fatto inject del keystore
 			if(!dynamicDiscovery) {
-				String file = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+				String file = p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE);
 				InputValidationUtils.validateTextAreaInput(file, "Validazione JWT - TrustStore - Location");
 			}
 			
@@ -273,10 +271,10 @@ public class TokenProvider implements IProvider {
 			throw new ProviderValidationException("Non è stata fornita una configurazione per effettuare la validazione JWE");
 		}
 		
-		if(!p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE) && !p.containsKey(JoseConstants.RSSEC_KEY_STORE_JWKSET) &&
+		if(!p.containsKey(SecurityConstants.JOSE_KEYSTORE) && !p.containsKey(SecurityConstants.JOSE_KEYSTORE_JWKSET) &&
 			// altrimenti è stato fatto inject del keystore
 			!dynamicDiscovery) {
-			String file = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+			String file = p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE);
 			InputValidationUtils.validateTextAreaInput(file, "Validazione JWT - KeyStore - Location");
 		}
 	}
@@ -928,12 +926,12 @@ public class TokenProvider implements IProvider {
 			throw new ProviderValidationException("La modalità di forward, delle informazioni raccolte, selezionata richiede una configurazione per poter attuare la firma JWS; configurazione non riscontrata");
 		}
 		
-		if(!p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE) && !p.containsKey(JoseConstants.RSSEC_KEY_STORE_JWKSET)) {
+		if(!p.containsKey(SecurityConstants.JOSE_KEYSTORE) && !p.containsKey(SecurityConstants.JOSE_KEYSTORE_JWKSET)) {
 			// altrimenti è stato fatto inject del keystore
-			String file = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+			String file = p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE);
 			InputValidationUtils.validateTextAreaInput(file, "Token Forward - JWS KeyStore - File");
 			
-			String fileChiavePubblica = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE+".public");
+			String fileChiavePubblica = p.getProperty(SecurityConstants.JOSE_KEYSTORE_PUBLIC_KEY);
 			if(fileChiavePubblica!=null && StringUtils.isNotEmpty(fileChiavePubblica)) {
 				InputValidationUtils.validateTextAreaInput(file, "Token Forward - JWS KeyStore - Chiave Pubblica");
 			}
@@ -945,9 +943,9 @@ public class TokenProvider implements IProvider {
 			throw new ProviderValidationException("La modalità di forward, delle informazioni raccolte, selezionata richiede una configurazione per poter attuare la cifratura JWE; configurazione non riscontrata");
 		}
 		
-		if(!p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE) && !p.containsKey(JoseConstants.RSSEC_KEY_STORE_JWKSET)) {
+		if(!p.containsKey(SecurityConstants.JOSE_KEYSTORE) && !p.containsKey(SecurityConstants.JOSE_KEYSTORE_JWKSET)) {
 			// altrimenti è stato fatto inject del keystore
-			String file = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+			String file = p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE);
 			InputValidationUtils.validateTextAreaInput(file, "Token Forward - JWE KeyStore - File");
 		}
 	}

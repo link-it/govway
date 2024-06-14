@@ -1396,6 +1396,12 @@ public class ConsoleProperties {
 	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiModIFruizioneById(String alias) throws UtilsException {
 		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiModIFruizioneById");
 	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiMessageSecurityErogazioneById(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiMessageSecurityErogazioneById");
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiMessageSecurityFruizioneById(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiMessageSecurityFruizioneById");
+	}
 	public String getJmxPdDConfigurazioneSistemaNomeRisorsaDatasourceGW(String alias) throws UtilsException {
 		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaDatasourceGW");
 	}

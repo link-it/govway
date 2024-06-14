@@ -43,6 +43,8 @@ public class KeystoreParams {
 	private byte[] keyPairPublicKey;
 	private String keyPairAlgorithm;
 	
+	private String description;
+	
 	public byte[] getStore() {
 		return this.store;
 	}
@@ -115,5 +117,12 @@ public class KeystoreParams {
 	}
 	public void setKeyPairAlgorithm(String keyPairAlgorithm) {
 		this.keyPairAlgorithm = keyPairAlgorithm;
+	}
+	
+	public String getDescription() {
+		return this.description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

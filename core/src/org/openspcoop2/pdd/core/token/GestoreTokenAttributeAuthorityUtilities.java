@@ -35,9 +35,7 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.cxf.rs.security.jose.common.JoseConstants;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
-import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -203,7 +201,7 @@ public class GestoreTokenAttributeAuthorityUtilities {
 	    				inject.initAttributeAuthorityValidazioneRispostaJwt(policyAttributeAuthority.getName(), portaDelegata, pd, pa, p);
 	    				inject.inject(p);
 	    				
-	    				String aliasMode = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS+".mode"); 
+	    				String aliasMode = p.getProperty(SecurityConstants.JOSE_KEYSTORE_KEY_ALIAS+".mode"); 
 						if(aliasMode!=null && 
 								(
 										aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C)
@@ -225,8 +223,8 @@ public class GestoreTokenAttributeAuthorityUtilities {
 	    					options.setPermitUseHeaderKID(aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_KID));
 	    					options.setPermitUseHeaderX5U(aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5U));
 	    												
-							if(p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE)) {
-								Object oKeystore = p.get(RSSecurityConstants.RSSEC_KEY_STORE);
+							if(p.containsKey(SecurityConstants.JOSE_KEYSTORE)) {
+								Object oKeystore = p.get(SecurityConstants.JOSE_KEYSTORE);
 								if(oKeystore instanceof java.security.KeyStore) {
 									java.security.KeyStore keystore = (java.security.KeyStore) oKeystore;
 			    					jsonCompactVerify = new JsonVerifySignature(keystore, options);
@@ -270,8 +268,8 @@ public class GestoreTokenAttributeAuthorityUtilities {
 
 								}
 							}
-							else if(p.containsKey(JoseConstants.RSSEC_KEY_STORE_JWKSET)) {
-								Object oKeystore = p.get(JoseConstants.RSSEC_KEY_STORE_JWKSET);
+							else if(p.containsKey(SecurityConstants.JOSE_KEYSTORE_JWKSET)) {
+								Object oKeystore = p.get(SecurityConstants.JOSE_KEYSTORE_JWKSET);
 								if(oKeystore instanceof String) {
 									String keystore = (String) oKeystore;
 									JsonWebKeys jwksKeystore = new JWKSet(keystore).getJsonWebKeys();

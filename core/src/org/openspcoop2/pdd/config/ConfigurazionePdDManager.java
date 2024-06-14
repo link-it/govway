@@ -1858,6 +1858,20 @@ public class ConfigurazionePdDManager {
 				addCertificateDetails, separator, newLine);
 	}
 	
+	public CertificateCheck checkCertificatiMessageSecurityErogazioneById(long idErogazione, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiMessageSecurityErogazioneById(null, false,
+				idErogazione, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiMessageSecurityFruizioneById(long idFruizione, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiMessageSecurityFruizioneById(null, false,
+				idFruizione, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	
 	
 
 	

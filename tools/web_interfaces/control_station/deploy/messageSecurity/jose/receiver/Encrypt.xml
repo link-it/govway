@@ -126,6 +126,9 @@
 				</conditions>
 			    <property name="rs.security.key.password" properties="decryptionPropRefId" />
 			</item>
+			<item type="select" name="keystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="rs.security.keystore.file.byok" properties="decryptionPropRefId" />
+			</item>
 
 		</subsection>
 

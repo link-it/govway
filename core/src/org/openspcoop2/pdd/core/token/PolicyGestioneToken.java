@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.token.parser.BasicDynamicDiscoveryParser;
@@ -319,7 +318,7 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 		if(this.properties!=null) {
 			Properties p = this.properties.get(Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID);
 			if(p!=null) {
-				return p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+				return p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE);
 			}
 		}
 		return null;

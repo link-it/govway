@@ -79,6 +79,9 @@
 			<item type="lock" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
 			    <property name="signaturePassword" />
 			</item>
+			<item type="select" name="keystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="org.apache.ws.security.crypto.merlin.file.byok" properties="signaturePropRefId" />
+			</item>
 
 		</subsection>
 

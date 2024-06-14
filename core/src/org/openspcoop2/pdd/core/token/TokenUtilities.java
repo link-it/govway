@@ -210,16 +210,16 @@ public class TokenUtilities {
 			// JWE Compact
 			p = policy.getProperties().get(org.openspcoop2.pdd.core.token.Costanti.POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID);
 		}
-		if(p!=null && p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE_FILE)) {
+		if(p!=null && p.containsKey(SecurityConstants.JOSE_KEYSTORE_FILE)) {
 			KeystoreParams keystoreParams = new KeystoreParams();
-			keystoreParams.setPath(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE));
-			String type = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
+			keystoreParams.setPath(p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE));
+			String type = p.getProperty(SecurityConstants.JOSE_KEYSTORE_TYPE);
 			if(type==null) {
 				type = KeystoreType.JKS.getNome();
 			}
 			keystoreParams.setType(type);
-			keystoreParams.setPassword(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_PSWD));
-			keystoreParams.setKeyAlias(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS));
+			keystoreParams.setPassword(p.getProperty(SecurityConstants.JOSE_KEYSTORE_PSWD));
+			keystoreParams.setKeyAlias(p.getProperty(SecurityConstants.JOSE_KEYSTORE_KEY_ALIAS));
 			keystoreParams.setKeyPassword(p.getProperty(RSSecurityConstants.RSSEC_KEY_PSWD));
 			
 			fillKeyPairParamters(keystoreParams, type, p);
@@ -230,7 +230,7 @@ public class TokenUtilities {
 	}
 	private static void fillKeyPairParamters(KeystoreParams keystoreParams, String type, Properties p) throws TokenException {
 		if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(type)) {
-			String keystorePublicKeyFile = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE+".public");
+			String keystorePublicKeyFile = p.getProperty(SecurityConstants.JOSE_KEYSTORE_PUBLIC_KEY);
 			if(keystorePublicKeyFile==null) {
 				throw new TokenException("Public key file undefined");
 			}
@@ -240,7 +240,7 @@ public class TokenUtilities {
 		if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(type)
 				||
 			SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(type)) {
-			String keyPairAlgorithm = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE+".algorithm");
+			String keyPairAlgorithm = p.getProperty(SecurityConstants.JOSE_KEYSTORE_KEY_ALGORITHM);
 			if(keyPairAlgorithm==null) {
 				throw new TokenException("Key pair algorithm undefined");
 			}
@@ -267,18 +267,18 @@ public class TokenUtilities {
 			// JWE Compact
 			p = policy.getProperties().get(org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_ENCRYP_PROP_REF_ID);
 		}
-		if(p!=null && p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE_FILE)) {
+		if(p!=null && p.containsKey(SecurityConstants.JOSE_KEYSTORE_FILE)) {
 			KeystoreParams keystoreParams = new KeystoreParams();
-			keystoreParams.setPath(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE));
-			String type = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
+			keystoreParams.setPath(p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE));
+			String type = p.getProperty(SecurityConstants.JOSE_KEYSTORE_TYPE);
 			if(type==null) {
 				type = KeystoreType.JKS.getNome();
 			}
 			keystoreParams.setType(type);
-			keystoreParams.setPassword(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_PSWD));
-			keystoreParams.setKeyAlias(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS));
+			keystoreParams.setPassword(p.getProperty(SecurityConstants.JOSE_KEYSTORE_PSWD));
+			keystoreParams.setKeyAlias(p.getProperty(SecurityConstants.JOSE_KEYSTORE_KEY_ALIAS));
 			keystoreParams.setKeyPassword(p.getProperty(RSSecurityConstants.RSSEC_KEY_PSWD));
-			keystoreParams.setByokPolicy(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE+".byok"));
+			keystoreParams.setByokPolicy(p.getProperty(SecurityConstants.JOSE_KEYSTORE_BYOK_POLICY));
 			
 			fillKeyPairParamters(keystoreParams, type, p);
 			
@@ -879,34 +879,34 @@ public class TokenUtilities {
 			if(endpoint==null || StringUtils.isEmpty(endpoint)) {
 				throw new TokenException("DynamicDiscovery.jwkUri undefined");
 			}
-			p.put(RSSecurityConstants.RSSEC_KEY_STORE_FILE, endpoint);
+			p.put(SecurityConstants.JOSE_KEYSTORE_FILE, endpoint);
 		}
 	}
 	private static void injectJOSEConfigKeystore(Properties p, 
 			Map<String, Object> dynamicMap, Context context) throws TokenException {
 		
-		String file = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+		String file = p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE);
 		if(file!=null && !"".equals(file)) {
 			file = convertDynamicPropertyValue(file, "file", dynamicMap, context);
-			p.put(RSSecurityConstants.RSSEC_KEY_STORE_FILE, file);
+			p.put(SecurityConstants.JOSE_KEYSTORE_FILE, file);
 		}
 		
-		String alias = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS);
+		String alias = p.getProperty(SecurityConstants.JOSE_KEYSTORE_KEY_ALIAS);
 		if(alias!=null && !"".equals(alias)) {
 			alias = convertDynamicPropertyValue(alias, "alias", dynamicMap, context);
-			p.put(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS, alias);
+			p.put(SecurityConstants.JOSE_KEYSTORE_KEY_ALIAS, alias);
 		}
 		
-		String pwd = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_PSWD);
+		String pwd = p.getProperty(SecurityConstants.JOSE_KEYSTORE_PSWD);
 		if(pwd!=null && !"".equals(pwd)) {
 			pwd = convertDynamicPropertyValue(pwd, "pwd", dynamicMap, context);
-			p.put(RSSecurityConstants.RSSEC_KEY_STORE_PSWD, pwd);
+			p.put(SecurityConstants.JOSE_KEYSTORE_PSWD, pwd);
 		}
 		
-		String type = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
+		String type = p.getProperty(SecurityConstants.JOSE_KEYSTORE_TYPE);
 		if(type!=null && !"".equals(type)) {
 			type = convertDynamicPropertyValue(type, "type", dynamicMap, context);
-			p.put(RSSecurityConstants.RSSEC_KEY_STORE_TYPE, type);
+			p.put(SecurityConstants.JOSE_KEYSTORE_TYPE, type);
 		}
 		
 	}

@@ -36,6 +36,7 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.Search;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.CanaleConfigurazione;
@@ -101,6 +102,7 @@ import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.utils.ModIUtils;
+import org.openspcoop2.security.message.utils.SecurityUtils;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.web.ctrlstat.core.CertificateChecker;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
@@ -3771,7 +3773,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 	}
 	
 	public void eseguiVerificaCertificati(AccordoServizioParteSpecifica asps, String alias, boolean gestioneFruitori,
-			Fruitore fruitore, List<String> aliases, String nomeApiImpl, boolean sicurezzaModi,
+			Fruitore fruitore, List<String> aliases, String nomeApiImpl, boolean sicurezzaModi, boolean messageSecurity,
 			List<String> listConnettoriRegistrati, List<String> listPosizioneConnettoriRegistrati,
 			List<org.openspcoop2.core.registry.Connettore> listConnettoriRegistry,
 			List<org.openspcoop2.core.config.Connettore> listConnettoriConfig, List<String> listTokenPolicyValidazione,
@@ -3820,14 +3822,18 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				org.openspcoop2.core.registry.Connettore connettore = null;
 				certificateChecker.checkFruizione(sbDetailsError, sbDetailsWarningModi,
 						false, connettore,
-						sicurezzaModi, asps, fruitore,
+						sicurezzaModi, 
+						false,
+						asps, fruitore,
 						sogliaWarningGiorni);
 			}
 			else {
 				org.openspcoop2.core.config.Connettore connettore = null;
 				certificateChecker.checkErogazione(sbDetailsError, sbDetailsWarningModi,
 						false, connettore,
-						sicurezzaModi, asps,
+						sicurezzaModi, 
+						false,
+						asps,
 						sogliaWarningGiorni);
 			}
 			if(sbDetailsError.length()>0) {
@@ -3837,7 +3843,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				posizioneWarningModi = nomeApiImpl;
 			}
 		}
-		
+				
 		// verifica connettori https
 		StringBuilder sbDetailsWarningConnettoriHttps = new StringBuilder(); 
 		String posizioneWarningConnettoriHttps = null;
@@ -3851,7 +3857,9 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					StringBuilder sbDetailsWarningConnettoriHttpsSecured = new StringBuilder(); 
 					certificateChecker.checkFruizione(sbDetailsError, sbDetailsWarningConnettoriHttpsSecured,
 							connettoreSsl, connettore,
-							false, asps, fruitore,
+							false, 
+							false,
+							asps, fruitore,
 							sogliaWarningGiorni);
 					if(sbDetailsError.length()>0) {
 						posizioneErrore = posizione;
@@ -3871,7 +3879,9 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					StringBuilder sbDetailsWarningConnettoriHttpsSecured = new StringBuilder(); 
 					certificateChecker.checkErogazione(sbDetailsError, sbDetailsWarningConnettoriHttpsSecured,
 							connettoreSsl, connettore,
-							false, asps,
+							false, 
+							false,
+							asps,
 							sogliaWarningGiorni);
 					if(sbDetailsError.length()>0) {
 						posizioneErrore = posizione;
@@ -3884,7 +3894,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				}
 			}
 		}
-								
+										
 		// verifica token policy validazione
 		StringBuilder sbDetailsWarningTokenPolicyValidazione = new StringBuilder(); 
 		String posizioneWarningTokenPolicyValidazione = null;
@@ -4132,7 +4142,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				}
 			}
 		}
-		
+				
 		// verifica certificati jvm
 		StringBuilder sbDetailsWarningCertificatiJvm = new StringBuilder(); 
 		String posizioneWarningCertificatiJvm = null;
@@ -4146,6 +4156,37 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			else if(sbDetailsWarningCertificatiJvm.length()>0) {
 				posizioneWarningCertificatiJvm = nomeApiImpl;
 				extraWarningCertificatiJvm = "Configurazione https nella JVM";
+			}
+		}
+		
+		// lasciare in ultima posizione poichè non viene generato un id univoco per poi formattare l'output
+		// verifica message security
+		StringBuilder sbDetailsWarningMessageSecurity = new StringBuilder();
+		String posizioneWarningMessageSecurity = null;
+		if(sbDetailsError.length()<=0 && messageSecurity) {
+			if(gestioneFruitori) {
+				org.openspcoop2.core.registry.Connettore connettore = null;
+				certificateChecker.checkFruizione(sbDetailsError, sbDetailsWarningMessageSecurity,
+						false, connettore,
+						false,
+						messageSecurity,
+						asps, fruitore,
+						sogliaWarningGiorni);
+			}
+			else {
+				org.openspcoop2.core.config.Connettore connettore = null;
+				certificateChecker.checkErogazione(sbDetailsError, sbDetailsWarningMessageSecurity,
+						false, connettore,
+						false,
+						messageSecurity,
+						asps,
+						sogliaWarningGiorni);
+			}
+			if(sbDetailsError.length()>0) {
+				posizioneErrore = nomeApiImpl;
+			}
+			else if(sbDetailsWarningMessageSecurity.length()>0) {
+				posizioneWarningMessageSecurity = nomeApiImpl;
 			}
 		}
 		
@@ -4179,6 +4220,10 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				posizioneWarning = posizioneWarningCertificatiJvm;
 				extraWarning = extraWarningCertificatiJvm;
 			}
+			else if(sbDetailsWarningMessageSecurity.length()>0) {
+				warning = sbDetailsWarningMessageSecurity.toString();
+				posizioneWarning = posizioneWarningMessageSecurity;
+			}
 		}
 									
 		// esito
@@ -4190,6 +4235,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		formatIds.add(ConfigurazionePdDReader.ID_CONFIGURAZIONE_TOKEN_NEGOZIAZIONE_SIGNED_JWT);
 		formatIds.add(ConfigurazionePdDReader.ID_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_JWT_RICHIESTA);
 		formatIds.add(ConfigurazionePdDReader.ID_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_JWT_RISPOSTA);
+		//formatIds.add(ConfigurazionePdDReader.ID_CONFIGURAZIONE_RICHIESTA_MESSAGE_SECURITY); // lasciare in ultima posizione poichè non viene generato un id univoco
 		this.apsCore.formatVerificaCertificatiEsito(this.pd, formatIds, 
 				(sbDetailsError.length()>0 ? sbDetailsError.toString() : null), extraErrore, posizioneErrore,
 				warning, extraWarning, posizioneWarning,
@@ -4210,10 +4256,15 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		// -- raccolgo dati
 		String nomeApiImpl = this.getLabelServizio(idSoggettoFruitore, gestioneFruitori, idServizio, tipoProtocollo);
 		
+		IDServizio idAps = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+		IDSoggetto idFruitore = null;
+		if(gestioneFruitori) {
+			idFruitore = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
+		}
+		
 		boolean modi = this.apsCore.isProfiloModIPA(tipoProtocollo);
 		boolean sicurezzaModi = false;
 		if(modi) {
-			IDServizio idAps = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
 			idAps.setPortType(asps.getPortType());
 			idAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
 			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
@@ -4228,7 +4279,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			else {
 				IDFruizione idFruizioneObject = new IDFruizione();
 				idFruizioneObject.setIdServizio(idAps);
-				idFruizioneObject.setIdFruitore(new IDSoggetto(fruitore.getTipo(), fruitore.getNome()));
+				idFruizioneObject.setIdFruitore(idFruitore);
 				consoleConfiguration = consoleDynamicConfiguration.getDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleOperationType.CHANGE, this,  
 						registryReader, configRegistryReader, idFruizioneObject);
 			}
@@ -4243,6 +4294,44 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				}
 				else if(gestioneErogatori && asps.sizeProtocolPropertyList()>0) {
 					sicurezzaModi = ModIUtils.existsStoreConfig(asps.getProtocolPropertyList(), includeRemoteStore, checkModeFruizioneKeystoreId);
+				}
+			}
+		}
+		
+		boolean messageSecurity = false;
+		if(gestioneFruitori) {
+			List<MappingFruizionePortaDelegata> list = this.apsCore.serviziFruitoriMappingList(idFruitore,idServizio, new Search(true)); 
+			if(list!=null && !list.isEmpty()) {
+				for (MappingFruizionePortaDelegata mappingFruizionePortaDelegata : list) {
+					PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(mappingFruizionePortaDelegata.getIdPortaDelegata());
+					List<KeystoreParams> listKeystoreParams = SecurityUtils.readRequestKeystoreParams(pd);
+					if(listKeystoreParams!=null && !listKeystoreParams.isEmpty()) {
+						messageSecurity = true;
+						break;
+					}
+					listKeystoreParams = SecurityUtils.readResponseKeystoreParams(pd);
+					if(listKeystoreParams!=null && !listKeystoreParams.isEmpty()) {
+						messageSecurity = true;
+						break;
+					}
+				}
+			}
+		}
+		else {
+			List<MappingErogazionePortaApplicativa> list = this.apsCore.mappingServiziPorteAppList(idServizio, new Search(true)); 
+			if(list!=null && !list.isEmpty()) {
+				for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : list) {
+					PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
+					List<KeystoreParams> listKeystoreParams = SecurityUtils.readRequestKeystoreParams(pa);
+					if(listKeystoreParams!=null && !listKeystoreParams.isEmpty()) {
+						messageSecurity = true;
+						break;
+					}
+					listKeystoreParams = SecurityUtils.readResponseKeystoreParams(pa);
+					if(listKeystoreParams!=null && !listKeystoreParams.isEmpty()) {
+						messageSecurity = true;
+						break;
+					}
 				}
 			}
 		}
@@ -4276,7 +4365,8 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				listTokenPolicyNegoziazione.isEmpty() &&
 				listAttributeAuthority.isEmpty() &&
 				!findConnettoreHttpConPrefissoHttps &&
-				!sicurezzaModi) {
+				!sicurezzaModi&&
+				!messageSecurity) {
 			this.pd.setMessage(CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_NON_PRESENTI,
 					Costanti.MESSAGE_TYPE_INFO);
 			
@@ -4291,7 +4381,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			if(aliases.size()==1 || alias!=null || !sceltaClusterId) {
 				
 				this.eseguiVerificaCertificati(asps, alias, gestioneFruitori, fruitore, aliases,
-						nomeApiImpl, sicurezzaModi, listConnettoriRegistrati, listPosizioneConnettoriRegistrati,
+						nomeApiImpl, sicurezzaModi, messageSecurity, listConnettoriRegistrati, listPosizioneConnettoriRegistrati,
 						listConnettoriRegistry, listConnettoriConfig, listTokenPolicyValidazione,
 						listTokenPolicyValidazioneConf, listPosizioneTokenPolicyValidazione,
 						listTokenPolicyNegoziazione, listPosizioneTokenPolicyNegoziazione, listAttributeAuthority,

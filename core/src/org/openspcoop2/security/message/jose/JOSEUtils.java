@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.cxf.rs.security.jose.common.JoseConstants;
 import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
@@ -748,17 +747,17 @@ public class JOSEUtils {
 			log = LoggerWrapperFactory.getLogger(JOSEUtils.class);
 		}
 		
-		if(properties!=null && properties.containsKey(RSSecurityConstants.RSSEC_KEY_STORE_FILE)) {
+		if(properties!=null && properties.containsKey(SecurityConstants.JOSE_KEYSTORE_FILE)) {
 			
-			String file = properties.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
-			String type = properties.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
+			String file = properties.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE);
+			String type = properties.getProperty(SecurityConstants.JOSE_KEYSTORE_TYPE);
 			if(type==null) {
 				type = SecurityConstants.KEYSTORE_TYPE_JKS_VALUE;
 			}
-			String password = properties.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_PSWD);
+			String password = properties.getProperty(SecurityConstants.JOSE_KEYSTORE_PSWD);
 			boolean passwordDefined = (password!=null && !"".equals(password));
 			
-			String byokPropertyName =  RSSecurityConstants.RSSEC_KEY_STORE_FILE+".byok";
+			String byokPropertyName =  SecurityConstants.JOSE_KEYSTORE_BYOK_POLICY;
 			String byokProperty = properties.getProperty(byokPropertyName);
 			BYOKRequestParams byokParams = null;
 			BYOKUnwrapManager byokManager = null;
@@ -782,10 +781,10 @@ public class JOSEUtils {
 					
 					String privateKeyPassword = properties.getProperty(RSSecurityConstants.RSSEC_KEY_PSWD);
 					
-					String algorithmPropertyName =  RSSecurityConstants.RSSEC_KEY_STORE_FILE+".algorithm";
+					String algorithmPropertyName =  SecurityConstants.JOSE_KEYSTORE_KEY_ALGORITHM;
 					String algorithmProperty = properties.getProperty(algorithmPropertyName);
 					
-					String publicKeyPropertyName =  RSSecurityConstants.RSSEC_KEY_STORE_FILE+".public";
+					String publicKeyPropertyName =  SecurityConstants.JOSE_KEYSTORE_PUBLIC_KEY;
 					String publicKeyProperty = properties.getProperty(publicKeyPropertyName);
 					if(publicKeyProperty==null || "".equals(publicKeyProperty) ) {
 						String error = "Errore durante l'accesso al keyPair '"+file+"': property public key file ("+publicKeyPropertyName+") undefined";
@@ -837,16 +836,16 @@ public class JOSEUtils {
 								String jwkSet = keyPair.getJwkSet().getJson();
 								String jwkSetKid = keyPair.getJwkSetKid();
 								
-								properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
-								properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_PSWD);
+								properties.remove(SecurityConstants.JOSE_KEYSTORE_FILE);
+								properties.remove(SecurityConstants.JOSE_KEYSTORE_PSWD);
 								properties.remove(algorithmPropertyName);
 								properties.remove(publicKeyPropertyName);
 								properties.remove(RSSecurityConstants.RSSEC_KEY_PSWD);
-								properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS);
-								properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
-								properties.put(JoseConstants.RSSEC_KEY_STORE_JWKSET, jwkSet);
-								properties.put(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS, jwkSetKid);
-								properties.put(RSSecurityConstants.RSSEC_KEY_STORE_TYPE, SecurityConstants.KEYSTORE_TYPE_JWK_VALUE);
+								properties.remove(SecurityConstants.JOSE_KEYSTORE_KEY_ALIAS);
+								properties.remove(SecurityConstants.JOSE_KEYSTORE_TYPE);
+								properties.put(SecurityConstants.JOSE_KEYSTORE_JWKSET, jwkSet);
+								properties.put(SecurityConstants.JOSE_KEYSTORE_KEY_ALIAS, jwkSetKid);
+								properties.put(SecurityConstants.JOSE_KEYSTORE_TYPE, SecurityConstants.KEYSTORE_TYPE_JWK_VALUE);
 							}catch(Exception e) {
 								String error = "Errore durante istanziazione del keyPair '"+file+"'/'"+publicKeyProperty+"': "+e.getMessage();
 								log.error(error,e);
@@ -861,7 +860,7 @@ public class JOSEUtils {
 				
 				else if(SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(type)) {
 					
-					String algorithmPropertyName =  RSSecurityConstants.RSSEC_KEY_STORE_FILE+".algorithm";
+					String algorithmPropertyName =  SecurityConstants.JOSE_KEYSTORE_KEY_ALGORITHM;
 					String algorithmProperty = properties.getProperty(algorithmPropertyName);
 					
 					PublicKeyStore publicKeyStore = null;
@@ -894,15 +893,15 @@ public class JOSEUtils {
 							String jwkSet = publicKeyStore.getJwkSet().getJson();
 							String jwkSetKid = publicKeyStore.getJwkSetKid();
 							
-							properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
-							properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_PSWD);
+							properties.remove(SecurityConstants.JOSE_KEYSTORE_FILE);
+							properties.remove(SecurityConstants.JOSE_KEYSTORE_PSWD);
 							properties.remove(algorithmPropertyName);
 							properties.remove(RSSecurityConstants.RSSEC_KEY_PSWD);
-							properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS);
-							properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
-							properties.put(JoseConstants.RSSEC_KEY_STORE_JWKSET, jwkSet);
-							properties.put(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS, jwkSetKid);
-							properties.put(RSSecurityConstants.RSSEC_KEY_STORE_TYPE, SecurityConstants.KEYSTORE_TYPE_JWK_VALUE);
+							properties.remove(SecurityConstants.JOSE_KEYSTORE_KEY_ALIAS);
+							properties.remove(SecurityConstants.JOSE_KEYSTORE_TYPE);
+							properties.put(SecurityConstants.JOSE_KEYSTORE_JWKSET, jwkSet);
+							properties.put(SecurityConstants.JOSE_KEYSTORE_KEY_ALIAS, jwkSetKid);
+							properties.put(SecurityConstants.JOSE_KEYSTORE_TYPE, SecurityConstants.KEYSTORE_TYPE_JWK_VALUE);
 						}catch(Exception e) {
 							String error = "Errore durante istanziazione della chiave pubblica '"+file+"': "+e.getMessage();
 							log.error(error,e);
@@ -934,9 +933,9 @@ public class JOSEUtils {
 						
 						if(content!=null) {
 							if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(type)) {
-								properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
-								properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_PSWD);
-								properties.put(JoseConstants.RSSEC_KEY_STORE_JWKSET, new String(content));
+								properties.remove(SecurityConstants.JOSE_KEYSTORE_FILE);
+								properties.remove(SecurityConstants.JOSE_KEYSTORE_PSWD);
+								properties.put(SecurityConstants.JOSE_KEYSTORE_JWKSET, new String(content));
 							}
 							else {
 								java.security.KeyStore keystore = null;
@@ -951,10 +950,10 @@ public class JOSEUtils {
 									}
 								}
 								if(keystore!=null) {
-									properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
-									// properties.remove(JoseConstants.RSSEC_KEY_STORE_TYPE); non va rimosso, serve per jceks
-									properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_PSWD);
-									properties.put(RSSecurityConstants.RSSEC_KEY_STORE, keystore);
+									properties.remove(SecurityConstants.JOSE_KEYSTORE_FILE);
+									// properties.remove(SecurityConstants.JOSE_KEYSTORE_TYPE); non va rimosso, serve per jceks
+									properties.remove(SecurityConstants.JOSE_KEYSTORE_PSWD);
+									properties.put(SecurityConstants.JOSE_KEYSTORE, keystore);
 								}
 							}
 						}
@@ -972,9 +971,9 @@ public class JOSEUtils {
 								}
 							}
 							if(jwkSet!=null) {
-								properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
-								properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_PSWD);
-								properties.put(JoseConstants.RSSEC_KEY_STORE_JWKSET, jwkSet);
+								properties.remove(SecurityConstants.JOSE_KEYSTORE_FILE);
+								properties.remove(SecurityConstants.JOSE_KEYSTORE_PSWD);
+								properties.put(SecurityConstants.JOSE_KEYSTORE_JWKSET, jwkSet);
 							}
 						}
 						else {
@@ -997,10 +996,10 @@ public class JOSEUtils {
 								}
 							}
 							if(keystore!=null) {
-								properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
-								// properties.remove(JoseConstants.RSSEC_KEY_STORE_TYPE); non va rimosso, serve per jceks
-								properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_PSWD);
-								properties.put(RSSecurityConstants.RSSEC_KEY_STORE, keystore);
+								properties.remove(SecurityConstants.JOSE_KEYSTORE_FILE);
+								// properties.remove(SecurityConstants.JOSE_KEYSTORE_TYPE); non va rimosso, serve per jceks
+								properties.remove(SecurityConstants.JOSE_KEYSTORE_PSWD);
+								properties.put(SecurityConstants.JOSE_KEYSTORE, keystore);
 							}
 						}
 					}

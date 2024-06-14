@@ -20,6 +20,14 @@ documentare visualizza credenziali!!
 
 AGGIUNTO API KEY!!!
 
+AGGIUNTI CHECK DEI CERTIFICATI ANCHE PER MESSAGE SECURITY
+
+AGGIUNTO OCSP POLICY IN HTTPS DELLE TOKEN POLICY E ATTRIBUTE AUTORITH
+
+FIX BUG TOKEN POLICY E AA DOVE SE SI SELEZIONAVA HTTPS CLIENT (o intrispection/userfino) senza https dell'endpoint non si attivava il connettore https
+
+Aggiunta possibilità di resettare le cache e verificare i certificati etc ovunque all'interno di una erogaizone/fruizione <- lavoro di Julio
+
 
 2024-04-02  Andrea Poli <apoli@link.it>
 

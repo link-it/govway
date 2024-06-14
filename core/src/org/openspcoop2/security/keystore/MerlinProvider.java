@@ -102,7 +102,7 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 		}
 	}
 	
-	public static final String SUFFIX_BYOK = ".byok";
+    public static final String SUFFIX_BYOK = ".byok";
 	
 	@Override
 	public void loadProperties(Properties properties, ClassLoader loader, PasswordEncryptor passwordEncryptor)
