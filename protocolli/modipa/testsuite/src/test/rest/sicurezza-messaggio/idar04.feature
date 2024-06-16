@@ -34,6 +34,9 @@ Background:
 @connettivita-base
 Scenario Outline: Test connettività base <tipo-test> (<descrizione>)
 
+# Svuoto la cache per evitare che venga generato lo stesso token in questo test usato già in altri
+* call reset_cache_token ({ })
+
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR04-<tipo-test>/v1"
 And path 'resources', 1, 'M'
 And request read('request.json')
@@ -136,6 +139,9 @@ Examples:
 @connettivita-base-kid-not-trusted
 Scenario Outline: Test connettività base <tipo-test> (<descrizione>) con kid non presente nel truststore
 
+# Svuoto la cache per evitare che venga generato lo stesso token in questo test usato già in altri
+* call reset_cache_token ({ })
+
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR04-<tipo-test>/v1"
 And path 'resources', 1, 'M'
 And request read('request.json')
@@ -194,6 +200,9 @@ Examples:
 @manomissione-token-richiesta
 Scenario Outline: Il payload del token di richiesta viene manomesso in modo da non far corrispondere più la firma e far arrabbiare l'erogazione (<tipo-test>; <descrizione>)
 
+# Svuoto la cache per evitare che venga generato lo stesso token in questo test usato già in altri
+* call reset_cache_token ({ })
+
 Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR04-<tipo-test>/v1'
 And path 'resources', 1, 'M'
 And request read('request.json')
@@ -218,6 +227,9 @@ Examples:
 
 @manomissione-token-risposta
 Scenario Outline: Il payload del token di risposta viene manomesso in modo da non far corrispondere più la firma e far arrabbiare la fruizione (<tipo-test>; <descrizione>)
+
+# Svuoto la cache per evitare che venga generato lo stesso token in questo test usato già in altri
+* call reset_cache_token ({ })
 
 Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR04-<tipo-test>/v1'
 And path 'resources', 1, 'M'
@@ -246,6 +258,9 @@ Examples:
 @manomissione-payload-richiesta
 Scenario Outline: Il payload della richiesta viene modificato in modo da non far coincidere la firma e fare arrabbiare l'erogazione (<tipo-test>; <descrizione>)
 
+# Svuoto la cache per evitare che venga generato lo stesso token in questo test usato già in altri
+* call reset_cache_token ({ })
+
 Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR04-<tipo-test>/v1'
 And path 'resources', 1, 'M'
 And request read('request.json')
@@ -269,6 +284,9 @@ Examples:
 
 @manomissione-payload-risposta
 Scenario Outline: Il payload della risposta viene modificato in modo da non far coincidere la firma e fare arrabbiare la fruizione (<tipo-test>; <descrizione>)
+
+# Svuoto la cache per evitare che venga generato lo stesso token in questo test usato già in altri
+* call reset_cache_token ({ })
 
 Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR04-<tipo-test>/v1'
 And path 'resources', 1, 'M'
@@ -299,6 +317,9 @@ Examples:
 @manomissione-payload-richiesta-vuota
 Scenario Outline: Il payload della richiesta viene eliminato in modo da non far coincidere la firma e fare arrabbiare l'erogazione (<tipo-test>; <descrizione>)
 
+# Svuoto la cache per evitare che venga generato lo stesso token in questo test usato già in altri
+* call reset_cache_token ({ })
+
 Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR04-<tipo-test>/v1'
 And path 'resources', 1, 'M'
 And request read('request.json')
@@ -323,6 +344,9 @@ Examples:
 
 @manomissione-payload-risposta-vuota
 Scenario Outline: Il payload della risposta viene eliminato in modo da non far coincidere la firma e fare arrabbiare la fruizione (<tipo-test>; <descrizione>)
+
+# Svuoto la cache per evitare che venga generato lo stesso token in questo test usato già in altri
+* call reset_cache_token ({ })
 
 Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR04-<tipo-test>-PayloadVuoto/v1'
 And path 'resources', 1, 'M'
@@ -351,6 +375,9 @@ Examples:
 
 @manomissione-header-http-firmati-richiesta
 Scenario Outline: Lo header da firmare IDAR04TestHeader viene manomesso nella richiesta (<tipo-test>; <descrizione>)
+
+# Svuoto la cache per evitare che venga generato lo stesso token in questo test usato già in altri
+* call reset_cache_token ({ })
 
 Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR04-<tipo-test>/v1'
 And path 'resources', 1, 'M'
@@ -924,6 +951,9 @@ Examples:
 @audience-differenti-ko-auth-claim-deny
 Scenario Outline: Test con audience nell'authorazione token diverso da quello atteso <tipo-test> (<descrizione>)
 
+# Svuoto la cache per evitare che venga generato lo stesso token in questo test usato già in altri
+* call reset_cache_token ({ })
+
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR04-<tipo-test>/v1"
 And path 'differentAudience', 1, 'M'
 And request read('request.json')
@@ -949,6 +979,9 @@ Examples:
 
 @audience-differenti-ko
 Scenario Outline: Test con audience nell'authorazione token diverso da quello atteso <tipo-test> (<descrizione>)
+
+# Svuoto la cache per evitare che venga generato lo stesso token in questo test usato già in altri
+* call reset_cache_token ({ })
 
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR04-<tipo-test>/v1"
 And path 'resources', 1, 'M'

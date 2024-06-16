@@ -454,24 +454,30 @@ public class CommonConsegnaMultipla {
 				sb.append(query2);
 				sb.append(" id:").append(id_transazione);
 				
-				for (Map<String, Object> map : letto) {
-					if(map!=null && !map.isEmpty()) {
-						for (Map.Entry<String,Object> entry : map.entrySet()) {
-							if(entry!=null) {
-								ConfigLoader.getLoggerCore().error("Entry["+row+"] key["+entry.getKey()+"]=["+entry.getValue()+"]");
-								sb.append(" entry[").append(row).append("]:key["+entry.getKey()+"]:value["+entry.getValue()+"]");
-							}
-							else {
-								ConfigLoader.getLoggerCore().error("Entry["+row+"] null");
-								sb.append(" entry[").append(row).append("]:null");
+				if(letto!=null && !letto.isEmpty()) {
+					for (Map<String, Object> map : letto) {
+						if(map!=null && !map.isEmpty()) {
+							for (Map.Entry<String,Object> entry : map.entrySet()) {
+								if(entry!=null) {
+									ConfigLoader.getLoggerCore().error("Entry["+row+"] key["+entry.getKey()+"]=["+entry.getValue()+"]");
+									sb.append(" entry[").append(row).append("]:key["+entry.getKey()+"]:value["+entry.getValue()+"]");
+								}
+								else {
+									ConfigLoader.getLoggerCore().error("Entry["+row+"] null");
+									sb.append(" entry[").append(row).append("]:null");
+								}
 							}
 						}
+						else {
+							ConfigLoader.getLoggerCore().error("Entry["+row+"] empty");
+							sb.append(" entry[").append(row).append("]:empty");
+						}
+						row++;
 					}
-					else {
-						ConfigLoader.getLoggerCore().error("Entry["+row+"] empty");
-						sb.append(" entry[").append(row).append("]:empty");
-					}
-					row++;
+				}
+				else {
+					ConfigLoader.getLoggerCore().error("Entry null");
+					sb.append(" entry null");	
 				}
 				
 				index++;
