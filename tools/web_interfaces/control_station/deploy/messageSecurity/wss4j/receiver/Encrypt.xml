@@ -89,6 +89,9 @@
 			<item type="hidden" name="keystorePrivateKeyPasswordCallback" value="true">
 			      	<property name="passwordCallbackRef" />
 			</item>
+			<item type="select" name="keystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="org.apache.ws.security.crypto.merlin.file.byok" properties="decryptionPropRefId" />
+			</item>
 
 		</subsection>
 

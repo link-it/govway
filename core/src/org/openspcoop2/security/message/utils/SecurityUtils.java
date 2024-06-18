@@ -225,30 +225,31 @@ public class SecurityUtils {
 		}
 		kp.setByokPolicy(keyStoreByokPolicy);
 		
-		readKeystoreAliasParamsMerlin(listKP, list, kp);
+		listKP.add(kp);
+		
+		readKeystoreAliasParamsMerlin(list, kp);
 	}
-	private static void readKeystoreAliasParamsMerlin(List<KeystoreParams> listKP, List<MessageSecurityFlowParameter> list, KeystoreParams kp) {
-		if(readKeystoreSignatureAliasParamsMerlin(listKP, list,  kp)) {
+	private static void readKeystoreAliasParamsMerlin(List<MessageSecurityFlowParameter> list, KeystoreParams kp) {
+		if(readKeystoreSignatureAliasParamsMerlin(list,  kp)) {
 			return;
 		}
-		if(readKeystoreEncryptAliasParamsMerlin(listKP, list, kp)) {
+		if(readKeystoreEncryptAliasParamsMerlin(list, kp)) {
 			return;
 		}
-		if(readKeystoreUserAliasParamsMerlin(listKP, list, kp)) {
+		if(readKeystoreUserAliasParamsMerlin(list, kp)) {
 			/**return;*/
 		}
 	}
-	private static boolean readKeystoreSignatureAliasParamsMerlin(List<KeystoreParams> listKP, List<MessageSecurityFlowParameter> list, KeystoreParams kp) {
+	private static boolean readKeystoreSignatureAliasParamsMerlin(List<MessageSecurityFlowParameter> list, KeystoreParams kp) {
 		String alias = readProperty(list, SecurityConstants.SIGNATURE_USER);
 		if (alias != null && StringUtils.isNotEmpty(alias)) {
 			kp.setKeyAlias(alias);
 			kp.setKeyPassword(readProperty(list, SecurityConstants.SIGNATURE_PASSWORD));
-			listKP.add(kp);
 			return true;
 		}
 		return false;
 	}
-	private static boolean readKeystoreEncryptAliasParamsMerlin(List<KeystoreParams> listKP, List<MessageSecurityFlowParameter> list, KeystoreParams kp) {	
+	private static boolean readKeystoreEncryptAliasParamsMerlin(List<MessageSecurityFlowParameter> list, KeystoreParams kp) {	
 		String alias = readProperty(list, SecurityConstants.ENCRYPTION_USER);
 		if (alias != null && StringUtils.isNotEmpty(alias)) {
 			kp.setKeyAlias(alias);
@@ -257,7 +258,6 @@ public class SecurityUtils {
 				pwd = readProperty(list, SecurityConstants.DECRYPTION_PASSWORD);
 			}
 			kp.setKeyPassword(pwd);
-			listKP.add(kp);
 			return true;
 		}
 		
@@ -269,12 +269,11 @@ public class SecurityUtils {
 				pwd = readProperty(list, SecurityConstants.ENCRYPTION_PASSWORD);
 			}
 			kp.setKeyPassword(pwd);
-			listKP.add(kp);
 			return true;
 		}
 		return false;
 	}
-	private static boolean readKeystoreUserAliasParamsMerlin(List<KeystoreParams> listKP, List<MessageSecurityFlowParameter> list, KeystoreParams kp) {	
+	private static boolean readKeystoreUserAliasParamsMerlin(List<MessageSecurityFlowParameter> list, KeystoreParams kp) {	
 		
 		String alias = readProperty(list, SecurityConstants.USER);
 		if (alias != null && StringUtils.isNotEmpty(alias)) {
@@ -287,7 +286,6 @@ public class SecurityUtils {
 				pwd = readProperty(list, SecurityConstants.DECRYPTION_PASSWORD);
 			}
 			kp.setKeyPassword(pwd);
-			listKP.add(kp);
 			return true;
 		}
 		return false;
