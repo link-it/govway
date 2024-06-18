@@ -1970,6 +1970,10 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPI_VUOTI = "Non è stato selezionato nessun gruppo di metadati";
 	public static final String MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPO_VUOTO = "Non è stato selezionato nessun valore per il gruppo di metadati {0}";
 	
+	public static final String MESSAGGIO_ERRORE_VALORE_PROPRIETA_255 = "Il valore della proprietà non deve superare i 255 caratteri";
+	public static final String MESSAGGIO_ERRORE_VALORE_PROPRIETA_4000 = "Il valore della proprietà non deve superare i 4000 caratteri";
+	
+	
 	/** ICONE E TOOLTIP 
 	 *  La definizione delle icone e' stata spostata nel file {@link Costanti} per aver un unico punto dove sono definite
 	 * 

@@ -41,6 +41,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
@@ -68,7 +69,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 		super(org.slf4j.LoggerFactory.getLogger(SoggettiApiServiceImpl.class));
 	}
 
-	private AuthorizationConfig getAuthorizationConfig() throws Exception{
+	private AuthorizationConfig getAuthorizationConfig() throws UtilsException{
 		return new AuthorizationConfig(ServerProperties.getInstance().getProperties());
 	}
 
@@ -89,12 +90,12 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 
 			SoggettiEnv env = new SoggettiEnv(context.getServletRequest(),  profilo, context);
 
-			/*if (profilo == null)
+			/**if (profilo == null)
 				profilo = Helper.getProfiloDefault();*/
             
 			Soggetto soggetto = null;
 			try{
-				soggetto = (Soggetto) body;
+				soggetto = body;
 				
 				if ( soggetto.getCredenziali() != null && soggetto.getCredenziali().getModalitaAccesso() != null ) {
 					soggetto.setCredenziali(Helper.translateCredenziali(soggetto.getCredenziali(), true));
@@ -109,8 +110,8 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			}
 			
 			String protocollo = env.protocolFactory.getProtocol();
-			String tipo_soggetto = ProtocolFactoryManager.getInstance().getDefaultOrganizationTypes().get(protocollo);
-			IDSoggetto idSoggetto = new IDSoggetto(tipo_soggetto,soggetto.getNome());
+			String tipoSoggetto = ProtocolFactoryManager.getInstance().getDefaultOrganizationTypes().get(protocollo);
+			IDSoggetto idSoggetto = new IDSoggetto(tipoSoggetto,soggetto.getNome());
 		
 			SoggettiApiHelper.validateCredentials(soggetto.getCredenziali());
 			

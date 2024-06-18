@@ -4334,7 +4334,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Proprieta"
+              $ref: "#/components/schemas/ProprietaOpzioneCifratura"
         required: true
       responses:
         "201":
@@ -4374,7 +4374,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Proprieta"
+                $ref: "#/components/schemas/ProprietaOpzioneCifratura"
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401":
@@ -4401,7 +4401,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Proprieta"
+              $ref: "#/components/schemas/ProprietaOpzioneCifratura"
         required: true
       responses:
         "204":
@@ -7415,7 +7415,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Proprieta"
+              $ref: "#/components/schemas/ProprietaOpzioneCifratura"
         required: true
       responses:
         "201":
@@ -7456,7 +7456,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Proprieta"
+                $ref: "#/components/schemas/ProprietaOpzioneCifratura"
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401":
@@ -7483,7 +7483,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Proprieta"
+              $ref: "#/components/schemas/ProprietaOpzioneCifratura"
         required: true
       responses:
         "204":
@@ -8830,7 +8830,7 @@ components:
           proprieta:
             type: "array"
             items:
-              $ref: "#/components/schemas/Proprieta4000"
+              $ref: "#/components/schemas/Proprieta4000OpzioneCifratura"
     SoggettoItem:
       type: "object"
       allOf:
@@ -8885,7 +8885,7 @@ components:
           proprieta:
             type: "array"
             items:
-              $ref: "#/components/schemas/Proprieta4000"
+              $ref: "#/components/schemas/Proprieta4000OpzioneCifratura"
           modi:
             type: "object"
             discriminator:
@@ -12400,15 +12400,23 @@ components:
           maxLength: 255
           type: "string"
         valore:
-          maxLength: 255
           type: "string"
+    ProprietaOpzioneCifratura:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/Proprieta"
+      - type: "object"
+        properties:
+          encrypted:
+            type: "boolean"
+            default: false
     ElencoProprieta:
       type: "object"
       properties:
         proprieta:
           type: "array"
           items:
-            $ref: "#/components/schemas/Proprieta"
+            $ref: "#/components/schemas/ProprietaOpzioneCifratura"
     Proprieta4000:
       required:
       - "nome"
@@ -12419,8 +12427,16 @@ components:
           maxLength: 255
           type: "string"
         valore:
-          maxLength: 4000
           type: "string"
+    Proprieta4000OpzioneCifratura:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/Proprieta4000"
+      - type: "object"
+        properties:
+          encrypted:
+            type: "boolean"
+            default: false
     AAName:
       maxLength: 255
       pattern: "^[_A-Za-z][\\-_A-Za-z0-9]*$"

@@ -3504,14 +3504,23 @@ components:
           maxLength: 255
         valore:
           type: string
-          maxLength: 255
+          # Encrypted maxLength: 255
+    ProprietaOpzioneCifratura:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/Proprieta'
+          - type: object
+            properties:
+              encrypted:
+                type: boolean
+                default: false
     ElencoProprieta:
       type: object  
       properties:
         proprieta:        
           type: array
           items:
-            $ref: '#/components/schemas/Proprieta'
+            $ref: '#/components/schemas/ProprietaOpzioneCifratura'
 
     Proprieta4000:
       type: object
@@ -3524,7 +3533,16 @@ components:
           maxLength: 255
         valore:
           type: string
-          maxLength: 4000
+          # Encrypted maxLength: 4000
+    Proprieta4000OpzioneCifratura:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/Proprieta4000'
+          - type: object
+            properties:
+              encrypted:
+                type: boolean
+                default: false
 
     AAName:
       type: string

@@ -7,5 +7,10 @@
 	},
 	"dominio": "interno",
 	"descrizione": "Descrizione Soggetto Json",
-	"ruoli": [ "RuoloDemo" ]
+	"ruoli": [ "RuoloDemo" ],
+	"proprieta":[
+		{"nome":"nome","valore":"valore"},
+		{"nome":"nome2","valore":"valore2","encrypted":false},
+		{"nome":"nome3","valore":"valore3","encrypted":true}
+	]
 }

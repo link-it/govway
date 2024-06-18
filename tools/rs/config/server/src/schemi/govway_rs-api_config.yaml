@@ -4248,7 +4248,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Proprieta'
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ProprietaOpzioneCifratura'
       responses:
         "201":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
@@ -4287,7 +4287,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/Proprieta"
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/ProprietaOpzioneCifratura"
         "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         "401":
@@ -4314,7 +4314,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Proprieta'
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ProprietaOpzioneCifratura'
       responses: 
         "204":
           description: La proprietà di configurazione è stata aggiornata correttamente
@@ -7256,7 +7256,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Proprieta'
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ProprietaOpzioneCifratura'
       responses:
         "201":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
@@ -7296,7 +7296,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/Proprieta"
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/ProprietaOpzioneCifratura"
         "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         "401":
@@ -7323,7 +7323,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Proprieta'
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ProprietaOpzioneCifratura'
       responses: 
         "204":
           description: La proprietà di configurazione è stata aggiornata correttamente
@@ -8668,7 +8668,7 @@ components:
             proprieta:
               type: array
               items:
-                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Proprieta4000'
+                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Proprieta4000OpzioneCifratura'
     SoggettoItem:
       type: object
       allOf:
@@ -8723,7 +8723,7 @@ components:
             proprieta:
               type: array
               items:
-                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Proprieta4000'
+                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Proprieta4000OpzioneCifratura'
             modi:
               type: object
               oneOf:

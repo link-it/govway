@@ -30,9 +30,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.byok.BYOKUtilities;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.byok.LockUtilities;
 
 /**
  * SecretDecoder
@@ -82,8 +85,23 @@ public class SecretDecoder extends HttpServlet {
 			
 			String secretToUnwrap = registroHelper.getParameter(UtilsCostanti.PARAMETRO_SECRET_TO_UNWRAP);
 			
+			// Viaggia comunque un valore cifrato, quindi il caso della informazione in chiaro non è riconoscibile
 			if (core.getDriverBYOKUtilities().isEnabledBYOK()) {
+				StringBuilder sb = new StringBuilder();
 				ControlStationCore.logInfo("SecretDecoder: secretToUnwrap: " + secretToUnwrap);
+				String messaggioInformativoInformazioneNonCifrata = core.getNotaInformativaInformazioneMemorizzataInChiaro();
+				if(BYOKUtilities.isWrappedValue(secretToUnwrap)) {
+					if(!core.getDriverBYOKUtilities().isWrapped(secretToUnwrap)) {
+						LockUtilities.appendErrorMessageSecurityPolicyDifferente(core.getNotaInformativaInformazioneCifrataSecurityPolicyDifferente(), sb, secretToUnwrap);
+					}
+				}
+				else if(messaggioInformativoInformazioneNonCifrata!=null && StringUtils.isNotEmpty(messaggioInformativoInformazioneNonCifrata)) {
+					sb.append(messaggioInformativoInformazioneNonCifrata);
+				}
+				
+				if(sb.length()>0) {
+					sb.append("\n\nValore in chiaro: ");
+				}
 				risposta = core.getDriverBYOKUtilities().unwrap(secretToUnwrap);
 			}
 			else {

@@ -216,7 +216,10 @@ public class LockUtilities {
 		}
 	}
 	private void appendErrorMessageSecurityPolicyDifferente(StringBuilder sb, String wrapValue) {
-		if(this.messaggioInformativoInformazioneCifrataDifferenteSecurityPolicy!=null && StringUtils.isNotEmpty(this.messaggioInformativoInformazioneCifrataDifferenteSecurityPolicy)) {
+		appendErrorMessageSecurityPolicyDifferente(this.messaggioInformativoInformazioneCifrataDifferenteSecurityPolicy, sb, wrapValue); 
+	}
+	public static void appendErrorMessageSecurityPolicyDifferente(String messaggioInformativoInformazioneCifrataDifferenteSecurityPolicy,StringBuilder sb, String wrapValue) {
+		if(messaggioInformativoInformazioneCifrataDifferenteSecurityPolicy!=null && StringUtils.isNotEmpty(messaggioInformativoInformazioneCifrataDifferenteSecurityPolicy)) {
 			String suffix ="";
 			try {
 				String old = BYOKUtilities.getPolicy(wrapValue);
@@ -226,7 +229,7 @@ public class LockUtilities {
 			}catch(Exception ignore) {
 				// ignore
 			}
-			String s = this.messaggioInformativoInformazioneCifrataDifferenteSecurityPolicy.replace("@SECURITY_POLICY_ID@", suffix);
+			String s = messaggioInformativoInformazioneCifrataDifferenteSecurityPolicy.replace("@SECURITY_POLICY_ID@", suffix);
 			sb.append(s);
 		}
 	}

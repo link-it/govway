@@ -19,56 +19,30 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import javax.validation.constraints.*;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class Proprieta  {
+public class Proprieta4000OpzioneCifratura extends Proprieta4000 {
   
-  @Schema(required = true, description = "")
-  private String nome = null;
-  
-  @Schema(required = true, description = "")
-  private String valore = null;
+  @Schema(description = "")
+  private Boolean encrypted = false;
  /**
-   * Get nome
-   * @return nome
+   * Get encrypted
+   * @return encrypted
   **/
-  @JsonProperty("nome")
-  @NotNull
+  @JsonProperty("encrypted")
   @Valid
- @Size(max=255)  public String getNome() {
-    return this.nome;
+  public Boolean isEncrypted() {
+    return this.encrypted;
   }
 
-  public void setNome(String nome) {
-    this.nome = nome;
+  public void setEncrypted(Boolean encrypted) {
+    this.encrypted = encrypted;
   }
 
-  public Proprieta nome(String nome) {
-    this.nome = nome;
-    return this;
-  }
-
- /**
-   * Get valore
-   * @return valore
-  **/
-  @JsonProperty("valore")
-  @NotNull
-  @Valid
-  public String getValore() {
-    return this.valore;
-  }
-
-  public void setValore(String valore) {
-    this.valore = valore;
-  }
-
-  public Proprieta valore(String valore) {
-    this.valore = valore;
+  public Proprieta4000OpzioneCifratura encrypted(Boolean encrypted) {
+    this.encrypted = encrypted;
     return this;
   }
 
@@ -76,10 +50,9 @@ public class Proprieta  {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Proprieta {\n");
-    
-    sb.append("    nome: ").append(Proprieta.toIndentedString(this.nome)).append("\n");
-    sb.append("    valore: ").append(Proprieta.toIndentedString(this.valore)).append("\n");
+    sb.append("class Proprieta4000OpzioneCifratura {\n");
+    sb.append("    ").append(Proprieta4000OpzioneCifratura.toIndentedString(super.toString())).append("\n");
+    sb.append("    encrypted: ").append(Proprieta4000OpzioneCifratura.toIndentedString(this.encrypted)).append("\n");
     sb.append("}");
     return sb.toString();
   }

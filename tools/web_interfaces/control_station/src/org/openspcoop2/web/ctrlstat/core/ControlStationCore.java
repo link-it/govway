@@ -2335,8 +2335,11 @@ public class ControlStationCore {
 			// inizializzo DateManager
 			DateManager.initializeDataManager(org.openspcoop2.utils.date.SystemDate.class.getName(), null, ControlStationCore.log);
 
-			// inizializzo JMX
-			if(!initForApi) {
+			// inizializzo JMX/BYOK
+			if(initForApi) {
+				initBYOK(ConfigurazioneNodiRuntime.getConfigurazioneNodiRuntime());
+			}
+			else {
 				this.initCoreJmxResources();
 			}
 
@@ -3310,6 +3313,17 @@ public class ControlStationCore {
 		}
 	}
 
+	private void initBYOK(ConfigurazioneNodiRuntime configurazioneNodiRuntime) {
+		this.configurazioneNodiRuntime = configurazioneNodiRuntime;
+		this.invoker = new InvokerNodiRuntime(log, this.configurazioneNodiRuntime);
+		
+		this.driverBYOKUtilities = new DriverBYOKUtilities(false, log, this.configurazioneNodiRuntime);
+		
+		this.lockUtilities = new LockUtilities(this.driverBYOKUtilities,
+				this.isVisualizzaInformazioniCifrate(), this.getByokWarningMessage(), UtilsCostanti.SERVLET_NAME_SECRET_DECODER,
+				this.getNotaInformativaInformazioneMemorizzataInChiaro(), this.getNotaInformativaInformazioneCifrataSecurityPolicyDifferente(), this.isVisualizzaCampiPasswordComeLock());
+		
+	}
 	
 	private void initCoreJmxResources() throws ControlStationCoreException {
 
@@ -3320,32 +3334,24 @@ public class ControlStationCore {
 					
 			// Opzioni Accesso JMX della PdD
 			
-			this.configurazioneNodiRuntime = consoleProperties.getConfigurazioneNodiRuntime();
-			this.invoker = new InvokerNodiRuntime(log, this.configurazioneNodiRuntime);
-			
-			this.driverBYOKUtilities = new DriverBYOKUtilities(false, log, this.configurazioneNodiRuntime);
-			
-			this.lockUtilities = new LockUtilities(this.driverBYOKUtilities,
-					this.isVisualizzaInformazioniCifrate(), this.getByokWarningMessage(), UtilsCostanti.SERVLET_NAME_SECRET_DECODER,
-					this.getNotaInformativaInformazioneMemorizzataInChiaro(), this.getNotaInformativaInformazioneCifrataSecurityPolicyDifferente(), this.isVisualizzaCampiPasswordComeLock());
+			initBYOK(consoleProperties.getConfigurazioneNodiRuntime());
 			
 			this.isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus = consoleProperties.isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus();
 			this.jmxPdDAliases = consoleProperties.getJmxPdDAliases();
-			if(this.singlePdD==false){
+			if(!this.singlePdD &&
 				// se esistono degli alias allora assegno poi come alias i nomi delle pdd operative
-				if(this.jmxPdDAliases!=null && this.jmxPdDAliases.size()>0){
-					this.jmxPdDAliases = new ArrayList<>();
-					PddCore pddCore = new PddCore(this);
-					try{
-						List<PdDControlStation> pddList = pddCore.pddList(null, new ConsoleSearch(true));
-						for (PdDControlStation pddControlStation : pddList) {
-							if(PddTipologia.OPERATIVO.toString().equals(pddControlStation.getTipo())){
-								this.jmxPdDAliases.add(pddControlStation.getNome());
-							}
+				this.jmxPdDAliases!=null && !this.jmxPdDAliases.isEmpty()){
+				this.jmxPdDAliases = new ArrayList<>();
+				PddCore pddCore = new PddCore(this);
+				try{
+					List<PdDControlStation> pddList = pddCore.pddList(null, new ConsoleSearch(true));
+					for (PdDControlStation pddControlStation : pddList) {
+						if(PddTipologia.OPERATIVO.toString().equals(pddControlStation.getTipo())){
+							this.jmxPdDAliases.add(pddControlStation.getNome());
 						}
-					}catch(Exception e){
-						// ignore
 					}
+				}catch(Exception e){
+					// ignore
 				}
 			}
 			
@@ -3360,7 +3366,7 @@ public class ControlStationCore {
 					if(descrizione!=null)
 						this.jmxPdDDescrizioni.put(alias,descrizione);
 					
-					if(this.singlePdD==false){
+					if(!this.singlePdD){
 						String url = this.configurazioneNodiRuntime.getResourceUrl(alias);
 						// replace con url del nodo
 						PddCore pddCore = new PddCore(this);
