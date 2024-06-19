@@ -32,9 +32,12 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.byok.BYOKUtilities;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.byok.LockUtilities;
 
 /**
@@ -70,7 +73,11 @@ public class SecretDecoder extends HttpServlet {
 	}
 
 	private void processRequest(HttpServletRequest request, HttpServletResponse response) {
-		String risposta = null;
+		String risposta = "";
+		String messaggioEsito = null;
+		String messageType = null;
+		response.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+		
 		try(ByteArrayOutputStream baosPayload = new ByteArrayOutputStream();){
 			HttpRequestMethod httpRequestMethod = HttpRequestMethod.valueOf(request.getMethod().toUpperCase()); 
 
@@ -102,21 +109,22 @@ public class SecretDecoder extends HttpServlet {
 				if(sb.length()>0) {
 					sb.append("\n\nValore in chiaro: ");
 				}
-				risposta = core.getDriverBYOKUtilities().unwrap(secretToUnwrap);
+				messaggioEsito = core.getDriverBYOKUtilities().unwrap(secretToUnwrap);
+				messageType = MessageType.INFO.toString();
 			}
 			else {
-				risposta = "ERROR: BYOK Unitialized";
+				messaggioEsito = "ERROR: BYOK Unitialized";
+				messageType = MessageType.ERROR.toString();
 			}
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la decodifica: "+e.getMessage(), e);
-			response.setStatus(500);
-			risposta = UtilsCostanti.MESSAGGIO_ERRORE_UNWRAP;
+			messaggioEsito = UtilsCostanti.MESSAGGIO_ERRORE_UNWRAP;
+			messageType = MessageType.ERROR.toString();
 		} finally {
+			risposta = ServletUtils.getJson(ServletUtils.getJsonPair(UtilsCostanti.KEY_ESITO, messageType), ServletUtils.getJsonPair(UtilsCostanti.KEY_DETTAGLIO_ESITO, messaggioEsito));
 			try {
-				if(risposta!=null) {
-					ServletOutputStream outputStream = response.getOutputStream();
-					outputStream.write(risposta.getBytes());
-				}
+				ServletOutputStream outputStream = response.getOutputStream();
+				outputStream.write(risposta.getBytes());
 			}catch(Exception eErr){
 				ControlStationCore.logError("Errore durante la serializzazione dell'errore di decodifica: "+eErr.getMessage(), eErr);
 			}

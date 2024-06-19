@@ -257,6 +257,8 @@ boolean inserisciDivComandiAffiancati =
 									    				$(idToOpen).dialog("open");
 					    							},
 					    							error: function(data, textStatus, jqXHR){
+					    								var val = data.responseURL;
+					    								document.location = val;
 					    								<%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
 					    							}
 					    						}
@@ -289,9 +291,11 @@ boolean inserisciDivComandiAffiancati =
 									    				mostraEsitoOperazioneAjaxModal(data);
 					    							},
 					    							error: function(data, textStatus, jqXHR){
+					    								var val = data.responseURL;
+					    								document.location = val;
 					    								<%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
 					    								// visualizza messaggio di errore ricevuto dal server
-					    								mostraEsitoOperazioneAjaxModal(data);
+					    								//mostraEsitoOperazioneAjaxModal(data);
 					    							}
 					    						}
 					    					);

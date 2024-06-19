@@ -101,6 +101,7 @@ public class LoginCostanti {
 	public static final String LABEL_ERRORE = "Errore";
 	public static final String LABEL_CONSOLE_RIPRISTINATA = "Console ripristinata con successo.";
 	public static final String LABEL_LOGIN_PASSWORD_AGGIORNATA_CON_SUCCESSO = "Password aggiornata con successo";
+	public static final String LABEL_REFRESH_SESSIONE_CONSOLE_RIPRISTINATA = "Rilevata sessione scaduta; una nuova sessione &egrave; stata creata per consentire l'utilizzo della console.";
 	
 	/* LABEL MENU' AZIONI UTENTE */
 	

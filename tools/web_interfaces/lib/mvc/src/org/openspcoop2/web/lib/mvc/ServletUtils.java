@@ -46,6 +46,7 @@ import org.openspcoop2.web.lib.mvc.Dialog.BodyElement;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.slf4j.Logger;
+import org.springframework.http.HttpStatus;
 
 /**
  * ServletUtils
@@ -646,9 +647,33 @@ public class ServletUtils {
 			
 			if(idSessionTab != null) {
 				Map<String, Object> mapSrc = sessionMap.get(idSessionTab);
-				mapDest = (HashMap<String, Object>) SerializationUtils.clone(((HashMap<String, Object>)mapSrc));
+				// in questo ramo devo riconoscere se ho cliccato su un tab dopo che e' scaduta la sessione, ma e' stato fatto login in un tab diverso
+				// in questo caso mi arrivano entrambi gli id ma non e' stato trovato una mappa sorgente nella lista delle mappe salvate
+				// gli id possono essere uguali = clic sullo stesso tab
+				// gli id possono non coincidere = apertura di un nuovo tab da un tab scaduto
+				if(idSessioneTabSrc != null && idSessioneTabDest != null) {
+					mapDest = new HashMap<>(); // nuova mappa dopo click su tab dove non e' stata rinnovata la sessione
+					// vengono riportati gli attributi relativi all'utenza collegata
+					if(mapSrc.containsKey(Costanti.SESSION_ATTRIBUTE_USER)) {
+						mapDest.put(Costanti.SESSION_ATTRIBUTE_USER, mapSrc.get(Costanti.SESSION_ATTRIBUTE_USER));
+					}
+					// page data
+					if(mapSrc.containsKey(Costanti.SESSION_ATTRIBUTE_PAGE_DATA)) {
+						mapDest.put(Costanti.SESSION_ATTRIBUTE_PAGE_DATA, mapSrc.get(Costanti.SESSION_ATTRIBUTE_PAGE_DATA));
+					}
+					// general data
+					if(mapSrc.containsKey(Costanti.SESSION_ATTRIBUTE_GENERAL_DATA)) {
+						mapDest.put(Costanti.SESSION_ATTRIBUTE_GENERAL_DATA, mapSrc.get(Costanti.SESSION_ATTRIBUTE_GENERAL_DATA));
+					}
+					
+					// attributo che indica l'id del tab con la sessione su cui fare refresh
+					mapDest.put(Costanti.SESSION_ATTRIBUTE_TAB_MAP_REFRESH_TAB_ID, idSessioneTabDest); 
+				} else {
+					mapDest = (HashMap<String, Object>) SerializationUtils.clone(((HashMap<String, Object>)mapSrc)); // mappa clonata dalla piu' vecchia sessione creata
+				}
 			} else {
-				mapDest = new HashMap<>();
+				mapDest = new HashMap<>(); // nuova mappa dopo login.
+				mapDest.put(Costanti.SESSION_ATTRIBUTE_TAB_MAP_CREATION_TAB_ID, idSessioneTabDest); // salvo l'identificativo del tab che ha creato la sessione
 			}
 		}
 		
@@ -909,5 +934,9 @@ public class ServletUtils {
 		
 		sb.append(Costanti.CHAR_CHIUSURA_JSON);
 		return sb.toString();
+	}
+	
+	public static void setErrorStatusCodeInRequestAttribute(HttpServletRequest request, HttpStatus httpStatus){
+		request.setAttribute(Costanti.REQUEST_ATTRIBUTE_SET_ERROR_CODE, httpStatus);
 	}
 }

@@ -66,6 +66,7 @@ public class Costanti {
 	/** PARAMETER ATTRIBUTE */
 	
 	public static final String REQUEST_ATTIBUTE_PARAMS = "params";
+	public static final String REQUEST_ATTRIBUTE_SET_ERROR_CODE = "__setErrorCode__";
 	
 	
 	/** SEARCH */
@@ -174,7 +175,8 @@ public class Costanti {
 	protected static final String SESSION_ATTRIBUTE_CONFIGURAZIONI_PERSONALIZZATE ="ConfigurazioniPersonalizzate";
 	public static final String SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX = "oldConfProp_";
 	
-	
+	public static final String SESSION_ATTRIBUTE_TAB_MAP_CREATION_TAB_ID = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "creation_tabId";
+	public static final String SESSION_ATTRIBUTE_TAB_MAP_REFRESH_TAB_ID = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "refresh_tabId";
 	
 	
 	/** COOKIES **/
@@ -286,6 +288,7 @@ public class Costanti {
 	public static final String PARAMETER_MESSAGE_TITLE ="mpTitle";
 	public static final String PARAMETER_MESSAGE_TYPE ="mpType";
 	public static final String PARAMETER_MESSAGE_BREADCRUMB ="mpBC";
+	public static final String PARAMETER_MESSAGE_ERROR_CODE ="mpCode";
 	
 	/** PARAMETRI TAB_ID **/
 	

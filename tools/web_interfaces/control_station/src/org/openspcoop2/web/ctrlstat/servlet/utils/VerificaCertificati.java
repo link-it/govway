@@ -186,7 +186,6 @@ public class VerificaCertificati extends HttpServlet {
 
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la decodifica: "+e.getMessage(), e);
-			response.setStatus(500);
 			messaggioEsito = UtilsCostanti.MESSAGGIO_ERRORE_VERIFICA_CERTIFICATI;
 			messageType = MessageType.ERROR.toString();
 		} finally {

@@ -174,6 +174,9 @@
  function downloadValoreDecodificato(evt) {
     // Recupero la URL e il valore da decodificare
     var urlLockDecoder = $("#__i_hidden_lockurl_").val();
+    
+    // addTabID
+	urlLockDecoder = addTabIdParam(urlLockDecoder,true);
 
     // Resettare i valori di lock dopo l'operazione
     resetValoriLock();
@@ -190,6 +193,9 @@ function visualizzaValoreDecodificato(evt) {
 	var urlLockDecoder = $("#__i_hidden_lockurl_").val();
 	var valToDecode = $("#__i_hidden_lockvalue_").val();
 	
+	// addTabID
+	urlLockDecoder = addTabIdParam(urlLockDecoder,true);
+	
 	// chiamata ajax
 	visualizzaAjaxStatus();
 	
@@ -202,34 +208,45 @@ function visualizzaValoreDecodificato(evt) {
 	    },
 	    contentType: 'application/x-www-form-urlencoded',
 		success: function(data, textStatus, jqXHR){
-			// inserimento del valore nella text area
-			$("textarea[id^='txtA_ne_dec']").val(data);
+			var esito = data.esito;
+			var dettaglio = data.dettaglioEsito;
 			
-			// visualizzo la text area 
-			$("#txtA_ne_dec").show();
-			
-			// visualizzo il pulsante di copia
-			$("#iconCopy_dec").show();
-			
-			// nascondo la nota
-			$("#visualizzaInformazioniCifrateModalPropNota").hide();
-			
-			// nascondo il tasto visualizza
-			$("#visualizzaInformazioniCifrateModal").parent().children('.ui-dialog-buttonpane').hide();
-			
-			// ripristino ombreggiatura
-			$("#visualizzaInformazioniCifrateModal").dialog("close");
-			$("#visualizzaInformazioniCifrateModal").dialog("open");
-			
-			nascondiAjaxStatus();
+			if(esito == 'errors'){
+				// visualizzare errore ricevuto nella modale prevista
+				mostraErroreInformazioniCifrateModal(dettaglio);
+				nascondiAjaxStatus();
+				$("#visualizzaInformazioniCifrateModal").dialog( "close" );
+			} else {
+				// inserimento del valore nella text area
+				$("textarea[id^='txtA_ne_dec']").val(dettaglio);
+				
+				// visualizzo la text area 
+				$("#txtA_ne_dec").show();
+				
+				// visualizzo il pulsante di copia
+				$("#iconCopy_dec").show();
+				
+				// nascondo la nota
+				$("#visualizzaInformazioniCifrateModalPropNota").hide();
+				
+				// nascondo il tasto visualizza
+				$("#visualizzaInformazioniCifrateModal").parent().children('.ui-dialog-buttonpane').hide();
+				
+				// ripristino ombreggiatura
+				$("#visualizzaInformazioniCifrateModal").dialog("close");
+				$("#visualizzaInformazioniCifrateModal").dialog("open");
+				
+				nascondiAjaxStatus();
+			}
 		},
 		error: function(data, textStatus, jqXHR){
+			var val = data.responseURL;
+			document.location = val;
+			
 			// visualizzare errore ricevuto nella modale prevista
-			mostraErroreInformazioniCifrateModal(data.responseText);
-			
-			nascondiAjaxStatus();
-			
-			$("#visualizzaInformazioniCifrateModal").dialog( "close" );
+			//mostraErroreInformazioniCifrateModal(data.responseText);
+			//nascondiAjaxStatus();
+			//$("#visualizzaInformazioniCifrateModal").dialog( "close" );
 		}
 	});
 	
@@ -241,6 +258,9 @@ function visualizzaValoreDecodificato(evt) {
     // Recupero la URL e il valore da decodificare
     var urlLockDecoder = $("#__i_hidden_lockurl_").val();
     var valToDecode = $("#__i_hidden_lockvalue_").val();
+
+	// addTabID
+	urlLockDecoder = addTabIdParam(urlLockDecoder,true);
 
     // Chiamata AJAX per decodificare il valore
     visualizzaAjaxStatus();
@@ -254,26 +274,37 @@ function visualizzaValoreDecodificato(evt) {
         },
         contentType: 'application/x-www-form-urlencoded',
         success: function(data, textStatus, jqXHR) {
-            var valueToCopy = data;
+			var esito = data.esito;
+			var dettaglio = data.dettaglioEsito;
+			
+			if(esito == 'errors'){
+				// visualizzare errore ricevuto nella modale prevista
+				mostraErroreInformazioniCifrateModal(dettaglio);
+				nascondiAjaxStatus();
+				$("#alertInformazioniCifrateModal").dialog( "close" );
+			} else {
+				var valueToCopy = dettaglio;
 
-            // Copia il valore nella clipboard
-            var copiatoOK = copyTextToClipboard(valueToCopy);
-
-            // Nasconde lo stato AJAX dopo la copia
-            nascondiAjaxStatus();
-
-            // Mostra il tooltip se la copia è avvenuta con successo
-            if (copiatoOK) {
-                showTooltipAndFadeOut(evt);
-            }
+	            // Copia il valore nella clipboard
+	            var copiatoOK = copyTextToClipboard(valueToCopy);
+	
+	            // Nasconde lo stato AJAX dopo la copia
+	            nascondiAjaxStatus();
+	
+	            // Mostra il tooltip se la copia è avvenuta con successo
+	            if (copiatoOK) {
+	                showTooltipAndFadeOut(evt);
+	            }
+			}
         },
         error: function(data, textStatus, jqXHR) {
+			var val = data.responseURL;
+			document.location = val;
+			
 			// visualizzare errore ricevuto nella modale prevista
-			mostraErroreInformazioniCifrateModal(data.responseText);
-			
-			nascondiAjaxStatus();
-			
-			$("#alertInformazioniCifrateModal").dialog( "close" );
+			//mostraErroreInformazioniCifrateModal(data.responseText);
+			//nascondiAjaxStatus();
+			//$("#alertInformazioniCifrateModal").dialog( "close" );
         }
     });
 

@@ -1237,6 +1237,7 @@ public class CostantiControlStation {
 	public static final String PARAMETER_MESSAGE_TITLE = Costanti.PARAMETER_MESSAGE_TITLE;
 	public static final String PARAMETER_MESSAGE_TYPE = Costanti.PARAMETER_MESSAGE_TYPE;
 	public static final String PARAMETER_MESSAGE_BREADCRUMB = Costanti.PARAMETER_MESSAGE_BREADCRUMB;
+	public static final String PARAMETER_MESSAGE_ERROR_CODE = Costanti.PARAMETER_MESSAGE_ERROR_CODE;
 	
 	/** VALUES **/
 	

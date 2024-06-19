@@ -110,7 +110,6 @@ public class CacheManager extends HttpServlet {
 
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la decodifica: "+e.getMessage(), e);
-			response.setStatus(500);
 			messaggioEsito = UtilsCostanti.MESSAGGIO_ERRORE_ELIMINAZIONE_ELEMENTO_CACHE;
 			messageType = MessageType.ERROR.toString();
 		} finally {

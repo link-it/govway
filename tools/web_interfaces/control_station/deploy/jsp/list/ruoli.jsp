@@ -246,6 +246,8 @@ visualizzaMetadati = listRiepilogo.size() > 1;
 									    				$(idToOpen).dialog("open");
 					    							},
 					    							error: function(data, textStatus, jqXHR){
+					    								var val = data.responseURL;
+					    								document.location = val;
 					    								<%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
 					    							}
 					    						}
