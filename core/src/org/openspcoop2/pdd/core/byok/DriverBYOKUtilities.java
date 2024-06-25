@@ -176,7 +176,13 @@ public class DriverBYOKUtilities {
 		}
 	}
 	
-	public boolean isWrapped(String value) {
+	public boolean isWrappedWithAnyPolicy(String value) {
+		if(value!=null && StringUtils.isNotEmpty(value)) {
+			return BYOKUtilities.isWrappedValue(value);
+		}
+		return false;
+	}
+	public boolean isWrappedWithActivePolicy(String value) {
 		String driverSecurityManagerPolicy = null;
 		try {
 			if(value==null || StringUtils.isEmpty(value) || !isEnabledBYOK()) {
@@ -192,10 +198,10 @@ public class DriverBYOKUtilities {
 			/**throw new DriverControlStationException(e.getMessage(),e);*/
 			return false; 
 		}
-		return isWrapped(this.log, value, driverSecurityManagerPolicy);
+		return isWrappedWithPolicy(this.log, value, driverSecurityManagerPolicy);
 	}
 	
-	public static boolean isWrapped(Logger log, String value, String policy) {
+	public static boolean isWrappedWithPolicy(Logger log, String value, String policy) {
 		try {
 			if(value==null || StringUtils.isEmpty(value)) {
 				return false;

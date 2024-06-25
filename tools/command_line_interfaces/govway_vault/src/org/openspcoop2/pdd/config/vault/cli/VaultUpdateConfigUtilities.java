@@ -75,6 +75,8 @@ public class VaultUpdateConfigUtilities {
 	
 	private static final String LOG_ORIG_SKIPPED = "\t!skyp! wrapped with other policy:";
 	private static final String LOG_ORIG_SKIPPED_NO_WRAPPED = "\t!skyp! no wrapped value:";
+	private static final String LOG_ORIG_SKIPPED_ALREADY_WRAPPED = "\t!skyp! already wrapped value:";
+	private static final String LOG_ORIG_SKIPPED_WITH_POLICY = "\t!skyp! wrapped with policy:";
 	private static final String LOG_ORIG = "\torig:";
 	private static final String LOG_NEW = "\tnew:";
 	private static final String LOG_ROW_UPDATE = "\trow-update:";
@@ -131,6 +133,8 @@ public class VaultUpdateConfigUtilities {
 			processGenericProperties(output);
 			
 			processProtocolProperties(output);
+			
+			processProperties(output); // lasciare in fondo in modo da non gestire nuovamente le proprietà di sicurezza
 			
 			if(this.config.getReportPath()!=null && output!=null) {
 				FileSystemUtilities.writeFile(this.config.getReportPath(), output.toString().getBytes());
@@ -313,6 +317,152 @@ public class VaultUpdateConfigUtilities {
 		
 		VaultTools.logCoreDebug("Conversione protocol properties terminata");
 	}
+	private void processProperties(StringBuilder output) throws CoreException {
+		VaultTools.logCoreDebug("Conversione properties ...");
+		
+		if(output!=null) {
+			if(output.length()>0) {
+				output.append("\n\n");
+			}
+			output.append("=== Soggetti properties ===\n\n");
+		}
+				
+		updateProperties(CostantiDB.SOGGETTI_PROPS, CostantiDB.SOGGETTI_PROPS_COLUMN_NAME, CostantiDB.SOGGETTI_PROPS_COLUMN_VALUE, CostantiDB.SOGGETTI_PROPS_COLUMN_ENC_VALUE, output,
+				false, false);
+		
+		if(output!=null) {
+			output.append("\n\n");
+			output.append("=== Applicativi properties ===\n\n");
+		}
+		
+		updateProperties(CostantiDB.SERVIZI_APPLICATIVI_PROPS, CostantiDB.SERVIZI_APPLICATIVI_PROPS_COLUMN_NOME, CostantiDB.SERVIZI_APPLICATIVI_PROPS_COLUMN_VALUE, CostantiDB.SERVIZI_APPLICATIVI_PROPS_COLUMN_ENC_VALUE, output,
+				false, false);
+		
+		if(output!=null) {
+			output.append("\n\n");
+			output.append("=== Configurazione properties ===\n\n");
+		}
+		
+		updateProperties(CostantiDB.SYSTEM_PROPERTIES_PDD, CostantiDB.SYSTEM_PROPERTIES_PDD_COLUMN_NOME, CostantiDB.SYSTEM_PROPERTIES_PDD_COLUMN_VALUE, CostantiDB.SYSTEM_PROPERTIES_PDD_COLUMN_ENC_VALUE, output,
+				false, false);
+		
+		
+		processErogazioniProperties(output);
+		
+		processFruizioniProperties(output);
+
+		VaultTools.logCoreDebug("Conversione properties terminata");
+	}
+	private void processErogazioniProperties(StringBuilder output) throws CoreException {
+		if(output!=null) {
+			output.append("\n\n");
+			output.append("=== Erogazioni message security request properties ===\n\n");
+		}
+		
+		updateProperties(CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_NOME, 
+				CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_ENC_VALUE, output,
+				true, false);
+		
+		if(output!=null) {
+			output.append("\n\n");
+			output.append("=== Erogazioni message security response properties ===\n\n");
+		}
+		
+		updateProperties(CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_NOME, 
+				CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_ENC_VALUE, output,
+				false, true);
+		
+		if(output!=null) {
+			output.append("\n\n");
+			output.append("=== Erogazioni autenticazione properties ===\n\n");
+		}
+		
+		updateProperties(CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP, CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP_COLUMN_NOME, 
+				CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP_COLUMN_ENC_VALUE, output,
+				false, false);
+		
+		if(output!=null) {
+			output.append("\n\n");
+			output.append("=== Erogazioni autorizzazione properties ===\n\n");
+		}
+		
+		updateProperties(CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP, CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP_COLUMN_NOME, 
+				CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP_COLUMN_ENC_VALUE, output,
+				false, false);
+		
+		if(output!=null) {
+			output.append("\n\n");
+			output.append("=== Erogazioni autorizzazione contenuti properties ===\n\n");
+		}
+		
+		updateProperties(CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP, CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_NOME, 
+				CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_ENC_VALUE, output,
+				false, false);
+		
+		if(output!=null) {
+			output.append("\n\n");
+			output.append("=== Erogazioni properties ===\n\n");
+		}
+		
+		updateProperties(CostantiDB.PORTE_APPLICATIVE_PROP, CostantiDB.PORTE_APPLICATIVE_PROP_COLUMN_NOME, 
+				CostantiDB.PORTE_APPLICATIVE_PROP_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_PROP_COLUMN_ENC_VALUE, output,
+				false, false);
+	}
+	private void processFruizioniProperties(StringBuilder output) throws CoreException {
+		if(output!=null) {
+			output.append("\n\n");
+			output.append("=== Fruizioni message security request properties ===\n\n");
+		}
+		
+		updateProperties(CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST, CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_COLUMN_NOME, 
+				CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_COLUMN_VALORE, CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_COLUMN_ENC_VALUE, output,
+				true, false);
+		
+		if(output!=null) {
+			output.append("\n\n");
+			output.append("=== Fruizioni message security response properties ===\n\n");
+		}
+		
+		updateProperties(CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE, CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_COLUMN_NOME, 
+				CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_COLUMN_VALORE, CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_COLUMN_ENC_VALUE, output,
+				false, true);
+		
+		if(output!=null) {
+			output.append("\n\n");
+			output.append("=== Fruizioni autenticazione properties ===\n\n");
+		}
+		
+		updateProperties(CostantiDB.PORTE_DELEGATE_AUTENTICAZIONE_PROP, CostantiDB.PORTE_DELEGATE_AUTENTICAZIONE_PROP_COLUMN_NOME, 
+				CostantiDB.PORTE_DELEGATE_AUTENTICAZIONE_PROP_COLUMN_VALORE, CostantiDB.PORTE_DELEGATE_AUTENTICAZIONE_PROP_COLUMN_ENC_VALUE, output,
+				false, false);
+		
+		if(output!=null) {
+			output.append("\n\n");
+			output.append("=== Fruizioni autorizzazione properties ===\n\n");
+		}
+		
+		updateProperties(CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_PROP, CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_PROP_COLUMN_NOME, 
+				CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_PROP_COLUMN_VALORE, CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_PROP_COLUMN_ENC_VALUE, output,
+				false, false);
+		
+		if(output!=null) {
+			output.append("\n\n");
+			output.append("=== Fruizioni autorizzazione contenuti properties ===\n\n");
+		}
+		
+		updateProperties(CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROP, CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_NOME, 
+				CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_VALORE, CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_ENC_VALUE, output,
+				false, false);
+		
+		if(output!=null) {
+			output.append("\n\n");
+			output.append("=== Fruizioni properties ===\n\n");
+		}
+		
+		updateProperties(CostantiDB.PORTE_DELEGATE_PROP, CostantiDB.PORTE_DELEGATE_PROP_COLUMN_NOME, 
+				CostantiDB.PORTE_DELEGATE_PROP_COLUMN_VALORE, CostantiDB.PORTE_DELEGATE_PROP_COLUMN_ENC_VALUE, output,
+				false, false);
+	}
 	
 	
 	
@@ -345,6 +495,18 @@ public class VaultUpdateConfigUtilities {
 			output.append(wrapped ? LOG_ORIG_SKIPPED : LOG_ORIG_SKIPPED_NO_WRAPPED).append(value).append("\n");
 		}
 	}
+	private void skipWithPolicy(StringBuilder output, String prefix, String value) {
+		if(output!=null) {
+			output.append(prefix).append("\n");
+			output.append(LOG_ORIG_SKIPPED_WITH_POLICY).append(value).append("\n");
+		}
+	}
+	private void skipAlreadyWrapped(StringBuilder output, String prefix, String value) {
+		if(output!=null) {
+			output.append(prefix).append("\n");
+			output.append(LOG_ORIG_SKIPPED_ALREADY_WRAPPED).append(value).append("\n");
+		}
+	}
 	
 	private void updateValue(Connection connectionSQL, ResultSet rs, String nomeColonna, 
 			String prefix, StringBuilder output,
@@ -372,6 +534,13 @@ public class VaultUpdateConfigUtilities {
 				return;
 			}
 		}
+		else {
+			if(plainStringValue!=null && StringUtils.isNotEmpty(plainStringValue) && BYOKUtilities.isWrappedValue(plainStringValue)) {
+				// trovato un valore cifrato con una security policy, non devo quindi considerarlo
+				skipWithPolicy(output, prefix, plainStringValue);
+				return;
+			}
+		}
 		
 		if(this.outDriverBYOK!=null || updatedValue!=null) {
 			updateValue(connectionSQL, output,
@@ -383,6 +552,16 @@ public class VaultUpdateConfigUtilities {
 	private void updateValue(Connection connectionSQL, StringBuilder output,
 			String plainStringValue, String updatedValue, 
 			VaultUpdateConfigValue c, String prefix) throws SQLQueryObjectException, SQLException, UtilsException {
+		
+		if(this.outDriverBYOK!=null) {
+			String v = updatedValue!=null ? updatedValue : plainStringValue;
+			if(this.outDriverBYOK.isWrappedWithInternalPolicy(v)) {
+				// Il valore di destinazione risulta già cifrato con la policy richiesta
+				skipAlreadyWrapped(output, prefix, v);
+				return;
+			}
+		}
+		
 		if(output!=null) {
 			output.append(prefix).append("\n");
 			output.append(LOG_ORIG).append(plainStringValue).append("\n");
@@ -465,6 +644,13 @@ public class VaultUpdateConfigUtilities {
 				return;
 			}
 		}
+		else {
+			if(encStringValue!=null && StringUtils.isNotEmpty(encStringValue)) {
+				// trovato un valore cifrato con una security policy, non devo quindi considerarlo
+				skipWithPolicy(output, prefix, encStringValue);
+				return;
+			}
+		}
 		
 		if(this.outDriverBYOK!=null || updatedValue!=null) {
 			updatePlainEncValue(connectionSQL, output,
@@ -476,6 +662,16 @@ public class VaultUpdateConfigUtilities {
 	private void updatePlainEncValue(Connection connectionSQL, StringBuilder output,
 			String plainStringValue, String encStringValue, String updatedValue, 
 			VaultUpdateConfigPlainEnc c, String prefix) throws SQLQueryObjectException, SQLException, UtilsException {
+		
+		if(this.outDriverBYOK!=null) {
+			String v = updatedValue!=null ? updatedValue : plainStringValue;
+			if(this.outDriverBYOK.isWrappedWithInternalPolicy(v)) {
+				// Il valore di destinazione risulta già cifrato con la policy richiesta
+				skipAlreadyWrapped(output, prefix, v);
+				return;
+			}
+		}
+		
 		if(output!=null) {
 			output.append(prefix).append("\n");
 			output.append(LOG_ORIG).append(encStringValue!=null && StringUtils.isNotEmpty(encStringValue) ? encStringValue : plainStringValue).append("\n");
@@ -561,6 +757,13 @@ public class VaultUpdateConfigUtilities {
 				return;
 			}
 		}
+		else {
+			if(binaryValue!=null && binaryValue.length>0 && BYOKUtilities.isWrappedValue(binaryValue)) {
+				// trovato un valore cifrato con una security policy, non devo quindi considerarlo
+				skipWithPolicy(output, prefix, BYOKUtilities.extractPrefixWrappedValue(binaryValue));
+				return;
+			}
+		}
 		
 		if(this.outDriverBYOK!=null || updateValue!=null) {
 			updateBinaryValue(jdbcAdapter, connectionSQL, output, 
@@ -572,6 +775,16 @@ public class VaultUpdateConfigUtilities {
 	private void updateBinaryValue(IJDBCAdapter jdbcAdapter, Connection connectionSQL, StringBuilder output, 
 			byte[]binaryValue, byte[]updateValue, 
 			VaultUpdateConfigValue c, String prefix) throws UtilsException, SQLQueryObjectException, SQLException {
+		
+		if(this.outDriverBYOK!=null) {
+			byte[] v = updateValue!=null ? updateValue : binaryValue;
+			if(this.outDriverBYOK.isWrappedWithInternalPolicy(v)) {
+				// Il valore di destinazione risulta già cifrato con la policy richiesta
+				skipAlreadyWrapped(output, prefix, BYOKUtilities.extractPrefixWrappedValue(v));
+				return;
+			}
+		}
+		
 		if(output!=null) {
 			output.append(prefix).append("\n");
 			String base64 = Base64Utilities.encodeAsString(binaryValue);
@@ -1153,28 +1366,28 @@ public class VaultUpdateConfigUtilities {
 		case AZIONE_ACCORDO:{
 			String nome = rs.getString("nome");
 			long idAccordo = rs.getLong(CostantiDB.ACCORDI_COLUMN_ID_ACCORDO_REF);
-			return "api:"+readDatiAccordo(connectionSQL, this.tipoDatabase, idAccordo) + " azione:"+nome;
+			return "api:"+readDatiAccordo(connectionSQL, idAccordo) + " azione:"+nome;
 		}
 		case OPERATION:{
 			String nome = rs.getString("nome");
 			long idPortType = rs.getLong("id_port_type");
-			return "api:"+readDatiPT(connectionSQL, this.tipoDatabase, idPortType) + " operation:"+nome;
+			return "api:"+readDatiPT(connectionSQL, idPortType) + " operation:"+nome;
 		}
 		case PORT_TYPE:{
 			String nome = rs.getString("nome");
 			long idAccordo = rs.getLong(CostantiDB.ACCORDI_COLUMN_ID_ACCORDO_REF);
-			return "api:"+readDatiAccordo(connectionSQL, this.tipoDatabase, idAccordo) + " portType:"+nome;
+			return "api:"+readDatiAccordo(connectionSQL, idAccordo) + " portType:"+nome;
 		}
 		case RESOURCE:{
 			String nome = rs.getString("nome");
 			long idAccordo = rs.getLong(CostantiDB.ACCORDI_COLUMN_ID_ACCORDO_REF);
-			return "api:"+readDatiAccordo(connectionSQL, this.tipoDatabase, idAccordo) + " resource:"+nome;
+			return "api:"+readDatiAccordo(connectionSQL, idAccordo) + " resource:"+nome;
 		}
 		case FRUITORE:{
 			long idServizio = rs.getLong("id_servizio");
 			long idSoggetto = rs.getLong(CostantiDB.SERVIZI_COLUMN_ID_SOGGETTO_REF);
 			IDSoggetto idS = DBUtils.getIdSoggetto(idSoggetto, connectionSQL, this.tipoDatabase);
-			return idS.toString() +" -> " + readDatiServizio(connectionSQL, this.tipoDatabase, idServizio);
+			return idS.toString() +" -> " + readDatiServizio(connectionSQL, idServizio);
 		}
 		case SERVIZIO_APPLICATIVO:{
 			String nome = rs.getString("nome");
@@ -1192,7 +1405,113 @@ public class VaultUpdateConfigUtilities {
 		}
 		return null;
 	}
-	private String readDatiAccordo(Connection connectionSQL, String tipoDB, long idAccordo) throws CoreException {
+	
+	
+	
+	
+	// PROPERTIES
+	
+	private void updateProperties(String tabella, String nomeColonna, String nomeColonnaPlain, String nomeColonnaCodificata, StringBuilder output,
+			boolean checkRequestSec, boolean checkResponseCheck) throws CoreException {
+		PreparedStatement stmRead = null;
+		ResultSet rs=null;
+		
+		Connection connectionSQL = null;
+		try {
+			connectionSQL = getConnection();
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addFromTable(tabella);
+			sqlQueryObject.addWhereIsNotNullCondition(nomeColonnaCodificata);
+			sqlQueryObject.addWhereIsNotEmptyCondition(nomeColonnaCodificata);
+			sqlQueryObject.addOrderBy(nomeColonna);
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stmRead = connectionSQL.prepareStatement(sqlQuery);
+			rs = stmRead.executeQuery();
+			
+			while(rs.next()){
+				
+				long idP = rs.getLong("id");
+				String nomeProprieta = rs.getString(nomeColonna);
+				
+				if(checkRequestSec || checkResponseCheck) {
+					long idPorta = rs.getLong(CostantiDB.PORTA_COLUMN_ID_REF);
+					String tabellaPorta = CostantiDB.PORTE_DELEGATE;
+					if(CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST.equals(tabella) ||
+							CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE.equals(tabella)) {
+						tabellaPorta = CostantiDB.PORTE_APPLICATIVE;
+					}
+					String sec = readMessageSecurityPorta(connectionSQL, idPorta, tabellaPorta, checkRequestSec);
+					if(sec!=null && StringUtils.isNotEmpty(sec) && !"-".equals(sec) && !CostantiDB.SICUREZZA_MESSAGGIO_SCHEMA_DEFAULT.equals(sec)) {
+						// viene gestita con il processamento specifico delle proprietà fatto in precedenza
+						continue;
+					}
+				}
+				
+				String identificativoOggetto = getIdentificativoOggettoProperties(tabella,connectionSQL,rs);
+				
+				String prefix = "[proprietario:"+tabella+"]["+identificativoOggetto+"][idProp:"+idP+"] '"+nomeProprieta+"' ";
+				
+				VaultUpdateConfigPlainEnc c = new VaultUpdateConfigPlainEnc();
+				c.tabella = tabella;
+				c.nomeColonnaPlain = nomeColonnaPlain;
+				c.nomeColonnaCodificata = nomeColonnaCodificata;
+				c.id = idP;
+				
+				updatePlainEncValue(connectionSQL, rs, nomeColonnaPlain, nomeColonnaCodificata, 
+						prefix, output,
+						c);
+			
+			}
+			
+		} catch (Exception se) {
+			throw new CoreException("[updateProperties-"+tabella+"] failed: " + se.getMessage(),se);
+		} finally {
+			JDBCUtilities.closeResources(rs, stmRead);
+			closeConnection(connectionSQL);
+		}
+	}
+	private String getIdentificativoOggettoProperties(String tabella, Connection connectionSQL, ResultSet rs) throws SQLException, CoreException {
+		if(CostantiDB.SOGGETTI_PROPS.equals(tabella)) {
+			long idSoggetto = rs.getLong("id_soggetto");
+			IDSoggetto idS = DBUtils.getIdSoggetto(idSoggetto, connectionSQL, this.tipoDatabase);
+			return idS.toString();
+		}
+		else if(CostantiDB.SERVIZI_APPLICATIVI_PROPS.equals(tabella)) {
+			long idSA = rs.getLong("id_servizio_applicativo");
+			return readDatiSA(connectionSQL, idSA);
+		}
+		else if(CostantiDB.SYSTEM_PROPERTIES_PDD.equals(tabella)) {
+			return "configurazione-generale";
+		}
+		else if(CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST.equals(tabella) ||
+				CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE.equals(tabella) ||
+				CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP.equals(tabella) ||
+				CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP.equals(tabella) ||
+				CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP.equals(tabella) ||
+				CostantiDB.PORTE_APPLICATIVE_PROP.equals(tabella)) {
+			long idPorta = rs.getLong(CostantiDB.PORTA_COLUMN_ID_REF);
+			return readDatiPortaApplicativa(connectionSQL, idPorta);
+		}
+		else if(CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST.equals(tabella) ||
+				CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE.equals(tabella) ||
+				CostantiDB.PORTE_DELEGATE_AUTENTICAZIONE_PROP.equals(tabella) ||
+				CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_PROP.equals(tabella) ||
+				CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROP.equals(tabella) ||
+				CostantiDB.PORTE_DELEGATE_PROP.equals(tabella)) {
+			long idPorta = rs.getLong(CostantiDB.PORTA_COLUMN_ID_REF);
+			return readDatiPortaDelegata(connectionSQL, idPorta);
+		}
+		return null;
+		
+	}
+	
+	
+	
+	// READ UTILS
+		
+	private String readDatiAccordo(Connection connectionSQL, long idAccordo) throws CoreException {
 		PreparedStatement stmReadInternal = null;
 		ResultSet rsInternal=null;
 		try {
@@ -1208,7 +1527,7 @@ public class VaultUpdateConfigUtilities {
 			if(rsInternal.next()) {
 				long idSoggetto = rsInternal.getLong(CostantiDB.ACCORDI_COLUMN_ID_REFERENTE_REF);
 				int versione = rsInternal.getInt("versione");
-				IDSoggetto idS = DBUtils.getIdSoggetto(idSoggetto, connectionSQL, tipoDB);
+				IDSoggetto idS = DBUtils.getIdSoggetto(idSoggetto, connectionSQL, this.tipoDatabase);
 				return IDAccordoFactory.getInstance().getUriFromValues(nome, idS, versione);
 			}
 			return null;
@@ -1218,7 +1537,7 @@ public class VaultUpdateConfigUtilities {
 			JDBCUtilities.closeResources(rsInternal, stmReadInternal);
 		}
 	}
-	private String readDatiPT(Connection connectionSQL, String tipoDB, long idPortType) throws CoreException {
+	private String readDatiPT(Connection connectionSQL, long idPortType) throws CoreException {
 		PreparedStatement stmReadInternal = null;
 		ResultSet rsInternal=null;
 		try {
@@ -1233,7 +1552,7 @@ public class VaultUpdateConfigUtilities {
 			if(rsInternal.next()) {
 				String nome = rsInternal.getString("nome");
 				long idAccordo = rsInternal.getLong(CostantiDB.ACCORDI_COLUMN_ID_ACCORDO_REF);
-				return readDatiAccordo(connectionSQL, tipoDB, idAccordo) + " portType:"+nome;
+				return readDatiAccordo(connectionSQL, idAccordo) + " portType:"+nome;
 			}
 			return null;
 		} catch (Exception se) {
@@ -1242,7 +1561,7 @@ public class VaultUpdateConfigUtilities {
 			JDBCUtilities.closeResources(rsInternal, stmReadInternal);
 		}
 	}
-	private String readDatiServizio(Connection connectionSQL, String tipoDB, long idServizio) throws CoreException {
+	private String readDatiServizio(Connection connectionSQL, long idServizio) throws CoreException {
 		PreparedStatement stmReadInternal = null;
 		ResultSet rsInternal=null;
 		try {
@@ -1259,8 +1578,83 @@ public class VaultUpdateConfigUtilities {
 				String nomeServizio = rsInternal.getString("nome_servizio");
 				int versioneServizio = rsInternal.getInt("versione_servizio");
 				long idSoggetto = rsInternal.getLong(CostantiDB.SERVIZI_COLUMN_ID_SOGGETTO_REF);
-				IDSoggetto idS = DBUtils.getIdSoggetto(idSoggetto, connectionSQL, tipoDB);
+				IDSoggetto idS = DBUtils.getIdSoggetto(idSoggetto, connectionSQL, this.tipoDatabase);
 				return IDServizioFactory.getInstance().getUriFromValues(tipoServizio, nomeServizio, idS, versioneServizio);
+			}
+			return null;
+		} catch (Exception se) {
+			throw new CoreException(se.getMessage(),se);
+		} finally {
+			JDBCUtilities.closeResources(rsInternal, stmReadInternal);
+		}
+	}
+	private String readDatiSA(Connection connectionSQL, long idServizioApplicativo) throws CoreException {
+		PreparedStatement stmReadInternal = null;
+		ResultSet rsInternal=null;
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+			sqlQueryObject.addWhereCondition(CONDITION_WHERE_ID);
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stmReadInternal = connectionSQL.prepareStatement(sqlQuery);
+			stmReadInternal.setLong(1, idServizioApplicativo);
+			rsInternal = stmReadInternal.executeQuery();
+			if(rsInternal.next()) {
+				String nome = rsInternal.getString("nome");
+				long idSoggetto = rsInternal.getLong(CostantiDB.SERVIZI_APPLICATIVI_COLUMN_ID_SOGGETTO);
+				IDSoggetto idS = DBUtils.getIdSoggetto(idSoggetto, connectionSQL, this.tipoDatabase);
+				return idS.toString()+" sa:"+nome;
+			}
+			return null;
+		} catch (Exception se) {
+			throw new CoreException(se.getMessage(),se);
+		} finally {
+			JDBCUtilities.closeResources(rsInternal, stmReadInternal);
+		}
+	}
+	private String readDatiPortaDelegata(Connection connectionSQL, long idPorta) throws CoreException {
+		return readDatiPorta(connectionSQL, idPorta, CostantiDB.PORTE_DELEGATE) ;
+	}
+	private String readDatiPortaApplicativa(Connection connectionSQL, long idPorta) throws CoreException {
+		return readDatiPorta(connectionSQL, idPorta, CostantiDB.PORTE_APPLICATIVE) ;
+	}
+	private String readDatiPorta(Connection connectionSQL, long idPorta, String tabella) throws CoreException {
+		PreparedStatement stmReadInternal = null;
+		ResultSet rsInternal=null;
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addFromTable(tabella);
+			sqlQueryObject.addWhereCondition(CONDITION_WHERE_ID);
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stmReadInternal = connectionSQL.prepareStatement(sqlQuery);
+			stmReadInternal.setLong(1, idPorta);
+			rsInternal = stmReadInternal.executeQuery();
+			if(rsInternal.next()) {
+				return rsInternal.getString("nome_porta");
+			}
+			return null;
+		} catch (Exception se) {
+			throw new CoreException(se.getMessage(),se);
+		} finally {
+			JDBCUtilities.closeResources(rsInternal, stmReadInternal);
+		}
+	}
+	private String readMessageSecurityPorta(Connection connectionSQL, long idPorta, String tabella, boolean request) throws CoreException {
+		PreparedStatement stmReadInternal = null;
+		ResultSet rsInternal=null;
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addFromTable(tabella);
+			sqlQueryObject.addWhereCondition(CONDITION_WHERE_ID);
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stmReadInternal = connectionSQL.prepareStatement(sqlQuery);
+			stmReadInternal.setLong(1, idPorta);
+			rsInternal = stmReadInternal.executeQuery();
+			if(rsInternal.next()) {
+				return rsInternal.getString(request ? "security_request_mode" : "security_response_mode");
 			}
 			return null;
 		} catch (Exception se) {

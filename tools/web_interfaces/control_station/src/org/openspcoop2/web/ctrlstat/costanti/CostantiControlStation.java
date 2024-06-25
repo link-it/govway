@@ -35,6 +35,7 @@ import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TrasformazioneIdentificazioneRisorsaFallita;
 import org.openspcoop2.core.config.constants.TrasformazioneRegolaParametroTipoAzione;
 import org.openspcoop2.core.config.constants.VersioneSOAP;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
@@ -554,7 +555,7 @@ public class CostantiControlStation {
 	public static final String LABEL_SICUREZZA_MESSAGGIO_SCHEMA_RISPOSTA = "Schema Sicurezza (Risposta)";
 	public static final String LABEL_SICUREZZA_MESSAGGIO_SCHEMA_NESSUNO = "Nessuno";
 	public static final String LABEL_SICUREZZA_MESSAGGIO_SCHEMA_CONFIGURAZIONE_MANUALE = "Configurazione Manuale";
-	public static final String VALUE_SICUREZZA_MESSAGGIO_SCHEMA_DEFAULT = "default";
+	public static final String VALUE_SICUREZZA_MESSAGGIO_SCHEMA_DEFAULT = CostantiDB.SICUREZZA_MESSAGGIO_SCHEMA_DEFAULT;
 	
 	public static final String LABEL_CONFIGURAZIONE_CORS = "Gestione CORS";
 	public static final String LABEL_CONFIGURAZIONE_CORS_ACCESS_CONTROL = "Access Control";

@@ -4328,7 +4328,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						return false;
 					}
 					if(proxyPassword!=null && !"".equals(proxyPassword) &&
-						!this.core.getDriverBYOKUtilities().isWrapped(proxyPassword) &&
+						!this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(proxyPassword) &&
 						!this.checkLength255(proxyPassword, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PASSWORD)) {
 						return false;
 					}
@@ -4422,7 +4422,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					if(!this.checkLength255(user, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME)) {
 						return false;
 					}
-					if(!this.core.getDriverBYOKUtilities().isWrapped(password) && 
+					if(!this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(password) && 
 							!this.checkLength255(password, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD)) {
 						return false;
 					}
@@ -4729,7 +4729,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 							this.pd.setMessage("La password del TrustStore è necessaria per l'Autenticazione Server");
 							return false;
 						}
-						if(!this.core.getDriverBYOKUtilities().isWrapped(httpspwd) && 
+						if(!this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(httpspwd) && 
 								!this.checkLength255(httpspwd, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD)) {
 							return false;
 						}
@@ -4779,7 +4779,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 								this.pd.setMessage("La password della chiave privata è necessaria in caso di Autenticazione Client abilitata");
 								return false;
 							}
-							if(!this.core.getDriverBYOKUtilities().isWrapped(httpspwdprivatekeytrust) && 
+							if(!this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(httpspwdprivatekeytrust) && 
 									!this.checkLength255(httpspwdprivatekeytrust, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE)) {
 								return false;
 							}
@@ -4820,7 +4820,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 								this.pd.setMessage("La password del KeyStore è necessaria per l'Autenticazione Client, in caso di dati di accesso al KeyStore ridefiniti");
 								return false;
 							}
-							if(!this.core.getDriverBYOKUtilities().isWrapped(httpspwdkey) && 
+							if(!this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(httpspwdkey) && 
 									!this.checkLength255(httpspwdkey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD)) {
 								return false;
 							}
@@ -4829,7 +4829,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 								this.pd.setMessage("La password della chiave privata è necessaria in caso di Autenticazione Client abilitata");
 								return false;
 							}
-							if(!this.core.getDriverBYOKUtilities().isWrapped(httpspwdprivatekey) && 
+							if(!this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(httpspwdprivatekey) && 
 									!this.checkLength255(httpspwdprivatekey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE)) {
 								return false;
 							}

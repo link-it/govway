@@ -351,7 +351,7 @@ public class DriverBYOK implements IDriverBYOK {
 	}
 	public boolean isWrappedWithInternalPolicy(String value) {
 		String policy = this.securityRemotePolicy!=null ? this.securityRemotePolicy : this.securityPolicy;
-		return DriverBYOKUtilities.isWrapped(this.log, value, policy);
+		return DriverBYOKUtilities.isWrappedWithPolicy(this.log, value, policy);
 	}
 	
 }

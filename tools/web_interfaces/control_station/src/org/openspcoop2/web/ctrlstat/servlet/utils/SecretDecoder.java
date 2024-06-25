@@ -98,7 +98,7 @@ public class SecretDecoder extends HttpServlet {
 				ControlStationCore.logInfo("SecretDecoder: secretToUnwrap: " + secretToUnwrap);
 				String messaggioInformativoInformazioneNonCifrata = core.getNotaInformativaInformazioneMemorizzataInChiaro();
 				if(BYOKUtilities.isWrappedValue(secretToUnwrap)) {
-					if(!core.getDriverBYOKUtilities().isWrapped(secretToUnwrap)) {
+					if(!core.getDriverBYOKUtilities().isWrappedWithActivePolicy(secretToUnwrap)) {
 						LockUtilities.appendErrorMessageSecurityPolicyDifferente(core.getNotaInformativaInformazioneCifrataSecurityPolicyDifferente(), sb, secretToUnwrap);
 					}
 				}

@@ -81,7 +81,7 @@ public class LockUtilities {
 		if(BYOKManager.isEnabledBYOK()) {
 			lockEngineWithBIOK(de, value, escapeHtml, hidden, readOnly, 
 					value); // non viene effettuato qual il wrap del valore, ma dovrà essere effettuato dalla servlet chiamante, in seguito alla chiamata dell'utente.
-			de.forceLockVisualizzazioneInputUtente(this.driverBYOKUtilities.isWrapped(value),this.visualizzaInformazioniCifrate);
+			de.forceLockVisualizzazioneInputUtente(this.driverBYOKUtilities.isWrappedWithAnyPolicy(value),this.visualizzaInformazioniCifrate);
 		}
 		else {
 			de.setType(DataElementType.TEXT_EDIT);
@@ -185,7 +185,7 @@ public class LockUtilities {
 		String checkValue = wrapValue; // viene verificato sempre il wrapValue, il quale se già cifrato non viene nuovamente cifrato e quindi permane la vecchia security policy.
 		if(checkValue!=null && StringUtils.isNotEmpty(checkValue)) {
 			if(BYOKUtilities.isWrappedValue(checkValue)) {
-				if(!this.driverBYOKUtilities.isWrapped(checkValue)) {
+				if(!this.driverBYOKUtilities.isWrappedWithActivePolicy(checkValue)) {
 					appendErrorMessageSecurityPolicyDifferente(sb, checkValue);
 				}
 			}

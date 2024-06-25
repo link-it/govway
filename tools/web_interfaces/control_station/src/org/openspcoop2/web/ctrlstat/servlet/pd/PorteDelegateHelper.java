@@ -1754,7 +1754,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				return false;
 			}
 			if( 
-					(!this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore))
+					(!this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore))
 					&&
 					(valore.startsWith(" ") || valore.endsWith(" "))
 				){
@@ -3100,7 +3100,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					de = new DataElement();
 					if(wsrfp.getValore()!=null && StringUtils.isNotEmpty(wsrfp.getValore()) &&
 							BYOKManager.isEnabledBYOK() &&
-							this.core.getDriverBYOKUtilities().isWrapped(wsrfp.getValore())) {
+							this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(wsrfp.getValore())) {
 						de.setValue(CostantiControlStation.VALORE_CIFRATO);
 					}
 					else {
@@ -3310,7 +3310,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				return false;
 			}
 			if( 
-				(!this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore))
+				(!this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore))
 				&&
 				(valore.startsWith(" ") || valore.endsWith(" "))
 			){
@@ -3461,7 +3461,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					de = new DataElement();
 					if(wsrfp.getValore()!=null && StringUtils.isNotEmpty(wsrfp.getValore()) &&
 							BYOKManager.isEnabledBYOK() &&
-							this.core.getDriverBYOKUtilities().isWrapped(wsrfp.getValore())) {
+							this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(wsrfp.getValore())) {
 						de.setValue(CostantiControlStation.VALORE_CIFRATO);
 					}
 					else {
@@ -4157,7 +4157,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					if(ssp.getValore()!=null) {
 						if(StringUtils.isNotEmpty(ssp.getValore()) &&
 								BYOKManager.isEnabledBYOK() &&
-								this.core.getDriverBYOKUtilities().isWrapped(ssp.getValore())) {
+								this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(ssp.getValore())) {
 							de.setValue(CostantiControlStation.VALORE_CIFRATO);
 						}
 						else {
@@ -4244,7 +4244,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				return false;
 			}
 			
-			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore) ){
+			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore) ){
 				if (valore.indexOf(" ") != -1) {
 					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 					return false;
@@ -5837,7 +5837,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					de = new DataElement();
 					if(StringUtils.isNotEmpty(ssp.getValore()) &&
 							BYOKManager.isEnabledBYOK() &&
-							this.core.getDriverBYOKUtilities().isWrapped(ssp.getValore())) {
+							this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(ssp.getValore())) {
 						de.setValue(CostantiControlStation.VALORE_CIFRATO);
 					}
 					else {
@@ -5887,7 +5887,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				return false;
 			}
 			
-			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore) ){
+			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore) ){
 				if (valore.indexOf(" ") != -1) {
 					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 					return false;
@@ -6048,7 +6048,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					de = new DataElement();
 					if(StringUtils.isNotEmpty(ssp.getValore()) &&
 							BYOKManager.isEnabledBYOK() &&
-							this.core.getDriverBYOKUtilities().isWrapped(ssp.getValore())) {
+							this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(ssp.getValore())) {
 						de.setValue(CostantiControlStation.VALORE_CIFRATO);
 					}
 					else {
@@ -6098,7 +6098,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				return false;
 			}
 			
-			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore) ){
+			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore) ){
 				if (valore.indexOf(" ") != -1) {
 					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 					return false;
@@ -6259,7 +6259,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					de = new DataElement();
 					if(StringUtils.isNotEmpty(ssp.getValore()) &&
 							BYOKManager.isEnabledBYOK() &&
-							this.core.getDriverBYOKUtilities().isWrapped(ssp.getValore())) {
+							this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(ssp.getValore())) {
 						de.setValue(CostantiControlStation.VALORE_CIFRATO);
 					}
 					else {
@@ -6308,7 +6308,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			if(!this.checkLength255(nome, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)) {
 				return false;
 			}
-			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore) ){
+			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore) ){
 				if (valore.indexOf(" ") != -1) {
 					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 					return false;

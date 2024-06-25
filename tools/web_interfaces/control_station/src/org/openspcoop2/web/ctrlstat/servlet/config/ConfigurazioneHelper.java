@@ -1439,7 +1439,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return false;
 			}
 			
-			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrapped(valore) ){
+			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore) ){
 				if(valore.startsWith(" ") || valore.endsWith(" ")){
 					this.pd.setMessage("Non inserire spazi all'inizio o alla fine dei valori");
 					return false;
@@ -1545,7 +1545,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = new DataElement();
 					if(sp.getValore()!=null && StringUtils.isNotEmpty(sp.getValore()) &&
 							BYOKManager.isEnabledBYOK() &&
-							this.core.getDriverBYOKUtilities().isWrapped(sp.getValore())) {
+							this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(sp.getValore())) {
 						de.setValue(CostantiControlStation.VALORE_CIFRATO);
 					}
 					else {
