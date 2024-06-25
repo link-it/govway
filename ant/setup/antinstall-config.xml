@@ -74,6 +74,9 @@
 
 	<hidden property="antinstaller_batch_dir" value=""/>
 	<hidden property="antinstaller_batch_system_out" value=""/>
+	<hidden property="antinstaller_tools_system_out" value=""/>
+	<hidden property="antinstaller_tools_cliVault" value=""/>
+	<hidden property="antinstaller_tools_cliConfigLoader" value=""/>
 
     </page>
 
@@ -300,6 +303,9 @@
 	<!-- Utilizzabile su sistemi di provisioning avanzati -->
 	<hidden property="antinstaller_batch_dir" value=""/>
 	<hidden property="antinstaller_batch_system_out" value=""/>
+	<hidden property="antinstaller_tools_system_out" value=""/>
+	<hidden property="antinstaller_tools_cliVault" value=""/>
+	<hidden property="antinstaller_tools_cliConfigLoader" value=""/>
 
     </page>
 
@@ -346,6 +352,9 @@
 	<!-- Utilizzabile su sistemi di provisioning avanzati -->
 	<hidden property="antinstaller_batch_dir" value=""/>
 	<hidden property="antinstaller_batch_system_out" value=""/>
+	<hidden property="antinstaller_tools_system_out" value=""/>
+	<hidden property="antinstaller_tools_cliVault" value=""/>
+	<hidden property="antinstaller_tools_cliConfigLoader" value=""/>
 
     </page>
 
@@ -756,6 +765,6 @@
     </page>
 
    <page name="Fine" displayText="Installazione" type="progress" showTargets="true"
-        target="setup,setup_datasource,setup_sql,setup_pdd,setup_govwayConsole,setup_govwayMonitor,setup_loader,setup_apiConfig,setup_apiMonitor,setup_batchStatistiche,setup_batchRuntimeRepository,setup_finished"/>
+        target="setup,setup_datasource,setup_sql,setup_pdd,setup_govwayConsole,setup_govwayMonitor,setup_loader,setup_apiConfig,setup_apiMonitor,setup_batchStatistiche,setup_batchRuntimeRepository,setup_cliVault,setup_cliConfigLoader,setup_finished"/>
 
 </installer>

@@ -130,29 +130,23 @@ public class LockUtilities {
 		else if( de.getType()==null || StringUtils.isEmpty(de.getType()) || 
 				( (!DataElementType.TEXT_EDIT.toString().equals(de.getType())) && (!DataElementType.TEXT_AREA.toString().equals(de.getType())) )
 				){
-			if(this.visualizzaCampiPasswordComeLock) {
-				this.lockEngineWithoutBIOK(de, value, escapeHtml, hidden, readOnly);
-			} else {
-				if(hidden) {
-					de.setType(DataElementType.HIDDEN);
-				}
-				else {
-					de.setType(DataElementType.TEXT_EDIT);
-				}
-			}
+			processByByokDisabledDataElement(de, value, escapeHtml, hidden, readOnly);
 		} else {
-			if(this.visualizzaCampiPasswordComeLock) {
-				this.lockEngineWithoutBIOK(de, value, escapeHtml, hidden, readOnly);
-			} else {
-				if(hidden) {
-					de.setType(DataElementType.HIDDEN);
-				}
-				else {
-					de.setType(DataElementType.TEXT_EDIT);
-				}
-			}
+			processByByokDisabledDataElement(de, value, escapeHtml, hidden, readOnly);
 		}
 		de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml(value) : value);
+	}
+	private void processByByokDisabledDataElement(DataElement de, String value, boolean escapeHtml, boolean hidden, boolean readOnly) {
+		if(this.visualizzaCampiPasswordComeLock) {
+			this.lockEngineWithoutBIOK(de, value, escapeHtml, hidden, readOnly);
+		} else {
+			if(hidden) {
+				de.setType(DataElementType.HIDDEN);
+			}
+			else {
+				de.setType(DataElementType.TEXT_EDIT);
+			}
+		}
 	}
 	private boolean isForceHidden(DataElement de, boolean hidden) {
 		return hidden &&

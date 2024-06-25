@@ -60,6 +60,8 @@ public class CostantiProprieta {
 	static {
 		tokenValidationProperties.add(POLICY_INTROSPECTION_AUTH_BASIC_PASSWORD);
 		tokenValidationProperties.add(POLICY_INTROSPECTION_AUTH_BEARER_TOKEN);
+		tokenValidationProperties.add(POLICY_USER_INFO_AUTH_BASIC_PASSWORD);
+		tokenValidationProperties.add(POLICY_USER_INFO_AUTH_BEARER_TOKEN);
 		tokenValidationProperties.add(RS_SECURITY_KEYSTORE_PASSWORD);
 		tokenValidationProperties.add(RS_SECURITY_KEY_PASSWORD);
 		tokenValidationProperties.add(RS_SECURITY_KEYSTORE_TLS_PASSWORD);

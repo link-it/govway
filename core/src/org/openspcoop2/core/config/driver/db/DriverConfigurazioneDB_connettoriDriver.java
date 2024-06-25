@@ -186,13 +186,13 @@ public class DriverConfigurazioneDB_connettoriDriver {
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.CONNETTORI_PROPERTIES);
-			sqlQueryObject.addSelectField("nome_connettore");
+			sqlQueryObject.addSelectField(CostantiDB.CONNETTORI_COLUMN_NOME);
 			String queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
 			risultato = stmt.executeQuery();
 
 			while (risultato.next())
-				lista.add(risultato.getString("nome_connettore"));
+				lista.add(risultato.getString(CostantiDB.CONNETTORI_COLUMN_NOME));
 
 			return lista;
 

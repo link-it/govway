@@ -62,7 +62,13 @@ public final class CostantiDB {
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_ID_PROPRIETARIO = "id_proprietario";
     public static final String CONNETTORI = "connettori";
+    public static final String CONNETTORI_COLUMN_NOME = "nome_connettore";
+    public static final String CONNETTORI_COLUMN_ENDPOINT_TYPE = "endpointtype";
     public static final String CONNETTORI_CUSTOM = "connettori_custom";
+    public static final String CONNETTORI_CUSTOM_COLUMN_NAME = "name";
+    public static final String CONNETTORI_CUSTOM_COLUMN_VALUE = "value";
+    public static final String CONNETTORI_CUSTOM_COLUMN_ENC_VALUE = "enc_value";
+    public static final String CONNETTORI_CUSTOM_COLUMN_ID_CONNETTORE = "id_connettore";
     public static final String SOGGETTI = "soggetti";
     public static final String SOGGETTI_PDD = "soggetti_pdd";
     public static final String SOGGETTI_COLUMN_TIPO_SOGGETTO = "tipo_soggetto";
@@ -111,6 +117,7 @@ public final class CostantiDB {
     public static final String SOGGETTI_PROPS = "soggetti_properties";
     public static final String SERVIZI = "servizi";
     public static final String SERVIZI_COLUMN_ID_ACCORDO_REF = "id_accordo";
+    public static final String SERVIZI_COLUMN_ID_SOGGETTO_REF = "id_soggetto";
     public static final String SERVIZI_AZIONI = "servizi_azioni";
     public static final String SERVIZI_AZIONE = "servizi_azione";
     public static final String SERVIZI_FRUITORI = "servizi_fruitori";
@@ -121,6 +128,8 @@ public final class CostantiDB {
     public static final String PORT_TYPE = "port_type";
     public static final String PORT_TYPE_AZIONI = "port_type_azioni";
     public static final String PORT_TYPE_AZIONI_OPERATION_MESSAGES = "operation_messages";
+    public static final String ACCORDI_COLUMN_ID_ACCORDO_REF = "id_accordo";
+    public static final String ACCORDI_COLUMN_ID_REFERENTE_REF = "id_referente";
     public static final String API_RESOURCES = "api_resources";
     public static final String API_RESOURCES_RESPONSE = "api_resources_response";
     public static final String API_RESOURCES_MEDIA = "api_resources_media";

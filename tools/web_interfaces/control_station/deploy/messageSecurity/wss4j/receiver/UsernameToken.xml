@@ -26,6 +26,9 @@ provider="org.openspcoop2.security.message.wss4j.WSS4JSecurityProvider">
 		<item type="checkbox" name="mustUnderstand" label="MustUnderstand" defaultSelected="false">
 			<property name="mustUnderstand" />
 		</item>
+		<item type="checkbox" name="isBSPCompliant" label="Compliance BSP 1.1" defaultSelected="true">
+			<property name="isBSPCompliant" />
+		</item>	
 		<item type="checkbox" name="signatureCleanSecurityInfo" label="Ripulisci Messaggio dalle Informazioni Sicurezza" defaultSelected="true">
 			<property name="detachSecurityInfo" />
 		</item>

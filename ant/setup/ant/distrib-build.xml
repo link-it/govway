@@ -1459,6 +1459,8 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 					<param name="token" value="/var/govway/log"/>
 					<param name="value" value="${log_dir}"/>
 				</antcall>
+				<chmod dir="${dist}/batch" perm="a+x" includes="**/*.sh"/>
+				<chmod dir="${dist}/batch" perm="a+x" includes="**/*.cmd"/>
 				<if>
 					<not>
 						<equals arg1="${batch_dir}" arg2="" />
@@ -1514,6 +1516,22 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 						</if>
 					</else>
 				</if>
+			</then>
+		</if>
+
+		<!-- Tools -->
+		<available file="${tmp_tools}" type="dir" property="tools.present"/>
+		<if>
+			<equals arg1="${tools.present}" arg2="true"/>
+			<then>
+				<mkdir dir="${dist}/tools"/>
+				<copy todir="${dist}/tools">
+					<fileset dir="${tmp_tools}">
+				    		<include name="**"/>
+					</fileset>
+				</copy>
+				<chmod dir="${dist}/tools" perm="a+x" includes="**/*.sh"/>
+				<chmod dir="${dist}/tools" perm="a+x" includes="**/*.cmd"/>
 			</then>
 		</if>
 	</target>

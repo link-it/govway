@@ -282,7 +282,7 @@ public class DriverRegistroServiziDB_connettoriLIB {
 				// create
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI);
-				sqlQueryObject.addInsertField("endpointtype", "?");
+				sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_COLUMN_ENDPOINT_TYPE, "?");
 				sqlQueryObject.addInsertField("url", "?");
 				sqlQueryObject.addInsertField("transfer_mode", "?");
 				sqlQueryObject.addInsertField("transfer_mode_chunk_size", "?");
@@ -298,7 +298,7 @@ public class DriverRegistroServiziDB_connettoriLIB {
 				sqlQueryObject.addInsertField("provurl", "?");
 				sqlQueryObject.addInsertField("connection_factory", "?");
 				sqlQueryObject.addInsertField("send_as", "?");
-				sqlQueryObject.addInsertField("nome_connettore", "?");
+				sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_COLUMN_NOME, "?");
 				sqlQueryObject.addInsertField("debug", "?");
 				sqlQueryObject.addInsertField("proxy", "?");		
 				sqlQueryObject.addInsertField("proxy_type", "?");		
@@ -473,10 +473,10 @@ public class DriverRegistroServiziDB_connettoriLIB {
 				if(connettore.getCustom()!=null && connettore.getCustom()){					
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI_CUSTOM);
-					sqlQueryObject.addInsertField("name", "?");
-					sqlQueryObject.addInsertField("value", "?");
-					sqlQueryObject.addInsertField("enc_value", "?");
-					sqlQueryObject.addInsertField("id_connettore", "?");
+					sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_CUSTOM_COLUMN_NAME, "?");
+					sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_CUSTOM_COLUMN_VALUE, "?");
+					sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_CUSTOM_COLUMN_ENC_VALUE, "?");
+					sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_CUSTOM_COLUMN_ID_CONNETTORE, "?");
 					sqlQuery = sqlQueryObject.createSQLInsert();
 					
 					for (int i = 0; i < connettore.sizePropertyList(); i++) {
@@ -514,10 +514,10 @@ public class DriverRegistroServiziDB_connettoriLIB {
 				else if(extendedProperties.size()>0){
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI_CUSTOM);
-					sqlQueryObject.addInsertField("name", "?");
-					sqlQueryObject.addInsertField("value", "?");
-					sqlQueryObject.addInsertField("enc_value", "?");
-					sqlQueryObject.addInsertField("id_connettore", "?");
+					sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_CUSTOM_COLUMN_NAME, "?");
+					sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_CUSTOM_COLUMN_VALUE, "?");
+					sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_CUSTOM_COLUMN_ENC_VALUE, "?");
+					sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_CUSTOM_COLUMN_ID_CONNETTORE, "?");
 					sqlQuery = sqlQueryObject.createSQLInsert();
 					
 					for (String nomeP : extendedProperties.keySet()) {
@@ -561,7 +561,7 @@ public class DriverRegistroServiziDB_connettoriLIB {
 
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addUpdateTable(CostantiDB.CONNETTORI);
-				sqlQueryObject.addUpdateField("endpointtype", "?");
+				sqlQueryObject.addUpdateField(CostantiDB.CONNETTORI_COLUMN_ENDPOINT_TYPE, "?");
 				sqlQueryObject.addUpdateField("url", "?");
 				sqlQueryObject.addUpdateField("transfer_mode", "?");
 				sqlQueryObject.addUpdateField("transfer_mode_chunk_size", "?");
@@ -577,7 +577,7 @@ public class DriverRegistroServiziDB_connettoriLIB {
 				sqlQueryObject.addUpdateField("provurl", "?");
 				sqlQueryObject.addUpdateField("connection_factory", "?");
 				sqlQueryObject.addUpdateField("send_as", "?");
-				sqlQueryObject.addUpdateField("nome_connettore", "?");
+				sqlQueryObject.addUpdateField(CostantiDB.CONNETTORI_COLUMN_NOME, "?");
 				sqlQueryObject.addUpdateField("debug", "?");
 				sqlQueryObject.addUpdateField("proxy", "?");		
 				sqlQueryObject.addUpdateField("proxy_type", "?");		
@@ -742,10 +742,10 @@ public class DriverRegistroServiziDB_connettoriLIB {
 				if(connettore.getCustom()!=null && connettore.getCustom()){					
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI_CUSTOM);
-					sqlQueryObject.addInsertField("name", "?");
-					sqlQueryObject.addInsertField("value", "?");
-					sqlQueryObject.addInsertField("enc_value", "?");
-					sqlQueryObject.addInsertField("id_connettore", "?");
+					sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_CUSTOM_COLUMN_NAME, "?");
+					sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_CUSTOM_COLUMN_VALUE, "?");
+					sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_CUSTOM_COLUMN_ENC_VALUE, "?");
+					sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_CUSTOM_COLUMN_ID_CONNETTORE, "?");
 					sqlQuery = sqlQueryObject.createSQLInsert();
 					
 					for (int i = 0; i < connettore.sizePropertyList(); i++) {
@@ -783,10 +783,10 @@ public class DriverRegistroServiziDB_connettoriLIB {
 				else if(extendedProperties.size()>0){
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI_CUSTOM);
-					sqlQueryObject.addInsertField("name", "?");
-					sqlQueryObject.addInsertField("value", "?");
-					sqlQueryObject.addInsertField("enc_value", "?");
-					sqlQueryObject.addInsertField("id_connettore", "?");
+					sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_CUSTOM_COLUMN_NAME, "?");
+					sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_CUSTOM_COLUMN_VALUE, "?");
+					sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_CUSTOM_COLUMN_ENC_VALUE, "?");
+					sqlQueryObject.addInsertField(CostantiDB.CONNETTORI_CUSTOM_COLUMN_ID_CONNETTORE, "?");
 					sqlQuery = sqlQueryObject.createSQLInsert();
 					
 					for (String nomeP : extendedProperties.keySet()) {

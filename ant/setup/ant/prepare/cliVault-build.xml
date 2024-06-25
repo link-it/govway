@@ -1,0 +1,55 @@
+
+<project name="prepare-setup-cliVault" basedir=".">
+	
+	<description>
+        	PREPARE SETUP CLI VAULT
+	</description>
+
+	
+	<target name="prepare_cliVault_setup">
+	
+		<mkdir dir="${deploy_sw}/tools"/>
+		<mkdir dir="${deploy_sw}/tools/tmp_dist"/>
+		<mkdir dir="${deploy_sw}/tools/tmp_empty"/>
+
+		<delete includeEmptyDirs="true" failonerror="false">
+		    <fileset dir="${deploy_sw}/tools/govway-vault-cli" includes="*"/>
+		</delete>
+		<delete dir="${deploy_sw}/tools/govway-vault-cli" failonerror="false"/>
+
+		<antcall target="distrib_cliVault">
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="openspcoop2" value="${rootDir}"/>
+			<param name="required_lib" value="${required_lib_cliVault}"/>
+			<param name="required_lib_cliVault" value="${required_lib_cliVault}"/>
+			<param name="openspcoop2.lib" value="${required_lib_cliVault}"/>
+			<param name="openspcoop2.dist" value="${deploy_sw_openspcoop2_jars}"/> <!-- usato per prendere i jar di openspcoop2 -->
+			<param name="src_cliVault" value="${src_cliVault}"/>
+			<param name="build_cliVault" location="build/cliVault" />
+			<param name="buildAPI" value="false" />
+			<param name="properties_cliVault" value="${cliVault}/properties"/>
+			<param name="script_cliVault" value="${cliVault}/script"/>
+			<param name="dist_cliVault" value="${deploy_sw}/tools/tmp_dist"/>
+			<param name="distrib_cliVault" value="${deploy_sw}/tools/govway-vault-cli"/>
+			<param name="openspcoop2.protocollo.trasparente.dist" value="${deploy_sw}/tools/tmp_empty"/>
+			<param name="openspcoop2.protocollo.spcoop.dist" value="${deploy_sw}/tools/tmp_empty"/>
+			<param name="openspcoop2.protocollo.modipa.dist" value="${deploy_sw}/tools/tmp_empty"/>
+			<param name="openspcoop2.protocollo.sdi.dist" value="${deploy_sw}/tools/tmp_empty"/>
+		</antcall>
+		<delete includeEmptyDirs="true">
+		    <fileset dir="${deploy_sw}/tools/tmp_dist" includes="*"/>
+		</delete>
+		<delete dir="${deploy_sw}/tools/tmp_dist"/>
+		<delete dir="${deploy_sw}/tools/tmp_empty"/>
+		<delete dir="build" includeEmptyDirs="true"/>
+
+		<!-- Converto jar in txt -->
+		<antcall target="replace_jar_with_txt">
+			<param name="archiveFileJarLocation" value="${deploy_sw}/tools/govway-vault-cli/lib"/>
+			<param name="deploy_sw" value="${deploy_sw}"/>		
+		</antcall>
+
+	</target>
+	
+	
+</project>

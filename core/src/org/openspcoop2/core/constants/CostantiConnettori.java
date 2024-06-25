@@ -180,7 +180,10 @@ public class CostantiConnettori {
     /** BYOK PROPERTIES */
     
     private static List<String> confidentials = new ArrayList<>();
-    static {
+    public static List<String> getConfidentials() {
+		return confidentials;
+	}
+	static {
     	confidentials.add(CONNETTORE_PASSWORD);
     	confidentials.add(CONNETTORE_BEARER_TOKEN);
     	confidentials.add(CONNETTORE_APIKEY);

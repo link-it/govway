@@ -176,17 +176,17 @@ public class DriverRegistroServiziDB_connettoriDriver {
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
-				String endpoint = rs.getString("endpointtype");
+				String endpoint = rs.getString(CostantiDB.CONNETTORI_COLUMN_ENDPOINT_TYPE);
 				if (endpoint == null || endpoint.equals("") || endpoint.equals(TipiConnettore.DISABILITATO.getNome())) {
 					connettore = new Connettore();
-					connettore.setNome(rs.getString("nome_connettore"));
+					connettore.setNome(rs.getString(CostantiDB.CONNETTORI_COLUMN_NOME));
 					connettore.setTipo(TipiConnettore.DISABILITATO.getNome());
 					connettore.setId(idConnettore);
 
 				} else {
 					Property prop = null;
 					connettore = new Connettore();
-					connettore.setNome(rs.getString("nome_connettore"));
+					connettore.setNome(rs.getString(CostantiDB.CONNETTORI_COLUMN_NOME));
 					connettore.setTipo(endpoint);
 					//l'id del connettore e' quello passato come parametro
 					connettore.setId(idConnettore);
@@ -631,9 +631,9 @@ public class DriverRegistroServiziDB_connettoriDriver {
 	}
 	private static void processPropertiesConnettoreCustom(ResultSet rs, Connettore connettore, 
 			IDriverBYOK driverBYOK) throws SQLException, UtilsException {
-		String nome = rs.getString("name");
-		String valore = rs.getString("value");
-		String encValue = rs.getString("enc_value");
+		String nome = rs.getString(CostantiDB.CONNETTORI_CUSTOM_COLUMN_NAME);
+		String valore = rs.getString(CostantiDB.CONNETTORI_CUSTOM_COLUMN_VALUE);
+		String encValue = rs.getString(CostantiDB.CONNETTORI_CUSTOM_COLUMN_ENC_VALUE);
 
 		if(CostantiDB.CONNETTORE_DEBUG.equals(nome)){ // lo posso aver aggiunto prima
 			boolean found = false;
@@ -676,7 +676,7 @@ public class DriverRegistroServiziDB_connettoriDriver {
 			sqlQueryObject.addFromTable(CostantiDB.CONNETTORI_CUSTOM);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("id_connettore = ?");
-			sqlQueryObject.addWhereLikeCondition("name", CostantiConnettori.CONNETTORE_EXTENDED_PREFIX+"%");
+			sqlQueryObject.addWhereLikeCondition(CostantiDB.CONNETTORI_CUSTOM_COLUMN_NAME, CostantiConnettori.CONNETTORE_EXTENDED_PREFIX+"%");
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 
 			stm = connection.prepareStatement(sqlQuery);
@@ -707,9 +707,9 @@ public class DriverRegistroServiziDB_connettoriDriver {
 	}
 	private static void processPropertiesConnettoreExtendedInfo(ResultSet rs, Connettore connettore, 
 			IDriverBYOK driverBYOK) throws SQLException, UtilsException {
-		String nome = rs.getString("name");
-		String valore = rs.getString("value");
-		String encValue = rs.getString("enc_value");
+		String nome = rs.getString(CostantiDB.CONNETTORI_CUSTOM_COLUMN_NAME);
+		String valore = rs.getString(CostantiDB.CONNETTORI_CUSTOM_COLUMN_VALUE);
+		String encValue = rs.getString(CostantiDB.CONNETTORI_CUSTOM_COLUMN_ENC_VALUE);
 
 		// Le proprietà sono già state inserite in caso di connettore custom
 		boolean found = false;

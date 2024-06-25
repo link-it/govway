@@ -228,6 +228,9 @@ public class DriverBYOK implements IDriverBYOK {
 		return BYOKInstance.newInstance(log, p, key);
 	}
 	private BYOKRequestParams getBYOKRequestParams(boolean wrap, String securityPolicy) throws UtilsException {
+		return getBYOKRequestParamsBySecurityPolicy(wrap, securityPolicy, this.dynamicMap);
+	}
+	public static BYOKRequestParams getBYOKRequestParamsBySecurityPolicy(boolean wrap, String securityPolicy, Map<String, Object> dynamicMap) throws UtilsException {
 		
 		if(securityPolicy==null) {
 			return null;
@@ -253,7 +256,7 @@ public class DriverBYOK implements IDriverBYOK {
 		}
 		
 		return getBYOKRequestParamsByKsmId(ksmId, manager, 
-				inputMap, this.dynamicMap);
+				inputMap, dynamicMap);
 	}
 	
 	public static BYOKRequestParams getBYOKRequestParamsByUnwrapBYOKPolicy(String ksmId,
@@ -338,6 +341,17 @@ public class DriverBYOK implements IDriverBYOK {
 			}
 		}
 		return content;
+	}
+	
+	public boolean isWrappedWithInternalPolicy(byte[] value) {
+		if(value==null || value.length<=0) {
+			return false;
+		}
+		return isWrappedWithInternalPolicy(new String(value));
+	}
+	public boolean isWrappedWithInternalPolicy(String value) {
+		String policy = this.securityRemotePolicy!=null ? this.securityRemotePolicy : this.securityPolicy;
+		return DriverBYOKUtilities.isWrapped(this.log, value, policy);
 	}
 	
 }

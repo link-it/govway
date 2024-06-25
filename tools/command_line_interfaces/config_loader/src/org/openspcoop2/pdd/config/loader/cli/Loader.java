@@ -98,6 +98,11 @@ public class Loader {
 	}
 	private static Logger logSql = LoggerWrapperFactory.getLogger(Loader.class);
 	
+	private static boolean delete = false;
+	private static boolean updateAbilitato = true;
+	
+	private static ArchiveMode mode = org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_ARCHIVE_MODE;
+		
 	public static void main(String[] args) throws CoreException, SQLException {
 		
 		Connection connectionSQL = null;
@@ -113,35 +118,20 @@ public class Loader {
 			
 			// costanti
 			ArchiveModeType modeType = org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_ARCHIVE_MODE_TYPE;
-			ArchiveMode mode = org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_ARCHIVE_MODE;
 			boolean validateDocuments = true;
 			MapPlaceholder importInformationMissingGlobalPlaceholder = new MapPlaceholder();
 			boolean showCorrelazioneAsincronaInAccordi = true;
-			boolean isShowGestioneWorkflowStatoDocumenti = false;
-			boolean isShowAccordiColonnaAzioni = false;
 			boolean smista = false;
 			
 			// properties
 			LoaderProperties loaderProperties = LoaderProperties.getInstance();
 			String confDir = null; // non sembra servire
 			String protocolloDefault = loaderProperties.getProtocolloDefault();
-			String importNomePddOperativa = loaderProperties.getNomePddOperativa();
-			String importTipoPddArchivi = loaderProperties.getTipoPddArchivio();
 			String userLogin = loaderProperties.getUtente();
-			boolean importDeletePolicyConfig = loaderProperties.isPolicyEnable();
-			boolean importDeletePluginConfig = loaderProperties.isPluginEnable();
-			boolean importCheckPluginReferences = loaderProperties.isPluginCheckReferences();
-			boolean importConfig = loaderProperties.isConfigurazioneGeneraleEnable();
-			boolean isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto = loaderProperties.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto();
-			boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto = loaderProperties.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto();
-			boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials = loaderProperties.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials();
-			boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials = loaderProperties.isSoggettiApplicativiCredenzialiSslPermitSameCredentials();
-			boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials = loaderProperties.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials();
+			
 
 			
 			// args
-			boolean delete = false;
-			boolean updateAbilitato = true;
 			String utilizzoErrato = "Usage error: Loader <operationType> <archivePath>";
 			if(args.length<2 || args[0]==null || args[1]==null) {
 				throw new CoreException(utilizzoErrato);
@@ -317,48 +307,8 @@ public class Loader {
 			logCoreInfo("Finalizzazione archivio effettuata");
 			
 			// store
-			String esito = null;
-			if(delete){
-				
-				logCoreInfo("Eliminazione in corso ...");
-				
-				DeleterArchiveUtils deleterArchiveUtils = 
-						new DeleterArchiveUtils(importerEngine, logCore, userLogin,
-								importDeletePolicyConfig,
-								importDeletePluginConfig);
-				
-				ArchiveEsitoDelete esitoDelete = deleterArchiveUtils.deleteArchive(archive, userLogin);
-				
-				esito = archiveEngine.toString(esitoDelete, mode);
-				
-				logCoreInfo("Eliminazione completata");
-				
-			}else{
-				
-				logCoreInfo("Importazione (aggiornamento:"+updateAbilitato+") in corso ...");
-				
-				ImporterArchiveUtils importerArchiveUtils = 
-						new ImporterArchiveUtils(importerEngine, logCore, userLogin, importNomePddOperativa, importTipoPddArchivi, 
-								isShowGestioneWorkflowStatoDocumenti, updateAbilitato,
-								importDeletePolicyConfig, 
-								importDeletePluginConfig, importCheckPluginReferences,
-								importConfig);
-				
-				ArchiveEsitoImport esitoImport = importerArchiveUtils.importArchive(archive, userLogin, 
-						isShowAccordiColonnaAzioni,
-						isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto, 
-						isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto,
-						isSoggettiApplicativiCredenzialiBasicPermitSameCredentials,
-						isSoggettiApplicativiCredenzialiSslPermitSameCredentials,
-						isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials);
-				
-				esito = archiveEngine.toString(esitoImport, mode);
-				
-				logCoreInfo("Importazione (aggiornamento:"+updateAbilitato+") completata");
-			}
-			
-			logCoreInfo("Operazione terminata con esito:\n"+esito);
-			
+			process(importerEngine, userLogin, loaderProperties,
+					archiveEngine, archive);		
 		}
 		catch(Exception t) {
 			if(logCore!=null) {
@@ -371,6 +321,69 @@ public class Loader {
 				connectionSQL.close();
 			}
 		}
+
+	}
+	
+	private static void process(ArchiveEngine importerEngine, String userLogin, LoaderProperties loaderProperties,
+			IArchive archiveEngine, Archive archive) throws Exception {
+		
+		boolean importDeletePolicyConfig = loaderProperties.isPolicyEnable();
+		boolean importDeletePluginConfig = loaderProperties.isPluginEnable();
+		boolean importCheckPluginReferences = loaderProperties.isPluginCheckReferences();
+		boolean importConfig = loaderProperties.isConfigurazioneGeneraleEnable();
+		boolean isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto = loaderProperties.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto();
+		boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto = loaderProperties.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto();
+		boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials = loaderProperties.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials();
+		boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials = loaderProperties.isSoggettiApplicativiCredenzialiSslPermitSameCredentials();
+		boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials = loaderProperties.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials();
+		
+		String importNomePddOperativa = loaderProperties.getNomePddOperativa();
+		String importTipoPddArchivi = loaderProperties.getTipoPddArchivio();
+				
+		boolean isShowGestioneWorkflowStatoDocumenti = false;
+		boolean isShowAccordiColonnaAzioni = false;
+				
+		String esito = null;
+		if(delete){
+			
+			logCoreInfo("Eliminazione in corso ...");
+			
+			DeleterArchiveUtils deleterArchiveUtils = 
+					new DeleterArchiveUtils(importerEngine, logCore, userLogin,
+							importDeletePolicyConfig,
+							importDeletePluginConfig);
+			
+			ArchiveEsitoDelete esitoDelete = deleterArchiveUtils.deleteArchive(archive, userLogin);
+			
+			esito = archiveEngine.toString(esitoDelete, mode);
+			
+			logCoreInfo("Eliminazione completata");
+			
+		}else{
+			
+			logCoreInfo("Importazione (aggiornamento:"+updateAbilitato+") in corso ...");
+			
+			ImporterArchiveUtils importerArchiveUtils = 
+					new ImporterArchiveUtils(importerEngine, logCore, userLogin, importNomePddOperativa, importTipoPddArchivi, 
+							isShowGestioneWorkflowStatoDocumenti, updateAbilitato,
+							importDeletePolicyConfig, 
+							importDeletePluginConfig, importCheckPluginReferences,
+							importConfig);
+			
+			ArchiveEsitoImport esitoImport = importerArchiveUtils.importArchive(archive, userLogin, 
+					isShowAccordiColonnaAzioni,
+					isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto, 
+					isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto,
+					isSoggettiApplicativiCredenzialiBasicPermitSameCredentials,
+					isSoggettiApplicativiCredenzialiSslPermitSameCredentials,
+					isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials);
+			
+			esito = archiveEngine.toString(esitoImport, mode);
+			
+			logCoreInfo("Importazione (aggiornamento:"+updateAbilitato+") completata");
+		}
+		
+		logCoreInfo("Operazione terminata con esito:\n"+esito);
 
 	}
 

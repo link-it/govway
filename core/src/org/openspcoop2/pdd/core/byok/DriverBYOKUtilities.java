@@ -80,7 +80,6 @@ public class DriverBYOKUtilities {
 	public DriverBYOK getDriverBYOKManagerNode(boolean wrap, boolean unwrap) throws UtilsException{
 		return getDriverBYOK(BYOKManager.getSecurityEngineGovWayPolicy(), BYOKManager.getSecurityRemoteEngineGovWayPolicy(), wrap, unwrap);
 	}
-	
 	private DriverBYOK getDriverBYOK(String securityManagerPolicy, String securityManagerRemotePolicy, boolean wrap, boolean unwrap) throws UtilsException{
 		if(securityManagerPolicy!=null && StringUtils.isNotEmpty(securityManagerPolicy)) {
 			Map<String, Object> dynamicMap = new HashMap<>();
@@ -178,21 +177,35 @@ public class DriverBYOKUtilities {
 	}
 	
 	public boolean isWrapped(String value) {
+		String driverSecurityManagerPolicy = null;
 		try {
 			if(value==null || StringUtils.isEmpty(value) || !isEnabledBYOK()) {
 				return false;
 			}
 			String securityManagerPolicy = BYOKManager.getSecurityEngineGovWayPolicy();
-			String driverSecurityManagerPolicy = BYOKManager.getSecurityRemoteEngineGovWayPolicy();
+			driverSecurityManagerPolicy = BYOKManager.getSecurityRemoteEngineGovWayPolicy();
 			if(driverSecurityManagerPolicy==null || StringUtils.isEmpty(driverSecurityManagerPolicy)) {
 				driverSecurityManagerPolicy = securityManagerPolicy;
 			}
+		}catch(Exception e) {
+			this.log.error("isWrapped failed ["+value+"]: "+e.getMessage(),e);
+			/**throw new DriverControlStationException(e.getMessage(),e);*/
+			return false; 
+		}
+		return isWrapped(this.log, value, driverSecurityManagerPolicy);
+	}
+	
+	public static boolean isWrapped(Logger log, String value, String policy) {
+		try {
+			if(value==null || StringUtils.isEmpty(value)) {
+				return false;
+			}
 			
-			String prefix = BYOKUtilities.newPrefixWrappedValue(driverSecurityManagerPolicy);
+			String prefix = BYOKUtilities.newPrefixWrappedValue(policy);
 			return value.startsWith(prefix) && value.length()>prefix.length();
 			
 		}catch(Exception e) {
-			this.log.error("isWrapped failed ["+value+"]: "+e.getMessage(),e);
+			log.error("isWrapped failed ["+value+"]: "+e.getMessage(),e);
 			/**throw new DriverControlStationException(e.getMessage(),e);*/
 			return false; 
 		}

@@ -1396,7 +1396,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							   						boolean visualizzaComandoEdit = !forzaVisualizzazioneInputUtente && lockValuePresent && !lockReadOnly;
 			                        							   						
 			                        							   						// 5. Comando Eye visualizzato quando si utilizza il campo password e c'e' un valore o non si devono utilizzare i servizi remoti di decodifica
-			                        							   						boolean visualizzaComandoEye = utilizzaInputPassword && (!lockValuePresent || !dePwd.isLockVisualizzaInformazioniCifrate());
+			                        							   						boolean visualizzaComandoEye = utilizzaInputPassword && (!lockValuePresent || !org.openspcoop2.utils.certificate.byok.BYOKManager.isEnabledBYOK());
 			                        							   						
 			                        							   						// 6. Comando all'interno dell'input visualizzato se almeno uno dei due comandi qui su e' abilitato
 			                        				                    				boolean visualizzaComandiInternoInput = visualizzaComandoEdit || visualizzaComandoEye;
