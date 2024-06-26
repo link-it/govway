@@ -7195,14 +7195,12 @@ public class ControlStationCore {
 		return this.getIdSoggettiOperativi(null);
 	}
 	public List<IDSoggetto> getIdSoggettiOperativi(String protocollo) throws DriverRegistroServiziException{
-		List<org.openspcoop2.core.registry.Soggetto> list = this.getSoggettiOperativi(protocollo);
-		List<IDSoggetto> l = new ArrayList<>();
-		if(list!=null && !list.isEmpty()) {
-			for (org.openspcoop2.core.registry.Soggetto soggetto : list) {
-				l.add(new IDSoggetto(soggetto.getTipo(), soggetto.getNome()));
-			}
+		ConsoleSearch s = new ConsoleSearch(true);
+		if(protocollo!=null) {
+			s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, protocollo); // imposto protocollo
 		}
-		return l;
+		s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, PddTipologia.OPERATIVO.toString()); // imposto dominio
+		return this.idSoggettiRegistroList(null, s);
 	}
 	
 	public List<org.openspcoop2.core.registry.Soggetto> getSoggetti() throws DriverRegistroServiziException{
@@ -7246,6 +7244,27 @@ public class ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
 			return driver.getDriverRegistroServiziDB().soggettiRegistroList(superuser, ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<IDSoggetto> idSoggettiRegistroList(String superuser, ISearch ricerca) throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "idSoggettiRegistroList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().idSoggettiRegistroList(superuser, ricerca);
 
 		} catch (Exception e) {
 			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);

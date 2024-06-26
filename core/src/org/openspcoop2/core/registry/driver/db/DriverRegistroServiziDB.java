@@ -1739,6 +1739,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 		return this.soggettiSearchDriver.soggettiRegistroList(superuser, ricerca);
 	}
 	
+	public List<IDSoggetto> idSoggettiRegistroListByTipo(String tipoSoggetto,ISearch ricerca) throws DriverRegistroServiziException{
+		return this.soggettiSearchDriver.idSoggettiRegistroListByTipo(tipoSoggetto, ricerca);
+	}
+
+	public List<IDSoggetto> idSoggettiRegistroList(String superuser, ISearch ricerca) throws DriverRegistroServiziException {
+		return this.soggettiSearchDriver.idSoggettiRegistroList(superuser, ricerca);
+	}
+	
 	public IDSoggetto getIdSoggetto(long idSoggetto) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		return this.soggettiDriver.getIdSoggetto(idSoggetto);
 	}
