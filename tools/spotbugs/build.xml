@@ -220,6 +220,20 @@
 			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
 			<param name="analyzeJar" value="openspcoop2_batch-runtime-repository*.jar"/>
 		</antcall>
+		<!-- CLI ConfigLoader -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="cli-config-loader"/>
+			<param name="analyzeSrc" value="${openspcoop2}/tools/command_line_interfaces/config_loader/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_cli-configLoader*.jar"/>
+		</antcall>
+		<!-- CLI GovWayVault -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="cli-govway-vault"/>
+			<param name="analyzeSrc" value="${openspcoop2}/tools/command_line_interfaces/govway_vault/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_cli-vault*.jar"/>
+		</antcall>
 
 	</target>
 	<target name="_findBugs">

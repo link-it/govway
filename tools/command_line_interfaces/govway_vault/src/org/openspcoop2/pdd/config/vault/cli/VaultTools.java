@@ -131,63 +131,7 @@ public class VaultTools {
 		}
 		
 		try {
-			logCoreDebug("Raccolta parametri terminata");
-			
-			// properties
-			VaultProperties vaultProperties = VaultProperties.getInstance();
-			/**String confDir = null;*/ // non sembra servire
-			String protocolloDefault = vaultProperties.getProtocolloDefault();
-			
-			// Map (environment)
-			initMap(vaultProperties);
-			
-			// Load Security Provider
-			if(vaultProperties.isSecurityLoadBouncyCastleProvider()) {
-				initBouncyCastle();
-			}
-			
-			// inizializzo HSM Manager
-			initHsm(vaultProperties);
-			
-			// inizializzo BYOK Manager
-			BYOKManager byokManager = initBYOK(vaultProperties);
-			
-			// Secrets (environment)
-			initSecrets(vaultProperties, byokManager);
-			
-			// Init GovWay
-			logCoreDebug("Inizializzazione risorse libreria in corso...");
-			
-			initProtocolFactory(protocolloDefault);
-			
-			initExtendedInfoManager();
-			
-			logCoreDebug("Inizializzazione risorse libreria terminata");
-			
-			// Validazione configurazioni
-			if(updateConfig!=null) {
-				
-				logCoreInfo("Aggiornamento informazioni sensibili in corso ...");
-				
-				updateConfig.validate(byokManager);
-				VaultUpdateConfigUtilities utils = new VaultUpdateConfigUtilities(updateConfig);
-				utils.process();
-				
-				logCoreInfo("Aggiornamento informazioni sensibili completato");
-			}
-			else if(encDecConfig!=null) {
-				
-				String op = encDecConfig.isEncode() ? "Cifratura" : "Decrifratura";
-				logCoreInfo(op+" in corso ...");
-				
-				encDecConfig.validate(byokManager);
-				VaultEncDecUtilities utils = new VaultEncDecUtilities(encDecConfig);
-				utils.process();
-				
-				logCoreInfo(op+" completata");
-			}
-			
-			
+			process(updateConfig, encDecConfig);
 		}
 		catch(Exception t) {
 			if(logCore!=null) {
@@ -196,6 +140,64 @@ public class VaultTools {
 			throw new CoreException(t.getMessage(),t);
 		}
 
+	}
+	
+	private static void process(VaultUpdateConfig updateConfig, VaultEncDecConfig encDecConfig) throws CoreException {
+		logCoreDebug("Raccolta parametri terminata");
+		
+		// properties
+		VaultProperties vaultProperties = VaultProperties.getInstance();
+		/**String confDir = null;*/ // non sembra servire
+		String protocolloDefault = vaultProperties.getProtocolloDefault();
+		
+		// Map (environment)
+		initMap(vaultProperties);
+		
+		// Load Security Provider
+		if(vaultProperties.isSecurityLoadBouncyCastleProvider()) {
+			initBouncyCastle();
+		}
+		
+		// inizializzo HSM Manager
+		initHsm(vaultProperties);
+		
+		// inizializzo BYOK Manager
+		BYOKManager byokManager = initBYOK(vaultProperties);
+		
+		// Secrets (environment)
+		initSecrets(vaultProperties, byokManager);
+		
+		// Init GovWay
+		logCoreDebug("Inizializzazione risorse libreria in corso...");
+		
+		initProtocolFactory(protocolloDefault);
+		
+		initExtendedInfoManager();
+		
+		logCoreDebug("Inizializzazione risorse libreria terminata");
+		
+		// Validazione configurazioni
+		if(updateConfig!=null) {
+			
+			logCoreInfo("Aggiornamento informazioni sensibili in corso ...");
+			
+			updateConfig.validate(byokManager);
+			VaultUpdateConfigUtilities utils = new VaultUpdateConfigUtilities(updateConfig);
+			utils.process();
+			
+			logCoreInfo("Aggiornamento informazioni sensibili completato");
+		}
+		else if(encDecConfig!=null) {
+			
+			String op = encDecConfig.isEncode() ? "Cifratura" : "Decrifratura";
+			logCoreInfo(op+" in corso ...");
+			
+			encDecConfig.validate(byokManager);
+			VaultEncDecUtilities utils = new VaultEncDecUtilities(encDecConfig);
+			utils.process();
+			
+			logCoreInfo(op+" completata");
+		}
 	}
 
 	private static void initLogger() throws CoreException {
