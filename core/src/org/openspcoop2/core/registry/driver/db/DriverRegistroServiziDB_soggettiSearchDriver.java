@@ -25,6 +25,7 @@ package org.openspcoop2.core.registry.driver.db;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,7 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Proprieta;
 import org.openspcoop2.core.registry.Soggetto;
@@ -48,6 +50,7 @@ import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.LikeConfig;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.utils.sql.SQLQueryObjectException;
 
 /**
  * DriverRegistroServiziDB_soggettiDriver
@@ -1455,6 +1458,217 @@ public class DriverRegistroServiziDB_soggettiSearchDriver {
 			JDBCUtilities.closeResources(risultato, stmt);
 
 			this.driver.closeConnection(error,con);
+		}
+	}
+	
+	protected List<IDSoggetto> idSoggettiRegistroListByTipo(String tipoSoggetto,ISearch ricerca) throws DriverRegistroServiziException{
+		return idSoggettiRegistroList("", tipoSoggetto, ricerca);
+	}
+
+	protected List<IDSoggetto> idSoggettiRegistroList(String superuser, ISearch ricerca) throws DriverRegistroServiziException {
+		return idSoggettiRegistroList(superuser, null, ricerca);
+	}
+	
+	private List<IDSoggetto> idSoggettiRegistroList(String superuser, String tipoSoggetto, ISearch ricerca) throws DriverRegistroServiziException {
+		String nomeMetodo = "idSoggettiRegistroList";
+		int idLista = Liste.SOGGETTI;
+		int offset;
+		int limit;
+		String search;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+
+		String filterProtocollo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLO);
+		String filterProtocolli = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLI);
+		List<String> tipoSoggettiProtocollo = null;
+		try {
+			tipoSoggettiProtocollo = Filtri.convertToTipiSoggetti(filterProtocollo, filterProtocolli);
+		}catch(Exception e) {
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		
+		String filterDominio = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_DOMINIO);
+		PddTipologia pddTipologia = null;
+		if(filterDominio!=null && !"".equals(filterDominio)) {
+			pddTipologia = PddTipologia.toPddTipologia(filterDominio);
+		}
+		
+		this.driver.logDebug("search : " + search);
+		this.driver.logDebug("filterProtocollo : " + filterProtocollo);
+		this.driver.logDebug("filterProtocolli : " + filterProtocolli);
+		
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+		ArrayList<IDSoggetto> lista = new ArrayList<>();
+
+		if (this.driver.atomica) {
+			try {
+				con = this.driver.getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.driver.globalConnection;
+
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
+
+		try {
+			/* === Filtro Dominio === */
+			
+			ISQLQueryObject sqlQueryObjectPdd = null;
+			if(pddTipologia!=null && PddTipologia.ESTERNO.equals(pddTipologia)) {
+				ISQLQueryObject sqlQueryObjectExistsPdd = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
+				sqlQueryObjectExistsPdd.addSelectField(CostantiDB.PDD+".nome");
+				sqlQueryObjectExistsPdd.addFromTable(CostantiDB.PDD);
+				sqlQueryObjectExistsPdd.setANDLogicOperator(true);
+				sqlQueryObjectExistsPdd.addWhereCondition(CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server");
+				sqlQueryObjectExistsPdd.addWhereCondition(CostantiDB.PDD+".tipo=?");
+				
+				sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
+				sqlQueryObjectPdd.setANDLogicOperator(false);
+				sqlQueryObjectPdd.addWhereIsNullCondition(CostantiDB.SOGGETTI+".server");
+				sqlQueryObjectPdd.addWhereExistsCondition(false, sqlQueryObjectExistsPdd);
+			}
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			
+			// creazione sqlQueryObject
+			impostaFiltriRicercaSqlQueryObjectIdSoggettiList(superuser, tipoSoggetto, search, tipoSoggettiProtocollo, sqlQueryObject, pddTipologia, sqlQueryObjectPdd);
+			sqlQueryObject.setANDLogicOperator(true);
+			queryString = sqlQueryObject.createSQLQuery();
+			
+			stmt = con.prepareStatement(queryString);
+			// setParameters
+			setParametersIdSoggettiList(superuser, tipoSoggetto, search, pddTipologia, stmt);
+
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addSelectField("nome_soggetto");
+			sqlQueryObject.addSelectField("tipo_soggetto");
+			
+			// creazione sqlQueryObject
+			impostaFiltriRicercaSqlQueryObjectIdSoggettiList(superuser, tipoSoggetto, search, tipoSoggettiProtocollo, sqlQueryObject, pddTipologia, sqlQueryObjectPdd);
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addOrderBy("nome_soggetto");
+			sqlQueryObject.addOrderBy("tipo_soggetto");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			queryString = sqlQueryObject.createSQLQuery();
+
+			stmt = con.prepareStatement(queryString);
+			// setParameters
+			setParametersIdSoggettiList(superuser, tipoSoggetto, search, pddTipologia, stmt);
+			risultato = stmt.executeQuery();
+
+			IDSoggetto sog;
+			while (risultato.next()) {
+
+				sog = new IDSoggetto();
+				sog.setNome(risultato.getString("nome_soggetto"));
+				sog.setTipo(risultato.getString("tipo_soggetto"));
+				lista.add(sog);
+
+			}
+
+			return lista;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			JDBCUtilities.closeResources(risultato, stmt);
+
+			this.driver.closeConnection(error,con);
+		}
+	}
+
+	private void setParametersIdSoggettiList(String superuser, String tipoSoggetto, String search, PddTipologia pddTipologia, PreparedStatement stmt) throws SQLException {
+		int index = 1;
+		
+		// superuser
+		if(this.driver.useSuperUser && superuser!=null && (!superuser.equals(""))){
+			stmt.setString(index++, superuser);
+		}
+		
+		// tipoSoggettiProtocollo in like
+		
+		// pddTipologia
+		if(pddTipologia!=null && !PddTipologia.ESTERNO.equals(pddTipologia)) {
+			stmt.setString(index++, pddTipologia.toString());
+		}
+		
+		// tipoSoggetto
+		if (!search.equals("")) {
+			if(tipoSoggetto!=null){
+				stmt.setString(index, tipoSoggetto); // index++ eliminato per segnalazione sonar
+			}
+		}else{
+			if(tipoSoggetto!=null) 
+				stmt.setString(index, tipoSoggetto); // index++ eliminato per segnalazione sonar
+		}
+	}
+
+	private void impostaFiltriRicercaSqlQueryObjectIdSoggettiList(String superuser, String tipoSoggetto, String search, List<String> tipoSoggettiProtocollo,
+			ISQLQueryObject sqlQueryObject, PddTipologia pddTipologia, ISQLQueryObject sqlQueryObjectPdd) throws SQLQueryObjectException {
+		// superuser
+		if(this.driver.useSuperUser && superuser!=null && (!superuser.equals("")))
+			sqlQueryObject.addWhereCondition("superuser = ?");
+		
+		// tipoSoggettiProtocollo
+		if(tipoSoggetto==null && tipoSoggettiProtocollo!=null && !tipoSoggettiProtocollo.isEmpty()) {
+			sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
+		}
+		
+		// pddTipologia
+		if(pddTipologia!=null) {
+			if(PddTipologia.ESTERNO.equals(pddTipologia)) {						
+				sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
+			}
+			else {
+				sqlQueryObject.addFromTable(CostantiDB.PDD);
+				sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+			}
+		}
+		
+		// tipoSoggetto
+		if (!search.equals("")) {
+			//query con search
+			
+			if(tipoSoggetto!=null){
+				sqlQueryObject.addWhereCondition("tipo_soggetto=?");
+				sqlQueryObject.addWhereLikeCondition("nome_soggetto", search, true, true);	
+			}
+			else{
+				sqlQueryObject.addWhereCondition(false, 
+						sqlQueryObject.getWhereLikeCondition("tipo_soggetto", search, true, true),
+						sqlQueryObject.getWhereLikeCondition("nome_soggetto", search, true, true));
+			}
+		} else {
+			if(tipoSoggetto!=null)
+				sqlQueryObject.addWhereCondition("tipo_soggetto=?");
 		}
 	}
 }

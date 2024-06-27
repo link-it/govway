@@ -3651,46 +3651,55 @@ public class ControlStationCore {
 					if (oggetto instanceof RoutingTable) {
 						RoutingTable rt = (RoutingTable) oggetto;
 						driver.getDriverConfigurazioneDB().createRoutingTable(rt);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// GestioneErrore
 					if (oggetto instanceof GestioneErrore) {
 						GestioneErrore gestErrore = (GestioneErrore) oggetto;
 						driver.getDriverConfigurazioneDB().createGestioneErroreComponenteCooperazione(gestErrore);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// Configurazione
 					if (oggetto instanceof Configurazione) {
 						Configurazione conf = (Configurazione) oggetto;
 						driver.getDriverConfigurazioneDB().createConfigurazione(conf);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// ConfigurazioneAccessoRegistro
 					if (oggetto instanceof AccessoRegistro) {
 						AccessoRegistro cfgAccessoRegistro = (AccessoRegistro) oggetto;
 						driver.getDriverConfigurazioneDB().createAccessoRegistro(cfgAccessoRegistro);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// ConfigurazioneAccessoRegistroRegistro
 					if (oggetto instanceof AccessoRegistroRegistro) {
 						AccessoRegistroRegistro carr = (AccessoRegistroRegistro) oggetto;
 						driver.getDriverConfigurazioneDB().createAccessoRegistro(carr);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// ConfigurazioneAccessoConfigurazione
 					if (oggetto instanceof AccessoConfigurazione) {
 						AccessoConfigurazione accesso = (AccessoConfigurazione) oggetto;
 						driver.getDriverConfigurazioneDB().createAccessoConfigurazione(accesso);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// ConfigurazioneAccessoDatiAutorizzazione
 					if (oggetto instanceof AccessoDatiAutorizzazione) {
 						AccessoDatiAutorizzazione accesso = (AccessoDatiAutorizzazione) oggetto;
 						driver.getDriverConfigurazioneDB().createAccessoDatiAutorizzazione(accesso);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// ConfigurazioneSystemProperty
 					if (oggetto instanceof SystemProperties) {
 						SystemProperties sps = (SystemProperties) oggetto;
 						driver.getDriverConfigurazioneDB().createSystemPropertiesPdD(sps);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// ConfigurazioneUrlInvocazioneRegola
 					if (oggetto instanceof ConfigurazioneUrlInvocazioneRegola) {
 						ConfigurazioneUrlInvocazioneRegola regola = (ConfigurazioneUrlInvocazioneRegola) oggetto;
 						driver.getDriverConfigurazioneDB().createUrlInvocazioneRegola(regola);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 
 					/***********************************************************
@@ -3940,46 +3949,55 @@ public class ControlStationCore {
 					if (oggetto instanceof RoutingTable) {
 						RoutingTable rt = (RoutingTable) oggetto;
 						driver.getDriverConfigurazioneDB().updateRoutingTable(rt);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// GestioneErrore
 					if (oggetto instanceof GestioneErrore) {
 						GestioneErrore gestErrore = (GestioneErrore) oggetto;
 						driver.getDriverConfigurazioneDB().updateGestioneErroreComponenteCooperazione(gestErrore);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// Configurazione
 					if (oggetto instanceof Configurazione) {
 						Configurazione conf = (Configurazione) oggetto;
 						driver.getDriverConfigurazioneDB().updateConfigurazione(conf);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// ConfigurazioneAccessoRegistro
 					if (oggetto instanceof AccessoRegistro) {
 						AccessoRegistro cfgAccessoRegistro = (AccessoRegistro) oggetto;
 						driver.getDriverConfigurazioneDB().updateAccessoRegistro(cfgAccessoRegistro);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// ConfigurazioneAccessoRegistroRegistro
 					if (oggetto instanceof AccessoRegistroRegistro) {
 						AccessoRegistroRegistro carr = (AccessoRegistroRegistro) oggetto;
 						driver.getDriverConfigurazioneDB().updateAccessoRegistro(carr);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// ConfigurazioneAccessoConfigurazione
 					if (oggetto instanceof AccessoConfigurazione) {
 						AccessoConfigurazione accesso = (AccessoConfigurazione) oggetto;
 						driver.getDriverConfigurazioneDB().updateAccessoConfigurazione(accesso);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// ConfigurazioneAccessoDatiAutorizzazione
 					if (oggetto instanceof AccessoDatiAutorizzazione) {
 						AccessoDatiAutorizzazione accesso = (AccessoDatiAutorizzazione) oggetto;
 						driver.getDriverConfigurazioneDB().updateAccessoDatiAutorizzazione(accesso);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// SystemProperties
 					if (oggetto instanceof SystemProperties) {
 						SystemProperties sps = (SystemProperties) oggetto;
 						driver.getDriverConfigurazioneDB().updateSystemPropertiesPdD(sps);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// ConfigurazioneUrlInvocazioneRegola
 					if (oggetto instanceof ConfigurazioneUrlInvocazioneRegola) {
 						ConfigurazioneUrlInvocazioneRegola regola = (ConfigurazioneUrlInvocazioneRegola) oggetto;
 						driver.getDriverConfigurazioneDB().updateUrlInvocazioneRegola(regola);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// ConfigurazioneUrlInvocazione
 					if (oggetto instanceof ConfigurazioneUrlInvocazione) {
@@ -3995,6 +4013,7 @@ public class ControlStationCore {
 						}
 						
 						driver.getDriverConfigurazioneDB().updateConfigurazione(config);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 
 					/***********************************************************
@@ -4245,46 +4264,55 @@ public class ControlStationCore {
 					if (oggetto instanceof RoutingTable) {
 						RoutingTable rt = (RoutingTable) oggetto;
 						driver.getDriverConfigurazioneDB().deleteRoutingTable(rt);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// GestioneErrore
 					if (oggetto instanceof GestioneErrore) {
 						GestioneErrore gestErrore = (GestioneErrore) oggetto;
 						driver.getDriverConfigurazioneDB().deleteGestioneErroreComponenteCooperazione(gestErrore);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// Configurazione
 					if (oggetto instanceof Configurazione) {
 						Configurazione conf = (Configurazione) oggetto;
 						driver.getDriverConfigurazioneDB().deleteConfigurazione(conf);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// ConfigurazioneAccessoRegistro
 					if (oggetto instanceof AccessoRegistro) {
 						AccessoRegistro cfgAccessoRegistro = (AccessoRegistro) oggetto;
 						driver.getDriverConfigurazioneDB().deleteAccessoRegistro(cfgAccessoRegistro);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// ConfigurazioneAccessoRegistroRegistro
 					if (oggetto instanceof AccessoRegistroRegistro) {
 						AccessoRegistroRegistro carr = (AccessoRegistroRegistro) oggetto;
 						driver.getDriverConfigurazioneDB().deleteAccessoRegistro(carr);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// ConfigurazioneAccessoConfigurazione
 					if (oggetto instanceof AccessoConfigurazione) {
 						AccessoConfigurazione accesso = (AccessoConfigurazione) oggetto;
 						driver.getDriverConfigurazioneDB().deleteAccessoConfigurazione(accesso);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// ConfigurazioneAccessoDatiAutorizzazione
 					if (oggetto instanceof AccessoDatiAutorizzazione) {
 						AccessoDatiAutorizzazione accesso = (AccessoDatiAutorizzazione) oggetto;
 						driver.getDriverConfigurazioneDB().deleteAccessoDatiAutorizzazione(accesso);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// SystemProperties
 					if (oggetto instanceof SystemProperties) {
 						SystemProperties sps = (SystemProperties) oggetto;
 						driver.getDriverConfigurazioneDB().deleteSystemPropertiesPdD(sps);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 					// ConfigurazioneUrlInvocazioneRegola
 					if (oggetto instanceof ConfigurazioneUrlInvocazioneRegola) {
 						ConfigurazioneUrlInvocazioneRegola regola = (ConfigurazioneUrlInvocazioneRegola) oggetto;
 						driver.getDriverConfigurazioneDB().deleteUrlInvocazioneRegola(regola);
+						ControlStationCore.invalidateConfigurazioneGenerale();
 					}
 
 					/***********************************************************
@@ -5730,7 +5758,35 @@ public class ControlStationCore {
 	 * @throws DriverConfigurazioneNotFound
 	 * @throws DriverConfigurazioneException
 	 */
+	private static Configurazione configurazioneInstance = null;
+	private static Semaphore configurazioneInstanceSemaphore = new Semaphore("configurazioneGenerale");
+	public static void invalidateConfigurazioneGenerale() {
+		if(ControlStationCore.configurazioneInstance!=null) {
+			ControlStationCore.configurazioneInstanceSemaphore.acquireThrowRuntime("invalidateConfigurazioneGenerale");
+			try {
+				ControlStationCore.configurazioneInstance=null;
+			}finally {
+				ControlStationCore.configurazioneInstanceSemaphore.release("invalidateConfigurazioneGenerale");
+			}
+		}
+	}
 	public Configurazione getConfigurazioneGenerale() throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		if(ControlStationCore.configurazioneInstance==null) {
+			initSyncConfigurazioneGenerale();
+		}
+		return ControlStationCore.configurazioneInstance;
+	}
+	private void initSyncConfigurazioneGenerale() throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		if(ControlStationCore.configurazioneInstance==null) {
+			ControlStationCore.configurazioneInstanceSemaphore.acquireThrowRuntime("initConfigurazioneGenerale");
+			try {
+				initConfigurazioneGenerale();
+			}finally {
+				ControlStationCore.configurazioneInstanceSemaphore.release("initConfigurazioneGenerale");
+			}
+		}
+	}
+	private void initConfigurazioneGenerale() throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getConfigurazioneGenerale";
 		DriverControlStationDB driver = null;
@@ -5773,7 +5829,7 @@ public class ControlStationCore {
 				}
 			}
 			
-			return config;
+			ControlStationCore.configurazioneInstance = config;
 
 		} catch (DriverConfigurazioneNotFound de) {
 			ControlStationCore.logError(getPrefixError(nomeMetodo,  de),de);
@@ -6167,14 +6223,12 @@ public class ControlStationCore {
 		return this.getIdSoggettiOperativi(null);
 	}
 	public List<IDSoggetto> getIdSoggettiOperativi(String protocollo) throws DriverRegistroServiziException{
-		List<org.openspcoop2.core.registry.Soggetto> list = this.getSoggettiOperativi(protocollo);
-		List<IDSoggetto> l = new ArrayList<>();
-		if(list!=null && !list.isEmpty()) {
-			for (org.openspcoop2.core.registry.Soggetto soggetto : list) {
-				l.add(new IDSoggetto(soggetto.getTipo(), soggetto.getNome()));
-			}
+		ConsoleSearch s = new ConsoleSearch(true);
+		if(protocollo!=null) {
+			s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, protocollo); // imposto protocollo
 		}
-		return l;
+		s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, PddTipologia.OPERATIVO.toString()); // imposto dominio
+		return this.idSoggettiRegistroList(null, s);
 	}
 	
 	public List<org.openspcoop2.core.registry.Soggetto> getSoggetti() throws DriverRegistroServiziException{
@@ -6218,6 +6272,27 @@ public class ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
 			return driver.getDriverRegistroServiziDB().soggettiRegistroList(superuser, ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<IDSoggetto> idSoggettiRegistroList(String superuser, ISearch ricerca) throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "idSoggettiRegistroList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().idSoggettiRegistroList(superuser, ricerca);
 
 		} catch (Exception e) {
 			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);

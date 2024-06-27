@@ -1,3 +1,9 @@
+2024-06-27  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1728
+	Apportate lievi migliorie prestazionali.
+
 2024-06-14  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [GovWayCore]
