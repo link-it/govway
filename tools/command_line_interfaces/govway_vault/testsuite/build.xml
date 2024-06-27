@@ -1,0 +1,302 @@
+<project name="GovWayCLIVaultTestSuite">
+
+	<description>
+        	File di Script per la compilazione dei test per la funzionalità di Vault
+	</description>
+
+	<import file="./local_env.xml" />
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<path id="vault_testsuite">
+		<fileset dir="${required_lib}/testsuite">
+			<include name="hamcrest-core-1.3.jar"/>
+			<include name="junit-4.13.2.jar"/>
+			<include name="picocli-4.2.0.jar"/>
+			<include name="logback-*.jar"/>
+			<include name="spring-jdbc-*.jar"/>
+		</fileset>
+		<fileset dir="${dir_jdbc}">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/commons">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/httpcore">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/log">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/json">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/spring">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/swagger">
+			<include name="swagger-models-2*.jar"/>
+			<include name="swagger-core-2*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/shared">
+			<include name="snakeyaml-1.33-gov4j-1.jar"/>
+			<include name="xercesImpl-*.jar"/>
+			<include name="xalan-*.jar"/>
+			<include name="joda-time-2.12.0.jar"/>
+			<include name="mailapi-1.6.7.jar"/>
+			<include name="jakarta.activation-1.2.2.jar"/>
+			<include name="serializer-2.7.3.jar"/>
+			<include name="wsdl4j-1.6.3.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/cxf">
+			<include name="cxf-rt-security-*.jar"/>
+			<include name="cxf-core-*.jar"/>
+			<include name="cxf-rt-rs-json-basic-*.jar"/>
+			<include name="cxf-rt-rs-security-jose-*.jar"/>
+			<include name="asm-9.6.jar"/>
+			<include name="woodstox-core-6.6.0.jar"/>
+			<include name="xmlschema-core-2.3.1.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/security">
+			<include name="neethi-3.2.0.jar"/>
+			<include name="bcprov-ext-jdk18on-1.74.jar"/>
+			<include name="nimbus-jose-jwt-9.37.3.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/stub/cxf">
+			<include name="openspcoop2_integrationManagerStub_messageBox_cxf.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/cxf">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/javax">
+			<include name="javax.annotation-api-1.3.2.jar"/>
+			<include name="javax.servlet-api-4.0.1.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/jax">
+			<include name="jaxws-*.jar"/>
+			<include name="jaxb-*.jar"/>
+		</fileset>	
+		<fileset dir="${required_lib}/jackson">
+			<include name="jackson-*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/jetty">
+			<include name="*.jar"/>
+		</fileset>	
+		<fileset dir="${required_lib}/saaj">
+			<include name="javax.xml.soap-api-1.4.0.jar"/>
+			<include name="saaj-impl-1.5.3-gov4j-1.jar"/>
+			<include name="stax-ex-1.8.3.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2.dist}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	<property name="src_testsuite" location="src" />
+	<property name="build_testsuite" location="build" />
+	<property name="build_plugin" location="build_plugin" />
+	<property name="log_testsuite" location="log" />
+	<property name="dist_testsuite" location="dist" />
+
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean">
+		<delete dir="${build_testsuite}"/>
+		<delete dir="${log_testsuite}"/>
+		<delete dir="${output}"/>
+		<delete dir="target"/>
+	</target>
+	<target name="init">
+		<mkdir dir="${build_testsuite}"/>
+	</target>
+	<target name="clean_plugin">
+		<delete dir="${build_plugin}"/>
+		<delete dir="${dist_testsuite}"/>
+	</target>
+	<target name="init_plugin">
+		<mkdir dir="${build_plugin}"/>
+		<mkdir dir="${dist_testsuite}"/>
+	</target>
+
+	<!-- Compilazione del plugin -->
+	<target name="plugin" depends="clean_plugin,init_plugin" description="produce l'archivio jar per i plugin">
+		<!-- Compile the java code  -->
+		<javac includeantruntime="false" destdir="${build_plugin}" debug="${debug}">
+			<src path="${src_testsuite}/org/openspcoop2/pdd/config/vault/cli/testsuite/plugin/classes"/>
+			<classpath>
+				<path refid="vault_testsuite"/>
+			</classpath>
+		</javac>
+		<jar jarfile="${dist_testsuite}/govway_testsuite_plugins.jar">
+			<zipfileset dir="${build_plugin}" />
+		</jar>
+	</target>
+
+	<!-- Compilazione del Client -->
+	<target name="build" depends="clean,init" description="compila">
+		<!-- Compile the java code  -->
+		<javac includeantruntime="false" destdir="${build_testsuite}" debug="${debug}">
+			<src path="${src_testsuite}"/>
+			<exclude name="org/openspcoop2/pdd/config/vault/cli/testsuite/plugin/classes/*" />
+			<classpath>
+				<path refid="vault_testsuite"/>
+			</classpath>
+		</javac>
+		<copy todir="${build_testsuite}">
+			<fileset dir="${src_testsuite}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- Esecuzione dei test -->
+
+	<target name="delete_config">
+		<echo message="Eliminazione configurazione in corso ..." />
+		<java classname="org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader" fork="true">
+			<arg value="false" />
+			<classpath>
+				<path refid="vault_testsuite" />
+				<pathelement path="${build_testsuite}"/>
+			</classpath>
+		</java>
+		<echo message="Eliminazione configurazione effettuata" />
+	</target>
+
+	<target name="load_config">
+		<echo message="Caricamento configurazione in corso (delete) ..." />
+		<java classname="org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader" fork="true">
+			<arg value="false" />
+		        <classpath>
+		                <path refid="vault_testsuite" />
+		                <pathelement path="${build_testsuite}"/>
+		        </classpath>
+		</java>
+		<echo message="Caricamento configurazione in corso (create) ..." />
+		<java classname="org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader" fork="true">
+			<arg value="true" />
+		        <classpath>
+		                <path refid="vault_testsuite" />
+		                <pathelement path="${build_testsuite}"/>
+		        </classpath>
+		</java>
+		<echo message="Caricamento configurazione completata" />
+	</target>
+
+	<target name="run_test">
+
+		<delete dir="${output}"/>
+		<delete dir="${log_testsuite}"/>
+		<mkdir dir="${output}"/>
+		<mkdir dir="${log_testsuite}"/>
+
+		<var name="loadEnabled" value="true"/>
+		<if>
+			<not>
+				<equals arg1="${load}" arg2="$${load}"/>
+			</not>
+			<then>
+				<var name="loadEnabled" value="${load}"/>
+			</then>
+		</if>
+		<var name="deleteEnabled" value="false"/>
+		<if>
+			<not>
+				<equals arg1="${delete}" arg2="$${delete}"/>
+			</not>
+			<then>
+				<var name="deleteEnabled" value="${delete}"/>
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${loadEnabled}" arg2="true"/>
+			<then>
+
+				<echo message="Caricamento configurazione in corso (delete) ..." />
+				<java classname="org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader" fork="true">
+					<arg value="false" />
+					<classpath>
+						<path refid="vault_testsuite" />
+						<pathelement path="${build_testsuite}"/>
+					</classpath>
+				</java>
+
+				<echo message="Caricamento configurazione in corso (create) ..." />
+				<java classname="org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader" fork="true">
+					<arg value="true" />
+					<classpath>
+						<path refid="vault_testsuite" />
+						<pathelement path="${build_testsuite}"/>
+					</classpath>
+				</java>
+				<echo message="Caricamento configurazione completata" />
+			</then>
+		</if>
+
+		<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}" fork="yes" forkmode="once">
+
+			<!-- <jvmarg value="-Xdebug" /> 
+			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8787" /> -->
+
+			<!-- Per non far comparire il Warning: Nashorn engine is planned to be removed from a future JDK release -->
+			<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
+
+			<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
+			     (file:.../lib/json/accessors-smart-2.4.8.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
+			<!-- Modificato da deny a permit per non far comparire il messaggio (sono test): 
+				Caused by: java.lang.IllegalAccessError: class Log4jHotPatch (in unnamed module @0x7a356a0d) 
+					cannot access class jdk.internal.org.objectweb.asm.Opcodes (in module java.base) 
+					because module java.base does not export jdk.internal.org.objectweb.asm to unnamed module @0x7a356a0d
+					at Log4jHotPatch.asmVersion(Log4jHotPatch.java:71)
+			-->
+			<jvmarg value="-Djdk.module.illegalAccess=permit"/>
+
+			<sysproperty key="wait" value="${wait}"/>
+
+			<classpath refid="vault_testsuite" />
+			<classpath location="${build_testsuite}" />
+
+			<formatter type="plain"/>
+			<formatter type="xml" />
+
+			<batchtest fork="yes" todir="${output}" >
+				<fileset dir="${src_testsuite}">
+					<include name="**/*Test.java" />
+				</fileset>
+			</batchtest>
+
+		</junit>
+
+		<if>
+			<equals arg1="${deleteEnabled}" arg2="true"/>
+			<then>
+				<echo message="Eliminazione configurazione in corso ..." />
+				<java classname="org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader" fork="true">
+					<arg value="false" />
+					<classpath>
+						<path refid="vault_testsuite" />
+						<pathelement path="${build_testsuite}"/>
+					</classpath>
+				</java>
+				<echo message="Eliminazione configurazione effettuata" />
+			</then>
+		</if>
+
+		<junitreport todir="${output}">
+			<fileset dir="${output}">
+				<include name="**/TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${output}\html\" />
+		</junitreport>
+
+		<copy todir="${output}/log">
+			<fileset dir="${log_testsuite}"/>
+		</copy>
+
+	</target>
+
+</project>

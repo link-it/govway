@@ -36,7 +36,9 @@ import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.BYOKLocalEncrypt;
+import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.byok.BYOKCostanti;
 import org.openspcoop2.utils.certificate.byok.BYOKInstance;
 import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.certificate.byok.BYOKMode;
@@ -62,7 +64,7 @@ public class DriverBYOK implements IDriverBYOK {
 	private Logger log;
 	private String securityPolicy;
 	private String securityRemotePolicy;
-	private Map<String, Object> dynamicMap;
+	private Map<String, Map<String, Object>> dynamicMapForSecurityPolicy; // per supportare l'unwrap di secrets codificati con security policy differenti da quelle di default
 	private boolean checkJmxPrefixOperazioneNonRiuscita;
 	
 	public DriverBYOK(Logger log, String securityPolicy, String securityRemotePolicy) {
@@ -82,8 +84,36 @@ public class DriverBYOK implements IDriverBYOK {
 		if(securityRemotePolicy!=null && StringUtils.isNotEmpty(securityRemotePolicy)) {
 			this.securityRemotePolicy = securityRemotePolicy;
 		}
-		this.dynamicMap = dynamicMapParam==null ? new HashMap<>() : dynamicMapParam;
+		
+		this.dynamicMapForSecurityPolicy = new HashMap<>();
+		Map<String, Object> defaultPolicy = dynamicMapParam==null ? new HashMap<>() : dynamicMapParam;
+		this.dynamicMapForSecurityPolicy.put(this.securityRemotePolicy!=null ? this.securityRemotePolicy : this.securityPolicy, defaultPolicy);
 		this.checkJmxPrefixOperazioneNonRiuscita = checkJmxPrefixOperazioneNonRiuscita;
+	}
+	
+	private Semaphore semaphoreDynamicMap = new Semaphore("dynamicMap");
+	private Map<String, Object> getDynamicMap(String securityPolicy) throws UtilsException{
+		if(!this.dynamicMapForSecurityPolicy.containsKey(securityPolicy)) {
+			this.initDynamicMap(securityPolicy);
+		}
+		return this.dynamicMapForSecurityPolicy.get(securityPolicy);
+	}
+	private void initDynamicMap(String securityPolicy) throws UtilsException {
+		this.semaphoreDynamicMap.acquire("initDynamicMap");
+		try {
+			if(!this.dynamicMapForSecurityPolicy.containsKey(securityPolicy)) {
+				Map<String, Object> mDefault = this.dynamicMapForSecurityPolicy.get(this.securityRemotePolicy!=null ? this.securityRemotePolicy : this.securityPolicy);
+				Map<String, Object> mNew = new HashMap<>();
+				for (Map.Entry<String,Object> entry : mDefault.entrySet()) {
+					if(!BYOKCostanti.VARIABILE_KSM.equals(entry.getKey())){ // devo escludere ksm object contenente le variabili di un'altra security policy
+						mNew.put(entry.getKey(), entry.getValue());
+					}
+				}
+				this.dynamicMapForSecurityPolicy.put(securityPolicy, mNew);
+			}
+		}finally {
+			this.semaphoreDynamicMap.release("initDynamicMap");
+		}
 	}
 	
 	@Override
@@ -228,7 +258,7 @@ public class DriverBYOK implements IDriverBYOK {
 		return BYOKInstance.newInstance(log, p, key);
 	}
 	private BYOKRequestParams getBYOKRequestParams(boolean wrap, String securityPolicy) throws UtilsException {
-		return getBYOKRequestParamsBySecurityPolicy(wrap, securityPolicy, this.dynamicMap);
+		return getBYOKRequestParamsBySecurityPolicy(wrap, securityPolicy, this. getDynamicMap(securityPolicy));
 	}
 	public static BYOKRequestParams getBYOKRequestParamsBySecurityPolicy(boolean wrap, String securityPolicy, Map<String, Object> dynamicMap) throws UtilsException {
 		
