@@ -80,6 +80,7 @@ public class ConfigLoader {
 	}
     
     protected static Logger logCore = null;
+    protected static Logger logConsole = null;
 	
 	public static Logger getLoggerCore() {
 		return logCore;
@@ -87,6 +88,15 @@ public class ConfigLoader {
 	public static void logCoreInfo(String msg) {
 		if(logCore!=null) {
 			logCore.info(msg);
+		}
+		if(msg.startsWith("@")) {
+			logConsole(msg);
+		}
+	}
+	
+	public static void logConsole(String msg) {
+		if(logConsole!=null) {
+			logConsole.info(msg);
 		}
 	}
 	
@@ -97,6 +107,7 @@ public class ConfigLoader {
 	@BeforeClass
 	public static void setupLogger() {
 		logCore =  LoggerWrapperFactory.getLogger("testsuite.core");
+		logConsole =  LoggerWrapperFactory.getLogger("testsuite.console");
 	}
 	
 	protected static DbUtils dbUtils;

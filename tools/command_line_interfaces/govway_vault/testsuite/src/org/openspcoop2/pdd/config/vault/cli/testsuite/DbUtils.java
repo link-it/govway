@@ -176,14 +176,40 @@ public class DbUtils {
         return this.jdbc.update(query);
     }
     
+    
     public String getServiziApplicativiPasswordInv(String colonnaIdValue) throws UtilsException {
     	return getColumnValue("passwordinv", CostantiDB.SERVIZI_APPLICATIVI, "nome", colonnaIdValue);
     }
     public String getServiziApplicativiEncPasswordInv(String colonnaIdValue) throws UtilsException {
     	return getColumnValue("enc_passwordinv", CostantiDB.SERVIZI_APPLICATIVI, "nome", colonnaIdValue);
     }
-    public String getColumnValue(String colonna, String tabella, String colonnaId, String colonnaIdValue) throws UtilsException {
+    
+    public String getServiziApplicativiPasswordInv(String nomePortaDefault, String azione) throws UtilsException {
+    	String nomeSA = getServizioApplicativoAssociatoPorta(nomePortaDefault, azione);
+    	return getColumnValue("passwordinv", CostantiDB.SERVIZI_APPLICATIVI, "nome", nomeSA);
+    }
+    public String getServiziApplicativiEncPasswordInv(String nomePortaDefault, String azione) throws UtilsException {
+    	String nomeSA = getServizioApplicativoAssociatoPorta(nomePortaDefault, azione);
+    	return getColumnValue("enc_passwordinv", CostantiDB.SERVIZI_APPLICATIVI, "nome", nomeSA);
+    }
+    
+    public String getServiziApplicativiPasswordRisp(String colonnaIdValue) throws UtilsException {
+    	return getColumnValue("passwordrisp", CostantiDB.SERVIZI_APPLICATIVI, "nome", colonnaIdValue);
+    }
+    public String getServiziApplicativiEncPasswordRisp(String colonnaIdValue) throws UtilsException {
+    	return getColumnValue("enc_passwordrisp", CostantiDB.SERVIZI_APPLICATIVI, "nome", colonnaIdValue);
+    }
+    
+    private String getColumnValue(String colonna, String tabella, String colonnaId, String colonnaIdValue) throws UtilsException {
+    	return getColumnValue(colonna, tabella, colonnaId, colonnaIdValue, 
+        		null, null);
+    }
+    private String getColumnValue(String colonna, String tabella, String colonnaId, String colonnaIdValue, 
+    		String colonnaId2, String colonnaIdValue2) throws UtilsException {
     	String query = "select "+colonna+" from "+tabella+" WHERE "+colonnaId+"='"+colonnaIdValue+"'";
+    	if(colonnaId2!=null && colonnaIdValue2!=null) {
+    		query+=" AND "+colonnaId2+"='"+colonnaIdValue2+"'";
+    	}
     	logger.info(query);
     	var result = readRow(query);
     	Object oId = result.get(colonna);
@@ -196,4 +222,18 @@ public class DbUtils {
     	throw new UtilsException("Uncorrect return type '"+oId.getClass().getName()+"' ("+oId+")");
     }
     
+    private String getServizioApplicativoAssociatoPorta(String nomePortaDefault, String nomeAzione) throws UtilsException {
+    	String query = "select nome from servizi_applicativi where id=(select id_servizio_applicativo from porte_applicative_sa where id_porta=(select pa.id from porte_applicative pa,pa_azioni az where az.id_porta=pa.id AND "+
+    			"az.azione='"+nomeAzione+"' AND pa.nome_porta LIKE '__"+nomePortaDefault+"__Specific%'));";
+    	logger.info(query);
+    	var result = readRow(query);
+    	Object oId = result.get("nome");
+    	if(oId instanceof String) {
+    		return (String) oId;
+    	}
+    	if(oId==null) {
+    		return null;
+    	}
+    	throw new UtilsException("Uncorrect return type '"+oId.getClass().getName()+"' ("+oId+")");
+    }
 }

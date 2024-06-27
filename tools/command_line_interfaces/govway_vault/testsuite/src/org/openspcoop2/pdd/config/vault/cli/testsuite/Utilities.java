@@ -23,7 +23,6 @@ package org.openspcoop2.pdd.config.vault.cli.testsuite;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -43,29 +42,37 @@ public class Utilities {
 	
 	private Utilities() {}
 
-	public static HttpResponse testSoap(Logger log,
-			TipoServizio tipoServizio, String api, String operazione) throws UtilsException, ProtocolException {
+	public static HttpResponse testSpcoop(Logger log,
+			TipoServizio tipoServizio, String api, String operazione, String relatesTo) throws UtilsException {
 		return test(log,
 				tipoServizio, api, operazione, 
-				false);
+				false, true, relatesTo);
+	}
+	public static HttpResponse testSoap(Logger log,
+			TipoServizio tipoServizio, String api, String operazione) throws UtilsException {
+		return test(log,
+				tipoServizio, api, operazione, 
+				false, false, null);
 	}
 	public static HttpResponse testRest(Logger log,
-			TipoServizio tipoServizio, String api, String operazione) throws UtilsException, ProtocolException {
+			TipoServizio tipoServizio, String api, String operazione) throws UtilsException {
 		return test(log,
 				tipoServizio, api, operazione, 
-				true);
+				true, false, null);
 	}
 	private static HttpResponse test(Logger log,
 			TipoServizio tipoServizio, String api, String operazione, 
-			boolean rest) throws UtilsException {
+			boolean rest, boolean spcoop, String relatesTo) throws UtilsException {
 		
 		if(log!=null) {
 			// nop
 		}
 		
+		String protocollo = spcoop ? "/spcoop" : "";
+		
 		String url = tipoServizio == TipoServizio.EROGAZIONE
-				? System.getProperty("govway_base_path") + "/SoggettoInternoVaultTest/"+api+"/v1/"+operazione
-				: System.getProperty("govway_base_path") + "/out/SoggettoInternoVaultTestFruitore/SoggettoInternoVaultTest/"+api+"/v1/"+operazione;
+				? System.getProperty("govway_base_path") + protocollo + "/SoggettoInternoVaultTest/"+api+"/v1/"+operazione
+				: System.getProperty("govway_base_path") + protocollo + "/out/SoggettoInternoVaultTestFruitore/SoggettoInternoVaultTest/"+api+"/v1/"+operazione;
 		
 		HttpRequest request = new HttpRequest();
 		
@@ -82,6 +89,11 @@ public class Utilities {
 			request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, operazione);
 		}
 		
+		request.addHeader("GovWay-TestSuite-IDOP", operazione);
+		if(relatesTo!=null) {
+			request.addHeader("GovWay-Relates-To", relatesTo);
+		}
+		
 		request.setUrl(url);
 		
 		HttpResponse response = HttpUtilities.httpInvoke(request);
@@ -94,10 +106,10 @@ public class Utilities {
 		return response;
 	}
 		
-	public static void verifyOk(HttpResponse response, String contentType, int code) {
+	public static void verifyOk(HttpResponse response, String contentTypeExpected, int code) {
 		
 		assertEquals(code, response.getResultHTTPOperation());
-		assertEquals(HttpConstants.CONTENT_TYPE_JSON, contentType);
+		assertEquals(contentTypeExpected, response.getHeaderFirstValue(HttpConstants.CONTENT_TYPE));
 		
 	}
 }
