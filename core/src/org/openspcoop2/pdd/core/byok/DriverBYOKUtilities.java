@@ -43,9 +43,14 @@ import org.slf4j.Logger;
 public class DriverBYOKUtilities {
 
 	public static DriverBYOK newInstanceDriverBYOKRuntimeNode(Logger log, boolean wrap, boolean unwrap) throws UtilsException {
+		return newInstanceDriverBYOKRuntimeNode(log, wrap, unwrap, true);
+	}
+	public static DriverBYOK newInstanceDriverBYOKRuntimeNode(Logger log, boolean wrap, boolean unwrap, boolean useCache) throws UtilsException {
 		String securityRuntimePolicy = BYOKManager.getSecurityEngineGovWayPolicy();
 		if(securityRuntimePolicy!=null) {
-			return new DriverBYOKUtilities(log).getDriverBYOKRuntimeNode(wrap, unwrap);
+			DriverBYOKUtilities utils = new DriverBYOKUtilities(log);
+			utils.setUseCache(useCache);
+			return utils.getDriverBYOKRuntimeNode(wrap, unwrap);
 		}
 		return null;
 	}
@@ -53,6 +58,10 @@ public class DriverBYOKUtilities {
 	private Logger log;
 	private ConfigurazioneNodiRuntime configurazioneNodiRuntime;
 	private boolean nodoruntime;
+	private boolean useCache=true;
+	public void setUseCache(boolean useCache) {
+		this.useCache = useCache;
+	}
 	
 	public DriverBYOKUtilities(Logger log) {
 		this.log = log;
@@ -84,7 +93,7 @@ public class DriverBYOKUtilities {
 		if(securityManagerPolicy!=null && StringUtils.isNotEmpty(securityManagerPolicy)) {
 			Map<String, Object> dynamicMap = new HashMap<>();
 			DynamicInfo dynamicInfo = new  DynamicInfo();
-			DynamicUtils.fillDynamicMap(this.log, dynamicMap, dynamicInfo);
+			DynamicUtils.fillDynamicMap(this.log, dynamicMap, dynamicInfo, this.useCache);
 			
 			if(securityManagerRemotePolicy!=null && StringUtils.isNotEmpty(securityManagerRemotePolicy) &&
 					!securityManagerPolicy.equals(securityManagerRemotePolicy) && 

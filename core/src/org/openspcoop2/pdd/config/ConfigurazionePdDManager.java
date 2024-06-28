@@ -2100,6 +2100,10 @@ public class ConfigurazionePdDManager {
 		}
 		return sp;
 	}
+	public SystemProperties getSystemPropertiesPdDNoCached() throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getSystemPropertiesPdD();
+	}
+	
 	
 	public List<String> getEncryptedSystemPropertiesPdD() throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getEncryptedSystemPropertiesPdD();

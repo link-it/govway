@@ -67,6 +67,7 @@ public class ConfigLoader {
     
     public static final String DEFAULT_POLICY = "gw-pbkdf2";
     public static final String GW_KEYS_POLICY = "gw-keys";
+    public static final String GW_REMOTE_POLICY = "gw-remote";
     
 	public static final String SECURITY_IN="-sec_in";
 	public static final String SECURITY_OUT="-sec_out";
@@ -183,7 +184,7 @@ public class ConfigLoader {
     
     public static void prepareConfig() throws UtilsException, HttpUtilsException, IOException {
 
-        org.slf4j.Logger logger = LoggerWrapperFactory.getLogger(ConfigLoader.class);
+        org.slf4j.Logger logger = logCore!=null ? logCore : LoggerWrapperFactory.getLogger(ConfigLoader.class);
 
         String configLoaderPath = prop.getProperty(CONFIG_LOADER_PATH);
         String scriptPath = configLoaderPath + File.separatorChar + (SystemUtils.IS_OS_WINDOWS ? "createOrUpdate.cmd" : "createOrUpdate.sh");
@@ -199,6 +200,10 @@ public class ConfigLoader {
         org.openspcoop2.utils.resources.ScriptInvoker scriptInvoker = new org.openspcoop2.utils.resources.ScriptInvoker(scriptPath);
         scriptInvoker.run(new File(configLoaderPath), testsuiteBundle);
         
+        logDebug(logger,"script - exitCode: " + scriptInvoker.getExitValue());
+        logDebug(logger,"script - errorStream: " + scriptInvoker.getErrorStream());
+        logDebug(logger,"script - outStream: " + scriptInvoker.getOutputStream());
+        
         // Dopo aver caricato lo script, resetto le cache
         resetCache();
     }
@@ -209,7 +214,7 @@ public class ConfigLoader {
         String scriptPath = configLoaderPath + File.separatorChar + (SystemUtils.IS_OS_WINDOWS ? "delete.cmd" : "delete.sh");
         String trasparenteBundle = new File("src/configurazioni-govway/trasparenteTestBundle.zip").getAbsolutePath();
         
-        org.slf4j.Logger logger = LoggerWrapperFactory.getLogger(ConfigLoader.class);
+        org.slf4j.Logger logger = logCore!=null ? logCore : LoggerWrapperFactory.getLogger(ConfigLoader.class);
         
         logDebug(logger,LOG_SCRIPT_PATH+ scriptPath);
         logDebug(logger,"Config loader path: " + configLoaderPath);
@@ -218,6 +223,10 @@ public class ConfigLoader {
                 
         org.openspcoop2.utils.resources.ScriptInvoker scriptInvoker = new org.openspcoop2.utils.resources.ScriptInvoker(scriptPath);
         scriptInvoker.run(new File(configLoaderPath), trasparenteBundle);
+        
+        logDebug(logger,"script - exitCode: " + scriptInvoker.getExitValue());
+        logDebug(logger,"script - errorStream: " + scriptInvoker.getErrorStream());
+        logDebug(logger,"script - outStream: " + scriptInvoker.getOutputStream());
 
     }
     
@@ -231,7 +240,7 @@ public class ConfigLoader {
     
     public static void vaultSecrets(String srcPolicy, String destPolicy, boolean report) throws UtilsException, HttpUtilsException {
 
-        org.slf4j.Logger logger = LoggerWrapperFactory.getLogger(ConfigLoader.class);
+        org.slf4j.Logger logger = logCore!=null ? logCore : LoggerWrapperFactory.getLogger(ConfigLoader.class);
 
         String vaultPath = prop.getProperty(VAULT_PATH);
         String scriptPath = vaultPath + File.separatorChar + (SystemUtils.IS_OS_WINDOWS ? "update.cmd" : "update.sh");
@@ -247,6 +256,7 @@ public class ConfigLoader {
         			+"-out_"+
         			((destPolicy!=null) ? destPolicy : PLAIN)
         			+".txt");
+        	org.openspcoop2.utils.resources.FileSystemUtilities.deleteFile(reportPath);
         }
         logDebug(logger,"Vault report '"+((reportPath!=null) ? reportPath.getAbsolutePath() : "none")+"'");
         
@@ -269,6 +279,10 @@ public class ConfigLoader {
         
         org.openspcoop2.utils.resources.ScriptInvoker scriptInvoker = new org.openspcoop2.utils.resources.ScriptInvoker(scriptPath);
         scriptInvoker.run(new File(vaultPath), params.toArray(new String[1]));
+        
+        logDebug(logger,"script - exitCode: " + scriptInvoker.getExitValue());
+        logDebug(logger,"script - errorStream: " + scriptInvoker.getErrorStream());
+        logDebug(logger,"script - outStream: " + scriptInvoker.getOutputStream());
         
         // Dopo attuato l'operazione, resetto le cache
         resetCache();
@@ -308,7 +322,7 @@ public class ConfigLoader {
     
     public static void resetCache() throws UtilsException, HttpUtilsException {
         
-    	org.slf4j.Logger logger = LoggerWrapperFactory.getLogger(ConfigLoader.class);
+    	org.slf4j.Logger logger = logCore!=null ? logCore : LoggerWrapperFactory.getLogger(ConfigLoader.class);
     	logDebug(logger,"---- resetAllCache ----");
     	
         String jmxUser = prop.getProperty("jmx_username");
@@ -338,7 +352,7 @@ public class ConfigLoader {
     		return;
     	}
     	
-    	org.slf4j.Logger logger =  LoggerWrapperFactory.getLogger(ConfigLoader.class);
+    	org.slf4j.Logger logger = logCore!=null ? logCore : LoggerWrapperFactory.getLogger(ConfigLoader.class);
     	logDebug(logger,"---- resetCache useForSkip:"+useForSkip+" cache:"+Arrays.asList(cache)+" ----");
     	    	
         String jmxUser = prop.getProperty("jmx_username");

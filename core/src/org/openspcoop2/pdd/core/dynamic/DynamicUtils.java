@@ -229,8 +229,11 @@ public class DynamicUtils {
 		DynamicUtils.fillDynamicMap(log, dynamicMap, dInfo);		
     }
 	
-	@SuppressWarnings("unchecked")
 	public static void fillDynamicMap(Logger log, Map<String, Object> dynamicMap, DynamicInfo dynamicInfo) {
+		fillDynamicMap(log,dynamicMap, dynamicInfo, true);
+	}
+	@SuppressWarnings("unchecked")
+	public static void fillDynamicMap(Logger log, Map<String, Object> dynamicMap, DynamicInfo dynamicInfo, boolean useCache) {
 		if(!dynamicMap.containsKey(Costanti.MAP_DATE_OBJECT)) {
 			dynamicMap.put(Costanti.MAP_DATE_OBJECT, DateManager.getDate());
 		}
@@ -455,7 +458,7 @@ public class DynamicUtils {
 		}
 		
 		try {
-			SystemPropertiesReader systemPropertiesReader = new SystemPropertiesReader(log, requestInfo);
+			SystemPropertiesReader systemPropertiesReader = new SystemPropertiesReader(log, requestInfo, useCache);
 			dynamicMap.put(Costanti.MAP_SYSTEM_PROPERTY, systemPropertiesReader);
 			dynamicMap.put(Costanti.MAP_SYSTEM_PROPERTY.toLowerCase(), systemPropertiesReader);
 		}

@@ -165,6 +165,16 @@ public class DriverBYOK implements IDriverBYOK {
 		return new BYOKWrappedValue(wrappedValue, prefix);
 	}
 
+	public boolean isAlreadyWrappedBySecPolicy(String check) throws UtilsException {
+		// Serve per evitare di effettuare un ulteriore livello di wrap ad una informazione già cifrata
+		// nei metodi wrap non viene usato poichè viene già verificato più in generale con 'isWrappedValue'
+		// si lascia come utility generica il metodo
+		try {
+			return getSecPolicyIdForUnwrap(check)!=null;
+		}catch(Exception e) {
+			return false;
+		}
+	}
 	private String getSecPolicyIdForUnwrap(String check) throws UtilsException {
 		// Serve per decodificare valori cifrati con security policy differente da quella impostata per la gestione della cifratura
 		// Il comportamento serve a supportare eventuali valori cifrati dopo un cambio della policy senza un aggiornamento delle informazioni sensibili

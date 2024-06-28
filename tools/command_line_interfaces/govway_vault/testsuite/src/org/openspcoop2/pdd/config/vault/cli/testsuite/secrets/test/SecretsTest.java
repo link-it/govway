@@ -56,9 +56,24 @@ public class SecretsTest extends ConfigLoader {
 	private static final String  OP_RISPOSTA_ASINCRONA = "asincronoRisposta";
 	private static final String NOME_SERVER_ASINCRNO_ASIMMETRICO = "TestServerAsincronoAsimmetrico";
 	
-	private String getMessageExpectedStartsWith(String found, String prefix) {
-		return "Found '"+found+"'; expected start with '"+prefix+"'";
+	private static final String SA_PREFIX = "SA:";
+	
+	private String getMessagePrefix(String origine, String found) {
+		return "["+origine+"] Found '"+found+"'; expected";
 	}
+	private String getMessageExpected(String origine, String found, String expected) {
+		return getMessagePrefix(origine, found)+" start with '"+expected+"'";
+	}
+	private String getMessageExpectedNull(String origine, String found) {
+		return getMessagePrefix(origine, found)+" null";
+	}
+	private String getMessageExpectedStartsWith(String origine, String found, String expectedPrefix) {
+		return getMessagePrefix(origine, found)+" start with '"+expectedPrefix+"'";
+	}
+	
+	
+	
+	// ** STEP 0 //
 	
 	@Test
 	public void step0aVerificaInizialeDatabase() throws UtilsException {
@@ -77,6 +92,11 @@ public class SecretsTest extends ConfigLoader {
 		invocazioneGovWay();
 		
 	}
+	
+	
+	
+	
+	// ** STEP 1 //
 	
 	@Test
 	public void step1aVaultDefaultPolicy() throws UtilsException, HttpUtilsException {
@@ -106,6 +126,13 @@ public class SecretsTest extends ConfigLoader {
 		invocazioneGovWay();
 		
 	}
+	
+	
+	
+	
+	
+	
+	// ** STEP 2 //
 	
 	@Test
 	public void step2aVaultGwKeysPolicySrcPlainUncorrect() throws UtilsException, HttpUtilsException {
@@ -160,8 +187,75 @@ public class SecretsTest extends ConfigLoader {
 		
 	}
 	
+	
+	
+	
+	
+	
+	
+	// ** STEP 3 //
+	
 	@Test
-	public void step3aVaultPlainPolicySrcUncorrect() throws UtilsException, HttpUtilsException {
+	public void step3aVaultGwRemotePolicySrcPlainUncorrect() throws UtilsException, HttpUtilsException {
+		
+		// Aggiorno con una nuova policy, dicendo però che i secrets originali sono in chiaro: così facendo non troverò nulla da aggiornare
+		
+		logCoreInfo("@step3aVaultGwRemotePolicySrcPlainUncorrect");
+		
+		// Vault dei secrets
+		vaultSecrets(null, GW_REMOTE_POLICY, false);
+		
+	}
+	
+	@Test
+	public void step3bVerificaSecretsDatabaseGwRemotePolicySianoRimastiComeInPrecedenza() throws UtilsException {
+		
+		logCoreInfo("@step3bVerificaSecretsDatabaseGwRemotePolicySianoRimastiComeInPrecedenza");
+		
+		String prefix = BYOKUtilities.newPrefixWrappedValue(GW_KEYS_POLICY);
+		
+		verificheDatabaseCifrato(prefix);
+	}
+
+	@Test
+	public void step3cVaultRemotePolicy() throws UtilsException, HttpUtilsException {
+		
+		// Aggiorno con una nuova polic
+		
+		logCoreInfo("@step3cVaultRemotePolicy");
+		
+		// Vault dei secrets
+		vaultSecrets(GW_KEYS_POLICY, GW_REMOTE_POLICY, false);
+		
+	}
+	
+	@Test
+	public void step3dVerificaSecretsDatabaseRemotePolicy() throws UtilsException {
+		
+		logCoreInfo("@step3dVerificaSecretsDatabaseRemotePolicy");
+		
+		String prefix = BYOKUtilities.newPrefixWrappedValue(GW_REMOTE_POLICY);
+		
+		verificheDatabaseCifrato(prefix);
+	}
+	
+	@Test
+	public void step3eInvocazioneServiziGovwayConSecretLockedByRemotePolicy() throws UtilsException, HttpUtilsException {
+		
+		logCoreInfo("@step3eInvocazioneServiziGovwayConSecretLockedByRemotePolicy");
+		
+		invocazioneGovWay();
+		
+	}
+	
+	
+	
+	
+	
+	// ** STEP 4 //
+	
+	@Test
+	public void step4aVaultPlainPolicySrcUncorrect() throws UtilsException, HttpUtilsException {
 		
 		// Aggiorno ripristinando i dati in chiaro, indicando però una policy sorgente non corretta: così facendo non troverò nulla da aggiornare
 		
@@ -173,29 +267,29 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step3bVerificaSecretsDatabasePlainPolicySianoRimastiComeInPrecedenza() throws UtilsException {
+	public void step4bVerificaSecretsDatabasePlainPolicySianoRimastiComeInPrecedenza() throws UtilsException {
 		
 		logCoreInfo("@step3bVerificaSecretsDatabasePlainPolicySianoRimastiComeInPrecedenza");
 		
-		String prefix = BYOKUtilities.newPrefixWrappedValue(GW_KEYS_POLICY);
+		String prefix = BYOKUtilities.newPrefixWrappedValue(GW_REMOTE_POLICY);
 		
 		verificheDatabaseCifrato(prefix);
 	}
 
 	@Test
-	public void step3cVaultPlainPolicy() throws UtilsException, HttpUtilsException {
+	public void step4cVaultPlainPolicy() throws UtilsException, HttpUtilsException {
 		
 		// Aggiorno con una nuova polic
 		
 		logCoreInfo("@step3cVaultPlainPolicy");
 		
 		// Vault dei secrets
-		vaultSecrets(GW_KEYS_POLICY, null, true);
+		vaultSecrets(GW_REMOTE_POLICY, null, true);
 		
 	}
 	
 	@Test
-	public void step3dVerificaSecretsDatabasePlainPolicy() throws UtilsException {
+	public void step4dVerificaSecretsDatabasePlainPolicy() throws UtilsException {
 		
 		logCoreInfo("@step3dVerificaSecretsDatabasePlainPolicy");
 		
@@ -203,12 +297,19 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step3eInvocazioneServiziGovwayConSecretsPlain() throws UtilsException, HttpUtilsException {
+	public void step4eInvocazioneServiziGovwayConSecretsPlain() throws UtilsException, HttpUtilsException {
 		
 		logCoreInfo("@step3eInvocazioneServiziGovwayConSecretsPlain");
 		
 		invocazioneGovWay();
 	}
+	
+	
+	
+	
+	
+	
+	// UTILS
 	
 	private void invocazioneGovWay() throws UtilsException, HttpUtilsException {
 		resetCache();
@@ -248,39 +349,55 @@ public class SecretsTest extends ConfigLoader {
 		logCoreInfo("verificheDatabaseInCharoServiziApplicativiPasswordInv");
 		
 		// gruppo di default
+		String nomeSA = ConfigLoader.dbUtils.getServiziApplicativiNome(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE);
 		String pwd = ConfigLoader.dbUtils.getServiziApplicativiPasswordInv(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE);
-		assertEquals("PasswordVaultTestConnettoreHttp", pwd);
+		/**System.out.println("CHIARO '"+nomeSA+"' ["+pwd+"]");*/
+		assertEquals(getMessageExpected(SA_PREFIX+nomeSA, pwd, "PasswordVaultTestConnettoreHttp"), 
+				"PasswordVaultTestConnettoreHttp", pwd);
 		pwd = ConfigLoader.dbUtils.getServiziApplicativiEncPasswordInv(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE);
-		assertEquals(null, pwd);
+		assertEquals(getMessageExpectedNull(SA_PREFIX+nomeSA, pwd), 
+				null, pwd);
 		
 		// gruppo differente dal default
+		nomeSA = ConfigLoader.dbUtils.getServiziApplicativiNome(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_HTTP_2);
 		pwd = ConfigLoader.dbUtils.getServiziApplicativiPasswordInv(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_HTTP_2);
-		assertEquals("PasswordVaultTestConnettoreHttpRidefinito", pwd);
+		assertEquals(getMessageExpected(SA_PREFIX+nomeSA, pwd, "PasswordVaultTestConnettoreHttpRidefinito"), 
+				"PasswordVaultTestConnettoreHttpRidefinito", pwd);
 		pwd = ConfigLoader.dbUtils.getServiziApplicativiEncPasswordInv(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_HTTP_2);
-		assertEquals(null, pwd);
+		assertEquals(getMessageExpectedNull(SA_PREFIX+nomeSA, pwd), 
+				null, pwd);
 		
 		// gruppo utilizza applicativo server
+		nomeSA = ConfigLoader.dbUtils.getServiziApplicativiNome(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_HTTP_SERVER);
 		pwd = ConfigLoader.dbUtils.getServiziApplicativiPasswordInv(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_HTTP_SERVER);
-		assertEquals("PasswordVaultTestConnettoreHttpServer", pwd);
+		assertEquals(getMessageExpected(SA_PREFIX+nomeSA, pwd, "PasswordVaultTestConnettoreHttpServer"), 
+				"PasswordVaultTestConnettoreHttpServer", pwd);
 		pwd = ConfigLoader.dbUtils.getServiziApplicativiEncPasswordInv(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_HTTP_SERVER);
-		assertEquals(null, pwd);
+		assertEquals(getMessageExpectedNull(SA_PREFIX+nomeSA, pwd), 
+				null, pwd);
 		
 	}
 	private void verificheDatabaseInCharoServiziApplicativiPasswordRisp() throws UtilsException {
 		
 		logCoreInfo("verificheDatabaseInCharoServiziApplicativiPasswordRisp");
 		
+		String nomeSA = ConfigLoader.dbUtils.getServiziApplicativiNome(NOME_SERVER_ASINCRNO_ASIMMETRICO);
+				
 		// richiesta
 		String pwd = ConfigLoader.dbUtils.getServiziApplicativiPasswordInv(NOME_SERVER_ASINCRNO_ASIMMETRICO);
-		assertEquals("PasswordVaultTestConnettoreAsincronoRichiesta", pwd);
+		assertEquals(getMessageExpected(SA_PREFIX+nomeSA, pwd, "PasswordVaultTestConnettoreAsincronoRichiesta"), 
+				"PasswordVaultTestConnettoreAsincronoRichiesta", pwd);
 		pwd = ConfigLoader.dbUtils.getServiziApplicativiEncPasswordInv(NOME_SERVER_ASINCRNO_ASIMMETRICO);
-		assertEquals(null, pwd);
+		assertEquals(getMessageExpectedNull(SA_PREFIX+nomeSA, pwd), 
+				null, pwd);
 		
 		// risposta
 		pwd = ConfigLoader.dbUtils.getServiziApplicativiPasswordRisp(NOME_SERVER_ASINCRNO_ASIMMETRICO);
-		assertEquals("PasswordVaultTestConnettoreAsincronoRisposta", pwd);
+		assertEquals(getMessageExpected(SA_PREFIX+nomeSA, pwd, "PasswordVaultTestConnettoreAsincronoRisposta"), 
+				"PasswordVaultTestConnettoreAsincronoRisposta", pwd);
 		pwd = ConfigLoader.dbUtils.getServiziApplicativiEncPasswordRisp(NOME_SERVER_ASINCRNO_ASIMMETRICO);
-		assertEquals(null, pwd);
+		assertEquals(getMessageExpectedNull(SA_PREFIX+nomeSA, pwd), 
+				null, pwd);
 			
 	}
 	
@@ -299,42 +416,59 @@ public class SecretsTest extends ConfigLoader {
 		logCoreInfo("verificheDatabaseCifratoPasswordInv");
 		
 		// gruppo di default
+		String nomeSA = ConfigLoader.dbUtils.getServiziApplicativiNome(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE);
 		String pwd = ConfigLoader.dbUtils.getServiziApplicativiPasswordInv(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE);
-		assertEquals(prefix, pwd);
+		/**System.out.println("CIFRATO '"+nomeSA+"' ["+pwd+"]");*/
+		assertEquals(getMessageExpected(SA_PREFIX+nomeSA, pwd, prefix), 
+				prefix, pwd);
 		pwd = ConfigLoader.dbUtils.getServiziApplicativiEncPasswordInv(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE);
 		boolean expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
-		assertTrue(getMessageExpectedStartsWith(pwd, prefix), expected);
+		assertTrue(getMessageExpectedStartsWith(SA_PREFIX+nomeSA, pwd, prefix), 
+				expected);
 		
 		// gruppo differente dal default
+		nomeSA = ConfigLoader.dbUtils.getServiziApplicativiNome(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_HTTP_2);
 		pwd = ConfigLoader.dbUtils.getServiziApplicativiPasswordInv(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_HTTP_2);
-		assertEquals(prefix, pwd);
+		assertEquals(getMessageExpected(SA_PREFIX+nomeSA, pwd, prefix), 
+				prefix, pwd);
 		pwd = ConfigLoader.dbUtils.getServiziApplicativiEncPasswordInv(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_HTTP_2);
 		expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
-		assertTrue(getMessageExpectedStartsWith(pwd, prefix), expected);
+		assertTrue(getMessageExpectedStartsWith(SA_PREFIX+nomeSA, pwd, prefix), 
+				expected);
 		
 		// gruppo utilizza applicativo server
+		nomeSA = ConfigLoader.dbUtils.getServiziApplicativiNome(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_HTTP_SERVER);
 		pwd = ConfigLoader.dbUtils.getServiziApplicativiPasswordInv(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_HTTP_SERVER);
-		assertEquals(prefix, pwd);
+		assertEquals(getMessageExpected(SA_PREFIX+nomeSA, pwd, prefix), 
+				prefix, pwd);
 		pwd = ConfigLoader.dbUtils.getServiziApplicativiEncPasswordInv(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_HTTP_SERVER);
 		expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
-		assertTrue(getMessageExpectedStartsWith(pwd, prefix), expected);
+		assertTrue(getMessageExpectedStartsWith(SA_PREFIX+nomeSA,pwd, prefix), 
+				expected);
 	}
 	private void verificheDatabaseCifratoPasswordRisp(String prefix) throws UtilsException {
 		
 		logCoreInfo("verificheDatabaseCifratoPasswordRisp");
 		
+		String nomeSA = ConfigLoader.dbUtils.getServiziApplicativiNome(NOME_SERVER_ASINCRNO_ASIMMETRICO);
+		
 		// richiesta
 		String pwd = ConfigLoader.dbUtils.getServiziApplicativiPasswordInv(NOME_SERVER_ASINCRNO_ASIMMETRICO);
-		assertEquals(prefix, pwd);
+		assertEquals(getMessageExpected(SA_PREFIX+nomeSA, pwd, prefix), 
+				prefix, pwd);
 		pwd = ConfigLoader.dbUtils.getServiziApplicativiEncPasswordInv(NOME_SERVER_ASINCRNO_ASIMMETRICO);
 		boolean expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
-		assertTrue(getMessageExpectedStartsWith(pwd, prefix), expected);
+		assertTrue(getMessageExpectedStartsWith(SA_PREFIX+nomeSA,pwd, prefix), 
+				expected);
 		
 		// risposta
 		pwd = ConfigLoader.dbUtils.getServiziApplicativiPasswordRisp(NOME_SERVER_ASINCRNO_ASIMMETRICO);
-		assertEquals(prefix, pwd);
+		assertEquals(getMessageExpected(SA_PREFIX+nomeSA, pwd, prefix), 
+				prefix, pwd);
 		pwd = ConfigLoader.dbUtils.getServiziApplicativiEncPasswordRisp(NOME_SERVER_ASINCRNO_ASIMMETRICO);
 		expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
-		assertTrue(getMessageExpectedStartsWith(pwd, prefix), expected);
+		assertTrue(getMessageExpectedStartsWith(SA_PREFIX+nomeSA,pwd, prefix), 
+				expected);
 	}
+	
 }

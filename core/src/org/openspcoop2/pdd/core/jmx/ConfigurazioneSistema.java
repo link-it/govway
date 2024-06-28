@@ -141,6 +141,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	public static final String BYOK_UNWRAP_BASE64 = "unwrapKeyAsBase64";
 	public static final String BYOK_UNWRAP_HEX = "unwrapKeyAsHex";
 
+	private static final boolean USE_CACHE_DISABLED = false;
+	
 	private static boolean includePassword = false;
 	public static boolean isIncludePassword() {
 		return includePassword;
@@ -1499,7 +1501,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String byokUnwrap(String value){
 		try {
-			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(this.log, false, true);
+			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(this.log, false, true, USE_CACHE_DISABLED);
 			if(driverBYOK!=null) {
 				return driverBYOK.unwrapAsString(value, true);
 			}
@@ -1509,10 +1511,10 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
-	
+		
 	public String byokBase64Unwrap(String value){
 		try {
-			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(this.log, false, true);
+			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(this.log, false, true, USE_CACHE_DISABLED);
 			if(driverBYOK!=null) {
 				byte [] c = driverBYOK.unwrap(value, true);
 				return Base64Utilities.encodeAsString(c);
@@ -1526,7 +1528,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String byokHexUnwrap(String value){
 		try {
-			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(this.log, false, true);
+			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(this.log, false, true, USE_CACHE_DISABLED);
 			if(driverBYOK!=null) {
 				byte [] c = driverBYOK.unwrap(value, true);
 				return HexBinaryUtilities.encodeAsString(c);
@@ -1540,7 +1542,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String byokWrap(String value){
 		try {
-			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(this.log, true, false);
+			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(this.log, true, false, USE_CACHE_DISABLED);
 			if(driverBYOK!=null) {
 				BYOKWrappedValue v = driverBYOK.wrap(value);
 				if(v!=null) {
@@ -1561,7 +1563,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		try {
 			byte[] decoded = Base64Utilities.decode(value);
 			
-			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(this.log, true, false);
+			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(this.log, true, false, USE_CACHE_DISABLED);
 			if(driverBYOK!=null) {
 				BYOKWrappedValue v = driverBYOK.wrap(decoded);
 				if(v!=null) {
@@ -1582,7 +1584,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		try {
 			byte[] decoded = HexBinaryUtilities.decode(value);
 			
-			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(this.log, true, false);
+			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(this.log, true, false, USE_CACHE_DISABLED);
 			if(driverBYOK!=null) {
 				BYOKWrappedValue v = driverBYOK.wrap(decoded);
 				if(v!=null) {

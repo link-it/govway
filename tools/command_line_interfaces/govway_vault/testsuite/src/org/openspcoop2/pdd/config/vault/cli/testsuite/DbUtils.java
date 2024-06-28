@@ -177,6 +177,10 @@ public class DbUtils {
     }
     
     
+    public String getServiziApplicativiNome(String colonnaIdValue) throws UtilsException {
+    	return getColumnValue("nome", CostantiDB.SERVIZI_APPLICATIVI, "nome", colonnaIdValue);
+    }
+    
     public String getServiziApplicativiPasswordInv(String colonnaIdValue) throws UtilsException {
     	return getColumnValue("passwordinv", CostantiDB.SERVIZI_APPLICATIVI, "nome", colonnaIdValue);
     }
@@ -184,6 +188,9 @@ public class DbUtils {
     	return getColumnValue("enc_passwordinv", CostantiDB.SERVIZI_APPLICATIVI, "nome", colonnaIdValue);
     }
     
+    public String getServiziApplicativiNome(String nomePortaDefault, String azione) throws UtilsException {
+    	return getServizioApplicativoAssociatoPorta(nomePortaDefault, azione);
+    }
     public String getServiziApplicativiPasswordInv(String nomePortaDefault, String azione) throws UtilsException {
     	String nomeSA = getServizioApplicativoAssociatoPorta(nomePortaDefault, azione);
     	return getColumnValue("passwordinv", CostantiDB.SERVIZI_APPLICATIVI, "nome", nomeSA);
