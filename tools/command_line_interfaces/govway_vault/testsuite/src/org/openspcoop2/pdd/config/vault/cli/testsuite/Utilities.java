@@ -73,7 +73,7 @@ public class Utilities {
 		String url = tipoServizio == TipoServizio.EROGAZIONE
 				? System.getProperty("govway_base_path") + protocollo + "/SoggettoInternoVaultTest/"+api+"/v1/"+operazione
 				: System.getProperty("govway_base_path") + protocollo + "/out/SoggettoInternoVaultTestFruitore/SoggettoInternoVaultTest/"+api+"/v1/"+operazione;
-		
+		url+="?govwayTestSuite_IDOP="+operazione;
 		HttpRequest request = new HttpRequest();
 		
 		request.setReadTimeout(20000);
@@ -89,7 +89,6 @@ public class Utilities {
 			request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, operazione);
 		}
 		
-		request.addHeader("GovWay-TestSuite-IDOP", operazione);
 		if(relatesTo!=null) {
 			request.addHeader("GovWay-Relates-To", relatesTo);
 		}
