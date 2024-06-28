@@ -167,7 +167,7 @@ public class ConfigLoader {
     		load = Boolean.valueOf(args[0]);
     	}
     	if(load) {
-    		prepareConfig();
+    		prepareConfig(false, null);
     	}
     	else {
     		deleteConfig();
@@ -178,11 +178,16 @@ public class ConfigLoader {
     	logger.debug(msg);
     }
     
+    private static void logScriptExit(org.slf4j.Logger logger, org.openspcoop2.utils.resources.ScriptInvoker scriptInvoker) {
+        logDebug(logger,"script - exitCode: " + scriptInvoker.getExitValue());
+        logDebug(logger,"script - errorStream: " + scriptInvoker.getErrorStream());
+        logDebug(logger,"script - outStream: " + scriptInvoker.getOutputStream());
+    }
     
     
     // LOADER
     
-    public static void prepareConfig() throws UtilsException, HttpUtilsException, IOException {
+    public static void prepareConfig(boolean byok, String policy) throws UtilsException, HttpUtilsException, IOException {
 
         org.slf4j.Logger logger = logCore!=null ? logCore : LoggerWrapperFactory.getLogger(ConfigLoader.class);
 
@@ -195,14 +200,17 @@ public class ConfigLoader {
         logDebug(logger,"testsuite bundle path: " + testsuiteBundle);
         logDebug(logger,"Carico la configurazione su govway...");
 
-        disableByokConfigLoader();
+        if(byok && policy!=null) {
+        	enableByokConfigLoader(policy);
+        }
+        else {
+        	disableByokConfigLoader();
+        }
         
         org.openspcoop2.utils.resources.ScriptInvoker scriptInvoker = new org.openspcoop2.utils.resources.ScriptInvoker(scriptPath);
         scriptInvoker.run(new File(configLoaderPath), testsuiteBundle);
         
-        logDebug(logger,"script - exitCode: " + scriptInvoker.getExitValue());
-        logDebug(logger,"script - errorStream: " + scriptInvoker.getErrorStream());
-        logDebug(logger,"script - outStream: " + scriptInvoker.getOutputStream());
+        logScriptExit(logger, scriptInvoker);
         
         // Dopo aver caricato lo script, resetto le cache
         resetCache();
@@ -224,14 +232,15 @@ public class ConfigLoader {
         org.openspcoop2.utils.resources.ScriptInvoker scriptInvoker = new org.openspcoop2.utils.resources.ScriptInvoker(scriptPath);
         scriptInvoker.run(new File(configLoaderPath), trasparenteBundle);
         
-        logDebug(logger,"script - exitCode: " + scriptInvoker.getExitValue());
-        logDebug(logger,"script - errorStream: " + scriptInvoker.getErrorStream());
-        logDebug(logger,"script - outStream: " + scriptInvoker.getOutputStream());
+        logScriptExit(logger, scriptInvoker);
 
     }
     
     public static void disableByokConfigLoader() throws IOException, UtilsException {
     	setConf(true, null, "config_loader");
+    }
+    public static void enableByokConfigLoader(String policy) throws IOException, UtilsException {
+    	setConf(false, policy, "config_loader");
     }
     
     
@@ -280,9 +289,7 @@ public class ConfigLoader {
         org.openspcoop2.utils.resources.ScriptInvoker scriptInvoker = new org.openspcoop2.utils.resources.ScriptInvoker(scriptPath);
         scriptInvoker.run(new File(vaultPath), params.toArray(new String[1]));
         
-        logDebug(logger,"script - exitCode: " + scriptInvoker.getExitValue());
-        logDebug(logger,"script - errorStream: " + scriptInvoker.getErrorStream());
-        logDebug(logger,"script - outStream: " + scriptInvoker.getOutputStream());
+        logScriptExit(logger, scriptInvoker);
         
         // Dopo attuato l'operazione, resetto le cache
         resetCache();
@@ -296,9 +303,14 @@ public class ConfigLoader {
     	
     	String byokPath = new File(TESTSUITE_BYOK_PATH).getAbsolutePath();
     	String contentByok = org.openspcoop2.utils.resources.FileSystemUtilities.readFile(byokPath);
-    	contentByok = contentByok.replace("govway.security=gw-pbkdf2", "#govway.security=gw-pbkdf2");
-    	File byokDisablePath = disable ? new File(BUILD_DIR,"byok-disable.properties") : new File(BUILD_DIR,"byok-enable-"+policy+".properties");
-    	org.openspcoop2.utils.resources.FileSystemUtilities.writeFile(byokDisablePath, contentByok.getBytes());
+    	if(disable) {
+    		contentByok = contentByok.replace("govway.security=gw-pbkdf2", "# !!DISABLED!!\n#govway.security=gw-pbkdf2");
+    	}
+    	else {
+    		contentByok = contentByok.replace("govway.security=gw-pbkdf2", "# !!ENABLED!!\ngovway.security="+policy);
+    	}
+    	File byokFilePath = disable ? new File(BUILD_DIR,"byok-disable.properties") : new File(BUILD_DIR,"byok-enable-"+policy+".properties");
+    	org.openspcoop2.utils.resources.FileSystemUtilities.writeFile(byokFilePath, contentByok.getBytes());
     	
     	String configLoaderPath = prop.getProperty(CONFIG_LOADER_PATH);
         String scriptProperties = configLoaderPath + File.separatorChar + "properties" + File.separatorChar  + tool+".cli.properties";
@@ -310,7 +322,7 @@ public class ConfigLoader {
     	String v = p.getProperty("byok.config");
     	if(v==null || !v.equals(byokPath)) {
     		String newContent = content.replaceAll("byok.config", "#byok.config");
-    		newContent += "\n\nbyok.config="+byokDisablePath.getAbsolutePath();
+    		newContent += "\n\nbyok.config="+byokFilePath.getAbsolutePath();
     		org.openspcoop2.utils.resources.FileSystemUtilities.deleteFile(new File(scriptProperties));
     		org.openspcoop2.utils.resources.FileSystemUtilities.writeFile(scriptProperties, newContent.getBytes());
     	}

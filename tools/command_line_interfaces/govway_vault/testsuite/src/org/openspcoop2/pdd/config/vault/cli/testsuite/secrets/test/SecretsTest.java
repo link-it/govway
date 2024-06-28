@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.config.vault.cli.testsuite.secrets.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -273,7 +274,7 @@ public class SecretsTest extends ConfigLoader {
 		
 		// Aggiorno ripristinando i dati in chiaro, indicando però una policy sorgente non corretta: così facendo non troverò nulla da aggiornare
 		
-		logCoreInfo("@step3aVaultPlainPolicySrcUncorrect");
+		logCoreInfo("@step4aVaultPlainPolicySrcUncorrect");
 		
 		// Vault dei secrets
 		vaultSecrets(DEFAULT_POLICY, null, true);
@@ -283,7 +284,7 @@ public class SecretsTest extends ConfigLoader {
 	@Test
 	public void step4bVerificaSecretsDatabasePlainPolicySianoRimastiComeInPrecedenza() throws UtilsException {
 		
-		logCoreInfo("@step3bVerificaSecretsDatabasePlainPolicySianoRimastiComeInPrecedenza");
+		logCoreInfo("@step4bVerificaSecretsDatabasePlainPolicySianoRimastiComeInPrecedenza");
 		
 		String prefix = BYOKUtilities.newPrefixWrappedValue(GW_REMOTE_POLICY);
 		
@@ -295,7 +296,7 @@ public class SecretsTest extends ConfigLoader {
 		
 		// Aggiorno con una nuova polic
 		
-		logCoreInfo("@step3cVaultPlainPolicy");
+		logCoreInfo("@step4cVaultPlainPolicy");
 		
 		// Vault dei secrets
 		vaultSecrets(GW_REMOTE_POLICY, null, true);
@@ -305,7 +306,7 @@ public class SecretsTest extends ConfigLoader {
 	@Test
 	public void step4dVerificaSecretsDatabasePlainPolicy() throws UtilsException {
 		
-		logCoreInfo("@step3dVerificaSecretsDatabasePlainPolicy");
+		logCoreInfo("@step4dVerificaSecretsDatabasePlainPolicy");
 		
 		verificheDatabaseInCharo();
 	}
@@ -313,7 +314,69 @@ public class SecretsTest extends ConfigLoader {
 	@Test
 	public void step4eInvocazioneServiziGovwayConSecretsPlain() throws UtilsException, HttpUtilsException {
 		
-		logCoreInfo("@step3eInvocazioneServiziGovwayConSecretsPlain");
+		logCoreInfo("@step4eInvocazioneServiziGovwayConSecretsPlain");
+		
+		invocazioneGovWay();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	// ** STEP 5 //
+	
+	@Test
+	public void step5aVaultByConfigLoaderWithBYOK() throws UtilsException, HttpUtilsException, IOException {
+			
+		logCoreInfo("@step5aVaultByConfigLoaderWithBYOK");
+		
+		prepareConfig(true, DEFAULT_POLICY);
+		
+	}
+	
+	@Test
+	public void step5bVerificaSecretsByDefaultPolicy() throws UtilsException {
+		
+		logCoreInfo("@step5VerificaSecretsByDefaultPolicy");
+		
+		String prefix = BYOKUtilities.newPrefixWrappedValue(DEFAULT_POLICY);
+		
+		verificheDatabaseCifrato(prefix);
+		
+	}
+	
+	@Test
+	public void step5cInvocazioneServiziGovwayConSecretsCifrati() throws UtilsException, HttpUtilsException {
+		
+		logCoreInfo("@step5cInvocazioneServiziGovwayConSecretsCifrati");
+		
+		invocazioneGovWay();
+	}
+	
+	@Test
+	public void step5dVaultByConfigLoaderWithoutBYOK() throws UtilsException, HttpUtilsException, IOException {
+			
+		logCoreInfo("@step5dVaultByConfigLoaderWithoutBYOK");
+		
+		prepareConfig(false, null);
+		
+	}
+	
+	@Test
+	public void step5eVerificaSecretsDatabasePlainPolicy() throws UtilsException {
+		
+		logCoreInfo("@step5eVerificaSecretsDatabasePlainPolicy");
+		
+		verificheDatabaseInCharo();
+	}
+	
+	@Test
+	public void step5eInvocazioneServiziGovwayConSecretsPlain() throws UtilsException, HttpUtilsException {
+		
+		logCoreInfo("@step5eInvocazioneServiziGovwayConSecretsPlain");
 		
 		invocazioneGovWay();
 	}
