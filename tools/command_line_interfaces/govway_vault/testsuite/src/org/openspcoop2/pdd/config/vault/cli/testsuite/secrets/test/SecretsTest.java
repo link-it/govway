@@ -51,12 +51,17 @@ public class SecretsTest extends ConfigLoader {
 	private static final String  OP_HTTP_2 = "http2";
 	private static final String  OP_HTTP_SERVER = "httpServer";
 	private static final String NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE = "gw_SoggettoInternoVaultTest/gw_VaultTestConnettori/v1";
+	private static final String NOME_CONNETTORE_DEFAULT_TEST_FRUIZIONE = "CNT_SF_gw/SoggettoInternoVaultTestFruitore_gw/SoggettoInternoVaultTest_gw/VaultTestConnettori/1";
+	private static String getNomeConnettoreDefaultTestAzione(String azione) {
+		return NOME_CONNETTORE_DEFAULT_TEST_FRUIZIONE.replace("CNT_SF", "CNT_SF_AZIONE")+"_"+azione;
+	}
 	
 	private static final String  OP_RICHIESTA_ASINCRONA = "asincronoRichiesta";
 	private static final String  OP_RISPOSTA_ASINCRONA = "asincronoRisposta";
 	private static final String NOME_SERVER_ASINCRNO_ASIMMETRICO = "TestServerAsincronoAsimmetrico";
 	
 	private static final String SA_PREFIX = "SA:";
+	private static final String CONNETTORE_PREFIX = "Connettore:";
 	
 	private String getMessagePrefix(String origine, String found) {
 		return "["+origine+"] Found '"+found+"'; expected";
@@ -314,37 +319,47 @@ public class SecretsTest extends ConfigLoader {
 	private void invocazioneGovWay() throws UtilsException, HttpUtilsException {
 		resetCache();
 		
-		String prefixLog = "invocazioneGovWay API:"+API + " operazione:";
+		String prefixLogErogazione = "invocazioneGovWay erogazione API:"+API + " operazione:";
+		String prefixLogFruizione = "invocazioneGovWay fruizione API:"+API + " operazione:";
 		
-		logCoreInfo(prefixLog+OP_HTTP);		
+		logCoreInfo(prefixLogErogazione+OP_HTTP);		
 		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API, OP_HTTP);
 		
-		logCoreInfo(prefixLog+OP_HTTP_2);		
+		logCoreInfo(prefixLogErogazione+OP_HTTP_2);		
 		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API, OP_HTTP_2);
 		
-		logCoreInfo(prefixLog+OP_HTTP_SERVER);		
+		logCoreInfo(prefixLogErogazione+OP_HTTP_SERVER);		
 		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API, OP_HTTP_SERVER);
 		
-		logCoreInfo(prefixLog+OP_RICHIESTA_ASINCRONA);		
+		logCoreInfo(prefixLogFruizione+OP_RICHIESTA_ASINCRONA);		
 		HttpResponse response = Utilities.testSpcoop(logCore, TipoServizio.FRUIZIONE, API, OP_RICHIESTA_ASINCRONA, null);
 		String idMessaggio = response.getHeaderFirstValue("GovWay-Message-ID");
 		
-		logCoreInfo(prefixLog+OP_RISPOSTA_ASINCRONA);		
+		logCoreInfo(prefixLogFruizione+OP_RISPOSTA_ASINCRONA);		
 		Utilities.testSpcoop(logCore, TipoServizio.FRUIZIONE, API, OP_RISPOSTA_ASINCRONA, idMessaggio);
+		
+		logCoreInfo(prefixLogFruizione+OP_HTTP);		
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API, OP_HTTP);
+		
+		logCoreInfo(prefixLogFruizione+OP_HTTP_2);		
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API, OP_HTTP_2);
 	}
 	
 	private void verificheDatabaseInCharo() throws UtilsException {
 		
 		// Verifiche database in chiaro
 		
-		// ** VERIFICHE colonne enc_passwordinv, passwordinv
-		verificheDatabaseInCharoServiziApplicativiPasswordInv();
+		// ** VERIFICHE colonne enc_passwordinv, passwordinv su servizi_applicativi
+		verificheDatabaseInChiaroServiziApplicativiPasswordInv();
 		
-		// ** VERIFICHE colonne enc_passwordrisp, passwordrisp
-		verificheDatabaseInCharoServiziApplicativiPasswordRisp();
+		// ** VERIFICHE colonne enc_passwordrisp, passwordrisp su servizi_applicativi
+		verificheDatabaseInChiaroServiziApplicativiPasswordRisp();
+		
+		// ** VERIFICHE colonne enc_password, password su connettori
+		verificheDatabaseInChiaroConnettoriHttp();
 
 	}
-	private void verificheDatabaseInCharoServiziApplicativiPasswordInv() throws UtilsException {
+	private void verificheDatabaseInChiaroServiziApplicativiPasswordInv() throws UtilsException {
 		
 		logCoreInfo("verificheDatabaseInCharoServiziApplicativiPasswordInv");
 		
@@ -377,7 +392,7 @@ public class SecretsTest extends ConfigLoader {
 				null, pwd);
 		
 	}
-	private void verificheDatabaseInCharoServiziApplicativiPasswordRisp() throws UtilsException {
+	private void verificheDatabaseInChiaroServiziApplicativiPasswordRisp() throws UtilsException {
 		
 		logCoreInfo("verificheDatabaseInCharoServiziApplicativiPasswordRisp");
 		
@@ -400,16 +415,43 @@ public class SecretsTest extends ConfigLoader {
 				null, pwd);
 			
 	}
+	private void verificheDatabaseInChiaroConnettoriHttp() throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseInChiaroConnettoriHttp");
+		
+		// gruppo di default
+		String nomeConnettore = NOME_CONNETTORE_DEFAULT_TEST_FRUIZIONE;
+		String v = ConfigLoader.dbUtils.getConnettorePassword(nomeConnettore);
+		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, "PasswordVaultTestConnettoreHttpFruitore"), 
+				"PasswordVaultTestConnettoreHttpFruitore", v);
+		v = ConfigLoader.dbUtils.getConnettoreEncPassword(nomeConnettore);
+		assertEquals(getMessageExpectedNull(CONNETTORE_PREFIX+nomeConnettore, v), 
+				null, v);
+		
+		// gruppo differente dal default
+		nomeConnettore = getNomeConnettoreDefaultTestAzione(OP_HTTP_2);
+		v = ConfigLoader.dbUtils.getConnettorePassword(nomeConnettore);
+		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, "PasswordVaultTestConnettoreHttpRidefinitoFruitore"), 
+				"PasswordVaultTestConnettoreHttpRidefinitoFruitore", v);
+		v = ConfigLoader.dbUtils.getConnettoreEncPassword(nomeConnettore);
+		assertEquals(getMessageExpectedNull(CONNETTORE_PREFIX+nomeConnettore, v), 
+				null, v);
+			
+	}
 	
 	private void verificheDatabaseCifrato(String prefix) throws UtilsException {
 		
 		// Verifiche database cifrato
 	
-		// ** VERIFICHE colonne enc_passwordinv, passwordinv
+		// ** VERIFICHE colonne enc_passwordinv, passwordinv su servizi_applicativi
 		verificheDatabaseCifratoPasswordInv(prefix);
 		
-		// ** VERIFICHE colonne enc_passwordrisp, passwordrisp
+		// ** VERIFICHE colonne enc_passwordrisp, passwordrisp su servizi_applicativi
 		verificheDatabaseCifratoPasswordRisp(prefix);
+		
+		// ** VERIFICHE colonne enc_password, password su connettori
+		verificheDatabaseCifratoConnettoriHttp(prefix);
+		
 	}
 	private void verificheDatabaseCifratoPasswordInv(String prefix) throws UtilsException {
 		
@@ -469,6 +511,31 @@ public class SecretsTest extends ConfigLoader {
 		expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
 		assertTrue(getMessageExpectedStartsWith(SA_PREFIX+nomeSA,pwd, prefix), 
 				expected);
+	}
+	private void verificheDatabaseCifratoConnettoriHttp(String prefix) throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseCifratoConnettoriHttp");
+		
+		// gruppo di default
+		String nomeConnettore = NOME_CONNETTORE_DEFAULT_TEST_FRUIZIONE;
+		String v = ConfigLoader.dbUtils.getConnettorePassword(nomeConnettore);
+		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, prefix), 
+				prefix, v);
+		v = ConfigLoader.dbUtils.getConnettoreEncPassword(nomeConnettore);
+		boolean expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(CONNETTORE_PREFIX+nomeConnettore,v, prefix), 
+				expected);
+		
+		// gruppo differente dal default
+		nomeConnettore = getNomeConnettoreDefaultTestAzione(OP_HTTP_2);
+		v = ConfigLoader.dbUtils.getConnettorePassword(nomeConnettore);
+		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, prefix), 
+				prefix, v);
+		v = ConfigLoader.dbUtils.getConnettoreEncPassword(nomeConnettore);
+		expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(CONNETTORE_PREFIX+nomeConnettore,v, prefix), 
+				expected);
+			
 	}
 	
 }

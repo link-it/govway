@@ -207,6 +207,13 @@ public class DbUtils {
     	return getColumnValue("enc_passwordrisp", CostantiDB.SERVIZI_APPLICATIVI, "nome", colonnaIdValue);
     }
     
+    public String getConnettorePassword(String colonnaIdValue) throws UtilsException {
+    	return getColumnValue("password", CostantiDB.CONNETTORI, "nome_connettore", colonnaIdValue);
+    }
+    public String getConnettoreEncPassword(String colonnaIdValue) throws UtilsException {
+    	return getColumnValue("enc_password", CostantiDB.CONNETTORI, "nome_connettore", colonnaIdValue);
+    }
+    
     private String getColumnValue(String colonna, String tabella, String colonnaId, String colonnaIdValue) throws UtilsException {
     	return getColumnValue(colonna, tabella, colonnaId, colonnaIdValue, 
         		null, null);
@@ -243,4 +250,5 @@ public class DbUtils {
     	}
     	throw new UtilsException("Uncorrect return type '"+oId.getClass().getName()+"' ("+oId+")");
     }
+     
 }
