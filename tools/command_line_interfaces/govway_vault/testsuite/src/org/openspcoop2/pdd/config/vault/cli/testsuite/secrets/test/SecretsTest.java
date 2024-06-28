@@ -57,9 +57,11 @@ public class SecretsTest extends ConfigLoader {
 	private static final String  OP_HTTP_SERVER = "httpServer";
 	private static final String  OP_HTTPS = "https";
 	private static final String  OP_MTLS = "mtls";
+	private static final String  OP_PROXY = "proxy"; // non invocata realmente
+	private static final String  OP_API_KEY = "apiKey";
 	private static final String NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE = "gw_SoggettoInternoVaultTest/gw_VaultTestConnettori/v1";
 	private static final String NOME_CONNETTORE_DEFAULT_TEST_FRUIZIONE = "CNT_SF_gw/SoggettoInternoVaultTestFruitore_gw/SoggettoInternoVaultTest_gw/VaultTestConnettori/1";
-	private static String getNomeConnettoreDefaultTestAzione(String azione) {
+	private static String getNomeConnettoreFruizioneTestAzione(String azione) {
 		return NOME_CONNETTORE_DEFAULT_TEST_FRUIZIONE.replace("CNT_SF", "CNT_SF_AZIONE")+"_"+azione;
 	}
 	
@@ -408,6 +410,9 @@ public class SecretsTest extends ConfigLoader {
 		logCoreInfo(prefixLogErogazione+OP_MTLS);		
 		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API, OP_MTLS);
 		
+		logCoreInfo(prefixLogErogazione+OP_API_KEY);		
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API, OP_API_KEY);
+		
 
 		
 		logCoreInfo(prefixLogFruizione+OP_HTTP);		
@@ -418,6 +423,9 @@ public class SecretsTest extends ConfigLoader {
 		
 		logCoreInfo(prefixLogFruizione+OP_HTTPS);		
 		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API, OP_HTTPS);
+		
+		logCoreInfo(prefixLogFruizione+OP_API_KEY);		
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API, OP_API_KEY);
 		
 		
 		
@@ -449,6 +457,12 @@ public class SecretsTest extends ConfigLoader {
 		
 		// ** VERIFICHE colonne enc_value, value su connettori_custom
 		verificheDatabaseInChiaroConnettoriCustom();
+		
+		// ** VERIFICHE colonne enc_proxy_username, proxy_username su connettori
+		verificheDatabaseInChiaroUtilizzoProxySuConnettori();
+		
+		// ** VERIFICHE colonne api_key su connettori
+		verificheDatabaseInChiaroUtilizzoApiKeySuConnettori();
 
 	}
 	private void verificheDatabaseInChiaroServiziApplicativiPasswordInv() throws UtilsException {
@@ -521,7 +535,7 @@ public class SecretsTest extends ConfigLoader {
 				null, v);
 		
 		// gruppo differente dal default
-		nomeConnettore = getNomeConnettoreDefaultTestAzione(OP_HTTP_2);
+		nomeConnettore = getNomeConnettoreFruizioneTestAzione(OP_HTTP_2);
 		v = ConfigLoader.dbUtils.getConnettorePassword(nomeConnettore);
 		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, "PasswordVaultTestConnettoreHttpRidefinitoFruitore"), 
 				"PasswordVaultTestConnettoreHttpRidefinitoFruitore", v);
@@ -542,7 +556,7 @@ public class SecretsTest extends ConfigLoader {
 			
 	}
 	private void verificheDatabaseInChiaroConnettoriCustomFruizione() throws UtilsException {
-		String nomeConnettore = getNomeConnettoreDefaultTestAzione(OP_HTTPS);
+		String nomeConnettore = getNomeConnettoreFruizioneTestAzione(OP_HTTPS);
 		// password
 		String v = ConfigLoader.dbUtils.getConnettoreCustomValue(nomeConnettore, CostantiConnettori.CONNETTORE_PASSWORD);
 		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, "PasswordVaultTestConnettoreHttpsRidefinitoFruitore"), 
@@ -589,6 +603,42 @@ public class SecretsTest extends ConfigLoader {
 		assertEquals(getMessageExpectedNull(CONNETTORE_PREFIX+nomeConnettore, v), 
 				null, v);
 	}
+	private void verificheDatabaseInChiaroUtilizzoProxySuConnettori() throws UtilsException {
+		
+		// erogazione
+		String nomeConnettore = ConfigLoader.dbUtils.getNomeConnettoreByPortaApplicativa(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_PROXY);
+		String v = ConfigLoader.dbUtils.getConnettoreProxyPassword(nomeConnettore);
+		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, "passwordProxyTestVault"), 
+				"passwordProxyTestVault", v);
+		v = ConfigLoader.dbUtils.getConnettoreEncProxyPassword(nomeConnettore);
+		assertEquals(getMessageExpectedNull(CONNETTORE_PREFIX+nomeConnettore, v), 
+				null, v);
+		
+		// fruizione
+		nomeConnettore = getNomeConnettoreFruizioneTestAzione(OP_PROXY);
+		v = ConfigLoader.dbUtils.getConnettoreProxyPassword(nomeConnettore);
+		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, "passwordProxyTestVaultFruitore"), 
+				"passwordProxyTestVaultFruitore", v);
+		v = ConfigLoader.dbUtils.getConnettoreEncProxyPassword(nomeConnettore);
+		assertEquals(getMessageExpectedNull(CONNETTORE_PREFIX+nomeConnettore, v), 
+				null, v);
+
+	}
+	private void verificheDatabaseInChiaroUtilizzoApiKeySuConnettori() throws UtilsException {
+		
+		// erogazione
+		String nomeConnettore = ConfigLoader.dbUtils.getNomeConnettoreByPortaApplicativa(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_API_KEY);
+		String v = ConfigLoader.dbUtils.getConnettoreApiKey(nomeConnettore);
+		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, "XXX-API_KEY-TestVault"), 
+				"XXX-API_KEY-TestVault", v);
+		
+		// fruizione
+		nomeConnettore = getNomeConnettoreFruizioneTestAzione(OP_API_KEY);
+		v = ConfigLoader.dbUtils.getConnettoreApiKey(nomeConnettore);
+		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, "XXX-API_KEY-TestVault-Fruitore"), 
+				"XXX-API_KEY-TestVault-Fruitore", v);
+
+	}
 	
 	
 	
@@ -610,6 +660,11 @@ public class SecretsTest extends ConfigLoader {
 		// ** VERIFICHE colonne enc_value, value su connettori_custom
 		verificheDatabaseCifratoConnettoriCustom(prefix);
 		
+		// ** VERIFICHE colonne enc_proxy_username, proxy_username su connettori
+		verificheDatabaseCifratoUtilizzoProxySuConnettori(prefix);
+		
+		// ** VERIFICHE colonne api_key su connettori
+		verificheDatabaseCifratoUtilizzoApiKeySuConnettori(prefix);
 	}
 	private void verificheDatabaseCifratoPasswordInv(String prefix) throws UtilsException {
 		
@@ -685,7 +740,7 @@ public class SecretsTest extends ConfigLoader {
 				expected);
 		
 		// gruppo differente dal default
-		nomeConnettore = getNomeConnettoreDefaultTestAzione(OP_HTTP_2);
+		nomeConnettore = getNomeConnettoreFruizioneTestAzione(OP_HTTP_2);
 		v = ConfigLoader.dbUtils.getConnettorePassword(nomeConnettore);
 		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, prefix), 
 				prefix, v);
@@ -707,7 +762,7 @@ public class SecretsTest extends ConfigLoader {
 			
 	}
 	private void verificheDatabaseCifratoConnettoriCustomFruizione(String prefix) throws UtilsException {
-		String nomeConnettore = getNomeConnettoreDefaultTestAzione(OP_HTTPS);
+		String nomeConnettore = getNomeConnettoreFruizioneTestAzione(OP_HTTPS);
 		
 		List<String> verifiche = new ArrayList<>();
 		verifiche.add(CostantiConnettori.CONNETTORE_PASSWORD);
@@ -739,6 +794,48 @@ public class SecretsTest extends ConfigLoader {
 					expected);
 		}
 		
+	}
+	
+	private void verificheDatabaseCifratoUtilizzoProxySuConnettori(String prefix) throws UtilsException {
+		
+		// erogazione
+		String nomeConnettore = ConfigLoader.dbUtils.getNomeConnettoreByPortaApplicativa(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_PROXY);
+		String v = ConfigLoader.dbUtils.getConnettoreProxyPassword(nomeConnettore);
+		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, prefix), 
+				prefix, v);
+		v = ConfigLoader.dbUtils.getConnettoreEncProxyPassword(nomeConnettore);
+		boolean expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(CONNETTORE_PREFIX+nomeConnettore,v, prefix), 
+				expected);
+		
+		// fruizione
+		nomeConnettore = getNomeConnettoreFruizioneTestAzione(OP_PROXY);
+		v = ConfigLoader.dbUtils.getConnettoreProxyPassword(nomeConnettore);
+		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, prefix), 
+				prefix, v);
+		v = ConfigLoader.dbUtils.getConnettoreEncProxyPassword(nomeConnettore);
+		expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(CONNETTORE_PREFIX+nomeConnettore,v, prefix), 
+				expected);
+
+	}
+	
+	private void verificheDatabaseCifratoUtilizzoApiKeySuConnettori(String prefix) throws UtilsException {
+		
+		// erogazione
+		String nomeConnettore = ConfigLoader.dbUtils.getNomeConnettoreByPortaApplicativa(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_API_KEY);
+		String v = ConfigLoader.dbUtils.getConnettoreApiKey(nomeConnettore);
+		boolean expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(CONNETTORE_PREFIX+nomeConnettore,v, prefix), 
+				expected);
+		
+		// fruizione
+		nomeConnettore = getNomeConnettoreFruizioneTestAzione(OP_API_KEY);
+		v = ConfigLoader.dbUtils.getConnettoreApiKey(nomeConnettore);
+		expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(CONNETTORE_PREFIX+nomeConnettore,v, prefix), 
+				expected);
+
 	}
 	
 }

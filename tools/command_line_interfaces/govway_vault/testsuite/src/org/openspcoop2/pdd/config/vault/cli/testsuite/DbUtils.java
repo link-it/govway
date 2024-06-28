@@ -217,6 +217,17 @@ public class DbUtils {
     	return getColumnValue("enc_password", CostantiDB.CONNETTORI, CostantiDB.CONNETTORI_COLUMN_NOME, colonnaIdValue);
     }
     
+    public String getConnettoreProxyPassword(String colonnaIdValue) throws UtilsException {
+    	return getColumnValue("proxy_password", CostantiDB.CONNETTORI, CostantiDB.CONNETTORI_COLUMN_NOME, colonnaIdValue);
+    }
+    public String getConnettoreEncProxyPassword(String colonnaIdValue) throws UtilsException {
+    	return getColumnValue("enc_proxy_password", CostantiDB.CONNETTORI, CostantiDB.CONNETTORI_COLUMN_NOME, colonnaIdValue);
+    }
+    
+    public String getConnettoreApiKey(String colonnaIdValue) throws UtilsException {
+    	return getColumnValue("api_key", CostantiDB.CONNETTORI, CostantiDB.CONNETTORI_COLUMN_NOME, colonnaIdValue);
+    }
+    
     public String getConnettoreCustomValue(String nomeConnettore, String nomeProprieta) throws UtilsException {
     	long idConnettore = getColumnLongValue("id", CostantiDB.CONNETTORI, CostantiDB.CONNETTORI_COLUMN_NOME, nomeConnettore);
     	return getColumnValueById("value", CostantiDB.CONNETTORI_CUSTOM, CostantiDB.CONNETTORI_CUSTOM_COLUMN_ID_CONNETTORE, idConnettore,
