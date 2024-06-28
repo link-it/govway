@@ -45,6 +45,9 @@ public class DbUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(DbUtils.class);
 
+    private static final String UNCORRECT_TYPE = "Uncorrect return type '";
+    private static final String AND_CONDITION=" AND ";
+    
     public final JdbcTemplate jdbc;
     
     public final TipiDatabase tipoDatabase;
@@ -208,10 +211,27 @@ public class DbUtils {
     }
     
     public String getConnettorePassword(String colonnaIdValue) throws UtilsException {
-    	return getColumnValue("password", CostantiDB.CONNETTORI, "nome_connettore", colonnaIdValue);
+    	return getColumnValue("password", CostantiDB.CONNETTORI, CostantiDB.CONNETTORI_COLUMN_NOME, colonnaIdValue);
     }
     public String getConnettoreEncPassword(String colonnaIdValue) throws UtilsException {
-    	return getColumnValue("enc_password", CostantiDB.CONNETTORI, "nome_connettore", colonnaIdValue);
+    	return getColumnValue("enc_password", CostantiDB.CONNETTORI, CostantiDB.CONNETTORI_COLUMN_NOME, colonnaIdValue);
+    }
+    
+    public String getConnettoreCustomValue(String nomeConnettore, String nomeProprieta) throws UtilsException {
+    	long idConnettore = getColumnLongValue("id", CostantiDB.CONNETTORI, CostantiDB.CONNETTORI_COLUMN_NOME, nomeConnettore);
+    	return getColumnValueById("value", CostantiDB.CONNETTORI_CUSTOM, CostantiDB.CONNETTORI_CUSTOM_COLUMN_ID_CONNETTORE, idConnettore,
+    			"name", nomeProprieta);
+    }
+    public String getConnettoreCustomEncValue(String nomeConnettore, String nomeProprieta) throws UtilsException {
+    	long idConnettore = getColumnLongValue("id", CostantiDB.CONNETTORI, CostantiDB.CONNETTORI_COLUMN_NOME, nomeConnettore);
+    	return getColumnValueById("enc_value", CostantiDB.CONNETTORI_CUSTOM, CostantiDB.CONNETTORI_CUSTOM_COLUMN_ID_CONNETTORE, idConnettore,
+    			"name", nomeProprieta);
+    }
+    
+    public String getNomeConnettoreByPortaApplicativa(String nomePortaDefault, String azione) throws UtilsException {
+    	String nomeSA = getServizioApplicativoAssociatoPorta(nomePortaDefault, azione);
+    	long idConnettore = getColumnLongValue(CostantiDB.CONNETTORI_COLUMN_ID_CONNETTORE_INV, CostantiDB.SERVIZI_APPLICATIVI, "nome", nomeSA);
+    	return getColumnValueById(CostantiDB.CONNETTORI_COLUMN_NOME, CostantiDB.CONNETTORI, "id", idConnettore);
     }
     
     private String getColumnValue(String colonna, String tabella, String colonnaId, String colonnaIdValue) throws UtilsException {
@@ -220,9 +240,9 @@ public class DbUtils {
     }
     private String getColumnValue(String colonna, String tabella, String colonnaId, String colonnaIdValue, 
     		String colonnaId2, String colonnaIdValue2) throws UtilsException {
-    	String query = "select "+colonna+" from "+tabella+" WHERE "+colonnaId+"='"+colonnaIdValue+"'";
+    	String query = getQueryBase(colonna, tabella, colonnaId, colonnaIdValue);
     	if(colonnaId2!=null && colonnaIdValue2!=null) {
-    		query+=" AND "+colonnaId2+"='"+colonnaIdValue2+"'";
+    		query+=AND_CONDITION+colonnaId2+"='"+colonnaIdValue2+"'";
     	}
     	logger.info(query);
     	var result = readRow(query);
@@ -233,7 +253,51 @@ public class DbUtils {
     	if(oId==null) {
     		return null;
     	}
-    	throw new UtilsException("Uncorrect return type '"+oId.getClass().getName()+"' ("+oId+")");
+    	throw new UtilsException(UNCORRECT_TYPE+oId.getClass().getName()+"' ("+oId+")");
+    }
+    
+    protected String getColumnValueById(String colonna, String tabella, String colonnaId, long colonnaIdValue) throws UtilsException {
+    	return getColumnValueById(colonna, tabella, colonnaId, colonnaIdValue, 
+        		null, null);
+    }
+    private String getColumnValueById(String colonna, String tabella, String colonnaId, long colonnaIdValue, 
+    		String colonnaId2, String colonnaIdValue2) throws UtilsException {
+    	String query = getQueryBase(colonna, tabella, colonnaId, colonnaIdValue);
+    	if(colonnaId2!=null && colonnaIdValue2!=null) {
+    		query+=AND_CONDITION+colonnaId2+"='"+colonnaIdValue2+"'";
+    	}
+    	logger.info(query);
+    	var result = readRow(query);
+    	Object oId = result.get(colonna);
+    	if(oId instanceof String) {
+    		return (String) oId;
+    	}
+    	if(oId==null) {
+    		return null;
+    	}
+    	throw new UtilsException(UNCORRECT_TYPE+oId.getClass().getName()+"' ("+oId+")");
+    }
+    
+    private Long getColumnLongValue(String colonna, String tabella, String colonnaId, String colonnaIdValue) throws UtilsException {
+    	return getColumnLongValue(colonna, tabella, colonnaId, colonnaIdValue, 
+        		null, null);
+    }
+    private Long getColumnLongValue(String colonna, String tabella, String colonnaId, String colonnaIdValue, 
+    		String colonnaId2, String colonnaIdValue2) throws UtilsException {
+    	String query = getQueryBase(colonna, tabella, colonnaId, colonnaIdValue);
+    	if(colonnaId2!=null && colonnaIdValue2!=null) {
+    		query+=AND_CONDITION+colonnaId2+"='"+colonnaIdValue2+"'";
+    	}
+    	logger.info(query);
+    	var result = readRow(query);
+    	Object oId = result.get(colonna);
+    	if(oId instanceof Long) {
+    		return (Long) oId;
+    	}
+    	if(oId==null) {
+    		return null;
+    	}
+    	throw new UtilsException(UNCORRECT_TYPE+oId.getClass().getName()+"' ("+oId+")");
     }
     
     private String getServizioApplicativoAssociatoPorta(String nomePortaDefault, String nomeAzione) throws UtilsException {
@@ -248,7 +312,18 @@ public class DbUtils {
     	if(oId==null) {
     		return null;
     	}
-    	throw new UtilsException("Uncorrect return type '"+oId.getClass().getName()+"' ("+oId+")");
+    	throw new UtilsException(UNCORRECT_TYPE+oId.getClass().getName()+"' ("+oId+")");
+    }
+    
+    private String getQueryBase(String colonna, String tabella, String colonnaId, Object colonnaIdValue) {
+    	String q = "select "+colonna+" from "+tabella+" WHERE "+colonnaId;
+    	if(colonnaIdValue instanceof String) {
+    		q+="='"+colonnaIdValue+"'";
+    	}
+    	else {
+    		q+="="+colonnaIdValue;
+    	}
+    	return q;
     }
      
 }

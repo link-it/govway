@@ -22,11 +22,15 @@ package org.openspcoop2.pdd.config.vault.cli.testsuite.secrets.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.openspcoop2.core.byok.BYOKUtilities;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader;
 import org.openspcoop2.pdd.config.vault.cli.testsuite.TipoServizio;
 import org.openspcoop2.pdd.config.vault.cli.testsuite.Utilities;
@@ -50,11 +54,14 @@ public class SecretsTest extends ConfigLoader {
 	private static final String  OP_HTTP = "http";
 	private static final String  OP_HTTP_2 = "http2";
 	private static final String  OP_HTTP_SERVER = "httpServer";
+	private static final String  OP_HTTPS = "https";
+	private static final String  OP_MTLS = "mtls";
 	private static final String NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE = "gw_SoggettoInternoVaultTest/gw_VaultTestConnettori/v1";
 	private static final String NOME_CONNETTORE_DEFAULT_TEST_FRUIZIONE = "CNT_SF_gw/SoggettoInternoVaultTestFruitore_gw/SoggettoInternoVaultTest_gw/VaultTestConnettori/1";
 	private static String getNomeConnettoreDefaultTestAzione(String azione) {
 		return NOME_CONNETTORE_DEFAULT_TEST_FRUIZIONE.replace("CNT_SF", "CNT_SF_AZIONE")+"_"+azione;
 	}
+	
 	
 	private static final String  OP_RICHIESTA_ASINCRONA = "asincronoRichiesta";
 	private static final String  OP_RISPOSTA_ASINCRONA = "asincronoRisposta";
@@ -62,6 +69,8 @@ public class SecretsTest extends ConfigLoader {
 	
 	private static final String SA_PREFIX = "SA:";
 	private static final String CONNETTORE_PREFIX = "Connettore:";
+	
+	private static final String STORE_PASSWORD_OPENSPCOOP = "openspcoop";
 	
 	private String getMessagePrefix(String origine, String found) {
 		return "["+origine+"] Found '"+found+"'; expected";
@@ -316,6 +325,8 @@ public class SecretsTest extends ConfigLoader {
 	
 	// UTILS
 	
+	// ** INVOCAZIONI GOVWAY **
+	
 	private void invocazioneGovWay() throws UtilsException, HttpUtilsException {
 		resetCache();
 		
@@ -331,19 +342,34 @@ public class SecretsTest extends ConfigLoader {
 		logCoreInfo(prefixLogErogazione+OP_HTTP_SERVER);		
 		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API, OP_HTTP_SERVER);
 		
-		logCoreInfo(prefixLogFruizione+OP_RICHIESTA_ASINCRONA);		
-		HttpResponse response = Utilities.testSpcoop(logCore, TipoServizio.FRUIZIONE, API, OP_RICHIESTA_ASINCRONA, null);
-		String idMessaggio = response.getHeaderFirstValue("GovWay-Message-ID");
+		logCoreInfo(prefixLogErogazione+OP_MTLS);		
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API, OP_MTLS);
 		
-		logCoreInfo(prefixLogFruizione+OP_RISPOSTA_ASINCRONA);		
-		Utilities.testSpcoop(logCore, TipoServizio.FRUIZIONE, API, OP_RISPOSTA_ASINCRONA, idMessaggio);
+
 		
 		logCoreInfo(prefixLogFruizione+OP_HTTP);		
 		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API, OP_HTTP);
 		
 		logCoreInfo(prefixLogFruizione+OP_HTTP_2);		
 		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API, OP_HTTP_2);
+		
+		logCoreInfo(prefixLogFruizione+OP_HTTPS);		
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API, OP_HTTPS);
+		
+		
+		
+		logCoreInfo(prefixLogFruizione+OP_RICHIESTA_ASINCRONA);		
+		HttpResponse response = Utilities.testSpcoop(logCore, TipoServizio.FRUIZIONE, API, OP_RICHIESTA_ASINCRONA, null);
+		String idMessaggio = response.getHeaderFirstValue("GovWay-Message-ID");
+		
+		logCoreInfo(prefixLogFruizione+OP_RISPOSTA_ASINCRONA);		
+		Utilities.testSpcoop(logCore, TipoServizio.FRUIZIONE, API, OP_RISPOSTA_ASINCRONA, idMessaggio);
 	}
+	
+	
+	
+	
+	
 	
 	private void verificheDatabaseInCharo() throws UtilsException {
 		
@@ -357,6 +383,9 @@ public class SecretsTest extends ConfigLoader {
 		
 		// ** VERIFICHE colonne enc_password, password su connettori
 		verificheDatabaseInChiaroConnettoriHttp();
+		
+		// ** VERIFICHE colonne enc_value, value su connettori_custom
+		verificheDatabaseInChiaroConnettoriCustom();
 
 	}
 	private void verificheDatabaseInChiaroServiziApplicativiPasswordInv() throws UtilsException {
@@ -438,6 +467,69 @@ public class SecretsTest extends ConfigLoader {
 				null, v);
 			
 	}
+	private void verificheDatabaseInChiaroConnettoriCustom() throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseInChiaroConnettoriCustom");
+		
+		// fruizione
+		verificheDatabaseInChiaroConnettoriCustomFruizione();
+		
+		// erogazione
+		verificheDatabaseInChiaroConnettoriCustomErogazione();
+			
+	}
+	private void verificheDatabaseInChiaroConnettoriCustomFruizione() throws UtilsException {
+		String nomeConnettore = getNomeConnettoreDefaultTestAzione(OP_HTTPS);
+		// password
+		String v = ConfigLoader.dbUtils.getConnettoreCustomValue(nomeConnettore, CostantiConnettori.CONNETTORE_PASSWORD);
+		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, "PasswordVaultTestConnettoreHttpsRidefinitoFruitore"), 
+				"PasswordVaultTestConnettoreHttpsRidefinitoFruitore", v);
+		v = ConfigLoader.dbUtils.getConnettoreCustomEncValue(nomeConnettore, CostantiConnettori.CONNETTORE_PASSWORD);
+		assertEquals(getMessageExpectedNull(CONNETTORE_PREFIX+nomeConnettore, v), 
+				null, v);
+		// trustStorePassword
+		v = ConfigLoader.dbUtils.getConnettoreCustomValue(nomeConnettore, CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, STORE_PASSWORD_OPENSPCOOP), 
+				STORE_PASSWORD_OPENSPCOOP, v);
+		v = ConfigLoader.dbUtils.getConnettoreCustomEncValue(nomeConnettore, CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+		assertEquals(getMessageExpectedNull(CONNETTORE_PREFIX+nomeConnettore, v), 
+				null, v);
+	}
+	private void verificheDatabaseInChiaroConnettoriCustomErogazione() throws UtilsException {
+		String nomeConnettore = ConfigLoader.dbUtils.getNomeConnettoreByPortaApplicativa(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_MTLS);
+		// password
+		String v = ConfigLoader.dbUtils.getConnettoreCustomValue(nomeConnettore,  CostantiConnettori.CONNETTORE_PASSWORD);
+		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, "PasswordVaultTestConnettoreHttpsRidefinito"), 
+				"PasswordVaultTestConnettoreHttpsRidefinito", v);
+		v = ConfigLoader.dbUtils.getConnettoreCustomEncValue(nomeConnettore,  CostantiConnettori.CONNETTORE_PASSWORD);
+		assertEquals(getMessageExpectedNull(CONNETTORE_PREFIX+nomeConnettore, v), 
+				null, v);
+		// trustStorePassword
+		v = ConfigLoader.dbUtils.getConnettoreCustomValue(nomeConnettore,  CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, STORE_PASSWORD_OPENSPCOOP), 
+				STORE_PASSWORD_OPENSPCOOP, v);
+		v = ConfigLoader.dbUtils.getConnettoreCustomEncValue(nomeConnettore,  CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+		assertEquals(getMessageExpectedNull(CONNETTORE_PREFIX+nomeConnettore, v), 
+				null, v);
+		// keyStorePassword
+		v = ConfigLoader.dbUtils.getConnettoreCustomValue(nomeConnettore,  CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
+		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, "openspcoopjks"), 
+				"openspcoopjks", v);
+		v = ConfigLoader.dbUtils.getConnettoreCustomEncValue(nomeConnettore,  CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
+		assertEquals(getMessageExpectedNull(CONNETTORE_PREFIX+nomeConnettore, v), 
+				null, v);
+		// keyPassword
+		v = ConfigLoader.dbUtils.getConnettoreCustomValue(nomeConnettore,  CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD);
+		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, STORE_PASSWORD_OPENSPCOOP), 
+				STORE_PASSWORD_OPENSPCOOP, v);
+		v = ConfigLoader.dbUtils.getConnettoreCustomEncValue(nomeConnettore,  CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD);
+		assertEquals(getMessageExpectedNull(CONNETTORE_PREFIX+nomeConnettore, v), 
+				null, v);
+	}
+	
+	
+	
+	// ** VERIFICHE DB CIFRATO **
 	
 	private void verificheDatabaseCifrato(String prefix) throws UtilsException {
 		
@@ -451,6 +543,9 @@ public class SecretsTest extends ConfigLoader {
 		
 		// ** VERIFICHE colonne enc_password, password su connettori
 		verificheDatabaseCifratoConnettoriHttp(prefix);
+		
+		// ** VERIFICHE colonne enc_value, value su connettori_custom
+		verificheDatabaseCifratoConnettoriCustom(prefix);
 		
 	}
 	private void verificheDatabaseCifratoPasswordInv(String prefix) throws UtilsException {
@@ -536,6 +631,51 @@ public class SecretsTest extends ConfigLoader {
 		assertTrue(getMessageExpectedStartsWith(CONNETTORE_PREFIX+nomeConnettore,v, prefix), 
 				expected);
 			
+	}
+	private void verificheDatabaseCifratoConnettoriCustom(String prefix) throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseCifratoConnettoriCustom");
+		
+		// fruizione
+		verificheDatabaseCifratoConnettoriCustomFruizione(prefix);
+		
+		// erogazione
+		verificheDatabaseCifratoConnettoriCustomErogazione(prefix);
+			
+	}
+	private void verificheDatabaseCifratoConnettoriCustomFruizione(String prefix) throws UtilsException {
+		String nomeConnettore = getNomeConnettoreDefaultTestAzione(OP_HTTPS);
+		
+		List<String> verifiche = new ArrayList<>();
+		verifiche.add(CostantiConnettori.CONNETTORE_PASSWORD);
+		verifiche.add(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+		
+		verificheDatabaseCifratoConnettoriCustom(prefix, verifiche, nomeConnettore);
+		
+	}
+	private void verificheDatabaseCifratoConnettoriCustomErogazione(String prefix) throws UtilsException {
+		String nomeConnettore = ConfigLoader.dbUtils.getNomeConnettoreByPortaApplicativa(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_MTLS);
+		
+		List<String> verifiche = new ArrayList<>();
+		verifiche.add(CostantiConnettori.CONNETTORE_PASSWORD);
+		verifiche.add(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+		verifiche.add(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
+		verifiche.add(CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD);
+		
+		verificheDatabaseCifratoConnettoriCustom(prefix, verifiche, nomeConnettore);
+		
+	}
+	private void verificheDatabaseCifratoConnettoriCustom(String prefix, List<String> verifiche, String nomeConnettore) throws UtilsException {
+		for (String nomeProprieta : verifiche) {
+			String v = ConfigLoader.dbUtils.getConnettoreCustomValue(nomeConnettore, nomeProprieta);
+			assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, prefix), 
+					prefix, v);
+			v = ConfigLoader.dbUtils.getConnettoreCustomEncValue(nomeConnettore, nomeProprieta);
+			boolean expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+			assertTrue(getMessageExpectedStartsWith(CONNETTORE_PREFIX+nomeConnettore,v, prefix), 
+					expected);
+		}
+		
 	}
 	
 }

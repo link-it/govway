@@ -64,6 +64,7 @@ public final class CostantiDB {
     public static final String CONNETTORI = "connettori";
     public static final String CONNETTORI_COLUMN_NOME = "nome_connettore";
     public static final String CONNETTORI_COLUMN_ENDPOINT_TYPE = "endpointtype";
+    public static final String CONNETTORI_COLUMN_ID_CONNETTORE_INV = "id_connettore_inv";
     public static final String CONNETTORI_CUSTOM = "connettori_custom";
     public static final String CONNETTORI_CUSTOM_COLUMN_NAME = "name";
     public static final String CONNETTORI_CUSTOM_COLUMN_VALUE = "value";
