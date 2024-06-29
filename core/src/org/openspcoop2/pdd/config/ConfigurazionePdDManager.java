@@ -2100,8 +2100,8 @@ public class ConfigurazionePdDManager {
 		}
 		return sp;
 	}
-	public SystemProperties getSystemPropertiesPdDNoCached() throws DriverConfigurazioneException{
-		return this.configurazionePdDReader.getSystemPropertiesPdD();
+	public SystemProperties getSystemPropertiesPdDNoCached(boolean forceDisableBYOKUse) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getSystemPropertiesPdD(forceDisableBYOKUse);
 	}
 	
 	
@@ -2110,7 +2110,7 @@ public class ConfigurazionePdDManager {
 	}
 	
 	public SystemProperties getSystemPropertiesPdD() throws DriverConfigurazioneException{
-		return this.configurazionePdDReader.getSystemPropertiesPdD();
+		return this.configurazionePdDReader.getSystemPropertiesPdD(false);
 	}
 
 	public void updateSystemPropertiesPdD(SystemProperties systemProperties) throws DriverConfigurazioneException{

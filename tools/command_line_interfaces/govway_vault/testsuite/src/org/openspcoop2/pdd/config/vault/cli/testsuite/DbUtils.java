@@ -245,6 +245,14 @@ public class DbUtils {
     	return getColumnValueById(CostantiDB.CONNETTORI_COLUMN_NOME, CostantiDB.CONNETTORI, "id", idConnettore);
     }
     
+    public String getConfigPropertyValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.SYSTEM_PROPERTIES_PDD_COLUMN_VALUE, CostantiDB.SYSTEM_PROPERTIES_PDD, CostantiDB.SYSTEM_PROPERTIES_PDD_COLUMN_NOME, propertyName);
+    }
+    public String getConfigPropertyEncValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.SYSTEM_PROPERTIES_PDD_COLUMN_ENC_VALUE, CostantiDB.SYSTEM_PROPERTIES_PDD, CostantiDB.SYSTEM_PROPERTIES_PDD_COLUMN_NOME, propertyName);
+    }
+    
+    
     private String getColumnValue(String colonna, String tabella, String colonnaId, String colonnaIdValue) throws UtilsException {
     	return getColumnValue(colonna, tabella, colonnaId, colonnaIdValue, 
         		null, null);
@@ -337,4 +345,24 @@ public class DbUtils {
     	return q;
     }
      
+    public void updateEncSystemProperty(String nome,String plainV,String encV) {
+    	deleteEncSystemProperties(nome);
+    	updateEncSystemProperties(nome,plainV,encV);
+    }
+    private void deleteEncSystemProperties(String nome) {
+    	String delete = "delete from "+CostantiDB.SYSTEM_PROPERTIES_PDD+" WHERE "+CostantiDB.SYSTEM_PROPERTIES_PDD_COLUMN_NOME+"='"+nome+"'";
+    	logger.info(delete);
+    	int r = this.update(delete);
+    	String m = "rows-delete:"+r;
+    	logger.info(m);
+    }
+    private void updateEncSystemProperties(String nome,String plainV,String encV) {
+    	String insert = "insert into "+CostantiDB.SYSTEM_PROPERTIES_PDD+" ("+CostantiDB.SYSTEM_PROPERTIES_PDD_COLUMN_NOME+","+CostantiDB.SYSTEM_PROPERTIES_PDD_COLUMN_VALUE+","+CostantiDB.SYSTEM_PROPERTIES_PDD_COLUMN_ENC_VALUE+") VALUES "+
+    				" ('"+nome+"','"+plainV+"','"+encV+"')";
+    	logger.info(insert);
+    	int r = this.update(insert);
+    	String m = "rows-insert:"+r;
+    	logger.info(m);
+    }
+
 }

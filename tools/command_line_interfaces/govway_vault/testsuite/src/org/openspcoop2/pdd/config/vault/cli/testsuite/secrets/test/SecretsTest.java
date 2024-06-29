@@ -50,24 +50,30 @@ import org.openspcoop2.utils.transport.http.HttpUtilsException;
 @RunWith(CustomRunner.class)
 public class SecretsTest extends ConfigLoader {
 
-	private static final String API = "VaultTestConnettori";
+	private static final String API_PROPRIETA = "VaultTestProprieta";
 	
-	private static final String  OP_HTTP = "http";
-	private static final String  OP_HTTP_2 = "http2";
-	private static final String  OP_HTTP_SERVER = "httpServer";
-	private static final String  OP_HTTPS = "https";
-	private static final String  OP_MTLS = "mtls";
-	private static final String  OP_PROXY = "proxy"; // non invocata realmente
-	private static final String  OP_API_KEY = "apiKey";
+	private static final String OP_PROPRIETA_CONFIG = "config";
+	
+	private static final String PROPRIETA_CONFIG_PREFIX = "ConfigProp:";
+	
+	
+	private static final String API_CONNETTORI = "VaultTestConnettori";
+	
+	private static final String OP_HTTP = "http";
+	private static final String OP_HTTP_2 = "http2";
+	private static final String OP_HTTP_SERVER = "httpServer";
+	private static final String OP_HTTPS = "https";
+	private static final String OP_MTLS = "mtls";
+	private static final String OP_PROXY = "proxy"; // non invocata realmente
+	private static final String OP_API_KEY = "apiKey";
 	private static final String NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE = "gw_SoggettoInternoVaultTest/gw_VaultTestConnettori/v1";
 	private static final String NOME_CONNETTORE_DEFAULT_TEST_FRUIZIONE = "CNT_SF_gw/SoggettoInternoVaultTestFruitore_gw/SoggettoInternoVaultTest_gw/VaultTestConnettori/1";
 	private static String getNomeConnettoreFruizioneTestAzione(String azione) {
 		return NOME_CONNETTORE_DEFAULT_TEST_FRUIZIONE.replace("CNT_SF", "CNT_SF_AZIONE")+"_"+azione;
 	}
 	
-	
-	private static final String  OP_RICHIESTA_ASINCRONA = "asincronoRichiesta";
-	private static final String  OP_RISPOSTA_ASINCRONA = "asincronoRisposta";
+	private static final String OP_RICHIESTA_ASINCRONA = "asincronoRichiesta";
+	private static final String OP_RISPOSTA_ASINCRONA = "asincronoRisposta";
 	private static final String NOME_SERVER_ASINCRNO_ASIMMETRICO = "TestServerAsincronoAsimmetrico";
 	
 	private static final String SA_PREFIX = "SA:";
@@ -98,6 +104,8 @@ public class SecretsTest extends ConfigLoader {
 		logCoreInfo("@step0aVerificaInizialeDatabase");
 		
 		verificheDatabaseInCharo();
+		
+		verificheProprietaCifrate(DEFAULT_POLICY);
 		
 	}
 	
@@ -131,8 +139,11 @@ public class SecretsTest extends ConfigLoader {
 		logCoreInfo("@step1bVerificaSecretsDatabaseDefaultPolicy");
 		
 		String prefix = BYOKUtilities.newPrefixWrappedValue(DEFAULT_POLICY);
+		prefix = prefix.substring(0, prefix.length()-1);
 		
 		verificheDatabaseCifrato(prefix);
+		
+		verificheProprietaCifrate(DEFAULT_POLICY);
 	}
 	
 	@Test
@@ -169,8 +180,11 @@ public class SecretsTest extends ConfigLoader {
 		logCoreInfo("@step2bVerificaSecretsDatabaseGwKeysPolicySianoRimastiComeInPrecedenza");
 		
 		String prefix = BYOKUtilities.newPrefixWrappedValue(DEFAULT_POLICY);
+		prefix = prefix.substring(0, prefix.length()-1);
 		
 		verificheDatabaseCifrato(prefix);
+		
+		verificheProprietaCifrate(DEFAULT_POLICY);
 	}
 
 	@Test
@@ -191,8 +205,11 @@ public class SecretsTest extends ConfigLoader {
 		logCoreInfo("@step2dVerificaSecretsDatabaseGwKeysPolicy");
 		
 		String prefix = BYOKUtilities.newPrefixWrappedValue(GW_KEYS_POLICY);
+		prefix = prefix.substring(0, prefix.length()-1);
 		
 		verificheDatabaseCifrato(prefix);
+		
+		verificheProprietaCifrate(GW_KEYS_POLICY);
 	}
 	
 	@Test
@@ -230,8 +247,11 @@ public class SecretsTest extends ConfigLoader {
 		logCoreInfo("@step3bVerificaSecretsDatabaseGwRemotePolicySianoRimastiComeInPrecedenza");
 		
 		String prefix = BYOKUtilities.newPrefixWrappedValue(GW_KEYS_POLICY);
+		prefix = prefix.substring(0, prefix.length()-1);
 		
 		verificheDatabaseCifrato(prefix);
+		
+		verificheProprietaCifrate(GW_KEYS_POLICY);
 	}
 
 	@Test
@@ -252,8 +272,11 @@ public class SecretsTest extends ConfigLoader {
 		logCoreInfo("@step3dVerificaSecretsDatabaseRemotePolicy");
 		
 		String prefix = BYOKUtilities.newPrefixWrappedValue(GW_REMOTE_POLICY);
+		prefix = prefix.substring(0, prefix.length()-1);
 		
 		verificheDatabaseCifrato(prefix);
+		
+		verificheProprietaCifrate(GW_REMOTE_POLICY);
 	}
 	
 	@Test
@@ -289,8 +312,11 @@ public class SecretsTest extends ConfigLoader {
 		logCoreInfo("@step4bVerificaSecretsDatabasePlainPolicySianoRimastiComeInPrecedenza");
 		
 		String prefix = BYOKUtilities.newPrefixWrappedValue(GW_REMOTE_POLICY);
+		prefix = prefix.substring(0, prefix.length()-1);
 		
 		verificheDatabaseCifrato(prefix);
+		
+		verificheProprietaCifrate(GW_REMOTE_POLICY);
 	}
 
 	@Test
@@ -311,6 +337,8 @@ public class SecretsTest extends ConfigLoader {
 		logCoreInfo("@step4dVerificaSecretsDatabasePlainPolicy");
 		
 		verificheDatabaseInCharo();
+		
+		verificheProprietaChiaro();
 	}
 	
 	@Test
@@ -335,7 +363,9 @@ public class SecretsTest extends ConfigLoader {
 			
 		logCoreInfo("@step5aVaultByConfigLoaderWithBYOK");
 		
-		prepareConfig(true, DEFAULT_POLICY);
+		prepareConfig(true, DEFAULT_POLICY, TESTSUITE_BUNDLE_PLAIN_PATH);
+		prepareConfig(true, DEFAULT_POLICY, TESTSUITE_BUNDLE_PROPRIETA_CIFRATE_PATH);
+		dbUtils.updateEncSystemProperty(SYSTEM_ENC_PROP_NAME,SYSTEM_ENC_PROP_PLAIN_VALUE,SYSTEM_ENC_PROP_ENC_VALUE);
 		
 	}
 	
@@ -345,8 +375,11 @@ public class SecretsTest extends ConfigLoader {
 		logCoreInfo("@step5VerificaSecretsByDefaultPolicy");
 		
 		String prefix = BYOKUtilities.newPrefixWrappedValue(DEFAULT_POLICY);
+		prefix = prefix.substring(0, prefix.length()-1);
 		
 		verificheDatabaseCifrato(prefix);
+		
+		verificheProprietaCifrate(DEFAULT_POLICY);
 		
 	}
 	
@@ -363,7 +396,11 @@ public class SecretsTest extends ConfigLoader {
 			
 		logCoreInfo("@step5dVaultByConfigLoaderWithoutBYOK");
 		
-		prepareConfig(false, null);
+		prepareConfig(false, null, ConfigLoader.TESTSUITE_BUNDLE_PLAIN_PATH);
+		/**
+		 * prepareConfig(false, null, TESTSUITE_BUNDLE_PROPRIETA_CIFRATE_PATH);
+		 * dbUtils.updateEncSystemProperty(SYSTEM_ENC_PROP_NAME,SYSTEM_ENC_PROP_PLAIN_VALUE,SYSTEM_ENC_PROP_ENC_VALUE);
+		 **/ // Le proprietà le lascio cifrate normalmente
 		
 	}
 	
@@ -373,6 +410,8 @@ public class SecretsTest extends ConfigLoader {
 		logCoreInfo("@step5eVerificaSecretsDatabasePlainPolicy");
 		
 		verificheDatabaseInCharo();
+		
+		verificheProprietaCifrate(DEFAULT_POLICY);
 	}
 	
 	@Test
@@ -395,52 +434,64 @@ public class SecretsTest extends ConfigLoader {
 	private void invocazioneGovWay() throws UtilsException, HttpUtilsException {
 		resetCache();
 		
-		String prefixLogErogazione = "invocazioneGovWay erogazione API:"+API + " operazione:";
-		String prefixLogFruizione = "invocazioneGovWay fruizione API:"+API + " operazione:";
+		String operazione = " operazione:";
+		
+		String prefixLogErogazione = "invocazioneGovWay erogazione API:"+API_CONNETTORI + operazione;
+		String prefixLogFruizione = "invocazioneGovWay fruizione API:"+API_CONNETTORI + operazione;
 		
 		logCoreInfo(prefixLogErogazione+OP_HTTP);		
-		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API, OP_HTTP);
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_CONNETTORI, OP_HTTP);
 		
 		logCoreInfo(prefixLogErogazione+OP_HTTP_2);		
-		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API, OP_HTTP_2);
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_CONNETTORI, OP_HTTP_2);
 		
 		logCoreInfo(prefixLogErogazione+OP_HTTP_SERVER);		
-		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API, OP_HTTP_SERVER);
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_CONNETTORI, OP_HTTP_SERVER);
 		
 		logCoreInfo(prefixLogErogazione+OP_MTLS);		
-		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API, OP_MTLS);
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_CONNETTORI, OP_MTLS);
 		
 		logCoreInfo(prefixLogErogazione+OP_API_KEY);		
-		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API, OP_API_KEY);
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_CONNETTORI, OP_API_KEY);
 		
-
 		
 		logCoreInfo(prefixLogFruizione+OP_HTTP);		
-		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API, OP_HTTP);
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_CONNETTORI, OP_HTTP);
 		
 		logCoreInfo(prefixLogFruizione+OP_HTTP_2);		
-		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API, OP_HTTP_2);
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_CONNETTORI, OP_HTTP_2);
 		
 		logCoreInfo(prefixLogFruizione+OP_HTTPS);		
-		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API, OP_HTTPS);
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_CONNETTORI, OP_HTTPS);
 		
 		logCoreInfo(prefixLogFruizione+OP_API_KEY);		
-		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API, OP_API_KEY);
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_CONNETTORI, OP_API_KEY);
 		
 		
 		
 		logCoreInfo(prefixLogFruizione+OP_RICHIESTA_ASINCRONA);		
-		HttpResponse response = Utilities.testSpcoop(logCore, TipoServizio.FRUIZIONE, API, OP_RICHIESTA_ASINCRONA, null);
+		HttpResponse response = Utilities.testSpcoop(logCore, TipoServizio.FRUIZIONE, API_CONNETTORI, OP_RICHIESTA_ASINCRONA, null);
 		String idMessaggio = response.getHeaderFirstValue("GovWay-Message-ID");
 		
 		logCoreInfo(prefixLogFruizione+OP_RISPOSTA_ASINCRONA);		
-		Utilities.testSpcoop(logCore, TipoServizio.FRUIZIONE, API, OP_RISPOSTA_ASINCRONA, idMessaggio);
+		Utilities.testSpcoop(logCore, TipoServizio.FRUIZIONE, API_CONNETTORI, OP_RISPOSTA_ASINCRONA, idMessaggio);
+		
+		
+		// proprieta
+		
+		prefixLogErogazione = "invocazioneGovWay erogazione API:"+API_PROPRIETA + operazione;
+		/**prefixLogFruizione = "invocazioneGovWay fruizione API:"+API_PROPRIETA + operazione;*/
+		
+		logCoreInfo(prefixLogErogazione+OP_PROPRIETA_CONFIG);		
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_PROPRIETA, OP_PROPRIETA_CONFIG);
 	}
 	
 	
 	
 	
 	
+	
+	// ** VERIFICHE DB CHIARO **
 	
 	private void verificheDatabaseInCharo() throws UtilsException {
 		
@@ -605,6 +656,8 @@ public class SecretsTest extends ConfigLoader {
 	}
 	private void verificheDatabaseInChiaroUtilizzoProxySuConnettori() throws UtilsException {
 		
+		logCoreInfo("verificheDatabaseInChiaroUtilizzoProxySuConnettori");
+		
 		// erogazione
 		String nomeConnettore = ConfigLoader.dbUtils.getNomeConnettoreByPortaApplicativa(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_PROXY);
 		String v = ConfigLoader.dbUtils.getConnettoreProxyPassword(nomeConnettore);
@@ -625,6 +678,8 @@ public class SecretsTest extends ConfigLoader {
 
 	}
 	private void verificheDatabaseInChiaroUtilizzoApiKeySuConnettori() throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseInChiaroUtilizzoApiKeySuConnettori");
 		
 		// erogazione
 		String nomeConnettore = ConfigLoader.dbUtils.getNomeConnettoreByPortaApplicativa(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_API_KEY);
@@ -798,6 +853,8 @@ public class SecretsTest extends ConfigLoader {
 	
 	private void verificheDatabaseCifratoUtilizzoProxySuConnettori(String prefix) throws UtilsException {
 		
+		logCoreInfo("verificheDatabaseCifratoUtilizzoProxySuConnettori");
+		
 		// erogazione
 		String nomeConnettore = ConfigLoader.dbUtils.getNomeConnettoreByPortaApplicativa(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_PROXY);
 		String v = ConfigLoader.dbUtils.getConnettoreProxyPassword(nomeConnettore);
@@ -822,6 +879,8 @@ public class SecretsTest extends ConfigLoader {
 	
 	private void verificheDatabaseCifratoUtilizzoApiKeySuConnettori(String prefix) throws UtilsException {
 		
+		logCoreInfo("verificheDatabaseCifratoUtilizzoApiKeySuConnettori");
+		
 		// erogazione
 		String nomeConnettore = ConfigLoader.dbUtils.getNomeConnettoreByPortaApplicativa(NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE, OP_API_KEY);
 		String v = ConfigLoader.dbUtils.getConnettoreApiKey(nomeConnettore);
@@ -836,6 +895,65 @@ public class SecretsTest extends ConfigLoader {
 		assertTrue(getMessageExpectedStartsWith(CONNETTORE_PREFIX+nomeConnettore,v, prefix), 
 				expected);
 
+	}
+
+	
+	
+	
+	
+	
+	
+	// ** VERIFICHE PROPRIETA CHIARO **
+	
+	private void verificheProprietaChiaro() throws UtilsException {
+		
+		// ** VERIFICHE colonne env_value, valore su pdd_sys_props
+		verificheDatabaseProprietaChiaroConfigurazione();
+		
+	}
+	private void verificheDatabaseProprietaChiaroConfigurazione() throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseProprietaChiaroConfigurazione");
+		
+		String nomeProprieta = "vaultTestNomeCifrato";
+		String pwd = ConfigLoader.dbUtils.getConfigPropertyValue(nomeProprieta);
+		assertEquals(getMessageExpected(PROPRIETA_CONFIG_PREFIX+nomeProprieta, pwd, "vaultTestValoreCifrato"), 
+				"vaultTestValoreCifrato", pwd);
+				
+		pwd = ConfigLoader.dbUtils.getConfigPropertyEncValue(nomeProprieta);
+		assertEquals(getMessageExpectedNull(PROPRIETA_CONFIG_PREFIX+nomeProprieta, pwd), 
+				null, pwd);
+		
+	}
+	
+	
+	
+	
+	
+	// ** VERIFICHE PROPRIETA CIFRATE **
+	
+	private void verificheProprietaCifrate(String policy) throws UtilsException {
+		
+		String prefix = BYOKUtilities.newPrefixWrappedValue(policy);
+		prefix = prefix.substring(0, prefix.length()-1);
+		
+		// ** VERIFICHE colonne env_value, valore su pdd_sys_props
+		verificheDatabaseProprietaCifrateConfigurazione(prefix);
+		
+	}
+	private void verificheDatabaseProprietaCifrateConfigurazione(String prefix) throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseProprietaCifrateConfigurazione");
+		
+		String nomeProprieta = "vaultTestNomeCifrato";
+		String pwd = ConfigLoader.dbUtils.getConfigPropertyValue(nomeProprieta);
+		assertEquals(getMessageExpected(PROPRIETA_CONFIG_PREFIX+nomeProprieta, pwd, prefix), 
+				prefix, pwd);
+		pwd = ConfigLoader.dbUtils.getConfigPropertyEncValue(nomeProprieta);
+		boolean expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(PROPRIETA_CONFIG_PREFIX+nomeProprieta, pwd, prefix), 
+				expected);
+		
 	}
 	
 }

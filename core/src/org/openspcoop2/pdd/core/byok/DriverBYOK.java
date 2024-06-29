@@ -138,7 +138,9 @@ public class DriverBYOK implements IDriverBYOK {
 			wrappedValue = prefix + wrappedValue;
 		}
 		
-		return new BYOKWrappedValue(wrappedValue, prefix);
+		return new BYOKWrappedValue(wrappedValue, 
+				prefix.substring(0, prefix.length()-1) // elimino il punto finale
+				);
 	}
 	@Override
 	public BYOKWrappedValue wrap(byte[] value) throws UtilsException {
@@ -162,7 +164,9 @@ public class DriverBYOK implements IDriverBYOK {
 			wrappedValue = prefix + wrappedValue;
 		}
 		
-		return new BYOKWrappedValue(wrappedValue, prefix);
+		return new BYOKWrappedValue(wrappedValue, 
+				prefix.substring(0, prefix.length()-1) // elimino il punto finale
+				);
 	}
 
 	public boolean isAlreadyWrappedBySecPolicy(String check) throws UtilsException {

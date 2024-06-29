@@ -8731,9 +8731,9 @@ public class ConfigurazionePdDReader {
 	protected List<String> getEncryptedSystemPropertiesPdD() throws DriverConfigurazioneException{
 		return this.configurazionePdD.getEncryptedSystemPropertiesPdD();
 	}
-	protected SystemProperties getSystemPropertiesPdD() throws DriverConfigurazioneException{
+	protected SystemProperties getSystemPropertiesPdD(boolean forceDisableBYOKUse) throws DriverConfigurazioneException{
 		try{
-			return this.configurazionePdD.getSystemPropertiesPdD();
+			return this.configurazionePdD.getSystemPropertiesPdD(forceDisableBYOKUse);
 		}catch(DriverConfigurazioneNotFound dNot){
 			return null;
 		}

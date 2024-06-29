@@ -2326,6 +2326,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	public SystemProperties getSystemPropertiesPdD() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configDriver.getSystemPropertiesPdD();
 	}
+	public SystemProperties getSystemPropertiesPdDWithoutBIOK() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configDriver.getSystemPropertiesPdDWithoutBIOK();
+	}
 	
 	/**
 	 * Restituisce i nomi delle proprieta' di sistema cifrate

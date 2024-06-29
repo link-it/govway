@@ -1513,6 +1513,9 @@ public class DriverConfigurazioneDB_configDriver {
 		IDriverBYOK driverBYOK = this.driver.getDriverUnwrapBYOK();
 		return getSystemPropertiesPdDEngine(driverBYOK);
 	}
+	protected SystemProperties getSystemPropertiesPdDWithoutBIOK() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return getSystemPropertiesPdDEngine(null);
+	}
 	private SystemProperties getSystemPropertiesPdDEngine(IDriverBYOK driverBYOK) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		Connection con = null;
@@ -1553,13 +1556,13 @@ public class DriverConfigurazioneDB_configDriver {
 
 				long id = rs.getLong("id");
 
-				String nome = rs.getString("nome");
+				String nome = rs.getString(CostantiDB.SYSTEM_PROPERTIES_PDD_COLUMN_NOME);
 				
 				Property sp = new Property();
 				sp.setNome(nome);
 								
-				String plainValue = rs.getString("valore");
-				String encValue = rs.getString("enc_value");
+				String plainValue = rs.getString(CostantiDB.SYSTEM_PROPERTIES_PDD_COLUMN_VALUE);
+				String encValue = rs.getString(CostantiDB.SYSTEM_PROPERTIES_PDD_COLUMN_ENC_VALUE);
 				if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
 					if(driverBYOK!=null) {
 						sp.setValore(driverBYOK.unwrapAsString(encValue));

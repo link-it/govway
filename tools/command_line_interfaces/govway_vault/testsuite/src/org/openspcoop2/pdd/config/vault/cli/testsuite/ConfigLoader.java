@@ -53,8 +53,13 @@ import org.slf4j.Logger;
 public class ConfigLoader {
 
     public static final String PROP_FILE_NAME = "testsuite.properties";
-    private static final String TESTSUITE_BUNDLE_PATH = "src/configurazioni-govway/vaultTestBundle.zip";
+    public static final String TESTSUITE_BUNDLE_PLAIN_PATH = "src/configurazioni-govway/vaultTestBundle.zip"; // da modificare usando la console senza un policy abilitato
+    public static final String TESTSUITE_BUNDLE_PROPRIETA_CIFRATE_PATH = "src/configurazioni-govway/vaultTestBundleProprietaCifrate.zip"; // da modificare usando la console con un policy abilitato
     private static final String TESTSUITE_BYOK_PATH = "src/configurazioni-govway/byok.properties";
+    
+    public static final String SYSTEM_ENC_PROP_NAME = "vaultTestNomeCifrato";
+    public static final String SYSTEM_ENC_PROP_PLAIN_VALUE = "==gw-pbkdf2==";
+    public static final String SYSTEM_ENC_PROP_ENC_VALUE = "==gw-pbkdf2==.U2FsdGVkX180iN6VYj77ymnPPJMhHJxHSt1sqR4JZlwLqHBmkUfQGymhrFzXxyB9";
     
     private static final String BUILD_DIR = "build";
     
@@ -167,10 +172,12 @@ public class ConfigLoader {
     		load = Boolean.valueOf(args[0]);
     	}
     	if(load) {
-    		prepareConfig(false, null);
+    		prepareConfig(false, null, TESTSUITE_BUNDLE_PLAIN_PATH);
+    		prepareConfig(true, DEFAULT_POLICY, TESTSUITE_BUNDLE_PROPRIETA_CIFRATE_PATH);
     	}
     	else {
-    		deleteConfig();
+    		deleteConfig(TESTSUITE_BUNDLE_PLAIN_PATH);
+    		deleteConfig(TESTSUITE_BUNDLE_PROPRIETA_CIFRATE_PATH);
     	}
     }
     
@@ -187,13 +194,13 @@ public class ConfigLoader {
     
     // LOADER
     
-    public static void prepareConfig(boolean byok, String policy) throws UtilsException, HttpUtilsException, IOException {
+    public static void prepareConfig(boolean byok, String policy, String testBundle) throws UtilsException, HttpUtilsException, IOException {
 
         org.slf4j.Logger logger = logCore!=null ? logCore : LoggerWrapperFactory.getLogger(ConfigLoader.class);
 
         String configLoaderPath = prop.getProperty(CONFIG_LOADER_PATH);
         String scriptPath = configLoaderPath + File.separatorChar + (SystemUtils.IS_OS_WINDOWS ? "createOrUpdate.cmd" : "createOrUpdate.sh");
-        String testsuiteBundle = new File(TESTSUITE_BUNDLE_PATH).getAbsolutePath();
+        String testsuiteBundle = new File(testBundle).getAbsolutePath();
 
         logDebug(logger,LOG_SCRIPT_PATH+ scriptPath);
         logDebug(logger,"Config loader path: " + configLoaderPath);
@@ -216,11 +223,11 @@ public class ConfigLoader {
         resetCache();
     }
     
-    public static void deleteConfig() throws UtilsException {
+    public static void deleteConfig(String testBundle) throws UtilsException {
     	
         String configLoaderPath = prop.getProperty(CONFIG_LOADER_PATH);
         String scriptPath = configLoaderPath + File.separatorChar + (SystemUtils.IS_OS_WINDOWS ? "delete.cmd" : "delete.sh");
-        String trasparenteBundle = new File("src/configurazioni-govway/trasparenteTestBundle.zip").getAbsolutePath();
+        String trasparenteBundle = new File(testBundle).getAbsolutePath();
         
         org.slf4j.Logger logger = logCore!=null ? logCore : LoggerWrapperFactory.getLogger(ConfigLoader.class);
         
@@ -303,12 +310,18 @@ public class ConfigLoader {
     	
     	String byokPath = new File(TESTSUITE_BYOK_PATH).getAbsolutePath();
     	String contentByok = org.openspcoop2.utils.resources.FileSystemUtilities.readFile(byokPath);
+    	
     	if(disable) {
     		contentByok = contentByok.replace("govway.security=gw-pbkdf2", "# !!DISABLED!!\n#govway.security=gw-pbkdf2");
     	}
     	else {
     		contentByok = contentByok.replace("govway.security=gw-pbkdf2", "# !!ENABLED!!\ngovway.security="+policy);
     	}
+    	
+    	contentByok = activeConf("policy", contentByok); 
+    	contentByok = activeConf("plugin", contentByok); 
+    	contentByok = activeConf("configurazioneGenerale", contentByok); 
+    	
     	File byokFilePath = disable ? new File(BUILD_DIR,"byok-disable.properties") : new File(BUILD_DIR,"byok-enable-"+policy+".properties");
     	org.openspcoop2.utils.resources.FileSystemUtilities.writeFile(byokFilePath, contentByok.getBytes());
     	
@@ -326,6 +339,15 @@ public class ConfigLoader {
     		org.openspcoop2.utils.resources.FileSystemUtilities.deleteFile(new File(scriptProperties));
     		org.openspcoop2.utils.resources.FileSystemUtilities.writeFile(scriptProperties, newContent.getBytes());
     	}
+    }
+    private static String activeConf(String name, String contentByok) {
+    	String enabled = ".enable=true";
+    	contentByok = contentByok.replace(name+".enable=false", name+enabled);
+    	contentByok = contentByok.replace(name+".enable= false", name+enabled);
+    	contentByok = contentByok.replace(name+".enable= false ", name+enabled);
+    	contentByok = contentByok.replace(name+".enable = false", name+enabled);
+    	contentByok = contentByok.replace(name+".enable =false", name+enabled);
+    	return contentByok;
     }
     
     

@@ -4977,7 +4977,10 @@ public class ConfigurazionePdD  {
 	public List<String> getEncryptedSystemPropertiesPdD() throws DriverConfigurazioneException{
 		return this.driverConfigurazionePdD.getEncryptedSystemPropertiesPdD();
 	}
-	public SystemProperties getSystemPropertiesPdD() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public SystemProperties getSystemPropertiesPdD(boolean forceDisableBYOKUse) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		if(forceDisableBYOKUse && this.driverConfigurazionePdD instanceof DriverConfigurazioneDB) {
+			return ((DriverConfigurazioneDB)this.driverConfigurazionePdD).getSystemPropertiesPdDWithoutBIOK();
+		}
 		return this.driverConfigurazionePdD.getSystemPropertiesPdD();
 	}
 	public void updateSystemPropertiesPdD(SystemProperties systemProperties) throws DriverConfigurazioneException{

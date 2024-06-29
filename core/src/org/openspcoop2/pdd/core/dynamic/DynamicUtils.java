@@ -230,10 +230,10 @@ public class DynamicUtils {
     }
 	
 	public static void fillDynamicMap(Logger log, Map<String, Object> dynamicMap, DynamicInfo dynamicInfo) {
-		fillDynamicMap(log,dynamicMap, dynamicInfo, true);
+		fillDynamicMap(log,dynamicMap, dynamicInfo, false);
 	}
 	@SuppressWarnings("unchecked")
-	public static void fillDynamicMap(Logger log, Map<String, Object> dynamicMap, DynamicInfo dynamicInfo, boolean useCache) {
+	public static void fillDynamicMap(Logger log, Map<String, Object> dynamicMap, DynamicInfo dynamicInfo, boolean initFromJmx) {
 		if(!dynamicMap.containsKey(Costanti.MAP_DATE_OBJECT)) {
 			dynamicMap.put(Costanti.MAP_DATE_OBJECT, DateManager.getDate());
 		}
@@ -241,6 +241,7 @@ public class DynamicUtils {
 		RequestInfo requestInfo = null;
 		
 		if(dynamicInfo!=null && dynamicInfo.getPddContext()!=null) {
+			
 			if(!dynamicMap.containsKey(Costanti.MAP_CTX_OBJECT)) {
 				dynamicMap.put(Costanti.MAP_CTX_OBJECT, dynamicInfo.getPddContext());
 			}
@@ -458,7 +459,7 @@ public class DynamicUtils {
 		}
 		
 		try {
-			SystemPropertiesReader systemPropertiesReader = new SystemPropertiesReader(log, requestInfo, useCache);
+			SystemPropertiesReader systemPropertiesReader = new SystemPropertiesReader(log, requestInfo, initFromJmx);
 			dynamicMap.put(Costanti.MAP_SYSTEM_PROPERTY, systemPropertiesReader);
 			dynamicMap.put(Costanti.MAP_SYSTEM_PROPERTY.toLowerCase(), systemPropertiesReader);
 		}

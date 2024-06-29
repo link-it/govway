@@ -43,13 +43,16 @@ import org.slf4j.Logger;
 public class DriverBYOKUtilities {
 
 	public static DriverBYOK newInstanceDriverBYOKRuntimeNode(Logger log, boolean wrap, boolean unwrap) throws UtilsException {
+		return newInstanceDriverBYOKRuntimeNode(log, wrap, unwrap, false);
+	}
+	public static DriverBYOK newInstanceDriverBYOKRuntimeNodeForJmxOperation(Logger log, boolean wrap, boolean unwrap) throws UtilsException {
 		return newInstanceDriverBYOKRuntimeNode(log, wrap, unwrap, true);
 	}
-	public static DriverBYOK newInstanceDriverBYOKRuntimeNode(Logger log, boolean wrap, boolean unwrap, boolean useCache) throws UtilsException {
+	private static DriverBYOK newInstanceDriverBYOKRuntimeNode(Logger log, boolean wrap, boolean unwrap, boolean initFromJmx) throws UtilsException {
 		String securityRuntimePolicy = BYOKManager.getSecurityEngineGovWayPolicy();
 		if(securityRuntimePolicy!=null) {
 			DriverBYOKUtilities utils = new DriverBYOKUtilities(log);
-			utils.setUseCache(useCache);
+			utils.setInitFromJmx(initFromJmx);
 			return utils.getDriverBYOKRuntimeNode(wrap, unwrap);
 		}
 		return null;
@@ -58,9 +61,9 @@ public class DriverBYOKUtilities {
 	private Logger log;
 	private ConfigurazioneNodiRuntime configurazioneNodiRuntime;
 	private boolean nodoruntime;
-	private boolean useCache=true;
-	public void setUseCache(boolean useCache) {
-		this.useCache = useCache;
+	private boolean initFromJmx=false;
+	public void setInitFromJmx(boolean initFromJmx) {
+		this.initFromJmx = initFromJmx;
 	}
 	
 	public DriverBYOKUtilities(Logger log) {
@@ -93,7 +96,7 @@ public class DriverBYOKUtilities {
 		if(securityManagerPolicy!=null && StringUtils.isNotEmpty(securityManagerPolicy)) {
 			Map<String, Object> dynamicMap = new HashMap<>();
 			DynamicInfo dynamicInfo = new  DynamicInfo();
-			DynamicUtils.fillDynamicMap(this.log, dynamicMap, dynamicInfo, this.useCache);
+			DynamicUtils.fillDynamicMap(this.log, dynamicMap, dynamicInfo, this.initFromJmx);
 			
 			if(securityManagerRemotePolicy!=null && StringUtils.isNotEmpty(securityManagerRemotePolicy) &&
 					!securityManagerPolicy.equals(securityManagerRemotePolicy) && 
