@@ -50,14 +50,18 @@ import org.openspcoop2.utils.transport.http.HttpUtilsException;
 @RunWith(CustomRunner.class)
 public class SecretsTest extends ConfigLoader {
 
-	private static final String API_PROPRIETA = "VaultTestProprieta";
+	public static final String API_PROPRIETA = "VaultTestProprieta";
 	
 	private static final String OP_PROPRIETA_CONFIG = "config";
+	public static final String OP_PROPRIETA_APPLICATIVO = "applicativo";
+	public static final String OP_PROPRIETA_SOGGETTO = "soggetto";
 	
 	private static final String PROPRIETA_CONFIG_PREFIX = "ConfigProp:";
+	private static final String PROPRIETA_SOGGETTO_PREFIX = "SoggettoProp:";
+	private static final String PROPRIETA_APPLICATIVO_PREFIX = "ApplicativoProp:";
 	
 	
-	private static final String API_CONNETTORI = "VaultTestConnettori";
+	public static final String API_CONNETTORI = "VaultTestConnettori";
 	
 	private static final String OP_HTTP = "http";
 	private static final String OP_HTTP_2 = "http2";
@@ -484,6 +488,12 @@ public class SecretsTest extends ConfigLoader {
 		
 		logCoreInfo(prefixLogErogazione+OP_PROPRIETA_CONFIG);		
 		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_PROPRIETA, OP_PROPRIETA_CONFIG);
+		
+		logCoreInfo(prefixLogErogazione+OP_PROPRIETA_CONFIG);		
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_PROPRIETA, OP_PROPRIETA_APPLICATIVO);
+		
+		logCoreInfo(prefixLogErogazione+OP_PROPRIETA_CONFIG);		
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_PROPRIETA, OP_PROPRIETA_SOGGETTO);
 	}
 	
 	
@@ -940,6 +950,12 @@ public class SecretsTest extends ConfigLoader {
 		// ** VERIFICHE colonne env_value, valore su pdd_sys_props
 		verificheDatabaseProprietaCifrateConfigurazione(prefix);
 		
+		// ** VERIFICHE colonne env_value, valore su soggetti_properties
+		verificheDatabaseProprietaCifrateSoggetto(prefix);
+		
+		// ** VERIFICHE colonne env_value, valore su sa_properties
+		verificheDatabaseProprietaCifrateApplicativo(prefix);
+		
 	}
 	private void verificheDatabaseProprietaCifrateConfigurazione(String prefix) throws UtilsException {
 		
@@ -952,6 +968,34 @@ public class SecretsTest extends ConfigLoader {
 		pwd = ConfigLoader.dbUtils.getConfigPropertyEncValue(nomeProprieta);
 		boolean expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
 		assertTrue(getMessageExpectedStartsWith(PROPRIETA_CONFIG_PREFIX+nomeProprieta, pwd, prefix), 
+				expected);
+		
+	}
+	private void verificheDatabaseProprietaCifrateSoggetto(String prefix) throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseProprietaCifrateSoggetto");
+		
+		String nomeProprieta = "vaultTestNomeCifratoSoggetto";
+		String pwd = ConfigLoader.dbUtils.getSoggettoPropertyValue(nomeProprieta);
+		assertEquals(getMessageExpected(PROPRIETA_SOGGETTO_PREFIX+nomeProprieta, pwd, prefix), 
+				prefix, pwd);
+		pwd = ConfigLoader.dbUtils.getSoggettoPropertyEncValue(nomeProprieta);
+		boolean expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(PROPRIETA_SOGGETTO_PREFIX+nomeProprieta, pwd, prefix), 
+				expected);
+		
+	}
+	private void verificheDatabaseProprietaCifrateApplicativo(String prefix) throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseProprietaCifrateApplicativo");
+		
+		String nomeProprieta = "vaultTestNomeCifratoApplicativo";
+		String pwd = ConfigLoader.dbUtils.getApplicativoPropertyValue(nomeProprieta);
+		assertEquals(getMessageExpected(PROPRIETA_APPLICATIVO_PREFIX+nomeProprieta, pwd, prefix), 
+				prefix, pwd);
+		pwd = ConfigLoader.dbUtils.getApplicativoPropertyEncValue(nomeProprieta);
+		boolean expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(PROPRIETA_APPLICATIVO_PREFIX+nomeProprieta, pwd, prefix), 
 				expected);
 		
 	}

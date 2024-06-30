@@ -252,6 +252,20 @@ public class DbUtils {
     	return getColumnValue(CostantiDB.SYSTEM_PROPERTIES_PDD_COLUMN_ENC_VALUE, CostantiDB.SYSTEM_PROPERTIES_PDD, CostantiDB.SYSTEM_PROPERTIES_PDD_COLUMN_NOME, propertyName);
     }
     
+    public String getSoggettoPropertyValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.SOGGETTI_PROPS_COLUMN_VALUE, CostantiDB.SOGGETTI_PROPS, CostantiDB.SOGGETTI_PROPS_COLUMN_NAME, propertyName);
+    }
+    public String getSoggettoPropertyEncValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.SOGGETTI_PROPS_COLUMN_ENC_VALUE, CostantiDB.SOGGETTI_PROPS, CostantiDB.SOGGETTI_PROPS_COLUMN_NAME, propertyName);
+    }
+    
+    public String getApplicativoPropertyValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.SERVIZI_APPLICATIVI_PROPS_COLUMN_VALUE, CostantiDB.SERVIZI_APPLICATIVI_PROPS, CostantiDB.SERVIZI_APPLICATIVI_PROPS_COLUMN_NOME, propertyName);
+    }
+    public String getApplicativoPropertyEncValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.SERVIZI_APPLICATIVI_PROPS_COLUMN_ENC_VALUE, CostantiDB.SERVIZI_APPLICATIVI_PROPS, CostantiDB.SERVIZI_APPLICATIVI_PROPS_COLUMN_NOME, propertyName);
+    }
+    
     
     private String getColumnValue(String colonna, String tabella, String colonnaId, String colonnaIdValue) throws UtilsException {
     	return getColumnValue(colonna, tabella, colonnaId, colonnaIdValue, 

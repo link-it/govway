@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.config.vault.cli.testsuite;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import org.openspcoop2.pdd.config.vault.cli.testsuite.secrets.test.SecretsTest;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -91,6 +92,13 @@ public class Utilities {
 		
 		if(relatesTo!=null) {
 			request.addHeader("GovWay-Relates-To", relatesTo);
+		}
+		
+		if(SecretsTest.API_PROPRIETA.equals(api) &&
+			(SecretsTest.OP_PROPRIETA_APPLICATIVO.equals(operazione) || SecretsTest.OP_PROPRIETA_SOGGETTO.equals(operazione)) 
+				){
+			request.setUsername("TestVaultApplicativoProprieta");
+			request.setPassword("123456");
 		}
 		
 		request.setUrl(url);
