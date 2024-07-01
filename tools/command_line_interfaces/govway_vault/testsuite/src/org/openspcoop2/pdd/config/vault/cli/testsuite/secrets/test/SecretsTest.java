@@ -55,10 +55,12 @@ public class SecretsTest extends ConfigLoader {
 	private static final String OP_PROPRIETA_CONFIG = "config";
 	public static final String OP_PROPRIETA_APPLICATIVO = "applicativo";
 	public static final String OP_PROPRIETA_SOGGETTO = "soggetto";
+	public static final String OP_PROPRIETA_PORTA = "porta";
 	
 	private static final String PROPRIETA_CONFIG_PREFIX = "ConfigProp:";
 	private static final String PROPRIETA_SOGGETTO_PREFIX = "SoggettoProp:";
 	private static final String PROPRIETA_APPLICATIVO_PREFIX = "ApplicativoProp:";
+	private static final String PROPRIETA_PORTA_PREFIX = "PortaProp:";
 	
 	
 	public static final String API_CONNETTORI = "VaultTestConnettori";
@@ -484,7 +486,7 @@ public class SecretsTest extends ConfigLoader {
 		// proprieta
 		
 		prefixLogErogazione = "invocazioneGovWay erogazione API:"+API_PROPRIETA + operazione;
-		/**prefixLogFruizione = "invocazioneGovWay fruizione API:"+API_PROPRIETA + operazione;*/
+		prefixLogFruizione = "invocazioneGovWay fruizione API:"+API_PROPRIETA + operazione;
 		
 		logCoreInfo(prefixLogErogazione+OP_PROPRIETA_CONFIG);		
 		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_PROPRIETA, OP_PROPRIETA_CONFIG);
@@ -494,6 +496,13 @@ public class SecretsTest extends ConfigLoader {
 		
 		logCoreInfo(prefixLogErogazione+OP_PROPRIETA_CONFIG);		
 		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_PROPRIETA, OP_PROPRIETA_SOGGETTO);
+		
+		logCoreInfo(prefixLogErogazione+OP_PROPRIETA_PORTA);		
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_PROPRIETA, OP_PROPRIETA_PORTA);
+		
+		
+		logCoreInfo(prefixLogFruizione+OP_PROPRIETA_PORTA);		
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_PROPRIETA, OP_PROPRIETA_PORTA);
 	}
 	
 	
@@ -956,6 +965,12 @@ public class SecretsTest extends ConfigLoader {
 		// ** VERIFICHE colonne env_value, valore su sa_properties
 		verificheDatabaseProprietaCifrateApplicativo(prefix);
 		
+		// ** VERIFICHE colonne env_value, valore su pd_properties
+		verificheDatabaseProprietaCifratePortaDelegata(prefix);
+		
+		// ** VERIFICHE colonne env_value, valore su pa_properties
+		verificheDatabaseProprietaCifratePortaApplicativa(prefix);
+		
 	}
 	private void verificheDatabaseProprietaCifrateConfigurazione(String prefix) throws UtilsException {
 		
@@ -996,6 +1011,34 @@ public class SecretsTest extends ConfigLoader {
 		pwd = ConfigLoader.dbUtils.getApplicativoPropertyEncValue(nomeProprieta);
 		boolean expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
 		assertTrue(getMessageExpectedStartsWith(PROPRIETA_APPLICATIVO_PREFIX+nomeProprieta, pwd, prefix), 
+				expected);
+		
+	}
+	private void verificheDatabaseProprietaCifratePortaDelegata(String prefix) throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseProprietaCifratePortaDelegata");
+		
+		String nomeProprieta = "vaultTestNomeCifratoPorta";
+		String pwd = ConfigLoader.dbUtils.getPortaDelegataPropertyValue(nomeProprieta);
+		assertEquals(getMessageExpected(PROPRIETA_PORTA_PREFIX+nomeProprieta, pwd, prefix), 
+				prefix, pwd);
+		pwd = ConfigLoader.dbUtils.getPortaDelegataPropertyEncValue(nomeProprieta);
+		boolean expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(PROPRIETA_PORTA_PREFIX+nomeProprieta, pwd, prefix), 
+				expected);
+		
+	}
+	private void verificheDatabaseProprietaCifratePortaApplicativa(String prefix) throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseProprietaCifratePortaApplicativa");
+		
+		String nomeProprieta = "vaultTestNomeCifratoPorta";
+		String pwd = ConfigLoader.dbUtils.getPortaApplicativaPropertyValue(nomeProprieta);
+		assertEquals(getMessageExpected(PROPRIETA_PORTA_PREFIX+nomeProprieta, pwd, prefix), 
+				prefix, pwd);
+		pwd = ConfigLoader.dbUtils.getPortaApplicativaPropertyEncValue(nomeProprieta);
+		boolean expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(PROPRIETA_PORTA_PREFIX+nomeProprieta, pwd, prefix), 
 				expected);
 		
 	}

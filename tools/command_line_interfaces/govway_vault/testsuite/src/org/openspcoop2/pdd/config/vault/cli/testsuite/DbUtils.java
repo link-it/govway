@@ -266,6 +266,20 @@ public class DbUtils {
     	return getColumnValue(CostantiDB.SERVIZI_APPLICATIVI_PROPS_COLUMN_ENC_VALUE, CostantiDB.SERVIZI_APPLICATIVI_PROPS, CostantiDB.SERVIZI_APPLICATIVI_PROPS_COLUMN_NOME, propertyName);
     }
     
+    public String getPortaDelegataPropertyValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.PORTE_DELEGATE_PROP_COLUMN_VALORE, CostantiDB.PORTE_DELEGATE_PROP, CostantiDB.PORTE_DELEGATE_PROP_COLUMN_NOME, propertyName);
+    }
+    public String getPortaDelegataPropertyEncValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.PORTE_DELEGATE_PROP_COLUMN_ENC_VALUE, CostantiDB.PORTE_DELEGATE_PROP, CostantiDB.PORTE_DELEGATE_PROP_COLUMN_NOME, propertyName);
+    }
+    
+    public String getPortaApplicativaPropertyValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.PORTE_APPLICATIVE_PROP_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_PROP, CostantiDB.PORTE_APPLICATIVE_PROP_COLUMN_NOME, propertyName);
+    }
+    public String getPortaApplicativaPropertyEncValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.PORTE_APPLICATIVE_PROP_COLUMN_ENC_VALUE, CostantiDB.PORTE_APPLICATIVE_PROP, CostantiDB.PORTE_APPLICATIVE_PROP_COLUMN_NOME, propertyName);
+    }
+    
     
     private String getColumnValue(String colonna, String tabella, String colonnaId, String colonnaIdValue) throws UtilsException {
     	return getColumnValue(colonna, tabella, colonnaId, colonnaIdValue, 
