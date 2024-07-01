@@ -1,3 +1,6 @@
+Corretto export	dei plugin per l'autorizzazione	dei contenuti, non veniva esportato a partire dall'erogazione o	dalla fruizione
+
+
 Aggioungere a jenkins: +- 'autenticazione', verifica la funzionalità di inoltro di credenziali (basic, api-key) al backend
 +   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.autenticazione
 
