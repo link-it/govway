@@ -56,11 +56,15 @@ public class SecretsTest extends ConfigLoader {
 	public static final String OP_PROPRIETA_APPLICATIVO = "applicativo";
 	public static final String OP_PROPRIETA_SOGGETTO = "soggetto";
 	public static final String OP_PROPRIETA_PORTA = "porta";
+	public static final String OP_PROPRIETA_AUTHN_AUTHZ_AUTHC = "plugin-authn-authz-authc";
 	
 	private static final String PROPRIETA_CONFIG_PREFIX = "ConfigProp:";
 	private static final String PROPRIETA_SOGGETTO_PREFIX = "SoggettoProp:";
 	private static final String PROPRIETA_APPLICATIVO_PREFIX = "ApplicativoProp:";
 	private static final String PROPRIETA_PORTA_PREFIX = "PortaProp:";
+	private static final String PROPRIETA_PORTA_AUTHN_PREFIX = "PortaAuthnProp:";
+	private static final String PROPRIETA_PORTA_AUTHZ_PREFIX = "PortaAuthzProp:";
+	private static final String PROPRIETA_PORTA_AUTHC_PREFIX = "PortaAuthcProp:";
 	
 	
 	public static final String API_CONNETTORI = "VaultTestConnettori";
@@ -500,9 +504,15 @@ public class SecretsTest extends ConfigLoader {
 		logCoreInfo(prefixLogErogazione+OP_PROPRIETA_PORTA);		
 		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_PROPRIETA, OP_PROPRIETA_PORTA);
 		
+		logCoreInfo(prefixLogErogazione+OP_PROPRIETA_AUTHN_AUTHZ_AUTHC);		
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_PROPRIETA, OP_PROPRIETA_AUTHN_AUTHZ_AUTHC);
+		
 		
 		logCoreInfo(prefixLogFruizione+OP_PROPRIETA_PORTA);		
 		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_PROPRIETA, OP_PROPRIETA_PORTA);
+		
+		logCoreInfo(prefixLogFruizione+OP_PROPRIETA_AUTHN_AUTHZ_AUTHC);		
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_PROPRIETA, OP_PROPRIETA_AUTHN_AUTHZ_AUTHC);
 	}
 	
 	
@@ -967,9 +977,21 @@ public class SecretsTest extends ConfigLoader {
 		
 		// ** VERIFICHE colonne env_value, valore su pd_properties
 		verificheDatabaseProprietaCifratePortaDelegata(prefix);
+		// ** VERIFICHE colonne env_value, valore su pd_auth_properties
+		verificheDatabaseProprietaAutenticazioneCifratePortaDelegata(prefix);
+		// ** VERIFICHE colonne env_value, valore su pd_authz_properties
+		verificheDatabaseProprietaAutorizzazioneCifratePortaDelegata(prefix);
+		// ** VERIFICHE colonne env_value, valore su pd_authzc_properties
+		verificheDatabaseProprietaAutorizzazioneContenutiCifratePortaDelegata(prefix);
 		
 		// ** VERIFICHE colonne env_value, valore su pa_properties
 		verificheDatabaseProprietaCifratePortaApplicativa(prefix);
+		// ** VERIFICHE colonne env_value, valore su pa_auth_properties
+		verificheDatabaseProprietaAutenticazioneCifratePortaApplicativa(prefix);
+		// ** VERIFICHE colonne env_value, valore su pa_authz_properties
+		verificheDatabaseProprietaAutorizzazioneCifratePortaApplicativa(prefix);
+		// ** VERIFICHE colonne env_value, valore su pa_authzc_properties
+		verificheDatabaseProprietaAutorizzazioneContenutiCifratePortaApplicativa(prefix);
 		
 	}
 	private void verificheDatabaseProprietaCifrateConfigurazione(String prefix) throws UtilsException {
@@ -1028,6 +1050,48 @@ public class SecretsTest extends ConfigLoader {
 				expected);
 		
 	}
+	private void verificheDatabaseProprietaAutenticazioneCifratePortaDelegata(String prefix) throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseProprietaAutenticazioneCifratePortaDelegata");
+		
+		String nomeProprieta = "vaultTestNomeCifratoAutenticazione";
+		String pwd = ConfigLoader.dbUtils.getPortaDelegataAuthnPropertyValue(nomeProprieta);
+		assertEquals(getMessageExpected(PROPRIETA_PORTA_AUTHN_PREFIX+nomeProprieta, pwd, prefix), 
+				prefix, pwd);
+		pwd = ConfigLoader.dbUtils.getPortaDelegataAuthnPropertyEncValue(nomeProprieta);
+		boolean expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(PROPRIETA_PORTA_AUTHN_PREFIX+nomeProprieta, pwd, prefix), 
+				expected);
+		
+	}
+	private void verificheDatabaseProprietaAutorizzazioneCifratePortaDelegata(String prefix) throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseProprietaAutorizzazioneCifratePortaDelegata");
+		
+		String nomeProprieta = "vaultTestNomeCifratoAutorizzazione";
+		String pwd = ConfigLoader.dbUtils.getPortaDelegataAuthzPropertyValue(nomeProprieta);
+		assertEquals(getMessageExpected(PROPRIETA_PORTA_AUTHZ_PREFIX+nomeProprieta, pwd, prefix), 
+				prefix, pwd);
+		pwd = ConfigLoader.dbUtils.getPortaDelegataAuthzPropertyEncValue(nomeProprieta);
+		boolean expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(PROPRIETA_PORTA_AUTHZ_PREFIX+nomeProprieta, pwd, prefix), 
+				expected);
+		
+	}
+	private void verificheDatabaseProprietaAutorizzazioneContenutiCifratePortaDelegata(String prefix) throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseProprietaAutorizzazioneContenutiCifratePortaDelegata");
+		
+		String nomeProprieta = "vaultTestNomeCifratoAutorizzazioneContenuti";
+		String pwd = ConfigLoader.dbUtils.getPortaDelegataAuthcPropertyValue(nomeProprieta);
+		assertEquals(getMessageExpected(PROPRIETA_PORTA_AUTHC_PREFIX+nomeProprieta, pwd, prefix), 
+				prefix, pwd);
+		pwd = ConfigLoader.dbUtils.getPortaDelegataAuthcPropertyEncValue(nomeProprieta);
+		boolean expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(PROPRIETA_PORTA_AUTHC_PREFIX+nomeProprieta, pwd, prefix), 
+				expected);
+		
+	}
 	private void verificheDatabaseProprietaCifratePortaApplicativa(String prefix) throws UtilsException {
 		
 		logCoreInfo("verificheDatabaseProprietaCifratePortaApplicativa");
@@ -1039,6 +1103,48 @@ public class SecretsTest extends ConfigLoader {
 		pwd = ConfigLoader.dbUtils.getPortaApplicativaPropertyEncValue(nomeProprieta);
 		boolean expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
 		assertTrue(getMessageExpectedStartsWith(PROPRIETA_PORTA_PREFIX+nomeProprieta, pwd, prefix), 
+				expected);
+		
+	}
+	private void verificheDatabaseProprietaAutenticazioneCifratePortaApplicativa(String prefix) throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseProprietaAutenticazioneCifratePortaApplicativa");
+		
+		String nomeProprieta = "vaultTestNomeCifratoAutenticazione";
+		String pwd = ConfigLoader.dbUtils.getPortaApplicativaAuthnPropertyValue(nomeProprieta);
+		assertEquals(getMessageExpected(PROPRIETA_PORTA_AUTHN_PREFIX+nomeProprieta, pwd, prefix), 
+				prefix, pwd);
+		pwd = ConfigLoader.dbUtils.getPortaApplicativaAuthnPropertyEncValue(nomeProprieta);
+		boolean expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(PROPRIETA_PORTA_AUTHN_PREFIX+nomeProprieta, pwd, prefix), 
+				expected);
+		
+	}
+	private void verificheDatabaseProprietaAutorizzazioneCifratePortaApplicativa(String prefix) throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseProprietaAutorizzazioneCifratePortaApplicativa");
+		
+		String nomeProprieta = "vaultTestNomeCifratoAutorizzazione";
+		String pwd = ConfigLoader.dbUtils.getPortaApplicativaAuthzPropertyValue(nomeProprieta);
+		assertEquals(getMessageExpected(PROPRIETA_PORTA_AUTHZ_PREFIX+nomeProprieta, pwd, prefix), 
+				prefix, pwd);
+		pwd = ConfigLoader.dbUtils.getPortaApplicativaAuthzPropertyEncValue(nomeProprieta);
+		boolean expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(PROPRIETA_PORTA_AUTHZ_PREFIX+nomeProprieta, pwd, prefix), 
+				expected);
+		
+	}
+	private void verificheDatabaseProprietaAutorizzazioneContenutiCifratePortaApplicativa(String prefix) throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseProprietaAutorizzazioneContenutiCifratePortaApplicativa");
+		
+		String nomeProprieta = "vaultTestNomeCifratoAutorizzazioneContenuti";
+		String pwd = ConfigLoader.dbUtils.getPortaApplicativaAuthcPropertyValue(nomeProprieta);
+		assertEquals(getMessageExpected(PROPRIETA_PORTA_AUTHC_PREFIX+nomeProprieta, pwd, prefix), 
+				prefix, pwd);
+		pwd = ConfigLoader.dbUtils.getPortaApplicativaAuthcPropertyEncValue(nomeProprieta);
+		boolean expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(PROPRIETA_PORTA_AUTHC_PREFIX+nomeProprieta, pwd, prefix), 
 				expected);
 		
 	}

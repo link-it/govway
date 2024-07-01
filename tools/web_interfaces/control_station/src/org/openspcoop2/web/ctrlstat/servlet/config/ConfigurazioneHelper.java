@@ -19123,10 +19123,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(!this.checkSimpleName(tipo, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO)) {
 				return false;
 			}
-			if(!this.checkLength255(tipo, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO)) {
+			if(TipoPlugin.AUTENTICAZIONE.equals(tipoPlugin)){
+				int lenghtMax = 20 - (TipoCredenzialeMittente.TRASPORTO.getRawValue()+"_").length();
+				if(!this.checkLength(tipo, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO, 1, lenghtMax)) { // finisce poi nei log delle transazioni
+					return false;
+				}
+			}
+			else if(!this.checkLength255(tipo, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO)) {
 				return false;
 			}
-			
+		
 			// label
 			if(label==null || "".equals(label)) {
 				this.pd.setMessage("Indicare un valore nel campo '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_LABEL+"'");

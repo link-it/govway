@@ -55,6 +55,7 @@ public class ConfigLoader {
     public static final String PROP_FILE_NAME = "testsuite.properties";
     public static final String TESTSUITE_BUNDLE_PLAIN_PATH = "src/configurazioni-govway/vaultTestBundle.zip"; // da modificare usando la console senza un policy abilitato
     public static final String TESTSUITE_BUNDLE_PROPRIETA_CIFRATE_PATH = "src/configurazioni-govway/vaultTestBundleProprietaCifrate.zip"; // da modificare usando la console con un policy abilitato
+    public static final String TESTSUITE_BUNDLE_PLUGIN_PATH = "src/configurazioni-govway/vaultTestBundleArchiviPluginJar.zip";
     private static final String TESTSUITE_BYOK_PATH = "src/configurazioni-govway/byok.properties";
     
     public static final String SYSTEM_ENC_PROP_NAME = "vaultTestNomeCifrato";
@@ -174,10 +175,12 @@ public class ConfigLoader {
     	if(load) {
     		prepareConfig(false, null, TESTSUITE_BUNDLE_PLAIN_PATH);
     		prepareConfig(true, DEFAULT_POLICY, TESTSUITE_BUNDLE_PROPRIETA_CIFRATE_PATH);
+    		prepareConfig(false, null, TESTSUITE_BUNDLE_PLUGIN_PATH);
     	}
     	else {
     		deleteConfig(TESTSUITE_BUNDLE_PLAIN_PATH);
     		deleteConfig(TESTSUITE_BUNDLE_PROPRIETA_CIFRATE_PATH);
+    		deleteConfig(TESTSUITE_BUNDLE_PLUGIN_PATH);
     	}
     }
     

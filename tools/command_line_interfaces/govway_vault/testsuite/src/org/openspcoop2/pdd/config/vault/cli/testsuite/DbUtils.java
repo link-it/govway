@@ -273,11 +273,53 @@ public class DbUtils {
     	return getColumnValue(CostantiDB.PORTE_DELEGATE_PROP_COLUMN_ENC_VALUE, CostantiDB.PORTE_DELEGATE_PROP, CostantiDB.PORTE_DELEGATE_PROP_COLUMN_NOME, propertyName);
     }
     
+    public String getPortaDelegataAuthnPropertyValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.PORTE_DELEGATE_AUTENTICAZIONE_PROP_COLUMN_VALORE, CostantiDB.PORTE_DELEGATE_AUTENTICAZIONE_PROP, CostantiDB.PORTE_DELEGATE_AUTENTICAZIONE_PROP_COLUMN_NOME, propertyName);
+    }
+    public String getPortaDelegataAuthnPropertyEncValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.PORTE_DELEGATE_AUTENTICAZIONE_PROP_COLUMN_ENC_VALUE, CostantiDB.PORTE_DELEGATE_AUTENTICAZIONE_PROP, CostantiDB.PORTE_DELEGATE_AUTENTICAZIONE_PROP_COLUMN_NOME, propertyName);
+    }
+    
+    public String getPortaDelegataAuthzPropertyValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_PROP_COLUMN_VALORE, CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_PROP, CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_PROP_COLUMN_NOME, propertyName);
+    }
+    public String getPortaDelegataAuthzPropertyEncValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_PROP_COLUMN_ENC_VALUE, CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_PROP, CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_PROP_COLUMN_NOME, propertyName);
+    }
+    
+    public String getPortaDelegataAuthcPropertyValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_VALORE, CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROP, CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_NOME, propertyName);
+    }
+    public String getPortaDelegataAuthcPropertyEncValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_ENC_VALUE, CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROP, CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_NOME, propertyName);
+    }
+    
     public String getPortaApplicativaPropertyValue(String propertyName) throws UtilsException {
     	return getColumnValue(CostantiDB.PORTE_APPLICATIVE_PROP_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_PROP, CostantiDB.PORTE_APPLICATIVE_PROP_COLUMN_NOME, propertyName);
     }
     public String getPortaApplicativaPropertyEncValue(String propertyName) throws UtilsException {
     	return getColumnValue(CostantiDB.PORTE_APPLICATIVE_PROP_COLUMN_ENC_VALUE, CostantiDB.PORTE_APPLICATIVE_PROP, CostantiDB.PORTE_APPLICATIVE_PROP_COLUMN_NOME, propertyName);
+    }
+    
+    public String getPortaApplicativaAuthnPropertyValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP, CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP_COLUMN_NOME, propertyName);
+    }
+    public String getPortaApplicativaAuthnPropertyEncValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP_COLUMN_ENC_VALUE, CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP, CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP_COLUMN_NOME, propertyName);
+    }
+    
+    public String getPortaApplicativaAuthzPropertyValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP, CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP_COLUMN_NOME, propertyName);
+    }
+    public String getPortaApplicativaAuthzPropertyEncValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP_COLUMN_ENC_VALUE, CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP, CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP_COLUMN_NOME, propertyName);
+    }
+    
+    public String getPortaApplicativaAuthcPropertyValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP, CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_NOME, propertyName);
+    }
+    public String getPortaApplicativaAuthcPropertyEncValue(String propertyName) throws UtilsException {
+    	return getColumnValue(CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_ENC_VALUE, CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP, CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_NOME, propertyName);
     }
     
     
