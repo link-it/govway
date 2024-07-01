@@ -476,6 +476,16 @@ public class SDIValidatoreServizioRicezioneFatture {
 						// ignore
 					}
 				}
+				if(formato==null){
+					try{
+						if(it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.utils.XMLUtils.isFattura(fattura)){
+							this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA, SDICostanti.SDI_TIPO_FATTURA_XML);
+							formato = SDICostanti.SDI_TIPO_FATTURA_XML;
+						}
+					}catch(Throwable e){
+						// ignore
+					}
+				}
 				
 				// provo a vedere se e' un P7M (CaDES)
 				if(formato==null){

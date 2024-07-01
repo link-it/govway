@@ -1,3 +1,11 @@
+2024-07-01  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSDI]
+	Risolto Bug OP-1730
+	La disabilitazione della validazione del nome della fattura tramite la proprietà 'org.openspcoop2.protocol.sdi.validazione.nomeFile.enable' 
+	causava il seguente errore bloccante se il nome della fattura era conforme a una fatturazione europea che iniziava con il codice 'UB' o 'II': 
+	'Elemento [File] decodifica non riuscita: formato non conosciuto'.
+
 2024-06-27  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]
