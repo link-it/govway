@@ -5829,6 +5829,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AUTORIZZAZIONE_CUSTOM_PROPERTIES_CHANGE, pId,pIdSoggetto, pIdAsps, pIdFruizione, new Parameter( PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, ssp.getNome()));
 					de.setValue(ssp.getNome());
 					de.setIdToRemove(ssp.getId()+"");
 					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
@@ -6040,6 +6041,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES_CHANGE, pId,pIdSoggetto, pIdAsps, pIdFruizione, new Parameter( PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, ssp.getNome()));
 					de.setValue(ssp.getNome());
 					de.setIdToRemove(ssp.getId()+"");
 					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
@@ -6229,7 +6231,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			
 			// imposto menu' contestuale
 			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
-
+			
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
 				ServletUtils.enabledPageDataSearch(this.pd, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE_PROPRIETA, search);
@@ -6251,6 +6253,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AUTENTICAZIONE_CUSTOM_PROPERTIES_CHANGE, pId,pIdSoggetto, pIdAsps, pIdFruizione, new Parameter( PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, ssp.getNome()));
 					de.setValue(ssp.getNome());
 					de.setIdToRemove(ssp.getId()+"");
 					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
