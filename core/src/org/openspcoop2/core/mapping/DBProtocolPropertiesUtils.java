@@ -68,7 +68,10 @@ public class DBProtocolPropertiesUtils {
 	}
 	
     private static List<String> protocolPropertiesConfidentials = new ArrayList<>();
-    public static void addConfidentialProtocolProperty(String nome){
+    public static List<String> getProtocolPropertiesConfidentials() {
+		return protocolPropertiesConfidentials;
+	}
+	public static void addConfidentialProtocolProperty(String nome){
     	if(!protocolPropertiesConfidentials.contains(nome)) {
     		protocolPropertiesConfidentials.add(nome);
     	}

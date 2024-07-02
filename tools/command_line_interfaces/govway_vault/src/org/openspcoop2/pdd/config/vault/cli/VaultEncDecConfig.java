@@ -208,25 +208,31 @@ public class VaultEncDecConfig {
 		String ksmPrefix = "Ksm '";
 		
 		if(this.securityMode){
-			String policy = this.id;
-			if(policy==null || StringUtils.isEmpty(policy)) {
-				policy = BYOKManager.getSecurityRemoteEngineGovWayPolicy();
-			}
-			if(policy==null || StringUtils.isEmpty(policy)) {
-				policy = BYOKManager.getSecurityEngineGovWayPolicy();
-			}
-			if(!byokManager.existsSecurityEngineByType(policy)) {
-				throw new CoreException("Security policy '"+policy+"' not found");
-			}
+			validateSecurityMode(byokManager);
 		}
 		if(this.ksmMode && !byokManager.existsKSMConfigByType(this.id)) {
 			throw new CoreException(ksmPrefix+this.id+"' not exists");
 		}
-		else if(this.ksmMode && !this.encodingMode && !byokManager.isKSMUsedInSecurityUnwrapConfig(this.id, new StringBuilder())) {
+		else if(this.ksmMode && !this.encodingMode && !byokManager.getUnwrapTypes().contains(this.id)) {
 			throw new CoreException(ksmPrefix+this.id+"' unusable for unwrap operation");
 		}
-		else if(this.ksmMode && this.encodingMode && !byokManager.isKSMUsedInSecurityWrapConfig(this.id, new StringBuilder())) {
+		else if(this.ksmMode && this.encodingMode && !byokManager.getWrapTypes().contains(this.id)) {
 			throw new CoreException(ksmPrefix+this.id+"' unusable for wrap operation");
+		}
+	}
+	public void validateSecurityMode(BYOKManager byokManager) throws CoreException {
+		String policy = this.id;
+		if(policy==null || StringUtils.isEmpty(policy)) {
+			policy = BYOKManager.getSecurityRemoteEngineGovWayPolicy();
+		}
+		if(policy==null || StringUtils.isEmpty(policy)) {
+			policy = BYOKManager.getSecurityEngineGovWayPolicy();
+		}
+		if(policy==null || StringUtils.isEmpty(policy)) {
+			throw new CoreException("Security policy default undefined (BYOK Disabled?)");
+		}
+		if(!byokManager.existsSecurityEngineByType(policy)) {
+			throw new CoreException("Security policy '"+policy+"' not found");
 		}
 	}
 }

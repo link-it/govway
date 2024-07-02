@@ -24,7 +24,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -32,10 +35,19 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.openspcoop2.core.byok.BYOKUtilities;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader;
 import org.openspcoop2.pdd.config.vault.cli.testsuite.TipoServizio;
 import org.openspcoop2.pdd.config.vault.cli.testsuite.Utilities;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.ArchiveLoader;
+import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilsException;
 
@@ -50,6 +62,13 @@ import org.openspcoop2.utils.transport.http.HttpUtilsException;
 @RunWith(CustomRunner.class)
 public class SecretsTest extends ConfigLoader {
 
+	public static final String SOGGETTO_INTERNO = "SoggettoInternoVaultTest";
+	public static final String SOGGETTO_INTERNO_FRUITORE = "SoggettoInternoVaultTestFruitore";
+	
+	private static final String APPLICATIVO_CLIENT_2 = "ExampleClient2";
+	
+	private static final String PASSWORD_123456 = "123456";
+	
 	public static final String API_PROPRIETA = "VaultTestProprieta";
 	
 	private static final String OP_PROPRIETA_CONFIG = "config";
@@ -76,6 +95,7 @@ public class SecretsTest extends ConfigLoader {
 	private static final String OP_MTLS = "mtls";
 	private static final String OP_PROXY = "proxy"; // non invocata realmente
 	private static final String OP_API_KEY = "apiKey";
+	private static final String OP_SECRETS_IN_GOVWAY_ETC_FILE = "secrets-in-govway-etc-file";
 	private static final String NOME_PORTA_DEFAULT_TEST_CONNETTORI_EROGAZIONE = "gw_SoggettoInternoVaultTest/gw_VaultTestConnettori/v1";
 	private static final String NOME_CONNETTORE_DEFAULT_TEST_FRUIZIONE = "CNT_SF_gw/SoggettoInternoVaultTestFruitore_gw/SoggettoInternoVaultTest_gw/VaultTestConnettori/1";
 	private static String getNomeConnettoreFruizioneTestAzione(String azione) {
@@ -86,8 +106,20 @@ public class SecretsTest extends ConfigLoader {
 	private static final String OP_RISPOSTA_ASINCRONA = "asincronoRisposta";
 	private static final String NOME_SERVER_ASINCRNO_ASIMMETRICO = "TestServerAsincronoAsimmetrico";
 	
+	public static final String API_CONNETTORI_PATH= "VaultTestConnettoriPath";
+	public static final String API_CONNETTORI_ARCHIVIO = "VaultTestConnettoriArchivio";
+	
+	public static final String API_CONNETTORI_PATH_FRUIZIONE = "VaultTestConnettoriPathFruizione";
+	public static final String API_CONNETTORI_ARCHIVIO_FRUIZIONE = "VaultTestConnettoriArchivioFruizione";
+	public static final String API_CONNETTORI_APPLICATIVO = "VaultTestConnettoriApplicativo";
+	
+	public static final String OP_MODI_PATH = "modi-path";
+	public static final String OP_MODI_ARCHIVIO = "modi-archivio";
+	
 	private static final String SA_PREFIX = "SA:";
 	private static final String CONNETTORE_PREFIX = "Connettore:";
+	
+	private static final String PP_PREFIX = "ProtocolProperty:";
 	
 	private static final String STORE_PASSWORD_OPENSPCOOP = "openspcoop";
 	
@@ -109,7 +141,7 @@ public class SecretsTest extends ConfigLoader {
 	// ** STEP 0 //
 	
 	@Test
-	public void step0aVerificaInizialeDatabase() throws UtilsException {
+	public void step0aVerificaInizialeDatabase() throws UtilsException, DriverRegistroServiziException {
 				
 		logCoreInfo("@step0aVerificaInizialeDatabase");
 		
@@ -144,7 +176,7 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step1bVerificaSecretsDatabaseDefaultPolicy() throws UtilsException {
+	public void step1bVerificaSecretsDatabaseDefaultPolicy() throws UtilsException, DriverRegistroServiziException {
 		
 		logCoreInfo("@step1bVerificaSecretsDatabaseDefaultPolicy");
 		
@@ -185,7 +217,7 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step2bVerificaSecretsDatabaseGwKeysPolicySianoRimastiComeInPrecedenza() throws UtilsException {
+	public void step2bVerificaSecretsDatabaseGwKeysPolicySianoRimastiComeInPrecedenza() throws UtilsException, DriverRegistroServiziException {
 		
 		logCoreInfo("@step2bVerificaSecretsDatabaseGwKeysPolicySianoRimastiComeInPrecedenza");
 		
@@ -210,7 +242,7 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step2dVerificaSecretsDatabaseGwKeysPolicy() throws UtilsException {
+	public void step2dVerificaSecretsDatabaseGwKeysPolicy() throws UtilsException, DriverRegistroServiziException {
 		
 		logCoreInfo("@step2dVerificaSecretsDatabaseGwKeysPolicy");
 		
@@ -252,7 +284,7 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step3bVerificaSecretsDatabaseGwRemotePolicySianoRimastiComeInPrecedenza() throws UtilsException {
+	public void step3bVerificaSecretsDatabaseGwRemotePolicySianoRimastiComeInPrecedenza() throws UtilsException, DriverRegistroServiziException {
 		
 		logCoreInfo("@step3bVerificaSecretsDatabaseGwRemotePolicySianoRimastiComeInPrecedenza");
 		
@@ -277,7 +309,7 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step3dVerificaSecretsDatabaseRemotePolicy() throws UtilsException {
+	public void step3dVerificaSecretsDatabaseRemotePolicy() throws UtilsException, DriverRegistroServiziException {
 		
 		logCoreInfo("@step3dVerificaSecretsDatabaseRemotePolicy");
 		
@@ -317,7 +349,7 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step4bVerificaSecretsDatabasePlainPolicySianoRimastiComeInPrecedenza() throws UtilsException {
+	public void step4bVerificaSecretsDatabasePlainPolicySianoRimastiComeInPrecedenza() throws UtilsException, DriverRegistroServiziException {
 		
 		logCoreInfo("@step4bVerificaSecretsDatabasePlainPolicySianoRimastiComeInPrecedenza");
 		
@@ -342,7 +374,7 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step4dVerificaSecretsDatabasePlainPolicy() throws UtilsException {
+	public void step4dVerificaSecretsDatabasePlainPolicy() throws UtilsException, DriverRegistroServiziException {
 		
 		logCoreInfo("@step4dVerificaSecretsDatabasePlainPolicy");
 		
@@ -380,7 +412,7 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step5bVerificaSecretsByDefaultPolicy() throws UtilsException {
+	public void step5bVerificaSecretsByDefaultPolicy() throws UtilsException, DriverRegistroServiziException {
 		
 		logCoreInfo("@step5VerificaSecretsByDefaultPolicy");
 		
@@ -415,7 +447,7 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step5eVerificaSecretsDatabasePlainPolicy() throws UtilsException {
+	public void step5eVerificaSecretsDatabasePlainPolicy() throws UtilsException, DriverRegistroServiziException {
 		
 		logCoreInfo("@step5eVerificaSecretsDatabasePlainPolicy");
 		
@@ -464,6 +496,9 @@ public class SecretsTest extends ConfigLoader {
 		logCoreInfo(prefixLogErogazione+OP_API_KEY);		
 		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_CONNETTORI, OP_API_KEY);
 		
+		logCoreInfo(prefixLogErogazione+OP_API_KEY);		
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_CONNETTORI, OP_SECRETS_IN_GOVWAY_ETC_FILE);
+		
 		
 		logCoreInfo(prefixLogFruizione+OP_HTTP);		
 		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_CONNETTORI, OP_HTTP);
@@ -485,6 +520,20 @@ public class SecretsTest extends ConfigLoader {
 		
 		logCoreInfo(prefixLogFruizione+OP_RISPOSTA_ASINCRONA);		
 		Utilities.testSpcoop(logCore, TipoServizio.FRUIZIONE, API_CONNETTORI, OP_RISPOSTA_ASINCRONA, idMessaggio);
+		
+		
+		logCoreInfo(prefixLogFruizione+OP_MODI_PATH);		
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_CONNETTORI_PATH_FRUIZIONE, OP_MODI_PATH);
+		
+		logCoreInfo(prefixLogFruizione+OP_MODI_PATH);		
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_CONNETTORI_ARCHIVIO_FRUIZIONE, OP_MODI_ARCHIVIO);
+
+		logCoreInfo(prefixLogFruizione+OP_MODI_PATH);		
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_CONNETTORI_APPLICATIVO, OP_MODI_PATH);
+		
+		logCoreInfo(prefixLogFruizione+OP_MODI_PATH);		
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_CONNETTORI_APPLICATIVO, OP_MODI_ARCHIVIO);
+		
 		
 		
 		// proprieta
@@ -522,7 +571,7 @@ public class SecretsTest extends ConfigLoader {
 	
 	// ** VERIFICHE DB CHIARO **
 	
-	private void verificheDatabaseInCharo() throws UtilsException {
+	private void verificheDatabaseInCharo() throws UtilsException, DriverRegistroServiziException {
 		
 		// Verifiche database in chiaro
 		
@@ -543,6 +592,9 @@ public class SecretsTest extends ConfigLoader {
 		
 		// ** VERIFICHE colonne api_key su connettori
 		verificheDatabaseInChiaroUtilizzoApiKeySuConnettori();
+		
+		// ** VERIFICHE colonne name, value_binary o enc_value_string,value_string per protocol_properties
+		verificheDatabaseInChiaroProtocolProperties();
 
 	}
 	private void verificheDatabaseInChiaroServiziApplicativiPasswordInv() throws UtilsException {
@@ -723,12 +775,192 @@ public class SecretsTest extends ConfigLoader {
 				"XXX-API_KEY-TestVault-Fruitore", v);
 
 	}
-	
+	private void verificheDatabaseInChiaroProtocolProperties() throws UtilsException, DriverRegistroServiziException {
+		
+		logCoreInfo("verificheDatabaseInChiaroProtocolProperties");
+		
+		// -- erogazioni --
+		verificheDatabaseInChiaroProtocolPropertiesErogazioni();
+		
+		// -- fruizioni -- 
+		verificheDatabaseInChiaroProtocolPropertiesFruizioni();
+		
+		// -- applicativi -- 
+		verificheDatabaseInChiaroProtocolPropertiesApplicativi();
+		
+	}
+	private String getPrefissoServizio(IDServizio idServizio) {
+		return "servizio '"+idServizio.toFormatString()+"' ";
+	}
+	private void verificheDatabaseInChiaroProtocolPropertiesErogazioni() throws UtilsException, DriverRegistroServiziException {
+		
+		Map<String, String > verifiche = new HashMap<>();
+		// richiesta
+		verifiche.put(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD, PASSWORD_123456); 
+		// risposta
+		verifiche.put(CostantiDB.MODIPA_KEYSTORE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(CostantiDB.MODIPA_KEY_PASSWORD, PASSWORD_123456);
+		
+		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(Costanti.MODIPA_PROTOCOL_NAME, API_CONNETTORI_PATH, 
+				Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO,
+				1);
+		String prefissoServizio = getPrefissoServizio(idServizio);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = entry.getValue();
+			String v = ConfigLoader.dbUtils.getProtocolPropertyPropertyServizioStringValue(idServizio, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso), 
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyServizioStringEncValue(idServizio, pName);
+			assertEquals(getMessageExpectedNull(prefissoServizio+PP_PREFIX+pName, v), 
+					null, v);
+		}
+		
+		idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(Costanti.MODIPA_PROTOCOL_NAME, API_CONNETTORI_ARCHIVIO, 
+				Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO,
+				1);
+		prefissoServizio = getPrefissoServizio(idServizio);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = entry.getValue();
+			String v = ConfigLoader.dbUtils.getProtocolPropertyPropertyServizioStringValue(idServizio, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso), 
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyServizioStringEncValue(idServizio, pName);
+			assertEquals(getMessageExpectedNull(prefissoServizio+PP_PREFIX+pName, v), 
+					null, v);
+		}
+		// binary
+		byte[] pkcs12 = ConfigLoader.dbUtils.getProtocolPropertyPropertyServizioBinaryValue(idServizio, CostantiDB.MODIPA_KEYSTORE_ARCHIVE);
+		Certificate cert = ArchiveLoader.loadFromKeystorePKCS12(pkcs12, "ExampleServer", PASSWORD_123456);
+		String v = cert.getCertificate().getSubject().getCN();
+		String vAtteso = "ExampleServer";
+		assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+CostantiDB.MODIPA_KEYSTORE_ARCHIVE, v, vAtteso), 
+				vAtteso, v);
+	}
+	private String getPrefissoFruizione(IDSoggetto idFruitore, IDServizio idServizio) {
+		return "fruitore: "+idFruitore+" servizio '"+idServizio.toFormatString()+"' ";
+	}
+	private void verificheDatabaseInChiaroProtocolPropertiesFruizioni() throws UtilsException, DriverRegistroServiziException {
+		
+		Map<String, String > verifiche = new HashMap<>();
+		// richiesta
+		verifiche.put(CostantiDB.MODIPA_KEYSTORE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(CostantiDB.MODIPA_KEY_PASSWORD, PASSWORD_123456);
+		// risposta
+		verifiche.put(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD, PASSWORD_123456); 
+		
+		IDSoggetto idFruitore = new IDSoggetto(Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO_FRUITORE);
+		
+		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(Costanti.MODIPA_PROTOCOL_NAME, API_CONNETTORI_PATH_FRUIZIONE, 
+				Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO,
+				1);
+		String prefissoServizio = getPrefissoFruizione(idFruitore, idServizio);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = entry.getValue();
+			String v = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreStringValue(idFruitore, idServizio, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso), 
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreStringEncValue(idFruitore, idServizio, pName);
+			assertEquals(getMessageExpectedNull(prefissoServizio+PP_PREFIX+pName, v), 
+					null, v);
+		}
+		
+		idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(Costanti.MODIPA_PROTOCOL_NAME, API_CONNETTORI_ARCHIVIO_FRUIZIONE, 
+				Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO,
+				1);
+		prefissoServizio = getPrefissoFruizione(idFruitore, idServizio);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = entry.getValue();
+			String v = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreStringValue(idFruitore, idServizio, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso), 
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreStringEncValue(idFruitore, idServizio, pName);
+			assertEquals(getMessageExpectedNull(prefissoServizio+PP_PREFIX+pName, v), 
+					null, v);
+		}
+		// binary
+		byte[] pkcs12 = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreBinaryValue(idFruitore, idServizio, CostantiDB.MODIPA_KEYSTORE_ARCHIVE);
+		Certificate cert = ArchiveLoader.loadFromKeystorePKCS12(pkcs12, APPLICATIVO_CLIENT_2, PASSWORD_123456);
+		String v = cert.getCertificate().getSubject().getCN();
+		String vAtteso = APPLICATIVO_CLIENT_2;
+		assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+CostantiDB.MODIPA_KEYSTORE_ARCHIVE, v, vAtteso), 
+				vAtteso, v);
+		
+		verifiche = new HashMap<>();
+		// richiesta
+		// definito sull'applicativo		
+		// risposta
+		verifiche.put(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD, PASSWORD_123456); 
+		idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(Costanti.MODIPA_PROTOCOL_NAME, API_CONNETTORI_APPLICATIVO, 
+				Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO,
+				1);
+		prefissoServizio = getPrefissoFruizione(idFruitore, idServizio);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			vAtteso = entry.getValue();
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreStringValue(idFruitore, idServizio, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso), 
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreStringEncValue(idFruitore, idServizio, pName);
+			assertEquals(getMessageExpectedNull(prefissoServizio+PP_PREFIX+pName, v), 
+					null, v);
+		}
+	}
+	private String getPrefissoApplicativo(IDServizioApplicativo idServizioApplicativo) {
+		return "applicativo '"+idServizioApplicativo.toFormatString()+"' ";
+	}
+	private void verificheDatabaseInChiaroProtocolPropertiesApplicativi() throws UtilsException {
+		
+		Map<String, String > verifiche = new HashMap<>();
+		verifiche.put(CostantiDB.MODIPA_KEYSTORE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(CostantiDB.MODIPA_KEY_PASSWORD, PASSWORD_123456);
+		
+		IDSoggetto idFruitore = new IDSoggetto(Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO_FRUITORE);
+		
+		IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+		idServizioApplicativo.setIdSoggettoProprietario(idFruitore);
+		
+		idServizioApplicativo.setNome("ApplicativoVaultModiPath");
+		String prefissoServizio = getPrefissoApplicativo(idServizioApplicativo);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = entry.getValue();
+			String v = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoStringValue(idServizioApplicativo, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso), 
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoStringEncValue(idServizioApplicativo, pName);
+			assertEquals(getMessageExpectedNull(prefissoServizio+PP_PREFIX+pName, v), 
+					null, v);
+		}
+		
+		idServizioApplicativo.setNome("ApplicativoVaultModiArchivio");
+		prefissoServizio = getPrefissoApplicativo(idServizioApplicativo);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = entry.getValue();
+			String v = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoStringValue(idServizioApplicativo, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso), 
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoStringEncValue(idServizioApplicativo, pName);
+			assertEquals(getMessageExpectedNull(prefissoServizio+PP_PREFIX+pName, v), 
+					null, v);
+		}
+		// binary
+		byte[] pkcs12 = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoBinaryValue(idServizioApplicativo, CostantiDB.MODIPA_KEYSTORE_ARCHIVE);
+		Certificate cert = ArchiveLoader.loadFromKeystorePKCS12(pkcs12, APPLICATIVO_CLIENT_2, PASSWORD_123456);
+		String v = cert.getCertificate().getSubject().getCN();
+		String vAtteso = APPLICATIVO_CLIENT_2;
+		assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+CostantiDB.MODIPA_KEYSTORE_ARCHIVE, v, vAtteso), 
+				vAtteso, v);
+	}
 	
 	
 	// ** VERIFICHE DB CIFRATO **
 	
-	private void verificheDatabaseCifrato(String prefix) throws UtilsException {
+	private void verificheDatabaseCifrato(String prefix) throws UtilsException, DriverRegistroServiziException {
 		
 		// Verifiche database cifrato
 	
@@ -749,6 +981,9 @@ public class SecretsTest extends ConfigLoader {
 		
 		// ** VERIFICHE colonne api_key su connettori
 		verificheDatabaseCifratoUtilizzoApiKeySuConnettori(prefix);
+		
+		// ** VERIFICHE colonne name, value_binary o enc_value_string,value_string per protocol_properties
+		verificheDatabaseCifratoProtocolProperties(prefix);
 	}
 	private void verificheDatabaseCifratoPasswordInv(String prefix) throws UtilsException {
 		
@@ -924,6 +1159,182 @@ public class SecretsTest extends ConfigLoader {
 		assertTrue(getMessageExpectedStartsWith(CONNETTORE_PREFIX+nomeConnettore,v, prefix), 
 				expected);
 
+	}
+	private void verificheDatabaseCifratoProtocolProperties(String prefix) throws UtilsException, DriverRegistroServiziException {
+		
+		logCoreInfo("verificheDatabaseCifratoProtocolProperties");
+		
+		// -- erogazioni --
+		verificheDatabaseCifratoProtocolPropertiesErogazioni(prefix);
+		
+		// -- fruizioni -- 
+		verificheDatabaseCifratoProtocolPropertiesFruizioni(prefix);
+		
+		// -- applicativi -- 
+		verificheDatabaseCifratoProtocolPropertiesApplicativi(prefix);
+
+	}
+	private void verificheDatabaseCifratoProtocolPropertiesErogazioni(String prefix) throws UtilsException, DriverRegistroServiziException {
+		
+		Map<String, String > verifiche = new HashMap<>();
+		// richiesta
+		verifiche.put(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD, PASSWORD_123456); 
+		// risposta
+		verifiche.put(CostantiDB.MODIPA_KEYSTORE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(CostantiDB.MODIPA_KEY_PASSWORD, PASSWORD_123456);
+		
+		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(Costanti.MODIPA_PROTOCOL_NAME, API_CONNETTORI_PATH, 
+				Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO,
+				1);
+		String prefissoServizio = getPrefissoServizio(idServizio);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = prefix;
+			String v = ConfigLoader.dbUtils.getProtocolPropertyPropertyServizioStringValue(idServizio, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso), 
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyServizioStringEncValue(idServizio, pName);
+			boolean expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+			assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+pName, v, prefix), 
+					expected);
+		}
+		
+		idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(Costanti.MODIPA_PROTOCOL_NAME, API_CONNETTORI_ARCHIVIO, 
+				Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO,
+				1);
+		prefissoServizio = getPrefissoServizio(idServizio);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = prefix;
+			String v = ConfigLoader.dbUtils.getProtocolPropertyPropertyServizioStringValue(idServizio, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso), 
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyServizioStringEncValue(idServizio, pName);
+			boolean expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+			assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+pName, v, prefix), 
+					expected);
+		}
+		// binary
+		byte[] pkcs12 = ConfigLoader.dbUtils.getProtocolPropertyPropertyServizioBinaryValue(idServizio, CostantiDB.MODIPA_KEYSTORE_ARCHIVE);
+		String v = new String(pkcs12);
+		boolean expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+CostantiDB.MODIPA_KEYSTORE_ARCHIVE, v, prefix), 
+				expected);
+	}
+	private void verificheDatabaseCifratoProtocolPropertiesFruizioni(String prefix) throws UtilsException, DriverRegistroServiziException {
+		
+		Map<String, String > verifiche = new HashMap<>();
+		// richiesta
+		verifiche.put(CostantiDB.MODIPA_KEYSTORE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(CostantiDB.MODIPA_KEY_PASSWORD, PASSWORD_123456);
+		// risposta
+		verifiche.put(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD, PASSWORD_123456); 
+		
+		IDSoggetto idFruitore = new IDSoggetto(Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO_FRUITORE);
+		
+		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(Costanti.MODIPA_PROTOCOL_NAME, API_CONNETTORI_PATH_FRUIZIONE, 
+				Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO,
+				1);
+		String prefissoServizio = getPrefissoFruizione(idFruitore, idServizio);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = prefix;
+			String v = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreStringValue(idFruitore, idServizio, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso), 
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreStringEncValue(idFruitore, idServizio, pName);
+			boolean expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+			assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+pName, v, prefix), 
+					expected);
+		}
+		
+		idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(Costanti.MODIPA_PROTOCOL_NAME, API_CONNETTORI_ARCHIVIO_FRUIZIONE, 
+				Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO,
+				1);
+		prefissoServizio = getPrefissoFruizione(idFruitore, idServizio);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = prefix;
+			String v = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreStringValue(idFruitore, idServizio, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso), 
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreStringEncValue(idFruitore, idServizio, pName);
+			boolean expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+			assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+pName, v, prefix), 
+					expected);
+		}
+		// binary
+		byte[] pkcs12 = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreBinaryValue(idFruitore, idServizio, CostantiDB.MODIPA_KEYSTORE_ARCHIVE);
+		String v = new String(pkcs12);
+		boolean expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+CostantiDB.MODIPA_KEYSTORE_ARCHIVE, v, prefix), 
+				expected);
+		
+		verifiche = new HashMap<>();
+		// richiesta
+		// definito sull'applicativo		
+		// risposta
+		verifiche.put(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD, PASSWORD_123456); 
+		idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(Costanti.MODIPA_PROTOCOL_NAME, API_CONNETTORI_APPLICATIVO, 
+				Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO,
+				1);
+		prefissoServizio = getPrefissoFruizione(idFruitore, idServizio);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = prefix;
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreStringValue(idFruitore, idServizio, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso), 
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreStringEncValue(idFruitore, idServizio, pName);
+			expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+			assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+pName, v, prefix), 
+					expected);
+		}
+	}
+	private void verificheDatabaseCifratoProtocolPropertiesApplicativi(String prefix) throws UtilsException {
+		
+		Map<String, String > verifiche = new HashMap<>();
+		verifiche.put(CostantiDB.MODIPA_KEYSTORE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(CostantiDB.MODIPA_KEY_PASSWORD, PASSWORD_123456);
+		
+		IDSoggetto idFruitore = new IDSoggetto(Costanti.MODIPA_PROTOCOL_NAME, SOGGETTO_INTERNO_FRUITORE);
+		
+		IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+		idServizioApplicativo.setIdSoggettoProprietario(idFruitore);
+		
+		idServizioApplicativo.setNome("ApplicativoVaultModiPath");
+		String prefissoServizio = getPrefissoApplicativo(idServizioApplicativo);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = prefix;
+			String v = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoStringValue(idServizioApplicativo, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso), 
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoStringEncValue(idServizioApplicativo, pName);
+			boolean expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+			assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+pName, v, prefix), 
+					expected);
+		}
+		
+		idServizioApplicativo.setNome("ApplicativoVaultModiArchivio");
+		prefissoServizio = getPrefissoApplicativo(idServizioApplicativo);
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			String pName = entry.getKey();
+			String vAtteso = prefix;
+			String v = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoStringValue(idServizioApplicativo, pName);
+			assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+pName, v, vAtteso), 
+					vAtteso, v);
+			v = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoStringEncValue(idServizioApplicativo, pName);
+			boolean expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+			assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+pName, v, prefix), 
+					expected);
+		}
+		// binary
+		byte[] pkcs12 = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoBinaryValue(idServizioApplicativo, CostantiDB.MODIPA_KEYSTORE_ARCHIVE);
+		String v = new String(pkcs12);
+		boolean expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+CostantiDB.MODIPA_KEYSTORE_ARCHIVE, v, prefix), 
+				expected);
 	}
 
 	

@@ -70,6 +70,10 @@ public class Utilities {
 		}
 		
 		String protocollo = spcoop ? "/spcoop" : "";
+		if(!spcoop && 
+				(SecretsTest.OP_MODI_PATH.equals(operazione)) || SecretsTest.OP_MODI_ARCHIVIO.equals(operazione)){
+			protocollo = "/rest";
+		}
 		
 		String url = tipoServizio == TipoServizio.EROGAZIONE
 				? System.getProperty("govway_base_path") + protocollo + "/SoggettoInternoVaultTest/"+api+"/v1/"+operazione
@@ -94,12 +98,7 @@ public class Utilities {
 			request.addHeader("GovWay-Relates-To", relatesTo);
 		}
 		
-		if(SecretsTest.API_PROPRIETA.equals(api) &&
-			(SecretsTest.OP_PROPRIETA_APPLICATIVO.equals(operazione) || SecretsTest.OP_PROPRIETA_SOGGETTO.equals(operazione)) 
-				){
-			request.setUsername("TestVaultApplicativoProprieta");
-			request.setPassword("123456");
-		}
+		setCredenziali(api, operazione, request); 
 		
 		request.setUrl(url);
 		
@@ -112,7 +111,25 @@ public class Utilities {
 		
 		return response;
 	}
-		
+	
+	private static void setCredenziali(String api, String operazione, HttpRequest request) {
+		if(SecretsTest.API_PROPRIETA.equals(api) &&
+				(SecretsTest.OP_PROPRIETA_APPLICATIVO.equals(operazione) || SecretsTest.OP_PROPRIETA_SOGGETTO.equals(operazione)) 
+					){
+			request.setUsername("TestVaultApplicativoProprieta");
+			request.setPassword("123456");
+		}
+		else if(SecretsTest.API_CONNETTORI_APPLICATIVO.equals(api)){
+			if(SecretsTest.OP_MODI_PATH.equals(operazione)) {
+				request.setUsername("ApplicativoVaultModiPath");
+			}
+			else if(SecretsTest.OP_MODI_ARCHIVIO.equals(operazione)) {
+				request.setUsername("ApplicativoVaultModiArchivio");
+			}
+			request.setPassword("123456");
+		}
+	}
+	
 	public static void verifyOk(HttpResponse response, String contentTypeExpected, int code) {
 		
 		assertEquals(code, response.getResultHTTPOperation());

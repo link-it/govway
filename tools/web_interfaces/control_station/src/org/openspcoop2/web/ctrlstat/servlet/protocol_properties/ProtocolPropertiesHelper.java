@@ -435,7 +435,6 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					
 			}else {
 				de = new DataElement();
-//				de.setLabel(binaryConsoleItem.getLabel());
 				de.setType(DataElementType.TEXT);
 				de.setValue(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_NOT_FOUND);
 				de.setSize(this.getSize());
@@ -452,7 +451,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, tipologiaDocumentoScaricare),
 						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_PROTOCOL_PROPERTY));
 				saveAs.setDisabilitaAjaxStatus();
-				if(binaryConsoleItem.isLockedType()) {
+				if(this.core.getDriverBYOKUtilities().isEnabledBYOK() && binaryConsoleItem.isLockedType()) {
 					saveAs.setConfirm(Costanti.TITOLO_FINESTRA_MODALE_DOWNLOAD_MESSAGE_WARNING, this.core.getByokWarningMessage(), Costanti.LABEL_MONITOR_BUTTON_CONFERMA);
 				}
 				dati.add(saveAs);
@@ -507,7 +506,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, tipologiaDocumentoScaricare),
 							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_PROTOCOL_PROPERTY));
 					saveAs.setDisabilitaAjaxStatus();
-					if(binaryConsoleItem.isLockedType()) {
+					if(this.core.getDriverBYOKUtilities().isEnabledBYOK() && binaryConsoleItem.isLockedType()) {
 						saveAs.setConfirm(Costanti.TITOLO_FINESTRA_MODALE_DOWNLOAD_MESSAGE_WARNING, this.core.getByokWarningMessage(), Costanti.LABEL_MONITOR_BUTTON_CONFERMA);
 					}
 					dati.add(saveAs);
@@ -553,17 +552,16 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 			de.setValue(contenutoDocumento!=null ? contenutoDocumento.getId() : null);
 			dati.add(de);
 	
-			if(!readOnly) {
-				if(contenutoDocumento != null && contenutoDocumento.getValue() != null && contenutoDocumento.getValue().length > 0 && !binaryConsoleItem.isRequired()){
-					de = new DataElement();
-					de.setBold(true);
-					de.setLabel(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_CHANGE_CLEAR_WARNING);
-					de.setValue(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_CHANGE_CLEAR);
-					de.setType(DataElementType.NOTE);
-					de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO_WARN);
-					de.setSize(this.getSize());
-					dati.add(de);
-				}
+			if(!readOnly &&
+				contenutoDocumento != null && contenutoDocumento.getValue() != null && contenutoDocumento.getValue().length > 0 && !binaryConsoleItem.isRequired()){
+				de = new DataElement();
+				de.setBold(true);
+				de.setLabel(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_CHANGE_CLEAR_WARNING);
+				de.setValue(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_CHANGE_CLEAR);
+				de.setType(DataElementType.NOTE);
+				de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO_WARN);
+				de.setSize(this.getSize());
+				dati.add(de);
 			}
 	
 			if(!readOnly && noteAggiornamento!=null) {

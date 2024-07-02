@@ -26,6 +26,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.ProprietariProtocolProperty;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
@@ -47,6 +51,8 @@ public class DbUtils {
 
     private static final String UNCORRECT_TYPE = "Uncorrect return type '";
     private static final String AND_CONDITION=" AND ";
+    private static final String SELECT_ID_FROM = "select id from ";
+    private static final String WHERE = " WHERE ";
     
     public final JdbcTemplate jdbc;
     
@@ -322,6 +328,71 @@ public class DbUtils {
     	return getColumnValue(CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_ENC_VALUE, CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP, CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_NOME, propertyName);
     }
     
+    public String getProtocolPropertyPropertyServizioStringValue(IDServizio idServizio, String propertyName) throws UtilsException {
+    	long idProprietario = getIdServizio(idServizio);
+    	return getColumnValueById(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING, CostantiDB.PROTOCOL_PROPERTIES, 
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO, idProprietario, 
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA.name(),
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME, propertyName);
+    }
+    public String getProtocolPropertyPropertyServizioStringEncValue(IDServizio idServizio, String propertyName) throws UtilsException {
+    	long idProprietario = getIdServizio(idServizio);
+    	return getColumnValueById(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_ENCODING_STRING, CostantiDB.PROTOCOL_PROPERTIES, 
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO, idProprietario, 
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA.name(),
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME, propertyName);
+    }
+    public byte[] getProtocolPropertyPropertyServizioBinaryValue(IDServizio idServizio, String propertyName) throws UtilsException {
+    	long idProprietario = getIdServizio(idServizio);
+    	return getColumnBinaryValueById(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_BINARY, CostantiDB.PROTOCOL_PROPERTIES, 
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO, idProprietario, 
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA.name(),
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME, propertyName);
+    }
+    
+    public String getProtocolPropertyPropertyFruitoreStringValue(IDSoggetto fruitore, IDServizio idServizio, String propertyName) throws UtilsException {
+    	long idProprietario = getIdFruizione(fruitore, idServizio);
+    	return getColumnValueById(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING, CostantiDB.PROTOCOL_PROPERTIES, 
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO, idProprietario, 
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO, ProprietariProtocolProperty.FRUITORE.name(),
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME, propertyName);
+    }
+    public String getProtocolPropertyPropertyFruitoreStringEncValue(IDSoggetto fruitore, IDServizio idServizio, String propertyName) throws UtilsException {
+    	long idProprietario = getIdFruizione(fruitore, idServizio);
+    	return getColumnValueById(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_ENCODING_STRING, CostantiDB.PROTOCOL_PROPERTIES, 
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO, idProprietario, 
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO, ProprietariProtocolProperty.FRUITORE.name(),
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME, propertyName);
+    }
+    public byte[] getProtocolPropertyPropertyFruitoreBinaryValue(IDSoggetto fruitore, IDServizio idServizio, String propertyName) throws UtilsException {
+    	long idProprietario = getIdFruizione(fruitore, idServizio);
+    	return getColumnBinaryValueById(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_BINARY, CostantiDB.PROTOCOL_PROPERTIES, 
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO, idProprietario, 
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO, ProprietariProtocolProperty.FRUITORE.name(),
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME, propertyName);
+    }
+    
+    public String getProtocolPropertyPropertyApplicativoStringValue(IDServizioApplicativo idServizioApplicativo, String propertyName) throws UtilsException {
+    	long idProprietario = getIdServizioApplicativo(idServizioApplicativo);
+    	return getColumnValueById(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING, CostantiDB.PROTOCOL_PROPERTIES, 
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO, idProprietario, 
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO.name(),
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME, propertyName);
+    }
+    public String getProtocolPropertyPropertyApplicativoStringEncValue(IDServizioApplicativo idServizioApplicativo, String propertyName) throws UtilsException {
+    	long idProprietario = getIdServizioApplicativo(idServizioApplicativo);
+    	return getColumnValueById(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_ENCODING_STRING, CostantiDB.PROTOCOL_PROPERTIES, 
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO, idProprietario, 
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO.name(),
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME, propertyName);
+    }
+    public byte[] getProtocolPropertyPropertyApplicativoBinaryValue(IDServizioApplicativo idServizioApplicativo, String propertyName) throws UtilsException {
+    	long idProprietario = getIdServizioApplicativo(idServizioApplicativo);
+    	return getColumnBinaryValueById(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_BINARY, CostantiDB.PROTOCOL_PROPERTIES, 
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO, idProprietario, 
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO.name(),
+    			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME, propertyName);
+    }
     
     private String getColumnValue(String colonna, String tabella, String colonnaId, String colonnaIdValue) throws UtilsException {
     	return getColumnValue(colonna, tabella, colonnaId, colonnaIdValue, 
@@ -351,10 +422,16 @@ public class DbUtils {
     }
     private String getColumnValueById(String colonna, String tabella, String colonnaId, long colonnaIdValue, 
     		String colonnaId2, String colonnaIdValue2) throws UtilsException {
-    	String query = getQueryBase(colonna, tabella, colonnaId, colonnaIdValue);
-    	if(colonnaId2!=null && colonnaIdValue2!=null) {
-    		query+=AND_CONDITION+colonnaId2+"='"+colonnaIdValue2+"'";
-    	}
+    	return getColumnValueById(colonna, tabella, colonnaId, colonnaIdValue, 
+        		colonnaId2, colonnaIdValue2,
+        		null, null);
+    }
+    private String getColumnValueById(String colonna, String tabella, String colonnaId, long colonnaIdValue, 
+    		String colonnaId2, String colonnaIdValue2,
+    		String colonnaId3, String colonnaIdValue3) throws UtilsException {
+    	String query = getQueryBase(colonna, tabella, colonnaId, colonnaIdValue, 
+        		colonnaId2, colonnaIdValue2,
+        		colonnaId3, colonnaIdValue3);
     	logger.info(query);
     	var result = readRow(query);
     	Object oId = result.get(colonna);
@@ -363,6 +440,24 @@ public class DbUtils {
     	}
     	if(oId==null) {
     		return null;
+    	}
+    	throw new UtilsException(UNCORRECT_TYPE+oId.getClass().getName()+"' ("+oId+")");
+    }
+    private byte[] getColumnBinaryValueById(String colonna, String tabella, String colonnaId, long colonnaIdValue, 
+    		String colonnaId2, String colonnaIdValue2,
+    		String colonnaId3, String colonnaIdValue3) throws UtilsException {
+    	String query = getQueryBase(colonna, tabella, colonnaId, colonnaIdValue, 
+        		colonnaId2, colonnaIdValue2,
+        		colonnaId3, colonnaIdValue3);
+    	logger.info(query);
+    	var result = readRow(query);
+    	Object oId = result.get(colonna);
+    	byte[] res = null;
+    	if(oId instanceof byte[]) {
+    		return (byte[]) oId;
+    	}
+    	if(oId==null) {
+    		return res;
     	}
     	throw new UtilsException(UNCORRECT_TYPE+oId.getClass().getName()+"' ("+oId+")");
     }
@@ -404,8 +499,68 @@ public class DbUtils {
     	throw new UtilsException(UNCORRECT_TYPE+oId.getClass().getName()+"' ("+oId+")");
     }
     
+    private Long getIdSoggetto(IDSoggetto idSoggetto) throws UtilsException {
+    	String query = SELECT_ID_FROM+CostantiDB.SOGGETTI+WHERE+CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO+"='"+idSoggetto.getTipo()+"'"+
+    			AND_CONDITION+CostantiDB.SOGGETTI_COLUMN_NOME_SOGGETTO+"='"+idSoggetto.getNome()+"'";
+    	logger.info(query);
+    	var result = readRow(query);
+    	Object oId = result.get("id");
+    	if(oId instanceof Long) {
+    		return (Long) oId;
+    	}
+    	if(oId==null) {
+    		return null;
+    	}
+    	throw new UtilsException(UNCORRECT_TYPE+oId.getClass().getName()+"' ("+oId+")");
+    }
+    private Long getIdServizio(IDServizio idServizio) throws UtilsException {
+    	String query = SELECT_ID_FROM+CostantiDB.SERVIZI+WHERE+CostantiDB.SERVIZI_COLUMN_TIPO_SERVIZIO+"='"+idServizio.getTipo()+"'"+
+    			AND_CONDITION+CostantiDB.SERVIZI_COLUMN_NOME_SERVIZIO+"='"+idServizio.getNome()+"'"+
+    			AND_CONDITION+CostantiDB.SERVIZI_COLUMN_VERSIONE_SERVIZIO+"="+idServizio.getVersione()+""+
+    			AND_CONDITION+CostantiDB.SERVIZI_COLUMN_ID_SOGGETTO_REF+"='"+getIdSoggetto(idServizio.getSoggettoErogatore())+"'";
+    	logger.info(query);
+    	var result = readRow(query);
+    	Object oId = result.get("id");
+    	if(oId instanceof Long) {
+    		return (Long) oId;
+    	}
+    	if(oId==null) {
+    		return null;
+    	}
+    	throw new UtilsException(UNCORRECT_TYPE+oId.getClass().getName()+"' ("+oId+")");
+    }
+    private Long getIdFruizione(IDSoggetto idSoggetto, IDServizio idServizio) throws UtilsException {
+    	String query = SELECT_ID_FROM+CostantiDB.SERVIZI_FRUITORI+WHERE+
+    			CostantiDB.SERVIZI_FRUITORI_ID_SERVIZIO_REF+"='"+getIdServizio(idServizio)+"'"+
+    			AND_CONDITION+CostantiDB.SERVIZI_FRUITORI_ID_SOGGETTO_REF+"='"+getIdSoggetto(idSoggetto)+"'";
+    	logger.info(query);
+    	var result = readRow(query);
+    	Object oId = result.get("id");
+    	if(oId instanceof Long) {
+    		return (Long) oId;
+    	}
+    	if(oId==null) {
+    		return null;
+    	}
+    	throw new UtilsException(UNCORRECT_TYPE+oId.getClass().getName()+"' ("+oId+")");
+    }
+    private Long getIdServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws UtilsException {
+    	String query = SELECT_ID_FROM+CostantiDB.SERVIZI_APPLICATIVI+WHERE+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_NOME+"='"+idServizioApplicativo.getNome()+"'"+
+    			AND_CONDITION+CostantiDB.SERVIZI_APPLICATIVI_COLUMN_ID_SOGGETTO+"='"+getIdSoggetto(idServizioApplicativo.getIdSoggettoProprietario())+"'";
+    	logger.info(query);
+    	var result = readRow(query);
+    	Object oId = result.get("id");
+    	if(oId instanceof Long) {
+    		return (Long) oId;
+    	}
+    	if(oId==null) {
+    		return null;
+    	}
+    	throw new UtilsException(UNCORRECT_TYPE+oId.getClass().getName()+"' ("+oId+")");
+    }
+    
     private String getQueryBase(String colonna, String tabella, String colonnaId, Object colonnaIdValue) {
-    	String q = "select "+colonna+" from "+tabella+" WHERE "+colonnaId;
+    	String q = "select "+colonna+" from "+tabella+WHERE+colonnaId;
     	if(colonnaIdValue instanceof String) {
     		q+="='"+colonnaIdValue+"'";
     	}
@@ -414,13 +569,25 @@ public class DbUtils {
     	}
     	return q;
     }
+    private String getQueryBase(String colonna, String tabella, String colonnaId, long colonnaIdValue, 
+    		String colonnaId2, String colonnaIdValue2,
+    		String colonnaId3, String colonnaIdValue3) {
+    	String query = getQueryBase(colonna, tabella, colonnaId, colonnaIdValue);
+    	if(colonnaId2!=null && colonnaIdValue2!=null) {
+    		query+=AND_CONDITION+colonnaId2+"='"+colonnaIdValue2+"'";
+    	}
+    	if(colonnaId3!=null && colonnaIdValue3!=null) {
+    		query+=AND_CONDITION+colonnaId3+"='"+colonnaIdValue3+"'";
+    	}
+    	return query;
+    }
      
     public void updateEncSystemProperty(String nome,String plainV,String encV) {
     	deleteEncSystemProperties(nome);
     	updateEncSystemProperties(nome,plainV,encV);
     }
     private void deleteEncSystemProperties(String nome) {
-    	String delete = "delete from "+CostantiDB.SYSTEM_PROPERTIES_PDD+" WHERE "+CostantiDB.SYSTEM_PROPERTIES_PDD_COLUMN_NOME+"='"+nome+"'";
+    	String delete = "delete from "+CostantiDB.SYSTEM_PROPERTIES_PDD+WHERE+CostantiDB.SYSTEM_PROPERTIES_PDD_COLUMN_NOME+"='"+nome+"'";
     	logger.info(delete);
     	int r = this.update(delete);
     	String m = "rows-delete:"+r;

@@ -1442,6 +1442,10 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 			
 				long idFruizione = listaFruizioniDaEliminare.get(i);
 				
+				// ProtocolProperties
+				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
+						idFruizione, ProprietariProtocolProperty.FRUITORE, con, DriverRegistroServiziDB_LIB.tipoDB, null);
+				
 				//cancellazione azioni
 				DriverRegistroServiziDB_accordiParteSpecificaLIB.deleteAllAzioniFruizioneServizio(idFruizione, con);
 				

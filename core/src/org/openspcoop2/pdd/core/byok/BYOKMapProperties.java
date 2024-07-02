@@ -58,6 +58,11 @@ public class BYOKMapProperties extends MapProperties {
 	private static final String ENV_WRAPPED_PREFIX = MapProperties.ENV_PREFIX+PROP_WRAPPED_PREFIX;
 	private static final String JAVA_WRAPPED_PREFIX = MapProperties.JAVA_PREFIX+PROP_WRAPPED_PREFIX;
 	
+	// default false
+	private static final String PROP_UNWRAP_AFTER_GOVWAY_STARTUP_PREFIX = "govway-run-only.unwrap-after-startup."; 
+	private static final String ENV_UNWRAP_AFTER_GOVWAY_STARTUP_PREFIX = MapProperties.ENV_PREFIX+PROP_UNWRAP_AFTER_GOVWAY_STARTUP_PREFIX;
+	private static final String JAVA_UNWRAP_AFTER_GOVWAY_STARTUP_PREFIX = MapProperties.JAVA_PREFIX+PROP_UNWRAP_AFTER_GOVWAY_STARTUP_PREFIX;
+	
 	private static final String UNWRAP_DEFAULT_MODE = "unwrap.default.mode";
 	private static final String UNWRAP_DEFAULT_ID = "unwrap.default.id";
 	private static final String UNWRAP_MODE_SECURITY = "security"; 
@@ -70,11 +75,14 @@ public class BYOKMapProperties extends MapProperties {
 		return KSM_PREFIX+ksmId+KSM_PARAM_PREFIX;
 	}
 		
+	private static final String ERROR_SUFFIX_UNKNOW = "' unknown";
+	
 	private static final String ERROR_DEFAULT_MODE_NOT_FOUND = ") an unwrap mode has not been defined (security/ksm); specifying the mode is mandatory if a default unwrap mode is not defined.";
 	
 	private String defaultUnwrapId = null;
 	private Boolean defaultUnwrapModeSecurity = null;
 	
+	private boolean useSecurityEngine = false;
 	private String securityPolicy;
 	private String securityRemotePolicy;
 	
@@ -85,23 +93,42 @@ public class BYOKMapProperties extends MapProperties {
 	private Map<String, Object> dynamicMap = null;
 	private boolean checkJmxPrefixOperazioneNonRiuscita = false;
 	
+	private boolean existsUnwrapPropertiesAfterGovWayStartup = false;
+	public boolean isExistsUnwrapPropertiesAfterGovWayStartup() {
+		return this.existsUnwrapPropertiesAfterGovWayStartup;
+	}
+	private boolean isGovWayStarted = false; // usato per caricare variabili che devono essere trattate solo sui nodi run
+	public boolean isGovWayStarted() {
+		return this.isGovWayStarted;
+	}
+	public void setGovWayStarted(boolean isGovWayStarted) {
+		this.isGovWayStarted = isGovWayStarted;
+	}
+
 	/** Copia Statica */
 	private static BYOKMapProperties secretsProperties = null;
 	
-	public BYOKMapProperties(Logger log, boolean throwNotFound, String securityPolicy, String securityRemotePolicy,
+	public BYOKMapProperties(Logger log, boolean throwNotFound,
+			boolean useSecurityEngine,
 			Map<String, Object> dynamicMapParam, boolean checkJmxPrefixOperazioneNonRiuscita) throws UtilsException {
-		this(log, FILE_NAME, throwNotFound, securityPolicy, securityRemotePolicy,
+		this(log, FILE_NAME, throwNotFound, 
+				useSecurityEngine,
 				dynamicMapParam, checkJmxPrefixOperazioneNonRiuscita);
 	}
-	public BYOKMapProperties(Logger log, String fileName, boolean throwNotFound, String securityPolicy, String securityRemotePolicy, 
+	public BYOKMapProperties(Logger log, String fileName, boolean throwNotFound, 
+			boolean useSecurityEngine,
 			Map<String, Object> dynamicMapParam, boolean checkJmxPrefixOperazioneNonRiuscita) throws UtilsException {
 		super(log, fileName, throwNotFound);
-		if(securityPolicy!=null && StringUtils.isNotEmpty(securityPolicy)) {
-			this.securityPolicy = securityPolicy;
+		
+		String securityPolicyB = BYOKManager.getSecurityEngineGovWayPolicy();
+		String securityRemotePolicyB = BYOKManager.getSecurityRemoteEngineGovWayPolicy();
+		if(securityPolicyB!=null && StringUtils.isNotEmpty(securityPolicyB)) {
+			this.securityPolicy = securityPolicyB;
 		}
-		if(securityRemotePolicy!=null && StringUtils.isNotEmpty(securityRemotePolicy)) {
-			this.securityRemotePolicy = securityRemotePolicy;
+		if(securityRemotePolicyB!=null && StringUtils.isNotEmpty(securityRemotePolicyB)) {
+			this.securityRemotePolicy = securityRemotePolicyB;
 		}
+		this.useSecurityEngine = useSecurityEngine;
 		this.dynamicMap = dynamicMapParam;
 		this.checkJmxPrefixOperazioneNonRiuscita = checkJmxPrefixOperazioneNonRiuscita;
 	}
@@ -116,10 +143,8 @@ public class BYOKMapProperties extends MapProperties {
 			Map<String, Object> dynamicMapParam, boolean checkJmxPrefixOperazioneNonRiuscita){
 
 		try {
-			String securityPolicy = useSecurityEngine ? BYOKManager.getSecurityEngineGovWayPolicy() : null;
-			String securityRemotePolicy = useSecurityEngine ? BYOKManager.getSecurityRemoteEngineGovWayPolicy() : null;
-			
-			BYOKMapProperties.secretsProperties = new BYOKMapProperties(log, fileName, throwNotFound, securityPolicy, securityRemotePolicy, 
+			BYOKMapProperties.secretsProperties = new BYOKMapProperties(log, fileName, throwNotFound, 
+					useSecurityEngine, 
 					dynamicMapParam, checkJmxPrefixOperazioneNonRiuscita);	
 		    return true;
 		}
@@ -146,32 +171,54 @@ public class BYOKMapProperties extends MapProperties {
 		if(key.startsWith(ENV_PREFIX) && key.length()>ENV_PREFIX.length() &&
 				!key.startsWith(ENV_KSM_PREFIX) &&
 				!key.startsWith(ENV_SECURITY_PREFIX) &&
-				!key.startsWith(ENV_WRAPPED_PREFIX)) {
-			String envKey = key.substring(ENV_PREFIX.length());
-			String value = this.reader.getValue_convertEnvProperties(key);
-			
-			if(this.isWrapped(false,envKey)) {
-				processWrappedValue(key, envKey, value, 
-						false); // envProperty
-			}
-			else {
-				setEnvProperty(envKey, value);
-			}
+				!key.startsWith(ENV_WRAPPED_PREFIX) &&
+				!key.startsWith(ENV_UNWRAP_AFTER_GOVWAY_STARTUP_PREFIX)) {
+			loadEnvPropertyInEnvironment(key);
 		}
 		else if(key.startsWith(JAVA_PREFIX) && key.length()>JAVA_PREFIX.length() &&
 				!key.startsWith(JAVA_KSM_PREFIX) &&
 				!key.startsWith(JAVA_SECURITY_PREFIX) &&
-				!key.startsWith(JAVA_WRAPPED_PREFIX)) {
-			String envKey = key.substring(JAVA_PREFIX.length());
-			String value = this.reader.getValue_convertEnvProperties(key);
-			
-			if(this.isWrapped(true,envKey)) {
-				processWrappedValue(key, envKey, value, 
-						true); // envProperty
+				!key.startsWith(JAVA_WRAPPED_PREFIX) &&
+				!key.startsWith(JAVA_UNWRAP_AFTER_GOVWAY_STARTUP_PREFIX)) {
+			loadJavaPropertyInEnvironment(key);
+		}
+	}
+	public void loadEnvPropertyInEnvironment(String key) throws UtilsException {
+		String envKey = key.substring(ENV_PREFIX.length());
+		String value = this.reader.getValue_convertEnvProperties(key);
+		
+		if(this.isUnwrapAfterGovWayStartup(false,envKey)){
+			this.existsUnwrapPropertiesAfterGovWayStartup = true;
+			if(!this.isGovWayStarted) {
+				return; // verrà effettuato l'unwrap dopo che GovWay ha completato lo startup
 			}
-			else {
-				setJavaProperty(envKey, value);
+		}
+		
+		if(this.isWrapped(false,envKey)) {
+			processWrappedValue(key, envKey, value, 
+					false); // envProperty
+		}
+		else {
+			setEnvProperty(envKey, value);
+		}
+	}
+	public void loadJavaPropertyInEnvironment(String key) throws UtilsException {
+		String envKey = key.substring(JAVA_PREFIX.length());
+		String value = this.reader.getValue_convertEnvProperties(key);
+		
+		if(this.isUnwrapAfterGovWayStartup(true,envKey)) {
+			this.existsUnwrapPropertiesAfterGovWayStartup = true;
+			if(!this.isGovWayStarted) {
+				return; // verrà effettuato l'unwrap dopo che GovWay ha completato lo startup
 			}
+		}
+		
+		if(this.isWrapped(true,envKey)) {
+			processWrappedValue(key, envKey, value, 
+					true); // envProperty
+		}
+		else {
+			setJavaProperty(envKey, value);
 		}
 	}
 	private void processWrappedValue(String key, String envKey, String value, boolean javaProperty) throws UtilsException {
@@ -179,7 +226,8 @@ public class BYOKMapProperties extends MapProperties {
 		String securityId = this.getUnwrapId(javaProperty, envKey);
 		try {
 			if(this.isWrappedBySecurity(javaProperty, envKey)) {
-				if(this.securityPolicy==null) {
+				String p = this.securityRemotePolicy!=null ? this.securityRemotePolicy : this.securityPolicy;
+				if(!this.useSecurityEngine && securityId!=null && securityId.equals(p)) {
 					// securityNonInizializzato, skip
 					return;
 				}
@@ -223,7 +271,7 @@ public class BYOKMapProperties extends MapProperties {
 					this.defaultUnwrapModeSecurity = false; 
 				}
 				else {
-					throw new UtilsException(UNWRAP_DEFAULT_MODE +" '"+tmp.trim()+"' unknown");
+					throw new UtilsException(UNWRAP_DEFAULT_MODE +" '"+tmp.trim()+ERROR_SUFFIX_UNKNOW);
 				}
 			}
 			else {
@@ -246,11 +294,33 @@ public class BYOKMapProperties extends MapProperties {
 				return false;
 			}
 			else {
-				throw new UtilsException(prefix+key+" with value '"+tmp.trim()+"' unknown");
+				throw new UtilsException(prefix+key+" with value '"+tmp.trim()+ERROR_SUFFIX_UNKNOW);
 			}
 		}
 		else {
 			return true; // default
+		}
+	}
+	
+	private boolean isUnwrapAfterGovWayStartup(boolean javaProperty, String key) throws UtilsException {
+		if(this.reader==null) {
+			return false; // non inizializzato
+		}
+		String prefix = javaProperty ? JAVA_UNWRAP_AFTER_GOVWAY_STARTUP_PREFIX : ENV_UNWRAP_AFTER_GOVWAY_STARTUP_PREFIX;
+		String tmp = this.reader.getValue_convertEnvProperties(prefix+key);
+		if(tmp!=null && StringUtils.isNotEmpty(tmp.trim())) {
+			if("true".equals(tmp.trim())) {
+				return true;
+			}
+			else if("false".equals(tmp.trim())) {
+				return false;
+			}
+			else {
+				throw new UtilsException(prefix+key+" with value '"+tmp.trim()+ERROR_SUFFIX_UNKNOW);
+			}
+		}
+		else {
+			return false; // default
 		}
 	}
 	

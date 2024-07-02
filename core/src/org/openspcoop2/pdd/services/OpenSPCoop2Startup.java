@@ -268,8 +268,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	/** Logger utilizzato per segnalazione di errori. */
 	private static final String LOG_CATEGORY_STARTUP = "govway.startup";
 	private static Logger log = LoggerWrapperFactory.getLogger(LOG_CATEGORY_STARTUP);
-	private static void logStartupInfo(String msg) {
+	public static void logStartupInfo(String msg) {
 		OpenSPCoop2Startup.log.info(msg);
+	}
+	public static void logStartupError(String msg, Exception e) {
+		OpenSPCoop2Startup.log.error(msg,e);
 	}
 
 	/** Variabile che indica il Nome del modulo attuale di OpenSPCoop */
@@ -635,11 +638,14 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 							true,
 							null, false);
 					BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
+					secretsProperties.setGovWayStarted(false);
 					secretsProperties.initEnvironment();
+					boolean existsUnwrapPropertiesAfterGovWayStartup = secretsProperties.isExistsUnwrapPropertiesAfterGovWayStartup();
 					String msgInit = "Environment inizializzato con i secrets definiti nel file '"+secretsConfig+"'"+
 							"\n\tJavaProperties: "+secretsProperties.getJavaMap().keys()+
 							"\n\tEnvProperties: "+secretsProperties.getEnvMap().keys()+
-							"\n\tObfuscateMode: "+secretsProperties.getObfuscateModeDescription();
+							"\n\tObfuscateMode: "+secretsProperties.getObfuscateModeDescription()+
+							"\n\tExistsUnwrapPropertiesAfterGovWayStartup: "+existsUnwrapPropertiesAfterGovWayStartup;
 					OpenSPCoop2Startup.log.info(msgInit);
 				}
 			} catch (Exception e) {
@@ -4003,6 +4009,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+
 
 
 

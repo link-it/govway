@@ -234,6 +234,7 @@ public class MapProperties {
 				this.javaMap.remove(envKey);
 			}
 			this.javaMap.put(envKey, value);
+			/**System.out.println("---- JAVAP ["+envKey+"]=["+value+"]");*/
 		}
 	}
 	
@@ -246,6 +247,7 @@ public class MapProperties {
 				this.envMap.remove(envKey);
 			}
 			this.envMap.put(envKey, value);
+			/**System.out.println("---- ENVP ["+envKey+"]=["+value+"]");*/
 		}
 	}
 	

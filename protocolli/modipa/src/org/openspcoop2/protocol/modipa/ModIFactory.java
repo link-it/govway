@@ -83,6 +83,7 @@ public class ModIFactory extends BasicFactory<AbstractModISecurityToken<?>> {
 		}
 		
 		// Le registro per consentire anche al runtime di decodificarle
+		// Aggiungerle anche in VaultUpdateConfigUtilities.processProtocolProperties()
 		DBProtocolPropertiesUtils.addConfidentialProtocolProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD);
 		DBProtocolPropertiesUtils.addConfidentialProtocolProperty(ModICostanti.MODIPA_KEY_PASSWORD);
 		DBProtocolPropertiesUtils.addConfidentialProtocolProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD);

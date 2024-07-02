@@ -307,7 +307,10 @@ public class VaultUpdateConfigUtilities {
 			}
 			output.append("=== ProtocolProperties ===\n\n");
 		}
-				
+		
+		// DBProtocolPropertiesUtils.getProtocolPropertiesConfidentials()
+		// Non uso questo metodo poichè viene inizializzato dalla ModI Factory e nel vault non viene usato alcun protocollo
+		
 		updateProtocolProperties(CostantiDB.MODIPA_KEYSTORE_PASSWORD, false, output);
 		updateProtocolProperties(CostantiDB.MODIPA_KEY_PASSWORD, false, output);
 		updateProtocolProperties(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD, false, output);
@@ -1243,7 +1246,7 @@ public class VaultUpdateConfigUtilities {
 				long idProprietario = rs.getLong(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO);
 				String proprietario = rs.getString(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO);
 				
-				String identificativoOggetto = getIdentificativoOggettoProtocolProperties(proprietario,idProprietario);
+				String identificativoOggetto = getIdentificativoOggettoProtocolProperties(proprietario,idProprietario, id);
 				
 				String prefix = "[tipoProprietario:"+proprietario+"][idProprietario:"+idProprietario+"]["+identificativoOggetto+"][idProp:"+id+"] '"+nomeProprieta+"' ";
 				
@@ -1276,7 +1279,7 @@ public class VaultUpdateConfigUtilities {
 			closeConnection(connectionSQL);
 		}
 	}
-	private String getIdentificativoOggettoProtocolProperties(String proprietario, long id) throws CoreException {
+	private String getIdentificativoOggettoProtocolProperties(String proprietario, long id, long idProp) throws CoreException {
 		PreparedStatement stmRead = null;
 		ResultSet rs=null;
 		
@@ -1297,7 +1300,7 @@ public class VaultUpdateConfigUtilities {
 			if(rs.next()){
 				return readInfoProtocolProperties(connectionSQL, rs, proprietarioProtocolProperty);
 			}
-			throw new CoreException("Entry not found");
+			throw new CoreException("Entry not found for (idProp:"+idProp+") '"+proprietarioProtocolProperty+"' ("+sqlQuery+" id:"+id+")");
 		
 		} catch (Exception se) {
 			throw new CoreException(se.getMessage(),se);

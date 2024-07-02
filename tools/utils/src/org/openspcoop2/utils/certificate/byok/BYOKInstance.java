@@ -229,7 +229,7 @@ public class BYOKInstance {
 			http.setConnectTimeout(config.getHttpConnectionTimeout());
 		}
 		if(config.getHttpReadTimeout()!=null) {
-			http.setConnectTimeout(config.getHttpReadTimeout());
+			http.setReadTimeout(config.getHttpReadTimeout());
 		}
 		
 		setHttpHeader(config, dynamicMap, 

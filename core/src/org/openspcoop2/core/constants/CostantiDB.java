@@ -120,11 +120,16 @@ public final class CostantiDB {
     public static final String SOGGETTI_PROPS_COLUMN_VALUE = "valore";
     public static final String SOGGETTI_PROPS_COLUMN_ENC_VALUE = "enc_value";
     public static final String SERVIZI = "servizi";
+    public static final String SERVIZI_COLUMN_TIPO_SERVIZIO = "tipo_servizio";
+    public static final String SERVIZI_COLUMN_NOME_SERVIZIO = "nome_servizio";
+    public static final String SERVIZI_COLUMN_VERSIONE_SERVIZIO = "versione_servizio";
     public static final String SERVIZI_COLUMN_ID_ACCORDO_REF = "id_accordo";
     public static final String SERVIZI_COLUMN_ID_SOGGETTO_REF = "id_soggetto";
     public static final String SERVIZI_AZIONI = "servizi_azioni";
     public static final String SERVIZI_AZIONE = "servizi_azione";
     public static final String SERVIZI_FRUITORI = "servizi_fruitori";
+    public static final String SERVIZI_FRUITORI_ID_SOGGETTO_REF = "id_soggetto";
+    public static final String SERVIZI_FRUITORI_ID_SERVIZIO_REF = "id_servizio";
     public static final String SERVIZI_FRUITORI_AZIONI = "servizi_fruitori_azioni";
     public static final String SERVIZI_FRUITORI_AZIONE = "servizi_fruitori_azione";
     public static final String ACCORDI = "accordi";
