@@ -6603,6 +6603,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -6624,6 +6627,11 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					List<DataElement> e = new ArrayList<>();
 		
 					DataElement de = new DataElement();
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES_CHANGE,
+							new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, id),
+							new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
+							new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, proprieta.getNome()),
+							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
 					de.setValue(proprieta.getNome());
 					de.setIdToRemove(proprieta.getId() + "");
 					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
@@ -6802,6 +6810,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -6823,6 +6834,11 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					List<DataElement> e = new ArrayList<>();
 		
 					DataElement de = new DataElement();
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES_CHANGE,
+							new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, id),
+							new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
+							new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, proprieta.getNome()),
+							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
 					de.setValue(proprieta.getNome());
 					de.setIdToRemove(proprieta.getId() + "");
 					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
@@ -7000,6 +7016,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -7021,6 +7040,11 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					List<DataElement> e = new ArrayList<>();
 		
 					DataElement de = new DataElement();
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES_CHANGE,
+							new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, id),
+							new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
+							new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, proprieta.getNome()),
+							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
 					de.setValue(proprieta.getNome());
 					de.setIdToRemove(proprieta.getId() + "");
 					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
