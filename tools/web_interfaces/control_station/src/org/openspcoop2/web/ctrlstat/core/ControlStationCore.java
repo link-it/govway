@@ -5759,15 +5759,18 @@ public class ControlStationCore {
 	 * @throws DriverConfigurazioneException
 	 */
 	private static Configurazione configurazioneInstance = null;
-	private static Semaphore configurazioneInstanceSemaphore = new Semaphore("configurazioneGenerale");
+	private static final Semaphore configurazioneInstanceSemaphore = new Semaphore("configurazioneGenerale");
 	public static void invalidateConfigurazioneGenerale() {
 		if(ControlStationCore.configurazioneInstance!=null) {
-			ControlStationCore.configurazioneInstanceSemaphore.acquireThrowRuntime("invalidateConfigurazioneGenerale");
-			try {
-				ControlStationCore.configurazioneInstance=null;
-			}finally {
-				ControlStationCore.configurazioneInstanceSemaphore.release("invalidateConfigurazioneGenerale");
-			}
+			invalidateConfigurazioneGeneraleEngine();
+		}
+	}
+	public static void invalidateConfigurazioneGeneraleEngine() {
+		ControlStationCore.configurazioneInstanceSemaphore.acquireThrowRuntime("invalidateConfigurazioneGenerale");
+		try {
+			ControlStationCore.configurazioneInstance=null;
+		}finally {
+			ControlStationCore.configurazioneInstanceSemaphore.release("invalidateConfigurazioneGenerale");
 		}
 	}
 	public Configurazione getConfigurazioneGenerale() throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
