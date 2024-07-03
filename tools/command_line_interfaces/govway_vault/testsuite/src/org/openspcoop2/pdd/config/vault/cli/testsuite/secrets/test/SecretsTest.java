@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.config.vault.cli.testsuite.secrets.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +38,7 @@ import org.junit.runners.MethodSorters;
 import org.openspcoop2.core.byok.BYOKUtilities;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.CostantiProprieta;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -116,12 +119,31 @@ public class SecretsTest extends ConfigLoader {
 	public static final String OP_MODI_PATH = "modi-path";
 	public static final String OP_MODI_ARCHIVIO = "modi-archivio";
 	
+	
+	public static final String API_TOKEN_POLICY_VALIDAZIONE = "TestVaultValidazioneAuthorizationServer";
+	public static final String API_TOKEN_POLICY_VALIDAZIONE_OP_INTROSPECTION_USER_INFO_TLS = "TLS-introspection-userInfo";
+	public static final String API_TOKEN_POLICY_VALIDAZIONE_OP_VALIDAZIONE_JWS = "Vault-ValidazioneJWS";
+	public static final String API_TOKEN_POLICY_VALIDAZIONE_OP_VALIDAZIONE_JWE = "Vault-ValidazioneJWE";
+	public static final String API_TOKEN_POLICY_VALIDAZIONE_OP_FORWARD_JWS = "Vault-ForwardJWS";
+	public static final String API_TOKEN_POLICY_VALIDAZIONE_OP_FORWARD_JWE = "Vault-ForwardJWE";
+	public static final String API_TOKEN_POLICY_VALIDAZIONE_OP_FORWARD_GOVWAY_JWS= "Vault-ForwardGovWayJWS";
+	public static final String API_TOKEN_POLICY_VALIDAZIONE_OP_OTHER_PROPERTIES = "Vault-OtherProperties"; // non invocata realmente
+	public static final String API_TOKEN_POLICY_VALIDAZIONE_OP_OTHER_PROPERTIES_2 = "Vault-OtherProperties2"; // non invocata realmente
+	
+	
 	private static final String SA_PREFIX = "SA:";
 	private static final String CONNETTORE_PREFIX = "Connettore:";
 	
 	private static final String PP_PREFIX = "ProtocolProperty:";
 	
+	private static final String TOKEN_POLICY_VALIDAZIONE_PREFIX = "TokenPolicyValidazione:";
+	private static final String TOKEN_POLICY_NEGOZIAZIONE_PREFIX = "TokenPolicyNegoziazione:";
+	private static final String ATTRIBUTE_AUTHORITY_PREFIX = "AttributeAuthority:";
+	private static final String NOME_PROPRIETA = " nome: ";
+
+	
 	private static final String STORE_PASSWORD_OPENSPCOOP = "openspcoop";
+	private static final String STORE_PASSWORD_OPENSPCOOP_JKS = "openspcoopjks";
 	
 	private String getMessagePrefix(String origine, String found) {
 		return "["+origine+"] Found '"+found+"'; expected";
@@ -135,6 +157,15 @@ public class SecretsTest extends ConfigLoader {
 	private String getMessageExpectedStartsWith(String origine, String found, String expectedPrefix) {
 		return getMessagePrefix(origine, found)+" start with '"+expectedPrefix+"'";
 	}
+	private String getMessageExpectedNotDefined(String origine, String found) {
+		return getMessagePrefix(origine, found)+" null or empty or -";
+	}
+	private String getMessageExpectedNotEmpty(String origine, List<String> found) {
+		return getMessagePrefix(origine, found!=null ? found.toString() : null)+" not empty";
+	}
+	private String getMessageExpectedEmptyOrNull(String origine, List<String> found) {
+		return getMessagePrefix(origine, found!=null ? found.toString() : null)+" empty or null";
+	}
 	
 	
 	
@@ -144,6 +175,8 @@ public class SecretsTest extends ConfigLoader {
 	public void step0aVerificaInizialeDatabase() throws UtilsException, DriverRegistroServiziException {
 				
 		logCoreInfo("@step0aVerificaInizialeDatabase");
+		
+		checkExternalToolError();
 		
 		verificheDatabaseInCharo();
 		
@@ -156,6 +189,8 @@ public class SecretsTest extends ConfigLoader {
 		
 		logCoreInfo("@step0bInvocazioneServiziGovway");
 		
+		checkExternalToolError();
+		
 		invocazioneGovWay();
 		
 	}
@@ -166,9 +201,11 @@ public class SecretsTest extends ConfigLoader {
 	// ** STEP 1 //
 	
 	@Test
-	public void step1aVaultDefaultPolicy() throws UtilsException, HttpUtilsException {
+	public void step1aVaultDefaultPolicy() throws UtilsException, HttpUtilsException, FileNotFoundException {
 		
 		logCoreInfo("@step1aVaultDefaultPolicy");
+		
+		checkExternalToolError();
 		
 		// Vault dei secrets
 		vaultSecrets(null, DEFAULT_POLICY, false);
@@ -179,6 +216,8 @@ public class SecretsTest extends ConfigLoader {
 	public void step1bVerificaSecretsDatabaseDefaultPolicy() throws UtilsException, DriverRegistroServiziException {
 		
 		logCoreInfo("@step1bVerificaSecretsDatabaseDefaultPolicy");
+		
+		checkExternalToolError();
 		
 		String prefix = BYOKUtilities.newPrefixWrappedValue(DEFAULT_POLICY);
 		prefix = prefix.substring(0, prefix.length()-1);
@@ -193,6 +232,8 @@ public class SecretsTest extends ConfigLoader {
 		
 		logCoreInfo("@step1cInvocazioneServiziGovwayConSecretLockedByDefaultPolicy");
 		
+		checkExternalToolError();
+		
 		invocazioneGovWay();
 		
 	}
@@ -205,11 +246,13 @@ public class SecretsTest extends ConfigLoader {
 	// ** STEP 2 //
 	
 	@Test
-	public void step2aVaultGwKeysPolicySrcPlainUncorrect() throws UtilsException, HttpUtilsException {
+	public void step2aVaultGwKeysPolicySrcPlainUncorrect() throws UtilsException, HttpUtilsException, FileNotFoundException {
 		
 		// Aggiorno con una nuova policy, dicendo però che i secrets originali sono in chiaro: così facendo non troverò nulla da aggiornare
 		
 		logCoreInfo("@step2aVaultGwKeysPolicy");
+		
+		checkExternalToolError();
 		
 		// Vault dei secrets
 		vaultSecrets(null, GW_KEYS_POLICY, true);
@@ -221,6 +264,8 @@ public class SecretsTest extends ConfigLoader {
 		
 		logCoreInfo("@step2bVerificaSecretsDatabaseGwKeysPolicySianoRimastiComeInPrecedenza");
 		
+		checkExternalToolError();
+		
 		String prefix = BYOKUtilities.newPrefixWrappedValue(DEFAULT_POLICY);
 		prefix = prefix.substring(0, prefix.length()-1);
 		
@@ -230,11 +275,13 @@ public class SecretsTest extends ConfigLoader {
 	}
 
 	@Test
-	public void step2cVaultGwKeysPolicy() throws UtilsException, HttpUtilsException {
+	public void step2cVaultGwKeysPolicy() throws UtilsException, HttpUtilsException, FileNotFoundException {
 		
 		// Aggiorno con una nuova polic
 		
 		logCoreInfo("@step2cVaultGwKeysPolicy");
+		
+		checkExternalToolError();
 		
 		// Vault dei secrets
 		vaultSecrets(DEFAULT_POLICY, GW_KEYS_POLICY, true);
@@ -245,6 +292,8 @@ public class SecretsTest extends ConfigLoader {
 	public void step2dVerificaSecretsDatabaseGwKeysPolicy() throws UtilsException, DriverRegistroServiziException {
 		
 		logCoreInfo("@step2dVerificaSecretsDatabaseGwKeysPolicy");
+		
+		checkExternalToolError();
 		
 		String prefix = BYOKUtilities.newPrefixWrappedValue(GW_KEYS_POLICY);
 		prefix = prefix.substring(0, prefix.length()-1);
@@ -259,6 +308,8 @@ public class SecretsTest extends ConfigLoader {
 		
 		logCoreInfo("@step2eInvocazioneServiziGovwayConSecretLockedByGwKeysPolicy");
 		
+		checkExternalToolError();
+		
 		invocazioneGovWay();
 		
 	}
@@ -272,11 +323,13 @@ public class SecretsTest extends ConfigLoader {
 	// ** STEP 3 //
 	
 	@Test
-	public void step3aVaultGwRemotePolicySrcPlainUncorrect() throws UtilsException, HttpUtilsException {
+	public void step3aVaultGwRemotePolicySrcPlainUncorrect() throws UtilsException, HttpUtilsException, FileNotFoundException {
 		
 		// Aggiorno con una nuova policy, dicendo però che i secrets originali sono in chiaro: così facendo non troverò nulla da aggiornare
 		
 		logCoreInfo("@step3aVaultGwRemotePolicySrcPlainUncorrect");
+		
+		checkExternalToolError();
 		
 		// Vault dei secrets
 		vaultSecrets(null, GW_REMOTE_POLICY, false);
@@ -288,6 +341,8 @@ public class SecretsTest extends ConfigLoader {
 		
 		logCoreInfo("@step3bVerificaSecretsDatabaseGwRemotePolicySianoRimastiComeInPrecedenza");
 		
+		checkExternalToolError();
+		
 		String prefix = BYOKUtilities.newPrefixWrappedValue(GW_KEYS_POLICY);
 		prefix = prefix.substring(0, prefix.length()-1);
 		
@@ -297,11 +352,13 @@ public class SecretsTest extends ConfigLoader {
 	}
 
 	@Test
-	public void step3cVaultRemotePolicy() throws UtilsException, HttpUtilsException {
+	public void step3cVaultRemotePolicy() throws UtilsException, HttpUtilsException, FileNotFoundException {
 		
 		// Aggiorno con una nuova polic
 		
 		logCoreInfo("@step3cVaultRemotePolicy");
+		
+		checkExternalToolError();
 		
 		// Vault dei secrets
 		vaultSecrets(GW_KEYS_POLICY, GW_REMOTE_POLICY, false);
@@ -312,6 +369,8 @@ public class SecretsTest extends ConfigLoader {
 	public void step3dVerificaSecretsDatabaseRemotePolicy() throws UtilsException, DriverRegistroServiziException {
 		
 		logCoreInfo("@step3dVerificaSecretsDatabaseRemotePolicy");
+		
+		checkExternalToolError();
 		
 		String prefix = BYOKUtilities.newPrefixWrappedValue(GW_REMOTE_POLICY);
 		prefix = prefix.substring(0, prefix.length()-1);
@@ -326,6 +385,8 @@ public class SecretsTest extends ConfigLoader {
 		
 		logCoreInfo("@step3eInvocazioneServiziGovwayConSecretLockedByRemotePolicy");
 		
+		checkExternalToolError();
+		
 		invocazioneGovWay();
 		
 	}
@@ -337,11 +398,13 @@ public class SecretsTest extends ConfigLoader {
 	// ** STEP 4 //
 	
 	@Test
-	public void step4aVaultPlainPolicySrcUncorrect() throws UtilsException, HttpUtilsException {
+	public void step4aVaultPlainPolicySrcUncorrect() throws UtilsException, HttpUtilsException, FileNotFoundException {
 		
 		// Aggiorno ripristinando i dati in chiaro, indicando però una policy sorgente non corretta: così facendo non troverò nulla da aggiornare
 		
 		logCoreInfo("@step4aVaultPlainPolicySrcUncorrect");
+		
+		checkExternalToolError();
 		
 		// Vault dei secrets
 		vaultSecrets(DEFAULT_POLICY, null, true);
@@ -353,6 +416,8 @@ public class SecretsTest extends ConfigLoader {
 		
 		logCoreInfo("@step4bVerificaSecretsDatabasePlainPolicySianoRimastiComeInPrecedenza");
 		
+		checkExternalToolError();
+		
 		String prefix = BYOKUtilities.newPrefixWrappedValue(GW_REMOTE_POLICY);
 		prefix = prefix.substring(0, prefix.length()-1);
 		
@@ -362,11 +427,13 @@ public class SecretsTest extends ConfigLoader {
 	}
 
 	@Test
-	public void step4cVaultPlainPolicy() throws UtilsException, HttpUtilsException {
+	public void step4cVaultPlainPolicy() throws UtilsException, HttpUtilsException, FileNotFoundException {
 		
 		// Aggiorno con una nuova polic
 		
 		logCoreInfo("@step4cVaultPlainPolicy");
+		
+		checkExternalToolError();
 		
 		// Vault dei secrets
 		vaultSecrets(GW_REMOTE_POLICY, null, true);
@@ -378,6 +445,8 @@ public class SecretsTest extends ConfigLoader {
 		
 		logCoreInfo("@step4dVerificaSecretsDatabasePlainPolicy");
 		
+		checkExternalToolError();
+		
 		verificheDatabaseInCharo();
 		
 		verificheProprietaChiaro();
@@ -387,6 +456,8 @@ public class SecretsTest extends ConfigLoader {
 	public void step4eInvocazioneServiziGovwayConSecretsPlain() throws UtilsException, HttpUtilsException {
 		
 		logCoreInfo("@step4eInvocazioneServiziGovwayConSecretsPlain");
+		
+		checkExternalToolError();
 		
 		invocazioneGovWay();
 	}
@@ -405,6 +476,8 @@ public class SecretsTest extends ConfigLoader {
 			
 		logCoreInfo("@step5aVaultByConfigLoaderWithBYOK");
 		
+		checkExternalToolError();
+		
 		prepareConfig(true, DEFAULT_POLICY, TESTSUITE_BUNDLE_PLAIN_PATH);
 		prepareConfig(true, DEFAULT_POLICY, TESTSUITE_BUNDLE_PROPRIETA_CIFRATE_PATH);
 		dbUtils.updateEncSystemProperty(SYSTEM_ENC_PROP_NAME,SYSTEM_ENC_PROP_PLAIN_VALUE,SYSTEM_ENC_PROP_ENC_VALUE);
@@ -415,6 +488,8 @@ public class SecretsTest extends ConfigLoader {
 	public void step5bVerificaSecretsByDefaultPolicy() throws UtilsException, DriverRegistroServiziException {
 		
 		logCoreInfo("@step5VerificaSecretsByDefaultPolicy");
+		
+		checkExternalToolError();
 		
 		String prefix = BYOKUtilities.newPrefixWrappedValue(DEFAULT_POLICY);
 		prefix = prefix.substring(0, prefix.length()-1);
@@ -430,6 +505,8 @@ public class SecretsTest extends ConfigLoader {
 		
 		logCoreInfo("@step5cInvocazioneServiziGovwayConSecretsCifrati");
 		
+		checkExternalToolError();
+		
 		invocazioneGovWay();
 	}
 	
@@ -437,6 +514,8 @@ public class SecretsTest extends ConfigLoader {
 	public void step5dVaultByConfigLoaderWithoutBYOK() throws UtilsException, HttpUtilsException, IOException {
 			
 		logCoreInfo("@step5dVaultByConfigLoaderWithoutBYOK");
+		
+		checkExternalToolError();
 		
 		prepareConfig(false, null, ConfigLoader.TESTSUITE_BUNDLE_PLAIN_PATH);
 		/**
@@ -451,6 +530,8 @@ public class SecretsTest extends ConfigLoader {
 		
 		logCoreInfo("@step5eVerificaSecretsDatabasePlainPolicy");
 		
+		checkExternalToolError();
+		
 		verificheDatabaseInCharo();
 		
 		verificheProprietaCifrate(DEFAULT_POLICY);
@@ -460,6 +541,8 @@ public class SecretsTest extends ConfigLoader {
 	public void step5eInvocazioneServiziGovwayConSecretsPlain() throws UtilsException, HttpUtilsException {
 		
 		logCoreInfo("@step5eInvocazioneServiziGovwayConSecretsPlain");
+		
+		checkExternalToolError();
 		
 		invocazioneGovWay();
 	}
@@ -535,6 +618,25 @@ public class SecretsTest extends ConfigLoader {
 		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_CONNETTORI_APPLICATIVO, OP_MODI_ARCHIVIO);
 		
 		
+		logCoreInfo(prefixLogErogazione+API_TOKEN_POLICY_VALIDAZIONE_OP_INTROSPECTION_USER_INFO_TLS);		
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_TOKEN_POLICY_VALIDAZIONE, API_TOKEN_POLICY_VALIDAZIONE_OP_INTROSPECTION_USER_INFO_TLS);
+		
+		logCoreInfo(prefixLogErogazione+API_TOKEN_POLICY_VALIDAZIONE_OP_VALIDAZIONE_JWS);		
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_TOKEN_POLICY_VALIDAZIONE, API_TOKEN_POLICY_VALIDAZIONE_OP_VALIDAZIONE_JWS);
+		
+		logCoreInfo(prefixLogErogazione+API_TOKEN_POLICY_VALIDAZIONE_OP_VALIDAZIONE_JWE);		
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_TOKEN_POLICY_VALIDAZIONE, API_TOKEN_POLICY_VALIDAZIONE_OP_VALIDAZIONE_JWE);
+		
+		logCoreInfo(prefixLogFruizione+API_TOKEN_POLICY_VALIDAZIONE_OP_FORWARD_JWS);		
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_TOKEN_POLICY_VALIDAZIONE, API_TOKEN_POLICY_VALIDAZIONE_OP_FORWARD_JWS);
+		
+		logCoreInfo(prefixLogFruizione+API_TOKEN_POLICY_VALIDAZIONE_OP_FORWARD_GOVWAY_JWS);		
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_TOKEN_POLICY_VALIDAZIONE, API_TOKEN_POLICY_VALIDAZIONE_OP_FORWARD_GOVWAY_JWS);
+		
+		logCoreInfo(prefixLogFruizione+API_TOKEN_POLICY_VALIDAZIONE_OP_FORWARD_JWE);		
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_TOKEN_POLICY_VALIDAZIONE, API_TOKEN_POLICY_VALIDAZIONE_OP_FORWARD_JWE);
+		
+		
 		
 		// proprieta
 		
@@ -595,6 +697,9 @@ public class SecretsTest extends ConfigLoader {
 		
 		// ** VERIFICHE colonne name, value_binary o enc_value_string,value_string per protocol_properties
 		verificheDatabaseInChiaroProtocolProperties();
+		
+		// ** VERIFICHE colonne nome,valore,enc_value su generic_property
+		verificheDatabaseInChiaroGenericProperties();
 
 	}
 	private void verificheDatabaseInChiaroServiziApplicativiPasswordInv() throws UtilsException {
@@ -956,6 +1061,88 @@ public class SecretsTest extends ConfigLoader {
 		assertEquals(getMessageExpected(prefissoServizio+PP_PREFIX+CostantiDB.MODIPA_KEYSTORE_ARCHIVE, v, vAtteso), 
 				vAtteso, v);
 	}
+	private void verificheDatabaseInChiaroGenericProperties() throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseInChiaroGenericProperties");
+		
+		// -- tokenPolicy validazione --
+		verificheDatabaseInChiaroTokenPolicyValidazione();
+		
+		// -- tokenPolicy negoziazione -- 
+		//verificheDatabaseInChiaroTokenPolicyNegoziazione();
+		
+		// -- attribute authority -- 
+		//verificheDatabaseInChiaroAttributeAuthority();
+		
+	}
+	private void verificheDatabaseInChiaroTokenPolicyValidazione() throws UtilsException {
+		
+		Map<String, String> verifiche = new HashMap<>();
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD, STORE_PASSWORD_OPENSPCOOP); 
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD, STORE_PASSWORD_OPENSPCOOP_JKS);
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD, STORE_PASSWORD_OPENSPCOOP);
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroTokenPolicyValidazione(entry, "Vault-TLS-IntrospectionUserInfo");
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEYSTORE_PASSWORD, PASSWORD_123456); 
+
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroTokenPolicyValidazione(entry, API_TOKEN_POLICY_VALIDAZIONE_OP_VALIDAZIONE_JWS);
+			verificheDatabaseInChiaroTokenPolicyValidazione(entry, "Vault-ValidazioneJWS-GovWay-JWT");
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEYSTORE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEY_PASSWORD, PASSWORD_123456); 
+
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroTokenPolicyValidazione(entry, API_TOKEN_POLICY_VALIDAZIONE_OP_VALIDAZIONE_JWE);
+			verificheDatabaseInChiaroTokenPolicyValidazione(entry, API_TOKEN_POLICY_VALIDAZIONE_OP_FORWARD_JWS);
+			verificheDatabaseInChiaroTokenPolicyValidazione(entry, API_TOKEN_POLICY_VALIDAZIONE_OP_FORWARD_JWE);
+			verificheDatabaseInChiaroTokenPolicyValidazione(entry, API_TOKEN_POLICY_VALIDAZIONE_OP_FORWARD_GOVWAY_JWS);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD, "123proxy"); 
+		verifiche.put(CostantiProprieta.POLICY_INTROSPECTION_AUTH_BASIC_PASSWORD, "123456basicintro"); 
+		verifiche.put(CostantiProprieta.POLICY_USER_INFO_AUTH_BASIC_PASSWORD, "123456basicuser"); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroTokenPolicyValidazione(entry, API_TOKEN_POLICY_VALIDAZIONE_OP_OTHER_PROPERTIES);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.POLICY_INTROSPECTION_AUTH_BEARER_TOKEN, "TOKEN-BEARER-INTRO"); 
+		verifiche.put(CostantiProprieta.POLICY_USER_INFO_AUTH_BEARER_TOKEN, "TOKEN-BEARER-USER"); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroTokenPolicyValidazione(entry, API_TOKEN_POLICY_VALIDAZIONE_OP_OTHER_PROPERTIES_2);
+		}
+		
+	}
+	private void verificheDatabaseInChiaroTokenPolicyValidazione(Entry<String, String> entry, String nomePolicy) throws UtilsException {
+		String pName = entry.getKey();
+		
+		String vAtteso = entry.getValue();
+		List<String> vList = ConfigLoader.dbUtils.getTokenPolicyValidazioneValue(pName, nomePolicy);
+		boolean expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(TOKEN_POLICY_VALIDAZIONE_PREFIX+nomePolicy+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			assertEquals(getMessageExpected(TOKEN_POLICY_VALIDAZIONE_PREFIX+nomePolicy+NOME_PROPRIETA+pName, v, vAtteso), 
+					vAtteso, v);
+		}
+		
+		vList = ConfigLoader.dbUtils.getTokenPolicyValidazioneEncValue(pName, nomePolicy);
+		expected = vList==null || vList.isEmpty() || vList.get(0)==null;
+		assertTrue(getMessageExpectedEmptyOrNull(TOKEN_POLICY_VALIDAZIONE_PREFIX+nomePolicy+NOME_PROPRIETA+pName, vList), 
+				expected);
+	}
+	
+	
 	
 	
 	// ** VERIFICHE DB CIFRATO **
@@ -984,6 +1171,9 @@ public class SecretsTest extends ConfigLoader {
 		
 		// ** VERIFICHE colonne name, value_binary o enc_value_string,value_string per protocol_properties
 		verificheDatabaseCifratoProtocolProperties(prefix);
+		
+		// ** VERIFICHE colonne nome,valore,enc_value su generic_property
+		verificheDatabaseCifratoGenericProperties(prefix);
 	}
 	private void verificheDatabaseCifratoPasswordInv(String prefix) throws UtilsException {
 		
@@ -1557,6 +1747,92 @@ public class SecretsTest extends ConfigLoader {
 		boolean expected = pwd!=null && pwd.startsWith(prefix) && pwd.length()>prefix.length();
 		assertTrue(getMessageExpectedStartsWith(PROPRIETA_PORTA_AUTHC_PREFIX+nomeProprieta, pwd, prefix), 
 				expected);
+		
+	}
+	
+	private void verificheDatabaseCifratoGenericProperties(String prefix) throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseProprietaCifrateGenericProperties");
+		
+		// -- tokenPolicy validazione --
+		verificheDatabaseProprietaCifrateTokenPolicyValidazione(prefix);
+		
+		// -- tokenPolicy negoziazione -- 
+		//verificheDatabaseProprietaCifrateTokenPolicyNegoziazione(prefix);
+		
+		// -- attribute authority -- 
+		//verificheDatabaseProprietaCifrateAttributeAuthority(prefix);
+		
+	}
+	private void verificheDatabaseProprietaCifrateTokenPolicyValidazione(String prefix) throws UtilsException {
+		
+		Map<String, String> verifiche = new HashMap<>();
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD, PASSWORD_123456);
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD, PASSWORD_123456);
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseProprietaCifrateTokenPolicyValidazione(entry, "Vault-TLS-IntrospectionUserInfo", prefix);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEYSTORE_PASSWORD, PASSWORD_123456); 
+
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseProprietaCifrateTokenPolicyValidazione(entry, API_TOKEN_POLICY_VALIDAZIONE_OP_VALIDAZIONE_JWS, prefix);
+			verificheDatabaseProprietaCifrateTokenPolicyValidazione(entry, "Vault-ValidazioneJWS-GovWay-JWT", prefix);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEYSTORE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEY_PASSWORD, PASSWORD_123456); 
+
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseProprietaCifrateTokenPolicyValidazione(entry, API_TOKEN_POLICY_VALIDAZIONE_OP_VALIDAZIONE_JWE, prefix);
+			verificheDatabaseProprietaCifrateTokenPolicyValidazione(entry, API_TOKEN_POLICY_VALIDAZIONE_OP_FORWARD_JWS, prefix);
+			verificheDatabaseProprietaCifrateTokenPolicyValidazione(entry, API_TOKEN_POLICY_VALIDAZIONE_OP_FORWARD_JWE, prefix);
+			verificheDatabaseProprietaCifrateTokenPolicyValidazione(entry, API_TOKEN_POLICY_VALIDAZIONE_OP_FORWARD_GOVWAY_JWS, prefix);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD, "123proxy"); 
+		verifiche.put(CostantiProprieta.POLICY_INTROSPECTION_AUTH_BASIC_PASSWORD, "123456basicintro"); 
+		verifiche.put(CostantiProprieta.POLICY_USER_INFO_AUTH_BASIC_PASSWORD, "123456basicuser"); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseProprietaCifrateTokenPolicyValidazione(entry, API_TOKEN_POLICY_VALIDAZIONE_OP_OTHER_PROPERTIES, prefix);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.POLICY_INTROSPECTION_AUTH_BEARER_TOKEN, "TOKEN-BEARER-INTRO"); 
+		verifiche.put(CostantiProprieta.POLICY_USER_INFO_AUTH_BEARER_TOKEN, "TOKEN-BEARER-USER"); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseProprietaCifrateTokenPolicyValidazione(entry, API_TOKEN_POLICY_VALIDAZIONE_OP_OTHER_PROPERTIES_2, prefix);
+		}
+		
+	}
+	private void verificheDatabaseProprietaCifrateTokenPolicyValidazione(Entry<String, String> entry, String nomePolicy, String prefix) throws UtilsException {
+		String pName = entry.getKey();
+		
+		List<String> vList = ConfigLoader.dbUtils.getTokenPolicyValidazioneValue(pName, nomePolicy);
+		boolean expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(TOKEN_POLICY_VALIDAZIONE_PREFIX+nomePolicy+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			assertEquals(getMessageExpected(TOKEN_POLICY_VALIDAZIONE_PREFIX+nomePolicy+NOME_PROPRIETA+pName, v, prefix), 
+					prefix, v);
+		}
+		
+		vList = ConfigLoader.dbUtils.getTokenPolicyValidazioneEncValue(pName, nomePolicy);
+		expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(TOKEN_POLICY_VALIDAZIONE_PREFIX+nomePolicy+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+			assertTrue(getMessageExpectedStartsWith(TOKEN_POLICY_VALIDAZIONE_PREFIX+nomePolicy+NOME_PROPRIETA+pName, v, prefix), 
+					expected);
+		}
 		
 	}
 	

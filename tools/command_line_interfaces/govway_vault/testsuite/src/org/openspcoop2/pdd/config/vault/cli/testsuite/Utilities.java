@@ -112,7 +112,7 @@ public class Utilities {
 		return response;
 	}
 	
-	private static void setCredenziali(String api, String operazione, HttpRequest request) {
+	private static void setCredenziali(String api, String operazione, HttpRequest request) throws UtilsException {
 		if(SecretsTest.API_PROPRIETA.equals(api) &&
 				(SecretsTest.OP_PROPRIETA_APPLICATIVO.equals(operazione) || SecretsTest.OP_PROPRIETA_SOGGETTO.equals(operazione)) 
 					){
@@ -127,6 +127,17 @@ public class Utilities {
 				request.setUsername("ApplicativoVaultModiArchivio");
 			}
 			request.setPassword("123456");
+		}
+		else if(SecretsTest.API_TOKEN_POLICY_VALIDAZIONE.equals(api)){
+			String token = null;
+			if(SecretsTest.API_TOKEN_POLICY_VALIDAZIONE_OP_VALIDAZIONE_JWE.equals(operazione) ||
+					SecretsTest.API_TOKEN_POLICY_VALIDAZIONE_OP_FORWARD_JWE.equals(operazione)) {
+				token = JWTUtils.buildJweTokenClient2(false);
+			}
+			else {
+				token = JWTUtils.buildJwsTokenClient1(false);
+			}
+			request.addHeader(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+token);
 		}
 	}
 	

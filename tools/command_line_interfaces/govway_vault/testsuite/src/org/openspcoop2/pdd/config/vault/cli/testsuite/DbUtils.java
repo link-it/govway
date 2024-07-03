@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.CostantiProprieta;
 import org.openspcoop2.core.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -394,6 +395,54 @@ public class DbUtils {
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME, propertyName);
     }
     
+    public List<String> getTokenPolicyValidazioneValue(String nomeProprieta, String nomePolicy) throws UtilsException {
+    	return getGenericPropertiesValue(CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_VALORE, nomeProprieta, CostantiProprieta.TOKEN_VALIDATION_ID, nomePolicy);
+    }
+    public List<String> getTokenPolicyValidazioneEncValue(String nomeProprieta, String nomePolicy) throws UtilsException {
+    	return getGenericPropertiesValue(CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_ENC_VALUE, nomeProprieta, CostantiProprieta.TOKEN_VALIDATION_ID, nomePolicy);
+    }
+    
+    public List<String> getTokenPolicyNegoziazioneValue(String nomeProprieta, String nomePolicy) throws UtilsException {
+    	return getGenericPropertiesValue(CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_VALORE, nomeProprieta, CostantiProprieta.TOKEN_NEGOZIAZIONE_ID, nomePolicy);
+    }
+    public List<String> getTokenPolicyNegoziazioneEncValue(String nomeProprieta, String nomePolicy) throws UtilsException {
+    	return getGenericPropertiesValue(CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_ENC_VALUE, nomeProprieta, CostantiProprieta.TOKEN_NEGOZIAZIONE_ID, nomePolicy);
+    }
+    
+    public List<String> getAttributeAuthorityValue(String nomeProprieta, String nomePolicy) throws UtilsException {
+    	return getGenericPropertiesValue(CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_VALORE, nomeProprieta, CostantiProprieta.ATTRIBUTE_AUTHORITY_ID, nomePolicy);
+    }
+    public List<String> getAttributeAuthorityEncValue(String nomeProprieta, String nomePolicy) throws UtilsException {
+    	return getGenericPropertiesValue(CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_ENC_VALUE, nomeProprieta, CostantiProprieta.ATTRIBUTE_AUTHORITY_ID, nomePolicy);
+    }
+    
+    private List<String> getGenericPropertiesValue(String nomeColonna, String nomeProprieta, String tipo, String nome) throws UtilsException {
+    	String query = "select "+nomeColonna+" from "+CostantiDB.CONFIG_GENERIC_PROPERTY+" where "+
+    			"  ("+CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_NOME+"='"+nomeProprieta+"' OR "+CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_NOME+" LIKE '%"+nomeProprieta+"') "+
+    			"AND "+CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_ID_PROPS+" in (select id from "+CostantiDB.CONFIG_GENERIC_PROPERTIES+" where tipo='"+tipo+"' AND nome='"+nome+"')";
+    	logger.info(query);
+    	List<Map<String, Object>> list = readRows(query);
+    	List<String> result = null;
+    	if(list==null || list.isEmpty()) {
+    		return result;
+    	}
+    	result = new ArrayList<>();
+    	for (Map<String, Object> map : list) {
+			Object oId = map.get(nomeColonna);
+			if(oId instanceof String) {
+				result.add((String) oId);
+	    	}
+			else if(oId==null) {
+	    		result.add(null);
+	    	}
+			else {
+				throw new UtilsException(UNCORRECT_TYPE+oId.getClass().getName()+"' ("+oId+")");
+			}
+		} 
+    	return result;
+    }
+    
+    
     private String getColumnValue(String colonna, String tabella, String colonnaId, String colonnaIdValue) throws UtilsException {
     	return getColumnValue(colonna, tabella, colonnaId, colonnaIdValue, 
         		null, null);
@@ -483,9 +532,9 @@ public class DbUtils {
     	}
     	throw new UtilsException(UNCORRECT_TYPE+oId.getClass().getName()+"' ("+oId+")");
     }
-    
+        
     private String getServizioApplicativoAssociatoPorta(String nomePortaDefault, String nomeAzione) throws UtilsException {
-    	String query = "select nome from servizi_applicativi where id=(select id_servizio_applicativo from porte_applicative_sa where id_porta=(select pa.id from porte_applicative pa,pa_azioni az where az.id_porta=pa.id AND "+
+    	String query = "select nome from "+CostantiDB.SERVIZI_APPLICATIVI+" where id=(select id_servizio_applicativo from porte_applicative_sa where id_porta=(select pa.id from porte_applicative pa,pa_azioni az where az.id_porta=pa.id AND "+
     			"az.azione='"+nomeAzione+"' AND pa.nome_porta LIKE '__"+nomePortaDefault+"__Specific%'));";
     	logger.info(query);
     	var result = readRow(query);

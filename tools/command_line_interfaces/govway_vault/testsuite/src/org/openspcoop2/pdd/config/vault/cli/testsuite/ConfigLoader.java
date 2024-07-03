@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -40,6 +41,7 @@ import org.junit.rules.TestName;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsRuntimeException;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpUtilsException;
 import org.slf4j.Logger;
 
@@ -62,7 +64,11 @@ public class ConfigLoader {
     public static final String SYSTEM_ENC_PROP_PLAIN_VALUE = "==gw-pbkdf2==";
     public static final String SYSTEM_ENC_PROP_ENC_VALUE = "==gw-pbkdf2==.U2FsdGVkX180iN6VYj77ymnPPJMhHJxHSt1sqR4JZlwLqHBmkUfQGymhrFzXxyB9";
     
+    private static final String ERROR = "ERROR";
+    
     private static final String BUILD_DIR = "build";
+    
+    private static final String PROPERTIES_DIR = "properties";
     
     private static final String PLAIN = "plain";
     
@@ -188,17 +194,127 @@ public class ConfigLoader {
     	logger.debug(msg);
     }
     
-    private static void logScriptExit(org.slf4j.Logger logger, org.openspcoop2.utils.resources.ScriptInvoker scriptInvoker) {
+    private static String logScriptExit(org.slf4j.Logger logger, org.openspcoop2.utils.resources.ScriptInvoker scriptInvoker, File ... log) throws FileNotFoundException, UtilsException {
         logDebug(logger,"script - exitCode: " + scriptInvoker.getExitValue());
         logDebug(logger,"script - errorStream: " + scriptInvoker.getErrorStream());
         logDebug(logger,"script - outStream: " + scriptInvoker.getOutputStream());
+        
+        if(scriptInvoker.getExitValue()!=0) {
+        	return "Exit value ("+scriptInvoker.getExitValue()+") <> 0";
+        }
+        else if(scriptInvoker.getErrorStream()!=null && StringUtils.isNotEmpty(scriptInvoker.getErrorStream())) {
+        	String sErrore = scriptInvoker.getErrorStream();
+        	String check = checkErrorStream(sErrore);
+        	if(check!=null) {
+        		return check;
+        	}
+        }
+      
+    	for (File fileLog : log) {
+        	String content = FileSystemUtilities.readFile(fileLog);
+        	content = filterERROR(content);
+        	if(content.contains(ERROR)) {
+        		return "Error found in log file '"+fileLog.getAbsolutePath()+"': "+extractSurroundingCharacters(content, ERROR, 300, 300);
+        	}	
+		}
+        
+        return null;
+    }
+    private static String checkErrorStream(String sErrore) {
+    	List<String> lines = Arrays.asList(sErrore.split("\n"));
+    	StringBuilder sb = new StringBuilder();
+    	for (String s : lines) {
+			if(!s.startsWith("WARNING: An illegal reflective access operation has occurred") &&
+					!s.startsWith("WARNING: Illegal reflective access by org.openspcoop2.utils.Utilities") &&
+					!s.startsWith("WARNING: Please consider reporting this to the maintainers of org.openspcoop2.utils.Utilities") &&
+					!s.startsWith("WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations") &&
+					!s.startsWith("WARNING: All illegal access operations will be denied in a future release")) {
+				if(sb.length()>0) {
+					sb.append("\n");
+				}
+				sb.append(s);
+			}
+		}
+    	if(sb.length()>0) {
+    		return "Error stream found small:"+sb.toString()+"\n full: "+sErrore;
+    	}
+    	return null;
+    }
+    public static String extractSurroundingCharacters(String input, String searchString, int x, int y) throws IllegalArgumentException {
+        int index = input.indexOf(searchString);
+        
+        if (index == -1) {
+            throw new IllegalArgumentException("Stringa di ricerca non trovata.");
+        }
+
+        int start = Math.max(0, index - x);
+        int end = Math.min(input.length(), index + searchString.length() + y);
+
+        return input.substring(start, end);
+    }
+    private static String filterERROR(String content) {
+    	List<String> lines = Arrays.asList(content.split("\n"));
+    	StringBuilder sb = new StringBuilder();
+    	for (String s : lines) {
+			if( 
+					!(
+							s.startsWith(ERROR) && 
+							(
+									s.contains("Errore durante l'eliminazione del soggetto [gw/ENTE]")
+									||
+									s.contains("Errore durante l'eliminazione del soggetto [gw/SoggettoInternoVaultTest]")
+									||
+									s.contains("Errore durante l'eliminazione del soggetto [gw/SoggettoInternoVaultTestFruitore]")
+									||
+									s.contains("Errore durante l'eliminazione del soggetto [modipa/ENTE]") 
+									||
+									s.contains("Errore durante l'eliminazione del soggetto [modipa/SoggettoInternoVaultTest]")
+									||
+									s.contains("Errore durante l'eliminazione del soggetto [modipa/SoggettoInternoVaultTestFruitore]")
+									||
+									s.contains("Errore durante l'eliminazione del soggetto [spc/ENTE]")
+									||
+									s.contains("Errore durante l'eliminazione del soggetto [spc/SoggettoInternoVaultTest]")
+									||
+									s.contains("Errore durante l'eliminazione del soggetto [spc/SoggettoInternoVaultTestFruitore]")
+									||
+									s.contains("Porta di Dominio [PdDENTE] non è eliminabile poichè di dominio interno")
+							)
+					)
+			) {
+				if(sb.length()>0) {
+					sb.append("\n");
+				}
+				sb.append(s);
+			}
+		}
+    	return sb.toString();
+    }
+    
+    public static void checkExternalToolError() throws UtilsException {
+    	if(prepareConfigError!=null) {
+    		throw new UtilsException("Rilevata precedente esecuzione di 'load config' fallita: "+prepareConfigError);
+    	}
+    	if(prepareDeleteError!=null) {
+    		throw new UtilsException("Rilevata precedente esecuzione di 'delete config' fallita: "+prepareDeleteError);
+    	}
+    	if(vaultSecretError!=null) {
+    		throw new UtilsException("Rilevata precedente esecuzione del vault fallita: "+vaultSecretError);
+    	}
     }
     
     
-    // LOADER
     
-    public static void prepareConfig(boolean byok, String policy, String testBundle) throws UtilsException, HttpUtilsException, IOException {
+    // LOADER
+        
+    private static String prepareConfigError = null;
+    public static String getPrepareConfigError() {
+		return prepareConfigError;
+	}
+	public static void prepareConfig(boolean byok, String policy, String testBundle) throws UtilsException, HttpUtilsException, IOException {
 
+		checkExternalToolError();
+		
         org.slf4j.Logger logger = logCore!=null ? logCore : LoggerWrapperFactory.getLogger(ConfigLoader.class);
 
         String configLoaderPath = prop.getProperty(CONFIG_LOADER_PATH);
@@ -217,17 +333,32 @@ public class ConfigLoader {
         	disableByokConfigLoader();
         }
         
+        File log = new File(configLoaderPath + File.separatorChar + "log"+ File.separatorChar + "govway_cli_configLoader.log");
+        File logSql = new File(configLoaderPath + File.separatorChar + "log"+ File.separatorChar + "govway_cli_configLoader_sql.log");
+        File logAuditing = new File(configLoaderPath + File.separatorChar + "log"+ File.separatorChar + "govway_cli_configLoader_auditing.log");
+        
+        FileSystemUtilities.clearFile(log);
+        FileSystemUtilities.clearFile(logSql);
+        FileSystemUtilities.clearFile(logAuditing);
+        
         org.openspcoop2.utils.resources.ScriptInvoker scriptInvoker = new org.openspcoop2.utils.resources.ScriptInvoker(scriptPath);
         scriptInvoker.run(new File(configLoaderPath), testsuiteBundle);
         
-        logScriptExit(logger, scriptInvoker);
+        prepareConfigError = logScriptExit(logger, scriptInvoker, 
+        		log, logSql, logAuditing);
         
         // Dopo aver caricato lo script, resetto le cache
         resetCache();
     }
     
-    public static void deleteConfig(String testBundle) throws UtilsException {
+	private static String prepareDeleteError = null;
+    public static String getPrepareDeleteError() {
+		return prepareDeleteError;
+	}
+	public static void deleteConfig(String testBundle) throws UtilsException, IOException {
     	
+		checkExternalToolError();
+		
         String configLoaderPath = prop.getProperty(CONFIG_LOADER_PATH);
         String scriptPath = configLoaderPath + File.separatorChar + (SystemUtils.IS_OS_WINDOWS ? "delete.cmd" : "delete.sh");
         String trasparenteBundle = new File(testBundle).getAbsolutePath();
@@ -238,11 +369,27 @@ public class ConfigLoader {
         logDebug(logger,"Config loader path: " + configLoaderPath);
         logDebug(logger,"trasparente bundle path: " + trasparenteBundle);
         logDebug(logger,"Elimino la configurazione su govway...");
-                
+        
+        enableByokConfigLoader(DEFAULT_POLICY);
+        
+        String logPropsPath = configLoaderPath + File.separatorChar + PROPERTIES_DIR + File.separatorChar + "config_loader.cli.log4j2.properties";
+        setLog(100, logPropsPath);
+        logPropsPath = configLoaderPath + File.separatorChar + PROPERTIES_DIR + File.separatorChar + "console.audit.log4j2.properties";
+        setLog(100, logPropsPath);
+        
+        File log = new File(configLoaderPath + File.separatorChar + "log"+ File.separatorChar + "govway_cli_configLoader.log");
+        File logSql = new File(configLoaderPath + File.separatorChar + "log"+ File.separatorChar + "govway_cli_configLoader_sql.log");
+        File logAuditing = new File(configLoaderPath + File.separatorChar + "log"+ File.separatorChar + "govway_cli_configLoader_auditing.log");
+        
+        FileSystemUtilities.clearFile(log);
+        FileSystemUtilities.clearFile(logSql);
+        FileSystemUtilities.clearFile(logAuditing);
+        
         org.openspcoop2.utils.resources.ScriptInvoker scriptInvoker = new org.openspcoop2.utils.resources.ScriptInvoker(scriptPath);
         scriptInvoker.run(new File(configLoaderPath), trasparenteBundle);
         
-        logScriptExit(logger, scriptInvoker);
+        prepareDeleteError = logScriptExit(logger, scriptInvoker, 
+        		log, logSql, logAuditing);
 
     }
     
@@ -257,8 +404,14 @@ public class ConfigLoader {
     
     // VAULT
     
-    public static void vaultSecrets(String srcPolicy, String destPolicy, boolean report) throws UtilsException, HttpUtilsException {
+    private static String vaultSecretError = null;
+    public static String getVaultSecretError() {
+		return vaultSecretError;
+	}
+    public static void vaultSecrets(String srcPolicy, String destPolicy, boolean report) throws UtilsException, HttpUtilsException, FileNotFoundException {
 
+    	checkExternalToolError();
+    	
         org.slf4j.Logger logger = logCore!=null ? logCore : LoggerWrapperFactory.getLogger(ConfigLoader.class);
 
         String vaultPath = prop.getProperty(VAULT_PATH);
@@ -279,6 +432,9 @@ public class ConfigLoader {
         }
         logDebug(logger,"Vault report '"+((reportPath!=null) ? reportPath.getAbsolutePath() : "none")+"'");
         
+        String logPropsPath = vaultPath + File.separatorChar + PROPERTIES_DIR + File.separatorChar + "govway_vault.cli.log4j2.properties";
+        setLog(100, logPropsPath);
+        
         List<String> params = new ArrayList<>();
         if(srcPolicy!=null) {
         	params.add(SECURITY_IN+"="+srcPolicy);
@@ -296,10 +452,15 @@ public class ConfigLoader {
         	params.add(REPORT+"="+reportPath.getAbsolutePath());
         }
         
-        org.openspcoop2.utils.resources.ScriptInvoker scriptInvoker = new org.openspcoop2.utils.resources.ScriptInvoker(scriptPath);
+        File log = new File(vaultPath + File.separatorChar + "log"+ File.separatorChar + "govway_cli_vault.log");
+         
+        FileSystemUtilities.clearFile(log);
+        
+        FileSystemUtilities.clearFile(log);org.openspcoop2.utils.resources.ScriptInvoker scriptInvoker = new org.openspcoop2.utils.resources.ScriptInvoker(scriptPath);
         scriptInvoker.run(new File(vaultPath), params.toArray(new String[1]));
         
-        logScriptExit(logger, scriptInvoker);
+        vaultSecretError = logScriptExit(logger, scriptInvoker,
+        		log);
         
         // Dopo attuato l'operazione, resetto le cache
         resetCache();
@@ -308,6 +469,26 @@ public class ConfigLoader {
     
     
     // Utilities
+    
+    private static void setLog(int size, String path) throws FileNotFoundException, UtilsException {
+    	String logPath = new File(path).getAbsolutePath();
+    	String contentLog = org.openspcoop2.utils.resources.FileSystemUtilities.readFile(logPath);
+    	if(isOrigSize(contentLog)) {
+    		contentLog = setSize(size, contentLog);
+    		org.openspcoop2.utils.resources.FileSystemUtilities.deleteFile(new File(path));
+    		org.openspcoop2.utils.resources.FileSystemUtilities.writeFile(path, contentLog.getBytes());
+    	}
+    }
+    private static String setSize(int size, String contentLog) {
+    	String sizeString = "="+size+"MB";
+    	contentLog = contentLog.replace("=1MB", sizeString);
+    	contentLog = contentLog.replace("= 1MB", sizeString);
+    	contentLog = contentLog.replace(" = 1MB", sizeString);
+    	return contentLog;
+    }
+    private static boolean isOrigSize(String contentLog) {
+    	return contentLog.contains("=1MB") || contentLog.contains("= 1MB") || contentLog.contains(" = 1MB");
+    }
     
     private static void setConf(boolean disable, String policy, String tool) throws IOException, UtilsException {
     	
@@ -329,7 +510,7 @@ public class ConfigLoader {
     	org.openspcoop2.utils.resources.FileSystemUtilities.writeFile(byokFilePath, contentByok.getBytes());
     	
     	String configLoaderPath = prop.getProperty(CONFIG_LOADER_PATH);
-        String scriptProperties = configLoaderPath + File.separatorChar + "properties" + File.separatorChar  + tool+".cli.properties";
+        String scriptProperties = configLoaderPath + File.separatorChar + PROPERTIES_DIR + File.separatorChar  + tool+".cli.properties";
         Properties p = new Properties();
         String content = org.openspcoop2.utils.resources.FileSystemUtilities.readFile(scriptProperties);
         try(ByteArrayInputStream bin = new ByteArrayInputStream(content.getBytes())){

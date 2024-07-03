@@ -159,7 +159,7 @@
 
 	<target name="delete_config">
 		<echo message="Eliminazione configurazione in corso ..." />
-		<java classname="org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader" fork="true">
+		<java classname="org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader" fork="true" failonerror="true">
 			<arg value="false" />
 			<classpath>
 				<path refid="vault_testsuite" />
@@ -171,7 +171,7 @@
 
 	<target name="load_config">
 		<echo message="Caricamento configurazione in corso (delete) ..." />
-		<java classname="org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader" fork="true">
+		<java classname="org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader" fork="true" failonerror="true">
 			<arg value="false" />
 		        <classpath>
 		                <path refid="vault_testsuite" />
@@ -179,7 +179,7 @@
 		        </classpath>
 		</java>
 		<echo message="Caricamento configurazione in corso (create) ..." />
-		<java classname="org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader" fork="true">
+		<java classname="org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader" fork="true" failonerror="true">
 			<arg value="true" />
 		        <classpath>
 		                <path refid="vault_testsuite" />
@@ -220,7 +220,7 @@
 			<then>
 
 				<echo message="Caricamento configurazione in corso (delete) ..." />
-				<java classname="org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader" fork="true">
+				<java classname="org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader" fork="true" failonerror="true">
 					<arg value="false" />
 					<classpath>
 						<path refid="vault_testsuite" />
@@ -229,7 +229,7 @@
 				</java>
 
 				<echo message="Caricamento configurazione in corso (create) ..." />
-				<java classname="org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader" fork="true">
+				<java classname="org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader" fork="true" failonerror="true">
 					<arg value="true" />
 					<classpath>
 						<path refid="vault_testsuite" />
@@ -278,7 +278,7 @@
 			<equals arg1="${deleteEnabled}" arg2="true"/>
 			<then>
 				<echo message="Eliminazione configurazione in corso ..." />
-				<java classname="org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader" fork="true">
+				<java classname="org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader" fork="true" failonerror="true">
 					<arg value="false" />
 					<classpath>
 						<path refid="vault_testsuite" />

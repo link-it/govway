@@ -103,6 +103,8 @@ public class Loader {
 	
 	private static ArchiveMode mode = org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_ARCHIVE_MODE;
 		
+	public static final String DS_JNDI_NAME = "org.govway.datasource.console";
+	
 	public static void main(String[] args) throws CoreException, SQLException {
 		
 		Connection connectionSQL = null;
@@ -203,11 +205,10 @@ public class Loader {
 				connectionSQL = DriverManager.getConnection(connectionURL);
 			}
 			
-			String jndiName = "org.govway.datasource.console";
 			DataSource ds = new SingleConnectionDataSource(connectionSQL, true); 
 			System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
 			System.setProperty(Context.URL_PKG_PREFIXES, "org.apache.naming");
-			bindDatasource(ds, jndiName);
+			bindDatasource(ds, DS_JNDI_NAME);
 			
 			logCoreDebug("Inizializzazione connessione database terminata");
 			
@@ -219,10 +220,10 @@ public class Loader {
 			
 			initExtendedInfoManager();
 			
-			initCorePluginLoader(configPdD, loaderProperties);
+			initCorePluginLoader(configPdD, loaderProperties, databaseProperties);
 			
 			Properties p = new Properties();
-			p.put("dataSource", jndiName);
+			p.put("dataSource", DS_JNDI_NAME);
 			p.put("tipoDatabase", tipoDatabase);
 			if(!org.openspcoop2.web.ctrlstat.config.DatasourceProperties.initialize(p,logCore)){
 				throw new CoreException("Inizializzazione fallita");
@@ -525,11 +526,11 @@ public class Loader {
 			throw new CoreException("Inizializzazione [ExtendedInfoManager] fallita",e);
 		}
 	}
-	private static void initCorePluginLoader(ConfigurazionePdD configPdD, LoaderProperties loaderProperties) throws CoreException {
+	private static void initCorePluginLoader(ConfigurazionePdD configPdD, LoaderProperties loaderProperties, LoaderDatabaseProperties databaseProperties) throws CoreException {
 		try{
 			CorePluginLoader.initialize(configPdD.getLoader(), logSql,
 					PluginLoader.class,
-					new LoaderRegistroPluginsService(logSql),
+					new LoaderRegistroPluginsService(logSql, databaseProperties),
 					loaderProperties.getPluginSeconds());
 		}catch(Exception e){
 			throw new CoreException("Inizializzazione [PluginManager] fallita",e);

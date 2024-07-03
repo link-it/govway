@@ -22,8 +22,9 @@ package org.openspcoop2.pdd.config.loader.cli;
 import java.sql.Connection;
 import java.util.Properties;
 
+import javax.naming.Context;
+
 import org.openspcoop2.core.commons.CoreException;
-import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.config.RegistroPlugins;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
@@ -45,46 +46,55 @@ public class LoaderRegistroPluginsService implements IRegistroPluginsReader {
 	
 	private DriverConfigurazioneDB driverConfigDB = null;
 		
-	public LoaderRegistroPluginsService(Logger log){
+	public LoaderRegistroPluginsService(Logger log, LoaderDatabaseProperties databaseProperties){
 		try{
-			this.initEngine(null, null, log);
+			this.initEngine(null, databaseProperties, null, log);
 			
 		}catch(Exception e){
 			String msgError = ERROR_PREFIX + e.getMessage();
 			log.error(msgError,e);
 		}
 	}
-	public LoaderRegistroPluginsService(Connection con, boolean autoCommit, Logger log){
-		this(con, autoCommit, null, log);
+	public LoaderRegistroPluginsService(Connection con, boolean autoCommit, LoaderDatabaseProperties databaseProperties, Logger log){
+		try{
+			if(autoCommit) {
+				// nop
+			}
+			this.initEngine(con, databaseProperties, null, log);
+		}catch(Exception e){
+			log.error(ERROR_PREFIX + e.getMessage(),e);
+		}
 	}
 	public LoaderRegistroPluginsService(Connection con, boolean autoCommit, ServiceManagerProperties serviceManagerProperties, Logger log){
 		try{
 			if(autoCommit) {
 				// nop
 			}
-			this.initEngine(con, serviceManagerProperties, log);
+			this.initEngine(con, null, serviceManagerProperties, log);
 		}catch(Exception e){
 			log.error(ERROR_PREFIX + e.getMessage(),e);
 		}
 	}
-	private void initEngine(Connection con, ServiceManagerProperties serviceManagerProperties, Logger log) {
+	private void initEngine(Connection con, LoaderDatabaseProperties databaseProperties, ServiceManagerProperties serviceManagerProperties, Logger log) {
 		try{
 			String tipoDatabase = null;
 			if(serviceManagerProperties!=null) {
 				tipoDatabase = serviceManagerProperties.getDatabaseType();
 			}
 			else {
-				tipoDatabase = DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+				tipoDatabase = databaseProperties.getTipoDatabase();
 			}
 			
 			if(con!=null) {
 				this.driverConfigDB = new DriverConfigurazioneDB(con, log, tipoDatabase);
 			}
 			else {
-				String datasourceJNDIName = DAOFactoryProperties.getInstance(log).getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
-				Properties datasourceJNDIContext = DAOFactoryProperties.getInstance(log).getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
-	
-				this.driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
+				
+				Properties datasourceJNDIContext = new Properties();
+				datasourceJNDIContext.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
+				datasourceJNDIContext.setProperty(Context.URL_PKG_PREFIXES, "org.apache.naming");
+				
+				this.driverConfigDB = new DriverConfigurazioneDB(Loader.DS_JNDI_NAME,datasourceJNDIContext, log, tipoDatabase);
 			}
 
 		}catch(Exception e){
