@@ -7,8 +7,6 @@ Lo script prende come parametro un boolean opzionale che indica se bisogna fare 
 
 ATTENZIONE: Eseguire l'installazione in modalita' release incrementa il Minor Version e tutte le installazioni SNAPSHOT successive saranno relative al nuovo valore di Minor Version.
 
-NOTA: Utilizzare maven v2.x
-
 Installazione dei jar in modalita' SNAPSHOT:
 
 sh openspcoop2_jars_installer.sh hostnameMvnDeployLink [true]

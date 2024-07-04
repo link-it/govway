@@ -21,6 +21,8 @@ package org.openspcoop2.utils.jdbc;
 
 
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URI;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,7 +34,6 @@ import java.util.Date;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.sql.SQLQueryObjectException;
 
 /**
  * JDBCParameterUtilities
@@ -46,22 +47,22 @@ public class JDBCParameterUtilities {
 	private TipiDatabase tipoDatabase = null;
 	private IJDBCAdapter jdbcAdapter = null;
 	
-	public JDBCParameterUtilities(TipiDatabase tipoDatabaseOpenSPCoop2) throws SQLQueryObjectException, JDBCAdapterException{
+	public JDBCParameterUtilities(TipiDatabase tipoDatabaseOpenSPCoop2) throws JDBCAdapterException{
 		this.tipoDatabase = tipoDatabaseOpenSPCoop2;
 		this.jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDatabase.getNome());
 	}
 	
 	
-	public void setParameter(PreparedStatement pstmt,int index,Object value, Class<?> type) throws SQLException, JDBCAdapterException, UtilsException{
+	public void setParameter(PreparedStatement pstmt,int index,Object value, Class<?> type) throws SQLException, UtilsException{
 		
-		//System.out.println("SET PARAMETER VALUE["+value+"] TYPE["+type.getName()+"]");
+		/**System.out.println("SET PARAMETER VALUE["+value+"] TYPE["+type.getName()+"]");*/
 		
 		if(type.isAssignableFrom(String.class)){
 			String valueWrapped = null;
-			if(value!=null && value instanceof String){
+			if(value instanceof String){
 				valueWrapped = (String) value;
 			}
-			else if(value!=null && value instanceof Character){
+			else if(value instanceof Character){
 				valueWrapped = ((Character)value).charValue()+"";
 			}
 			else if(value!=null){
@@ -74,26 +75,8 @@ public class JDBCParameterUtilities {
 			}
 		}
 		
-		else if(type.isAssignableFrom(Character.class)){
-			Character valueWrapped = null;
-			String charValue = null;
-			if(value!=null){
-				valueWrapped = (Character) value;
-				char charPrimitiveValue = valueWrapped.charValue();
-				charValue = valueWrapped.charValue()+"";
-				if(charPrimitiveValue==0){ // == ''
-					// ERROR: invalid byte sequence for encoding "UTF8": 0x00
-					// Postgresql non supporta il carattere 'vuoto'. Si deve usare un null value
-					charValue = null;
-				}
-			}
-			if(charValue!=null){
-				pstmt.setString(index, charValue );
-			}else{
-				pstmt.setNull(index, java.sql.Types.VARCHAR);
-			}
-		}
-		else if(type.isAssignableFrom(char.class)){
+		else if(type.isAssignableFrom(Character.class) ||
+				type.isAssignableFrom(char.class)){
 			Character valueWrapped = null;
 			String charValue = null;
 			if(value!=null){
@@ -113,7 +96,8 @@ public class JDBCParameterUtilities {
 			}
 		}
 		
-		else if(type.isAssignableFrom(Boolean.class)){
+		else if(type.isAssignableFrom(Boolean.class) ||
+				type.isAssignableFrom(boolean.class)){
 			if(value!=null){
 				Boolean valueWrapped = (Boolean) value;
 				pstmt.setBoolean(index, valueWrapped);
@@ -128,55 +112,22 @@ public class JDBCParameterUtilities {
 				}
 			}
 		}
-		else if(type.isAssignableFrom(boolean.class)){
-			if(value!=null){
-				Boolean valueWrapped = (Boolean) value;
-				pstmt.setBoolean(index, valueWrapped); 
-			}
-			else{
-				if(TipiDatabase.ORACLE.equals(this.tipoDatabase) ||
-						TipiDatabase.DB2.equals(this.tipoDatabase)){
-					pstmt.setNull(index, java.sql.Types.INTEGER);
-				}
-				else{
-					pstmt.setNull(index, java.sql.Types.BOOLEAN);
-				}
-			}
-		}
 		
-		else if(type.isAssignableFrom(Byte.class)){
+		else if(type.isAssignableFrom(Byte.class) ||
+				type.isAssignableFrom(byte.class)){
 			if(value!=null){
 				Byte valueWrapped = (Byte) value;
-				//pstmt.setByte(index, valueWrapped); tradotto come INT nel database
+				/**pstmt.setByte(index, valueWrapped); tradotto come INT nel database*/
 				pstmt.setInt(index, valueWrapped.intValue());
 			}
 			else{
-				//pstmt.setNull(index, java.sql.Types.BINARY);
+				/**pstmt.setNull(index, java.sql.Types.BINARY);*/
 				pstmt.setNull(index, java.sql.Types.INTEGER);
 			}
-		}
-		else if(type.isAssignableFrom(byte.class)){
-			if(value!=null){
-				Byte valueWrapped = (Byte) value;
-				//pstmt.setByte(index, valueWrapped); tradotto come INT nel database
-				pstmt.setInt(index, valueWrapped.intValue());
-			}
-			else{
-				//pstmt.setNull(index, java.sql.Types.BINARY);
-				pstmt.setNull(index, java.sql.Types.INTEGER);
-			}		
 		}
 		
-		else if(type.isAssignableFrom(Short.class)){
-			if(value!=null){
-				Short valueWrapped = (Short) value;
-				pstmt.setShort(index, valueWrapped);
-			}
-			else{
-				pstmt.setNull(index, java.sql.Types.INTEGER);
-			}
-		}
-		else if(type.isAssignableFrom(short.class)){
+		else if(type.isAssignableFrom(Short.class) ||
+				type.isAssignableFrom(short.class)){
 			if(value!=null){
 				Short valueWrapped = (Short) value;
 				pstmt.setShort(index, valueWrapped);
@@ -186,16 +137,8 @@ public class JDBCParameterUtilities {
 			}
 		}
 		
-		else if(type.isAssignableFrom(Integer.class)){
-			if(value!=null){
-				Integer valueWrapped = (Integer) value;
-				pstmt.setInt(index, valueWrapped);
-			}
-			else{
-				pstmt.setNull(index, java.sql.Types.INTEGER);
-			}
-		}
-		else if(type.isAssignableFrom(int.class)){
+		else if(type.isAssignableFrom(Integer.class) ||
+				type.isAssignableFrom(int.class)){
 			if(value!=null){
 				Integer valueWrapped = (Integer) value;
 				pstmt.setInt(index, valueWrapped);
@@ -205,16 +148,8 @@ public class JDBCParameterUtilities {
 			}
 		}
 						
-		else if(type.isAssignableFrom(Long.class)){
-			if(value!=null){
-				Long valueWrapped = (Long) value;
-				pstmt.setLong(index, valueWrapped);
-			}
-			else{
-				pstmt.setNull(index, java.sql.Types.BIGINT);
-			}
-		}
-		else if(type.isAssignableFrom(long.class)){
+		else if(type.isAssignableFrom(Long.class) ||
+				type.isAssignableFrom(long.class)){
 			if(value!=null){
 				Long valueWrapped = (Long) value;
 				pstmt.setLong(index, valueWrapped);
@@ -224,26 +159,18 @@ public class JDBCParameterUtilities {
 			}
 		}
 		
-		else if(type.isAssignableFrom(Double.class)){
+		else if(type.isAssignableFrom(java.math.BigInteger.class) ){
 			if(value!=null){
-				Double valueWrapped = (Double) value;
-				pstmt.setDouble(index, valueWrapped);
+				java.math.BigInteger valueWrapped = (java.math.BigInteger) value;
+				pstmt.setLong(index, valueWrapped.longValue());
 			}
 			else{
-				pstmt.setNull(index, java.sql.Types.DOUBLE);
+				pstmt.setNull(index, java.sql.Types.BIGINT);
 			}
 		}
-		else if(type.isAssignableFrom(double.class)){
-			if(value!=null){
-				Double valueWrapped = (Double) value;
-				pstmt.setDouble(index, valueWrapped);
-			}
-			else{
-				pstmt.setNull(index, java.sql.Types.DOUBLE);
-			}
-		}
-		
-		else if(type.isAssignableFrom(Float.class)){
+
+		else if(type.isAssignableFrom(Float.class) ||
+				type.isAssignableFrom(float.class)){
 			if(value!=null){
 				Float valueWrapped = (Float) value;
 				pstmt.setFloat(index, valueWrapped);
@@ -252,10 +179,22 @@ public class JDBCParameterUtilities {
 				pstmt.setNull(index, java.sql.Types.FLOAT);
 			}
 		}
-		else if(type.isAssignableFrom(float.class)){
+		
+		else if(type.isAssignableFrom(Double.class) ||
+				type.isAssignableFrom(double.class)){
 			if(value!=null){
-				Float valueWrapped = (Float) value;
-				pstmt.setFloat(index, valueWrapped);
+				Double valueWrapped = (Double) value;
+				pstmt.setDouble(index, valueWrapped);
+			}
+			else{
+				pstmt.setNull(index, java.sql.Types.DOUBLE);
+			}
+		}
+				
+		else if(type.isAssignableFrom(java.math.BigDecimal.class)){
+			if(value!=null){
+				java.math.BigDecimal valueWrapped = (java.math.BigDecimal) value;
+				pstmt.setDouble(index, valueWrapped.doubleValue());
 			}
 			else{
 				pstmt.setNull(index, java.sql.Types.FLOAT);
@@ -324,7 +263,7 @@ public class JDBCParameterUtilities {
 		}
 		
 		else{
-			throw new SQLException("Tipo di oggetto (posizione "+index+") non gestito: "+type.getClass().getName()+" - "+type);
+			throw new SQLException("Tipo di oggetto (posizione "+index+") "+"non gestito: "+type.getClass().getName()+" - "+type);
 		}
 				
 	}
@@ -371,17 +310,29 @@ public class JDBCParameterUtilities {
 	public Long readLongParameter(ResultSet rs,String name) throws SQLException, UtilsException{
 		return (Long) readParameter(rs, name, Long.class);
 	}
-	public Double readDoubleParameter(ResultSet rs,int index) throws SQLException, UtilsException{
-		return (Double) readParameter(rs, index, Double.class);
+	public BigInteger readBigIntegerParameter(ResultSet rs,int index) throws SQLException, UtilsException{
+		return (BigInteger) readParameter(rs, index, BigInteger.class);
 	}
-	public Double readDoubleParameter(ResultSet rs,String name) throws SQLException, UtilsException{
-		return (Double) readParameter(rs, name, Double.class);
+	public BigInteger readBigIntegerParameter(ResultSet rs,String name) throws SQLException, UtilsException{
+		return (BigInteger) readParameter(rs, name, BigInteger.class);
 	}
 	public Float readFloatParameter(ResultSet rs,int index) throws SQLException, UtilsException{
 		return (Float) readParameter(rs, index, Float.class);
 	}
 	public Float readFloatParameter(ResultSet rs,String name) throws SQLException, UtilsException{
 		return (Float) readParameter(rs, name, Float.class);
+	}
+	public Double readDoubleParameter(ResultSet rs,int index) throws SQLException, UtilsException{
+		return (Double) readParameter(rs, index, Double.class);
+	}
+	public Double readDoubleParameter(ResultSet rs,String name) throws SQLException, UtilsException{
+		return (Double) readParameter(rs, name, Double.class);
+	}
+	public BigDecimal readBigDecimalParameter(ResultSet rs,int index) throws SQLException, UtilsException{
+		return (BigDecimal) readParameter(rs, index, BigDecimal.class);
+	}
+	public BigDecimal readBigDecimalParameter(ResultSet rs,String name) throws SQLException, UtilsException{
+		return (BigDecimal) readParameter(rs, name, BigDecimal.class);
 	}
 	public Date readDateParameter(ResultSet rs,int index) throws SQLException, UtilsException{
 		return (Date) readParameter(rs, index, Date.class);
@@ -457,10 +408,9 @@ public class JDBCParameterUtilities {
 			}else{
 				booleanValue = rs.getBoolean(index);
 			}
-			if(type.toString().equals(Boolean.class.toString())){
-				if(rs.wasNull()){
-					return null;
-				}
+			if(type.toString().equals(Boolean.class.toString()) &&
+				rs.wasNull()){
+				return null;
 			}
 			return booleanValue;
 		}
@@ -478,10 +428,9 @@ public class JDBCParameterUtilities {
 				JDBCDefaultForXSDType.FORCE_ZERO_AS_NULL.equals(jdbcDefaultForXSDType)){
 				return null;
 			}
-			if(type.toString().equals(Byte.class.toString())){
-				if(rs.wasNull()){
-					return null;
-				}
+			if(type.toString().equals(Byte.class.toString()) &&
+				rs.wasNull()){
+				return null;
 			}
 			return byteValue;
 		}
@@ -497,10 +446,9 @@ public class JDBCParameterUtilities {
 				JDBCDefaultForXSDType.FORCE_ZERO_AS_NULL.equals(jdbcDefaultForXSDType)){
 				return null;
 			}
-			if(type.toString().equals(Short.class.toString())){
-				if(rs.wasNull()){
-					return null;
-				}
+			if(type.toString().equals(Short.class.toString()) &&
+				rs.wasNull()){
+				return null;
 			}
 			return shortValue;
 		}
@@ -516,10 +464,9 @@ public class JDBCParameterUtilities {
 				JDBCDefaultForXSDType.FORCE_ZERO_AS_NULL.equals(jdbcDefaultForXSDType)){
 				return null;
 			}
-			if(type.toString().equals(Integer.class.toString())){
-				if(rs.wasNull()){
-					return null;
-				}
+			if(type.toString().equals(Integer.class.toString()) &&
+				rs.wasNull()){
+				return null;
 			}
 			return intValue;
 		}
@@ -535,31 +482,28 @@ public class JDBCParameterUtilities {
 				JDBCDefaultForXSDType.FORCE_ZERO_AS_NULL.equals(jdbcDefaultForXSDType)){
 				return null;
 			}
-			if(type.toString().equals(Long.class.toString())){
-				if(rs.wasNull()){
-					return null;
-				}
+			if(type.toString().equals(Long.class.toString()) &&
+				rs.wasNull()){
+				return null;
 			}
 			return longValue;
 		}
-		else if(type.toString().equals(Double.class.toString()) || type.toString().equals(double.class.toString())){
-			double doubleValue;
+		else if(type.toString().equals(BigInteger.class.toString())){
+			long longValue;
 			if(name!=null){
-				doubleValue = rs.getDouble(name);
+				longValue = rs.getLong(name);
 			}else{
-				doubleValue = rs.getDouble(index);
+				longValue = rs.getLong(index);
 			}
-			if(doubleValue==0.0d && 
+			if(longValue==0L && 
 				jdbcDefaultForXSDType!=null && 
 				JDBCDefaultForXSDType.FORCE_ZERO_AS_NULL.equals(jdbcDefaultForXSDType)){
 				return null;
 			}
-			if(type.toString().equals(Double.class.toString())){
-				if(rs.wasNull()){
-					return null;
-				}
+			if(rs.wasNull()){
+				return null;
 			}
-			return doubleValue;
+			return BigInteger.valueOf(longValue);
 		}
 		else if(type.toString().equals(Float.class.toString()) || type.toString().equals(float.class.toString())){
 			float floatValue;
@@ -573,12 +517,46 @@ public class JDBCParameterUtilities {
 				JDBCDefaultForXSDType.FORCE_ZERO_AS_NULL.equals(jdbcDefaultForXSDType)){
 				return null;
 			}
-			if(type.toString().equals(Float.class.toString())){
-				if(rs.wasNull()){
-					return null;
-				}
+			if(type.toString().equals(Float.class.toString()) &&
+				rs.wasNull()){
+				return null;
 			}
 			return floatValue;
+		}
+		else if(type.toString().equals(Double.class.toString()) || type.toString().equals(double.class.toString())){
+			double doubleValue;
+			if(name!=null){
+				doubleValue = rs.getDouble(name);
+			}else{
+				doubleValue = rs.getDouble(index);
+			}
+			if(doubleValue==0.0d && 
+				jdbcDefaultForXSDType!=null && 
+				JDBCDefaultForXSDType.FORCE_ZERO_AS_NULL.equals(jdbcDefaultForXSDType)){
+				return null;
+			}
+			if(type.toString().equals(Double.class.toString()) &&
+				rs.wasNull()){
+				return null;
+			}
+			return doubleValue;
+		}
+		else if(type.toString().equals(BigDecimal.class.toString())){
+			double doubleValue;
+			if(name!=null){
+				doubleValue = rs.getDouble(name);
+			}else{
+				doubleValue = rs.getDouble(index);
+			}
+			if(doubleValue==0.0d && 
+				jdbcDefaultForXSDType!=null && 
+				JDBCDefaultForXSDType.FORCE_ZERO_AS_NULL.equals(jdbcDefaultForXSDType)){
+				return null;
+			}
+			if(rs.wasNull()){
+				return null;
+			}
+			return BigDecimal.valueOf(doubleValue);
 		}
 		else if(type.toString().equals(Date.class.toString())){
 			Timestamp ts = null;
@@ -632,12 +610,12 @@ public class JDBCParameterUtilities {
 			}
 		}
 		else if(type.isAssignableFrom(byte[].class)){
-//			if(name!=null){
-//				return this.jdbcAdapter.getBinaryData(rs, name);
-//			}
-//			else{
-//				return this.jdbcAdapter.getBinaryData(rs, index);
-//			}
+			/**if(name!=null){
+				return this.jdbcAdapter.getBinaryData(rs, name);
+			}
+			else{
+				return this.jdbcAdapter.getBinaryData(rs, index);
+			}*/
 			// OP-686: si preferisce il metodo getBinaryStream per i motivi descritti nell'Issue
 			InputStream binaryStream = null;
             if(name!=null){
@@ -652,8 +630,8 @@ public class JDBCParameterUtilities {
             try {
             	return Utilities.getAsByteArray(binaryStream, false); // non lancio eccezione se l'input stream ritornato e' vuoto (succede in caso si salva una stringa vuota su alcuni database)
             } finally {
-            	if(binaryStream != null) {
-            		try {binaryStream.close();} catch(Exception e) {}
+            	try {binaryStream.close();} catch(Exception e) {
+            		// ignore
             	}
             }
 		}
