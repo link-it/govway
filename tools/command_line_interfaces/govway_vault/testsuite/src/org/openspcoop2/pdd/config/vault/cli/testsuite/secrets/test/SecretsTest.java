@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -130,6 +129,12 @@ public class SecretsTest extends ConfigLoader {
 	public static final String API_TOKEN_POLICY_VALIDAZIONE_OP_OTHER_PROPERTIES = "Vault-OtherProperties"; // non invocata realmente
 	public static final String API_TOKEN_POLICY_VALIDAZIONE_OP_OTHER_PROPERTIES_2 = "Vault-OtherProperties2"; // non invocata realmente
 	
+	public static final String API_TOKEN_POLICY_NEGOZIAZIONE = "TestVaultNegoziazioneAuthorizationServer";
+	public static final String API_TOKEN_POLICY_NEGOZIAZIONE_OP_TLS = "Vault-TLS";
+	public static final String API_TOKEN_POLICY_NEGOZIAZIONE_OP_SIGNED_JWT = "NegoziazioneSignedJWT";
+	public static final String API_TOKEN_POLICY_NEGOZIAZIONE_OP_OTHER_PROPERTIES = "Vault-OtherProperties"; // non invocata realmente
+	public static final String API_TOKEN_POLICY_NEGOZIAZIONE_OP_OTHER_PROPERTIES_2 = "Vault-OtherProperties2"; // non invocata realmente
+	public static final String API_TOKEN_POLICY_NEGOZIAZIONE_OP_OTHER_PROPERTIES_3 = "Vault-OtherProperties3"; // non invocata realmente
 	
 	private static final String SA_PREFIX = "SA:";
 	private static final String CONNETTORE_PREFIX = "Connettore:";
@@ -638,6 +643,14 @@ public class SecretsTest extends ConfigLoader {
 		
 		
 		
+		logCoreInfo(prefixLogErogazione+API_TOKEN_POLICY_NEGOZIAZIONE_OP_TLS);		
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_TOKEN_POLICY_NEGOZIAZIONE, API_TOKEN_POLICY_NEGOZIAZIONE_OP_TLS);
+		
+		logCoreInfo(prefixLogErogazione+API_TOKEN_POLICY_NEGOZIAZIONE_OP_SIGNED_JWT);		
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_TOKEN_POLICY_NEGOZIAZIONE, API_TOKEN_POLICY_NEGOZIAZIONE_OP_SIGNED_JWT);
+		
+		
+		
 		// proprieta
 		
 		prefixLogErogazione = "invocazioneGovWay erogazione API:"+API_PROPRIETA + operazione;
@@ -1069,7 +1082,7 @@ public class SecretsTest extends ConfigLoader {
 		verificheDatabaseInChiaroTokenPolicyValidazione();
 		
 		// -- tokenPolicy negoziazione -- 
-		//verificheDatabaseInChiaroTokenPolicyNegoziazione();
+		verificheDatabaseInChiaroTokenPolicyNegoziazione();
 		
 		// -- attribute authority -- 
 		//verificheDatabaseInChiaroAttributeAuthority();
@@ -1141,6 +1154,71 @@ public class SecretsTest extends ConfigLoader {
 		assertTrue(getMessageExpectedEmptyOrNull(TOKEN_POLICY_VALIDAZIONE_PREFIX+nomePolicy+NOME_PROPRIETA+pName, vList), 
 				expected);
 	}
+	
+	private void verificheDatabaseInChiaroTokenPolicyNegoziazione() throws UtilsException {
+		
+		Map<String, String> verifiche = new HashMap<>();
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD, STORE_PASSWORD_OPENSPCOOP); 
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD, STORE_PASSWORD_OPENSPCOOP_JKS);
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD, STORE_PASSWORD_OPENSPCOOP);
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroTokenPolicyNegoziazione(entry, API_TOKEN_POLICY_NEGOZIAZIONE_OP_TLS);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD, PASSWORD_123456); 
+
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroTokenPolicyNegoziazione(entry, "Vault-"+API_TOKEN_POLICY_NEGOZIAZIONE_OP_SIGNED_JWT);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD, "123proxy"); 
+		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_PASSWORD, "123456basic"); 
+		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_PASSWORD, "passwordOwnerCredentials"); 
+
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroTokenPolicyNegoziazione(entry, API_TOKEN_POLICY_NEGOZIAZIONE_OP_OTHER_PROPERTIES);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET, "secretSimmetrico"); 
+
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroTokenPolicyNegoziazione(entry, API_TOKEN_POLICY_NEGOZIAZIONE_OP_OTHER_PROPERTIES_2);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_AUTH_BEARER_TOKEN, "TOKEN-BEARER"); 
+
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroTokenPolicyNegoziazione(entry, API_TOKEN_POLICY_NEGOZIAZIONE_OP_OTHER_PROPERTIES_3);
+		}
+		
+	}
+	private void verificheDatabaseInChiaroTokenPolicyNegoziazione(Entry<String, String> entry, String nomePolicy) throws UtilsException {
+		String pName = entry.getKey();
+		
+		String vAtteso = entry.getValue();
+		List<String> vList = ConfigLoader.dbUtils.getTokenPolicyNegoziazioneValue(pName, nomePolicy);
+		boolean expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(TOKEN_POLICY_NEGOZIAZIONE_PREFIX+nomePolicy+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			assertEquals(getMessageExpected(TOKEN_POLICY_NEGOZIAZIONE_PREFIX+nomePolicy+NOME_PROPRIETA+pName, v, vAtteso), 
+					vAtteso, v);
+		}
+		
+		vList = ConfigLoader.dbUtils.getTokenPolicyNegoziazioneEncValue(pName, nomePolicy);
+		expected = vList==null || vList.isEmpty() || vList.get(0)==null;
+		assertTrue(getMessageExpectedEmptyOrNull(TOKEN_POLICY_VALIDAZIONE_PREFIX+nomePolicy+NOME_PROPRIETA+pName, vList), 
+				expected);
+	}
+	
+	
+
 	
 	
 	
@@ -1758,7 +1836,7 @@ public class SecretsTest extends ConfigLoader {
 		verificheDatabaseProprietaCifrateTokenPolicyValidazione(prefix);
 		
 		// -- tokenPolicy negoziazione -- 
-		//verificheDatabaseProprietaCifrateTokenPolicyNegoziazione(prefix);
+		verificheDatabaseProprietaCifrateTokenPolicyNegoziazione(prefix);
 		
 		// -- attribute authority -- 
 		//verificheDatabaseProprietaCifrateAttributeAuthority(prefix);
@@ -1831,6 +1909,73 @@ public class SecretsTest extends ConfigLoader {
 		for (String v : vList) {
 			expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
 			assertTrue(getMessageExpectedStartsWith(TOKEN_POLICY_VALIDAZIONE_PREFIX+nomePolicy+NOME_PROPRIETA+pName, v, prefix), 
+					expected);
+		}
+		
+	}
+	
+	private void verificheDatabaseProprietaCifrateTokenPolicyNegoziazione(String prefix) throws UtilsException {
+		
+		Map<String, String> verifiche = new HashMap<>();
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD, STORE_PASSWORD_OPENSPCOOP); 
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD, STORE_PASSWORD_OPENSPCOOP_JKS);
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD, STORE_PASSWORD_OPENSPCOOP);
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseProprietaCifrateTokenPolicyNegoziazione(entry, API_TOKEN_POLICY_NEGOZIAZIONE_OP_TLS, prefix);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD, PASSWORD_123456); 
+
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseProprietaCifrateTokenPolicyNegoziazione(entry, "Vault-"+API_TOKEN_POLICY_NEGOZIAZIONE_OP_SIGNED_JWT, prefix);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD, "123proxy"); 
+		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_PASSWORD, "123456basic"); 
+		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_PASSWORD, "passwordOwnerCredentials"); 
+
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseProprietaCifrateTokenPolicyNegoziazione(entry, API_TOKEN_POLICY_NEGOZIAZIONE_OP_OTHER_PROPERTIES, prefix);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET, "secretSimmetrico"); 
+
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseProprietaCifrateTokenPolicyNegoziazione(entry, API_TOKEN_POLICY_NEGOZIAZIONE_OP_OTHER_PROPERTIES_2, prefix);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_AUTH_BEARER_TOKEN, "TOKEN-BEARER"); 
+
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseProprietaCifrateTokenPolicyNegoziazione(entry, API_TOKEN_POLICY_NEGOZIAZIONE_OP_OTHER_PROPERTIES_3, prefix);
+		}
+		
+	}
+	private void verificheDatabaseProprietaCifrateTokenPolicyNegoziazione(Entry<String, String> entry, String nomePolicy, String prefix) throws UtilsException {
+		String pName = entry.getKey();
+		
+		List<String> vList = ConfigLoader.dbUtils.getTokenPolicyNegoziazioneValue(pName, nomePolicy);
+		boolean expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(TOKEN_POLICY_NEGOZIAZIONE_PREFIX+nomePolicy+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			assertEquals(getMessageExpected(TOKEN_POLICY_NEGOZIAZIONE_PREFIX+nomePolicy+NOME_PROPRIETA+pName, v, prefix), 
+					prefix, v);
+		}
+		
+		vList = ConfigLoader.dbUtils.getTokenPolicyNegoziazioneEncValue(pName, nomePolicy);
+		expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(TOKEN_POLICY_NEGOZIAZIONE_PREFIX+nomePolicy+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+			assertTrue(getMessageExpectedStartsWith(TOKEN_POLICY_NEGOZIAZIONE_PREFIX+nomePolicy+NOME_PROPRIETA+pName, v, prefix), 
 					expected);
 		}
 		
