@@ -71,6 +71,12 @@ public class SecretsTest extends ConfigLoader {
 	
 	private static final String PASSWORD_123456 = "123456";
 	
+	private static final String PASSWORD_123456_BASIC = "123456basic";
+	
+	private static final String PASSWORD_PROXY = "123proxy";
+	
+	private static final String TOKEN_BEARER = "TOKEN-BEARER";
+	
 	public static final String API_PROPRIETA = "VaultTestProprieta";
 	
 	private static final String OP_PROPRIETA_CONFIG = "config";
@@ -136,6 +142,13 @@ public class SecretsTest extends ConfigLoader {
 	public static final String API_TOKEN_POLICY_NEGOZIAZIONE_OP_OTHER_PROPERTIES_2 = "Vault-OtherProperties2"; // non invocata realmente
 	public static final String API_TOKEN_POLICY_NEGOZIAZIONE_OP_OTHER_PROPERTIES_3 = "Vault-OtherProperties3"; // non invocata realmente
 	
+	public static final String API_ATTRIBUTE_AUTHORITY = "TestAttributeAuthorityVault";
+	public static final String API_ATTRIBUTE_AUTHORITY_OP_TLS = "TLS-Trust-ServerAlias";
+	public static final String API_ATTRIBUTE_AUTHORITY_OP_JWS_REQUEST = "JWSRequest";
+	public static final String API_ATTRIBUTE_AUTHORITY_OP_JWS_RESPONSE = "JWSResponse";
+	public static final String API_ATTRIBUTE_AUTHORITY_OP_OTHER_PROPERTIES = "Vault-OtherProperties"; // non invocata realmente
+	public static final String API_ATTRIBUTE_AUTHORITY_OP_OTHER_PROPERTIES_2 = "Vault-OtherProperties2"; // non invocata realmente
+	
 	private static final String SA_PREFIX = "SA:";
 	private static final String CONNETTORE_PREFIX = "Connettore:";
 	
@@ -162,9 +175,9 @@ public class SecretsTest extends ConfigLoader {
 	private String getMessageExpectedStartsWith(String origine, String found, String expectedPrefix) {
 		return getMessagePrefix(origine, found)+" start with '"+expectedPrefix+"'";
 	}
-	private String getMessageExpectedNotDefined(String origine, String found) {
+	/**private String getMessageExpectedNotDefined(String origine, String found) {
 		return getMessagePrefix(origine, found)+" null or empty or -";
-	}
+	}*/
 	private String getMessageExpectedNotEmpty(String origine, List<String> found) {
 		return getMessagePrefix(origine, found!=null ? found.toString() : null)+" not empty";
 	}
@@ -642,13 +655,21 @@ public class SecretsTest extends ConfigLoader {
 		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_TOKEN_POLICY_VALIDAZIONE, API_TOKEN_POLICY_VALIDAZIONE_OP_FORWARD_JWE);
 		
 		
-		
 		logCoreInfo(prefixLogErogazione+API_TOKEN_POLICY_NEGOZIAZIONE_OP_TLS);		
 		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_TOKEN_POLICY_NEGOZIAZIONE, API_TOKEN_POLICY_NEGOZIAZIONE_OP_TLS);
 		
 		logCoreInfo(prefixLogErogazione+API_TOKEN_POLICY_NEGOZIAZIONE_OP_SIGNED_JWT);		
 		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_TOKEN_POLICY_NEGOZIAZIONE, API_TOKEN_POLICY_NEGOZIAZIONE_OP_SIGNED_JWT);
 		
+
+		logCoreInfo(prefixLogErogazione+API_ATTRIBUTE_AUTHORITY_OP_TLS);		
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_ATTRIBUTE_AUTHORITY, API_ATTRIBUTE_AUTHORITY_OP_TLS);
+		
+		logCoreInfo(prefixLogErogazione+API_ATTRIBUTE_AUTHORITY_OP_JWS_REQUEST);		
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_ATTRIBUTE_AUTHORITY, API_ATTRIBUTE_AUTHORITY_OP_JWS_REQUEST);
+		
+		logCoreInfo(prefixLogErogazione+API_ATTRIBUTE_AUTHORITY_OP_JWS_RESPONSE);		
+		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_ATTRIBUTE_AUTHORITY, API_ATTRIBUTE_AUTHORITY_OP_JWS_RESPONSE);
 		
 		
 		// proprieta
@@ -840,8 +861,8 @@ public class SecretsTest extends ConfigLoader {
 				null, v);
 		// keyStorePassword
 		v = ConfigLoader.dbUtils.getConnettoreCustomValue(nomeConnettore,  CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
-		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, "openspcoopjks"), 
-				"openspcoopjks", v);
+		assertEquals(getMessageExpected(CONNETTORE_PREFIX+nomeConnettore, v, STORE_PASSWORD_OPENSPCOOP_JKS), 
+				STORE_PASSWORD_OPENSPCOOP_JKS, v);
 		v = ConfigLoader.dbUtils.getConnettoreCustomEncValue(nomeConnettore,  CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 		assertEquals(getMessageExpectedNull(CONNETTORE_PREFIX+nomeConnettore, v), 
 				null, v);
@@ -1085,7 +1106,7 @@ public class SecretsTest extends ConfigLoader {
 		verificheDatabaseInChiaroTokenPolicyNegoziazione();
 		
 		// -- attribute authority -- 
-		//verificheDatabaseInChiaroAttributeAuthority();
+		verificheDatabaseInChiaroAttributeAuthority();
 		
 	}
 	private void verificheDatabaseInChiaroTokenPolicyValidazione() throws UtilsException {
@@ -1119,7 +1140,7 @@ public class SecretsTest extends ConfigLoader {
 		}
 		
 		verifiche = new HashMap<>();
-		verifiche.put(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD, "123proxy"); 
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD, PASSWORD_PROXY); 
 		verifiche.put(CostantiProprieta.POLICY_INTROSPECTION_AUTH_BASIC_PASSWORD, "123456basicintro"); 
 		verifiche.put(CostantiProprieta.POLICY_USER_INFO_AUTH_BASIC_PASSWORD, "123456basicuser"); 
 		
@@ -1175,8 +1196,8 @@ public class SecretsTest extends ConfigLoader {
 		}
 		
 		verifiche = new HashMap<>();
-		verifiche.put(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD, "123proxy"); 
-		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_PASSWORD, "123456basic"); 
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD, PASSWORD_PROXY); 
+		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_PASSWORD, PASSWORD_123456_BASIC); 
 		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_PASSWORD, "passwordOwnerCredentials"); 
 
 		for (Entry<String, String> entry : verifiche.entrySet()) {
@@ -1191,7 +1212,7 @@ public class SecretsTest extends ConfigLoader {
 		}
 		
 		verifiche = new HashMap<>();
-		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_AUTH_BEARER_TOKEN, "TOKEN-BEARER"); 
+		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_AUTH_BEARER_TOKEN, TOKEN_BEARER); 
 
 		for (Entry<String, String> entry : verifiche.entrySet()) {
 			verificheDatabaseInChiaroTokenPolicyNegoziazione(entry, API_TOKEN_POLICY_NEGOZIAZIONE_OP_OTHER_PROPERTIES_3);
@@ -1217,7 +1238,66 @@ public class SecretsTest extends ConfigLoader {
 				expected);
 	}
 	
-	
+	private void verificheDatabaseInChiaroAttributeAuthority() throws UtilsException {
+		
+		Map<String, String> verifiche = new HashMap<>();
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD, STORE_PASSWORD_OPENSPCOOP); 
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD, STORE_PASSWORD_OPENSPCOOP_JKS);
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD, STORE_PASSWORD_OPENSPCOOP);
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroAttributeAuthority(entry, "Vault-TLS-Trust-ServerAlias");
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.AA_REQUEST_JWT_SIGN_KEYSTORE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(CostantiProprieta.AA_REQUEST_JWT_SIGN_KEY_PASSWORD, PASSWORD_123456); 
+
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroAttributeAuthority(entry, "Vault-JwsRequest");
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEYSTORE_PASSWORD, PASSWORD_123456); 
+
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroAttributeAuthority(entry, "Vault-JwsResponse");
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD, PASSWORD_PROXY); 
+		verifiche.put(CostantiProprieta.AA_AUTH_BASIC_PASSWORD, PASSWORD_123456_BASIC); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroAttributeAuthority(entry, API_ATTRIBUTE_AUTHORITY_OP_OTHER_PROPERTIES);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.AA_AUTH_BEARER_TOKEN, TOKEN_BEARER); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroAttributeAuthority(entry, API_ATTRIBUTE_AUTHORITY_OP_OTHER_PROPERTIES_2);
+		}
+		
+	}
+	private void verificheDatabaseInChiaroAttributeAuthority(Entry<String, String> entry, String nomePolicy) throws UtilsException {
+		String pName = entry.getKey();
+		
+		String vAtteso = entry.getValue();
+		List<String> vList = ConfigLoader.dbUtils.getAttributeAuthorityValue(pName, nomePolicy);
+		boolean expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(ATTRIBUTE_AUTHORITY_PREFIX+nomePolicy+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			assertEquals(getMessageExpected(ATTRIBUTE_AUTHORITY_PREFIX+nomePolicy+NOME_PROPRIETA+pName, v, vAtteso), 
+					vAtteso, v);
+		}
+		
+		vList = ConfigLoader.dbUtils.getAttributeAuthorityEncValue(pName, nomePolicy);
+		expected = vList==null || vList.isEmpty() || vList.get(0)==null;
+		assertTrue(getMessageExpectedEmptyOrNull(ATTRIBUTE_AUTHORITY_PREFIX+nomePolicy+NOME_PROPRIETA+pName, vList), 
+				expected);
+	}
 
 	
 	
@@ -1839,7 +1919,7 @@ public class SecretsTest extends ConfigLoader {
 		verificheDatabaseProprietaCifrateTokenPolicyNegoziazione(prefix);
 		
 		// -- attribute authority -- 
-		//verificheDatabaseProprietaCifrateAttributeAuthority(prefix);
+		verificheDatabaseProprietaCifrateAttributeAuthority(prefix);
 		
 	}
 	private void verificheDatabaseProprietaCifrateTokenPolicyValidazione(String prefix) throws UtilsException {
@@ -1873,7 +1953,7 @@ public class SecretsTest extends ConfigLoader {
 		}
 		
 		verifiche = new HashMap<>();
-		verifiche.put(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD, "123proxy"); 
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD, PASSWORD_PROXY); 
 		verifiche.put(CostantiProprieta.POLICY_INTROSPECTION_AUTH_BASIC_PASSWORD, "123456basicintro"); 
 		verifiche.put(CostantiProprieta.POLICY_USER_INFO_AUTH_BASIC_PASSWORD, "123456basicuser"); 
 		
@@ -1934,8 +2014,8 @@ public class SecretsTest extends ConfigLoader {
 		}
 		
 		verifiche = new HashMap<>();
-		verifiche.put(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD, "123proxy"); 
-		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_PASSWORD, "123456basic"); 
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD, PASSWORD_PROXY); 
+		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_PASSWORD, PASSWORD_123456_BASIC); 
 		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_PASSWORD, "passwordOwnerCredentials"); 
 
 		for (Entry<String, String> entry : verifiche.entrySet()) {
@@ -1950,7 +2030,7 @@ public class SecretsTest extends ConfigLoader {
 		}
 		
 		verifiche = new HashMap<>();
-		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_AUTH_BEARER_TOKEN, "TOKEN-BEARER"); 
+		verifiche.put(CostantiProprieta.POLICY_RETRIEVE_TOKEN_AUTH_BEARER_TOKEN, TOKEN_BEARER); 
 
 		for (Entry<String, String> entry : verifiche.entrySet()) {
 			verificheDatabaseProprietaCifrateTokenPolicyNegoziazione(entry, API_TOKEN_POLICY_NEGOZIAZIONE_OP_OTHER_PROPERTIES_3, prefix);
@@ -1976,6 +2056,72 @@ public class SecretsTest extends ConfigLoader {
 		for (String v : vList) {
 			expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
 			assertTrue(getMessageExpectedStartsWith(TOKEN_POLICY_NEGOZIAZIONE_PREFIX+nomePolicy+NOME_PROPRIETA+pName, v, prefix), 
+					expected);
+		}
+		
+	}
+	
+	private void verificheDatabaseProprietaCifrateAttributeAuthority(String prefix) throws UtilsException {
+		
+		Map<String, String> verifiche = new HashMap<>();
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD, STORE_PASSWORD_OPENSPCOOP); 
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD, STORE_PASSWORD_OPENSPCOOP_JKS);
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD, STORE_PASSWORD_OPENSPCOOP);
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseProprietaCifrateAttributeAuthority(entry, "Vault-TLS-Trust-ServerAlias", prefix);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.AA_REQUEST_JWT_SIGN_KEYSTORE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(CostantiProprieta.AA_REQUEST_JWT_SIGN_KEY_PASSWORD, PASSWORD_123456); 
+
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseProprietaCifrateAttributeAuthority(entry, "Vault-JwsRequest", prefix);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEYSTORE_PASSWORD, PASSWORD_123456); 
+
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseProprietaCifrateAttributeAuthority(entry, "Vault-JwsResponse", prefix);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD, PASSWORD_PROXY); 
+		verifiche.put(CostantiProprieta.AA_AUTH_BASIC_PASSWORD, PASSWORD_123456_BASIC); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseProprietaCifrateAttributeAuthority(entry, API_ATTRIBUTE_AUTHORITY_OP_OTHER_PROPERTIES, prefix);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.AA_AUTH_BEARER_TOKEN, TOKEN_BEARER); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseProprietaCifrateAttributeAuthority(entry, API_ATTRIBUTE_AUTHORITY_OP_OTHER_PROPERTIES_2, prefix);
+		}
+		
+	}
+	private void verificheDatabaseProprietaCifrateAttributeAuthority(Entry<String, String> entry, String nomePolicy, String prefix) throws UtilsException {
+		String pName = entry.getKey();
+		
+		List<String> vList = ConfigLoader.dbUtils.getAttributeAuthorityValue(pName, nomePolicy);
+		boolean expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(ATTRIBUTE_AUTHORITY_PREFIX+nomePolicy+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			assertEquals(getMessageExpected(ATTRIBUTE_AUTHORITY_PREFIX+nomePolicy+NOME_PROPRIETA+pName, v, prefix), 
+					prefix, v);
+		}
+		
+		vList = ConfigLoader.dbUtils.getAttributeAuthorityEncValue(pName, nomePolicy);
+		expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(ATTRIBUTE_AUTHORITY_PREFIX+nomePolicy+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+			assertTrue(getMessageExpectedStartsWith(ATTRIBUTE_AUTHORITY_PREFIX+nomePolicy+NOME_PROPRIETA+pName, v, prefix), 
 					expected);
 		}
 		
