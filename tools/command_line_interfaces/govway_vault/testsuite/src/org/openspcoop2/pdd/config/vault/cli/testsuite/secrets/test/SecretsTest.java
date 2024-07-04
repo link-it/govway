@@ -71,6 +71,8 @@ public class SecretsTest extends ConfigLoader {
 	
 	private static final String PASSWORD_123456 = "123456";
 	
+	private static final String PASSWORD_SYNC_KEY123456 = "key123456";
+	
 	private static final String PASSWORD_123456_BASIC = "123456basic";
 	
 	private static final String PASSWORD_PROXY = "123proxy";
@@ -149,6 +151,16 @@ public class SecretsTest extends ConfigLoader {
 	public static final String API_ATTRIBUTE_AUTHORITY_OP_OTHER_PROPERTIES = "Vault-OtherProperties"; // non invocata realmente
 	public static final String API_ATTRIBUTE_AUTHORITY_OP_OTHER_PROPERTIES_2 = "Vault-OtherProperties2"; // non invocata realmente
 	
+	public static final String API_MESSAGE_SECURITY_JOSE = "TestVaultJoseSecurity";
+	public static final String API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT = "encrypt";
+	public static final String API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_SYMMETRIC = "encrypt-symm";
+	public static final String API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_HEADER = "encrypt-header";
+	public static final String API_MESSAGE_SECURITY_JOSE_OP_SIGNATURE = "signature";
+	
+	public static final String PORTA_DELEGATA_MESSAGE_SECURITY_JOSE = "gw_SoggettoInternoVaultTestFruitore/gw_SoggettoInternoVaultTest/gw_TestVaultJoseSecurity/v1";
+	public static final String PORTA_APPLICATIVA_MESSAGE_SECURITY_JOSE = "gw_SoggettoInternoVaultTest/gw_TestVaultJoseSecurity/v1";
+	
+	
 	private static final String SA_PREFIX = "SA:";
 	private static final String CONNETTORE_PREFIX = "Connettore:";
 	
@@ -157,6 +169,12 @@ public class SecretsTest extends ConfigLoader {
 	private static final String TOKEN_POLICY_VALIDAZIONE_PREFIX = "TokenPolicyValidazione:";
 	private static final String TOKEN_POLICY_NEGOZIAZIONE_PREFIX = "TokenPolicyNegoziazione:";
 	private static final String ATTRIBUTE_AUTHORITY_PREFIX = "AttributeAuthority:";
+	
+	private static final String MESSAGE_SECURITY_FRUIZIONE_RICHIESTA_PREFIX = "FruizioneMessageSecurityRequest:";
+	private static final String MESSAGE_SECURITY_FRUIZIONE_RISPOSTA_PREFIX = "FruizioneMessageSecurityResponse:";
+	private static final String MESSAGE_SECURITY_EROGAZIONE_RICHIESTA_PREFIX = "ErogazioneMessageSecurityRequest:";
+	private static final String MESSAGE_SECURITY_EROGAZIONE_RISPOSTA_PREFIX = "ErogazioneMessageSecurityResponse:";
+	
 	private static final String NOME_PROPRIETA = " nome: ";
 
 	
@@ -672,6 +690,20 @@ public class SecretsTest extends ConfigLoader {
 		Utilities.testRest(logCore, TipoServizio.EROGAZIONE, API_ATTRIBUTE_AUTHORITY, API_ATTRIBUTE_AUTHORITY_OP_JWS_RESPONSE);
 		
 		
+		logCoreInfo(prefixLogFruizione+API_MESSAGE_SECURITY_JOSE_OP_SIGNATURE);		
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_SIGNATURE);
+		
+		logCoreInfo(prefixLogFruizione+API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT);		
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT);
+		
+		logCoreInfo(prefixLogFruizione+API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_SYMMETRIC);		
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_SYMMETRIC);
+		
+		logCoreInfo(prefixLogFruizione+API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_HEADER);		
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_HEADER);
+		
+		
+		
 		// proprieta
 		
 		prefixLogErogazione = "invocazioneGovWay erogazione API:"+API_PROPRIETA + operazione;
@@ -734,6 +766,9 @@ public class SecretsTest extends ConfigLoader {
 		
 		// ** VERIFICHE colonne nome,valore,enc_value su generic_property
 		verificheDatabaseInChiaroGenericProperties();
+		
+		// ** VERIFICHE colonne nome,valore,enc_value su pd_security_request,pd_security_response,pa_security_request e pa_security_response
+		verificheDatabaseInChiaroMessageSecurity();
 
 	}
 	private void verificheDatabaseInChiaroServiziApplicativiPasswordInv() throws UtilsException {
@@ -1298,6 +1333,173 @@ public class SecretsTest extends ConfigLoader {
 		assertTrue(getMessageExpectedEmptyOrNull(ATTRIBUTE_AUTHORITY_PREFIX+nomePolicy+NOME_PROPRIETA+pName, vList), 
 				expected);
 	}
+	
+	private void verificheDatabaseInChiaroMessageSecurity() throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseInChiaroMessageSecurity");
+		
+		// -- jose --
+		verificheDatabaseInChiaroMessageSecurityJOSE();
+		
+	}
+	private void verificheDatabaseInChiaroMessageSecurityJOSE() throws UtilsException {
+		
+		// ** signature **
+		
+		Map<String, String> verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEYSTORE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEY_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_SIGNATURE);
+			// response c'è JWK, senza password
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEYSTORE_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_SIGNATURE);
+			// response c'è JWK, senza password
+		}
+		
+		
+		// ** encrypt **
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEYSTORE_PASSWORD, PASSWORD_123456);
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT);
+			// response c'è JWK, senza password
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEYSTORE_PASSWORD, PASSWORD_123456);  
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEY_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT);
+			// response c'è JWK, senza password
+		}
+		
+		
+		// ** encrypt-sync **
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEYSTORE_PASSWORD, PASSWORD_123456);
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEY_PASSWORD, PASSWORD_SYNC_KEY123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_SYMMETRIC);
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataResponse(entry, PORTA_DELEGATA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_SYMMETRIC);
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_SYMMETRIC);
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaResponse(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_SYMMETRIC);
+		}
+		
+		
+		// ** encrypt-header **
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEYSTORE_PASSWORD, PASSWORD_123456);
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_HEADER);
+			// response c'è JWK, senza password
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.MESSAGE_SECURITY_JOSE_KEYSTORE_PASSWORD, PASSWORD_123456);  
+		verifiche.put(CostantiProprieta.MESSAGE_SECURITY_JOSE_KEY1_PASSWORD, PASSWORD_123456); 
+		verifiche.put(CostantiProprieta.MESSAGE_SECURITY_JOSE_TRUSTSTORE_PASSWORD, PASSWORD_123456);  
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_HEADER);
+			// response c'è JWK, senza password
+		}
+		
+	}
+	
+	private void verificheDatabaseInChiaroMessageSecurityPortaDelegataRequest(Entry<String, String> entry, String nomePortaDefault, String nomeAzione) throws UtilsException {
+		String pName = entry.getKey();
+		
+		String nomePorta = ConfigLoader.dbUtils.getNomePorta(CostantiDB.PORTE_DELEGATE, nomePortaDefault, nomeAzione);
+		
+		String vAtteso = entry.getValue();
+		List<String> vList = ConfigLoader.dbUtils.getMessageSecurityPortaDelegataRequestValue(pName, nomePortaDefault, nomeAzione);
+		boolean expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(MESSAGE_SECURITY_FRUIZIONE_RICHIESTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			assertEquals(getMessageExpected(MESSAGE_SECURITY_FRUIZIONE_RICHIESTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, v, vAtteso), 
+					vAtteso, v);
+		}
+		
+		vList = ConfigLoader.dbUtils.getMessageSecurityPortaDelegataRequestEncValue(pName, nomePortaDefault, nomeAzione);
+		expected = vList==null || vList.isEmpty() || vList.get(0)==null;
+		assertTrue(getMessageExpectedEmptyOrNull(MESSAGE_SECURITY_FRUIZIONE_RICHIESTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, vList), 
+				expected);
+	}
+	private void verificheDatabaseInChiaroMessageSecurityPortaDelegataResponse(Entry<String, String> entry, String nomePortaDefault, String nomeAzione) throws UtilsException {
+		String pName = entry.getKey();
+		
+		String nomePorta = ConfigLoader.dbUtils.getNomePorta(CostantiDB.PORTE_DELEGATE, nomePortaDefault, nomeAzione);
+		
+		String vAtteso = entry.getValue();
+		List<String> vList = ConfigLoader.dbUtils.getMessageSecurityPortaDelegataResponseValue(pName, nomePortaDefault, nomeAzione);
+		boolean expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(MESSAGE_SECURITY_FRUIZIONE_RISPOSTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			assertEquals(getMessageExpected(MESSAGE_SECURITY_FRUIZIONE_RISPOSTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, v, vAtteso), 
+					vAtteso, v);
+		}
+		
+		vList = ConfigLoader.dbUtils.getMessageSecurityPortaDelegataResponseEncValue(pName, nomePortaDefault, nomeAzione);
+		expected = vList==null || vList.isEmpty() || vList.get(0)==null;
+		assertTrue(getMessageExpectedEmptyOrNull(MESSAGE_SECURITY_FRUIZIONE_RISPOSTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, vList), 
+				expected);
+	}
+	private void verificheDatabaseInChiaroMessageSecurityPortaApplicativaRequest(Entry<String, String> entry, String nomePortaDefault, String nomeAzione) throws UtilsException {
+		String pName = entry.getKey();
+		
+		String nomePorta = ConfigLoader.dbUtils.getNomePorta(CostantiDB.PORTE_APPLICATIVE, nomePortaDefault, nomeAzione);
+		
+		String vAtteso = entry.getValue();
+		List<String> vList = ConfigLoader.dbUtils.getMessageSecurityPortaApplicativaRequestValue(pName, nomePortaDefault, nomeAzione);
+		boolean expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(MESSAGE_SECURITY_EROGAZIONE_RICHIESTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			assertEquals(getMessageExpected(MESSAGE_SECURITY_EROGAZIONE_RICHIESTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, v, vAtteso), 
+					vAtteso, v);
+		}
+		
+		vList = ConfigLoader.dbUtils.getMessageSecurityPortaApplicativaRequestEncValue(pName, nomePortaDefault, nomeAzione);
+		expected = vList==null || vList.isEmpty() || vList.get(0)==null;
+		assertTrue(getMessageExpectedEmptyOrNull(MESSAGE_SECURITY_EROGAZIONE_RICHIESTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, vList), 
+				expected);
+	}
+	private void verificheDatabaseInChiaroMessageSecurityPortaApplicativaResponse(Entry<String, String> entry, String nomePortaDefault, String nomeAzione) throws UtilsException {
+		String pName = entry.getKey();
+		
+		String nomePorta = ConfigLoader.dbUtils.getNomePorta(CostantiDB.PORTE_APPLICATIVE, nomePortaDefault, nomeAzione);
+		
+		String vAtteso = entry.getValue();
+		List<String> vList = ConfigLoader.dbUtils.getMessageSecurityPortaApplicativaResponseValue(pName, nomePortaDefault, nomeAzione);
+		boolean expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(MESSAGE_SECURITY_EROGAZIONE_RISPOSTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			assertEquals(getMessageExpected(MESSAGE_SECURITY_EROGAZIONE_RISPOSTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, v, vAtteso), 
+					vAtteso, v);
+		}
+		
+		vList = ConfigLoader.dbUtils.getMessageSecurityPortaApplicativaResponseEncValue(pName, nomePortaDefault, nomeAzione);
+		expected = vList==null || vList.isEmpty() || vList.get(0)==null;
+		assertTrue(getMessageExpectedEmptyOrNull(MESSAGE_SECURITY_EROGAZIONE_RISPOSTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, vList), 
+				expected);
+	}
 
 	
 	
@@ -1332,6 +1534,9 @@ public class SecretsTest extends ConfigLoader {
 		
 		// ** VERIFICHE colonne nome,valore,enc_value su generic_property
 		verificheDatabaseCifratoGenericProperties(prefix);
+		
+		// ** VERIFICHE colonne nome,valore,enc_value su pd_security_request,pd_security_response,pa_security_request e pa_security_response
+		verificheDatabaseCifratoMessageSecurity(prefix);
 	}
 	private void verificheDatabaseCifratoPasswordInv(String prefix) throws UtilsException {
 		
@@ -2126,5 +2331,188 @@ public class SecretsTest extends ConfigLoader {
 		}
 		
 	}
+
 	
+	private void verificheDatabaseCifratoMessageSecurity(String prefix) throws UtilsException {
+		
+		logCoreInfo("verificheDatabaseCifratoMessageSecurity");
+		
+		// -- jose --
+		verificheDatabaseCifratoMessageSecurityJOSE(prefix);
+		
+	}
+	private void verificheDatabaseCifratoMessageSecurityJOSE(String prefix) throws UtilsException {
+		
+		// ** signature **
+		
+		Map<String, String> verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEYSTORE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEY_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseCifratoMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_SIGNATURE, prefix);
+			// response c'è JWK, senza password
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEYSTORE_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_SIGNATURE, prefix);
+			// response c'è JWK, senza password
+		}
+		
+		
+		// ** encrypt **
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEYSTORE_PASSWORD, PASSWORD_123456);
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseCifratoMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT, prefix);
+			// response c'è JWK, senza password
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEYSTORE_PASSWORD, PASSWORD_123456);  
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEY_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT, prefix);
+			// response c'è JWK, senza password
+		}
+		
+		
+		// ** encrypt-sync **
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEYSTORE_PASSWORD, PASSWORD_123456);
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEY_PASSWORD, PASSWORD_SYNC_KEY123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseCifratoMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_SYMMETRIC, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaDelegataResponse(entry, PORTA_DELEGATA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_SYMMETRIC, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_SYMMETRIC, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaResponse(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_SYMMETRIC, prefix);
+		}
+		
+		
+		// ** encrypt-header **
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.RS_SECURITY_KEYSTORE_PASSWORD, PASSWORD_123456);
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseCifratoMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_HEADER, prefix);
+			// response c'è JWK, senza password
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(CostantiProprieta.MESSAGE_SECURITY_JOSE_KEYSTORE_PASSWORD, PASSWORD_123456);  
+		verifiche.put(CostantiProprieta.MESSAGE_SECURITY_JOSE_KEY1_PASSWORD, PASSWORD_123456); 
+		verifiche.put(CostantiProprieta.MESSAGE_SECURITY_JOSE_TRUSTSTORE_PASSWORD, PASSWORD_123456);  
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_HEADER, prefix);
+			// response c'è JWK, senza password
+		}
+		
+	}
+	private void verificheDatabaseCifratoMessageSecurityPortaDelegataRequest(Entry<String, String> entry, String nomePortaDefault, String nomeAzione, String prefix) throws UtilsException {
+		String pName = entry.getKey();
+		
+		String nomePorta = ConfigLoader.dbUtils.getNomePorta(CostantiDB.PORTE_DELEGATE, nomePortaDefault, nomeAzione);
+		
+		List<String> vList = ConfigLoader.dbUtils.getMessageSecurityPortaDelegataRequestValue(pName, nomePortaDefault, nomeAzione);
+		boolean expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(MESSAGE_SECURITY_FRUIZIONE_RICHIESTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			assertEquals(getMessageExpected(MESSAGE_SECURITY_FRUIZIONE_RICHIESTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, v, prefix), 
+					prefix, v);
+		}
+		
+		vList = ConfigLoader.dbUtils.getMessageSecurityPortaDelegataRequestEncValue(pName, nomePortaDefault, nomeAzione);
+		expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(MESSAGE_SECURITY_FRUIZIONE_RICHIESTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+			assertTrue(getMessageExpectedStartsWith(MESSAGE_SECURITY_FRUIZIONE_RICHIESTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, v, prefix), 
+					expected);
+		}
+		
+	}
+	private void verificheDatabaseCifratoMessageSecurityPortaDelegataResponse(Entry<String, String> entry, String nomePortaDefault, String nomeAzione, String prefix) throws UtilsException {
+		String pName = entry.getKey();
+		
+		String nomePorta = ConfigLoader.dbUtils.getNomePorta(CostantiDB.PORTE_DELEGATE, nomePortaDefault, nomeAzione);
+		
+		List<String> vList = ConfigLoader.dbUtils.getMessageSecurityPortaDelegataResponseValue(pName, nomePortaDefault, nomeAzione);
+		boolean expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(MESSAGE_SECURITY_FRUIZIONE_RISPOSTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			assertEquals(getMessageExpected(MESSAGE_SECURITY_FRUIZIONE_RISPOSTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, v, prefix), 
+					prefix, v);
+		}
+		
+		vList = ConfigLoader.dbUtils.getMessageSecurityPortaDelegataResponseEncValue(pName, nomePortaDefault, nomeAzione);
+		expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(MESSAGE_SECURITY_FRUIZIONE_RISPOSTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+			assertTrue(getMessageExpectedStartsWith(MESSAGE_SECURITY_FRUIZIONE_RISPOSTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, v, prefix), 
+					expected);
+		}
+	}
+	private void verificheDatabaseCifratoMessageSecurityPortaApplicativaRequest(Entry<String, String> entry, String nomePortaDefault, String nomeAzione, String prefix) throws UtilsException {
+		String pName = entry.getKey();
+		
+		String nomePorta = ConfigLoader.dbUtils.getNomePorta(CostantiDB.PORTE_APPLICATIVE, nomePortaDefault, nomeAzione);
+		
+		List<String> vList = ConfigLoader.dbUtils.getMessageSecurityPortaApplicativaRequestValue(pName, nomePortaDefault, nomeAzione);
+		boolean expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(MESSAGE_SECURITY_EROGAZIONE_RICHIESTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			assertEquals(getMessageExpected(MESSAGE_SECURITY_EROGAZIONE_RICHIESTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, v, prefix), 
+					prefix, v);
+		}
+		
+		vList = ConfigLoader.dbUtils.getMessageSecurityPortaApplicativaRequestEncValue(pName, nomePortaDefault, nomeAzione);
+		expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(MESSAGE_SECURITY_EROGAZIONE_RICHIESTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+			assertTrue(getMessageExpectedStartsWith(MESSAGE_SECURITY_EROGAZIONE_RICHIESTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, v, prefix), 
+					expected);
+		}
+	}
+	private void verificheDatabaseCifratoMessageSecurityPortaApplicativaResponse(Entry<String, String> entry, String nomePortaDefault, String nomeAzione, String prefix) throws UtilsException {
+		String pName = entry.getKey();
+		
+		String nomePorta = ConfigLoader.dbUtils.getNomePorta(CostantiDB.PORTE_APPLICATIVE, nomePortaDefault, nomeAzione);
+		
+		List<String> vList = ConfigLoader.dbUtils.getMessageSecurityPortaApplicativaResponseValue(pName, nomePortaDefault, nomeAzione);
+		boolean expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(MESSAGE_SECURITY_EROGAZIONE_RISPOSTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			assertEquals(getMessageExpected(MESSAGE_SECURITY_EROGAZIONE_RISPOSTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, v, prefix), 
+					prefix, v);
+		}
+		
+		vList = ConfigLoader.dbUtils.getMessageSecurityPortaApplicativaResponseEncValue(pName, nomePortaDefault, nomeAzione);
+		expected = vList!=null && !vList.isEmpty();
+		assertTrue(getMessageExpectedNotEmpty(MESSAGE_SECURITY_EROGAZIONE_RISPOSTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, vList), 
+				expected);
+		for (String v : vList) {
+			expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+			assertTrue(getMessageExpectedStartsWith(MESSAGE_SECURITY_EROGAZIONE_RISPOSTA_PREFIX+nomePorta+NOME_PROPRIETA+pName, v, prefix), 
+					expected);
+		}
+	}
 }

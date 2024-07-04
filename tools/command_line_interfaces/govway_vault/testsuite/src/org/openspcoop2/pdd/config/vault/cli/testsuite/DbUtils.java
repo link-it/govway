@@ -442,6 +442,97 @@ public class DbUtils {
     	return result;
     }
     
+    public List<String> getMessageSecurityPortaDelegataRequestValue(String nomeProprieta, String nomePortaDefault, String nomeAzione) throws UtilsException {
+    	return getMessageSecurityValue(CostantiDB.PORTE_DELEGATE, CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST, 
+    			CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_COLUMN_VALORE, CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_COLUMN_NOME, 
+    			nomeProprieta, nomePortaDefault, nomeAzione);
+    }
+    public List<String> getMessageSecurityPortaDelegataRequestEncValue(String nomeProprieta, String nomePortaDefault, String nomeAzione) throws UtilsException {
+    	return getMessageSecurityValue(CostantiDB.PORTE_DELEGATE, CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST, 
+    			CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_COLUMN_ENC_VALUE, CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_COLUMN_NOME, 
+    			nomeProprieta, nomePortaDefault, nomeAzione);
+    }
+    
+    public List<String> getMessageSecurityPortaDelegataResponseValue(String nomeProprieta, String nomePortaDefault, String nomeAzione) throws UtilsException {
+    	return getMessageSecurityValue(CostantiDB.PORTE_DELEGATE, CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE, 
+    			CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_COLUMN_VALORE, CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_COLUMN_NOME, 
+    			nomeProprieta, nomePortaDefault, nomeAzione);
+    }
+    public List<String> getMessageSecurityPortaDelegataResponseEncValue(String nomeProprieta, String nomePortaDefault, String nomeAzione) throws UtilsException {
+    	return getMessageSecurityValue(CostantiDB.PORTE_DELEGATE, CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE, 
+    			CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_COLUMN_ENC_VALUE, CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_COLUMN_NOME, 
+    			nomeProprieta, nomePortaDefault, nomeAzione);
+    }
+    
+    public List<String> getMessageSecurityPortaApplicativaRequestValue(String nomeProprieta, String nomePortaDefault, String nomeAzione) throws UtilsException {
+    	return getMessageSecurityValue(CostantiDB.PORTE_APPLICATIVE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST, 
+    			CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_NOME, 
+    			nomeProprieta, nomePortaDefault, nomeAzione);
+    }
+    public List<String> getMessageSecurityPortaApplicativaRequestEncValue(String nomeProprieta, String nomePortaDefault, String nomeAzione) throws UtilsException {
+    	return getMessageSecurityValue(CostantiDB.PORTE_APPLICATIVE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST, 
+    			CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_ENC_VALUE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_NOME, 
+    			nomeProprieta, nomePortaDefault, nomeAzione);
+    }
+    
+    public List<String> getMessageSecurityPortaApplicativaResponseValue(String nomeProprieta, String nomePortaDefault, String nomeAzione) throws UtilsException {
+    	return getMessageSecurityValue(CostantiDB.PORTE_APPLICATIVE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE, 
+    			CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_NOME, 
+    			nomeProprieta, nomePortaDefault, nomeAzione);
+    }
+    public List<String> getMessageSecurityPortaApplicativaResponseEncValue(String nomeProprieta, String nomePortaDefault, String nomeAzione) throws UtilsException {
+    	return getMessageSecurityValue(CostantiDB.PORTE_APPLICATIVE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE, 
+    			CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_ENC_VALUE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_NOME, 
+    			nomeProprieta, nomePortaDefault, nomeAzione);
+    }
+    
+    private List<String> getMessageSecurityValue(String tabellaPadre, String tabella, 
+    		String colonnaValue, String colonnaNome, String nomeProprieta, String nomePortaDefault, String nomeAzione) throws UtilsException {
+    	
+    	String nomePorta = nomeAzione==null ? nomePortaDefault : getNomePorta(tabellaPadre, nomePortaDefault, nomeAzione);
+    	
+    	String query = "select "+colonnaValue+" from "+tabella+" where "+
+    			"  ("+colonnaNome+"='"+nomeProprieta+"' OR "+colonnaNome+" LIKE '%"+nomeProprieta+"') "+
+    			"AND id_porta in (select id from "+tabellaPadre+" where nome_porta='"+nomePorta+"')";
+    	logger.info(query);
+    	List<Map<String, Object>> list = readRows(query);
+    	List<String> result = null;
+    	if(list==null || list.isEmpty()) {
+    		return result;
+    	}
+    	result = new ArrayList<>();
+    	for (Map<String, Object> map : list) {
+			Object oId = map.get(colonnaValue);
+			if(oId instanceof String) {
+				result.add((String) oId);
+	    	}
+			else if(oId==null) {
+	    		result.add(null);
+	    	}
+			else {
+				throw new UtilsException(UNCORRECT_TYPE+oId.getClass().getName()+"' ("+oId+")");
+			}
+		} 
+    	return result;
+    }
+    public String getNomePorta(String tabella, String nomePortaDefault, String nomeAzione) throws UtilsException {
+    	
+    	String tabellaAzioni = CostantiDB.PORTE_DELEGATE.equals(tabella) ? CostantiDB.PORTE_DELEGATE_AZIONI : CostantiDB.PORTE_APPLICATIVE_AZIONI;
+    	
+    	String query = "select nome_porta from "+tabella+" p, "+tabellaAzioni+" a where a.id_porta=p.id AND "+
+    			"a.azione='"+nomeAzione+"' AND p.nome_porta LIKE '__"+nomePortaDefault+"__Specific%'";
+    	logger.info(query);
+    	var result = readRow(query);
+    	Object oId = result.get("nome_porta");
+    	if(oId instanceof String) {
+    		return (String) oId;
+    	}
+    	if(oId==null) {
+    		throw new UtilsException("Nome porta non individuata per portaDefault '"+nomePortaDefault+"' e azione '"+nomeAzione+"'");
+    	}
+    	throw new UtilsException(UNCORRECT_TYPE+oId.getClass().getName()+"' ("+oId+")");
+    }
+    
     
     private String getColumnValue(String colonna, String tabella, String colonnaId, String colonnaIdValue) throws UtilsException {
     	return getColumnValue(colonna, tabella, colonnaId, colonnaIdValue, 
@@ -535,7 +626,7 @@ public class DbUtils {
         
     private String getServizioApplicativoAssociatoPorta(String nomePortaDefault, String nomeAzione) throws UtilsException {
     	String query = "select nome from "+CostantiDB.SERVIZI_APPLICATIVI+" where id=(select id_servizio_applicativo from porte_applicative_sa where id_porta=(select pa.id from porte_applicative pa,pa_azioni az where az.id_porta=pa.id AND "+
-    			"az.azione='"+nomeAzione+"' AND pa.nome_porta LIKE '__"+nomePortaDefault+"__Specific%'));";
+    			"az.azione='"+nomeAzione+"' AND pa.nome_porta LIKE '__"+nomePortaDefault+"__Specific%'))";
     	logger.info(query);
     	var result = readRow(query);
     	Object oId = result.get("nome");
