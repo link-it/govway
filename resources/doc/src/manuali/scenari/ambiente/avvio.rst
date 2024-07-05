@@ -26,11 +26,11 @@ I componenti avviati sono i seguenti:
 
     * gateway: l'istanza di Govway
 
-    * PGSQL95: il database Postgres
+    * PGSQL16: il database Postgres
 
     * keycloak: l'authorization server
 
-    * traefik: il load balancer
+    * nginx: il server web
 
 .. note::
 

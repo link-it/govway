@@ -1,3 +1,11 @@
+2024-07-05  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [Documentazione]
+	Aggiornato openapi 'resources/openapi/3.0/openapi.yaml'
+	Aggiornati archivi zip contenenti gli scenari:
+	- aggiornate le immagini docker di postgresql e keycloak alle ultime versioni;
+	- sostituito utilizzo di traefik con nginx come server web.
+
 2024-07-01  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloSDI]
