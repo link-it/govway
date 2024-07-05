@@ -8615,6 +8615,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				|| ApiCostanti.VALORE_PARAMETRO_APC_API_OPZIONI_AVANZATE.equals(parameterValueFiltrato)
 				|| ApiCostanti.VALORE_PARAMETRO_APC_API_GRUPPI.equals(parameterValueFiltrato)
 				|| ApiCostanti.VALORE_PARAMETRO_APC_API_CANALE.equals(parameterValueFiltrato)
+				|| ApiCostanti.VALORE_PARAMETRO_APC_API_GESTIONE_PARZIALE_WSDL_CHANGE.equals(parameterValueFiltrato)
 				;
 	}
 	

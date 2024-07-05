@@ -53,7 +53,7 @@
 		                           files="mailcap"/>
 				</concat>
 				<jar jarfile="${build_govwayMonitorApiRS}/tmp/jakarta.mail-api-2.1.2.gw.jar" manifest="${build_govwayMonitorApiRS}/tmp/mailapi/META-INF/MANIFEST.MF">
-					<zipfileset dir="${build_govwayMonitor}/tmp/mailapi"/>
+					<zipfileset dir="${build_govwayMonitorApiRS}/tmp/mailapi"/>
 				</jar>
 				<var name="mailapi_jar" value="jakarta.mail-api-2.1.2.gw.jar" />
 			</then>
