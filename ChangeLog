@@ -34,6 +34,8 @@ FIX BUG TOKEN POLICY E AA DOVE SE SI SELEZIONAVA HTTPS CLIENT (o intrispection/u
 
 Aggiunta possibilità di resettare le cache e verificare i certificati etc ovunque all'interno di una erogaizone/fruizione <- lavoro di Julio
 
+Corretto bug su export per profilo SPCoop dove una API è identifficata anche da un soggetto referente, quando si selezioanva il soggetto multi-tenant in alto a destra.
+Se un soggetto era selezionato, facendo l'export dell'API o di una fruizione che riferiva una API il cui soggetto era differente da quello selezionato, non veniva esportata l'API.
 
 2024-04-02  Andrea Poli <apoli@link.it>
 

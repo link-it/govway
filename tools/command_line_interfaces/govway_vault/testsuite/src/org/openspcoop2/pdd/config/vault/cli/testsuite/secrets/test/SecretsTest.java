@@ -20,8 +20,10 @@
 package org.openspcoop2.pdd.config.vault.cli.testsuite.secrets.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,6 +52,7 @@ import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.Certificate;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilsException;
 
@@ -160,6 +163,8 @@ public class SecretsTest extends ConfigLoader {
 	public static final String PORTA_DELEGATA_MESSAGE_SECURITY_JOSE = "gw_SoggettoInternoVaultTestFruitore/gw_SoggettoInternoVaultTest/gw_TestVaultJoseSecurity/v1";
 	public static final String PORTA_APPLICATIVA_MESSAGE_SECURITY_JOSE = "gw_SoggettoInternoVaultTest/gw_TestVaultJoseSecurity/v1";
 	
+	private static final String TESTO_INPUT = "!HelloWorld!";
+	private static final String TESTO_PREFIX = "Text:";
 	
 	private static final String SA_PREFIX = "SA:";
 	private static final String CONNETTORE_PREFIX = "Connettore:";
@@ -187,6 +192,9 @@ public class SecretsTest extends ConfigLoader {
 	private String getMessageExpected(String origine, String found, String expected) {
 		return getMessagePrefix(origine, found)+" start with '"+expected+"'";
 	}
+	private String getMessageDifferent(String origine, String found, String expected) {
+		return getMessagePrefix(origine, found)+" expected <> '"+expected+"'";
+	}
 	private String getMessageExpectedNull(String origine, String found) {
 		return getMessagePrefix(origine, found)+" null";
 	}
@@ -208,9 +216,18 @@ public class SecretsTest extends ConfigLoader {
 	// ** STEP 0 //
 	
 	@Test
-	public void step0aVerificaInizialeDatabase() throws UtilsException, DriverRegistroServiziException {
+	public void step0aVerificaEncryptDecryptTool() throws UtilsException, IOException {
+		
+		logCoreInfo("@step0aVerificaEncryptDecryptTool");
+		verificaEncryptDecryptTool();
+		
+	}
+
+	
+	@Test
+	public void step0bVerificaInizialeDatabase() throws UtilsException, DriverRegistroServiziException {
 				
-		logCoreInfo("@step0aVerificaInizialeDatabase");
+		logCoreInfo("@step0bVerificaInizialeDatabase");
 		
 		checkExternalToolError();
 		
@@ -219,11 +236,25 @@ public class SecretsTest extends ConfigLoader {
 		verificheProprietaCifrate(DEFAULT_POLICY);
 		
 	}
+		
 	
 	@Test
-	public void step0bInvocazioneServiziGovway() throws UtilsException, HttpUtilsException {
+	public void step0cCifraturaKeystoreFileViaSecurity() throws UtilsException, HttpUtilsException, IOException {
 		
-		logCoreInfo("@step0bInvocazioneServiziGovway");
+		logCoreInfo("@step0cCifraturaKeystoreFileViaSecurity");
+		
+		checkExternalToolError();
+		
+		copyEncryptedFile(DEFAULT_POLICY, true);
+		/** già impostati all'interno dell'archivio updateByokPolicy(DEFAULT_POLICY, DEFAULT_POLICY);*/
+		resetCache();
+	}
+	
+	
+	@Test
+	public void step0dInvocazioneServiziGovway() throws UtilsException, HttpUtilsException {
+		
+		logCoreInfo("@step0dInvocazioneServiziGovway");
 		
 		checkExternalToolError();
 		
@@ -264,9 +295,22 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step1cInvocazioneServiziGovwayConSecretLockedByDefaultPolicy() throws UtilsException, HttpUtilsException {
+	public void step1cCifraturaKeystoreFileViaKsm() throws UtilsException, HttpUtilsException, IOException {
 		
-		logCoreInfo("@step1cInvocazioneServiziGovwayConSecretLockedByDefaultPolicy");
+		logCoreInfo("@step1cCifraturaKeystoreFileViaKsm");
+		
+		checkExternalToolError();
+		
+		copyEncryptedFile(KSM_PBKDF2_WRAP, false); 
+		// verifico utilizzo di un ksm non agganciato a security
+		updateByokPolicy(SECURITY_PBKDF2_UNWRAP, KSM_PBKDF2_UNWRAP);
+		resetCache();
+	}
+	
+	@Test
+	public void step1dInvocazioneServiziGovwayConSecretLockedByDefaultPolicy() throws UtilsException, HttpUtilsException {
+		
+		logCoreInfo("@step1dInvocazioneServiziGovwayConSecretLockedByDefaultPolicy");
 		
 		checkExternalToolError();
 		
@@ -340,9 +384,44 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step2eInvocazioneServiziGovwayConSecretLockedByGwKeysPolicy() throws UtilsException, HttpUtilsException {
+	public void step2eCifraturaKeystoreFileViaSecurity() throws UtilsException, HttpUtilsException, IOException {
 		
-		logCoreInfo("@step2eInvocazioneServiziGovwayConSecretLockedByGwKeysPolicy");
+		logCoreInfo("@step2eCifraturaKeystoreFileViaSecurity");
+		
+		checkExternalToolError();
+		
+		copyEncryptedFile(GW_KEYS_POLICY, true);
+		updateByokPolicy(KSM_PBKDF2_UNWRAP, SECURITY_ASYNC_KEYS_UNWRAP);
+		resetCache();
+	}
+	
+	@Test
+	public void step2fInvocazioneServiziGovwayConSecretLockedByGwKeysPolicy() throws UtilsException, HttpUtilsException {
+		
+		logCoreInfo("@step2fInvocazioneServiziGovwayConSecretLockedByGwKeysPolicy");
+		
+		checkExternalToolError();
+		
+		invocazioneGovWay();
+		
+	}
+	
+	@Test
+	public void step2gCifraturaKeystoreFileViaKsm() throws UtilsException, HttpUtilsException, IOException {
+		
+		logCoreInfo("@step2gCifraturaKeystoreFileViaKsm");
+		
+		checkExternalToolError();
+		
+		copyEncryptedFile(KSM_ASYNC_KEYS_WRAP, false);
+		updateByokPolicy(SECURITY_ASYNC_KEYS_UNWRAP, KSM_ASYNC_KEYS_UNWRAP);
+		resetCache();
+	}
+	
+	@Test
+	public void step2hInvocazioneServiziGovwayConSecretLockedByGwKeysPolicyKeystoreFileViaKsm() throws UtilsException, HttpUtilsException {
+		
+		logCoreInfo("@step2hInvocazioneServiziGovwayConSecretLockedByGwKeysPolicyKeystoreFileViaKsm");
 		
 		checkExternalToolError();
 		
@@ -417,9 +496,44 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step3eInvocazioneServiziGovwayConSecretLockedByRemotePolicy() throws UtilsException, HttpUtilsException {
+	public void step3eCifraturaKeystoreFileViaSecurity() throws UtilsException, HttpUtilsException, IOException {
 		
-		logCoreInfo("@step3eInvocazioneServiziGovwayConSecretLockedByRemotePolicy");
+		logCoreInfo("@step3eCifraturaKeystoreFileViaSecurity");
+		
+		checkExternalToolError();
+		
+		copyEncryptedFile(GW_REMOTE_POLICY, true);
+		updateByokPolicy(KSM_ASYNC_KEYS_UNWRAP, SECURITY_GOVWAY_REMOTE_UNWRAP);
+		resetCache();
+	}
+	
+	@Test
+	public void step3fInvocazioneServiziGovwayConSecretLockedByRemotePolicy() throws UtilsException, HttpUtilsException {
+		
+		logCoreInfo("@step3fInvocazioneServiziGovwayConSecretLockedByRemotePolicy");
+		
+		checkExternalToolError();
+		
+		invocazioneGovWay();
+		
+	}
+	
+	@Test
+	public void step3gCifraturaKeystoreFileViaKsm() throws UtilsException, HttpUtilsException, IOException {
+		
+		logCoreInfo("@step3gCifraturaKeystoreFileViaKsm");
+		
+		checkExternalToolError();
+		
+		copyEncryptedFile(KSM_GOVWAY_REMOTE_WRAP, false);
+		updateByokPolicy(SECURITY_GOVWAY_REMOTE_UNWRAP, KSM_GOVWAY_REMOTE_UNWRAP);
+		resetCache();
+	}
+	
+	@Test
+	public void step3hInvocazioneServiziGovwayConSecretLockedByRemotePolicyKeystoreFileViaKsm() throws UtilsException, HttpUtilsException {
+		
+		logCoreInfo("@step3hInvocazioneServiziGovwayConSecretLockedByRemotePolicyKeystoreFileViaKsm");
 		
 		checkExternalToolError();
 		
@@ -489,9 +603,21 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step4eInvocazioneServiziGovwayConSecretsPlain() throws UtilsException, HttpUtilsException {
+	public void step4ePlainKeystoreFile() throws UtilsException, HttpUtilsException, IOException {
 		
-		logCoreInfo("@step4eInvocazioneServiziGovwayConSecretsPlain");
+		logCoreInfo("@step4ePlainKeystoreFile");
+		
+		checkExternalToolError();
+		
+		copyEncryptedFile(null, false); // riversa i file con contennuto in chiaro
+		updateByokPolicy(KSM_GOVWAY_REMOTE_UNWRAP, "-");
+		resetCache();
+	}
+	
+	@Test
+	public void step4fInvocazioneServiziGovwayConSecretsPlain() throws UtilsException, HttpUtilsException {
+		
+		logCoreInfo("@step4fInvocazioneServiziGovwayConSecretsPlain");
 		
 		checkExternalToolError();
 		
@@ -537,9 +663,21 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step5cInvocazioneServiziGovwayConSecretsCifrati() throws UtilsException, HttpUtilsException {
+	public void step5cCifraturaKeystoreFileViaSecurity() throws UtilsException, HttpUtilsException, IOException {
 		
-		logCoreInfo("@step5cInvocazioneServiziGovwayConSecretsCifrati");
+		logCoreInfo("@step5cCifraturaKeystoreFileViaSecurity");
+		
+		checkExternalToolError();
+		
+		copyEncryptedFile(DEFAULT_POLICY, true);
+		updateByokPolicy("-", DEFAULT_POLICY);
+		resetCache();
+	}
+	
+	@Test
+	public void step5dInvocazioneServiziGovwayConSecretsCifrati() throws UtilsException, HttpUtilsException {
+		
+		logCoreInfo("@step5dInvocazioneServiziGovwayConSecretsCifrati");
 		
 		checkExternalToolError();
 		
@@ -547,9 +685,9 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step5dVaultByConfigLoaderWithoutBYOK() throws UtilsException, HttpUtilsException, IOException {
+	public void step5eVaultByConfigLoaderWithoutBYOK() throws UtilsException, HttpUtilsException, IOException {
 			
-		logCoreInfo("@step5dVaultByConfigLoaderWithoutBYOK");
+		logCoreInfo("@step5eVaultByConfigLoaderWithoutBYOK");
 		
 		checkExternalToolError();
 		
@@ -562,9 +700,9 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step5eVerificaSecretsDatabasePlainPolicy() throws UtilsException, DriverRegistroServiziException {
+	public void step5fVerificaSecretsDatabasePlainPolicy() throws UtilsException, DriverRegistroServiziException {
 		
-		logCoreInfo("@step5eVerificaSecretsDatabasePlainPolicy");
+		logCoreInfo("@step5fVerificaSecretsDatabasePlainPolicy");
 		
 		checkExternalToolError();
 		
@@ -574,9 +712,9 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step5eInvocazioneServiziGovwayConSecretsPlain() throws UtilsException, HttpUtilsException {
+	public void step5gInvocazioneServiziGovwayConSecretsPlain() throws UtilsException, HttpUtilsException {
 		
-		logCoreInfo("@step5eInvocazioneServiziGovwayConSecretsPlain");
+		logCoreInfo("@step5gInvocazioneServiziGovwayConSecretsPlain");
 		
 		checkExternalToolError();
 		
@@ -589,6 +727,133 @@ public class SecretsTest extends ConfigLoader {
 	
 	
 	// UTILS
+	
+	
+	
+	// ** VERIFICA ENCRYPT / DECRYPT **
+	
+	public void verificaEncryptDecryptTool() throws UtilsException, IOException {
+		
+		// Default security
+		verificaEncryptDecryptToolBySecurity(DEFAULT_POLICY, null);
+		
+		// altre policy security
+		verificaEncryptDecryptToolBySecurity(GW_KEYS_POLICY, GW_KEYS_POLICY);
+		verificaEncryptDecryptToolBySecurity(GW_REMOTE_POLICY, GW_REMOTE_POLICY);
+		
+		// ksm
+		verificaEncryptDecryptToolByKsm(null, KSM_PBKDF2_WRAP, KSM_PBKDF2_UNWRAP);
+		verificaEncryptDecryptToolByKsm(null, KSM_ASYNC_KEYS_WRAP, KSM_ASYNC_KEYS_UNWRAP);
+		verificaEncryptDecryptToolByKsm(null, KSM_GOVWAY_REMOTE_WRAP, KSM_GOVWAY_REMOTE_UNWRAP);
+		
+	}
+	private void verificaEncryptDecryptToolBySecurity(String idPolicy, String idPolicyFornitaAlTool) throws UtilsException, IOException {
+		verificaEncryptDecryptTool(idPolicy, true, idPolicyFornitaAlTool, idPolicyFornitaAlTool);
+	}
+	private void verificaEncryptDecryptToolByKsm(String idPolicy, String idWrap, String idUnwrap) throws UtilsException, IOException {
+		verificaEncryptDecryptTool(idPolicy, false, idWrap, idUnwrap);
+	}
+	private void verificaEncryptDecryptTool(String idPolicy, boolean security,String idWrap, String idUnwrap) throws UtilsException, IOException {
+		
+		String encryptedValue = vaultEncryptBySystem(idWrap, security, TESTO_INPUT);
+		checkExternalToolError();
+		if(security) {
+			verifyEncryptedValue(idPolicy, encryptedValue);
+		}
+		else {
+			verifyEncryptedValueAgainstPlain(idPolicy, TESTO_INPUT, encryptedValue);
+		}
+		
+		String decryptedValue = vaultDecryptBySystem(idUnwrap, security, encryptedValue);
+		checkExternalToolError();
+		verifyDecryptedValue(idPolicy, decryptedValue, TESTO_INPUT);
+		
+		File fTmp = File.createTempFile("keystore", ".test");
+		File fTmp2 = File.createTempFile("keystore", ".test");
+		try {
+			String plainContent = FileSystemUtilities.readFile(KEYSTORE_JWK);
+			
+			FileSystemUtilities.deleteFile(fTmp); // non deve esistere, prendo solo il nome
+			vaultEncryptByFile(idWrap, security, KEYSTORE_JWK, fTmp.getAbsolutePath());
+			checkExternalToolError();
+			String encryptedContent = FileSystemUtilities.readFile(fTmp);
+			if(security) {
+				verifyEncryptedValue(idPolicy, encryptedContent);
+			}
+			else {
+				verifyEncryptedValueAgainstPlain(idPolicy, plainContent, encryptedContent);
+			}
+			
+			FileSystemUtilities.deleteFile(fTmp2); // non deve esistere, prendo solo il nome
+			vaultDecryptByFile(idUnwrap, security, fTmp.getAbsolutePath(), fTmp2.getAbsolutePath());
+			checkExternalToolError();
+			String decryptedContent = FileSystemUtilities.readFile(fTmp2);
+			verifyDecryptedValue(idPolicy, decryptedContent, plainContent);
+			
+			// li elimino solo se va tutto bene, in modo che possa fare le verifiche
+			FileSystemUtilities.deleteFile(fTmp);
+			FileSystemUtilities.deleteFile(fTmp2);
+			
+		}finally {
+			// una volta li eliminavo qua fTmp e fTmp2
+		}
+	}
+	private void verifyEncryptedValue(String idPolicy, String encryptedValue) {
+		String prefix = BYOKUtilities.newPrefixWrappedValue(idPolicy);
+		prefix = prefix.substring(0, prefix.length()-1);
+		boolean expected = encryptedValue!=null && encryptedValue.startsWith(prefix) && encryptedValue.length()>prefix.length();
+		assertTrue(getMessageExpectedStartsWith(TESTO_PREFIX+idPolicy, encryptedValue, prefix), 
+				expected);
+	}
+	private void verifyEncryptedValueAgainstPlain(String idPolicy, String plainValue, String encryptedValue) {
+		assertNotEquals(getMessageDifferent(TESTO_PREFIX+idPolicy, plainValue, encryptedValue), 
+				encryptedValue, plainValue);
+	}
+	private void verifyDecryptedValue(String idPolicy, String decryptedValue, String expectedValue) {
+		assertEquals(getMessageExpected(TESTO_PREFIX+idPolicy, decryptedValue, expectedValue), 
+				expectedValue, decryptedValue);
+	}
+	
+	
+	
+	// ** VERIFICA ENCRYPT BYOK KEYSTORE **
+	
+	private void copyEncryptedFile(String idWrap, boolean security) throws UtilsException, IOException {
+		List<String> keystores = getKeystoresBYOK();
+		for (String fileChiaro : keystores) {
+			String fileCifrato = fileChiaro+KEYSTORE_BYOK_SUFFIX;
+			File f = new File(fileCifrato);
+			FileSystemUtilities.deleteFile(f); // non deve esistere
+			if(security || idWrap!=null) {
+				vaultEncryptByFile(idWrap, security, fileChiaro, fileCifrato);
+			}
+			else {
+				FileSystemUtilities.writeFile(fileCifrato, FileSystemUtilities.readBytesFromFile(fileChiaro));
+			}
+			checkExternalToolError();
+		}
+	}
+	
+	private void updateByokPolicy(String oldPolicy, String newPolicy) {
+		
+		ConfigLoader.dbUtils.updateByokPolicyPorteMessageSecurity(oldPolicy, "decryptionPropRefId"+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiProprieta.RS_SECURITY_BYOK_POLICY, newPolicy);
+		ConfigLoader.dbUtils.updateByokPolicyPorteMessageSecurity(oldPolicy, "encryptionPropRefId"+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiProprieta.RS_SECURITY_BYOK_POLICY, newPolicy);
+		ConfigLoader.dbUtils.updateByokPolicyPorteMessageSecurity(oldPolicy, "signaturePropRefId"+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiProprieta.RS_SECURITY_BYOK_POLICY, newPolicy);
+		
+		ConfigLoader.dbUtils.updateByokPolicyConnettoriCustom(oldPolicy, CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY, newPolicy);
+		
+		ConfigLoader.dbUtils.updateByokPolicyGenericProperties(oldPolicy, "decryptionPropRefId"+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiProprieta.RS_SECURITY_BYOK_POLICY, newPolicy);
+		ConfigLoader.dbUtils.updateByokPolicyGenericProperties(oldPolicy, "encryptionPropRefId"+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiProprieta.RS_SECURITY_BYOK_POLICY, newPolicy);
+		ConfigLoader.dbUtils.updateByokPolicyGenericProperties(oldPolicy, "signaturePropRefId"+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiProprieta.RS_SECURITY_BYOK_POLICY, newPolicy);
+		ConfigLoader.dbUtils.updateByokPolicyGenericProperties(oldPolicy, org.openspcoop2.pdd.core.token.Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY, newPolicy);
+		ConfigLoader.dbUtils.updateByokPolicyGenericProperties(oldPolicy, org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_BYOK_POLICY, newPolicy);
+		ConfigLoader.dbUtils.updateByokPolicyGenericProperties(oldPolicy, org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_REQUEST_JWT_SIGN_KEYSTORE_BYOK_POLICY, newPolicy);
+		
+		ConfigLoader.dbUtils.updateByokPolicyProtocolProperties(oldPolicy, CostantiDB.MODIPA_KEYSTORE_BYOK_POLICY, newPolicy);
+		
+	}
+	
+	
 	
 	// ** INVOCAZIONI GOVWAY **
 	

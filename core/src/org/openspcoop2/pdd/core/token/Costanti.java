@@ -545,6 +545,7 @@ public class Costanti {
 	public static final String ID_VALIDAZIONE_JWT_KEYSTORE_FILE = "validazioneJwtKeystoreFile";
 	public static final String ID_VALIDAZIONE_JWT_KEYSTORE_PASSWORD = "validazioneJwtKeystorePassword";
 	public static final String ID_VALIDAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY = "validazioneJwtKeystorePrivateKeyPassword";
+	public static final String ID_VALIDAZIONE_JWT_KEYSTORE_BYOK_POLOCY = "validazioneJwtKeystoreByokPolicy";
 	
 	public static final String ID_HTTPS_TRUSTSTORE_TYPE = "endpointHttpsTruststoreType";
 	public static final String ID_HTTPS_TRUSTSTORE_FILE = "endpointHttpsTruststoreFile";

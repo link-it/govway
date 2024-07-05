@@ -23,9 +23,12 @@ package org.openspcoop2.security.keystore;
 import java.io.Serializable;
 
 import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.byok.BYOKConfig;
 import org.openspcoop2.utils.certificate.byok.BYOKInstance;
 import org.openspcoop2.utils.certificate.byok.BYOKMode;
+import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.io.HexBinaryUtilities;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
@@ -67,14 +70,7 @@ public class BYOKStore implements Serializable {
 			this.config = instance.getConfig();
 			
 			if(instance.getHttpRequest()!=null) {
-				HttpResponse httpResponse = HttpUtilities.httpInvoke(instance.getHttpRequest());
-				if(httpResponse==null || httpResponse.getContent()==null) {
-					throw new SecurityException("Store '"+this.config.getLabel()+"' (endpoint:"+instance.getHttpRequest().getUrl()+") unavailable");
-				}
-				if(httpResponse.getResultHTTPOperation()!=200) {
-					throw new SecurityException("Retrieve store '"+this.config.getLabel()+"' (endpoint:"+instance.getHttpRequest().getUrl()+") failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
-				}
-				this.storeBytes = httpResponse.getContent();
+				remoteProcess(instance);
 			}
 			else {
 				BYOKLocalEncrypt localEncrypt = new BYOKLocalEncrypt();
@@ -90,6 +86,25 @@ public class BYOKStore implements Serializable {
 			throw new SecurityException(e.getMessage(),e);
 		}
 		
+	}
+	private void remoteProcess(BYOKInstance instance) throws UtilsException, SecurityException{
+		HttpResponse httpResponse = HttpUtilities.httpInvoke(instance.getHttpRequest());
+		if(httpResponse==null || httpResponse.getContent()==null) {
+			throw new SecurityException("Store '"+this.config.getLabel()+"' (endpoint:"+instance.getHttpRequest().getUrl()+") unavailable");
+		}
+		if(httpResponse.getResultHTTPOperation()!=200) {
+			throw new SecurityException("Retrieve store '"+this.config.getLabel()+"' (endpoint:"+instance.getHttpRequest().getUrl()+") failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
+		}
+		this.storeBytes = httpResponse.getContent();
+		
+		if(this.storeBytes!=null && this.storeBytes.length>0) {
+			if(instance.getConfig().getRemoteConfig().isHttpResponseBase64Encoded()) {
+				this.storeBytes = Base64Utilities.decode(this.storeBytes);
+			}
+			else if(instance.getConfig().getRemoteConfig().isHttpResponseHexEncoded()) {
+				this.storeBytes = HexBinaryUtilities.decode(new String(this.storeBytes).toCharArray());
+			}
+		}
 	}
 	
 	public byte[] getStoreBytes() {

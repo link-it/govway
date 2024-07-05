@@ -741,5 +741,44 @@ public class DbUtils {
     	String m = "rows-insert:"+r;
     	logger.info(m);
     }
+    
 
+    public void updateByokPolicyPorteMessageSecurity(String oldValue, String name,String securityPolicy) {
+    	updateByokPolicyPorteDelegateMessageSecurity(oldValue, name, securityPolicy);
+    	updateByokPolicyPorteApplicativeMessageSecurity(oldValue, name, securityPolicy);
+    }
+    public void updateByokPolicyPorteDelegateMessageSecurity(String oldValue, String name,String securityPolicy) {
+    	updateByokPolicy(oldValue, name, securityPolicy,
+    			CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST, CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_COLUMN_VALORE, CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_COLUMN_NOME);
+    	updateByokPolicy(oldValue, name, securityPolicy,
+    			CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE, CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_COLUMN_VALORE, CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_COLUMN_NOME);
+    }
+    public void updateByokPolicyPorteApplicativeMessageSecurity(String oldValue, String name,String securityPolicy) {
+    	updateByokPolicy(oldValue, name, securityPolicy,
+    			CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_NOME);
+    	updateByokPolicy(oldValue, name, securityPolicy,
+    			CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_NOME);
+    }
+    public void updateByokPolicyConnettoriCustom(String oldValue, String name,String securityPolicy) {
+    	updateByokPolicy(oldValue, name, securityPolicy,
+    			CostantiDB.CONNETTORI_CUSTOM, CostantiDB.CONNETTORI_CUSTOM_COLUMN_VALUE, CostantiDB.CONNETTORI_CUSTOM_COLUMN_NAME);
+    }
+    public void updateByokPolicyGenericProperties(String oldValue, String name,String securityPolicy) {
+    	updateByokPolicy(oldValue, name, securityPolicy,
+    			CostantiDB.CONFIG_GENERIC_PROPERTY, CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_VALORE, CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_NOME);
+    }
+    public void updateByokPolicyProtocolProperties(String oldValue, String name,String securityPolicy) {
+    	updateByokPolicy(oldValue, name, securityPolicy,
+    			CostantiDB.PROTOCOL_PROPERTIES, CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING, CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME);
+    }
+    
+    public void updateByokPolicy(String oldValue, String name,String securityPolicy,
+    		String table, String columnValue, String columnName) {
+    	String update = "update "+table+" set "+columnValue+" = '"+securityPolicy+"' "+
+    			"WHERE "+columnName+"='"+name+"' AND "+columnValue+"='"+oldValue+"'";
+    	logger.info(update);
+    	int r = this.update(update);
+    	String m = "rows-updated:"+r;
+    	logger.info(m);
+    }
 }

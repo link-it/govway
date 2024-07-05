@@ -120,7 +120,7 @@ public class StoreUtils {
 		if(requestParams!=null) {
 			
 			if(archive!=null && BYOKUtilities.isWrappedValue(archive)) {
-				archive = BYOKUtilities.extractPrefixWrappedValue(archive).getBytes();
+				archive = BYOKUtilities.deletePrefixWrappedValue(archive);
 			}
 			
 			Logger log = LoggerWrapperFactory.getLogger(StoreUtils.class);

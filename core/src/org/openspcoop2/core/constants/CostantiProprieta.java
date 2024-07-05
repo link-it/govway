@@ -38,6 +38,8 @@ public class CostantiProprieta {
 	public static final String KEY_PROPERTIES_DEFAULT_SEPARATOR = "_@@_";
 	
 	// commons
+	public static final String RS_SECURITY_BYOK_POLICY = "rs.security.keystore.file.byok";
+	
 	public static final String RS_SECURITY_KEYSTORE_PASSWORD = "rs.security.keystore.password";
 	public static final String RS_SECURITY_KEY_PASSWORD = "rs.security.key.password";
 	public static final String RS_SECURITY_KEYSTORE_TLS_PASSWORD = "rs.security.keystore.password.ssl";

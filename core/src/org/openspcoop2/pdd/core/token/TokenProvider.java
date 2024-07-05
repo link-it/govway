@@ -990,7 +990,8 @@ public class TokenProvider implements IProvider {
 		}
 		else if(Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_BYOK_POLICY.equals(id) ||
 				Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_BYOK_POLICY.equals(id) ||
-				Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(id)) {
+				Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(id) ||
+				Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_BYOK_POLOCY.equals(id) ) {
 			return this.byokProvider.getValues();
 		}
 		else {
@@ -1074,7 +1075,8 @@ public class TokenProvider implements IProvider {
 		}
 		else if(Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_BYOK_POLICY.equals(id) ||
 				Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_BYOK_POLICY.equals(id) ||
-				Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(id)) {
+				Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(id) ||
+				Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_BYOK_POLOCY.equals(id)) {
 			return this.byokProvider.getLabels();
 		}
 		else {
@@ -1270,7 +1272,8 @@ public class TokenProvider implements IProvider {
 		}
 		else if(Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_BYOK_POLICY.equals(item.getName()) ||
 				Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_BYOK_POLICY.equals(item.getName()) ||
-				Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(item.getName())) {
+				Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(item.getName()) ||
+				Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_BYOK_POLOCY.equals(item.getName())) {
 			return dynamicUpdateByok(items, mapNameValue, item, actualValue);
 		}
 		else {
@@ -1376,6 +1379,9 @@ public class TokenProvider implements IProvider {
 		}
 		else if(Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(item.getName())) {
 			type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
+		}
+		else if(Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_BYOK_POLOCY.equals(item.getName())) {
+			type = Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_TYPE;
 		}
 		
 		return AbstractSecurityProvider.processStoreByokPolicy(type, items, mapNameValue, item, actualValue);

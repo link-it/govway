@@ -53,6 +53,64 @@ public class BYOKUtilities {
 		return CostantiDB.ENC_PREFIX + policy + CostantiDB.ENC_PREFIX + ".";
 	}
 	
+	public static byte[] deletePrefixWrappedValue(byte[] s) {
+		if(s!=null && BYOKUtilities.isWrappedValue(s)) {
+			byte[] newS = BYOKUtilities.deletePrefixWrappedValueEngine(s);
+			// controllo 2 volte perchè l'operazione encrypt tramite 'remote' aggiunge 2 prefissi
+			// non serve, eventualmente il servizio jmx supporta questo caso
+			/**if(BYOKUtilities.isWrappedValue(newS)) {
+				newS = BYOKUtilities.deletePrefixWrappedValueEngine(newS);
+			}*/
+			if(newS.length>0) {
+				return newS;
+			}
+		}
+		return s;
+	}
+	private static byte[] deletePrefixWrappedValueEngine(byte[] s) {
+		String prefix = BYOKUtilities.extractPrefixWrappedValue(s);
+		if(prefix==null) {
+			return s;
+		}
+		if(!prefix.endsWith(".")) {
+			prefix = prefix + ".";
+		}
+		if(s.length>prefix.getBytes().length) {
+			byte[] newArchive = new byte[s.length - prefix.getBytes().length];
+			System.arraycopy(s, prefix.getBytes().length, newArchive, 0, newArchive.length);
+			return newArchive;
+		}
+		return s;
+	}
+	
+	public static String deletePrefixWrappedValue(String s) {
+		if(s!=null && BYOKUtilities.isWrappedValue(s)) {
+			String newS = BYOKUtilities.deletePrefixWrappedValueEngine(s);
+			// controllo 2 volte perchè l'operazione encrypt tramite 'remote' aggiunge 2 prefissi
+			// non serve, eventualmente il servizio jmx supporta questo caso
+			/**if(newS!=null && BYOKUtilities.isWrappedValue(newS)) {
+				newS = BYOKUtilities.deletePrefixWrappedValueEngine(newS);
+			}*/
+			if(newS!=null && newS.length()>0) {
+				return newS;
+			}
+		}
+		return s;
+	}
+	public static String deletePrefixWrappedValueEngine(String s) {
+		String prefix = BYOKUtilities.extractPrefixWrappedValue(s);
+		if(prefix==null) {
+			return s;
+		}
+		if(!prefix.endsWith(".")) {
+			prefix = prefix + ".";
+		}
+		if(s.length()>prefix.length()) {
+			return s.substring(prefix.length());
+		}
+		return s;
+	}
+	
 	public static String extractPrefixWrappedValue(byte[] s) {
 		if(s==null) {
 			return null;

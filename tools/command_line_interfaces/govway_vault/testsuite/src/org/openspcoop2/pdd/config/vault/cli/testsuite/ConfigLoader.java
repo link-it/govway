@@ -81,12 +81,52 @@ public class ConfigLoader {
     public static final String GW_KEYS_POLICY = "gw-keys";
     public static final String GW_REMOTE_POLICY = "gw-remote";
     
+    public static final String SECURITY_PBKDF2_UNWRAP = "openssl-pbkdf2-unwrap"; 
+    public static final String SECURITY_ASYNC_KEYS_UNWRAP = "async-keys-unwrap"; 
+    public static final String SECURITY_GOVWAY_REMOTE_UNWRAP = "govway-remote-unwrap";
+    
+    public static final String KSM_PBKDF2_WRAP = "openssl-pbkdf2-wrap-novariable";
+    public static final String KSM_PBKDF2_UNWRAP = "openssl-pbkdf2-unwrap-novariable"; 
+    public static final String KSM_ASYNC_KEYS_WRAP = "async-keys-wrap-novariable";
+    public static final String KSM_ASYNC_KEYS_UNWRAP = "async-keys-unwrap-novariable"; 
+    public static final String KSM_GOVWAY_REMOTE_WRAP = "govway-remote-wrap-novariable";
+    public static final String KSM_GOVWAY_REMOTE_UNWRAP = "govway-remote-unwrap-novariable";
+    
+    public static final String SYSTEM_IN="-system_in";
+    public static final String SYSTEM_OUT="-system_out";
+    public static final String FILE_IN="-file_in";
+    public static final String FILE_OUT="-file_out";
+    public static final String SEC="-sec";
+    public static final String KSM="-ksm";
+    
 	public static final String SECURITY_IN="-sec_in";
 	public static final String SECURITY_OUT="-sec_out";
 	public static final String PLAIN_IN="-plain_in";
 	public static final String PLAIN_OUT="-plain_out";
 	public static final String REPORT="-report";
     
+	private static final String KEYSTORE_EXAMPLE_CLIENT1_P12 = "/etc/govway/keys/xca/ExampleClient1.p12";
+	private static final String KEYSTORE_EXAMPLE_CLIENT2_P12 = "/etc/govway/keys/xca/ExampleClient2.p12";
+	private static final String KEYSTORE_EXAMPLE_SERVER_P12 = "/etc/govway/keys/xca/ExampleServer.p12";
+	private static final String KEYSTORE_SOGGETTO1_JKS = "/etc/govway/keys/soggetto1.jks";
+	private static final String KEYSTORE_JCEKS = "/etc/govway/keys/jose_example.jceks";
+	public static final String KEYSTORE_JWK = "/etc/govway/keys/testJWKprivate.jwk";
+	private static final String KEYSTORE_JWK_SAME_ALIAS_PUBLIC = "/etc/govway/keys/testJWKprivate_sameAliasPublic.jwk";
+	public static final String KEYSTORE_BYOK_SUFFIX = ".BYOK";
+	private static final List<String> KEYSTORES_BYOK = new ArrayList<>();
+	static {
+		KEYSTORES_BYOK.add(KEYSTORE_EXAMPLE_CLIENT1_P12);
+		KEYSTORES_BYOK.add(KEYSTORE_EXAMPLE_CLIENT2_P12);
+		KEYSTORES_BYOK.add(KEYSTORE_EXAMPLE_SERVER_P12);
+		KEYSTORES_BYOK.add(KEYSTORE_SOGGETTO1_JKS);
+		KEYSTORES_BYOK.add(KEYSTORE_JCEKS);
+		KEYSTORES_BYOK.add(KEYSTORE_JWK);
+		KEYSTORES_BYOK.add(KEYSTORE_JWK_SAME_ALIAS_PUBLIC);
+	}
+	public static List<String> getKeystoresBYOK(){
+		return KEYSTORES_BYOK;
+	}
+	
     protected static Properties prop = new Properties();
     static {
         setupProperties();
@@ -199,15 +239,16 @@ public class ConfigLoader {
         logDebug(logger,"script - errorStream: " + scriptInvoker.getErrorStream());
         logDebug(logger,"script - outStream: " + scriptInvoker.getOutputStream());
         
-        if(scriptInvoker.getExitValue()!=0) {
-        	return "Exit value ("+scriptInvoker.getExitValue()+") <> 0";
-        }
-        else if(scriptInvoker.getErrorStream()!=null && StringUtils.isNotEmpty(scriptInvoker.getErrorStream())) {
+        if(scriptInvoker.getErrorStream()!=null && StringUtils.isNotEmpty(scriptInvoker.getErrorStream())) {
         	String sErrore = scriptInvoker.getErrorStream();
         	String check = checkErrorStream(sErrore);
         	if(check!=null) {
         		return check;
         	}
+        }
+        
+        if(scriptInvoker.getExitValue()!=0) {
+        	return "Exit value ("+scriptInvoker.getExitValue()+") <> 0";
         }
       
     	for (File fileLog : log) {
@@ -300,6 +341,9 @@ public class ConfigLoader {
     	}
     	if(vaultSecretError!=null) {
     		throw new UtilsException("Rilevata precedente esecuzione del vault fallita: "+vaultSecretError);
+    	}
+    	if(encryptDecryptError!=null) {
+    		throw new UtilsException("Rilevata precedente esecuzione di operazioni di cifratura/decifratura fallita: "+encryptDecryptError);
     	}
     }
     
@@ -456,6 +500,8 @@ public class ConfigLoader {
          
         FileSystemUtilities.clearFile(log);
         
+        logDebug(logger,"Vault params: "+params);
+        
         FileSystemUtilities.clearFile(log);org.openspcoop2.utils.resources.ScriptInvoker scriptInvoker = new org.openspcoop2.utils.resources.ScriptInvoker(scriptPath);
         scriptInvoker.run(new File(vaultPath), params.toArray(new String[1]));
         
@@ -465,6 +511,93 @@ public class ConfigLoader {
         // Dopo attuato l'operazione, resetto le cache
         resetCache();
     }
+    
+    
+    
+    
+    
+    
+
+    
+    
+    // ENCRYPT/DECRYPT
+    
+    private static String encryptDecryptError = null;
+    public static String getEncryptDecryptError() {
+		return encryptDecryptError;
+	}
+    public static String vaultEncryptBySystem(String idPolicy, boolean security, String text) throws UtilsException, FileNotFoundException {
+    	return vaultEncryptDecrypt(true, idPolicy, security, text, null, true);	
+    }
+    public static String vaultDecryptBySystem(String idPolicy, boolean security, String text) throws UtilsException, FileNotFoundException {
+    	return vaultEncryptDecrypt(false, idPolicy, security, text, null, true);	
+    }
+    public static String vaultEncryptByFile(String idPolicy, boolean security, String fileIn, String fileOut) throws UtilsException, FileNotFoundException {
+    	return vaultEncryptDecrypt(true, idPolicy, security, fileIn, fileOut, false);	
+    }
+    public static String vaultDecryptByFile(String idPolicy, boolean security, String fileIn, String fileOut) throws UtilsException, FileNotFoundException {
+    	return vaultEncryptDecrypt(false, idPolicy, security, fileIn, fileOut, false);	
+    }
+    private static String vaultEncryptDecrypt(boolean encrypt, String idPolicy, boolean security, String fileIn, String fileOut, boolean system) throws UtilsException, FileNotFoundException {
+
+    	checkExternalToolError();
+    	
+        org.slf4j.Logger logger = logCore!=null ? logCore : LoggerWrapperFactory.getLogger(ConfigLoader.class);
+
+        String encrytpDecryptPath = prop.getProperty(VAULT_PATH);
+        String command = encrypt ? "encrypt" : "decrypt";
+        String scriptPath = encrytpDecryptPath + File.separatorChar + (SystemUtils.IS_OS_WINDOWS ? command+".cmd" : command+".sh");
+        
+        logDebug(logger,LOG_SCRIPT_PATH+ scriptPath);
+        logDebug(logger,"Encrypt/Decrypt path: " + encrytpDecryptPath);
+        logDebug(logger,"Encrypt/Decrypt idPolicy '"+idPolicy+"'");
+        logDebug(logger,"Encrypt/Decrypt security '"+security+"'");
+               
+        String logPropsPath = encrytpDecryptPath + File.separatorChar + PROPERTIES_DIR + File.separatorChar + "govway_vault.cli.log4j2.properties";
+        setLog(100, logPropsPath);
+        
+        List<String> params = new ArrayList<>();
+        if(system) {
+        	params.add(SYSTEM_IN+"="+fileIn);
+        }
+        else {
+        	params.add(FILE_IN+"="+fileIn);
+        }
+        if(system) {
+        	params.add(SYSTEM_OUT);
+        }
+        else {
+        	params.add(FILE_OUT+"="+fileOut);
+        }
+        if(idPolicy!=null) {
+	        if(security) {
+	        	params.add(SEC+"="+idPolicy);
+	        }
+	        else {
+	        	params.add(KSM+"="+idPolicy);
+	        }
+        }
+        
+        File log = new File(encrytpDecryptPath + File.separatorChar + "log"+ File.separatorChar + "govway_cli_vault.log");
+         
+        FileSystemUtilities.clearFile(log);
+        
+        logDebug(logger,"Encrypt/Decrypt params: "+params);
+        
+        FileSystemUtilities.clearFile(log);org.openspcoop2.utils.resources.ScriptInvoker scriptInvoker = new org.openspcoop2.utils.resources.ScriptInvoker(scriptPath);
+        scriptInvoker.run(new File(encrytpDecryptPath), params.toArray(new String[1]));
+        
+        vaultSecretError = logScriptExit(logger, scriptInvoker,
+        		log);
+        
+        if(system) {
+        	return scriptInvoker.getOutputStream();
+        }
+        return null;
+        
+    }
+    
+    
     
     
     
