@@ -22,6 +22,7 @@ package org.openspcoop2.security.message.saml;
 
 import org.apache.wss4j.common.saml.builder.SAML1Constants;
 import org.apache.wss4j.common.saml.builder.SAML2Constants;
+import org.openspcoop2.security.keystore.MerlinProvider;
 
 /**
  * SAMLBuilderConfigConstants
@@ -31,6 +32,8 @@ import org.apache.wss4j.common.saml.builder.SAML2Constants;
  * @version $Rev$, $Date$
  */
 public class SAMLBuilderConfigConstants {
+	
+	private SAMLBuilderConfigConstants() {}
 
 	public static final String SAML_CONFIG_BUILDER_SAML_CALLBACK = "org.apache.ws.security.saml.callback";
 	
@@ -53,6 +56,7 @@ public class SAMLBuilderConfigConstants {
 	public static final String SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_REF_ID = "openspcoop2.saml.assertion.sign.cryptoProp.refId"; // si indica true. A questo punto il properties stesso e' usato anche come crypto
 	public static final String SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_TYPE = "openspcoop2.saml.assertion.sign.cryptoProp.keystore.type";
 	public static final String SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_FILE = "openspcoop2.saml.assertion.sign.cryptoProp.keystore.file";
+	public static final String SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_BYOK_POLICY = SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_FILE+MerlinProvider.SUFFIX_BYOK;
 	public static final String SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_PASSWORD = "openspcoop2.saml.assertion.sign.cryptoProp.keystore.password";
 	public static final String SAML_CONFIG_BUILDER_SIGN_ASSERTION_KEY_NAME = "openspcoop2.saml.assertion.sign.key.name";
 	public static final String SAML_CONFIG_BUILDER_SIGN_ASSERTION_KEY_PASSWORD = "openspcoop2.saml.assertion.sign.key.password";
@@ -97,6 +101,7 @@ public class SAMLBuilderConfigConstants {
 	public static final String SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_REF_ID = "openspcoop2.saml.subject.confirmation.method.holderOfKey.cryptoProperties.refId"; // si indica true. A questo punto il properties stesso e' usato anche come crypto
 	public static final String SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_TYPE = "openspcoop2.saml.subject.confirmation.method.holderOfKey.cryptoProperties.keystore.type";
 	public static final String SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_FILE = "openspcoop2.saml.subject.confirmation.method.holderOfKey.cryptoProperties.keystore.file";
+	public static final String SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_BYOK_POLICY = SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_FILE+MerlinProvider.SUFFIX_BYOK;
 	public static final String SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_PASSWORD = "openspcoop2.saml.subject.confirmation.method.holderOfKey.cryptoProperties.keystore.password";
 	public static final String SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_ALIAS = "openspcoop2.saml.subject.confirmation.method.holderOfKey.cryptoCertificateAlias";
 	

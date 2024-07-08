@@ -85,6 +85,10 @@ public class Utilities {
 
 		String contentType= rest ? HttpConstants.CONTENT_TYPE_JSON : HttpConstants.CONTENT_TYPE_SOAP_1_1;
 		byte[]content= rest ? Bodies.getJson(Bodies.SIZE_1K).getBytes() : Bodies.getSOAPEnvelope11(Bodies.SIZE_1K).getBytes();
+		if(SecretsTest.API_MESSAGE_SECURITY_XML.equals(api)) {
+			contentType=HttpConstants.CONTENT_TYPE_XML;
+			content = Bodies.getXML(Bodies.SIZE_1K).getBytes();
+		}
 		
 		request.setMethod(HttpRequestMethod.POST);
 		request.setContentType(contentType);

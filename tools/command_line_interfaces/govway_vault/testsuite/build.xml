@@ -95,6 +95,9 @@
 			<include name="saaj-impl-1.5.3-gov4j-1.jar"/>
 			<include name="stax-ex-1.8.3.jar"/>
 		</fileset>
+		<fileset dir="${required_lib}/wss4j">
+			<include name="*.jar"/>
+		</fileset>
 		<fileset dir="${openspcoop2.dist}">
 			<include name="*.jar"/>
 		</fileset>

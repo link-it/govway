@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.wss4j.common.crypto.Merlin;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,6 +50,7 @@ import org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader;
 import org.openspcoop2.pdd.config.vault.cli.testsuite.TipoServizio;
 import org.openspcoop2.pdd.config.vault.cli.testsuite.Utilities;
 import org.openspcoop2.protocol.engine.constants.Costanti;
+import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.Certificate;
@@ -159,9 +161,23 @@ public class SecretsTest extends ConfigLoader {
 	public static final String API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_SYMMETRIC = "encrypt-symm";
 	public static final String API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_HEADER = "encrypt-header";
 	public static final String API_MESSAGE_SECURITY_JOSE_OP_SIGNATURE = "signature";
-	
 	public static final String PORTA_DELEGATA_MESSAGE_SECURITY_JOSE = "gw_SoggettoInternoVaultTestFruitore/gw_SoggettoInternoVaultTest/gw_TestVaultJoseSecurity/v1";
 	public static final String PORTA_APPLICATIVA_MESSAGE_SECURITY_JOSE = "gw_SoggettoInternoVaultTest/gw_TestVaultJoseSecurity/v1";
+	
+	public static final String API_MESSAGE_SECURITY_XML = "TestVaultXmlSecurity";
+	public static final String API_MESSAGE_SECURITY_XML_OP_ENCRYPT = "encrypt";
+	public static final String API_MESSAGE_SECURITY_XML_OP_SIGNATURE = "signature";
+	public static final String PORTA_DELEGATA_MESSAGE_SECURITY_XML = "gw_SoggettoInternoVaultTestFruitore/gw_SoggettoInternoVaultTest/gw_TestVaultXmlSecurity/v1";
+	public static final String PORTA_APPLICATIVA_MESSAGE_SECURITY_XML = "gw_SoggettoInternoVaultTest/gw_TestVaultXmlSecurity/v1";
+	
+	public static final String API_MESSAGE_SECURITY_WSS = "TestVaultWSSecurity";
+	public static final String API_MESSAGE_SECURITY_WSS_OP_ENCRYPT = "encrypt";
+	public static final String API_MESSAGE_SECURITY_WSS_OP_SIGNATURE = "signature";
+	public static final String API_MESSAGE_SECURITY_WSS_OP_SAML_BEARER = "saml-bearer";
+	public static final String API_MESSAGE_SECURITY_WSS_OP_SAML_HOLDER_OF_KEY = "saml-holder-of-key";
+	public static final String API_MESSAGE_SECURITY_WSS_OP_SAML_SENDER_VOUCHES = "saml-sender-vouches";
+	public static final String PORTA_DELEGATA_MESSAGE_SECURITY_WSS = "gw_SoggettoInternoVaultTestFruitore/gw_SoggettoInternoVaultTest/gw_TestVaultWSSecurity/v1";
+	public static final String PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS = "gw_SoggettoInternoVaultTest/gw_TestVaultWSSecurity/v1";
 	
 	private static final String TESTO_INPUT = "!HelloWorld!";
 	private static final String TESTO_PREFIX = "Text:";
@@ -966,7 +982,30 @@ public class SecretsTest extends ConfigLoader {
 		
 		logCoreInfo(prefixLogFruizione+API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_HEADER);		
 		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_HEADER);
+			
 		
+		logCoreInfo(prefixLogFruizione+API_MESSAGE_SECURITY_XML_OP_SIGNATURE);		
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_MESSAGE_SECURITY_XML, API_MESSAGE_SECURITY_XML_OP_SIGNATURE);
+		
+		logCoreInfo(prefixLogFruizione+API_MESSAGE_SECURITY_XML_OP_ENCRYPT);		
+		Utilities.testRest(logCore, TipoServizio.FRUIZIONE, API_MESSAGE_SECURITY_XML, API_MESSAGE_SECURITY_XML_OP_ENCRYPT);
+		
+		
+		logCoreInfo(prefixLogFruizione+API_MESSAGE_SECURITY_WSS_OP_SIGNATURE);		
+		Utilities.testSoap(logCore, TipoServizio.FRUIZIONE, API_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SIGNATURE);
+	
+		logCoreInfo(prefixLogFruizione+API_MESSAGE_SECURITY_WSS_OP_ENCRYPT);		
+		Utilities.testSoap(logCore, TipoServizio.FRUIZIONE, API_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_ENCRYPT);
+	
+		logCoreInfo(prefixLogFruizione+API_MESSAGE_SECURITY_WSS_OP_SAML_BEARER);		
+		Utilities.testSoap(logCore, TipoServizio.FRUIZIONE, API_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_BEARER);
+	
+		logCoreInfo(prefixLogFruizione+API_MESSAGE_SECURITY_WSS_OP_SAML_HOLDER_OF_KEY);		
+		Utilities.testSoap(logCore, TipoServizio.FRUIZIONE, API_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_HOLDER_OF_KEY);
+	
+		logCoreInfo(prefixLogFruizione+API_MESSAGE_SECURITY_WSS_OP_SAML_SENDER_VOUCHES);		
+		Utilities.testSoap(logCore, TipoServizio.FRUIZIONE, API_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_SENDER_VOUCHES);
+
 		
 		
 		// proprieta
@@ -1606,6 +1645,12 @@ public class SecretsTest extends ConfigLoader {
 		// -- jose --
 		verificheDatabaseInChiaroMessageSecurityJOSE();
 		
+		// -- xml --
+		verificheDatabaseInChiaroMessageSecurityXML();
+		
+		// -- wssecurity --
+		verificheDatabaseInChiaroMessageSecurityWSSecurity();
+		
 	}
 	private void verificheDatabaseInChiaroMessageSecurityJOSE() throws UtilsException {
 		
@@ -1682,6 +1727,120 @@ public class SecretsTest extends ConfigLoader {
 			verificheDatabaseInChiaroMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_JOSE, API_MESSAGE_SECURITY_JOSE_OP_ENCRYPT_HEADER);
 			// response c'è JWK, senza password
 		}
+		
+	}
+	private void verificheDatabaseInChiaroMessageSecurityXML() throws UtilsException {
+		
+		// ** signature **
+		
+		Map<String, String> verifiche = new HashMap<>();
+		verifiche.put(SecurityConstants.SIGNATURE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_XML, API_MESSAGE_SECURITY_XML_OP_SIGNATURE);
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaResponse(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_XML, API_MESSAGE_SECURITY_XML_OP_SIGNATURE);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataResponse(entry, PORTA_DELEGATA_MESSAGE_SECURITY_XML, API_MESSAGE_SECURITY_XML_OP_SIGNATURE);
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_XML, API_MESSAGE_SECURITY_XML_OP_SIGNATURE);
+		}
+		
+		
+		// ** encrypt **
+		
+		verifiche = new HashMap<>();
+		verifiche.put(SecurityConstants.DECRYPTION_PASSWORD, PASSWORD_123456); 
+		verifiche.put(Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataResponse(entry, PORTA_DELEGATA_MESSAGE_SECURITY_XML, API_MESSAGE_SECURITY_XML_OP_ENCRYPT);
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_XML, API_MESSAGE_SECURITY_XML_OP_ENCRYPT);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_XML, API_MESSAGE_SECURITY_XML_OP_ENCRYPT);
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaResponse(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_XML, API_MESSAGE_SECURITY_XML_OP_ENCRYPT);
+		}
+		
+	}
+	
+	private void verificheDatabaseInChiaroMessageSecurityWSSecurity() throws UtilsException {
+		
+		// ** signature **
+		
+		Map<String, String> verifiche = new HashMap<>();
+		verifiche.put(SecurityConstants.SIGNATURE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SIGNATURE);
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaResponse(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SIGNATURE);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataResponse(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SIGNATURE);
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SIGNATURE);
+		}
+		
+		
+		// ** encrypt **
+		
+		verifiche = new HashMap<>();
+		verifiche.put(SecurityConstants.DECRYPTION_PASSWORD, STORE_PASSWORD_OPENSPCOOP); 
+		verifiche.put(Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, STORE_PASSWORD_OPENSPCOOP_JKS); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataResponse(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_ENCRYPT);
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_ENCRYPT);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, STORE_PASSWORD_OPENSPCOOP); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_ENCRYPT);
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaResponse(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_ENCRYPT);
+		}
+		
+		
+		// ** saml-bearer **
+		
+		verifiche = new HashMap<>();
+		verifiche.put(SecurityConstants.SIGNATURE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_BEARER);
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaResponse(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_BEARER);
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_SENDER_VOUCHES);
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaResponse(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_SENDER_VOUCHES);
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_HOLDER_OF_KEY);
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaResponse(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_HOLDER_OF_KEY);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataResponse(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_BEARER);
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_BEARER);
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataResponse(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_SENDER_VOUCHES);
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_SENDER_VOUCHES);
+			verificheDatabaseInChiaroMessageSecurityPortaDelegataResponse(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_HOLDER_OF_KEY);
+			verificheDatabaseInChiaroMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_HOLDER_OF_KEY);
+		}
+
 		
 	}
 	
@@ -2605,6 +2764,12 @@ public class SecretsTest extends ConfigLoader {
 		// -- jose --
 		verificheDatabaseCifratoMessageSecurityJOSE(prefix);
 		
+		// -- xml --
+		verificheDatabaseCifratoMessageSecurityXML(prefix);
+		
+		// -- wssecurity --
+		verificheDatabaseCifratoMessageSecurityWSSecurity(prefix);
+		
 	}
 	private void verificheDatabaseCifratoMessageSecurityJOSE(String prefix) throws UtilsException {
 		
@@ -2683,6 +2848,123 @@ public class SecretsTest extends ConfigLoader {
 		}
 		
 	}
+	
+	private void verificheDatabaseCifratoMessageSecurityXML(String prefix) throws UtilsException {
+		
+		// ** signature **
+		
+		Map<String, String> verifiche = new HashMap<>();
+		verifiche.put(SecurityConstants.SIGNATURE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseCifratoMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_XML, API_MESSAGE_SECURITY_XML_OP_SIGNATURE, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaResponse(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_XML, API_MESSAGE_SECURITY_XML_OP_SIGNATURE, prefix);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseCifratoMessageSecurityPortaDelegataResponse(entry, PORTA_DELEGATA_MESSAGE_SECURITY_XML, API_MESSAGE_SECURITY_XML_OP_SIGNATURE, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_XML, API_MESSAGE_SECURITY_XML_OP_SIGNATURE, prefix);
+		}
+		
+		
+		// ** encrypt **
+		
+		verifiche = new HashMap<>();
+		verifiche.put(SecurityConstants.DECRYPTION_PASSWORD, PASSWORD_123456); 
+		verifiche.put(Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseCifratoMessageSecurityPortaDelegataResponse(entry, PORTA_DELEGATA_MESSAGE_SECURITY_XML, API_MESSAGE_SECURITY_XML_OP_ENCRYPT, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_XML, API_MESSAGE_SECURITY_XML_OP_ENCRYPT, prefix);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseCifratoMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_XML, API_MESSAGE_SECURITY_XML_OP_ENCRYPT, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaResponse(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_XML, API_MESSAGE_SECURITY_XML_OP_ENCRYPT, prefix);
+		}
+		
+	}
+	
+	private void verificheDatabaseCifratoMessageSecurityWSSecurity(String prefix) throws UtilsException {
+		
+		// ** signature **
+		
+		Map<String, String> verifiche = new HashMap<>();
+		verifiche.put(SecurityConstants.SIGNATURE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseCifratoMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SIGNATURE, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaResponse(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SIGNATURE, prefix);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseCifratoMessageSecurityPortaDelegataResponse(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SIGNATURE, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SIGNATURE, prefix);
+		}
+		
+		
+		// ** encrypt **
+		
+		verifiche = new HashMap<>();
+		verifiche.put(SecurityConstants.DECRYPTION_PASSWORD, PASSWORD_123456); 
+		verifiche.put(Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseCifratoMessageSecurityPortaDelegataResponse(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_ENCRYPT, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_ENCRYPT, prefix);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseCifratoMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_ENCRYPT, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaResponse(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_ENCRYPT, prefix);
+		}
+		
+		
+		// ** saml-bearer **
+		
+		verifiche = new HashMap<>();
+		verifiche.put(SecurityConstants.SIGNATURE_PASSWORD, PASSWORD_123456); 
+		verifiche.put(Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseCifratoMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_BEARER, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaResponse(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_BEARER, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_SENDER_VOUCHES, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaResponse(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_SENDER_VOUCHES, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaDelegataRequest(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_HOLDER_OF_KEY, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaResponse(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_HOLDER_OF_KEY, prefix);
+		}
+		
+		verifiche = new HashMap<>();
+		verifiche.put(Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD, PASSWORD_123456); 
+		
+		for (Entry<String, String> entry : verifiche.entrySet()) {
+			verificheDatabaseCifratoMessageSecurityPortaDelegataResponse(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_BEARER, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_BEARER, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaDelegataResponse(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_SENDER_VOUCHES, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_SENDER_VOUCHES, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaDelegataResponse(entry, PORTA_DELEGATA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_HOLDER_OF_KEY, prefix);
+			verificheDatabaseCifratoMessageSecurityPortaApplicativaRequest(entry, PORTA_APPLICATIVA_MESSAGE_SECURITY_WSS, API_MESSAGE_SECURITY_WSS_OP_SAML_HOLDER_OF_KEY, prefix);
+		}
+
+		
+	}
+	
+	
 	private void verificheDatabaseCifratoMessageSecurityPortaDelegataRequest(Entry<String, String> entry, String nomePortaDefault, String nomeAzione, String prefix) throws UtilsException {
 		String pName = entry.getKey();
 		
