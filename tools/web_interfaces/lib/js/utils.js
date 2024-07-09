@@ -192,6 +192,7 @@ function visualizzaValoreDecodificato(evt) {
 	// recupero la url
 	var urlLockDecoder = $("#__i_hidden_lockurl_").val();
 	var valToDecode = $("#__i_hidden_lockvalue_").val();
+	var labelElementoForm = $("#__i_hidden_locklabel_").val();
 	
 	// addTabID
 	urlLockDecoder = addTabIdParam(urlLockDecoder,true);
@@ -231,6 +232,9 @@ function visualizzaValoreDecodificato(evt) {
 				
 				// nascondo il tasto visualizza
 				$("#visualizzaInformazioniCifrateModal").parent().children('.ui-dialog-buttonpane').hide();
+				
+				// imposto label elemento form
+				$("#visualizzaInformazioniCifrateModal").prev().children('span').text(labelElementoForm);
 				
 				// ripristino ombreggiatura
 				$("#visualizzaInformazioniCifrateModal").dialog("close");
@@ -442,13 +446,18 @@ function copyTextToClipboard(text) {
 	  return successful;
 }
 		
-function setValoriLock(url,valore){
+function setValoriLock(url,valore,label){
 		$("#__i_hidden_lockurl_").val(url);
 		$("#__i_hidden_lockvalue_").val(valore);
+		if(label) {
+			$("#__i_hidden_locklabel_").val(label);
+		} else {
+			$("#__i_hidden_locklabel_").val('');
+		} 
 }
 
 function resetValoriLock(){
-	setValoriLock('','');
+	setValoriLock('','','');
 }
 
 // Funzione per estrarre il nome del file dall'header Content-Disposition

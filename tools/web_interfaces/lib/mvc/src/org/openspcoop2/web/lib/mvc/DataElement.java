@@ -183,6 +183,9 @@ public class DataElement implements Serializable {
 	public void setLabel(String s) {
 		this.label = s;
 	}
+	public String getOriginalLabel() {
+		return DataElement.getEscapedValue(DataElement.checkNull(this.label));
+	}
 	public String getLabel() {
 		return this.getLabel(true);
 	}
