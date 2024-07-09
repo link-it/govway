@@ -414,11 +414,12 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
   			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
   			console.log(idx);
   			if(idx) {
-				var label = $("#hidden_title_pwd_"+ idx + "_lock_view").val();
+				var title = $("#hidden_title_pwd_"+ idx + "_lock_view").val();
+				var label = $("#hidden_label_pwd_"+ idx + "_lock_view").val();
 				var body = $("#hidden_body_pwd_"+ idx+ "_lock_view").val();
 				var url = $("#hidden_url_pwd_"+ idx+ "_lock_view").val();
 				var valore = $("#__lk__pwd_"+ idx+ "").val();
-				mostraInformazioniCifrateModal(label,body,url,valore);
+				mostraInformazioniCifrateModal(title,body,url,valore,label);
   			}
 			});
   	}
@@ -470,8 +471,13 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 		$("#dataElementInfoModal").dialog("open");
 	}
 	
-	function mostraInformazioniCifrateModal(title,body,url,valore){
-		setValoriLock(url,valore);
+	function mostraInformazioniCifrateModal(title,body,url,valore,label){
+		// se non passo un valore nella label lascio il titolo di default
+		if(!label) {
+			label = title;
+		}
+		
+		setValoriLock(url,valore,label);
 		
 		$("#txtA_ne_dec").val('');
 		$("#txtA_ne_dec").attr('style','');		

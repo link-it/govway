@@ -90,6 +90,7 @@ if(csrfTokenFromSession == null)
 		%>
 		<input type="hidden" name="__i_hidden_lockurl_" id="__i_hidden_lockurl_"  value=""/>
 		<input type="hidden" name="__i_hidden_lockvalue_" id="__i_hidden_lockvalue_"  value=""/>
+		<input type="hidden" name="__i_hidden_locklabel_" id="__i_hidden_locklabel_"  value=""/>
 <%
 boolean elementsRequired = false;
 boolean elementsRequiredEnabled = true;
@@ -1602,6 +1603,7 @@ for (int i = 0; i < dati.size(); i++) {
 																								<input type="hidden" name="__i_hidden_title_<%= idPwdViewLock %>" id="hidden_title_<%= idPwdViewLock %>"  value="<%= Costanti.TITOLO_FINESTRA_MODALE_VISUALIZZA_MESSAGE_WARNING %>"/>
 			                        											      			<input type="hidden" name="__i_hidden_body_<%= idPwdViewLock %>" id="hidden_body_<%= idPwdViewLock %>"  value="<%= dePwd.getLockWarningMessage() %>"/>
 			                        											      			<input type="hidden" name="__i_hidden_url_<%= idPwdViewLock %>" id="hidden_url_<%= idPwdViewLock %>"  value="<%= de.getUrl() %>"/>
+			                        											      			<input type="hidden" name="__i_hidden_label_<%= idPwdViewLock %>" id="hidden_label_<%= idPwdViewLock %>"  value="<%= de.getOriginalLabel() %>"/>
 			                        													      	<span class="spanIconInfoBox-viewLock">
 			                        																<i class="material-symbols-outlined md-24" id="<%=idPwdViewLock %>" title="<%= Costanti.ICONA_VISIBILITY_LOCK_TOOLTIP %>"><%= Costanti.ICON_VISIBILITY_LOCK %></i>
 			                        															</span>			                        															
