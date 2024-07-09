@@ -39,3 +39,4 @@ manualistica distribuita con il prodotto.
 	entita
 	processo
 	utente
+	info_confidenziali/index

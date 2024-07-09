@@ -18,7 +18,7 @@ La configurazione consente inoltre di abilitare la modalità 'App ID' che preved
 .. figure:: ../../_figure_console/AutenticazioneApiKeyAppID.png
     :scale: 70%
     :align: center
-    :name: configAutenticazioneApiKeyFig
+    :name: configAutenticazioneApiKeyAppIDFig
 
     Dati di configurazione di un'autenticazione API Key + App ID
 
@@ -27,7 +27,7 @@ Infine è possibile ridefinire i nomi degli header http utilizzati non seleziona
 .. figure:: ../../_figure_console/AutenticazioneApiKeyAppIDCustom.png
     :scale: 70%
     :align: center
-    :name: configAutenticazioneApiKeyFig
+    :name: configAutenticazioneApiKeyAppIDCustomFig
 
     Dati di configurazione di un'autenticazione API Key + App ID con personalizzazione dei nomi degli header HTTP
 

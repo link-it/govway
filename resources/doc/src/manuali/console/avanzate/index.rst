@@ -25,4 +25,5 @@ Funzionalità Avanzate
 	contentBased
 	validazione
 	password
+	info_confidenziali
 	health_check

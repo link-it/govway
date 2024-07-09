@@ -32,7 +32,7 @@ Le regole di trasformazione possono avvalersi di un contesto di risorse, con val
 -   *system:NAME* : valore associato alla proprietà di sistema, indicata nella configurazione generale, con nome 'NAME'
 -   *env:NAME* : valore associato alla variabile di sistema con nome 'NAME'
 -   *java:NAME* : valore associato alla variabile java con nome 'NAME'
--   *envj:NAME* : valore associato alla variabile di sistema o java con nome 'NAME'; la variabile viene cercata prima come variabile di sistema e se non presente come variabile della jvm
+-   *envj:NAME* : valore associato alla variabile di sistema o java con nome 'NAME'; la variabile viene cercata prima come variabile di sistema e, se non presente, come variabile della jvm
 
 Per le risposte sono inoltre disponibili anche le seguenti risorse:
 

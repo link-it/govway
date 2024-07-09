@@ -760,7 +760,7 @@
 		<comment displayText="La fase di predisposizione del software è stata completata."/>
 	        <comment displayText="Si raccomanda di far riferimento alla documentazione del prodotto"/>
 		<comment displayText="per attivare le modalità di cifratura delle informazioni confidenziali."/>
-	        <comment explanatoryText="       https://govway.org/doc/xxx" bold="true"/>
+	        <comment explanatoryText="       https://govway.org/documentazione/console/introduzione/infoConfidenziali.html" bold="true"/>
 
     </page>
 
