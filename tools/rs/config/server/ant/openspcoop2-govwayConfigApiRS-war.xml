@@ -62,6 +62,14 @@
 			</then>
 		</if>
 		
+		<var name="excludeSwagger" value=""/>
+		<if>
+                        <equals arg1="${enableSwaggerUi}" arg2="false"/>
+                        <then>
+				<var name="excludeSwagger" value="swagger-ui-*.jar"/>
+			</then>
+		</if>
+
 		<war destfile="${dist_govwayConfigApiRS}/govwayAPIConfig.war" webxml="${src_govwayConfigApiRS}/WEB-INF/web.xml">
 
 			<webinf dir="${tmp_jboss_conf}">
@@ -109,6 +117,7 @@
 				<include name="xmlsec-2.3.4-gov4j-1.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/swagger">
+				<exclude name="${excludeSwagger}"/>
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/openapi4j">

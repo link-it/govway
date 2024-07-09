@@ -19,6 +19,7 @@
       <property name="buildGovWayConfigApiRS" value="true"/>
       <property name="buildGovwayConsoleCore" value="true"/>
       <property name="buildAPI" value="true"/>
+      <property name="enableSwaggerUi" value="false"/>
 
       <!-- Dipendenze di compilazione -->
       <property name="webInterfaces" location="../../../web_interfaces"/>
