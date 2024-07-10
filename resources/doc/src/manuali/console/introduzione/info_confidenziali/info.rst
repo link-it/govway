@@ -11,9 +11,9 @@ Rientrano in questa casistica:
 
 - la password per l'accesso ad un HTTP :ref:`avanzate_connettori_proxy`.
 
-La gestione delle informazioni sopra descritte varia a seconda se viene attivata la modalità di cifratura delle informazioni confidenziali descritta nella sezione ':ref:`byokInstall`' della Guida di Installazione.
+La gestione delle informazioni sopra descritte varia a seconda se viene attivata la modalità di cifratura delle informazioni confidenziali descritta nella sezione ':ref:`byokInstallSecurityGovWay`' della Guida di Installazione.
 
-*Senza una cifratura delle informazioni*
+*Senza una* :ref:`byokInstallSecurityGovWay`
 
 La console visualizzerà l'informazione mascherandola come mostrato nella figura :numref:`infoConfidenzialiChiaroMascheraAttiva` e fornendo la possibilità di visualizzarla in chiaro come mostrato nella figura :numref:`infoConfidenzialiChiaroMascheraNonAttiva`. 
 
@@ -43,7 +43,7 @@ Un'informazione confidenziale, una volta salvata nella base dati, sarà sempre p
 
     Cifratura delle informazioni confidenziali non abilitata: modifica di una informazione precedentemente salvata
 
-*Abilitando una* :ref:`byokInstall`
+*Abilitando la* :ref:`byokInstallSecurityGovWay`
 
 In fase di creazione di un'entità, le maschere di gestione sono simili a quelle mostrate nelle figure :numref:`infoConfidenzialiChiaroMascheraAttiva` e :numref:`infoConfidenzialiChiaroMascheraNonAttiva`, con la differenza che comparirà un lucchetto aperto a indicare che l'informazione verrà salvata cifrata sulla base dati, come mostrato nella figura :numref:`infoConfidenzialiCifrataMascheraAttiva` e :numref:`infoConfidenzialiCifrataMascheraNonAttiva`.
 

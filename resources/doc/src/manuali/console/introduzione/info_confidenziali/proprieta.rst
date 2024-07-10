@@ -10,7 +10,7 @@ Nel registro di GovWay è possibile registrare proprietà nome-valore per le seg
 - un applicativo
 - configurazione globale (:ref:`configGeneraleProprieta`)
 
-Abilitando una :ref:`byokInstall`, anche la registrazione delle proprietà può prevedere il salvataggio di alcune proprietà contenenti informazioni confidenziali cifrandole.
+Abilitando la :ref:`byokInstallSecurityGovWay`, anche la registrazione delle proprietà può prevedere il salvataggio di alcune proprietà contenenti informazioni confidenziali cifrandole.
 
 Durante la fase di registrazione di una proprietà, nel campo indicante il valore, è presente un lucchetto aperto che consente, cliccandolo, di cifrare il contenuto inserito (:numref:`infoConfidenzialiCifrataProprietaRegistrazione`).
 

@@ -98,7 +98,7 @@ public class BYOKManager {
 	 * ksm.<idKSM>.http.endpoint: [required] definisce l'endpoint del ksm
 	 * ksm.<idKSM>.http.method: [required] definisce il metodo HTTP utilzzato per connettersi al ksm
 	 * ksm.<idKSM>.http.header.<nome>: definisce un header HTTP che possiede il nome indicato nella proprietà stessa
-	 * ksm.<idKSM>.http.payload.inline [optional] defnisce il payload da utilizzare nella richiesta http
+	 * ksm.<idKSM>.http.payload.inline [optional] definisce il payload da utilizzare nella richiesta http
 	 * ksm.<idKSM>.http.payload.path [optional] alternativa alla precedente proprietà defnisce il path ad un file contenente il payload da utilizzare nella richiesta http
 	 * ksm.<idKSM>.http.username [optional] definisce la credenziale http-basic (username)
 	 * ksm.<idKSM>.http.password [optional] definisce la credenziale http-basic (password)
@@ -122,6 +122,10 @@ public class BYOKManager {
 	 * ksm.<idKSM>.https.clientAuth.keyStore.password password del keystore
 	 * ksm.<idKSM>.https.clientAuth.key.alias: identifica la chiave privata
 	 * ksm.<idKSM>.https.clientAuth.key.password: password della chiave privata
+     *
+     * ksm.<idKSM>.http.response.base64Encoded [optional; boolean] indicazione se la risposta è codificata in base64
+     * ksm.<idKSM>.http.response.hexEncoded [optional; boolean] indicazione se la risposta è codificata tramite una rappresentazione esadecimale
+     * ksm.<idKSM>.http.response.jsonPath [optional] se la risposta è un json (eventualmente dopo la decodificata base64/hex) consente di indicare un jsonPath per estrarre l'informazione da un singolo elemento
      *
      * Configurazioni per ksm locale:
      * 

@@ -77,6 +77,7 @@ public class BYOKRemoteConfig implements Serializable {
 	
 	private boolean httpResponseBase64Encoded;
 	private boolean httpResponseHexEncoded;
+	private String httpResponseJsonPath;
 	
 	
 	protected BYOKRemoteConfig(String id, Properties p, Logger log) throws UtilsException {
@@ -120,6 +121,7 @@ public class BYOKRemoteConfig implements Serializable {
 		
 		this.httpResponseBase64Encoded = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_RESPONSE_BASE64_ENCODED, false, false);
 		this.httpResponseHexEncoded = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_RESPONSE_HEX_ENCODED, false, false);
+		this.httpResponseJsonPath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_RESPONSE_JSON_PATH, false);
 	}
 
 	private void initHttpHeader(Properties p) {
@@ -222,5 +224,8 @@ public class BYOKRemoteConfig implements Serializable {
 	}
 	public boolean isHttpResponseHexEncoded() {
 		return this.httpResponseHexEncoded;
+	}
+	public String getHttpResponseJsonPath() {
+		return this.httpResponseJsonPath;
 	}
 }

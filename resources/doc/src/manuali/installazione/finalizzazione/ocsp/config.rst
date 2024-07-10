@@ -5,7 +5,7 @@ Configurazione Policy OCSP
 
 GovWay consente di definire molteplici policy OCSP agendo sul file *<directory-lavoro>/ocsp.properties*.
 
-La configurazione di ogni policy è rappresentata dall'insieme di proprietà che presentano lo stesso prefisso 'ocsp.<idPolicy>'. L'identificativo <idPolicy> serve univocamente ad aggregatore tali proprietà.
+La configurazione di ogni policy è rappresentata dall'insieme di proprietà che presentano lo stesso prefisso 'ocsp.<idPolicy>'. L'identificativo <idPolicy> serve univocamente ad aggregare tali proprietà.
 
 Una policy viene identificata univocamente da GovWay tramite la proprietà 'ocsp.<idPolicy>.type'; il suo valore deve essere univoco rispetto ai valori forniti nelle altre policy per la medesima proprietà.
 

@@ -26,4 +26,5 @@ Funzionalità Avanzate
 	validazione
 	password
 	info_confidenziali
+	byokNodiManager
 	health_check

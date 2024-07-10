@@ -5,9 +5,9 @@ Cifratura delle informazioni confidenziali (HYOK/BYOK)
 
 GovWay supporta la gestione delle informazioni confidenziali salvate su database e delle chiavi/keystore presenti su filesystem attraverso la cifratura/decifratura mediante una master key, utilizzando un approccio HYOK (Hold Your Own Key) o BYOK (Bring Your Own Key).
 
-Con l'approccio HYOK, le operazioni di cifratura e decifratura avvengono utilizzando una master key presente in un keystore locale (risiedente su filesystem) all'interno di un HSM, come descritto nella sezione :ref:`pkcs11Install`.
+Con l'approccio HYOK, le operazioni di cifratura e decifratura avvengono utilizzando una master key presente in un keystore locale (risiedente su filesystem) o all'interno di un HSM come descritto nella sezione :ref:`pkcs11Install`.
 
-In alternativa, è possibile adottare una gestione BYOK, dove la master key è depositata su un servizio cloud. In questo caso, le operazioni di wrap-key e unwrap-key delle informazioni confidenziali vengono gestite tramite chiamate API esposte dal servizio cloud.
+In alternativa, è possibile adottare una gestione BYOK, dove la master key è depositata su un servizio remoto (es. in cloud). In questo caso, le operazioni di wrap-key e unwrap-key delle informazioni confidenziali vengono gestite tramite chiamate API esposte dal servizio remoto.
 
 La gestione delle informazioni confidenziali è attivabile all'interno del file *<directory-lavoro>/byok.properties*, nel quale sono presenti le due seguenti sezioni principali:
 
@@ -29,6 +29,8 @@ I KMS e i security engine vengono utilizzati da GovWay per gestire diversi aspet
     :name: byokPolicyConnettoreEsempio
   
     Esempio di configurazione di una policy BYOK su GovWay
+
+- 'Unwrap delle chiavi/keystore per la funzionalità di FileTrace': nella sezione :ref:`avanzate_fileTrace_proprietaCifrate` vengono fornite le indicazioni per cifrare eventuali parti di log; i keystore o le chiavi utilizzate per la cifratura possono a loro volta essere cifrate e dovranno essere decifrate prima del loro utilizzo attraverso un KSM riferito tramite la direttiva *encrypt.encMode1.ksm*.
 
 - 'Tool govway-vault-cli': al termine dell'esecuzione dell'installer (:ref:`inst_installer`), nella directory *dist/tools/* è presente un tool da linea di comando che consente:
 

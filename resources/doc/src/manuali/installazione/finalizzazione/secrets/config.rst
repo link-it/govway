@@ -62,7 +62,7 @@ Di seguito un esempio di utilizzo di un ksm:
     java.<nomeVariabile>=<valoreCifratoTramiteKSMIdX>
     java.ksm.<nomeVariabile>=<identificativoKSMIdX>
 
-Come descritto nella sezione :ref:`byokInstallKsm` ogni KSM può richiedere dei parametri di input. Tali parametri possono essere forniti nel file *govway.secrets.properties* tramite la seguente sintassi:
+Come descritto nella sezione :ref:`byokInstallKsmParametri` ogni KSM può richiedere dei parametri di input. Tali parametri possono essere forniti nel file *govway.secrets.properties* tramite la seguente sintassi:
 
 ::
 

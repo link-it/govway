@@ -36,6 +36,7 @@ import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.BYOKLocalEncrypt;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.byok.BYOKCostanti;
@@ -43,11 +44,10 @@ import org.openspcoop2.utils.certificate.byok.BYOKInstance;
 import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.certificate.byok.BYOKMode;
 import org.openspcoop2.utils.certificate.byok.BYOKProvider;
+import org.openspcoop2.utils.certificate.byok.BYOKRemoteUtils;
 import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 import org.openspcoop2.utils.certificate.byok.BYOKSecurityConfig;
 import org.openspcoop2.utils.certificate.byok.BYOKSecurityConfigParameter;
-import org.openspcoop2.utils.io.Base64Utilities;
-import org.openspcoop2.utils.io.HexBinaryUtilities;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
@@ -377,12 +377,7 @@ public class DriverBYOK implements IDriverBYOK {
 			content = httpResponse.getContent();
 		}
 		if(content!=null && content.length>0) {
-			if(instance.getConfig().getRemoteConfig().isHttpResponseBase64Encoded()) {
-				content = Base64Utilities.decode(content);
-			}
-			else if(instance.getConfig().getRemoteConfig().isHttpResponseHexEncoded()) {
-				content = HexBinaryUtilities.decode(new String(content).toCharArray());
-			}
+			content = BYOKRemoteUtils.normalizeResponse(instance, content, LoggerWrapperFactory.getLogger(DriverBYOK.class));
 		}
 		return content;
 	}
