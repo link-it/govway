@@ -79,6 +79,20 @@
 			</then>
 		</if>
 
+		<delete dir="${build_govwayMonitorApiRS}/config" />
+		<mkdir dir="${build_govwayMonitorApiRS}/config" />
+		<copy file="${deploy_govwayMonitorApiRS}/config/openapi-configuration.json" todir="${build_govwayMonitorApiRS}/config" />
+		
+		<!-- SwaggerUI -->
+                <var name="excludeSwagger" value=""/>
+                <if>
+			<equals arg1="${enableSwaggerUi}" arg2="false"/>
+                        <then>
+                                <var name="excludeSwagger" value="swagger-ui-*.jar"/>
+                                <replace file="${build_govwayMonitorApiRS}/config/openapi-configuration.json" token="&quot;support.swagger.ui&quot;: true" value="&quot;support.swagger.ui&quot;: false"/>
+                        </then>
+                </if>
+
 		<war destfile="${dist_govwayMonitorApiRS}/govwayAPIMonitor.war" webxml="${src_govwayMonitorApiRS}/WEB-INF/web.xml">
 
 			<webinf dir="${tmp_jboss_conf}">
@@ -126,6 +140,7 @@
 				<include name="xmlsec-2.3.4-gov4j-1.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/swagger">
+				<exclude name="${excludeSwagger}"/>
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/shared">
@@ -223,7 +238,7 @@
 				<include name="log4j2.properties"/>
 			</classes>
 			
-			<classes dir="${deploy_govwayMonitorApiRS}/config" />
+			<classes dir="${build_govwayMonitorApiRS}/config" />
 		
 		</war>
 
