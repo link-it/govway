@@ -755,6 +755,7 @@
 				<include name="*.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/swagger">
+				<exclude name="swagger-ui-*.jar" />
 				<include name="*.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/openapi4j">

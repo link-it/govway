@@ -409,6 +409,7 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/swagger">
+				<exclude name="swagger-ui-*.jar"/>
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/openapi4j">

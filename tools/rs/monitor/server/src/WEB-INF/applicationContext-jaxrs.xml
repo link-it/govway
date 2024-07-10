@@ -28,7 +28,7 @@
 		<!-- definito tutto in deploy/config/openapi-configuration.json 
 		     poichè all'interno di tale configurazione e' possibile definire anche il server
 		<b:property name="prettyPrint" value="true"/>
-		<b:property name="supportSwaggerUi" value="true"/>
+		<b:property name="supportSwaggerUi" value="false"/>
 		<b:property name="license" value="GPL v3.0"/>
 		<b:property name="licenseUrl" value="https://www.gnu.org/licenses/gpl-3.0.txt"/>
 		<b:property name="contactEmail" value="info@link.it"/>

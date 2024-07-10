@@ -228,6 +228,7 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/swagger">
+				<exclude name="swagger-ui-*.jar"/>
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/reports"> <!-- I report CSV vengono anche utilizzati per l'esportazione delle transazioni -->

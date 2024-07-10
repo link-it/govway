@@ -52,6 +52,7 @@
 			<param name="required_lib_govwayMonitorApiRS" value="${required_lib_govwayMonitorApiRS}"/>
 			<param name="tmp_jboss_conf" value="tmp_govwayMonitorApiRS" />
 	 		<param name="data_content_handler_dir" value="${core}/deploy/data_content_handler" />
+	 		<param name="enableSwaggerUi" value="false"/>
 		</antcall>
 		<delete includeEmptyDirs="true" dir="tmp_govwayMonitorApiRS"/>
 	
