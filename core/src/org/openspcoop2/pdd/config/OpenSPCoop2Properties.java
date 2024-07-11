@@ -890,6 +890,8 @@ public class OpenSPCoop2Properties {
 			
 			this.getBYOKConfig();
 			this.isBYOKConfigRequired();
+			this.isBYOKJmxWrapEnbled();
+			this.isBYOKJmxUnwrapEnbled();
 			this.getBYOKEnvSecretsConfig();
 			this.isBYOKEnvSecretsConfigRequired();
 			
@@ -10122,6 +10124,52 @@ public class OpenSPCoop2Properties {
 			}
 		}
 		return this.isBYOKConfigRequired;
+	}
+	
+	private Boolean isBYOKJmxWrapEnbled= null;
+	public boolean isBYOKJmxWrapEnbled(){
+		if(this.isBYOKJmxWrapEnbled==null){
+			String pName = "org.openspcoop2.pdd.byok.jmx.wrap.enabled";
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					this.isBYOKJmxWrapEnbled = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isBYOKJmxWrapEnbled = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isBYOKJmxWrapEnbled = false;
+			}
+		}
+		return this.isBYOKJmxWrapEnbled;
+	}
+	
+	private Boolean isBYOKJmxUnwrapEnbled= null;
+	public boolean isBYOKJmxUnwrapEnbled(){
+		if(this.isBYOKJmxUnwrapEnbled==null){
+			String pName = "org.openspcoop2.pdd.byok.jmx.unwrap.enabled";
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					this.isBYOKJmxUnwrapEnbled = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isBYOKJmxUnwrapEnbled = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isBYOKJmxUnwrapEnbled = false;
+			}
+		}
+		return this.isBYOKJmxUnwrapEnbled;
 	}
 		
 	private String getBYOKEnvSecretsConfig = null;

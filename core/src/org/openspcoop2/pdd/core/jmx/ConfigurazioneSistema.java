@@ -1497,8 +1497,17 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		}
 	}
 	
+	private void checkByokJmx(boolean wrap) throws CoreException {
+		boolean enabled = wrap ? this.openspcoopProperties.isBYOKJmxWrapEnbled() : this.openspcoopProperties.isBYOKJmxUnwrapEnbled();
+		if(!enabled) {
+			throw new CoreException("not enabled");
+		}
+	}
+	
 	public String byokUnwrap(String value){
 		try {
+			checkByokJmx(false);
+			
 			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNodeForJmxOperation(this.log, false, true);
 			if(driverBYOK!=null) {
 				return driverBYOK.unwrapAsString(value, true);
@@ -1512,6 +1521,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		
 	public String byokBase64Unwrap(String value){
 		try {
+			checkByokJmx(false);
+			
 			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNodeForJmxOperation(this.log, false, true);
 			if(driverBYOK!=null) {
 				byte [] c = driverBYOK.unwrap(value, true);
@@ -1526,6 +1537,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String byokHexUnwrap(String value){
 		try {
+			checkByokJmx(false);
+			
 			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNodeForJmxOperation(this.log, false, true);
 			if(driverBYOK!=null) {
 				byte [] c = driverBYOK.unwrap(value, true);
@@ -1540,6 +1553,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String byokWrap(String value){
 		try {
+			checkByokJmx(true);
+			
 			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNodeForJmxOperation(this.log, true, false);
 			if(driverBYOK!=null) {
 				BYOKWrappedValue v = driverBYOK.wrap(value);
@@ -1559,6 +1574,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String byokWrapBase64Key(String value){
 		try {
+			checkByokJmx(true);
+			
 			byte[] decoded = Base64Utilities.decode(value);
 			
 			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNodeForJmxOperation(this.log, true, false);
@@ -1580,6 +1597,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String byokWrapHexKey(String value){
 		try {
+			checkByokJmx(true);
+			
 			byte[] decoded = HexBinaryUtilities.decode(value);
 			
 			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNodeForJmxOperation(this.log, true, false);

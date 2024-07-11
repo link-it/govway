@@ -32,7 +32,7 @@ I KMS e i security engine vengono utilizzati da GovWay per gestire diversi aspet
 
 - 'Unwrap delle chiavi/keystore per la funzionalità di FileTrace': nella sezione :ref:`avanzate_fileTrace_proprietaCifrate` vengono fornite le indicazioni per cifrare eventuali parti di log; i keystore o le chiavi utilizzate per la cifratura possono a loro volta essere cifrate e dovranno essere decifrate prima del loro utilizzo attraverso un KSM riferito tramite la direttiva *encrypt.encMode1.ksm*.
 
-- 'Tool govway-vault-cli': al termine dell'esecuzione dell'installer (:ref:`inst_installer`), nella directory *dist/tools/* è presente un tool da linea di comando che consente:
+- 'Tool govway-vault-cli': al termine dell'esecuzione dell'installer (:ref:`inst_installer`), nella directory *dist/tools/govway-vault-cli* è presente un tool da linea di comando che consente:
 
    - la cifratura o decifratura di chiavi, riferendosi a un security engine o un KSM definito nel file *<directory-lavoro>/byok.properties*;
    

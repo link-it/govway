@@ -1,22 +1,34 @@
 .. _configAvanzataByokSecurityGovWayRemoto:
 
-Cifratura delle Informazioni Confidenziali solamente su nodi run
--------------------------------------------------------------------
+Cifratura delle Informazioni Confidenziali
+---------------------------------------------------------------------
 
-In architetture dove risiede una suddivisione fisica tra le istanze run e le istanze manager contenenti le console di gestione, la cifratura delle informazioni confidenziali può avvenire attraverso 2 modalità:
+In architetture dove risiede una suddivisione fisica tra le istanze run e le istanze manager contenenti le console di gestione, la cifratura delle informazioni confidenziali può avvenire attraverso due modalità:
 
 - la modalità standard, descritta nella sezione :ref:`byokInstallSecurityGovWay`, in cui viene attivato un unico *Security Engine* che prevede la condivisione della chiave master da parte di tutti i nodi run e manager;
 - una differente modalità in cui la chiave master risiede solamente sui nodi run e i nodi manager richiedono l'operazione di wrap/unwrap ai nodi run.
 
+Di seguito vengono fornite le indicazioni necessarie ad attivare la seconda modalità.
+
+.. note::
+    La seconda modalità può essere utilizzata per scenari di test o in ambienti progettati per far sì che le funzioni di wrap/unwrap esposte dai nodi run siano sufficientemente protette da criteri di sicurezza elevati, accessibili solamente dai nodi manager e dove il livello di sicurezza di accesso a questi ultimi è equivalente a quello dei corrispettivi nodi run.
+
 La seconda modalità richiede la configurazione del file *<directory-lavoro>/govway.nodirun.properties* come descritto nella sezione :ref:`cluster-console`.
 
-La configurazione dei KSM utilizzati dai nodi manager potranno riferire speciali costanti:
+Devono inoltre essere abilitate le funzioni di wrap e unwrap (per default disabilitate) attraverso la creazione delle seguenti due proprietà sul file *<directory-lavoro>/govway_local.properties*:
+
+ ::
+
+    org.openspcoop2.pdd.byok.jmx.wrap.enabled=true
+    org.openspcoop2.pdd.byok.jmx.unwrap.enabled=true
+
+Tanto premesso la configurazione dei KSM utilizzati dai nodi manager potranno riferire speciali costanti:
 
 - ${govway-runtime:endpoint-wrap}: consente di riferire l'endpoint esposto dai nodi run che implementa l'operazione di wrap;
 - ${govway-runtime:endpoint-unwrap}: consente di riferire l'endpoint esposto dai nodi run che implementa l'operazione di unwrap;
 - ${govway-runtime:username} e ${govway-runtime:password}: consente di riferire la credenziale http-basic configurata in un nodo run e descritta nella sezione :ref:`cluster-console`.
 
-L'attivazione del *Security Engine* dovrà avvenire definendo 2 proprietà differenti nel file *<directory-lavoro>/byok.properties*:
+L'attivazione del *Security Engine* dovrà avvenire definendo due proprietà differenti nel file *<directory-lavoro>/byok.properties*:
 
 - *govway.security*: identificativo del (:ref:`byokInstallSecurityEngine`) che devono utilizzare i nodi manager;
 - *govway.security.runtime*: identificativo del (:ref:`byokInstallSecurityEngine`) utilizzato sui nodi run.

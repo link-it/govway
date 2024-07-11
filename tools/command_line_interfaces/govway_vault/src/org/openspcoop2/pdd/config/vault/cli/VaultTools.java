@@ -102,7 +102,7 @@ public class VaultTools {
 			throw new CoreException(t.getMessage(),t);
 		}
 			
-		if(args.length<3 || args[0]==null || args[1]==null || args[2]==null) {
+		if(args.length<1 || args[0]==null) {
 			throw new CoreException(utilizzoErrato);
 		}
 		
@@ -120,12 +120,15 @@ public class VaultTools {
 		
 		switch (opType) {
 		case UPDATE_CONFIG:
+			utilizzoErrato = "Usage error: update "+VaultUpdateConfig.getUsage();			
 			updateConfig = new VaultUpdateConfig(argsConfig, utilizzoErrato);
 			break;
 		case ENCRYPT:
+			utilizzoErrato = "Usage error: encrypt "+VaultEncDecConfig.getUsage();			
 			encDecConfig = new VaultEncDecConfig(argsConfig, utilizzoErrato, true);
 			break;
 		case DECRYPT:
+			utilizzoErrato = "Usage error: decrypt "+VaultEncDecConfig.getUsage();			
 			encDecConfig = new VaultEncDecConfig(argsConfig, utilizzoErrato, false);
 			break;
 		}
