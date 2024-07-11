@@ -1,41 +1,58 @@
-Documentare govway.map e govway.secrets
+2024-07-12  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, InstallerVersioneBinaria, GovWayConsole, GovWayMonitor, ApiRsConfigurazione, ApiRsMonitoraggio]
+	Aggiunta funzionalità OP-1701
 
-Corretto export	dei plugin per l'autorizzazione	dei contenuti, non veniva esportato a partire dall'erogazione o	dalla fruizione
+2024-07-10  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Aggiunto supporto per collezionare una serie di variabili Java che potranno essere riferite in qualsiasi file di proprietà di GovWay presente nella 'directory-lavoro' tramite la sintassi '${nomeVar}'.
+	Le variabili potranno inoltre essere accedute all’interno delle varie configurazioni di GovWay come, ad esempio, tramite la sintassi 'java:NAME' o 'envj:NAME'.
+	La definizione può essere attuata all'interno di due file differenti:
+	- govway.map.properties: le variabili definite in questo file verranno caricate all'avvio di ogni applicazione GovWay (es. runtime, console, batch ecc.)
+	- govway.secrets.properties: i valori delle variabili definite nel file saranno cifrati e GovWay si occuperà di decifrarli prima del loro caricamento nel sistema.
 
-Aggioungere a jenkins: +- 'autenticazione', verifica la funzionalità di inoltro di credenziali (basic, api-key) al backend
-+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.autenticazione
+2024-07-09  Andrea Poli <apoli@link.it>
 
-Aggiungere a jenkins la conf del loader:
+	* [GovWayCore, GovWayConsole, ApiRsConfigurazione]
+	Aggiunta funzionalità OP-1356
+	Le informazioni confidenziali presenti nella base dati possono adesso essere cifrate tramite le utility 'Bring Your Own Key (BYOK)'. 
+	La definizione della master key e le modalità di cifratura e decifratura sono specificate all'interno di un file di configurazione presente nella 'directory-lavoro' con il nome 'byok.properties'. 
+	La console di gestione è stata rivista per supportare i nuovi campi contenenti informazioni confidenziali.
+	
+2024-07-08  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Il corretto export dei plugin per l'autorizzazione dei contenuti non veniva eseguito correttamente, sia durante l'erogazione che durante la fruizione.
+
+2024-07-06  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	(https://github.com/link-it/govway/issues/159)
+	Nella configurazione del connettore è adesso possibile specificare il metodo di autenticazione 'api-key'.
 		
-		- Impostare in /etc/govway/byok.properties il file protocolli/trasparente/testsuite/karate/byok/byok.properties
-		- Impostare in /etc/govway/byok.properties il file protocolli/modipa/testsuite/byok/byok.properties
+2024-07-05  Andrea Poli <apoli@link.it>
 
-		- Modificare le properties del config_loader in modo che vengano caricate le policy utente e le regole di proxy pass.
-			Impostare in <.../distrib/properties/config_loader.cli.properties>
+	* [GovWayCore, GovWayConsole]
+	La verifica dei certificati include adesso anche la validazione dei keystore riferiti nella configurazione della sicurezza dei messaggi. 
+	Inoltre, è stata aggiunta la possibilità di disabilitare la 'Compliance BSP 1.1' nella validazione di un messaggio contenente WS-Security Username Token.
 
-				policy.enable=true
-				plugin.enable=true
-				configurazioneGenerale.enable=true
-		
-				verificare il puntamento file 'byok.config' all'interno del file config_loader.cli.properties
-		
+2024-07-04  Andrea Poli <apoli@link.it>
 
-documentare visualizza credenziali!!
+	Aggiunta la possibilità di utilizzare policy OCSP nei connettori HTTPS riferiti nelle token policy di validazione e negoziazione. 
+	Risolto inoltre un problema che si presentava selezionando un'autenticazione HTTPS client sulla funzionalità specifica di introspection o userinfo, ma non si abilitava l'endpoint HTTPS nella sezione token. 
+	In questo scenario, la gestione personalizzata dei keystore utilizzati per la connessione HTTPS non veniva attivata.
 
-AGGIUNTO API KEY!!!
+2024-07-03  Giuliano Pintori <pintori@link.it>
 
-AGGIUNTI CHECK DEI CERTIFICATI ANCHE PER MESSAGE SECURITY
+	* [GovWayConsole]
+	Aggiunta la possibilità di svuotare la cache e verificare i certificati in qualsiasi maschera di configurazione di erogazione o fruizione di API, oltre che nella scheda di dettaglio.
 
-AGGIUNTO OCSP POLICY IN HTTPS DELLE TOKEN POLICY E ATTRIBUTE AUTORITH
+2024-07-02  Giuliano Pintori <pintori@link.it>
 
-FIX BUG TOKEN POLICY E AA DOVE SE SI SELEZIONAVA HTTPS CLIENT (o intrispection/userfino) senza https dell'endpoint non si attivava il connettore https
-
-Aggiunta possibilità di resettare le cache e verificare i certificati etc ovunque all'interno di una erogaizone/fruizione <- lavoro di Julio
-
-Corretto bug su export per profilo SPCoop dove una API è identifficata anche da un soggetto referente, quando si selezioanva il soggetto multi-tenant in alto a destra.
-Se un soggetto era selezionato, facendo l'export dell'API o di una fruizione che riferiva una API il cui soggetto era differente da quello selezionato, non veniva esportata l'API.
+	* [GovWayConsole]
+	Corretto il problema presente nella funzionalità di export per il profilo SPCoop che si verificava quando veniva selezionato un soggetto multi-tenant tra quelli disponibili. 
+	Il problema si presentava durante l'export di una API o di una fruizione che riferiva una API il cui soggetto era differente da quello selezionato; all'interno dell'archivio zip non veniva inserita l'API.
 
 2024-04-02  Andrea Poli <apoli@link.it>
 
