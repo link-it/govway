@@ -84,13 +84,16 @@ public final class PorteDelegateProprietaProtocolloChange extends Action {
 			int idInt = Integer.parseInt(idPorta);
 			String idSoggFruitore = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			String nome = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-			String valore = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE);
+			String valore = porteDelegateHelper.getLockedParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE, false);
 			String idAsps = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
 			if(idAsps == null) 
 				idAsps = "";
 			String idFruizione= porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
 			if(idFruizione == null) 
 				idFruizione = "";
+			
+			// Wrap value
+			valore = porteDelegateHelper.wrapValoreProprieta(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE, valore);
 			
 			// Prendo nome, tipo e pdd del soggetto
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
@@ -126,13 +129,15 @@ public final class PorteDelegateProprietaProtocolloChange extends Action {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
-				for (int i = 0; i < pde.sizeProprietaList(); i++) {
-					Proprieta ssp = pde.getProprieta(i);
-					if (nome.equals(ssp.getNome())) {
-						if(ssp.getValore()!=null){
-							valore = ssp.getValore();
+				if(valore==null){
+					for (int i = 0; i < pde.sizeProprietaList(); i++) {
+						Proprieta ssp = pde.getProprieta(i);
+						if (nome.equals(ssp.getNome())) {
+							if(ssp.getValore()!=null){
+								valore = ssp.getValore();
+							}
+							break;
 						}
-						break;
 					}
 				}
 

@@ -31,6 +31,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -41,6 +42,7 @@ import org.openspcoop2.protocol.sdk.constants.IDService;
 import org.openspcoop2.protocol.sdk.state.FunctionContextsCustom;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -68,9 +70,42 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 		return logger;
 	}
 
+	private static boolean checkSecrets = false;
+	private static final Semaphore semaphoreCheckSecrets = new Semaphore("GovWaySecrets");
+	private static void checkSecrets() {
+		if(!checkSecrets) {
+			initSecrets();
+		}
+	}
+	private static void initSecrets() {
+		semaphoreCheckSecrets.acquireThrowRuntime("initSecrets");
+		try {
+			if(!checkSecrets) {
+				BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
+				if(secretsProperties!=null && secretsProperties.isExistsUnwrapPropertiesAfterGovWayStartup()) {
+					secretsProperties.setGovWayStarted(true);
+					try {
+						secretsProperties.initEnvironment();
+						String secretsConfig = OpenSPCoop2Properties.getInstance().getBYOKEnvSecretsConfig();
+						String msgInit = "Environment inizializzato con i secrets definiti nel file '"+secretsConfig+"' dopo il completamento dell'avvio di GovWay"+
+								"\n\tJavaProperties: "+secretsProperties.getJavaMap().keys()+
+								"\n\tEnvProperties: "+secretsProperties.getEnvMap().keys()+
+								"\n\tObfuscateMode: "+secretsProperties.getObfuscateModeDescription();
+						OpenSPCoop2Startup.logStartupInfo(msgInit);
+					} catch (Exception e) {
+						OpenSPCoop2Startup.logStartupError("Inizializzazione ambiente (secrets) non riuscita: "+e.getMessage(),e);
+					}
+				}
+				checkSecrets = true;
+			}
+		}finally {
+			semaphoreCheckSecrets.release("initSecrets");
+		}
+	}
+	
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
+				
 		HttpRequestMethod m = null;
 		try {
 			m = HttpRequestMethod.valueOf(req.getMethod().toUpperCase());
@@ -273,6 +308,8 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 					(idServiceCustom!=null && IDService.PORTA_DELEGATA.equals(idServiceCustom))
 				){
 				
+				checkSecrets();
+				
 				RicezioneContenutiApplicativiConnector r = new RicezioneContenutiApplicativiConnector();
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 				
@@ -282,6 +319,8 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 					|| 
 					(idServiceCustom!=null && IDService.PORTA_DELEGATA_XML_TO_SOAP.equals(idServiceCustom))
 				){
+				
+				checkSecrets();
 				
 				RicezioneContenutiApplicativiHTTPtoSOAPConnector r = new RicezioneContenutiApplicativiHTTPtoSOAPConnector();
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
@@ -293,11 +332,15 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 					(idServiceCustom!=null && IDService.PORTA_APPLICATIVA.equals(idServiceCustom))
 				){
 				
+				checkSecrets();
+				
 				RicezioneBusteConnector r = new RicezioneBusteConnector();
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 			}
 			
 			else if(function.equals(URLProtocolContext.IntegrationManager_FUNCTION) || (idServiceCustom!=null && IDService.INTEGRATION_MANAGER_SOAP.equals(idServiceCustom))){
+				
+				checkSecrets();
 				
 				if(op2Properties!=null && op2Properties.isIntegrationManagerEnabled()==false) {
 					throw new Exception("Service ["+function+"] not active");

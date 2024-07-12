@@ -98,6 +98,9 @@ if(idsTextArea == null)
 			<%			
 		}
 		%>
+		<input type="hidden" name="__i_hidden_lockurl_" id="__i_hidden_lockurl_"  value=""/>
+		<input type="hidden" name="__i_hidden_lockvalue_" id="__i_hidden_lockvalue_"  value=""/>
+		<input type="hidden" name="__i_hidden_locklabel_" id="__i_hidden_locklabel_"  value=""/>
 <%
 boolean elementsRequired = false;
 boolean elementsRequiredEnabled = true;
@@ -141,167 +144,9 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 							<td class="titoloSezione" id="dettaglioFormHeader" colspan="<%= colFormHeader %>">
 								<span class="history"><%= titoloSezione %></span>
 							</td>
-							<% if(mostraComandiHeader) { 
-								String iconaComandiMenu = Costanti.ICONA_MENU_AZIONI_BUTTON;
-								String tipComandiMenu = " title=\"" + Costanti.ICONA_MENU_AZIONI_BUTTON_TOOLTIP + "\"" ;
-								
-								String idDivIconMenu = "divIconMenu_"+numeroEntry;
-								String idIconMenu = "iconMenu_"+numeroEntry; 
-								String idSpanMenu = "spanIconMenu_"+numeroEntry;
-								String idContextMenu = "contextMenu_"+numeroEntry;
-							%>
-								<td class="titoloSezione titoloSezione-right">
-									<div class="iconInfoBoxList" id="<%=idDivIconMenu %>" <%=tipComandiMenu %> >
-			    						<span class="icon-box" id="<%=idSpanMenu %>">
-											<i class="material-icons md-18" id="<%=idIconMenu %>"><%= iconaComandiMenu %></i>
-										</span>
-				   					</div>
-				   					
-				   					<% 
-									// creazione elementi hidden necessari per visualizzare le modali
-									for(int idxLink =0; idxLink < listaComandi.size() ; idxLink ++ ){
-										DataElement de = (DataElement) listaComandi.get(idxLink);
-										String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
-										String classLink = "";
-										String numeroLink = numeroEntry + "_" + idxLink;
-										
-										// gestione link che visualizzano la finestra modale
-										if(de.getInfo() != null || de.getDialog() != null){
-											if(de.getInfo() != null) {
-												DataElementInfo deInfo = de.getInfo();
-												String idDivIconInfo = "divIconInfo_"+numeroLink;
-												String idIconInfo = "iconInfo_"+numeroLink; 
-												String idSpanInfo = "spanIconInfoBoxList_"+numeroLink;
-										%>
-										<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
-					   					<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
-				                
-						                <%						
-											}
-											
-											if(de.getDialog() != null) {
-												Dialog dialog = de.getDialog();
-												String idDivIconUso = "divIconUso_"+numeroLink;
-												String idIconUso = "iconUso_"+numeroLink; 
-												String idSpanUso = "spanIconUsoBoxList_"+numeroLink;
-												
-												BodyElement urlElement = dialog.getUrlElement();
-												
-												request.setAttribute("idFinestraModale_"+numeroLink, de.getDialog());
-												
-												String identificativoFinestraModale = "idFinestraModale_" + numeroLink;
-											%>
-											<input type="hidden" name="__i_hidden_title_<%= idIconUso %>" id="hidden_title_<%= idIconUso %>"  value="<%= urlElement.getUrl() %>"/>
-											<jsp:include page="/jsplib/info-uso-modal.jsp" flush="true">
-												<jsp:param name="idFinestraModale" value="<%=identificativoFinestraModale %>"/>
-											</jsp:include>
-											
-											<%	
-											}
-										} else { // link classico non sono necessarie risorse
-										}
-									}
-					                %>
-				   					<script type="text/javascript" nonce="<%= randomNonce %>">
-										if($("#<%=idSpanMenu %>").length>0){
-											// create context menu
-								            var contextMenu_<%=numeroEntry %> = $('#<%=idSpanMenu %>').contextMenu();
-											
-								         	// set context menu button
-								            contextMenu_<%=numeroEntry %>.button = mouseButton.LEFT;
-											<% 
-												for(int idxLink =0; idxLink < listaComandi.size() ; idxLink ++ ){
-													DataElement de = (DataElement) listaComandi.get(idxLink);
-													String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
-													String classLink = "";
-													String numeroLink = numeroEntry + "_" + idxLink;
-													
-													
-													if(de.getInfo() != null || de.getDialog() != null){
-														
-														%>
-														// add third item with function
-											            contextMenu_<%=numeroEntry %>.menu().addItem('<%=de.getToolTip()%>', function () {
-												            <%
-															
-															if(de.getInfo() != null) {
-																%>
-											    				var labelM_<%=numeroLink %> = $("#hidden_title_iconInfo_<%= numeroLink %>").val();
-																var bodyM_<%=numeroLink %> = $("#hidden_body_iconInfo_<%= numeroLink %>").val();
-																mostraDataElementInfoModal(labelM_<%=numeroLink %>,bodyM_<%=numeroLink %>);
-												    			<%
-															}
-															
-															if(de.getDialog() != null) {
-																Dialog dialog = de.getDialog();
-																request.setAttribute("idFinestraModale_"+numeroLink, de.getDialog());
-																
-																%>
-																var urlD_<%= numeroLink %> = $("#hidden_title_iconUso_<%= numeroLink %>").val();
-																
-																// addTabID
-																urlD_<%= numeroLink %> = addTabIdParam(urlD_<%= numeroLink %>,true);
-
-											    				// chiamata al servizio
-											    				<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
-											    				
-											    				$.ajax({
-										    							url : urlD_<%= numeroLink %>,
-										    							method: 'GET',
-										    							async : false,
-										    							success: function(data, textStatus, jqXHR){
-										    								// inserimento del valore nella text area
-														    				$("textarea[id^='idFinestraModale_<%=numeroLink %>_txtA']").val(data);
-														    				
-														    				<%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
-														    				// apertura modale
-														    				var idToOpen = '#' + 'idFinestraModale_<%= numeroLink %>';
-														    				$(idToOpen).dialog("open");
-										    							},
-										    							error: function(data, textStatus, jqXHR){
-										    								<%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
-										    							}
-										    						}
-										    					);
-												    			<%
-											                }
-															
-															%>
-											            });
-														<%
-														
-													} else {
-														
-														String deVisualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
-														%>
-														contextMenu_<%=numeroEntry %>.menu().addItem('<%=de.getToolTip()%>', function () {
-															
-															<%= deVisualizzaAjaxStatus %>
-															
-												             var val = '<%= de.getUrl() %>';
-												             // addTabID
-										                     val = addTabIdParam(val,true);
-										                     document.location = val;
-
-																
-														 });	
-														<%
-													}
-													
-												}
-											%>				                
-								             // generate context menu
-							             	contextMenu_<%=numeroEntry %>.init();	
-									                
-							                $("#<%=idSpanMenu %>").click(function(e){       
-								            	e.stopPropagation();
-											});
-										}
-									</script>
-								</td>
-							<% 
-							
-							}%>
+							<% if(mostraComandiHeader) { %>
+								<jsp:include page="/jsplib/comandi-header.jsp" flush="true" />
+							<% } %>
 						</tr>
 					</tbody>
 				</table>
@@ -431,13 +276,13 @@ for (int i = 0; i < dati.size(); i++) {
 							      		if(subtitle_<%= deName  %>_aperto){
 						      				$("#<%= titleDivId  %>").show();
 						      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
-						      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI__FIELDSET%>');
+						      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_NASCONDI_FIELDSET%>');
 						      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
 						      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
 						      			} else {
 						      				$("#<%= titleDivId  %>").hide();
 						      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
-						      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA__FIELDSET%>');
+						      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_FIELDSET%>');
 						      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
 						      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
 						      			}
@@ -448,14 +293,14 @@ for (int i = 0; i < dati.size(); i++) {
 							      			if(subtitle_<%= deName  %>_aperto){
 							      				$("#<%= titleDivId  %>").show();
 							      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
-							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI__FIELDSET%>');
+							      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_NASCONDI_FIELDSET%>');
 							      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
 							      				inizializzaSelectSezione('<%= titleDivId  %>');
 							      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
 							      			} else {
 							      				$("#<%= titleDivId  %>").hide();
 							      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
-							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA__FIELDSET%>');
+							      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_FIELDSET%>');
 							      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
 							      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
 							      			}
@@ -467,14 +312,14 @@ for (int i = 0; i < dati.size(); i++) {
 							      			if(subtitle_<%= deName  %>_aperto){
 							      				$("#<%= titleDivId  %>").show();
 							      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
-							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI__FIELDSET%>');
+							      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_NASCONDI_FIELDSET%>');
 							      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
 							      				inizializzaSelectSezione('<%= titleDivId  %>');
 							      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
 							      			} else {
 							      				$("#<%= titleDivId  %>").hide();
 							      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
-							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA__FIELDSET%>');
+							      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_FIELDSET%>');
 							      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
 							      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
 							      			}
@@ -553,14 +398,14 @@ for (int i = 0; i < dati.size(); i++) {
 				      		if(subtitle_<%= deName  %>_aperto){
 			      				$("#<%= subtitleDeId  %>").show();
 			      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
-			      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
+			      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
 			      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
 			      				$("#<%= deName  %>__divEsterno").removeClass('subtitleCollapsed');
 			      				$("#<%= deName  %>__divEsterno").addClass('subtitleOpen');
 			      			} else {
 			      				$("#<%= subtitleDeId  %>").hide();
 			      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
-			      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
+			      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
 			      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
 			      				$("#<%= deName  %>__divEsterno").removeClass('subtitleOpen');
 			      				$("#<%= deName  %>__divEsterno").addClass('subtitleCollapsed');
@@ -572,7 +417,7 @@ for (int i = 0; i < dati.size(); i++) {
 				      			if(subtitle_<%= deName  %>_aperto){
 				      				$("#<%= subtitleDeId  %>").show();
 				      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
-				      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
+				      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
 				      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
 				      				$("#<%= deName  %>__divEsterno").removeClass('subtitleCollapsed');
 				      				$("#<%= deName  %>__divEsterno").addClass('subtitleOpen');
@@ -580,7 +425,7 @@ for (int i = 0; i < dati.size(); i++) {
 				      			} else {
 				      				$("#<%= subtitleDeId  %>").hide();
 				      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
-				      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
+				      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
 				      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
 				      				$("#<%= deName  %>__divEsterno").removeClass('subtitleOpen');
 				      				$("#<%= deName  %>__divEsterno").addClass('subtitleCollapsed');
@@ -593,7 +438,7 @@ for (int i = 0; i < dati.size(); i++) {
 				      			if(subtitle_<%= deName  %>_aperto){
 				      				$("#<%= subtitleDeId  %>").show();
 				      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
-				      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
+				      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
 				      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
 				      				$("#<%= deName  %>__divEsterno").removeClass('subtitleCollapsed');
 				      				$("#<%= deName  %>__divEsterno").addClass('subtitleOpen');
@@ -601,7 +446,7 @@ for (int i = 0; i < dati.size(); i++) {
 				      			} else {
 				      				$("#<%= subtitleDeId  %>").hide();
 				      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
-				      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
+				      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
 				      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
 				      				$("#<%= deName  %>__divEsterno").removeClass('subtitleOpen');
 				      				$("#<%= deName  %>__divEsterno").addClass('subtitleCollapsed');
@@ -648,19 +493,57 @@ for (int i = 0; i < dati.size(); i++) {
 								de.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
 							}
 							String id = "form-link_" + i ;
+							
+							DataElementConfirm deConfirm = de.getConfirm();
+							boolean visualizzaConferma = deConfirm != null;
 	        				%>
 	            			<div class="prop prop-link">
 	            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabelLink %></label>
 	            				<div class="<%=classDivNoEdit %>"> 
-	            					<span class="<%=classSpanNoEdit %>"><a id="<%=id %>" href="<%= de.getUrl() %>" <%=deTarget %> ><%= de.getValue() %></a></span>
-	            					<% if (!de.getOnClick().equals("")) { %>
-		            					<script type="text/javascript" nonce="<%= randomNonce %>">
+	            					<% if (!visualizzaConferma) { %>
+		            					<span class="<%=classSpanNoEdit %>"><a id="<%=id %>" href="<%= de.getUrl() %>" <%=deTarget %> ><%= de.getValue() %></a></span>
+		            					<% if (!de.getOnClick().equals("")) { %>
+			            					<script type="text/javascript" nonce="<%= randomNonce %>">
+										      	 $(document).ready(function(){
+														$('#<%=id %>').click(function() {
+															<%= visualizzaAjaxStatus %><%= de.getOnClick() %>;
+														});
+													});
+											</script>
+										<%  } %>
+									<%  } else {%>
+										<span class="<%=classSpanNoEdit %>"><a id="<%=id %>" href="<%= de.getUrl() %>"><%= de.getValue() %></a></span>
+										<input type="hidden" name="__i_hidden_title_<%= id %>" id="hidden_title_<%= id %>"  value="<%= deConfirm.getTitolo() %>"/>
+						      			<input type="hidden" name="__i_hidden_body_<%= id %>" id="hidden_body_<%= id %>"  value="<%= deConfirm.getBody() %>"/>
+						      			<input type="hidden" name="__i_hidden_azione_<%= id %>" id="hidden_azione_<%= id %>"  value="<%= deConfirm.getAzione() %>"/>
+						      			<input type="hidden" name="__i_hidden_url_<%= id %>" id="hidden_url_<%= id %>"  value="<%= de.getUrl() %>"/>
+										<script type="text/javascript" nonce="<%= randomNonce %>">
 									      	 $(document).ready(function(){
-													$('#<%=id %>').click(function() {
-														<%= visualizzaAjaxStatus %><%= de.getOnClick() %>;
+													$('#<%=id %>').click(function(event) {
+														
+														// Evita l'azione predefinita dell'evento click (apertura del link)
+													    event.preventDefault();
+
+													    // Mostra la modale o finestra di conferma
+													    //$('#myModal').modal('show');
+
+													    // Aggiungi un listener per l'evento di conferma dalla modale
+													    //document.getElementById('confirmButton').addEventListener('click', function() {
+													        // Ripristina l'azione originale dell'evento click
+													   //     window.location.href = event.target.href;
+													    //});
+														
+														
+														// visualizza modale di conferma
+														var label = $("#hidden_title_<%=id %>").val();
+														var body = $("#hidden_body_<%=id %>").val();
+														var url = $("#hidden_url_<%=id %>").val();
+														var azione = $("#hidden_azione_<%=id %>").val();
+														mostraDownloadInformazioniCifrateModal(label,body,url,azione);
 													});
 												});
 										</script>
+									
 									<%  } %>
 	            				</div>
 	            				<% 
@@ -674,6 +557,9 @@ for (int i = 0; i < dati.size(); i++) {
 											<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 										</span>
 									</div>
+						      	<% } %>
+						      	<% if(!deNote.equals("")){ %>
+						      		<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 						      	<% } %>
 	            			</div>
 	            			<%
@@ -917,12 +803,14 @@ for (int i = 0; i < dati.size(); i++) {
 		                    				DataElementPassword dePwd = de.getPassword();
 		                    				boolean visualizzaPasswordChiaro = dePwd.isVisualizzaPasswordChiaro();
 		                    				boolean bottoneGeneraPassword = dePwd.isVisualizzaBottoneGeneraPassword();
+		                    				boolean visualizzaIconaMostraPassword = dePwd.isVisualizzaIconaMostraPassword();
 		                    				
 		                    				String dePwdType = visualizzaPasswordChiaro ? "text" : "password";
-		                    				String dePwdNoEdit = visualizzaPasswordChiaro ? de.getValue() : "********";
+		                    				String dePwdNoEdit = visualizzaPasswordChiaro ? de.getValue() : Costanti.PARAMETER_LOCK_DEFAULT_VALUE;
 		                    				if(bottoneGeneraPassword){
 		                    					classInput = Costanti.INPUT_PWD_CHIARO_CSS_CLASS;
 		                    				}
+		                    				String idPwd = "pwd_" + i;
 		                    				%>
 		                        			<div class="prop">
 		                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" ><%=deLabel %></label>
@@ -930,63 +818,106 @@ for (int i = 0; i < dati.size(); i++) {
 							          			if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 													%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%=dePwdNoEdit %></span></div><%
 							   					} else {
-													%><input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" value="<%= de.getValue()  %>">
-						     					<% 
-									      		if(deInfo != null || bottoneGeneraPassword){
-									      			String idDivIconInfo = "divIconInfo_"+i;
-									      			String idIconInfo = "iconInfo_"+i; 
-									      			
-											      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
-											      		<% 
-									      				if(bottoneGeneraPassword){
-									      					PasswordGenerator pwdGen = dePwd.getPasswordGenerator();
-									      					String id = "form-gen-pass-link_" + i;
-									      				%>
-									      					<script type="text/javascript" nonce="<%= randomNonce %>">
-									      						var pwdGenerate_<%= deName %>_idx = 0;
-									      						var pwdGenerate_<%= deName %> = [];
-									      					
-									      						<% 
-									      							for(int iPwd = 0; iPwd < dePwd.getNumeroSample(); iPwd ++){
-									      								String pwTmp = pwdGen.generate();
-									      								%> pwdGenerate_<%= deName %>.push('<%= pwTmp  %>'); <%
-									      							}
-									      						%>
-									      						
-									      						function generaPwd(inputElement){
-									      							pwdGenerate_<%= deName %>_idx = pwdGenerate_<%= deName %>_idx % pwdGenerate_<%= deName %>.length;
-									      							
-									      							var newValue = pwdGenerate_<%= deName %> [pwdGenerate_<%= deName %>_idx];
-									      							$('input[name="'+ inputElement+'"]').val(newValue);
-									      							
-									      							pwdGenerate_<%= deName %>_idx ++;
-									      						}
-									      					</script>
-									      					<span class="spanButtonGeneraBox">
-								      							<input id="<%=id %>" class="buttonGeneraPassword" type="button" title="<%=dePwd.getTooltipButtonGeneraPassword() %>" value="<%=dePwd.getLabelButtonGeneraPassword() %>">
-								      							<script type="text/javascript" nonce="<%= randomNonce %>">
-															      	 $(document).ready(function(){
-																			$('#<%=id %>').click(function() {
-																				<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>generaPwd('<%= deName  %>');<%= Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>;
+							   						String idPwdEye = "pwd_" + i + "_eye";
+							   						String idPwdEyeSpan = "pwd_" + i + "_eye_span";
+													%>
+													<div class="lock-container">
+														<div class="lock-input-container">
+															<input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= de.getValue()  %>">
+															<%
+									          				if (!bottoneGeneraPassword && visualizzaIconaMostraPassword) {
+										          				%>
+										          					<span id="<%=idPwdEyeSpan %>" class="lock-span-comandi-input">
+																  		<i id="<%=idPwdEye %>" class="material-icons md-24" title="<%= Costanti.ICON_VISIBILITY_TOOLTIP %>"><%= Costanti.ICON_VISIBILITY %></i>
+																  	</span>
+																	<script type="text/javascript" nonce="<%= randomNonce %>">
+																		$(document).ready(function(){
+																			$('#<%=idPwdEye %>').click(function() {
+																				
+																				// toggle the type attribute
+																				var x = document.getElementById("<%=idPwd %>");
+																				  if (x.type === "password") {
+																				    x.type = "text";
+																				  } else {
+																				    x.type = "password";
+																				  }
+				
+																				  // toggle the eye slash icon
+																			    var eyeIcon = $('#<%=idPwdEye %>');
+																			    if (x.type === 'password') {
+																			        eyeIcon.html('<%= Costanti.ICON_VISIBILITY %>');
+																			        eyeIcon.attr('title', '<%= Costanti.ICON_VISIBILITY_TOOLTIP %>');
+																			    } else {
+																			        eyeIcon.html('<%= Costanti.ICON_VISIBILITY_OFF %>');
+																			        eyeIcon.attr('title', '<%= Costanti.ICON_VISIBILITY_OFF_TOOLTIP %>');
+																			    }
+																			    
 																			});
 																		});
-																</script>
-									      					</span>
-									      				<% } %>	
-											      		<% 
-									      				if(deInfo != null){
-									      				%>
-											      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
-											      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
-													      	<span class="spanIconInfoBox">
-																<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
-															</span>
+																	</script>
+									     					<% 
+										   					}
 															
-														<% } %>	
+															%>
 														</div>
-											      	<% 
-							   					}
-						     					%>
+														<%
+														
+										      		if(deInfo != null || bottoneGeneraPassword){
+										      			String idDivIconInfo = "divIconInfo_"+i;
+										      			String idIconInfo = "iconInfo_"+i; 
+										      			
+												      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
+												      		<% 
+										      				if(bottoneGeneraPassword){
+										      					PasswordGenerator pwdGen = dePwd.getPasswordGenerator();
+										      					String id = "form-gen-pass-link_" + i;
+										      				%>
+										      					<script type="text/javascript" nonce="<%= randomNonce %>">
+										      						var pwdGenerate_<%= deName %>_idx = 0;
+										      						var pwdGenerate_<%= deName %> = [];
+										      					
+										      						<% 
+										      							for(int iPwd = 0; iPwd < dePwd.getNumeroSample(); iPwd ++){
+										      								String pwTmp = pwdGen.generate();
+										      								%> pwdGenerate_<%= deName %>.push('<%= pwTmp  %>'); <%
+										      							}
+										      						%>
+										      						
+										      						function generaPwd(inputElement){
+										      							pwdGenerate_<%= deName %>_idx = pwdGenerate_<%= deName %>_idx % pwdGenerate_<%= deName %>.length;
+										      							
+										      							var newValue = pwdGenerate_<%= deName %> [pwdGenerate_<%= deName %>_idx];
+										      							$('input[name="'+ inputElement+'"]').val(newValue);
+										      							
+										      							pwdGenerate_<%= deName %>_idx ++;
+										      						}
+										      					</script>
+										      					<span class="spanButtonGeneraBox">
+									      							<input id="<%=id %>" class="buttonGeneraPassword" type="button" title="<%=dePwd.getTooltipButtonGeneraPassword() %>" value="<%=dePwd.getLabelButtonGeneraPassword() %>">
+									      							<script type="text/javascript" nonce="<%= randomNonce %>">
+																      	 $(document).ready(function(){
+																				$('#<%=id %>').click(function() {
+																					<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>generaPwd('<%= deName  %>');<%= Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>;
+																				});
+																			});
+																	</script>
+										      					</span>
+										      				<% } %>	
+												      		<% 
+										      				if(deInfo != null){
+										      				%>
+												      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+												      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+														      	<span class="spanIconInfoBox">
+																	<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																</span>
+																
+															<% } %>	
+															</div>
+												      	<% 
+								   					}
+							     					%>
+						     					</div>
 						     					<% if(!deNote.equals("")){ %>
 									      			<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 									      		<% } %>
@@ -1419,8 +1350,297 @@ for (int i = 0; i < dati.size(); i++) {
 																			      	<% } %>
 												                    			</div>
 			                                                				<%
-			                                                			} else{ // else interval number			                                                			
-			                                                				//fineelementi
+			                                                			} else{ // else interval number			   
+			                                                				if (type.equals("lock")){
+			                        		                    				String idPwd = "pwd_" + i;
+			                        		                    				%>
+			                        		                        			<div class="prop">
+			                        		                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" ><%=deLabel %></label>
+			                        		                        				<%
+			                        							          			if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
+			                        													%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%= Costanti.PARAMETER_LOCK_DEFAULT_VALUE  %></span></div><%
+			                        							   					} else {
+			                        							   						String idPwdEdit = idPwd + "_edit";
+			                        							   						String idPwdEditSpan = idPwd + "_edit_span";
+			                        							   						String idPwdLock = idPwd + "_lock";
+			                        							   						String idPwdLockOpen = idPwd + "_lock_open";
+			                        							   						String idPwdViewLock = idPwd + "_lock_view";
+			                        							   						String idPwdCopyLock = idPwd + "_lock_copy";
+			                        							   						String idPwdViewInnerLock = idPwd + "_lock_view_inner";
+			                        							   						String hiddenLockName = Costanti.PARAMETER_LOCK_PREFIX + deName;
+			                        							   						String hiddenLockId = Costanti.PARAMETER_LOCK_PREFIX + idPwd;
+			                        							   						String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+			                        							   						DataElementPassword dePwd = de.getPassword();
+			                        							   						boolean lockReadOnly = dePwd.isLockReadOnly();
+			                        							   						boolean forzaVisualizzazioneInputUtente = dePwd.isLockForzaVisualizzazioneInputUtente();
+			                        							   						boolean utilizzaInputPassword = dePwd.isLockUtilizzaInputPassword();
+			                        							   						boolean visualizzaIconLucchetto = dePwd.isLockVisualizzaIconaLucchetto();
+			                        							   						boolean lockValuePresent = !de.getValue().equals(""); // e' gia' presente un valore
+			                        							   						boolean visualizzaInformazioniCifrate = lockValuePresent && dePwd.isLockVisualizzaInformazioniCifrate();
+			                        							   						
+			                        							   						String lockValue = lockValuePresent ? Costanti.PARAMETER_LOCK_DEFAULT_VALUE : de.getValue();
+			                        							   						String lockDisabled = lockValuePresent ? " disabled=\"disabled\"" : "";
+			                        							   						// 1. decido il valore da inserire nell'input e la visualizzazione readonly del campo
+			                        							   						// se devo visualizzare l'input come password o forzare l'input dell'utente  visualizzo gli asterischi
+			                        							   						if(forzaVisualizzazioneInputUtente || (utilizzaInputPassword && !dePwd.isLockVisualizzaInformazioniCifrate())){
+			                        							   							lockValue = de.getValue();
+			                        							   						}
+			                        							   						
+			                        							   						// 2. Tipo del campo, text quando e' vuoto o password quando e' valorizzato
+			                        							   						String dePwdType = !lockValuePresent ? "text" : "password";
+			                        							   						if(utilizzaInputPassword) { // in questa modalita' l'input e' sempre di tipo password
+			                        							   							dePwdType = "password";
+			                        							   						}
+			                        							   						if(forzaVisualizzazioneInputUtente) { // in questa modalita' l'input e' sempre di tipo text
+			                        							   							dePwdType = "text";
+			                        							   							lockDisabled = "";
+			                        							   						}
+			                        							   						
+			                        							   						// 3. se il lock e' readonly il campo input sara' disabilitato
+			                        							   						if(lockReadOnly) {
+			                        							   							lockDisabled = " disabled=\"disabled\"";
+			                        							   						}
+			                        				                    						     
+			                        							   						// 4. Comando Edit visualizzato se presente un valore e il campo e' modificabile
+			                        							   						boolean visualizzaComandoEdit = !forzaVisualizzazioneInputUtente && lockValuePresent && !lockReadOnly;
+			                        							   						
+			                        							   						// 5. Comando Eye visualizzato quando si utilizza il campo password e c'e' un valore o non si devono utilizzare i servizi remoti di decodifica
+			                        							   						boolean visualizzaComandoEye = utilizzaInputPassword && (!lockValuePresent || !org.openspcoop2.utils.certificate.byok.BYOKManager.isEnabledBYOK());
+			                        							   						
+			                        							   						// 6. Comando all'interno dell'input visualizzato se almeno uno dei due comandi qui su e' abilitato
+			                        				                    				boolean visualizzaComandiInternoInput = visualizzaComandoEdit || visualizzaComandoEye;
+			                        				                    				boolean visualizzaTuttiComandiInternoInput = visualizzaComandoEdit && visualizzaComandoEye;
+
+			                        							   						// 7. Comando lock aperto visualizzato se non c'e un valore oppure si forza la visualizzazione dell'input utente.
+			                        				                    				boolean visualizzaOpenLock = !lockValuePresent || forzaVisualizzazioneInputUtente;
+			                        							   						
+			                        							   						
+			                        							   						
+			                        							   						String spanComaniInternoInputClass = visualizzaTuttiComandiInternoInput ? "lock-span-comandi-input lock-span-comandi-input-x2" : "lock-span-comandi-input";
+			                        				                    				
+			                        							   						String titleIconaModifica = visualizzaTuttiComandiInternoInput ? Costanti.ICONA_EDIT_TOOLTIP : Costanti.ICONA_REIMPOSTA_TOOLTIP;
+			                        													%>
+			                        													<div class="lock-container">
+			                        													<%
+			                        							          				if (visualizzaComandiInternoInput) {
+			                        								          				%>
+			                        														<div class="lock-input-container">
+			                        													<% } %>
+				                        													<input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= lockValue %>" <%=lockDisabled %> autocomplete="new-password">
+				                        													<input type="hidden" name="<%= hiddenLockName  %>" id="<%=hiddenLockId %>" value="<%= de.getValue()  %>">
+			                        													<%
+			                        							          				if (visualizzaComandiInternoInput) {
+			                        								          				%>
+			                        								          					<span id="<%=idPwdEditSpan %>" class="<%= spanComaniInternoInputClass %>">
+			                        														  		<i id="<%=idPwdEdit %>" class="material-icons md-24" title="<%= titleIconaModifica %>"><%=  Costanti.ICONA_EDIT %></i>
+			                        														  		<i id="<%=idPwdViewInnerLock %>" class="material-icons md-24" title="<%= Costanti.ICON_VISIBILITY_TOOLTIP %>"><%= Costanti.ICON_VISIBILITY %></i>
+			                        														  	</span>
+			                        															<script type="text/javascript" nonce="<%= randomNonce %>">
+			                        																$(document).ready(function(){
+			                        																	
+			                        																	<% 
+		    			                        									      				if(visualizzaComandoEdit){
+		    			                        									      				%>
+		                        																			// nascondi icona modifica contentuto
+			                        																        $('#<%=idPwdEdit%>').show();
+																									    <% } else {
+	                        																				   %>
+				                        																		// nascondi icona modifica contentuto
+				                        																        $('#<%=idPwdEdit%>').hide();
+		                        																			   <%
+																									    }
+	                        																			%>
+	                        																			
+	                        																			<% 
+		    			                        									      				if(visualizzaComandoEye){
+		    			                        									      				%>
+			    			                        									      				// icona visualizza contenuto visibile	
+		                        																			$('#<%=idPwdViewInnerLock%>').show();
+																									    <% } else {
+	                        																				   %>
+	                        																					// icona visualizza contenuto nascosta
+				                        																		$('#<%=idPwdViewInnerLock%>').hide();
+		                        																			   <%
+																									    }
+	                        																			%>
+			                        																	
+			                        																	$('#<%=idPwdEdit %>').click(function() {
+			                        																		
+			                        																		// Abilita l'input di tipo password
+			                        																        $('#<%=idPwd %>').attr('disabled', false);
+			                        																		
+				                        																     // convertire l'elemento in un text
+			                        																        // toggle the type attribute
+																											var x = document.getElementById("<%=idPwd %>");
+			                        																     
+			                        																        <% 
+			    			                        									      				if(!(visualizzaComandoEdit && visualizzaComandoEye)){
+			    			                        									      				%>
+				                        																        // Svuota l'input di tipo password
+				                        																        $('#<%=idPwd %>').val('');
+			                        																        <% } %>
+			                        																        
+			                        																        <% 
+			    			                        									      				if(visualizzaTuttiComandiInternoInput){
+			    			                        									      					// eliminare il comando di edit
+			    			                        									      				%>
+			    			                        									      					
+			                        																        	$('#<%=idPwdEdit %>').remove();
+			    			                        									      					$('#<%=idPwdEditSpan%>').removeClass('lock-span-comandi-input-x2');
+			                        																        <% } else { 
+			                        																        	// eliminare il comando di edit (rimuovo tutto il div)
+			                        																        	%>
+			                        																        	<% 
+				    			                        									      				if(utilizzaInputPassword){
+				    			                        									      				%>
+				    			                        									      					$('#<%=idPwdEdit %>').remove();
+					                        																        $('#<%=idPwdViewInnerLock%>').show();
+																											    <% } else { %>
+																											    	$('#<%=idPwdEditSpan %>').remove();
+																											    <% } %>
+			                        																        <% } %>
+			                        																    	<% 
+			    			                        									      				if(visualizzaIconLucchetto){
+			    			                        									      				%>
+				                        																        // sostituire l'icona lock con unlock
+				                        																        $('#<%=idPwdLock%>').hide();
+				                        																        $('#<%=idPwdLockOpen%>').show();
+				                        																        // ripristino cursore con puntatore
+				                        																        $('#<%=idPwdLockOpen%>').parent().removeClass('spanIconInfoBox-lock').addClass('spanIconInfoBox');
+																											    
+																											    // nascondere comandi copia
+																											    $('#<%=idPwdCopyLock%>').hide();
+																											    // nascondere comando visualizza
+																											    $('#<%=idPwdViewLock%>').hide();
+																										    <% } %>
+																										    
+																										    <% 
+			    			                        									      				if(utilizzaInputPassword){
+			    			                        									      				%>
+			    			                        									      				 	//x.type = "password";
+				                        																        // visualizza icona visualizza contentuto
+				                        																        $('#<%=idPwdViewInnerLock%>').show();
+																										    <% } else { %>
+																										    	x.type = "text";
+																										    <% } %>
+			                        																	});
+			                        																	
+			                        																	<% 
+		    			                        									      				if(utilizzaInputPassword){
+		    			                        									      				%>
+			                        																		$('#<%=idPwdViewInnerLock %>').click(function() {
+			                        																			
+			                        																			// toggle the type attribute
+			                        																			var x = document.getElementById("<%=idPwd %>");
+			                        																			  if (x.type === "password") {
+			                        																			    x.type = "text";
+			                        																			  } else {
+			                        																			    x.type = "password";
+			                        																			  }
+			                        			
+			                        																			  // toggle the eye slash icon
+			                        																		    var eyeIcon = $('#<%=idPwdViewInnerLock %>');
+			                        																		    if (x.type === 'password') {
+			                        																		        eyeIcon.html('<%= Costanti.ICON_VISIBILITY %>');
+			                        																		        eyeIcon.attr('title', '<%= Costanti.ICON_VISIBILITY_TOOLTIP %>');
+			                        																		    } else {
+			                        																		        eyeIcon.html('<%= Costanti.ICON_VISIBILITY_OFF %>');
+			                        																		        eyeIcon.attr('title', '<%= Costanti.ICON_VISIBILITY_OFF_TOOLTIP %>');
+			                        																		    }
+			                        																		    
+			                        																		});
+		                        																		 <% } %>
+			                        																	
+			                        																});
+			                        															</script>
+			                        														</div>
+			                        							     					<% 
+			                        								   					}
+			                        															                        													
+			                        									      		
+			                        									      			String idDivIconInfo = "divIconInfo_"+i;
+			                        									      			String idIconInfo = "iconInfo_"+i; 
+			                        									      			
+			                        									      			if(visualizzaIconLucchetto || visualizzaInformazioniCifrate || deInfo != null){
+			                        											      	%> 	<div class="lock-iconInfoBox" id="<%=idDivIconInfo %>">
+			                        											      	
+			                        											      	<% 
+			                        									      				if(visualizzaIconLucchetto){
+			                        									      					String chiamataEventoPostback = Costanti.POSTBACK_VIA_POST_FUNCTION_PREFIX;
+			                        									      					chiamataEventoPostback+=Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_START;
+			                        									      					chiamataEventoPostback+=de.getName();
+			                        									      					chiamataEventoPostback+=Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_END;
+			                        									      				%>
+			                        											      			<span class="spanIconInfoBox-lock">
+			                        																<i class="material-icons md-24" id="<%=idPwdLockOpen %>" title="<%= Costanti.ICON_LOCK_OPEN_TOOLTIP %>" ><%=Costanti.ICON_LOCK_OPEN %></i>
+			                        																<i class="material-icons md-24 md-nohover" id="<%=idPwdLock %>"><%=Costanti.ICON_LOCK %></i>
+			                        															</span>
+			                        															<script type="text/javascript" nonce="<%= randomNonce %>">
+			                        																$(document).ready(function(){
+			                        																	<% 
+						                        									      				if(!visualizzaOpenLock){
+						                        									      				%>
+						                        									      				 	$('#<%=idPwdLock%>').show();
+			                        																        $('#<%=idPwdLockOpen%>').hide();
+			                        																     	// ripristino cursore senza puntatore
+			                        																        $('#<%=idPwdLockOpen%>').parent().removeClass('spanIconInfoBox').addClass('spanIconInfoBox-lock');
+						                        									      				<% } else { %>
+						                        									      				 	$('#<%=idPwdLock%>').hide();
+			                        																        $('#<%=idPwdLockOpen%>').show();
+			                        																     	// ripristino cursore con puntatore
+			                        																        $('#<%=idPwdLockOpen%>').parent().removeClass('spanIconInfoBox-lock').addClass('spanIconInfoBox');
+						                        									      				<% } %>
+						                        									      				
+						                        									      				// lancio il postback
+				                        																$('#<%=idPwdLockOpen %>').click(function() {
+				                        																	<%= visualizzaAjaxStatus %><%= chiamataEventoPostback %>;
+				                        																});
+			                        																});
+			                        															</script>
+		                        															<% } %>
+			                        															<% 
+			                        									      				if(visualizzaInformazioniCifrate){
+			                        									      				%>
+			                        															<input type="hidden" name="__i_hidden_title_<%= idPwdCopyLock %>" id="hidden_title_<%= idPwdCopyLock %>"  value="<%= Costanti.TITOLO_FINESTRA_MODALE_COPIA_MESSAGE_WARNING %>"/>
+			                        											      			<input type="hidden" name="__i_hidden_body_<%= idPwdCopyLock %>" id="hidden_body_<%= idPwdCopyLock %>"  value="<%= dePwd.getLockWarningMessage() %>"/>
+			                        											      			<input type="hidden" name="__i_hidden_url_<%= idPwdCopyLock %>" id="hidden_url_<%= idPwdCopyLock %>"  value="<%= de.getUrl() %>"/>
+			                        															<span class="spanIconInfoBox-copyLock">
+			                        																<i class="material-icons md-24" id="<%=idPwdCopyLock %>" title="<%= Costanti.ICONA_COPY_LOCK_TOOLTIP %>"><%= Costanti.ICON_COPY %></i>
+			                        															</span>
+			                        															
+																								<input type="hidden" name="__i_hidden_title_<%= idPwdViewLock %>" id="hidden_title_<%= idPwdViewLock %>"  value="<%= Costanti.TITOLO_FINESTRA_MODALE_VISUALIZZA_MESSAGE_WARNING %>"/>
+			                        											      			<input type="hidden" name="__i_hidden_body_<%= idPwdViewLock %>" id="hidden_body_<%= idPwdViewLock %>"  value="<%= dePwd.getLockWarningMessage() %>"/>
+			                        											      			<input type="hidden" name="__i_hidden_url_<%= idPwdViewLock %>" id="hidden_url_<%= idPwdViewLock %>"  value="<%= de.getUrl() %>"/>
+			                        											      			<input type="hidden" name="__i_hidden_label_<%= idPwdViewLock %>" id="hidden_label_<%= idPwdViewLock %>"  value="<%= de.getOriginalLabel() %>"/>
+			                        													      	<span class="spanIconInfoBox-viewLock">
+			                        																<i class="material-symbols-outlined md-24" id="<%=idPwdViewLock %>" title="<%= Costanti.ICONA_VISIBILITY_LOCK_TOOLTIP %>"><%= Costanti.ICON_VISIBILITY_LOCK %></i>
+			                        															</span>			                        															
+			                        														<% } %>	
+			                        											      			                        											      	
+			                        											      		<% 
+			                        									      				if(deInfo != null){
+			                        									      				%>
+			                        											      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+			                        											      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+			                        													      	<span class="spanIconInfoBox">
+			                        																<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+			                        															</span>
+			                        															
+			                        														<% } %>	
+			                        														</div>
+			                        											      	<% 
+			                        							   					}
+			                        						     					%>
+			                        						     					</div>
+			                        						     					<% if(!deNote.equals("")){ %>
+			                        									      			<p class="note <%= labelStyleClass %>"><%=deNote %></p>
+			                        									      		<% } %>
+			                        		                        			</div>
+			                        		                        			<%
+			                        						   					}
+			                        		                        		} else { // else lock
+			                                                					//fineelementi
+			                        		                        		} // end else lock
 			                                                			} // end else interval number
 			                                                		} // end else radio
 			                                            		} // end else checkbox

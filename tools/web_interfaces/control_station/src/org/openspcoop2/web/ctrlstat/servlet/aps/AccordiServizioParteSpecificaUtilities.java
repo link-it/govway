@@ -1995,7 +1995,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
-			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy,
+			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy, String httpsKeyStoreBYOKPolicy,
 			String proxyEnabled, String proxyHostname, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRispostaEnabled, String tempiRispostaConnectionTimeout, String tempiRispostaReadTimeout, String tempiRispostaTempoMedioRisposta,
 			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop,
@@ -2018,7 +2018,8 @@ public class AccordiServizioParteSpecificaUtilities {
 			AccordoServizioParteSpecifica asps, 
 			String protocollo, String userLogin,
 			AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper, String nomeSAServer,
-			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception {
+			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi,
+			String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue) throws Exception {
 	
 		if(autenticazioneToken && nomeSA!=null) {
 			// nop: eliminare questo if se viene usato uno dei parametri
@@ -2085,7 +2086,7 @@ public class AccordiServizioParteSpecificaUtilities {
 					httpspathkey, httpstipokey,
 					httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey,
-					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
 					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
@@ -2093,6 +2094,7 @@ public class AccordiServizioParteSpecificaUtilities {
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					tokenPolicy,
+					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
 					listExtendedConnettore);
 		}
 		boolean addSpecSicurezza = false;
@@ -2538,7 +2540,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
-			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy,
+			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy, String httpsKeyStoreBYOKPolicy,
 			String proxyEnabled, String proxyHostname, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRispostaEnabled, String tempiRispostaConnectionTimeout, String tempiRispostaReadTimeout, String tempiRispostaTempoMedioRisposta,
 			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop,
@@ -2561,7 +2563,8 @@ public class AccordiServizioParteSpecificaUtilities {
 			IDSoggetto idSoggettoFruitore, AccordoServizioParteSpecifica asps, 
 			String userLogin,
 			AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper,
-			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception {
+			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi,
+			String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue) throws Exception {
 	
 		if(autenticazioneHttp!=null && autenticazioneToken) {
 			// nop: rimuovere questo if se viene usato un qualche parametro
@@ -2610,7 +2613,7 @@ public class AccordiServizioParteSpecificaUtilities {
 					httpspathkey, httpstipokey,
 					httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey,
-					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
 					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
@@ -2618,6 +2621,7 @@ public class AccordiServizioParteSpecificaUtilities {
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					tokenPolicy,
+					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
 					listExtendedConnettore);
 		}
 		

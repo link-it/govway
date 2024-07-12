@@ -332,9 +332,9 @@ public class SSLUtilities {
 	}
 	
 	public static SSLContext generateSSLContext(SSLConfig sslConfig, StringBuilder bfLog) throws UtilsException{
-		return generateSSLContext(sslConfig, null, bfLog);
+		return generateSSLContext(sslConfig, null, null, bfLog);
 	}
-	public static SSLContext generateSSLContext(SSLConfig sslConfig, IOCSPValidator ocspValidator, StringBuilder bfLog) throws UtilsException{
+	public static SSLContext generateSSLContext(SSLConfig sslConfig, IOCSPValidator ocspValidator, IBYOKUnwrapManager byok, StringBuilder bfLog) throws UtilsException{
 
 		// Gestione https
 		SSLContext sslContext = null;
@@ -352,9 +352,10 @@ public class SSLUtilities {
 				bfLog.append("Gestione keystore...\n");
 				bfLog.append("\tKeystore type["+sslConfig.getKeyStoreType()+"]\n");
 				bfLog.append("\tKeystore location["+sslConfig.getKeyStoreLocation()+"]\n");
-				//bfLog.append("\tKeystore password["+sslConfig.getKeyStorePassword()+"]\n");
+				/**bfLog.append("\tKeystore password["+sslConfig.getKeyStorePassword()+"]\n");*/
+				bfLog.append("\tKeystore byok policy["+sslConfig.getKeyStoreBYOKPolicy()+"]\n");
 				bfLog.append("\tKeystore keyManagementAlgorithm["+sslConfig.getKeyManagementAlgorithm()+"]\n");
-				//bfLog.append("\tKeystore keyPassword["+sslConfig.getKeyPassword()+"]\n");
+				/**bfLog.append("\tKeystore keyPassword["+sslConfig.getKeyPassword()+"]\n");*/
 				String location = null;
 				try {
 					location = sslConfig.getKeyStoreLocation(); // per debug
@@ -403,7 +404,14 @@ public class SSLUtilities {
 							if(finKeyStore == null) {
 								throw new UtilsException("Keystore not found");
 							}
-							keystoreParam = KeystoreUtils.readKeystore(finKeyStore, sslConfig.getKeyStoreType(), sslConfig.getKeyStorePassword());
+							if(byok!=null) {
+								byte [] keystoreEncBytes = Utilities.getAsByteArray(finKeyStore);
+								byte [] keystorePlainBytes = byok.unwrap(keystoreEncBytes);
+								keystoreParam = KeystoreUtils.readKeystore(keystorePlainBytes, sslConfig.getKeyStoreType(), sslConfig.getKeyStorePassword());
+							}
+							else {
+								keystoreParam = KeystoreUtils.readKeystore(finKeyStore, sslConfig.getKeyStoreType(), sslConfig.getKeyStorePassword());
+							}
 						}
 					}
 					

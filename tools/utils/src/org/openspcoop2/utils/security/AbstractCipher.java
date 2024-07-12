@@ -41,11 +41,15 @@ import org.openspcoop2.utils.random.RandomUtilities;
  */
 public abstract class AbstractCipher {
 
-	private java.security.Key key;
-	private IvParameterSpec ivParameterSpec;
-	private java.security.cert.Certificate certificate;
+	protected java.security.Key key;
+	protected IvParameterSpec ivParameterSpec;
+	protected java.security.cert.Certificate certificate;
 	private int mode;
 		
+	protected AbstractCipher(int mode) {
+		this.mode = mode;
+	}
+	
 	protected AbstractCipher(int mode, java.security.Key key) {
 		this.mode = mode;
 		this.key = key;

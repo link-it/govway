@@ -40,7 +40,8 @@ public enum KeystoreType {
 	JWK_SET ("jwk","JWK Set"),
 	PUBLIC_KEY ("public","Public Key"),
 	KEY_PAIR ("keys","Key Pair"),
-	SYMMETRIC_KEY ("symm", "Symmetric Key");
+	SYMMETRIC_KEY ("symm", "Symmetric Key"),
+	PASSWORD_KEY_DERIVATION ("pass", "Password Key Derivation");
 	
 	
 	private final String nome;

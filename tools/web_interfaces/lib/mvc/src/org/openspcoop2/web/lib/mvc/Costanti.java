@@ -28,10 +28,11 @@ package org.openspcoop2.web.lib.mvc;
  * @version $Rev$, $Date$
  */
 public class Costanti {
+	
+	private Costanti() {}
 
 	/** SISTEMA NON DISPONIBILE */
 	
-	//public static final String MESSAGGIO_SISTEMA_NON_DISPONIBILE = "Il sistema &egrave; momentaneamente indisponibile.<BR/>Si prega di riprovare pi&ugrave; tardi.";
 	public static final String MESSAGGIO_SISTEMA_NON_DISPONIBILE = "Il sistema &egrave; momentaneamente indisponibile.";
 	public static final String MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME_PRE = "Torna alla ";
 	public static final String MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME = "home";
@@ -67,6 +68,7 @@ public class Costanti {
 	public static final String REQUEST_ATTIBUTE_PARAMS = "params";
 	public static final String REQUEST_ATTRIBUTE_SET_ERROR_CODE = "__setErrorCode__";
 	
+	
 	/** SEARCH */
 	
 	public static final String SEARCH_ENABLED ="on";
@@ -98,6 +100,12 @@ public class Costanti {
 	
 	public static final String VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_TEXT= "text";
 	public static final String VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_JSON = "json";
+	
+	/** CACHE MANAGER */
+	public static final String PARAMETRO_RESET_CACHE_TIPO_OGGETTO = PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_OGGETTO;
+	
+	/** VERIFICA CERTIFICATI */
+	public static final String PARAMETRO_VERIFICA_CERTIFICATI_TIPO_OGGETTO = PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_OGGETTO;
 	
 	/** FILTER */
 	
@@ -153,9 +161,10 @@ public class Costanti {
 	public static final String SESSION_ATTRIBUTE_TAB_MAP_CREATION_DATE = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "creation_date";
 	
 	protected static final String SESSION_ATTRIBUTE_LOGIN = "Login";
+	public static final String SESSION_ATTRIBUTE_PAGE_DATA_REDIRECT = "PageData";
 	protected static final String SESSION_ATTRIBUTE_USER = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "User";
 	public static final String SESSION_ATTRIBUTE_GENERAL_DATA = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "GeneralData";
-	public static final String SESSION_ATTRIBUTE_PAGE_DATA = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "PageData";
+	public static final String SESSION_ATTRIBUTE_PAGE_DATA = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + SESSION_ATTRIBUTE_PAGE_DATA_REDIRECT;
 	public static final String SESSION_ATTRIBUTE_RICERCA = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "Ricerca";
 	public static final String SESSION_ATTRIBUTE_RISULTATI_LISTA = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "RisultatiLista";
 	protected static final String SESSION_ATTRIBUTE_CONTA_LISTE = "contaListe";
@@ -166,8 +175,9 @@ public class Costanti {
 	protected static final String SESSION_ATTRIBUTE_GESTIONE_WSBL ="GestioneWSBL";
 	protected static final String SESSION_ATTRIBUTE_CONFIGURAZIONI_PERSONALIZZATE ="ConfigurazioniPersonalizzate";
 	public static final String SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX = "oldConfProp_";
-	public static final String SESSION_ATTRIBUTE_PAGE_DATA_REDIRECT = "PageData";
 	
+	public static final String SESSION_ATTRIBUTE_TAB_MAP_CREATION_TAB_ID = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "creation_tabId";
+	public static final String SESSION_ATTRIBUTE_TAB_MAP_REFRESH_TAB_ID = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "refresh_tabId";
 	
 	
 	/** COOKIES **/
@@ -207,7 +217,7 @@ public class Costanti {
 	public static final String DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS = "in_progress";
 	public static final String DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END = "end";
 	
-	public static DataElement DATA_ELEMENT_HIDDENT_EDIT_MODE_END = new DataElement();
+	public static final DataElement DATA_ELEMENT_HIDDENT_EDIT_MODE_END = new DataElement();
 	static{
 		DATA_ELEMENT_HIDDENT_EDIT_MODE_END.setLabel(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 		DATA_ELEMENT_HIDDENT_EDIT_MODE_END.setValue(DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END);
@@ -215,11 +225,11 @@ public class Costanti {
 		DATA_ELEMENT_HIDDENT_EDIT_MODE_END.setName(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 	}
 	
-	public static Parameter PARAMETER_EDIT_MODE_END = new Parameter
+	public static final Parameter PARAMETER_EDIT_MODE_END = new Parameter
 			(DATA_ELEMENT_EDIT_MODE_NAME, DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END);
 
 	
-	public static DataElement DATA_ELEMENT_HIDDENT_EDIT_MODE_IN_PROGRESS = new DataElement();
+	public static final DataElement DATA_ELEMENT_HIDDENT_EDIT_MODE_IN_PROGRESS = new DataElement();
 	static{
 		DATA_ELEMENT_HIDDENT_EDIT_MODE_IN_PROGRESS.setLabel(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 		DATA_ELEMENT_HIDDENT_EDIT_MODE_IN_PROGRESS.setValue(DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS);
@@ -283,11 +293,20 @@ public class Costanti {
 	public static final String PARAMETER_MESSAGE_TITLE ="mpTitle";
 	public static final String PARAMETER_MESSAGE_TYPE ="mpType";
 	public static final String PARAMETER_MESSAGE_BREADCRUMB ="mpBC";
+	public static final String PARAMETER_MESSAGE_ERROR_CODE ="mpCode";
 	
 	/** PARAMETRI TAB_ID **/
 	
 	public static final String PARAMETER_TAB_KEY ="__tabKey__";
 	public static final String PARAMETER_PREV_TAB_KEY ="__prevTabKey__";
+	
+	/** PARAMETRI LOCK **/
+	
+	public static final String PARAMETER_LOCK_PREFIX = "__lk__";
+	public static final String PARAMETER_LOCK_DEFAULT_VALUE = "********";
+	public static final String TITOLO_FINESTRA_MODALE_DOWNLOAD_MESSAGE_WARNING = "Attenzione";
+	public static final String TITOLO_FINESTRA_MODALE_VISUALIZZA_MESSAGE_WARNING = "Attenzione";
+	public static final String TITOLO_FINESTRA_MODALE_COPIA_MESSAGE_WARNING = "Attenzione";
 	
 	/** PAGE DATA TITLE */
 	
@@ -330,49 +349,110 @@ public class Costanti {
 	public static final String TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA = "Visualizza Sezione";
 	public static final String TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA = "Nascondi Sezione";
 	
-	public static final String ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA = "expand_more";
-	public static final String ICON_NASCONDI_SEZIONE_FILTRI_RICERCA = "expand_less";
-	public static final String ICON_VISUALIZZA__FIELDSET = "expand_more";
-	public static final String ICON_NASCONDI__FIELDSET = "expand_less";
-	public static final String ICON_VISUALIZZA_SUBTITLE = "expand_more";
-	public static final String ICON_NASCONDI_SUBTITLE = "expand_less";
+	/** ICONE
+	 * 
+	 *  Le icone devono essere definite come stringhe contenenti il codice unicode del carattere da visualizzare
+	 *  al posto di utilizzare le legature che non sono supportate da tutti i browser.
+	 *  Ulteriori dettagli in:
+	 *  
+	 *  https://developers.google.com/fonts/docs/material_icons?hl=it#using_the_icons_in_html
+	 * 
+	 * 	per ogni icona indicare il codice unicode e nel commento il nome dell'icona per agevolare la ricerca nel repo icone 
+	 * 
+	 * **/
 	
-	public static final String ICON_ELIMINA_FILE = "delete";
+	public static final String ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA = "&#xE5CF;"; // "expand_more"
+	public static final String ICON_NASCONDI_SEZIONE_FILTRI_RICERCA = "&#xE5CE;"; //"expand_less"
+	public static final String ICON_VISUALIZZA_FIELDSET = "&#xE5CF;"; // "expand_more"
+	public static final String ICON_NASCONDI_FIELDSET = "&#xE5CE;"; //"expand_less"
+	public static final String ICON_VISUALIZZA_SUBTITLE = "&#xE5CF;"; // "expand_more"
+	public static final String ICON_NASCONDI_SUBTITLE = "&#xE5CE;"; //"expand_less"
 	
-	public static final String INFO_BUTTON_ICON = "&#xE88E;";
-	public static final String INFO_BUTTON_ICON_WHITE = "&#xE88F;";
-	public static final String ICON_DIALOG_HEADER = "&#xE8B2;";
-	public static final String ICON_COPY = "file_copy";
-	public static final String ICON_USO = "find_in_page";//"location_searching";
-	public static final String ICON_USO_INFO = INFO_BUTTON_ICON; //"info";
+	public static final String ICON_ELIMINA_FILE = "&#xE872;"; //"delete"
 	
-	public static final String ICON_PERSON = "person";
-	public static final String ICON_UPDATE = "update";
-	public static final String ICON_SCHEDULE = "schedule";
+	public static final String INFO_BUTTON_ICON = "&#xE88E;"; // info 
+	public static final String INFO_BUTTON_ICON_WHITE = "&#xE88F;"; // info_outline
+	public static final String ICON_DIALOG_HEADER = "&#xE8B2;"; // report_problem
+	public static final String ICON_COPY = "&#xE14D;"; // "content_copy" 
+	public static final String ICON_USO = "&#xE880;"; // "find_in_page" //"location_searching"
+	public static final String ICON_USO_INFO = INFO_BUTTON_ICON; //"info"
 	
-	public static final String ICONA_RESET_CACHE_ELEMENTO = "&#xE863;";
+	public static final String ICON_PERSON = "&#xE7FD;"; // "person"
+	public static final String ICON_UPDATE = "&#xE923;"; // "update"
+	public static final String ICON_SCHEDULE = "&#xE8B5;"; // "schedule"
+	
+	public static final String ICONA_RESET_CACHE_ELEMENTO = "&#xE863;"; // autorenew
 	public static final String ICONA_RESET_CACHE_ELEMENTO_TOOLTIP = "Rimuovi dalla cache";
 	public static final String ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO = "Rimuovi {0} dalla cache";
 	
-	public static final String ICONA_VERIFICA = "&#xE8BE;";
+	public static final String ICONA_VERIFICA = "&#xE8BE;"; // settings_ethernet
 	public static final String ICONA_VERIFICA_TOOLTIP = "Verifica";
 	public static final String ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO = "Verifica {0}";
 
 	public static final String ICONA_VERIFICA_CONNETTIVITA_TOOLTIP = "Verifica connettività";
 	public static final String ICONA_VERIFICA_CONNETTIVITA_TOOLTIP_CON_PARAMETRO = "Verifica connettività {0}";
 	
-	public static final String ICONA_VERIFICA_CERTIFICATI = "&#xEA17;";
+	public static final String ICONA_VERIFICA_CERTIFICATI = "&#xEA17;"; // policy
 	public static final String ICONA_VERIFICA_CERTIFICATI_TOOLTIP = "Verifica certificati";
 	public static final String ICONA_VERIFICA_CERTIFICATI_TOOLTIP_CON_PARAMETRO = "Verifica certificati {0}";
 	
 	public static final String ICONA_VISUALIZZA_RUNTIME_ALLARME = Costanti.ICON_USO;
 	public static final String ICONA_VISUALIZZA_RUNTIME_ALLARME_TOOLTIP = "Visualizza runtime";
 	
-	public static final String ICONA_AGGIORNA_RICERCA = "&#xE863;";
+	public static final String ICONA_AGGIORNA_RICERCA = "&#xE863;"; // autorenew
 	public static final String ICONA_AGGIORNA_RICERCA_TOOLTIP = "Aggiorna Ricerca";
 	
-	public static final String ICONA_MENU_AZIONI_BUTTON = "&#xE5D4;";
-	public static final String ICONA_MENU_AZIONI_BUTTON_TOOLTIP = ""; // "Visualizza azioni disponibili";
+	public static final String ICONA_MENU_AZIONI_BUTTON = "&#xE5D4;"; // more_vert
+	public static final String ICONA_MENU_AZIONI_BUTTON_TOOLTIP = ""; // "Visualizza azioni disponibili"
+	
+	public static final String ICONA_EDIT = "&#xE3C9;"; // "edit"
+	public static final String ICONA_EDIT_TOOLTIP = "Modifica";
+	public static final String ICONA_REIMPOSTA_TOOLTIP = "Reimposta";
+	
+	public static final String ICON_LOCK = "&#xE897;"; // lock
+	public static final String ICON_LOCK_OPEN = "&#xE898;"; // lock_open
+	public static final String ICON_LOCK_OPEN_TOOLTIP = "Proteggi informazione";
+	
+	public static final String ICON_VISIBILITY = "&#xE8F4;"; // visibility
+	public static final String ICON_VISIBILITY_TOOLTIP = "Mostra";
+	public static final String ICON_VISIBILITY_OFF = "&#xE8F5;"; // visibility_off
+	public static final String ICON_VISIBILITY_OFF_TOOLTIP = "Nascondi";
+	
+	public static final String ICON_SEARCH = "&#xE8B6;"; // search
+	
+	public static final String ICON_SUPERVISOR_ACCOUNT = "&#xE8D3;"; // supervisor_account
+	
+	public static final String ICON_CHEVRON_RIGHT = "&#xE5CC;"; // chevron_right
+	public static final String ICON_CHEVRON_LEFT = "&#xE5CB;"; // chevron_left
+	
+	public static final String ICONA_FRECCIA_SU = "&#xE316;"; //keyboard_arrow_up
+	public static final String ICONA_FRECCIA_GIU = "&#xE313;"; // keyboard_arrow_down
+	public static final String ICONA_PLACEHOLDER = "&#160;&#160;&#160;&#160;&#160;"; // 5 spazi
+	
+	public static final String ICONA_CONTINUE = "&#xE5DB;"; // arrow_downward
+	public static final String ICONA_BREAK = "&#xE5CD;"; // close
+
+	public static final String ICONA_ALARM_ACTIVE = "&#xE855;"; // alarm
+	public static final String ICONA_ALARM_PASSIVE = "&#xE857;"; // alarm_off
+	
+	public static final String ICONA_SCHEDULE_ACTIVE = "&#xe889;"; // history
+	public static final String ICONA_SCHEDULE_PASSIVE = "&#xf17d;"; // history_toggle_off
+	
+	public static final String ICONA_DESCRIZIONE = "&#xE873;"; //description
+	public static final String ICONA_VISUALIZZA = "&#xE89E;"; // open_in_new
+	public static final String ICONA_SETTINGS = "&#xE8B8;"; // settings
+	public static final String ICONA_ELENCO = "&#xE0EE;";// "list_alt"
+	public static final String ICONA_UPGRADE = "&#xE3CA;"; // exposure 
+	public static final String ICONA_TOGGLE_ON = "&#xE9F6;"; //"toggle_on"
+	public static final String ICONA_TOGGLE_OFF = "&#xE9F5;"; //"toggle_off"
+	
+	// Icone del set material symbols
+	
+	public static final String ICONA_COPY_LOCK_TOOLTIP = "Copia informazione cifrata";
+	
+	public static final String ICON_VISIBILITY_LOCK = "&#xF653;"; // visibility_lock
+	public static final String ICONA_VISIBILITY_LOCK_TOOLTIP = "Visualizza informazione cifrata";
+	
 	
 	public static final int LUNGHEZZA_LABEL_TABS = 30;
 	public static final int LUNGHEZZA_RIGA_TESTO_TABELLA = 150;
@@ -385,6 +465,16 @@ public class Costanti {
 	/** CSP */
 	public static final String REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE = "_csp_random_nonce";
 	public static final String SESSION_ATTRIBUTE_CSP_RANDOM_NONCE =  REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE;
+
+	/* JSON */
+	public static final String CHAR_APERTURA_JSON = "{";
+	public static final String CHAR_CHIUSURA_JSON = "}";
+	public static final String CHAR_QUOTA_JSON = "\"";
+	public static final String CHAR_VIRGOLA_JSON = ",";
+	public static final String CHAR_DUE_PUNTI_JSON = ":";
+	public static final String NULL_VALUE_JSON = "null";
+	public static final String KEY_ESITO_JSON = "esito";
+	public static final String KEY_DETTAGLIO_ESITO_JSON = "dettaglioEsito";
 	
 	/** LIB JQUERY */
 	

@@ -64,6 +64,7 @@ import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreUscita;
 import org.openspcoop2.pdd.core.controllo_traffico.ConnettoreUtilities;
 import org.openspcoop2.pdd.core.controllo_traffico.DatiTempiRisposta;
+import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.OutResponseContext;
@@ -779,6 +780,7 @@ public class InoltroRisposte extends GenericLib{
 						contextParameters.setPddErogatore(registroServiziManager.getIdPortaDominio(idServizio.getSoggettoErogatore(), null, requestInfo));
 						messageSecurityContext = new MessageSecurityFactory().getMessageSecurityContext(contextParameters);
 						messageSecurityContext.setOutgoingProperties(securityConfig.getFlowParameters());
+						DynamicMapBuilderUtils.injectDynamicMap(busta, requestInfo, pddContext, this.log);
 						if(messageSecurityContext.processOutgoing(responseMessage,pddContext,
 								transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null) == false){
 							msgDiag.logErroreGenerico(messageSecurityContext.getMsgErrore(), "Costruzione header MessageSecurity");

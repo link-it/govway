@@ -238,6 +238,7 @@ CREATE TABLE pa_auth_properties
 	id_porta BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore VARCHAR(255) NOT NULL,
+	enc_value TEXT,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_pa_auth_properties') NOT NULL,
 	-- unique constraints
@@ -259,6 +260,7 @@ CREATE TABLE pa_authz_properties
 	id_porta BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore VARCHAR(255) NOT NULL,
+	enc_value TEXT,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_pa_authz_properties') NOT NULL,
 	-- unique constraints
@@ -280,6 +282,7 @@ CREATE TABLE pa_authzc_properties
 	id_porta BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore VARCHAR(255) NOT NULL,
+	enc_value TEXT,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_pa_authzc_properties') NOT NULL,
 	-- unique constraints
@@ -323,6 +326,7 @@ CREATE TABLE pa_properties
 	id_porta BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore VARCHAR(255) NOT NULL,
+	enc_value TEXT,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_pa_properties') NOT NULL,
 	-- unique constraints
@@ -386,6 +390,7 @@ CREATE TABLE pa_security_request
 	id_porta BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore TEXT NOT NULL,
+	enc_value TEXT,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_pa_security_request') NOT NULL,
 	-- fk/pk keys constraints
@@ -405,6 +410,7 @@ CREATE TABLE pa_security_response
 	id_porta BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore TEXT NOT NULL,
+	enc_value TEXT,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_pa_security_response') NOT NULL,
 	-- fk/pk keys constraints

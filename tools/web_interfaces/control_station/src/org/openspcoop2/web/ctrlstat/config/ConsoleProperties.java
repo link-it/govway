@@ -645,7 +645,20 @@ public class ConsoleProperties {
 			return this.readBooleanRequiredProperty("cluster_dinamico.enabled");
 		}
 	}
+	
+	public boolean isSecurityLoadBouncyCastle() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "security.addBouncyCastleProvider");
+		return parse(b, false);
+	}
 
+	public String getEnvMapConfig() throws UtilsException{
+		return this.readProperty(false, "env.map.config");
+	}
+	public boolean isEnvMapConfigRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "env.map.required");
+		return parse(b, false);
+	}
+	
 	public String getHSMConfigurazione() throws UtilsException{
 		return this.readProperty(false, "hsm.config");
 	}
@@ -657,6 +670,43 @@ public class ConsoleProperties {
 		BooleanNullable b = this.readBooleanProperty(false, "hsm.keyPassword");
 		return parse(b, false);
 	}
+	
+	public String getBYOKConfig() throws UtilsException{
+		return this.readProperty(false, "byok.config");
+	}
+	public boolean isBYOKConfigRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "byok.required");
+		return parse(b, false);
+	}
+	public String getBYOKEnvSecretsConfig() throws UtilsException{
+		return this.readProperty(false, "byok.env.secrets.config");
+	}
+	public boolean isBYOKEnvSecretsConfigRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "byok.env.secrets.required");
+		return parse(b, false);
+	}
+	public boolean isConsoleBYOKShowUnwrapPolicy() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "console.byok.showUnwrapPolicy");
+		return parse(b, true);
+	}
+	public boolean isVisualizzaInformazioniCifrate() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "console.visualizzaInformazioniCifrate.enabled");
+		return parse(b, false);
+	}
+	public String getVisualizzaInformazioniCifrateWarningMessage() throws UtilsException {
+		return this.readProperty(false, "console.visualizzaInformazioniCifrate.warningMessage");
+	}
+	public String getNotaInformativaInformazioneMemorizzataInChiaro() throws UtilsException {
+		return this.readProperty(false, "console.informazioniCifrate.memorizzataInChiaro.nota");
+	}
+	public String getNotaInformativaInformazioneCifrataSecurityPolicyDifferente() throws UtilsException {
+		return this.readProperty(false, "console.informazioniCifrate.cifrataConSecurityPolicyDifferente.nota");
+	}
+	public boolean isVisualizzaCampiPasswordComeLock() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "console.visualizzaCampiPasswordComeLock.enabled");
+		return parse(b, false);
+	}
+	
 	
 	public Integer getVerificaCertificatiWarningExpirationDays() throws UtilsException{
 		String cacheV = this.readProperty(true, "verificaCertificati.warning.expirationDays");
@@ -1008,6 +1058,12 @@ public class ConsoleProperties {
 	public String getJmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace(String alias) throws UtilsException {
 		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.updateFileTrace");
 	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoUnwrapKey(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.unwrapKey");
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoWrapKey(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.wrapKey");
+	}
 	public String getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(String alias) throws UtilsException {
 		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaMonitoraggio");
 	}
@@ -1337,6 +1393,12 @@ public class ConsoleProperties {
 	}
 	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiModIFruizioneById(String alias) throws UtilsException {
 		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiModIFruizioneById");
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiMessageSecurityErogazioneById(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiMessageSecurityErogazioneById");
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiMessageSecurityFruizioneById(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiMessageSecurityFruizioneById");
 	}
 	public String getJmxPdDConfigurazioneSistemaNomeRisorsaDatasourceGW(String alias) throws UtilsException {
 		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaDatasourceGW");

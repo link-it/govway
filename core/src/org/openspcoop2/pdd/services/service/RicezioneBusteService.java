@@ -62,6 +62,7 @@ import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
 import org.openspcoop2.pdd.core.controllo_traffico.SogliaReadTimeout;
 import org.openspcoop2.pdd.core.controllo_traffico.SoglieDimensioneMessaggi;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
+import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
@@ -582,7 +583,8 @@ public class RicezioneBusteService  {
 			context.setIdModulo(idModulo);
 			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
 			pddContext = context.getPddContext();
-			
+			DynamicMapBuilderUtils.injectDynamicMap(null, requestInfo, pddContext, logCore); // per le funzioni di generazione risposta errore
+						
 			try{
 				if(openSPCoopProperties.isTransazioniEnabled()) {
 					// NOTA: se gia' esiste con l'id di transazione, non viene ricreata

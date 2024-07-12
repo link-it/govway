@@ -192,7 +192,7 @@ provider="org.openspcoop2.security.message.wss4j.SAMLReceiverProvider">
 			<item type="textarea" name="keystoreFile" label="File" required="true">
 			      	<property name="org.apache.ws.security.crypto.merlin.file" properties="signaturePropRefId" />
 			</item>
-			<item type="text" name="keystorePassword" label="Password" required="true">
+			<item type="lock" name="keystorePassword" label="Password" required="true">
 			      	<property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="signaturePropRefId" />
 			</item>
 			<!-- NON SERVE

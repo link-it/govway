@@ -1403,7 +1403,9 @@ public class PorteApplicativeCore extends ControlStationCore {
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
 			Map<String, String> readProperties = DBPropertiesUtils.readProperties(con, this.tipoDB, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_NOME, 
-					CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_ID_PORTA, idPortaDelegata);
+					CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_ENC_VALUE, 
+					CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_ID_PORTA, idPortaDelegata,
+					this.getDriverBYOKUtilities().getDriverBYOKManagerNode(false, true));
 			return DBPropertiesUtils.toMultiMap(readProperties);
 		} catch (Exception e) {
 			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
@@ -1420,7 +1422,9 @@ public class PorteApplicativeCore extends ControlStationCore {
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
 			Map<String, String> readProperties = DBPropertiesUtils.readProperties(con, this.tipoDB, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_NOME, 
-					CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_ID_PORTA, idPortaDelegata);
+					CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_ENC_VALUE, 
+					CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_ID_PORTA, idPortaDelegata,
+					this.getDriverBYOKUtilities().getDriverBYOKManagerNode(false, true));
 			return DBPropertiesUtils.toMultiMap(readProperties);
 		} catch (Exception e) {
 			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);

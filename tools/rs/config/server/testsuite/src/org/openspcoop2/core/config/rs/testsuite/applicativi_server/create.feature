@@ -40,3 +40,23 @@ Scenario: Creazione ApplicativoServer descrizione 4000 204 OK
 
     * call delete ( { resourcePath: 'applicativi-server' + '/' + applicativo_server_descrizione4000.nome } )
 
+
+@Create204_connettore_ApiKey
+Scenario: ApplicativiServer Creazione 204 OK
+
+    * def applicativo = read('applicativo_connettore_apikey.json') 
+    * eval randomize(applicativo, ["nome"])
+
+    # full
+    * call create_201 { resourcePath: 'applicativi-server', body: '#(applicativo)', key: '#(applicativo.nome)' }
+    
+    # senza header
+    * remove applicativo.connettore.autenticazione_apikey.api_key_header
+    * remove applicativo.connettore.autenticazione_apikey.app_id_header
+    * call create_201 { resourcePath: 'applicativi-server', body: '#(applicativo)', key: '#(applicativo.nome)' }
+    
+    # senza app id
+    * remove applicativo.connettore.autenticazione_apikey.app_id
+    * call create_201 { resourcePath: 'applicativi-server', body: '#(applicativo)', key: '#(applicativo.nome)' }
+    
+    

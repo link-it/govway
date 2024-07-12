@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.openspcoop2.core.byok.BYOKUtilities;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AttributeAuthority;
@@ -532,7 +533,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      *
      */
 	@Override
-    public void addFruizioneProprieta(org.openspcoop2.core.config.rs.server.model.Proprieta body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+    public void addFruizioneProprieta(org.openspcoop2.core.config.rs.server.model.ProprietaOpzioneCifratura body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -559,7 +560,16 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			Proprieta p = new Proprieta();
 			p.setNome(body.getNome());
-			p.setValore(body.getValore());
+			if(env.pdCore!=null && env.pdCore.getDriverBYOKUtilities()!=null && 
+					body.isEncrypted()!=null && body.isEncrypted().booleanValue()) {
+				p.setValore(env.pdCore.getDriverBYOKUtilities().wrap(body.getValore()));
+			}
+			else {
+				if(body.getValore().length()>255) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(CostantiControlStation.MESSAGGIO_ERRORE_VALORE_PROPRIETA_255);
+				}
+				p.setValore(body.getValore());
+			}
 			pd.addProprieta(p);
 			
 			env.pdCore.performUpdateOperation(env.userLogin, false, pd);
@@ -2067,12 +2077,13 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
         
 			ElencoProprieta ret = new ElencoProprieta();
-			ret.setProprieta(new ArrayList<org.openspcoop2.core.config.rs.server.model.Proprieta>());
+			ret.setProprieta(new ArrayList<>());
 			if(pd.getProprietaList()!=null && !pd.getProprietaList().isEmpty()) {
 				for (Proprieta p: pd.getProprietaList()) {
-					org.openspcoop2.core.config.rs.server.model.Proprieta retP = new org.openspcoop2.core.config.rs.server.model.Proprieta();
+					org.openspcoop2.core.config.rs.server.model.ProprietaOpzioneCifratura retP = new org.openspcoop2.core.config.rs.server.model.ProprietaOpzioneCifratura();
 					retP.setNome(p.getNome());
 					retP.setValore(p.getValore());
+					retP.setEncrypted(BYOKUtilities.isWrappedValue(p.getValore()));
 					ret.addProprietaItem(retP);
 				}
 			}
@@ -2112,7 +2123,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final ControlloAccessiIdentificazioneAttributi ret = new ControlloAccessiIdentificazioneAttributi();
 			if(pd.sizeAttributeAuthorityList()>0) {
 				ret.setAbilitato(true);
-				ret.setAttributeAuthority(new ArrayList<ControlloAccessiAttributeAuthority>());
+				ret.setAttributeAuthority(new ArrayList<>());
 				for (AttributeAuthority aa : pd.getAttributeAuthorityList()) {
 					ControlloAccessiAttributeAuthority attributeAuthorityItem = new ControlloAccessiAttributeAuthority();
 					attributeAuthorityItem.setNome(aa.getNome());
@@ -2149,7 +2160,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      *
      */
 	@Override
-    public org.openspcoop2.core.config.rs.server.model.Proprieta getFruizioneProprieta(String erogatore, String nome, Integer versione, String proprieta, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+    public org.openspcoop2.core.config.rs.server.model.ProprietaOpzioneCifratura getFruizioneProprieta(String erogatore, String nome, Integer versione, String proprieta, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -2160,19 +2171,20 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
         
-			Proprieta to_get = null;
+			Proprieta toGet = null;
 			if(pd.getProprietaList()!=null && !pd.getProprietaList().isEmpty()) {
 				Optional<Proprieta> op = BaseHelper.findFirst(pd.getProprietaList(), p -> p.getNome().equals(proprieta));
 				if(op.isPresent()) {
-					to_get = op.get();
+					toGet = op.get();
 				}
 			}
 			
-			org.openspcoop2.core.config.rs.server.model.Proprieta ret = null;
-			if(to_get!=null) {
-				ret = new org.openspcoop2.core.config.rs.server.model.Proprieta();
-				ret.setNome(to_get.getNome());
-				ret.setValore(to_get.getValore());
+			org.openspcoop2.core.config.rs.server.model.ProprietaOpzioneCifratura ret = null;
+			if(toGet!=null) {
+				ret = new org.openspcoop2.core.config.rs.server.model.ProprietaOpzioneCifratura();
+				ret.setNome(toGet.getNome());
+				ret.setValore(toGet.getValore());
+				ret.setEncrypted(BYOKUtilities.isWrappedValue(toGet.getValore()));
 			}
 			else {
 				throw FaultCode.NOT_FOUND.toException("Nessuna proprietà è presente nella configurazione con nome '"+proprieta+"'"); 
@@ -2818,7 +2830,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      *
      */
 	@Override
-    public void updateFruizioneProprieta(org.openspcoop2.core.config.rs.server.model.Proprieta body, String erogatore, String nome, Integer versione, String proprieta, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+    public void updateFruizioneProprieta(org.openspcoop2.core.config.rs.server.model.ProprietaOpzioneCifratura body, String erogatore, String nome, Integer versione, String proprieta, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -2835,13 +2847,12 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 			}
 			
-			if(!proprieta.equals(body.getNome())) {
+			if(!proprieta.equals(body.getNome()) &&
 				// cambio nome proprieta
-				if(pd.getProprietaList()!=null && !pd.getProprietaList().isEmpty()) {
-					for (Proprieta p : pd.getProprietaList()) {
-						if(p.getNome().equals(body.getNome())) {
-							throw FaultCode.CONFLITTO.toException("Proprietà " + body.getNome() + " già assegnata alla configurazione");
-						}
+				pd.getProprietaList()!=null && !pd.getProprietaList().isEmpty()) {
+				for (Proprieta p : pd.getProprietaList()) {
+					if(p.getNome().equals(body.getNome())) {
+						throw FaultCode.CONFLITTO.toException("Proprietà " + body.getNome() + " già assegnata alla configurazione");
 					}
 				}
 			}
@@ -2851,7 +2862,16 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				for (Proprieta p : pd.getProprietaList()) {
 					if(p.getNome().equals(proprieta)) {
 						p.setNome(body.getNome());
-						p.setValore(body.getValore());
+						if(env.pdCore!=null && env.pdCore.getDriverBYOKUtilities()!=null && 
+								body.isEncrypted()!=null && body.isEncrypted().booleanValue()) {
+							p.setValore(env.pdCore.getDriverBYOKUtilities().wrap(body.getValore()));
+						}
+						else {
+							if(body.getValore().length()>255) {
+								throw FaultCode.RICHIESTA_NON_VALIDA.toException(CostantiControlStation.MESSAGGIO_ERRORE_VALORE_PROPRIETA_255);
+							}
+							p.setValore(body.getValore());
+						}
 						found = true;
 						break;
 					}

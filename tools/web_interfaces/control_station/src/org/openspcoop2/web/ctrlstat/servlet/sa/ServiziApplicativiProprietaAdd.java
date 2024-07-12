@@ -93,7 +93,10 @@ public final class ServiziApplicativiProprietaAdd extends Action {
 			String dominio = saHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO);	
 			int idServizioApplicativo = Integer.parseInt(id);
 			String nome = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_NOME);
-			String valore = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE);  
+			String valore = saHelper.getLockedParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE, false);  
+			
+			// Wrap value
+			valore = saHelper.wrapValoreProprieta(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE, valore);
 			
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
 			
@@ -162,7 +165,7 @@ public final class ServiziApplicativiProprietaAdd extends Action {
 				
 				dati = saHelper.addServizioApplicativoHiddenToDati(dati, id, idProv+"", dominio, sa.getNome());
 
-				dati = saHelper.addProprietaToDati(TipoOperazione.ADD, saHelper.getSize(), nome, valore, dati);
+				dati = saHelper.addProprietaToDati(TipoOperazione.ADD, saHelper.getSize(), nome, valore, dati); 
 
 				pd.setDati(dati);
 

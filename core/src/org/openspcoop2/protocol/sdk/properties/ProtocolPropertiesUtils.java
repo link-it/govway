@@ -232,7 +232,7 @@ public class ProtocolPropertiesUtils {
 				if(StringUtils.isNotEmpty(sp.getValue())) {
 					prop.setValue(sp.getValue());
 				}
-				//if(StringUtils.isNotEmpty(sp.getValue()))
+				/**if(StringUtils.isNotEmpty(sp.getValue()))*/
 				// aggiungo sempre per cercare proprieta' non valorizzate nelle search
 				add = true;
 			} else if(property instanceof NumberProperty){
@@ -240,7 +240,7 @@ public class ProtocolPropertiesUtils {
 				if(np.getValue() != null) {
 					prop.setNumberValue(np.getValue());
 				}
-				//if(np.getValue() != null)
+				/**if(np.getValue() != null)*/
 				// aggiungo sempre per cercare proprieta' non valorizzate nelle search
 				add = true;
 			} else if(property instanceof BinaryProperty){
@@ -276,7 +276,7 @@ public class ProtocolPropertiesUtils {
 			} else if(property instanceof BooleanProperty){
 				BooleanProperty bp = (BooleanProperty) property;
 				prop.setBooleanValue(bp.getValue() != null ? bp.getValue() : false);
-				//if(bp.getValue() != null)
+				/**if(bp.getValue() != null)*/
 				// aggiungo sempre per cercare proprieta' non valorizzate nelle search
 				add = true;
 			}   
@@ -304,7 +304,7 @@ public class ProtocolPropertiesUtils {
 				if(StringUtils.isNotEmpty(sp.getValue())) {
 					prop.setValue(sp.getValue());
 				}
-				//if(StringUtils.isNotEmpty(sp.getValue()))
+				/**if(StringUtils.isNotEmpty(sp.getValue()))*/
 				// aggiungo sempre per cercare proprieta' non valorizzate nelle search
 				add = true;
 			} else if(property instanceof NumberProperty){
@@ -312,7 +312,7 @@ public class ProtocolPropertiesUtils {
 				if(np.getValue() != null) {
 					prop.setNumberValue(np.getValue());
 				}
-				//if(np.getValue() != null)
+				/**if(np.getValue() != null)*/
 				// aggiungo sempre per cercare proprieta' non valorizzate nelle search
 				add = true;
 			} else if(property instanceof BinaryProperty){
@@ -347,8 +347,8 @@ public class ProtocolPropertiesUtils {
 
 			} else if(property instanceof BooleanProperty){
 				BooleanProperty bp = (BooleanProperty) property;
-				prop.setBooleanValue(bp.getValue() != null ? bp.getValue() : false);
-				//if(bp.getValue() != null)
+				prop.setBooleanValue(bp.getValue() != null && bp.getValue());
+				/**if(bp.getValue() != null)*/
 				// aggiungo sempre per cercare proprieta' non valorizzate nelle search
 				add = true;
 			}   
@@ -361,6 +361,11 @@ public class ProtocolPropertiesUtils {
 	}
 
 	public static void mergeProtocolPropertiesRegistry (ProtocolProperties protocolProperties, List<ProtocolProperty> listaProtocolPropertiesDaDB, ConsoleOperationType consoleOperationType){
+		
+		if(consoleOperationType!=null) {
+			// nop
+		}
+		
 		for (int i = 0; i < protocolProperties.sizeProperties(); i++) {
 			AbstractProperty<?> property = protocolProperties.getProperty(i);
 
@@ -386,6 +391,11 @@ public class ProtocolPropertiesUtils {
 		}
 	}
 	public static void mergeProtocolPropertiesConfig (ProtocolProperties protocolProperties, List<org.openspcoop2.core.config.ProtocolProperty> listaProtocolPropertiesDaDB, ConsoleOperationType consoleOperationType){
+		
+		if(consoleOperationType!=null) {
+			// nop
+		}
+		
 		for (int i = 0; i < protocolProperties.sizeProperties(); i++) {
 			AbstractProperty<?> property = protocolProperties.getProperty(i);
 

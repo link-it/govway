@@ -50,7 +50,24 @@
     <servlet-name>proprietaOggettoRegistro</servlet-name>
 	<servlet-class>org.openspcoop2.web.ctrlstat.servlet.utils.ProprietaOggettoRegistro</servlet-class>
   </servlet>
+  
+  <!-- Servlet per l'unwrap dei secrets -->
+  <servlet>
+    <servlet-name>secretDecoder</servlet-name>
+	<servlet-class>org.openspcoop2.web.ctrlstat.servlet.utils.SecretDecoder</servlet-class>
+  </servlet>
 
+  <!-- Servlet per la verifica dei certificati -->
+  <servlet>
+    <servlet-name>verificaCertificati</servlet-name>
+	<servlet-class>org.openspcoop2.web.ctrlstat.servlet.utils.VerificaCertificati</servlet-class>
+  </servlet>
+  
+  <!-- Servlet per il reset della cache -->
+  <servlet>
+    <servlet-name>cacheManager</servlet-name>
+	<servlet-class>org.openspcoop2.web.ctrlstat.servlet.utils.CacheManager</servlet-class>
+  </servlet>
 
   <!-- Servlet per il download dei documenti -->
   <servlet-mapping>
@@ -86,6 +103,24 @@
   <servlet-mapping>
     <servlet-name>proprietaOggettoRegistro</servlet-name>
 	<url-pattern>/proprietaOggettoRegistro</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Servlet per l'unwrap dei secrets -->
+  <servlet-mapping>
+    <servlet-name>secretDecoder</servlet-name>
+	<url-pattern>/secretDecoder</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Servlet per la verifica dei certificati -->
+  <servlet-mapping>
+    <servlet-name>verificaCertificati</servlet-name>
+	<url-pattern>/verificaCertificati</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Servlet per il reset della cache -->
+  <servlet-mapping>
+    <servlet-name>cacheManager</servlet-name>
+	<url-pattern>/cacheManager</url-pattern>
   </servlet-mapping>
 
   <!-- Action Servlet Mapping -->

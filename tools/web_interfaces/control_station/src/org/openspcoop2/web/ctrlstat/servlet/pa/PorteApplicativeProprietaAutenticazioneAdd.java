@@ -21,8 +21,8 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -35,8 +35,8 @@ import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.Proprieta;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -87,7 +87,10 @@ public final class PorteApplicativeProprietaAutenticazioneAdd extends Action {
 			if(idAsps == null) 
 				idAsps = "";
 			String nome = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-			String valore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE);
+			String valore = porteApplicativeHelper.getLockedParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE, false);
+			
+			// Wrap value
+			valore = porteApplicativeHelper.wrapValoreProprieta(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE, valore);
 			
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 

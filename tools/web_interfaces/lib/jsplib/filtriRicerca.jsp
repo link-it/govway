@@ -85,49 +85,9 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 							<span class="history"><%=titoloSezione %></span>
 						</td>
 						<% if(mostraComandiHeader) { %>
-							<td class="titoloSezione titoloSezione-right">
-								<div class="titoloSezioneDiv">
-									<% 
-										for(int idxLink =0; idxLink < listaComandi.size() ; idxLink ++ ){
-											DataElement de = (DataElement) listaComandi.get(idxLink);
-											String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
-											String classLink = "";
-											String deTarget = " ";
-									  		if (!de.getTarget().equals("")) {
-									  			deTarget = " target=\""+ de.getTarget() +"\"";
-									  		}
-									  		
-									  		if (!de.getUrl().equals("")) {
-												de.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
-											}
-									  		
-									  		String deVisualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
-											
-									  		String deIconName = de.getIcon(); 
-									  		String id = "pnlRicercaHeader_link_" + idxLink;
-									  		%>
-					    					<a id="<%=id %>" class="titoloSezioneAzioneLink <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" type="button">
-					    						<span class="icon-box">
-													<i class="material-icons md-24"><%= deIconName %></i>
-												</span>
-					    					</a>
-					    					<script type="text/javascript" nonce="<%= randomNonce %>">
-										      	 $(document).ready(function(){
-														$('#<%=id %>').click(function() {
-															<%= deVisualizzaAjaxStatus %>return true;
-														});
-													});
-											</script>
-										<% 
-										}
-									%>
-									<% if(mostraFormHeader) { %>
-										<span class="icon-box" id="iconaPanelListaSpan">
-											<i class="material-icons md-24" id="iconaPanelLista">&#xE8B6;</i>
-										</span>
-									<% }%>
-								</div>
-							</td>
+							<jsp:include page="/jsplib/comandi-header.jsp" flush="true" >
+								<jsp:param value="<%=mostraFormHeader %>" name="visualizzaComandoEspandiFormRicerca"/>
+							</jsp:include>
 						<% }%>
 					</tr>
 					</tbody>
@@ -244,14 +204,14 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 									      		if(subtitle_<%= filterName  %>_aperto){
 								      				$("#<%= filterId  %>").show();
 								      				$("#<%= filterName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-								      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+								      				$("#<%= filterName  %>__icon").html('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
 								      				$("#<%= filterName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
 								      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleCollapsed');
 								      				$("#<%= filterName  %>__divEsterno").addClass('subtitleOpen');
 								      			} else {
 								      				$("#<%= filterId  %>").hide();
 								      				$("#<%= filterName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-								      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+								      				$("#<%= filterName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
 								      				$("#<%= filterName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
 								      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleOpen');
 								      				$("#<%= filterName  %>__divEsterno").addClass('subtitleCollapsed');
@@ -263,7 +223,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 									      			if(subtitle_<%= filterName  %>_aperto){
 									      				$("#<%= filterId  %>").show();
 									      				$("#<%= filterName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-									      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__icon").html('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleCollapsed');
 									      				$("#<%= filterName  %>__divEsterno").addClass('subtitleOpen');
@@ -271,7 +231,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 									      			} else {
 									      				$("#<%= filterId  %>").hide();
 									      				$("#<%= filterName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-									      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleOpen');
 									      				$("#<%= filterName  %>__divEsterno").addClass('subtitleCollapsed');
@@ -284,7 +244,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 									      			if(subtitle_<%= filterName  %>_aperto){
 									      				$("#<%= filterId  %>").show();
 									      				$("#<%= filterName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-									      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__icon").html('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleCollapsed');
 									      				$("#<%= filterName  %>__divEsterno").addClass('subtitleOpen');
@@ -292,7 +252,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 									      			} else {
 									      				$("#<%= filterId  %>").hide();
 									      				$("#<%= filterName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-									      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleOpen');
 									      				$("#<%= filterName  %>__divEsterno").addClass('subtitleCollapsed');
@@ -358,7 +318,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 														<div class="prop">
 															<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
 															<label><%= filtro.getLabel() %></label>
-														  	<select id="<%= filterId  %>" name="<%= filterName %>" class="<%= classInput %>">
+														  	<select id="<%= filterId  %>" name="<%= filterName %>" <%= selEvtOnChange %> class="<%= classInput %>">
 															  	<%
 															  	for (int i = 0; i < values.length; i++) {
 															  		String optionSel = values[i].equals(selezionato) ? " selected " : " ";

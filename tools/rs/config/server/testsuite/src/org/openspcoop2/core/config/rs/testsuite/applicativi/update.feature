@@ -293,8 +293,8 @@ Scenario: Applicativi Aggiornamento Proprieta
     When method get
     Then status 200
     And assert response.proprieta.length == 2
-    And match response.proprieta[*] contains { 'nome': 'pModificata', 'valore': 'ValoreProprieta1' }
-    And match response.proprieta[*] contains { 'nome': 'NomeProprieta2', 'valore': 'vModificato' }
+    And match response.proprieta[*] contains { 'nome': 'pModificata', 'valore': 'ValoreProprieta1', 'encrypted': false }
+    And match response.proprieta[*] contains { 'nome': 'NomeProprieta2', 'valore': 'vModificato', 'encrypted': false }
 
     # UPDATE 2
 

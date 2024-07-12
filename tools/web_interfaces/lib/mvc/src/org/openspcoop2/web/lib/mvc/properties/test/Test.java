@@ -29,11 +29,13 @@ import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
 import org.openspcoop2.core.mvc.properties.utils.XSDValidator;
 import org.openspcoop2.core.mvc.properties.utils.serializer.JaxbDeserializer;
+import org.openspcoop2.pdd.core.byok.DriverBYOKUtilities;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
+import org.openspcoop2.web.lib.mvc.byok.LockUtilities;
 import org.openspcoop2.web.lib.mvc.properties.beans.BaseItemBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.mvc.properties.utils.ReadPropertiesUtilities;
@@ -49,6 +51,9 @@ public class Test {
 	public static void main(String[] args) {
 		try {
 			System.out.println("TEST CONFIG 1");
+			
+			DriverBYOKUtilities driverBYOKUtilities = new DriverBYOKUtilities(false, null, null);
+			LockUtilities lockUtilities = new LockUtilities(driverBYOKUtilities, false, null, null, null, null, false);
 			
 			File f = new File(Test.class.getResource("Test.xml").toURI());
 			
@@ -82,7 +87,7 @@ public class Test {
 			
 			Map<String, String> mapNameValue = new HashMap<>();
 			for (BaseItemBean<?> item : configurazioneAdd.getListaItem()) {
-				DataElement de = item.toDataElement(configurazioneAdd, mapNameValue, externalResources);
+				DataElement de = item.toDataElement(configurazioneAdd, mapNameValue, externalResources, lockUtilities);
 				System.out.println("Item ["+de.getName()+"] Type ["	+de.getType() +"] Label ["+de.getLabel()+"] Value ["+de.getValue()+"]");
 			}
 						
@@ -92,8 +97,8 @@ public class Test {
 			
 			System.out.println("Simulazione POSTBACK");
 			
-			configurazioneAdd.setValueFromRequest("usernameAction", Costanti.CHECK_BOX_ENABLED_ABILITATO, externalResources);
-			configurazioneAdd.setValueFromRequest("keystoreType", "pkcs12", externalResources);
+			configurazioneAdd.setValueFromRequest("usernameAction", Costanti.CHECK_BOX_ENABLED_ABILITATO, externalResources, lockUtilities);
+			configurazioneAdd.setValueFromRequest("keystoreType", "pkcs12", externalResources, lockUtilities);
 			
 			System.out.println("ConfigurazioneAdd Resolve Conditions POSTBACK");
 			
@@ -103,7 +108,7 @@ public class Test {
 			
 			mapNameValue = new HashMap<>();
 			for (BaseItemBean<?> item : configurazioneAdd.getListaItem()) {
-				DataElement de = item.toDataElement(configurazioneAdd, mapNameValue, externalResources);
+				DataElement de = item.toDataElement(configurazioneAdd, mapNameValue, externalResources, lockUtilities);
 				if(de.getType().equals(DataElementType.CHECKBOX.toString()) || de.getType().equals(DataElementType.SELECT.toString()) )
 					System.out.println("Item ["+de.getName()+"] Type ["	+de.getType() +"] Label ["+de.getLabel()+"] SelectedValue ["+de.getSelected()+"]");
 				else 
@@ -115,11 +120,11 @@ public class Test {
 			
 			System.out.println("Simulazione EDIT FINALE ADD ---> Clicco SALVA....");
 			
-			configurazioneAdd.setValueFromRequest("usernameAction", Costanti.CHECK_BOX_ENABLED_ABILITATO, externalResources);
-			configurazioneAdd.setValueFromRequest("keystoreType", "pkcs12", externalResources);
-			configurazioneAdd.setValueFromRequest("keystore", "/tmp/keystoreAdd.jks", externalResources);
-			configurazioneAdd.setValueFromRequest("encryptAction", Costanti.CHECK_BOX_ENABLED_ABILITATO, externalResources);
-			configurazioneAdd.setValueFromRequest("encryptSignatureAction", Costanti.CHECK_BOX_ENABLED_ABILITATO, externalResources);
+			configurazioneAdd.setValueFromRequest("usernameAction", Costanti.CHECK_BOX_ENABLED_ABILITATO, externalResources, lockUtilities);
+			configurazioneAdd.setValueFromRequest("keystoreType", "pkcs12", externalResources, lockUtilities);
+			configurazioneAdd.setValueFromRequest("keystore", "/tmp/keystoreAdd.jks", externalResources, lockUtilities);
+			configurazioneAdd.setValueFromRequest("encryptAction", Costanti.CHECK_BOX_ENABLED_ABILITATO, externalResources, lockUtilities);
+			configurazioneAdd.setValueFromRequest("encryptSignatureAction", Costanti.CHECK_BOX_ENABLED_ABILITATO, externalResources, lockUtilities);
 			
 			
 			System.out.println("Simulazione EDIT FINALE ADD ---> Validazione Input utente");
@@ -180,9 +185,9 @@ public class Test {
 			
 			System.out.println("configurazioneChange Resolve Conditions");
 			
-			configurazioneChange.setValueFromRequest("keystoreType", "jks", externalResources);
-			configurazioneChange.setValueFromRequest("keystore", "/tmp/keystore.jks", externalResources);
-			configurazioneChange.setValueFromRequest("timeToLive", "120", externalResources);
+			configurazioneChange.setValueFromRequest("keystoreType", "jks", externalResources, lockUtilities);
+			configurazioneChange.setValueFromRequest("keystore", "/tmp/keystore.jks", externalResources, lockUtilities);
+			configurazioneChange.setValueFromRequest("timeToLive", "120", externalResources, lockUtilities);
 			
 			configurazioneChange.updateConfigurazione(configDaFile);
 			
@@ -190,7 +195,7 @@ public class Test {
 			
 			mapNameValue = new HashMap<>();
 			for (BaseItemBean<?> item : configurazioneChange.getListaItem()) {
-				DataElement de = item.toDataElement(configurazioneAdd, mapNameValue, externalResources);
+				DataElement de = item.toDataElement(configurazioneAdd, mapNameValue, externalResources, lockUtilities);
 				if(de.getType().equals(DataElementType.CHECKBOX.toString()) || de.getType().equals(DataElementType.SELECT.toString()) )
 					System.out.println("Item ["+de.getName()+"] Type ["	+de.getType() +"] Label ["+de.getLabel()+"] SelectedValue ["+de.getSelected()+"]");
 				else 

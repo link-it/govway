@@ -81,6 +81,7 @@ import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.KeystoreParams;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.crypt.PasswordGenerator;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
@@ -141,7 +142,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				tipoauth = ConnettoriCostanti.DEFAULT_AUTENTICAZIONE_TIPO;
 			}
 			String utente = this.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-			String password = this.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			String password = this.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			// String confpw = this.getParameter("confpw");
 			
 			String servizioApplicativoServerEnabledS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER);
@@ -340,7 +341,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
-			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy,
+			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy, String httpsKeyStoreBYOKPolicy,
 			String tipoconn,
 			String connettoreDebug,
 			Boolean isConnettoreCustomUltimaImmagineSalvata,
@@ -361,7 +362,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			boolean autenticazioneToken, String tokenPolicy, String tipoSA, boolean useAsClient,
 			boolean integrationManagerEnabled, 
 			boolean visualizzaModificaCertificato, boolean visualizzaAddCertificato, String servletCredenzialiList, List<Parameter> parametersServletCredenzialiList, Integer numeroCertificati, String servletCredenzialiAdd,
-			String tokenPolicySA, String tokenClientIdSA, boolean tokenWithHttpsEnabledByConfigSA) throws Exception {
+			String tokenPolicySA, String tokenClientIdSA, boolean tokenWithHttpsEnabledByConfigSA,
+			String autenticazioneApiKey, boolean useOAS3Names, boolean useAppId, String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue) throws Exception {
 
 		if(oldNomeSA!=null && invrifRichiesta!=null) {
 			// nop
@@ -963,6 +965,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			showErogatore = this.isModalitaStandard() && !TipologiaErogazione.DISABILITATO.equals(ruoloErogatore);
 		}
 		
+		boolean postBackViaPost = false;
+		if(showErogatore) {
+			postBackViaPost = true;
+		}
 		
 		
 		
@@ -1044,7 +1050,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						multipleApiKey, appId, apiKey,
 						subtitleConfigSslCredenziali, visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
 						true, tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
-						dominioEsterno, tipoProtocollo);
+						dominioEsterno, tipoProtocollo,
+						postBackViaPost);
 			}
 			else {
 				// aggiungo dopo il link sui ruoli
@@ -1110,7 +1117,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						multipleApiKey, appId, apiKey,
 						subtitleConfigSslCredenziali, visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
 						true, tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
-						dominioEsterno, tipoProtocollo);
+						dominioEsterno, tipoProtocollo,
+						postBackViaPost);
 			}
 			
 		}
@@ -1195,8 +1203,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de.setType(DataElementType.SELECT);
 				de.setValues(ServiziApplicativiCostanti.getServiziApplicativiFault());
 				de.setSelected(fault);
-				//			de.setOnChange("CambiaFault()");
-				de.setPostBack(true);
+				if(postBackViaPost) {
+					de.setPostBack_viaPOST(true);
+				}
+				else {
+					de.setPostBack(true);
+				}
 			}
 			else{
 				de.setType(DataElementType.HIDDEN);
@@ -1400,7 +1412,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					parentSA,null,null,servizioApplicativoServerEnabled,
 					tipoSA, useAsClient,
 					integrationManagerEnabled,
-					tipoOperazione, tipoCredenzialiSSLVerificaTuttiICampi, changepwd);
+					tipoOperazione, tipoCredenzialiSSLVerificaTuttiICampi, changepwd, 
+					postBackViaPost);
 			
 			if(!applicativiServerEnabled && TipologiaFruizione.DISABILITATO.equals(ruoloFruitore) &&
 					CostantiConfigurazione.ABILITATO.equals(getmsg)){
@@ -1432,7 +1445,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						multipleApiKey, appId, apiKey,
 						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
 						true, tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
-						dominioEsterno, tipoProtocollo
+						dominioEsterno, tipoProtocollo,
+						postBackViaPost
 						);
 				
 			}
@@ -1447,7 +1461,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, 
 					httpspwdprivatekey,	httpsalgoritmokey, 
-					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 					tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
 					nome, id, null, null, null, null,
 					null, null, true,
@@ -1461,7 +1475,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					autenticazioneToken, tokenPolicy, false, false,
 					listExtendedConnettore, connettoreErogatoreForceEnabled,
 					nomeProtocollo, false, false
-					, false, servizioApplicativoServerEnabled, null, null
+					, false, servizioApplicativoServerEnabled, null, null,
+					autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+					postBackViaPost
 					);
 		}
 		
@@ -3441,7 +3457,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String accessoDaAPSParametro, boolean servizioApplicativoServerEnabled, 
 			String tipoSA, boolean useAsClient,
 			boolean integrationManagerEnabled,
-			TipoOperazione tipoOperazione, String tipoCredenzialiSSLVerificaTuttiICampi, String changepwd) throws Exception{
+			TipoOperazione tipoOperazione, String tipoCredenzialiSSLVerificaTuttiICampi, String changepwd,
+			boolean postBackViaPost) throws Exception{
 		
 		if(servizioApplicativoServerEnabled) {
 			this.addEndPointToDatiAsHidden(dati, idsil, nomeservizioApplicativo, sbustamento,
@@ -3621,7 +3638,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}else{
 					de.setSelected(getmsg);
 				}
-				de.setPostBack(true);
+				if(postBackViaPost) {
+					de.setPostBack_viaPOST(true);
+				}
+				else {
+					de.setPostBack(true);
+				}
 			} else {
 				de.setType(DataElementType.HIDDEN);
 				if(getmsg==null){
@@ -4871,22 +4893,21 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
-		de.setType(DataElementType.TEXT_EDIT);
-		de.setRequired(true);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE);
-		de.setValue(valore);
+		this.core.getLockUtilities().lockProperty(de, valore);
+		de.setRequired(true);
 		de.setSize(size);
 		dati.add(de);
 
 		return dati;
 	}
 	
-	public boolean serviziApplicativiProprietaCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean serviziApplicativiProprietaCheckData(TipoOperazione tipoOp) throws DriverControlStationException {
 		try {
 			String id = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
 			int idServizioApplicativo = Integer.parseInt(id);
 			String nome = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_NOME);
-			String valore = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE);
+			String valore = this.getLockedParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE, false);
 
 			// Campi obbligatori
 			if (nome.equals("") || valore.equals("")) {
@@ -4905,18 +4926,22 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				return false;
 			}
 
-			// Controllo che non ci siano spazi nei campi di testo
-			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
+			if (nome.indexOf(" ") != -1) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
-			
-			// Check Lunghezza
-			if(this.checkLength255(nome, ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROP_NOME)==false) {
+			if(!this.checkLength255(nome, ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROP_NOME)) {
 				return false;
 			}
-			if(this.checkLength4000(valore, ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE)==false) {
-				return false;
+			
+			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore) ){
+				if (valore.indexOf(" ") != -1) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+					return false;
+				}
+				if(!this.checkLength4000(valore, ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE)) {
+					return false;
+				}
 			}
 
 			// Se tipoOp = add, controllo che la property non sia gia'
@@ -4946,11 +4971,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			return true;
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e.getMessage(),e);
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
 	}
 	
-	public void prepareServiziApplicativiProprietaList(ServizioApplicativo sa, ConsoleSearch ricerca, List<Proprieta> lista) throws Exception{
+	public void prepareServiziApplicativiProprietaList(ServizioApplicativo sa, ConsoleSearch ricerca, List<Proprieta> lista) throws DriverControlStationException {
 		try {
 			boolean modalitaCompleta = this.isModalitaCompleta();
 			
@@ -4975,7 +5000,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				parametersServletSAChange.add(pDominio);
 			}
 			
-			if(useIdSogg){
+			if(useIdSogg!=null && useIdSogg.booleanValue()){
 				Parameter pProvider = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, idProvider); 
 				List<Parameter> parametersServletSAChangeProvider = new ArrayList<>();
 				parametersServletSAChangeProvider.add(pProvider);
@@ -4997,7 +5022,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String tmpTitle = null;
 			String protocolloSoggetto = null;
 			boolean supportAsincroni = true;
-			if(useIdSogg){
+			if(useIdSogg!=null && useIdSogg.booleanValue()){
 				if(this.core.isRegistroServiziLocale()){
 					Soggetto tmpSogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idProvider));
 					protocolloSoggetto = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tmpSogg.getTipo());
@@ -5014,17 +5039,19 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 							|| this.core.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocolloSoggetto, serviceBinding, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO);
 				}
 				
-				if(supportAsincroni==false){
-					if (this.isModalitaAvanzata()){
-						supportAsincroni = this.core.isElenchiSAAsincroniNonSupportatiVisualizzaRispostaAsincrona();
-					}
+				if(!supportAsincroni &&
+					this.isModalitaAvanzata()){
+					supportAsincroni = this.core.isElenchiSAAsincroniNonSupportatiVisualizzaRispostaAsincrona();
 				}
+			}
+			if(supportAsincroni) {
+				// nop
 			}
 			
 			// setto la barra del titolo
 			String labelApplicativi = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
 			String labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI;
-			if(modalitaCompleta==false) {
+			if(!modalitaCompleta) {
 				labelApplicativi = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
 				labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_APPLICATIVI_DI;
 			}
@@ -5086,8 +5113,16 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					e.add(de);
 
 					de = new DataElement();
-					if(ssp.getValore()!=null)
-						de.setValue(ssp.getValore().toString());
+					if(ssp.getValore()!=null) {
+						if(StringUtils.isNotEmpty(ssp.getValore()) &&
+								BYOKManager.isEnabledBYOK() &&
+								this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(ssp.getValore())) {
+							de.setValue(CostantiControlStation.VALORE_CIFRATO);
+						}
+						else {
+							de.setValue(ssp.getValore());
+						}
+					}
 					e.add(de);
 
 					dati.add(e);
@@ -5099,7 +5134,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
-			throw new Exception(e.getMessage(),e);
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
 	}
 

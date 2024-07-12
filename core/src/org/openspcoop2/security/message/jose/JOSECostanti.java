@@ -20,7 +20,7 @@
 
 package org.openspcoop2.security.message.jose;
 
-import org.apache.cxf.rt.security.rs.RSSecurityConstants;
+import org.openspcoop2.security.message.constants.SecurityConstants;
 
 /**     
  * JOSECostanti
@@ -48,31 +48,29 @@ public class JOSECostanti {
 	public static final String ID_ENCRYPT_CONTENT_ALGORITHM = "encryptionContentAlgorithm";
 
 	
-	private static final String JOSE_SSL_SUFFIX = ".ssl";
-	public static final String ID_TRUSTSTORE_SSL_KEYSTORE_FILE = RSSecurityConstants.RSSEC_KEY_STORE_FILE+JOSE_SSL_SUFFIX;
-	public static final String ID_TRUSTSTORE_SSL_KEYSTORE_PASSWORD = RSSecurityConstants.RSSEC_KEY_STORE_PSWD+JOSE_SSL_SUFFIX;
-	public static final String ID_TRUSTSTORE_SSL_KEYSTORE_TYPE = RSSecurityConstants.RSSEC_KEY_STORE_TYPE+JOSE_SSL_SUFFIX;
-	public static final String ID_TRUSTSTORE_SSL_KEYSTORE_CRL = RSSecurityConstants.RSSEC_KEY_STORE+".crl"+JOSE_SSL_SUFFIX;
 	
-	public static final String ID_TRUSTSTORE_SSL_KEYSTORE_TRUSTALL = RSSecurityConstants.RSSEC_KEY_STORE+".trustAll"+JOSE_SSL_SUFFIX;
+	public static final String ID_TRUSTSTORE_SSL_KEYSTORE_FILE = SecurityConstants.JOSE_TRUSTSTORE_SSL_FILE;
+	public static final String ID_TRUSTSTORE_SSL_KEYSTORE_PASSWORD = SecurityConstants.JOSE_TRUSTSTORE_SSL_PSWD;
+	public static final String ID_TRUSTSTORE_SSL_KEYSTORE_TYPE = SecurityConstants.JOSE_TRUSTSTORE_SSL_TYPE;
+	public static final String ID_TRUSTSTORE_SSL_KEYSTORE_CRL = SecurityConstants.JOSE_TRUSTSTORE_SSL_CRL;
 	
-	public static final String ID_TRUSTSTORE_SSL_KEYSTORE_CONNECTION_TIMEOUT = RSSecurityConstants.RSSEC_KEY_STORE+JOSE_SSL_SUFFIX+".connectionTimeout";
-	public static final String ID_TRUSTSTORE_SSL_KEYSTORE_READ_TIMEOUT = RSSecurityConstants.RSSEC_KEY_STORE+JOSE_SSL_SUFFIX+".readTimeout";
+	public static final String ID_TRUSTSTORE_SSL_KEYSTORE_TRUSTALL = SecurityConstants.JOSE_TRUSTSTORE_SSL_TRUSTALL;
 	
-	public static final String ID_TRUSTSTORE_SSL_KEYSTORE_HOSTNAME_VERIFIER = RSSecurityConstants.RSSEC_KEY_STORE+JOSE_SSL_SUFFIX+".hostNameVerifier";
+	public static final String ID_TRUSTSTORE_SSL_KEYSTORE_CONNECTION_TIMEOUT = SecurityConstants.JOSE_TRUSTSTORE_SSL_CONNECTION_TIMEOUT;
+	public static final String ID_TRUSTSTORE_SSL_KEYSTORE_READ_TIMEOUT =  SecurityConstants.JOSE_TRUSTSTORE_SSL_READ_TIMEOUT;
 	
-	private static final String ID_FORWARD_PROXY_PREFIX = "rs.security.forwardProxy.";
-	public static final String ID_FORWARD_PROXY_ENDPOINT = ID_FORWARD_PROXY_PREFIX+"endpoint";
-	public static final String ID_FORWARD_PROXY_HEADER = ID_FORWARD_PROXY_PREFIX+"header";
-	public static final String ID_FORWARD_PROXY_HEADER_BASE64 = ID_FORWARD_PROXY_PREFIX+"header.base64";
-	public static final String ID_FORWARD_PROXY_QUERY = ID_FORWARD_PROXY_PREFIX+"query";
-	public static final String ID_FORWARD_PROXY_QUERY_BASE64 = ID_FORWARD_PROXY_PREFIX+"query.base64";
+	public static final String ID_TRUSTSTORE_SSL_KEYSTORE_HOSTNAME_VERIFIER = SecurityConstants.JOSE_TRUSTSTORE_SSL_HOSTNAME_VERIFIER;
 	
-	private static final String ID_PROXY_PREFIX = "rs.security.proxy.";
-	public static final String ID_PROXY_TYPE = ID_PROXY_PREFIX+"type";
-	public static final String ID_PROXY_HOSTNAME = ID_PROXY_PREFIX+"hostname";
-	public static final String ID_PROXY_PORT = ID_PROXY_PREFIX+"port";
-	public static final String ID_PROXY_USERNAME = ID_PROXY_PREFIX+"username";
-	public static final String ID_PROXY_PASSWORD = ID_PROXY_PREFIX+"password";
+	public static final String ID_FORWARD_PROXY_ENDPOINT = SecurityConstants.JOSE_FORWARD_PROXY_ENDPOINT;
+	public static final String ID_FORWARD_PROXY_HEADER = SecurityConstants.JOSE_FORWARD_PROXY_HEADER;
+	public static final String ID_FORWARD_PROXY_HEADER_BASE64 = SecurityConstants.JOSE_FORWARD_PROXY_HEADER_BASE64;
+	public static final String ID_FORWARD_PROXY_QUERY = SecurityConstants.JOSE_FORWARD_PROXY_QUERY;
+	public static final String ID_FORWARD_PROXY_QUERY_BASE64 = SecurityConstants.JOSE_FORWARD_PROXY_QUERY_BASE64;
+	
+	public static final String ID_PROXY_TYPE = SecurityConstants.JOSE_PROXY_TYPE;
+	public static final String ID_PROXY_HOSTNAME = SecurityConstants.JOSE_PROXY_HOSTNAME;
+	public static final String ID_PROXY_PORT = SecurityConstants.JOSE_PROXY_PORT;
+	public static final String ID_PROXY_USERNAME = SecurityConstants.JOSE_PROXY_USERNAME;
+	public static final String ID_PROXY_PASSWORD = SecurityConstants.JOSE_PROXY_PASSWORD;
 	
 }

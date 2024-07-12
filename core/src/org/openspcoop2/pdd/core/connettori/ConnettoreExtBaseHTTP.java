@@ -253,14 +253,14 @@ public abstract class ConnettoreExtBaseHTTP extends ConnettoreBaseHTTP {
 				this.maxNumberRedirects = Integer.parseInt(redirectTmp);
 			}
 
-			redirectTmp = this.properties.get(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_NUMBER);
+			redirectTmp = this.properties.get(CostantiConnettori.CONNETTORE_HTTP_REDIRECT_NUMBER);
 			//this.log.info("PROPERTY! ("+redirectTmp+")");
 			if(redirectTmp!=null){
 				redirectTmp = redirectTmp.trim();
 				this.numberRedirect = Integer.parseInt(redirectTmp);
 			}
 
-			redirectTmp = this.properties.get(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_ROUTE);
+			redirectTmp = this.properties.get(CostantiConnettori.CONNETTORE_HTTP_REDIRECT_ROUTE);
 			//this.log.info("PROPERTY! ("+redirectTmp+")");
 			if(redirectTmp!=null){
 				redirectTmp = redirectTmp.trim();

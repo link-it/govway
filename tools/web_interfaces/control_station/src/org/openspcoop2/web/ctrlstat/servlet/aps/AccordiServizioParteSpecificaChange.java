@@ -34,16 +34,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.govway.struts.action.Action;
 import org.govway.struts.action.ActionForm;
 import org.govway.struts.action.ActionForward;
 import org.govway.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
@@ -194,7 +197,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String proxyHostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
 			String proxyPort = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
 			String proxyUsername = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
-			String proxyPassword = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			String proxyPassword = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 			
 			// tempi risposta
 			String tempiRispostaEnabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
@@ -213,7 +216,36 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String url = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL  );
 			if(TipiConnettore.HTTP.toString().equals(endpointtype)){
 				user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				password = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			}
+			
+			// api key
+			String autenticazioneApiKey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_API_KEY);
+			String apiKeyHeader = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_HEADER);
+			if(apiKeyHeader==null || StringUtils.isEmpty(apiKeyHeader)) {
+				apiKeyHeader = CostantiConnettori.DEFAULT_HEADER_API_KEY;
+			}
+			String apiKeyValue = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_VALUE);
+			String appIdHeader = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_APP_ID_HEADER);
+			if(appIdHeader==null || StringUtils.isEmpty(appIdHeader)) {
+				appIdHeader = CostantiConnettori.DEFAULT_HEADER_APP_ID;
+			}
+			String appIdValue = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE);
+			String useOAS3NamesTmp = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_NOMI_OAS);
+			boolean useOAS3Names=true;
+			if(useOAS3NamesTmp!=null && StringUtils.isNotEmpty(useOAS3NamesTmp)) {
+				useOAS3Names = ServletUtils.isCheckBoxEnabled(useOAS3NamesTmp);
+			}
+			else {
+				useOAS3Names = apsHelper.isAutenticazioneApiKeyUseOAS3Names(apiKeyHeader, appIdHeader);
+			}
+			String useAppIdTmp = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_USE_APP_ID);
+			boolean useAppId=false;
+			if(useAppIdTmp!=null && StringUtils.isNotEmpty(useAppIdTmp)) {
+				useAppId = ServletUtils.isCheckBoxEnabled(useAppIdTmp);
+			}
+			else {
+				useAppId = apsHelper.isAutenticazioneApiKeyUseAppId(appIdValue);
 			}
 			
 			// jms
@@ -226,7 +258,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String sendas = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
 			if(TipiConnettore.JMS.toString().equals(endpointtype)){
 				user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_USERNAME);
-				password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
+				password = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
 			}
 			
 			// https
@@ -240,25 +272,26 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			boolean httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 			String httpspath = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION );
 			String httpstipo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
-			String httpspwd = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+			String httpspwd = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
 			String httpsalgoritmo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
 			String httpsstatoS = apsHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
 			boolean httpsstato = false;
 			if (httpsstatoS != null && httpsstatoS.equals(Costanti.CHECK_BOX_ENABLED))
 				httpsstato = true;
 			String httpskeystore = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
-			String httpspwdprivatekeytrust = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
+			String httpspwdprivatekeytrust = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
 			String httpspathkey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
 			String httpstipokey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
-			String httpspwdkey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
-			String httpspwdprivatekey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
+			String httpspwdkey = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
+			String httpspwdprivatekey = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 			String httpsalgoritmokey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 			String httpsKeyAlias = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
 			String httpsTrustStoreCRLs = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			String httpsTrustStoreOCSPPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+			String httpsKeyStoreBYOKPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				password = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			}
 			
 			// file
@@ -358,7 +391,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			
 			String canale = apsHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CANALI_CANALE);
 			String canaleStato = apsHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO);
-
+			
+			boolean postBackViaPost = true;
+			
 			String[] ptList = null;
 			// Prendo nome, tipo e provider dal db
 			// Prendo la lista di soggetti e la metto in un array
@@ -525,7 +560,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					}
 				}
 				if(fruitore==null) {
-					throw new Exception("Fruitore '"+idSoggettoFruitore.getTipo()+"/"+idSoggettoFruitore.getNome()+"' non trovato");
+					throw new CoreException("Fruitore '"+idSoggettoFruitore.getTipo()+"/"+idSoggettoFruitore.getNome()+"' non trovato");
 				}
 				providerSoggettoFruitore = fruitore.getId()+"";
 			}
@@ -554,12 +589,12 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			if (accordo != null && !"".equals(accordo)) {
 				as = apcCore.getAccordoServizioSintetico(Long.parseLong(accordo));
 				if(as==null) {
-					throw new Exception("AccordoServizioParteComune con id '"+accordo+"' non trovato");
+					throw new CoreException("AccordoServizioParteComune con id '"+accordo+"' non trovato");
 				}
 			} else {
 				as = apcCore.getAccordoServizioSintetico(idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
 				if(as==null) {
-					throw new Exception("AccordoServizioParteComune con id '"+asps.getAccordoServizioParteComune()+"' non trovato");
+					throw new CoreException("AccordoServizioParteComune con id '"+asps.getAccordoServizioParteComune()+"' non trovato");
 				}
 				portType = asps.getPortType();
 			}
@@ -896,7 +931,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						if(oldIDAccodo.getVersione().intValue() == asps.getVersione().intValue()) {
 							String tmpNewVersion = as.getVersione().intValue()+"";
 							IDServizio idApsCheck = apsHelper.getIDServizioFromValues(oldtiposervizio, oldnomeservizio, oldtiposoggetto,oldnomesoggetto, tmpNewVersion);
-							if(apsCore.existsAccordoServizioParteSpecifica(idApsCheck)==false) {
+							if(!apsCore.existsAccordoServizioParteSpecifica(idApsCheck)) {
 								versione = tmpNewVersion;
 							}
 						}
@@ -1146,6 +1181,25 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					autenticazioneHttp = apsHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 					
+					if(autenticazioneApiKey==null || StringUtils.isEmpty(autenticazioneApiKey)) {
+						apiKeyHeader = props.get(CostantiDB.CONNETTORE_APIKEY_HEADER);
+						apiKeyValue = props.get(CostantiDB.CONNETTORE_APIKEY);
+						appIdHeader = props.get(CostantiDB.CONNETTORE_APIKEY_APPID_HEADER);
+						appIdValue = props.get(CostantiDB.CONNETTORE_APIKEY_APPID);
+						
+						autenticazioneApiKey = apsHelper.getAutenticazioneApiKey(autenticazioneApiKey, endpointtype, apiKeyValue);
+						if(ServletUtils.isCheckBoxEnabled(autenticazioneApiKey)) {
+							useOAS3Names = apsHelper.isAutenticazioneApiKeyUseOAS3Names(apiKeyHeader, appIdHeader);
+							useAppId = apsHelper.isAutenticazioneApiKeyUseAppId(appIdValue);
+						}
+						else {
+							apiKeyValue=null;
+							apiKeyHeader=null;
+							appIdHeader=null;
+							appIdValue=null;
+						}
+					}
+					
 					if (httpstipologia == null) {
 						httpsurl = props.get(CostantiDB.CONNETTORE_HTTPS_LOCATION);
 						httpstipologia = props.get(CostantiDB.CONNETTORE_HTTPS_SSL_TYPE);
@@ -1173,6 +1227,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						httpsKeyAlias = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_ALIAS);
 						httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLS);
 						httpsTrustStoreOCSPPolicy = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+						httpsKeyStoreBYOKPolicy = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
 						if (httpspathkey == null) {
 							httpsstato = false;
 							httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
@@ -1195,32 +1250,32 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);	
 						requestOutputFileNameHeadersPermissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS);
 						String v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
-						if(v!=null && !"".equals(v)){
-							if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-								requestOutputParentDirCreateIfNotExists = Costanti.CHECK_BOX_ENABLED_TRUE;
-							}
+						if(v!=null && !"".equals(v) &&
+							("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+							){
+							requestOutputParentDirCreateIfNotExists = Costanti.CHECK_BOX_ENABLED_TRUE;
 						}					
 						v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE);
-						if(v!=null && !"".equals(v)){
-							if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-								requestOutputOverwriteIfExists = Costanti.CHECK_BOX_ENABLED_TRUE;
-							}
+						if(v!=null && !"".equals(v) &&
+							("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+							){
+							requestOutputOverwriteIfExists = Costanti.CHECK_BOX_ENABLED_TRUE;
 						}	
 						
 						v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_MODE);
-						if(v!=null && !"".equals(v)){
-							if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-								responseInputMode = CostantiConfigurazione.ABILITATO.getValue();
-							}
+						if(v!=null && !"".equals(v) &&
+							("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+							){
+							responseInputMode = CostantiConfigurazione.ABILITATO.getValue();
 						}
 						if(CostantiConfigurazione.ABILITATO.getValue().equals(responseInputMode)){						
 							responseInputFileName = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE);
 							responseInputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS);
 							v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ);
-							if(v!=null && !"".equals(v)){
-								if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-									responseInputDeleteAfterRead = Costanti.CHECK_BOX_ENABLED_TRUE;
-								}
+							if(v!=null && !"".equals(v) &&
+								("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+								){
+								responseInputDeleteAfterRead = Costanti.CHECK_BOX_ENABLED_TRUE;
 							}						
 							responseInputWaitTime = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);						
 						}
@@ -1242,11 +1297,11 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					// altrimenti sono checkbox
 					if(httpshostverifyS==null || "".equals(httpshostverifyS)){
 						httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
-						httpshostverify = true;
+						httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
 					}
 					if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
 						httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
-						httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
+						httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 					}
 				}
 
@@ -1318,7 +1373,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								httpspwdprivatekeytrust, httpspathkey,
 								httpstipokey, httpspwdkey, 
 								httpspwdprivatekey, httpsalgoritmokey,
-								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 								nomeservizio, tiposervizio, null, null, null,
 								null, oldStatoPackage, true,
@@ -1332,7 +1387,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
 								listExtendedConnettore, forceEnableConnettore,
 								tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
-								erogazioneServizioApplicativoServer, saSoggetti);
+								erogazioneServizioApplicativoServer, saSoggetti,
+								autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+								postBackViaPost);
 						
 					}
 					else {
@@ -1349,7 +1406,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								httpspwdprivatekeytrust, httpspathkey,
 								httpstipokey, httpspwdkey,
 								httpspwdprivatekey, httpsalgoritmokey,
-								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 								nomeservizio, tiposervizio, null, null, null,
 								null, oldStatoPackage,
@@ -1359,7 +1416,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								autenticazioneToken, tokenPolicy);
+								autenticazioneToken, tokenPolicy,
+								autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
 						
 					}
 					
@@ -1417,7 +1475,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, 
 					httpspwdprivatekey, httpsalgoritmokey,
-					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 					tipoconn,versione,validazioneDocumenti,backToStato,autenticazioneHttp,
 					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
@@ -1432,7 +1490,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					null, null, null, null,
 					tipoProtocollo,null, 
 					descrizioneVerificata, tipoSoggettoFruitore, nomeSoggettoFruitore,
-					autenticazioneToken, tokenPolicy, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer, 
+					autenticazioneToken, tokenPolicy,
+					autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue, 
+					erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer, 
 					canaleStato, canale, gestioneCanaliEnabled);
 			
 			// updateDynamic
@@ -1527,7 +1587,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey, 
 							httpspwdprivatekey, httpsalgoritmokey,
-							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 							tipoconn,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 							nomeservizio, tiposervizio, null, null, null,
 							null, oldStatoPackage, true,
@@ -1541,7 +1601,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
 							listExtendedConnettore, forceEnableConnettore,
 							tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
-							erogazioneServizioApplicativoServer, saSoggetti);
+							erogazioneServizioApplicativoServer, saSoggetti,
+							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+							postBackViaPost);
 					
 				}
 				else {
@@ -1559,7 +1621,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey,
 							httpspwdprivatekey, httpsalgoritmokey,
-							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 							tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 							nomeservizio, tiposervizio, null, null, null,
 							null, oldStatoPackage,
@@ -1569,7 +1631,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken, tokenPolicy);
+							autenticazioneToken, tokenPolicy,
+							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
 					
 				}
 				
@@ -1591,219 +1654,223 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			}
 
 			// I dati dell'utente sono validi, se ha scelto di modificare lo stato da finale ad operativo visualizzo la schermata di conferma
-			if( actionConfirm == null){
-				if(  backToStato != null || backToConfermaModificaDatiServizio!=null){
-					// setto la barra del titolo
-					ServletUtils.setPageDataTitle(pd, lstParm );
+			if( actionConfirm == null &&
+				(  backToStato != null || backToConfermaModificaDatiServizio!=null)
+				){
+				// setto la barra del titolo
+				ServletUtils.setPageDataTitle(pd, lstParm );
 
-					portType = (portType != null && !"".equals(portType) ? portType : asps.getPortType());
-					if(portTypeErased) {
-						portType = null;
-					}
+				portType = (portType != null && !"".equals(portType) ? portType : asps.getPortType());
+				if(portTypeErased) {
+					portType = null;
+				}
 
-					// preparo i campi
-					List<DataElement> dati = new ArrayList<>();
+				// preparo i campi
+				List<DataElement> dati = new ArrayList<>();
 
-					dati.add(ServletUtils.getDataElementForEditModeFinished());
-					
-					// update della configurazione 
-					strutsBean.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties,
-							strutsBean.registryReader, strutsBean.configRegistryReader, oldIdAps);
-					
-					dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
+				dati.add(ServletUtils.getDataElementForEditModeFinished());
+				
+				// update della configurazione 
+				strutsBean.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, apsHelper, strutsBean.protocolProperties,
+						strutsBean.registryReader, strutsBean.configRegistryReader, oldIdAps);
+				
+				dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
-					dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, oldnomeservizio, oldtiposervizio, 
-							provider, tipoSoggettoErogatore, nomeSoggettoErogatore, soggettiList, 
-							soggettiListLabel, accordo, serviceBinding,formatoSpecifica, 
-							accordiList, accordiListLabel, servcorr, strutsBean.wsdlimpler, strutsBean.wsdlimplfru, tipoOp, 
-							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, 
-							descrizione, descrizioneModificata,  
-							soggettoErogatoreID.getId(),
-							statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
-							null,null,generaPACheckSoggetto,asParteComuneCompatibili,
-							null,
-							null,null,null,null,null,null,false,
-							null,null,null,null,null,null,null,
-							tipoProtocollo,null,
-							null, null, providerSoggettoFruitore, tipoSoggettoFruitore, nomeSoggettoFruitore,
-							null, null, null, null, null,null,null,
-							null, null, null, null,
-							null,null,null,null,null,null,null,null,null,null,
-							null,null,null,null,null,
-							null,null,
-							null,null,null,null,moreThenOneImplementation, canaleStato, canaleAPI, canale, canaleList, gestioneCanaliEnabled,
-							null,null,null,null,null,
-							null,
-							null,null,null);
+				dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, oldnomeservizio, oldtiposervizio, 
+						provider, tipoSoggettoErogatore, nomeSoggettoErogatore, soggettiList, 
+						soggettiListLabel, accordo, serviceBinding,formatoSpecifica, 
+						accordiList, accordiListLabel, servcorr, strutsBean.wsdlimpler, strutsBean.wsdlimplfru, tipoOp, 
+						id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, 
+						descrizione, descrizioneModificata,  
+						soggettoErogatoreID.getId(),
+						statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
+						null,null,generaPACheckSoggetto,asParteComuneCompatibili,
+						null,
+						null,null,null,null,null,null,false,
+						null,null,null,null,null,null,null,
+						tipoProtocollo,null,
+						null, null, providerSoggettoFruitore, tipoSoggettoFruitore, nomeSoggettoFruitore,
+						null, null, null, null, null,null,null,
+						null, null, null, null,
+						null,null,null,null,null,null,null,null,null,null,
+						null,null,null,null,null,
+						null,null,
+						null,null,null,null,moreThenOneImplementation, canaleStato, canaleAPI, canale, canaleList, gestioneCanaliEnabled,
+						null,null,null,null,null,
+						null,
+						null,null,null);
 
-					if(apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
-						boolean forceEnableConnettore = false;
-						if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
-							forceEnableConnettore = true;
-						}
-						
-						dati = apsHelper.addEndPointToDati(dati, connettoreDebug,  endpointtype, autenticazioneHttp, 
-								null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
-								url, nome,
-								tipo, user, password, initcont, urlpgk, provurl,
-								connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, 
-								httpsurl, httpstipologia,httpshostverify, 
-								httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
-								httpsalgoritmo, httpsstato, httpskeystore,
-								httpspwdprivatekeytrust, httpspathkey,
-								httpstipokey, httpspwdkey, 
-								httpspwdprivatekey, httpsalgoritmokey,
-								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
-								tipoconn,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
-								nomeservizio, tiposervizio, null, null, null,
-								null, oldStatoPackage, true,
-								isConnettoreCustomUltimaImmagineSalvata, 
-								proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
-								tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
-								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
-								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
-								listExtendedConnettore, forceEnableConnettore,
-								tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
-								erogazioneServizioApplicativoServer, saSoggetti);
-						
+				if(apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
+					boolean forceEnableConnettore = false;
+					if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
+						forceEnableConnettore = true;
 					}
 					
-					dati = apsHelper.addServiziToDatiAsHidden(dati, nomeservizio, tiposervizio, provider, tipoSoggettoErogatore, nomeSoggettoErogatore, soggettiList,
-							soggettiListLabel, accordo, serviceBinding,accordiList, accordiListLabel, servcorr, "", "", tipoOp, 
-							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, 
-							descrizione, soggettoErogatoreID.getId(),
-							statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
-							null,null,tipoProtocollo,generaPACheckSoggetto);
-
-					dati = apsHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
-					
-					dati = apsHelper.addEndPointToDatiAsHidden(dati, connettoreDebug,
-							endpointtype, autenticazioneHttp,
+					dati = apsHelper.addEndPointToDati(dati, connettoreDebug,  endpointtype, autenticazioneHttp, 
+							null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 							url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
 							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, 
-							httpsurl, httpstipologia, httpshostverify, 
+							httpsurl, httpstipologia,httpshostverify, 
 							httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
 							httpsalgoritmo, httpsstato, httpskeystore,
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey, 
 							httpspwdprivatekey, httpsalgoritmokey,
-							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+							httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 							tipoconn,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 							nomeservizio, tiposervizio, null, null, null,
-							null, oldStatoPackage,
+							null, oldStatoPackage, true,
+							isConnettoreCustomUltimaImmagineSalvata, 
 							proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 							tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
 							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							autenticazioneToken, tokenPolicy);
+							autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
+							listExtendedConnettore, forceEnableConnettore,
+							tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
+							erogazioneServizioApplicativoServer, saSoggetti,
+							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+							postBackViaPost);
 					
-					if(backToStato != null) {
-						// backtostato per chiudere la modifica dopo la conferma
-						DataElement de = new DataElement();
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
-						de.setValue(backToStato);
-						de.setType(DataElementType.HIDDEN);
-						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RIPRISTINA_STATO);
-						dati.add(de);
-					}
-					if(backToConfermaModificaDatiServizio != null) {
-						// backtostato per chiudere la modifica dopo la conferma
-						DataElement de = new DataElement();
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
-						de.setValue(backToConfermaModificaDatiServizio);
-						de.setType(DataElementType.HIDDEN);
-						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_CONFERMA_MODIFICA_DATI_SERVIZIO);
-						dati.add(de);
-					}
-					
-					// aggiunta campi custom
-					if(addPropertiesHidden) {
-						dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
-					}
-					else {
-						dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
-						
-						// aggiunta campi custom come hidden, quelli sopra vengono bruciati dal no-edit
-						dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
-					}
-						
-					String msg = null;
-					if(backToStato != null) {
-						msg = "&Egrave; stato richiesto di ripristinare lo stato dell''accordo [{0}] in operativo. Tale operazione permetter&agrave; successive modifiche all''accordo. Vuoi procedere?";
-					}
-					else if(backToConfermaModificaDatiServizio != null) {
-						msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_MULTI_API_INFLUENZATE_MODIFICA;
-						msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+"Di seguito vengono elencate tutte le configurazioni coinvolte dalla modifica. Vuoi procedere?";
-						msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
-						if(!listMappingPD.isEmpty()) {
-							msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
-							if(listMappingPD.size()==1) {
-								msg+="La fruizione:";
-							}
-							else if(listMappingPD.size()>1) {
-								msg+="Le "+listMappingPD.size()+" fruizioni:";
-							}
-							msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
-							for (IDPortaDelegata idPortaDelegata : listMappingPD) {
-								msg+="- ";
-								msg+=apsHelper.getLabelServizioFruizione(tipoProtocollo, idPortaDelegata.getIdentificativiFruizione().getSoggettoFruitore(), idPortaDelegata.getIdentificativiFruizione().getIdServizio());
-								msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
-							}
-						}
-						if(!listMappingPA.isEmpty()) {
-							msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
-							if(listMappingPA.size()==1) {
-								msg+="L&#39;erogazione:";
-							}
-							else if(listMappingPA.size()>1) {
-								msg+=listMappingPA.size()+" erogazioni:";
-							}
-							msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
-							for (IDPortaApplicativa idPortaApplicativa : listMappingPA) {
-								msg+="- ";
-								msg+=apsHelper.getLabelServizioErogazione(tipoProtocollo, idPortaApplicativa.getIdentificativiErogazione().getIdServizio());
-								msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
-							}
-						}
-					}
-					
-					String pre = Costanti.HTML_MODAL_SPAN_PREFIX;
-					String post = Costanti.HTML_MODAL_SPAN_SUFFIX;
-					if(uriAccordo!=null) {
-						pd.setMessage(pre + MessageFormat.format(msg, uriAccordo) + post, Costanti.MESSAGE_TYPE_CONFIRM);
-					}
-					else {
-						pd.setMessage(pre + msg + post, Costanti.MESSAGE_TYPE_CONFIRM);
-					}
-					
-					pd.setDati(dati);
-					
-					String[][] bottoni = { 
-							{ Costanti.LABEL_MONITOR_BUTTON_ANNULLA, 
-								Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_PREFIX +
-								Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_SUFFIX
-
-							},
-							{ Costanti.LABEL_MONITOR_BUTTON_CONFERMA,
-								Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_PREFIX +
-								Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_SUFFIX }};
-
-					pd.setBottoni(bottoni);
-					
-					// disabilito la form
-					pd.disableEditMode();
-
-					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
-
-					return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
-							ForwardParams.CHANGE());
 				}
+				
+				dati = apsHelper.addServiziToDatiAsHidden(dati, nomeservizio, tiposervizio, provider, tipoSoggettoErogatore, nomeSoggettoErogatore, soggettiList,
+						soggettiListLabel, accordo, serviceBinding,accordiList, accordiListLabel, servcorr, "", "", tipoOp, 
+						id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, 
+						descrizione, soggettoErogatoreID.getId(),
+						statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
+						null,null,tipoProtocollo,generaPACheckSoggetto);
+
+				dati = apsHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
+				
+				dati = apsHelper.addEndPointToDatiAsHidden(dati, connettoreDebug,
+						endpointtype, autenticazioneHttp,
+						url, nome,
+						tipo, user, password, initcont, urlpgk, provurl,
+						connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, 
+						httpsurl, httpstipologia, httpshostverify, 
+						httpsTrustVerifyCert, httpspath, httpstipo, httpspwd,
+						httpsalgoritmo, httpsstato, httpskeystore,
+						httpspwdprivatekeytrust, httpspathkey,
+						httpstipokey, httpspwdkey, 
+						httpspwdprivatekey, httpsalgoritmokey,
+						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
+						tipoconn,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
+						nomeservizio, tiposervizio, null, null, null,
+						null, oldStatoPackage,
+						proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
+						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
+						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+						autenticazioneToken, tokenPolicy,
+						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
+				
+				if(backToStato != null) {
+					// backtostato per chiudere la modifica dopo la conferma
+					DataElement de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+					de.setValue(backToStato);
+					de.setType(DataElementType.HIDDEN);
+					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RIPRISTINA_STATO);
+					dati.add(de);
+				}
+				if(backToConfermaModificaDatiServizio != null) {
+					// backtostato per chiudere la modifica dopo la conferma
+					DataElement de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+					de.setValue(backToConfermaModificaDatiServizio);
+					de.setType(DataElementType.HIDDEN);
+					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_CONFERMA_MODIFICA_DATI_SERVIZIO);
+					dati.add(de);
+				}
+				
+				// aggiunta campi custom
+				if(addPropertiesHidden) {
+					dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				}
+				else {
+					dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+					
+					// aggiunta campi custom come hidden, quelli sopra vengono bruciati dal no-edit
+					dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, strutsBean.consoleConfiguration,strutsBean.consoleOperationType, strutsBean.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				}
+					
+				StringBuilder msgSB = new StringBuilder();
+				if(backToStato != null) {
+					msgSB.append("&Egrave; stato richiesto di ripristinare lo stato dell''accordo [{0}] in operativo. Tale operazione permetter&agrave; successive modifiche all''accordo. Vuoi procedere?");
+				}
+				else if(backToConfermaModificaDatiServizio != null) {
+					msgSB.append(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_MULTI_API_INFLUENZATE_MODIFICA);
+					msgSB.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+"Di seguito vengono elencate tutte le configurazioni coinvolte dalla modifica. Vuoi procedere?");
+					msgSB.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					if(!listMappingPD.isEmpty()) {
+						msgSB.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+						if(listMappingPD.size()==1) {
+							msgSB.append("La fruizione:");
+						}
+						else if(listMappingPD.size()>1) {
+							msgSB.append("Le "+listMappingPD.size()+" fruizioni:");
+						}
+						msgSB.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+						for (IDPortaDelegata idPortaDelegata : listMappingPD) {
+							msgSB.append("- ");
+							msgSB.append(apsHelper.getLabelServizioFruizione(tipoProtocollo, idPortaDelegata.getIdentificativiFruizione().getSoggettoFruitore(), idPortaDelegata.getIdentificativiFruizione().getIdServizio()));
+							msgSB.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+						}
+					}
+					if(!listMappingPA.isEmpty()) {
+						msgSB.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+						if(listMappingPA.size()==1) {
+							msgSB.append("L&#39;erogazione:");
+						}
+						else if(listMappingPA.size()>1) {
+							msgSB.append(listMappingPA.size()+" erogazioni:");
+						}
+						msgSB.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+						for (IDPortaApplicativa idPortaApplicativa : listMappingPA) {
+							msgSB.append("- ");
+							msgSB.append(apsHelper.getLabelServizioErogazione(tipoProtocollo, idPortaApplicativa.getIdentificativiErogazione().getIdServizio()));
+							msgSB.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+						}
+					}
+				}
+				String msg = msgSB.length()>0 ? msgSB.toString() : null;
+				
+				String pre = Costanti.HTML_MODAL_SPAN_PREFIX;
+				String post = Costanti.HTML_MODAL_SPAN_SUFFIX;
+				if(uriAccordo!=null) {
+					pd.setMessage(pre + MessageFormat.format(msg, uriAccordo) + post, Costanti.MESSAGE_TYPE_CONFIRM);
+				}
+				else {
+					pd.setMessage(pre + msg + post, Costanti.MESSAGE_TYPE_CONFIRM);
+				}
+				
+				pd.setDati(dati);
+				
+				String[][] bottoni = { 
+						{ Costanti.LABEL_MONITOR_BUTTON_ANNULLA, 
+							Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_PREFIX +
+							Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_SUFFIX
+
+						},
+						{ Costanti.LABEL_MONITOR_BUTTON_CONFERMA,
+							Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_PREFIX +
+							Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_SUFFIX }};
+
+				pd.setBottoni(bottoni);
+				
+				// disabilito la form
+				pd.disableEditMode();
+
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
+
+				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
+						ForwardParams.CHANGE());
 			}
 			
 			// Esco immediatamente nel caso di modifica API non confermata
@@ -1916,7 +1983,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, 
 					httpspwdprivatekey, httpsalgoritmokey,
-					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
 					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
@@ -1924,6 +1991,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					tokenPolicy,
+					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
 					listExtendedConnettore);
 
 			asps.getConfigurazioneServizio().setConnettore(newConnettore);
@@ -2037,7 +2105,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								httpskeystore, httpspwdprivatekeytrust,
 								httpspathkey, httpstipokey, httpspwdkey,
 								httpspwdprivatekey, httpsalgoritmokey, 
-								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 								nomeservizio, tiposervizio, null, null, null,
 								null,
@@ -2052,7 +2120,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								autenticazioneToken, tokenPolicy, forcePDND, forceOAuth,
 								listExtendedConnettore, forceEnableConnettore,
 								tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
-								erogazioneServizioApplicativoServer, saSoggetti);
+								erogazioneServizioApplicativoServer, saSoggetti,
+								autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+								postBackViaPost);
 						
 					}
 					else {
@@ -2069,7 +2139,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								httpspwdprivatekeytrust, httpspathkey,
 								httpstipokey, httpspwdkey,
 								httpspwdprivatekey, httpsalgoritmokey,
-								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 								nomeservizio, tiposervizio, null, null, null,
 								null, oldStatoPackage,
@@ -2079,7 +2149,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								autenticazioneToken, tokenPolicy);
+								autenticazioneToken, tokenPolicy,
+								autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
 						
 					}
 					

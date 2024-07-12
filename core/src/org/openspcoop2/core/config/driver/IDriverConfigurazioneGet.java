@@ -431,6 +431,14 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	public SystemProperties getSystemPropertiesPdD() throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
 	
 	/**
+	 * Restituisce i nomi delle proprieta' di sistema cifrate
+	 *
+	 * @return proprieta' di sistema
+	 * 
+	 */
+	public List<String> getEncryptedSystemPropertiesPdD() throws DriverConfigurazioneException;
+	
+	/**
 	 * Restituisce le proprieta' generiche utilizzate dalla PdD
 	 *
 	 * @return proprieta' generiche

@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.ConnettoreHTTPSProperties;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
@@ -117,6 +118,8 @@ import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.transport.http.IBYOKUnwrapFactory;
+import org.openspcoop2.utils.transport.http.IBYOKUnwrapManager;
 import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.slf4j.Logger;
 
@@ -840,14 +843,14 @@ public class RegistroServiziReader {
 			boolean raggiungibilitaTotale, boolean readObjectStatoBozza, 
 			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX, 
 			boolean prefillCache, CryptConfig cryptConfigSoggetti,
-			CacheType cacheType){
+			CacheType cacheType, IDriverBYOK driverBYOK){
 
 		try {
 			RegistroServiziReader.registroServiziReader = 
 				new RegistroServiziReader(accessoRegistro,aLog,aLogconsole,raggiungibilitaTotale,readObjectStatoBozza,
 						jndiNameDatasourcePdD,useOp2UtilsDatasource,bindJMX, 
 						prefillCache, cryptConfigSoggetti,
-						cacheType);	
+						cacheType, driverBYOK);	
 			return RegistroServiziReader.initialize;
 		}
 		catch(Exception e) {
@@ -898,7 +901,7 @@ public class RegistroServiziReader {
 			Logger aLogconsole,boolean raggiungibilitaTotale, boolean readObjectStatoBozza, 
 			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX, 
 			boolean prefillCache, CryptConfig cryptConfigSoggetti,
-			CacheType cacheType)throws DriverRegistroServiziException{
+			CacheType cacheType, IDriverBYOK driverBYOK)throws DriverRegistroServiziException{
 		try{
 			if(aLog!=null)
 				this.log = aLog;
@@ -907,7 +910,7 @@ public class RegistroServiziReader {
 			this.registroServizi = new RegistroServizi(accessoRegistro,this.log,aLogconsole,raggiungibilitaTotale,readObjectStatoBozza,
 					jndiNameDatasourcePdD, useOp2UtilsDatasource, bindJMX, 
 					prefillCache, cryptConfigSoggetti,
-					cacheType);
+					cacheType, driverBYOK);
 			RegistroServiziReader.initialize = true;
 		}catch(Exception e){
 			RegistroServiziReader.initialize = false;
@@ -3433,7 +3436,7 @@ public class RegistroServiziReader {
 	}
 	
 	protected CertificateCheck checkCertificatiConnettoreHttpsById(Connection connectionPdD,boolean useCache,
-			long idConnettore, int sogliaWarningGiorni, 
+			long idConnettore, int sogliaWarningGiorni, IBYOKUnwrapFactory byokUnwrapFactory, 
 			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		
 		if(useCache) {
@@ -3452,12 +3455,14 @@ public class RegistroServiziReader {
 			}
 		}
 		
-		return checkCertificatiConnettoreHttpsById(connettore,sogliaWarningGiorni, 
+		return checkCertificatiConnettoreHttpsById(connettore,
+				sogliaWarningGiorni, byokUnwrapFactory,
 				addCertificateDetails, separator, newLine,
 				this.log);
 	}
 	public static final String ID_CONFIGURAZIONE_CONNETTORE_HTTPS = "Configurazione connettore https";
-	public static CertificateCheck checkCertificatiConnettoreHttpsById(Connettore connettore, int sogliaWarningGiorni, 
+	public static CertificateCheck checkCertificatiConnettoreHttpsById(Connettore connettore, 
+			int sogliaWarningGiorni, IBYOKUnwrapFactory byokUnwrapFactory, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		
@@ -3483,8 +3488,14 @@ public class RegistroServiziReader {
 		
 		if(httpsProp.getKeyStoreLocation()!=null) {
 			try {
+				IBYOKUnwrapManager byokUnwrapManager = null;
+				if(byokUnwrapFactory!=null && httpsProp.getKeyStoreBYOKPolicy()!=null) {
+					byokUnwrapManager = byokUnwrapFactory.newInstance(httpsProp.getKeyStoreBYOKPolicy(),log);
+				}
 				check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(httpsProp.getKeyStoreLocation(), classpathSupported, httpsProp.getKeyStoreType(), 
-						httpsProp.getKeyStorePassword(), httpsProp.getKeyAlias(), httpsProp.getKeyPassword(),
+						httpsProp.getKeyStorePassword(), 
+						byokUnwrapManager,
+						httpsProp.getKeyAlias(), httpsProp.getKeyPassword(),
 						sogliaWarningGiorni, 
 						false, //addCertificateDetails, 
 						separator, newLine,
@@ -3492,6 +3503,7 @@ public class RegistroServiziReader {
 				
 				if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
 					storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringKeyStore(httpsProp.getKeyStoreLocation(), httpsProp.getKeyStoreType(),
+							httpsProp.getKeyStoreBYOKPolicy(),
 							httpsProp.getKeyAlias(), 
 							separator, newLine);
 				}
@@ -3539,7 +3551,7 @@ public class RegistroServiziReader {
 	}
 	
 	protected CertificateCheck checkCertificatiModIErogazioneById(Connection connectionPdD,boolean useCache,
-			long idAsps, int sogliaWarningGiorni, 
+			long idAsps, int sogliaWarningGiorni, IBYOKUnwrapFactory byokUnwrapFactory, 
 			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		
 		if(connectionPdD!=null) {
@@ -3565,11 +3577,13 @@ public class RegistroServiziReader {
 			}
 		}
 		
-		return checkCertificatiModIErogazioneById(api,asps,sogliaWarningGiorni, 
+		return checkCertificatiModIErogazioneById(api,asps,
+				sogliaWarningGiorni, byokUnwrapFactory, 
 				addCertificateDetails, separator, newLine,
 				this.log);
 	}
-	public static CertificateCheck checkCertificatiModIErogazioneById(AccordoServizioParteComune api, AccordoServizioParteSpecifica asps, int sogliaWarningGiorni, 
+	public static CertificateCheck checkCertificatiModIErogazioneById(AccordoServizioParteComune api, AccordoServizioParteSpecifica asps, 
+			int sogliaWarningGiorni, IBYOKUnwrapFactory byokUnwrapFactory, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws DriverRegistroServiziException {
 		
@@ -3616,7 +3630,7 @@ public class RegistroServiziReader {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 		
-		return _checkStore(keystoreParams, 
+		return _checkStore(keystoreParams, byokUnwrapFactory,
 				truststoreParams,
 				truststoreSslParams, 
 				sogliaWarningGiorni, 
@@ -3626,7 +3640,8 @@ public class RegistroServiziReader {
 	}
 	
 	protected CertificateCheck checkCertificatiModIFruizioneById(Connection connectionPdD,boolean useCache,
-			long idFruitore, int sogliaWarningGiorni, 
+			long idFruitore, 
+			int sogliaWarningGiorni, IBYOKUnwrapFactory byokUnwrapFactory, 
 			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		
 		if(connectionPdD!=null) {
@@ -3657,11 +3672,13 @@ public class RegistroServiziReader {
 			throw new DriverRegistroServiziNotFound("Fruitore con id '"+idFruitore+"' non trovato");
 		}
 		
-		return checkCertificatiModIFruizioneById(api, asps, fruitore,sogliaWarningGiorni, 
+		return checkCertificatiModIFruizioneById(api, asps, fruitore,
+				sogliaWarningGiorni, byokUnwrapFactory, 
 				addCertificateDetails, separator, newLine,
 				this.log);
 	}
-	public static CertificateCheck checkCertificatiModIFruizioneById(AccordoServizioParteComune api, AccordoServizioParteSpecifica asps, Fruitore fruitore, int sogliaWarningGiorni, 
+	public static CertificateCheck checkCertificatiModIFruizioneById(AccordoServizioParteComune api, AccordoServizioParteSpecifica asps, Fruitore fruitore, 
+			int sogliaWarningGiorni, IBYOKUnwrapFactory byokUnwrapFactory, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws DriverRegistroServiziException {
 		
@@ -3710,7 +3727,7 @@ public class RegistroServiziReader {
 			return check;
 		}
 		
-		return _checkStore(keystoreParams, 
+		return _checkStore(keystoreParams, byokUnwrapFactory,
 				truststoreParams,
 				truststoreSslParams, 
 				sogliaWarningGiorni, 
@@ -3720,7 +3737,7 @@ public class RegistroServiziReader {
 	}
 	
 	public static final String ID_CONFIGURAZIONE_FIRMA_MODI = "Configurazione della firma "+CostantiLabel.MODIPA_PROTOCOL_LABEL;
-	private static CertificateCheck _checkStore(KeystoreParams keystoreParams, 
+	private static CertificateCheck _checkStore(KeystoreParams keystoreParams, IBYOKUnwrapFactory byokUnwrapFactory,
 			KeystoreParams truststoreParams,
 			KeystoreParams truststoreSslParams, 
 			int sogliaWarningGiorni, 
@@ -3740,19 +3757,29 @@ public class RegistroServiziReader {
 		if(keystoreParams!=null) {
 			try {
 				if(CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(keystoreParams.getType())) {
+					IBYOKUnwrapManager byokUnwrapManager = null;
+					if(byokUnwrapFactory!=null && keystoreParams.getByokPolicy()!=null) {
+						byokUnwrapManager = byokUnwrapFactory.newInstance(keystoreParams.getByokPolicy(),log);
+					}
 					check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyPair(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyPairPublicKeyPath(), keystoreParams.getKeyPassword(), keystoreParams.getKeyPairAlgorithm(),
+							byokUnwrapManager,
 							false, //addCertificateDetails,  
-							separator);
+							separator, newLine);
 					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
 						storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringKeyPair(keystoreParams, 
-								separator);
+								separator, newLine);
 					}
 				}
 				else if(CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(keystoreParams.getType())) {
 					throw new DriverConfigurazioneException("Nella configurazione ModI viene utilizzato un keystore "+CostantiLabel.KEYSTORE_TYPE_PUBLIC_KEY+" non compatibile la firma dei messaggi");
 				}
 				else if(CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(keystoreParams.getType())) {
+					IBYOKUnwrapManager byokUnwrapManager = null;
+					if(byokUnwrapFactory!=null && keystoreParams.getByokPolicy()!=null) {
+						byokUnwrapManager = byokUnwrapFactory.newInstance(keystoreParams.getByokPolicy(),log);
+					}
 					check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeystoreJWKs(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyAlias(), 
+							byokUnwrapManager,
 							false, //addCertificateDetails,  
 							separator, newLine);
 					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
@@ -3761,15 +3788,23 @@ public class RegistroServiziReader {
 					}
 				}
 				else {
+					IBYOKUnwrapManager byokUnwrapManager = null;
+					if(byokUnwrapFactory!=null && keystoreParams.getByokPolicy()!=null) {
+						byokUnwrapManager = byokUnwrapFactory.newInstance(keystoreParams.getByokPolicy(),log);
+					}
 					if(keystoreParams.getStore()!=null) {
-						check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(CostantiLabel.STORE_CARICATO_BASEDATI, keystoreParams.getStore(), keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+						check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(CostantiLabel.STORE_CARICATO_BASEDATI, keystoreParams.getStore(), keystoreParams.getType(), keystoreParams.getPassword(), 
+								byokUnwrapManager,
+								keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
 								sogliaWarningGiorni, 
 								false, //addCertificateDetails, 
 								separator, newLine,
 								log);
 					}
 					else {
-						check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+						check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(), keystoreParams.getPassword(), 
+								byokUnwrapManager,
+								keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
 								sogliaWarningGiorni, 
 								false, //addCertificateDetails, 
 								separator, newLine,
@@ -3808,14 +3843,14 @@ public class RegistroServiziReader {
 					else if(CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(truststoreParams.getType())) {
 						check = org.openspcoop2.protocol.registry.CertificateUtils.checkPublicKey(classpathSupported, truststoreParams.getPath(), truststoreParams.getKeyPairAlgorithm(),
 								false, //addCertificateDetails,  
-								separator);
+								separator, newLine);
 						if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
 							storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringPublicKey(truststoreParams, 
-									separator);
+									separator, newLine);
 						}
 					}
 					else if(CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(truststoreParams.getType())) {
-						check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeystoreJWKs(classpathSupported, truststoreParams.getPath(), truststoreParams.getKeyAlias(), 
+						check = org.openspcoop2.protocol.registry.CertificateUtils.checkTruststoreJWKs(classpathSupported, truststoreParams.getPath(), truststoreParams.getKeyAlias(), 
 								false, //addCertificateDetails,  
 								separator, newLine);
 						if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {

@@ -339,6 +339,7 @@ public class DocumentoExporter extends HttpServlet {
 						ProtocolProperty bp = ppCore.getProtocolPropertyBinaria(idAllegatoInt);
 						fileName = bp.getFile();
 						docBytes = bp.getByteFile();
+						docBytes = archiviCore.getDriverBYOKUtilities().unwrap(docBytes); // se cifrato, viene decifrato
 					}else{
 						throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non gestito per il tipo archivio ["+tipoDocumento+"]");
 					}

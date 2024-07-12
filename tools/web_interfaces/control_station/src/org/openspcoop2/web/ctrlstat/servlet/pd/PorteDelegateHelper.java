@@ -86,8 +86,10 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
@@ -961,7 +963,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 //							localForwardShow = false; 
 //						}
 //					}catch(Exception dNot){
-//						this.log.error(dNot.getMessage(), dNot);
+//						this.logError(dNot.getMessage(), dNot);
 //					}
 //				}
 			}
@@ -1722,13 +1724,12 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 	}
 
 	// Controlla i dati del message-security response-flow della porta delegata
-	public boolean porteDelegateMessageSecurityResponseCheckData(TipoOperazione tipoOp)
-			throws Exception {
+	public boolean porteDelegateMessageSecurityResponseCheckData(TipoOperazione tipoOp) throws ControlStationCoreException {
 		try {
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(id);
 			String nome = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-			String valore = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE);
+			String valore = this.getLockedParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE, false);
 
 			// Campi obbligatori
 			if (nome.equals("") || valore.equals("")) {
@@ -1748,16 +1749,19 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
-			//if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
 			if ((nome.indexOf(" ") != -1) ) {
 				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_NOMI);
 				return false;
 			}
-			if(valore.startsWith(" ") || valore.endsWith(" ")){
+			if( 
+					(!this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore))
+					&&
+					(valore.startsWith(" ") || valore.endsWith(" "))
+				){
 				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_ALL_INIZIO_O_ALLA_FINE_DEI_VALORI);
 				return false;
 			}
-			if(this.checkLength255(nome, PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME)==false) {
+			if(!this.checkLength255(nome, PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME)) {
 				return false;
 			}
 
@@ -1769,14 +1773,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				String nomeporta = pde.getNome();
 				MessageSecurity messageSecurity = pde.getMessageSecurity();
 
-				if(messageSecurity!=null){
-					if(messageSecurity.getResponseFlow()!=null){
-						for (int i = 0; i < messageSecurity.getResponseFlow().sizeParameterList(); i++) {
-							MessageSecurityFlowParameter tmpMessageSecurity =messageSecurity.getResponseFlow().getParameter(i);
-							if (nome.equals(tmpMessageSecurity.getNome())) {
-								giaRegistrato = true;
-								break;
-							}
+				if(messageSecurity!=null &&
+					messageSecurity.getResponseFlow()!=null){
+					for (int i = 0; i < messageSecurity.getResponseFlow().sizeParameterList(); i++) {
+						MessageSecurityFlowParameter tmpMessageSecurity =messageSecurity.getResponseFlow().getParameter(i);
+						if (nome.equals(tmpMessageSecurity.getNome())) {
+							giaRegistrato = true;
+							break;
 						}
 					}
 				}
@@ -1790,8 +1793,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -2152,8 +2155,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -2227,8 +2230,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -2550,8 +2553,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				}
 			} 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -2654,6 +2657,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -2703,8 +2709,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -2804,6 +2810,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -2848,8 +2857,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -2922,6 +2931,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -2966,8 +2978,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3041,6 +3053,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3074,7 +3089,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					e.add(de);
 
 					de = new DataElement();
-					de.setValue(wsrfp.getValore());
+					if(wsrfp.getValore()!=null && StringUtils.isNotEmpty(wsrfp.getValore()) &&
+							BYOKManager.isEnabledBYOK() &&
+							this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(wsrfp.getValore())) {
+						de.setValue(CostantiControlStation.VALORE_CIFRATO);
+					}
+					else {
+						de.setValue(wsrfp.getValore());
+					}
 					e.add(de);
 
 					dati.add(e);
@@ -3085,8 +3107,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3156,6 +3178,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3239,18 +3264,18 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
 	// Controlla i dati del message-security request-flow della porta delegata
-	public boolean porteDelegateMessageSecurityRequestCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean porteDelegateMessageSecurityRequestCheckData(TipoOperazione tipoOp) throws ControlStationCoreException {
 		try {
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(id);
 			String nome = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-			String valore = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE);
+			String valore = this.getLockedParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE, false);
 
 			// Campi obbligatori
 			if (nome.equals("") || valore.equals("")) {
@@ -3270,16 +3295,19 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
-			//if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
 			if ((nome.indexOf(" ") != -1) ) {
 				this.pd.setMessage("Non inserire spazi nei nomi");
 				return false;
 			}
-			if(valore.startsWith(" ") || valore.endsWith(" ")){
+			if( 
+				(!this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore))
+				&&
+				(valore.startsWith(" ") || valore.endsWith(" "))
+			){
 				this.pd.setMessage("Non inserire spazi all'inizio o alla fine dei valori");
 				return false;
 			}
-			if(this.checkLength255(nome, PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME)==false) {
+			if(!this.checkLength255(nome, PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME)) {
 				return false;
 			}
 
@@ -3291,14 +3319,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				String nomeporta = pde.getNome();
 				MessageSecurity messageSecurity = pde.getMessageSecurity();
 
-				if(messageSecurity!=null){
-					if(messageSecurity.getRequestFlow()!=null){
-						for (int i = 0; i < messageSecurity.getRequestFlow().sizeParameterList(); i++) {
-							MessageSecurityFlowParameter tmpMessageSecurity =messageSecurity.getRequestFlow().getParameter(i);
-							if (nome.equals(tmpMessageSecurity.getNome())) {
-								giaRegistrato = true;
-								break;
-							}
+				if(messageSecurity!=null &&
+					messageSecurity.getRequestFlow()!=null){
+					for (int i = 0; i < messageSecurity.getRequestFlow().sizeParameterList(); i++) {
+						MessageSecurityFlowParameter tmpMessageSecurity =messageSecurity.getRequestFlow().getParameter(i);
+						if (nome.equals(tmpMessageSecurity.getNome())) {
+							giaRegistrato = true;
+							break;
 						}
 					}
 				}
@@ -3312,8 +3339,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3387,6 +3414,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3419,7 +3449,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					e.add(de);
 
 					de = new DataElement();
-					de.setValue(wsrfp.getValore());
+					if(wsrfp.getValore()!=null && StringUtils.isNotEmpty(wsrfp.getValore()) &&
+							BYOKManager.isEnabledBYOK() &&
+							this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(wsrfp.getValore())) {
+						de.setValue(CostantiControlStation.VALORE_CIFRATO);
+					}
+					else {
+						de.setValue(wsrfp.getValore());
+					}
 					e.add(de);
 
 					dati.add(e);
@@ -3430,8 +3467,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3501,6 +3538,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3578,8 +3618,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3650,6 +3690,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3687,8 +3730,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3760,6 +3803,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3798,8 +3844,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -3916,6 +3962,52 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		return lstParam;
 	}
 	
+	public void impostaComandiMenuContestualePD(String idSoggFruitoreDelServizio, String idAsps, String idFruizione)	throws Exception, DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		if(idSoggFruitoreDelServizio==null) {
+			throw new Exception("Parameter idSoggettoFruitore is null");
+		}
+		
+		IDSoggetto idSoggettoFruitore = new IDSoggetto();
+		String tipoSoggettoFruitore = null;
+		String nomeSoggettoFruitore = null;
+		if(this.core.isRegistroServiziLocale()){
+			org.openspcoop2.core.registry.Soggetto soggettoFruitore = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggFruitoreDelServizio));
+			tipoSoggettoFruitore = soggettoFruitore.getTipo();
+			nomeSoggettoFruitore = soggettoFruitore.getNome();
+		}else{
+			org.openspcoop2.core.config.Soggetto soggettoFruitore = this.soggettiCore.getSoggetto(Integer.parseInt(idSoggFruitoreDelServizio));
+			tipoSoggettoFruitore = soggettoFruitore.getTipo();
+			nomeSoggettoFruitore = soggettoFruitore.getNome();
+		}
+		idSoggettoFruitore.setTipo(tipoSoggettoFruitore);
+		idSoggettoFruitore.setNome(nomeSoggettoFruitore);
+		
+		String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoFruitore);
+		
+		// Prendo il nome e il tipo del servizio
+		AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+		
+		Fruitore fru = null;
+		for (Fruitore fruCheck : asps.getFruitoreList()) {
+			if(fruCheck.getTipo().equals(idSoggettoFruitore.getTipo()) &&
+					fruCheck.getNome().equals(idSoggettoFruitore.getNome())) {
+				fru = fruCheck;
+				break;
+			}
+		}
+		
+		Parameter pIdFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idFruizione+ "");
+		Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
+		Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
+		Parameter pTipoSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE, tipoSoggettoFruitore);
+		Parameter pNomeSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE, nomeSoggettoFruitore);
+		Parameter pIdSoggettoErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, asps.getIdSoggetto()+"");
+		
+		this.impostaComandiMenuContestualePD(idSoggFruitoreDelServizio, pTipoSoggettoFruitore,
+				pNomeSoggettoFruitore, asps, protocollo, pIdSoggettoErogatore, fru,
+				pIdFruitore, pNomeServizio, pTipoServizio);
+	}
+	
 	public String getPortaDelegataAzioneIdentificazioneLabel(String pdAiString) {
 		if(pdAiString == null)
 			return "";
@@ -3952,6 +4044,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 	public void preparePorteDelPropList(ConsoleSearch ricerca, List<Proprieta> lista) throws Exception {
 		try {
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
@@ -4013,6 +4106,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -4042,8 +4138,16 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					e.add(de);
 
 					de = new DataElement();
-					if(ssp.getValore()!=null)
-						de.setValue(ssp.getValore().toString());
+					if(ssp.getValore()!=null) {
+						if(StringUtils.isNotEmpty(ssp.getValore()) &&
+								BYOKManager.isEnabledBYOK() &&
+								this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(ssp.getValore())) {
+							de.setValue(CostantiControlStation.VALORE_CIFRATO);
+						}
+						else {
+							de.setValue(ssp.getValore());
+						}
+					}
 					e.add(de);
 
 					dati.add(e);
@@ -4054,8 +4158,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -4082,10 +4186,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
-		de.setType(DataElementType.TEXT_EDIT);
-		de.setRequired(true);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE);
-		de.setValue(valore);
+		this.core.getLockUtilities().lockProperty(de, valore);
+		de.setRequired(true);
 		de.setSize(size);
 		dati.add(de);
 
@@ -4093,12 +4196,12 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		
 	}
 
-	public boolean porteAppPropCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean porteAppPropCheckData(TipoOperazione tipoOp) throws ControlStationCoreException {
 		try {
 			String idPorta = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(idPorta);
 			String nome = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-			String valore = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE);
+			String valore = this.getLockedParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE, false);
 
 			// Campi obbligatori
 			if (nome.equals("") || valore.equals("")) {
@@ -4117,18 +4220,22 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				return false;
 			}
 
-			// Controllo che non ci siano spazi nei campi di testo
-			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
+			if (nome.indexOf(" ") != -1) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
-			
-			// Check Lunghezza
-			if(this.checkLength255(nome, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)==false) {
+			if(!this.checkLength255(nome, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)) {
 				return false;
 			}
-			if(this.checkLength255(valore, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE)==false) {
-				return false;
+			
+			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore) ){
+				if (valore.indexOf(" ") != -1) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+					return false;
+				}
+				if(!this.checkLength255(valore, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE)) {
+					return false;
+				}
 			}
 
 			// Se tipoOp = add, controllo che la property non sia gia'
@@ -4157,8 +4264,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -4231,6 +4338,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			lstParam.add(new Parameter(labelPagLista,null));
 			
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// setto le label delle colonne
 			String[] labels = {
@@ -4299,8 +4409,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -4353,8 +4463,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 		
@@ -4411,6 +4521,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = this.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 			
 			String labelPerPorta = null;
 			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
@@ -4637,8 +4750,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -4727,6 +4840,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// setto le label delle colonne
 			List<String> lstLabels = new ArrayList<>();
@@ -4871,8 +4987,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -4984,6 +5100,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// setto le label delle colonne
 			String[] labels = { PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_HEADER_NOME,
@@ -5034,8 +5153,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -5131,6 +5250,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// setto le label delle colonne
 			String[] labels = { PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_HEADER_NOME,
@@ -5180,8 +5302,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -5277,6 +5399,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// setto le label delle colonne
 			String[] labels = { PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME,
@@ -5326,8 +5451,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -5440,6 +5565,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -5484,8 +5612,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -5578,13 +5706,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
 	public void preparePorteDelegateAutorizzazioneCustomPropList(ConsoleSearch ricerca, List<Proprieta> lista) throws Exception {
 		try {
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
@@ -5654,6 +5783,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -5676,13 +5808,21 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AUTORIZZAZIONE_CUSTOM_PROPERTIES_CHANGE, pId,pIdSoggetto, pIdAsps, pIdFruizione, new Parameter( PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, ssp.getNome()));
 					de.setValue(ssp.getNome());
 					de.setIdToRemove(ssp.getId()+"");
 					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
 					e.add(de);
 
 					de = new DataElement();
-					de.setValue(ssp.getValore());
+					if(StringUtils.isNotEmpty(ssp.getValore()) &&
+							BYOKManager.isEnabledBYOK() &&
+							this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(ssp.getValore())) {
+						de.setValue(CostantiControlStation.VALORE_CIFRATO);
+					}
+					else {
+						de.setValue(ssp.getValore());
+					}
 					e.add(de);
 
 					dati.add(e);
@@ -5693,12 +5833,12 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
-	public boolean proprietaAutorizzazioneCheckData(TipoOperazione tipoOp, String idPorta, String nome, String valore ) throws Exception {
+	public boolean proprietaAutorizzazioneCheckData(TipoOperazione tipoOp, String idPorta, String nome, String valore ) throws ControlStationCoreException {
 		try {
 			int idInt = Integer.parseInt(idPorta);
 
@@ -5719,18 +5859,22 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				return false;
 			}
 
-			// Controllo che non ci siano spazi nei campi di testo
-			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
+			if (nome.indexOf(" ") != -1) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
-			
-			// Check Lunghezza
-			if(this.checkLength255(nome, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)==false) {
+			if(!this.checkLength255(nome, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)) {
 				return false;
 			}
-			if(this.checkLength255(valore, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE)==false) {
-				return false;
+			
+			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore) ){
+				if (valore.indexOf(" ") != -1) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+					return false;
+				}
+				if(!this.checkLength255(valore, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE)) {
+					return false;
+				}
 			}
 
 			// Se tipoOp = add, controllo che la property non sia gia'
@@ -5771,13 +5915,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
 	public void preparePorteDelegateAutorizzazioneContenutoCustomPropList(ConsoleSearch ricerca, List<Proprieta> lista) throws Exception {
 		try {
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
@@ -5844,6 +5989,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -5866,13 +6014,21 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES_CHANGE, pId,pIdSoggetto, pIdAsps, pIdFruizione, new Parameter( PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, ssp.getNome()));
 					de.setValue(ssp.getNome());
 					de.setIdToRemove(ssp.getId()+"");
 					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
 					e.add(de);
 
 					de = new DataElement();
-					de.setValue(ssp.getValore());
+					if(StringUtils.isNotEmpty(ssp.getValore()) &&
+							BYOKManager.isEnabledBYOK() &&
+							this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(ssp.getValore())) {
+						de.setValue(CostantiControlStation.VALORE_CIFRATO);
+					}
+					else {
+						de.setValue(ssp.getValore());
+					}
 					e.add(de);
 
 					dati.add(e);
@@ -5883,12 +6039,12 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
-	public boolean proprietaAutorizzazioneContenutoCheckData(TipoOperazione tipoOp, String idPorta, String nome, String valore ) throws Exception {
+	public boolean proprietaAutorizzazioneContenutoCheckData(TipoOperazione tipoOp, String idPorta, String nome, String valore ) throws ControlStationCoreException {
 		try {
 			int idInt = Integer.parseInt(idPorta);
 
@@ -5909,20 +6065,24 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				return false;
 			}
 
-			// Controllo che non ci siano spazi nei campi di testo
-			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
+			if (nome.indexOf(" ") != -1) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
+			if(!this.checkLength255(nome, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)) {
+				return false;
+			}
 			
-			// Check Lunghezza
-			if(this.checkLength255(nome, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)==false) {
-				return false;
+			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore) ){
+				if (valore.indexOf(" ") != -1) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+					return false;
+				}
+				if(!this.checkLength255(valore, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE)) {
+					return false;
+				}
 			}
-			if(this.checkLength255(valore, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE)==false) {
-				return false;
-			}
-
+				
 			// Se tipoOp = add, controllo che la property non sia gia'
 			// stata
 			// registrata per la porta applicativa
@@ -5961,13 +6121,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
 	public void preparePorteDelegateAutenticazioneCustomPropList(ConsoleSearch ricerca, List<Proprieta> lista) throws Exception {
 		try {
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
@@ -6034,7 +6195,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
-
+			
+			// imposto menu' contestuale
+			this.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
+			
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
 				ServletUtils.enabledPageDataSearch(this.pd, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE_PROPRIETA, search);
@@ -6056,13 +6220,21 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AUTENTICAZIONE_CUSTOM_PROPERTIES_CHANGE, pId,pIdSoggetto, pIdAsps, pIdFruizione, new Parameter( PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, ssp.getNome()));
 					de.setValue(ssp.getNome());
 					de.setIdToRemove(ssp.getId()+"");
 					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
 					e.add(de);
 
 					de = new DataElement();
-					de.setValue(ssp.getValore());
+					if(StringUtils.isNotEmpty(ssp.getValore()) &&
+							BYOKManager.isEnabledBYOK() &&
+							this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(ssp.getValore())) {
+						de.setValue(CostantiControlStation.VALORE_CIFRATO);
+					}
+					else {
+						de.setValue(ssp.getValore());
+					}
 					e.add(de);
 
 					dati.add(e);
@@ -6073,12 +6245,12 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
-	public boolean proprietaAutenticazioneCheckData(TipoOperazione tipoOp, String idPorta, String nome, String valore ) throws Exception {
+	public boolean proprietaAutenticazioneCheckData(TipoOperazione tipoOp, String idPorta, String nome, String valore ) throws ControlStationCoreException {
 		try {
 			int idInt = Integer.parseInt(idPorta);
 
@@ -6099,18 +6271,21 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				return false;
 			}
 
-			// Controllo che non ci siano spazi nei campi di testo
-			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
+			if (nome.indexOf(" ") != -1) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
-			
-			// Check Lunghezza
-			if(this.checkLength255(nome, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)==false) {
+			if(!this.checkLength255(nome, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)) {
 				return false;
 			}
-			if(this.checkLength255(valore, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE)==false) {
-				return false;
+			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore) ){
+				if (valore.indexOf(" ") != -1) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+					return false;
+				}
+				if(!this.checkLength255(valore, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE)) {
+					return false;
+				}
 			}
 
 			// Se tipoOp = add, controllo che la property non sia gia'
@@ -6151,8 +6326,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 }

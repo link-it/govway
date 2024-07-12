@@ -20,13 +20,10 @@
 
 package org.openspcoop2.web.ctrlstat.core;
 
-import java.util.List;
-
-import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
+import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntimeInit;
 import org.openspcoop2.pdd.config.InvokerNodiRuntime;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceGovWayState;
-import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.threads.BaseThread;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 
 /**
@@ -38,53 +35,31 @@ import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
  * @version $Rev$, $Date$
  * 
  */
-public class InitRuntimeConfigReader extends BaseThread {
+public class InitRuntimeConfigReader extends ConfigurazioneNodiRuntimeInit {
 
 	private ConsoleProperties consoleProperties;
-	
-	public InitRuntimeConfigReader(ConsoleProperties consoleProperties) {
+		
+	public InitRuntimeConfigReader(ConsoleProperties consoleProperties, boolean reInitSecretMaps) throws UtilsException {
+		super(InitListener.getLog(), consoleProperties.getConfigurazioneNodiRuntime(), 
+				reInitSecretMaps, 
+				consoleProperties.getBYOKEnvSecretsConfig(), consoleProperties.isBYOKEnvSecretsConfigRequired());
 		this.consoleProperties = consoleProperties;
 	}
 	
 	@Override
-	protected void process() {
+	protected boolean isCompleted(String alias) {
 		
-		// provo ad iterare fino a che un nodo runtime non risulta disponibile
+		boolean finished = false;
 		
-		boolean finish = false;
-		
-		while(!finish) {
-		
-			try{
-				ConfigurazioneNodiRuntime configurazioneNodiRuntime = this.consoleProperties.getConfigurazioneNodiRuntime();
-				InvokerNodiRuntime invoker = new InvokerNodiRuntime(InitListener.log, configurazioneNodiRuntime);
-				List<String> aliases = configurazioneNodiRuntime.getAliases();
-				if(aliases!=null && !aliases.isEmpty()) {
-					for (String alias : aliases) {
-						analizeFileTraceGovWayState(invoker, alias, this.consoleProperties);
-						if(InitListener.getFileTraceGovWayState()!=null) {
-							finish = true;
-							break; // non itero su altri nodi
-						}
-					}
-				}
-			} catch (Exception e) {
-				String msgErrore = "Errore durante l'inizializzazione del FileTraceGovWayState: " + e.getMessage();
-				InitListener.logError(
-						msgErrore,e);
-				//throw new UtilsRuntimeException(msgErrore,e); non sollevo l'eccezione, e' solo una informazione informativa, non voglio mettere un vincolo che serve per forza un nodo acceso
-			}
-		
-			if(!finish) {
-				InitListener.logError("Non è stato possibile ottenere informazioni sulla configurazione del file trace da nessun nodo runtime (prossimo controllo tra 30 secondi)");
-				Utilities.sleep(30000); // riprovo dopo 10 secondi
-			}
+		InvokerNodiRuntime invoker = new InvokerNodiRuntime(InitListener.log, this.configurazioneNodiRuntime);
+		analizeFileTraceGovWayState(invoker, alias, this.consoleProperties);
+		if(InitListener.getFileTraceGovWayState()!=null) {
+			finished = true;
 		}
 		
-		this.setStop(true);
-		
+		return finished;
 	}
-	
+
 	private void analizeFileTraceGovWayState(InvokerNodiRuntime invoker, String alias, ConsoleProperties consoleProperties) {
 		try{
 			String tmp = invoker.invokeJMXMethod(alias, consoleProperties.getJmxPdDConfigurazioneSistemaType(alias),
@@ -97,4 +72,8 @@ public class InitRuntimeConfigReader extends BaseThread {
 		}
 	}
 	
+	@Override
+	protected String getDescrizione() {
+		return "secrets,filetrace";
+	}
 }

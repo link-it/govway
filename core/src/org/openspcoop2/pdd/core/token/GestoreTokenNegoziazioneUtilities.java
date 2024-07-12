@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
@@ -63,12 +61,10 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPS;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.controllo_traffico.PolicyTimeoutConfig;
-import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
-import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
+import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.pdd.core.token.parser.ClaimsNegoziazione;
 import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
-import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -82,6 +78,8 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.certificate.KeystoreParams;
+import org.openspcoop2.utils.certificate.byok.BYOKProvider;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.json.JSONUtils;
@@ -95,7 +93,6 @@ import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
-import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -413,41 +410,8 @@ public class GestoreTokenNegoziazioneUtilities {
 	
 	static Map<String, Object> buildDynamicNegoziazioneTokenMap(Busta busta, 
 			RequestInfo requestInfo, PdDContext pddContext, Logger log) {
-	
-		Map<String, Object> dynamicMap = new HashMap<>();
-		
-		Map<String, List<String>> pTrasporto = null;
-		String urlInvocazione = null;
-		Map<String, List<String>> pQuery = null;
-		Map<String, List<String>> pForm = null;
-		if(requestInfo!=null && requestInfo.getProtocolContext()!=null) {
-			pTrasporto = requestInfo.getProtocolContext().getHeaders();
-			urlInvocazione = requestInfo.getProtocolContext().getUrlInvocazione_formBased();
-			pQuery = requestInfo.getProtocolContext().getParameters();
-			if(requestInfo.getProtocolContext() instanceof HttpServletTransportRequestContext) {
-				HttpServletTransportRequestContext httpServletContext = requestInfo.getProtocolContext();
-				HttpServletRequest httpServletRequest = httpServletContext.getHttpServletRequest();
-				if(httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
-					FormUrlEncodedHttpServletRequest formServlet = (FormUrlEncodedHttpServletRequest) httpServletRequest;
-					if(formServlet.getFormUrlEncodedParametersValues()!=null &&
-							!formServlet.getFormUrlEncodedParametersValues().isEmpty()) {
-						pForm = formServlet.getFormUrlEncodedParametersValues();
-					}
-				}
-			}
-		}
-				
-		ErrorHandler errorHandler = new ErrorHandler();
-		DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
-				null,
-				null, 
-				busta, 
-				pTrasporto, 
-				pQuery,
-				pForm,
-				errorHandler);
-		
-		return dynamicMap;
+		return TokenUtilities.buildDynamicMap(busta, 
+				requestInfo, pddContext, log);
 	}
 	
 	private static HttpResponse http(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken,
@@ -642,7 +606,8 @@ public class GestoreTokenNegoziazioneUtilities {
 					busta, tipoPdD,
 					dynamicParameters,
 					protocolFactory, requestInfo);
-			String signedJwt = signJwt(policyNegoziazioneToken, jwt, contentType, dynamicParameters, requestInfo);
+			String signedJwt = signJwt(policyNegoziazioneToken, jwt, contentType, dynamicParameters, 
+					busta, requestInfo, log);
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ASSERTION, signedJwt);
 			if(datiRichiesta!=null) {
 				boolean infoNormalizzate = properties.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_transazioniRegistrazioneInformazioniNormalizzate();
@@ -1013,6 +978,28 @@ public class GestoreTokenNegoziazioneUtilities {
 		}
 		kp.setType(keystoreType);
 		
+		fillKeystoreParams(policyNegoziazioneToken, keystoreType, kp);
+				
+		String keyAlias = policyNegoziazioneToken.getJwtSignKeyAlias();
+		if(keyAlias==null && 
+				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
+				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
+			throw new TokenException(GestoreToken.KEY_ALIAS_UNDEFINED);
+		}
+		kp.setKeyAlias(keyAlias);
+		
+		String keyPassword = policyNegoziazioneToken.getJwtSignKeyPassword();
+		if(keyPassword==null && 
+				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
+				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
+				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
+			throw new TokenException(GestoreToken.KEY_PASSWORD_UNDEFINED);
+		}
+		kp.setKeyPassword(keyPassword);
+		
+		return kp;
+	}
+	private static void fillKeystoreParams(PolicyNegoziazioneToken policyNegoziazioneToken, String keystoreType, KeystoreParams kp) throws TokenException {
 		String keystoreFile = null;
 		String keystoreFilePublicKey = null;
 		String keyPairAlgorithm = null;
@@ -1052,29 +1039,13 @@ public class GestoreTokenNegoziazioneUtilities {
 		}
 		kp.setPassword(keystorePassword);
 		
-		String keyAlias = policyNegoziazioneToken.getJwtSignKeyAlias();
-		if(keyAlias==null && 
-				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
-				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
-			throw new TokenException(GestoreToken.KEY_ALIAS_UNDEFINED);
-		}
-		kp.setKeyAlias(keyAlias);
-		
-		String keyPassword = policyNegoziazioneToken.getJwtSignKeyPassword();
-		if(keyPassword==null && 
-				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
-				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
-				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
-			throw new TokenException(GestoreToken.KEY_PASSWORD_UNDEFINED);
-		}
-		kp.setKeyPassword(keyPassword);
-		
-		return kp;
+		String keystoreByokPolicy = policyNegoziazioneToken.getJwtSignKeystoreByokPolicy();
+		kp.setByokPolicy(keystoreByokPolicy);
 	}
 	
 	private static String signJwt(PolicyNegoziazioneToken policyNegoziazioneToken, String payload, String contentType,
 			NegoziazioneTokenDynamicParameters dynamicParameters,
-			RequestInfo requestInfo) throws TokenException, SecurityException, UtilsException {
+			Busta busta, RequestInfo requestInfo, Logger log) throws TokenException, SecurityException, UtilsException {
 		
 		String signAlgo = policyNegoziazioneToken.getJwtSignAlgorithm();
 		if(signAlgo==null) {
@@ -1090,24 +1061,30 @@ public class GestoreTokenNegoziazioneUtilities {
 			
 			if(policyNegoziazioneToken.isJwtSignKeystoreApplicativoModI()) {
 				
+				Map<String, Object> dynamicMap = null;
+				if(dynamicParameters.isByokPolicyDefinedApplicativoModI()) {
+					dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(busta, 
+							requestInfo, dynamicParameters.getPddContext(), log);
+				}
+				
 				String keystoreType = dynamicParameters.getTipoKeystoreApplicativoModI();
 				if(keystoreType==null) {
 					throw new TokenException(GestoreToken.KEYSTORE_TYPE_UNDEFINED);
 				}
 				if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
-					keyPairStore = dynamicParameters.getKeyPairStoreApplicativoModI();
+					keyPairStore = dynamicParameters.getKeyPairStoreApplicativoModI(dynamicMap);
 					if(keyPairStore==null) {
 						throw new TokenException(GestoreToken.KEYSTORE_KEYPAIR_UNDEFINED);
 					}
 				}
 				else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType)) {
-					jwtStore =  dynamicParameters.getJWKSetStoreApplicativoModI();
+					jwtStore =  dynamicParameters.getJWKSetStoreApplicativoModI(dynamicMap);
 					if(jwtStore==null) {
 						throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_UNDEFINED);
 					}
 				}
 				else {
-					ks = dynamicParameters.getKeystoreApplicativoModI();
+					ks = dynamicParameters.getKeystoreApplicativoModI(dynamicMap);
 					if(ks==null) {
 						throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_UNDEFINED);
 					}
@@ -1129,24 +1106,30 @@ public class GestoreTokenNegoziazioneUtilities {
 			}
 			else if(policyNegoziazioneToken.isJwtSignKeystoreFruizioneModI()) {
 				
+				Map<String, Object> dynamicMap = null;
+				if(dynamicParameters.isByokPolicyDefinedFruizioneModI()) {
+					dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(busta, 
+							requestInfo, dynamicParameters.getPddContext(), log);
+				}
+				
 				String keystoreType = dynamicParameters.getTipoKeystoreFruizioneModI();
 				if(keystoreType==null) {
 					throw new TokenException(GestoreToken.KEYSTORE_TYPE_UNDEFINED);
 				}
 				if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
-					keyPairStore = dynamicParameters.getKeyPairStoreFruizioneModI();
+					keyPairStore = dynamicParameters.getKeyPairStoreFruizioneModI(dynamicMap);
 					if(keyPairStore==null) {
 						throw new TokenException(GestoreToken.KEYSTORE_KEYPAIR_UNDEFINED);
 					}
 				}
 				else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType)) {
-					jwtStore =  dynamicParameters.getJWKSetStoreFruizioneModI();
+					jwtStore =  dynamicParameters.getJWKSetStoreFruizioneModI(dynamicMap);
 					if(jwtStore==null) {
 						throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_UNDEFINED);
 					}
 				}
 				else {
-					ks = dynamicParameters.getKeystoreFruizioneModI();
+					ks = dynamicParameters.getKeystoreFruizioneModI(dynamicMap);
 					if(ks==null) {
 						throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_UNDEFINED);
 					}
@@ -1168,7 +1151,7 @@ public class GestoreTokenNegoziazioneUtilities {
 			}
 			else {
 				KeystoreParams kp = readKeystoreParams(policyNegoziazioneToken);
-				
+
 				String keystoreType = kp.getType();	
 				String keystoreFile = kp.getPath();
 				String keystoreFilePublicKey = kp.getKeyPairPublicKeyPath();
@@ -1178,14 +1161,23 @@ public class GestoreTokenNegoziazioneUtilities {
 				keyAlias = kp.getKeyAlias();				
 				keyPassword = kp.getKeyPassword();
 				
+				String keystoreByokPolicy = kp.getByokPolicy();
+				BYOKRequestParams byokParams = null;
+				if(BYOKProvider.isPolicyDefined(keystoreByokPolicy)) {
+					Map<String, Object> dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(busta, 
+							requestInfo, dynamicParameters.getPddContext(), log);
+					byokParams = BYOKProvider.getBYOKRequestParamsByUnwrapBYOKPolicy(keystoreByokPolicy, 
+							dynamicMap );
+				}
+				
 				if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
-					keyPairStore = GestoreKeystoreCache.getKeyPairStore(requestInfo, keystoreFile, keystoreFilePublicKey, keyPassword, keyPairAlgorithm);
+					keyPairStore = GestoreKeystoreCache.getKeyPairStore(requestInfo, keystoreFile, keystoreFilePublicKey, keyPassword, keyPairAlgorithm, byokParams);
 				}
 				else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType)) {
-					jwtStore = GestoreKeystoreCache.getJwkSetStore(requestInfo, keystoreFile);
+					jwtStore = GestoreKeystoreCache.getJwkSetStore(requestInfo, keystoreFile, byokParams);
 				}
 				else {
-					MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keystoreFile, keystoreType, keystorePassword);
+					MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keystoreFile, keystoreType, keystorePassword, byokParams);
 					if(merlinKs==null) {
 						throw new TokenException("Accesso al keystore '"+keystoreFile+"' non riuscito");
 					}

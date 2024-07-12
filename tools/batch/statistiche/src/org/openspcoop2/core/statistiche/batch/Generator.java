@@ -20,18 +20,31 @@
 
 package org.openspcoop2.core.statistiche.batch;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
 import org.openspcoop2.monitor.engine.statistic.StatisticsConfig;
 import org.openspcoop2.monitor.engine.statistic.StatisticsLibrary;
+import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
+import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
+import org.openspcoop2.utils.certificate.hsm.HSMManager;
+import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.properties.MapProperties;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.security.ProviderUtils;
 import org.slf4j.Logger;
 
 /**
@@ -43,7 +56,9 @@ import org.slf4j.Logger;
 */
 public class Generator {
 
-	public static void main(String[] args) throws Exception {
+	private static final String LOGGER_PREFIX = "govway.batch.";
+	
+	public static void main(String[] args) throws UtilsException {
 
 		StringBuilder bf = new StringBuilder();
 		String [] tipi = TipoIntervalloStatistico.toStringArray();
@@ -58,7 +73,7 @@ public class Generator {
 		String usage = "\n\nUse: generator.sh tipo\n\ttipo: "+bf.toString();
 		
 		if(args.length<=0) {
-			throw new Exception("ERROR: tipo di statistica da generare non fornito"+usage);
+			throw new UtilsException("ERROR: tipo di statistica da generare non fornito"+usage);
 		}
 		
 		String tipo = args[0].trim();
@@ -66,7 +81,7 @@ public class Generator {
 		try {
 			tipoStatistica = TipoIntervalloStatistico.toEnumConstant(tipo, true);
 		}catch(Exception e) {
-			throw new Exception("ERROR: tipo di statistica fornita ("+tipo+") sconosciuta"+usage);
+			throw new UtilsException("ERROR: tipo di statistica fornita ("+tipo+") sconosciuta"+usage);
 		}
 
 		String nomeLogger = null;
@@ -93,19 +108,114 @@ public class Generator {
 				props.load(fis);
 				LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.ERROR);
 				LoggerWrapperFactory.setLogConfiguration(props);
-				logCore = LoggerWrapperFactory.getLogger("govway.batch."+nomeLogger+".generazione.error");
-				logSql = LoggerWrapperFactory.getLogger("govway.batch."+nomeLogger+".generazione.sql.error");
+				logCore = LoggerWrapperFactory.getLogger(LOGGER_PREFIX+nomeLogger+".generazione.error");
+				logSql = LoggerWrapperFactory.getLogger(LOGGER_PREFIX+nomeLogger+".generazione.sql.error");
 			}
 		}catch(Exception e) {
-			throw new Exception("Impostazione logging fallita: "+e.getMessage());
+			throw new UtilsException("Impostazione logging fallita: "+e.getMessage());
 		}
 		
 		GeneratorProperties generatorProperties = GeneratorProperties.getInstance();
+		
 		if(generatorProperties.isStatisticheGenerazioneDebug()) {
-			logCore = LoggerWrapperFactory.getLogger("govway.batch."+nomeLogger+".generazione");
-			logSql = LoggerWrapperFactory.getLogger("govway.batch."+nomeLogger+".generazione.sql");
+			logCore = LoggerWrapperFactory.getLogger(LOGGER_PREFIX+nomeLogger+".generazione");
+			logSql = LoggerWrapperFactory.getLogger(LOGGER_PREFIX+nomeLogger+".generazione.sql");
 		}
 		
+		// Map (environment)
+		try {
+			String mapConfig = generatorProperties.getEnvMapConfig();
+			if(StringUtils.isNotEmpty(mapConfig)) {
+				logCore.info("Inizializzazione environment in corso...");
+				MapProperties.initialize(logCore, mapConfig, generatorProperties.isEnvMapConfigRequired());
+				MapProperties mapProperties = MapProperties.getInstance();
+				mapProperties.initEnvironment();
+				String msgInit = "Environment inizializzato con le variabili definite nel file '"+mapConfig+"'"+
+						"\n\tJavaProperties: "+mapProperties.getJavaMap().keys()+
+						"\n\tEnvProperties: "+mapProperties.getEnvMap().keys()+
+						"\n\tObfuscateMode: "+mapProperties.getObfuscateModeDescription()+
+						"\n\tObfuscatedJavaKeys: "+mapProperties.getObfuscatedJavaKeys()+
+						"\n\tObfuscatedEnvKeys: "+mapProperties.getObfuscatedEnvKeys();
+				logCore.info(msgInit);
+			}
+		} catch (Exception e) {
+			doError(logCore, "Errore durante l'inizializzazione dell'ambiente",e);
+		}
+		
+		// Load Security Provider
+		logCore.info("Inizializzazione security provider...");
+		try {
+			if(generatorProperties.isSecurityLoadBouncyCastleProvider()) {
+				ProviderUtils.addBouncyCastleAfterSun(true);
+				logCore.info("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
+			}
+		} catch (Exception e) {
+			doError(logCore, "Errore durante l'inizializzazione dei security provider",e);
+		}
+		logCore.info("Inizializzazione security provider effettuata con successo");
+		
+		// inizializzo HSM Manager
+		try {
+			String hsmConfig = generatorProperties.getHSMConfigurazione();
+			if(StringUtils.isNotEmpty(hsmConfig)) {
+				logCore.info("Inizializzazione HSM in corso...");
+				File f = new File(hsmConfig);
+				HSMManager.init(f, generatorProperties.isHSMRequired(), logCore, false);
+				HSMUtils.setHsmConfigurableKeyPassword(generatorProperties.isHSMKeyPasswordConfigurable());
+				logCore.info("Inizializzazione HSM effettuata con successo");
+			}
+		} catch (Exception e) {
+			doError(logCore, "Errore durante l'inizializzazione del manager HSM",e);
+		}
+		
+		// inizializzo BYOK Manager
+		BYOKManager byokManager = null;
+		try {
+			String byokConfig = generatorProperties.getBYOKConfigurazione();
+			if(StringUtils.isNotEmpty(byokConfig)) {
+				logCore.info("Inizializzazione BYOK in corso...");
+				File f = new File(byokConfig);
+				BYOKManager.init(f, generatorProperties.isBYOKRequired(), logCore);
+				byokManager = BYOKManager.getInstance();
+				String msgInit = "Gestore BYOK inizializzato;"+
+						"\n\tHSM registrati: "+byokManager.getKeystoreTypes()+
+						"\n\tSecurityEngine registrati: "+byokManager.getSecurityEngineTypes()+
+						"\n\tGovWaySecurityEngine: "+byokManager.getSecurityEngineGovWayDescription();
+				logCore.info(msgInit);
+			}
+		} catch (Exception e) {
+			doError(logCore, "Errore durante l'inizializzazione del manager BYOK",e);
+		}
+		
+		// Secrets (environment)
+		try {
+			String secretsConfig = generatorProperties.getBYOKEnvSecretsConfig();
+			if(byokManager!=null && StringUtils.isNotEmpty(secretsConfig)) {
+				logCore.info("Inizializzazione secrets in corso...");
+				
+				Map<String, Object> dynamicMap = new HashMap<>();
+				DynamicInfo dynamicInfo = new  DynamicInfo();
+				DynamicUtils.fillDynamicMap(logCore, dynamicMap, dynamicInfo);
+
+				BYOKMapProperties.initialize(logCore, secretsConfig, generatorProperties.isBYOKEnvSecretsConfigRequired(), 
+						true, 
+						dynamicMap, true);
+				BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
+				secretsProperties.initEnvironment();
+				String msgInit = "Environment inizializzato con i secrets definiti nel file '"+secretsConfig+"'"+
+						"\n\tJavaProperties: "+secretsProperties.getJavaMap().keys()+
+						"\n\tEnvProperties: "+secretsProperties.getEnvMap().keys()+
+						"\n\tObfuscateMode: "+secretsProperties.getObfuscateModeDescription();
+				logCore.info(msgInit);
+			}
+		} catch (Exception e) {
+			doError(logCore, "Errore durante l'inizializzazione dell'ambiente (secrets)",e);
+		}		
+		
+		// Inizializza restanti proprietà
+		generatorProperties.initProperties();
+		
+		// Inizializza Protocol Factory Manager
 		try {
 			ConfigurazionePdD configPdD = new ConfigurazionePdD();
 			configPdD.setAttesaAttivaJDBC(-1);
@@ -115,9 +225,10 @@ public class Generator {
 			ProtocolFactoryManager.initialize(logCore, configPdD,
 					generatorProperties.getProtocolloDefault());
 		} catch (Exception e) {
-			throw new Exception("Errore durante la generazione delle statistiche (InitConfigurazione - ProtocolFactoryManager): "+e.getMessage(),e);
+			throw new UtilsException("Errore durante la generazione delle statistiche (InitConfigurazione - ProtocolFactoryManager): "+e.getMessage(),e);
 		}
 		
+		// Inizializza configurazione statistiche
 		StatisticsConfig statisticsConfig = null;
 		try{
 			statisticsConfig = new StatisticsConfig(false);
@@ -153,7 +264,7 @@ public class Generator {
 			statisticsConfig.setForceIndexConfig(generatorProperties.getStatisticheGenerazioneForceIndexConfig());
 			
 		}catch(Exception e){
-			throw new Exception("Errore durante la generazione delle statistiche (InitConfigurazione): "+e.getMessage(),e);
+			throw new UtilsException("Errore durante la generazione delle statistiche (InitConfigurazione): "+e.getMessage(),e);
 		}
 		
 		StatisticsLibrary sLibrary = null;
@@ -207,7 +318,7 @@ public class Generator {
 				sLibrary = new StatisticsLibrary(statisticsConfig, statisticheSM, transazioniSM, 
 						pluginsStatisticheSM, pluginsBaseSM, utilsSM, pluginsTransazioniSM);
 			}catch(Exception e){
-				throw new Exception("Errore durante la generazione delle statistiche (InitConnessioni): "+e.getMessage(),e);
+				throw new UtilsException("Errore durante la generazione delle statistiche (InitConnessioni): "+e.getMessage(),e);
 			}
 			
 			try {
@@ -226,7 +337,7 @@ public class Generator {
 					break;
 				}	
 			}catch(Exception e){
-				throw new Exception("Errore durante la generazione delle statistiche: "+e.getMessage(),e);
+				throw new UtilsException("Errore durante la generazione delle statistiche: "+e.getMessage(),e);
 			}
 		}finally {
 			if(sLibrary!=null) {
@@ -235,4 +346,9 @@ public class Generator {
 		}
 	}
 
+	private static void doError(Logger logCore,String msg,Exception e) throws UtilsException {
+		String msgErrore = msg+": " + e.getMessage();
+		logCore.error(msgErrore,e);
+		throw new UtilsException(msgErrore,e);
+	}
 }

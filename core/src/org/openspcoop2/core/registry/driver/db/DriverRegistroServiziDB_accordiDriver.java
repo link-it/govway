@@ -370,13 +370,16 @@ public class DriverRegistroServiziDB_accordiDriver {
 					
 					// Protocol Properties
 					try{
-						List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAzione, ProprietariProtocolProperty.AZIONE_ACCORDO, con, this.driver.tipoDB);
+						List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAzione, ProprietariProtocolProperty.AZIONE_ACCORDO, con, 
+								this.driver.tipoDB, this.driver.getDriverUnwrapBYOK());
 						if(listPP!=null && !listPP.isEmpty()){
 							for (ProtocolProperty protocolProperty : listPP) {
 								azione.addProtocolProperty(protocolProperty);
 							}
 						}
-					}catch(DriverRegistroServiziNotFound dNotFound){}
+					}catch(DriverRegistroServiziNotFound dNotFound){
+						// ignore
+					}
 					
 					accordoServizio.addAzione(azione);
 
@@ -429,13 +432,16 @@ public class DriverRegistroServiziDB_accordiDriver {
 				
 				// Protocol Properties
 				try{
-					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAccordoLong, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, con, this.driver.tipoDB);
+					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAccordoLong, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, con, 
+							this.driver.tipoDB, this.driver.getDriverUnwrapBYOK());
 					if(listPP!=null && !listPP.isEmpty()){
 						for (ProtocolProperty protocolProperty : listPP) {
 							accordoServizio.addProtocolProperty(protocolProperty);
 						}
 					}
-				}catch(DriverRegistroServiziNotFound dNotFound){}
+				}catch(DriverRegistroServiziNotFound dNotFound){
+					// ignore
+				}
 				
 				
 			} else {
@@ -748,7 +754,8 @@ public class DriverRegistroServiziDB_accordiDriver {
 		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
-			DriverRegistroServiziDB_accordiLIB.createAccordoServizioParteComune(accordoServizio, connection, this.driver.tabellaSoggetti, this.driver.log, this.driver.idAccordoFactory);
+			DriverRegistroServiziDB_accordiLIB.createAccordoServizioParteComune(accordoServizio, connection, this.driver.tabellaSoggetti, this.driver.log, 
+					this.driver.idAccordoFactory, this.driver.getDriverWrapBYOK());
 		} catch (DriverRegistroServiziException e) {
 			error = true;
 			throw e;
@@ -781,7 +788,8 @@ public class DriverRegistroServiziDB_accordiDriver {
 		this.driver.logDebug("operazione atomica = " + this.driver.atomica);
 
 		try {
-			DriverRegistroServiziDB_accordiLIB.updateAccordoServizioParteComune(accordoServizio, connection, this.driver.tabellaSoggetti, this.driver.log, this.driver.idAccordoFactory);
+			DriverRegistroServiziDB_accordiLIB.updateAccordoServizioParteComune(accordoServizio, connection, this.driver.tabellaSoggetti, this.driver.log, 
+					this.driver.idAccordoFactory, this.driver.getDriverWrapBYOK());
 		}catch (DriverRegistroServiziException se) {
 			this.driver.log.error(se.getMessage(),se);
 			error = true;
@@ -820,7 +828,8 @@ public class DriverRegistroServiziDB_accordiDriver {
 
 		try {
 
-			DriverRegistroServiziDB_accordiLIB.deleteAccordoServizioParteComune(accordoServizio, connection, this.driver.tabellaSoggetti, this.driver.log, this.driver.idAccordoFactory);
+			DriverRegistroServiziDB_accordiLIB.deleteAccordoServizioParteComune(accordoServizio, connection, this.driver.tabellaSoggetti, this.driver.log, 
+					this.driver.idAccordoFactory, this.driver.getDriverWrapBYOK());
 
 		} catch (DriverRegistroServiziException se) {
 

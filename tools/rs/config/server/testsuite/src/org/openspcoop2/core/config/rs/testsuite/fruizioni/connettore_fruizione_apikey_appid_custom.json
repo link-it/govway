@@ -1,0 +1,18 @@
+{
+    "connettore": {
+	    "tipo": "http",
+	    "debug":false,
+	    "endpoint": "https://ginovadifretta.it/petstore",
+	
+	    "autenticazione_apikey":{
+               "api_key": "API_KEY_VALUE",
+               "api_key_header": "API_KEY_HEADER",
+               "app_id": "APP_ID_VALUE",
+               "app_id_header": "APP_ID_HEADER"
+            }
+     }
+
+}
+
+
+

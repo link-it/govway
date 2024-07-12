@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import jakarta.servlet.ServletContext;
@@ -45,6 +47,9 @@ import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntimeProperties;
+import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
+import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceGovWayState;
 import org.openspcoop2.protocol.basic.archive.BasicArchive;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -52,11 +57,15 @@ import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsRuntimeException;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
+import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.json.YamlSnakeLimits;
+import org.openspcoop2.utils.properties.MapProperties;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.security.ProviderUtils;
 import org.openspcoop2.utils.xml.XMLDiffImplType;
 import org.openspcoop2.utils.xml.XMLDiffOptions;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
@@ -84,6 +93,9 @@ import org.slf4j.Logger;
 public class InitListener implements ServletContextListener {
 
 	protected static Logger log = null;
+	public static Logger getLog() {
+		return log;
+	}
 	public static void setLog(Logger log) {
 		InitListener.log = log;
 	}
@@ -95,6 +107,11 @@ public class InitListener implements ServletContextListener {
 	static void logDebug(String msg, Throwable e) {
 		if(InitListener.log!=null) {
 			InitListener.log.debug(msg, e);
+		}
+	}
+	static void logInfo(String msg) {
+		if(InitListener.log!=null) {
+			InitListener.log.info(msg);
 		}
 	}
 	static void logError(String msg) {
@@ -134,7 +151,7 @@ public class InitListener implements ServletContextListener {
 	
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
-		InitListener.log.info("Undeploy govwayConsole in corso...");
+		InitListener.logInfo("Undeploy govwayConsole in corso...");
 
 		InitListener.setInitialized(false);
 		
@@ -160,7 +177,7 @@ public class InitListener implements ServletContextListener {
 			InitListener.logError(msgErrore,e);
 		}
 		
-		InitListener.log.info("Undeploy govwayConsole effettuato.");
+		InitListener.logInfo("Undeploy govwayConsole effettuato.");
 
 	}
 
@@ -218,7 +235,7 @@ public class InitListener implements ServletContextListener {
 			}
 			
 			
-			InitListener.log.info("Inizializzazione resources (properties) govwayConsole in corso...");
+			InitListener.logInfo("Inizializzazione resources (properties) govwayConsole in corso...");
 			ConsoleProperties consoleProperties = null;
 			try{
 			
@@ -243,10 +260,147 @@ public class InitListener implements ServletContextListener {
 			}catch(Exception e){
 				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
-			InitListener.log.info("Inizializzazione resources (properties) govwayConsole effettuata con successo.");
+			InitListener.logInfo("Inizializzazione resources (properties) govwayConsole effettuata con successo.");
 	
 			
-			InitListener.log.info("Inizializzazione ExtendedInfoManager in corso...");
+			// Map (environment)
+			try {
+				String mapConfig = consoleProperties.getEnvMapConfig();
+				if(StringUtils.isNotEmpty(mapConfig)) {
+					InitListener.logInfo("Inizializzazione environment in corso...");
+					MapProperties.initialize(InitListener.log, mapConfig, consoleProperties.isEnvMapConfigRequired());
+					MapProperties mapProperties = MapProperties.getInstance();
+					mapProperties.initEnvironment();
+					String msgInit = "Environment inizializzato con le variabili definite nel file '"+mapConfig+"'"+
+							"\n\tJavaProperties: "+mapProperties.getJavaMap().keys()+
+							"\n\tEnvProperties: "+mapProperties.getEnvMap().keys()+
+							"\n\tObfuscateMode: "+mapProperties.getObfuscateModeDescription()+
+							"\n\tObfuscatedJavaKeys: "+mapProperties.getObfuscatedJavaKeys()+
+							"\n\tObfuscatedEnvKeys: "+mapProperties.getObfuscatedEnvKeys();
+					InitListener.logInfo(msgInit);
+				}
+			} catch (Exception e) {
+				String msgErrore = "Inizializzazione ambiente non riuscita: "+e.getMessage();
+				InitListener.logError(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
+			}
+			
+			// Load Security Provider
+			try {
+				if(consoleProperties.isSecurityLoadBouncyCastle()) {
+					ProviderUtils.addBouncyCastleAfterSun(true);
+					InitListener.logInfo("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
+				}
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'aggiunta dei security provider: " + e.getMessage();
+				InitListener.logError(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
+			}
+						
+			// inizializzo HSM Manager
+			try {
+				String hsmConfig = consoleProperties.getHSMConfigurazione();
+				if(StringUtils.isNotEmpty(hsmConfig)) {
+					InitListener.logInfo("Inizializzazione HSM in corso...");
+					File f = new File(hsmConfig);
+					HSMManager.init(f, consoleProperties.isHSMRequired(), log, false);
+					HSMUtils.setHsmConfigurableKeyPassword(consoleProperties.isHSMKeyPasswordConfigurable());
+					InitListener.logInfo("Inizializzazione HSM effettuata con successo");
+				}
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'inizializzazione del manager HSM: " + e.getMessage();
+				InitListener.logError(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
+			}
+					
+			// inizializzo OCSP Manager
+			try {
+				String ocspConfig = consoleProperties.getOCSPConfigurazione();
+				if(StringUtils.isNotEmpty(ocspConfig)) {
+					InitListener.logInfo("Inizializzazione OCSP in corso...");
+					File f = new File(ocspConfig);
+					OCSPManager.init(f, consoleProperties.isOCSPRequired(), consoleProperties.isOCSPLoadDefault(), log);
+					InitListener.logInfo("Inizializzazione OCSP effettuata con successo");
+				}
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'inizializzazione del manager OCSP: " + e.getMessage();
+				InitListener.logError(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
+			}
+			
+			// inizializzo BYOK Manager
+			BYOKManager byokManager = null;
+			try {
+				String byokConfig = consoleProperties.getBYOKConfig();
+				if(StringUtils.isNotEmpty(byokConfig)) {
+					InitListener.logInfo("Inizializzazione BYOK in corso...");
+					File f = new File(byokConfig);
+					BYOKManager.init(f, consoleProperties.isBYOKConfigRequired(), log);
+					byokManager = BYOKManager.getInstance();
+					BYOKProvider.setUnwrapKeystoreFileEnabled(consoleProperties.isConsoleBYOKShowUnwrapPolicy());
+					String msgInit = "Gestore BYOK inizializzato;"+
+							"\n\tHSM registrati: "+byokManager.getKeystoreTypes()+
+							"\n\tSecurityEngine registrati: "+byokManager.getSecurityEngineTypes()+
+							"\n\tGovWaySecurityEngine: "+byokManager.getSecurityEngineGovWayDescription()+
+							"\n\tVisualizza informazioni cifrate: "+consoleProperties.isVisualizzaInformazioniCifrate()+
+							"\n\tVisualizza policy unwrap: "+consoleProperties.isConsoleBYOKShowUnwrapPolicy();
+					InitListener.logInfo(msgInit);
+				}
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'inizializzazione del manager BYOK: " + e.getMessage();
+				InitListener.logError(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
+			}
+						
+			// Secrets (environment)
+			boolean reInitSecretMaps = false;
+			try {
+				String secretsConfig = consoleProperties.getBYOKEnvSecretsConfig();
+				if(byokManager!=null && StringUtils.isNotEmpty(secretsConfig)) {
+					InitListener.logInfo("Inizializzazione secrets in corso...");
+					
+					boolean useSecurityEngine = true;
+					Map<String, Object> dynamicMap = new HashMap<>();
+					DynamicInfo dynamicInfo = new  DynamicInfo();
+					DynamicUtils.fillDynamicMap(log, dynamicMap, dynamicInfo);
+					if(byokManager.isBYOKRemoteGovWayNodeUnwrapConfig()) {
+						// i secrets cifrati verranno riletti quando i nodi sono attivi (verificato in InitRuntimeConfigReader)
+						reInitSecretMaps = true;
+						useSecurityEngine = false;
+					}
+					
+					BYOKMapProperties.initialize(InitListener.log, secretsConfig, consoleProperties.isBYOKEnvSecretsConfigRequired(), 
+							useSecurityEngine, 
+							dynamicMap, true);
+					BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
+					secretsProperties.initEnvironment();
+					String msgInit = "Environment inizializzato con i secrets definiti nel file '"+secretsConfig+"'"+
+							"\n\tJavaProperties: "+secretsProperties.getJavaMap().keys()+
+							"\n\tEnvProperties: "+secretsProperties.getEnvMap().keys()+
+							"\n\tObfuscateMode: "+secretsProperties.getObfuscateModeDescription();
+					InitListener.logInfo(msgInit);
+				}
+			} catch (Exception e) {
+				String msgErrore = "Inizializzazione ambiente (secrets) non riuscita: "+e.getMessage();
+				InitListener.logError(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
+			}		
+			
+			// inizializza nodi runtime
+			// !!NOTA!!: eventuali secrets riferiti nella ConfigurazioneNodiRuntimeProperties devono essere definiti tramite ksm o tramite security che non invocano i nodi govway run
+			InitListener.logInfo("Inizializzazione NodiRuntime in corso...");
+			try {
+				ConfigurazioneNodiRuntimeProperties backwardCompatibility = new ConfigurazioneNodiRuntimeProperties(consoleProperties.getJmxPdDBackwardCompatibilityPrefix(), 
+						consoleProperties.getJmxPdDBackwardCompatibilityProperties());
+				ConfigurazioneNodiRuntime.initialize(consoleProperties.getJmxPdDExternalConfiguration(), backwardCompatibility);
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'inizializzazione del gestore dei nodi run: " + e.getMessage();
+				InitListener.logError(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
+			}
+			InitListener.logInfo("Inizializzazione NodiRuntime effettuata con successo");
+			
+			InitListener.logInfo("Inizializzazione ExtendedInfoManager in corso...");
 			try{
 				ExtendedInfoManager.initialize(new Loader(), 
 						consoleProperties.getExtendedInfoDriverConfigurazione(), 
@@ -255,9 +409,9 @@ public class InitListener implements ServletContextListener {
 			}catch(Exception e){
 				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
-			InitListener.log.info("Inizializzazione ExtendedInfoManager effettuata con successo");
+			InitListener.logInfo("Inizializzazione ExtendedInfoManager effettuata con successo");
 			
-			InitListener.log.info("Inizializzazione resources govwayConsole in corso...");
+			InitListener.logInfo("Inizializzazione resources govwayConsole in corso...");
 			try{
 			
 				Connettori.initialize(InitListener.log);
@@ -267,9 +421,9 @@ public class InitListener implements ServletContextListener {
 			}catch(Exception e){
 				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
-			InitListener.log.info("Inizializzazione resources govwayConsole effettuata con successo.");
+			InitListener.logInfo("Inizializzazione resources govwayConsole effettuata con successo.");
 			
-			InitListener.log.info("Inizializzazione YAML Limits in corso...");
+			InitListener.logInfo("Inizializzazione YAML Limits in corso...");
 			try{
 				Properties yamlSnakeLimits = consoleProperties.getApiYamlSnakeLimits();
 				if(yamlSnakeLimits!=null && !yamlSnakeLimits.isEmpty()) {
@@ -278,16 +432,16 @@ public class InitListener implements ServletContextListener {
 			}catch(Exception e){
 				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
-			InitListener.log.info("Inizializzazione YAML Limits con successo");
+			InitListener.logInfo("Inizializzazione YAML Limits con successo");
 			
-			InitListener.log.info("Inizializzazione XMLDiff in corso...");
+			InitListener.logInfo("Inizializzazione XMLDiff in corso...");
 			try{
 				XMLDiff diff = new XMLDiff(OpenSPCoop2MessageFactory.getDefaultMessageFactory());
 				diff.initialize(XMLDiffImplType.XML_UNIT, new XMLDiffOptions());
 			}catch(Exception e){
 				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
-			InitListener.log.info("Inizializzazione XMLDiff effettuata con successo");
+			InitListener.logInfo("Inizializzazione XMLDiff effettuata con successo");
 
 			try{
 				// Notes on Apache Commons FileUpload 1.3.3
@@ -303,9 +457,9 @@ public class InitListener implements ServletContextListener {
 				// Purtroppo la classe 'org.govway.struts.upload.FormFile', all'interna utilizza DiskFileItem per serializzare le informazioni.
 				// Tale classe viene usata nel meccanismo di import/export nei metodi writeFormFile e readFormFile della classe org.openspcoop2.web.ctrlstat.servlet.archivi.ImporterUtils
 				// Per questo motivo si riabilita' l'opzione!
-				InitListener.log.info("Inizializzazione DiskFileItem (opzione serializable), in corso...");
+				InitListener.logInfo("Inizializzazione DiskFileItem (opzione serializable), in corso...");
 				System.setProperty("org.apache.commons.fileupload.disk.DiskFileItem.serializable", "true");
-				InitListener.log.info("Inizializzazione DiskFileItem (opzione serializable), effettuata.");
+				InitListener.logInfo("Inizializzazione DiskFileItem (opzione serializable), effettuata.");
 			}catch(Exception e){
 				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
@@ -314,16 +468,16 @@ public class InitListener implements ServletContextListener {
 				if(consoleProperties.isGestoreConsistenzaDatiEnabled()){
 					this.gestoreConsistenzaDati = new GestoreConsistenzaDati(consoleProperties.isGestoreConsistenzaDatiForceCheckMapping());
 	                new Thread(this.gestoreConsistenzaDati).start();
-	                InitListener.log.info("Gestore Controllo Consistenza Dati avviato con successo.");
+	                InitListener.logInfo("Gestore Controllo Consistenza Dati avviato con successo.");
 				}
 				else{
-					InitListener.log.info("Gestore Controllo Consistenza Dati disabilitato.");
+					InitListener.logInfo("Gestore Controllo Consistenza Dati disabilitato.");
 				}
 			}catch(Exception e){
 				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 			
-			InitListener.log.info("Inizializzazione DataElement in corso...");
+			InitListener.logInfo("Inizializzazione DataElement in corso...");
 			try{
 				int consoleLunghezzaLabel = consoleProperties.getConsoleLunghezzaLabel();
 				int numeroColonneTextArea = consoleProperties.getConsoleNumeroColonneDefaultTextArea();
@@ -334,7 +488,7 @@ public class InitListener implements ServletContextListener {
 			}catch(Exception e){
 				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
-			InitListener.log.info("Inizializzazione DataElement effettuata con successo");
+			InitListener.logInfo("Inizializzazione DataElement effettuata con successo");
 			
 			ServletContext servletContext = sce.getServletContext();
 	
@@ -372,20 +526,7 @@ public class InitListener implements ServletContextListener {
 					}
 				}
 			}
-			
-			// inizializza nodi runtime
-			try {
-				ConfigurazioneNodiRuntimeProperties backwardCompatibility = new ConfigurazioneNodiRuntimeProperties(consoleProperties.getJmxPdDBackwardCompatibilityPrefix(), 
-						consoleProperties.getJmxPdDBackwardCompatibilityProperties());
-				ConfigurazioneNodiRuntime.initialize(consoleProperties.getJmxPdDExternalConfiguration(), backwardCompatibility);
-			} catch (Exception e) {
-				String msgErrore = "Errore durante l'inizializzazione del gestore dei nodi run: " + e.getMessage();
-				InitListener.logError(
-						//					throw new ServletException(
-						msgErrore,e);
-				throw new UtilsRuntimeException(msgErrore,e);
-			}
-				
+							
 			// inizializza il repository dei plugin
 			try {
 				if(consoleProperties.isConfigurazionePluginsEnabled()!=null && consoleProperties.isConfigurazionePluginsEnabled().booleanValue()) {
@@ -402,37 +543,6 @@ public class InitListener implements ServletContextListener {
 				}
 			} catch (Exception e) {
 				String msgErrore = "Errore durante l'inizializzazione del loader dei plugins: " + e.getMessage();
-				InitListener.logError(
-						//					throw new ServletException(
-						msgErrore,e);
-				throw new UtilsRuntimeException(msgErrore,e);
-			}
-			
-			// inizializzo HSM Manager
-			try {
-				String hsmConfig = consoleProperties.getHSMConfigurazione();
-				if(StringUtils.isNotEmpty(hsmConfig)) {
-					File f = new File(hsmConfig);
-					HSMManager.init(f, consoleProperties.isHSMRequired(), log, false);
-					HSMUtils.setHsmConfigurableKeyPassword(consoleProperties.isHSMKeyPasswordConfigurable());
-				}
-			} catch (Exception e) {
-				String msgErrore = "Errore durante l'inizializzazione del manager HSM: " + e.getMessage();
-				InitListener.logError(
-						//					throw new ServletException(
-						msgErrore,e);
-				throw new UtilsRuntimeException(msgErrore,e);
-			}
-			
-			// inizializzo OCSP Manager
-			try {
-				String ocspConfig = consoleProperties.getOCSPConfigurazione();
-				if(StringUtils.isNotEmpty(ocspConfig)) {
-					File f = new File(ocspConfig);
-					OCSPManager.init(f, consoleProperties.isOCSPRequired(), consoleProperties.isOCSPLoadDefault(), log);
-				}
-			} catch (Exception e) {
-				String msgErrore = "Errore durante l'inizializzazione del manager OCSP: " + e.getMessage();
 				InitListener.logError(
 						//					throw new ServletException(
 						msgErrore,e);
@@ -462,11 +572,11 @@ public class InitListener implements ServletContextListener {
 				throw new UtilsRuntimeException(msgErrore,e);
 			}
 			
-			// fileTraceGovWayState
+			// InitRuntimeConfigReader
 			try{
-				this.initRuntimeConfigReader = new InitRuntimeConfigReader(consoleProperties);
+				this.initRuntimeConfigReader = new InitRuntimeConfigReader(consoleProperties, reInitSecretMaps);
 				this.initRuntimeConfigReader.start();
-				InitListener.log.info("RuntimeConfigReader avviato con successo.");
+				InitListener.logInfo("RuntimeConfigReader avviato con successo.");
 			} catch (Exception e) {
 				String msgErrore = "Errore durante l'inizializzazione del RuntimeConfigReader: " + e.getMessage();
 				InitListener.logError(

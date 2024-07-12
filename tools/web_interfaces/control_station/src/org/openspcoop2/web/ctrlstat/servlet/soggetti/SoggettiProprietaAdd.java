@@ -28,6 +28,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.govway.struts.action.Action;
 import org.govway.struts.action.ActionForm;
 import org.govway.struts.action.ActionForward;
@@ -38,6 +39,7 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -87,7 +89,10 @@ public final class SoggettiProprietaAdd extends Action {
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
 			String nome = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_NOME);
-			String valore = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_VALORE);   
+			String valore = soggettiHelper.getLockedParameter(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_VALORE, false);   
+			
+			// Wrap value
+			valore = soggettiHelper.wrapValoreProprieta(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_VALORE, valore);
 			
 			SoggettiCore soggettiCore = new SoggettiCore();
 			
@@ -96,7 +101,7 @@ public final class SoggettiProprietaAdd extends Action {
 			
 			soggettoRegistry = soggettiCore.getSoggettoRegistro(idSoggettoLong);
 			if(soggettoRegistry==null) {
-				throw new Exception("Soggetto non trovato con id '"+idSoggettoLong+"'");
+				throw new DriverControlStationException("Soggetto non trovato con id '"+idSoggettoLong+"'");
 			}
 			
 			soggettoConfig = soggettiCore.getSoggetto(idSoggettoLong);// core.getSoggetto(new
@@ -110,7 +115,9 @@ public final class SoggettiProprietaAdd extends Action {
 				tipoprov = soggettoConfig.getTipo();
 			}
 
-			protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
+			if(protocollo==null || StringUtils.isEmpty(protocollo)) {
+				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
+			}
 			
 			List<Parameter> parametersServletSoggettoChange = new ArrayList<>();
 			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id);

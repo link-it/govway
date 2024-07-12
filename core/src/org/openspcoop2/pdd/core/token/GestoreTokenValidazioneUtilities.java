@@ -30,9 +30,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.cxf.rs.security.jose.common.JoseConstants;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
-import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -86,6 +84,7 @@ import org.openspcoop2.security.keystore.CRLCertstore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.keystore.cache.GestoreOCSPResource;
 import org.openspcoop2.security.keystore.cache.GestoreOCSPValidator;
+import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.CertificateInfo;
@@ -383,7 +382,7 @@ public class GestoreTokenValidazioneUtilities {
 		// serve per leggere il keystore dalla cache
 		TokenKeystoreInjectUtilities inject = new TokenKeystoreInjectUtilities(log, datiInvocazione.getRequestInfo() ,
 				datiInvocazione.getRequestInfo()!=null ? datiInvocazione.getRequestInfo().getProtocolFactory() : null, 
-				context, datiInvocazione.getState());
+				context, datiInvocazione.getState(), busta);
 		if(datiInvocazione instanceof DatiInvocazionePortaApplicativa) {
 			DatiInvocazionePortaApplicativa dati = (DatiInvocazionePortaApplicativa) datiInvocazione;
 			inject.initTokenPolicyValidazioneJwt(policyGestioneToken.getName(), portaDelegata, dati.getPd(), dati.getPa(), p);
@@ -395,7 +394,7 @@ public class GestoreTokenValidazioneUtilities {
 		inject.inject(p);
 		
 		
-		String aliasMode = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS+".mode"); 
+		String aliasMode = p.getProperty(SecurityConstants.JOSE_KEYSTORE_KEY_ALIAS+".mode"); 
 		if(aliasMode!=null && 
 				(
 						aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5C)
@@ -417,8 +416,8 @@ public class GestoreTokenValidazioneUtilities {
 			options.setPermitUseHeaderKID(aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_KID));
 			options.setPermitUseHeaderX5U(aliasMode.equals(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_CERTIFICATE_VALUE_X5U));
 									
-			if(p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE)) {
-				Object oKeystore = p.get(RSSecurityConstants.RSSEC_KEY_STORE);
+			if(p.containsKey(SecurityConstants.JOSE_KEYSTORE)) {
+				Object oKeystore = p.get(SecurityConstants.JOSE_KEYSTORE);
 				if(oKeystore instanceof java.security.KeyStore) {
 					java.security.KeyStore keystore = (java.security.KeyStore) oKeystore;
 					jsonCompactVerify = new JsonVerifySignature(keystore, options);
@@ -460,8 +459,8 @@ public class GestoreTokenValidazioneUtilities {
 
 				}
 			}
-			else if(p.containsKey(JoseConstants.RSSEC_KEY_STORE_JWKSET)) {
-				Object oKeystore = p.get(JoseConstants.RSSEC_KEY_STORE_JWKSET);
+			else if(p.containsKey(SecurityConstants.JOSE_KEYSTORE_JWKSET)) {
+				Object oKeystore = p.get(SecurityConstants.JOSE_KEYSTORE_JWKSET);
 				if(oKeystore instanceof String) {
 					String keystore = (String) oKeystore;
 					JsonWebKeys jwksKeystore = new JWKSet(keystore).getJsonWebKeys();
@@ -471,8 +470,8 @@ public class GestoreTokenValidazioneUtilities {
 		}
 		    				
 		if(jsonCompactVerify==null &&
-			p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS)) {
-			String alias = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS);
+			p.containsKey(SecurityConstants.JOSE_KEYSTORE_KEY_ALIAS)) {
+			String alias = p.getProperty(SecurityConstants.JOSE_KEYSTORE_KEY_ALIAS);
 			if(alias!=null && 
 					(
 							alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C)
@@ -482,9 +481,9 @@ public class GestoreTokenValidazioneUtilities {
 							alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C_X5T)
 					)
 				&&
-				(p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE)) // backward compatibility
+				(p.containsKey(SecurityConstants.JOSE_KEYSTORE)) // backward compatibility
 				){
-				Object oKeystore = p.get(RSSecurityConstants.RSSEC_KEY_STORE);
+				Object oKeystore = p.get(SecurityConstants.JOSE_KEYSTORE);
 				if(oKeystore instanceof java.security.KeyStore) {
 					java.security.KeyStore keystore = (java.security.KeyStore) oKeystore;
 					options.setPermitUseHeaderX5C(alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C) || alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C_X5T));
@@ -516,7 +515,7 @@ public class GestoreTokenValidazioneUtilities {
 		// serve per leggere il keystore dalla cache
 		TokenKeystoreInjectUtilities inject = new TokenKeystoreInjectUtilities(log, datiInvocazione.getRequestInfo() ,
 				datiInvocazione.getRequestInfo()!=null ? datiInvocazione.getRequestInfo().getProtocolFactory() : null, 
-				context, datiInvocazione.getState());
+				context, datiInvocazione.getState(), busta);
 		if(datiInvocazione instanceof DatiInvocazionePortaApplicativa) {
 			DatiInvocazionePortaApplicativa dati = (DatiInvocazionePortaApplicativa) datiInvocazione;
 			inject.initTokenPolicyValidazioneJwt(policyGestioneToken.getName(), portaDelegata, dati.getPd(), dati.getPa(), p);
@@ -1752,7 +1751,20 @@ public class GestoreTokenValidazioneUtilities {
 			prefixConnettore = prefixConnettore+GestoreToken.getMessageViaProxy(hostProxy, portProxy);
 		}
 		
-		boolean https = policyGestioneToken.isEndpointHttps();
+		boolean https = false;
+		if(!https) {
+			switch (httpType) {
+			case DYNAMIC_DISCOVERY:
+				https = policyGestioneToken.isEndpointHttps(false, false);
+				break;
+			case INTROSPECTION:
+				https = policyGestioneToken.isEndpointHttps(true, false);
+				break;
+			case USER_INFO:
+				https = policyGestioneToken.isEndpointHttps(false, true);
+				break;
+			}
+		}
 		boolean httpsClient = false;
 		Properties sslConfig = null;
 		Properties sslClientConfig = null;

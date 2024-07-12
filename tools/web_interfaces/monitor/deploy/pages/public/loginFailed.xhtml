@@ -30,6 +30,15 @@
 				#submitBtn { margin-left: 20px; }			
 				.error-place-holder { width: 50%;margin-top: 20px; }	
 			</style>
+			<script type="text/javascript" nonce="#{_csp_random_nonce}">
+					//<![CDATA[
+					   jQuery(document).ready(visualizzaComandoMostraPassword);
+					   
+					   function visualizzaComandoMostraPassword(){
+						   aggiungiComandoMostraPassword('j_password');
+					   }
+					 //]]>
+			</script>
 
 			<form id="formLogin" action="j_security_check" method="post">
 				<link:fieldset legend="Login" rendered="#{true}" collapsible="false" closed="false">

@@ -23,6 +23,7 @@ package org.openspcoop2.security.keystore;
 import java.io.IOException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
+import java.util.HashMap;
 import java.util.Properties;
 
 import org.apache.wss4j.common.crypto.PasswordEncryptor;
@@ -34,6 +35,8 @@ import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.utils.certificate.KeystoreType;
+import org.openspcoop2.utils.certificate.byok.BYOKProvider;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 
 /**
  * Implementazione che estente l'implementazione di default e permette di caricare keystore utilizzando la cache o il binario passato direttamente.
@@ -99,6 +102,8 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 		}
 	}
 	
+    public static final String SUFFIX_BYOK = ".byok";
+	
 	@Override
 	public void loadProperties(Properties properties, ClassLoader loader, PasswordEncryptor passwordEncryptor)
 			throws WSSecurityException, IOException {
@@ -146,6 +151,23 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 		}
 				
 		if (keyStoreLocation != null) {
+		
+			String keyStoreByokPolicy = properties.getProperty(prefix + KEYSTORE_FILE+SUFFIX_BYOK);
+			BYOKRequestParams byokParams = null;
+			if (keyStoreByokPolicy == null) {
+				keyStoreByokPolicy = properties.getProperty(prefix + OLD_KEYSTORE_FILE+SUFFIX_BYOK);
+			}
+			if (keyStoreByokPolicy != null) {
+				keyStoreByokPolicy = keyStoreByokPolicy.trim();
+				if(BYOKProvider.isPolicyDefined(keyStoreByokPolicy)){
+					try {
+						byokParams = BYOKProvider.getBYOKRequestParamsByUnwrapBYOKPolicy(keyStoreByokPolicy, 
+								requestInfo!=null && requestInfo.getDynamicMap()!=null ? requestInfo.getDynamicMap() : new HashMap<>() );
+					}catch(Exception e) {
+						throw new IOException(e.getMessage(),e);
+					}
+				}
+			}
 			
 			// rimuovo la proprietà per non farla trovare quando chiamo il super.loadProperties
 			this.properties.remove(prefix + KEYSTORE_FILE);
@@ -162,7 +184,7 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 
 			try {
 				MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keyStoreLocation, keyStoreType, 
-						keyStorePassword);
+						keyStorePassword, byokParams);
 				if(merlinKs==null) {
 					throw new IOException(getError(KEY_STORE_REF,keyStoreLocation));
 				}

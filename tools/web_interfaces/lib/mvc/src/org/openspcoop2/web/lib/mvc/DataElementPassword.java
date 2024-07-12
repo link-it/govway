@@ -1,9 +1,3 @@
-package org.openspcoop2.web.lib.mvc;
-
-import java.io.Serializable;
-
-import org.openspcoop2.utils.crypt.PasswordGenerator;
-
 /*
  * GovWay - A customizable API Gateway 
  * https://govway.org
@@ -23,11 +17,17 @@ import org.openspcoop2.utils.crypt.PasswordGenerator;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+package org.openspcoop2.web.lib.mvc;
+
+import java.io.Serializable;
+
+import org.openspcoop2.utils.crypt.PasswordGenerator;
+
 
 /**
  * DataElementPassword
  * 
- * @author Giuliano Puntori (pintori@link.it)
+ * @author Giuliano Pintori (pintori@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -44,6 +44,13 @@ public class DataElementPassword implements Serializable {
 	private int numeroSample = 20;
 	private String labelButtonGeneraPw = Costanti.LABEL_MONITOR_BUTTON_GENERA;
 	private String tooltipButtonGeneraPw = Costanti.TOOLTIP_MONITOR_BUTTON_GENERA_PWD;
+	private boolean visualizzaIconaMostraPassword = true;
+	private boolean lockVisualizzaInformazioniCifrate = false;
+	private boolean lockReadOnly = false;
+	private boolean lockVisualizzaIconaLucchetto = true;
+	private boolean lockUtilizzaInputPassword = true;
+	private boolean lockForzaVisualizzazioneInputUtente = false;
+	private String lockWarningMessage = null;
 	
 	public DataElementPassword() {
 		this.visualizzaBottoneGeneraPassword = false;
@@ -52,6 +59,13 @@ public class DataElementPassword implements Serializable {
 		this.numeroSample = 20;
 		this.labelButtonGeneraPw = Costanti.LABEL_MONITOR_BUTTON_GENERA;
 		this.tooltipButtonGeneraPw = Costanti.TOOLTIP_MONITOR_BUTTON_GENERA_PWD;
+		this.setVisualizzaIconaMostraPassword(true);
+		this.setLockVisualizzaInformazioniCifrate(false);
+		this.setLockReadOnly(false);
+		this.setLockWarningMessage(null);
+		this.setLockVisualizzaIconaLucchetto(true);
+		this.setLockUtilizzaInputPassword(true);
+		this.setLockForzaVisualizzazioneInputUtente(false);
 	}
 
 	public boolean isVisualizzaBottoneGeneraPassword() {
@@ -100,4 +114,61 @@ public class DataElementPassword implements Serializable {
 	public void setTooltipButtonGeneraPassword(String tooltipButtonGeneraPw) {
 		this.tooltipButtonGeneraPw = tooltipButtonGeneraPw;
 	}
+
+	public boolean isVisualizzaIconaMostraPassword() {
+		return this.visualizzaIconaMostraPassword;
+	}
+
+	public void setVisualizzaIconaMostraPassword(boolean visualizzaIconaMostraPassword) {
+		this.visualizzaIconaMostraPassword = visualizzaIconaMostraPassword;
+	}
+
+	public boolean isLockReadOnly() {
+		return this.lockReadOnly;
+	}
+
+	public void setLockReadOnly(boolean lockReadOnly) {
+		this.lockReadOnly = lockReadOnly;
+	}
+
+	public String getLockWarningMessage() {
+		return this.lockWarningMessage;
+	}
+
+	public void setLockWarningMessage(String lockWarningMessage) {
+		this.lockWarningMessage = lockWarningMessage;
+	}
+
+	public boolean isLockVisualizzaInformazioniCifrate() {
+		return this.lockVisualizzaInformazioniCifrate;
+	}
+
+	public void setLockVisualizzaInformazioniCifrate(boolean lockVisualizzaInformazioniCifrate) {
+		this.lockVisualizzaInformazioniCifrate = lockVisualizzaInformazioniCifrate;
+	}
+
+	public boolean isLockVisualizzaIconaLucchetto() {
+		return this.lockVisualizzaIconaLucchetto;
+	}
+
+	public void setLockVisualizzaIconaLucchetto(boolean lockVisualizzaIconaLucchetto) {
+		this.lockVisualizzaIconaLucchetto = lockVisualizzaIconaLucchetto;
+	}
+
+	public boolean isLockUtilizzaInputPassword() {
+		return this.lockUtilizzaInputPassword;
+	}
+
+	public void setLockUtilizzaInputPassword(boolean lockUtilizzaInputPassword) {
+		this.lockUtilizzaInputPassword = lockUtilizzaInputPassword;
+	}
+
+	public boolean isLockForzaVisualizzazioneInputUtente() {
+		return this.lockForzaVisualizzazioneInputUtente;
+	}
+
+	public void setLockForzaVisualizzazioneInputUtente(boolean lockForzaVisualizzazioneInputUtente) {
+		this.lockForzaVisualizzazioneInputUtente = lockForzaVisualizzazioneInputUtente;
+	}
+
 }

@@ -584,6 +584,7 @@ CREATE TABLE pdd_sys_props
 (
 	nome VARCHAR(255) NOT NULL,
 	valore VARCHAR(255) NOT NULL,
+	enc_value TEXT,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_pdd_sys_props') NOT NULL,
 	-- unique constraints
@@ -627,6 +628,7 @@ CREATE TABLE generic_property
 	id_props BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore VARCHAR(4000) NOT NULL,
+	enc_value TEXT,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_generic_property') NOT NULL,
 	-- unique constraints

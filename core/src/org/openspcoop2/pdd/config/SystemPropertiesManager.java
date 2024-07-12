@@ -44,20 +44,30 @@ public class SystemPropertiesManager {
 	private ConfigurazionePdDManager configPdDManager;
 	private Logger log;
 	
+	private void logInfo(String msg) {
+		if(this.log!=null) {
+			this.log.info(msg);
+		}
+	}
+	
 	public SystemPropertiesManager(ConfigurazionePdDManager configPdDManager,Logger log){
 		this.configPdDManager = configPdDManager;
 		this.log = log;
 	}
 
+	private String getPrefixKey(String key) {
+		return "Property["+key+"] ";
+	}
+	
 	public void updateSystemProperties() throws DriverConfigurazioneException{
 		
 		// remove old properties
 		String oldProperties = System.getProperty(SYSTEM_PROPERTIES);
 		if(oldProperties!=null && oldProperties.length()>0){
-			this.log.info("Remove old properties: ["+oldProperties+"]");
+			this.logInfo("Remove old properties: ["+oldProperties+"]");
 			String [] names = oldProperties.split(",");
 			for (int i = 0; i < names.length; i++) {
-				this.log.info("RemoveProperty ["+names[i]+"]");
+				this.logInfo("RemoveProperty ["+names[i]+"]");
 				System.clearProperty(names[i]);
 			}
 		}
@@ -77,17 +87,17 @@ public class SystemPropertiesManager {
 					bf.append(",");
 				}
 				bf.append(nome);
-				this.log.info("SetProperty ["+nome+"]=["+valore+"]");
+				this.logInfo("SetProperty ["+nome+"]=["+valore+"]");
 				System.setProperty(nome, valore);
 			}
 			
 			// Storico
-			this.log.info("SetStoricoProperty ["+SYSTEM_PROPERTIES+"]=["+bf.toString()+"]");
+			this.logInfo("SetStoricoProperty ["+SYSTEM_PROPERTIES+"]=["+bf.toString()+"]");
 			System.setProperty(SYSTEM_PROPERTIES, bf.toString());
 			
 		}
 		else{
-			this.log.info("Non sono state rilevate proprietà di sistema da impostare");
+			this.logInfo("Non sono state rilevate proprietà di sistema da impostare");
 		}
 		
 	}
@@ -109,38 +119,14 @@ public class SystemPropertiesManager {
 			Enumeration<Object> keys = p.keys();
 			java.util.ArrayList<String> listKeys = new ArrayList<>();
 			while (keys.hasMoreElements()) {
-				Object object = (Object) keys.nextElement();
+				Object object = keys.nextElement();
 				if(object instanceof String){
 					listKeys.add((String)object);
 				}
 			}
 			java.util.Collections.sort(listKeys);
 			
-			for (int i = 0; i < listKeys.size(); i++) {
-				String key = listKeys.get(i);
-				
-				boolean isOpenSPCoop2SystemProperty = false;
-				String oldProperties = System.getProperty(SYSTEM_PROPERTIES);
-				if(oldProperties!=null && oldProperties.length()>0){
-					String [] names = oldProperties.split(",");
-					for (int j = 0; j < names.length; j++) {
-						if(key.equals(names[j])){
-							isOpenSPCoop2SystemProperty = true;
-							break;
-						}
-					}
-				}
-				if(!isOpenSPCoop2SystemProperty){
-					if(onlyOpenSPCoop2){
-						continue;
-					}
-				}
-				
-				if(bf.length()>0){
-					bf.append(separator);
-				}
-				bf.append("["+key+"]=["+p.getProperty(key)+"]");
-			}
+			addSystemProperties(p, listKeys, separator, onlyOpenSPCoop2, bf);
 			
 			return bf.toString();
 			
@@ -148,14 +134,44 @@ public class SystemPropertiesManager {
 			return null;
 		}
 	}
+	private void addSystemProperties(Properties p,java.util.ArrayList<String> listKeys,String separator,boolean onlyOpenSPCoop2,StringBuilder bf) {
+		for (int i = 0; i < listKeys.size(); i++) {
+			String key = listKeys.get(i);
+			
+			boolean isOpenSPCoop2SystemProperty = isOpenSPCoop2SystemProperty(key);
+			if(!isOpenSPCoop2SystemProperty &&
+				onlyOpenSPCoop2){
+				continue;
+			}
+			
+			if(bf.length()>0){
+				bf.append(separator);
+			}
+			bf.append("["+key+"]=["+p.getProperty(key)+"]");
+		}
+	}
+	private boolean isOpenSPCoop2SystemProperty(String key) {
+		boolean isOpenSPCoop2SystemProperty = false;
+		String oldProperties = System.getProperty(SYSTEM_PROPERTIES);
+		if(oldProperties!=null && oldProperties.length()>0){
+			String [] names = oldProperties.split(",");
+			for (int j = 0; j < names.length; j++) {
+				if(key.equals(names[j])){
+					isOpenSPCoop2SystemProperty = true;
+					break;
+				}
+			}
+		}
+		return isOpenSPCoop2SystemProperty;
+	}
 	
 	public String readOpenSPCoop2SystemProperties(String separator){
 		return this.readAllSystemProperties(separator, true);
 	}
 
 	public void removeProperty(String key) throws OpenSPCoop2ConfigurationException{
-		if(System.getProperties().containsKey(key)==false){
-			throw new OpenSPCoop2ConfigurationException("Property["+key+"] not found");
+		if(!System.getProperties().containsKey(key)){
+			throw new OpenSPCoop2ConfigurationException(getPrefixKey(key)+"not found");
 		}
 		System.clearProperty(key);
 		String oldProperties = System.getProperty(SYSTEM_PROPERTIES);
@@ -177,8 +193,8 @@ public class SystemPropertiesManager {
 	}
 	
 	public void updateProperty(String key,String value) throws OpenSPCoop2ConfigurationException{
-		if(System.getProperties().containsKey(key)==false){
-			throw new OpenSPCoop2ConfigurationException("Property["+key+"] not found");
+		if(!System.getProperties().containsKey(key)){
+			throw new OpenSPCoop2ConfigurationException(getPrefixKey(key)+"not found");
 		}
 		System.clearProperty(key);
 		System.setProperty(key,value);
@@ -186,7 +202,7 @@ public class SystemPropertiesManager {
 	
 	public void insertProperty(String key,String value) throws OpenSPCoop2ConfigurationException{
 		if(System.getProperties().containsKey(key)){
-			throw new OpenSPCoop2ConfigurationException("Property["+key+"] already exists (actual value: "+System.getProperties().getProperty(key)+")");
+			throw new OpenSPCoop2ConfigurationException(getPrefixKey(key)+"already exists (actual value: "+System.getProperties().getProperty(key)+")");
 		}
 		System.setProperty(key,value);
 		

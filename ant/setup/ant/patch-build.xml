@@ -320,6 +320,58 @@ Esempi:
 			</then>
 		</if>
 
+		<!-- *** Aggiunta dell'applicazione govway-vault-cli ***-->
+		<if>
+			<not>
+				<equals arg1="${antinstaller_tools_cliVault}" arg2="false"/>
+			</not>
+			<then>
+				<if>
+					<or>
+						<equals arg1="${patchArchiveType}" arg2="all"/>
+						<equals arg1="${patchArchiveType}" arg2="govway-vault-cli"/>
+					</or>
+					<then>
+						<var name="patchTmpArchive" value="${tmp_tools}/govway-vault-cli"/>
+						<var name="patchTmpArchiveType" value="ear"/>
+						<foreach target="-patch-resource" param="patchResource" inheritall="true">
+							<path>
+								<dirset dir="${patchArchive}" casesensitive="yes">
+									<include name="*"/>
+								</dirset>
+							</path>
+						</foreach>
+					</then>
+				</if>
+			</then>
+		</if>
+				
+		<!-- *** Aggiunta dell'applicazione govway-config-loader ***-->
+		<if>
+			<not>
+				<equals arg1="${antinstaller_tools_cliConfigLoader}" arg2="false"/>
+			</not>
+			<then>
+				<if>
+					<or>
+						<equals arg1="${patchArchiveType}" arg2="all"/>
+						<equals arg1="${patchArchiveType}" arg2="govway-config-loader"/>
+					</or>
+					<then>
+						<var name="patchTmpArchive" value="${tmp_tools}/govway-config-loader"/>
+						<var name="patchTmpArchiveType" value="ear"/>
+						<foreach target="-patch-resource" param="patchResource" inheritall="true">
+							<path>
+								<dirset dir="${patchArchive}" casesensitive="yes">
+									<include name="*"/>
+								</dirset>
+							</path>
+						</foreach>
+					</then>
+				</if>
+			</then>
+		</if>
+
 		<echo message="Patch archiveType [${patchArchiveType}] ok"/>
 
 	</target>

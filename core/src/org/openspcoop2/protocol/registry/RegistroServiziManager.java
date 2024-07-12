@@ -75,6 +75,7 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.crypt.CryptConfig;
+import org.openspcoop2.utils.transport.http.IBYOKUnwrapFactory;
 import org.slf4j.Logger;
 
 /**
@@ -683,24 +684,24 @@ public class RegistroServiziManager {
 				addCertificateDetails, separator, newLine);
 	}
 	
-	public CertificateCheck checkCertificatiConnettoreHttpsByIdWithoutCache(long idConnettore, int sogliaWarningGiorni,  
+	public CertificateCheck checkCertificatiConnettoreHttpsByIdWithoutCache(long idConnettore, int sogliaWarningGiorni, IBYOKUnwrapFactory byokUnwrapFactory,  
 			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		return this.registroServiziReader.checkCertificatiConnettoreHttpsById(null, false,
-				idConnettore, sogliaWarningGiorni,  
+				idConnettore, sogliaWarningGiorni, byokUnwrapFactory,
 				addCertificateDetails, separator, newLine);
 	}
 	
-	public CertificateCheck checkCertificatiModIErogazioneByIdWithoutCache(long idErogazione, int sogliaWarningGiorni,  
+	public CertificateCheck checkCertificatiModIErogazioneByIdWithoutCache(long idErogazione, int sogliaWarningGiorni, IBYOKUnwrapFactory byokUnwrapFactory,  
 			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		return this.registroServiziReader.checkCertificatiModIErogazioneById(null, false,
-				idErogazione, sogliaWarningGiorni,  
+				idErogazione, sogliaWarningGiorni, byokUnwrapFactory,  
 				addCertificateDetails, separator, newLine);
 	}
 	
-	public CertificateCheck checkCertificatiModIFruizioneByIdWithoutCache(long idFruizione, int sogliaWarningGiorni,  
+	public CertificateCheck checkCertificatiModIFruizioneByIdWithoutCache(long idFruizione, int sogliaWarningGiorni, IBYOKUnwrapFactory byokUnwrapFactory,
 			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		return this.registroServiziReader.checkCertificatiModIFruizioneById(null, false,
-				idFruizione, sogliaWarningGiorni,  
+				idFruizione, sogliaWarningGiorni, byokUnwrapFactory,  
 				addCertificateDetails, separator, newLine);
 	}
 	

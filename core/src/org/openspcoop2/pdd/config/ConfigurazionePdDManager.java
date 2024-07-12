@@ -1902,6 +1902,20 @@ public class ConfigurazionePdDManager {
 				addCertificateDetails, separator, newLine);
 	}
 	
+	public CertificateCheck checkCertificatiMessageSecurityErogazioneById(long idErogazione, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiMessageSecurityErogazioneById(null, false,
+				idErogazione, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiMessageSecurityFruizioneById(long idFruizione, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiMessageSecurityFruizioneById(null, false,
+				idFruizione, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	
 	
 
 	
@@ -2130,9 +2144,17 @@ public class ConfigurazionePdDManager {
 		}
 		return sp;
 	}
+	public SystemProperties getSystemPropertiesPdDNoCached(boolean forceDisableBYOKUse) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getSystemPropertiesPdD(forceDisableBYOKUse);
+	}
+	
+	
+	public List<String> getEncryptedSystemPropertiesPdD() throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getEncryptedSystemPropertiesPdD();
+	}
 	
 	public SystemProperties getSystemPropertiesPdD() throws DriverConfigurazioneException{
-		return this.configurazionePdDReader.getSystemPropertiesPdD();
+		return this.configurazionePdDReader.getSystemPropertiesPdD(false);
 	}
 
 	public void updateSystemPropertiesPdD(SystemProperties systemProperties) throws DriverConfigurazioneException{

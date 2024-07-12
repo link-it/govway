@@ -32,6 +32,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeystoreParams;
+import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
@@ -52,6 +53,8 @@ public class ModIKeystoreUtils {
 	protected String securityMessageKeystorePathPublicKey = null;
 	protected String securityMessageKeystoreKeyAlgorithm = null;
 	protected String securityMessageKeystorePassword = null;
+	protected String securityMessageKeystoreByokPolicy = null;
+
 	protected String securityMessageKeyAlias = null;
 	protected String securityMessageKeyPassword = null;
 	
@@ -114,6 +117,13 @@ public class ModIKeystoreUtils {
 		}
 		else {
 			this.securityMessageKeystorePassword = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
+		}
+		
+		if(!this.securityMessageKeystoreHSM && !CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(this.securityMessageKeystoreMode)) {
+			this.securityMessageKeystoreByokPolicy = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEYSTORE_BYOK_POLICY);
+		}
+		else {
+			this.securityMessageKeystoreByokPolicy = BYOKProvider.BYOK_POLICY_UNDEFINED;
 		}
 		
 		if(!CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) && 
@@ -205,6 +215,13 @@ public class ModIKeystoreUtils {
 				}
 				else {
 					this.securityMessageKeystorePassword = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
+				}
+				
+				if(!this.securityMessageKeystoreHSM && !CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(this.securityMessageKeystoreMode)) {
+					this.securityMessageKeystoreByokPolicy = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEYSTORE_BYOK_POLICY);
+				}
+				else {
+					this.securityMessageKeystoreByokPolicy = BYOKProvider.BYOK_POLICY_UNDEFINED;
 				}
 				
 				if(!CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) && 
@@ -321,6 +338,13 @@ public class ModIKeystoreUtils {
 			this.securityMessageKeystorePassword = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
 		}
 		
+		if(!this.securityMessageKeystoreHSM && !CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(this.securityMessageKeystoreMode)) {
+			this.securityMessageKeystoreByokPolicy = kp.getByokPolicy();
+		}
+		else {
+			this.securityMessageKeystoreByokPolicy = BYOKProvider.BYOK_POLICY_UNDEFINED;
+		}
+		
 		if(!CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) && 
 				!CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
 			this.securityMessageKeyAlias = kp.getKeyAlias();
@@ -365,6 +389,10 @@ public class ModIKeystoreUtils {
 		return this.securityMessageKeystorePassword;
 	}
 
+	public String getSecurityMessageKeystoreByokPolicy() {
+		return this.securityMessageKeystoreByokPolicy;
+	}
+	
 	public String getSecurityMessageKeyPassword() {
 		return this.securityMessageKeyPassword;
 	}

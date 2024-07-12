@@ -49,6 +49,7 @@ import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDFruizione;
@@ -196,7 +197,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			strutsBean.proxyHostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
 			strutsBean.proxyPort = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
 			strutsBean.proxyUsername = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
-			strutsBean.proxyPassword = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			strutsBean.proxyPassword = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 
 			// tempi risposta
 			strutsBean.tempiRispostaEnabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
@@ -215,7 +216,36 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			strutsBean.url = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL  );
 			if(TipiConnettore.HTTP.toString().equals(strutsBean.endpointtype)){
 				strutsBean.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				strutsBean.password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				strutsBean.password = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			}
+			
+			// api key
+			strutsBean.autenticazioneApiKey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_API_KEY);
+			strutsBean.apiKeyHeader = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_HEADER);
+			if(strutsBean.apiKeyHeader==null || StringUtils.isEmpty(strutsBean.apiKeyHeader)) {
+				strutsBean.apiKeyHeader = CostantiConnettori.DEFAULT_HEADER_API_KEY;
+			}
+			strutsBean.apiKeyValue = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_VALUE);
+			strutsBean.appIdHeader = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_APP_ID_HEADER);
+			if(strutsBean.appIdHeader==null || StringUtils.isEmpty(strutsBean.appIdHeader)) {
+				strutsBean.appIdHeader = CostantiConnettori.DEFAULT_HEADER_APP_ID;
+			}
+			strutsBean.appIdValue = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE);
+			String useOAS3NamesTmp = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_NOMI_OAS);
+			strutsBean.useOAS3Names=true;
+			if(useOAS3NamesTmp!=null && StringUtils.isNotEmpty(useOAS3NamesTmp)) {
+				strutsBean.useOAS3Names = ServletUtils.isCheckBoxEnabled(useOAS3NamesTmp);
+			}
+			else {
+				strutsBean.useOAS3Names = apsHelper.isAutenticazioneApiKeyUseOAS3Names(strutsBean.apiKeyHeader, strutsBean.appIdHeader);
+			}
+			String useAppIdTmp = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_USE_APP_ID);
+			strutsBean.useAppId=false;
+			if(useAppIdTmp!=null && StringUtils.isNotEmpty(useAppIdTmp)) {
+				strutsBean.useAppId = ServletUtils.isCheckBoxEnabled(useAppIdTmp);
+			}
+			else {
+				strutsBean.useAppId = apsHelper.isAutenticazioneApiKeyUseAppId(strutsBean.appIdValue);
 			}
 
 			// jms
@@ -228,7 +258,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			strutsBean.sendas = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
 			if(TipiConnettore.JMS.toString().equals(strutsBean.endpointtype)){
 				strutsBean.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_USERNAME);
-				strutsBean.password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
+				strutsBean.password = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
 			}
 
 			// https
@@ -239,22 +269,23 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			strutsBean.httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 			strutsBean.httpspath = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION );
 			strutsBean.httpstipo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
-			strutsBean.httpspwd = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+			strutsBean.httpspwd = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
 			strutsBean.httpsalgoritmo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
 			strutsBean.httpsstatoS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
 			strutsBean.httpskeystore = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
-			strutsBean.httpspwdprivatekeytrust = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
+			strutsBean.httpspwdprivatekeytrust = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
 			strutsBean.httpspathkey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
 			strutsBean.httpstipokey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
-			strutsBean.httpspwdkey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
-			strutsBean.httpspwdprivatekey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
+			strutsBean.httpspwdkey = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
+			strutsBean.httpspwdprivatekey = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 			strutsBean.httpsalgoritmokey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 			strutsBean.httpsKeyAlias = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
 			strutsBean.httpsTrustStoreCRLs = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			strutsBean.httpsTrustStoreOCSPPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+			strutsBean.httpsKeyStoreBYOKPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
 			if(TipiConnettore.HTTPS.toString().equals(strutsBean.endpointtype)){
 				strutsBean.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				strutsBean.password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				strutsBean.password = apsHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			}
 			
 			// file
@@ -416,7 +447,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			boolean filtraSoggettiEsistenti = true;
 			boolean filtraAccordiEsistenti = true;
 			List<String> listaTipiProtocollo = apcCore.getProtocolliByFilter(request, session, filtraSoggettiEsistenti, null, filtraAccordiEsistenti, false, true);
-
+					
+			boolean postBackViaPost = true;
+			
 			if(listaTipiProtocollo.isEmpty()) {
 				
 				List<String> listaTipiProtocolloSoloSoggetti = apcCore.getProtocolliByFilter(request, session, filtraSoggettiEsistenti, null, !filtraAccordiEsistenti, false, true);			
@@ -1398,7 +1431,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 				if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
 					httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
-					strutsBean.httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
+					strutsBean.httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 				}
 
 
@@ -1518,7 +1551,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								strutsBean.httpspwdprivatekeytrust, strutsBean.httpspathkey,
 								strutsBean.httpstipokey, strutsBean.httpspwdkey, 
 								strutsBean.httpspwdprivatekey, strutsBean.httpsalgoritmokey,
-								strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy,
+								strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy, strutsBean.httpsKeyStoreBYOKPolicy,
 								strutsBean.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
 								null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
@@ -1531,7 +1564,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								strutsBean.autenticazioneToken,strutsBean.tokenPolicy,forcePDND,forceOAuth,
 								listExtendedConnettore, forceEnableConnettore,
 								strutsBean.tipoProtocollo, forceHttps, forceHttpsClient, visualizzaSezioneApplicativiServerEnabled, strutsBean.erogazioneServizioApplicativoServerEnabled,
-								strutsBean.erogazioneServizioApplicativoServer, saSoggetti);
+								strutsBean.erogazioneServizioApplicativoServer, saSoggetti,
+								strutsBean.autenticazioneApiKey, strutsBean.useOAS3Names, strutsBean.useAppId, strutsBean.apiKeyHeader, strutsBean.apiKeyValue, strutsBean.appIdHeader, strutsBean.appIdValue,
+								postBackViaPost);
 						
 						// url suggerita
 						if(urlAPI!=null) {
@@ -1593,7 +1628,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					strutsBean.httpspathkey, strutsBean.httpstipokey,
 					strutsBean.httpspwdkey, strutsBean.httpspwdprivatekey,
 					strutsBean.httpsalgoritmokey,
-					strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy,
+					strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy, strutsBean.httpsKeyStoreBYOKPolicy,
 					strutsBean.tipoconn,strutsBean.versione,strutsBean.validazioneDocumenti,null,strutsBean.autenticazioneHttp,
 					strutsBean.proxyEnabled, strutsBean.proxyHostname, strutsBean.proxyPort, strutsBean.proxyUsername, strutsBean.proxyPassword,
 					strutsBean.tempiRispostaEnabled, strutsBean.tempiRispostaConnectionTimeout, strutsBean.tempiRispostaReadTimeout, strutsBean.tempiRispostaTempoMedioRisposta,
@@ -1608,7 +1643,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					strutsBean.fruizioneAutorizzazioneAutenticati, strutsBean.fruizioneAutorizzazioneRuoli, strutsBean.fruizioneAutorizzazioneRuoliTipologia, strutsBean.fruizioneAutorizzazioneRuoliMatch,
 					strutsBean.tipoProtocollo, allegatoXacmlPolicy, 
 					strutsBean.descrizione, strutsBean.tipoSoggettoFruitore, strutsBean.nomeSoggettoFruitore,
-					strutsBean.autenticazioneToken,strutsBean.tokenPolicy,strutsBean.erogazioneServizioApplicativoServerEnabled,
+					strutsBean.autenticazioneToken,strutsBean.tokenPolicy,
+					strutsBean.autenticazioneApiKey, strutsBean.useOAS3Names, strutsBean.useAppId, strutsBean.apiKeyHeader, strutsBean.apiKeyValue, strutsBean.appIdHeader, strutsBean.appIdValue,
+					strutsBean.erogazioneServizioApplicativoServerEnabled,
 					strutsBean.erogazioneServizioApplicativoServer, strutsBean.canaleStato, strutsBean.canale, gestioneCanaliEnabled);
 
 			if(isOk &&
@@ -1736,7 +1773,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								strutsBean.httpspathkey, strutsBean.httpstipokey,
 								strutsBean.httpspwdkey, strutsBean.httpspwdprivatekey,
 								strutsBean.httpsalgoritmokey, 
-								strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy,
+								strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy, strutsBean.httpsKeyStoreBYOKPolicy,
 								strutsBean.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
 								null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
@@ -1749,7 +1786,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								strutsBean.autenticazioneToken,strutsBean.tokenPolicy,forcePDND,forceOAuth,
 								listExtendedConnettore, forceEnableConnettore,
 								strutsBean.tipoProtocollo, forceHttps, forceHttpsClient, visualizzaSezioneApplicativiServerEnabled, strutsBean.erogazioneServizioApplicativoServerEnabled,
-								strutsBean.erogazioneServizioApplicativoServer, saSoggetti);
+								strutsBean.erogazioneServizioApplicativoServer, saSoggetti,
+								strutsBean.autenticazioneApiKey, strutsBean.useOAS3Names, strutsBean.useAppId, strutsBean.apiKeyHeader, strutsBean.apiKeyValue, strutsBean.appIdHeader, strutsBean.appIdValue,
+								postBackViaPost);
 						
 						// url suggerita
 						if(urlAPI!=null) {
@@ -1878,7 +1917,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						strutsBean.httpspathkey, strutsBean.httpstipokey,
 						strutsBean.httpspwdkey, strutsBean.httpspwdprivatekey,
 						strutsBean.httpsalgoritmokey,
-						strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy,
+						strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy, strutsBean.httpsKeyStoreBYOKPolicy,
 						strutsBean.proxyEnabled, strutsBean.proxyHostname, strutsBean.proxyPort, strutsBean.proxyUsername, strutsBean.proxyPassword,
 						strutsBean.tempiRispostaEnabled, strutsBean.tempiRispostaConnectionTimeout, strutsBean.tempiRispostaReadTimeout, strutsBean.tempiRispostaTempoMedioRisposta,
 						strutsBean.opzioniAvanzate, strutsBean.transferMode, strutsBean.transferModeChunkSize, strutsBean.redirectMode, strutsBean.redirectMaxHop,
@@ -1886,6 +1925,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						strutsBean.requestOutputParentDirCreateIfNotExists,strutsBean.requestOutputOverwriteIfExists,
 						strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,
 						strutsBean.tokenPolicy,
+						strutsBean.apiKeyHeader, strutsBean.apiKeyValue, strutsBean.appIdHeader, strutsBean.appIdValue,
 						listExtendedConnettore);
 			}
 
@@ -2000,7 +2040,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								strutsBean.httpspathkey, strutsBean.httpstipokey,
 								strutsBean.httpspwdkey, strutsBean.httpspwdprivatekey,
 								strutsBean.httpsalgoritmokey, 
-								strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy,
+								strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy, strutsBean.httpsKeyStoreBYOKPolicy,
 								strutsBean.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
 								null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
@@ -2013,7 +2053,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								strutsBean.autenticazioneToken,strutsBean.tokenPolicy,forcePDND,forceOAuth,
 								listExtendedConnettore, forceEnableConnettore,
 								strutsBean.tipoProtocollo, forceHttps, forceHttpsClient, visualizzaSezioneApplicativiServerEnabled, strutsBean.erogazioneServizioApplicativoServerEnabled,
-								strutsBean.erogazioneServizioApplicativoServer, saSoggetti);
+								strutsBean.erogazioneServizioApplicativoServer, saSoggetti,
+								strutsBean.autenticazioneApiKey, strutsBean.useOAS3Names, strutsBean.useAppId, strutsBean.apiKeyHeader, strutsBean.apiKeyValue, strutsBean.appIdHeader, strutsBean.appIdValue,
+								postBackViaPost);
 						
 					}
 

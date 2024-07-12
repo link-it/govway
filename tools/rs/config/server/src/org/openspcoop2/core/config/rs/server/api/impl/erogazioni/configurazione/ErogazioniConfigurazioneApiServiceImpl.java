@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.openspcoop2.core.byok.BYOKUtilities;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AttributeAuthority;
@@ -862,7 +863,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void addErogazioneProprieta(org.openspcoop2.core.config.rs.server.model.Proprieta body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+    public void addErogazioneProprieta(org.openspcoop2.core.config.rs.server.model.ProprietaOpzioneCifratura body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -889,7 +890,16 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			Proprieta p = new Proprieta();
 			p.setNome(body.getNome());
-			p.setValore(body.getValore());
+			if(env.paCore!=null && env.paCore.getDriverBYOKUtilities()!=null && 
+					body.isEncrypted()!=null && body.isEncrypted().booleanValue()) {
+				p.setValore(env.paCore.getDriverBYOKUtilities().wrap(body.getValore()));
+			}
+			else {
+				if(body.getValore().length()>255) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(CostantiControlStation.MESSAGGIO_ERRORE_VALORE_PROPRIETA_255);
+				}
+				p.setValore(body.getValore());
+			}
 			pa.addProprieta(p);
 			
 			env.paCore.performUpdateOperation(env.userLogin, false, pa);
@@ -2627,12 +2637,13 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(idPa);
      
 			ElencoProprieta ret = new ElencoProprieta();
-			ret.setProprieta(new ArrayList<org.openspcoop2.core.config.rs.server.model.Proprieta>());
+			ret.setProprieta(new ArrayList<>());
 			if(pa.getProprietaList()!=null && !pa.getProprietaList().isEmpty()) {
 				for (Proprieta p: pa.getProprietaList()) {
-					org.openspcoop2.core.config.rs.server.model.Proprieta retP = new org.openspcoop2.core.config.rs.server.model.Proprieta();
+					org.openspcoop2.core.config.rs.server.model.ProprietaOpzioneCifratura retP = new org.openspcoop2.core.config.rs.server.model.ProprietaOpzioneCifratura();
 					retP.setNome(p.getNome());
 					retP.setValore(p.getValore());
+					retP.setEncrypted(BYOKUtilities.isWrappedValue(p.getValore()));
 					ret.addProprietaItem(retP);
 				}
 			}
@@ -2657,7 +2668,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public org.openspcoop2.core.config.rs.server.model.Proprieta getErogazioneProprieta(String nome, Integer versione, String proprieta, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+    public org.openspcoop2.core.config.rs.server.model.ProprietaOpzioneCifratura getErogazioneProprieta(String nome, Integer versione, String proprieta, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -2672,19 +2683,20 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final IDPortaApplicativa idPa = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPADefault( idAsps, env.apsCore ),  "Gruppo default per l'erogazione scelta" );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(idPa);
 			
-			Proprieta to_get = null;
+			Proprieta toGet = null;
 			if(pa.getProprietaList()!=null && !pa.getProprietaList().isEmpty()) {
 				Optional<Proprieta> op = BaseHelper.findFirst(pa.getProprietaList(), p -> p.getNome().equals(proprieta));
 				if(op.isPresent()) {
-					to_get = op.get();
+					toGet = op.get();
 				}
 			}
 			
-			org.openspcoop2.core.config.rs.server.model.Proprieta ret = null;
-			if(to_get!=null) {
-				ret = new org.openspcoop2.core.config.rs.server.model.Proprieta();
-				ret.setNome(to_get.getNome());
-				ret.setValore(to_get.getValore());
+			org.openspcoop2.core.config.rs.server.model.ProprietaOpzioneCifratura ret = null;
+			if(toGet!=null) {
+				ret = new org.openspcoop2.core.config.rs.server.model.ProprietaOpzioneCifratura();
+				ret.setNome(toGet.getNome());
+				ret.setValore(toGet.getValore());
+				ret.setEncrypted(BYOKUtilities.isWrappedValue(toGet.getValore()));
 			}
 			else {
 				throw FaultCode.NOT_FOUND.toException("Nessuna proprietà è presente nella configurazione con nome '"+proprieta+"'"); 
@@ -3288,7 +3300,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void updateErogazioneProprieta(org.openspcoop2.core.config.rs.server.model.Proprieta body, String nome, Integer versione, String proprieta, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+    public void updateErogazioneProprieta(org.openspcoop2.core.config.rs.server.model.ProprietaOpzioneCifratura body, String nome, Integer versione, String proprieta, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 
 		IContext context = this.getContext();
 		try {
@@ -3306,13 +3318,12 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 			}
 			
-			if(!proprieta.equals(body.getNome())) {
+			if(!proprieta.equals(body.getNome()) &&
 				// cambio nome proprieta
-				if(pa.getProprietaList()!=null && !pa.getProprietaList().isEmpty()) {
-					for (Proprieta p : pa.getProprietaList()) {
-						if(p.getNome().equals(body.getNome())) {
-							throw FaultCode.CONFLITTO.toException("Proprietà " + body.getNome() + " già assegnata alla configurazione");
-						}
+				pa.getProprietaList()!=null && !pa.getProprietaList().isEmpty()) {
+				for (Proprieta p : pa.getProprietaList()) {
+					if(p.getNome().equals(body.getNome())) {
+						throw FaultCode.CONFLITTO.toException("Proprietà " + body.getNome() + " già assegnata alla configurazione");
 					}
 				}
 			}
@@ -3322,7 +3333,16 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				for (Proprieta p : pa.getProprietaList()) {
 					if(p.getNome().equals(proprieta)) {
 						p.setNome(body.getNome());
-						p.setValore(body.getValore());
+						if(env.paCore!=null && env.paCore.getDriverBYOKUtilities()!=null && 
+								body.isEncrypted()!=null && body.isEncrypted().booleanValue()) {
+							p.setValore(env.paCore.getDriverBYOKUtilities().wrap(body.getValore()));
+						}
+						else {
+							if(body.getValore().length()>255) {
+								throw FaultCode.RICHIESTA_NON_VALIDA.toException(CostantiControlStation.MESSAGGIO_ERRORE_VALORE_PROPRIETA_255);
+							}
+							p.setValore(body.getValore());
+						}
 						found = true;
 						break;
 					}

@@ -88,7 +88,10 @@ public final class PorteApplicativeProprietaProtocolloChange extends Action {
 			if(idAsps == null) 
 				idAsps = "";
 			String nome = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-			String valore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE);
+			String valore = porteApplicativeHelper.getLockedParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE, false);
+			
+			// Wrap value
+			valore = porteApplicativeHelper.wrapValoreProprieta(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE, valore);
 			
 			// Prendo nome, tipo e pdd del soggetto
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
@@ -123,13 +126,15 @@ public final class PorteApplicativeProprietaProtocolloChange extends Action {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
-				for (int i = 0; i < pa.sizeProprietaList(); i++) {
-					Proprieta ssp = pa.getProprieta(i);
-					if (nome.equals(ssp.getNome())) {
-						if(ssp.getValore()!=null){
-							valore = ssp.getValore();
+				if(valore==null){
+					for (int i = 0; i < pa.sizeProprietaList(); i++) {
+						Proprieta ssp = pa.getProprieta(i);
+						if (nome.equals(ssp.getNome())) {
+							if(ssp.getValore()!=null){
+								valore = ssp.getValore();
+							}
+							break;
 						}
-						break;
 					}
 				}
 

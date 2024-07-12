@@ -65,6 +65,9 @@ import org.slf4j.Logger;
  */
 public class DBUtils {
 
+	private DBUtils() {}
+	
+	private static final String WHERE_ID_CONDITION = "id = ?";
 	
 	public static String estraiTipoDatabaseFromLocation(String location)throws CoreException{
 		if(location==null){
@@ -88,17 +91,17 @@ public class DBUtils {
 		ResultSet rs = null;
 		try
 		{
-			if(returnTypes==null || returnTypes.size()<=0){
+			if(returnTypes==null || returnTypes.isEmpty()){
 				throw new CoreException("Non sono stati definiti tipi da ritornare");
 			}
 			
-			List<List<Object>> lista = new ArrayList<List<Object>>();
+			List<List<Object>> lista = new ArrayList<>();
 			
 			String sql = sqlQueryObject.createSQLQuery();
 			stm=connection.prepareStatement(sql);
 			GenericJDBCParameterUtilities jdbcParameterUtilities = new GenericJDBCParameterUtilities(TipiDatabase.toEnumConstant(tipoDB));
 			JDBCObject [] paramsArray = null;
-			if(paramTypes!=null && paramTypes.size()>0){
+			if(paramTypes!=null && !paramTypes.isEmpty()){
 				paramsArray = paramTypes.toArray(new JDBCObject[1]);
 			}
 			jdbcParameterUtilities.setParameters(stm, paramsArray);
@@ -121,8 +124,6 @@ public class DBUtils {
 
 			return lista;
 
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -174,8 +175,6 @@ public class DBUtils {
 
 			return idSoggetto;
 
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -185,6 +184,50 @@ public class DBUtils {
 
 		}
 	}
+	
+	public static IDSoggetto getIdSoggetto(long id,Connection con, String tipoDB) throws CoreException
+	{
+		return DBUtils.getIdSoggetto(id, con, tipoDB, CostantiDB.SOGGETTI);
+	}
+	public static IDSoggetto getIdSoggetto(long id,Connection con, String tipoDB,String tabellaSoggetti) throws CoreException
+	{
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		IDSoggetto idSoggetto = null;
+		try
+		{
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(tabellaSoggetti);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition(WHERE_ID_CONDITION);
+			sqlQueryObject.setANDLogicOperator(true);
+			String query = sqlQueryObject.createSQLQuery();
+			stm=con.prepareStatement(query);
+			stm.setLong(1, id);
+
+			rs=stm.executeQuery();
+
+			if(rs.next()){
+				String tipSoggetto = rs.getString("tipo_soggetto");
+				String nomeSoggetto = rs.getString("nome_soggetto");
+				idSoggetto = new IDSoggetto(tipSoggetto, nomeSoggetto);
+			}
+
+			return idSoggetto;
+
+		}catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			JDBCUtilities.closeResources(rs, stm);
+
+		}
+	}
+	
+	
+	
+	
 
 	public static long getIdConnettore(String nomeConnettore,Connection con, String tipoDB) throws CoreException
 	{
@@ -208,8 +251,6 @@ public class DBUtils {
 
 			return idConnettore;
 
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -220,6 +261,8 @@ public class DBUtils {
 		}
 	}
 
+	
+	
 	/**
 	 * Recupero l'id del servizio
 	 */
@@ -276,9 +319,6 @@ public class DBUtils {
 			String query = sqlQueryObject.createSQLQuery();
 			if(testServizioNonCorrelato)
 				query = query + " AND servizio_correlato=?";
-//			probabile errore del merge
-//			if(testServizioNonCorrelato)
-//			query = query + " AND servizio_correlato=?";
 			stm=con.prepareStatement(query);
 			int index = 1;
 			stm.setLong(index++, idSoggetto);
@@ -296,8 +336,6 @@ public class DBUtils {
 
 			return idServizio;
 
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -347,7 +385,7 @@ public class DBUtils {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(tabellaSoggetti);
 			sqlQueryObject.addSelectField("superuser");
-			sqlQueryObject.addWhereCondition("id = ?");
+			sqlQueryObject.addWhereCondition(WHERE_ID_CONDITION);
 			sqlQueryObject.setANDLogicOperator(true);
 			String query = sqlQueryObject.createSQLQuery();
 			stm=con.prepareStatement(query);
@@ -404,7 +442,7 @@ public class DBUtils {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 			sqlQueryObject.addSelectField("superuser");
-			sqlQueryObject.addWhereCondition("id = ?");
+			sqlQueryObject.addWhereCondition(WHERE_ID_CONDITION);
 			sqlQueryObject.setANDLogicOperator(true);
 			String query = sqlQueryObject.createSQLQuery();
 			stm=con.prepareStatement(query);
@@ -459,8 +497,6 @@ public class DBUtils {
 				idPortaApplicativa=rs.getLong("id");
 			}
 			return idPortaApplicativa;
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -501,8 +537,6 @@ public class DBUtils {
 				idPortaDelegata=rs.getLong("id");
 			}
 			return idPortaDelegata;
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -555,8 +589,6 @@ public class DBUtils {
 				idServizioApplicativo=rs.getLong("id");
 			}
 			return idServizioApplicativo;
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -597,8 +629,6 @@ public class DBUtils {
 
 			return idPdD;
 
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -637,8 +667,6 @@ public class DBUtils {
 
 			return idGruppoLong;
 
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -678,8 +706,6 @@ public class DBUtils {
 
 			return idRuoloLong;
 
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -717,8 +743,6 @@ public class DBUtils {
 
 			return idScopeLong;
 
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -751,7 +775,7 @@ public class DBUtils {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition("id = ?");
+			sqlQueryObject.addWhereCondition(WHERE_ID_CONDITION);
 			String query = sqlQueryObject.createSQLQuery();
 			stm=con.prepareStatement(query);
 			stm.setLong(1, idServizio);
@@ -764,8 +788,6 @@ public class DBUtils {
 
 			return idAccordo;
 
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -866,8 +888,6 @@ public class DBUtils {
 
 			return idAccordoLong;
 
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -915,8 +935,6 @@ public class DBUtils {
 
 			return 1; // accordo non esistente
 
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -966,8 +984,6 @@ public class DBUtils {
 
 			return idAccordoLong;
 
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -1015,8 +1031,6 @@ public class DBUtils {
 
 			return idAccordoLong;
 
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -1063,8 +1077,6 @@ public class DBUtils {
 
 			return idFruizione;
 
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -1114,8 +1126,6 @@ public class DBUtils {
 			stm.close();
 
 			return idDoc;
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -1152,8 +1162,6 @@ public class DBUtils {
 			stm.close();
 
 			return idPP;
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -1195,8 +1203,6 @@ public class DBUtils {
 			stm=null;
 			
 			return idRP;
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -1252,8 +1258,6 @@ public class DBUtils {
 			stm=null;
 			
 			return idRP;
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally
@@ -1292,8 +1296,6 @@ public class DBUtils {
 			stm=null;
 			
 			return idRP;
-		}catch (SQLException e) {
-			throw new CoreException(e);
 		}catch (Exception e) {
 			throw new CoreException(e);
 		}finally

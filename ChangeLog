@@ -1,3 +1,43 @@
+2024-07-12  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, InstallerVersioneBinaria, GovWayConsole, GovWayMonitor, ApiRsConfigurazione, ApiRsMonitoraggio]
+	Aggiunta funzionalità OP-1701
+	Aggiunto supporto per gestire keystore firmati.
+
+2024-07-10  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunto supporto per collezionare una serie di variabili Java che potranno essere riferite in qualsiasi file di proprietà di GovWay presente nella 'directory-lavoro' tramite la sintassi '${nomeVar}'.
+	Le variabili potranno inoltre essere accedute all’interno delle varie configurazioni di GovWay come, ad esempio, tramite la sintassi 'java:NAME' o 'envj:NAME'.
+	La definizione può essere attuata all'interno di due file differenti:
+	- govway.map.properties: le variabili definite in questo file verranno caricate all'avvio di ogni applicazione GovWay (es. runtime, console, batch ecc.)
+	- govway.secrets.properties: i valori delle variabili definite nel file saranno cifrati e GovWay si occuperà di decifrarli prima del loro caricamento nel sistema.
+
+2024-07-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, ApiRsConfigurazione]
+	Aggiunta funzionalità OP-1356
+	Le informazioni confidenziali presenti nella base dati possono adesso essere cifrate tramite le utility 'Bring Your Own Key (BYOK)'. 
+	La definizione della master key e le modalità di cifratura e decifratura sono specificate all'interno di un file di configurazione presente nella 'directory-lavoro' con il nome 'byok.properties'. 
+	La console di gestione è stata rivista per supportare i nuovi campi contenenti informazioni confidenziali.
+	
+2024-07-08  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Il corretto export dei plugin per l'autorizzazione dei contenuti non veniva eseguito correttamente, sia durante l'erogazione che durante la fruizione.
+
+2024-07-06  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	(https://github.com/link-it/govway/issues/159)
+	Nella configurazione del connettore è adesso possibile specificare il metodo di autenticazione 'api-key'.
+		
+2024-07-05  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	La verifica dei certificati include adesso anche la validazione dei keystore riferiti nella configurazione della sicurezza dei messaggi. 
+	Inoltre, è stata aggiunta la possibilità di disabilitare la 'Compliance BSP 1.1' nella validazione di un messaggio contenente WS-Security Username Token.
+
 2024-07-05  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [Documentazione]
@@ -5,6 +45,23 @@
 	Aggiornati archivi zip contenenti gli scenari:
 	- aggiornate le immagini docker di postgresql e keycloak alle ultime versioni;
 	- sostituito utilizzo di traefik con nginx come server web.
+
+2024-07-04  Andrea Poli <apoli@link.it>
+
+	Aggiunta la possibilità di utilizzare policy OCSP nei connettori HTTPS riferiti nelle token policy di validazione e negoziazione. 
+	Risolto inoltre un problema che si presentava selezionando un'autenticazione HTTPS client sulla funzionalità specifica di introspection o userinfo, ma non si abilitava l'endpoint HTTPS nella sezione token. 
+	In questo scenario, la gestione personalizzata dei keystore utilizzati per la connessione HTTPS non veniva attivata.
+
+2024-07-03  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Aggiunta la possibilità di svuotare la cache e verificare i certificati in qualsiasi maschera di configurazione di erogazione o fruizione di API, oltre che nella scheda di dettaglio.
+
+2024-07-02  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Corretto il problema presente nella funzionalità di export per il profilo SPCoop che si verificava quando veniva selezionato un soggetto multi-tenant tra quelli disponibili. 
+	Il problema si presentava durante l'export di una API o di una fruizione che riferiva una API il cui soggetto era differente da quello selezionato; all'interno dell'archivio zip non veniva inserita l'API.
 
 2024-07-01  Andrea Poli <apoli@link.it>
 

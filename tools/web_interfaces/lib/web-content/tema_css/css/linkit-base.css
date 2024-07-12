@@ -220,6 +220,10 @@ textarea.inputLinkLong {
 	width: 412px !important;
 }
 
+.textAreaDec{
+	width: 600px !important;
+}
+
 div.txtA_div {
 	margin-left: 232px;
 }
@@ -1649,7 +1653,9 @@ div.prop-slider{
 
 /* finestra modal di dialog messaggi con copia campi */
 
-#finestraDialogModalHeader {
+#finestraDialogModalHeader,
+#erroreInformazioniCifrateModalHeader,
+#operazioneAjaxModalHeader {
 	padding: 10px 0px 10px 0px;
 	display: flex;
 }
@@ -1662,15 +1668,21 @@ div.prop-slider{
 	padding: 10px 10px 10px 10px;
 }
 
-#finestraDialogModalHeaderSx {
+#finestraDialogModalHeaderSx,
+#erroreInformazioniCifrateModalHeaderSx,
+#operazioneAjaxModalHeaderSx {
 	padding: 10px 10px 10px	10px;
 }
 
-#finestraDialogModalHeaderDx {
+#finestraDialogModalHeaderDx,
+#erroreInformazioniCifrateModalHeaderDx,
+#operazioneAjaxModalHeaderDx {
 	padding: 10px 10px 10px 10px;
 }
 
-#finestraDialogModalHeaderDxRiga1 {
+#finestraDialogModalHeaderDxRiga1,
+#erroreInformazioniCifrateModalHeaderDxRiga1,
+#operazioneAjaxModalHeaderDxRiga1 {
 	padding: 10px 0px 10px 0px;
 }
 
@@ -1714,6 +1726,10 @@ div.propDialog label.labelLong{
 
 div.txtA_div_propDialog {
 	margin-left: 146px;
+}
+
+div.txtA_div_propDialog_dec {
+	margin-left: 0px;
 }
 
 .iconCopyBox{
@@ -2174,6 +2190,10 @@ td.riepilogo-spacer {
 	align-items: center;
 }
 
+.spanIconInfoBox-lock {
+	cursor: default;
+}
+
 div.prop table.controlset-cb-info label{
 	float: right;
 	padding-left: 2px;
@@ -2589,5 +2609,58 @@ div.txtA_div_propDialogInfoUso {
 li.protocolloItem {
 	list-style-type:disc; 
 	margin-left:12px;
+}
+
+.lock-container {
+	
+}
+
+.lock-input-container {
+	position: relative;
+    display: inline-block;
+}
+
+.lock-input-container input[type="text"],
+.lock-input-container input[type="password"] {
+	height: 20px;
+}
+
+.lock-iconInfoBox {
+	padding-left: 8px;
+    display: inline;
+    cursor: pointer;
+    position: absolute;
+    padding-top: 2px;
+}
+
+.lock-span-comandi-input {
+	padding-left: 4px;
+	padding-right: 2px;
+	padding-top: 2px;
+    cursor: pointer;
+    vertical-align: bottom;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    height: 26px;
+    display: inline-block;
+    width: 27px;
+    color: ${p.note.color};
+    background-color: ${input.background.color} ;	
+	background-image: none !important;
+	border: 1px solid ${input.border.color} ;
+}
+
+.lock-span-comandi-input-x2 {
+	width: 54px;
+}
+
+
+.span-password-eye {
+	margin-left: -32px;
+	margin-right: 4px;
+    cursor: pointer;
+    vertical-align: bottom;
+    color: ${p.note.color};
 }
 

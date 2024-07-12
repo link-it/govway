@@ -122,13 +122,7 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 			String tipoProtocollo = apsCore.getProtocolloAssociatoTipoServizio(asps.getTipo());
 			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
 			
-			String tmpTitle = null;
-			if(gestioneFruitori) {
-				tmpTitle = apsHelper.getLabelServizioFruizione(tipoProtocollo, idSoggettoFruitore, asps);
-			}
-			else {
-				tmpTitle = apsHelper.getLabelServizioErogazione(tipoProtocollo, asps);
-			}
+			String tmpTitle = apsHelper.getLabelServizio(idSoggettoFruitore, gestioneFruitori, asps, tipoProtocollo);
 
 			String[] ruoli = {RuoliDocumento.allegato.toString(),RuoliDocumento.specificaSemiformale.toString(),RuoliDocumento.specificaSicurezza.toString(),RuoliDocumento.specificaLivelloServizio.toString()};
 

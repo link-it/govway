@@ -41,7 +41,7 @@ import org.openspcoop2.core.config.rs.server.model.BaseCredenziali;
 import org.openspcoop2.core.config.rs.server.model.ListaApplicativi;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import org.openspcoop2.core.config.rs.server.model.OneOfBaseCredenzialiCredenziali;
-import org.openspcoop2.core.config.rs.server.model.Proprieta4000;
+import org.openspcoop2.core.config.rs.server.model.Proprieta4000OpzioneCifratura;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -57,6 +57,7 @@ import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiGeneralInfo;
@@ -112,8 +113,8 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			ApplicativiEnv env = new ApplicativiEnv(wrap, profilo, soggetto, context); 					
 	
 			String protocollo = env.protocolFactory.getProtocol();
-			String tipo_soggetto = ProtocolFactoryManager.getInstance().getDefaultOrganizationTypes().get(protocollo);
-			IDSoggetto idSoggetto = new IDSoggetto(tipo_soggetto,env.idSoggetto.getNome());
+			String tipoSoggetto = ProtocolFactoryManager.getInstance().getDefaultOrganizationTypes().get(protocollo);
+			IDSoggetto idSoggetto = new IDSoggetto(tipoSoggetto,env.idSoggetto.getNome());
 			IDServizioApplicativo idSA = new IDServizioApplicativo();
 			idSA.setIdSoggettoProprietario(idSoggetto);
 			idSA.setNome(applicativo.getNome());
@@ -121,7 +122,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			ApiKeyInfo keyInfo = ApplicativiApiHelper.createApiKey(applicativo.getCredenziali(), idSA, env.saCore, protocollo);
 			boolean updateKey = false;
 			
-			ServizioApplicativo sa = ApplicativiApiHelper.applicativoToServizioApplicativo(applicativo, env.tipo_protocollo, env.idSoggetto.getNome(), env.stationCore, keyInfo);
+			ServizioApplicativo sa = ApplicativiApiHelper.applicativoToServizioApplicativo(applicativo, env.tipo_protocollo, env.idSoggetto.getNome(), env.stationCore, keyInfo, true);
 						
 			if ( ApplicativiApiHelper.isApplicativoDuplicato(sa, env.saCore) ) {
 				throw FaultCode.CONFLITTO.toException(
@@ -287,8 +288,8 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 				ricerca.clearFilter(idLista, Filtri.FILTRO_SOGGETTO);
 			}
 			
-			//ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO_SERVIZIO_APPLICATIVO, Filtri.VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_FRUITORE);
-			//ricerca.addFilter(idLista, Filtri.FILTRO_TIPO_SERVIZIO_APPLICATIVO, CostantiConfigurazione.CLIENT_OR_SERVER);
+			/**ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO_SERVIZIO_APPLICATIVO, Filtri.VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_FRUITORE);
+			ricerca.addFilter(idLista, Filtri.FILTRO_TIPO_SERVIZIO_APPLICATIVO, CostantiConfigurazione.CLIENT_OR_SERVER);*/
 			ricerca.addFilter(idLista, Filtri.FILTRO_TIPO_SERVIZIO_APPLICATIVO, CostantiConfigurazione.CLIENT); // Nelle API per adesso sono gestiti solo gli applicativi SERVER
 			
 			if (ruolo != null && ruolo.trim().length() > 0)
@@ -405,7 +406,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			ApiKeyInfo keyInfo = ApplicativiApiHelper.getApiKey(oldSa, false);
 			boolean updateKey = false;
 			
-			final ServizioApplicativo tmpSa = ApplicativiApiHelper.applicativoToServizioApplicativo(applicativo, env.tipo_protocollo, soggetto, env.stationCore, keyInfo);
+			final ServizioApplicativo tmpSa = ApplicativiApiHelper.applicativoToServizioApplicativo(applicativo, env.tipo_protocollo, soggetto, env.stationCore, keyInfo, false);
 			final ServizioApplicativo newSa = ApplicativiApiHelper.getServizioApplicativo(nome, env.idSoggetto.getNome(), env.tipo_protocollo, env.saCore);
 			
 			if(ModalitaAccessoEnum.HTTP_BASIC.equals(body.getCredenziali().getModalitaAccesso())) {
@@ -445,18 +446,27 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 
 			newSa.getProprietaList().clear();
 			if(applicativo.getProprieta()!=null && !applicativo.getProprieta().isEmpty()) {
-				for (Proprieta4000 proprieta : applicativo.getProprieta()) {
+				for (Proprieta4000OpzioneCifratura proprieta : applicativo.getProprieta()) {
 					org.openspcoop2.core.config.Proprieta pConfig = new org.openspcoop2.core.config.Proprieta();
 					pConfig.setNome(proprieta.getNome());
-					pConfig.setValore(proprieta.getValore());
+					if(env.saCore!=null && env.saCore.getDriverBYOKUtilities()!=null && 
+							proprieta.isEncrypted()!=null && proprieta.isEncrypted().booleanValue()) {
+						pConfig.setValore(env.saCore.getDriverBYOKUtilities().wrap(proprieta.getValore()));
+					}
+					else {
+						if(proprieta.getValore().length()>4000) {
+							throw FaultCode.RICHIESTA_NON_VALIDA.toException(CostantiControlStation.MESSAGGIO_ERRORE_VALORE_PROPRIETA_4000);
+						}
+						pConfig.setValore(proprieta.getValore());
+					}
 					newSa.addProprieta(pConfig);
 				}
 			}
 			
 			// Vincolo rilasciato in 3.3.1
-//			if (!oldSa.getNome().equals(newSa.getNome())) {
-//				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile modificare il nome del servizio applicativo");
-//			}
+			/**if (!oldSa.getNome().equals(newSa.getNome())) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile modificare il nome del servizio applicativo");
+			}*/
 			
 			ProtocolProperties protocolProperties = null;
 			if(profilo != null) {

@@ -114,6 +114,7 @@ public class ConnettorePluginApiHelper extends AbstractConnettoreApiHelper<Conne
 				null,	// httpsKeyAlias
 				null,	// httpsTrustStoreCRLs
         		null,	// httpsTrustStoreOCSPPolicy
+        		null,	// httpsKeyStoreBYOKPolicy
 				conn.getPlugin(),																//	tipoconn (personalizzato)
 				ServletUtils.boolToCheckBoxStatus(false),										 	//autenticazioneHttp,
 				ServletUtils.boolToCheckBoxStatus(false),	
@@ -141,12 +142,20 @@ public class ConnettorePluginApiHelper extends AbstractConnettoreApiHelper<Conne
 				null,	// this.responseInputFileNameHeaders, 
 				null,	// this.responseInputDeleteAfterRead, 
 				null,	// this.responseInputWaitTime,
-				false,
-				null,
-				null,
-        		false, // erogazioneServizioApplicativoServerEnabled, TODO quando si aggiunge applicativo server
-    			null // rogazioneServizioApplicativoServer
+				false, // autenticazioneToken
+				null, // tokenPolicy
+				null, // autenticazioneApiKey
+				false, // useOAS3Names
+				false, // useAppId
+				null, // apiKeyHeader
+				null, // apiKey,
+				null, // appIdHeader,
+				null, // appId,
+				null, // listExtendedConnettore
+        		false, // erogazioneServizioApplicativoServerEnabled, 
+    			null // erogazioneServizioApplicativoServer
 			);
+		
 	}
 
 	@Override
@@ -189,6 +198,7 @@ public class ConnettorePluginApiHelper extends AbstractConnettoreApiHelper<Conne
 				null,					// httpsKeyAlias
         		null,					// httpsTrustStoreCRLs
         		null,					// httpsTrustStoreOCSPPolicy
+        		null,					// httpsKeyStoreBYOKPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( false ),	
 				null,
@@ -216,8 +226,11 @@ public class ConnettorePluginApiHelper extends AbstractConnettoreApiHelper<Conne
 				null,	// this.responseInputFileNameHeaders, 
 				null,	// this.responseInputDeleteAfterRead, 
 				null,	// this.responseInputWaitTime,
-				null,
-				null);
+				null,   // tokenPolicy
+				null, null, // apiKeyHeader,  apiKeyValue
+				null, null, // appIdHeader, appIdValue
+				null // listExtendedConnettore
+				);
 		
 		if(conn.getProprieta() != null) {
 			for(org.openspcoop2.core.config.rs.server.model.Proprieta prop: conn.getProprieta()) {
@@ -271,6 +284,7 @@ public class ConnettorePluginApiHelper extends AbstractConnettoreApiHelper<Conne
 						null,					// httpsKeyAlias
 						null,					// httpsTrustStoreCRLs
 		        		null,					// httpsTrustStoreOCSPPolicy
+		        		null,					// httpsKeyStoreBYOKPolicy
 
 						ServletUtils.boolToCheckBoxStatus( false ),	
 						null,
@@ -298,8 +312,11 @@ public class ConnettorePluginApiHelper extends AbstractConnettoreApiHelper<Conne
 						null,	// this.responseInputFileNameHeaders, 
 						null,	// this.responseInputDeleteAfterRead, 
 						null,	// this.responseInputWaitTime,
-						null,
-						null);	
+						null,   // tokenPolicy
+						null, null, // apiKeyHeader,  apiKeyValue
+						null, null, // appIdHeader, appIdValue
+						null // listExtendedConnettore
+						);	
 
 		
 		if(conn.getProprieta() != null) {

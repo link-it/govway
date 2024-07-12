@@ -28,6 +28,7 @@ import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.byok.LockUtilities;
 import org.openspcoop2.web.lib.mvc.properties.exception.UserInputValidationException;
 
 /***
@@ -48,15 +49,15 @@ public abstract class BaseItemBean<T> {
 	protected Boolean visible = null;
 	protected Boolean oldVisible = null;
 	
-	public BaseItemBean(T item, String name, IProvider provider) {
+	protected BaseItemBean(T item, String name, IProvider provider) {
 		this.item = item;
 		this.name = name;
 		this.provider = provider;
 	}
 
-	public abstract DataElement toDataElement(ConfigBean config, Map<String, String> mapNameValue, ExternalResources externalResources) throws ProviderException;
+	public abstract DataElement toDataElement(ConfigBean config, Map<String, String> mapNameValue, ExternalResources externalResources, LockUtilities lockUtilities) throws ProviderException;
 	
-	public abstract void setValueFromRequest(String parameterValue, ExternalResources externalResources)  throws ProviderException;
+	public abstract void setValueFromRequest(String parameterValue, ExternalResources externalResources, LockUtilities lockUtilities)  throws ProviderException;
 	
 	public abstract Property getSaveProperty();
 	

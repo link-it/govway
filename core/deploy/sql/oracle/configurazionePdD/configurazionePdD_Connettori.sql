@@ -23,6 +23,7 @@ CREATE TABLE connettori
 	utente VARCHAR2(255),
 	-- password per una connessione jms
 	password VARCHAR2(255),
+	enc_password CLOB,
 	-- context property: initial_content
 	initcont VARCHAR2(255),
 	-- context property: url_pkg
@@ -42,6 +43,7 @@ CREATE TABLE connettori
 	proxy_port VARCHAR2(255),
 	proxy_username VARCHAR2(255),
 	proxy_password VARCHAR2(255),
+	enc_proxy_password CLOB,
 	-- Indicazione sull'intervallo massimo di tempo necessario per instaurare una connessione (intervallo in ms)
 	connection_timeout NUMBER,
 	-- Indicazione sull'intervallo massimo di tempo che può occorrere prima di ricevere una risposta (intervallo in ms)
@@ -52,6 +54,10 @@ CREATE TABLE connettori
 	custom NUMBER,
 	-- Gestione Token
 	token_policy VARCHAR2(255),
+	api_key CLOB,
+	api_key_header VARCHAR2(255),
+	app_id CLOB,
+	app_id_header VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -85,6 +91,7 @@ CREATE TABLE connettori_custom
 (
 	name VARCHAR2(255) NOT NULL,
 	value VARCHAR2(4000) NOT NULL,
+	enc_value CLOB,
 	id_connettore NUMBER NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,

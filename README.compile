@@ -68,7 +68,8 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
     - profili di interoperabiltà: protocol-as4, protocol-modipa, protocol-sdi, protocol-spcoop, protocol-trasparente;
     - console web: web-lib-audit, web-lib-mvc, web-lib-queue, web-lib-users, web-loader, web-govwayConsole, web-govwayMonitor;
     - api di configurazione e monitoraggio: rs-config, rs-monitor;
-    - batch: batch-statistiche, batch-runtime-repository.
+    - batch: batch-statistiche, batch-runtime-repository;
+    - cli: cli-config-loader, cli-govway-vault.
 
     Per evitare la verifica di alcuni package è possibile utilizzare la proprietà 'spotbugs.skipPackages'.   
 
@@ -76,7 +77,7 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
         mvn verify -Dspotbugs=verify 
                    -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none 
                    -Dspotbugs.home=/tmp/spotbugs-4.7.3 
-                   -Dspotbugs.skipPackages=protocol-as4,protocol-modipa,protocol-sdi,protocol-spcoop,protocol-trasparente,web-lib-audit,web-lib-mvc,web-lib-queue,web-lib-users,web-loader,web-govwayConsole,web-govwayMonitor,rs-config,rs-monitor,batch-statistiche,batch-runtime-repository
+                   -Dspotbugs.skipPackages=protocol-as4,protocol-modipa,protocol-sdi,protocol-spcoop,protocol-trasparente,web-lib-audit,web-lib-mvc,web-lib-queue,web-lib-users,web-loader,web-govwayConsole,web-govwayMonitor,rs-config,rs-monitor,batch-statistiche,batch-runtime-repository,cli-config-loader,cli-govway-vault
 
 2.6 Analisi statica dei sorgenti tramite SonarQube
 
@@ -95,7 +96,8 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
     - profili di interoperabiltà: protocol-as4, protocol-modipa, protocol-sdi, protocol-spcoop, protocol-trasparente;
     - console web: web-lib-audit, web-lib-mvc, web-lib-queue, web-lib-users, web-loader, web-govwayConsole, web-govwayMonitor;
     - api di configurazione e monitoraggio: rs-config, rs-monitor;
-    - batch: batch-statistiche, batch-runtime-repository.
+    - batch: batch-statistiche, batch-runtime-repository;
+    - cli: cli-config-loader, cli-govway-vault.
 
     Per effettuare l'analisi di un solo package è possibile utilizzare la proprietà 'sonar.govway.project'.   
 

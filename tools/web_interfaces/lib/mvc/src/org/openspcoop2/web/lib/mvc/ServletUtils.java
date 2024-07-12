@@ -674,9 +674,33 @@ public class ServletUtils {
 			
 			if(idSessionTab != null) {
 				Map<String, Object> mapSrc = sessionMap.get(idSessionTab);
-				mapDest = SerializationUtils.clone(((HashMap<String, Object>)mapSrc));
+				// in questo ramo devo riconoscere se ho cliccato su un tab dopo che e' scaduta la sessione, ma e' stato fatto login in un tab diverso
+				// in questo caso mi arrivano entrambi gli id ma non e' stato trovato una mappa sorgente nella lista delle mappe salvate
+				// gli id possono essere uguali = clic sullo stesso tab
+				// gli id possono non coincidere = apertura di un nuovo tab da un tab scaduto
+				if(idSessioneTabSrc != null && idSessioneTabDest != null) {
+					mapDest = new HashMap<>(); // nuova mappa dopo click su tab dove non e' stata rinnovata la sessione
+					// vengono riportati gli attributi relativi all'utenza collegata
+					if(mapSrc.containsKey(Costanti.SESSION_ATTRIBUTE_USER)) {
+						mapDest.put(Costanti.SESSION_ATTRIBUTE_USER, mapSrc.get(Costanti.SESSION_ATTRIBUTE_USER));
+					}
+					// page data
+					if(mapSrc.containsKey(Costanti.SESSION_ATTRIBUTE_PAGE_DATA)) {
+						mapDest.put(Costanti.SESSION_ATTRIBUTE_PAGE_DATA, mapSrc.get(Costanti.SESSION_ATTRIBUTE_PAGE_DATA));
+					}
+					// general data
+					if(mapSrc.containsKey(Costanti.SESSION_ATTRIBUTE_GENERAL_DATA)) {
+						mapDest.put(Costanti.SESSION_ATTRIBUTE_GENERAL_DATA, mapSrc.get(Costanti.SESSION_ATTRIBUTE_GENERAL_DATA));
+					}
+					
+					// attributo che indica l'id del tab con la sessione su cui fare refresh
+					mapDest.put(Costanti.SESSION_ATTRIBUTE_TAB_MAP_REFRESH_TAB_ID, idSessioneTabDest); 
+				} else {
+					mapDest = (HashMap<String, Object>) SerializationUtils.clone(((HashMap<String, Object>)mapSrc)); // mappa clonata dalla piu' vecchia sessione creata
+				}
 			} else {
-				mapDest = new HashMap<>();
+				mapDest = new HashMap<>(); // nuova mappa dopo login.
+				mapDest.put(Costanti.SESSION_ATTRIBUTE_TAB_MAP_CREATION_TAB_ID, idSessioneTabDest); // salvo l'identificativo del tab che ha creato la sessione
 			}
 		}
 		
@@ -802,11 +826,12 @@ public class ServletUtils {
 	
 	public static void addInUsoButton(String servletName, List<DataElement> e, DataElementType deType, String titolo, String id, String inUsoType,
 			String tooltip, String icon, String headerRiga1, 
-			Boolean resizable, Boolean draggable) {
+			Boolean resizable, Boolean draggable, boolean contextMenu) {
 		DataElement de = new DataElement();
 		de.setType(deType);
 		de.setToolTip(tooltip);
 		de.setWidthPx(15);	
+		de.setContextMenu(contextMenu);
 		Dialog deDialog = new Dialog();
 		deDialog.setIcona(icon);
 		deDialog.setTitolo(titolo);
@@ -841,6 +866,29 @@ public class ServletUtils {
 		deDialog.addBodyElement(bodyElement );
 		
 		de.setDialog(deDialog );
+		e.add(de);
+	}
+	
+	public static void addAjaxButton(List<DataElement> e, DataElementType deType, String icon, String tooltip, String titolo, String body, boolean contextMenu, String servletName, List<Parameter> parameters, String inUsoType) {
+		DataElement de = new DataElement();
+		de.setType(deType);
+		de.setIcon(icon);
+		de.setToolTip(tooltip);
+		de.setWidthPx(15);	
+		de.setContextMenu(contextMenu);
+		if(parameters == null) {
+			parameters = new ArrayList<>();
+		}
+		parameters.add(new Parameter(Costanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_OGGETTO, inUsoType));
+		parameters.add(new Parameter(Costanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA, Costanti.VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_TEXT));
+		
+		de.setUrl(servletName, parameters.toArray(new Parameter[parameters.size()]));
+		
+		DataElementConfirm confirm = new DataElementConfirm();
+		confirm.setTitolo(titolo);
+		confirm.setBody(body);
+		de.setConfirm(confirm );
+		
 		e.add(de);
 	}
 	
@@ -1215,6 +1263,35 @@ public class ServletUtils {
 		}
 		
 		return sb.length() > 0 ? sb.toString() : null;
+	}
+	
+	
+	public static String getJsonPair(String key, String val) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(Costanti.CHAR_QUOTA_JSON).append(key).append(Costanti.CHAR_QUOTA_JSON).append(Costanti.CHAR_DUE_PUNTI_JSON);
+		if(val != null) {
+			sb.append(Costanti.CHAR_QUOTA_JSON).append(val).append(Costanti.CHAR_QUOTA_JSON);
+		} else {
+			sb.append(Costanti.NULL_VALUE_JSON);
+		}
+		return sb.toString();
+	}
+	
+	public static String getJson(String ... pairs) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(Costanti.CHAR_APERTURA_JSON);
+		
+		if(pairs != null) {
+			for (int i = 0; i < pairs.length; i++) {
+				if(i > 0) {
+					sb.append(Costanti.CHAR_VIRGOLA_JSON);
+				}
+				sb.append(pairs[i]);
+			}
+		}
+		
+		sb.append(Costanti.CHAR_CHIUSURA_JSON);
+		return sb.toString();
 	}
 	
 	public static void setErrorStatusCodeInRequestAttribute(HttpServletRequest request, HttpStatus httpStatus){

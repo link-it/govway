@@ -31,9 +31,14 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.byok.BYOKCostanti;
 import org.openspcoop2.utils.properties.PropertiesReader;
+import org.openspcoop2.utils.transport.TransportUtils;
+import org.slf4j.Logger;
 
 /**
  * ConfigurazioneNodiRuntime
@@ -52,9 +57,9 @@ public class ConfigurazioneNodiRuntime {
 	
 	public static final String ALIAS_DEFAULT = "pdd";
 	
-	private static Map<String, ConfigurazioneNodiRuntime> staticInstanceMap = new HashMap<String, ConfigurazioneNodiRuntime>();
+	private static Map<String, ConfigurazioneNodiRuntime> staticInstanceMap = new HashMap<>();
 	private static final String PREFIX_DEFAULT = "";
-	public static void initialize(String path, ConfigurazioneNodiRuntimeProperties ... backwardCompatibilitiesProperties) throws Exception {
+	public static void initialize(String path, ConfigurazioneNodiRuntimeProperties ... backwardCompatibilitiesProperties) throws UtilsException {
 		
 		ConfigurazioneNodiRuntimeProperties cpClasspath = null;
 		try(InputStream is = ConfigurazioneNodiRuntime.class.getResourceAsStream("/"+RESOURCE_NAME);){
@@ -63,6 +68,8 @@ public class ConfigurazioneNodiRuntime {
 				p.load(is);
 				cpClasspath = new ConfigurazioneNodiRuntimeProperties(PREFIX_DEFAULT, p);
 			}
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
 		}
 		
 		ConfigurazioneNodiRuntimeProperties cpFile = null;
@@ -77,10 +84,10 @@ public class ConfigurazioneNodiRuntime {
 			}
 			else {
 				if(!f.exists()) {
-					throw new Exception("Configuration file '"+f.getAbsolutePath()+"' not exists");
+					throw new UtilsException("Configuration file '"+f.getAbsolutePath()+"' not exists");
 				}
 				if(!f.canRead()) {
-					throw new Exception("Configuration file '"+f.getAbsolutePath()+"' cannot read");
+					throw new UtilsException("Configuration file '"+f.getAbsolutePath()+"' cannot read");
 				}
 				read = true;
 			}
@@ -89,6 +96,8 @@ public class ConfigurazioneNodiRuntime {
 					Properties p = new Properties();
 					p.load(fin);
 					cpFile = new ConfigurazioneNodiRuntimeProperties(PREFIX_DEFAULT, p);
+				}catch(Exception e) {
+					throw new UtilsException(e.getMessage(),e);
 				}
 			}
 		}
@@ -116,12 +125,13 @@ public class ConfigurazioneNodiRuntime {
 		return null;
 	}
 	public static List<String> getPrefixes(){
+		List<String> l = null;
 		if(staticInstanceMap!=null && !staticInstanceMap.isEmpty()) {
-			List<String> l = new ArrayList<>();
+			l = new ArrayList<>();
 			l.addAll(staticInstanceMap.keySet());
 			return l;
 		}
-		return null;
+		return l;
 	}
 	
 	private PropertiesReader reader;
@@ -132,7 +142,7 @@ public class ConfigurazioneNodiRuntime {
 	
 	private List<String> aliases;
 	
-	private Map<String,List<String>> gruppi_aliases;
+	private Map<String,List<String>> gruppiAliases;
 	
 	private Map<String, String> descrizione;
 	
@@ -142,15 +152,15 @@ public class ConfigurazioneNodiRuntime {
 	private Map<String, String> password;
 	
 	private Map<String, Boolean> https;
-	private Map<String, Boolean> https_verificaHostName;
-	private Map<String, Boolean> https_autenticazioneServer;
-	private Map<String, String> https_autenticazioneServer_truststorePath;
-	private Map<String, String> https_autenticazioneServer_truststoreType;
-	private Map<String, String> https_autenticazioneServer_truststorePassword;
+	private Map<String, Boolean> httpsVerificaHostName;
+	private Map<String, Boolean> httpsAutenticazioneServer;
+	private Map<String, String> httpsAutenticazioneServerTruststorePath;
+	private Map<String, String> httpsAutenticazioneServerTruststoreType;
+	private Map<String, String> httpsAutenticazioneServerTruststorePassword;
 	
 	private Map<String, String> connectionTimeout;
 	private Map<String, String> readConnectionTimeout;
-	private Map<String, String> readConnectionTimeout_slowOperation;
+	private Map<String, String> readConnectionTimeoutSlowOperation;
 	
 	private Map<String, String> as;
 	private Map<String, String> factory;
@@ -160,7 +170,7 @@ public class ConfigurazioneNodiRuntime {
 	
 	private Map<String, String> dominio;
 	
-	private ConfigurazioneNodiRuntime(ConfigurazioneNodiRuntimeProperties config, ConfigurazioneNodiRuntimeProperties configClasspath) throws Exception {
+	private ConfigurazioneNodiRuntime(ConfigurazioneNodiRuntimeProperties config, ConfigurazioneNodiRuntimeProperties configClasspath) throws UtilsException {
 		if(config!=null) {
 			this.reader = new PropertiesReader(config.getProperties(), false);
 			this.prefix = config.getPrefix();
@@ -170,11 +180,11 @@ public class ConfigurazioneNodiRuntime {
 			this.prefix = configClasspath.getPrefix();
 		}
 		if(this.reader==null && this.readerClasspath==null) {
-			throw new Exception("Nessuna configurazione fornita");
+			throw new UtilsException("Nessuna configurazione fornita");
 		}
 		
 		this.initAliases();
-		this.initGruppi_aliases();
+		this.initGruppiAliases();
 		this.initConfigAliases();
 		
 	}
@@ -220,7 +230,7 @@ public class ConfigurazioneNodiRuntime {
 		return this.aliases;
 	}
 	
-	public void initGruppi_aliases() throws UtilsException {
+	private void initGruppiAliases() throws UtilsException {
 		Map<String,List<String>> map = new HashMap<>();
 		String nomeP = "aliases.";
 		Properties p = null;
@@ -244,20 +254,20 @@ public class ConfigurazioneNodiRuntime {
 			
 			Enumeration<?> en = p.keys();
 			while (en.hasMoreElements()) {
-				Object object = (Object) en.nextElement();
+				Object object = en.nextElement();
 				if(object instanceof String) {
 					String gruppo = (String) object;
 					if(map.containsKey(gruppo)) {
 						throw new UtilsException("Gruppo '"+gruppo+"' definito più di una volta nella proprietà '"+this.prefix+nomeP+"*'");
 					}
-					String aliases = p.getProperty(gruppo);
-					if(aliases!=null && !"".equals(aliases)){
-						String [] tmp = aliases.split(",");
+					String aliasesGruppo = p.getProperty(gruppo);
+					if(aliasesGruppo!=null && !"".equals(aliasesGruppo)){
+						String [] tmp = aliasesGruppo.split(",");
 						if(tmp!=null && tmp.length>0) {
 							List<String> list = new ArrayList<>();
 							for (int i = 0; i < tmp.length; i++) {
 								String alias = tmp[i].trim();
-								if(aliasesRegistrati.contains(alias)==false) {
+								if(!aliasesRegistrati.contains(alias)) {
 									throw new UtilsException("Alias '"+alias+"' indicato nella proprietà '"+nomeP+""+gruppo+"' non è uno degli alias censiti in '"+this.prefix+"aliases'");
 								}
 								list.add(alias);
@@ -270,10 +280,10 @@ public class ConfigurazioneNodiRuntime {
 				}
 			}
 		}
-		this.gruppi_aliases = map;
+		this.gruppiAliases = map;
 	}
 	public Map<String, List<String>> getGruppi_aliases() {
-		return this.gruppi_aliases;
+		return this.gruppiAliases;
 	}
 	
 	public void initConfigAliases() throws UtilsException {
@@ -285,16 +295,16 @@ public class ConfigurazioneNodiRuntime {
 		this.username = new HashMap<>();
 		this.password = new HashMap<>();
 		
-		this.https = new HashMap<String, Boolean>();
-		this.https_verificaHostName = new HashMap<String, Boolean>();
-		this.https_autenticazioneServer = new HashMap<String, Boolean>();
-		this.https_autenticazioneServer_truststorePath = new HashMap<>();
-		this.https_autenticazioneServer_truststoreType = new HashMap<>();
-		this.https_autenticazioneServer_truststorePassword = new HashMap<>();
+		this.https = new HashMap<>();
+		this.httpsVerificaHostName = new HashMap<>();
+		this.httpsAutenticazioneServer = new HashMap<>();
+		this.httpsAutenticazioneServerTruststorePath = new HashMap<>();
+		this.httpsAutenticazioneServerTruststoreType = new HashMap<>();
+		this.httpsAutenticazioneServerTruststorePassword = new HashMap<>();
 		
 		this.connectionTimeout = new HashMap<>();
 		this.readConnectionTimeout = new HashMap<>();
-		this.readConnectionTimeout_slowOperation = new HashMap<>();
+		this.readConnectionTimeoutSlowOperation = new HashMap<>();
 		
 		this.as = new HashMap<>();
 		this.factory = new HashMap<>();
@@ -307,99 +317,99 @@ public class ConfigurazioneNodiRuntime {
 		if(this.aliases!=null && !this.aliases.isEmpty()) {
 			for (String alias : this.aliases) {
 				
-				String descrizione = this.readProperty(false, alias+".descrizione");
-				if(descrizione!=null) {
-					this.descrizione.put(alias, descrizione);
+				String descr = this.readProperty(false, alias+".descrizione");
+				if(descr!=null) {
+					this.descrizione.put(alias, descr);
 				}
 				
 				boolean tipoAccessoRequired = PREFIX_DEFAULT.equals(this.prefix) ? false : true;
-				String tipoAccesso = _getValue(tipoAccessoRequired, alias, "tipoAccesso"); 
-				if(tipoAccesso==null) {
-					tipoAccesso = RESOURCE_TIPOLOGIA_ACCESSO_JMX;
+				String tipoAccessoCfg = getValueEngine(tipoAccessoRequired, alias, "tipoAccesso"); 
+				if(tipoAccessoCfg==null) {
+					tipoAccessoCfg = RESOURCE_TIPOLOGIA_ACCESSO_JMX;
 				}
-				if(RESOURCE_TIPOLOGIA_ACCESSO_GOVWAY.equals(tipoAccesso)) {
-					tipoAccesso = RESOURCE_TIPOLOGIA_ACCESSO_OPENSPCOOP;
+				if(RESOURCE_TIPOLOGIA_ACCESSO_GOVWAY.equals(tipoAccessoCfg)) {
+					tipoAccessoCfg = RESOURCE_TIPOLOGIA_ACCESSO_OPENSPCOOP;
 				}
 				else {
-					if(!RESOURCE_TIPOLOGIA_ACCESSO_JMX.equals(tipoAccesso) && !RESOURCE_TIPOLOGIA_ACCESSO_OPENSPCOOP.equals(tipoAccesso)){
-						throw new UtilsException("Tipo di accesso ["+tipoAccesso+"] non supportato per la proprietà '"+this.prefix+"tipoAccesso'");
+					if(!RESOURCE_TIPOLOGIA_ACCESSO_JMX.equals(tipoAccessoCfg) && !RESOURCE_TIPOLOGIA_ACCESSO_OPENSPCOOP.equals(tipoAccessoCfg)){
+						throw new UtilsException("Tipo di accesso ["+tipoAccessoCfg+"] non supportato per la proprietà '"+this.prefix+"tipoAccesso'");
 					}
 				}
-				this.tipoAccesso.put(alias, tipoAccesso);
+				this.tipoAccesso.put(alias, tipoAccessoCfg);
 				
-				String username =_getValue(false, alias, "remoteAccess.username");
-				if(username!=null) {
-					this.username.put(alias, username);
+				String user =getValueEngine(false, alias, "remoteAccess.username");
+				if(user!=null) {
+					this.username.put(alias, user);
 				}
-				String password =_getValue(false, alias, "remoteAccess.password");
-				if(password!=null) {
-					this.password.put(alias, password);
+				String pwd =getValueEngine(false, alias, "remoteAccess.password");
+				if(pwd!=null) {
+					this.password.put(alias, pwd);
 				}
 				
-				String v = _getValue(false, alias, "remoteAccess.https");
-				boolean https = v!=null ? Boolean.valueOf(v.trim()) : false; // default false
-				this.https.put(alias, https);
+				String v = getValueEngine(false, alias, "remoteAccess.https");
+				boolean httpsEnabled = v!=null ? Boolean.valueOf(v.trim()) : false; // default false
+				this.https.put(alias, httpsEnabled);
 				
-				v = _getValue(false, alias, "remoteAccess.https.verificaHostName");
-				boolean https_verificaHostName = v!=null ? Boolean.valueOf(v.trim()) : true; // default true
-				this.https_verificaHostName.put(alias, https_verificaHostName);
+				v = getValueEngine(false, alias, "remoteAccess.https.verificaHostName");
+				boolean httpsVerificaHostNameEnabled = v!=null ? Boolean.valueOf(v.trim()) : true; // default true
+				this.httpsVerificaHostName.put(alias, httpsVerificaHostNameEnabled);
 
-				v =  _getValue(false, alias, "remoteAccess.https.autenticazioneServer");
-				boolean https_autenticazioneServer = v!=null ? Boolean.valueOf(v.trim()) : true; // default true
-				this.https_autenticazioneServer.put(alias, https_autenticazioneServer);
+				v =  getValueEngine(false, alias, "remoteAccess.https.autenticazioneServer");
+				boolean httpsAutenticazioneServerEnabled = v!=null ? Boolean.valueOf(v.trim()) : true; // default true
+				this.httpsAutenticazioneServer.put(alias, httpsAutenticazioneServerEnabled);
 				
-				v = _getValue(false, alias, "remoteAccess.https.autenticazioneServer.truststorePath");
+				v = getValueEngine(false, alias, "remoteAccess.https.autenticazioneServer.truststorePath");
 				if(v!=null) {
-					this.https_autenticazioneServer_truststorePath.put(alias, v);
+					this.httpsAutenticazioneServerTruststorePath.put(alias, v);
 				}
 				
-				v = _getValue(false, alias, "remoteAccess.https.autenticazioneServer.truststoreType");
+				v = getValueEngine(false, alias, "remoteAccess.https.autenticazioneServer.truststoreType");
 				if(v!=null) {
-					this.https_autenticazioneServer_truststoreType.put(alias, v);
+					this.httpsAutenticazioneServerTruststoreType.put(alias, v);
 				}
 				
-				v = _getValue(false, alias, "remoteAccess.https.autenticazioneServer.truststorePassword");
+				v = getValueEngine(false, alias, "remoteAccess.https.autenticazioneServer.truststorePassword");
 				if(v!=null) {
-					this.https_autenticazioneServer_truststorePassword.put(alias, v);
+					this.httpsAutenticazioneServerTruststorePassword.put(alias, v);
 				}
 				
 				
-				v = _getValue(false, alias, "remoteAccess.connectionTimeout");
+				v = getValueEngine(false, alias, "remoteAccess.connectionTimeout");
 				if(v!=null) {
 					this.connectionTimeout.put(alias, v);
 				}
 				
-				v = _getValue(false, alias, "remoteAccess.readConnectionTimeout");
+				v = getValueEngine(false, alias, "remoteAccess.readConnectionTimeout");
 				if(v!=null) {
 					this.readConnectionTimeout.put(alias, v);
 				}
 				
-				v = _getValue(false, alias, "remoteAccess.readConnectionTimeout.slowOperation");
+				v = getValueEngine(false, alias, "remoteAccess.readConnectionTimeout.slowOperation");
 				if(v!=null) {
-					this.readConnectionTimeout_slowOperation.put(alias, v);
+					this.readConnectionTimeoutSlowOperation.put(alias, v);
 				}
 				
-				v = _getValue(false, alias, "remoteAccess.as");
+				v = getValueEngine(false, alias, "remoteAccess.as");
 				if(v!=null) {
 					this.as.put(alias, v);
 				}
 				
-				v = _getValue(false, alias, "remoteAccess.factory");
+				v = getValueEngine(false, alias, "remoteAccess.factory");
 				if(v!=null) {
 					this.factory.put(alias, v);
 				}
 				
-				v = _getValue(false, alias, "remoteAccess.url");
+				v = getValueEngine(false, alias, "remoteAccess.url");
 				if(v!=null) {
 					this.resourceUrl.put(alias, v);
 				}
 				
-				v = _getValue(false, alias, "remoteAccess.checkStatus.url");
+				v = getValueEngine(false, alias, "remoteAccess.checkStatus.url");
 				if(v!=null) {
 					this.checkStatusUrl.put(alias, v);
 				}
 				
-				v = _getValue(!PREFIX_DEFAULT.equals(this.prefix), alias, "dominio");
+				v = getValueEngine(!PREFIX_DEFAULT.equals(this.prefix), alias, "dominio");
 				if(v!=null) {
 					this.dominio.put(alias, v);
 				}
@@ -410,72 +420,72 @@ public class ConfigurazioneNodiRuntime {
 		}
 	}
 	
-	public String getDescrizione(String alias) throws UtilsException {
+	public String getDescrizione(String alias) {
 		return this.descrizione.get(alias);
 	}
 	
-	public String getTipoAccesso(String alias) throws UtilsException {
+	public String getTipoAccesso(String alias)  {
 		return this.tipoAccesso.get(alias);
 	}
 	
-	public String getUsername(String alias) throws UtilsException {
+	public String getUsername(String alias) {
 		return this.username.get(alias);
 	}
-	public String getPassword(String alias) throws UtilsException {
+	public String getPassword(String alias) {
 		return this.password.get(alias);
 	}
 	
-	public boolean isHttps(String alias) throws UtilsException {
+	public boolean isHttps(String alias) {
 		return this.https.get(alias);
 	}
-	public boolean isHttps_verificaHostName(String alias) throws UtilsException {
-		return this.https_verificaHostName.get(alias);
+	public boolean isHttps_verificaHostName(String alias) {
+		return this.httpsVerificaHostName.get(alias);
 	}
-	public boolean isHttps_autenticazioneServer(String alias) throws UtilsException {
-		return this.https_autenticazioneServer.get(alias);
+	public boolean isHttps_autenticazioneServer(String alias) {
+		return this.httpsAutenticazioneServer.get(alias);
 	}
-	public String getHttps_autenticazioneServer_truststorePath(String alias) throws UtilsException {
-		return this.https_autenticazioneServer_truststorePath.get(alias);
+	public String getHttps_autenticazioneServer_truststorePath(String alias) {
+		return this.httpsAutenticazioneServerTruststorePath.get(alias);
 	}
-	public String getHttps_autenticazioneServer_truststoreType(String alias) throws UtilsException {
-		return this.https_autenticazioneServer_truststoreType.get(alias);
+	public String getHttps_autenticazioneServer_truststoreType(String alias) {
+		return this.httpsAutenticazioneServerTruststoreType.get(alias);
 	}
-	public String getHttps_autenticazioneServer_truststorePassword(String alias) throws UtilsException {
-		return this.https_autenticazioneServer_truststorePassword.get(alias);
+	public String getHttps_autenticazioneServer_truststorePassword(String alias) {
+		return this.httpsAutenticazioneServerTruststorePassword.get(alias);
 	}
 	
-	public String getConnectionTimeout(String alias) throws UtilsException {
+	public String getConnectionTimeout(String alias) {
 		return this.connectionTimeout.get(alias);
 	}
-	public String getReadConnectionTimeout(String alias) throws UtilsException {
+	public String getReadConnectionTimeout(String alias) {
 		return this.readConnectionTimeout.get(alias);
 	}
-	public String getReadConnectionTimeout_slowOperation(String alias) throws UtilsException {
-		return this.readConnectionTimeout_slowOperation.get(alias);
+	public String getReadConnectionTimeout_slowOperation(String alias) {
+		return this.readConnectionTimeoutSlowOperation.get(alias);
 	}
 	
-	public String getAs(String alias) throws UtilsException {
+	public String getAs(String alias) {
 		return this.as.get(alias);
 	}
 	
-	public String getFactory(String alias) throws UtilsException {
+	public String getFactory(String alias) {
 		return this.factory.get(alias);
 	}
 	
-	public String getResourceUrl(String alias) throws UtilsException {
+	public String getResourceUrl(String alias) {
 		return this.resourceUrl.get(alias);
 	}
 	
-	public String getCheckStatusUrl(String alias) throws UtilsException {
+	public String getCheckStatusUrl(String alias) {
 		return this.checkStatusUrl.get(alias);
 	}
 	
-	public String getDominio(String alias) throws UtilsException {
+	public String getDominio(String alias) {
 		return this.dominio.get(alias);
 	}
 	
 	
-	private String _getValue(boolean required, String alias, String prop) throws UtilsException{
+	private String getValueEngine(boolean required, String alias, String prop) throws UtilsException{
 		String tmp = this.readProperty(false, alias+"."+prop);
 		if(tmp==null || "".equals(tmp)){
 			tmp = this.readProperty(required, prop);
@@ -487,10 +497,9 @@ public class ConfigurazioneNodiRuntime {
 		if(this.reader!=null) {
 			tmp = this.reader.getValue_convertEnvProperties(property);
 		}
-		if(tmp==null){
-			if(this.readerClasspath!=null) {
-				tmp = this.readerClasspath.getValue_convertEnvProperties(property);
-			}
+		if(tmp==null &&
+			this.readerClasspath!=null) {
+			tmp = this.readerClasspath.getValue_convertEnvProperties(property);
 		}
 		if(tmp==null){
 			if(required){
@@ -509,7 +518,7 @@ public class ConfigurazioneNodiRuntime {
 		if(tmp==null && !required) {
 			return BooleanNullable.NULL(); // se e' required viene sollevata una eccezione dal metodo readProperty
 		}
-		if("true".equalsIgnoreCase(tmp)==false && "false".equalsIgnoreCase(tmp)==false){
+		if(!"true".equalsIgnoreCase(tmp) && !"false".equalsIgnoreCase(tmp)){
 			throw new UtilsException("Property ["+this.prefix+property+"] with uncorrect value ["+tmp+"] (true/value expected)");
 		}
 		return Boolean.parseBoolean(tmp) ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
@@ -536,6 +545,75 @@ public class ConfigurazioneNodiRuntime {
 			return Long.parseLong(tmp);
 		}catch(Exception e){
 			throw new UtilsException("Property ["+this.prefix+property+"] with uncorrect value ["+tmp+"] (long value expected)");
+		}
+	}
+	
+	
+	public void initBYOKDynamicMapRemoteGovWayNode(Logger log, Map<String, Object> dynamicMap, boolean wrap, boolean unwrap, ConfigurazioneNodiRuntimeBYOKRemoteConfig remoteConfig) {
+		if(this.aliases!=null && !this.aliases.isEmpty()){
+			// prendo il primo nodo funzionante
+			for (String alias : this.aliases) {
+				if(isActiveNode(log, alias, remoteConfig) &&
+					this.getResourceUrl(alias)!=null && !"".equals(this.getResourceUrl(alias))
+					&& !InvokerNodiRuntime.RESOURCE_URL_LOCALE.equals(this.getResourceUrl(alias))
+						){
+					initBYOKDynamicMapRemoteGovWayNode(dynamicMap, wrap, unwrap, alias, remoteConfig);
+					break;
+				}
+			}
+		}
+	}
+	public boolean isAtLeastOneActiveNode(Logger log, ConfigurazioneNodiRuntimeBYOKRemoteConfig remoteConfig) {
+		if(this.aliases!=null && !this.aliases.isEmpty()){
+			// prendo il primo nodo funzionante
+			for (String alias : this.aliases) {
+				if(isActiveNode(log, alias, remoteConfig)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	public boolean isActiveNode(Logger log, String alias, ConfigurazioneNodiRuntimeBYOKRemoteConfig remoteConfig) {
+		try {
+			InvokerNodiRuntime invoker = new InvokerNodiRuntime(null,this); // passo volutamente null per non registrare l'errore
+			String value = invoker.readJMXAttribute(alias, remoteConfig.getType(), 
+					remoteConfig.getResourceStatoServiziPdd(), 
+					remoteConfig.getAttributeComponentePD());
+			return value!=null && !"".equals(value) && !value.startsWith(InvokerNodiRuntime.PREFIX_HTTP_CODE) && 
+					(CostantiConfigurazione.ABILITATO.getValue().equals(value) || CostantiConfigurazione.DISABILITATO.getValue().equals(value));
+		}catch(Exception e) {
+			log.debug("Nodo '"+alias+"' non non attivo?: "+e.getMessage(),e);
+			return false;
+		}
+	}
+
+	private void initBYOKDynamicMapRemoteGovWayNode(Map<String, Object> dynamicMap, boolean wrap, boolean unwrap, String alias, ConfigurazioneNodiRuntimeBYOKRemoteConfig remoteConfig)  {
+		String remoteUrl = this.getResourceUrl(alias);
+		
+		Map<String, String> govwayContext = new HashMap<>();
+		dynamicMap.put(BYOKCostanti.GOVWAY_RUNTIME_CONTEXT, govwayContext);
+		
+		Map<String, List<String>> p = new HashMap<>();
+		TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, remoteConfig.getResourceConfigurazioneSistema());
+		if(wrap) {
+			TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_METHOD_NAME, remoteConfig.getMethodWrap());
+			String urlWrap = TransportUtils.buildUrlWithParameters(p, remoteUrl);
+			govwayContext.put(BYOKCostanti.GOVWAY_RUNTIME_ENDPOINT_WRAP, urlWrap);
+		}
+		if(unwrap) {
+			TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_METHOD_NAME, remoteConfig.getMethodUnwrap());
+			String urlUnwrap = TransportUtils.buildUrlWithParameters(p, remoteUrl);
+			govwayContext.put(BYOKCostanti.GOVWAY_RUNTIME_ENDPOINT_UNWRAP, urlUnwrap);
+		}
+
+		String user = this.getUsername(alias);
+		if(user!=null) {
+			govwayContext.put(BYOKCostanti.GOVWAY_RUNTIME_USERNAME, user);
+		}
+		String pwd = this.getPassword(alias);
+		if(pwd!=null) {
+			govwayContext.put(BYOKCostanti.GOVWAY_RUNTIME_PASSWORD, pwd);
 		}
 	}
 }

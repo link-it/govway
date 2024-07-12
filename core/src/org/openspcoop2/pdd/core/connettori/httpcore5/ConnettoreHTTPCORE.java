@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.hc.client5.http.ConnectionKeepAliveStrategy;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
@@ -468,6 +469,31 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 	    	
 	    	
 	    	
+	    	// Authentication Api Key
+			String apiKey = this.properties.get(CostantiConnettori.CONNETTORE_APIKEY);
+			if(apiKey!=null && StringUtils.isNotEmpty(apiKey)){
+				String apiKeyHeader = this.properties.get(CostantiConnettori.CONNETTORE_APIKEY_HEADER);
+				if(apiKeyHeader==null || StringUtils.isEmpty(apiKeyHeader)) {
+					apiKeyHeader = CostantiConnettori.DEFAULT_HEADER_API_KEY;
+				}
+				setRequestHeader(apiKeyHeader,apiKey, propertiesTrasportoDebug);
+				if(this.debug)
+					this.logger.info("Impostazione autenticazione api key ["+apiKeyHeader+"]=["+apiKey+"]",false);
+				
+				String appId = this.properties.get(CostantiConnettori.CONNETTORE_APIKEY_APPID);
+				if(appId!=null && StringUtils.isNotEmpty(appId)){
+					String appIdHeader = this.properties.get(CostantiConnettori.CONNETTORE_APIKEY_APPID_HEADER);
+					if(appIdHeader==null || StringUtils.isEmpty(appIdHeader)) {
+						appIdHeader = CostantiConnettori.DEFAULT_HEADER_APP_ID;
+					}
+					setRequestHeader(appIdHeader,appId, propertiesTrasportoDebug);
+					if(this.debug)
+						this.logger.info("Impostazione autenticazione api key (app id) ["+appIdHeader+"]=["+appId+"]",false);
+				}
+			}
+	    	
+	    	
+	    	
 	    	
 	    	// ForwardProxy
 	    	if(this.forwardProxy_headerName!=null && this.forwardProxy_headerValue!=null) {
@@ -743,14 +769,14 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 						}
 						
 						TransportUtils.removeObject(request.getConnectorProperties(), CostantiConnettori.CONNETTORE_LOCATION);
-						TransportUtils.removeObject(request.getConnectorProperties(), CostantiConnettori._CONNETTORE_HTTP_REDIRECT_NUMBER);
-						TransportUtils.removeObject(request.getConnectorProperties(), CostantiConnettori._CONNETTORE_HTTP_REDIRECT_ROUTE);
+						TransportUtils.removeObject(request.getConnectorProperties(), CostantiConnettori.CONNETTORE_HTTP_REDIRECT_NUMBER);
+						TransportUtils.removeObject(request.getConnectorProperties(), CostantiConnettori.CONNETTORE_HTTP_REDIRECT_ROUTE);
 						request.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION, redirectLocation);
-						request.getConnectorProperties().put(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_NUMBER, (this.numberRedirect+1)+"" );
+						request.getConnectorProperties().put(CostantiConnettori.CONNETTORE_HTTP_REDIRECT_NUMBER, (this.numberRedirect+1)+"" );
 						if(this.routeRedirect!=null){
-							request.getConnectorProperties().put(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_ROUTE, this.routeRedirect+" -> "+redirectLocation );
+							request.getConnectorProperties().put(CostantiConnettori.CONNETTORE_HTTP_REDIRECT_ROUTE, this.routeRedirect+" -> "+redirectLocation );
 						}else{
-							request.getConnectorProperties().put(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_ROUTE, redirectLocation );
+							request.getConnectorProperties().put(CostantiConnettori.CONNETTORE_HTTP_REDIRECT_ROUTE, redirectLocation );
 						}
 						if(this.originalAbsolutePrefixForRelativeRedirectLocation==null) {
 							this.originalAbsolutePrefixForRelativeRedirectLocation = url.getProtocol()+"://"+url.getHost()+":"+url.getPort();

@@ -39,6 +39,7 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 	private T defaultValue;
 	private T defaultValueForCloseableSection; // il default value viene modificato, questo rimane impostato al valore iniziale
 	private boolean reloadOnChange;
+	private boolean reloadOnHttpPost;
 	private boolean required;
 	private String regexpr;
 	private SortedMap<T> mapLabelValues;
@@ -63,8 +64,15 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 	public boolean isReloadOnChange() {
 		return this.reloadOnChange;
 	}
+	public boolean isReloadOnHttpPost() {
+		return this.reloadOnHttpPost;
+	}
 	public void setReloadOnChange(boolean reloadOnChange) {
+		this.setReloadOnChange(reloadOnChange, false);
+	}
+	public void setReloadOnChange(boolean reloadOnChange, boolean reloadOnHttpPost) {
 		this.reloadOnChange = reloadOnChange;
+		this.reloadOnHttpPost = reloadOnHttpPost;
 	}
 
 	public boolean isRequired() {

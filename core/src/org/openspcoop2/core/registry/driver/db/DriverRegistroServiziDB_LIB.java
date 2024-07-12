@@ -34,6 +34,7 @@ import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.List;
 
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -1350,9 +1351,9 @@ public class DriverRegistroServiziDB_LIB {
 
 	public static void CRUDProtocolProperty(int type, List<ProtocolProperty> listPP, long idProprietario,
 			org.openspcoop2.core.constants.ProprietariProtocolProperty tipologiaProprietarioProtocolProperty, Connection connection,
-			String tipoDatabase) throws DriverRegistroServiziException {
+			String tipoDatabase, IDriverBYOK driverBYOK) throws DriverRegistroServiziException {
 		try {
-			DBProtocolPropertiesUtils.CRUDRegistryProtocolProperty(log, type, listPP, idProprietario, tipologiaProprietarioProtocolProperty, connection, tipoDatabase);
+			DBProtocolPropertiesUtils.crudRegistryProtocolProperty(log, type, listPP, idProprietario, tipologiaProprietarioProtocolProperty, connection, tipoDatabase, driverBYOK);
 		}catch(Exception e) {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
@@ -1361,9 +1362,9 @@ public class DriverRegistroServiziDB_LIB {
 	
 	public static List<ProtocolProperty> getListaProtocolProperty(long idProprietario, org.openspcoop2.core.constants.ProprietariProtocolProperty tipologiaProprietario, 
 			Connection connection,
-			String tipoDatabase) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+			String tipoDatabase, IDriverBYOK driverBYOK) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		try {
-			return DBProtocolPropertiesUtils.getListaProtocolPropertyRegistry(idProprietario,tipologiaProprietario,connection,tipoDatabase);
+			return DBProtocolPropertiesUtils.getListaProtocolPropertyRegistry(idProprietario,tipologiaProprietario,connection,tipoDatabase, driverBYOK);
 		}
 		catch(NotFoundException e) {
 			throw new DriverRegistroServiziNotFound(e.getMessage(),e);
@@ -1373,9 +1374,9 @@ public class DriverRegistroServiziDB_LIB {
 		}
 	}
 	
-	public static ProtocolProperty getProtocolProperty(long id, Connection connection, String tipoDatabase) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+	public static ProtocolProperty getProtocolProperty(long id, Connection connection, String tipoDatabase, IDriverBYOK driverBYOK) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		try {
-			return DBProtocolPropertiesUtils.getProtocolPropertyRegistry(id, connection, tipoDatabase);
+			return DBProtocolPropertiesUtils.getProtocolPropertyRegistry(id, connection, tipoDatabase, driverBYOK);
 		}
 		catch(NotFoundException e) {
 			throw new DriverRegistroServiziNotFound(e.getMessage(),e);

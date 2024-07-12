@@ -90,7 +90,10 @@ public final class PorteApplicativeWSResponseAdd extends Action {
 			if(idAsps == null) 
 				idAsps = "";
 			String nome = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-			String valore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE);
+			String valore = porteApplicativeHelper.getLockedParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE, false);
+			
+			// Wrap value
+			valore = porteApplicativeHelper.wrapValoreProprieta(valore);
 			
 			// Prendo il nome della porta
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
@@ -133,7 +136,7 @@ public final class PorteApplicativeWSResponseAdd extends Action {
 				List<DataElement> dati = new ArrayList<>();
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addNomeValoreToDati(TipoOperazione.ADD, dati, "", "",false);
+				dati = porteApplicativeHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.ADD, dati, nome, valore,false);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg,idPorta, idAsps, dati);
 
@@ -156,7 +159,7 @@ public final class PorteApplicativeWSResponseAdd extends Action {
 
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addNomeValoreToDati(TipoOperazione.ADD,dati, nome, valore,false);
+				dati = porteApplicativeHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.ADD,dati, nome, valore,false);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg,idPorta, idAsps, dati);
 

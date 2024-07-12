@@ -59,7 +59,7 @@
 			<item type="textarea" name="keystoreFile" label="File" required="true">
 			    <property name="rs.security.keystore.file" properties="encryptionPropRefId" />
 			</item>
-			<item type="text" name="keystorePassword" label="Password" required="true">
+			<item type="lock" name="keystorePassword" label="Password" required="true">
 				<conditions>
 					<condition not="true" and="true">
 						<equals name="keystoreType" value="jwk"/>
@@ -83,13 +83,21 @@
 				</conditions>
 			    <property name="rs.security.keystore.alias" properties="encryptionPropRefId" />
 			</item>
-			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Segreta" required="true">
+			<item type="lock" name="keystorePrivateKeyPassword" label="Password Chiave Segreta" required="true">
 				<conditions>
 					<condition not="false">
 						<equals name="keystoreType" value="jceks"/>
 					</condition>
 				</conditions>
 			    <property name="rs.security.key.password" properties="encryptionPropRefId" />
+			</item>
+			<item type="select" name="keystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<conditions>
+					<condition not="false">
+						<equals name="keystoreType" value="jceks"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.file.byok" properties="encryptionPropRefId" />
 			</item>
 
 		</subsection>

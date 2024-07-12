@@ -4334,7 +4334,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Proprieta"
+              $ref: "#/components/schemas/ProprietaOpzioneCifratura"
         required: true
       responses:
         "201":
@@ -4374,7 +4374,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Proprieta"
+                $ref: "#/components/schemas/ProprietaOpzioneCifratura"
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401":
@@ -4401,7 +4401,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Proprieta"
+              $ref: "#/components/schemas/ProprietaOpzioneCifratura"
         required: true
       responses:
         "204":
@@ -7415,7 +7415,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Proprieta"
+              $ref: "#/components/schemas/ProprietaOpzioneCifratura"
         required: true
       responses:
         "201":
@@ -7456,7 +7456,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Proprieta"
+                $ref: "#/components/schemas/ProprietaOpzioneCifratura"
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401":
@@ -7483,7 +7483,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Proprieta"
+              $ref: "#/components/schemas/ProprietaOpzioneCifratura"
         required: true
       responses:
         "204":
@@ -8830,7 +8830,7 @@ components:
           proprieta:
             type: "array"
             items:
-              $ref: "#/components/schemas/Proprieta4000"
+              $ref: "#/components/schemas/Proprieta4000OpzioneCifratura"
     SoggettoItem:
       type: "object"
       allOf:
@@ -8885,7 +8885,7 @@ components:
           proprieta:
             type: "array"
             items:
-              $ref: "#/components/schemas/Proprieta4000"
+              $ref: "#/components/schemas/Proprieta4000OpzioneCifratura"
           modi:
             type: "object"
             discriminator:
@@ -9646,7 +9646,6 @@ components:
           type: "string"
           example: "/path/to/truststore"
         truststore_password:
-          maxLength: 255
           type: "string"
           format: "password"
           example: "pwd"
@@ -9663,12 +9662,10 @@ components:
       type: "object"
       properties:
         keystore_password:
-          maxLength: 255
           type: "string"
           format: "password"
           example: "pwd"
         key_password:
-          maxLength: 255
           type: "string"
           description: "password della chiave privata"
           format: "password"
@@ -9678,6 +9675,9 @@ components:
           type: "string"
           description: "alias della chiave privata"
           example: "pwd"
+        keystore_byok_policy:
+          maxLength: 255
+          type: "string"
     BaseKeyStoreFile:
       type: "object"
       allOf:
@@ -9712,10 +9712,25 @@ components:
           type: "string"
           example: "user"
         password:
-          maxLength: 255
           type: "string"
           format: "password"
           example: "pwd"
+      additionalProperties: false
+    ConnettoreConfigurazioneApiKey:
+      required:
+      - "api_key"
+      type: "object"
+      properties:
+        api_key:
+          type: "string"
+        api_key_header:
+          maxLength: 255
+          type: "string"
+        app_id:
+          type: "string"
+        app_id_header:
+          maxLength: 255
+          type: "string"
       additionalProperties: false
     ConnettoreConfigurazioneHttps:
       required:
@@ -9794,7 +9809,6 @@ components:
           type: "string"
           example: "user"
         password:
-          maxLength: 255
           type: "string"
           format: "password"
           example: "pwd"
@@ -9832,6 +9846,8 @@ components:
           example: "http://ente.it/servizio"
         autenticazione_http:
           $ref: "#/components/schemas/ConnettoreConfigurazioneHttpBasic"
+        autenticazione_apikey:
+          $ref: "#/components/schemas/ConnettoreConfigurazioneApiKey"
         autenticazione_https:
           $ref: "#/components/schemas/ConnettoreConfigurazioneHttps"
         proxy:
@@ -9936,7 +9952,6 @@ components:
           maxLength: 255
           type: "string"
         password:
-          maxLength: 255
           type: "string"
         jndi_initial_context:
           maxLength: 255
@@ -12385,15 +12400,23 @@ components:
           maxLength: 255
           type: "string"
         valore:
-          maxLength: 255
           type: "string"
+    ProprietaOpzioneCifratura:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/Proprieta"
+      - type: "object"
+        properties:
+          encrypted:
+            type: "boolean"
+            default: false
     ElencoProprieta:
       type: "object"
       properties:
         proprieta:
           type: "array"
           items:
-            $ref: "#/components/schemas/Proprieta"
+            $ref: "#/components/schemas/ProprietaOpzioneCifratura"
     Proprieta4000:
       required:
       - "nome"
@@ -12404,8 +12427,16 @@ components:
           maxLength: 255
           type: "string"
         valore:
-          maxLength: 4000
           type: "string"
+    Proprieta4000OpzioneCifratura:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/Proprieta4000"
+      - type: "object"
+        properties:
+          encrypted:
+            type: "boolean"
+            default: false
     AAName:
       maxLength: 255
       pattern: "^[_A-Za-z][\\-_A-Za-z0-9]*$"

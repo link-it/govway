@@ -22,6 +22,8 @@ package org.openspcoop2.utils.certificate.byok;
 
 import java.util.Map;
 
+import org.openspcoop2.utils.UtilsException;
+
 /**
  * BYOKRequestParams
  *
@@ -65,4 +67,33 @@ public class BYOKRequestParams {
 		this.inputMap = inputMap;
 	}
 	
+	
+	public static BYOKRequestParams getBYOKRequestParamsByKsmId(String ksmId, 
+			Map<String, String> inputMap, Map<String, Object> dynamicMap) throws UtilsException {
+		
+		BYOKManager manager = BYOKManager.getInstance();
+		if(manager==null) {
+			throw new UtilsException("BYOKManager not initialized");
+		}
+		
+		return getBYOKRequestParamsByKsmId(ksmId, manager, 
+				inputMap, dynamicMap);
+	}
+	public static BYOKRequestParams getBYOKRequestParamsByKsmId(String ksmId, BYOKManager manager, 
+			Map<String, String> inputMap, Map<String, Object> dynamicMap) throws UtilsException {
+		BYOKConfig bconfig = manager.getKSMConfigByType(ksmId);
+		if(bconfig==null) {
+			throw new UtilsException("BYOK configuration for ksm id '"+ksmId+"' not found");
+		}
+		BYOKRequestParams req = new BYOKRequestParams();
+		req.setConfig(bconfig);
+			
+		req.setInputMap(inputMap);
+		
+		req.setDynamicMap(dynamicMap);
+		
+		req.setKeyIdentity(ksmId);
+		
+		return req;
+	}
 }

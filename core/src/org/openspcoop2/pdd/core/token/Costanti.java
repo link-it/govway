@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.constants.CostantiProprieta;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.MapKey;
@@ -206,9 +207,9 @@ public class Costanti {
 	public static final String POLICY_INTROSPECTION_CLAIMS_PARSER_PLUGIN_TYPE = CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_PLUGIN_TYPE; 
 	public static final String POLICY_INTROSPECTION_AUTH_BASIC_STATO = "policy.introspection.endpoint.basic.stato";
 	public static final String POLICY_INTROSPECTION_AUTH_BASIC_USERNAME = "policy.introspection.endpoint.basic.username";
-	public static final String POLICY_INTROSPECTION_AUTH_BASIC_PASSWORD = "policy.introspection.endpoint.basic.password";
+	public static final String POLICY_INTROSPECTION_AUTH_BASIC_PASSWORD = CostantiProprieta.POLICY_INTROSPECTION_AUTH_BASIC_PASSWORD;
 	public static final String POLICY_INTROSPECTION_AUTH_BEARER_STATO = "policy.introspection.endpoint.bearer.stato";
-	public static final String POLICY_INTROSPECTION_AUTH_BEARER_TOKEN = "policy.introspection.endpoint.bearer.token";
+	public static final String POLICY_INTROSPECTION_AUTH_BEARER_TOKEN = CostantiProprieta.POLICY_INTROSPECTION_AUTH_BEARER_TOKEN;
 	public static final String POLICY_INTROSPECTION_AUTH_SSL_STATO = "policy.introspection.endpoint.https.stato";
 	
 	public static final String POLICY_USER_INFO_STATO = "policy.userInfo.stato";
@@ -227,9 +228,9 @@ public class Costanti {
 	public static final String POLICY_USER_INFO_CLAIMS_PARSER_PLUGIN_TYPE = CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_PLUGIN_TYPE; 
 	public static final String POLICY_USER_INFO_AUTH_BASIC_STATO = "policy.userInfo.endpoint.basic.stato";
 	public static final String POLICY_USER_INFO_AUTH_BASIC_USERNAME = "policy.userInfo.endpoint.basic.username";
-	public static final String POLICY_USER_INFO_AUTH_BASIC_PASSWORD = "policy.userInfo.endpoint.basic.password";
+	public static final String POLICY_USER_INFO_AUTH_BASIC_PASSWORD = CostantiProprieta.POLICY_USER_INFO_AUTH_BASIC_PASSWORD;
 	public static final String POLICY_USER_INFO_AUTH_BEARER_STATO = "policy.userInfo.endpoint.bearer.stato";
-	public static final String POLICY_USER_INFO_AUTH_BEARER_TOKEN = "policy.userInfo.endpoint.bearer.token";
+	public static final String POLICY_USER_INFO_AUTH_BEARER_TOKEN = CostantiProprieta.POLICY_USER_INFO_AUTH_BEARER_TOKEN;
 	public static final String POLICY_USER_INFO_AUTH_SSL_STATO = "policy.userInfo.endpoint.https.stato";
 	
 	public static final String POLICY_TOKEN_FORWARD_STATO = "policy.tokenForward.stato";
@@ -292,13 +293,13 @@ public class Costanti {
 	public static final String POLICY_RETRIEVE_TOKEN_RESPONSE_TYPE = "policy.retrieveToken.responseType";
 	public static final String POLICY_RETRIEVE_TOKEN_AUTH_BASIC_STATO = "policy.retrieveToken.endpoint.basic.stato";
 	public static final String POLICY_RETRIEVE_TOKEN_AUTH_BASIC_USERNAME = "policy.retrieveToken.endpoint.basic.username";
-	public static final String POLICY_RETRIEVE_TOKEN_AUTH_BASIC_PASSWORD = "policy.retrieveToken.endpoint.basic.password";
+	public static final String POLICY_RETRIEVE_TOKEN_AUTH_BASIC_PASSWORD = CostantiProprieta.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_PASSWORD;
 	public static final String POLICY_RETRIEVE_TOKEN_AUTH_BASIC_AS_AUTHORIZATION_HEADER = "policy.retrieveToken.endpoint.basic.asAuthorizationHeader";
 	public static final String POLICY_RETRIEVE_TOKEN_AUTH_BEARER_STATO = "policy.retrieveToken.endpoint.bearer.stato";
-	public static final String POLICY_RETRIEVE_TOKEN_AUTH_BEARER_TOKEN = "policy.retrieveToken.endpoint.bearer.token";
+	public static final String POLICY_RETRIEVE_TOKEN_AUTH_BEARER_TOKEN = CostantiProprieta.POLICY_RETRIEVE_TOKEN_AUTH_BEARER_TOKEN;
 	public static final String POLICY_RETRIEVE_TOKEN_AUTH_SSL_STATO = "policy.retrieveToken.endpoint.https.stato";
 	public static final String POLICY_RETRIEVE_TOKEN_USERNAME = "policy.retrieveToken.username";
-	public static final String POLICY_RETRIEVE_TOKEN_PASSWORD = "policy.retrieveToken.password";
+	public static final String POLICY_RETRIEVE_TOKEN_PASSWORD = CostantiProprieta.POLICY_RETRIEVE_TOKEN_PASSWORD;
 	public static final String POLICY_RETRIEVE_TOKEN_SCOPES = "policy.retrieveToken.scope";
 	public static final String POLICY_RETRIEVE_TOKEN_AUDIENCE = "policy.retrieveToken.audience";
 	public static final String POLICY_RETRIEVE_TOKEN_FORM_CLIENT_ID = "policy.retrieveToken.formClientId";
@@ -316,7 +317,7 @@ public class Costanti {
 	public static final String POLICY_RETRIEVE_TOKEN_SAVE_ERROR_IN_CACHE = "policy.retrieveToken.saveErrorInCache";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID_MODE= "policy.retrieveToken.jwt.clientId.mode";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID= "policy.retrieveToken.jwt.clientId";
-	public static final String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET= "policy.retrieveToken.jwt.clientSecret";
+	public static final String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET= CostantiProprieta.POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET;
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_ISSUER= "policy.retrieveToken.jwt.issuer";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_ISSUER_MODE= "policy.retrieveToken.jwt.issuer.mode";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SUBJECT= "policy.retrieveToken.jwt.subject";
@@ -349,9 +350,10 @@ public class Costanti {
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_FILE= "policy.retrieveToken.jwt.signature.keystoreFile";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_FILE_PUBLIC_KEY= "policy.retrieveToken.jwt.signature.keystoreFilePublicKey";
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYPAIR_ALGORITHM= "policy.retrieveToken.jwt.signature.keyPairAlgorithm";
-	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD= "policy.retrieveToken.jwt.signature.keystorePassword";
+	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD= CostantiProprieta.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD;
 	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_ALIAS= "policy.retrieveToken.jwt.signature.keyAlias";
-	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD= "policy.retrieveToken.jwt.signature.keyPassword";
+	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD= CostantiProprieta.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD;
+	public static final String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_BYOK_POLICY= "policy.retrieveToken.jwt.signature.byok";
 	
 	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_MODE = "policy.tokenForward.mode";
 	public static final String POLICY_RETRIEVE_TOKEN_FORWARD_MODE_RFC6750_HEADER = "RFC6750_header";
@@ -543,25 +545,30 @@ public class Costanti {
 	public static final String ID_VALIDAZIONE_JWT_KEYSTORE_FILE = "validazioneJwtKeystoreFile";
 	public static final String ID_VALIDAZIONE_JWT_KEYSTORE_PASSWORD = "validazioneJwtKeystorePassword";
 	public static final String ID_VALIDAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY = "validazioneJwtKeystorePrivateKeyPassword";
+	public static final String ID_VALIDAZIONE_JWT_KEYSTORE_BYOK_POLOCY = "validazioneJwtKeystoreByokPolicy";
 	
 	public static final String ID_HTTPS_TRUSTSTORE_TYPE = "endpointHttpsTruststoreType";
 	public static final String ID_HTTPS_TRUSTSTORE_FILE = "endpointHttpsTruststoreFile";
 	public static final String ID_HTTPS_TRUSTSTORE_PASSWORD = "endpointHttpsTruststorePassword";
+	public static final String ID_HTTPS_TRUSTSTORE_OCSP_POLICY = "endpointHttpsTrustStoreOcspPolicy";
 	
 	public static final String ID_HTTPS_KEYSTORE_TYPE = "endpointHttpsClientKeystoreType";
 	public static final String ID_HTTPS_KEYSTORE_FILE = "endpointHttpsClientKeystoreFile";
 	public static final String ID_HTTPS_KEYSTORE_PASSWORD = "endpointHttpsClientKeystorePassword";
 	public static final String ID_HTTPS_KEYSTORE_PASSWORD_PRIVATE_KEY = "endpointHttpsClientPasswordChiavePrivata";
+	public static final String ID_HTTPS_KEYSTORE_BYOK_POLICY = "endpointHttpsByokPolicy";
 	
 	public static final String ID_TOKEN_FORWARD_JWS_KEYSTORE_TYPE = "tokenForwardInfoRaccolteModeJWSKeystoreType";
 	public static final String ID_TOKEN_FORWARD_JWS_KEYSTORE_FILE = "tokenForwardInfoRaccolteModeJWSKeystoreFile";
 	public static final String ID_TOKEN_FORWARD_JWS_KEYSTORE_PASSWORD = "tokenForwardInfoRaccolteModeJWSKeystorePassword";
 	public static final String ID_TOKEN_FORWARD_JWS_KEYSTORE_PASSWORD_PRIVATE_KEY = "tokenForwardInfoRaccolteModeJWSKeystorePrivateKeyPassword";
+	public static final String ID_TOKEN_FORWARD_JWS_KEYSTORE_BYOK_POLICY = "tokenForwardInfoRaccolteModeJWSKeystoreByokPolicy";
 	
 	public static final String ID_TOKEN_FORWARD_JWE_KEYSTORE_TYPE = "tokenForwardInfoRaccolteModeJWEContentKeystoreType";
 	public static final String ID_TOKEN_FORWARD_JWE_KEYSTORE_FILE = "tokenForwardInfoRaccolteModeJWEContentKeystoreFile";
 	public static final String ID_TOKEN_FORWARD_JWE_KEYSTORE_PASSWORD = "tokenForwardInfoRaccolteModeJWEContentKeystorePassword";
 	public static final String ID_TOKEN_FORWARD_JWE_KEYSTORE_PASSWORD_PRIVATE_KEY = "tokenForwardInfoRaccolteModeJWEContentKeystorePrivateKeyPassword";
+	public static final String ID_TOKEN_FORWARD_JWE_KEYSTORE_BYOK_POLICY = "tokenForwardInfoRaccolteModeJWEContentKeystoreByokPolicy";
 	
 	public static final String ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CLASSNAME = "discoveryParserCustom";
 	public static final String ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CLASSNAME = "validazioneJwtParserCustom";
@@ -581,6 +588,7 @@ public class Costanti {
 	public static final String ID_NEGOZIAZIONE_JWT_KEYSTORE_ALIAS_PRIVATE_KEY = "jwtAliasChiavePrivata";
 	public static final String ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY = "jwtPasswordChiavePrivata";
 	public static final String ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY_OPZIONALE = "jwtPasswordChiavePrivataOpzionale";
+	public static final String ID_NEGOZIAZIONE_JWT_KEYSTORE_BYOK_POLICY = "jwtByokPolicy";
 		
 	public static final String ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CLASSNAME = "customTokenParserCustomPlugin";
 	public static final String ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE = "customTokenParserCustomPluginChoice";
@@ -589,6 +597,7 @@ public class Costanti {
 	public static final String ID_AA_JWS_KEYSTORE_FILE = "aaJWSKeystoreFile";
 	public static final String ID_AA_JWS_KEYSTORE_PASSWORD = "aaJWSKeystorePassword";
 	public static final String ID_AA_JWS_KEYSTORE_PASSWORD_PRIVATE_KEY = "aaJWSKeystorePrivateKeyPassword";
+	public static final String ID_AA_JWS_KEYSTORE_BYOK_POLICY = "aaJWSKeystoreByokPolicy";
 	
 	public static final String ID_AA_JWS_TRUSTSTORE_TYPE = "aaJWSTruststoreType";
 	public static final String ID_AA_JWS_TRUSTSTORE_FILE = "aaJWSTruststoreFile";

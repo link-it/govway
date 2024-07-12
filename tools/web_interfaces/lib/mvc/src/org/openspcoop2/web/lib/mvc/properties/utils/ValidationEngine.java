@@ -151,6 +151,7 @@ public class ValidationEngine {
 				validaCheckBox(item);
 				break;
 			case HIDDEN:
+			case LOCK_HIDDEN:
 				validaHidden(item);
 				break;
 			case NUMBER:
@@ -161,6 +162,7 @@ public class ValidationEngine {
 				break;
 			case TEXT:
 			case TEXTAREA:
+			case LOCK:
 				validaText(item,metadata, externalResources);
 				break;
 			}

@@ -124,10 +124,12 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.utils.BooleanNullable;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
@@ -655,8 +657,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -740,8 +742,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -810,8 +812,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -845,8 +847,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -854,12 +856,12 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 
 	// Controlla i dati della property della porta applicativa
-	public boolean porteAppPropCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean porteAppPropCheckData(TipoOperazione tipoOp) throws ControlStationCoreException {
 		try {
 			String idPorta = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			int idInt = Integer.parseInt(idPorta);
 			String nome = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-			String valore = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE);
+			String valore = this.getLockedParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE, false);
 
 			// Campi obbligatori
 			if (nome.equals("") || valore.equals("")) {
@@ -878,19 +880,22 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				return false;
 			}
 
-			// Controllo che non ci siano spazi nei campi di testo
-			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
+			if (nome.indexOf(" ") != -1) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
-
-			
-			// Check Lunghezza
-			if(this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)==false) {
+			if(!this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)) {
 				return false;
 			}
-			if(this.checkLength255(valore, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE)==false) {
-				return false;
+			
+			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore) ){
+				if (valore.indexOf(" ") != -1) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+					return false;
+				}
+				if(!this.checkLength255(valore, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE)) {
+					return false;
+				}
 			}
 			
 			// Se tipoOp = add, controllo che la property non sia gia'
@@ -919,18 +924,18 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
 	// Controlla i dati del message-security request-flow della porta applicativa
-	public boolean porteAppMessageSecurityRequestCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean porteAppMessageSecurityRequestCheckData(TipoOperazione tipoOp) throws ControlStationCoreException {
 		try {
 			String idPorta = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			int idInt = Integer.parseInt(idPorta);
 			String nome = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-			String valore = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE);
+			String valore = this.getLockedParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE, false);
 
 			// Campi obbligatori
 			if (nome.equals("") || valore.equals("")) {
@@ -950,16 +955,19 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
-			//if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
 			if ((nome.indexOf(" ") != -1) ) {
 				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_NOMI);
 				return false;
 			}
-			if(valore.startsWith(" ") || valore.endsWith(" ")){
+			if( 
+					(!this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore))
+					&&
+					(valore.startsWith(" ") || valore.endsWith(" "))
+				){
 				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_ALL_INIZIO_O_ALLA_FINE_DEI_VALORI);
 				return false;
 			}
-			if(this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)==false) {
+			if(!this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)) {
 				return false;
 			}
 
@@ -971,14 +979,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				String nomeporta = pa.getNome();
 				MessageSecurity messageSecurity = pa.getMessageSecurity();
 
-				if(messageSecurity!=null){
-					if(messageSecurity.getRequestFlow()!=null){
-						for (int i = 0; i < messageSecurity.getRequestFlow().sizeParameterList(); i++) {
-							MessageSecurityFlowParameter tmpMessageSecurity =messageSecurity.getRequestFlow().getParameter(i);
-							if (nome.equals(tmpMessageSecurity.getNome())) {
-								giaRegistrato = true;
-								break;
-							}
+				if(messageSecurity!=null &&
+					messageSecurity.getRequestFlow()!=null){
+					for (int i = 0; i < messageSecurity.getRequestFlow().sizeParameterList(); i++) {
+						MessageSecurityFlowParameter tmpMessageSecurity =messageSecurity.getRequestFlow().getParameter(i);
+						if (nome.equals(tmpMessageSecurity.getNome())) {
+							giaRegistrato = true;
+							break;
 						}
 					}
 				}
@@ -992,18 +999,18 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
 	// Controlla i dati del message-security response-flow della porta applicativa
-	public boolean porteAppMessageSecurityResponseCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean porteAppMessageSecurityResponseCheckData(TipoOperazione tipoOp) throws ControlStationCoreException {
 		try {
 			String idPorta = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			int idInt = Integer.parseInt(idPorta);
 			String nome = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-			String valore = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE);
+			String valore = this.getLockedParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE, false);
 
 			// Campi obbligatori
 			if (nome.equals("") || valore.equals("")) {
@@ -1023,16 +1030,19 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
-			//if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
 			if ((nome.indexOf(" ") != -1) ) {
 				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_NOMI);
 				return false;
 			}
-			if(valore.startsWith(" ") || valore.endsWith(" ")){
+			if( 
+					(!this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore))
+					&&
+					(valore.startsWith(" ") || valore.endsWith(" "))
+				){
 				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_ALL_INIZIO_O_ALLA_FINE_DEI_VALORI);
 				return false;
 			}
-			if(this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)==false) {
+			if(!this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)) {
 				return false;
 			}
 
@@ -1044,14 +1054,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				String nomeporta = pa.getNome();
 				MessageSecurity messageSecurity = pa.getMessageSecurity();
 
-				if(messageSecurity!=null){
-					if(messageSecurity.getResponseFlow()!=null){
-						for (int i = 0; i < messageSecurity.getResponseFlow().sizeParameterList(); i++) {
-							MessageSecurityFlowParameter tmpMessageSecurity =messageSecurity.getResponseFlow().getParameter(i);
-							if (nome.equals(tmpMessageSecurity.getNome())) {
-								giaRegistrato = true;
-								break;
-							}
+				if(messageSecurity!=null &&
+					messageSecurity.getResponseFlow()!=null){
+					for (int i = 0; i < messageSecurity.getResponseFlow().sizeParameterList(); i++) {
+						MessageSecurityFlowParameter tmpMessageSecurity =messageSecurity.getResponseFlow().getParameter(i);
+						if (nome.equals(tmpMessageSecurity.getNome())) {
+							giaRegistrato = true;
+							break;
 						}
 					}
 				}
@@ -1066,8 +1075,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -2663,8 +2672,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			} 
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -2672,6 +2681,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	public void preparePorteAppPropList(ISearch ricerca, List<Proprieta> lista)
 			throws Exception {
 		try {
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session, this.request);
 
@@ -2727,6 +2737,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -2760,8 +2773,16 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					e.add(de);
 
 					de = new DataElement();
-					if(ssp.getValore()!=null)
-						de.setValue(ssp.getValore().toString());
+					if(ssp.getValore()!=null) {
+						if(StringUtils.isNotEmpty(ssp.getValore()) &&
+								BYOKManager.isEnabledBYOK() &&
+								this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(ssp.getValore())) {
+							de.setValue(CostantiControlStation.VALORE_CIFRATO);
+						}
+						else {
+							de.setValue(ssp.getValore());
+						}
+					}
 					e.add(de);
 
 					dati.add(e);
@@ -2772,8 +2793,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -2839,6 +2860,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -2877,8 +2901,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -2949,6 +2973,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3032,8 +3059,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3106,6 +3133,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
 
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3186,8 +3215,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3257,6 +3286,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3292,7 +3324,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					e.add(de);
 
 					de = new DataElement();
-					de.setValue(wsrfp.getValore());
+					if(wsrfp.getValore()!=null && StringUtils.isNotEmpty(wsrfp.getValore()) &&
+							BYOKManager.isEnabledBYOK() &&
+							this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(wsrfp.getValore())) {
+						de.setValue(CostantiControlStation.VALORE_CIFRATO);
+					}
+					else {
+						de.setValue(wsrfp.getValore());
+					}
 					e.add(de);
 
 					dati.add(e);
@@ -3303,8 +3342,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3374,6 +3413,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -3408,7 +3450,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					e.add(de);
 
 					de = new DataElement();
-					de.setValue(wsrfp.getValore());
+					if(wsrfp.getValore()!=null && StringUtils.isNotEmpty(wsrfp.getValore()) &&
+							BYOKManager.isEnabledBYOK() &&
+							this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(wsrfp.getValore())) {
+						de.setValue(CostantiControlStation.VALORE_CIFRATO);
+					}
+					else {
+						de.setValue(wsrfp.getValore());
+					}
 					e.add(de);
 
 					dati.add(e);
@@ -3419,8 +3468,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -3513,6 +3562,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
 
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
+						
 			// controllo eventuali risultati ricerca
 //			if (!search.equals("")) {
 //				this.pd.setSearch("on");
@@ -3558,8 +3610,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -3670,6 +3722,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 //			if (!search.equals("")) {
@@ -3738,8 +3793,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -4113,10 +4168,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
-		de.setType(DataElementType.TEXT_EDIT);
-		de.setRequired(true);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE);
-		de.setValue(valore);
+		this.core.getLockUtilities().lockProperty(de, valore);
+		de.setRequired(true);
 		de.setSize(size);
 		dati.add(de);
 
@@ -4193,6 +4247,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -4233,8 +4290,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -4309,6 +4366,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -4350,8 +4410,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -4449,6 +4509,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -4493,8 +4556,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -4565,6 +4628,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -4609,9 +4675,31 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
+	}
+	
+	public void impostaComandiMenuContestualePA(String idsogg, String idAsps) throws Exception {
+		if(idsogg==null) {
+			throw new Exception("Param idsogg is null");
+		}
+		String protocollo = null;
+		if(this.core.isRegistroServiziLocale()){
+			Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
+			protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(mySogg.getTipo());
+		}
+		else{
+			org.openspcoop2.core.config.Soggetto mySogg = this.soggettiCore.getSoggetto(Integer.parseInt(idsogg));
+			protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(mySogg.getTipo());
+		}
+		AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+		
+		Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
+		Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
+		Parameter pIdSoggettoErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, asps.getIdSoggetto()+"");
+		
+		this.impostaComandiMenuContestualePA(asps, protocollo, pNomeServizio, pTipoServizio, pIdSoggettoErogatore);
 	}
 	
 	public List<Parameter> getTitoloPA(Integer parentPA, String idsogg, String idAsps)	throws Exception, DriverRegistroServiziNotFound, DriverRegistroServiziException {
@@ -4789,6 +4877,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			lstParam.add(new Parameter(labelPagLista,null));
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// setto le label delle colonne
 			String[] labels = {
@@ -4857,8 +4948,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -4911,8 +5002,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -4984,6 +5075,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// setto le label delle colonne
 			String nomeColonnaAzione = null;
@@ -5271,8 +5365,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -5354,6 +5448,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// setto le label delle colonne
 			List<String> lstLabels = new ArrayList<>();
@@ -5507,8 +5604,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -5618,6 +5715,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// setto le label delle colonne
 			String[] labels = { PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_NOME,
@@ -5671,8 +5771,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -5763,6 +5863,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// setto le label delle colonne
 			String[] labels = { PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_NOME,
@@ -5815,8 +5918,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -5907,6 +6010,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// setto le label delle colonne
 			String[] labels = { PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME,
@@ -5959,8 +6065,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -6076,6 +6182,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 	
 			// controllo eventuali risultati ricerca
 	//			if (!search.equals("")) {
@@ -6128,8 +6237,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 	
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -6245,6 +6354,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 //				if (!search.equals("")) {
@@ -6286,8 +6398,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -6372,8 +6484,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
@@ -6406,13 +6518,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
 	public void preparePorteApplicativeAutenticazioneCustomPropList(ISearch ricerca, List<Proprieta> lista) throws Exception {
 		try {
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session, this.request);
 			String idAsps = this.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
@@ -6477,6 +6590,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -6498,13 +6614,25 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					List<DataElement> e = new ArrayList<>();
 		
 					DataElement de = new DataElement();
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES_CHANGE,
+							new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, id),
+							new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
+							new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, proprieta.getNome()),
+							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
 					de.setValue(proprieta.getNome());
 					de.setIdToRemove(proprieta.getId() + "");
 					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
 					e.add(de);
 					
 					de = new DataElement();
-					de.setValue(proprieta.getValore());
+					if(StringUtils.isNotEmpty(proprieta.getValore()) &&
+							BYOKManager.isEnabledBYOK() &&
+							this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(proprieta.getValore())) {
+						de.setValue(CostantiControlStation.VALORE_CIFRATO);
+					}
+					else {
+						de.setValue(proprieta.getValore());
+					}
 					e.add(de);
 		
 					dati.add(e);
@@ -6515,12 +6643,12 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
-	public boolean proprietaAutenticazioneCheckData(TipoOperazione tipoOp, String idPorta, String nome,String valore) throws Exception {
+	public boolean proprietaAutenticazioneCheckData(TipoOperazione tipoOp, String idPorta, String nome,String valore) throws ControlStationCoreException {
 		try {
 			// Campi obbligatori
 			if (nome.equals("") || valore.equals("")) {
@@ -6539,11 +6667,19 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				return false;
 			}
 			
-			// Check Lunghezza
-			if(this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)==false) {
+			if (nome.indexOf(" ") != -1) {
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
-			if(this.checkLength255(valore, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE)==false) {
+			if(!this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)) {
+				return false;
+			}
+			
+			if( 
+					( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore) ) 
+					&&
+					(!this.checkLength255(valore, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE)) 
+				){
 				return false;
 			}
 			
@@ -6585,14 +6721,15 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
 	
 	public void preparePorteApplicativeAutorizzazioneCustomPropList(ISearch ricerca, List<Proprieta> lista) throws Exception {
 		try {
+
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session, this.request);
 			String idAsps = this.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
@@ -6657,6 +6794,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -6678,13 +6818,25 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					List<DataElement> e = new ArrayList<>();
 		
 					DataElement de = new DataElement();
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES_CHANGE,
+							new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, id),
+							new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
+							new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, proprieta.getNome()),
+							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
 					de.setValue(proprieta.getNome());
 					de.setIdToRemove(proprieta.getId() + "");
 					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
 					e.add(de);
 					
 					de = new DataElement();
-					de.setValue(proprieta.getValore());
+					if(StringUtils.isNotEmpty(proprieta.getValore()) &&
+							BYOKManager.isEnabledBYOK() &&
+							this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(proprieta.getValore())) {
+						de.setValue(CostantiControlStation.VALORE_CIFRATO);
+					}
+					else {
+						de.setValue(proprieta.getValore());
+					}
 					e.add(de);
 		
 					dati.add(e);
@@ -6695,12 +6847,12 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
-	public boolean proprietaAutorizzazioneCheckData(TipoOperazione tipoOp, String idPorta, String nome,String valore) throws Exception {
+	public boolean proprietaAutorizzazioneCheckData(TipoOperazione tipoOp, String idPorta, String nome,String valore) throws ControlStationCoreException {
 		try {
 			// Campi obbligatori
 			if (nome.equals("") || valore.equals("")) {
@@ -6719,11 +6871,19 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				return false;
 			}
 			
-			// Check Lunghezza
-			if(this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)==false) {
+			if (nome.indexOf(" ") != -1) {
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
-			if(this.checkLength255(valore, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE)==false) {
+			if(!this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)) {
+				return false;
+			}
+			
+			if( 
+					( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore) ) 
+					&&
+					(!this.checkLength255(valore, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE)) 
+				){
 				return false;
 			}
 			
@@ -6765,13 +6925,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
 	public void preparePorteApplicativeAutorizzazioneContenutoCustomPropList(ISearch ricerca, List<Proprieta> lista) throws Exception {
 		try {
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session, this.request);
 			String idAsps = this.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
@@ -6836,6 +6997,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -6857,13 +7021,25 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					List<DataElement> e = new ArrayList<>();
 		
 					DataElement de = new DataElement();
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES_CHANGE,
+							new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, id),
+							new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
+							new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, proprieta.getNome()),
+							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
 					de.setValue(proprieta.getNome());
 					de.setIdToRemove(proprieta.getId() + "");
 					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
 					e.add(de);
 					
 					de = new DataElement();
-					de.setValue(proprieta.getValore());
+					if(StringUtils.isNotEmpty(proprieta.getValore()) &&
+							BYOKManager.isEnabledBYOK() &&
+							this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(proprieta.getValore())) {
+						de.setValue(CostantiControlStation.VALORE_CIFRATO);
+					}
+					else {
+						de.setValue(proprieta.getValore());
+					}
 					e.add(de);
 		
 					dati.add(e);
@@ -6874,12 +7050,12 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
-	public boolean proprietaAutorizzazioneContenutoCheckData(TipoOperazione tipoOp, String idPorta, String nome,String valore) throws Exception {
+	public boolean proprietaAutorizzazioneContenutoCheckData(TipoOperazione tipoOp, String idPorta, String nome,String valore) throws ControlStationCoreException {
 		try {
 			// Campi obbligatori
 			if (nome.equals("") || valore.equals("")) {
@@ -6898,11 +7074,19 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				return false;
 			}
 			
-			// Check Lunghezza
-			if(this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)==false) {
+			if (nome.indexOf(" ") != -1) {
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
-			if(this.checkLength255(valore, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE)==false) {
+			if(!this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)) {
+				return false;
+			}
+			
+			if( 
+				( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore) ) 
+				&&
+				(!this.checkLength255(valore, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE)) 
+			){
 				return false;
 			}
 			
@@ -6944,8 +7128,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -8422,6 +8606,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 //				ServletUtils.enabledPageDataSearch(this.pd, ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, search);
 //			}*/
 			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
+			
 			// preparo i dati
 			List<List<DataElement>> dati = new ArrayList<>();
 			
@@ -8952,8 +9139,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setRemoveButton(pa.sizeServizioApplicativoList() > 1);
 			
 		}  catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -9761,7 +9948,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 									labelErogazione = labelErogazione+" (gruppo:"+mappingPA.getDescrizione()+")";
 								}
 							}catch(Throwable t) {
-								this.log.error("Errore durante l'identificazione dell'erogazione: "+t.getMessage(),t);
+								this.logError("Errore durante l'identificazione dell'erogazione: "+t.getMessage(),t);
 							}
 						}
 						this.pd.setMessage("L'erogazione "+labelErogazione+" possiede già l'utente (http-basic) indicato per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
@@ -9772,8 +9959,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 		return true;
 	}
@@ -9803,8 +9990,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 		return true;
 	}	
@@ -9961,6 +10148,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -9998,8 +10188,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -10054,8 +10244,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -10186,6 +10376,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -10224,8 +10417,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -10294,8 +10487,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	
@@ -10569,6 +10762,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			lstParam.add(new Parameter(labelPagLista,null));
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			
+			// imposta menu' contestuale
+			this.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			ServiceBinding serviceBinding = this.porteApplicativeCore.toMessageServiceBinding(as.getServiceBinding());
 			
@@ -10607,8 +10803,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 	public List<DataElement> addAzioneConnettoriMultipliConfigToDati(List<DataElement> dati, TipoOperazione tipoOp, String protocollo, ServiceBinding serviceBinding,
@@ -12237,8 +12433,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 		return true;
 	}

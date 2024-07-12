@@ -24,6 +24,10 @@ package org.openspcoop2.pdd.core.batch;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.openspcoop2.utils.BooleanNullable;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.properties.PropertiesReader;
+
 /**
 * GeneratorProperties
 *
@@ -34,12 +38,12 @@ import java.util.Properties;
 public class GeneratorProperties {
 	
 	private static GeneratorProperties staticInstance = null;
-	private static synchronized void init() throws Exception{
+	private static synchronized void init() throws UtilsException{
 		if(GeneratorProperties.staticInstance == null){
 			GeneratorProperties.staticInstance = new GeneratorProperties();
 		}
 	}
-	public static GeneratorProperties getInstance() throws Exception{
+	public static GeneratorProperties getInstance() throws UtilsException{
 		if(GeneratorProperties.staticInstance == null){
 			GeneratorProperties.init();
 		}
@@ -49,7 +53,7 @@ public class GeneratorProperties {
 	
 	
 	
-	private static String PROPERTIES_FILE = "/batch-runtime-repository.properties";
+	private static final String PROPERTIES_FILE = "/batch-runtime-repository.properties";
 	
 	private String protocolloDefault;
 	
@@ -57,45 +61,53 @@ public class GeneratorProperties {
 	
 	private int scadenzaMessaggiMinuti;
 
-	private boolean messaggiDebug;
 	private boolean messaggiLogQuery;
 	private int messaggiFinestraSecondi;
 	
 	private String repositoryBuste;
 	private boolean useDataRegistrazione;
 	
+	private PropertiesReader props;
 
-	public GeneratorProperties() throws Exception {
+	public GeneratorProperties() throws UtilsException {
 
-		Properties props = new Properties();
+		Properties p = new Properties();
 		try {
 			InputStream is = GeneratorProperties.class.getResourceAsStream(GeneratorProperties.PROPERTIES_FILE);
-			props.load(is);
+			p.load(is);
 		} catch(Exception e) {
-			throw new Exception("Errore durante l'init delle properties", e);
+			throw new UtilsException("Errore durante l'init delle properties", e);
 		}
-		
-		// PROPERTIES
-				
-		this.protocolloDefault = this.getProperty(props, "protocolloDefault", true);
-	
-		this.refreshConnessione = this.getIntProperty(props, "connectionRefresh.secondi", true);
-		this.scadenzaMessaggiMinuti = this.getIntProperty(props, "repository.scadenzaMessaggio.minuti", false);
-		
-		this.messaggiDebug = this.getBooleanProperty(props, "repository.debug", true);
-		this.messaggiLogQuery = this.getBooleanProperty(props, "repository.logQuery", true);
-		this.messaggiFinestraSecondi = this.getIntProperty(props, "repository.finestra.secondi", true);
-
-		this.repositoryBuste = this.getProperty(props, "repository.gestoreBuste", true);
-		this.useDataRegistrazione = this.getBooleanProperty(props, "repository.gestoreBuste.dataRegistrazione", true);
+		this.props = new PropertiesReader(p, true);
 		
 	}
 	
-	private String getProperty(Properties props,String name,boolean required) throws Exception{
-		String tmp = props.getProperty(name);
+	public void initProperties() throws UtilsException {
+		
+		// PROPERTIES
+				
+		this.protocolloDefault = this.getProperty("protocolloDefault", true);
+	
+		this.refreshConnessione = this.getIntProperty("connectionRefresh.secondi", true);
+		this.scadenzaMessaggiMinuti = this.getIntProperty("repository.scadenzaMessaggio.minuti", false);
+		
+		this.messaggiLogQuery = this.getBooleanProperty("repository.logQuery", true);
+		this.messaggiFinestraSecondi = this.getIntProperty("repository.finestra.secondi", true);
+
+		this.repositoryBuste = this.getProperty("repository.gestoreBuste", true);
+		this.useDataRegistrazione = this.getBooleanProperty("repository.gestoreBuste.dataRegistrazione", true);
+		
+	}
+	
+	private String getPropertyPrefix(String name) {
+		return "Property '"+name+"' ";
+	} 
+	
+	private String getProperty(String name,boolean required) throws UtilsException{
+		String tmp = this.props.getValue_convertEnvProperties(name);
 		if(tmp==null){
 			if(required){
-				throw new Exception("Property '"+name+"' not found");
+				throw new UtilsException(getPropertyPrefix(name)+"not found");
 			}
 			else{
 				return null;
@@ -105,26 +117,44 @@ public class GeneratorProperties {
 			return tmp.trim();
 		}
 	}
-	private boolean getBooleanProperty(Properties props,String name,boolean required) throws Exception{
-		String tmp = this.getProperty(props, name, required);
+	public String readProperty(boolean required,String property) throws UtilsException{
+		return getProperty(property, required);
+	}
+	
+	private boolean getBooleanProperty(String name,boolean required) throws UtilsException{
+		String tmp = this.getProperty(name, required);
 		if(tmp!=null){
 			try{
 				return Boolean.parseBoolean(tmp);
 			}catch(Exception e){
-				throw new Exception("Property '"+name+"' wrong int format: "+e.getMessage());
+				throw new UtilsException(getPropertyPrefix(name)+"wrong int format: "+e.getMessage());
 			}
 		}
 		else{
 			return false;
 		}
 	}
-	private int getIntProperty(Properties props,String name,boolean required) throws Exception{
-		String tmp = this.getProperty(props, name, required);
+	private BooleanNullable readBooleanProperty(boolean required,String property) throws UtilsException{
+		String tmp = this.getProperty(property, required);
+		if(tmp==null && !required) {
+			return BooleanNullable.NULL(); // se e' required viene sollevata una eccezione dal metodo readProperty
+		}
+		if(!"true".equalsIgnoreCase(tmp) && !"false".equalsIgnoreCase(tmp)){
+			throw new UtilsException("Property ["+property+"] with uncorrect value ["+tmp+"] (true/value expected)");
+		}
+		return Boolean.parseBoolean(tmp) ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
+	}
+	private boolean parse(BooleanNullable b, boolean defaultValue) {
+		return (b!=null && b.getValue()!=null) ? b.getValue() : defaultValue;
+	}
+	
+	private int getIntProperty(String name,boolean required) throws UtilsException{
+		String tmp = this.getProperty(name, required);
 		if(tmp!=null){
 			try{
 				return Integer.valueOf(tmp);
 			}catch(Exception e){
-				throw new Exception("Property '"+name+"' wrong int format: "+e.getMessage());
+				throw new UtilsException(getPropertyPrefix(name)+"wrong int format: "+e.getMessage());
 			}
 		}
 		else{
@@ -145,8 +175,8 @@ public class GeneratorProperties {
 		return this.scadenzaMessaggiMinuti;
 	}
 	
-	public boolean isMessaggiDebug() {
-		return this.messaggiDebug;
+	public boolean isMessaggiDebug() throws UtilsException {
+		return this.getBooleanProperty("repository.debug", true);
 	}
 	public boolean isMessaggiLogQuery() {
 		return this.messaggiLogQuery;
@@ -160,5 +190,54 @@ public class GeneratorProperties {
 	}
 	public boolean isUseDataRegistrazione() {
 		return this.useDataRegistrazione;
+	}
+	
+	public boolean isSecurityLoadBouncyCastleProvider() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "security.addBouncyCastleProvider");
+		return parse(b, false);
+	}
+	
+	
+	public String getEnvMapConfig() throws UtilsException{
+		return this.readProperty(false, "env.map.config");
+	}
+	public boolean isEnvMapConfigRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "env.map.required");
+		return this.parse(b, false);
+	}
+	
+	
+	public String getHSMConfigurazione() throws UtilsException {
+		return this.readProperty(false, "hsm.config");
+	}
+	public boolean isHSMRequired() throws UtilsException {
+		BooleanNullable b = this.readBooleanProperty(false, "hsm.required");
+		return this.parse(b, false);
+	}
+	public boolean isHSMKeyPasswordConfigurable() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "hsm.keyPassword");
+		return this.parse(b, false);
+	}
+	
+	
+	
+	public String getBYOKConfigurazione() throws UtilsException{
+		return this.readProperty(false, "byok.config");
+	}
+	public boolean isBYOKRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "byok.required");
+		return parse(b, false);
+	}
+	public String getBYOKEnvSecretsConfig() throws UtilsException{
+		return this.readProperty(false, "byok.env.secrets.config");
+	}
+	public boolean isBYOKEnvSecretsConfigRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "byok.env.secrets.required");
+		return this.parse(b, false);
+	}
+	
+	
+	public String getConfigurazioneNodiRuntime() throws UtilsException{
+		return this.readProperty(false, "configurazioni.configurazioneNodiRun");
 	}
 }

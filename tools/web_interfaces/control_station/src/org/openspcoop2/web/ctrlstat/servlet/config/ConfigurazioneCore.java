@@ -2096,7 +2096,8 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
 			Map<String, String> readProperties = DBPropertiesUtils.readProperties(con, this.tipoDB, CostantiDB.CONFIG_GENERIC_PROPERTY, CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_NOME, 
-					CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_VALORE, CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_ID_PROPS, idGenericProperties);
+					CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_VALORE, CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_ENC_VALUE, CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_ID_PROPS, idGenericProperties,
+					this.getDriverBYOKUtilities().getDriverBYOKManagerNode(false, true));
 			return DBPropertiesUtils.toMultiMap(readProperties);
 		} catch (Exception e) {
 			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);

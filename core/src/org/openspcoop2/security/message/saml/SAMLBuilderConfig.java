@@ -53,13 +53,13 @@ public class SAMLBuilderConfig {
 
 	// ---- STATIC CONFIG CACHE -----
 	
-	private static Map<String, SAMLBuilderConfig> SAML_CACHE_CONFIG = new ConcurrentHashMap<String, SAMLBuilderConfig>();
+	private static Map<String, SAMLBuilderConfig> samlCacheConfig = new ConcurrentHashMap<>();
 	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("SAMLBuilderConfig");
 	private static void addSamlConfig(String propertiesName,SAMLBuilderConfig p){
 		semaphore.acquireThrowRuntime("addSamlConfig");
 		try {
-			if(SAML_CACHE_CONFIG.containsKey(propertiesName)==false){
-				SAML_CACHE_CONFIG.put(propertiesName, p);
+			if(!samlCacheConfig.containsKey(propertiesName)){
+				samlCacheConfig.put(propertiesName, p);
 			}
 		}finally {
 			semaphore.release("addSamlConfig");
@@ -94,6 +94,12 @@ public class SAMLBuilderConfig {
 			}
 		}
 	}
+
+	private static final String SAML_CONFIG_BUILD_PROPERTY_PREFIX = "SAML Config Builder: property [";
+	private static final String SAML_CONFIG_BUILD_REQUIRED_PROPERTY_PREFIX = "SAML Config Builder: required property [";
+	private static final String SAML_CONFIG_BUILD_PROPERTY_OR = "] or [";
+	private static final String SAML_CONFIG_BUILD_PROPERTY_IF_USE = "] if use property [";
+	
 	public static SAMLBuilderConfig getSamlConfig(Properties p, RequestInfo requestInfoParam) throws IOException {
 		
 		String propertiesName = p.getProperty(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_CONFIG_NAME);
@@ -103,7 +109,7 @@ public class SAMLBuilderConfig {
     	
     	boolean cacheConfig = isTrue(p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_CACHE, false);
     	if(cacheConfig && propertiesName==null) {
-    		throw new IOException("SAML Config Builder: property ["+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_CONFIG_NAME+"] not found");
+    		throw new IOException(SAML_CONFIG_BUILD_PROPERTY_PREFIX+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_CONFIG_NAME+"] not found");
     	}
 		
     	RequestInfo requestInfo = null;
@@ -112,10 +118,9 @@ public class SAMLBuilderConfig {
     		requestInfo = requestInfoParam;
     	}
     	
-    	if(cacheConfig) {
-			if(SAML_CACHE_CONFIG.containsKey(propertiesName)){
-				return SAML_CACHE_CONFIG.get(propertiesName);
-			}
+    	if(cacheConfig &&
+			samlCacheConfig.containsKey(propertiesName)){
+    		return samlCacheConfig.get(propertiesName);
     	}
 		try{
 			SAMLBuilderConfig config = new SAMLBuilderConfig(p, requestInfo);
@@ -156,7 +161,7 @@ public class SAMLBuilderConfig {
 		}
 		else{
 			if(required){
-				throw new IOException("SAML Config Builder: property ["+name+"] not found");
+				throw new IOException(SAML_CONFIG_BUILD_PROPERTY_PREFIX+name+"] not found");
 			}
 			else{
 				return null;
@@ -190,6 +195,7 @@ public class SAMLBuilderConfig {
 	private String signAssertionCryptoPropRefId = null;
 	private String signAssertionCryptoPropCustomKeystoreType = null;
 	private String signAssertionCryptoPropCustomKeystoreFile = null;
+	private String signAssertionCryptoPropCustomKeystoreBYOKPolicy = null;
 	private String signAssertionCryptoPropCustomKeystorePassword = null;
     private String signAssertionIssuerKeyPassword = null;
     private String signAssertionIssuerKeyName = null;
@@ -209,13 +215,14 @@ public class SAMLBuilderConfig {
 	private String subjectConfirmationDataAddress;
 	private String subjectConfirmationDataInResponseTo;
 	private String subjectConfirmationDataRecipient;
-	private Crypto subjectConfirmationMethod_holderOfKey_crypto = null;
-	private String subjectConfirmationMethod_holderOfKey_cryptoPropertiesFile = null;
-	private String subjectConfirmationMethod_holderOfKey_cryptoPropertiesRefId = null;
-	private String subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreType = null;
-	private String subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreFile = null;
-	private String subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystorePassword = null;
-	private String subjectConfirmationMethod_holderOfKey_cryptoCertificateAlias = null;
+	private Crypto subjectConfirmationMethodHolderOfKeyCrypto = null;
+	private String subjectConfirmationMethodHolderOfKeyCryptoPropertiesFile = null;
+	private String subjectConfirmationMethodHolderOfKeyCryptoPropertiesRefId = null;
+	private String subjectConfirmationMethodHolderOfKeyCryptoPropertiesCustomKeystoreType = null;
+	private String subjectConfirmationMethodHolderOfKeyCryptoPropertiesCustomKeystoreFile = null;
+	private String subjectConfirmationMethodHolderOfKeyCryptoPropertiesCustomKeystoreBYOKPolicy = null;
+	private String subjectConfirmationMethodHolderOfKeyCryptoPropertiesCustomKeystorePassword = null;
+	private String subjectConfirmationMethodHolderOfKeyCryptoCertificateAlias = null;
 	
 	// Conditions
 	private boolean conditionsEnabled = true;
@@ -234,7 +241,7 @@ public class SAMLBuilderConfig {
 	private String authnSubjectLocalityDnsAddress;
 	
 	// Attribute
-	private List<SAMLBuilderConfigAttribute> attributes = new ArrayList<SAMLBuilderConfigAttribute>();
+	private List<SAMLBuilderConfigAttribute> attributes = new ArrayList<>();
 	
 	public SAMLBuilderConfig(Properties p, RequestInfo requestInfo) throws IOException{
 		this.p = p;
@@ -245,20 +252,20 @@ public class SAMLBuilderConfig {
 		
 		// Version
 		boolean saml2 = false;
-		String version = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION, true);
-		if(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION_10.equals(version)){
+		String versionP = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION, true);
+		if(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION_10.equals(versionP)){
 			this.version = Version.SAML_10;
 		}
 		else 
-		if(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION_11.equals(version)){
+		if(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION_11.equals(versionP)){
 			this.version = Version.SAML_11;
 		}
-		else if(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION_20.equals(version)){
+		else if(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION_20.equals(versionP)){
 			this.version = Version.SAML_20;
 			saml2 = true;
 		}
 		else{
-			throw new IOException("SAML Config Builder: property ["+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION+"] not supported");
+			throw new IOException(SAML_CONFIG_BUILD_PROPERTY_PREFIX+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION+"] not supported");
 		}
 		
 		// Issuer
@@ -278,14 +285,15 @@ public class SAMLBuilderConfig {
 			this.signAssertionCryptoPropRefId = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_REF_ID, false);
 			this.signAssertionCryptoPropCustomKeystoreType = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_TYPE, false);
 			this.signAssertionCryptoPropCustomKeystoreFile =  getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_FILE, false);
+			this.signAssertionCryptoPropCustomKeystoreBYOKPolicy =  getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_BYOK_POLICY, false);
 			this.signAssertionCryptoPropCustomKeystorePassword =  getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_PASSWORD, false);
 			if(this.signAssertionCryptoPropFile==null && this.signAssertionCryptoPropRefId==null && this.signAssertionCryptoPropCustomKeystoreFile==null) {
-				throw new IOException("SAML Config Builder: required property ["+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_FILE+"] or ["+
-										SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_REF_ID+"] or ["+
+				throw new IOException(SAML_CONFIG_BUILD_REQUIRED_PROPERTY_PREFIX+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_FILE+SAML_CONFIG_BUILD_PROPERTY_OR+
+										SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_REF_ID+SAML_CONFIG_BUILD_PROPERTY_OR+
 										SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_FILE+"]");
 			}
 			if(this.signAssertionCryptoPropCustomKeystoreFile!=null && this.signAssertionCryptoPropCustomKeystorePassword==null) {
-				throw new IOException("SAML Config Builder: required property ["+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_PASSWORD+"] if use property ["+
+				throw new IOException(SAML_CONFIG_BUILD_REQUIRED_PROPERTY_PREFIX+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_PASSWORD+SAML_CONFIG_BUILD_PROPERTY_IF_USE+
 						SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_FILE+"]");
 			}
 			this.signAssertionIssuerKeyName = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_KEY_NAME, true);
@@ -324,21 +332,22 @@ public class SAMLBuilderConfig {
 		this.subjectConfirmationDataRecipient = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_DATA_RECIPIENT, false);
 		
 		if(holderOfKey){
-			this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesFile = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_FILE, false);
-			this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesRefId = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_REF_ID, false);
-			this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreType = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_TYPE, false);
-			this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreFile =  getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_FILE, false);
-			this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystorePassword =  getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_PASSWORD, false);
-			if(this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesFile==null && this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesRefId==null && this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreFile==null) {
-				throw new IOException("SAML Config Builder: required property ["+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_FILE+"] or ["+
-										SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_REF_ID+"] or ["+
+			this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesFile = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_FILE, false);
+			this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesRefId = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_REF_ID, false);
+			this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesCustomKeystoreType = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_TYPE, false);
+			this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesCustomKeystoreFile =  getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_FILE, false);
+			this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesCustomKeystoreBYOKPolicy = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_BYOK_POLICY, false);
+			this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesCustomKeystorePassword =  getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_PASSWORD, false);
+			if(this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesFile==null && this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesRefId==null && this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesCustomKeystoreFile==null) {
+				throw new IOException(SAML_CONFIG_BUILD_REQUIRED_PROPERTY_PREFIX+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_FILE+SAML_CONFIG_BUILD_PROPERTY_OR+
+										SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_REF_ID+SAML_CONFIG_BUILD_PROPERTY_OR+
 										SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_FILE+"]");
 			}
-			if(this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreFile!=null && this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystorePassword==null) {
-				throw new IOException("SAML Config Builder: required property ["+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_PASSWORD+"] if use property ["+
+			if(this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesCustomKeystoreFile!=null && this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesCustomKeystorePassword==null) {
+				throw new IOException(SAML_CONFIG_BUILD_REQUIRED_PROPERTY_PREFIX+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_PASSWORD+SAML_CONFIG_BUILD_PROPERTY_IF_USE+
 						SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_FILE+"]");
 			}
-			this.subjectConfirmationMethod_holderOfKey_cryptoCertificateAlias = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_ALIAS, true);
+			this.subjectConfirmationMethodHolderOfKeyCryptoCertificateAlias = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_ALIAS, true);
 		}
 		
 		
@@ -379,7 +388,7 @@ public class SAMLBuilderConfig {
 				}
 			}
 			else {
-				throw new IOException("SAML Config Builder: required property ["+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_AUTHN_STATEMENT_DATA_INSTANT_FORMAT+"] if use property ["+
+				throw new IOException(SAML_CONFIG_BUILD_REQUIRED_PROPERTY_PREFIX+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_AUTHN_STATEMENT_DATA_INSTANT_FORMAT+SAML_CONFIG_BUILD_PROPERTY_IF_USE+
 						SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_AUTHN_STATEMENT_DATA_INSTANT_VALUE+"]");
 			}
 		}
@@ -403,7 +412,7 @@ public class SAMLBuilderConfig {
 				}
 			}
 			else {
-				throw new IOException("SAML Config Builder: required property ["+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_AUTHN_STATEMENT_DATA_NOT_ON_OR_AFTER_FORMAT+"] if use property ["+
+				throw new IOException(SAML_CONFIG_BUILD_REQUIRED_PROPERTY_PREFIX+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_AUTHN_STATEMENT_DATA_NOT_ON_OR_AFTER_FORMAT+SAML_CONFIG_BUILD_PROPERTY_IF_USE+
 						SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_AUTHN_STATEMENT_DATA_NOT_ON_OR_AFTER_VALUE+"]");
 			}
 		}
@@ -429,7 +438,7 @@ public class SAMLBuilderConfig {
 			Enumeration<?> enAttributes = pAttribute.keys();
 			if(enAttributes!=null){
 				while (enAttributes.hasMoreElements()) {
-					Object objectName = (Object) enAttributes.nextElement();
+					Object objectName = enAttributes.nextElement();
 					if(objectName instanceof String){
 						String key = (String) objectName;
 						if(key.endsWith(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_VALUE)){
@@ -792,13 +801,14 @@ public class SAMLBuilderConfig {
 					CryptoFactory.getInstance(this.signAssertionCryptoPropFile);
 			}
 			else if(this.signAssertionCryptoPropCustomKeystoreFile!=null) {
-				Properties p = SAMLUtilities.convertToMerlinProperties(this.signAssertionCryptoPropCustomKeystoreType, 
+				Properties pMerlin = SAMLUtilities.convertToMerlinProperties(this.signAssertionCryptoPropCustomKeystoreType, 
 						this.signAssertionCryptoPropCustomKeystoreFile, this.signAssertionCryptoPropCustomKeystorePassword,
-						this.useKeystoreCache);
+						this.useKeystoreCache,
+						this.signAssertionCryptoPropCustomKeystoreBYOKPolicy);
 				if(this.requestInfo!=null) {
-					p.put(KeystoreConstants.PROPERTY_REQUEST_INFO, this.requestInfo);
+					pMerlin.put(KeystoreConstants.PROPERTY_REQUEST_INFO, this.requestInfo);
 				}
-				this.signAssertionCrypto = CryptoFactory.getInstance(p);
+				this.signAssertionCrypto = CryptoFactory.getInstance(pMerlin);
 			}
 			else {
 				this.signAssertionCrypto = 
@@ -857,35 +867,36 @@ public class SAMLBuilderConfig {
 	public String getSubjectConfirmationDataRecipient() {
 		return this.subjectConfirmationDataRecipient;
 	}
-	public Crypto getSubjectConfirmationMethod_holderOfKey_crypto() throws Exception {
-		if(this.subjectConfirmationMethod_holderOfKey_crypto==null){
-			initSubjectConfirmationMethod_holderOfKey_crypto();
+	public Crypto getSubjectConfirmationMethodHolderOfKeyCrypto() throws Exception {
+		if(this.subjectConfirmationMethodHolderOfKeyCrypto==null){
+			initSubjectConfirmationMethodHolderOfKeyCrypto();
 		}
-		return this.subjectConfirmationMethod_holderOfKey_crypto;
+		return this.subjectConfirmationMethodHolderOfKeyCrypto;
 	}
-	private synchronized void initSubjectConfirmationMethod_holderOfKey_crypto() throws Exception{
-		if(this.subjectConfirmationMethod_holderOfKey_crypto==null){
-			if(this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesFile!=null) {
-				this.subjectConfirmationMethod_holderOfKey_crypto = 
-					CryptoFactory.getInstance(this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesFile);	
+	private synchronized void initSubjectConfirmationMethodHolderOfKeyCrypto() throws Exception{
+		if(this.subjectConfirmationMethodHolderOfKeyCrypto==null){
+			if(this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesFile!=null) {
+				this.subjectConfirmationMethodHolderOfKeyCrypto = 
+					CryptoFactory.getInstance(this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesFile);	
 			}
-			else if(this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreFile!=null) {
-				Properties p = SAMLUtilities.convertToMerlinProperties(this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreType, 
-						this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreFile, this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystorePassword,
-						this.useKeystoreCache);
+			else if(this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesCustomKeystoreFile!=null) {
+				Properties pMerlin = SAMLUtilities.convertToMerlinProperties(this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesCustomKeystoreType, 
+						this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesCustomKeystoreFile, this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesCustomKeystorePassword,
+						this.useKeystoreCache,
+						this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesCustomKeystoreBYOKPolicy);
 				if(this.requestInfo!=null) {
-					p.put(KeystoreConstants.PROPERTY_REQUEST_INFO, this.requestInfo);
+					pMerlin.put(KeystoreConstants.PROPERTY_REQUEST_INFO, this.requestInfo);
 				}
-				this.subjectConfirmationMethod_holderOfKey_crypto = CryptoFactory.getInstance(p);
+				this.subjectConfirmationMethodHolderOfKeyCrypto = CryptoFactory.getInstance(pMerlin);
 			}
 			else {
-				this.subjectConfirmationMethod_holderOfKey_crypto = 
+				this.subjectConfirmationMethodHolderOfKeyCrypto = 
 						CryptoFactory.getInstance(this.p);
 			}
 		}
 	}
-	public String getSubjectConfirmationMethod_holderOfKey_cryptoCertificateAlias() {
-		return this.subjectConfirmationMethod_holderOfKey_cryptoCertificateAlias;
+	public String getSubjectConfirmationMethodHolderOfKeyCryptoCertificateAlias() {
+		return this.subjectConfirmationMethodHolderOfKeyCryptoCertificateAlias;
 	}
 	
 	// Conditions

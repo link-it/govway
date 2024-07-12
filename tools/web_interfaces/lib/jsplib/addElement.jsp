@@ -50,11 +50,14 @@ String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CS
 <title><%= gd.getTitle() %></title>
 <link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="css/materialIcons/material-icons-fontface.css" type="text/css">
+<link rel="stylesheet" href="css/materialSymbols/material-symbols-fontface.css" type="text/css">
 <link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
 <link rel="stylesheet" href="css/materialIcons.css" type="text/css">
+<link rel="stylesheet" href="css/materialSymbols.css" type="text/css">
 <link rel="stylesheet" href="css/ui.core.css" type="text/css">
 <link rel="stylesheet" href="css/ui.theme.css" type="text/css">
 <link rel="stylesheet" href="css/ui.dialog.css" type="text/css">
+<link rel="stylesheet" href="css/ui.resizable.css" type="text/css">
 <link rel="stylesheet" href="css/ui.slider.css" type="text/css">
 <link rel="stylesheet" href="css/ui.datepicker.css" type="text/css">
 <link rel="stylesheet" href="css/bootstrap-tagsinput.css" type="text/css">
@@ -74,6 +77,13 @@ var path = '<%= request.getContextPath()%>';
 <script type="text/javascript" src="js/PostBack.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/utils.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/array-utils.js" nonce="<%= randomNonce %>"></script>
+<% if(
+// TODO verifica se serve questa gestione
+		(customListViewName == null || "".equals(customListViewName))
+	|| (!"configurazione".equals(customListViewName) && !"connettoriMultipli".equals(customListViewName))
+	){ %>
+<script type="text/javascript" src="js/ui.resizable.js" nonce="<%= randomNonce %>"></script>
+<% }%>
 <script type="text/javascript" src="js/typeahead.bundle.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/bootstrap-tagsinput.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/jquery.searchabledropdown-1.0.8.min.js" nonce="<%= randomNonce %>"></script>
@@ -139,9 +149,6 @@ function CheckDati() {
 		<jsp:include page="/jsplib/templateFooter.jsp" flush="true" />
 	</tbody>
 </table>
-<div id="dataElementInfoModal" title="Info">
-	<div id="dataElementInfoModalBody" class="contenutoModal"></div>
-</div>
 <jsp:include page="/jsplib/conferma.jsp" flush="true" />
 </body>
 </html>

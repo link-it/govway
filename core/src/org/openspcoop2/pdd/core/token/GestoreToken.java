@@ -51,6 +51,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
+import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.pdd.core.token.attribute_authority.AttributeAuthorityDynamicParameters;
 import org.openspcoop2.pdd.core.token.attribute_authority.AttributeAuthorityProvider;
 import org.openspcoop2.pdd.core.token.attribute_authority.EsitoRecuperoAttributi;
@@ -1672,7 +1673,8 @@ public class GestoreToken {
 	public static void forwardToken(Logger log, String idTransazione, AbstractDatiInvocazione datiInvocazione, EsitoPresenzaToken esitoPresenzaToken, 
 			EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo, 
 			InformazioniToken informazioniTokenNormalizzate,
-			boolean portaDelegata) throws Exception {
+			boolean portaDelegata,
+			PdDContext pddContext, Busta busta) throws Exception {
 		
 		PolicyGestioneToken policyGestioneToken = datiInvocazione.getPolicyGestioneToken();
 			
@@ -1734,7 +1736,8 @@ public class GestoreToken {
 				
 				if(jwtSecurity!=null) {
 					boolean throwError = true;
-    				JOSEUtils.injectKeystore(datiInvocazione.getRequestInfo(), jwtSecurity, log, throwError); // serve per leggere il keystore dalla cache
+					Map<String,Object> dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(busta, datiInvocazione.getRequestInfo(), pddContext, log);
+    				JOSEUtils.injectKeystore(datiInvocazione.getRequestInfo(), dynamicMap, jwtSecurity, log, throwError); // serve per leggere il keystore dalla cache
 				}
 				
 				forwardValidazioneJWT = policyGestioneToken.isForwardTokenInformazioniRaccolteValidazioneJWT();

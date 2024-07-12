@@ -86,10 +86,13 @@ public final class PorteDelegateWSResponseAdd extends Action {
 			int idInt = Integer.parseInt(id);
 			String idsogg = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			String nome = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-			String valore = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE);
+			String valore = porteDelegateHelper.getLockedParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE,false);
 			String idAsps = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
 			if(idAsps == null)
 				idAsps = "";
+			
+			// Wrap value
+			valore = porteDelegateHelper.wrapValoreProprieta(valore);
 			
 			String idFruizione = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
 			if(idFruizione == null)
@@ -138,7 +141,7 @@ public final class PorteDelegateWSResponseAdd extends Action {
 
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteDelegateHelper.addNomeValoreToDati(TipoOperazione.ADD,dati, "", "",false);
+				dati = porteDelegateHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.ADD,dati, nome, valore,false);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
@@ -162,7 +165,7 @@ public final class PorteDelegateWSResponseAdd extends Action {
 
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteDelegateHelper.addNomeValoreToDati(TipoOperazione.ADD,dati, nome, valore,false);
+				dati = porteDelegateHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.ADD,dati, nome, valore,false);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);

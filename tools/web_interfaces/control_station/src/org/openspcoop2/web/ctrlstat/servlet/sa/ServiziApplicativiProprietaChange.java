@@ -92,7 +92,10 @@ public final class ServiziApplicativiProprietaChange extends Action {
 			String provider = saHelper.getParametroLong(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			String dominio = saHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO);	
 			String nome = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_NOME);
-			String valore = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE);
+			String valore = saHelper.getLockedParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE, false);
+			
+			// Wrap value
+			valore = saHelper.wrapValoreProprieta(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE, valore);
 
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
 			
@@ -156,13 +159,15 @@ public final class ServiziApplicativiProprietaChange extends Action {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
-				for (int i = 0; i < sa.sizeProprietaList(); i++) {
-					Proprieta ssp = sa.getProprieta(i);
-					if (nome.equals(ssp.getNome())) {
-						if(ssp.getValore()!=null){
-							valore = ssp.getValore();
+				if(valore==null){
+					for (int i = 0; i < sa.sizeProprietaList(); i++) {
+						Proprieta ssp = sa.getProprieta(i);
+						if (nome.equals(ssp.getNome())) {
+							if(ssp.getValore()!=null){
+								valore = ssp.getValore();
+							}
+							break;
 						}
-						break;
 					}
 				}
 

@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.token.AbstractPolicyToken;
@@ -114,7 +113,8 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 	}
 	
 	public boolean isEndpointHttps() {
-		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.AA_AUTH_SSL_STATO);	
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.AA_AUTH_SSL_STATO)
+				|| isHttpsAuthentication(); // anche solo se è abilitato httpsAuthentication, di fatto è abilitato https	
 	}
 	public boolean isHttpsAuthentication() {
 		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.AA_AUTH_SSL_CLIENT_STATO);	
@@ -276,6 +276,9 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 	public String getRequestJwtSignKeystorePassword() {
 		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_KEYSTORE_PASSWORD);
 	}
+	public String getRequestJwtSignKeystoreByokPolicy() {
+		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_KEYSTORE_BYOK_POLICY);
+	}
 	public String getRequestJwtSignKeyAlias() {
 		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_KEY_ALIAS);
 	}
@@ -305,7 +308,7 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 		if(this.properties!=null) {
 			Properties p = this.properties.get(Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID);
 			if(p!=null) {
-				return p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+				return p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE);
 			}
 		}
 		return null;

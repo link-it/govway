@@ -42,6 +42,7 @@ import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.ForwardProxyConfigurazione;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.keystore.GestoreKeystoreCaching;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -327,15 +328,22 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 					this.sslContextProperties.setSbDebug(sbDebug);
 				}
 				this.sslContextProperties.setLogger(this.logger.getLogger());
+				Map<String,Object> dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(this.busta, this.requestInfo, this.getPddContext(), 
+						this.logger!=null ? this.logger.getLogger() : null);
+				this.sslContextProperties.setDynamicMap(dynamicMap);
 				return GestoreKeystoreCaching.getSSLSocketFactory(this.requestInfo, this.sslContextProperties).getSslSocketFactory(this.requestInfo);
 			}catch(Exception e) {
-				this.logger.error("Lettura SSLSocketFactory '"+this.sslContextProperties.toString()+"' dalla cache fallita: "+e.getMessage(),e);
+				if(this.logger!=null) {
+					this.logger.error("Lettura SSLSocketFactory '"+this.sslContextProperties.toString()+"' dalla cache fallita: "+e.getMessage(),e);
+				}
 				throw new UtilsException(e.getMessage(),e);
 			}finally {
-				if(sbError!=null && sbError.length()>0) {
+				if(sbError!=null && sbError.length()>0 &&
+						this.logger!=null) {
 					this.logger.error(sbError.toString());
 				}
-				if(sbDebug!=null && sbDebug.length()>0) {
+				if(sbDebug!=null && sbDebug.length()>0 &&
+						this.logger!=null) {
 					this.logger.info(sbDebug.toString(), false);
 				}
 			}

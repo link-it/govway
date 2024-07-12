@@ -119,6 +119,9 @@ import org.openspcoop2.pdd.core.StatoServiziPdD;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.GestoreLoadBalancerCaching;
+import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
+import org.openspcoop2.pdd.core.byok.DriverBYOK;
+import org.openspcoop2.pdd.core.byok.DriverBYOKUtilities;
 import org.openspcoop2.pdd.core.cache.GestoreCacheCleaner;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneGatewayControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
@@ -233,11 +236,13 @@ import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStreamFactory;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.json.YamlSnakeLimits;
+import org.openspcoop2.utils.properties.MapProperties;
 import org.openspcoop2.utils.random.RandomUtilities;
 import org.openspcoop2.utils.resources.FileSystemMkdirConfig;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.security.ProviderUtils;
 import org.openspcoop2.utils.semaphore.Semaphore;
 import org.openspcoop2.utils.semaphore.SemaphoreConfiguration;
 import org.openspcoop2.utils.semaphore.SemaphoreMapping;
@@ -262,8 +267,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	/** Logger utilizzato per segnalazione di errori. */
 	private static final String LOG_CATEGORY_STARTUP = "govway.startup";
 	private static Logger log = LoggerWrapperFactory.getLogger(LOG_CATEGORY_STARTUP);
-	private static void logStartupInfo(String msg) {
+	public static void logStartupInfo(String msg) {
 		OpenSPCoop2Startup.log.info(msg);
+	}
+	public static void logStartupError(String msg, Exception e) {
+		OpenSPCoop2Startup.log.error(msg,e);
 	}
 
 	/** Variabile che indica il Nome del modulo attuale di OpenSPCoop */
@@ -409,7 +417,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			/* ------------ LogConsole -------------------- */
 			// Inizializza lo startup log, utile per web spheare
-			if(OpenSPCoop2Logger.initializeLogConsole(OpenSPCoop2Startup.log) == false){
+			if(!OpenSPCoop2Logger.initializeLogConsole(OpenSPCoop2Startup.log)){
 				return;
 			}
 			OpenSPCoop2Startup.log = LoggerWrapperFactory.getLogger(LOG_CATEGORY_STARTUP);
@@ -428,7 +436,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 
 			/* ------------- Inizializzo ClassNameProperties di OpenSPCoop --------------- */
-			if( ClassNameProperties.initialize(true) == false){
+			if( !ClassNameProperties.initialize(true)){
 				this.logError("Riscontrato errore durante l'inizializzazione del reader di 'govway.classRegistry.properties'");
 				return;
 			}
@@ -485,12 +493,169 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 
 
-			/* ------------- Verifica Proprieta' di OpenSPCoop --------------- */
-			if( OpenSPCoop2Properties.initialize(openspcoopP) == false){
+			/* ------------- Proprieta' di OpenSPCoop --------------- */
+			if( !OpenSPCoop2Properties.initialize(openspcoopP)){
 				this.logError("Riscontrato errore durante l'inizializzazione del reader di 'govway.properties'");
 				return;
 			}
 			OpenSPCoop2Properties propertiesReader = OpenSPCoop2Properties.getInstance();
+			// Di seguito vengono attivati gli engine che richiedono di essere caricati prima della validazione del file di proprietà
+			
+			
+			
+			
+			
+			
+			
+			/* ----------- Map (environment) ------------ */
+			try {
+				String mapConfig = propertiesReader.getEnvMapConfig();
+				if(StringUtils.isNotEmpty(mapConfig)) {
+					MapProperties.initialize(OpenSPCoop2Startup.log, mapConfig, propertiesReader.isEnvMapConfigRequired());
+					MapProperties mapProperties = MapProperties.getInstance();
+					mapProperties.initEnvironment();
+					String msgInit = "Environment inizializzato con le variabili definite nel file '"+mapConfig+"'"+
+							"\n\tJavaProperties: "+mapProperties.getJavaMap().keys()+
+							"\n\tEnvProperties: "+mapProperties.getEnvMap().keys()+
+							"\n\tObfuscateMode: "+mapProperties.getObfuscateModeDescription()+
+							"\n\tObfuscatedJavaKeys: "+mapProperties.getObfuscatedJavaKeys()+
+							"\n\tObfuscatedEnvKeys: "+mapProperties.getObfuscatedEnvKeys();
+					OpenSPCoop2Startup.log.info(msgInit);
+				}
+			} catch (Exception e) {
+				OpenSPCoop2Startup.log.error("Inizializzazione ambiente non riuscita: "+e.getMessage(),e);
+				return;
+			}
+			
+			
+			
+			
+			
+			
+			
+			/* ----------- BouncyCastle ------------ */
+			if(propertiesReader.isLoadBouncyCastle()){ 
+				ProviderUtils.addBouncyCastleAfterSun(true);
+				OpenSPCoop2Startup.logStartupInfo("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
+				
+				if(propertiesReader.getBouncyCastleSecureRandomAlgorithm()!=null) {
+			        try{
+				        SecureRandom secureRandom = SecureRandom.getInstance(propertiesReader.getBouncyCastleSecureRandomAlgorithm());
+				        CryptoServicesRegistrar.setSecureRandom(secureRandom);
+				        OpenSPCoop2Startup.logStartupInfo("Aggiunto default SecureRandom '"+secureRandom.getAlgorithm()+"' in CryptoServicesRegistrar di Bouncycastle");
+			        }catch(Exception e){
+						this.logError("Inizializzazione SecureRandom in BouncyCastle fallita",e);
+						return;
+					}
+				}
+				else {
+					SecureRandom secureRandom = CryptoServicesRegistrar.getSecureRandom();
+					if(secureRandom!=null) {
+						OpenSPCoop2Startup.logStartupInfo("SecureRandom used in CryptoServicesRegistrar di Bouncycastle: '"+secureRandom.getAlgorithm()+"'");
+					}
+				}				
+			}
+			
+			
+			
+			
+			
+			
+			/* ----------- Gestori HSM ------------ */
+			try {
+				String hsmConfig = propertiesReader.getHSMConfig();
+				if(StringUtils.isNotEmpty(hsmConfig)) {
+					File f = new File(hsmConfig);
+					HSMManager.init(f, propertiesReader.isHSMConfigRequired(), OpenSPCoop2Startup.log, true);
+					HSMManager hsmManager = HSMManager.getInstance();
+					hsmManager.providerInit(OpenSPCoop2Startup.log, propertiesReader.isHSMConfigUniqueProviderInstance());
+					String msgInit = "Gestore HSM inizializzato; keystore registrati: "+hsmManager.getKeystoreTypes();
+					OpenSPCoop2Startup.log.info(msgInit);
+				}
+			} catch (Exception e) {
+				OpenSPCoop2Startup.log.error("Inizializzazione Gestore HSM non riuscita: "+e.getMessage(),e);
+				return;
+			}
+			
+			
+			
+			
+			
+			
+			/* ----------- Gestori OCSP ------------ */
+			try {
+				String ocspConfig = propertiesReader.getOCSPConfig();
+				if(StringUtils.isNotEmpty(ocspConfig)) {
+					File f = new File(ocspConfig);
+					OCSPManager.init(f, propertiesReader.isOCSPConfigRequired(), propertiesReader.isOCSPConfigLoadDefault(), OpenSPCoop2Startup.log);
+					OCSPManager ocspManager = OCSPManager.getInstance();
+					String msgInit = "Gestore OCSP inizializzato; policy registrate: "+ocspManager.getOCSPConfigTypes();
+					OpenSPCoop2Startup.log.info(msgInit);
+				}
+			} catch (Exception e) {
+				OpenSPCoop2Startup.log.error("Inizializzazione Gestore OCSP non riuscita: "+e.getMessage(),e);
+				return;
+			}
+			
+			
+			
+			
+			
+			
+			/* ----------- Gestori BYOK ------------ */
+			BYOKManager byokManager = null;
+			try {
+				String byokConfig = propertiesReader.getBYOKConfig();
+				if(StringUtils.isNotEmpty(byokConfig)) {
+					File f = new File(byokConfig);
+					BYOKManager.init(f, propertiesReader.isBYOKConfigRequired(), OpenSPCoop2Startup.log);
+					byokManager = BYOKManager.getInstance();
+					String msgInit = "Gestore BYOK inizializzato;"+
+							"\n\tHSM registrati: "+byokManager.getKeystoreTypes()+
+							"\n\tSecurityEngine registrati: "+byokManager.getSecurityEngineTypes()+
+							"\n\tGovWaySecurityEngine: "+byokManager.getSecurityEngineGovWayDescription();
+					OpenSPCoop2Startup.log.info(msgInit);
+				}
+			} catch (Exception e) {
+				OpenSPCoop2Startup.log.error("Inizializzazione Gestore BYOK non riuscita: "+e.getMessage(),e);
+				return;
+			}
+			
+	
+			
+			
+			
+			
+			/* ----------- Secrets (environment) ------------ */
+			try {
+				String secretsConfig = propertiesReader.getBYOKEnvSecretsConfig();
+				if(byokManager!=null && StringUtils.isNotEmpty(secretsConfig)) {
+					BYOKMapProperties.initialize(OpenSPCoop2Startup.log, secretsConfig, propertiesReader.isBYOKEnvSecretsConfigRequired(), 
+							true,
+							null, false);
+					BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
+					secretsProperties.setGovWayStarted(false);
+					secretsProperties.initEnvironment();
+					boolean existsUnwrapPropertiesAfterGovWayStartup = secretsProperties.isExistsUnwrapPropertiesAfterGovWayStartup();
+					String msgInit = "Environment inizializzato con i secrets definiti nel file '"+secretsConfig+"'"+
+							"\n\tJavaProperties: "+secretsProperties.getJavaMap().keys()+
+							"\n\tEnvProperties: "+secretsProperties.getEnvMap().keys()+
+							"\n\tObfuscateMode: "+secretsProperties.getObfuscateModeDescription()+
+							"\n\tExistsUnwrapPropertiesAfterGovWayStartup: "+existsUnwrapPropertiesAfterGovWayStartup;
+					OpenSPCoop2Startup.log.info(msgInit);
+				}
+			} catch (Exception e) {
+				OpenSPCoop2Startup.log.error("Inizializzazione ambiente (secrets) non riuscita: "+e.getMessage(),e);
+				return;
+			}
+			
+			
+			
+			
+			
+			
+			
+			/* ------------- Verifica Proprieta' di OpenSPCoop --------------- */
 			try{
 				propertiesReader.checkOpenSPCoopHome();
 			}catch(Exception e){
@@ -501,17 +666,17 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 			classNameReader.refreshLocalProperties(classNameP,propertiesReader.getRootDirectory()); // prima della validazione
 			if(o!=null){
-				if(propertiesReader.validaConfigurazione((java.lang.ClassLoader)o[0]) == false){
+				if(!propertiesReader.validaConfigurazione((java.lang.ClassLoader)o[0])){
 					return;
 				}
-				if(classNameReader.validaConfigurazione((java.lang.ClassLoader)o[0], propertiesReader.getDatabaseType()) == false){
+				if(!classNameReader.validaConfigurazione((java.lang.ClassLoader)o[0], propertiesReader.getDatabaseType())){
 					return;
 				}
 			}else{
-				if(propertiesReader.validaConfigurazione(null) == false){
+				if(!propertiesReader.validaConfigurazione(null)){
 					return;
 				}
-				if(classNameReader.validaConfigurazione(null, propertiesReader.getDatabaseType()) == false){
+				if(!classNameReader.validaConfigurazione(null, propertiesReader.getDatabaseType())){
 					return;
 				}
 			}
@@ -582,9 +747,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			 *  per risolvere il problema java.lang.NoSuchMethodError: org.apache.xml.security.utils.I18n.init 
 			 */
 			// NOTA: il caricamento di BouncyCastleProvider DEVE essere effettuato prima dell'inizializzazione 'org.apache.wss4j.dom.engine.WSSConfig.init' 
-			if(propertiesReader.isLoadBouncyCastle()){ 
-				//Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-				Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 2); // lasciare alla posizione 1 il provider 'SUN'
+			/**Spostato sopra prima del BYOK/HSM
+			 * if(propertiesReader.isLoadBouncyCastle()){ 
+				ProviderUtils.addBouncyCastleAfterSun(true);
 				OpenSPCoop2Startup.logStartupInfo("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
 				
 				if(propertiesReader.getBouncyCastleSecureRandomAlgorithm()!=null) {
@@ -603,7 +768,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						OpenSPCoop2Startup.logStartupInfo("SecureRandom used in CryptoServicesRegistrar di Bouncycastle: '"+secureRandom.getAlgorithm()+"'");
 					}
 				}				
-			}
+			}*/
 			if(propertiesReader.isUseBouncyCastleProviderForCertificate()) {
 				OpenSPCoop2Startup.logStartupInfo("Add Bouncycastle in CertificateFactory");
 				CertificateFactory.setUseBouncyCastleProvider(true);
@@ -719,7 +884,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			boolean isInitializeLogger = false;
 			isInitializeLogger = OpenSPCoop2Logger.initialize(OpenSPCoop2Startup.log,propertiesReader.getRootDirectory(),loggerP,
 					propertiesReader.isAllarmiEnabled());
-			if(isInitializeLogger == false){
+			if(!isInitializeLogger){
 				return;
 			}
 			Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
@@ -2230,14 +2395,21 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 
 			// inizializzo registri
+			DriverBYOK driverBYOK = null;
+			try{
+				driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(logCore, false, true);
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Inizializzazione driver BYOK fallita");
+				return;
+			}
 			boolean isInitializeRegistro = 
 				RegistroServiziReader.initialize(accessoRegistro,
 						logCore,OpenSPCoop2Startup.log,propertiesReader.isControlloRisorseRegistriRaggiungibilitaTotale(),
 						propertiesReader.isReadObjectStatoBozza(),propertiesReader.getJNDIName_DataSource(),
 						propertiesReader.isDSOp2UtilsEnabled(), propertiesReader.isRisorseJMXAbilitate(),
 						propertiesReader.isConfigurazioneCache_RegistryPrefill(), propertiesReader.getCryptConfigAutenticazioneSoggetti(),
-						propertiesReader.getCacheTypeRegistry());
-			if(isInitializeRegistro == false){
+						propertiesReader.getCacheTypeRegistry(), driverBYOK);
+			if(!isInitializeRegistro){
 				msgDiag.logStartupError("Inizializzazione fallita","Accesso registro/i dei servizi");
 				return;
 			}
@@ -2251,12 +2423,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 
 			// Inizializza il reader del registro dei Servizi utilizzato nella configurazione
-//			try{
-//				configurazionePdDReader.initializeRegistroServiziReader();
-//			}catch(Exception e){
-//				msgDiag.logStartupError(e,"Inizializzazione Reader per il registro dei servizi utilizzato nella configurazione");
-//				return;
-//			}
+			/**try{
+				configurazionePdDReader.initializeRegistroServiziReader();
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Inizializzazione Reader per il registro dei servizi utilizzato nella configurazione");
+				return;
+			}*/
 
 
 			
@@ -2799,73 +2971,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
-			
-			/* ----------- Gestori HSM ------------ */
-			try {
-				String hsmConfig = propertiesReader.getHSMConfig();
-				if(StringUtils.isNotEmpty(hsmConfig)) {
-					File f = new File(hsmConfig);
-					HSMManager.init(f, propertiesReader.isHSMConfigRequired(), log, true);
-					HSMManager hsmManager = HSMManager.getInstance();
-					hsmManager.providerInit(logCore, propertiesReader.isHSMConfigUniqueProviderInstance());
-					String msgInit = "Gestore HSM inizializzato; keystore registrati: "+hsmManager.getKeystoreTypes();
-					log.info(msgInit);
-					logCore.info(msgInit);
-				}
-			} catch (Exception e) {
-				logCore.error("Inizializzazione Gestore HSM non riuscita: "+e.getMessage(),e);
-				msgDiag.logStartupError(e,"Inizializzazione Gestore HSM");
-				return;
-			}
-			
-			
-			
-			
-			
-			
-			/* ----------- Gestori OCSP ------------ */
-			try {
-				String ocspConfig = propertiesReader.getOCSPConfig();
-				if(StringUtils.isNotEmpty(ocspConfig)) {
-					File f = new File(ocspConfig);
-					OCSPManager.init(f, propertiesReader.isOCSPConfigRequired(), propertiesReader.isOCSPConfigLoadDefault(), log);
-					OCSPManager ocspManager = OCSPManager.getInstance();
-					String msgInit = "Gestore OCSP inizializzato; policy registrate: "+ocspManager.getOCSPConfigTypes();
-					log.info(msgInit);
-					logCore.info(msgInit);
-				}
-			} catch (Exception e) {
-				logCore.error("Inizializzazione Gestore OCSP non riuscita: "+e.getMessage(),e);
-				msgDiag.logStartupError(e,"Inizializzazione Gestore OCSP");
-				return;
-			}
-			
-			
-			
-			
-			
-			
-			/* ----------- Gestori BYOK ------------ */
-			try {
-				String byokConfig = propertiesReader.getBYOKConfig();
-				if(StringUtils.isNotEmpty(byokConfig)) {
-					File f = new File(byokConfig);
-					BYOKManager.init(f, propertiesReader.isBYOKConfigRequired(), log);
-					BYOKManager byokManager = BYOKManager.getInstance();
-					String msgInit = "Gestore BYOK inizializzato; keystore registrati: "+byokManager.getKeystoreTypes();
-					log.info(msgInit);
-					logCore.info(msgInit);
-				}
-			} catch (Exception e) {
-				logCore.error("Inizializzazione Gestore HSM non riuscita: "+e.getMessage(),e);
-				msgDiag.logStartupError(e,"Inizializzazione Gestore HSM");
-				return;
-			}
-			
-			
-			
-			
-		
+
 		
 			/* ----------- Inizializzazione Risorse JMX ------------ */
 			if( OpenSPCoop2Startup.this.gestoreRisorseJMX!=null ){
@@ -3880,6 +3986,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+
 
 
 

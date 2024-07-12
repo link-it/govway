@@ -199,6 +199,9 @@ public class PorteDelegateDumpConfigurazione extends Action {
 			
 			lstParam.add(new Parameter(labelPerPorta,  null));
 			
+			// imposto menu' contestuale
+			porteDelegateHelper.impostaComandiMenuContestualePD(idSoggFruitore, idAsps, idFruizione);
+			
 			// edit in progress
 			if (porteDelegateHelper.isEditModeInProgress()) {
 				ServletUtils.setPageDataTitle(pd, lstParam);

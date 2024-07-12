@@ -146,6 +146,9 @@ public class ModIConsoleCostanti {
     public static final String MODIPA_KEYSTORE_PASSWORD_LABEL = "Password";
 	public static final String MODIPA_KEYSTORE_PASSWORD_ID = ModICostanti.MODIPA_KEYSTORE_PASSWORD;
 	
+    public static final String MODIPA_KEYSTORE_BYOK_POLICY_LABEL = "BYOK Policy";
+	public static final String MODIPA_KEYSTORE_BYOK_POLICY_ID = ModICostanti.MODIPA_KEYSTORE_BYOK_POLICY;
+	
 	public static final String MODIPA_KEY_ALIAS_LABEL = CostantiLabel.MODIPA_KEY_ALIAS_LABEL;
 	public static final String MODIPA_KEY_ALIAS_ID = ModICostanti.MODIPA_KEY_ALIAS;
 	

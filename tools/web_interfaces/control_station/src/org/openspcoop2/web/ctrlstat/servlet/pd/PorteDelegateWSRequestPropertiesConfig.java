@@ -148,6 +148,8 @@ public class PorteDelegateWSRequestPropertiesConfig  extends Action {
 
 			lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG + " " + configurazione.getLabel() ,null));
 
+			// imposto menu' contestuale
+			porteDelegateHelper.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 			
 			if(porteDelegateHelper.isEditModeInProgress()){
 				// setto la barra del titolo

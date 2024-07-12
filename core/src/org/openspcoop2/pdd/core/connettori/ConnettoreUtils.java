@@ -55,6 +55,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -439,6 +440,36 @@ public class ConnettoreUtils {
 				sb.append(separator);
 				sb.append(bearerToken);
 			}
+			
+			String apiKey = getProperty(CostantiConnettori.CONNETTORE_APIKEY, connettore.getPropertyList());
+			if(apiKey!=null && StringUtils.isNotEmpty(apiKey)){
+				
+				String apiKeyHeader = getProperty(CostantiConnettori.CONNETTORE_APIKEY_HEADER, connettore.getPropertyList());
+				if(apiKeyHeader==null || StringUtils.isEmpty(apiKeyHeader)) {
+					apiKeyHeader = CostantiConnettori.DEFAULT_HEADER_API_KEY;
+				}
+				
+				sb.append(newLine);
+				sb.append(CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_API_KEY).append(" '").append(apiKeyHeader).append("'");
+				/**sb.append(separator);
+				sb.append(apiKey); Informazione sensibile*/
+				
+				String appId = getProperty(CostantiConnettori.CONNETTORE_APIKEY_APPID, connettore.getPropertyList());
+				if(appId!=null && StringUtils.isNotEmpty(appId)){
+					
+					String appIdHeader = getProperty(CostantiConnettori.CONNETTORE_APIKEY_APPID_HEADER, connettore.getPropertyList());
+					if(appIdHeader==null || StringUtils.isEmpty(appIdHeader)) {
+						appIdHeader = CostantiConnettori.DEFAULT_HEADER_APP_ID;
+					}
+					
+					sb.append(newLine);
+					sb.append(CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_API_KEY_APP_ID).append(" '").append(appIdHeader).append("'");
+					sb.append(separator);
+					sb.append(appId);
+					
+				}
+			}
+			
 		}
 		
 		if(TipiConnettore.HTTPS.getNome().equals(connettore.getTipo())){
@@ -484,7 +515,7 @@ public class ConnettoreUtils {
 					sb.append("(").append(trustType).append(") ").append(trustLocation);
 				}
 				
-				String trustCRL = getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs, connettore.getPropertyList());
+				String trustCRL = getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLS, connettore.getPropertyList());
 				if(trustCRL!=null) {
 					sb.append(newLine);
 					sb.append(CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLS);
@@ -526,6 +557,19 @@ public class ConnettoreUtils {
 					sb.append(CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEY_ALIAS);
 					sb.append(separator);
 					sb.append(keyAlias);
+				}
+				
+				String keyBYOK = getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY, connettore.getPropertyList());
+				if(keyBYOK!=null) {
+					sb.append(newLine);
+					sb.append(CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE_BYOK_POLICY);
+					sb.append(separator);
+					try {
+						String label = BYOKManager.getInstance().getKSMConfigByType(keyBYOK).getLabel();
+						sb.append((label!=null && StringUtils.isNotEmpty(label)) ? label : keyBYOK);
+					}catch(Exception t) {
+						sb.append(keyBYOK);	
+					}
 				}
 			}
 		}

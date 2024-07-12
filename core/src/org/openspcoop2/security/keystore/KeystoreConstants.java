@@ -77,6 +77,11 @@ public class KeystoreConstants {
 	public static final String PROPERTY_KEYSTORE_PATH = Merlin.OLD_PREFIX+Merlin.OLD_KEYSTORE_FILE; // vecchio modalita' utilizzata in 1.6.x
 	public static final String PROPERTY_KEYSTORE_FILE = Merlin.OLD_PREFIX+Merlin.KEYSTORE_FILE;
 
+	//	${PREFIX}.merlin.keystore.file.byok - The byok policy of the keystore
+
+	public static final String PROPERTY_KEYSTORE_PATH_BYOK = Merlin.OLD_PREFIX+Merlin.OLD_KEYSTORE_FILE+MerlinProvider.SUFFIX_BYOK; // vecchio modalita' utilizzata in 1.6.x
+	public static final String PROPERTY_KEYSTORE_FILE_BYOK = Merlin.OLD_PREFIX+Merlin.KEYSTORE_FILE+MerlinProvider.SUFFIX_BYOK;
+	
 	//	${PREFIX}.merlin.keystore.password - The password used to load the keystore. Default value is "security".
 
 	public static final String PROPERTY_KEYSTORE_PASSWORD = Merlin.OLD_PREFIX+Merlin.KEYSTORE_PASSWORD;

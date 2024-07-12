@@ -43,6 +43,7 @@ import org.openspcoop2.security.keystore.RemoteStore;
 import org.openspcoop2.security.keystore.SSLConfigProps;
 import org.openspcoop2.security.keystore.SSLSocketFactory;
 import org.openspcoop2.security.keystore.SecretKeyStore;
+import org.openspcoop2.security.keystore.SecretPasswordKeyDerivationConfig;
 import org.openspcoop2.security.keystore.SymmetricKeystore;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.certificate.CertificateInfo;
@@ -555,6 +556,39 @@ public class GestoreKeystoreCache {
 		return k;
 	}
 	
+	public static KeyPairStore getKeyPairStore(RequestInfo requestInfo, String privateKeyPath, byte[] publicKey, String privateKeyPassword, String algorithm) throws SecurityException{
+		return getKeyPairStore(requestInfo, privateKeyPath, publicKey, privateKeyPassword, algorithm, 
+				(BYOKRequestParams) null);
+	}
+	public static KeyPairStore getKeyPairStore(RequestInfo requestInfo, String privateKeyPath, byte[] publicKey, String privateKeyPassword, String algorithm, 
+			BYOKRequestParams requestParams) throws SecurityException{
+		// come chiave di cache si usa solo la chiave privata
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && privateKeyPath!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getKeyPairStore(privateKeyPath);
+			if(o instanceof KeyPairStore) {
+				return (KeyPairStore) o;
+			}
+		}
+		KeyPairStore k = null;
+		if(requestParams!=null) {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.keyPairStoreCache.getKeystoreAndCreateIfNotExists(privateKeyPath, publicKey, privateKeyPassword, algorithm, requestParams);
+			else
+				k = new KeyPairStore(privateKeyPath, publicKey, privateKeyPassword, algorithm, requestParams);
+		}
+		else {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.keyPairStoreCache.getKeystoreAndCreateIfNotExists(privateKeyPath, publicKey, privateKeyPassword, algorithm);
+			else
+				k = new KeyPairStore(privateKeyPath, publicKey, privateKeyPassword, algorithm);
+		}
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addKeyPairStore(privateKeyPath, k, requestInfo.getIdTransazione());
+		}
+		return k;
+	}
+	
 	public static KeyPairStore getKeyPairStore(RequestInfo requestInfo, byte[] privateKey, byte[] publicKey, String privateKeyPassword, String algorithm) throws SecurityException{
 		return getKeyPairStore(requestInfo, privateKey, publicKey, privateKeyPassword, algorithm, 
 				(BYOKRequestParams) null);
@@ -583,6 +617,41 @@ public class GestoreKeystoreCache {
 				k = GestoreKeystoreCache.keyPairStoreCache.getKeystoreAndCreateIfNotExists(privateKey, publicKey, privateKeyPassword, algorithm);
 			else
 				k = new KeyPairStore(privateKey, publicKey, privateKeyPassword, algorithm);
+		}
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addKeyPairStore(keyParam, k, requestInfo.getIdTransazione());
+		}
+		return k;
+	}
+	
+	public static KeyPairStore getKeyPairStore(RequestInfo requestInfo, byte[] privateKey, String publicKeyPath, String privateKeyPassword, String algorithm) throws SecurityException{
+		return getKeyPairStore(requestInfo, privateKey, publicKeyPath, privateKeyPassword, algorithm, 
+				(BYOKRequestParams) null);
+	}
+	public static KeyPairStore getKeyPairStore(RequestInfo requestInfo, byte[] privateKey, String publicKeyPath, String privateKeyPassword, String algorithm, 
+			BYOKRequestParams requestParams) throws SecurityException{
+		// come chiave di cache si usa solo la chiave privata
+		String keyParam = null;
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && privateKey!=null;
+		if(useRequestInfo) {
+			keyParam = AbstractKeystoreCache.buildKeyCacheFromBytes(privateKey);
+			Object o = requestInfo.getRequestConfig().getKeyPairStore(keyParam);
+			if(o instanceof KeyPairStore) {
+				return (KeyPairStore) o;
+			}
+		}
+		KeyPairStore k = null;
+		if(requestParams!=null) {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.keyPairStoreCache.getKeystoreAndCreateIfNotExists(privateKey, publicKeyPath, privateKeyPassword, algorithm, requestParams);
+			else
+				k = new KeyPairStore(privateKey, publicKeyPath, privateKeyPassword, algorithm, requestParams);
+		}
+		else {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.keyPairStoreCache.getKeystoreAndCreateIfNotExists(privateKey, publicKeyPath, privateKeyPassword, algorithm);
+			else
+				k = new KeyPairStore(privateKey, publicKeyPath, privateKeyPassword, algorithm);
 		}
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addKeyPairStore(keyParam, k, requestInfo.getIdTransazione());
@@ -694,6 +763,39 @@ public class GestoreKeystoreCache {
 				k = GestoreKeystoreCache.secretKeyStoreCache.getKeystoreAndCreateIfNotExists(secretKey, algorithm);
 			else
 				k = new SecretKeyStore(secretKey, algorithm);
+		}
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addSecretKeyStore(keyParam, k, requestInfo.getIdTransazione());
+		}
+		return k;
+	}
+	
+	public static SecretKeyStore getSecretKeyStore(RequestInfo requestInfo, SecretPasswordKeyDerivationConfig config) throws SecurityException{
+		return getSecretKeyStore(requestInfo, config,
+				(BYOKRequestParams) null);
+	}
+	public static SecretKeyStore getSecretKeyStore(RequestInfo requestInfo, SecretPasswordKeyDerivationConfig config, 
+			BYOKRequestParams requestParams) throws SecurityException{
+		String keyParam = config.toKey();
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && config!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getSecretKeyStore(keyParam);
+			if(o instanceof SecretKeyStore) {
+				return (SecretKeyStore) o;
+			}
+		}
+		SecretKeyStore k = null;
+		if(requestParams!=null) {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.secretKeyStoreCache.getKeystoreAndCreateIfNotExists(keyParam, config, requestParams);
+			else
+				k = new SecretKeyStore(config, requestParams);
+		}
+		else {
+			if(GestoreKeystoreCache.cacheEnabled)
+				k = GestoreKeystoreCache.secretKeyStoreCache.getKeystoreAndCreateIfNotExists(keyParam, config);
+			else
+				k = new SecretKeyStore(config);
 		}
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addSecretKeyStore(keyParam, k, requestInfo.getIdTransazione());

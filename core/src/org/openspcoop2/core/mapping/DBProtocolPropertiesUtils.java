@@ -31,6 +31,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.byok.BYOKWrappedValue;
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -55,10 +58,31 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class DBProtocolPropertiesUtils {
+	
+	private DBProtocolPropertiesUtils() {}
 
-	public static void CRUDRegistryProtocolProperty(Logger log, int type, List<org.openspcoop2.core.registry.ProtocolProperty> listPP, long idProprietario,
+	private static void logDebug(Logger log, String msg) {
+		if(log!=null) {
+			log.debug(msg);
+		}
+	}
+	
+    private static List<String> protocolPropertiesConfidentials = new ArrayList<>();
+    public static List<String> getProtocolPropertiesConfidentials() {
+		return protocolPropertiesConfidentials;
+	}
+	public static void addConfidentialProtocolProperty(String nome){
+    	if(!protocolPropertiesConfidentials.contains(nome)) {
+    		protocolPropertiesConfidentials.add(nome);
+    	}
+    }
+    public static boolean isConfidentialProtocolProperty(String nome) {
+    	return protocolPropertiesConfidentials.contains(nome);
+    }
+	
+	public static void crudRegistryProtocolProperty(Logger log, int type, List<org.openspcoop2.core.registry.ProtocolProperty> listPP, long idProprietario,
 			ProprietariProtocolProperty tipologiaProprietarioProtocolProperty, Connection connection,
-			String tipoDatabase) throws CoreException {
+			String tipoDatabase, IDriverBYOK driverBYOK) throws CoreException {
 		List<ProtocolProperty> list = null;
 		if(listPP!=null) {
 			list = new ArrayList<>();
@@ -68,11 +92,11 @@ public class DBProtocolPropertiesUtils {
 				}
 			}
 		}
-		CRUDProtocolProperty(log, type, list, idProprietario, tipologiaProprietarioProtocolProperty, connection, tipoDatabase);
+		crudProtocolProperty(log, type, list, idProprietario, tipologiaProprietarioProtocolProperty, connection, tipoDatabase, driverBYOK);
 	}
-	public static void CRUDConfigProtocolProperty(Logger log, int type, List<org.openspcoop2.core.config.ProtocolProperty> listPP, long idProprietario,
+	public static void crudConfigProtocolProperty(Logger log, int type, List<org.openspcoop2.core.config.ProtocolProperty> listPP, long idProprietario,
 			ProprietariProtocolProperty tipologiaProprietarioProtocolProperty, Connection connection,
-			String tipoDatabase) throws CoreException {
+			String tipoDatabase, IDriverBYOK driverBYOK) throws CoreException {
 		List<ProtocolProperty> list = null;
 		if(listPP!=null) {
 			list = new ArrayList<>();
@@ -82,12 +106,12 @@ public class DBProtocolPropertiesUtils {
 				}
 			}
 		}
-		CRUDProtocolProperty(log, type, list, idProprietario, tipologiaProprietarioProtocolProperty, connection, tipoDatabase);
+		crudProtocolProperty(log, type, list, idProprietario, tipologiaProprietarioProtocolProperty, connection, tipoDatabase, driverBYOK);
 	}
 
-	public static void CRUDProtocolProperty(Logger log, int type, List<ProtocolProperty> listPP, long idProprietario,
+	private static void crudProtocolProperty(Logger log, int type, List<ProtocolProperty> listPP, long idProprietario,
 			ProprietariProtocolProperty tipologiaProprietarioProtocolProperty, Connection connection,
-			String tipoDatabase) throws CoreException {
+			String tipoDatabase, IDriverBYOK driverBYOK) throws CoreException {
 		
 		// NOTA: l'update dei documenti, essendo mega di documenti non puo' essere implementata come delete + create
 		
@@ -123,10 +147,18 @@ public class DBProtocolPropertiesUtils {
 						int contenutiDefiniti = 0;
 						
 						boolean stringValue = protocolProperty.getValue()!=null && !"".equals(protocolProperty.getValue());
-						String contenutoString = null;
-						if(stringValue){
+						String plainContenutoString = null;
+						String encContenutoString = null;
+						if(stringValue){ 
 							contenutiDefiniti++;
-							contenutoString = protocolProperty.getValue();
+							plainContenutoString = protocolProperty.getValue();
+							if(driverBYOK!=null && isConfidentialProtocolProperty(protocolProperty.getName())) {
+								BYOKWrappedValue byokValue = driverBYOK.wrap(protocolProperty.getValue());
+								if(byokValue!=null) {
+									encContenutoString = byokValue.getWrappedValue();
+									plainContenutoString = byokValue.getWrappedPlainValue();
+								}
+							}
 						}
 						
 						boolean numberValue = protocolProperty.getNumberValue()!=null;
@@ -151,7 +183,7 @@ public class DBProtocolPropertiesUtils {
 							contenutoBinario = protocolProperty.getByteFile();
 							if(contenutoBinario.length<3){
 								String test = new String(contenutoBinario);
-								if("".equals(test.trim().replaceAll("\n", ""))){
+								if("".equals(test.trim().replace("\n", ""))){
 									// eliminare \n\n
 									contenutoBinario = null;	
 									binaryValue = false;
@@ -160,12 +192,19 @@ public class DBProtocolPropertiesUtils {
 							}
 							if(binaryValue){
 								contenutoBinarioFileName = protocolProperty.getFile();
+							
+								if(driverBYOK!=null && isConfidentialProtocolProperty(protocolProperty.getName())) {
+									BYOKWrappedValue byokValue = driverBYOK.wrap(contenutoBinario);
+									if(byokValue!=null) {
+										contenutoBinario = byokValue.getWrappedValue().getBytes();
+									}
+								}
 							}
 						}
 						
-	//					if(!stringValue && !numberValue && !binaryValue && !booleanValue){
-	//						throw new DriverRegistroServiziException("[DBProtocolProperties::CRUDProtocolProperty] Contenuto non definito per protocolProperty ["+protocolProperty.getName()+"]");
-	//					}
+						/**if(!stringValue && !numberValue && !binaryValue && !booleanValue){
+							throw new DriverRegistroServiziException("[DBProtocolProperties::CRUDProtocolProperty] Contenuto non definito per protocolProperty ["+protocolProperty.getName()+"]");
+						}*/
 						// Per fare i filtri con is null e' necessario registrarlo!
 						if(contenutiDefiniti>1){
 							throw new CoreException("[DBProtocolProperties::CRUDProtocolProperty] Contenuto definito con più tipologie per protocolProperty ["+protocolProperty.getName()+
@@ -176,21 +215,22 @@ public class DBProtocolPropertiesUtils {
 						// create
 						ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 						sqlQueryObject.addInsertTable(CostantiDB.PROTOCOL_PROPERTIES);
-						sqlQueryObject.addInsertField("tipo_proprietario", "?");
-						sqlQueryObject.addInsertField("id_proprietario", "?");
-						sqlQueryObject.addInsertField("name", "?");
+						sqlQueryObject.addInsertField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO, "?");
+						sqlQueryObject.addInsertField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO, "?");
+						sqlQueryObject.addInsertField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME, "?");
 						if(stringValue){
-							sqlQueryObject.addInsertField("value_string", "?");
+							sqlQueryObject.addInsertField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING, "?");
+							sqlQueryObject.addInsertField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_ENCODING_STRING, "?");
 						}
 						if(numberValue){
-							sqlQueryObject.addInsertField("value_number", "?");
+							sqlQueryObject.addInsertField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_NUMBER, "?");
 						}
 						if(booleanValue){
-							sqlQueryObject.addInsertField("value_boolean", "?");
+							sqlQueryObject.addInsertField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_BOOLEAN, "?");
 						}
 						if(binaryValue){
-							sqlQueryObject.addInsertField("value_binary", "?");
-							sqlQueryObject.addInsertField("file_name", "?");
+							sqlQueryObject.addInsertField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_BINARY, "?");
+							sqlQueryObject.addInsertField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_FILENAME, "?");
 						}
 						sqlQuery = sqlQueryObject.createSQLInsert();
 						stm = connection.prepareStatement(sqlQuery);
@@ -200,15 +240,16 @@ public class DBProtocolPropertiesUtils {
 						stm.setString(index++, protocolProperty.getName());
 						String debug = null;
 						if(stringValue){
-							stm.setString(index++, contenutoString);
-							debug = contenutoString;
+							stm.setString(index++, plainContenutoString);
+							debug = plainContenutoString;
+							stm.setString(index++, encContenutoString);
 						}
 						if(numberValue){
 							stm.setLong(index++, contenutoNumber);
 							debug = contenutoNumber+"";
 						}
 						if(booleanValue){
-							if(contenutoBoolean){
+							if(contenutoBoolean!=null && contenutoBoolean.booleanValue()){
 								stm.setInt(index++,CostantiDB.TRUE);
 								debug = CostantiDB.TRUE+"";
 							}
@@ -224,19 +265,19 @@ public class DBProtocolPropertiesUtils {
 							debug = debug + "," + contenutoBinarioFileName;
 						}
 						
-						log.debug("CRUDProtocolProperty CREATE : \n" + DBUtils.
+						logDebug(log,"CRUDProtocolProperty CREATE : \n" + DBUtils.
 								formatSQLString(sqlQuery, tipologiaProprietarioProtocolProperty.name(), idProprietario, protocolProperty.getName(), debug));
 		
 						int n = stm.executeUpdate();
 						stm.close();
-						log.debug("Inserted " + n + " row(s)");
+						logDebug(log,"Inserted " + n + " row(s)");
 			
 						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 						sqlQueryObject.addFromTable(CostantiDB.PROTOCOL_PROPERTIES);
-						sqlQueryObject.addSelectField("id");
-						sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
-						sqlQueryObject.addWhereCondition("id_proprietario = ?");
-						sqlQueryObject.addWhereCondition("name = ?");
+						sqlQueryObject.addSelectField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID);
+						sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO+" = ?");
+						sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO+" = ?");
+						sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME+" = ?");
 						sqlQueryObject.setANDLogicOperator(true);
 						sqlQuery = sqlQueryObject.createSQLQuery();
 						stm = connection.prepareStatement(sqlQuery);
@@ -245,13 +286,13 @@ public class DBProtocolPropertiesUtils {
 						stm.setLong(index++, idProprietario);
 						stm.setString(index++, protocolProperty.getName());
 		
-						log.debug("Recupero id inserito : \n" + DBUtils.
+						logDebug(log,"Recupero id inserito : \n" + DBUtils.
 								formatSQLString(sqlQuery, tipologiaProprietarioProtocolProperty.name(), idProprietario, protocolProperty.getName()));
 		
 						rs = stm.executeQuery();
 		
 						if (rs.next()) {
-							listPP.get(i).setId(rs.getLong("id"));
+							listPP.get(i).setId(rs.getLong(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID));
 						} else {
 							throw new CoreException("[DBProtocolProperties::CRUDProtocolProperty] Errore avvenuto durante il recupero dell'id dopo una create");
 						}
@@ -266,12 +307,8 @@ public class DBProtocolPropertiesUtils {
 			case UPDATE:
 				
 				// Prelevo vecchia lista
-				List<ProtocolProperty> oldLista = null;
-				try{
-					oldLista = getListaProtocolProperty(idProprietario,tipologiaProprietarioProtocolProperty, connection, tipoDatabase);
-				}catch(NotFoundException dNotFound){
-					oldLista = new ArrayList<ProtocolProperty>();
-				}
+				List<ProtocolProperty> oldLista = getListaProtocolPropertySafe(idProprietario,tipologiaProprietarioProtocolProperty, connection, tipoDatabase, 
+						null); //driverBYOK);  // serve solo a verificare se devo aggiornare o meno. Non serve quindi decodificare
 				
 				// Gestico la nuova immagine
 				if(listPP!=null) {
@@ -288,10 +325,18 @@ public class DBProtocolPropertiesUtils {
 						int contenutiDefiniti = 0;
 						
 						boolean stringValue = protocolProperty.getValue()!=null && !"".equals(protocolProperty.getValue());
-						String contenutoString = null;
-						if(stringValue){
+						String plainContenutoString = null;
+						String encContenutoString = null;
+						if(stringValue){ 
 							contenutiDefiniti++;
-							contenutoString = protocolProperty.getValue();
+							plainContenutoString = protocolProperty.getValue();
+							if(driverBYOK!=null && isConfidentialProtocolProperty(protocolProperty.getName())) {
+								BYOKWrappedValue byokValue = driverBYOK.wrap(protocolProperty.getValue());
+								if(byokValue!=null) {
+									encContenutoString = byokValue.getWrappedValue();
+									plainContenutoString = byokValue.getWrappedPlainValue();
+								}
+							}
 						}
 						
 						boolean numberValue = protocolProperty.getNumberValue()!=null;
@@ -316,7 +361,7 @@ public class DBProtocolPropertiesUtils {
 							contenutoBinario = protocolProperty.getByteFile();
 							if(contenutoBinario.length<3){
 								String test = new String(contenutoBinario);
-								if("".equals(test.trim().replaceAll("\n", ""))){
+								if("".equals(test.trim().replace("\n", ""))){
 									// eliminare \n\n
 									contenutoBinario = null;	
 									binaryValue = false;
@@ -325,12 +370,19 @@ public class DBProtocolPropertiesUtils {
 							}
 							if(binaryValue){
 								contenutoBinarioFileName = protocolProperty.getFile();
+							
+								if(driverBYOK!=null && isConfidentialProtocolProperty(protocolProperty.getName())) {
+									BYOKWrappedValue byokValue = driverBYOK.wrap(contenutoBinario);
+									if(byokValue!=null) {
+										contenutoBinario = byokValue.getWrappedValue().getBytes();
+									}
+								}
 							}
 						}
 						
-	//					if(!stringValue && !numberValue && !binaryValue && !booleanValue){
-	//						throw new DriverRegistroServiziException("[DBProtocolProperties::CRUDProtocolProperty] Contenuto non definito per protocolProperty ["+protocolProperty.getName()+"]");
-	//					}
+						/**if(!stringValue && !numberValue && !binaryValue && !booleanValue){
+							throw new DriverRegistroServiziException("[DBProtocolProperties::CRUDProtocolProperty] Contenuto non definito per protocolProperty ["+protocolProperty.getName()+"]");
+						}*/
 						// Per fare i filtri con is null e' necessario registrarlo!
 						if(contenutiDefiniti>1){
 							throw new CoreException("[DBProtocolProperties::CRUDProtocolProperty] Contenuto definito con più tipologie per protocolProperty ["+protocolProperty.getName()+
@@ -338,7 +390,7 @@ public class DBProtocolPropertiesUtils {
 						}
 						
 										
-						//if(doc.getId()<=0){
+						/**if(doc.getId()<=0){*/
 						// Rileggo sempre id, puo' essere diverso (es. importato tramite sincronizzazioni)
 						protocolProperty.setId(DBUtils.getIdProtocolProperty(protocolProperty.getTipoProprietario(), idProprietario,protocolProperty.getName(), 
 								connection, 
@@ -350,14 +402,15 @@ public class DBProtocolPropertiesUtils {
 							for(int j=0; j<oldLista.size(); j++){
 								ProtocolProperty old = oldLista.get(j);
 			
-								//System.out.println("OLD["+old.getId().longValue()+"]==ATTUALE["+doc.getId().longValue()+"] ("+((doc.getId().longValue() == old.getId().longValue()))+")");
+								/**System.out.println("OLD["+old.getId().longValue()+"]==ATTUALE["+doc.getId().longValue()+"] ("+((doc.getId().longValue() == old.getId().longValue()))+")");*/
 								if(protocolProperty.getId().longValue() == old.getId().longValue()){		
-										ppGiaPresente = true; // non devo fare una insert, ma una update...
+									ppGiaPresente = true; // non devo fare una insert, ma una update...
 											
-										// rimuovo la vecchia immagine del documento dalla lista dei doc vecchi
-										oldLista.remove(j);
+									// rimuovo la vecchia immagine del documento dalla lista dei doc vecchi
+									oldLista.remove(j);
 										
-										ppDaAggiornare = true;
+									ppDaAggiornare = true;
+									break;
 								}
 							}
 						}
@@ -371,17 +424,19 @@ public class DBProtocolPropertiesUtils {
 								}
 								ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 								sqlQueryObject.addUpdateTable(CostantiDB.PROTOCOL_PROPERTIES);
-								sqlQueryObject.addUpdateField("value_string", "?");
-								sqlQueryObject.addUpdateField("value_number", "?");
-								sqlQueryObject.addUpdateField("value_boolean", "?");
-								sqlQueryObject.addUpdateField("value_binary", "?");
-								sqlQueryObject.addUpdateField("file_name", "?");
+								sqlQueryObject.addUpdateField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING, "?");
+								sqlQueryObject.addUpdateField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_ENCODING_STRING, "?");
+								sqlQueryObject.addUpdateField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_NUMBER, "?");
+								sqlQueryObject.addUpdateField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_BOOLEAN, "?");
+								sqlQueryObject.addUpdateField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_BINARY, "?");
+								sqlQueryObject.addUpdateField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_FILENAME, "?");
 								sqlQueryObject.addWhereCondition("id=?");
 								sqlQuery = sqlQueryObject.createSQLUpdate();
 								stm = connection.prepareStatement(sqlQuery);
 								int index = 1;
 								
-								stm.setString(index++, contenutoString);
+								stm.setString(index++, plainContenutoString);
+								stm.setString(index++, encContenutoString);
 								
 								if(numberValue){
 									stm.setLong(index++, contenutoNumber);
@@ -391,7 +446,7 @@ public class DBProtocolPropertiesUtils {
 								}
 								
 								if(booleanValue){
-									if(contenutoBoolean){
+									if(contenutoBoolean!=null && contenutoBoolean.booleanValue()){
 										stm.setInt(index++,CostantiDB.TRUE);
 									}
 									else{
@@ -413,21 +468,22 @@ public class DBProtocolPropertiesUtils {
 							// create
 							ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 							sqlQueryObject.addInsertTable(CostantiDB.PROTOCOL_PROPERTIES);
-							sqlQueryObject.addInsertField("tipo_proprietario", "?");
-							sqlQueryObject.addInsertField("id_proprietario", "?");
-							sqlQueryObject.addInsertField("name", "?");
+							sqlQueryObject.addInsertField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO, "?");
+							sqlQueryObject.addInsertField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO, "?");
+							sqlQueryObject.addInsertField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME, "?");
 							if(stringValue){
-								sqlQueryObject.addInsertField("value_string", "?");
+								sqlQueryObject.addInsertField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING, "?");
+								sqlQueryObject.addInsertField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_ENCODING_STRING, "?");
 							}
 							if(numberValue){
-								sqlQueryObject.addInsertField("value_number", "?");
+								sqlQueryObject.addInsertField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_NUMBER, "?");
 							}
 							if(booleanValue){
-								sqlQueryObject.addInsertField("value_boolean", "?");
+								sqlQueryObject.addInsertField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_BOOLEAN, "?");
 							}
 							if(binaryValue){
-								sqlQueryObject.addInsertField("value_binary", "?");
-								sqlQueryObject.addInsertField("file_name", "?");
+								sqlQueryObject.addInsertField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_BINARY, "?");
+								sqlQueryObject.addInsertField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_FILENAME, "?");
 							}
 							sqlQuery = sqlQueryObject.createSQLInsert();
 							stm = connection.prepareStatement(sqlQuery);
@@ -437,15 +493,16 @@ public class DBProtocolPropertiesUtils {
 							stm.setString(index++, protocolProperty.getName());
 							String debug = null;
 							if(stringValue){
-								stm.setString(index++, contenutoString);
-								debug = contenutoString;
+								stm.setString(index++, plainContenutoString);
+								debug = plainContenutoString;
+								stm.setString(index++, encContenutoString);
 							}
 							if(numberValue){
 								stm.setLong(index++, contenutoNumber);
 								debug = contenutoNumber+"";
 							}
 							if(booleanValue){
-								if(contenutoBoolean){
+								if(contenutoBoolean!=null && contenutoBoolean.booleanValue()){
 									stm.setInt(index++,CostantiDB.TRUE);
 									debug = CostantiDB.TRUE+"";
 								}
@@ -461,19 +518,19 @@ public class DBProtocolPropertiesUtils {
 								debug = debug + "," + contenutoBinarioFileName;
 							}
 							
-							log.debug("CRUDProtocolProperty CREATE : \n" + DBUtils.
+							logDebug(log,"CRUDProtocolProperty CREATE : \n" + DBUtils.
 									formatSQLString(sqlQuery, tipologiaProprietarioProtocolProperty.name(), idProprietario, protocolProperty.getName(), debug));
 			
 							int n = stm.executeUpdate();
 							stm.close();
-							log.debug("Inserted " + n + " row(s)");
+							logDebug(log,"Inserted " + n + " row(s)");
 				
 							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 							sqlQueryObject.addFromTable(CostantiDB.PROTOCOL_PROPERTIES);
-							sqlQueryObject.addSelectField("id");
-							sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
-							sqlQueryObject.addWhereCondition("id_proprietario = ?");
-							sqlQueryObject.addWhereCondition("name = ?");
+							sqlQueryObject.addSelectField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID);
+							sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO+" = ?");
+							sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO+" = ?");
+							sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME+" = ?");
 							sqlQueryObject.setANDLogicOperator(true);
 							sqlQuery = sqlQueryObject.createSQLQuery();
 							stm = connection.prepareStatement(sqlQuery);
@@ -482,13 +539,13 @@ public class DBProtocolPropertiesUtils {
 							stm.setLong(index++, idProprietario);
 							stm.setString(index++, protocolProperty.getName());
 			
-							log.debug("Recupero id inserito : \n" + DBUtils.
+							logDebug(log,"Recupero id inserito : \n" + DBUtils.
 									formatSQLString(sqlQuery, tipologiaProprietarioProtocolProperty.name(), idProprietario, protocolProperty.getName()));
 			
 							rs = stm.executeQuery();
 			
 							if (rs.next()) {
-								listPP.get(i).setId(rs.getLong("id"));
+								listPP.get(i).setId(rs.getLong(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID));
 							} else {
 								throw new CoreException("[DBProtocolProperties::CRUDProtocolProperty] Errore avvenuto durante il recupero dell'id dopo una create");
 							}
@@ -501,7 +558,7 @@ public class DBProtocolPropertiesUtils {
 					}
 				}
 				
-				if(oldLista.size()>0){
+				if(!oldLista.isEmpty()){
 					// Qualche documento e' stato cancellato.
 					// Non e' piu' presente.
 					for(int j=0; j<oldLista.size(); j++){
@@ -525,8 +582,8 @@ public class DBProtocolPropertiesUtils {
 				
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 				sqlQueryObject.addDeleteTable(CostantiDB.PROTOCOL_PROPERTIES);
-				sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
-				sqlQueryObject.addWhereCondition("id_proprietario=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO+" = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO+"=?");
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQuery = sqlQueryObject.createSQLDelete();
 				stm = connection.prepareStatement(sqlQuery);
@@ -535,9 +592,12 @@ public class DBProtocolPropertiesUtils {
 				stm.executeUpdate();
 				stm.close();
 
-				log.debug("CRUDDocumento DELETE : \n" + DBUtils.formatSQLString(sqlQuery, tipologiaProprietarioProtocolProperty.name(), idProprietario));
+				logDebug(log,"CRUDDocumento DELETE : \n" + DBUtils.formatSQLString(sqlQuery, tipologiaProprietarioProtocolProperty.name(), idProprietario));
 
 				break;
+				
+			default:
+				// nop
 			}
 
 		} catch (SQLException se) {
@@ -562,12 +622,13 @@ public class DBProtocolPropertiesUtils {
 	
 	public static List<org.openspcoop2.core.registry.ProtocolProperty> getListaProtocolPropertyRegistry(long idProprietario, ProprietariProtocolProperty tipologiaProprietario, 
 			Connection connection,
-			String tipoDatabase) throws CoreException,NotFoundException {
-		List<ProtocolProperty> l = getListaProtocolProperty(idProprietario, tipologiaProprietario, connection, tipoDatabase);
+			String tipoDatabase, IDriverBYOK driverBYOK) throws CoreException,NotFoundException {
+		List<ProtocolProperty> l = getListaProtocolProperty(idProprietario, tipologiaProprietario, connection, tipoDatabase, driverBYOK);
+		List<org.openspcoop2.core.registry.ProtocolProperty> lPP = null;
 		if(l==null) {
-			return null;
+			return lPP;
 		}
-		List<org.openspcoop2.core.registry.ProtocolProperty> lPP = new ArrayList<>();
+		lPP = new ArrayList<>();
 		if(!l.isEmpty()) {
 			for (ProtocolProperty protocolProperty : l) {
 				lPP.add(protocolProperty.toRegistry());
@@ -577,12 +638,13 @@ public class DBProtocolPropertiesUtils {
 	}
 	public static List<org.openspcoop2.core.config.ProtocolProperty> getListaProtocolPropertyConfig(long idProprietario, ProprietariProtocolProperty tipologiaProprietario, 
 			Connection connection,
-			String tipoDatabase) throws CoreException,NotFoundException {
-		List<ProtocolProperty> l = getListaProtocolProperty(idProprietario, tipologiaProprietario, connection, tipoDatabase);
+			String tipoDatabase, IDriverBYOK driverBYOK) throws CoreException,NotFoundException {
+		List<ProtocolProperty> l = getListaProtocolProperty(idProprietario, tipologiaProprietario, connection, tipoDatabase, driverBYOK);
+		List<org.openspcoop2.core.config.ProtocolProperty> lPP = null;
 		if(l==null) {
-			return null;
+			return lPP;
 		}
-		List<org.openspcoop2.core.config.ProtocolProperty> lPP = new ArrayList<>();
+		lPP = new ArrayList<>();
 		if(!l.isEmpty()) {
 			for (ProtocolProperty protocolProperty : l) {
 				lPP.add(protocolProperty.toConfig());
@@ -591,9 +653,20 @@ public class DBProtocolPropertiesUtils {
 		return lPP;
 	}
 	
+	public static List<ProtocolProperty> getListaProtocolPropertySafe(long idProprietario, ProprietariProtocolProperty tipologiaProprietario, 
+			Connection connection,
+			String tipoDatabase, IDriverBYOK driverBYOK) throws CoreException  {
+		List<ProtocolProperty> l = null;
+		try{
+			l = getListaProtocolProperty(idProprietario,tipologiaProprietario, connection, tipoDatabase, driverBYOK);
+		}catch(NotFoundException dNotFound){
+			l = new ArrayList<>();
+		}
+		return l;
+	}
 	public static List<ProtocolProperty> getListaProtocolProperty(long idProprietario, ProprietariProtocolProperty tipologiaProprietario, 
 			Connection connection,
-			String tipoDatabase) throws CoreException,NotFoundException {
+			String tipoDatabase, IDriverBYOK driverBYOK) throws CoreException,NotFoundException {
 		
 		PreparedStatement stm = null;
 		ResultSet rs=null;
@@ -604,13 +677,13 @@ public class DBProtocolPropertiesUtils {
 		
 		try {
 		
-			List<ProtocolProperty> listPP = new ArrayList<ProtocolProperty>();
+			List<ProtocolProperty> listPP = new ArrayList<>();
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.PROTOCOL_PROPERTIES);
-			sqlQueryObject.addSelectField("id");
-			sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
-			sqlQueryObject.addWhereCondition("id_proprietario = ?");
+			sqlQueryObject.addSelectField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID);
+			sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO+" = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO+" = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = connection.prepareStatement(sqlQuery);
@@ -619,11 +692,11 @@ public class DBProtocolPropertiesUtils {
 			rs = stm.executeQuery();
 			
 			while(rs.next()){
-				ProtocolProperty pp = getProtocolProperty(rs.getLong("id"), connection,tipoDatabase); 
+				ProtocolProperty pp = getProtocolProperty(rs.getLong(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID), connection,tipoDatabase, driverBYOK); 
 				listPP.add(pp);
 			}
 			
-			if(listPP.size()<=0)
+			if(listPP.isEmpty())
 				throw new NotFoundException("ProtocolProperty con tipologiaProprietario["+tipologiaProprietario.name()+
 						"] e idProprietario["+idProprietario+"] non trovati");
 			
@@ -651,21 +724,21 @@ public class DBProtocolPropertiesUtils {
 		}
 	}
 	
-	public static org.openspcoop2.core.registry.ProtocolProperty getProtocolPropertyRegistry(long id, Connection connection, String tipoDatabase) throws CoreException,NotFoundException {
-		ProtocolProperty pp = getProtocolProperty(id, connection, tipoDatabase);
+	public static org.openspcoop2.core.registry.ProtocolProperty getProtocolPropertyRegistry(long id, Connection connection, String tipoDatabase, IDriverBYOK driverBYOK) throws CoreException,NotFoundException {
+		ProtocolProperty pp = getProtocolProperty(id, connection, tipoDatabase, driverBYOK);
 		if(pp==null) {
 			return null;
 		}
 		return pp.toRegistry();
 	}
-	public static org.openspcoop2.core.config.ProtocolProperty getProtocolPropertyConfig(long id, Connection connection, String tipoDatabase) throws CoreException,NotFoundException {
-		ProtocolProperty pp = getProtocolProperty(id, connection, tipoDatabase);
+	public static org.openspcoop2.core.config.ProtocolProperty getProtocolPropertyConfig(long id, Connection connection, String tipoDatabase, IDriverBYOK driverBYOK) throws CoreException,NotFoundException {
+		ProtocolProperty pp = getProtocolProperty(id, connection, tipoDatabase, driverBYOK);
 		if(pp==null) {
 			return null;
 		}
 		return pp.toConfig();
 	}
-	public static ProtocolProperty getProtocolProperty(long id, Connection connection, String tipoDatabase) throws CoreException,NotFoundException {
+	public static ProtocolProperty getProtocolProperty(long id, Connection connection, String tipoDatabase, IDriverBYOK driverBYOK) throws CoreException,NotFoundException {
 		
 		PreparedStatement stm = null;
 		ResultSet rs=null;
@@ -680,16 +753,17 @@ public class DBProtocolPropertiesUtils {
 				
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.PROTOCOL_PROPERTIES);
-			sqlQueryObject.addSelectField("tipo_proprietario");
-			sqlQueryObject.addSelectField("id_proprietario");
-			sqlQueryObject.addSelectField("name");
-			sqlQueryObject.addSelectField("value_string");
-			sqlQueryObject.addSelectField("value_number");
-			sqlQueryObject.addSelectField("value_boolean");
-			sqlQueryObject.addSelectField("value_binary");
-			sqlQueryObject.addSelectField("file_name");
-			sqlQueryObject.addSelectField("id");
-			sqlQueryObject.addWhereCondition("id = ?");
+			sqlQueryObject.addSelectField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO);
+			sqlQueryObject.addSelectField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO);
+			sqlQueryObject.addSelectField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME);
+			sqlQueryObject.addSelectField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING);
+			sqlQueryObject.addSelectField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_ENCODING_STRING);
+			sqlQueryObject.addSelectField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_NUMBER);
+			sqlQueryObject.addSelectField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_BOOLEAN);
+			sqlQueryObject.addSelectField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_BINARY);
+			sqlQueryObject.addSelectField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_FILENAME);
+			sqlQueryObject.addSelectField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID);
+			sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID+" = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = connection.prepareStatement(sqlQuery);
@@ -699,22 +773,44 @@ public class DBProtocolPropertiesUtils {
 			ProtocolProperty pp = null;
 			if(rs.next()){
 				pp = new ProtocolProperty();
-				pp.setTipoProprietario(rs.getString("tipo_proprietario"));
-				pp.setIdProprietario(rs.getLong("id_proprietario"));
-				pp.setName(rs.getString("name"));
-				pp.setValue(rs.getString("value_string"));
-				pp.setNumberValue(rs.getLong("value_number"));
+				pp.setTipoProprietario(rs.getString(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO));
+				pp.setIdProprietario(rs.getLong(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO));
+				
+				String ppName = rs.getString(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME);
+				pp.setName(ppName);
+				
+				String plainStringValue = rs.getString(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING);
+				String encStringValue = rs.getString(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_ENCODING_STRING);
+				if(encStringValue!=null && StringUtils.isNotEmpty(encStringValue)) {
+					if(driverBYOK!=null) {
+						pp.setValue(driverBYOK.unwrapAsString(encStringValue));
+					}
+					else {
+						pp.setValue(encStringValue);
+					}
+				}
+				else {
+					pp.setValue(plainStringValue);
+				}
+				
+				pp.setNumberValue(rs.getLong(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_NUMBER));
 				if(rs.wasNull()){
 					pp.setNumberValue(null);
 				}
-				int value = rs.getInt("value_boolean");
+				int value = rs.getInt(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_BOOLEAN);
 				pp.setBooleanValue(value == CostantiDB.TRUE);
 				if(rs.wasNull()){
 					pp.setBooleanValue(null);
 				}
-				pp.setByteFile(jdbcAdapter.getBinaryData(rs,"value_binary"));
-				pp.setFile(rs.getString("file_name"));
-				pp.setId(rs.getLong("id"));
+				
+				byte[]binaryValue = jdbcAdapter.getBinaryData(rs,CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_BINARY);
+				if(binaryValue!=null && binaryValue.length>0 && driverBYOK!=null && isConfidentialProtocolProperty(ppName)) {
+					binaryValue = driverBYOK.unwrap(binaryValue);
+				}
+				pp.setByteFile(binaryValue);
+				
+				pp.setFile(rs.getString(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_FILENAME));
+				pp.setId(rs.getLong(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID));
 			}
 			
 			if(pp==null)
@@ -758,10 +854,10 @@ public class DBProtocolPropertiesUtils {
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.PROTOCOL_PROPERTIES);
-			sqlQueryObject.addSelectField("id");
-			sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
-			sqlQueryObject.addWhereCondition("id_proprietario = ?");
-			sqlQueryObject.addWhereCondition("name = ?");
+			sqlQueryObject.addSelectField(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID);
+			sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO+" = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO+" = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME+" = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = connection.prepareStatement(sqlQuery);
@@ -798,27 +894,27 @@ public class DBProtocolPropertiesUtils {
 	}
 
 	public static org.openspcoop2.core.registry.ProtocolProperty getProtocolPropertyRegistry(ProprietariProtocolProperty proprietarioProtocolProperty, long idProprietario, String nome,
-			Connection connection, String tipoDatabase) throws CoreException {
-		ProtocolProperty pp = getProtocolProperty(proprietarioProtocolProperty, idProprietario, nome, connection, tipoDatabase);
+			Connection connection, String tipoDatabase, IDriverBYOK driverBYOK) throws CoreException {
+		ProtocolProperty pp = getProtocolProperty(proprietarioProtocolProperty, idProprietario, nome, connection, tipoDatabase, driverBYOK);
 		if(pp==null) {
 			return null;
 		}
 		return pp.toRegistry();
 	}
 	public static org.openspcoop2.core.config.ProtocolProperty getProtocolPropertyConfig(ProprietariProtocolProperty proprietarioProtocolProperty, long idProprietario, String nome,
-			Connection connection, String tipoDatabase) throws CoreException {
-		ProtocolProperty pp = getProtocolProperty(proprietarioProtocolProperty, idProprietario, nome, connection, tipoDatabase);
+			Connection connection, String tipoDatabase, IDriverBYOK driverBYOK) throws CoreException {
+		ProtocolProperty pp = getProtocolProperty(proprietarioProtocolProperty, idProprietario, nome, connection, tipoDatabase, driverBYOK);
 		if(pp==null) {
 			return null;
 		}
 		return pp.toConfig();
 	}
 	public static ProtocolProperty getProtocolProperty(ProprietariProtocolProperty proprietarioProtocolProperty, long idProprietario, String nome,
-			Connection connection, String tipoDatabase) throws CoreException {
+			Connection connection, String tipoDatabase, IDriverBYOK driverBYOK) throws CoreException {
 		String nomeMetodo = "getProtocolProperty";
 		try {
 			long idPP = DBUtils.getIdProtocolProperty(proprietarioProtocolProperty.name(),idProprietario,nome,connection,tipoDatabase);
-			return getProtocolProperty(idPP, connection, tipoDatabase);
+			return getProtocolProperty(idPP, connection, tipoDatabase, driverBYOK);
 
 		} catch (Exception se) {
 			throw new CoreException("[DriverRegistroServiziException::" + nomeMetodo + "] Exception: " + se.getMessage());
@@ -826,67 +922,68 @@ public class DBProtocolPropertiesUtils {
 	}
 	
 	
-	
+	private static final String AND_SEPARATOR = " AND ";
+	private static final String IS_NULL_CONDITION = "is null";
 	public static void setProtocolPropertiesForSearch(ISQLQueryObject sqlQueryObject, List<FiltroRicercaProtocolProperty> list, String tabella) throws SQLQueryObjectException{
-		if(list!=null && list.size()>0){
+		if(list!=null && !list.isEmpty()){
 			String [] conditions = new String[list.size()];
 			for (int i = 0; i < conditions.length; i++) {
 				String aliasTabella = "pp"+i+tabella;
 				sqlQueryObject.addFromTable(CostantiDB.PROTOCOL_PROPERTIES, aliasTabella);
 				sqlQueryObject.setANDLogicOperator(true);
-				sqlQueryObject.addWhereCondition(aliasTabella+".tipo_proprietario=?");
-				sqlQueryObject.addWhereCondition(aliasTabella+".id_proprietario="+tabella+".id");
+				sqlQueryObject.addWhereCondition(aliasTabella+"."+CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO+"=?");
+				sqlQueryObject.addWhereCondition(aliasTabella+"."+CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO+"="+tabella+".id");
 				FiltroRicercaProtocolProperty f = list.get(i);
 								
 				if(f.getName()!=null){
 					if(conditions[i]!=null){
-						conditions[i] = conditions[i] + " AND ";
+						conditions[i] = conditions[i] + AND_SEPARATOR;
 					}
 					else {
 						conditions[i] = "";
 					}
-					conditions[i] = conditions[i] + " " + aliasTabella+".name=?";
+					conditions[i] = conditions[i] + " " + aliasTabella+"."+CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME+"=?";
 				}
 				
 				if(f.getValueAsString()!=null){
 					if(conditions[i]!=null){
-						conditions[i] = conditions[i] + " AND ";
+						conditions[i] = conditions[i] + AND_SEPARATOR;
 					}
 					else {
 						conditions[i] = "";
 					}
-					conditions[i] = conditions[i] + " " + aliasTabella+".value_string=?";
+					conditions[i] = conditions[i] + " " + aliasTabella+"."+CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING+"=?";
 				}
 				else if(f.getValueAsLong()!=null){
 					if(conditions[i]!=null){
-						conditions[i] = conditions[i] + " AND ";
+						conditions[i] = conditions[i] + AND_SEPARATOR;
 					}
 					else {
 						conditions[i] = "";
 					}
-					conditions[i] = conditions[i] + " " + aliasTabella+".value_number=?";
+					conditions[i] = conditions[i] + " " + aliasTabella+"."+CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_NUMBER+"=?";
 				}
 				else if(f.getValueAsBoolean()!=null){
 					if(conditions[i]!=null){
-						conditions[i] = conditions[i] + " AND ";
+						conditions[i] = conditions[i] + AND_SEPARATOR;
 					}
 					else {
 						conditions[i] = "";
 					}
-					conditions[i] = conditions[i] + " " + aliasTabella+".value_boolean=?";
+					conditions[i] = conditions[i] + " " + aliasTabella+"."+CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_BOOLEAN+"=?";
 				}
 				else {
 					if(conditions[i]!=null){
-						conditions[i] = conditions[i] + " AND ";
+						conditions[i] = conditions[i] + AND_SEPARATOR;
 					}
 					else {
 						conditions[i] = "";
 					}
-					conditions[i] = conditions[i] + " " + aliasTabella+".value_string is null";
-					conditions[i] = conditions[i] + " AND ";
-					conditions[i] = conditions[i] + " " + aliasTabella+".value_number is null";
-					conditions[i] = conditions[i] + " AND ";
-					conditions[i] = conditions[i] + " " + aliasTabella+".value_boolean is null";
+					conditions[i] = conditions[i] + " " + aliasTabella+"."+CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING+" "+IS_NULL_CONDITION;
+					conditions[i] = conditions[i] + AND_SEPARATOR;
+					conditions[i] = conditions[i] + " " + aliasTabella+"."+CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_NUMBER+" "+IS_NULL_CONDITION;
+					conditions[i] = conditions[i] + AND_SEPARATOR;
+					conditions[i] = conditions[i] + " " + aliasTabella+"."+CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_BOOLEAN+" "+IS_NULL_CONDITION;
 				}
 				
 				// casoSpecialeValoreNull
@@ -899,10 +996,10 @@ public class DBProtocolPropertiesUtils {
 					ISQLQueryObject sqlQueryObjectPropertyNotExistsInternal = sqlQueryObject.newSQLQueryObject();
 					String aliasTabellaNotExists =  "not_exists_"+aliasTabella;
 					sqlQueryObjectPropertyNotExistsInternal.addFromTable(CostantiDB.PROTOCOL_PROPERTIES, aliasTabellaNotExists);
-					sqlQueryObjectPropertyNotExistsInternal.addSelectField(aliasTabellaNotExists, "id");
-					sqlQueryObjectPropertyNotExistsInternal.addWhereCondition(aliasTabellaNotExists+".id_proprietario="+aliasTabella+".id_proprietario");
-					sqlQueryObjectPropertyNotExistsInternal.addWhereCondition(aliasTabellaNotExists+".tipo_proprietario="+aliasTabella+".tipo_proprietario");
-					sqlQueryObjectPropertyNotExistsInternal.addWhereCondition(aliasTabellaNotExists+".name=?");
+					sqlQueryObjectPropertyNotExistsInternal.addSelectField(aliasTabellaNotExists, CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID);
+					sqlQueryObjectPropertyNotExistsInternal.addWhereCondition(aliasTabellaNotExists+"."+CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO+"="+aliasTabella+"."+CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO);
+					sqlQueryObjectPropertyNotExistsInternal.addWhereCondition(aliasTabellaNotExists+"."+CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO+"="+aliasTabella+"."+CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO);
+					sqlQueryObjectPropertyNotExistsInternal.addWhereCondition(aliasTabellaNotExists+"."+CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME+"=?");
 					sqlQueryObjectPropertyNotExistsInternal.setANDLogicOperator(true);
 					
 					sqlQueryObjectPropertyNotExists = sqlQueryObject.newSQLQueryObject();
@@ -921,32 +1018,34 @@ public class DBProtocolPropertiesUtils {
 		
 		JDBCParameterUtilities jdbcParameterUtilities = new JDBCParameterUtilities(TipiDatabase.toEnumConstant(tipoDatabase));
 		
-		if(list!=null && list.size()>0){
+		if(list!=null && !list.isEmpty()){
 			for (int i = 0; i < list.size(); i++) {
 				
-				log.debug("FiltroRicercaProtocolProperty size:"+list.size()+" ["+i+"] Proprietario stmt.setString("+proprietario.name()+")");
+				logDebug(log,"FiltroRicercaProtocolProperty size:"+list.size()+" ["+i+"] Proprietario stmt.setString("+proprietario.name()+")");
 				stmt.setString(index++, proprietario.name());
 				
 			}
 			for (int i = 0; i < list.size(); i++) {
 				
+				String prefix = "FiltroRicercaProtocolProperty["+i+"] ";
+				
 				FiltroRicercaProtocolProperty f = list.get(i);
 				if(f.getName()!=null){
-					log.debug("FiltroRicercaProtocolProperty["+i+"] Name stmt.setString("+f.getName()+")");
+					logDebug(log,prefix+"Name stmt.setString("+f.getName()+")");
 					stmt.setString(index++, f.getName());
 				}
 				
 				if(f.getValueAsString()!=null){
-					log.debug("FiltroRicercaProtocolProperty["+i+"] ValueAsString stmt.setString("+f.getValueAsString()+")");
+					logDebug(log,prefix+"ValueAsString stmt.setString("+f.getValueAsString()+")");
 					jdbcParameterUtilities.setParameter(stmt, index++, f.getValueAsString(), String.class);
 				}
 				else if(f.getValueAsLong()!=null){
-					log.debug("FiltroRicercaProtocolProperty["+i+"] ValueAsLong stmt.setLong("+f.getValueAsLong()+")");
+					logDebug(log,prefix+"ValueAsLong stmt.setLong("+f.getValueAsLong()+")");
 					jdbcParameterUtilities.setParameter(stmt, index++, f.getValueAsLong(), Long.class);
 				}
 				else if(f.getValueAsBoolean()!=null){
-					int value = f.getValueAsBoolean() ? CostantiDB.TRUE : CostantiDB.FALSE;
-					log.debug("FiltroRicercaProtocolProperty["+i+"] ValueAsBoolean stmt.setInt("+value+")");
+					int value = f.getValueAsBoolean()!=null && f.getValueAsBoolean().booleanValue() ? CostantiDB.TRUE : CostantiDB.FALSE;
+					logDebug(log,prefix+"ValueAsBoolean stmt.setInt("+value+")");
 					jdbcParameterUtilities.setParameter(stmt, index++, value, Integer.class);
 				}
 				
@@ -955,7 +1054,7 @@ public class DBProtocolPropertiesUtils {
 				// 1) Passando via govwayConsole, la proprieta' esiste con il nome ('name') ed e' valorizzata null in tutte le colonne (value_string,value_number,value_boolean)
 				// 2) Passando via govwayLoader, in una configurazione xml, non si definisce la proprietà senza il valore, quindi la riga con il nome non esistera proprio nel db.
 				if(f.getValueAsString()==null && f.getValueAsLong()==null && f.getValueAsBoolean()==null){
-					log.debug("FiltroRicercaProtocolProperty["+i+"] Name stmt.setString("+f.getName()+")");
+					logDebug(log,prefix+"Name stmt.setString("+f.getName()+")");
 					stmt.setString(index++, f.getName());
 				}
 			}

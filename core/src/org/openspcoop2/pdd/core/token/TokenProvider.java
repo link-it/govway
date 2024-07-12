@@ -27,8 +27,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.cxf.rs.security.jose.common.JoseConstants;
-import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.mvc.properties.Item;
@@ -47,6 +45,8 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.jose.JOSECostanti;
 import org.openspcoop2.security.message.jose.SecurityProvider;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
+import org.openspcoop2.utils.UtilsRuntimeException;
+import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPProvider;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -63,9 +63,15 @@ public class TokenProvider implements IProvider {
 
 	
 	private OCSPProvider ocspProvider;
+	private BYOKProvider byokProvider;
 
 	public TokenProvider() {
 		this.ocspProvider = new OCSPProvider();
+		try {
+			this.byokProvider = BYOKProvider.getUnwrapInstance();
+		}catch(Exception e) {
+			throw new UtilsRuntimeException(e.getMessage(),e);
+		}
 	}
 
 	private static final String SCONOSCIUTO = "Sconosciuto";
@@ -246,10 +252,10 @@ public class TokenProvider implements IProvider {
 			throw new ProviderValidationException("Non è stata fornita una configurazione per effettuare la validazione JWS");
 		}
 		
-		if(!p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE) && !p.containsKey(JoseConstants.RSSEC_KEY_STORE_JWKSET)) {
+		if(!p.containsKey(SecurityConstants.JOSE_KEYSTORE) && !p.containsKey(SecurityConstants.JOSE_KEYSTORE_JWKSET)) {
 			// altrimenti è stato fatto inject del keystore
 			if(!dynamicDiscovery) {
-				String file = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+				String file = p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE);
 				InputValidationUtils.validateTextAreaInput(file, "Validazione JWT - TrustStore - Location");
 			}
 			
@@ -265,12 +271,11 @@ public class TokenProvider implements IProvider {
 			throw new ProviderValidationException("Non è stata fornita una configurazione per effettuare la validazione JWE");
 		}
 		
-		if(!p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE) && !p.containsKey(JoseConstants.RSSEC_KEY_STORE_JWKSET)) {
+		if(!p.containsKey(SecurityConstants.JOSE_KEYSTORE) && !p.containsKey(SecurityConstants.JOSE_KEYSTORE_JWKSET) &&
 			// altrimenti è stato fatto inject del keystore
-			if(!dynamicDiscovery) {
-				String file = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
-				InputValidationUtils.validateTextAreaInput(file, "Validazione JWT - KeyStore - Location");
-			}
+			!dynamicDiscovery) {
+			String file = p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE);
+			InputValidationUtils.validateTextAreaInput(file, "Validazione JWT - KeyStore - Location");
 		}
 	}
 	private void validateValidazioneJwtCustomParser(Properties pDefault) throws ProviderValidationException {
@@ -314,13 +319,13 @@ public class TokenProvider implements IProvider {
 				throw new ProviderValidationException("Non indicare spazi nell'algoritmo per l'autenticazione server");
 			}
 			
-			String locationCRL = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+			String locationCRL = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLS);
 			if(locationCRL!=null && !"".equals(locationCRL)) {
 				InputValidationUtils.validateTextAreaInput(locationCRL, "Https - Autenticazione Server - CRL File(s)");
 			}
 		}
 	}
-	private void validateIntrospection(Map<String, Properties> mapProperties, Properties pDefault, boolean dynamicDiscovery) throws ProviderValidationException, ProviderException {
+	private void validateIntrospection(Map<String, Properties> mapProperties, Properties pDefault, boolean dynamicDiscovery) throws ProviderValidationException {
 		
 		if(!dynamicDiscovery) {
 			String url = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_URL);
@@ -520,7 +525,7 @@ public class TokenProvider implements IProvider {
 		}
 	}
 	
-	private void validateUserInfo(Map<String, Properties> mapProperties, Properties pDefault, boolean dynamicDiscovery) throws ProviderValidationException, ProviderException {
+	private void validateUserInfo(Map<String, Properties> mapProperties, Properties pDefault, boolean dynamicDiscovery) throws ProviderValidationException {
 		
 		if(!dynamicDiscovery) {
 			String url = pDefault.getProperty(Costanti.POLICY_USER_INFO_URL);
@@ -720,7 +725,7 @@ public class TokenProvider implements IProvider {
 		}
 	}
 	
-	private void validateInformazioniRaccolte(Map<String, Properties> mapProperties, Properties pDefault) throws ProviderValidationException, ProviderException {
+	private void validateInformazioniRaccolte(Map<String, Properties> mapProperties, Properties pDefault) throws ProviderValidationException {
 		boolean forwardTrasparente = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_STATO);
 		boolean forwardInformazioniRaccolte = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_STATO);
 
@@ -768,7 +773,7 @@ public class TokenProvider implements IProvider {
 			}
 		}
 	}
-	private void validateInformazioniRaccolteForward(Map<String, Properties> mapProperties, Properties pDefault) throws ProviderValidationException, ProviderException {
+	private void validateInformazioniRaccolteForward(Map<String, Properties> mapProperties, Properties pDefault) throws ProviderValidationException {
 		String mode = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE);
 		if(mode==null) {
 			throw new ProviderValidationException("Nessuna modalità di forward, delle informazioni raccolte, indicata");
@@ -806,7 +811,7 @@ public class TokenProvider implements IProvider {
 			validateInformazioniRaccolteForwardJwe(mapProperties);
 		}
 	}
-	private void validateInformazioniRaccolteForwardJson(Properties pDefault, String mode) throws ProviderValidationException, ProviderException {
+	private void validateInformazioniRaccolteForwardJson(Properties pDefault, String mode) throws ProviderValidationException {
 		boolean forwardValidazioneJWT = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_VALIDAZIONE_JWT);	
 		boolean forwardIntrospection = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION);
 		boolean forwardUserInfo = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO);
@@ -921,12 +926,12 @@ public class TokenProvider implements IProvider {
 			throw new ProviderValidationException("La modalità di forward, delle informazioni raccolte, selezionata richiede una configurazione per poter attuare la firma JWS; configurazione non riscontrata");
 		}
 		
-		if(!p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE) && !p.containsKey(JoseConstants.RSSEC_KEY_STORE_JWKSET)) {
+		if(!p.containsKey(SecurityConstants.JOSE_KEYSTORE) && !p.containsKey(SecurityConstants.JOSE_KEYSTORE_JWKSET)) {
 			// altrimenti è stato fatto inject del keystore
-			String file = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+			String file = p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE);
 			InputValidationUtils.validateTextAreaInput(file, "Token Forward - JWS KeyStore - File");
 			
-			String fileChiavePubblica = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE+".public");
+			String fileChiavePubblica = p.getProperty(SecurityConstants.JOSE_KEYSTORE_PUBLIC_KEY);
 			if(fileChiavePubblica!=null && StringUtils.isNotEmpty(fileChiavePubblica)) {
 				InputValidationUtils.validateTextAreaInput(file, "Token Forward - JWS KeyStore - Chiave Pubblica");
 			}
@@ -938,9 +943,9 @@ public class TokenProvider implements IProvider {
 			throw new ProviderValidationException("La modalità di forward, delle informazioni raccolte, selezionata richiede una configurazione per poter attuare la cifratura JWE; configurazione non riscontrata");
 		}
 		
-		if(!p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE) && !p.containsKey(JoseConstants.RSSEC_KEY_STORE_JWKSET)) {
+		if(!p.containsKey(SecurityConstants.JOSE_KEYSTORE) && !p.containsKey(SecurityConstants.JOSE_KEYSTORE_JWKSET)) {
 			// altrimenti è stato fatto inject del keystore
-			String file = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+			String file = p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE);
 			InputValidationUtils.validateTextAreaInput(file, "Token Forward - JWE KeyStore - File");
 		}
 	}
@@ -951,7 +956,6 @@ public class TokenProvider implements IProvider {
 	}
 	@Override
 	public List<String> getValues(String id, ExternalResources externalResources) throws ProviderException{
-		List<String> l = null;
 		if(Costanti.ID_INTROSPECTION_HTTP_METHOD.equals(id) ||
 				Costanti.ID_USER_INFO_HTTP_METHOD.equals(id)) {
 			return getHttpRequestMethodValues();
@@ -980,10 +984,23 @@ public class TokenProvider implements IProvider {
 		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY.equals(id)) {
 			return Costanti.getIdValidazioneJwtTruststoreTypeSelectJwkPublicKeyValues();
 		}
-		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_OCSP_POLICY.equals(id)) {
+		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_OCSP_POLICY.equals(id) ||
+				Costanti.ID_HTTPS_TRUSTSTORE_OCSP_POLICY.equals(id)) {
 			return this.ocspProvider.getValues();
 		}
-		else if(Costanti.ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)) {
+		else if(Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_BYOK_POLICY.equals(id) ||
+				Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_BYOK_POLICY.equals(id) ||
+				Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(id) ||
+				Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_BYOK_POLOCY.equals(id) ) {
+			return this.byokProvider.getValues();
+		}
+		else {
+			return getValuesContinue1(id, externalResources);
+		}
+	}
+	private List<String> getValuesContinue1(String id, ExternalResources externalResources) throws ProviderException{
+		List<String> l = null;
+		if(Costanti.ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)) {
 			return TokenUtilities.getTokenPluginValues(externalResources, TipoPlugin.TOKEN_DYNAMIC_DISCOVERY);
 		}
 		else if(Costanti.ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)
@@ -1036,16 +1053,7 @@ public class TokenProvider implements IProvider {
 				Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id) ||
 				Costanti.ID_JWS_ENCRYPT_KEY_ALGORITHM.equals(id) ||
 				Costanti.ID_JWS_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
-			SecurityProvider secProvider = new SecurityProvider();
-			if(Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id)) {
-				return secProvider.getLabels(JOSECostanti.ID_SIGNATURE_ALGORITHM);
-			}
-			else if(Costanti.ID_JWS_ENCRYPT_KEY_ALGORITHM.equals(id) || JOSECostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id)) {
-				return secProvider.getLabels(JOSECostanti.ID_ENCRYPT_KEY_ALGORITHM);
-			}
-			else{/**else if(Costanti.ID_JWS_ENCRYPT_CONTENT_ALGORITHM.equals(id) || JOSECostanti.ID_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {*/
-				return secProvider.getLabels(JOSECostanti.ID_ENCRYPT_CONTENT_ALGORITHM);
-			}
+			return getLabelsEncryption(id);
 		}
 		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE.equals(id) || 
 				Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_TYPE.equals(id) ||
@@ -1061,10 +1069,34 @@ public class TokenProvider implements IProvider {
 		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE_SELECT_JWK_PUBLIC_KEY.equals(id)) {
 			return Costanti.getIdValidazioneJwtTruststoreTypeSelectJwkPublicKeyLabels();
 		}
-		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_OCSP_POLICY.equals(id)) {
+		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_OCSP_POLICY.equals(id) ||
+				Costanti.ID_HTTPS_TRUSTSTORE_OCSP_POLICY.equals(id)) {
 			return this.ocspProvider.getLabels();
 		}
-		else if(Costanti.ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)) {
+		else if(Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_BYOK_POLICY.equals(id) ||
+				Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_BYOK_POLICY.equals(id) ||
+				Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(id) ||
+				Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_BYOK_POLOCY.equals(id)) {
+			return this.byokProvider.getLabels();
+		}
+		else {
+			return getLabelsContinue1(id, externalResources);
+		}
+	}
+	private List<String> getLabelsEncryption(String id) throws ProviderException{
+		SecurityProvider secProvider = new SecurityProvider();
+		if(Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id)) {
+			return secProvider.getLabels(JOSECostanti.ID_SIGNATURE_ALGORITHM);
+		}
+		else if(Costanti.ID_JWS_ENCRYPT_KEY_ALGORITHM.equals(id) || JOSECostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id)) {
+			return secProvider.getLabels(JOSECostanti.ID_ENCRYPT_KEY_ALGORITHM);
+		}
+		else{/**else if(Costanti.ID_JWS_ENCRYPT_CONTENT_ALGORITHM.equals(id) || JOSECostanti.ID_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {*/
+			return secProvider.getLabels(JOSECostanti.ID_ENCRYPT_CONTENT_ALGORITHM);
+		}
+	}
+	private List<String> getLabelsContinue1(String id, ExternalResources externalResources) throws ProviderException{
+		if(Costanti.ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)) {
 			return TokenUtilities.getTokenPluginLabels(externalResources, TipoPlugin.TOKEN_DYNAMIC_DISCOVERY);
 		}
 		else if(Costanti.ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CHOICE.equals(id)
@@ -1230,13 +1262,26 @@ public class TokenProvider implements IProvider {
 				) {
 			return dynamicUpdateStoreKeyPassword(items, mapNameValue, item, actualValue);
 		}
-		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_OCSP_POLICY.equals(item.getName())) {
+		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_OCSP_POLICY.equals(item.getName()) ||
+				Costanti.ID_HTTPS_TRUSTSTORE_OCSP_POLICY.equals(item.getName())) {
 			if(!this.ocspProvider.isOcspEnabled()) {
 				item.setValue("");
 				item.setType(ItemType.HIDDEN);
 			}
+			return actualValue;
 		}
-		else if(Costanti.ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CHOICE.equals(item.getName())
+		else if(Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_BYOK_POLICY.equals(item.getName()) ||
+				Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_BYOK_POLICY.equals(item.getName()) ||
+				Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(item.getName()) ||
+				Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_BYOK_POLOCY.equals(item.getName())) {
+			return dynamicUpdateByok(items, mapNameValue, item, actualValue);
+		}
+		else {
+			return dynamicUpdateContinue1(items, mapNameValue, item, actualValue, externalResources);
+		}
+	}
+	public String dynamicUpdateContinue1(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue, ExternalResources externalResources) {
+		if(Costanti.ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CHOICE.equals(item.getName())
 			) {
 			return TokenUtilities.dynamicUpdateTokenPluginChoice(externalResources, TipoPlugin.TOKEN_DYNAMIC_DISCOVERY, item, actualValue);
 		}
@@ -1248,17 +1293,16 @@ public class TokenProvider implements IProvider {
 			) {
 			return TokenUtilities.dynamicUpdateTokenPluginChoice(externalResources, TipoPlugin.TOKEN_VALIDAZIONE, item, actualValue);
 		}
-		if(Costanti.ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(item.getName())
+		else if(Costanti.ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(item.getName())
 			) {
 			return dynamicUpdateTokenDynamicDiscoveryPluginClassName(items, mapNameValue, item, actualValue, externalResources);
 		}
-		if(Costanti.ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(item.getName()) ||
+		else if(Costanti.ID_VALIDAZIONE_JWT_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(item.getName()) ||
 				Costanti.ID_INTROSPECTION_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(item.getName()) ||
 				Costanti.ID_USER_INFO_CUSTOM_PARSER_PLUGIN_CLASSNAME.equals(item.getName())
 			) {
 			return dynamicUpdateTokenPluginClassName(items, mapNameValue, item, actualValue, externalResources);
 		}
-		
 		return actualValue;
 	}
 	private String dynamicUpdateFile(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
@@ -1314,6 +1358,33 @@ public class TokenProvider implements IProvider {
 		}
 		
 		return AbstractSecurityProvider.processStoreKeyPassword(type, items, mapNameValue, item, actualValue);
+	}
+	private String dynamicUpdateByok(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		if(!this.byokProvider.isByokEnabled()) {
+			item.setValue("");
+			item.setType(ItemType.HIDDEN);
+			return actualValue;
+		}
+		else {
+			return dynamicUpdateByokPolicy(items, mapNameValue, item, actualValue);
+		}
+	}
+	private String dynamicUpdateByokPolicy(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		String type = null;
+		if(Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_BYOK_POLICY.equals(item.getName())) {
+			type = Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_TYPE;
+		}
+		else if(Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_BYOK_POLICY.equals(item.getName())) {
+			type = Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_TYPE;
+		}
+		else if(Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(item.getName())) {
+			type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
+		}
+		else if(Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_BYOK_POLOCY.equals(item.getName())) {
+			type = Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_TYPE;
+		}
+		
+		return AbstractSecurityProvider.processStoreByokPolicy(type, items, mapNameValue, item, actualValue);
 	}
 	private String dynamicUpdateTokenDynamicDiscoveryPluginClassName(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue, ExternalResources externalResources) {
 		String idChoice = Costanti.ID_DYNAMIC_DISCOVERY_CUSTOM_PARSER_PLUGIN_CHOICE;

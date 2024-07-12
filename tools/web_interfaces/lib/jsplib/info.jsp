@@ -37,7 +37,7 @@ else
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 
-// Imposta uno status diverso da 200 se previsto.
+//Imposta uno status diverso da 200 se previsto.
 Object setErrorCodeObj = request.getAttribute(Costanti.REQUEST_ATTRIBUTE_SET_ERROR_CODE);
 
 if(setErrorCodeObj != null){

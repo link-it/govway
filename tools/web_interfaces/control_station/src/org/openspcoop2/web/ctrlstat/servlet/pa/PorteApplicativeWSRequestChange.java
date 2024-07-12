@@ -40,7 +40,9 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -90,8 +92,11 @@ public final class PorteApplicativeWSRequestChange extends Action {
 			if(idAsps == null) 
 				idAsps = "";
 			String nome = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-			String valore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE);
+			String valore = porteApplicativeHelper.getLockedParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE, false);
 
+			// Wrap value
+			valore = porteApplicativeHelper.wrapValoreProprieta(valore);
+			
 			// Prendo il nome della porta applicativa
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			
@@ -130,14 +135,16 @@ public final class PorteApplicativeWSRequestChange extends Action {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
-				MessageSecurity ws = pa.getMessageSecurity();
-				if(ws.getRequestFlow()!=null){
-					List<MessageSecurityFlowParameter> wsrfpArray = ws.getRequestFlow().getParameterList();
-					for (int i = 0; i < wsrfpArray.size(); i++) {
-						MessageSecurityFlowParameter wsrfp = wsrfpArray.get(i);
-						if (nome.equals(wsrfp.getNome())) {
-							valore = wsrfp.getValore();
-							break;
+				if(valore==null) {
+					MessageSecurity ws = pa.getMessageSecurity();
+					if(ws.getRequestFlow()!=null){
+						List<MessageSecurityFlowParameter> wsrfpArray = ws.getRequestFlow().getParameterList();
+						for (int i = 0; i < wsrfpArray.size(); i++) {
+							MessageSecurityFlowParameter wsrfp = wsrfpArray.get(i);
+							if (nome.equals(wsrfp.getNome())) {
+								valore = wsrfp.getValore();
+								break;
+							}
 						}
 					}
 				}
@@ -146,7 +153,12 @@ public final class PorteApplicativeWSRequestChange extends Action {
 				List<DataElement> dati = new ArrayList<>();
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addNomeValoreToDati(TipoOperazione.CHANGE, dati, nome, valore, false);
+				DataElement dataElement = new DataElement();
+				dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA);
+				dataElement.setType(DataElementType.TITLE);
+				dati.add(dataElement);
+				
+				dati = porteApplicativeHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.CHANGE, dati, nome, valore, false);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg,idPorta, idAsps, dati);
 				
@@ -169,7 +181,12 @@ public final class PorteApplicativeWSRequestChange extends Action {
 
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addNomeValoreToDati(TipoOperazione.CHANGE, dati, nome, valore,  false);
+				DataElement dataElement = new DataElement();
+				dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA);
+				dataElement.setType(DataElementType.TITLE);
+				dati.add(dataElement);
+				
+				dati = porteApplicativeHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.CHANGE, dati, nome, valore,  false);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg,idPorta, idAsps, dati);
 

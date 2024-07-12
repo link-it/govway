@@ -41,6 +41,7 @@ import jakarta.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
+import org.openspcoop2.core.byok.IDriverBYOKConfig;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.Filtri;
@@ -146,6 +147,8 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
+import org.openspcoop2.pdd.core.byok.DriverBYOK;
+import org.openspcoop2.pdd.core.byok.DriverBYOKUtilities;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.pdd.core.keystore.RemoteStoreKeyEntry;
 import org.openspcoop2.pdd.core.keystore.RemoteStoreProviderDriverUtils;
@@ -203,6 +206,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.ctrlstat.servlet.utils.UtilsCostanti;
 import org.openspcoop2.web.lib.audit.DriverAudit;
 import org.openspcoop2.web.lib.audit.appender.AuditAppender;
 import org.openspcoop2.web.lib.audit.appender.AuditDBAppender;
@@ -216,6 +220,7 @@ import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.byok.LockUtilities;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.mvc.properties.exception.ValidationException;
 import org.openspcoop2.web.lib.mvc.properties.utils.ReadPropertiesUtilities;
@@ -1187,6 +1192,29 @@ public class ControlStationCore {
 		return this.isClusterDinamicoEnabled;
 	}
 	
+	/** BYOK */
+
+	private boolean visualizzaInformazioniCifrate = false;
+	public boolean isVisualizzaInformazioniCifrate() {
+		return this.visualizzaInformazioniCifrate;
+	}
+	private String byokWarningMessage = null;
+	public String getByokWarningMessage() {
+		return this.byokWarningMessage;
+	}
+	private String notaInformativaInformazioneMemorizzataInChiaro = null;
+	public String getNotaInformativaInformazioneMemorizzataInChiaro() {
+		return this.notaInformativaInformazioneMemorizzataInChiaro;
+	}
+	private String notaInformativaInformazioneCifrataSecurityPolicyDifferente = null;
+	public String getNotaInformativaInformazioneCifrataSecurityPolicyDifferente() {
+		return this.notaInformativaInformazioneCifrataSecurityPolicyDifferente;
+	}
+	private boolean visualizzaCampiPasswordComeLock = false;
+	public boolean isVisualizzaCampiPasswordComeLock() {
+		return this.visualizzaCampiPasswordComeLock;
+	}
+
 	/** OCSP */
 	private boolean isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = false;
 	public boolean isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata() {
@@ -1563,6 +1591,8 @@ public class ControlStationCore {
 	private boolean isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus = false;
 	private InvokerNodiRuntime invoker = null;
 	private ConfigurazioneNodiRuntime configurazioneNodiRuntime = null;
+	private DriverBYOKUtilities driverBYOKUtilities = null;
+	private LockUtilities lockUtilities = null;
 	private List<String> jmxPdDAliases = new ArrayList<>();
 	private Map<String,List<String>>  jmxPdDGruppiAliases = new HashMap<>();
 	private Map<String, String> jmxPdDDescrizioni = new HashMap<>();
@@ -1594,6 +1624,8 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoInformazioniInstallazione = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoUnwrapKey = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoWrapKey = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoConnessioniDB = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoConnessioniJMS = new HashMap<>();
@@ -1713,6 +1745,13 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdDCacheNomeMetodoResetCache = new HashMap<>();
 	private Map<String, String> jmxPdDCacheNomeMetodoPrefillCache = new HashMap<>();
 	
+	public DriverBYOKUtilities getDriverBYOKUtilities() {
+		return this.driverBYOKUtilities;
+	}
+	public LockUtilities getLockUtilities() {
+		return this.lockUtilities;
+	}
+	
 	public boolean isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus() {
 		return this.isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus;
 	}
@@ -1827,6 +1866,12 @@ public class ControlStationCore {
 	}
 	public String getJmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace(String alias) {
 		return this.jmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace.get(alias);
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoUnwrapKey(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoUnwrapKey.get(alias);
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoWrapKey(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoWrapKey.get(alias);
 	}
 	public String getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(String alias) {
 		return this.jmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio.get(alias);
@@ -2235,8 +2280,11 @@ public class ControlStationCore {
 			// inizializzo DateManager
 			DateManager.initializeDataManager(org.openspcoop2.utils.date.SystemDate.class.getName(), null, ControlStationCore.log);
 
-			// inizializzo JMX
-			if(!initForApi) {
+			// inizializzo JMX/BYOK
+			if(initForApi) {
+				initBYOK(ConfigurazioneNodiRuntime.getConfigurazioneNodiRuntime());
+			}
+			else {
 				this.initCoreJmxResources();
 			}
 
@@ -2577,6 +2625,13 @@ public class ControlStationCore {
 		/** Cluster dinamico */
 		this.isClusterDinamicoEnabled = core.isClusterDinamicoEnabled;
 		
+		/** BYOK **/
+		this.visualizzaInformazioniCifrate = core.visualizzaInformazioniCifrate;
+		this.byokWarningMessage = core.byokWarningMessage;
+		this.notaInformativaInformazioneMemorizzataInChiaro = core.notaInformativaInformazioneMemorizzataInChiaro;
+		this.notaInformativaInformazioneCifrataSecurityPolicyDifferente = core.notaInformativaInformazioneCifrataSecurityPolicyDifferente;
+		this.visualizzaCampiPasswordComeLock = core.visualizzaCampiPasswordComeLock;
+		
 		/** OCSP */
 		this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = core.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata; 
 		
@@ -2674,6 +2729,8 @@ public class ControlStationCore {
 		/** Opzioni Accesso JMX della PdD */
 		this.invoker = core.invoker;
 		this.configurazioneNodiRuntime = core.configurazioneNodiRuntime;
+		this.driverBYOKUtilities = core.driverBYOKUtilities;
+		this.lockUtilities = core.lockUtilities;
 		this.isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus = core.isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus;
 		this.jmxPdDAliases = core.jmxPdDAliases;
 		this.jmxPdDGruppiAliases = core.jmxPdDGruppiAliases;
@@ -2706,6 +2763,8 @@ public class ControlStationCore {
 		this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniInstallazione = core.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniInstallazione;
 		this.jmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace = core.jmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace;
 		this.jmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace = core.jmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoUnwrapKey = core.jmxPdDConfigurazioneSistemaNomeMetodoUnwrapKey;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoWrapKey = core.jmxPdDConfigurazioneSistemaNomeMetodoWrapKey;
 		this.jmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio = core.jmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio;
 		this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniDB = core.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniDB;
 		this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniJMS = core.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniJMS;
@@ -3000,6 +3059,11 @@ public class ControlStationCore {
 			}
 			this.isRegistrazioneMessaggiMultipartPayloadParsingEnabled = consoleProperties.isRegistrazioneMessaggiMultipartPayloadParsingEnabled();
 			this.isClusterDinamicoEnabled = consoleProperties.isClusterDinamicoEnabled();
+			this.visualizzaInformazioniCifrate = consoleProperties.isVisualizzaInformazioniCifrate();
+			this.byokWarningMessage = consoleProperties.getVisualizzaInformazioniCifrateWarningMessage();
+			this.notaInformativaInformazioneMemorizzataInChiaro = consoleProperties.getNotaInformativaInformazioneMemorizzataInChiaro();
+			this.notaInformativaInformazioneCifrataSecurityPolicyDifferente = consoleProperties.getNotaInformativaInformazioneCifrataSecurityPolicyDifferente();
+			this.visualizzaCampiPasswordComeLock = consoleProperties.isVisualizzaCampiPasswordComeLock();
 			this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = consoleProperties.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata();
 			this.verificaCertificatiWarningExpirationDays = consoleProperties.getVerificaCertificatiWarningExpirationDays();
 			this.verificaCertificatiSceltaClusterId = consoleProperties.isVerificaCertificatiSceltaClusterId();
@@ -3135,6 +3199,17 @@ public class ControlStationCore {
 		
 	}
 
+	private void initBYOK(ConfigurazioneNodiRuntime configurazioneNodiRuntime) {
+		this.configurazioneNodiRuntime = configurazioneNodiRuntime;
+		this.invoker = new InvokerNodiRuntime(log, this.configurazioneNodiRuntime);
+		
+		this.driverBYOKUtilities = new DriverBYOKUtilities(false, log, this.configurazioneNodiRuntime);
+		
+		this.lockUtilities = new LockUtilities(this.driverBYOKUtilities,
+				this.isVisualizzaInformazioniCifrate(), this.getByokWarningMessage(), UtilsCostanti.SERVLET_NAME_SECRET_DECODER,
+				this.getNotaInformativaInformazioneMemorizzataInChiaro(), this.getNotaInformativaInformazioneCifrataSecurityPolicyDifferente(), this.isVisualizzaCampiPasswordComeLock());
+		
+	}
 	
 	private void initCoreJmxResources() throws ControlStationCoreException {
 
@@ -3145,26 +3220,24 @@ public class ControlStationCore {
 					
 			// Opzioni Accesso JMX della PdD
 			
-			this.configurazioneNodiRuntime = consoleProperties.getConfigurazioneNodiRuntime();
-			this.invoker = new InvokerNodiRuntime(log, this.configurazioneNodiRuntime);
+			initBYOK(consoleProperties.getConfigurazioneNodiRuntime());
 			
 			this.isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus = consoleProperties.isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus();
 			this.jmxPdDAliases = consoleProperties.getJmxPdDAliases();
-			if(this.singlePdD==false){
+			if(!this.singlePdD &&
 				// se esistono degli alias allora assegno poi come alias i nomi delle pdd operative
-				if(this.jmxPdDAliases!=null && this.jmxPdDAliases.size()>0){
-					this.jmxPdDAliases = new ArrayList<>();
-					PddCore pddCore = new PddCore(this);
-					try{
-						List<PdDControlStation> pddList = pddCore.pddList(null, new ConsoleSearch(true));
-						for (PdDControlStation pddControlStation : pddList) {
-							if(PddTipologia.OPERATIVO.toString().equals(pddControlStation.getTipo())){
-								this.jmxPdDAliases.add(pddControlStation.getNome());
-							}
+				this.jmxPdDAliases!=null && !this.jmxPdDAliases.isEmpty()){
+				this.jmxPdDAliases = new ArrayList<>();
+				PddCore pddCore = new PddCore(this);
+				try{
+					List<PdDControlStation> pddList = pddCore.pddList(null, new ConsoleSearch(true));
+					for (PdDControlStation pddControlStation : pddList) {
+						if(PddTipologia.OPERATIVO.toString().equals(pddControlStation.getTipo())){
+							this.jmxPdDAliases.add(pddControlStation.getNome());
 						}
-					}catch(Exception e){
-						// ignore
 					}
+				}catch(Exception e){
+					// ignore
 				}
 			}
 			
@@ -3205,6 +3278,8 @@ public class ControlStationCore {
 					this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniInstallazione.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniInstallazione(alias));
 					this.jmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace(alias));
 					this.jmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoUnwrapKey.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoUnwrapKey(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoWrapKey.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoWrapKey(alias));
 					this.jmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(alias));
 					this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniDB.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniDB(alias));
 					this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniJMS.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniJMS(alias));
@@ -3489,6 +3564,9 @@ public class ControlStationCore {
 			
 			// creo il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			// BYOK
+			activeBYOK(driver, true, false);
 			
 			for (int i = 0; i < oggetti.length; i++) {
 				// prendo il tipo di operazione da effettuare su questo oggetto
@@ -7908,4 +7986,20 @@ public class ControlStationCore {
 		}
 		return filetrace;
 	}
+	
+	
+
+
+	protected void activeBYOK(DriverControlStationDB driver, boolean wrap, boolean unwrap) throws UtilsException{
+		DriverBYOK driverBYOK = this.driverBYOKUtilities.getDriverBYOKManagerNode(wrap, unwrap);
+		if(driverBYOK!=null && driver.getDriverConfigurazioneDB() instanceof IDriverBYOKConfig) {
+			IDriverBYOKConfig c = driver.getDriverConfigurazioneDB();
+			c.initialize(driverBYOK, wrap, unwrap);
+		}
+		if(driverBYOK!=null && driver.getDriverRegistroServiziDB() instanceof IDriverBYOKConfig) {
+			IDriverBYOKConfig c = driver.getDriverRegistroServiziDB();
+			c.initialize(driverBYOK, wrap, unwrap);
+		}
+	}
+		
 }

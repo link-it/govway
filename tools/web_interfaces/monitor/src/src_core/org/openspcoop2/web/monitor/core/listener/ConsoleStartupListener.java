@@ -28,6 +28,7 @@ import java.util.Arrays;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.thread.ThreadExecutorManager;
 
@@ -41,22 +42,22 @@ import org.openspcoop2.web.monitor.core.thread.ThreadExecutorManager;
  */
 public class ConsoleStartupListener extends AbstractConsoleStartupListener{
 
+	private InitRuntimeConfigReader initRuntimeConfigReader;
 
 	@Override
 	public void contextInitialized(ServletContextEvent evt) {
 
 		super.contextInitialized(evt);
 
-		@SuppressWarnings("unused")
 		PddMonitorProperties govwayMonitorProperties = null;
 		try{
 			govwayMonitorProperties = PddMonitorProperties.getInstance(AbstractConsoleStartupListener.log);
 		} catch (Exception e) {
 			String msgErrore = "Errore durante l'inizializzazione delle proprietà della govwayMonitor: " + e.getMessage();
-			AbstractConsoleStartupListener.log.error(
+			AbstractConsoleStartupListener.logError(
 					//					throw new ServletException(
 					msgErrore,e);
-			throw new RuntimeException(msgErrore,e);
+			throw new UtilsRuntimeException(msgErrore,e);
 		}
 
 		
@@ -69,31 +70,33 @@ public class ConsoleStartupListener extends AbstractConsoleStartupListener{
 		try{
 			String fontFileName = PddMonitorProperties.getInstance(log).getConsoleFont();
 			
-			log.debug("Caricato Font dal file: ["+fontFileName+"] in corso... ");
+			logDebug("Caricato Font dal file: ["+fontFileName+"] in corso... ");
 			
 			isFont = servletContext.getResourceAsStream("/fonts/"+ fontFileName);
 
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			Font fontCaricato = Font.createFont(Font.PLAIN, isFont);
 			
-			log.debug("Caricato Font: ["+fontCaricato.getName()+"] FontName: ["+fontCaricato.getFontName()+"] FontFamily: ["+fontCaricato.getFamily()+"] FontStyle: ["+fontCaricato.getStyle()+"]");
+			logDebug("Caricato Font: ["+fontCaricato.getName()+"] FontName: ["+fontCaricato.getFontName()+"] FontFamily: ["+fontCaricato.getFamily()+"] FontStyle: ["+fontCaricato.getStyle()+"]");
 			
 			ge.registerFont(fontCaricato);
 
-			log.debug("Check Graphics Environment: is HeadeLess ["+java.awt.GraphicsEnvironment.isHeadless()+"]");
+			logDebug("Check Graphics Environment: is HeadeLess ["+java.awt.GraphicsEnvironment.isHeadless()+"]");
 
-			log.debug("Elenco Nomi Font disponibili: " + Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()));
+			logDebug("Elenco Nomi Font disponibili: " + Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()));
 			
 			PddMonitorProperties.getInstance(log).setConsoleFontName(fontCaricato.getName());
 			PddMonitorProperties.getInstance(log).setConsoleFontFamilyName(fontCaricato.getFamily());
 			PddMonitorProperties.getInstance(log).setConsoleFontStyle(fontCaricato.getStyle());
 			
-			log.debug("Caricato Font dal file: ["+fontFileName+"] completato.");
+			logDebug("Caricato Font dal file: ["+fontFileName+"] completato.");
 		}catch (Exception e) {
-			log.error(e.getMessage(),e);
+			logError(e.getMessage(),e);
 		} finally {
 			if(isFont != null){
-				try {	isFont.close(); } catch (IOException e) {	}
+				try {	isFont.close(); } catch (IOException e) {
+					// ignore
+				}
 			}
 		}
 		
@@ -101,10 +104,24 @@ public class ConsoleStartupListener extends AbstractConsoleStartupListener{
 		try{
 			ThreadExecutorManager.setup();
 		}catch (Exception e) {
-			log.error(e.getMessage(),e);
+			logError(e.getMessage(),e);
 			String msgErrore = "Errore durante l'inizializzazione del ThreadExecutorManager: "+e.getMessage();
-			throw new RuntimeException(msgErrore,e);
+			throw new UtilsRuntimeException(msgErrore,e);
 		} 
+		
+		// InitRuntimeConfigReader
+		if(this.isReInitSecretMaps()) {
+			try{
+				this.initRuntimeConfigReader = new InitRuntimeConfigReader(govwayMonitorProperties, this.isReInitSecretMaps());
+				this.initRuntimeConfigReader.start();
+				logInfo("RuntimeConfigReader avviato con successo.");
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'inizializzazione del RuntimeConfigReader: " + e.getMessage();
+				logError(
+						msgErrore,e);
+				//throw new UtilsRuntimeException(msgErrore,e); non sollevo l'eccezione, e' solo una informazione informativa, non voglio mettere un vincolo che serve per forza un nodo acceso
+			}
+		}
 	}
 
 
@@ -114,18 +131,22 @@ public class ConsoleStartupListener extends AbstractConsoleStartupListener{
 	public void contextDestroyed(ServletContextEvent arg0) {
 		super.contextDestroyed(arg0);
 		
-		log.info("Shutdown pool thread ricerche ...");
+		logInfo("Shutdown pool thread ricerche ...");
         try {
             ThreadExecutorManager.shutdown();
-            log.info("Shutdown pool thread ricerche completato.");
+            logInfo("Shutdown pool thread ricerche completato.");
         } 
         catch (InterruptedException e) {
-        	log.warn("Shutdown pool thread ricerche fallito:" + e);
+        	logWarn("Shutdown pool thread ricerche fallito:" + e);
 		    Thread.currentThread().interrupt();
         }
         catch (Exception e) {
-            log.warn("Shutdown pool thread ricerche fallito:" + e);
+            logWarn("Shutdown pool thread ricerche fallito:" + e);
         }
+        
+        if(this.initRuntimeConfigReader!=null) {
+			this.initRuntimeConfigReader.setStop(true);
+		}
 	}
 
 }

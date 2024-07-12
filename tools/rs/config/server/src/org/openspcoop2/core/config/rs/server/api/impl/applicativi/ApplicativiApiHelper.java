@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.byok.BYOKUtilities;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
@@ -66,6 +67,7 @@ import org.openspcoop2.core.config.rs.server.model.BaseCredenziali;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import org.openspcoop2.core.config.rs.server.model.OneOfBaseCredenzialiCredenziali;
 import org.openspcoop2.core.config.rs.server.model.Proprieta4000;
+import org.openspcoop2.core.config.rs.server.model.Proprieta4000OpzioneCifratura;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -93,6 +95,7 @@ import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
@@ -272,7 +275,8 @@ public class ApplicativiApiHelper {
 			String tipoProtocollo,
 			String soggetto,
 			ControlStationCore stationCore, 
-			ApiKeyInfo keyInfo) throws UtilsException, DriverControlStationException, ProtocolException, DriverRegistroServiziException, DriverRegistroServiziNotFound, IllegalAccessException, InvocationTargetException, InstantiationException {
+			ApiKeyInfo keyInfo,
+			boolean useEncryptEngine) throws UtilsException, DriverControlStationException, ProtocolException, DriverRegistroServiziException, DriverRegistroServiziNotFound, IllegalAccessException, InvocationTargetException, InstantiationException {
 
 		ServerProperties serverProperties = ServerProperties.getInstance();
 	
@@ -358,10 +362,19 @@ public class ApplicativiApiHelper {
 		
 		// *** proprieta ***
 		if(applicativo.getProprieta()!=null && !applicativo.getProprieta().isEmpty()) {
-			for (Proprieta4000 proprieta : applicativo.getProprieta()) {
+			for (Proprieta4000OpzioneCifratura proprieta : applicativo.getProprieta()) {
 				org.openspcoop2.core.config.Proprieta pConfig = new org.openspcoop2.core.config.Proprieta();
 				pConfig.setNome(proprieta.getNome());
-				pConfig.setValore(proprieta.getValore());
+				if(useEncryptEngine && stationCore.getDriverBYOKUtilities()!=null && 
+						proprieta.isEncrypted()!=null && proprieta.isEncrypted().booleanValue()) {
+					pConfig.setValore(stationCore.getDriverBYOKUtilities().wrap(proprieta.getValore()));
+				}
+				else {
+					if(proprieta.getValore().length()>4000) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException(CostantiControlStation.MESSAGGIO_ERRORE_VALORE_PROPRIETA_4000);
+					}
+					pConfig.setValore(proprieta.getValore());
+				}
 				sa.addProprieta(pConfig);
 			}
 		}
@@ -391,11 +404,12 @@ public class ApplicativiApiHelper {
 			
 		if(sa.sizeProprietaList()>0) {
 			for (org.openspcoop2.core.config.Proprieta proprieta : sa.getProprietaList()) {
-				Proprieta4000 p = new Proprieta4000();
+				Proprieta4000OpzioneCifratura p = new Proprieta4000OpzioneCifratura();
 				p.setNome(proprieta.getNome());
 				p.setValore(proprieta.getValore());
+				p.setEncrypted(BYOKUtilities.isWrappedValue(p.getValore()));
 				if(ret.getProprieta()==null) {
-					ret.setProprieta(new ArrayList<Proprieta4000>());
+					ret.setProprieta(new ArrayList<>());
 				}
 				ret.addProprietaItem(p);
 			}

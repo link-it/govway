@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.crypto.SecretKey;
+
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.StatoCheck;
@@ -50,6 +52,7 @@ import org.openspcoop2.utils.certificate.ocsp.OCSPValidatorImpl;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.transport.http.IBYOKUnwrapManager;
 import org.openspcoop2.utils.transport.http.IOCSPValidator;
 import org.slf4j.Logger;
 
@@ -114,20 +117,24 @@ public class CertificateUtils {
 	
 	public static String toStringKeyStore(KeystoreParams params,
 			String separator, String newLine) {
-		return toStringEngine(true, params.getKeyAlias(), null, null,
+		return toStringEngine(true, params.getKeyAlias(), 
+				null, params.getByokPolicy(),
 				params.getPath(), params.getType(), 
 				separator, newLine);
 	}
 	public static String toStringKeyStore(String storePath, String storeType,
+			String byokPolicy,
 			String keyAlias,
 			String separator, String newLine) {
-		return toStringEngine(true, keyAlias, null, null,
+		return toStringEngine(true, keyAlias, 
+				null, byokPolicy,
 				storePath, storeType, 
 				separator, newLine);
 	}
 	public static String toStringTrustStore(KeystoreParams params,
 			String separator, String newLine) {
-		return toStringEngine(false, params.getKeyAlias(), params.getCrls(), params.getOcspPolicy(),
+		return toStringEngine(false, params.getKeyAlias(), 
+				params.getCrls(), params.getOcspPolicy(),
 				params.getPath(), params.getType(), 
 				separator, newLine);
 	}
@@ -143,11 +150,13 @@ public class CertificateUtils {
 			String trustCRL, String ocspPolicy,
 			String certAlias,
 			String separator, String newLine) {
-		return toStringEngine(false, certAlias, trustCRL, ocspPolicy,
+		return toStringEngine(false, certAlias, 
+				trustCRL, ocspPolicy,
 				storePath, storeType, 
 				separator, newLine);
 	}
-	private static String toStringEngine(boolean keystore, String keyAlias, String trustCRL, String ocspPolicy,
+	private static String toStringEngine(boolean keystore, String keyAlias, 
+			String trustCRL, String policy, // policy è ocspPolicy in truststore e byokPolicy in keystore; nel caso di keystore crl è inutilizzato
 			String storePath, String storeType, 
 			String separator, String newLine) {
 		
@@ -169,11 +178,11 @@ public class CertificateUtils {
 			sb.append(trustCRL);
 		}
 		
-		if(!keystore && ocspPolicy!=null) {
+		if(policy!=null) {
 			sb.append(newLine);
-			sb.append(CostantiLabel.OCSP_POLICY);
+			sb.append(keystore ? CostantiLabel.BYOK_POLICY : CostantiLabel.OCSP_POLICY);
 			sb.append(separator);
-			sb.append(ocspPolicy);
+			sb.append(policy);
 		}
 		
 		if(keyAlias!=null) {
@@ -445,7 +454,8 @@ public class CertificateUtils {
 				}
 			}
 		}
-		return checkStore(false, certAlias, null, trustStoreCrls, ocspPolicy,
+		return checkStore(false, certAlias, null, 
+				trustStoreCrls, ocspPolicy, null,
 				trustStore, keystoreBytes, type, password, 
 				sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
@@ -455,7 +465,8 @@ public class CertificateUtils {
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws UtilsException{
-		return checkStore(false, null, null, trustStoreCrls, ocspPolicy,
+		return checkStore(false, null, null, 
+				trustStoreCrls, ocspPolicy, null,
 				trustStorePath!=null ? trustStorePath : CostantiLabel.STORE_CARICATO_BASEDATI, trustStore, type, password, 
 				sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
@@ -466,13 +477,15 @@ public class CertificateUtils {
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws UtilsException{
-		return checkStore(false, alias, null, trustStoreCrls, ocspPolicy,
+		return checkStore(false, alias, null, 
+				trustStoreCrls, ocspPolicy, null,
 				trustStorePath!=null ? trustStorePath : CostantiLabel.STORE_CARICATO_BASEDATI, trustStore, type, password, 
 				sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
 				log);
 	}
-	public static CertificateCheck checkKeyStore(String keyStore, boolean classpathSupported, String type, String password, String aliasKey, String passwordKey,
+	public static CertificateCheck checkKeyStore(String keyStore, boolean classpathSupported, String type, String password, IBYOKUnwrapManager byokUnwrapManager, 
+			String aliasKey, String passwordKey, 
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws UtilsException{
@@ -503,7 +516,7 @@ public class CertificateUtils {
 				
 				String storeDetails = null;
 				if(addCertificateDetails) {
-					storeDetails = toStringKeyStore(keyStore, type, aliasKey, separator, newLine);
+					storeDetails = toStringKeyStore(keyStore, type, (byokUnwrapManager!=null ? byokUnwrapManager.getPolicy() : null), aliasKey, separator, newLine);
 				}
 				String errorDetails = CostantiLabel.KEYSTORE;
 				if(!addCertificateDetails) {
@@ -527,23 +540,27 @@ public class CertificateUtils {
 				}
 			}
 		}
-		return checkStore(true, aliasKey, passwordKey, null, null,
+		return checkStore(true, aliasKey, passwordKey, 
+				null, null, byokUnwrapManager,
 				keyStore, keystoreBytes, type, password, 
 				sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
 				log);
 	}
-	public static CertificateCheck checkKeyStore(String keyStorePath, byte[] keyStore, String type, String password, String aliasKey, String passwordKey,
+	public static CertificateCheck checkKeyStore(String keyStorePath, byte[] keyStore, String type, String password, IBYOKUnwrapManager byokUnwrapManager, 
+			String aliasKey, String passwordKey,
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws UtilsException{
-		return checkStore(true, aliasKey, passwordKey, null, null,
+		return checkStore(true, aliasKey, passwordKey, 
+				null, null, byokUnwrapManager,
 				keyStorePath!=null ? keyStorePath : CostantiLabel.STORE_CARICATO_BASEDATI, keyStore, type, password, 
 				sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
 				log);
 	}
-	private static CertificateCheck checkStore(boolean keystore, String aliasKey, String passwordKey, String trustStoreCrls, String ocspPolicy,
+	private static CertificateCheck checkStore(boolean keystore, String aliasKey, String passwordKey, 
+			String trustStoreCrls, String ocspPolicy, IBYOKUnwrapManager byokUnwrapManager,
 			String storePath, byte[] storeBytes, String type, String password,
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
@@ -554,7 +571,7 @@ public class CertificateUtils {
 		String storeDetails = "";
 		if(addCertificateDetails) {
 			if(keystore) {
-				storeDetails = toStringKeyStore(storePath, type, aliasKey, separator, newLine);
+				storeDetails = toStringKeyStore(storePath, type, (byokUnwrapManager!=null ? byokUnwrapManager.getPolicy() : null), aliasKey, separator, newLine);
 			}
 			else {
 				storeDetails = toStringTrustStore(storePath, type, trustStoreCrls, ocspPolicy, aliasKey, separator, newLine);
@@ -567,6 +584,9 @@ public class CertificateUtils {
 				store = HSMManager.getInstance().getKeystore(type);
 			}
 			else {
+				if(keystore && byokUnwrapManager!=null) {
+					storeBytes = byokUnwrapManager.unwrap(storeBytes);
+				}
 				store = new org.openspcoop2.utils.certificate.KeyStore(storeBytes, type, password);
 			}
 		}catch(Exception t) {
@@ -699,8 +719,30 @@ public class CertificateUtils {
 		if(aliasesForCheck!=null && !aliasesForCheck.isEmpty()) {
 			for (String aliasVerify : aliasesForCheck) {
 				
+				boolean secret = KeystoreType.JCEKS.getNome().equalsIgnoreCase(store.getKeystoreType());
+				
 				java.security.cert.X509Certificate cert = (java.security.cert.X509Certificate) store.getCertificate(aliasVerify);
-				if(cert==null) {
+				SecretKey secretKey = null;
+				if(cert==null && secret && store.existsAlias(aliasKey)) {
+					// provo a vedere se si tratta di una chiave segreta
+					String errorKey = null;
+					try {
+						secretKey = store.getSecretKey(aliasVerify, passwordKey);
+					}catch(Exception e) {
+						errorKey = e.getMessage();
+					}
+					if(secretKey==null) {
+						esito = new CertificateCheck();
+						esito.setStatoCheck(StatoCheck.ERROR);
+						esito.addError(storePath, "Nel "+
+								CostantiLabel.KEYSTORE+
+								" la chiave segreta "+
+								" con alias '"+aliasVerify+"' non è accessibile"+
+								(errorKey!=null ? ": "+errorKey : ""), storeDetails);
+						return esito;
+					}
+				}
+				if(cert==null && secretKey==null) {
 					esito = new CertificateCheck();
 					esito.setStatoCheck(StatoCheck.ERROR);
 					esito.addError(storePath, "Nel "+
@@ -711,7 +753,7 @@ public class CertificateUtils {
 					return esito;
 				}
 				
-				if(keystore) {
+				if(keystore && secretKey==null) {
 					PrivateKey privateKey = null;
 					String errorKey = null;
 					try {
@@ -731,24 +773,26 @@ public class CertificateUtils {
 					}
 				}
 				
-				java.security.cert.Certificate[] baseCertChain = store.getCertificateChain(aliasVerify);
-				List<java.security.cert.X509Certificate> certChain = null;
-				if(baseCertChain!=null && baseCertChain.length>0) {
-					for (int i = 0; i < baseCertChain.length; i++) {
-						java.security.cert.Certificate check = baseCertChain[i];
-						if(check instanceof X509Certificate) {
-							if(certChain==null) {
-								certChain = new ArrayList<>();
+				if(secretKey==null) {
+					java.security.cert.Certificate[] baseCertChain = store.getCertificateChain(aliasVerify);
+					List<java.security.cert.X509Certificate> certChain = null;
+					if(baseCertChain!=null && baseCertChain.length>0) {
+						for (int i = 0; i < baseCertChain.length; i++) {
+							java.security.cert.Certificate check = baseCertChain[i];
+							if(check instanceof X509Certificate) {
+								if(certChain==null) {
+									certChain = new ArrayList<>();
+								}
+								certChain.add((X509Certificate) check);
 							}
-							certChain.add((X509Certificate) check);
 						}
 					}
+									
+					Certificate certificate = new Certificate(aliasVerify, 
+							cert, 
+							certChain );
+					listCertificate.add(certificate);
 				}
-								
-				Certificate certificate = new Certificate(aliasVerify, 
-						cert, 
-						certChain );
-				listCertificate.add(certificate);
 			}
 		}
 				
@@ -929,31 +973,33 @@ public class CertificateUtils {
 	
 	
 	public static CertificateCheck checkKeyPair(String privateKeyPath, byte[] privateKey, 
-			String publicKeyPath, byte[] publicKey, String passwordKey, String algorithm,
-			boolean addCertificateDetails, String separator) throws UtilsException{
+			String publicKeyPath, byte[] publicKey, String passwordKey, String algorithm, IBYOKUnwrapManager byokUnwrapManager,
+			boolean addCertificateDetails, String separator, String newLine) throws UtilsException{
 		
 		String storeDetails = null;
 		if(addCertificateDetails) {
-			storeDetails = toStringKeyPair(privateKeyPath, publicKeyPath, separator);
+			storeDetails = toStringKeyPair(privateKeyPath, publicKeyPath,
+					(byokUnwrapManager!=null ? byokUnwrapManager.getPolicy() : null),
+					separator, newLine);
 		}
 		
 		return checkKeyPairEngine(true,
-				storeDetails, privateKey, publicKey, passwordKey, algorithm,
+				storeDetails, privateKey, publicKey, passwordKey, algorithm, byokUnwrapManager,
 				addCertificateDetails);
 	}
-	public static CertificateCheck checkKeyPair(boolean classpathSupported, String privateKey, String publicKey, String passwordKey, String algorithm,
-			boolean addCertificateDetails, String separator) throws UtilsException{
+	public static CertificateCheck checkKeyPair(boolean classpathSupported, String privateKey, String publicKey, String passwordKey, String algorithm, IBYOKUnwrapManager byokUnwrapManager,
+			boolean addCertificateDetails, String separator, String newLine) throws UtilsException{
 		return checkKeyPairEngine(true,
-				classpathSupported, privateKey, publicKey, passwordKey, algorithm,
-				addCertificateDetails, separator);
+				classpathSupported, privateKey, publicKey, passwordKey, algorithm, byokUnwrapManager,
+				addCertificateDetails, separator, newLine);
 	}
 	public static String toStringKeyPair(KeystoreParams params,
-			String separator) {
-		return toStringKeyPair(params.getPath(), params.getKeyPairPublicKeyPath(),
-				separator);
+			String separator, String newLine) {
+		return toStringKeyPair(params.getPath(), params.getKeyPairPublicKeyPath(), params.getByokPolicy(),
+				separator, newLine);
 	}
-	private static String toStringKeyPair(String privateKey, String publicKey,
-			String separator) {
+	private static String toStringKeyPair(String privateKey, String publicKey, String byokPolicy,
+			String separator, String newLine) {
 		
 		StringBuilder sb = new StringBuilder();
 		
@@ -965,34 +1011,45 @@ public class CertificateUtils {
 		sb.append("public:");
 		sb.append(publicKey);
 		
+		if(byokPolicy!=null) {
+			sb.append(newLine);
+			sb.append(CostantiLabel.BYOK_POLICY);
+			sb.append(separator);
+			sb.append(byokPolicy);
+		}
+		
 		return sb.toString();
 	}
 	
 	public static CertificateCheck checkPublicKey(String publicKeyPath, byte[] publicKey, String algorithm,
-			boolean addCertificateDetails, String separator) throws UtilsException{
+			boolean addCertificateDetails, String separator, String newLine) throws UtilsException{
 		
 		String storeDetails = null;
 		if(addCertificateDetails) {
-			storeDetails = toStringPublicKey(publicKeyPath, separator);
+			storeDetails = toStringPublicKey(publicKeyPath, separator, newLine);
 		}
 		
 		return checkKeyPairEngine(false,
-				storeDetails, null, publicKey, null, algorithm,
+				storeDetails, null, publicKey, null, algorithm, null,
 				addCertificateDetails);
 	}
 	public static CertificateCheck checkPublicKey(boolean classpathSupported, String publicKey, String algorithm,
-			boolean addCertificateDetails, String separator) throws UtilsException{
+			boolean addCertificateDetails, String separator, String newLine) throws UtilsException{
 		return checkKeyPairEngine(false,
-				classpathSupported, null, publicKey, null, algorithm,
-				addCertificateDetails, separator);
+				classpathSupported, null, publicKey, null, algorithm, null,
+				addCertificateDetails, separator, newLine);
 	}	
 	public static String toStringPublicKey(KeystoreParams params,
-			String separator) {
+			String separator, String newLine) {
 		return toStringPublicKey(params.getPath(), 
-				separator);
+				separator, newLine);
 	}
 	private static String toStringPublicKey(String publicKey,
-			String separator) {
+			String separator, String newLine) {
+		
+		if(newLine!=null) {
+			// nop
+		}
 		
 		StringBuilder sb = new StringBuilder();
 		
@@ -1007,16 +1064,18 @@ public class CertificateUtils {
 	
 	
 	private static CertificateCheck checkKeyPairEngine(boolean isKeyPair,
-			boolean classpathSupported, String privateKey, String publicKey, String passwordKey, String algorithm,
-			boolean addCertificateDetails, String separator) throws UtilsException{
+			boolean classpathSupported, String privateKey, String publicKey, String passwordKey, String algorithm, IBYOKUnwrapManager byokUnwrapManager,
+			boolean addCertificateDetails, String separator, String newLine) throws UtilsException{
 		
 		String storeDetails = null;
 		if(addCertificateDetails) {
 			if(isKeyPair) {
-				storeDetails = toStringKeyPair(privateKey, publicKey, separator);
+				storeDetails = toStringKeyPair(privateKey, publicKey, 
+						(byokUnwrapManager!=null ? byokUnwrapManager.getPolicy() : null),
+						separator, newLine);
 			}
 			else {
-				storeDetails = toStringPublicKey(publicKey, separator);
+				storeDetails = toStringPublicKey(publicKey, separator, newLine);
 			}
 		}
 		
@@ -1119,11 +1178,11 @@ public class CertificateUtils {
 		}
 		
 		return checkKeyPairEngine(isKeyPair,
-				storeDetails, privateKeyBytes, publicKeyBytes, passwordKey, algorithm,
+				storeDetails, privateKeyBytes, publicKeyBytes, passwordKey, algorithm, byokUnwrapManager,
 				addCertificateDetails);
 	}
 	private static CertificateCheck checkKeyPairEngine(boolean isKeyPair,
-			String storeDetails, byte[] privateKey, byte[] publicKey, String passwordKey, String algorithm,
+			String storeDetails, byte[] privateKey, byte[] publicKey, String passwordKey, String algorithm, IBYOKUnwrapManager byokUnwrapManager,
 			boolean addCertificateDetails) throws UtilsException{
 				
 		KeyUtils keyUtils = null;
@@ -1147,6 +1206,9 @@ public class CertificateUtils {
 		
 		if(isKeyPair) {
 			try {
+				if(byokUnwrapManager!=null) {
+					privateKey = byokUnwrapManager.unwrap(privateKey);
+				}
 				if(passwordKey!=null) {
 					keyUtils.getPrivateKey(privateKey, passwordKey);
 				}
@@ -1181,28 +1243,30 @@ public class CertificateUtils {
 	
 	
 	
-	public static CertificateCheck checkKeystoreJWKs(boolean classpathSupported, String jwksPath, String keyAlias, 
+	public static CertificateCheck checkKeystoreJWKs(boolean classpathSupported, String jwksPath, String keyAlias, IBYOKUnwrapManager byokUnwrapManager, 
 			boolean addCertificateDetails, String separator, String newLine) throws UtilsException{
 		return checkJWKsEngine(true,
 				classpathSupported, jwksPath, keyAlias,
+				byokUnwrapManager,
 				addCertificateDetails, separator, newLine);
 	}
-	public static CertificateCheck checkKeystoreJWKs(String jwksPath, String jwks, String keyAlias, 
+	public static CertificateCheck checkKeystoreJWKs(String jwksPath, String jwks, String keyAlias, IBYOKUnwrapManager byokUnwrapManager, 
 			boolean addCertificateDetails, String separator, String newLine) throws UtilsException{
 		
 		String storeDetails = null;
 		if(addCertificateDetails) {
 			storeDetails = toStringJWKs(true, jwksPath, keyAlias,
+					(byokUnwrapManager!=null ? byokUnwrapManager.getPolicy() : null),
 					separator, newLine);
 		}
 		
 		return checkJWKsEngine(false, 
-				storeDetails, jwks, keyAlias);
+				storeDetails, jwks, keyAlias, byokUnwrapManager);
 	}
 	public static CertificateCheck checkTruststoreJWKs(boolean classpathSupported, String jwksPath, String keyAlias, 
 			boolean addCertificateDetails, String separator, String newLine) throws UtilsException{
 		return checkJWKsEngine(false,
-				classpathSupported, jwksPath, keyAlias,
+				classpathSupported, jwksPath, keyAlias, null,
 				addCertificateDetails, separator, newLine);
 	}
 	public static CertificateCheck checkTruststoreJWKs(String jwksPath, String jwks, String keyAlias, 
@@ -1211,19 +1275,21 @@ public class CertificateUtils {
 		String storeDetails = null;
 		if(addCertificateDetails) {
 			storeDetails = toStringJWKs(false, jwksPath, keyAlias,
+					null,
 					separator, newLine);
 		}
 		
 		return checkJWKsEngine(false, 
-				storeDetails, jwks, keyAlias);
+				storeDetails, jwks, keyAlias, null);
 	}
 	private static CertificateCheck checkJWKsEngine(boolean keystore,
-			boolean classpathSupported, String jwksPath, String keyAlias, 
+			boolean classpathSupported, String jwksPath, String keyAlias, IBYOKUnwrapManager byokUnwrapManager,
 			boolean addCertificateDetails, String separator, String newLine) throws UtilsException{
 		
 		String storeDetails = null;
 		if(addCertificateDetails) {
 			storeDetails = toStringJWKs(keystore, jwksPath, keyAlias,
+					(byokUnwrapManager!=null ? byokUnwrapManager.getPolicy() : null),
 					separator, newLine);
 		}
 				
@@ -1274,14 +1340,17 @@ public class CertificateUtils {
 		}
 		
 		return checkJWKsEngine(keystore, 
-				storeDetails, jwks, keyAlias);
+				storeDetails, jwks, keyAlias, byokUnwrapManager);
 	}
 	private static CertificateCheck checkJWKsEngine(boolean keystore, 
 			String storeDetails,
-			String jwks, String keyAlias) throws UtilsException{
+			String jwks, String keyAlias, IBYOKUnwrapManager byokUnwrapManager) throws UtilsException{
 				
 		com.nimbusds.jose.jwk.JWKSet set = null;
 		try {
+			if(keystore && byokUnwrapManager!=null) {
+				jwks = new String(byokUnwrapManager.unwrap(jwks.getBytes()));
+			}
 			JWKSet jwkset = new JWKSet(jwks);
 			set = jwkset.getJWKSet();
 		}catch(Exception t) {
@@ -1320,15 +1389,15 @@ public class CertificateUtils {
 	}
 	public static String toStringKeystoreJWKs(KeystoreParams params,
 			String separator, String newLine) {
-		return toStringJWKs(true, params.getPath(), params.getKeyAlias(),
+		return toStringJWKs(true, params.getPath(), params.getKeyAlias(), params.getByokPolicy(),
 				separator, newLine);
 	}
 	public static String toStringTruststoreJWKs(KeystoreParams params,
 			String separator, String newLine) {
-		return toStringJWKs(false, params.getPath(), params.getKeyAlias(),
+		return toStringJWKs(false, params.getPath(), params.getKeyAlias(), null,
 				separator, newLine);
 	}
-	private static String toStringJWKs(boolean keystore, String jwksPath, String keyAlias,
+	private static String toStringJWKs(boolean keystore, String jwksPath, String keyAlias, String byokPolicy,
 			String separator, String newLine) {
 		
 		StringBuilder sb = new StringBuilder();
@@ -1349,6 +1418,13 @@ public class CertificateUtils {
 			}
 			sb.append(separator);
 			sb.append(keyAlias);
+		}
+		
+		if(byokPolicy!=null) {
+			sb.append(newLine);
+			sb.append(CostantiLabel.BYOK_POLICY);
+			sb.append(separator);
+			sb.append(byokPolicy);
 		}
 		
 		return sb.toString();

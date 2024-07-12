@@ -236,6 +236,34 @@
 		</then>
 	</if>
 	<import file="${batch.runtimeRepository.dir}/build.xml" />
+
+	<!-- Tools - cli - config_loader -->
+	<property name="cli.configLoader.dir" location="${rootDir}/tools/command_line_interfaces/config_loader/" />
+	<available file="${cli.configLoader.dir}/local_env.xml" property="cli_configLoader_localenv.present"/>
+	<if>
+		<not>
+			<equals arg1="${cli_configLoader_localenv.present}" arg2="true"/>
+		</not>
+		<then>
+			<copy file="${cli.configLoader.dir}/local_env.xml.template" tofile="${cli.configLoader.dir}/local_env.xml"/>
+			<replace file="${cli.configLoader.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
+		</then>
+	</if>
+	<import file="${cli.configLoader.dir}/build.xml" />
+
+	<!-- Tools - cli - vault -->
+	<property name="cli.govwayVault.dir" location="${rootDir}/tools/command_line_interfaces/govway_vault/" />
+	<available file="${cli.govwayVault.dir}/local_env.xml" property="cli_govwayVault_localenv.present"/>
+	<if>
+		<not>
+			<equals arg1="${cli_govwayVault_localenv.present}" arg2="true"/>
+		</not>
+		<then>
+			<copy file="${cli.govwayVault.dir}/local_env.xml.template" tofile="${cli.govwayVault.dir}/local_env.xml"/>
+			<replace file="${cli.govwayVault.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
+		</then>
+	</if>
+	<import file="${cli.govwayVault.dir}/build.xml" />
 	
 	
 	
@@ -435,6 +463,22 @@
 		<antcall target="compile_batchRuntimeRepository">
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src_batchRuntimeRepository" value="${batch.runtimeRepository.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false" />
+		</antcall>
+
+		<antcall target="compile_cliConfigLoader">
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_cliConfigLoader" value="${cli.configLoader.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false" />
+		</antcall>
+
+		<antcall target="compile_cliVault">
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_cliVault" value="${cli.govwayVault.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
 			<param name="buildAPI" value="false" />

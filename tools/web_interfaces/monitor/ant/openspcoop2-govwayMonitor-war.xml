@@ -195,6 +195,7 @@
 				<include name="freemarker-2.3.32.jar" />
 				<include name="joda-time-2.12.5.jar" />
 				<include name="reactive-streams-1.0.4.jar" />
+				<include name="velocity-*.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/cxf">
 				<include name="cxf-core-*.jar" />

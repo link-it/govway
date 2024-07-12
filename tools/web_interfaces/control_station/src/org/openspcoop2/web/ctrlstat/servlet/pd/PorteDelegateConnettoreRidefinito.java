@@ -233,6 +233,9 @@ public class PorteDelegateConnettoreRidefinito  extends Action {
 			String servletConnettore = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE;
 			Parameter[] parametriServletConnettore =listParameter.toArray(new Parameter[listParameter.size()]); 
 			
+			// imposto menu' contestuale
+			porteDelegateHelper.impostaComandiMenuContestualePD(idSoggFruitore, idAsps, idFruizione);
+			
 			if(	porteDelegateHelper.isEditModeInProgress()){
 				
 				if(modalita == null) {

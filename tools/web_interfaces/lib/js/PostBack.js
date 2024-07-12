@@ -101,12 +101,19 @@ function postVersion_postBack(dataElementName) {
 		
 		if(nome == "edit-mode")
 			theForm.elements[k].value = 'in_progress_postback';
-			
-		// elimino codice html dall'input testuale
+		
 		var tipo = theForm.elements[k].type;
+	
+		// elimino codice html dall'input testuale
 		if (tipo == "text" || tipo == "textarea" || tipo == "number"){
 			var valore = theForm.elements[k].value;
 			theForm.elements[k].value = HtmlSanitizer.SanitizeHtml(valore);
+		}
+
+		if (tipo == "checkbox") {
+			if (!theForm.elements[k].checked){
+  			   addHidden(theForm, nome , 'no');
+			}
 		}
 		
 		if(dump) { 
@@ -139,16 +146,78 @@ function postVersion_postBack(dataElementName) {
 	    }
     }
     
+    // Se la location url contiene dei parametri, vanno eliminati. Sono dovuti a precedenti eventi di postback via GET
+    var checkActionUrl = document.location.href;
+    var indexActionUrl = checkActionUrl.indexOf('?');
+    var newActionUrl = checkActionUrl;
+    //console.log('Precedente URL: ' + checkActionUrl);
+    if (indexActionUrl >0 && indexActionUrl < (checkActionUrl.length - 1) ){
+        var queryString = checkActionUrl.split('?')[1];
+        newActionUrl = checkActionUrl.split('?')[0] + '?';
+        /*
+        Il codice sottostante ricreava la url aggiungendo i parametri non presenti nella form. Questo non serve poichè tutti i parametri devono essere nella form.
+        
+        var parametri = queryString.split('&');
+        var parametriObj = {};
+        parametri.forEach(function(parametro) {
+           var coppia = parametro.split('=');
+           var nome = decodeURIComponent(coppia[0]);
+           var valore = decodeURIComponent(coppia[1]);
+           parametriObj[nome] = valore;
+        });
+        var firstParameter = true;
+        for (var nomeParametro in parametriObj) {
+          if (parametriObj.hasOwnProperty(nomeParametro)) {
+	          var valoreParametro = parametriObj[nomeParametro];
+              console.log(nomeParametro + ': ' + valoreParametro);
+              
+              var foundElement = false;
+              for (var k=0; k<document.form.elements.length; k++) {
+				 var nome = document.form.elements[k].name;
+				 if(nome == nomeParametro){
+					foundElement=true;
+				}
+			  }
+			  if(!foundElement){
+				 if(!firstParameter){
+					newActionUrl += "&";
+			 	 }
+			 	 else{
+					firstParameter=false;
+				 }
+				 newActionUrl += encodeURIComponent(nomeParametro) + "=" + encodeURIComponent(valoreParametro);
+			  }
+          }
+        }
+        */
+    }
+    //console.log('Nuova URL: ' + newActionUrl);
+    
+    /*if(navigationAnchor!=null){
+    	 document.form.action=navigationAnchor;
+    }*/
     if(navigationAnchor!=null){
     	 theForm.action=navigationAnchor;
     }
-    
+    theForm.action=newActionUrl
+        
+    // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+	for (var k=0; k<theForm.elements.length; k++) {
+		var nome = theForm.elements[k].name;
+		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
+
+		if(hiddenInfo > -1) {
+			theForm.elements[k].value = '';
+		}
+	}
+	
 	// aggiungo parametro idTab
   if(tabValue != ''){
   	addHidden(theForm, tabSessionKey , tabValue);
   	addHidden(theForm, prevTabSessionKey , tabValue);
   }
-	
+  
+	//console.log('ACTION FINALE: ' + document.form.action);
     // form submit
     theForm.submit();
 }

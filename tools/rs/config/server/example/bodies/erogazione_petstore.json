@@ -1,6 +1,13 @@
 {
     "connettore": {
-        "endpoint": "https://ginovadifretta.it/petstore"
+        "endpoint": "https://ginovadifretta.it/petstore",
+        "autenticazione_http":{
+        	"username": "test",
+        	"password": "123changeME"
+        },
+        "autenticazione_apikey":{
+        	"api_key": "XXXYYYZZZ"
+        }
     },
     "api_nome": "PetStore",
     "api_versione": 1

@@ -113,13 +113,7 @@ public final class AccordiServizioParteSpecificaAllegatiView extends Action {
 			
 			String tipoProtocollo = apsCore.getProtocolloAssociatoTipoServizio(asps.getTipo());
 			
-			String tmpTitle = null;
-			if(gestioneFruitori) {
-				tmpTitle = apsHelper.getLabelServizioFruizione(tipoProtocollo, idSoggettoFruitore, asps);
-			}
-			else {
-				tmpTitle = apsHelper.getLabelServizioErogazione(tipoProtocollo, asps);
-			}
+			String tmpTitle = apsHelper.getLabelServizio(idSoggettoFruitore, gestioneFruitori, asps, tipoProtocollo);
 
 			Documento doc = archiviCore.getDocumento(idAllegatoLong,true);
 

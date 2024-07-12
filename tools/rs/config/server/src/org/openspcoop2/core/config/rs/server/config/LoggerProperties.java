@@ -48,7 +48,7 @@ import org.openspcoop2.utils.properties.PropertiesUtilities;
 public class LoggerProperties {
 	
 	private LoggerProperties() {}
-	
+
 	public static void initialize(Logger logConsole,String rootDirectory,Properties objectProperties) throws IOException, UtilsException{
 
 		// Originale
@@ -61,18 +61,8 @@ public class LoggerProperties {
 		if(!loggerFile .exists() ){
 			loggerProperties.load(LoggerProperties.class.getResourceAsStream("/rs-api-config.log4j2.properties"));
 		}else{
-			FileInputStream fin = null;
-			try{
-				fin = new java.io.FileInputStream(loggerFile);
+			try (FileInputStream fin = new java.io.FileInputStream(loggerFile);){
 				loggerProperties.load(fin);
-			}finally{
-				try{
-					if(fin!=null){
-						fin.close();
-					}
-				}catch(Exception eClose){
-					// close
-				}
 			}
 		}
 
@@ -89,6 +79,7 @@ public class LoggerProperties {
 					loggerProperties.remove(key);
 				}
 				loggerProperties.put(key, value);
+				/**System.out.println("CHECK NUOVO VALORE ["+key+"]: "+loggerProperties.get(key));*/
 			}
 		}
 
@@ -103,6 +94,7 @@ public class LoggerProperties {
 					loggerProperties.remove(key);
 				}
 				loggerProperties.put(key, value);
+				/**System.out.println("CHECK NUOVO VALORE ["+key+"]: "+loggerProperties.get(key));*/
 			}
 		}
 
@@ -134,6 +126,7 @@ public class LoggerProperties {
 			LoggerFactory.initialize(Log4jLoggerWithApplicationContext.class.getName(),
 					mConfig);
 			
+			LoggerFactory.newLogger(); // inizializza la configurazione log4j
 			/**LoggerWrapperFactory.setLogConfiguration(loggerProperties);*/
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);

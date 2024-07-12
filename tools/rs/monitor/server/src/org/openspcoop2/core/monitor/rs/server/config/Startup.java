@@ -21,11 +21,15 @@
 
 package org.openspcoop2.core.monitor.rs.server.config;
 
+import java.io.File;
 import java.io.InputStream;
 import java.sql.Connection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.PddTipologia;
@@ -36,11 +40,20 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.transazioni.utils.DumpUtils;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
+import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
+import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsRuntimeException;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
+import org.openspcoop2.utils.certificate.hsm.HSMManager;
+import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.properties.MapProperties;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.security.ProviderUtils;
 import org.openspcoop2.web.lib.mvc.security.SecurityProperties;
 import org.openspcoop2.web.lib.mvc.security.Validatore;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
@@ -62,6 +75,11 @@ import jakarta.servlet.ServletContextListener;
 public class Startup implements ServletContextListener {
 
 	private static Logger log = null;
+	public static Logger getLog() {
+		return log;
+	}
+	
+	private static InitRuntimeConfigReader initRuntimeConfigReader;
 	
 	
 	@Override
@@ -69,6 +87,10 @@ public class Startup implements ServletContextListener {
 		if(Startup.log!=null)
 			Startup.log.info("Undeploy webService in corso...");
 
+		 if(initRuntimeConfigReader!=null) {
+			 initRuntimeConfigReader.setStop(true);
+		 }
+		
 		if(Startup.log!=null)
 			Startup.log.info("Undeploy webService effettuato.");
 
@@ -141,11 +163,114 @@ public class Startup implements ServletContextListener {
 			if(!ServerProperties.initialize(confDir,Startup.log)){
 				return;
 			}
+			ServerProperties serverProperties = null;
+			try {
+				serverProperties = ServerProperties.getInstance();
+			} catch (Exception e) {
+				doError("Errore durante l'inizializzazione del serverProperties",e);
+			}
 			
+			// Map (environment)
+			try {
+				String mapConfig = serverProperties.getEnvMapConfig();
+				if(StringUtils.isNotEmpty(mapConfig)) {
+					Startup.log.info("Inizializzazione environment in corso...");
+					MapProperties.initialize(Startup.log, mapConfig, serverProperties.isEnvMapConfigRequired());
+					MapProperties mapProperties = MapProperties.getInstance();
+					mapProperties.initEnvironment();
+					String msgInit = "Environment inizializzato con le variabili definite nel file '"+mapConfig+"'"+
+							"\n\tJavaProperties: "+mapProperties.getJavaMap().keys()+
+							"\n\tEnvProperties: "+mapProperties.getEnvMap().keys()+
+							"\n\tObfuscateMode: "+mapProperties.getObfuscateModeDescription()+
+							"\n\tObfuscatedJavaKeys: "+mapProperties.getObfuscatedJavaKeys()+
+							"\n\tObfuscatedEnvKeys: "+mapProperties.getObfuscatedEnvKeys();
+					Startup.log.info(msgInit);
+				}
+			} catch (Exception e) {
+				doError("Errore durante l'inizializzazione dell'ambiente",e);
+			}
+			
+			// Load Security Provider
+			Startup.log.info("Inizializzazione security provider...");
+			try {
+				if(serverProperties.isSecurityLoadBouncyCastleProvider()) {
+					ProviderUtils.addBouncyCastleAfterSun(true);
+					Startup.log.info("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
+				}
+			} catch (Exception e) {
+				doError("Errore durante l'inizializzazione dei security provider",e);
+			}
+			Startup.log.info("Inizializzazione security provider effettuata con successo");
+			
+			// inizializzo HSM Manager
+			try {
+				String hsmConfig = serverProperties.getHSMConfigurazione();
+				if(StringUtils.isNotEmpty(hsmConfig)) {
+					Startup.log.info("Inizializzazione HSM in corso...");
+					File f = new File(hsmConfig);
+					HSMManager.init(f, serverProperties.isHSMRequired(), log, false);
+					HSMUtils.setHsmConfigurableKeyPassword(serverProperties.isHSMKeyPasswordConfigurable());
+					Startup.log.info("Inizializzazione HSM effettuata con successo");
+				}
+			} catch (Exception e) {
+				doError("Errore durante l'inizializzazione del manager HSM",e);
+			}
+			
+			// inizializzo BYOK Manager
+			BYOKManager byokManager = null;
+			try {
+				String byokConfig = serverProperties.getBYOKConfigurazione();
+				if(StringUtils.isNotEmpty(byokConfig)) {
+					Startup.log.info("Inizializzazione BYOK in corso...");
+					File f = new File(byokConfig);
+					BYOKManager.init(f, serverProperties.isBYOKRequired(), log);
+					byokManager = BYOKManager.getInstance();
+					String msgInit = "Gestore BYOK inizializzato;"+
+							"\n\tHSM registrati: "+byokManager.getKeystoreTypes()+
+							"\n\tSecurityEngine registrati: "+byokManager.getSecurityEngineTypes()+
+							"\n\tGovWaySecurityEngine: "+byokManager.getSecurityEngineGovWayDescription();
+					Startup.log.info(msgInit);
+				}
+			} catch (Exception e) {
+				doError("Errore durante l'inizializzazione del manager BYOK",e);
+			}
+			
+			// Secrets (environment)
+			boolean reInitSecretMaps = false;
+			try {
+				String secretsConfig = serverProperties.getBYOKEnvSecretsConfig();
+				if(byokManager!=null && StringUtils.isNotEmpty(secretsConfig)) {
+					Startup.log.info("Inizializzazione secrets in corso...");
+					
+					boolean useSecurityEngine = true;
+					Map<String, Object> dynamicMap = new HashMap<>();
+					DynamicInfo dynamicInfo = new  DynamicInfo();
+					DynamicUtils.fillDynamicMap(log, dynamicMap, dynamicInfo);
+					if(byokManager.isBYOKRemoteGovWayNodeUnwrapConfig()) {
+						// i secrets cifrati verranno riletti quando i nodi sono attivi (verificato in InitRuntimeConfigReader)
+						reInitSecretMaps = true;
+						useSecurityEngine = false;
+					}
+					
+					BYOKMapProperties.initialize(Startup.log, secretsConfig, serverProperties.isBYOKEnvSecretsConfigRequired(), 
+							useSecurityEngine, 
+							dynamicMap, true);
+					BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
+					secretsProperties.initEnvironment();
+					String msgInit = "Environment inizializzato con i secrets definiti nel file '"+secretsConfig+"'"+
+							"\n\tJavaProperties: "+secretsProperties.getJavaMap().keys()+
+							"\n\tEnvProperties: "+secretsProperties.getEnvMap().keys()+
+							"\n\tObfuscateMode: "+secretsProperties.getObfuscateModeDescription();
+					Startup.log.info(msgInit);
+				}
+			} catch (Exception e) {
+				doError("Errore durante l'inizializzazione dell'ambiente (secrets)",e);
+			}		
+			
+			// Database
 			if(!DatasourceProperties.initialize(confDir,Startup.log)){
 				return;
 			}
-			
 			Startup.log.info("Inizializzazione DBManager in corso...");
 			try{
 				DatasourceProperties dbProperties = DatasourceProperties.getInstance();
@@ -158,6 +283,7 @@ public class Startup implements ServletContextListener {
 			}
 			Startup.log.info("Inizializzazione DBManager effettuata con successo");
 			
+			// Extended Manager
 			Startup.log.info("Inizializzazione ExtendedInfoManager in corso...");
 			try{
 				ExtendedInfoManager.initialize(new Loader(), null, null, null);
@@ -166,6 +292,16 @@ public class Startup implements ServletContextListener {
 			}
 			Startup.log.info("Inizializzazione ExtendedInfoManager effettuata con successo");
 			
+			// inizializza nodi runtime
+			Startup.log.info("Inizializzazione NodiRuntime in corso...");
+			try {
+				ConfigurazioneNodiRuntime.initialize(serverProperties.getConfigurazioneNodiRuntime());
+			} catch (Exception e) {
+				doError("Errore durante l'inizializzazione del gestore dei nodi run",e);
+			}
+			Startup.log.info("Inizializzazione NodiRuntime effettuata con successo");
+			
+			// Protocol Factory Manager
 			Startup.log.info("Inizializzazione ProtocolFactoryManager in corso...");
 			ServerProperties properties = null;
 			try {
@@ -186,6 +322,19 @@ public class Startup implements ServletContextListener {
 			
 			initSogliaDimensioneMessaggi(properties);
 						
+			// InitRuntimeConfigReader
+			if(reInitSecretMaps) {
+				try{
+					initRuntimeConfigReader = new InitRuntimeConfigReader(serverProperties, ConfigurazioneNodiRuntime.getConfigurazioneNodiRuntime(), reInitSecretMaps);
+					initRuntimeConfigReader.start();
+					Startup.log.info("RuntimeConfigReader avviato con successo.");
+				} catch (Exception e) {
+					/**doError("Errore durante l'inizializzazione del RuntimeConfigReader",e);*/
+					// non sollevo l'eccezione, e' solo una informazione informativa, non voglio mettere un vincolo che serve per forza un nodo acceso
+					Startup.log.error("Errore durante l'inizializzazione del RuntimeConfigReader: "+e.getMessage(),e);
+				}
+			}
+			
 			Startup.initializedResources = true;
 			
 			Startup.log.info("Inizializzazione rs api monitor effettuata con successo.");
@@ -268,5 +417,11 @@ public class Startup implements ServletContextListener {
 			throw new UtilsRuntimeException(e.getMessage(),e);
 		}
 		Startup.log.info("Inizializzazione Soglia per Dimensione Messaggi effettuata con successo");
+	}
+	
+	private static void doError(String msg,Exception e) {
+		String msgErrore = msg+": " + e.getMessage();
+		Startup.log.error(msgErrore,e);
+		throw new UtilsRuntimeException(msgErrore,e);
 	}
 }

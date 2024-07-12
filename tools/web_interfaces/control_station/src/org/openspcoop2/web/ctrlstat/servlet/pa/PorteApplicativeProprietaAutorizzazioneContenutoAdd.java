@@ -87,7 +87,10 @@ public final class PorteApplicativeProprietaAutorizzazioneContenutoAdd extends A
 			if(idAsps == null) 
 				idAsps = "";
 			String nome = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-			String valore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE);
+			String valore = porteApplicativeHelper.getLockedParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE, false);
+			
+			// Wrap value
+			valore = porteApplicativeHelper.wrapValoreProprieta(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE, valore);
 			
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 

@@ -630,6 +630,9 @@ public class ZIPReadUtils  {
 										String s = null;
 										try {
 											s = new String(xml);
+											if(s.endsWith("\n") && s.length()>1){
+												s = s.substring(0, s.length()-1);
+											}
 											IDSoggetto idSoggetto = IDSoggetto.toIDSoggetto(s);
 											mapKeySoggetti.put(tipoNomeSoggetto, idSoggetto);
 										}catch(Exception e) {
@@ -2444,6 +2447,9 @@ public class ZIPReadUtils  {
 					}
 					
 					s = new String(xml);
+					if(s.endsWith("\n") && s.length()>1){
+						s = s.substring(0, s.length()-1);
+					}
 					IDSoggetto idSoggetto = IDSoggetto.toIDSoggetto(s);
 					mapKeyFruitori.put(tipoNomeSoggettoFruitore, idSoggetto);
 				}catch(Exception e) {

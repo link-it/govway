@@ -90,8 +90,11 @@ public final class PorteApplicativeWSResponseChange extends Action {
 			if(idAsps == null) 
 				idAsps = "";
 			String nome = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-			String valore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE);
+			String valore = porteApplicativeHelper.getLockedParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE, false);
 
+			// Wrap value
+			valore = porteApplicativeHelper.wrapValoreProprieta(valore);
+			
 			// Prendo il nome della porta
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			
@@ -128,14 +131,16 @@ public final class PorteApplicativeWSResponseChange extends Action {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
-				MessageSecurity ws = pa.getMessageSecurity();
-				if(ws.getResponseFlow()!=null){
-					List<MessageSecurityFlowParameter> wsrfpArray = ws.getResponseFlow().getParameterList();
-					for (int i = 0; i < wsrfpArray.size(); i++) {
-						MessageSecurityFlowParameter wsrfp = wsrfpArray.get(i);
-						if (nome.equals(wsrfp.getNome())) {
-							valore = wsrfp.getValore();
-							break;
+				if(valore==null) {
+					MessageSecurity ws = pa.getMessageSecurity();
+					if(ws.getResponseFlow()!=null){
+						List<MessageSecurityFlowParameter> wsrfpArray = ws.getResponseFlow().getParameterList();
+						for (int i = 0; i < wsrfpArray.size(); i++) {
+							MessageSecurityFlowParameter wsrfp = wsrfpArray.get(i);
+							if (nome.equals(wsrfp.getNome())) {
+								valore = wsrfp.getValore();
+								break;
+							}
 						}
 					}
 				}
@@ -144,7 +149,7 @@ public final class PorteApplicativeWSResponseChange extends Action {
 				List<DataElement> dati = new ArrayList<>();
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addNomeValoreToDati(TipoOperazione.CHANGE, dati, nome, valore,false);
+				dati = porteApplicativeHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.CHANGE, dati, nome, valore,false);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg,idPorta, idAsps, dati);
 
@@ -167,7 +172,7 @@ public final class PorteApplicativeWSResponseChange extends Action {
 
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addNomeValoreToDati(TipoOperazione.CHANGE, dati, nome, valore, false);
+				dati = porteApplicativeHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.CHANGE, dati, nome, valore, false);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg,idPorta, idAsps, dati);
 

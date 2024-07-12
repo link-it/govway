@@ -219,6 +219,9 @@ public final class PorteDelegateWS extends Action {
 			Parameter[] urlResParms = { pId,pIdSoggetto,pIdAsps,pIdFrizione,pIdPropertiesConfigRes };
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);
+			
+			// imposto menu' contestuale
+			porteDelegateHelper.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			String servletNameRequestList =  idPropertiesConfigReq.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME) 
 					? PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_LIST : PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_PROPERTIES_CONFIG;

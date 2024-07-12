@@ -35,6 +35,7 @@ import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.web.lib.mvc.byok.LockUtilities;
 import org.openspcoop2.web.lib.mvc.properties.exception.ConditionException;
 import org.openspcoop2.web.lib.mvc.properties.exception.UserInputValidationException;
 import org.openspcoop2.web.lib.mvc.properties.exception.ValidationException;
@@ -61,8 +62,8 @@ public class ConfigBean {
 	public ConfigBean(IProvider provider) {
 		this.listaNomiProperties = new ArrayList<>();
 		this.listaKeysItem = new ArrayList<>();
-		this.mapItem = new HashMap<String, BaseItemBean<?>>();
-		this.mapPropertyItem = new HashMap<String, List<BaseItemBean<?>>>();
+		this.mapItem = new HashMap<>();
+		this.mapPropertyItem = new HashMap<>();
 		this.provider = provider;
 	}
 
@@ -127,7 +128,7 @@ public class ConfigBean {
 	}
 	
 	public Map<String, Properties> getPropertiesMap (){
-		Map<String, Properties> map = new HashMap<String, Properties>();
+		Map<String, Properties> map = new HashMap<>();
 
 		List<BaseItemBean<?>> listaItem = this.getListaItem();
 
@@ -201,8 +202,8 @@ public class ConfigBean {
 		return map;
 	}
 
-	public void setValueFromRequest(String name, String parameterValue, ExternalResources externalResources) throws ProviderException {
-		this.getItem(name).setValueFromRequest(parameterValue, externalResources);
+	public void setValueFromRequest(String name, String parameterValue, ExternalResources externalResources, LockUtilities lockUtilities) throws ProviderException {
+		this.getItem(name).setValueFromRequest(parameterValue, externalResources, lockUtilities);
 //		System.out.println("Item ["+name+"] Valore dalla request ["+parameterValue+"], Nuovo Valore ["+this.getItem(name).getValue()+"]");
 	}
 

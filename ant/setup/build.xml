@@ -24,6 +24,8 @@
 	<import file="./ant/govwayAPIMonitor-build.xml" />
 	<import file="./ant/batchStatistiche-build.xml" />
 	<import file="./ant/batchRuntimeRepository-build.xml" />
+	<import file="./ant/cliVault-build.xml" />
+	<import file="./ant/cliConfigLoader-build.xml" />
 	<import file="./ant/distrib-build.xml" />
 	<import file="./ant/patch-build.xml" />
 	<import file="./ant/archiveAdd-build.xml" />
@@ -39,6 +41,7 @@
 	<property name="deploy_archivi_add" location="deploy/archivi_add" />
 	<property name="tmp_archivi" location="${build}/archivi" />
 	<property name="tmp_batch" location="${build}/batch" />
+	<property name="tmp_tools" location="${build}/tools" />
 	<property name="tmp_sql" location="${build}/sql" />
 	<property name="tmp_sql_completi" location="${build}/sql_completi" />
 	<property name="tmp_ds" location="${build}/ds" />
@@ -58,6 +61,7 @@
 		<mkdir dir="${tmp_ds}" />
 		<mkdir dir="${tmp_archivi}" />
 		<!-- <mkdir dir="${tmp_batch}" /> La creamo se serve, nello specifico task. -->
+		<!-- <mkdir dir="${tmp_tools}" /> La creamo se serve, nello specifico task. -->
 		<mkdir dir="${tmp_cfg}" />
 		<mkdir dir="${dist}" />
 	</target>
@@ -96,6 +100,9 @@
 			antinstaller_batch_dir=
 			antinstaller_batch_system_out=
 			antinstaller_gestione_nodi=static/dynamic
+			antinstaller_tools_system_out=
+			antinstaller_tools_cliVault=
+			antinstaller_tools_cliConfigLoader=
 
 		Informazioni DataSource
 			antinstaller_driver_jdbc_classname=org.postgresql.Driver
@@ -2580,6 +2587,203 @@
 				<!-- Ripristino jar -->
 				<antcall target="ripristina_jar">
 				    <param name="archiveFile" value="${tmp_batch}/gestoreRuntimeRepository"/>
+					<param name="as" value="BATCH"/>
+					<param name="archiveType" value="BATCH"/>
+				</antcall>
+			</then>
+		</if>
+	</target>
+
+
+	<target name="setup_cliVault" depends="_setup_cliVault"/>
+	<target name="_setup_cliVault">
+		<if>
+			<not>
+				<equals arg1="${antinstaller_tools_cliVault}" arg2="false"/>
+			</not>
+			<then>
+				<mkdir dir="${tmp_tools}" /> 
+				<copy todir="${tmp_tools}/govway-vault-cli">
+					<fileset dir="${deploy_sw}/tools/govway-vault-cli"/>
+				</copy>
+
+				<antcall target="cli_vault_properties_settings">
+				    <param name="file" value="${tmp_tools}/govway-vault-cli/properties/govway_vault.cli.properties"/>
+				</antcall>
+				<antcall target="cli_vault_database_properties_settings">
+				    <param name="file" value="${tmp_tools}/govway-vault-cli/properties/govway_vault.cli.database.properties"/>
+				</antcall>
+				<antcall target="cli_vault_log4j_properties_settings">
+				    <param name="file" value="${tmp_tools}/govway-vault-cli/properties/govway_vault.cli.log4j2.properties"/>
+				</antcall>
+				<antcall target="dos2unix">
+					<param name="dir" value="${tmp_tools}/govway-vault-cli/properties"/>
+				    <param name="file" value="*.properties"/>
+				</antcall>
+				<!-- trasparente -->
+				<if>
+					<istrue value="${antinstaller_protocollo_trasparente}" />
+					<then>
+						<copy todir="${tmp_tools}/govway-vault-cli/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_trasparente-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- modipa -->
+				<if>
+					<istrue value="${antinstaller_protocollo_modipa}"/>
+					<then>
+						<copy todir="${tmp_tools}/govway-vault-cli/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_modipa-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- spcoop -->
+				<if>
+					<istrue value="${antinstaller_protocollo_spcoop}"/>
+					<then>
+						<copy todir="${tmp_tools}/govway-vault-cli/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_spcoop-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- as4 -->
+				<if>
+					<istrue value="${antinstaller_protocollo_as4}" />
+					<then>
+						<copy todir="${tmp_tools}/govway-vault-cli/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_as4-protocol_*.jar"/>
+								<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- sdi -->
+				<if>
+					<istrue value="${antinstaller_protocollo_sdi}"/>
+					<then>
+						<copy todir="${tmp_tools}/govway-vault-cli/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_sdi-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- Ripristino jar -->
+				<antcall target="ripristina_jar">
+				    <param name="archiveFile" value="${tmp_tools}/govway-vault-cli"/>
+					<param name="as" value="BATCH"/>
+					<param name="archiveType" value="BATCH"/>
+				</antcall>
+			</then>
+		</if>
+	</target>
+
+
+	<target name="setup_cliConfigLoader" depends="_setup_cliConfigLoader"/>
+	<target name="_setup_cliConfigLoader">
+		<if>
+			<not>
+				<equals arg1="${antinstaller_tools_cliConfigLoader}" arg2="false"/>
+			</not>
+			<then>
+				<mkdir dir="${tmp_tools}" /> 
+				<copy todir="${tmp_tools}/govway-config-loader">
+					<fileset dir="${deploy_sw}/tools/govway-config-loader"/>
+				</copy>
+
+				<antcall target="cli_vault_properties_settings">
+				    <param name="file" value="${tmp_tools}/govway-config-loader/properties/config_loader.cli.properties"/>
+				</antcall>
+				<antcall target="cli_vault_database_properties_settings">
+				    <param name="file" value="${tmp_tools}/govway-config-loader/properties/config_loader.cli.database.properties"/>
+				</antcall>
+				<antcall target="cli_vault_log4j_properties_settings">
+				    <param name="file" value="${tmp_tools}/govway-config-loader/properties/config_loader.cli.log4j2.properties"/>
+				</antcall>
+				<antcall target="cli_configLoaders_console_audit_log4j_properties_settings">
+				    <param name="file" value="${tmp_tools}/govway-config-loader/properties/console.audit.log4j2.properties"/>
+				</antcall>
+				<antcall target="dos2unix">
+					<param name="dir" value="${tmp_tools}/govway-config-loader/properties"/>
+				    <param name="file" value="*.properties"/>
+				</antcall>
+				<!-- trasparente -->
+				<if>
+					<istrue value="${antinstaller_protocollo_trasparente}" />
+					<then>
+						<copy todir="${tmp_tools}/govway-config-loader/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_trasparente-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- modipa -->
+				<if>
+					<istrue value="${antinstaller_protocollo_modipa}"/>
+					<then>
+						<copy todir="${tmp_tools}/govway-config-loader/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_modipa-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- spcoop -->
+				<if>
+					<istrue value="${antinstaller_protocollo_spcoop}"/>
+					<then>
+						<copy todir="${tmp_tools}/govway-config-loader/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_spcoop-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- as4 -->
+				<if>
+					<istrue value="${antinstaller_protocollo_as4}" />
+					<then>
+						<copy todir="${tmp_tools}/govway-config-loader/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_as4-protocol_*.jar"/>
+								<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- sdi -->
+				<if>
+					<istrue value="${antinstaller_protocollo_sdi}"/>
+					<then>
+						<copy todir="${tmp_tools}/govway-config-loader/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_sdi-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- Ripristino jar -->
+				<antcall target="ripristina_jar">
+				    <param name="archiveFile" value="${tmp_tools}/govway-config-loader"/>
 					<param name="as" value="BATCH"/>
 					<param name="archiveType" value="BATCH"/>
 				</antcall>

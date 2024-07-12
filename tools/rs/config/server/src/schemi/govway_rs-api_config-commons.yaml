@@ -678,7 +678,7 @@ components:
         truststore_password:
           type: string
           format: password
-          maxLength: 255
+          # Encrypted maxLength: 255
           example: 'pwd'
         truststore_crl:
           type: string
@@ -695,12 +695,12 @@ components:
         keystore_password:
           type: string
           format: password
-          maxLength: 255
+          # Encrypted maxLength: 255
           example: 'pwd'
         key_password:
           type: string
           format: password
-          maxLength: 255
+          # Encrypted maxLength: 255
           description: password della chiave privata
           example: 'pwd'
         key_alias:
@@ -708,6 +708,9 @@ components:
           maxLength: 255
           description: alias della chiave privata
           example: 'pwd'
+        keystore_byok_policy:
+          type: string
+          maxLength: 255
     BaseKeyStoreFile:
       type: object
       allOf:
@@ -746,9 +749,25 @@ components:
         password:
           type: string
           format: password
-          maxLength: 255
+          # Encrypted maxLength: 255
           example: 'pwd'
-      additionalProperties: false           
+      additionalProperties: false
+    ConnettoreConfigurazioneApiKey:
+      type: object
+      required:
+        - api_key
+      properties:
+        api_key:
+          type: string
+        api_key_header:
+          type: string
+          maxLength: 255
+        app_id:
+          type: string
+        app_id_header:
+          type: string
+          maxLength: 255
+      additionalProperties: false     
     ConnettoreConfigurazioneHttps:
       type: object
       required: 
@@ -827,7 +846,7 @@ components:
           example: 'user'
         password:
           type: string
-          maxLength: 255
+          # Encrypted maxLength: 255
           format: password
           example: 'pwd'
     ConnettoreConfigurazioneTimeout:
@@ -866,6 +885,8 @@ components:
           example: 'http://ente.it/servizio'
         autenticazione_http:
           $ref: '#/components/schemas/ConnettoreConfigurazioneHttpBasic'
+        autenticazione_apikey:
+          $ref: '#/components/schemas/ConnettoreConfigurazioneApiKey'
         autenticazione_https:
           $ref: '#/components/schemas/ConnettoreConfigurazioneHttps'
         proxy:
@@ -975,7 +996,7 @@ components:
           maxLength: 255
         password:
           type: string
-          maxLength: 255
+          # Encrypted maxLength: 255
         jndi_initial_context:
           type: string
           maxLength: 255
@@ -3483,14 +3504,23 @@ components:
           maxLength: 255
         valore:
           type: string
-          maxLength: 255
+          # Encrypted maxLength: 255
+    ProprietaOpzioneCifratura:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/Proprieta'
+          - type: object
+            properties:
+              encrypted:
+                type: boolean
+                default: false
     ElencoProprieta:
       type: object  
       properties:
         proprieta:        
           type: array
           items:
-            $ref: '#/components/schemas/Proprieta'
+            $ref: '#/components/schemas/ProprietaOpzioneCifratura'
 
     Proprieta4000:
       type: object
@@ -3503,7 +3533,16 @@ components:
           maxLength: 255
         valore:
           type: string
-          maxLength: 4000
+          # Encrypted maxLength: 4000
+    Proprieta4000OpzioneCifratura:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/Proprieta4000'
+          - type: object
+            properties:
+              encrypted:
+                type: boolean
+                default: false
 
     AAName:
       type: string

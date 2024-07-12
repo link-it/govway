@@ -21,8 +21,8 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -37,10 +37,12 @@ import org.openspcoop2.core.config.MessageSecurity;
 import org.openspcoop2.core.config.MessageSecurityFlow;
 import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -90,8 +92,11 @@ public final class PorteApplicativeWSRequestAdd extends Action {
 			if(idAsps == null) 
 				idAsps = "";
 			String nome = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-			String valore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE);
+			String valore = porteApplicativeHelper.getLockedParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE, false);
 
+			// Wrap value
+			valore = porteApplicativeHelper.wrapValoreProprieta(valore);
+			
 			// Prendo il nome della porta
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			
@@ -133,7 +138,12 @@ public final class PorteApplicativeWSRequestAdd extends Action {
 				List<DataElement> dati = new ArrayList<>();
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addNomeValoreToDati(TipoOperazione.ADD, dati, "", "", false);
+				DataElement dataElement = new DataElement();
+				dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA);
+				dataElement.setType(DataElementType.TITLE);
+				dati.add(dataElement);
+				
+				dati = porteApplicativeHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.ADD, dati, nome, valore, false);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg,idPorta, idAsps, dati);
 				
@@ -156,7 +166,12 @@ public final class PorteApplicativeWSRequestAdd extends Action {
 
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addNomeValoreToDati(TipoOperazione.ADD, dati, nome, valore,  false);
+				DataElement dataElement = new DataElement();
+				dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA);
+				dataElement.setType(DataElementType.TITLE);
+				dati.add(dataElement);
+				
+				dati = porteApplicativeHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.ADD, dati, nome, valore,  false);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, dati);
 

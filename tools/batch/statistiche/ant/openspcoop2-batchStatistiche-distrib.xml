@@ -34,12 +34,22 @@
 			<fileset dir="${openspcoop2.lib}" includes="log/*"/>
 			<fileset dir="${openspcoop2.lib}" includes="commons/commons-collections-*.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="commons/commons-lang-2.6.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="commons/commons-codec-1.16.0.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="jax/jaxb-*.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="saaj/jakarta.xml.soap-api-3.0.0.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="saaj/saaj-impl-3.0.2-gov4j-1.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="shared/joda-time-2.12.5.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="shared/xercesImpl-2.12.2.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="jakarta/jakarta.activation-api-2.1.2.jar"/>
+                        <fileset dir="${openspcoop2.lib}" includes="shared/freemarker-2.3.32.jar"/>
+                        <fileset dir="${openspcoop2.lib}" includes="shared/velocity-*.jar"/>
+                        <fileset dir="${openspcoop2.lib}" includes="security/bcpkix-jdk18on-1.78.1.jar"/>
+                        <fileset dir="${openspcoop2.lib}" includes="security/bcprov-jdk18on-1.78.1.jar"/>
+                        <fileset dir="${openspcoop2.lib}" includes="security/bcutil-jdk18on-1.78.1.jar"/>
+                        <fileset dir="${openspcoop2.lib}" includes="security/xmlsec-3.0.3-gov4j-1.jar"/>
+                        <fileset dir="${openspcoop2.lib}" includes="security/neethi-3.2.0.jar"/>
+                        <fileset dir="${openspcoop2.lib}" includes="security/jasypt-1.9.3.jar"/>
+                        <fileset dir="${openspcoop2.lib}" includes="security/nimbus-jose-jwt-9.37.3.jar"/>
 		</copy>
 
 		<mkdir dir="${distrib_batchStatistiche}/jdbc"/>

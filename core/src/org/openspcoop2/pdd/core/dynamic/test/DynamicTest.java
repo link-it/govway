@@ -1948,6 +1948,58 @@ public class DynamicTest {
 			throw new Exception("Expected null value, found '"+value+"'");
 		}
 		
+		expr = prefix + "{envj:pCustomJava1}";
+		DynamicUtils.validate("testEnvJava", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testJava", expr, dynamicMap, pddContext);
+		System.out.println("testEnvJava: "+value+"\n\n");
+		expected = "v1java";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix+"{envj:javaNotFound}";
+		DynamicUtils.validate("testEnvJavaNotFound", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testEnvJavaNotFound", expr, dynamicMap, pddContext);
+		System.out.println("testEnvJavaNotFound: "+value);
+		expected = "";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefixOptional+"{envj:javaNotFound}";
+		DynamicUtils.validate("optional testEnvJavaNotFound", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testEnvJavaNotFound", expr, dynamicMap, pddContext);
+		System.out.println("optional testEnvJavaNotFound: "+value+"\n\n");
+		if(value!=null) {
+			throw new Exception("Expected null value, found '"+value+"'");
+		}
+		
+		expr = prefix + "{envj:HOSTNAME}";
+		DynamicUtils.validate("testENVJava", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testENVJava", expr, dynamicMap, pddContext);
+		System.out.println("testENVJava: "+value+"\n\n");
+		expected = System.getenv("HOSTNAME");
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix+"{envj:envNotFound}";
+		DynamicUtils.validate("testENVJavaNotFound", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("testENVJavaNotFound", expr, dynamicMap, pddContext);
+		System.out.println("testENVJavaNotFound: "+value);
+		expected = "";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefixOptional+"{envj:envNotFound}";
+		DynamicUtils.validate("optional testEVNJavaNotFound", expr, addPrefixError);
+		value = DynamicUtils.convertDynamicPropertyValue("optional testEVNJavaNotFound", expr, dynamicMap, pddContext);
+		System.out.println("optional testEVNJavaNotFound: "+value+"\n\n");
+		if(value!=null) {
+			throw new Exception("Expected null value, found '"+value+"'");
+		}
+		
 		}finally {
 			if(fTmpConfig!=null) {
 				fTmpConfig.delete();

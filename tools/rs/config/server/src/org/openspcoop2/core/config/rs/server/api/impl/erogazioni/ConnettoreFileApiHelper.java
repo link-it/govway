@@ -125,6 +125,7 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 				null,	// httpsKeyAlias
 				null,	// httpsTrustStoreCRLs
         		null,	// httpsTrustStoreOCSPPolicy
+        		null,	// httpsKeyStoreBYOKPolicy
 				null,																//	tipoconn (personalizzato)
 				ServletUtils.boolToCheckBoxStatus(false),										 	//autenticazioneHttp,
 				ServletUtils.boolToCheckBoxStatus(false),	
@@ -152,11 +153,18 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 				responseInputFileNameHeaders,	// this.responseInputFileNameHeaders, 
 				ServletUtils.boolToCheckBoxStatus(responseInputDeleteAfterRead),	// this.responseInputDeleteAfterRead, 
 				responseInputWaitTime,	// this.responseInputWaitTime,
-				false,
-				null,
-				listExtendedConnettore,
-        		false, // erogazioneServizioApplicativoServerEnabled, TODO quando si aggiunge applicativo server
-    			null // rogazioneServizioApplicativoServer
+				false, // autenticazioneToken
+				null, // tokenPolicy
+				null, // autenticazioneApiKey
+				false, // useOAS3Names
+				false, // useAppId
+				null, // apiKeyHeader
+				null, // apiKey,
+				null, // appIdHeader,
+				null, // appId,
+				listExtendedConnettore, // listExtendedConnettore
+        		false, // erogazioneServizioApplicativoServerEnabled, 
+    			null // erogazioneServizioApplicativoServer
 			);
 
 	}
@@ -226,6 +234,7 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 				null,  //httpsKeyAlias
 				null,  //httpsTrustStoreCRLs
         		null,  //httpsTrustStoreOCSPPolicy
+        		null,  //httpsKeyStoreBYOKPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( false ),	
 				null,
@@ -252,7 +261,9 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 				responseInputFileNameHeaders,	// this.responseInputFileNameHeaders, 
 				ServletUtils.boolToCheckBoxStatus(responseInputDeleteAfterRead),	// this.responseInputDeleteAfterRead, 
 				responseInputWaitTime,	// this.responseInputWaitTime,
-				null,
+				null,   // tokenPolicy
+				null, null, // apiKeyHeader,  apiKeyValue
+				null, null, // appIdHeader, appIdValue
 				listExtendedConnettore);	
 		return regConnettore;
 	}
@@ -322,6 +333,7 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 				null,  //httpsKeyAlias
 				null,  //httpsTrustStoreCRLs
         		null,  //httpsTrustStoreOCSPPolicy
+        		null,  //httpsKeyStoreBYOKPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( false ),	
 				null,
@@ -348,7 +360,9 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 				responseInputFileNameHeaders,	// this.responseInputFileNameHeaders, 
 				ServletUtils.boolToCheckBoxStatus(responseInputDeleteAfterRead),	// this.responseInputDeleteAfterRead, 
 				responseInputWaitTime,	// this.responseInputWaitTime,
-				null,
+				null,   // tokenPolicy
+				null, null, // apiKeyHeader,  apiKeyValue
+				null, null, // appIdHeader, appIdValue
 				listExtendedConnettore);	
 		return regConnettore;
 	}

@@ -28,6 +28,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.govway.struts.action.Action;
 import org.govway.struts.action.ActionForm;
 import org.govway.struts.action.ActionForward;
@@ -86,8 +87,11 @@ public final class SoggettiProprietaChange extends Action {
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			String nome = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_NOME);
-			String valore = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_VALORE);
-
+			String valore = soggettiHelper.getLockedParameter(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_VALORE, false);
+			
+			// Wrap value
+			valore = soggettiHelper.wrapValoreProprieta(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_VALORE, valore);
+			
 			SoggettiCore soggettiCore = new SoggettiCore();
 			
 			Soggetto soggettoRegistry = null;
@@ -108,7 +112,9 @@ public final class SoggettiProprietaChange extends Action {
 				tipoprov = soggettoConfig.getTipo();
 			}
 
-			protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
+			if(protocollo==null || StringUtils.isEmpty(protocollo)) {
+				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
+			}
 
 			List<Parameter> parametersServletSoggettoChange = new ArrayList<>();
 			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id);
@@ -133,13 +139,15 @@ public final class SoggettiProprietaChange extends Action {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
-				for (int i = 0; i < soggettoRegistry.sizeProprietaList(); i++) {
-					Proprieta ssp = soggettoRegistry.getProprieta(i);
-					if (nome.equals(ssp.getNome())) {
-						if(ssp.getValore()!=null){
-							valore = ssp.getValore();
+				if(valore==null){
+					for (int i = 0; i < soggettoRegistry.sizeProprietaList(); i++) {
+						Proprieta ssp = soggettoRegistry.getProprieta(i);
+						if (nome.equals(ssp.getNome())) {
+							if(ssp.getValore()!=null){
+								valore = ssp.getValore();
+							}
+							break;
 						}
-						break;
 					}
 				}
 

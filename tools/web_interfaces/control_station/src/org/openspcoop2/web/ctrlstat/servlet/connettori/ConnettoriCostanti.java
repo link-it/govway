@@ -78,6 +78,7 @@ public class ConnettoriCostanti {
 	public static final String LABEL_CONNETTORE_PROXY = "Proxy";
 	public static final String LABEL_CONNETTORE_HTTP = "Autenticazione Http";
 	public static final String LABEL_CONNETTORE_BEARER = "Autenticazione Token";
+	public static final String LABEL_CONNETTORE_API_KEY = "Autenticazione API Key";
 	public static final String LABEL_CONNETTORE_BEARER_MODI_PDND = "Negoziazione Token tramite PDND";
 	public static final String LABEL_CONNETTORE_BEARER_MODI_OAUTH = "Negoziazione Token tramite Authorization Server OAuth";
 	public static final String LABEL_CONNETTORE_HTTPS = "Autenticazione Https";
@@ -102,6 +103,7 @@ public class ConnettoriCostanti {
 	public static final String PARAMETRO_CONNETTORE_ENDPOINT_TYPE = "endpointtype";
 	public static final String PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP = "endpointtype_http";
 	public static final String PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTPS = "endpointtype_https";
+	public static final String PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_API_KEY = "endpointtype_apikey";
 	public static final String PARAMETRO_CONNETTORE_ENDPOINT_TYPE_CHECK = "endpointtype_ckb";
 	public static final String PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO = "tipoconn";
 	public static final String PARAMETRO_CONNETTORE_DEBUG = "connettore_debug";
@@ -154,6 +156,13 @@ public class ConnettoriCostanti {
 	public static final String PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO;
 	public static final String PARAMETRO_CONNETTORE_TOKEN_POLICY = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_CONNETTORE_TOKEN_POLICY;
 	
+	public static final String PARAMETRO_CONNETTORE_API_KEY_NOMI_OAS = "connettore_apikey_nomi_oas";
+	public static final String PARAMETRO_CONNETTORE_API_KEY_VALUE = "connettore_apikey_value";
+	public static final String PARAMETRO_CONNETTORE_API_KEY_HEADER = "connettore_apikey_hdr";
+	public static final String PARAMETRO_CONNETTORE_API_KEY_USE_APP_ID = "connettore_appid_use";
+	public static final String PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE = "connettore_appid_value";
+	public static final String PARAMETRO_CONNETTORE_API_KEY_APP_ID_HEADER = "connettore_appid_header";
+	
 	public static final String PARAMETRO_CONNETTORE_PROXY_ENABLED = "connettore_proxy_enabled";
 	public static final String PARAMETRO_CONNETTORE_PROXY_HOSTNAME = "connettore_proxy_host";
 	public static final String PARAMETRO_CONNETTORE_PROXY_PORT = "connettore_proxy_port";
@@ -201,6 +210,7 @@ public class ConnettoriCostanti {
 	public static final String PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE = "httpspwdprivatekey";
 	public static final String PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE = "httpsaliasprivatekey";
 	public static final String PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM = "httpsalgoritmokey";
+	public static final String PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY = "httpsbyok";
 	
 	public static final String PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME = "requestOutputFileName";
 	public static final String PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS = "requestOutputFileNameP";
@@ -309,6 +319,15 @@ public class ConnettoriCostanti {
 	
 	public static final String LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY = CostantiLabel.LABEL_CONNETTORE_TOKEN_POLICY;
 	
+	public static final String LABEL_PARAMETRO_CONNETTORE_API_KEY_NOMI_OAS = CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_NOMI_STANDARD_OAS3;
+	public static final String LABEL_PARAMETRO_CONNETTORE_API_KEY_USE_APP_ID = "App ID";
+	public static final String LABEL_PARAMETRO_CONNETTORE_API_KEY_VALUE = "API Key";
+	public static final String LABEL_PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE = "App ID";
+	public static final String LABEL_PARAMETRO_CONNETTORE_API_KEY_HEADER = "Header HTTP";
+	public static final String LABEL_PARAMETRO_CONNETTORE_API_KEY_APP_ID_HEADER = "Header HTTP";
+	public static final String LABEL_PARAMETRO_CONNETTORE_API_KEY_NON_STANDARD_VALUE = "Valore";
+	public static final String LABEL_PARAMETRO_CONNETTORE_API_KEY_APP_ID_NON_STANDARD_VALUE = "Valore";
+	
 	public static final String LABEL_PARAMETRO_CONNETTORE_JMS_NOME_CODA = CostantiLabel.LABEL_CONNETTORE_JMS_NOME_CODA;
 	public static final String LABEL_PARAMETRO_CONNETTORE_JMS_TIPO_CODA = "Tipo";
 	public static final String LABEL_PARAMETRO_CONNETTORE_JMS_USERNAME = CostantiLabel.LABEL_CONNETTORE_JMS_USERNAME;
@@ -343,6 +362,8 @@ public class ConnettoriCostanti {
 	public static final String LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE = "Password Chiave Privata";
 	public static final String LABEL_PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE = "Alias Chiave Privata";
 	public static final String LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM = "Algoritmo";
+	public static final String LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY = "BYOK Policy";
+
 	
 	public static final String LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME = "File";
 	public static final int LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_SIZE = LABEL_PARAMETRO_CONNETTORE_TEXT_AREA_SIZE;
@@ -435,6 +456,9 @@ public class ConnettoriCostanti {
 	
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_TOKEN = CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_TOKEN;
 	
+	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_API_KEY = CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_API_KEY;
+	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_API_KEY_APP_ID = CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_API_KEY_APP_ID;
+	
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS = CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS;
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_SSL_TYPE = LABEL_PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE;
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_HOSTNAME_VERIFIER = LABEL_PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY;
@@ -443,6 +467,7 @@ public class ConnettoriCostanti {
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLS = CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLS;
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_OCSP_POLICY = CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_OCSP_POLICY;
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE = CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE;
+	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE_BYOK_POLICY = CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE_BYOK_POLICY;
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEY_ALIAS = CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEY_ALIAS;
 	
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY = CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY;

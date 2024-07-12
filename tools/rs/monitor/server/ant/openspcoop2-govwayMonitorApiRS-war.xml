@@ -127,6 +127,8 @@
 				<include name="snakeyaml-2.1-gov4j-1.jar"/>
 				<include name="javassist-3.29.2-GA.jar"/>
 				<include name="xom-1.3.5.jar" />
+				<include name="freemarker-2.3.32.jar" />
+				<include name="velocity-*.jar"/>
 				<include name="${xerces_jar}"/>
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>

@@ -41,8 +41,14 @@ Background:
 * def fruizione_petstore_connettore_https_pkcs11 = read('fruizione_petstore_connettore_pkcs11.json')
 * eval fruizione_petstore_connettore_https_pkcs11.api_nome = api_petstore.nome
 * eval fruizione_petstore_connettore_https_pkcs11.api_versione = api_petstore.versione
-* eval fruizione_petstore_connettore_https_jks.erogatore = erogatore.nome
-* eval fruizione_petstore_connettore_https_jks.api_referente = api_petstore.referente
+* eval fruizione_petstore_connettore_https_pkcs11.erogatore = erogatore.nome
+* eval fruizione_petstore_connettore_https_pkcs11.api_referente = api_petstore.referente
+
+* def fruizione_petstore_connettore_apikey = read('fruizione_petstore_connettore_apikey.json')
+* eval fruizione_petstore_connettore_apikey.api_nome = api_petstore.nome
+* eval fruizione_petstore_connettore_apikey.api_versione = api_petstore.versione
+* eval fruizione_petstore_connettore_apikey.erogatore = erogatore.nome
+* eval fruizione_petstore_connettore_apikey.api_referente = api_petstore.referente
 
 #TODO Sistemare i campi predefiniti quando si checka il campo autorizzazione in erogazione.
 
@@ -61,7 +67,7 @@ Scenario: Creazione Fruizioni Petstore 204 (truststore JKS, keystore JKS)
 
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'soggetti', body: erogatore })
-    * call create_201 ({ resourcePath: 'fruizioni', body: fruizione_petstore,  key: petstore_key })
+    * call create_201 ({ resourcePath: 'fruizioni', body: fruizione_petstore_connettore_https_jks,  key: petstore_key })
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
     * call delete ({ resourcePath: api_petstore_path })
 
@@ -70,7 +76,7 @@ Scenario: Creazione Fruizioni Petstore 204 (truststore PKCS11, keystore PKCS11)
 
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'soggetti', body: erogatore })
-    * call create_201 ({ resourcePath: 'fruizioni', body: fruizione_petstore,  key: petstore_key })
+    * call create_201 ({ resourcePath: 'fruizioni', body: fruizione_petstore_connettore_https_pkcs11,  key: petstore_key })
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
     * call delete ({ resourcePath: api_petstore_path })
 
@@ -91,6 +97,27 @@ Examples:
 |debug|
 |true|
 |false|
+
+@CreatePetstore204_connettore_ApiKey
+Scenario: Creazione Fruizioni Petstore 204 (api key e app id)
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    
+    # full
+    * call create_201 ({ resourcePath: 'fruizioni', body: fruizione_petstore_connettore_apikey,  key: petstore_key })
+    
+    # senza header
+    * remove fruizione_petstore_connettore_apikey.connettore.autenticazione_apikey.api_key_header
+    * remove fruizione_petstore_connettore_apikey.connettore.autenticazione_apikey.app_id_header
+    * call create_201 ({ resourcePath: 'fruizioni', body: fruizione_petstore_connettore_apikey,  key: petstore_key })
+    
+    # senza app id
+    * remove fruizione_petstore_connettore_apikey.connettore.autenticazione_apikey.app_id
+    * call create_201 ({ resourcePath: 'fruizioni', body: fruizione_petstore_connettore_apikey,  key: petstore_key })
+    
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path })
 
 @CreateSPCoop204
 Scenario: Creazione Fruizioni SPCoop 204

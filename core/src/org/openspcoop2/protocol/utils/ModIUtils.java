@@ -1257,7 +1257,7 @@ public class ModIUtils {
 			
 			String pw = CostantiDB.MODIPA_KEYSTORE_PASSWORD;
 			String vPassword = getStringValueConfig(protocolPropertyList, pw);
-			
+						
 			String aliasKey = CostantiDB.MODIPA_KEY_ALIAS;
 			String vAliasKey = getStringValueConfig(protocolPropertyList, aliasKey);
 			
@@ -1274,6 +1274,12 @@ public class ModIUtils {
 				vKeyPairAlgorithm = getStringValueConfig(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_KEY_ALGORITHM);
 			}
 			
+			String byok = CostantiDB.MODIPA_KEYSTORE_BYOK_POLICY;
+			String vByok = null;
+			if(!keystoreModeArchive && !keystoreModeHsm) {
+				vByok = getStringValueConfig(protocolPropertyList, byok);
+			}
+			
 			keystoreParams = new KeystoreParams();
 			keystoreParams.setType(vType);
 			keystoreParams.setPath(vPath);
@@ -1283,6 +1289,7 @@ public class ModIUtils {
 			keystoreParams.setKeyPassword(vPassordKey);
 			keystoreParams.setKeyPairPublicKeyPath(vPathPublicKey);
 			keystoreParams.setKeyPairAlgorithm(vKeyPairAlgorithm);
+			keystoreParams.setByokPolicy(vByok);
 			
 		}
 	
@@ -1410,6 +1417,7 @@ public class ModIUtils {
 				String ocsp = null;
 				String aliasKey = null;
 				String pwKey = null;
+				String byok = null;
 				boolean keystoreModePath = false;
 				boolean keystoreModeArchive = false;
 				boolean keystoreModeHsm = false;
@@ -1440,6 +1448,7 @@ public class ModIUtils {
 					else if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_PATH.equals(mode)) {
 						keystoreModePath = true;
 						path = CostantiDB.MODIPA_KEYSTORE_PATH;
+						byok = CostantiDB.MODIPA_KEYSTORE_BYOK_POLICY;
 					}
 					else if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_HSM.equals(mode)) {
 						keystoreModeHsm = true;
@@ -1513,6 +1522,11 @@ public class ModIUtils {
 					vKeyPairAlgorithm = getStringValue(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_KEY_ALGORITHM);
 				}
 				
+				String vByok = null;
+				if(byok!=null) {
+					vByok = getStringValue(protocolPropertyList, byok);
+				}
+				
 				keystoreParams = new KeystoreParams();
 				keystoreParams.setType(vType);
 				keystoreParams.setPath(vPath);
@@ -1524,6 +1538,7 @@ public class ModIUtils {
 				keystoreParams.setKeyPassword(vPasswordKey);
 				keystoreParams.setKeyPairPublicKeyPath(vPathPublicKey);
 				keystoreParams.setKeyPairAlgorithm(vKeyPairAlgorithm);
+				keystoreParams.setByokPolicy(vByok);
 			}
 		}
 	

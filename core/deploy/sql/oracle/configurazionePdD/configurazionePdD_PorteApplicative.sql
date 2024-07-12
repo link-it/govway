@@ -291,6 +291,7 @@ CREATE TABLE pa_auth_properties
 	id_porta NUMBER NOT NULL,
 	nome VARCHAR2(255) NOT NULL,
 	valore VARCHAR2(255) NOT NULL,
+	enc_value CLOB,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -323,6 +324,7 @@ CREATE TABLE pa_authz_properties
 	id_porta NUMBER NOT NULL,
 	nome VARCHAR2(255) NOT NULL,
 	valore VARCHAR2(255) NOT NULL,
+	enc_value CLOB,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -355,6 +357,7 @@ CREATE TABLE pa_authzc_properties
 	id_porta NUMBER NOT NULL,
 	nome VARCHAR2(255) NOT NULL,
 	valore VARCHAR2(255) NOT NULL,
+	enc_value CLOB,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -420,6 +423,7 @@ CREATE TABLE pa_properties
 	id_porta NUMBER NOT NULL,
 	nome VARCHAR2(255) NOT NULL,
 	valore VARCHAR2(255) NOT NULL,
+	enc_value CLOB,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -516,6 +520,7 @@ CREATE TABLE pa_security_request
 	id_porta NUMBER NOT NULL,
 	nome VARCHAR2(255) NOT NULL,
 	valore CLOB NOT NULL,
+	enc_value CLOB,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints
@@ -546,6 +551,7 @@ CREATE TABLE pa_security_response
 	id_porta NUMBER NOT NULL,
 	nome VARCHAR2(255) NOT NULL,
 	valore CLOB NOT NULL,
+	enc_value CLOB,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints

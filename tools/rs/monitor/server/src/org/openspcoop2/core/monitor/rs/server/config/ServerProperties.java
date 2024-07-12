@@ -23,6 +23,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 import org.slf4j.Logger;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsRuntimeException;
@@ -137,6 +138,10 @@ public class ServerProperties  {
 
 	/* ********  M E T O D I  ******** */
 
+	private boolean parse(BooleanNullable b, boolean defaultValue) {
+		return (b!=null && b.getValue()!=null) ? b.getValue() : defaultValue;
+	}
+	
 	public String readProperty(boolean required,String property) throws UtilsException{
 		String tmp = this.reader.getValueConvertEnvProperties(property);
 		if(tmp==null){
@@ -149,6 +154,17 @@ public class ServerProperties  {
 		}else{
 			return tmp.trim();
 		}
+	}
+	
+	private BooleanNullable readBooleanProperty(boolean required,String property) throws UtilsException{
+		String tmp = this.readProperty(required, property);
+		if(tmp==null && !required) {
+			return BooleanNullable.NULL(); // se e' required viene sollevata una eccezione dal metodo readProperty
+		}
+		if(!"true".equalsIgnoreCase(tmp) && !"false".equalsIgnoreCase(tmp)){
+			throw new UtilsException("Property ["+property+"] with uncorrect value ["+tmp+"] (true/value expected)");
+		}
+		return Boolean.parseBoolean(tmp) ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
 	}
 	
 	public Properties getProperties() throws UtilsException{
@@ -240,6 +256,57 @@ public class ServerProperties  {
 	
 	public int getTransazioniDettaglioVisualizzazioneMessaggiThreshold() throws UtilsException{
 		return Integer.valueOf(this.readProperty(true, "transazioni.dettaglio.visualizzazioneMessaggi.threshold"));
+	}
+	
+	
+	
+	public boolean isSecurityLoadBouncyCastleProvider() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "security.addBouncyCastleProvider");
+		return parse(b, false);
+	}
+	
+	
+	public String getEnvMapConfig() throws UtilsException{
+		return this.readProperty(false, "env.map.config");
+	}
+	public boolean isEnvMapConfigRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "env.map.required");
+		return this.parse(b, false);
+	}
+	
+	
+	public String getHSMConfigurazione() throws UtilsException {
+		return this.readProperty(false, "hsm.config");
+	}
+	public boolean isHSMRequired() throws UtilsException {
+		BooleanNullable b = this.readBooleanProperty(false, "hsm.required");
+		return parse(b, false);
+	}
+	public boolean isHSMKeyPasswordConfigurable() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "hsm.keyPassword");
+		return this.parse(b, false);
+	}
+	
+	
+	
+	public String getBYOKConfigurazione() throws UtilsException{
+		return this.readProperty(false, "byok.config");
+	}
+	public boolean isBYOKRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "byok.required");
+		return parse(b, false);
+	}
+	public String getBYOKEnvSecretsConfig() throws UtilsException{
+		return this.readProperty(false, "byok.env.secrets.config");
+	}
+	public boolean isBYOKEnvSecretsConfigRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "byok.env.secrets.required");
+		return this.parse(b, false);
+	}
+	
+	
+	public String getConfigurazioneNodiRuntime() throws UtilsException{
+		return this.readProperty(false, "configurazioni.configurazioneNodiRun");
 	}
 	
 	public Properties getConsoleSecurityConfiguration() throws UtilsException{

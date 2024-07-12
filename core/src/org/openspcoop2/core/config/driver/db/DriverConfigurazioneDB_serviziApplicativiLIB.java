@@ -31,6 +31,9 @@ import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.List;
 
+import org.openspcoop2.core.byok.BYOKUtilities;
+import org.openspcoop2.core.byok.BYOKWrappedValue;
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.Connettore;
@@ -78,7 +81,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 	 * @return id
 	 * @throws DriverConfigurazioneException
 	 */
-	public static long CRUDServizioApplicativo(int type, ServizioApplicativo aSA, Connection con) throws DriverConfigurazioneException {
+	public static long CRUDServizioApplicativo(int type, ServizioApplicativo aSA, Connection con, IDriverBYOK driverBYOK) throws DriverConfigurazioneException {
 		if (aSA == null)
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDServizioApplicativo] Servizio Applicativo non valido.");
 
@@ -158,6 +161,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				sqlQueryObject.addInsertField("tipoauthrisp", "?");
 				sqlQueryObject.addInsertField("utenterisp", "?");
 				sqlQueryObject.addInsertField("passwordrisp", "?");
+				sqlQueryObject.addInsertField("enc_passwordrisp", "?");
 				sqlQueryObject.addInsertField("id_connettore_risp", "?");
 				sqlQueryObject.addInsertField("sbustamentoinv", "?");
 				sqlQueryObject.addInsertField("sbustamento_protocol_info_inv", "?");
@@ -165,6 +169,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				sqlQueryObject.addInsertField("tipoauthinv", "?");
 				sqlQueryObject.addInsertField("utenteinv", "?");
 				sqlQueryObject.addInsertField("passwordinv", "?");
+				sqlQueryObject.addInsertField("enc_passwordinv", "?");
 				sqlQueryObject.addInsertField("id_connettore_inv", "?");
 				sqlQueryObject.addInsertField("id_soggetto", "?");
 				sqlQueryObject.addInsertField("fault", "?");
@@ -206,28 +211,28 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				connettoreRisp.setNome("ConnettoreRISP_" + aSA.getNome()+"_"+aSA.getTipoSoggettoProprietario()+aSA.getNomeSoggettoProprietario());
 				connettoreRisp.setTipo(TipiConnettore.DISABILITATO.getNome());
 				//Creo il connettore disabilitato
-				idConnettoreRisp = DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(1, connettoreRisp, con);
+				idConnettoreRisp = DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(1, connettoreRisp, con, driverBYOK);
 				//Se il connettore mi era stato passato allora devo aggiornare il connettore con i dati giusti
 				if(ricezione!=null && ricezione.getConnettore()!=null){
 					Connettore connettore= ricezione.getConnettore();
 					//setto l'id del connettore e il nome che aveva prima
 					connettore.setId(idConnettoreRisp);
 					connettore.setNome(connettoreRisp.getNome());//il nome DEVE essere quello creato in precedenza per assicurarsi che sia univoco
-					DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(CostantiDB.UPDATE, connettore, con);
+					DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(CostantiDB.UPDATE, connettore, con, driverBYOK);
 				}
 
 				// connettore inv
 				connettoreInv = new Connettore();
 				connettoreInv.setNome("ConnettoreINV_" + aSA.getNome()+"_"+aSA.getTipoSoggettoProprietario()+aSA.getNomeSoggettoProprietario());
 				connettoreInv.setTipo(TipiConnettore.DISABILITATO.getNome());
-				idConnettoreInv = DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(1, connettoreInv, con);
+				idConnettoreInv = DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(1, connettoreInv, con, driverBYOK);
 
 				//setto i valori corretti del connettore se mi era stato passato
 				if(invServizio!=null && invServizio.getConnettore()!=null){
 					Connettore connettore = invServizio.getConnettore();
 					connettore.setId(idConnettoreInv);
 					connettore.setNome(connettoreInv.getNome());//il nome DEVE essere quello creato in precedenza per assicurarsi che sia univoco
-					DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(CostantiDB.UPDATE, connettore, con);
+					DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(CostantiDB.UPDATE, connettore, con, driverBYOK);
 				}
 
 				int index = 1;
@@ -245,7 +250,19 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				credenzialiInvocazione = ricezione != null ? ricezione.getCredenziali() : null;
 				stm.setString(index++, (ricezione != null ? DriverConfigurazioneDBLib.getValue(ricezione.getAutenticazione()) : null)); //l'autenticazione e' quella della risposta asincrona
 				stm.setString(index++, (credenzialiInvocazione != null ? credenzialiInvocazione.getUser() : null));
-				stm.setString(index++, (credenzialiInvocazione != null ? credenzialiInvocazione.getPassword() : null));
+				
+				String plainValue = (credenzialiInvocazione != null ? credenzialiInvocazione.getPassword() : null);
+				String encValue = null;
+				if(driverBYOK!=null && plainValue!=null) {
+					BYOKWrappedValue byokValue = driverBYOK.wrap(plainValue);
+					if(byokValue!=null) {
+						encValue = byokValue.getWrappedValue();
+						plainValue = byokValue.getWrappedPlainValue();
+					}
+				}
+				stm.setString(index++, plainValue);
+				stm.setString(index++, encValue);
+				
 				// setto idconnettore risp
 				stm.setLong(index++, idConnettoreRisp);
 
@@ -257,7 +274,19 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				credenzialiInvocazione = invServizio != null ? invServizio.getCredenziali() : null;
 				stm.setString(index++, (invServizio != null ? DriverConfigurazioneDBLib.getValue(invServizio.getAutenticazione()) : null));//l'autenticazione e' quella dell invocazione servizio
 				stm.setString(index++, (credenzialiInvocazione != null ? credenzialiInvocazione.getUser() : null));
-				stm.setString(index++, (credenzialiInvocazione != null ? credenzialiInvocazione.getPassword() : null));
+				
+				plainValue = (credenzialiInvocazione != null ? credenzialiInvocazione.getPassword() : null);
+				encValue = null;
+				if(driverBYOK!=null && plainValue!=null) {
+					BYOKWrappedValue byokValue = driverBYOK.wrap(plainValue);
+					if(byokValue!=null) {
+						encValue = byokValue.getWrappedValue();
+						plainValue = byokValue.getWrappedPlainValue();
+					}
+				}
+				stm.setString(index++, plainValue);
+				stm.setString(index++, encValue);
+				
 				// setto idconnettore inv
 				stm.setLong(index++, idConnettoreInv);
 
@@ -524,11 +553,27 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 						sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
 						sqlQueryObject.addInsertField("nome", "?");
 						sqlQueryObject.addInsertField("valore", "?");
+						sqlQueryObject.addInsertField("enc_value", "?");
 						sqlQuery = sqlQueryObject.createSQLInsert();
 						stm = con.prepareStatement(sqlQuery);
-						stm.setLong(1, aSA.getId());
-						stm.setString(2, prop.getNome());
-						stm.setString(3, prop.getValore());
+						
+						int indexP = 1;
+						stm.setLong(indexP++, aSA.getId());
+						stm.setString(indexP++, prop.getNome());
+						
+						String plainValueP = prop.getValore();
+						String encValueP = null;
+						if(driverBYOK!=null && BYOKUtilities.isWrappedValue(plainValueP) ) {
+							BYOKWrappedValue byokValue = driverBYOK.wrap(plainValueP);
+							if(byokValue!=null) {
+								encValueP = byokValue.getWrappedValue();
+								plainValueP = byokValue.getWrappedPlainValue();
+							}
+						}
+						
+						stm.setString(indexP++, plainValueP);
+						stm.setString(indexP++, encValueP);
+						
 						stm.executeUpdate();
 						stm.close();
 						n++;
@@ -541,7 +586,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				
 				// ProtocolProperties
 				DriverConfigurazioneDBLib.crudProtocolProperty(CostantiDB.CREATE, aSA.getProtocolPropertyList(), 
-						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDBLib.tipoDB);
+						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDBLib.tipoDB, driverBYOK);
 				
 				
 				break;
@@ -599,6 +644,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				sqlQueryObject.addUpdateField("tipoauthrisp", "?");
 				sqlQueryObject.addUpdateField("utenterisp", "?");
 				sqlQueryObject.addUpdateField("passwordrisp", "?");
+				sqlQueryObject.addUpdateField("enc_passwordrisp", "?");
 				sqlQueryObject.addUpdateField("id_connettore_risp", "?");
 				sqlQueryObject.addUpdateField("sbustamentoinv", "?");
 				sqlQueryObject.addUpdateField("sbustamento_protocol_info_inv", "?");
@@ -606,6 +652,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				sqlQueryObject.addUpdateField("tipoauthinv", "?");
 				sqlQueryObject.addUpdateField("utenteinv", "?");
 				sqlQueryObject.addUpdateField("passwordinv", "?");
+				sqlQueryObject.addUpdateField("enc_passwordinv", "?");
 				sqlQueryObject.addUpdateField("id_connettore_inv", "?");
 				sqlQueryObject.addUpdateField("fault", "?");
 				sqlQueryObject.addUpdateField("tipoauth", "?");
@@ -663,13 +710,13 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				RispostaAsincrona rispAsin = aSA.getRispostaAsincrona();
 				connettoreRisp = rispAsin != null ? rispAsin.getConnettore() : new Connettore();
 				String newNomeConnettoreRisp = "ConnettoreRISP_"+nomeSA+"_"+tipoProprietario+nomeProprietario;
-				idConnettoreRisp = DriverConfigurazioneDB_connettoriLIB.getIdConnettore_SA_RISP(idServizioApplicativo, con);
+				idConnettoreRisp = DriverConfigurazioneDB_connettoriLIB.getIdConnettoreSARISP(idServizioApplicativo, con);
 				
 				// connettore inv servizio
 				InvocazioneServizio invServ = aSA.getInvocazioneServizio();
 				connettoreInv = invServ != null ? invServizio.getConnettore() : new Connettore();
 				String newNomeConnettoreInv = "ConnettoreINV_"+nomeSA+"_"+tipoProprietario+nomeProprietario;
-				idConnettoreInv = DriverConfigurazioneDB_connettoriLIB.getIdConnettore_SA_INV(idServizioApplicativo, con);
+				idConnettoreInv = DriverConfigurazioneDB_connettoriLIB.getIdConnettoreSAINV(idServizioApplicativo, con);
 				
 				//Controllo consistenza degli id dei connettori in quanto devono essere specificati
 				//e quindi maggiori di 0
@@ -684,8 +731,8 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				 *   
 				 */
 
-				String nomeConnettoreRisp = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettoreRisp, con).getNome();
-				String nomeConnettoreInv = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettoreInv, con).getNome();
+				String nomeConnettoreRisp = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettoreRisp, con, null).getNome();
+				String nomeConnettoreInv = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettoreInv, con, null).getNome();
 
 				String pattern = "Aggiorno Connettore [{0}] : id [{1}] oldNome [{2}] newNome [{2}]";
 
@@ -693,13 +740,13 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				//aggiorno connettore risp
 				connettoreRisp.setNome(newNomeConnettoreRisp);
 				connettoreRisp.setId(idConnettoreRisp);
-				DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(CostantiDB.UPDATE, connettoreRisp, con);
+				DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(CostantiDB.UPDATE, connettoreRisp, con, driverBYOK);
 
 				//aggiorno connettore inv
 				DriverConfigurazioneDBLib.logDebug(MessageFormat.format(pattern, "Invocazione Servizio",idConnettoreInv, nomeConnettoreInv, newNomeConnettoreInv));
 				connettoreInv.setNome(newNomeConnettoreInv);
 				connettoreInv.setId(idConnettoreInv);
-				DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(CostantiDB.UPDATE, connettoreInv, con);
+				DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(CostantiDB.UPDATE, connettoreInv, con, driverBYOK);
 
 
 				// Setto i dati del ServizioApplicativo
@@ -718,7 +765,19 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				credenzialiInvocazione = ricezione != null ? ricezione.getCredenziali() : null;
 				stm.setString(index++, (ricezione != null ? DriverConfigurazioneDBLib.getValue(ricezione.getAutenticazione()) : null));
 				stm.setString(index++, (credenzialiInvocazione != null ? credenzialiInvocazione.getUser() : null));
-				stm.setString(index++, (credenzialiInvocazione != null ? credenzialiInvocazione.getPassword() : null));
+				
+				plainValue = (credenzialiInvocazione != null ? credenzialiInvocazione.getPassword() : null);
+				encValue = null;
+				if(driverBYOK!=null && plainValue!=null) {
+					BYOKWrappedValue byokValue = driverBYOK.wrap(plainValue);
+					if(byokValue!=null) {
+						encValue = byokValue.getWrappedValue();
+						plainValue = byokValue.getWrappedPlainValue();
+					}
+				}
+				stm.setString(index++, plainValue);
+				stm.setString(index++, encValue);
+				
 				// setto idconnettore risp
 				stm.setLong(index++, idConnettoreRisp);
 
@@ -730,7 +789,19 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				credenzialiInvocazione = invServizio != null ? invServizio.getCredenziali() : null;
 				stm.setString(index++, (invServizio != null ? DriverConfigurazioneDBLib.getValue(invServizio.getAutenticazione()) : null));
 				stm.setString(index++, (credenzialiInvocazione != null ? credenzialiInvocazione.getUser() : null));
-				stm.setString(index++, (credenzialiInvocazione != null ? credenzialiInvocazione.getPassword() : null));
+				
+				plainValue = (credenzialiInvocazione != null ? credenzialiInvocazione.getPassword() : null);
+				encValue = null;
+				if(driverBYOK!=null && plainValue!=null) {
+					BYOKWrappedValue byokValue = driverBYOK.wrap(plainValue);
+					if(byokValue!=null) {
+						encValue = byokValue.getWrappedValue();
+						plainValue = byokValue.getWrappedPlainValue();
+					}
+				}
+				stm.setString(index++, plainValue);
+				stm.setString(index++, encValue);
+				
 				// setto idconnettore inv
 				stm.setLong(index++, idConnettoreInv);
 
@@ -979,11 +1050,27 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 						sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
 						sqlQueryObject.addInsertField("nome", "?");
 						sqlQueryObject.addInsertField("valore", "?");
+						sqlQueryObject.addInsertField("enc_value", "?");
 						sqlQuery = sqlQueryObject.createSQLInsert();
 						stm = con.prepareStatement(sqlQuery);
-						stm.setLong(1, aSA.getId());
-						stm.setString(2, prop.getNome());
-						stm.setString(3, prop.getValore());
+						
+						int indexP = 1;
+						stm.setLong(indexP++, aSA.getId());
+						stm.setString(indexP++, prop.getNome());
+						
+						String plainValueP = prop.getValore();
+						String encValueP = null;
+						if(driverBYOK!=null && BYOKUtilities.isWrappedValue(plainValueP) ) {
+							BYOKWrappedValue byokValue = driverBYOK.wrap(plainValueP);
+							if(byokValue!=null) {
+								encValueP = byokValue.getWrappedValue();
+								plainValueP = byokValue.getWrappedPlainValue();
+							}
+						}
+						
+						stm.setString(indexP++, plainValueP);
+						stm.setString(indexP++, encValueP);
+						
 						stm.executeUpdate();
 						stm.close();
 						n++;
@@ -998,7 +1085,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				
 				// ProtocolProperties
 				DriverConfigurazioneDBLib.crudProtocolProperty(CostantiDB.UPDATE, aSA.getProtocolPropertyList(), 
-						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDBLib.tipoDB);
+						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDBLib.tipoDB, driverBYOK);
 				
 				break;
 
@@ -1014,7 +1101,7 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 
 				// ProtocolProperties
 				DriverConfigurazioneDBLib.crudProtocolProperty(CostantiDB.DELETE, null, 
-						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDBLib.tipoDB);
+						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDBLib.tipoDB, driverBYOK);
 				
 				// proprieta'
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -1175,9 +1262,9 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				// se il connettore e' abilitato allora propago le modifiche al
 				// connettore
 				DriverConfigurazioneDBLib.logDebug("Delete connettore asincrono ...");
-				DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(CostantiDB.DELETE, connettoreRisp, con);
+				DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(CostantiDB.DELETE, connettoreRisp, con, driverBYOK);
 				DriverConfigurazioneDBLib.logDebug("Delete connettore invocazione servizio ...");
-				DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(CostantiDB.DELETE, connettoreInv, con);
+				DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(CostantiDB.DELETE, connettoreInv, con, driverBYOK);
 
 				
 				// Delete gestione errore risposta asincrona

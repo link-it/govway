@@ -33,6 +33,7 @@ Per identificare una risorsa sono utilizzabili le seguenti espressioni dinamiche
 - ${system:NAME}: valore associato alla proprietà di sistema, indicata nella configurazione generale, con nome 'NAME'
 - ${env:NAME}: valore associato alla variabile di sistema con nome 'NAME'
 - ${java:NAME}: valore associato alla variabile java con nome 'NAME'
+- ${envj:NAME}: valore associato alla variabile di sistema o java con nome 'NAME'; la variabile viene cercata prima come variabile di sistema e se non presente come variabile della jvm
 
 Ogni valore atteso per una risorsa può essere fornito in una delle seguenti modalità:
 

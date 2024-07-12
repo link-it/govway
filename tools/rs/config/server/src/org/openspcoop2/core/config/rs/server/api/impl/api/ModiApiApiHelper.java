@@ -87,6 +87,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.lib.mvc.security.exception.ValidationException;
@@ -118,7 +119,7 @@ public class ModiApiApiHelper {
 		return "sicurezza_messaggio.digest_richiesta specificato con pattern " + pattern + " o applicabilita " + applicabilita;
 	}
 
-	public static void populateApiAzioneWithProtocolInfo(AccordoServizioParteComune as, Operation az, ApiEnv env, ApiAzione ret) throws CoreException, DriverRegistroServiziException, ProtocolException, DriverConfigurazioneException, ValidationException {
+	public static void populateApiAzioneWithProtocolInfo(AccordoServizioParteComune as, Operation az, ApiEnv env, ApiAzione ret) throws CoreException, DriverRegistroServiziException, ProtocolException, DriverConfigurazioneException, ValidationException, UtilsException {
 
 		Map<String, AbstractProperty<?>> p = new HashMap<>();
 		Optional<PortType> portType = as.getPortTypeList().stream().filter(pt -> pt.getId().equals(az.getIdPortType())).findAny();
@@ -190,7 +191,7 @@ public class ModiApiApiHelper {
 	}
 
 
-	public static void populateApiRisorsaWithProtocolInfo(AccordoServizioParteComune as, Resource res, ApiEnv env, ApiRisorsa ret) throws DriverRegistroServiziException, ProtocolException, DriverConfigurazioneException, CoreException, RegistryNotFound, RegistryException, ValidationException {
+	public static void populateApiRisorsaWithProtocolInfo(AccordoServizioParteComune as, Resource res, ApiEnv env, ApiRisorsa ret) throws DriverRegistroServiziException, ProtocolException, DriverConfigurazioneException, CoreException, RegistryNotFound, RegistryException, ValidationException, UtilsException {
 
 		Map<String, AbstractProperty<?>> p = new HashMap<>();
 		IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
@@ -312,7 +313,7 @@ public class ModiApiApiHelper {
 	}
 
 
-	public static ApiModI getApiModI(AccordoServizioParteComune as, ProfiloEnum profilo, ApiEnv env) throws DriverRegistroServiziException, ProtocolException, DriverConfigurazioneException, CoreException, ValidationException {
+	public static ApiModI getApiModI(AccordoServizioParteComune as, ProfiloEnum profilo, ApiEnv env) throws DriverRegistroServiziException, ProtocolException, DriverConfigurazioneException, CoreException, ValidationException, UtilsException {
 		if(profilo == null || (!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA))) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Operazione utilizzabile solamente con Profilo 'ModI'");
 		}

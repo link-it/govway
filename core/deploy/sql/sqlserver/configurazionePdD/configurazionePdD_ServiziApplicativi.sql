@@ -15,6 +15,7 @@ CREATE TABLE servizi_applicativi
 	tipoauthrisp VARCHAR(255),
 	utenterisp VARCHAR(255),
 	passwordrisp VARCHAR(255),
+	enc_passwordrisp VARCHAR(max),
 	invio_x_rif_risp VARCHAR(255),
 	risposta_x_rif_risp VARCHAR(255),
 	id_connettore_risp BIGINT NOT NULL,
@@ -28,6 +29,7 @@ CREATE TABLE servizi_applicativi
 	tipoauthinv VARCHAR(255),
 	utenteinv VARCHAR(255),
 	passwordinv VARCHAR(255),
+	enc_passwordinv VARCHAR(max),
 	invio_x_rif_inv VARCHAR(255),
 	risposta_x_rif_inv VARCHAR(255),
 	id_connettore_inv BIGINT NOT NULL,
@@ -119,6 +121,7 @@ CREATE TABLE sa_properties
 	id_servizio_applicativo BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore VARCHAR(4000) NOT NULL,
+	enc_value VARCHAR(max),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints

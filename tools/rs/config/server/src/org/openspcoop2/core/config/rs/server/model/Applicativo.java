@@ -38,7 +38,7 @@ public class Applicativo extends BaseCredenziali {
   private List<String> ruoli = null;
   
   @Schema(description = "")
-  private List<Proprieta4000> proprieta = null;
+  private List<Proprieta4000OpzioneCifratura> proprieta = null;
   
   @Schema(description = "")
   @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "dominio", visible = true )
@@ -115,20 +115,20 @@ public class Applicativo extends BaseCredenziali {
   **/
   @JsonProperty("proprieta")
   @Valid
-  public List<Proprieta4000> getProprieta() {
+  public List<Proprieta4000OpzioneCifratura> getProprieta() {
     return this.proprieta;
   }
 
-  public void setProprieta(List<Proprieta4000> proprieta) {
+  public void setProprieta(List<Proprieta4000OpzioneCifratura> proprieta) {
     this.proprieta = proprieta;
   }
 
-  public Applicativo proprieta(List<Proprieta4000> proprieta) {
+  public Applicativo proprieta(List<Proprieta4000OpzioneCifratura> proprieta) {
     this.proprieta = proprieta;
     return this;
   }
 
-  public Applicativo addProprietaItem(Proprieta4000 proprietaItem) {
+  public Applicativo addProprietaItem(Proprieta4000OpzioneCifratura proprietaItem) {
     this.proprieta.add(proprietaItem);
     return this;
   }

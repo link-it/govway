@@ -2484,7 +2484,7 @@ public class ExporterArchiveUtils {
 						if(pd!=null && StringUtils.isNotEmpty(pd.getAutorizzazioneContenuto())) {
 							if(!CostantiConfigurazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN.equals(pd.getAutorizzazioneContenuto())) {
 								try {
-									readPlugin_classe(archive, TipoPlugin.AUTORIZZAZIONE_CONTENUTI.getValue(), pd.getAutorizzazione(), cascadeConfig, provenienza);
+									readPlugin_classe(archive, TipoPlugin.AUTORIZZAZIONE_CONTENUTI.getValue(), pd.getAutorizzazioneContenuto(), cascadeConfig, provenienza);
 								}catch(DriverConfigurazioneNotFound notFound) {}
 							}
 						}
@@ -2877,7 +2877,7 @@ public class ExporterArchiveUtils {
 						if(pa!=null && StringUtils.isNotEmpty(pa.getAutorizzazioneContenuto())) {
 							if(!CostantiConfigurazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN.equals(pa.getAutorizzazioneContenuto())) {
 								try {
-									readPlugin_classe(archive, TipoPlugin.AUTORIZZAZIONE_CONTENUTI.getValue(), pa.getAutorizzazione(), cascadeConfig, provenienza);
+									readPlugin_classe(archive, TipoPlugin.AUTORIZZAZIONE_CONTENUTI.getValue(), pa.getAutorizzazioneContenuto(), cascadeConfig, provenienza);
 								}catch(DriverConfigurazioneNotFound notFound) {}
 							}
 						}

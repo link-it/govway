@@ -276,6 +276,9 @@ public final class PorteApplicativeWS extends Action {
 			
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);
+			
+			// imposta menu' contestuale
+			porteApplicativeHelper.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati

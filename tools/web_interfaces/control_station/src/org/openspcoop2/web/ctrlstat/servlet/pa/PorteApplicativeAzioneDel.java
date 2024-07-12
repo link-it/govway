@@ -153,6 +153,9 @@ public final class PorteApplicativeAzioneDel extends Action {
 			porteApplicativeHelper.preparePorteAzioneList(ricerca,
 					listaAzioni, parentPA, lstParam, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE, 
 					listaParametriSessione, labelPerPorta, serviceBinding, aspc);
+			
+			// imposto menu' contestuale
+			porteApplicativeHelper.impostaComandiMenuContestualePA(idsogg, idAsps);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI

@@ -44,9 +44,10 @@ Di seguito vengono fornite tutte le direttive supportate:
 - *mode* [required]: indica il tipo di token cifrato prodotto:
 
      - *jose*: viene prodotto un token JSON Web Encryption (JWE) conforme al RFC 7516;
-     - *java*: viene utilizzata la classe Cipher fornita dal package javax.crypto per cifrare i dati che poi verranno serializzati su file di log a seconda della direttiva '*encoding*' fornita.
+     - *java*: viene utilizzata la classe Cipher fornita dal package javax.crypto per cifrare i dati che poi verranno serializzati su file di log a seconda della direttiva '*encoding*' fornita;
+     - *openssl*: viene prodotto un cipher text, attraverso una chiave derivata da una password, che può essere decifrato utilizzando i comandi di encryption 'openssl'; richiede un keystore di tipo 'pass'.
 
-- *encoding* [required; mode=java]: indica il tipo di codifica utilizzato per la rappresentazione dei dati cifrati:
+- *encoding* [required; mode=java|openssl]: indica il tipo di codifica utilizzato per la rappresentazione dei dati cifrati:
 
      - *base64*: rappresentazione base64;
      - *hex*: rappresentazione esadecimale;
@@ -55,7 +56,20 @@ Di seguito vengono fornite tutte le direttive supportate:
   
      - *symm*: indica l'utilizzo di una chiave simmetrica fornita attraverso tramite la direttiva:
 
-            - *key.path*: path su filesystem ad una chiave simmetrica (es. Chiave AES dovà essere di 16, 24 o 32 byte);
+            - *key.inline*: chiave simmetrica (es. Chiave AES dovà essere di 16, 24 o 32 byte);
+            - *key.path*: [ignorata se presente 'key.inline'] path su filesystem ad una chiave simmetrica (es. Chiave AES dovà essere di 16, 24 o 32 byte);
+            - *key.encoding*: [optional; base64/hex] consente di indicare la codifica della chiave;
+
+     - *pass*: indica la generazione di una chiave derivata da una password attraverso le seguenti direttive (non utilizzabile con la modalità 'jose'):
+
+            - *password*: la password utilizzata per derivare la chiave;
+            - *password.type*: [opzionale; default=openssl-pbkdf2-aes-256-cbc] consente di selezionare l’algoritmo di derivazione tra le seguenti opzioni disponibili:
+            
+                 - openssl-aes-256-cbc
+                 - openssl-pbkdf2-aes-128-cbc
+                 - openssl-pbkdf2-aes-192-cbc
+                 - openssl-pbkdf2-aes-256-cbc
+            - *password.iter*: [optional] consente di indicare il numero di iterazioni durante la derivazione della chiave con l’algoritmo pbkdf2.
 
      - *jceks*: indica l'utilizzo di una chiave simmetrica presente in un keystore java di tipo JCEKS indirizzato tramite le seguenti direttive:
 
@@ -66,7 +80,9 @@ Di seguito vengono fornite tutte le direttive supportate:
 
      - *public*: indica l'utilizzo di una chiave pubblica asimmetrica fornita attraverso le seguenti direttive:
 
-            - *key.path*: path su filesystem ad una chiave pubblica asimmetrica in formato PEM o DER (sono supportati sia i formati pkcs1 che pkcs8);
+            - *key.inline*: chiave pubblica asimmetrica in formato PEM o DER (sono supportati sia i formati pkcs1 che pkcs8);
+            - *key.path*: [ignorata se presente 'key.inline'] path su filesystem ad una chiave pubblica asimmetrica in formato PEM o DER (sono supportati sia i formati pkcs1 che pkcs8);
+            - *key.encoding*: [optional; base64/hex] consente di indicare la codifica della chiave;
 	    - *key.wrap* [optional; mode=java; boolean true/false]: indicazione se la chiave pubblica debba essere utilizzata per cifrare direttamente i dati (key.wrap=false) o per cifrare una chiave simmetrica AES generata dinamicamente (key.wrap=true);
 
                .. note::
@@ -106,6 +122,9 @@ Di seguito vengono fornite tutte le direttive supportate:
 
 - *include.public.key* [optional; mode=jose; boolean true/false]: indicazione se inserire nell'header del token JWE  (claim 'jwk') la chiave pubblica utilizzata per la cifratura.
 
+- *ksm* [optional]: consente di riferire un KSM di 'unwrap', tramite il proprio identificativo, definito nel file *<directory-lavoro>/byok.properties*; maggiori dettagli vengono forniti nella sezione :ref:`byokInstallKsm`;
+
+- *ksm.param.<paramName>* [optional]: come descritto nella sezione :ref:`byokInstallKsmParametri` ogni KSM può richiedere dei parametri di input che possono essere forniti tramite la direttiva '*ksm.param.<paramName>*'.
 
 **Rappresentazione dei dati cifrati con mode=java**
 

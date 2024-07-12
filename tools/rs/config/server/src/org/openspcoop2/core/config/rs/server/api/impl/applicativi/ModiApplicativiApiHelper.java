@@ -121,6 +121,7 @@ public class ModiApplicativiApiHelper {
 							p.addProperty(ModICostanti.MODIPA_KEY_PASSWORD, fsKeystore.getKeyPassword());
 							p.addProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD, fsKeystore.getKeystorePassword());
 							p.addProperty(ModICostanti.MODIPA_KEYSTORE_PATH, fsKeystore.getKeystorePath());
+							p.addProperty(ModICostanti.MODIPA_KEYSTORE_BYOK_POLICY, fsKeystore.getKeystoreByokPolicy());
 							
 							if( fsKeystore.getKeystoreCertificato()!=null && fsKeystore.getKeystoreCertificato().length>0) {
 								String filename = "applicativo.cer";
@@ -281,6 +282,7 @@ public class ModiApplicativiApiHelper {
 					datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_PASSWORD, true));
 					datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PASSWORD, true));
 					datiKeystore.setKeystorePath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PATH, true));
+					datiKeystore.setKeystoreByokPolicy(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_BYOK_POLICY, false));
 					
 					datiKeystore.setKeystoreCertificato(ProtocolPropertiesHelper.getByteArrayProperty(p, ModICostanti.MODIPA_KEYSTORE_CERTIFICATE, false));
 

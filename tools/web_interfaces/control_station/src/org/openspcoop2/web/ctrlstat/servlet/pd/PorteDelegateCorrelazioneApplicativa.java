@@ -586,6 +586,9 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);
+			
+			// imposto menu' contestuale
+			porteDelegateHelper.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			Parameter[] urlParms = { pId,pIdSoggetto,pIdAsps,pIdFruizione };
 			Parameter urlRichiesta = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST, urlParms);

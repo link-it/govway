@@ -98,7 +98,7 @@ public class DriverConfigurazioneDB_protocolPropertiesDriver {
 		}
 
 		try {
-			return DBProtocolPropertiesUtils.getProtocolPropertyConfig(proprietarioProtocolProperty, idProprietario, nome, con, this.driver.tipoDB);
+			return DBProtocolPropertiesUtils.getProtocolPropertyConfig(proprietarioProtocolProperty, idProprietario, nome, con, this.driver.tipoDB, this.driver.getDriverUnwrapBYOK());
 		} catch (Exception se) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneException::" + nomeMetodo + "] Exception: " + se.getMessage());
 		} finally {
@@ -126,7 +126,7 @@ public class DriverConfigurazioneDB_protocolPropertiesDriver {
 
 		try {
 
-			return DriverConfigurazioneDBLib.getProtocolProperty(idProtocolProperty, con, this.driver.tipoDB);
+			return DriverConfigurazioneDBLib.getProtocolProperty(idProtocolProperty, con, this.driver.tipoDB, this.driver.getDriverUnwrapBYOK());
 
 		} catch (Exception se) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneException::" + nomeMetodo + "] Exception: " + se.getMessage());

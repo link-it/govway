@@ -276,9 +276,9 @@ public class SAMLCallbackHandler implements CallbackHandler {
 		The response is signed using the server’s private key and encrypted using the key provided within the HOK SAML assertion.
 	*/
 	protected KeyInfoBean createKeyInfo() throws Exception {
-		Crypto crypto = this.samlBuilderConfig.getSubjectConfirmationMethod_holderOfKey_crypto();
+		Crypto crypto = this.samlBuilderConfig.getSubjectConfirmationMethodHolderOfKeyCrypto();
 		CryptoType cryptoType = new CryptoType(CryptoType.TYPE.ALIAS);
-		cryptoType.setAlias(this.samlBuilderConfig.getSubjectConfirmationMethod_holderOfKey_cryptoCertificateAlias());
+		cryptoType.setAlias(this.samlBuilderConfig.getSubjectConfirmationMethodHolderOfKeyCryptoCertificateAlias());
 		X509Certificate[] certs = crypto.getX509Certificates(cryptoType);
 
 		KeyInfoBean keyInfo = new KeyInfoBean();

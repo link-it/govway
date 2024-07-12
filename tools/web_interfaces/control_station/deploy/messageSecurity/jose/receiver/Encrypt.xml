@@ -76,7 +76,7 @@
 			<item type="textarea" name="keystoreFile" label="File" required="true">
 			    <property name="rs.security.keystore.file" properties="decryptionPropRefId" />
 			</item>
-			<item type="text" name="keystorePassword" label="Password" required="true">
+			<item type="lock" name="keystorePassword" label="Password" required="true">
 				<conditions>
 					<condition not="true" and="true">
 						<equals name="keystoreType" value="jwk"/>
@@ -109,7 +109,7 @@
 				</conditions>
 			    <property name="rs.security.keystore.alias" properties="decryptionPropRefId" />
 			</item>
-			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			<item type="lock" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
 				<conditions>
 					<condition not="true" and="false">
 						<equals name="keystoreType" value="jceks"/>
@@ -118,13 +118,16 @@
 				</conditions>
 			    <property name="rs.security.key.password" properties="decryptionPropRefId" />
 			</item>
-			<item type="text" name="keystoreSecretKeyPassword" label="Password Chiave Segreta" required="true">
+			<item type="lock" name="keystoreSecretKeyPassword" label="Password Chiave Segreta" required="true">
 				<conditions>
 					<condition and="true">
 						<equals name="keystoreType" value="jceks"/>
 					</condition>
 				</conditions>
 			    <property name="rs.security.key.password" properties="decryptionPropRefId" />
+			</item>
+			<item type="select" name="keystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="rs.security.keystore.file.byok" properties="decryptionPropRefId" />
 			</item>
 
 		</subsection>
@@ -183,7 +186,7 @@
 			<item type="textarea" name="joseUseHeaders.ssl.file" label="File" required="false">
 			    <property name="rs.security.keystore.file.ssl" />
 			</item>
-			<item type="text" name="joseUseHeaders.ssl.password" label="Password" required="false">
+			<item type="lock" name="joseUseHeaders.ssl.password" label="Password" required="false">
 			    <property name="rs.security.keystore.password.ssl" />
 			</item>
 
@@ -250,7 +253,7 @@
 			<item type="textarea" name="joseUseHeaders.keystore.file" label="File" required="false">
 			    <property name="joseUseHeaders.keystore.file" />
 			</item>
-			<item type="text" name="joseUseHeaders.keystore.password" label="Password" required="false">
+			<item type="lock" name="joseUseHeaders.keystore.password" label="Password" required="false">
 			    <property name="joseUseHeaders.keystore.password" />
 			</item>
 			
@@ -291,7 +294,7 @@
 			<item type="text" name="joseUseHeaders.key.1.alias" label="Alias" required="true">
 				<property name="joseUseHeaders.key.1.alias" />
 			</item>
-			<item type="text" name="joseUseHeaders.key.1.password" label="Password" required="true">
+			<item type="lock" name="joseUseHeaders.key.1.password" label="Password" required="true">
 				<property name="joseUseHeaders.key.1.password" />
 			</item>
 			
@@ -308,7 +311,7 @@
 			<item type="text" name="joseUseHeaders.key.2.alias" label="Alias" required="true">
 				<property name="joseUseHeaders.key.2.alias" />
 			</item>
-			<item type="text" name="joseUseHeaders.key.2.password" label="Password" required="true">
+			<item type="lock" name="joseUseHeaders.key.2.password" label="Password" required="true">
 				<property name="joseUseHeaders.key.2.password" />
 			</item>
 			
@@ -325,7 +328,7 @@
 			<item type="text" name="joseUseHeaders.key.3.alias" label="Alias" required="true">
 				<property name="joseUseHeaders.key.3.alias" />
 			</item>
-			<item type="text" name="joseUseHeaders.key.3.password" label="Password" required="true">
+			<item type="lock" name="joseUseHeaders.key.3.password" label="Password" required="true">
 				<property name="joseUseHeaders.key.3.password" />
 			</item>
 			
@@ -342,7 +345,7 @@
 			<item type="text" name="joseUseHeaders.key.4.alias" label="Alias" required="true">
 				<property name="joseUseHeaders.key.4.alias" />
 			</item>
-			<item type="text" name="joseUseHeaders.key.4.password" label="Password" required="true">
+			<item type="lock" name="joseUseHeaders.key.4.password" label="Password" required="true">
 				<property name="joseUseHeaders.key.4.password" />
 			</item>
 			
@@ -359,7 +362,7 @@
 			<item type="text" name="joseUseHeaders.key.5.alias" label="Alias" required="true">
 				<property name="joseUseHeaders.key.5.alias" />
 			</item>
-			<item type="text" name="joseUseHeaders.key.5.password" label="Password" required="true">
+			<item type="lock" name="joseUseHeaders.key.5.password" label="Password" required="true">
 				<property name="joseUseHeaders.key.5.password" />
 			</item>
 			
@@ -376,7 +379,7 @@
 			<item type="text" name="joseUseHeaders.key.6.alias" label="Alias" required="true">
 				<property name="joseUseHeaders.key.6.alias" />
 			</item>
-			<item type="text" name="joseUseHeaders.key.6.password" label="Password" required="true">
+			<item type="lock" name="joseUseHeaders.key.6.password" label="Password" required="true">
 				<property name="joseUseHeaders.key.6.password" />
 			</item>
 			
@@ -393,7 +396,7 @@
 			<item type="text" name="joseUseHeaders.key.7.alias" label="Alias" required="true">
 				<property name="joseUseHeaders.key.7.alias" />
 			</item>
-			<item type="text" name="joseUseHeaders.key.7.password" label="Password" required="true">
+			<item type="lock" name="joseUseHeaders.key.7.password" label="Password" required="true">
 				<property name="joseUseHeaders.key.7.password" />
 			</item>
 			
@@ -410,7 +413,7 @@
 			<item type="text" name="joseUseHeaders.key.8.alias" label="Alias" required="true">
 				<property name="joseUseHeaders.key.8.alias" />
 			</item>
-			<item type="text" name="joseUseHeaders.key.8.password" label="Password" required="true">
+			<item type="lock" name="joseUseHeaders.key.8.password" label="Password" required="true">
 				<property name="joseUseHeaders.key.8.password" />
 			</item>
 			
@@ -427,7 +430,7 @@
 			<item type="text" name="joseUseHeaders.key.9.alias" label="Alias" required="true">
 				<property name="joseUseHeaders.key.9.alias" />
 			</item>
-			<item type="text" name="joseUseHeaders.key.9.password" label="Password" required="true">
+			<item type="lock" name="joseUseHeaders.key.9.password" label="Password" required="true">
 				<property name="joseUseHeaders.key.9.password" />
 			</item>
 			
@@ -444,7 +447,7 @@
 			<item type="text" name="joseUseHeaders.key.10.alias" label="Alias" required="true">
 				<property name="joseUseHeaders.key.10.alias" />
 			</item>
-			<item type="text" name="joseUseHeaders.key.10.password" label="Password" required="true">
+			<item type="lock" name="joseUseHeaders.key.10.password" label="Password" required="true">
 				<property name="joseUseHeaders.key.10.password" />
 			</item>
 			
@@ -472,7 +475,7 @@
 			<item type="textarea" name="joseUseHeaders.truststore.file" label="File" required="false">
 			    <property name="joseUseHeaders.truststore.file" />
 			</item>
-			<item type="text" name="joseUseHeaders.truststore.password" label="Password" required="false">
+			<item type="lock" name="joseUseHeaders.truststore.password" label="Password" required="false">
 			    <property name="joseUseHeaders.truststore.password" />
 			</item>
             

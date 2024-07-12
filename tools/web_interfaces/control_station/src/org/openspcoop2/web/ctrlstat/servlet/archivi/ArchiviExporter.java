@@ -350,7 +350,9 @@ public class ArchiviExporter extends HttpServlet {
 			exporterUtils.filterByProtocol(tipiSoggetti,tipiServizi,archive);
 			
 			// Filtro per il soggetto selezionato
-			if(archiviHelper.isSoggettoMultitenantSelezionato()) {
+			// non devo filtrare se sto facendo l'export dalle API, poiche' le ho selezionate puntualmente indipendentemente dal soggetto selezionato
+			boolean exportFromApi = ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE.equals(archiveType) || ArchiveType.ACCORDO_SERVIZIO_COMPOSTO.equals(archiveType);
+			if(archiviHelper.isSoggettoMultitenantSelezionato() && !exportFromApi) {
 				IDSoggetto idSoggettoSelezionato = archiviCore.convertSoggettoSelezionatoToID(archiviHelper.getSoggettoMultitenantSelezionato());
 				exporterUtils.filterBySoggettoSelezionato(idSoggettoSelezionato, archive);
 			}

@@ -85,6 +85,26 @@ public class KeyPairStore implements Serializable {
 		
 	}
 	
+	public KeyPairStore(String privateKeyPath, byte[] publicKey, String privateKeyPassword, String algorithm) throws SecurityException{
+		this(privateKeyPath, publicKey, privateKeyPassword, algorithm, null);
+	}
+	public KeyPairStore(String privateKeyPath, byte[] publicKey, String privateKeyPassword, String algorithm, BYOKRequestParams requestParams) throws SecurityException{
+
+		this.privateKeyPath = privateKeyPath;
+		
+		if(publicKey==null){
+			throw new SecurityException("Store publicKey non indicato");
+		}
+		this.publicKeyContent = publicKey;
+				
+		this.privateKeyPassword = privateKeyPassword;
+		this.algorithm = algorithm==null ? KeyUtils.ALGO_RSA : algorithm;
+		
+		this.privateKeyContent = StoreUtils.readContent("PrivateKey", this.privateKeyPath);
+		this.privateKeyContent = StoreUtils.unwrapBYOK(this.privateKeyContent, requestParams);
+				
+	}
+	
 	public KeyPairStore(byte[] privateKey, byte[] publicKey, String privateKeyPassword, String algorithm) throws SecurityException{
 		this(privateKey, publicKey, privateKeyPassword, algorithm, null);
 	}
@@ -104,6 +124,31 @@ public class KeyPairStore implements Serializable {
 			
 			this.privateKeyPassword = privateKeyPassword;
 			this.algorithm = algorithm==null ? KeyUtils.ALGO_RSA : algorithm;
+			
+		}catch(Exception e){
+			throw new SecurityException(e.getMessage(),e);
+		}
+		
+	}
+	
+	public KeyPairStore(byte[] privateKey, String publicKeyPath, String privateKeyPassword, String algorithm) throws SecurityException{
+		this(privateKey, publicKeyPath, privateKeyPassword, algorithm, null);
+	}
+	public KeyPairStore(byte[] privateKey, String publicKeyPath, String privateKeyPassword, String algorithm, BYOKRequestParams requestParams) throws SecurityException{
+
+		try{
+			if(privateKey==null){
+				throw new SecurityException("Store privateKey non indicato");
+			}
+			this.privateKeyContent = privateKey;
+			this.privateKeyContent = StoreUtils.unwrapBYOK(this.privateKeyContent, requestParams);
+			
+			this.publicKeyPath = publicKeyPath;
+			
+			this.privateKeyPassword = privateKeyPassword;
+			this.algorithm = algorithm==null ? KeyUtils.ALGO_RSA : algorithm;
+	
+			this.publicKeyContent = StoreUtils.readContent("PublicKey", this.publicKeyPath);
 			
 		}catch(Exception e){
 			throw new SecurityException(e.getMessage(),e);

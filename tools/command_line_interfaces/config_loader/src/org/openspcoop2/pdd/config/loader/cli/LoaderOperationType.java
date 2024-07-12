@@ -20,6 +20,8 @@
 
 package org.openspcoop2.pdd.config.loader.cli;
 
+import org.openspcoop2.generic_project.exception.NotFoundException;
+
 /**
 * LoaderOperationType
 *
@@ -29,6 +31,91 @@ package org.openspcoop2.pdd.config.loader.cli;
 */
 public enum LoaderOperationType {
 
-	create,createUpdate,delete;
+	CREATE("create"),CREATE_UPDATE("createUpdate"),DELETE("delete");
 	
+	/** Value */
+	private String value;
+	public String getValue()
+	{
+		return this.value;
+	}
+
+
+	/** Official Constructor */
+	LoaderOperationType(String value)
+	{
+		this.value = value;
+	}
+
+
+	
+	@Override
+	public String toString(){
+		return this.value;
+	}
+	public boolean equalsEnum(String object){
+		if(object==null)
+			return false;
+		return object.equals(this.getValue());	
+	}
+	
+		
+	
+	
+	
+	/** Utilities */
+	
+	public static String[] toArray(){
+		String[] res = new String[values().length];
+		int i=0;
+		for (LoaderOperationType tmp : values()) {
+			res[i]=tmp.getValue();
+			i++;
+		}
+		return res;
+	}	
+	public static String[] toStringArray(){
+		String[] res = new String[values().length];
+		int i=0;
+		for (LoaderOperationType tmp : values()) {
+			res[i]=tmp.toString();
+			i++;
+		}
+		return res;
+	}
+	public static String[] toEnumNameArray(){
+		String[] res = new String[values().length];
+		int i=0;
+		for (LoaderOperationType tmp : values()) {
+			res[i]=tmp.name();
+			i++;
+		}
+		return res;
+	}
+	
+	public static boolean contains(String value){
+		return toEnumConstant(value)!=null;
+	}
+	
+	public static LoaderOperationType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static LoaderOperationType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
+		LoaderOperationType res = null;
+		for (LoaderOperationType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"] not found");
+		}
+		return res;
+	}
+
 }

@@ -263,6 +263,9 @@ public class PorteApplicativeVerificaConnettore extends Action {
 			
 			ServletUtils.setPageDataTitle(pd, lstParam);
 			
+			// imposta menu' contestuale
+			porteApplicativeHelper.impostaComandiMenuContestualePA(idsogg, idAsps);
+			
 			// preparo i campi
 			List<DataElement> dati = new ArrayList<>();
 			dati.add(ServletUtils.getDataElementForEditModeFinished());

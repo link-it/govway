@@ -32,6 +32,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+import org.openspcoop2.core.byok.BYOKUtilities;
+import org.openspcoop2.core.byok.BYOKWrappedValue;
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -257,7 +260,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 	 * @throws DriverRegistroServiziException
 	 */
 	public static long CRUDSoggetto(int type, org.openspcoop2.core.registry.Soggetto soggetto, 
-			Connection con, String tipoDatabase) throws DriverRegistroServiziException {
+			Connection con, String tipoDatabase, IDriverBYOK driverBYOK) throws DriverRegistroServiziException {
 		if (soggetto == null)
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDSoggetto] Parametro non valido.");
 
@@ -357,7 +360,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 				if (connettore.getNome() == null || connettore.getNome().equals(""))
 					connettore.setNome("CNT_" + tipo + "_" + nome);
 
-				idConnettore = DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(CostantiDB.CREATE, connettore, con);
+				idConnettore = DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(CostantiDB.CREATE, connettore, con, driverBYOK);
 
 				int index = 1;
 				
@@ -456,7 +459,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 				
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.CREATE, soggetto.getProtocolPropertyList(), 
-						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase);
+						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase, driverBYOK);
 				
 				
 				// ruoli
@@ -571,12 +574,26 @@ public class DriverRegistroServiziDB_soggettiLIB {
 						sqlQueryObject.addInsertField("id_soggetto", "?");
 						sqlQueryObject.addInsertField("nome", "?");
 						sqlQueryObject.addInsertField("valore", "?");
+						sqlQueryObject.addInsertField("enc_value", "?");
 						updateQuery = sqlQueryObject.createSQLInsert();
 						updateStmt = con.prepareStatement(updateQuery);
 						
-						updateStmt.setLong(1, idSoggetto);
-						updateStmt.setString(2, proprieta.getNome());
-						updateStmt.setString(3, proprieta.getValore());
+						int indexP = 1;
+						updateStmt.setLong(indexP++, idSoggetto);
+						updateStmt.setString(indexP++, proprieta.getNome());
+						
+						String plainValue = proprieta.getValore();
+						String encValue = null;
+						if(driverBYOK!=null && BYOKUtilities.isWrappedValue(plainValue) ) {
+							BYOKWrappedValue byokValue = driverBYOK.wrap(plainValue);
+							if(byokValue!=null) {
+								encValue = byokValue.getWrappedValue();
+								plainValue = byokValue.getWrappedPlainValue();
+							}
+						}
+						
+						updateStmt.setString(indexP++, plainValue);
+						updateStmt.setString(indexP++, encValue);
 						
 						int r= updateStmt.executeUpdate();
 						n++;
@@ -739,7 +756,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 				//setto il nuovo nome
 				String newNomeConnettore = "CNT_" + tipo + "_" + nome;
 				connettore.setNome(newNomeConnettore);
-				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(2, connettore, con);
+				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(2, connettore, con, driverBYOK);
 
 				DriverRegistroServiziDB_LIB.logDebug("CRUDSoggetto UPDATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(updateQuery, nome, descizione, identificativoPorta, tipo, idSoggetto));
 
@@ -886,12 +903,26 @@ public class DriverRegistroServiziDB_soggettiLIB {
 						sqlQueryObject.addInsertField("id_soggetto", "?");
 						sqlQueryObject.addInsertField("nome", "?");
 						sqlQueryObject.addInsertField("valore", "?");
+						sqlQueryObject.addInsertField("enc_value", "?");
 						updateQuery = sqlQueryObject.createSQLInsert();
 						updateStmt = con.prepareStatement(updateQuery);
 						
-						updateStmt.setLong(1, idSoggetto);
-						updateStmt.setString(2, proprieta.getNome());
-						updateStmt.setString(3, proprieta.getValore());
+						int indexP = 1;
+						updateStmt.setLong(indexP++, idSoggetto);
+						updateStmt.setString(indexP++, proprieta.getNome());
+
+						String plainValue = proprieta.getValore();
+						String encValue = null;
+						if(driverBYOK!=null && BYOKUtilities.isWrappedValue(plainValue) ) {
+							BYOKWrappedValue byokValue = driverBYOK.wrap(plainValue);
+							if(byokValue!=null) {
+								encValue = byokValue.getWrappedValue();
+								plainValue = byokValue.getWrappedPlainValue();
+							}
+						}
+						
+						updateStmt.setString(indexP++, plainValue);
+						updateStmt.setString(indexP++, encValue);
 						
 						int r= updateStmt.executeUpdate();
 						n++;
@@ -905,7 +936,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 				
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, soggetto.getProtocolPropertyList(), 
-						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase);
+						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase, driverBYOK);
 				
 				
 				break;
@@ -921,7 +952,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 				
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
-						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase);
+						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase, driverBYOK);
 				
 				// elimino le proprieta' del soggetto
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
@@ -970,7 +1001,7 @@ public class DriverRegistroServiziDB_soggettiLIB {
 				// elimino il connettore
 				connettore=new Connettore();
 				connettore.setId(idConnettore);
-				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(3, connettore, con);
+				DriverRegistroServiziDB_connettoriLIB.CRUDConnettore(3, connettore, con, driverBYOK);
 
 				DriverRegistroServiziDB_LIB.logDebug("CRUDSoggetto DELETE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(updateQuery, idSoggetto));
 

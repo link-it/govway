@@ -51,9 +51,11 @@ import javax.management.MBeanConstructorInfo;
 import javax.management.MBeanException;
 import javax.management.MBeanInfo;
 import javax.management.MBeanOperationInfo;
+import javax.management.MBeanParameterInfo;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ReflectionException;
 
+import org.openspcoop2.core.byok.BYOKWrappedValue;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.Property;
@@ -66,6 +68,9 @@ import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
+import org.openspcoop2.pdd.core.byok.DriverBYOK;
+import org.openspcoop2.pdd.core.byok.DriverBYOKUtilities;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceConfig;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceGovWayState;
@@ -79,7 +84,10 @@ import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.io.HexBinaryUtilities;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
+import org.openspcoop2.utils.properties.MapProperties;
 import org.openspcoop2.utils.resources.CharsetUtilities;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.transport.http.SSLConstants;
@@ -98,6 +106,9 @@ import com.sun.xml.messaging.saaj.soap.SOAPDocumentImpl;
  */
 public class ConfigurazioneSistema extends NotificationBroadcasterSupport implements DynamicMBean {
 
+	private static final String LUNGHEZZA_PARAMETRI_ERRORE = "] Lunghezza parametri non corretta: ";
+	private static final String CHIAVE = "Chiave";
+	
 	/** Nomi metodi */
 	public static final String VERSIONE_PDD = "getVersionePdD";
 	public static final String VERSIONE_BASE_DATI = "getVersioneBaseDati";
@@ -123,7 +134,13 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	public static final String INFORMAZIONI_INSTALLAZIONE = "getInformazioniInstallazione";
 	public static final String FILE_TRACE_CONFIG = "getFileTrace";
 	public static final String FILE_TRACE_UPDATE = "updateFileTrace";
-
+	public static final String BYOK_WRAP = "wrapKey";
+	public static final String BYOK_WRAP_BASE64 = "wrapBase64Key";
+	public static final String BYOK_WRAP_HEX = "wrapHexKey";
+	public static final String BYOK_UNWRAP = "unwrapKey";
+	public static final String BYOK_UNWRAP_BASE64 = "unwrapKeyAsBase64";
+	public static final String BYOK_UNWRAP_HEX = "unwrapKeyAsHex";
+	
 	private static boolean includePassword = false;
 	public static boolean isIncludePassword() {
 		return includePassword;
@@ -305,7 +322,84 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		else if(actionName.equals(FILE_TRACE_UPDATE)){
 			return this.updateFileTrace();
 		}
-
+		
+		else if(actionName.equals(BYOK_UNWRAP)){
+			
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+BYOK_UNWRAP+LUNGHEZZA_PARAMETRI_ERRORE+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			return this.byokUnwrap(param1);
+		}
+		
+		else if(actionName.equals(BYOK_UNWRAP_BASE64)){
+					
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+BYOK_UNWRAP_BASE64+LUNGHEZZA_PARAMETRI_ERRORE+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			return this.byokBase64Unwrap(param1);
+		}
+				
+		else if(actionName.equals(BYOK_UNWRAP_HEX)){
+			
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+BYOK_UNWRAP_HEX+LUNGHEZZA_PARAMETRI_ERRORE+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			return this.byokHexUnwrap(param1);
+		}
+		
+		else if(actionName.equals(BYOK_WRAP)){
+			
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+BYOK_WRAP+LUNGHEZZA_PARAMETRI_ERRORE+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			return this.byokWrap(param1);
+		}
+		
+		else if(actionName.equals(BYOK_WRAP_BASE64)){
+			
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+BYOK_WRAP_BASE64+LUNGHEZZA_PARAMETRI_ERRORE+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			return this.byokWrapBase64Key(param1);
+		}
+		
+		else if(actionName.equals(BYOK_WRAP_HEX)){
+			
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+BYOK_WRAP_HEX+LUNGHEZZA_PARAMETRI_ERRORE+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			return this.byokWrapHexKey(param1);
+		}
 
 		throw new UnsupportedOperationException("Operazione "+actionName+" sconosciuta");
 	}
@@ -456,6 +550,53 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				String.class.getName(),
 				MBeanOperationInfo.ACTION);
 		
+		// BYOK_UNWRAP
+		MBeanOperationInfo byokUnwrapOp = new MBeanOperationInfo(BYOK_UNWRAP,"Effettua l'unwrap della chiave fornita",
+				new MBeanParameterInfo[]{
+						new MBeanParameterInfo("key",String.class.getName(),CHIAVE),
+				},
+				String.class.getName(),
+				MBeanOperationInfo.ACTION);
+		
+		// BYOK_UNWRAP_BASE64
+		MBeanOperationInfo byokBase64UnwrapOp = new MBeanOperationInfo(BYOK_UNWRAP_BASE64,"Effettua l'unwrap della chiave fornita (ritorna codificata in base64)",
+				new MBeanParameterInfo[]{
+						new MBeanParameterInfo("key",String.class.getName(),CHIAVE),
+				},
+				String.class.getName(),
+				MBeanOperationInfo.ACTION);
+		
+		// BYOK_UNWRAP_HEX
+		MBeanOperationInfo byokHexUnwrapOp = new MBeanOperationInfo(BYOK_UNWRAP_HEX,"Effettua l'unwrap della chiave fornita (ritorna codificata in hex)",
+				new MBeanParameterInfo[]{
+						new MBeanParameterInfo("key",String.class.getName(),CHIAVE),
+				},
+				String.class.getName(),
+				MBeanOperationInfo.ACTION);
+
+		// BYOK_WRAP
+		MBeanOperationInfo byokWrapOp = new MBeanOperationInfo(BYOK_WRAP,"Effettua il wrap della chiave fornita",
+				new MBeanParameterInfo[]{
+						new MBeanParameterInfo("key",String.class.getName(),CHIAVE),
+				},
+				String.class.getName(),
+				MBeanOperationInfo.ACTION);
+		
+		// BYOK_WRAP_BASE64
+		MBeanOperationInfo byokWrapBase64KeyOp = new MBeanOperationInfo(BYOK_WRAP_BASE64,"Effettua il wrap della chiave fornita codificata in base64",
+				new MBeanParameterInfo[]{
+						new MBeanParameterInfo("key",String.class.getName(),"Chiave codificata in base64"),
+				},
+				String.class.getName(),
+				MBeanOperationInfo.ACTION);
+		
+		// BYOK_WRAP_HEX
+		MBeanOperationInfo byokWrapHexKeyOp = new MBeanOperationInfo(BYOK_WRAP_HEX,"Effettua il wrap della chiave fornita codificata in esadecimale",
+				new MBeanParameterInfo[]{
+						new MBeanParameterInfo("key",String.class.getName(),"Chiave codificata in hex"),
+				},
+				String.class.getName(),
+				MBeanOperationInfo.ACTION);
 		
 		// Mbean costruttore
 		MBeanConstructorInfo defaultConstructor = new MBeanConstructorInfo("Default Constructor","Crea e inizializza una nuova istanza del MBean",null);
@@ -474,7 +615,9 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				informazioniProprietaJavaNetworkingOp, informazioniCompleteProprietaJavaNetworkingOp, 
 				informazioniProprietaJavaAltroOp, informazioniProprietaSistemaOp,
 				messageFactoryOp,confDirectoryOp,protocolsOp,
-				fileTraceConfigOp, fileTraceUpdateOp};
+				fileTraceConfigOp, fileTraceUpdateOp,
+				byokUnwrapOp, byokBase64UnwrapOp, byokHexUnwrapOp, 
+				byokWrapOp, byokWrapBase64KeyOp, byokWrapHexKeyOp};
 
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
 	}
@@ -878,7 +1021,28 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		}
 	}
 	
-	private boolean isPasswordProperty(String key) {
+	private boolean isPasswordProperty(String key, boolean java) {
+		
+		try {
+			MapProperties mapProperties = MapProperties.getInstance();
+			if(mapProperties!=null && !MapProperties.OBFUSCATED_MODE_NON_INIZIALIZZATO.equals(mapProperties.getObfuscateModeDescription())) {
+				List<String> mapObfuscateKey = java ? mapProperties.getJavaMap().keys() : mapProperties.getEnvMap().keys();
+				if(mapObfuscateKey.contains(key)) {
+					return false; // gestione effettuata dentro il file govway.map
+				}
+			}
+			
+			BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
+			if(secretsProperties!=null && !MapProperties.OBFUSCATED_MODE_NON_INIZIALIZZATO.equals(secretsProperties.getObfuscateModeDescription())) {
+				List<String> secretsObfuscateKey = java ? secretsProperties.getJavaMap().keys() : secretsProperties.getEnvMap().keys();
+				if(secretsObfuscateKey.contains(key)) {
+					return false; // gestione effettuata dentro il file govway.secrets
+				}
+			}
+		}catch(Exception e) {
+			// ignore
+		}
+		
 		return key.toLowerCase().contains("password");
 	}
 	private boolean isNetworkProperties(boolean allNetwork, String key) {
@@ -930,21 +1094,55 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			if(!ll.isEmpty()) {
 				bf.append("\n"); // Separo security manager
 			}
-			for (String key : ll) {
-				if(bf.length()>0){
-					bf.append("\n");
-				}
-				bf.append(key).append("=").append(p.get(key));
-			}
+			
+			printProprietaJava(ll, bf, p);
 			
 			if(bf.length()<=0){
 				throw new CoreException("Non sono disponibili proprietà java");
 			}else{
 				return bf.toString();
 			}
+			
 		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	private void printProprietaJava(List<String> ll, StringBuilder bf, Properties p) throws UtilsException {
+		MapProperties mapProperties = MapProperties.getInstance();
+		List<String> mapObfuscateKey = null;
+		if(mapProperties.isObfuscatedModeEnabled()) {
+			mapObfuscateKey = mapProperties.getObfuscatedJavaKeys();
+		}
+		
+		BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
+		List<String> secretsObfuscateKey = null;
+		if(secretsProperties.isObfuscatedModeEnabled()) {
+			/**secretsObfuscateKey = secretsProperties.getObfuscatedJavaKeys(); Tutte le variabili definite in secrets sono da offuscare*/
+			secretsObfuscateKey = secretsProperties.getJavaMap().keys();
+		}
+		
+		List<String> govwayEncryptedProperties = getGovwayEncryptedProperties();
+		
+		for (String key : ll) {
+			
+			Object value = p.get(key);
+			if(value instanceof String) {
+				if(mapObfuscateKey!=null && mapObfuscateKey.contains(key)) {
+					value = mapProperties.obfuscateJavaProperty(key, (String)value);
+				}
+				else if(secretsObfuscateKey!=null && secretsObfuscateKey.contains(key)) {
+					value = secretsProperties.obfuscateJavaProperty(key, (String)value);
+				}
+				else if(govwayEncryptedProperties!=null && govwayEncryptedProperties.contains(key)) {
+					value = obfuscateGovWayEncryptedProperty(mapProperties, key, (String)value);
+				}
+			}
+			
+			if(bf.length()>0){
+				bf.append("\n");
+			}
+			bf.append(key).append("=").append(value);
 		}
 	}
 	private void addInformazioniProprietaJava(boolean allNetwork, boolean includeNetwork, boolean includeNotNetwork, boolean includePassword,
@@ -967,7 +1165,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		}
 		else if(includeNetwork && !includeNotNetwork) {
 			if(this.isNetworkProperties(allNetwork, key)&&
-				(includePassword || !isPasswordProperty(key)) 
+				(includePassword || !isPasswordProperty(key, true)) 
 				){
 				ll.add(key);
 			}
@@ -978,7 +1176,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			addInformazioniProprietaJavaIncludeNotNetwork(ll, key);
 		}
 		else {
-			if(includePassword || !isPasswordProperty(key)) {
+			if(includePassword || !isPasswordProperty(key, true)) {
 				ll.add(key);
 			}
 		}
@@ -986,7 +1184,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	private void addInformazioniProprietaJavaIncludeNotNetwork(List<String> ll, String key) {
 		if( 
 				(!this.isNetworkProperties(true, key)) &&
-				(includePassword || !isPasswordProperty(key)) 
+				(includePassword || !isPasswordProperty(key, true)) 
 			){
 			ll.add(key);
 		}
@@ -1014,12 +1212,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			if(!ll.isEmpty()) {
 				bf.append("\n"); // Separo security manager
 			}
-			for (String key : ll) {
-				if(bf.length()>0){
-					bf.append("\n");
-				}
-				bf.append(key).append("=").append(map.get(key));
-			}
+			
+			printProprietaSistema(ll, bf, map);
 			
 			if(bf.length()<=0){
 				throw new CoreException("Non sono disponibili proprietà di sistema");
@@ -1030,6 +1224,70 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
+	}
+	private void printProprietaSistema(List<String> ll, StringBuilder bf, Map<String, String> map) throws UtilsException {
+		MapProperties mapProperties = MapProperties.getInstance();
+		List<String> mapObfuscateKey = null;
+		if(mapProperties!=null && mapProperties.isObfuscatedModeEnabled()) {
+			mapObfuscateKey = mapProperties.getObfuscatedEnvKeys();
+		}
+		
+		BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
+		List<String> secretsObfuscateKey = null;
+		if(secretsProperties!=null && secretsProperties.isObfuscatedModeEnabled()) {
+			/**secretsObfuscateKey = secretsProperties.getObfuscatedEnvKeys(); Tutte le variabili definite in secrets sono da offuscare*/
+			secretsObfuscateKey = secretsProperties.getEnvMap().keys();
+		}
+		
+		/** Vengono impostate come proprieta java List<String> govwayEncryptedProperties = getGovwayEncryptedProperties();*/
+		
+		for (String key : ll) {
+			
+			String value = map.get(key);
+			if(mapObfuscateKey!=null && mapObfuscateKey.contains(key)) {
+				value = mapProperties.obfuscateEnvProperty(key, value);
+			}
+			else if(secretsObfuscateKey!=null && secretsObfuscateKey.contains(key)) {
+				value = secretsProperties.obfuscateEnvProperty(key, value);
+			}
+			/** Vengono impostate come proprieta java else if(govwayEncryptedProperties!=null && govwayEncryptedProperties.contains(key)) {
+				value = obfuscateGovWayEncryptedProperty(mapProperties, key, value);
+			}*/
+			
+			if(bf.length()>0){
+				bf.append("\n");
+			}
+			bf.append(key).append("=").append(value);
+		}
+	}
+	
+	private List<String> getGovwayEncryptedProperties() throws UtilsException{
+		List<String> govwayEncryptedProperties = null;
+		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance();
+		if(configurazionePdDManager!=null) {
+			try {
+				govwayEncryptedProperties = configurazionePdDManager.getEncryptedSystemPropertiesPdD();
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(),e);
+			}
+		}
+		return govwayEncryptedProperties;
+	}	
+	private String obfuscateGovWayEncryptedProperty(MapProperties mapProperties, String key, String value) throws UtilsException {
+		if(mapProperties!=null && mapProperties.isObfuscatedModeEnabled()) {
+			value = mapProperties.obfuscateEnvProperty(key, value); 
+		}
+		else {
+			try {
+				value = MapProperties.obfuscateByDigest(value);
+			}catch(Exception e) {
+				if(this.log!=null) {
+					this.log.error(e.getMessage(),e);
+				}
+				value = "---***---***";
+			}
+		}
+		return value;
 	}
 	
 	public String getMessageFactory(){
@@ -1241,6 +1499,127 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			else {
 				throw new CoreException("Funzionalità 'FileTrace' disabilitata");
 			}
+		}catch(Exception e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	private void checkByokJmx(boolean wrap) throws CoreException {
+		boolean enabled = wrap ? this.openspcoopProperties.isBYOKJmxWrapEnbled() : this.openspcoopProperties.isBYOKJmxUnwrapEnbled();
+		if(!enabled) {
+			throw new CoreException("not enabled");
+		}
+	}
+	
+	public String byokUnwrap(String value){
+		try {
+			checkByokJmx(false);
+			
+			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNodeForJmxOperation(this.log, false, true);
+			if(driverBYOK!=null) {
+				return driverBYOK.unwrapAsString(value, true);
+			}
+			return value;
+		}catch(Exception e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+		
+	public String byokBase64Unwrap(String value){
+		try {
+			checkByokJmx(false);
+			
+			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNodeForJmxOperation(this.log, false, true);
+			if(driverBYOK!=null) {
+				byte [] c = driverBYOK.unwrap(value, true);
+				return Base64Utilities.encodeAsString(c);
+			}
+			return value;
+		}catch(Exception e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String byokHexUnwrap(String value){
+		try {
+			checkByokJmx(false);
+			
+			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNodeForJmxOperation(this.log, false, true);
+			if(driverBYOK!=null) {
+				byte [] c = driverBYOK.unwrap(value, true);
+				return HexBinaryUtilities.encodeAsString(c);
+			}
+			return value;
+		}catch(Exception e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String byokWrap(String value){
+		try {
+			checkByokJmx(true);
+			
+			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNodeForJmxOperation(this.log, true, false);
+			if(driverBYOK!=null) {
+				BYOKWrappedValue v = driverBYOK.wrap(value);
+				if(v!=null) {
+					return v.getWrappedValue();
+				}
+				else {
+					return null;
+				}
+			}
+			return value;
+		}catch(Exception e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String byokWrapBase64Key(String value){
+		try {
+			checkByokJmx(true);
+			
+			byte[] decoded = Base64Utilities.decode(value);
+			
+			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNodeForJmxOperation(this.log, true, false);
+			if(driverBYOK!=null) {
+				BYOKWrappedValue v = driverBYOK.wrap(decoded);
+				if(v!=null) {
+					return v.getWrappedValue();
+				}
+				else {
+					return null;
+				}
+			}
+			return value;
+		}catch(Exception e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String byokWrapHexKey(String value){
+		try {
+			checkByokJmx(true);
+			
+			byte[] decoded = HexBinaryUtilities.decode(value);
+			
+			DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNodeForJmxOperation(this.log, true, false);
+			if(driverBYOK!=null) {
+				BYOKWrappedValue v = driverBYOK.wrap(decoded);
+				if(v!=null) {
+					return v.getWrappedValue();
+				}
+				else {
+					return null;
+				}
+			}
+			return value;
 		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();

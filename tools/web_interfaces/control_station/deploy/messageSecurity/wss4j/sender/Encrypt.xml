@@ -206,17 +206,20 @@
 			<item type="textarea" name="keystoreFile" label="File" required="true">
 			    <property name="org.apache.ws.security.crypto.merlin.file" properties="encryptionPropRefId" />
 			</item>
-			<item type="text" name="keystorePassword" label="Password" required="true">
+			<item type="lock" name="keystorePassword" label="Password" required="true">
 			    <property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="encryptionPropRefId" />
 			</item>
 			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
 			    <property name="encryptionUser" /> 
 			</item>
-			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			<item type="lock" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
 			    <property name="encryptionPassword" />
 			</item>
 			<item type="hidden" name="keystorePrivateKeyPasswordCallback" value="true">
 			      	<property name="passwordCallbackRef" />
+			</item>
+			<item type="select" name="keystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="org.apache.ws.security.crypto.merlin.file.byok" properties="encryptionPropRefId" />
 			</item>
 
 		</subsection>
@@ -241,7 +244,7 @@
 			<item type="textarea" name="truststoreFile" label="File" required="true">
 			    <property name="org.apache.ws.security.crypto.merlin.file" properties="encryptionPropRefId" />
 			</item>
-			<item type="text" name="truststorePassword" label="Password" required="true">
+			<item type="lock" name="truststorePassword" label="Password" required="true">
 			    <property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="encryptionPropRefId" />
 			</item>
 			<item type="text" name="keystoreCertificateAlias" label="Alias Certificato" required="true">
