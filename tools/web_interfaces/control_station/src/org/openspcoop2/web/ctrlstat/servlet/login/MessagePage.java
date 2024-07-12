@@ -43,6 +43,7 @@ import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.springframework.http.HttpStatus;
 
 /**     
  * MessagePage
@@ -108,6 +109,14 @@ public class MessagePage extends Action {
 				
 				// imposto il messaggio da visualizzare
 				pd.setMessage(messageText, messageTitle, mt);
+				
+				// imposto il return code personalizzato se previsto 
+				String retCodeS = consoleHelper.getParameter(CostantiControlStation.PARAMETER_MESSAGE_ERROR_CODE);
+				if(retCodeS != null) {
+					int returnCode = Integer.parseInt(retCodeS);
+					HttpStatus httpStatus = HttpStatus.valueOf(returnCode);
+					ServletUtils.setErrorStatusCodeInRequestAttribute(request, httpStatus);
+				}
 			}
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);

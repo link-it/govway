@@ -75,6 +75,10 @@ public class BYOKRemoteConfig implements Serializable {
 	private String httpsClientAuthKeyAlias;
 	private String httpsClientAuthKeyPassword;
 	
+	private boolean httpResponseBase64Encoded;
+	private boolean httpResponseHexEncoded;
+	private String httpResponseJsonPath;
+	
 	
 	protected BYOKRemoteConfig(String id, Properties p, Logger log) throws UtilsException {
 				
@@ -115,6 +119,9 @@ public class BYOKRemoteConfig implements Serializable {
 		this.httpsClientAuthKeyAlias = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT_KEY_ALIAS, false);
 		this.httpsClientAuthKeyPassword = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT_KEY_PASSWORD, false);
 		
+		this.httpResponseBase64Encoded = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_RESPONSE_BASE64_ENCODED, false, false);
+		this.httpResponseHexEncoded = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_RESPONSE_HEX_ENCODED, false, false);
+		this.httpResponseJsonPath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_RESPONSE_JSON_PATH, false);
 	}
 
 	private void initHttpHeader(Properties p) {
@@ -210,5 +217,15 @@ public class BYOKRemoteConfig implements Serializable {
 	}
 	public String getHttpsClientAuthKeyPassword() {
 		return this.httpsClientAuthKeyPassword;
+	}
+	
+	public boolean isHttpResponseBase64Encoded() {
+		return this.httpResponseBase64Encoded;
+	}
+	public boolean isHttpResponseHexEncoded() {
+		return this.httpResponseHexEncoded;
+	}
+	public String getHttpResponseJsonPath() {
+		return this.httpResponseJsonPath;
 	}
 }

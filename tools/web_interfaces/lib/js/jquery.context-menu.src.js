@@ -44,7 +44,7 @@ if (!window.jQuery) throw new Error('jQuery plugin is required!');
  * Mouse buttons
  * @type {{LEFT: string, RIGHT: string, BOTH: string}}
  */
-const mouseButton = {
+var mouseButton = {
     LEFT    : 1,
     MIDDLE  : 2,
     RIGHT   : 3,

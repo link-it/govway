@@ -82,10 +82,13 @@ public final class PorteApplicativeWSResponseChange extends Action {
 			int idInt = Integer.parseInt(idPorta);
 			String idsogg = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 			String nome = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-			String valore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE);
+			String valore = porteApplicativeHelper.getLockedParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE,false);
 			String idAsps = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
 			if(idAsps == null) 
 				idAsps = "";
+			
+			// Wrap value
+			valore = porteApplicativeHelper.wrapValoreProprieta(valore);
 			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
@@ -126,14 +129,16 @@ public final class PorteApplicativeWSResponseChange extends Action {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
-				MessageSecurity ws = pa.getMessageSecurity();
-				if(ws.getResponseFlow()!=null){
-					List<MessageSecurityFlowParameter> wsrfpArray = ws.getResponseFlow().getParameterList();
-					for (int i = 0; i < wsrfpArray.size(); i++) {
-						MessageSecurityFlowParameter wsrfp = wsrfpArray.get(i);
-						if (nome.equals(wsrfp.getNome())) {
-							valore = wsrfp.getValore();
-							break;
+				if(valore==null) {
+					MessageSecurity ws = pa.getMessageSecurity();
+					if(ws.getResponseFlow()!=null){
+						List<MessageSecurityFlowParameter> wsrfpArray = ws.getResponseFlow().getParameterList();
+						for (int i = 0; i < wsrfpArray.size(); i++) {
+							MessageSecurityFlowParameter wsrfp = wsrfpArray.get(i);
+							if (nome.equals(wsrfp.getNome())) {
+								valore = wsrfp.getValore();
+								break;
+							}
 						}
 					}
 				}
@@ -142,7 +147,7 @@ public final class PorteApplicativeWSResponseChange extends Action {
 				List<DataElement> dati = new ArrayList<>();
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addNomeValoreToDati(TipoOperazione.CHANGE, dati, nome, valore,false);
+				dati = porteApplicativeHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.CHANGE, dati, nome, valore,false);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg,idPorta, idAsps, dati);
 
@@ -165,7 +170,7 @@ public final class PorteApplicativeWSResponseChange extends Action {
 
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addNomeValoreToDati(TipoOperazione.CHANGE, dati, nome, valore, false);
+				dati = porteApplicativeHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.CHANGE, dati, nome, valore, false);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg,idPorta, idAsps, dati);
 

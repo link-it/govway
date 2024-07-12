@@ -29,7 +29,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.byok.BYOKWrappedValue;
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_genericPropertiesDriver;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -42,8 +46,11 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
  */
 public class DBPropertiesUtils {
 
-	public static Map<String, String> readProperties(Connection con, String tipoDB, String nomeTabella, String nomeColonnaKey, String nomeColonnaValue, String nomeColonnaParent, Long idParent) throws CoreException{
-		String methodName = "readProperties Tabella["+nomeTabella+"], NomeColonnaKey["+nomeColonnaKey+"], NomeColonnaValue["+nomeColonnaValue+"], NomeColonnaParent["+nomeColonnaParent+"], IDParent["+idParent+"]";
+	private DBPropertiesUtils() {}
+	
+	public static Map<String, String> readProperties(Connection con, String tipoDB, String nomeTabella, String nomeColonnaKey, String nomeColonnaValue, String nomeColonnaEncValue, 
+			String nomeColonnaParent, Long idParent, IDriverBYOK driverBYOK) throws CoreException{
+		String methodName = "readProperties Tabella["+nomeTabella+"], NomeColonnaKey["+nomeColonnaKey+"], NomeColonnaValue["+nomeColonnaValue+"], nomeColonnaEncValue["+nomeColonnaEncValue+"], NomeColonnaParent["+nomeColonnaParent+"], IDParent["+idParent+"]";
 		Map<String, String> map = new HashMap<>();
 
 		PreparedStatement stmt = null;
@@ -53,6 +60,7 @@ public class DBPropertiesUtils {
 			sqlQueryObject.addFromTable(nomeTabella);
 			sqlQueryObject.addSelectField(nomeTabella +"." + nomeColonnaKey);
 			sqlQueryObject.addSelectField(nomeTabella +"." + nomeColonnaValue);
+			sqlQueryObject.addSelectField(nomeTabella +"." + nomeColonnaEncValue);
 			sqlQueryObject.addWhereCondition(nomeTabella +"." + nomeColonnaParent +" = ?");
 			sqlQueryObject.addOrderBy(nomeTabella +"." + nomeColonnaKey);
 			sqlQueryObject.setSortType(true);
@@ -68,7 +76,21 @@ public class DBPropertiesUtils {
 
 			while (risultato.next()) {
 				String key = risultato.getString(nomeColonnaKey);
-				String value = risultato.getString(nomeColonnaValue);
+				
+				String value = null;
+				String plainValue = risultato.getString(nomeColonnaValue);
+				String encValue = risultato.getString(nomeColonnaEncValue);
+				if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+					if(driverBYOK!=null) {
+						value = driverBYOK.unwrapAsString(encValue);
+					}
+					else {
+						value = encValue;
+					}
+				}
+				else {
+					value = plainValue;
+				}
 
 				map.put(key, value);
 			}
@@ -94,8 +116,9 @@ public class DBPropertiesUtils {
 		}
 	}
 
-	public static void writeProperties(Connection con, String tipoDB, Map<String, String> map, String nomeTabella, String nomeColonnaKey, String nomeColonnaValue, String nomeColonnaParent, Long idParent) throws CoreException{
-		String methodName = "writeProperties Tabella["+nomeTabella+"], NomeColonnaKey["+nomeColonnaKey+"], NomeColonnaValue["+nomeColonnaValue+"], NomeColonnaParent["+nomeColonnaParent+"], IDParent["+idParent+"]";
+	public static void writeProperties(Connection con, String tipoDB, Map<String, String> map, String nomeTabella, String nomeColonnaKey, String nomeColonnaValue, String nomeColonnaEncValue, 
+			String nomeColonnaParent, Long idParent, IDriverBYOK driverBYOK, String tipoParent) throws CoreException{
+		String methodName = "writeProperties Tabella["+nomeTabella+"], NomeColonnaKey["+nomeColonnaKey+"], NomeColonnaValue["+nomeColonnaValue+"], nomeColonnaEncValue["+nomeColonnaEncValue+"], NomeColonnaParent["+nomeColonnaParent+"], IDParent["+idParent+"]";
 
 		PreparedStatement stmt = null;
 
@@ -108,14 +131,29 @@ public class DBPropertiesUtils {
 			sqlQueryObject.addInsertTable(nomeTabella);
 			sqlQueryObject.addInsertField(nomeColonnaKey, "?");
 			sqlQueryObject.addInsertField(nomeColonnaValue, "?");
+			sqlQueryObject.addInsertField(nomeColonnaEncValue, "?");
 			sqlQueryObject.addInsertField(nomeColonnaParent, "?");
 			String queryString = sqlQueryObject.createSQLInsert();
 
 			for (String key : map.keySet()) {
 				stmt = con.prepareStatement(queryString);
-				stmt.setString(1, key);
-				stmt.setString(2, map.get(key));
-				stmt.setLong(3, idParent);
+				int index = 1;
+				stmt.setString(index++, key);
+				
+				String plainValue = map.get(key);
+				String encValue = null;
+				if(driverBYOK!=null && DriverConfigurazioneDB_genericPropertiesDriver.isConfidentialProperty(tipoParent, key)) {
+					BYOKWrappedValue byokValue = driverBYOK.wrap(plainValue);
+					if(byokValue!=null) {
+						encValue = byokValue.getWrappedValue();
+						plainValue = byokValue.getWrappedPlainValue();
+					}
+				}
+				
+				stmt.setString(index++, plainValue);
+				stmt.setString(index++, encValue);
+				
+				stmt.setLong(index++, idParent);
 				stmt.executeUpdate();
 				stmt.close();
 			}
@@ -169,10 +207,11 @@ public class DBPropertiesUtils {
 
 
 	public static Map<String, String> toMap(Map<String, Properties> propertiesMap) throws Exception {
+		Map<String, String> map = null;
 		if(propertiesMap == null)
-			return null;
+			return map;
 
-		Map<String, String> map = new HashMap<>();
+		map = new HashMap<>();
 
 		for (String nomeProperties : propertiesMap.keySet()) {
 			Properties properties = propertiesMap.get(nomeProperties);
@@ -209,11 +248,12 @@ public class DBPropertiesUtils {
 	}
 	
 	
-	public static Map<String, Properties> toMultiMap(Map<String, String> dbMap, List<String> nomiProperties) throws Exception {
+	public static Map<String, Properties> toMultiMap(Map<String, String> dbMap, List<String> nomiProperties) {
+		Map<String, Properties> map = null;
 		if(dbMap == null)
-			return null;
+			return map;
 
-		Map<String, Properties> map = new HashMap<String,Properties>();
+		map = new HashMap<>();
 
 		for (String key : dbMap.keySet()) {
 			String value = dbMap.get(key);
@@ -238,7 +278,7 @@ public class DBPropertiesUtils {
 	}
 
 	public static String startsWith(List<String> nomiProperties, String key) {
-		if(nomiProperties != null && nomiProperties.size()  > 0) {
+		if(nomiProperties != null && !nomiProperties.isEmpty()) {
 			for (String string : nomiProperties) {
 				if(key.startsWith(string+Costanti.KEY_PROPERTIES_CUSTOM_SEPARATOR))
 					return string;

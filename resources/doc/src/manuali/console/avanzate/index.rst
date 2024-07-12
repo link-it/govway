@@ -25,4 +25,6 @@ Funzionalità Avanzate
 	contentBased
 	validazione
 	password
+	info_confidenziali
+	byokNodiManager
 	health_check

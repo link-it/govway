@@ -139,7 +139,7 @@
 		policy.enable=true
 		plugin.enable=true
 		configurazioneGenerale.enable=true
-
+		
 - Per variare il ritardo con cui vengono scritti gli eventi sul database:
 	In <govway_local.properties>:
 		org.openspcoop2.pdd.eventi.timer.seconds=3
@@ -501,6 +501,9 @@ Di seguito vengono descritti i test del package 'connettori':
 
 - 'forward_proxy', verifica la funzionalità di forward proxy
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.forward_proxy
+   
+- 'autenticazione', verifica la funzionalità di inoltro di credenziali (basic, api-key) al backend
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.autenticazione
 
 Di seguito vengono descritti i test del package 'token':
 

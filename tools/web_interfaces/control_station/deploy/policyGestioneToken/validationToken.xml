@@ -521,7 +521,7 @@
 				</conditions>
 				<property name="rs.security.keystore.file.algorithm" properties="signatureVerificationPropRefId" />
 			</item>
-			<item type="text" name="validazioneJwtTruststorePassword" label="Password" required="true">
+			<item type="lock" name="validazioneJwtTruststorePassword" label="Password" required="true">
 				<conditions>
 					<condition not="true" and="false">
 						<selected name="discoveryStato"/>
@@ -659,7 +659,7 @@
 			<item type="hidden" name="validazioneJwtTruststoreFileGoogleSSL" value="/Token.jks">
 			    <property name="rs.security.keystore.file.ssl" properties="signatureVerificationPropRefId" />
 			</item>
-			<item type="hidden" name="validazioneJwtTruststorePasswordGoogleSSL" value="123456">
+			<item type="lock_hidden" name="validazioneJwtTruststorePasswordGoogleSSL" value="123456">
 			    <property name="rs.security.keystore.password.ssl" properties="signatureVerificationPropRefId" />
 			</item>
 
@@ -704,7 +704,7 @@
 				</conditions>
 				<property name="rs.security.keystore.file" properties="decryptionPropRefId" />
 			</item>
-			<item type="text" name="validazioneJwtKeystorePassword" label="Password" required="true">
+			<item type="lock" name="validazioneJwtKeystorePassword" label="Password" required="true">
 				<conditions>
 					<condition not="true" and="false">
 						<selected name="discoveryStato"/>
@@ -716,13 +716,16 @@
 			<item type="text" name="validazioneJwtKeystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
 			    <property name="rs.security.keystore.alias" properties="decryptionPropRefId" />
 			</item>
-			<item type="text" name="validazioneJwtKeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			<item type="lock" name="validazioneJwtKeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
 				<conditions>
 					<condition not="true" and="true">
 						<equals name="validazioneJwtKeystoreType" value="jwk"/>
 					</condition>
 				</conditions>
 			    	<property name="rs.security.key.password" properties="decryptionPropRefId" />
+			</item>
+			<item type="select" name="validazioneJwtKeystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="rs.security.keystore.file.byok" properties="decryptionPropRefId" />
 			</item>
 
 		</subsection>
@@ -881,7 +884,7 @@
 			<item type="text" name="introspectionEndpointBasicUsername" label="Username" required="true">
 			      	<property name="policy.introspection.endpoint.basic.username" />
 			</item>
-			<item type="text" name="introspectionEndpointPassword" label="Password" required="true">
+			<item type="lock" name="introspectionEndpointPassword" label="Password" required="true">
 			      	<property name="policy.introspection.endpoint.basic.password" />
 			</item>
 		</subsection>
@@ -892,7 +895,7 @@
 					<selected name="introspectionEndpointBearer"/>
 				</condition>
 			</conditions>
-			<item type="textarea" name="introspectionEndpointBearerToken" label="Token" required="true">
+			<item type="lock" name="introspectionEndpointBearerToken" label="Token" required="true">
 			      	<property name="policy.introspection.endpoint.bearer.token" />
 			</item>
 		</subsection>
@@ -1269,7 +1272,7 @@
 			<item type="text" name="userInfoEndpointBasicUsername" label="Username" required="true">
 			      	<property name="policy.userInfo.endpoint.basic.username" />
 			</item>
-			<item type="text" name="userInfoEndpointPassword" label="Password" required="true">
+			<item type="lock" name="userInfoEndpointPassword" label="Password" required="true">
 			      	<property name="policy.userInfo.endpoint.basic.password" />
 			</item>
 		</subsection>
@@ -1283,7 +1286,7 @@
 					<equals name="userInfoRequestPositionToken" value="authorization"/>
 				</condition>
 			</conditions>
-			<item type="textarea" name="userInfoEndpointBearerToken" label="Token" required="true">
+			<item type="lock" name="userInfoEndpointBearerToken" label="Token" required="true">
 			      	<property name="policy.userInfo.endpoint.bearer.token" />
 			</item>
 		</subsection>
@@ -1558,7 +1561,7 @@
 				</conditions>
 				<property name="trustStoreLocation" properties="sslConfig" />
 			</item>
-			<item type="text" name="endpointHttpsTruststorePassword" label="Password" required="true">
+			<item type="lock" name="endpointHttpsTruststorePassword" label="Password" required="true">
 			      	<conditions>
 					<condition and="false">
 						<selected name="endpointHttpsTrustAllCerts"/>
@@ -1574,13 +1577,21 @@
 				</conditions>
 				<property name="trustManagementAlgorithm" properties="sslConfig" />
 			</item>
-			<item type="textarea" name="endpointHttpsTrustStoreCRLs" label="CRL File(s)" required="false" note="Elencare più file separandoli con la ','">
-			      	<conditions>
+			<item type="select" name="endpointHttpsTrustStoreOcspPolicy" label="OCSP Policy" default="" reloadOnChange="true">
+				<conditions>
 					<condition and="false">
 						<selected name="endpointHttpsTrustAllCerts"/>
 					</condition>	
 				</conditions>
-				<property name="trustStoreCRLs" properties="sslConfig" />
+				<property name="trustStoreOCSPPolicy" properties="sslConfig" />
+			</item>
+			<item type="textarea" name="endpointHttpsTrustStoreCRLs" label="CRL File(s)" required="false" note="Elencare più file separandoli con la ','">
+				<conditions>
+					<condition and="false">
+						<selected name="endpointHttpsTrustAllCerts"/>
+					</condition>
+				</conditions>
+			      	<property name="trustStoreCRLs" properties="sslConfig" />
 			</item>
 			
 		</subsection>
@@ -1617,7 +1628,7 @@
 				</conditions>
 			    <property name="keyStoreLocation" properties="sslClientConfig" />
 			</item>
-			<item type="text" name="endpointHttpsClientKeystorePassword" label="Password" required="true">
+			<item type="lock" name="endpointHttpsClientKeystorePassword" label="Password" required="true">
 				<conditions>
 					<condition and="true">
 						<equals name="endpointHttpsClientMode" value="ridefinito"/>
@@ -1625,7 +1636,7 @@
 				</conditions>
 			    <property name="keyStorePassword" properties="sslClientConfig" />
 			</item>
-			<item type="text" name="endpointHttpsClientPasswordChiavePrivata" label="Password Chiave Privata" required="true">
+			<item type="lock" name="endpointHttpsClientPasswordChiavePrivata" label="Password Chiave Privata" required="true">
 				<property name="keyPassword" properties="sslClientConfig" />
 			</item>
 			<item type="text" name="endpointHttpsClientAliasChiavePrivata" label="Alias Chiave Privata" required="false">
@@ -1633,6 +1644,9 @@
 			</item>
 			<item type="text" name="endpointHttpsClientAlgoritmo" label="Algoritmo" default="SunX509" required="true">
 				<property name="keyManagementAlgorithm" properties="sslClientConfig" />
+			</item>
+			<item type="select" name="endpointHttpsByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="keyStoreBYOKPolicy" properties="sslClientConfig" />
 			</item>
 		
 		</subsection>
@@ -1671,7 +1685,7 @@
 			<item type="hidden" name="endpointHttpsTruststoreFileGOOGLE" value="/Token.jks">
 			    <property name="trustStoreLocation" properties="sslConfig" />
 			</item>
-			<item type="hidden" name="endpointHttpsTruststorePasswordGOOGLE" value="123456">
+			<item type="lock_hidden" name="endpointHttpsTruststorePasswordGOOGLE" value="123456">
 			      	<property name="trustStorePassword" properties="sslConfig" />
 			</item>
 			<item type="hidden" name="endpointHttpsTruststoreAlgoritmoGOOGLE" value="PKIX">
@@ -1702,7 +1716,7 @@
 		<item type="text" name="endpointProxyUsername" label="Username" required="false">
 			<property name="proxyUsername" properties="endpointConfig" />
 		</item>
-		<item type="text" name="endpointProxyPassword" label="Password" required="false">
+		<item type="lock" name="endpointProxyPassword" label="Password" required="false">
 			<property name="proxyPassword" properties="endpointConfig" />
 		</item>
 		
@@ -2137,7 +2151,7 @@
 				</conditions>
 				<property name="rs.security.keystore.file.algorithm" properties="signaturePropRefId" />
 			</item>
-			<item type="text" name="tokenForwardInfoRaccolteModeJWSKeystorePassword" label="Password" required="true">
+			<item type="lock" name="tokenForwardInfoRaccolteModeJWSKeystorePassword" label="Password" required="true">
 				<conditions>
 					<condition not="true" and="false">
 						<equals name="tokenForwardInfoRaccolteModeJWSKeystoreType" value="jwk"/>
@@ -2154,7 +2168,7 @@
 				</conditions>
 				<property name="rs.security.keystore.alias" properties="signaturePropRefId" />
 			</item>
-			<item type="text" name="tokenForwardInfoRaccolteModeJWSKeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			<item type="lock" name="tokenForwardInfoRaccolteModeJWSKeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
 				<conditions and="true">
 					<condition not="true" and="false">
 						<equals name="tokenForwardInfoRaccolteModeJWSKeystoreType" value="jwk"/>
@@ -2163,13 +2177,16 @@
 				</conditions>
 				<property name="rs.security.key.password" properties="signaturePropRefId" />
 			</item>
-			<item type="text" name="tokenForwardInfoRaccolteModeJWSKeystorePrivateKeyPasswordOpzionale" label="Password Chiave Privata" required="false">
+			<item type="lock" name="tokenForwardInfoRaccolteModeJWSKeystorePrivateKeyPasswordOpzionale" label="Password Chiave Privata" required="false">
 				<conditions and="true">
 					<condition and="false">
 						<equals name="tokenForwardInfoRaccolteModeJWSKeystoreType" value="keys"/>
 					</condition>
 				</conditions>				
 				<property name="rs.security.key.password" properties="signaturePropRefId" />
+			</item>
+			<item type="select" name="tokenForwardInfoRaccolteModeJWSKeystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="rs.security.keystore.file.byok" properties="signaturePropRefId" />
 			</item>
 
 		</subsection>
@@ -2188,7 +2205,7 @@
 			<item type="textarea" name="tokenForwardInfoRaccolteModeJWEContentKeystoreFile" label="File" required="true">
 			    <property name="rs.security.keystore.file" properties="encryptionPropRefId" />
 			</item>
-			<item type="text" name="tokenForwardInfoRaccolteModeJWEContentKeystorePassword" label="Password" required="true">
+			<item type="lock" name="tokenForwardInfoRaccolteModeJWEContentKeystorePassword" label="Password" required="true">
 				<conditions>
 					<condition not="true" and="true">
 						<equals name="tokenForwardInfoRaccolteModeJWEContentKeystoreType" value="jwk"/>
@@ -2212,7 +2229,7 @@
 				</conditions>
 			    <property name="rs.security.keystore.alias" properties="encryptionPropRefId" />
 			</item>
-			<item type="text" name="tokenForwardInfoRaccolteModeJWEContentKeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			<item type="lock" name="tokenForwardInfoRaccolteModeJWEContentKeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
 				<conditions>
 					<condition not="true" and="false">
 						<equals name="tokenForwardInfoRaccolteModeJWEContentKeystoreType" value="jceks"/>
@@ -2220,6 +2237,9 @@
 					</condition>
 				</conditions>
 			    <property name="rs.security.key.password" properties="encryptionPropRefId" />
+			</item>
+			<item type="select" name="tokenForwardInfoRaccolteModeJWEContentKeystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="rs.security.keystore.file.byok" properties="encryptionPropRefId" />
 			</item>
 
 		</subsection>

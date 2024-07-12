@@ -169,6 +169,8 @@ public class ModICostanti {
     
     public static final String MODIPA_KEYSTORE_PASSWORD = CostantiDB.MODIPA_KEYSTORE_PASSWORD;
     
+    public static final String MODIPA_KEYSTORE_BYOK_POLICY = CostantiDB.MODIPA_KEYSTORE_BYOK_POLICY;
+    
     public static final String MODIPA_KEY_ALIAS = CostantiDB.MODIPA_KEY_ALIAS;
     
     public static final String MODIPA_KEY_PASSWORD = CostantiDB.MODIPA_KEY_PASSWORD;

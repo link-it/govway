@@ -59,7 +59,7 @@ public class Proprieta4000  {
   @JsonProperty("valore")
   @NotNull
   @Valid
- @Size(max=4000)  public String getValore() {
+  public String getValore() {
     return this.valore;
   }
 

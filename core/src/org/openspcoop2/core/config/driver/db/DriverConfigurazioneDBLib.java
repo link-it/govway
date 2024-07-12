@@ -26,6 +26,7 @@ import java.sql.Connection;
 import java.text.MessageFormat;
 import java.util.List;
 
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.config.ProtocolProperty;
 import org.openspcoop2.core.config.constants.AlgoritmoCache;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIdentificazioneFallita;
@@ -591,9 +592,9 @@ public class DriverConfigurazioneDBLib {
 	
 	public static void crudProtocolProperty(int type, List<ProtocolProperty> listPP, long idProprietario,
 			org.openspcoop2.core.constants.ProprietariProtocolProperty tipologiaProprietarioProtocolProperty, Connection connection,
-			String tipoDatabase) throws DriverConfigurazioneException {
+			String tipoDatabase, IDriverBYOK driverBYOK) throws DriverConfigurazioneException {
 		try {
-			DBProtocolPropertiesUtils.CRUDConfigProtocolProperty(log, type, listPP, idProprietario, tipologiaProprietarioProtocolProperty, connection, tipoDatabase);
+			DBProtocolPropertiesUtils.crudConfigProtocolProperty(log, type, listPP, idProprietario, tipologiaProprietarioProtocolProperty, connection, tipoDatabase, driverBYOK);
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
@@ -602,9 +603,9 @@ public class DriverConfigurazioneDBLib {
 	
 	public static List<ProtocolProperty> getListaProtocolProperty(long idProprietario, org.openspcoop2.core.constants.ProprietariProtocolProperty tipologiaProprietario, 
 			Connection connection,
-			String tipoDatabase) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+			String tipoDatabase, IDriverBYOK driverBYOK) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		try {
-			return DBProtocolPropertiesUtils.getListaProtocolPropertyConfig(idProprietario,tipologiaProprietario,connection,tipoDatabase);
+			return DBProtocolPropertiesUtils.getListaProtocolPropertyConfig(idProprietario,tipologiaProprietario,connection,tipoDatabase, driverBYOK);
 		}
 		catch(NotFoundException e) {
 			throw new DriverConfigurazioneNotFound(e.getMessage(),e);
@@ -614,9 +615,9 @@ public class DriverConfigurazioneDBLib {
 		}
 	}
 	
-	public static ProtocolProperty getProtocolProperty(long id, Connection connection, String tipoDatabase) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+	public static ProtocolProperty getProtocolProperty(long id, Connection connection, String tipoDatabase, IDriverBYOK driverBYOK) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		try {
-			return DBProtocolPropertiesUtils.getProtocolPropertyConfig(id, connection, tipoDatabase);
+			return DBProtocolPropertiesUtils.getProtocolPropertyConfig(id, connection, tipoDatabase, driverBYOK);
 		}
 		catch(NotFoundException e) {
 			throw new DriverConfigurazioneNotFound(e.getMessage(),e);

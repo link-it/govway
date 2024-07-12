@@ -32,13 +32,18 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.Search;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Connettore;
+import org.openspcoop2.core.config.GenericProperties;
+import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.MessageSecurity;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -51,6 +56,8 @@ import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDFruizione;
@@ -72,22 +79,38 @@ import org.openspcoop2.core.registry.ProprietaOggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.beans.GruppoSintetico;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
+import org.openspcoop2.pdd.core.connettori.ConnettoreUtils;
+import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
+import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
+import org.openspcoop2.pdd.core.token.TokenUtilities;
+import org.openspcoop2.pdd.core.token.attribute_authority.AttributeAuthorityUtilities;
+import org.openspcoop2.pdd.core.token.attribute_authority.PolicyAttributeAuthority;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.utils.ModIUtils;
+import org.openspcoop2.security.message.utils.SecurityUtils;
+import org.openspcoop2.utils.certificate.KeystoreParams;
+import org.openspcoop2.web.ctrlstat.core.CertificateChecker;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
@@ -100,7 +123,6 @@ import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.utils.ProprietaOggettoRegistro;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -951,13 +973,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 	
 					// Titolo Servizio
 					DataElement de = new DataElement();			
-					String labelServizio = null;
-					if(gestioneFruitori) {
-						labelServizio = this.getLabelServizioFruizione(protocollo, idSoggettoFruitore, idServizio);
-					}
-					else {
-						labelServizio = this.getLabelServizioErogazione(protocollo, idServizio);
-					}
+					String labelServizio = this.getLabelServizio(idSoggettoFruitore, gestioneFruitori, idServizio, protocollo);
 					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_NOME_SERVIZIO);
 					List<Parameter> listParameters = new ArrayList<>();
 					listParameters.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""));
@@ -1649,21 +1665,11 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		boolean showSoggettoFruitoreInFruizioni = gestioneFruitori &&  this.core.isMultitenant() && 
 				!this.isSoggettoMultitenantSelezionato();
 		
-		String uriASPS = this.idServizioFactory.getUriFromAccordo(asps);
-		
 		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
 		
 		IDSoggetto idSoggettoFruitore = null;
 		if(gestioneFruitori) {
 			idSoggettoFruitore = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
-		}
-		
-		String labelServizioConFruitore = null;
-		if(gestioneFruitori) {
-			labelServizioConFruitore = this.getLabelServizioFruizione(protocollo, idSoggettoFruitore, idServizio);
-		}
-		else {
-			labelServizioConFruitore = this.getLabelServizioErogazione(protocollo, idServizio);
 		}
 		
 		IDServizio idAps = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
@@ -1737,46 +1743,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		// sezione 1 riepilogo
 		List<DataElement> dati = datiPagina.get(0);
 		
-		String idServizioButton = gestioneFruitori ? uriASPS+"@"+fruitore.getTipo()+"/"+fruitore.getNome() : uriASPS;
+		ProprietaOggetto pOggetto = this.creaProprietaOggetto(asps, gestioneFruitori, fruitore, idServizio, idSoggettoFruitore);
 		
-		// In Uso Button
-		this.addComandoInUsoInfoButton(labelServizioConFruitore,
-				idServizioButton,
-				gestioneFruitori ? InUsoType.FRUIZIONE_INFO : InUsoType.EROGAZIONE_INFO);
-		
-		// Verifica Certificati
-		if(showVerificaCertificati) {
-			if(gestioneFruitori) {
-				this.pd.addComandoVerificaCertificatiElementoButton(ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI, listParametersServizioFruitoriModificaProfiloOrVerificaCertificati);
-			}
-			else {
-				this.pd.addComandoVerificaCertificatiElementoButton(ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI, listParametersServizioModificaProfiloOrVerificaCertificati);
-			}
-		}
-		
-		// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
-		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
-			this.pd.addComandoResetCacheElementoButton(ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, listaParametriChange);
-		}
-		
-		// Proprieta Button
-		ProprietaOggetto pOggetto = null;
-		if(gestioneFruitori) {
-			pOggetto = ProprietaOggettoRegistro.mergeProprietaOggetto(fruitore.getProprietaOggetto(), idServizio, idSoggettoFruitore, this.porteDelegateCore, this); 
-		}
-		else {
-			pOggetto = ProprietaOggettoRegistro.mergeProprietaOggetto(asps.getProprietaOggetto(), idServizio, this.porteApplicativeCore, this.saCore, this); 
-		}
-		if(gestioneFruitori
-				&& this.existsProprietaOggetto(pOggetto, fruitore.getDescrizione())) {
-			this.addComandoProprietaOggettoButton(labelServizioConFruitore, idServizioButton, 
-					InUsoType.FRUIZIONE);
-		}
-		else if(!gestioneFruitori &&	
-			this.existsProprietaOggetto(pOggetto, asps.getDescrizione())) {
-			this.addComandoProprietaOggettoButton(labelServizioConFruitore, idServizioButton, 
-					InUsoType.EROGAZIONE);
-		}
+		this.impostaComandiMenuContestuale(asps, protocollo, gestioneFruitori, fruitore,
+				showVerificaCertificati, listaParametriChange,
+				listParametersServizioModificaProfiloOrVerificaCertificati,
+				listParametersServizioFruitoriModificaProfiloOrVerificaCertificati, pOggetto, true, false);
 		
 		
 		// Titolo Servizio
@@ -2671,7 +2643,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 
 		return datiPagina;
 	}
-
+	
 	@SuppressWarnings("unused")
 	private void aggiungiListaConfigurazioni(List<List<DataElement>> datiPagina, ServiceBinding serviceBinding,
 			boolean gestioneErogatori, List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa,
@@ -3307,13 +3279,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		AccordoServizioParteComuneSintetico as = this.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 		ServiceBinding serviceBinding = this.apcCore.toMessageServiceBinding(as.getServiceBinding());
 		
-		String tmpTitle = null;
-		if(gestioneFruitori) {
-			tmpTitle = this.getLabelServizioFruizione(tipoProtocollo, idSoggettoFruitore, idServizio);
-		}
-		else {
-			tmpTitle = this.getLabelServizioErogazione(tipoProtocollo, idServizio);
-		}
+		String tmpTitle = this.getLabelServizio(idSoggettoFruitore, gestioneFruitori, idServizio, tipoProtocollo);
 						
 		List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa = new ArrayList<>();
 		List<PortaApplicativa> listaPorteApplicativeAssociate = new ArrayList<>();
@@ -3431,13 +3397,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
 		String tipoProtocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(asps.getTipoSoggettoErogatore());
 		
-		String tmpTitle = null;
-		if(gestioneFruitori) {
-			tmpTitle = this.getLabelServizioFruizione(tipoProtocollo, idSoggettoFruitore, idServizio);
-		}
-		else {
-			tmpTitle = this.getLabelServizioErogazione(tipoProtocollo, idServizio);
-		}
+		String tmpTitle = this.getLabelServizio(idSoggettoFruitore, gestioneFruitori, idServizio, tipoProtocollo);
 						
 		List<PortaApplicativa> listaPorteApplicativeAssociate = new ArrayList<>();
 		if(gestioneErogatori) {
@@ -3482,39 +3442,9 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		// setto la barra del titolo
 		ServletUtils.setPageDataTitle(this.pd, lstParm );
 
-		String labelServizio = null;
-		if(gestioneFruitori) {
-			labelServizio = this.getLabelServizioFruizione(tipoProtocollo, idSoggettoFruitore, idServizio);
-		}
-		else {
-			labelServizio = this.getLabelServizioErogazione(tipoProtocollo, idServizio);
-		}
+		String labelServizio = getLabelServizio(idSoggettoFruitore, gestioneFruitori, idServizio, tipoProtocollo);
 		
-		// Uso lo stessoAlias
-		List<String> aliases = this.apcCore.getJmxPdDAliases();
-		String alias = null;
-		if(aliases!=null && !aliases.isEmpty()) {
-			alias = aliases.get(0);
-		}
-		
-		long idOjectLong = -1;
-		if(gestioneFruitori) {
-			if(fruitore==null) {
-				throw new DriverControlStationException("Fruitore non trovato");
-			}
-			idOjectLong = fruitore.getId();
-		}
-		else {
-			idOjectLong = asps.getId();
-		}
-		
-		this.apcCore.invokeJmxMethodAllNodesAndSetResult(this.pd, this.apcCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
-				gestioneFruitori ?
-						this.apcCore.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheFruizione(alias) :
-						this.apcCore.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheErogazione(alias),
-				MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_SUCCESSO,labelServizio),
-				MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_FALLITO_PREFIX,labelServizio),
-				idOjectLong);
+		this.eseguiResetCacheAspsOFruitore(asps, gestioneFruitori, fruitore, labelServizio);
 		
 		String resetElementoCacheS = this.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
 		boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
@@ -3568,4 +3498,911 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		}
 	}
 	
+	public void eseguiResetCacheAspsOFruitore(AccordoServizioParteSpecifica asps, boolean gestioneFruitori, Fruitore fruitore, String labelServizio) 
+			throws DriverControlStationException, DriverControlStationNotFound {
+		// Uso lo stessoAlias
+		List<String> aliases = this.apcCore.getJmxPdDAliases();
+		String alias = null;
+		if(aliases!=null && !aliases.isEmpty()) {
+			alias = aliases.get(0);
+		}
+		
+		long idOjectLong = -1;
+		if(gestioneFruitori) {
+			if(fruitore==null) {
+				throw new DriverControlStationException("Fruitore non trovato");
+			}
+			idOjectLong = fruitore.getId();
+		}
+		else {
+			idOjectLong = asps.getId();
+		}
+		
+		this.apcCore.invokeJmxMethodAllNodesAndSetResult(this.pd, this.apcCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+				gestioneFruitori ?
+						this.apcCore.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheFruizione(alias) :
+						this.apcCore.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheErogazione(alias),
+				MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_SUCCESSO,labelServizio),
+				MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_FALLITO_PREFIX,labelServizio),
+				idOjectLong);
+	}
+	
+	public void eseguiResetCacheAspsOFruitore()
+			throws DriverControlStationException, DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverControlStationNotFound {
+		String id = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
+		long idInt  = Long.parseLong(id);
+		AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(idInt);
+		
+		String tipoSoggettoFruitore = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE);
+		String nomeSoggettoFruitore = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE);
+		IDSoggetto idSoggettoFruitore = null;
+		if(tipoSoggettoFruitore!=null && !"".equals(tipoSoggettoFruitore) &&
+				nomeSoggettoFruitore!=null && !"".equals(nomeSoggettoFruitore)) {
+			idSoggettoFruitore = new IDSoggetto(tipoSoggettoFruitore, nomeSoggettoFruitore);
+		}
+		
+		String tipologia = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+		boolean gestioneFruitori = false;
+		if(tipologia!=null && AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+			gestioneFruitori = true;
+		}
+		
+		Fruitore fruitore = null;
+		if(gestioneFruitori && idSoggettoFruitore != null) {
+			// In questa modalità ci deve essere un fruitore indirizzato
+			for (Fruitore check : asps.getFruitoreList()) {
+				if(check.getTipo().equals(idSoggettoFruitore.getTipo()) && check.getNome().equals(idSoggettoFruitore.getNome())) {
+					fruitore = check;
+					break;
+				}
+			}
+		}
+		
+		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+		String tipoProtocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(asps.getTipoSoggettoErogatore());
+		String labelServizio = this.getLabelServizio(idSoggettoFruitore, gestioneFruitori, idServizio, tipoProtocollo);
+		this.eseguiResetCacheAspsOFruitore(asps, gestioneFruitori, fruitore, labelServizio);
+	}
+	
+	public boolean estraiElencoInvocazioni(boolean soloModI,
+			AccordoServizioParteSpecifica asps, IDSoggetto idSoggettoFruitore, boolean gestioneFruitori,
+			Fruitore fruitore, IDServizio idServizio, String tipoProtocollo, String nomeApiImpl,
+			List<String> listConnettoriRegistrati, List<String> listPosizioneConnettoriRegistrati,
+			List<org.openspcoop2.core.registry.Connettore> listConnettoriRegistry,
+			List<org.openspcoop2.core.config.Connettore> listConnettoriConfig, List<String> listTokenPolicyValidazione,
+			List<GestioneToken> listTokenPolicyValidazioneConf, List<String> listPosizioneTokenPolicyValidazione,
+			List<String> listTokenPolicyNegoziazione, List<String> listPosizioneTokenPolicyNegoziazione,
+			List<String> listAttributeAuthority, List<String> listPosizioneAttributeAuthority)
+			throws ProtocolException, DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		boolean findConnettoreHttpConPrefissoHttps = false;
+		if(!soloModI) {
+			
+			if(gestioneFruitori) {
+				
+				boolean connettoreStatic = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo).createProtocolVersionManager(null).isStaticRoute();
+										
+				List<MappingFruizionePortaDelegata> listaMappingFruizionePortaDelegata = this.apsCore.serviziFruitoriMappingList(fruitore.getId(), idSoggettoFruitore, idServizio, null);
+				for(MappingFruizionePortaDelegata mappingFruizione : listaMappingFruizionePortaDelegata) {
+					PortaDelegata porta = this.porteDelegateCore.getPortaDelegata(mappingFruizione.getIdPortaDelegata());
+					
+					// solo le porte applicative abilitate 
+					if(StatoFunzionalita.DISABILITATO.equals(porta.getStato())) {
+						continue;
+					}
+					
+					String suffixGruppo = "";
+					if(!mappingFruizione.isDefault()) {
+						suffixGruppo = org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+						"Gruppo: "+mappingFruizione.getDescrizione();
+					}
+					String nomeFruizione = nomeApiImpl+suffixGruppo;
+					
+					if(porta.getGestioneToken()!=null && porta.getGestioneToken().getPolicy()!=null && !listTokenPolicyValidazione.contains(porta.getGestioneToken().getPolicy())) {
+						listTokenPolicyValidazione.add(porta.getGestioneToken().getPolicy());
+						listTokenPolicyValidazioneConf.add(porta.getGestioneToken());
+						listPosizioneTokenPolicyValidazione.add(nomeFruizione+
+								org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+								"Token Policy Validazione: "+porta.getGestioneToken().getPolicy());
+					}
+					if(porta.sizeAttributeAuthorityList()>0) {
+						for (AttributeAuthority aa : porta.getAttributeAuthorityList()) {
+							if(!listAttributeAuthority.contains(aa.getNome())) {
+								listAttributeAuthority.add(aa.getNome());
+								listPosizioneAttributeAuthority.add(nomeFruizione+
+										org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+										"Attribute Authority: "+aa.getNome());
+							}
+						}
+					}
+					
+					if(!connettoreStatic) {
+						org.openspcoop2.core.registry.Connettore connettore = null;
+						if(mappingFruizione.isDefault()) {
+							connettore = fruitore.getConnettore();
+						}
+						else {
+							if(porta.getAzione()!=null && porta.getAzione().sizeAzioneDelegataList()>0) {
+								for (String az : porta.getAzione().getAzioneDelegataList()) {
+									for(ConfigurazioneServizioAzione config : fruitore.getConfigurazioneAzioneList()) {
+										if(config.getAzioneList().contains(az)) {
+											connettore = config.getConnettore();
+											break;
+										}
+									}
+									if(connettore!=null) {
+										break;
+									}
+								}
+							}
+						}
+						
+						if(connettore!=null) {
+							TipiConnettore tipo = TipiConnettore.toEnumFromName(connettore.getTipo());
+							if( (!findConnettoreHttpConPrefissoHttps && TipiConnettore.HTTP.equals(tipo)) 
+									|| 
+								TipiConnettore.HTTPS.equals(tipo) ) {
+								
+								String nomeConnettore = connettore.getNome();
+								if(listConnettoriRegistrati.contains(nomeConnettore)) {
+									continue;
+								}
+								
+								String tokenPolicy = ConnettoreUtils.getNegoziazioneTokenPolicyConnettore(connettore);
+								if(tokenPolicy!=null && StringUtils.isNotEmpty(tokenPolicy) && !listTokenPolicyNegoziazione.contains(tokenPolicy)) {
+									listTokenPolicyNegoziazione.add(tokenPolicy);
+									listPosizioneTokenPolicyNegoziazione.add(nomeFruizione + 
+											org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+											"Token Policy Negoziazione: "+tokenPolicy);
+								}
+								
+								if( TipiConnettore.HTTP.equals(tipo) ) {
+									String endpoint = ConnettoreUtils.getEndpointConnettore(connettore, false);
+									if(endpoint!=null) {
+										findConnettoreHttpConPrefissoHttps = endpoint.trim().startsWith("https");
+									}
+								}
+								else {
+									listConnettoriRegistry.add(connettore);
+									listConnettoriRegistrati.add(nomeConnettore);
+									listPosizioneConnettoriRegistrati.add(nomeFruizione);
+								}
+							}
+						}
+					}
+				}
+			}
+			else {
+				List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa = this.apsCore.mappingServiziPorteAppList(idServizio,asps.getId(), null);
+				for(MappingErogazionePortaApplicativa mappingErogazione : listaMappingErogazionePortaApplicativa) {
+					PortaApplicativa porta = this.porteApplicativeCore.getPortaApplicativa(mappingErogazione.getIdPortaApplicativa());
+					
+					// solo le porte applicative abilitate 
+					if(StatoFunzionalita.DISABILITATO.equals(porta.getStato())) {
+						continue;
+					}
+					
+					String suffixGruppo = "";
+					if(!mappingErogazione.isDefault()) {
+						suffixGruppo = org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+								"Gruppo: "+mappingErogazione.getDescrizione();
+					}
+					String nomeErogazione = nomeApiImpl+suffixGruppo;
+					
+					if(porta.getGestioneToken()!=null && porta.getGestioneToken().getPolicy()!=null && !listTokenPolicyValidazione.contains(porta.getGestioneToken().getPolicy())) {
+						listTokenPolicyValidazione.add(porta.getGestioneToken().getPolicy());
+						listTokenPolicyValidazioneConf.add(porta.getGestioneToken());
+						listPosizioneTokenPolicyValidazione.add(nomeErogazione+
+								org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+								"Token Policy Validazione: "+porta.getGestioneToken().getPolicy());
+					}
+					if(porta.sizeAttributeAuthorityList()>0) {
+						for (AttributeAuthority aa : porta.getAttributeAuthorityList()) {
+							if(!listAttributeAuthority.contains(aa.getNome())) {
+								listAttributeAuthority.add(aa.getNome());
+								listPosizioneAttributeAuthority.add(nomeErogazione+
+									org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+									"Attribute Authority: "+aa.getNome());
+							}
+						}
+					}
+					
+					boolean connettoreMultiploEnabled = porta.getBehaviour() != null;
+					
+					for (PortaApplicativaServizioApplicativo paSA : porta.getServizioApplicativoList()) {
+						IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+						idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(porta.getTipoSoggettoProprietario(), porta.getNomeSoggettoProprietario()));
+						idServizioApplicativo.setNome(paSA.getNome());
+						ServizioApplicativo sa = this.saCore.getServizioApplicativo(idServizioApplicativo);
+						
+						InvocazioneServizio is = sa.getInvocazioneServizio();
+						if(is!=null) {
+							org.openspcoop2.core.config.Connettore connettore = is.getConnettore();
+							if(connettore!=null) {
+								TipiConnettore tipo = TipiConnettore.toEnumFromName(connettore.getTipo());
+								if( (!findConnettoreHttpConPrefissoHttps && TipiConnettore.HTTP.equals(tipo)) 
+										|| 
+									TipiConnettore.HTTPS.equals(tipo) ) {
+									
+									String nomeConnettore = connettore.getNome();
+									if(listConnettoriRegistrati.contains(nomeConnettore)) {
+										continue;
+									}
+									
+									if(connettoreMultiploEnabled && paSA.getDatiConnettore()!=null &&
+										// solo le porte applicative abilitate 
+										StatoFunzionalita.DISABILITATO.equals(paSA.getDatiConnettore().getStato())) {
+										continue;
+									}
+									
+									String nomeErogazioneConnettore = nomeErogazione;
+									if(connettoreMultiploEnabled && paSA.getDatiConnettore()!=null &&
+										paSA.getDatiConnettore().getNome()!=null) {
+										nomeErogazioneConnettore = nomeErogazioneConnettore + 
+												org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+												"Connettore Multiplo: "+paSA.getDatiConnettore().getNome();
+									}
+									
+									String tokenPolicy = ConnettoreUtils.getNegoziazioneTokenPolicyConnettore(connettore);
+									if(tokenPolicy!=null && StringUtils.isNotEmpty(tokenPolicy) && !listTokenPolicyNegoziazione.contains(tokenPolicy)) {
+										listTokenPolicyNegoziazione.add(tokenPolicy);
+										listPosizioneTokenPolicyNegoziazione.add(nomeErogazioneConnettore +
+												org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+												"Token Policy Negoziazione: "+tokenPolicy);
+									}
+									
+									if( TipiConnettore.HTTP.equals(tipo) ) {
+										String endpoint = ConnettoreUtils.getEndpointConnettore(connettore, false);
+										if(endpoint!=null) {
+											findConnettoreHttpConPrefissoHttps = endpoint.trim().startsWith("https");
+										}
+									}
+									else {
+										listConnettoriConfig.add(connettore);
+										listConnettoriRegistrati.add(nomeConnettore);
+										listPosizioneConnettoriRegistrati.add(nomeErogazioneConnettore);
+									}
+								}
+							}
+						}
+					}
+									
+				}
+			}
+		}
+		return findConnettoreHttpConPrefissoHttps;
+	}
+	
+	public void eseguiVerificaCertificati(AccordoServizioParteSpecifica asps, String alias, boolean gestioneFruitori,
+			Fruitore fruitore, List<String> aliases, String nomeApiImpl, boolean sicurezzaModi, boolean messageSecurity,
+			List<String> listConnettoriRegistrati, List<String> listPosizioneConnettoriRegistrati,
+			List<org.openspcoop2.core.registry.Connettore> listConnettoriRegistry,
+			List<org.openspcoop2.core.config.Connettore> listConnettoriConfig, List<String> listTokenPolicyValidazione,
+			List<GestioneToken> listTokenPolicyValidazioneConf, List<String> listPosizioneTokenPolicyValidazione,
+			List<String> listTokenPolicyNegoziazione, List<String> listPosizioneTokenPolicyNegoziazione,
+			List<String> listAttributeAuthority, List<String> listPosizioneAttributeAuthority,
+			boolean findConnettoreHttpConPrefissoHttps, boolean sceltaClusterId)
+			throws Exception {
+		if(alias==null && !sceltaClusterId) {
+			alias = CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI;
+		}
+												
+		// -- verifica
+		List<String> aliasesForCheck = new ArrayList<>();
+		boolean all = false;
+		if(aliases.size()==1) {
+			aliasesForCheck.add(aliases.get(0));
+		}
+		else if(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI.equals(alias)) {
+			aliasesForCheck.addAll(aliases);
+			all = true;
+		}
+		else {
+			aliasesForCheck.add(alias);
+		}
+		
+		CertificateChecker certificateChecker = null;
+		if(all) {
+			certificateChecker = this.apsCore.getJmxPdDCertificateChecker();
+		}
+		else {
+			certificateChecker = this.apsCore.newJmxPdDCertificateChecker(aliasesForCheck);
+		}
+		StringBuilder sbDetailsError = new StringBuilder(); 
+		
+		int sogliaWarningGiorni = this.apsCore.getVerificaCertificatiWarningExpirationDays();
+		
+		String posizioneErrore = null;
+		String extraErrore = null;
+		
+		// verifica modi
+		StringBuilder sbDetailsWarningModi = new StringBuilder();
+		String posizioneWarningModi = null;
+		if(sicurezzaModi) {
+			if(gestioneFruitori) {
+				org.openspcoop2.core.registry.Connettore connettore = null;
+				certificateChecker.checkFruizione(sbDetailsError, sbDetailsWarningModi,
+						false, connettore,
+						sicurezzaModi, 
+						false,
+						asps, fruitore,
+						sogliaWarningGiorni);
+			}
+			else {
+				org.openspcoop2.core.config.Connettore connettore = null;
+				certificateChecker.checkErogazione(sbDetailsError, sbDetailsWarningModi,
+						false, connettore,
+						sicurezzaModi, 
+						false,
+						asps,
+						sogliaWarningGiorni);
+			}
+			if(sbDetailsError.length()>0) {
+				posizioneErrore = nomeApiImpl;
+			}
+			else if(sbDetailsWarningModi.length()>0) {
+				posizioneWarningModi = nomeApiImpl;
+			}
+		}
+				
+		// verifica connettori https
+		StringBuilder sbDetailsWarningConnettoriHttps = new StringBuilder(); 
+		String posizioneWarningConnettoriHttps = null;
+		boolean connettoreSsl = !listConnettoriRegistrati.isEmpty();
+		if(sbDetailsError.length()<=0 && connettoreSsl) {
+			if(gestioneFruitori) {
+				for (int i = 0; i < listConnettoriRegistry.size(); i++) {
+					org.openspcoop2.core.registry.Connettore connettore = listConnettoriRegistry.get(i);
+					String posizione = listPosizioneConnettoriRegistrati.get(i);
+					
+					StringBuilder sbDetailsWarningConnettoriHttpsSecured = new StringBuilder(); 
+					certificateChecker.checkFruizione(sbDetailsError, sbDetailsWarningConnettoriHttpsSecured,
+							connettoreSsl, connettore,
+							false, 
+							false,
+							asps, fruitore,
+							sogliaWarningGiorni);
+					if(sbDetailsError.length()>0) {
+						posizioneErrore = posizione;
+						break;
+					}
+					else if(sbDetailsWarningConnettoriHttps.length()<=0 && sbDetailsWarningConnettoriHttpsSecured.length()>0) {
+						posizioneWarningModi = nomeApiImpl;
+						sbDetailsWarningConnettoriHttps.append(sbDetailsWarningConnettoriHttpsSecured.toString());
+					}
+				}
+			}
+			else {
+				for (int i = 0; i < listConnettoriConfig.size(); i++) {
+					org.openspcoop2.core.config.Connettore connettore = listConnettoriConfig.get(i); 
+					String posizione = listPosizioneConnettoriRegistrati.get(i);
+					
+					StringBuilder sbDetailsWarningConnettoriHttpsSecured = new StringBuilder(); 
+					certificateChecker.checkErogazione(sbDetailsError, sbDetailsWarningConnettoriHttpsSecured,
+							connettoreSsl, connettore,
+							false, 
+							false,
+							asps,
+							sogliaWarningGiorni);
+					if(sbDetailsError.length()>0) {
+						posizioneErrore = posizione;
+						break;
+					}
+					else if(sbDetailsWarningConnettoriHttps.length()<=0 && sbDetailsWarningConnettoriHttpsSecured.length()>0) {
+						posizioneWarningModi = nomeApiImpl;
+						sbDetailsWarningConnettoriHttps.append(sbDetailsWarningConnettoriHttpsSecured.toString()); // tengo solo un warning alla volta, come per gli errori
+					}
+				}
+			}
+		}
+										
+		// verifica token policy validazione
+		StringBuilder sbDetailsWarningTokenPolicyValidazione = new StringBuilder(); 
+		String posizioneWarningTokenPolicyValidazione = null;
+		if(sbDetailsError.length()<=0 && listTokenPolicyValidazione!=null && !listTokenPolicyValidazione.isEmpty()) {
+			for (int j = 0; j < listTokenPolicyValidazione.size(); j++) {
+				GestioneToken policy = listTokenPolicyValidazioneConf.get(j);
+				String posizione = listPosizioneTokenPolicyValidazione.get(j);
+				GenericProperties gp = this.confCore.getGenericProperties(policy.getPolicy(), org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, false);
+				if(gp!=null) {
+					PolicyGestioneToken policyToken = TokenUtilities.convertTo(gp, policy);
+					boolean httpsDynamicDiscovery = policyToken.isDynamicDiscovery();
+					boolean httpsValidazioneJwt = false;
+					boolean httpsIntrospection = false;
+					boolean httpsUserInfo = false;
+					boolean validazioneJwt = false;
+					if(!policyToken.isDynamicDiscovery()) {
+						httpsValidazioneJwt = policyToken.isValidazioneJWT() && policyToken.isValidazioneJWTLocationHttp();
+						httpsIntrospection = policyToken.isIntrospection();
+						httpsUserInfo = policyToken.isUserInfo();
+						validazioneJwt = policyToken.isValidazioneJWT();
+					}
+					boolean forwardToJwt = policyToken.isForwardToken();
+					
+					if(httpsDynamicDiscovery &&
+						!policyToken.isEndpointHttps(false, false)) {
+						httpsDynamicDiscovery = false;
+						
+						String endpoint = policyToken.getDynamicDiscoveryEndpoint();
+						if(endpoint!=null && StringUtils.isNotEmpty(endpoint) &&
+							!findConnettoreHttpConPrefissoHttps) {
+							findConnettoreHttpConPrefissoHttps = endpoint.trim().startsWith("https");
+						}
+					}
+					if(httpsValidazioneJwt &&
+						!policyToken.isEndpointHttps(false, false)) {
+						httpsValidazioneJwt = false;
+						
+						String endpoint = policyToken.getValidazioneJWTLocation();
+						if(endpoint!=null && StringUtils.isNotEmpty(endpoint) &&
+							!findConnettoreHttpConPrefissoHttps) {
+							findConnettoreHttpConPrefissoHttps = endpoint.trim().startsWith("https");
+						}
+					}
+					if(httpsIntrospection &&
+						!policyToken.isEndpointHttps(true,false)) {
+						httpsIntrospection = false;
+						
+						String endpoint = policyToken.getIntrospectionEndpoint();
+						if(endpoint!=null && StringUtils.isNotEmpty(endpoint) &&
+							!findConnettoreHttpConPrefissoHttps) {
+							findConnettoreHttpConPrefissoHttps = endpoint.trim().startsWith("https");
+						}
+					}
+					if(httpsUserInfo &&
+						!policyToken.isEndpointHttps(false,true)) {
+						httpsUserInfo = false;
+						
+						String endpoint = policyToken.getUserInfoEndpoint();
+						if(endpoint!=null && StringUtils.isNotEmpty(endpoint) &&
+							!findConnettoreHttpConPrefissoHttps) {
+							findConnettoreHttpConPrefissoHttps = endpoint.trim().startsWith("https");
+						}
+					}
+					
+					if(validazioneJwt) {
+						try {
+							String tokenType = policyToken.getTipoToken();
+							KeystoreParams keystoreParams = null;
+							if(org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_TYPE_JWS.equals(tokenType) ||
+									org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_TYPE_JWE.equals(tokenType)) {
+								keystoreParams = TokenUtilities.getValidazioneJwtKeystoreParams(policyToken);
+							}
+							if(keystoreParams==null) {
+								validazioneJwt = false;
+							}
+						}catch(Exception t) {
+							throw new DriverConfigurazioneException(t.getMessage(),t);
+						}
+					}
+					
+					if(forwardToJwt) {
+						try {
+							KeystoreParams keystoreParams = null;
+							if(policyToken.isForwardTokenInformazioniRaccolte()) {
+								String forwardInformazioniRaccolteMode = policyToken.getForwardTokenInformazioniRaccolteMode();
+								if(org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS.equals(forwardInformazioniRaccolteMode) ||
+										org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS.equals(forwardInformazioniRaccolteMode) ||
+										org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(forwardInformazioniRaccolteMode)) {
+									keystoreParams = TokenUtilities.getForwardToJwtKeystoreParams(policyToken);
+					    		}
+							}
+							if(keystoreParams==null) {
+								forwardToJwt = false;
+							}
+						}catch(Exception t) {
+							throw new DriverConfigurazioneException(t.getMessage(),t);
+						}
+					}
+					
+					if(httpsIntrospection || httpsUserInfo || validazioneJwt || forwardToJwt) {
+						StringBuilder sbDetailsWarningTokenPolicyValidazioneSecured = new StringBuilder(); 
+						certificateChecker.checkTokenPolicyValidazione(sbDetailsError, sbDetailsWarningTokenPolicyValidazioneSecured, 
+								httpsDynamicDiscovery, httpsValidazioneJwt, httpsIntrospection, httpsUserInfo, 
+								validazioneJwt, forwardToJwt,
+								gp,
+								sogliaWarningGiorni);
+						if(sbDetailsWarningTokenPolicyValidazione.length()<=0 && sbDetailsWarningTokenPolicyValidazioneSecured.length()>0) {
+							posizioneWarningTokenPolicyValidazione = posizione;
+							sbDetailsWarningTokenPolicyValidazione.append(sbDetailsWarningTokenPolicyValidazioneSecured.toString()); // tengo solo un warning alla volta, come per gli errori
+						}
+					}
+				}
+				if(sbDetailsError.length()>0) {
+					posizioneErrore = posizione;
+					break;
+				}
+			}
+		}
+		
+		// verifica token policy negoziazione
+		StringBuilder sbDetailsWarningTokenPolicyNegoziazione = new StringBuilder(); 
+		String posizioneWarningTokenPolicyNegoziazione = null;
+		if(sbDetailsError.length()<=0 && listTokenPolicyNegoziazione!=null && !listTokenPolicyNegoziazione.isEmpty()) {
+			for (int j = 0; j < listTokenPolicyNegoziazione.size(); j++) {
+				String policy = listTokenPolicyNegoziazione.get(j);
+				String posizione = listPosizioneTokenPolicyNegoziazione.get(j);
+				GenericProperties gp = this.confCore.getGenericProperties(policy, org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA_RETRIEVE, false);
+				if(gp!=null) {
+					PolicyNegoziazioneToken policyNegoziazione = TokenUtilities.convertTo(gp);
+					
+					boolean https = false;
+					String endpoint = policyNegoziazione.getEndpoint();
+					if(StringUtils.isNotEmpty(endpoint)) {
+						if(policyNegoziazione.isEndpointHttps()) {
+							https = true;
+						}
+						else if(endpoint!=null && !findConnettoreHttpConPrefissoHttps) {
+							findConnettoreHttpConPrefissoHttps = endpoint.trim().startsWith("https");
+						}
+					}
+														
+					boolean signedJwt = false;
+					KeystoreParams keystoreParams = null;
+					try {
+						if(policyNegoziazione.isRfc7523x509Grant()) {
+							// JWS Compact   			
+							keystoreParams = TokenUtilities.getSignedJwtKeystoreParams(policyNegoziazione);
+						}
+					}catch(Exception t) {
+						throw new DriverConfigurazioneException(t.getMessage(),t);
+					}
+					
+					boolean riferimentoApplicativoModi = keystoreParams!=null && org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath());
+					boolean riferimentoFruizioneModi = keystoreParams!=null && org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equalsIgnoreCase(keystoreParams.getPath());
+					if(keystoreParams!=null &&
+							!riferimentoApplicativoModi &&
+							!riferimentoFruizioneModi) {
+						signedJwt = true;
+					}
+					
+					if(https || signedJwt) {
+						StringBuilder sbDetailsWarningTokenPolicyNegoziazioneSecured = new StringBuilder(); 
+						certificateChecker.checkTokenPolicyNegoziazione(sbDetailsError, sbDetailsWarningTokenPolicyNegoziazioneSecured,
+							https, signedJwt,
+							gp,
+							sogliaWarningGiorni);
+						if(sbDetailsWarningTokenPolicyNegoziazione.length()<=0 && sbDetailsWarningTokenPolicyNegoziazioneSecured.length()>0) {
+							posizioneWarningTokenPolicyNegoziazione = posizione;
+							sbDetailsWarningTokenPolicyNegoziazione.append(sbDetailsWarningTokenPolicyNegoziazioneSecured.toString()); // tengo solo un warning alla volta, come per gli errori
+						}
+					}
+				}
+				if(sbDetailsError.length()>0) {
+					posizioneErrore = posizione;
+					break;
+				}
+			}
+		}
+		
+		// attribute authority
+		StringBuilder sbDetailsWarningAttributeAuthority = new StringBuilder(); 
+		String posizioneWarningAttributeAuthority = null;
+		if(sbDetailsError.length()<=0 && listAttributeAuthority!=null && !listAttributeAuthority.isEmpty()) {
+			for (int j = 0; j < listAttributeAuthority.size(); j++) {
+				String aa = listAttributeAuthority.get(j);
+				String posizione = listPosizioneAttributeAuthority.get(j);
+				GenericProperties gp = this.confCore.getGenericProperties(aa, org.openspcoop2.pdd.core.token.Costanti.ATTRIBUTE_AUTHORITY, false);
+				if(gp!=null) {
+					PolicyAttributeAuthority policyAA = AttributeAuthorityUtilities.convertTo(gp);
+					
+					boolean https = false;
+					String endpoint = policyAA.getEndpoint();
+					if(StringUtils.isNotEmpty(endpoint)) {
+						if(policyAA.isEndpointHttps()) {
+							https = true;
+						}
+						else if(endpoint!=null && !findConnettoreHttpConPrefissoHttps) {
+							findConnettoreHttpConPrefissoHttps = endpoint.trim().startsWith("https");
+						}
+					}
+														
+					boolean jwtRichiesta = false;
+					try {
+						KeystoreParams keystoreParams = null;
+						if(policyAA.isRequestJws()) {
+							// JWS Compact   			
+							keystoreParams = AttributeAuthorityUtilities.getRequestJwsKeystoreParams(policyAA);
+						}
+						if(keystoreParams!=null) {
+							jwtRichiesta = true;
+						}
+					}catch(Exception t) {
+						throw new DriverConfigurazioneException(t.getMessage(),t);
+					}
+					
+					boolean jwtRisposta = false;
+					try {
+						KeystoreParams truststoreParams = null;
+						if(policyAA.isResponseJws()) {
+							// JWS Compact   			
+							truststoreParams = AttributeAuthorityUtilities.getResponseJwsKeystoreParams(policyAA);
+						}
+						if(truststoreParams!=null) {
+							jwtRisposta = true;
+						}
+					}catch(Exception t) {
+						throw new DriverConfigurazioneException(t.getMessage(),t);
+					}
+					
+					if(https || jwtRichiesta || jwtRisposta) {
+						StringBuilder sbDetailsWarningAttributeAuthorityDebug = new StringBuilder(); 
+						certificateChecker.checkAttributeAuthority(sbDetailsError, sbDetailsWarningAttributeAuthorityDebug,
+							https, jwtRichiesta, jwtRisposta,
+							gp,
+							sogliaWarningGiorni);
+						if(sbDetailsWarningAttributeAuthority.length()<=0 && sbDetailsWarningAttributeAuthorityDebug.length()>0) {
+							posizioneWarningAttributeAuthority = posizione;
+							sbDetailsWarningAttributeAuthority.append(sbDetailsWarningAttributeAuthorityDebug.toString()); // tengo solo un warning alla volta, come per gli errori
+						}
+					}
+				}
+				if(sbDetailsError.length()>0) {
+					posizioneErrore = posizione;
+					break;
+				}
+			}
+		}
+				
+		// verifica certificati jvm
+		StringBuilder sbDetailsWarningCertificatiJvm = new StringBuilder(); 
+		String posizioneWarningCertificatiJvm = null;
+		String extraWarningCertificatiJvm = null;
+		if(sbDetailsError.length()<=0 && findConnettoreHttpConPrefissoHttps) {
+			certificateChecker.checkConfigurazioneJvm(sbDetailsError, sbDetailsWarningCertificatiJvm, sogliaWarningGiorni);
+			if(sbDetailsError.length()>0) {
+				posizioneErrore = nomeApiImpl;
+				extraErrore = "Configurazione https nella JVM";
+			}
+			else if(sbDetailsWarningCertificatiJvm.length()>0) {
+				posizioneWarningCertificatiJvm = nomeApiImpl;
+				extraWarningCertificatiJvm = "Configurazione https nella JVM";
+			}
+		}
+		
+		// lasciare in ultima posizione poichè non viene generato un id univoco per poi formattare l'output
+		// verifica message security
+		StringBuilder sbDetailsWarningMessageSecurity = new StringBuilder();
+		String posizioneWarningMessageSecurity = null;
+		if(sbDetailsError.length()<=0 && messageSecurity) {
+			if(gestioneFruitori) {
+				org.openspcoop2.core.registry.Connettore connettore = null;
+				certificateChecker.checkFruizione(sbDetailsError, sbDetailsWarningMessageSecurity,
+						false, connettore,
+						false,
+						messageSecurity,
+						asps, fruitore,
+						sogliaWarningGiorni);
+			}
+			else {
+				org.openspcoop2.core.config.Connettore connettore = null;
+				certificateChecker.checkErogazione(sbDetailsError, sbDetailsWarningMessageSecurity,
+						false, connettore,
+						false,
+						messageSecurity,
+						asps,
+						sogliaWarningGiorni);
+			}
+			if(sbDetailsError.length()>0) {
+				posizioneErrore = nomeApiImpl;
+			}
+			else if(sbDetailsWarningMessageSecurity.length()>0) {
+				posizioneWarningMessageSecurity = nomeApiImpl;
+			}
+		}
+		
+		// analisi warning
+		String warning = null;
+		String posizioneWarning = null;
+		String extraWarning = null;
+		if(sbDetailsError.length()<=0) {
+			if(sbDetailsWarningModi.length()>0) {
+				warning = sbDetailsWarningModi.toString();
+				posizioneWarning = posizioneWarningModi;
+			}
+			else if(sbDetailsWarningConnettoriHttps.length()>0) {
+				warning = sbDetailsWarningConnettoriHttps.toString();
+				posizioneWarning = posizioneWarningConnettoriHttps;
+			}
+			else if(sbDetailsWarningTokenPolicyValidazione.length()>0) {
+				warning = sbDetailsWarningTokenPolicyValidazione.toString();
+				posizioneWarning = posizioneWarningTokenPolicyValidazione;
+			}
+			else if(sbDetailsWarningTokenPolicyNegoziazione.length()>0) {
+				warning = sbDetailsWarningTokenPolicyNegoziazione.toString();
+				posizioneWarning = posizioneWarningTokenPolicyNegoziazione;
+			}
+			else if(sbDetailsWarningAttributeAuthority.length()>0) {
+				warning = sbDetailsWarningAttributeAuthority.toString();
+				posizioneWarning = posizioneWarningAttributeAuthority;
+			}
+			else if(sbDetailsWarningCertificatiJvm.length()>0) {
+				warning = sbDetailsWarningCertificatiJvm.toString();
+				posizioneWarning = posizioneWarningCertificatiJvm;
+				extraWarning = extraWarningCertificatiJvm;
+			}
+			else if(sbDetailsWarningMessageSecurity.length()>0) {
+				warning = sbDetailsWarningMessageSecurity.toString();
+				posizioneWarning = posizioneWarningMessageSecurity;
+			}
+		}
+									
+		// esito
+		List<String> formatIds = new ArrayList<>();
+		formatIds.add(RegistroServiziReader.ID_CONFIGURAZIONE_CONNETTORE_HTTPS);
+		formatIds.add(RegistroServiziReader.ID_CONFIGURAZIONE_FIRMA_MODI);
+		formatIds.add(ConfigurazionePdDReader.ID_CONFIGURAZIONE_TOKEN_VALIDAZIONE_JWT);
+		formatIds.add(ConfigurazionePdDReader.ID_CONFIGURAZIONE_TOKEN_VALIDAZIONE_FORWARD_TO_JWT);
+		formatIds.add(ConfigurazionePdDReader.ID_CONFIGURAZIONE_TOKEN_NEGOZIAZIONE_SIGNED_JWT);
+		formatIds.add(ConfigurazionePdDReader.ID_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_JWT_RICHIESTA);
+		formatIds.add(ConfigurazionePdDReader.ID_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_JWT_RISPOSTA);
+		//formatIds.add(ConfigurazionePdDReader.ID_CONFIGURAZIONE_RICHIESTA_MESSAGE_SECURITY); // lasciare in ultima posizione poichè non viene generato un id univoco
+		this.apsCore.formatVerificaCertificatiEsito(this.pd, formatIds, 
+				(sbDetailsError.length()>0 ? sbDetailsError.toString() : null), extraErrore, posizioneErrore,
+				warning, extraWarning, posizioneWarning,
+				false);
+	}
+	
+	public boolean eseguiVerificaCertificati(boolean soloModI,
+			AccordoServizioParteSpecifica asps, IDSoggetto idSoggettoFruitore, String alias, boolean gestioneFruitori,
+			boolean gestioneErogatori, Fruitore fruitore, IDServizio idServizio, String tipoProtocollo,
+			List<DataElement> dati) throws Exception {
+		
+		// Prendo la lista di aliases
+		List<String> aliases = this.apsCore.getJmxPdDAliases();
+		if(aliases==null || aliases.isEmpty()){
+			throw new CoreException("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
+		}
+		
+		// -- raccolgo dati
+		String nomeApiImpl = this.getLabelServizio(idSoggettoFruitore, gestioneFruitori, idServizio, tipoProtocollo);
+		
+		IDServizio idAps = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+		IDSoggetto idFruitore = null;
+		if(gestioneFruitori) {
+			idFruitore = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
+		}
+		
+		boolean modi = this.apsCore.isProfiloModIPA(tipoProtocollo);
+		boolean sicurezzaModi = false;
+		if(modi) {
+			idAps.setPortType(asps.getPortType());
+			idAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
+			IConsoleDynamicConfiguration consoleDynamicConfiguration = protocolFactory.createDynamicConfigurationConsole();
+			IRegistryReader registryReader = this.apsCore.getRegistryReader(protocolFactory); 
+			IConfigIntegrationReader configRegistryReader = this.apsCore.getConfigIntegrationReader(protocolFactory);
+			ConsoleConfiguration consoleConfiguration = null;
+			if(!gestioneFruitori) {
+				consoleConfiguration = consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType.CHANGE, this, 
+						registryReader, configRegistryReader, idAps );
+			}
+			else {
+				IDFruizione idFruizioneObject = new IDFruizione();
+				idFruizioneObject.setIdServizio(idAps);
+				idFruizioneObject.setIdFruitore(idFruitore);
+				consoleConfiguration = consoleDynamicConfiguration.getDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleOperationType.CHANGE, this,  
+						registryReader, configRegistryReader, idFruizioneObject);
+			}
+			if(consoleConfiguration!=null && consoleConfiguration.getConsoleItem()!=null && !consoleConfiguration.getConsoleItem().isEmpty()) {
+				sicurezzaModi = true;
+			}
+			if(sicurezzaModi) {
+				boolean includeRemoteStore = false;
+				boolean checkModeFruizioneKeystoreId = gestioneFruitori;
+				if(gestioneFruitori && fruitore.sizeProtocolPropertyList()>0) {
+					sicurezzaModi = ModIUtils.existsStoreConfig(fruitore.getProtocolPropertyList(), includeRemoteStore, checkModeFruizioneKeystoreId);
+				}
+				else if(gestioneErogatori && asps.sizeProtocolPropertyList()>0) {
+					sicurezzaModi = ModIUtils.existsStoreConfig(asps.getProtocolPropertyList(), includeRemoteStore, checkModeFruizioneKeystoreId);
+				}
+			}
+		}
+		
+		boolean messageSecurity = false;
+		if(gestioneFruitori) {
+			List<MappingFruizionePortaDelegata> list = this.apsCore.serviziFruitoriMappingList(idFruitore,idServizio, new Search(true)); 
+			if(list!=null && !list.isEmpty()) {
+				for (MappingFruizionePortaDelegata mappingFruizionePortaDelegata : list) {
+					PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(mappingFruizionePortaDelegata.getIdPortaDelegata());
+					List<KeystoreParams> listKeystoreParams = SecurityUtils.readRequestKeystoreParams(pd);
+					if(listKeystoreParams!=null && !listKeystoreParams.isEmpty()) {
+						messageSecurity = true;
+						break;
+					}
+					listKeystoreParams = SecurityUtils.readResponseKeystoreParams(pd);
+					if(listKeystoreParams!=null && !listKeystoreParams.isEmpty()) {
+						messageSecurity = true;
+						break;
+					}
+				}
+			}
+		}
+		else {
+			List<MappingErogazionePortaApplicativa> list = this.apsCore.mappingServiziPorteAppList(idServizio, new Search(true)); 
+			if(list!=null && !list.isEmpty()) {
+				for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : list) {
+					PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
+					List<KeystoreParams> listKeystoreParams = SecurityUtils.readRequestKeystoreParams(pa);
+					if(listKeystoreParams!=null && !listKeystoreParams.isEmpty()) {
+						messageSecurity = true;
+						break;
+					}
+					listKeystoreParams = SecurityUtils.readResponseKeystoreParams(pa);
+					if(listKeystoreParams!=null && !listKeystoreParams.isEmpty()) {
+						messageSecurity = true;
+						break;
+					}
+				}
+			}
+		}
+		
+		List<String> listConnettoriRegistrati = new ArrayList<>();
+		List<String> listPosizioneConnettoriRegistrati = new ArrayList<>();
+		List<org.openspcoop2.core.registry.Connettore> listConnettoriRegistry = new ArrayList<>();
+		List<org.openspcoop2.core.config.Connettore> listConnettoriConfig = new ArrayList<>();
+		
+		List<String> listTokenPolicyValidazione = new ArrayList<>();
+		List<GestioneToken> listTokenPolicyValidazioneConf = new ArrayList<>();
+		List<String> listPosizioneTokenPolicyValidazione = new ArrayList<>();
+		
+		List<String> listTokenPolicyNegoziazione = new ArrayList<>();
+		List<String> listPosizioneTokenPolicyNegoziazione = new ArrayList<>();
+		
+		List<String> listAttributeAuthority = new ArrayList<>();
+		List<String> listPosizioneAttributeAuthority = new ArrayList<>();
+		
+		boolean findConnettoreHttpConPrefissoHttps = this.estraiElencoInvocazioni(soloModI, asps, idSoggettoFruitore, gestioneFruitori, fruitore, idServizio, tipoProtocollo,
+				nomeApiImpl, listConnettoriRegistrati, listPosizioneConnettoriRegistrati, listConnettoriRegistry,
+				listConnettoriConfig, listTokenPolicyValidazione, listTokenPolicyValidazioneConf,
+				listPosizioneTokenPolicyValidazione, listTokenPolicyNegoziazione,
+				listPosizioneTokenPolicyNegoziazione, listAttributeAuthority, listPosizioneAttributeAuthority);
+		
+		
+		boolean verificaCertificatiEffettuata = false;
+		
+		if(listConnettoriRegistrati.isEmpty() && 
+				listTokenPolicyValidazione.isEmpty() &&
+				listTokenPolicyNegoziazione.isEmpty() &&
+				listAttributeAuthority.isEmpty() &&
+				!findConnettoreHttpConPrefissoHttps &&
+				!sicurezzaModi&&
+				!messageSecurity) {
+			this.pd.setMessage(CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_NON_PRESENTI,
+					Costanti.MESSAGE_TYPE_INFO);
+			
+			this.pd.disableEditMode();
+			
+			verificaCertificatiEffettuata = true;
+		}
+		else {
+			
+			boolean sceltaClusterId = this.apsCore.isVerificaCertificatiSceltaClusterId();
+			
+			if(aliases.size()==1 || alias!=null || !sceltaClusterId) {
+				
+				this.eseguiVerificaCertificati(asps, alias, gestioneFruitori, fruitore, aliases,
+						nomeApiImpl, sicurezzaModi, messageSecurity, listConnettoriRegistrati, listPosizioneConnettoriRegistrati,
+						listConnettoriRegistry, listConnettoriConfig, listTokenPolicyValidazione,
+						listTokenPolicyValidazioneConf, listPosizioneTokenPolicyValidazione,
+						listTokenPolicyNegoziazione, listPosizioneTokenPolicyNegoziazione, listAttributeAuthority,
+						listPosizioneAttributeAuthority, findConnettoreHttpConPrefissoHttps, sceltaClusterId);
+
+				this.pd.disableEditMode();
+				
+				verificaCertificatiEffettuata = true;
+				
+			} else {
+				
+				DataElement deTestConnettivita = new DataElement();
+				deTestConnettivita.setType(DataElementType.TITLE);
+				deTestConnettivita.setLabel(ErogazioniCostanti.LABEL_ASPS_VERIFICA_CERTIFICATI);
+				dati.add(deTestConnettivita);
+				
+				this.addVerificaCertificatoSceltaAlias(aliases, dati);	
+			}
+			
+		}
+		return verificaCertificatiEffettuata;
+	}
+
 }

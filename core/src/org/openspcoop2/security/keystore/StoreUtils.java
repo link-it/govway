@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.openspcoop2.core.byok.BYOKUtilities;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
@@ -117,6 +118,11 @@ public class StoreUtils {
 	
 	public static byte[] unwrapBYOK(byte[] archive, BYOKRequestParams requestParams) throws SecurityException {
 		if(requestParams!=null) {
+			
+			if(archive!=null && BYOKUtilities.isWrappedValue(archive)) {
+				archive = BYOKUtilities.deletePrefixWrappedValue(archive);
+			}
+			
 			Logger log = LoggerWrapperFactory.getLogger(StoreUtils.class);
 			BYOKInstance instance = null;
 			try {

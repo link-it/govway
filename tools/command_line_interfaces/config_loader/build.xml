@@ -1,4 +1,4 @@
-<project name="pddConfigLoader" basedir="." default="run">
+<project name="govway_cliConfigLoader" basedir="." default="run">
 
 	<import file="local_env.xml" />
 	<import file="${openspcoop2}/ant/commons/as-check.xml" />
@@ -18,13 +18,13 @@
 	</taskdef>
 	
 	<!-- Properties -->
-	<property name="src_loader" location="src" />
-	<property name="build" location="build" />
-	<property name="dist" location="dist" />
-	<property name="doc" location="doc" />
-	<property name="distrib" location="distrib" />
-	<property name="properties" location="properties" />
-	<property name="script" location="script" />
+	<property name="src_cliConfigLoader" location="src" />
+	<property name="build_cliConfigLoader" location="build" />
+	<property name="dist_cliConfigLoader" location="dist" />
+	<property name="doc_cliConfigLoader" location="doc" />
+	<property name="distrib_cliConfigLoader" location="distrib" />
+	<property name="properties_cliConfigLoader" location="properties" />
+	<property name="script_cliConfigLoader" location="script" />
 
 	<!-- CLASSPATH -->
 	<path id="classpath_compile" >
@@ -58,21 +58,21 @@
 
 
 	<!-- Clean -->
-	<target name="clean">
-		<delete dir="${build}" />
-		<delete dir="${dist}" />
-		<delete dir="${distrib}" />
+	<target name="clean_cliConfigLoader">
+		<delete dir="${build_cliConfigLoader}" />
+		<delete dir="${dist_cliConfigLoader}" />
+		<delete dir="${distrib_cliConfigLoader}" />
 	</target>
 
 
 	<!-- Create the build directory structure used by compile -->
-	<target name="init_compile">
-		<mkdir dir="${build}" />
-		<mkdir dir="${dist}" />
+	<target name="init_compile_cliConfigLoader">
+		<mkdir dir="${build_cliConfigLoader}" />
+		<mkdir dir="${dist_cliConfigLoader}" />
 	</target>	
 
 
-	<target name="compile_importer" depends="init_compile">
+	<target name="compile_cliConfigLoader" depends="init_compile_cliConfigLoader">
 
 		<!-- Info git -->
 		<runtarget target="checkgit" />
@@ -82,12 +82,14 @@
 		<var name="packagesCompiled" value="org.openspcoop2.pdd.config.loader.cli" />
 		<antcall target="compile_src_openspcoop2">
 			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
-			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_loader}"/>
-			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="pdd-config-loader"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_cliConfigLoader}"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="cli-configLoader"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.pdd.config.loader.cli"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+			<param name="dist" value="${dist_cliConfigLoader}"/>
+			<param name="build" value="${build_cliConfigLoader}"/>
 		</antcall>
 				
 		<!-- Jar Complessivo -->
@@ -103,33 +105,35 @@
 		<if>
 			<istrue value="${buildAPI}"/>
 			<then>
-				<mkdir dir="${doc}"/>
+				<mkdir dir="${doc_cliConfigLoader}"/>
 			</then>
 		</if>
 		<antcall target="compile_api_openspcoop2">
 			<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
-			<param name="compile_src_openspcoop2.API_NAME" value="pdd-config-loader"/>
-			<param name="compile_src_openspcoop2.API_DIR" value="${doc}/api"/>
+			<param name="compile_src_openspcoop2.API_NAME" value="cli-configLoader"/>
+			<param name="compile_src_openspcoop2.API_DIR" value="${doc_cliConfigLoader}/api"/>
 			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
-			<param name="src" value="${src_loader}"/>
+			<param name="src" value="${src_cliConfigLoader}"/>
+			<param name="doc" value="${doc_cliConfigLoader}"/>
+			<param name="dist" value="${dist_cliConfigLoader}"/>
 		</antcall>
 			
 	</target>
-	<target name="build" depends="compile_importer" />
+	<target name="build_cliConfigLoader" depends="compile_cliConfigLoader" />
 	
-	<target name="distrib" depends="build">
-		<mkdir dir="${distrib}"/>
-		<mkdir dir="${distrib}/jdbc"/>
-		<mkdir dir="${distrib}/log"/>
-		<mkdir dir="${distrib}/properties"/>
-		<copy todir="${distrib}/properties">
-			<fileset dir="${properties}" includes="*"/>
+	<target name="distrib_cliConfigLoader" depends="build_cliConfigLoader">
+		<mkdir dir="${distrib_cliConfigLoader}"/>
+		<mkdir dir="${distrib_cliConfigLoader}/jdbc"/>
+		<mkdir dir="${distrib_cliConfigLoader}/log"/>
+		<mkdir dir="${distrib_cliConfigLoader}/properties"/>
+		<copy todir="${distrib_cliConfigLoader}/properties">
+			<fileset dir="${properties_cliConfigLoader}" includes="*"/>
 		</copy>
-		<mkdir dir="${distrib}/lib"/>
-		<copy todir="${distrib}/lib">
-			<fileset dir="${dist}" includes="openspcoop2_*.jar"/>
+		<mkdir dir="${distrib_cliConfigLoader}/lib"/>
+		<copy todir="${distrib_cliConfigLoader}/lib">
+			<fileset dir="${dist_cliConfigLoader}" includes="openspcoop2_*.jar"/>
 		</copy>
-		<copy todir="${distrib}/lib">
+		<copy todir="${distrib_cliConfigLoader}/lib">
 			<fileset dir="${openspcoop2.dist}" includes="openspcoop2_*.jar"/>
 			<fileset dir="${openspcoop2.tools.web_interface.controlStation.dist}" includes="openspcoop2_*.jar"/>
 			<fileset dir="${openspcoop2.protocollo.trasparente.dist}" includes="openspcoop2_*.jar"/>
@@ -137,7 +141,7 @@
 			<fileset dir="${openspcoop2.protocollo.modipa.dist}" includes="openspcoop2_*.jar"/>
 			<fileset dir="${openspcoop2.protocollo.sdi.dist}" includes="openspcoop2_*.jar"/>
 		</copy>
-		<copy todir="${distrib}/lib">
+		<copy todir="${distrib_cliConfigLoader}/lib">
 			<fileset dir="${openspcoop2.lib}/log" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/cxf" includes="cxf-rt-rs-security-jose-*.jar"/>
 			<fileset dir="${openspcoop2.lib}/cxf" includes="cxf-rt-rs-json-basic-*.jar"/>
@@ -148,7 +152,7 @@
 			<fileset dir="${openspcoop2.lib}/saaj" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/commons" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/spring" includes="*.jar"/>
-			<fileset dir="${openspcoop2.lib}/swagger" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/swagger" includes="*.jar" excludes="swagger-ui-*.jar"/>
 			<fileset dir="${openspcoop2.lib}/openapi4j" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/jackson" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/javax" includes="javax.servlet-api-4.0.1.jar"/>
@@ -161,53 +165,61 @@
 			<fileset dir="${openspcoop2.lib}/shared" includes="wsdl4j-1.6.3.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="snakeyaml-1.33-gov4j-1.jar"/>
 			<fileset dir="${openspcoop2.lib}/testsuite" includes="spring-jdbc-5.3.34.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="freemarker-2.3.31.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="velocity-*.jar"/>
 			<fileset dir="${openspcoop2.lib}/wss4j" includes="wss4j-ws-security-common-2.4.1-gov4j-1.jar"/>
 			<fileset dir="${openspcoop2.lib}/applicationServer/tomcat9" includes="*.jar"/> <!-- Serve per il datasource env -->
 		</copy>
 		
-		<antcall target="-distrib_script">
+		<antcall target="-distrib_script_cliConfigLoader">
 			<param name="NomeScript" value="create"/>
 			<param name="TipoOperazione" value="create"/>
                 </antcall>
-		<antcall target="-distrib_script">
+		<antcall target="-distrib_script_cliConfigLoader">
 			<param name="NomeScript" value="createOrUpdate"/>
 			<param name="TipoOperazione" value="createUpdate"/>
                 </antcall>
-		<antcall target="-distrib_script">
+		<antcall target="-distrib_script_cliConfigLoader">
 			<param name="NomeScript" value="delete"/>
 			<param name="TipoOperazione" value="delete"/>
                 </antcall>
 	</target>
 
-	<target name="-distrib_script">
+	<target name="-distrib_script_cliConfigLoader">
 
-		<copy file="${script}/run.sh" tofile="${distrib}/${NomeScript}.sh"/>
+		<copy file="${script_cliConfigLoader}/run.sh" tofile="${distrib_cliConfigLoader}/${NomeScript}.sh"/>
 		<antcall target="replace_token">
-			<param name="file" value="${distrib}/${NomeScript}.sh"/>
+			<param name="file" value="${distrib_cliConfigLoader}/${NomeScript}.sh"/>
 			<param name="token" value="TIPO_OPERAZIONE"/>
 			<param name="value" value="${TipoOperazione}"/>
                 </antcall>
 		<antcall target="replace_token">
-			<param name="file" value="${distrib}/${NomeScript}.sh"/>
+			<param name="file" value="${distrib_cliConfigLoader}/${NomeScript}.sh"/>
 			<param name="token" value="NOME_SCRIPT"/>
 			<param name="value" value="${NomeScript}"/>
                 </antcall>
-		<chmod file="${distrib}/${NomeScript}.sh" perm="a+x"/>
+		<chmod file="${distrib_cliConfigLoader}/${NomeScript}.sh" perm="a+x"/>
 
-		<copy file="${script}/run.cmd" tofile="${distrib}/${NomeScript}.cmd"/>
+		<copy file="${script_cliConfigLoader}/run.cmd" tofile="${distrib_cliConfigLoader}/${NomeScript}.cmd"/>
 		<antcall target="replace_token">
-			<param name="file" value="${distrib}/${NomeScript}.cmd"/>
+			<param name="file" value="${distrib_cliConfigLoader}/${NomeScript}.cmd"/>
 			<param name="token" value="TIPO_OPERAZIONE"/>
 			<param name="value" value="${TipoOperazione}"/>
                 </antcall>
 		<antcall target="replace_token">
-			<param name="file" value="${distrib}/${NomeScript}.cmd"/>
+			<param name="file" value="${distrib_cliConfigLoader}/${NomeScript}.cmd"/>
 			<param name="token" value="NOME_SCRIPT"/>
 			<param name="value" value="${NomeScript}"/>
                 </antcall>
-		<chmod file="${distrib}/${NomeScript}.cmd" perm="a+x"/>
+		<chmod file="${distrib_cliConfigLoader}/${NomeScript}.cmd" perm="a+x"/>
 
 
 	</target>
+		
+		
+	<!-- alias -->
+	<target name="build" depends="distrib_cliConfigLoader"/>
+	<target name="build_openspcoop2_cliConfigLoader_jar" depends="compile_cliConfigLoader"/>
+	<target name="clean" depends="clean_cliConfigLoader"/>
 
 </project>

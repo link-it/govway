@@ -34,6 +34,9 @@ public class BaseConnettoreHttp  {
   private ConnettoreConfigurazioneHttpBasic autenticazioneHttp = null;
   
   @Schema(description = "")
+  private ConnettoreConfigurazioneApiKey autenticazioneApikey = null;
+  
+  @Schema(description = "")
   private ConnettoreConfigurazioneHttps autenticazioneHttps = null;
   
   @Schema(description = "")
@@ -83,6 +86,25 @@ public class BaseConnettoreHttp  {
 
   public BaseConnettoreHttp autenticazioneHttp(ConnettoreConfigurazioneHttpBasic autenticazioneHttp) {
     this.autenticazioneHttp = autenticazioneHttp;
+    return this;
+  }
+
+ /**
+   * Get autenticazioneApikey
+   * @return autenticazioneApikey
+  **/
+  @JsonProperty("autenticazione_apikey")
+  @Valid
+  public ConnettoreConfigurazioneApiKey getAutenticazioneApikey() {
+    return this.autenticazioneApikey;
+  }
+
+  public void setAutenticazioneApikey(ConnettoreConfigurazioneApiKey autenticazioneApikey) {
+    this.autenticazioneApikey = autenticazioneApikey;
+  }
+
+  public BaseConnettoreHttp autenticazioneApikey(ConnettoreConfigurazioneApiKey autenticazioneApikey) {
+    this.autenticazioneApikey = autenticazioneApikey;
     return this;
   }
 
@@ -189,6 +211,7 @@ public class BaseConnettoreHttp  {
     
     sb.append("    endpoint: ").append(BaseConnettoreHttp.toIndentedString(this.endpoint)).append("\n");
     sb.append("    autenticazioneHttp: ").append(BaseConnettoreHttp.toIndentedString(this.autenticazioneHttp)).append("\n");
+    sb.append("    autenticazioneApikey: ").append(BaseConnettoreHttp.toIndentedString(this.autenticazioneApikey)).append("\n");
     sb.append("    autenticazioneHttps: ").append(BaseConnettoreHttp.toIndentedString(this.autenticazioneHttps)).append("\n");
     sb.append("    proxy: ").append(BaseConnettoreHttp.toIndentedString(this.proxy)).append("\n");
     sb.append("    tempiRisposta: ").append(BaseConnettoreHttp.toIndentedString(this.tempiRisposta)).append("\n");

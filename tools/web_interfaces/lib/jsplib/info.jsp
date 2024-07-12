@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 <!DOCTYPE html>
+<%@page import="org.springframework.http.HttpStatus"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page session="true" import="org.openspcoop2.web.lib.mvc.*" %>
 
@@ -35,6 +36,15 @@ else
   iddati = "notdefined";
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
+
+//Imposta uno status diverso da 200 se previsto.
+Object setErrorCodeObj = request.getAttribute(Costanti.REQUEST_ATTRIBUTE_SET_ERROR_CODE);
+
+if(setErrorCodeObj != null){
+	HttpStatus httpStatus = (HttpStatus) setErrorCodeObj;
+	response.setStatus(httpStatus.value());
+}
+
 %>
 
 <html lang="it">

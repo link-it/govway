@@ -28,6 +28,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
 import org.openspcoop2.core.commons.CoreException;
@@ -46,15 +47,17 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
  */
 public class ConnettorePropertiesUtilities {
 
-	public static ArrayList<Property> fromPropertiesToCollection(Properties props) {
-		ArrayList<Property> lista = new ArrayList<Property>();
+	private ConnettorePropertiesUtilities() {}
+	
+	public static List<Property> fromPropertiesToCollection(Properties props) {
+		ArrayList<Property> lista = new ArrayList<>();
 
 		Property tmp = null;
 		Enumeration<?> en = props.keys();
 		while (en.hasMoreElements()) {
 			String key = (String) en.nextElement();
 			String value = (String) props.get(key);
-			// log.info("loading property "+key+" - "+value);
+			/** log.info("loading property "+key+" - "+value);*/
 			tmp = new Property();
 			tmp.setNome(key);
 			tmp.setValore(value);
@@ -65,13 +68,12 @@ public class ConnettorePropertiesUtilities {
 		return lista;
 	}
 	
-	public static Property[] getPropertiesConnettore(String nome_connettore,Connection con, String tipoDB) throws CoreException {
+	public static List<Property> getPropertiesConnettore(String nomeConnettore,Connection con, String tipoDB) throws CoreException {
 
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
 		String path = null;
 		Properties prop = new Properties();
-		Property[] res = null;
 
 		try {
 
@@ -82,7 +84,7 @@ public class ConnettorePropertiesUtilities {
 			String queryString = sqlQueryObject.createSQLQuery();
 
 			stmt = con.prepareStatement(queryString);
-			stmt.setString(1, nome_connettore);
+			stmt.setString(1, nomeConnettore);
 
 			risultato = stmt.executeQuery();
 
@@ -91,21 +93,21 @@ public class ConnettorePropertiesUtilities {
 
 			// controllo il path
 			if (path == null || path.equals(""))
-				throw new CoreException("getPropertiesConnettore : nessun path impostato per il connettore : " + nome_connettore);
+				throw new CoreException("getPropertiesConnettore : nessun path impostato per il connettore : " + nomeConnettore);
 
 			// Accedo al file
 			InputStream ins = DBUtils.class.getResourceAsStream(path);
 
 			prop.load(ins);
 
-			// log.info("caricato il file :"+path+" con "+prop.size()+"
-			// properties.");
+			/** log.info("caricato il file :"+path+" con "+prop.size()+properties."); */
 
 			Collection<Property> collection = ConnettorePropertiesUtilities.fromPropertiesToCollection(prop);
 
-			res =collection.toArray(new Property[collection.size()]);
+			List<Property> list = new ArrayList<>();
+			list.addAll(collection);
 
-			return res;
+			return list;
 
 		} catch (FileNotFoundException fe) {
 			throw new CoreException("Impossibile aprire il file :" + path + " Errore: " + fe.getMessage(),fe);

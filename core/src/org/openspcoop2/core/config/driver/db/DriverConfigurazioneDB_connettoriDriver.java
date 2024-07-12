@@ -25,6 +25,8 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.driver.ConnettorePropertiesUtilities;
@@ -32,6 +34,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -77,11 +80,8 @@ public class DriverConfigurazioneDB_connettoriDriver {
 		try {
 			this.driver.logDebug("CRUDConnettore type = 1");
 			// creo connettore
-			DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(1, connettore, con);
+			DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(1, connettore, con, this.driver.getDriverWrapBYOK());
 
-		} catch (DriverConfigurazioneException qe) {
-			error = true;
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createConnettore] Errore durante la creazione del connettore : " + qe.getMessage(),qe);
 		} catch (Exception qe) {
 			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createConnettore] Errore durante la creazione del connettore : " + qe.getMessage(),qe);
@@ -114,11 +114,8 @@ public class DriverConfigurazioneDB_connettoriDriver {
 		try {
 			this.driver.logDebug("CRUDConnettore type = 2");
 			// update connettore
-			DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(2, connettore, con);
+			DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(2, connettore, con, this.driver.getDriverWrapBYOK());
 
-		} catch (DriverConfigurazioneException qe) {
-			error = true;
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateConnettore] Errore durante l'aggiornamento del connettore : " + qe.getMessage(),qe);
 		} catch (Exception qe) {
 			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateConnettore] Errore durante l'aggiornamento del connettore : " + qe.getMessage(),qe);
@@ -152,11 +149,8 @@ public class DriverConfigurazioneDB_connettoriDriver {
 		try {
 			this.driver.logDebug("CRUDConnettore type = 3");
 			// delete connettore
-			DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(3, connettore, con);
+			DriverConfigurazioneDB_connettoriLIB.CRUDConnettore(3, connettore, con, this.driver.getDriverWrapBYOK());
 
-		} catch (DriverConfigurazioneException qe) {
-			error = true;
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteConnettore] Errore durante la rimozione del connettore : " + qe.getMessage(),qe);
 		} catch (Exception qe) {
 			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteConnettore] Errore durante la rimozione del connettore : " + qe.getMessage(),qe);
@@ -192,13 +186,13 @@ public class DriverConfigurazioneDB_connettoriDriver {
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.CONNETTORI_PROPERTIES);
-			sqlQueryObject.addSelectField("nome_connettore");
+			sqlQueryObject.addSelectField(CostantiDB.CONNETTORI_COLUMN_NOME);
 			String queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
 			risultato = stmt.executeQuery();
 
 			while (risultato.next())
-				lista.add(risultato.getString("nome_connettore"));
+				lista.add(risultato.getString(CostantiDB.CONNETTORI_COLUMN_NOME));
 
 			return lista;
 
@@ -272,13 +266,7 @@ public class DriverConfigurazioneDB_connettoriDriver {
 			stmt.setString(1, nome);
 			risultato = stmt.executeQuery();
 
-			if (risultato.next()) {
-
-				return true;
-
-			}
-
-			return false;
+			return risultato.next();
 
 		} catch (Exception qe) {
 			error = true;
@@ -310,7 +298,7 @@ public class DriverConfigurazioneDB_connettoriDriver {
 
 		try {
 
-			Connettore connettore = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettore, con);
+			Connettore connettore = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettore, con, this.driver.getDriverUnwrapBYOK());
 			if(connettore==null) {
 				throw new DriverConfigurazioneNotFound("Connettore con id '"+idConnettore+"' non esistente");
 			}
@@ -366,7 +354,7 @@ public class DriverConfigurazioneDB_connettoriDriver {
 				throw new DriverConfigurazioneNotFound("Connettore con nome '"+nomeConnettore+"' non esistente");
 			}
 					
-			Connettore connettore = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettore, con);
+			Connettore connettore = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettore, con, this.driver.getDriverUnwrapBYOK());
 			if(connettore==null) {
 				throw new DriverConfigurazioneNotFound("Connettore con id '"+idConnettore+"' non esistente");
 			}
@@ -398,21 +386,24 @@ public class DriverConfigurazioneDB_connettoriDriver {
 		try {
 			
 			// Recupero anche eventuale username e password in invocazione servizio.
-			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_USERNAME)==false) {
+			if(!connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_USERNAME)) {
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 				sqlQueryObject.addSelectField("utenteinv");
 				sqlQueryObject.addSelectField("passwordinv");
+				sqlQueryObject.addSelectField("enc_passwordinv");
 				sqlQueryObject.addWhereCondition("id_connettore_inv=?");
 				String queryString = sqlQueryObject.createSQLQuery();
 				stmt = con.prepareStatement(queryString);
 				stmt.setLong(1, idConnettore);
 				risultato = stmt.executeQuery();
 				String user = null;
-				String password = null;
+				String encPassword = null;
+				String plainPassword = null;
 				if (risultato.next()) {
 					user = risultato.getString("utenteinv");
-					password = risultato.getString("passwordinv");
+					plainPassword = risultato.getString("passwordinv");
+					encPassword = risultato.getString("enc_passwordinv");
 				}
 				else {
 					// cerco come risposta asincrona
@@ -422,6 +413,7 @@ public class DriverConfigurazioneDB_connettoriDriver {
 					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 					sqlQueryObject.addSelectField("utenterisp");
 					sqlQueryObject.addSelectField("passwordrisp");
+					sqlQueryObject.addSelectField("enc_passwordrisp");
 					sqlQueryObject.addWhereCondition("id_connettore_risp=?");
 					queryString = sqlQueryObject.createSQLQuery();
 					stmt = con.prepareStatement(queryString);
@@ -429,22 +421,13 @@ public class DriverConfigurazioneDB_connettoriDriver {
 					risultato = stmt.executeQuery();
 					if (risultato.next()) {
 						user = risultato.getString("utenterisp");
-						password = risultato.getString("passwordrisp");
+						plainPassword = risultato.getString("passwordrisp");
+						encPassword = risultato.getString("enc_passwordrisp");
 					}
 				}
 				
-				if(user!=null) {
-					Property property = new Property();
-					property.setNome(CostantiConnettori.CONNETTORE_USERNAME);
-					property.setValore(user);
-					connettore.addProperty(property);
-				}
-				if(password!=null) {
-					Property property = new Property();
-					property.setNome(CostantiConnettori.CONNETTORE_PASSWORD);
-					property.setValore(password);
-					connettore.addProperty(property);
-				}
+				setUsernameProperty(user, connettore) ;
+				setPasswordProperty(plainPassword, encPassword, connettore);
 
 			}
 			
@@ -455,6 +438,36 @@ public class DriverConfigurazioneDB_connettoriDriver {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
+		}
+	}
+	
+	private void setUsernameProperty(String user, Connettore connettore) {
+		if(user!=null) {
+			Property property = new Property();
+			property.setNome(CostantiConnettori.CONNETTORE_USERNAME);
+			property.setValore(user);
+			connettore.addProperty(property);
+		}
+	}
+	private void setPasswordProperty(String plainPassword, String encPassword, Connettore connettore) throws UtilsException {
+		if(plainPassword!=null || encPassword!=null) {
+			Property property = new Property();
+			property.setNome(CostantiConnettori.CONNETTORE_PASSWORD);
+			
+			if(encPassword!=null && StringUtils.isNotEmpty(encPassword)) {
+				IDriverBYOK driverBYOK = this.driver.getDriverUnwrapBYOK();
+				if(driverBYOK!=null) {
+					property.setValore(driverBYOK.unwrapAsString(encPassword));
+				}
+				else {
+					property.setValore(encPassword);
+				}
+			}
+			else {
+				property.setValore(plainPassword);
+			}
+		
+			connettore.addProperty(property);
 		}
 	}
 }

@@ -36,6 +36,12 @@ import org.openspcoop2.core.allarmi.dao.IServiceManager;
 import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
 import org.openspcoop2.core.allarmi.utils.ProjectInfo;
 import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.generic_project.exception.ExpressionException;
+import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
+import org.openspcoop2.generic_project.exception.MultipleResultException;
+import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.generic_project.exception.NotImplementedException;
+import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
@@ -59,13 +65,15 @@ public class AlarmLibrary {
 	
 	private Map<String, AlarmThread> activeThreads = null;
 	
+	private String getMessageAlarmNotExists(String name) {
+		return "Alarm ["+name+"] not exists";
+	}
+	
 	public AlarmLibrary(DAOFactory daoFactory,Logger log,AlarmEngineConfig alarmEngineConfig) throws AlarmException{
 		try{
 			this.daoFactory = daoFactory;
 			IServiceManager pluginSM = (IServiceManager) this.daoFactory.getServiceManager(ProjectInfo.getInstance());
-			IAllarmeServiceSearch allarmeSearchDAO = pluginSM
-					.getAllarmeServiceSearch();
-			this.allarmeSearchDAO = allarmeSearchDAO;
+			this.allarmeSearchDAO = pluginSM.getAllarmeServiceSearch();
 			this.log = log;
 			this.alarmEngineConfig = alarmEngineConfig;
 			AlarmManager.setAlarmEngineConfig(alarmEngineConfig);
@@ -92,7 +100,7 @@ public class AlarmLibrary {
 	
 	private boolean stop = false;
 	public void stop(){
-		if(this.activeThreads.size()>0){
+		if(this.activeThreads!=null && this.activeThreads.size()>0){
 			for (AlarmThread alarmThread : this.activeThreads.values()) {
 				this.stopAlarm(alarmThread);
 			}
@@ -108,7 +116,7 @@ public class AlarmLibrary {
 		}
 		else{
 			if(throwExceptionNotFound){
-				throw new AlarmException("Alarm ["+name+"] not exists");
+				throw new AlarmException(getMessageAlarmNotExists(name));
 			}
 		}
 	}
@@ -117,7 +125,7 @@ public class AlarmLibrary {
 		int max = 10 * 60 * 5; // attendo 5 minuti
 		int offset = 0;
 		int increment = 100;
-		while(offset<max && alarmThread.isTerminated()==false){
+		while(offset<max && !alarmThread.isTerminated()){
 			Utilities.sleep(increment);
 			offset = offset + increment;
 		}
@@ -139,7 +147,7 @@ public class AlarmLibrary {
 					t.start();	
 				}
 				
-				if(exitAfterExecution==false){
+				if(!exitAfterExecution){
 					while (!this.stopLibrary){
 						// non deve morire mai
 						this.sleep();
@@ -154,20 +162,27 @@ public class AlarmLibrary {
 		}
 	}
 	
+	private Allarme getAlarmConf(String name) throws AlarmException {
+		Allarme conf = null;
+		try{
+			conf = this.getActiveAlarmThread(this.allarmeSearchDAO, name);
+		}catch(Exception e){
+			throw new AlarmException(e.getMessage(),e);
+		}
+		if(conf==null){
+			throw new AlarmException(getMessageAlarmNotExists(name));
+		}
+		return conf;
+	}
 	public void executeAlarm(String name) throws AlarmException{
 		try{
-			Allarme conf = null;
-			try{
-				conf = this.getActiveAlarmThread(this.allarmeSearchDAO, name);
-			}catch(Exception e){
-				throw new AlarmException(e.getMessage(),e);
-			}
-			if(conf==null){
-				throw new AlarmException("Alarm ["+name+"] not exists");
-			}
+			Allarme conf = getAlarmConf(name);
 			if(conf.getEnabled()==1 && TipoAllarme.ATTIVO.equals(conf.getTipoAllarme())){
 				AlarmThread alarmThread = this.createAlarmThread(conf);
 				if(alarmThread!=null){
+					if(this.activeThreads==null) {
+						this.activeThreads = new ConcurrentHashMap<>();
+					}
 					this.activeThreads.put(conf.getNome(),alarmThread);
 					Thread t = new Thread(alarmThread);
 					t.start();	
@@ -182,15 +197,7 @@ public class AlarmLibrary {
 	
 	public void forceNewCheckAlarm(String name) throws AlarmException{
 		try{
-			Allarme conf = null;
-			try{
-				conf = this.getActiveAlarmThread(this.allarmeSearchDAO, name);
-			}catch(Exception e){
-				throw new AlarmException(e.getMessage(),e);
-			}
-			if(conf==null){
-				throw new AlarmException("Alarm ["+name+"] not exists");
-			}
+			getAlarmConf(name); // verificare se eliminabile
 			AlarmThread alarmThread = this.activeThreads.get(name);
 			alarmThread.forceNewCheck();
 		}catch(Exception e){
@@ -202,15 +209,7 @@ public class AlarmLibrary {
 	
 	public void updateStateAlarm(String name,AlarmStateValues alarmStatus) throws AlarmException{
 		try{
-			Allarme conf = null;
-			try{
-				conf = this.getActiveAlarmThread(this.allarmeSearchDAO, name);
-			}catch(Exception e){
-				throw new AlarmException(e.getMessage(),e);
-			}
-			if(conf==null){
-				throw new AlarmException("Alarm ["+name+"] not exists");
-			}
+			getAlarmConf(name); // verificare se eliminabile
 			AlarmThread alarmThread = this.activeThreads.get(name);
 			alarmThread.updateState(alarmStatus);
 		}catch(Exception e){
@@ -220,15 +219,7 @@ public class AlarmLibrary {
 	
 	public void updateAcknoledgement(String name,boolean acknoledgement) throws AlarmException{
 		try{
-			Allarme conf = null;
-			try{
-				conf = this.getActiveAlarmThread(this.allarmeSearchDAO, name);
-			}catch(Exception e){
-				throw new AlarmException(e.getMessage(),e);
-			}
-			if(conf==null){
-				throw new AlarmException("Alarm ["+name+"] not exists");
-			}
+			getAlarmConf(name); // verificare se eliminabile
 			AlarmThread alarmThread = this.activeThreads.get(name);
 			alarmThread.updateAcknowledged(acknoledgement);
 		}catch(Exception e){
@@ -245,11 +236,11 @@ public class AlarmLibrary {
 			return alarmThread.getStatoAllarme();
 		}
 		else{
-			throw new AlarmException("Alarm ["+name+"] not exists");
+			throw new AlarmException(getMessageAlarmNotExists(name));
 		}
 	}
 	
-	public String getAlarmsImages() throws AlarmException{
+	public String getAlarmsImages() {
 		if(this.activeThreads!=null && this.activeThreads.size()>0){
 			List<String> list = new ArrayList<>();
 			for (String idAllarme : this.activeThreads.keySet()) {
@@ -274,19 +265,14 @@ public class AlarmLibrary {
 	
 	/* Utiltiies per exists threads */
 	
-	public boolean existsAlarm(String name) throws AlarmException{
-		if(this.activeThreads!=null && this.activeThreads.size()>0 && this.activeThreads.containsKey(name)){
-			return true;
-		}
-		else{
-			return false;
-		}
+	public boolean existsAlarm(String name) {
+		return this.activeThreads!=null && this.activeThreads.size()>0 && this.activeThreads.containsKey(name);
 	}
 	
 	
 	/* Utiltiies interne */
 	
-	private Map<String, AlarmThread> getActiveAlarmThreads(IAllarmeServiceSearch allarmeSearchDAO, Logger log) throws Exception{
+	private Map<String, AlarmThread> getActiveAlarmThreads(IAllarmeServiceSearch allarmeSearchDAO, Logger log) throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
 		
 		IExpression expr = allarmeSearchDAO.newExpression();
 		expr.and();
@@ -294,13 +280,13 @@ public class AlarmLibrary {
 				Integer.valueOf(0));
 		expr.notEquals(Allarme.model().TIPO_ALLARME,
 				TipoAllarme.PASSIVO);
-		//expr.isNotNull(Allarme.model().CLASS_NAME);
+		/**expr.isNotNull(Allarme.model().CLASS_NAME);*/
 
 		IPaginatedExpression pagExpr = allarmeSearchDAO
 				.toPaginatedExpression(expr);
 		
 		List<Allarme> list = allarmeSearchDAO.findAll(pagExpr);
-		Map<String, AlarmThread> listAlarmThread = new ConcurrentHashMap<String, AlarmThread>();
+		Map<String, AlarmThread> listAlarmThread = new ConcurrentHashMap<>();
 		
 		for (Allarme confAllarme : list) {
 			try {
@@ -308,14 +294,14 @@ public class AlarmLibrary {
 				if(alarmThread!=null){
 					listAlarmThread.put(confAllarme.getNome(),alarmThread);
 				}
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				log.error("Creazione allarme con id '"+confAllarme.getNome()+"' (alias: "+confAllarme.getAlias()+") non riuscita: "+t.getMessage(),t);
 			}
 		}
 		return listAlarmThread;
 	}
 	
-	private Allarme getActiveAlarmThread(IAllarmeServiceSearch allarmeSearchDAO, String name) throws Exception{
+	private Allarme getActiveAlarmThread(IAllarmeServiceSearch allarmeSearchDAO, String name) throws ServiceException, NotFoundException, MultipleResultException, NotImplementedException {
 		
 		IdAllarme id = new IdAllarme();
 		id.setNome(name);
@@ -330,29 +316,28 @@ public class AlarmLibrary {
 		int periodo = confAllarme.getPeriodo().intValue();
 
 		AlarmThread alarmThread = null;
-		if (alarm != null) {
-			try {
-				alarmThread = new AlarmThread(this.log, confAllarme.getTipo(), classname, alarm, this.alarmEngineConfig);
-				if (periodo != 0) {
-					switch (tipoPeriodo) {
-					case G:
-						alarmThread.setPeriodByDays(periodo);
-						break;
-					case H:
-						alarmThread.setPeriodByHours(periodo);
-						break;
-					case M:
-						alarmThread.setPeriodByMinutes(periodo);
-						break;
-					default:
-						alarmThread.setPeriodBySeconds(periodo);
-						break;
-					}
+		/**if (alarm != null) {*/
+		try {
+			alarmThread = new AlarmThread(this.log, confAllarme.getTipo(), classname, alarm, this.alarmEngineConfig);
+			if (periodo != 0) {
+				switch (tipoPeriodo) {
+				case G:
+					alarmThread.setPeriodByDays(periodo);
+					break;
+				case H:
+					alarmThread.setPeriodByHours(periodo);
+					break;
+				case M:
+					alarmThread.setPeriodByMinutes(periodo);
+					break;
+				default:
+					alarmThread.setPeriodBySeconds(periodo);
+					break;
 				}
-				
-			} catch (AlarmException e) {
-				this.log.error(e.getMessage(),e);
 			}
+			
+		} catch (AlarmException e) {
+			this.log.error(e.getMessage(),e);
 		}
 		return alarmThread;
 	}

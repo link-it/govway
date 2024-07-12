@@ -42,6 +42,10 @@ Background:
 * eval erogazione_petstore_connettore_https_pkcs11.api_nome = api_petstore.nome
 * eval erogazione_petstore_connettore_https_pkcs11.api_versione = api_petstore.versione
 
+* def erogazione_petstore_connettore_apikey = read('erogazione_petstore_connettore_apikey.json')
+* eval erogazione_petstore_connettore_apikey.api_nome = api_petstore.nome
+* eval erogazione_petstore_connettore_apikey.api_versione = api_petstore.versione
+
 @CreateErogatoreEsterno400
 Scenario: Erogazioni Creazione Fallita Erogatore Esterno
     * call create ({ resourcePath: 'api', body: api_petstore })
@@ -91,6 +95,25 @@ Examples:
 |debug|
 |true|
 |false|
+
+@CreatePetstore204_connettore_ApiKey
+Scenario: Erogazioni Creazione Petstore 204 (api key e app id)
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    
+    # full
+    * call create_201 ({ resourcePath: 'erogazioni', body: erogazione_petstore_connettore_apikey,  key: petstore_key })
+    
+    # senza header
+    * remove erogazione_petstore_connettore_apikey.connettore.autenticazione_apikey.api_key_header
+    * remove erogazione_petstore_connettore_apikey.connettore.autenticazione_apikey.app_id_header
+    * call create_201 ({ resourcePath: 'erogazioni', body: erogazione_petstore_connettore_apikey,  key: petstore_key })
+    
+    # senza app id
+    * remove erogazione_petstore_connettore_apikey.connettore.autenticazione_apikey.app_id
+    * call create_201 ({ resourcePath: 'erogazioni', body: erogazione_petstore_connettore_apikey,  key: petstore_key })
+    
+    * call delete ({ resourcePath: api_petstore_path })
 
 @CreatePetstoreAuth204
 Scenario: Erogazioni Creazione Petstore con autenticazione e autorizzazione

@@ -187,6 +187,7 @@ import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
@@ -1407,11 +1408,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 
 	// Controlla i dati del system properties
-	public boolean systemPropertiesCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean systemPropertiesCheckData(TipoOperazione tipoOp) throws DriverControlStationException {
 		try {
-			//String id = this.getParameter("id");
 			String nome = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME);
-			String valore = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALORE);
+			String valore = this.getLockedParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALORE, false);
 
 			// Campi obbligatori
 			if (nome.equals("") || valore.equals("")) {
@@ -1431,21 +1431,22 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
-			//if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
 			if ((nome.indexOf(" ") != -1) ) {
 				this.pd.setMessage("Non inserire spazi nei nomi");
 				return false;
 			}
-			if(valore.startsWith(" ") || valore.endsWith(" ")){
-				this.pd.setMessage("Non inserire spazi all'inizio o alla fine dei valori");
+			if(!this.checkLength255(nome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME)) {
 				return false;
 			}
 			
-			if(this.checkLength255(nome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME)==false) {
-				return false;
-			}
-			if(this.checkLength255(valore, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_VALORE)==false) {
-				return false;
+			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore) ){
+				if(valore.startsWith(" ") || valore.endsWith(" ")){
+					this.pd.setMessage("Non inserire spazi all'inizio o alla fine dei valori");
+					return false;
+				}
+				if(!this.checkLength255(valore, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_VALORE)) {
+					return false;
+				}
 			}
 
 			// Se tipoOp = add, controllo che non sia gia' stato
@@ -1542,7 +1543,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					e.add(de);
 
 					de = new DataElement();
-					de.setValue(sp.getValore());
+					if(sp.getValore()!=null && StringUtils.isNotEmpty(sp.getValore()) &&
+							BYOKManager.isEnabledBYOK() &&
+							this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(sp.getValore())) {
+						de.setValue(CostantiControlStation.VALORE_CIFRATO);
+					}
+					else {
+						de.setValue(sp.getValore());
+					}
 					e.add(de);
 
 					dati.add(e);
@@ -8686,6 +8694,36 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return lstParamPorta;
 	}
 	
+	public void impostaComandiMenuContestualeAttivazionePolicy(RuoloPolicy ruoloPorta, String nomePorta) throws Exception{
+		if(ruoloPorta!=null) {
+			if(RuoloPolicy.DELEGATA.equals(ruoloPorta)) {
+				IDPortaDelegata idPortaDelegata = new IDPortaDelegata();
+				idPortaDelegata.setNome(nomePorta);
+				PortaDelegata myPD = this.porteDelegateCore.getPortaDelegata(idPortaDelegata);
+				
+				MappingFruizionePortaDelegata mappingPD = this.porteDelegateCore.getMappingFruizionePortaDelegata(myPD);
+				long idSoggetto = myPD.getIdSoggetto().longValue();
+				long idAsps = this.apsCore.getIdAccordoServizioParteSpecifica(mappingPD.getIdServizio());
+				long idFruizione = this.apsCore.getIdFruizioneAccordoServizioParteSpecifica(mappingPD.getIdFruitore(),mappingPD.getIdServizio());
+				
+				PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(this.request, this.pd, this.session);
+				porteDelegateHelper.impostaComandiMenuContestualePD(idSoggetto +"", idAsps+"", idFruizione+"");
+			}
+			else {
+				IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
+				idPortaApplicativa.setNome(nomePorta);
+				PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(idPortaApplicativa);
+				
+				MappingErogazionePortaApplicativa mappingPA = this.porteApplicativeCore.getMappingErogazionePortaApplicativa(myPA);
+				long idSoggetto = myPA.getIdSoggetto().longValue();
+				long idAsps = this.apsCore.getIdAccordoServizioParteSpecifica(mappingPA.getIdServizio());
+				
+				PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(this.request, this.pd, this.session);
+				porteApplicativeHelper.impostaComandiMenuContestualePA(idSoggetto+"", idAsps+"");
+			}
+		}
+	}
+	
 	public List<TipoRisorsaPolicyAttiva> gestisciCriteriFiltroRisorsaPolicy(ConsoleSearch ricerca, RuoloPolicy ruoloPorta, String nomePorta) throws Exception {
 		
 		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
@@ -8800,6 +8838,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam);
+			
+			if(ruoloPorta!=null) {
+				this.impostaComandiMenuContestualeAttivazionePolicy(ruoloPorta, nomePorta);
+			}
 				
 			String labelSogliaColonna = null;
 			TipoRisorsaPolicyAttiva tipoRisorsa = null;
@@ -19081,10 +19123,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(!this.checkSimpleName(tipo, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO)) {
 				return false;
 			}
-			if(!this.checkLength255(tipo, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO)) {
+			if(TipoPlugin.AUTENTICAZIONE.equals(tipoPlugin)){
+				int lenghtMax = 20 - (TipoCredenzialeMittente.TRASPORTO.getRawValue()+"_").length();
+				if(!this.checkLength(tipo, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO, 1, lenghtMax)) { // finisce poi nei log delle transazioni
+					return false;
+				}
+			}
+			else if(!this.checkLength255(tipo, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO)) {
 				return false;
 			}
-			
+		
 			// label
 			if(label==null || "".equals(label)) {
 				this.pd.setMessage("Indicare un valore nel campo '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_LABEL+"'");
@@ -19327,6 +19375,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			ServletUtils.setPageDataTitle(this.pd, lstParam);
 			
+			if(ruoloPorta!=null) {
+				this.impostaComandiMenuContestualeAllarmi(ruoloPorta, nomePorta);
+			}
+			
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
 				ServletUtils.enabledPageDataSearch(this.pd, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI, search);
@@ -19392,6 +19444,36 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		} catch (Exception e) {
 			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
+		}
+	}
+	
+	public void impostaComandiMenuContestualeAllarmi(RuoloPorta ruoloPorta, String nomePorta) throws Exception{
+		if(ruoloPorta!=null) {
+			if(RuoloPorta.DELEGATA.equals(ruoloPorta)) {
+				IDPortaDelegata idPortaDelegata = new IDPortaDelegata();
+				idPortaDelegata.setNome(nomePorta);
+				PortaDelegata myPD = this.porteDelegateCore.getPortaDelegata(idPortaDelegata);
+				
+				MappingFruizionePortaDelegata mappingPD = this.porteDelegateCore.getMappingFruizionePortaDelegata(myPD);
+				long idSoggetto = myPD.getIdSoggetto().longValue();
+				long idAsps = this.apsCore.getIdAccordoServizioParteSpecifica(mappingPD.getIdServizio());
+				long idFruizione = this.apsCore.getIdFruizioneAccordoServizioParteSpecifica(mappingPD.getIdFruitore(),mappingPD.getIdServizio());
+				
+				PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(this.request, this.pd, this.session);
+				porteDelegateHelper.impostaComandiMenuContestualePD(idSoggetto +"", idAsps+"", idFruizione+"");
+			}
+			else {
+				IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
+				idPortaApplicativa.setNome(nomePorta);
+				PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(idPortaApplicativa);
+				
+				MappingErogazionePortaApplicativa mappingPA = this.porteApplicativeCore.getMappingErogazionePortaApplicativa(myPA);
+				long idSoggetto = myPA.getIdSoggetto().longValue();
+				long idAsps = this.apsCore.getIdAccordoServizioParteSpecifica(mappingPA.getIdServizio());
+				
+				PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(this.request, this.pd, this.session);
+				porteApplicativeHelper.impostaComandiMenuContestualePA(idSoggetto+"", idAsps+"");
+			}
 		}
 	}
 	
@@ -23882,6 +23964,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			ServletUtils.setPageDataTitle(this.pd, lstParam);
 			
+			if(ruoloPorta!=null) {
+				this.impostaComandiMenuContestualeHandler(ruoloPorta, idPortaS);
+			}
+			
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
 				ServletUtils.enabledPageDataSearch(this.pd, labelHandler, search);
@@ -24099,6 +24185,34 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		return lstParamPorta;
+	}
+	
+	public void impostaComandiMenuContestualeHandler(TipoPdD ruoloPorta, String idPortaS) throws Exception{
+		
+		if(ruoloPorta!=null) {
+			Long idPorta = Long.parseLong(idPortaS);
+			if(TipoPdD.DELEGATA.equals(ruoloPorta)) {
+				PortaDelegata myPD = this.porteDelegateCore.getPortaDelegata(idPorta);
+				
+				MappingFruizionePortaDelegata mappingPD = this.porteDelegateCore.getMappingFruizionePortaDelegata(myPD);
+				long idSoggetto = myPD.getIdSoggetto().longValue();
+				long idAsps = this.apsCore.getIdAccordoServizioParteSpecifica(mappingPD.getIdServizio());
+				long idFruizione = this.apsCore.getIdFruizioneAccordoServizioParteSpecifica(mappingPD.getIdFruitore(),mappingPD.getIdServizio());
+				
+				PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(this.request, this.pd, this.session);
+				porteDelegateHelper.impostaComandiMenuContestualePD(idSoggetto +"", idAsps+"", idFruizione+"");
+			}
+			else {
+				PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(idPorta);
+				
+				MappingErogazionePortaApplicativa mappingPA = this.porteApplicativeCore.getMappingErogazionePortaApplicativa(myPA);
+				long idSoggetto = myPA.getIdSoggetto().longValue();
+				long idAsps = this.apsCore.getIdAccordoServizioParteSpecifica(mappingPA.getIdServizio());
+				
+				PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(this.request, this.pd, this.session);
+				porteApplicativeHelper.impostaComandiMenuContestualePA(idSoggetto+"", idAsps+"");
+			}
+		}
 	}
 	
 	public String getLabelTipologiaFromFaseMessageHandler(String fase, boolean request) {

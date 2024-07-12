@@ -79,7 +79,7 @@ public class BYOKConfig implements Serializable {
 		}
 		
 		tmpMode = getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_ENCRYPTION_MODE, false);
-		if(tmpMode!=null && StringUtils.isEmpty(tmpMode)) {
+		if(tmpMode!=null && StringUtils.isNotEmpty(tmpMode)) {
 			try {
 				this.encryptionMode = BYOKEncryptionMode.valueOf(tmpMode.toUpperCase());
 			}catch(Exception e) {
@@ -176,7 +176,7 @@ public class BYOKConfig implements Serializable {
 	
 	
 	public String getPrefixForLog() {
-		return "[HSM '"+this.getId()+"' type:"+this.type+" label:"+this.label+"] ";
+		return "[KSM '"+this.getId()+"' type:"+this.type+" label:"+this.label+"] ";
 	}
 
 	

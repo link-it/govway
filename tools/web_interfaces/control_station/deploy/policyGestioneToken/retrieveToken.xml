@@ -61,7 +61,7 @@
 			<item type="text" name="autenticazioneUsername" label="Username" required="true">
 			      	<property name="policy.retrieveToken.username" />
 			</item>
-			<item type="text" name="autenticazionePassword" label="Password" required="true">
+			<item type="lock" name="autenticazionePassword" label="Password" required="true">
 			      	<property name="policy.retrieveToken.password" />
 			</item>
 		</subsection>
@@ -111,7 +111,7 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.endpoint.basic.username" />
 			</item>
-			<item type="text" name="autenticazioneEndpointBasicPassword" label="Client Secret" required="true">
+			<item type="lock" name="autenticazioneEndpointBasicPassword" label="Client Secret" required="true">
 				<conditions>
 					<condition and="true">
 						<selected name="autenticazioneEndpointBasic"/>
@@ -120,7 +120,7 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.endpoint.basic.password" />
 			</item>
-			<item type="text" name="autenticazioneEndpointBasicPasswordCustom" label="Password" required="true">
+			<item type="lock" name="autenticazioneEndpointBasicPasswordCustom" label="Password" required="true">
 				<conditions>
 					<condition and="true">
 						<selected name="autenticazioneEndpointBasic"/>
@@ -149,7 +149,7 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.endpoint.basic.asAuthorizationHeader" />
 			</item>
-			<item type="textarea" name="autenticazioneEndpointBearerToken" label="Token" required="true">
+			<item type="lock" name="autenticazioneEndpointBearerToken" label="Token" required="true">
 				<conditions>
 					<condition and="true">
 						<selected name="autenticazioneEndpointBearer"/>
@@ -206,7 +206,7 @@
 				</conditions>
 				<property name="policy.retrieveToken.jwt.signature.keyPairAlgorithm" />
 			</item>
-			<item type="text" name="jwtKeystorePassword" label="Password" required="true">
+			<item type="lock" name="jwtKeystorePassword" label="Password" required="true">
 				<conditions and="true">
 					<condition not="true" and="false">
 						<equals name="jwtKeystoreType" value="jwk"/>
@@ -223,7 +223,7 @@
 				</conditions>
 				<property name="policy.retrieveToken.jwt.signature.keyAlias" />
 			</item>
-			<item type="text" name="jwtPasswordChiavePrivata" label="Password Chiave Privata" required="true">
+			<item type="lock" name="jwtPasswordChiavePrivata" label="Password Chiave Privata" required="true">
 				<conditions and="true">
 					<condition not="true" and="false">
 						<equals name="jwtKeystoreType" value="jwk"/>
@@ -232,13 +232,16 @@
 				</conditions>				
 				<property name="policy.retrieveToken.jwt.signature.keyPassword" />
 			</item>
-			<item type="text" name="jwtPasswordChiavePrivataOpzionale" label="Password Chiave Privata" required="false">
+			<item type="lock" name="jwtPasswordChiavePrivataOpzionale" label="Password Chiave Privata" required="false">
 				<conditions and="true">
 					<condition and="false">
 						<equals name="jwtKeystoreType" value="keys"/>
 					</condition>
 				</conditions>				
 				<property name="policy.retrieveToken.jwt.signature.keyPassword" />
+			</item>
+			<item type="select" name="jwtByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="policy.retrieveToken.jwt.signature.byok" />
 			</item>
 
 		</subsection>
@@ -268,7 +271,7 @@
 			      	<property name="policy.retrieveToken.jwt.signature.algorithm"/>
 			</item>
 
-			<item type="text" name="jwtSecret" label="Client Secret" required="true">
+			<item type="lock" name="jwtSecret" label="Client Secret" required="true">
 				<conditions>
 					<condition and="false">
 						<equals name="retrieveTokenMethod" value="rfc7523_clientSecret"/>
@@ -1070,7 +1073,7 @@
 				</conditions>
 				<property name="trustStoreLocation" properties="sslConfig" />
 			</item>
-			<item type="text" name="endpointHttpsTruststorePassword" label="Password" required="true">
+			<item type="lock" name="endpointHttpsTruststorePassword" label="Password" required="true">
 				<conditions>
 					<condition and="false">
 						<selected name="endpointHttpsTrustAllCerts"/>
@@ -1085,6 +1088,14 @@
 					</condition>	
 				</conditions>
 			      	<property name="trustManagementAlgorithm" properties="sslConfig" />
+			</item>
+			<item type="select" name="endpointHttpsTrustStoreOcspPolicy" label="OCSP Policy" default="" reloadOnChange="true">
+				<conditions>
+					<condition and="false">
+						<selected name="endpointHttpsTrustAllCerts"/>
+					</condition>	
+				</conditions>
+				<property name="trustStoreOCSPPolicy" properties="sslConfig" />
 			</item>
 			<item type="textarea" name="endpointHttpsTrustStoreCRLs" label="CRL File(s)" required="false" note="Elencare più file separandoli con la ','">
 				<conditions>
@@ -1128,7 +1139,7 @@
 				</conditions>
 			    <property name="keyStoreLocation" properties="sslClientConfig" />
 			</item>
-			<item type="text" name="endpointHttpsClientKeystorePassword" label="Password" required="true">
+			<item type="lock" name="endpointHttpsClientKeystorePassword" label="Password" required="true">
 				<conditions>
 					<condition and="true">
 						<equals name="endpointHttpsClientMode" value="ridefinito"/>
@@ -1136,7 +1147,7 @@
 				</conditions>
 			    <property name="keyStorePassword" properties="sslClientConfig" />
 			</item>
-			<item type="text" name="endpointHttpsClientPasswordChiavePrivata" label="Password Chiave Privata" required="true">
+			<item type="lock" name="endpointHttpsClientPasswordChiavePrivata" label="Password Chiave Privata" required="true">
 				<property name="keyPassword" properties="sslClientConfig" />
 			</item>
 			<item type="text" name="endpointHttpsClientAliasChiavePrivata" label="Alias Chiave Privata" required="false">
@@ -1144,6 +1155,9 @@
 			</item>
 			<item type="text" name="endpointHttpsClientAlgoritmo" label="Algoritmo" default="SunX509" required="true">
 				<property name="keyManagementAlgorithm" properties="sslClientConfig" />
+			</item>
+			<item type="select" name="endpointHttpsByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="keyStoreBYOKPolicy" properties="sslClientConfig" />
 			</item>
 		
 		</subsection>
@@ -1170,7 +1184,7 @@
 		<item type="text" name="endpointProxyUsername" label="Username" required="false">
 			<property name="proxyUsername" properties="endpointConfig" />
 		</item>
-		<item type="text" name="endpointProxyPassword" label="Password" required="false">
+		<item type="lock" name="endpointProxyPassword" label="Password" required="false">
 			<property name="proxyPassword" properties="endpointConfig" />
 		</item>
 		

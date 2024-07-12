@@ -26,6 +26,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.pdd.core.token.TokenException;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -45,6 +46,30 @@ public class DynamicMapBuilderUtils {
 	
 	private DynamicMapBuilderUtils() {}
 
+	public static void injectDynamicMap(Busta busta, 
+			RequestInfo requestInfo, org.openspcoop2.utils.Map<Object> contextParam, Logger log) {
+		
+		/**&& !context.containsKey(Costanti.DYNAMIC_MAP_CONTEXT)) { aggiorno */
+		
+		Context context = null;
+		if(contextParam instanceof Context) {
+			context = (Context) contextParam;
+		}
+			
+		Map<String,Object> dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(busta, requestInfo, context, log);
+		
+		if(context!=null) {
+			context.put(Costanti.DYNAMIC_MAP_CONTEXT, dynamicMap);
+		}
+		if(requestInfo!=null) {
+			requestInfo.setDynamicMap(dynamicMap);
+		}
+		
+	}
+	public static Map<String,Object> readDynamicMap(org.openspcoop2.utils.Map<Object> context){
+		return Costanti.readDynamicMap(context);
+	}
+	
 	public static Map<String, Object> buildDynamicMap(Busta busta, 
 			RequestInfo requestInfo, Context pddContext, Logger log) {
 	

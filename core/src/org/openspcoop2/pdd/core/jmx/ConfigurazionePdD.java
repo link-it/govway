@@ -177,6 +177,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public static final String CHECK_CERTIFICATI_CONNETTORE_HTTPS_ATTRIBUTE_AUTHORITY = "checkCertificatiConnettoreHttpsAttributeAuthority";
 	public static final String CHECK_CERTIFICATI_ATTRIBUTE_AUTHORITY_JWT_RICHIESTA = "checkCertificatiAttributeAuthorityJwtRichiesta";
 	public static final String CHECK_CERTIFICATI_ATTRIBUTE_AUTHORITY_JWT_RISPOSTA = "checkCertificatiAttributeAuthorityJwtRisposta";
+	public static final String CHECK_CERTIFICATI_MESSAGE_SECURITY_EROGAZIONE_BY_ID = "checkCertificatiMessageSecurityErogazioneById";
+	public static final String CHECK_CERTIFICATI_MESSAGE_SECURITY_FRUIZIONE_BY_ID = "checkCertificatiMessageSecurityFruizioneById";
 	public static final String CHECK_PROXY_CONFIGURAZIONE_JVM = "checkProxyJvm";
 	public static final String ABILITA_PORTA_DELEGATA = "enablePortaDelegata";
 	public static final String DISABILITA_PORTA_DELEGATA = "disablePortaDelegata";
@@ -1152,6 +1154,68 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			return this.checkCertificatiAttributeAuthorityJwtRisposta(param1, soglia);
+		}
+		
+		if(actionName.equals(CHECK_CERTIFICATI_MESSAGE_SECURITY_EROGAZIONE_BY_ID)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_MESSAGE_SECURITY_EROGAZIONE_BY_ID+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_MESSAGE_SECURITY_EROGAZIONE_BY_ID+"] parametro richiesto non fornito"));
+			}
+			return this.checkCertificatiMessageSecurityErogazioneById(param1, soglia);
+		}
+		
+		if(actionName.equals(CHECK_CERTIFICATI_MESSAGE_SECURITY_FRUIZIONE_BY_ID)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_MESSAGE_SECURITY_FRUIZIONE_BY_ID+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_MESSAGE_SECURITY_FRUIZIONE_BY_ID+"] parametro richiesto non fornito"));
+			}
+			return this.checkCertificatiMessageSecurityFruizioneById(param1, soglia);
 		}
 		
 		if(actionName.equals(ABILITA_PORTA_DELEGATA)){
@@ -2204,6 +2268,26 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			},
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatiModIErogazioneById
+		MBeanOperationInfo checkCertificatiModIErogazioneById 
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_MESSAGE_SECURITY_EROGAZIONE_BY_ID,"Verifica i certificati presenti nei keystore e truststore della configurazione di MessageSecurity dell'erogazione che possiede l'id fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("idErogazione",long.class.getName(),"Identificativo dell'erogazione"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatiModIFruizioneById
+		MBeanOperationInfo checkCertificatiModIFruizioneById 
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_MESSAGE_SECURITY_FRUIZIONE_BY_ID,"Verifica i certificati presenti nei keystore e truststore della configurazione di MessageSecurity della fruizione che possiede l'id fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("idFruizione",long.class.getName(),"Identificativo della fruizione"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
 				
 		// MetaData per l'operazione enablePortaDelegata
 		MBeanOperationInfo enablePortaDelegata 
@@ -2515,6 +2599,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		listOperation.add(checkCertificatiConnettoreHttpsAttributeAuthority);
 		listOperation.add(checkCertificatiAttributeAuthorityJwtRichiesta);
 		listOperation.add(checkCertificatiAttributeAuthorityJwtRisposta);
+		listOperation.add(checkCertificatiModIErogazioneById);
+		listOperation.add(checkCertificatiModIFruizioneById);
 		listOperation.add(enablePortaDelegata);
 		listOperation.add(disablePortaDelegata);
 		listOperation.add(enablePortaApplicativa);
@@ -3199,6 +3285,34 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			return statoCheck.toString(newLine);
 		}catch(Exception e){
 			this.logError(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatiMessageSecurityErogazioneById(long idErogazione, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiMessageSecurityErogazioneById(idErogazione, sogliaWarningGiorni,
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Exception e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatiMessageSecurityFruizioneById(long idFruizione, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiMessageSecurityFruizioneById(idFruizione, sogliaWarningGiorni,
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Exception e){
+			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}

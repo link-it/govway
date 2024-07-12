@@ -40,7 +40,9 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -82,10 +84,13 @@ public final class PorteDelegateWSRequestChange extends Action {
 			int idInt = Integer.parseInt(id);
 			String idsogg = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			String nome = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-			String valore = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE);
+			String valore = porteDelegateHelper.getLockedParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE, false);
 			String idAsps = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
 			if(idAsps == null)
 				idAsps = "";
+			
+			// Wrap value
+			valore = porteDelegateHelper.wrapValoreProprieta(valore);
 			
 			String idFruizione = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
 			if(idFruizione == null)
@@ -132,14 +137,16 @@ public final class PorteDelegateWSRequestChange extends Action {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
-				MessageSecurity ws = pde.getMessageSecurity();
-				if(ws.getRequestFlow()!=null){
-					List<MessageSecurityFlowParameter> wsrfpArray = ws.getRequestFlow().getParameterList();
-					for (int i = 0; i < wsrfpArray.size(); i++) {
-						MessageSecurityFlowParameter wsrfp = wsrfpArray.get(i);
-						if (nome.equals(wsrfp.getNome())) {
-							valore = wsrfp.getValore();
-							break;
+				if(valore==null) {
+					MessageSecurity ws = pde.getMessageSecurity();
+					if(ws.getRequestFlow()!=null){
+						List<MessageSecurityFlowParameter> wsrfpArray = ws.getRequestFlow().getParameterList();
+						for (int i = 0; i < wsrfpArray.size(); i++) {
+							MessageSecurityFlowParameter wsrfp = wsrfpArray.get(i);
+							if (nome.equals(wsrfp.getNome())) {
+								valore = wsrfp.getValore();
+								break;
+							}
 						}
 					}
 				}
@@ -148,7 +155,12 @@ public final class PorteDelegateWSRequestChange extends Action {
 				List<DataElement> dati = new ArrayList<>();
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteDelegateHelper.addNomeValoreToDati(TipoOperazione.CHANGE,dati, nome, valore,false);
+				DataElement dataElement = new DataElement();
+				dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA);
+				dataElement.setType(DataElementType.TITLE);
+				dati.add(dataElement);
+				
+				dati = porteDelegateHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.CHANGE,dati, nome, valore,false);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
@@ -172,7 +184,12 @@ public final class PorteDelegateWSRequestChange extends Action {
 
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteDelegateHelper.addNomeValoreToDati(TipoOperazione.CHANGE,dati, nome, valore,false);
+				DataElement dataElement = new DataElement();
+				dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA);
+				dataElement.setType(DataElementType.TITLE);
+				dati.add(dataElement);
+				
+				dati = porteDelegateHelper.addNomeValoreProprietaCifrataToDati(TipoOperazione.CHANGE,dati, nome, valore,false);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);

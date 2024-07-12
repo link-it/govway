@@ -31,6 +31,8 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.openspcoop2.core.byok.IDriverBYOK;
+import org.openspcoop2.core.byok.IDriverBYOKConfig;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
@@ -109,6 +111,7 @@ import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsAlreadyExistsException;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
@@ -130,7 +133,7 @@ import org.slf4j.Logger;
 
 public class DriverRegistroServiziDB extends BeanUtilities implements IDriverRegistroServiziGet,
 IDriverRegistroServiziCRUD, 
-IDriverWS ,IMonitoraggioRisorsa{
+IDriverWS ,IMonitoraggioRisorsa, IDriverBYOKConfig{
 
 	/* ******** F I E L D S P R I V A T I ******** */
 
@@ -519,6 +522,29 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 	
+	
+	
+	
+	// *** BYOK ***
+	
+	private IDriverBYOK driverBYOK = null;
+	private boolean wrapBYOK;
+	private boolean unwrapBYOK;
+	
+	@Override
+	public void initialize(IDriverBYOK driver, 
+			boolean wrap, boolean unwrap) throws UtilsException{
+		this.driverBYOK = driver;
+		this.wrapBYOK = wrap;
+		this.unwrapBYOK = unwrap;
+	}
+
+	public IDriverBYOK getDriverWrapBYOK() {
+		return this.wrapBYOK ? this.driverBYOK : null;
+	}
+	public IDriverBYOK getDriverUnwrapBYOK() {
+		return this.unwrapBYOK ? this.driverBYOK : null;
+	}
 	
 	
 	

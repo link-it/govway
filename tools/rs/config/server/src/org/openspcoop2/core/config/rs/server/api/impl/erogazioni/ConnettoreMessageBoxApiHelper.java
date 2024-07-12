@@ -124,6 +124,7 @@ public class ConnettoreMessageBoxApiHelper extends AbstractConnettoreApiHelper<C
 				null,					// httpsKeyAlias
         		null,					// httpsTrustStoreCRLs
         		null,					// httpsTrustStoreOCSPPolicy
+        		null,					// httpsKeyStoreBYOKPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( false ),	
 				null,
@@ -151,8 +152,11 @@ public class ConnettoreMessageBoxApiHelper extends AbstractConnettoreApiHelper<C
 				null,	// this.responseInputFileNameHeaders, 
 				null,	// this.responseInputDeleteAfterRead, 
 				null,	// this.responseInputWaitTime,
-				null,
-				null);			
+				null,   // tokenPolicy
+				null, null, // apiKeyHeader,  apiKeyValue
+				null, null, // appIdHeader, appIdValue
+				null // listExtendedConnettore
+				);		
 		return regConnettore;
 	}
 
@@ -196,6 +200,7 @@ public class ConnettoreMessageBoxApiHelper extends AbstractConnettoreApiHelper<C
 				null,					// httpsKeyAlias
         		null,					// httpsTrustStoreCRLs
         		null,					// httpsTrustStoreOCSPPolicy
+        		null,					// httpsKeyStoreBYOKPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( false ),	
 				null,
@@ -223,8 +228,11 @@ public class ConnettoreMessageBoxApiHelper extends AbstractConnettoreApiHelper<C
 				null,	// this.responseInputFileNameHeaders, 
 				null,	// this.responseInputDeleteAfterRead, 
 				null,	// this.responseInputWaitTime,
-				null,
-				null);			
+				null,   // tokenPolicy
+				null, null, // apiKeyHeader,  apiKeyValue
+				null, null, // appIdHeader, appIdValue
+				null // listExtendedConnettore
+				);		
 		return regConnettore;
 	}
 

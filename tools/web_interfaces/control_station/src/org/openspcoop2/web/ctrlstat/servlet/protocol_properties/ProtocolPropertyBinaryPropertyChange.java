@@ -19,8 +19,8 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.protocol_properties;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,7 +39,12 @@ import org.openspcoop2.protocol.sdk.properties.AbstractConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
 import org.openspcoop2.protocol.sdk.properties.BinaryConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.BinaryProperty;
+import org.openspcoop2.protocol.sdk.properties.BooleanProperty;
+import org.openspcoop2.protocol.sdk.properties.NumberProperty;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesFactory;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.properties.StringProperty;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -250,7 +255,37 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			// Valido i parametri custom se ho gia' passato tutta la validazione prevista
 			if(isOk){
 				try{
-					ppHelper.validateDynamicConfig(strutsBean.consoleDynamicConfiguration, idOggettoProprietario, strutsBean.tipoAccordo, strutsBean.tipoProprietario, strutsBean.consoleConfiguration, strutsBean.consoleOperationType, strutsBean.protocolProperties, 
+					
+					// Rendo in chiaro eventuali proprietà cifrate, per consentirne la validazione
+					ProtocolProperties protocolPropertiesCloned = new ProtocolProperties();
+					if(strutsBean.protocolProperties!=null && strutsBean.protocolProperties.sizeProperties()>0) {
+						for (int i = 0; i < strutsBean.protocolProperties.sizeProperties(); i++) {
+							AbstractProperty<?> pp = strutsBean.protocolProperties.getProperty(i);
+							if(pp instanceof BinaryProperty) {
+								BinaryProperty bp = (BinaryProperty) pp;
+								BinaryProperty bpCloned = ProtocolPropertiesFactory.newProperty(bp.getId(), ppCore.getDriverBYOKUtilities().unwrap(bp.getValue()), bp.getFileName(), bp.getFileId());
+								protocolPropertiesCloned.addProperty(bpCloned);
+							}
+							else if(pp instanceof StringProperty) {
+								StringProperty sp = (StringProperty) pp;
+								StringProperty spCloned = ProtocolPropertiesFactory.newProperty(sp.getId(), ppCore.getDriverBYOKUtilities().unwrap(sp.getValue()));
+								protocolPropertiesCloned.addProperty(spCloned);
+							}
+							else if(pp instanceof BooleanProperty) {
+								BooleanProperty bp = (BooleanProperty) pp;
+								BooleanProperty bpCloned = ProtocolPropertiesFactory.newProperty(bp.getId(), bp.getValue());
+								protocolPropertiesCloned.addProperty(bpCloned);
+							}
+							else if(pp instanceof NumberProperty) {
+								NumberProperty np = (NumberProperty) pp;
+								NumberProperty npCloned = ProtocolPropertiesFactory.newProperty(np.getId(), np.getValue());
+								protocolPropertiesCloned.addProperty(npCloned);
+							}
+						}
+					}
+					
+					ppHelper.validateDynamicConfig(strutsBean.consoleDynamicConfiguration, idOggettoProprietario, strutsBean.tipoAccordo, strutsBean.tipoProprietario, strutsBean.consoleConfiguration, strutsBean.consoleOperationType, 
+							protocolPropertiesCloned,/** strutsBean.protocolProperties,*/ 
 							strutsBean.registryReader, strutsBean.configRegistryReader);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);

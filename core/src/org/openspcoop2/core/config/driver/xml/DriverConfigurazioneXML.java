@@ -2429,6 +2429,17 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	}
 	
 	/**
+	 * Restituisce i nomi delle proprieta' di sistema cifrate
+	 *
+	 * @return proprieta' di sistema
+	 * 
+	 */
+	@Override
+	public List<String> getEncryptedSystemPropertiesPdD() throws DriverConfigurazioneException{
+		return new ArrayList<>();
+	}
+	
+	/**
 	 * Restituisce le proprieta' generiche utilizzate dalla PdD
 	 *
 	 * @return proprieta' generiche

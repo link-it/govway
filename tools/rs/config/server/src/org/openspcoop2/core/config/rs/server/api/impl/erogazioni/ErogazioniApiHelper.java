@@ -216,6 +216,8 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class ErogazioniApiHelper {
+	
+	private ErogazioniApiHelper() {}
 		
 	
 	public static void validateProperties(ErogazioniEnv env, ProtocolProperties protocolProperties, AccordoServizioParteSpecifica asps,
@@ -465,7 +467,7 @@ public class ErogazioniApiHelper {
 	}
 	
 	public static final AccordoServizioParteSpecifica apiImplToAps(APIImpl impl, final Soggetto soggErogatore, AccordoServizioParteComuneSintetico as, ErogazioniEnv env) 
-			throws DriverRegistroServiziException, DriverRegistroServiziNotFound, CoreException, ProtocolException {
+			throws DriverRegistroServiziException, ProtocolException {
 		final AccordoServizioParteSpecifica ret = new AccordoServizioParteSpecifica();
 				
 		fillAps(ret, impl);
@@ -566,12 +568,14 @@ public class ErogazioniApiHelper {
 		final boolean accordoPrivato = as.getPrivato()!=null && as.getPrivato();
 
 		final ConnettoreHttp connRest = new ConnettoreHTTPApiHelper().buildConnettore(connRegistro.getProperties(), connRegistro.getTipo());
+		final ConnettoreConfigurazioneApiKey httpApiKey = connRest.getAutenticazioneApikey();
+		boolean apiKey = (httpApiKey!=null && httpApiKey.getApiKey()!=null && StringUtils.isNotEmpty(httpApiKey.getApiKey()));
 		final ConnettoreConfigurazioneHttps httpsConf 	 = connRest.getAutenticazioneHttps();
 
 		final ConnettoreConfigurazioneHttpBasic httpConf	 = connRest.getAutenticazioneHttp();
 		// Questa è la cosa diversa per i fruitori, Li invece abbiamo le credenziali direttamente nel connettore.
-        final ConnettoreConfigurazioneHttpsClient httpsClient = evalnull( () -> httpsConf.getClient() );
-      	final ConnettoreConfigurazioneHttpsServer httpsServer = evalnull( () -> httpsConf.getServer() );
+        final ConnettoreConfigurazioneHttpsClient httpsClient = httpsConf!=null ? evalnull( httpsConf::getClient ) : null;
+      	final ConnettoreConfigurazioneHttpsServer httpsServer = httpsConf!=null ? evalnull( httpsConf::getServer ) : null;
       	final ConnettoreConfigurazioneProxy 	  proxy   	  = connRest.getProxy();
       	final ConnettoreConfigurazioneTimeout	  timeoutConf = connRest.getTempiRisposta();
       	final String tokenPolicy = connRest.getTokenPolicy(); 
@@ -709,8 +713,8 @@ public class ErogazioniApiHelper {
         		endpoint_url,
         		null, 	// nome JMS
         		null, 	// tipo JMS,
-        		evalnull( () -> httpConf.getUsername() ),	
-        		evalnull( () -> httpConf.getUsername() ), 
+        		httpConf!=null ? evalnull( httpConf::getUsername ) : null,	
+        		httpConf!=null ? evalnull( httpConf::getUsername ) : null, 
         		null,   // initcont JMS,
         		null,   // urlpgk JMS,
         		null,   // provurl JMS 
@@ -728,31 +732,32 @@ public class ErogazioniApiHelper {
         		evalnull( () ->  httpsConf.getTipologia().toString() ),				// I valori corrispondono con con org.openspcoop2.utils.transport.http.SSLConstants
         		BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),				// this.httpshostverify,
         		(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
-				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
+        		httpsServer!=null ? evalnull( httpsServer::getTruststorePath ) : null,				// this.httpspath
 				evalnull( () -> ConnettoreHTTPApiHelper.getTruststoreType(httpsServer) ),		// this.httpstipo,
-				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
-				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
+				httpsServer!=null ? evalnull( httpsServer::getTruststorePassword ) : null,			// this.httpspwd,
+				httpsServer!=null ? evalnull( httpsServer::getAlgoritmo ) : null,					// this.httpsalgoritmo
 				httpsstato,	//
         		httpskeystore, 	
         		"", //  this.httpspwdprivatekeytrust
-        		evalnull( () -> httpsClient.getKeystorePath() ),					// httpspathkey
+        		httpsClient!=null ? evalnull( httpsClient::getKeystorePath ) : null,					// httpspathkey
         		evalnull( () -> ConnettoreHTTPApiHelper.getKeystoreType(httpsClient) ),	 		// httpstipokey, coincide con ConnettoriCostanti.TIPOLOGIE_KEYSTORE
-        		evalnull( () -> httpsClient.getKeystorePassword() ), 	 		// httpspwdkey
-        		evalnull( () -> httpsClient.getKeyPassword() ),	 				// httpspwdprivatekey
-        		evalnull( () -> httpsClient.getAlgoritmo() ),					// httpsalgoritmokey
-        		evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
-        		evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
-        		evalnull( () -> httpsServer.getTruststoreOcspPolicy()),				// httpsTrustStoreOCSPPolicy
+        		httpsClient!=null ? evalnull( httpsClient::getKeystorePassword ) : null, 	 		// httpspwdkey
+        		httpsClient!=null ? evalnull( httpsClient::getKeyPassword ) : null,	 				// httpspwdprivatekey
+        		httpsClient!=null ? evalnull( httpsClient::getAlgoritmo ) : null,					// httpsalgoritmokey
+        		httpsClient!=null ? evalnull( httpsClient::getKeyAlias ) : null,					// httpsKeyAlias
+        		httpsServer!=null ? evalnull( httpsServer::getTruststoreCrl ) : null,					// httpsTrustStoreCRLs
+        		httpsServer!=null ? evalnull( httpsServer::getTruststoreOcspPolicy) : null,				// httpsTrustStoreOCSPPolicy
+        		httpsClient!=null ? evalnull( httpsClient::getKeystoreByokPolicy) : null,				// httpsKeyStoreBYOKPolicy
         		null, 								// tipoconn Da debug = null.	
         		as.getVersione().toString(), 		// Versione aspc
         		false,								// validazioneDocumenti Da debug = false
         		null,								// Da Codice console
         		ServletUtils.boolToCheckBoxStatus(http_stato),	// "yes" se utilizziamo http.
         		ServletUtils.boolToCheckBoxStatus(proxy_enabled),			
-    			evalnull( () -> proxy.getHostname() ),
+        		proxy!=null ? evalnull( proxy::getHostname ) : null,
     			evalnull( () -> proxy.getPorta().toString() ),
-    			evalnull( () -> proxy.getUsername() ),
-    			evalnull( () -> proxy.getPassword() ),				
+    			proxy!=null ? evalnull( proxy::getUsername ) : null,
+    			proxy!=null ? evalnull( proxy::getPassword ) : null,				
     			ServletUtils.boolToCheckBoxStatus(tempiRisposta_enabled), 
     			evalnull( () -> timeoutConf.getConnectionTimeout().toString()),		// this.tempiRisposta_connectionTimeout, 
     			evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()),  // this.tempiRisposta_readTimeout, 
@@ -805,7 +810,23 @@ public class ErogazioniApiHelper {
         		null,	// nomeFruitore
         		autenticazioneToken, 
         		tokenPolicy,
-        		false, // erogazioneServizioApplicativoServerEnabled, TODO quando si aggiunge applicativo server
+        		
+        		apiKey ? org.openspcoop2.web.lib.mvc.Costanti.CHECK_BOX_ENABLED : org.openspcoop2.web.lib.mvc.Costanti.CHECK_BOX_DISABLED, // autenticazioneApiKey
+        		apiKey && 
+        				env.erogazioniHelper.isAutenticazioneApiKeyUseOAS3Names(
+        						httpApiKey!=null ? evalnull(httpApiKey::getApiKeyHeader) : null, 
+        						httpApiKey!=null ? evalnull(httpApiKey::getAppIdHeader) : null
+        		), // useOAS3Names
+        		apiKey && 
+        			env.erogazioniHelper.isAutenticazioneApiKeyUseAppId(
+        					httpApiKey!=null ? evalnull(httpApiKey::getAppId) : null
+        		), // useAppId
+        		httpApiKey!=null ? evalnull( httpApiKey::getApiKeyHeader ) : null, // apiKeyHeader
+        		httpApiKey!=null ? evalnull( httpApiKey::getApiKey ) : null, // apiKeyValue
+        		httpApiKey!=null ? evalnull( httpApiKey::getAppIdHeader ) : null, // appIdHeader
+        		httpApiKey!=null ? evalnull( httpApiKey::getAppId ) : null, // appIdValue		
+        		
+        		false, // erogazioneServizioApplicativoServerEnabled, 
     			null, // rogazioneServizioApplicativoServer,
     			canaleStato, canale, gestioneCanaliEnabled
         	)) {
@@ -815,10 +836,10 @@ public class ErogazioniApiHelper {
 		
 	}
 	
-	public static final List<IDSoggettoDB> getSoggettiCompatibiliAutorizzazione( CredenzialeTipo tipoAutenticazione, Boolean appId, IdSoggetto erogatore, ErogazioniEnv env ) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverConfigurazioneException {
+	public static final List<IDSoggettoDB> getSoggettiCompatibiliAutorizzazione( CredenzialeTipo tipoAutenticazione, Boolean appId, IdSoggetto erogatore, ErogazioniEnv env ) throws DriverRegistroServiziException, DriverConfigurazioneException {
 		
 		PddTipologia pddTipologiaSoggettoAutenticati = null;
-		boolean gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore = false;
+		boolean gestioneErogatoriSoggettiAutenticatiEscludiSoggettoErogatore = false;
 		
 		
 		if(env.apsCore.isMultitenant() && env.apsCore.getMultitenantSoggettiErogazioni()!=null) {
@@ -827,7 +848,7 @@ public class ErogazioniApiHelper {
 					pddTipologiaSoggettoAutenticati = PddTipologia.ESTERNO;
 					break;
 				case ESCLUDI_SOGGETTO_EROGATORE:
-					gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore = true;
+					gestioneErogatoriSoggettiAutenticatiEscludiSoggettoErogatore = true;
 					break;
 				case TUTTI:
 					break;
@@ -839,7 +860,7 @@ public class ErogazioniApiHelper {
 		// calcolo soggetti compatibili con tipi protocollo supportati dalla pa e credenziali indicate
 		List<IDSoggettoDB> list = env.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, appId, pddTipologiaSoggettoAutenticati);
 		
-		if( !list.isEmpty() && gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore ) {
+		if( !list.isEmpty() && gestioneErogatoriSoggettiAutenticatiEscludiSoggettoErogatore ) {
 			for (int i = 0; i < list.size(); i++) {
 				IDSoggettoDB soggettoCheck = list.get(i);
 				if(soggettoCheck.getTipo().equals(erogatore.getTipo()) && soggettoCheck.getNome().equals(erogatore.getNome())) {
@@ -874,7 +895,7 @@ public class ErogazioniApiHelper {
 	}
 	
 	public static TipoAutenticazionePrincipal getTipoAutenticazionePrincipal(Object authn){
-		if(authn!=null && (authn instanceof APIImplAutenticazionePrincipal)) {
+		if(authn instanceof APIImplAutenticazionePrincipal) {
 			
 			APIImplAutenticazionePrincipal authPrincipal = (APIImplAutenticazionePrincipal) authn;
 			TipoAutenticazioneEnum tipo = authPrincipal.getTipo();
@@ -909,7 +930,7 @@ public class ErogazioniApiHelper {
         		if(authnBasic.isForward()!=null) {
         			Proprieta propertyAutenticazione = new Proprieta();
 					propertyAutenticazione.setNome(ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION);
-        			if(authnBasic.isForward()) {	
+        			if(authnBasic.isForward().booleanValue()) {	
         				propertyAutenticazione.setValore(ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION_FALSE);
         			}
         			else {
@@ -1256,7 +1277,9 @@ public class ErogazioniApiHelper {
         		.toArray(String[]::new);
         
         final BaseConnettoreHttp conn = impl.getConnettore();
-        final ConnettoreConfigurazioneHttps httpsConf 	 = conn.getAutenticazioneHttps();
+        final ConnettoreConfigurazioneApiKey httpApiKey = conn.getAutenticazioneApikey();
+		boolean apiKey = (httpApiKey!=null && httpApiKey.getApiKey()!=null && StringUtils.isNotEmpty(httpApiKey.getApiKey()));
+		final ConnettoreConfigurazioneHttps httpsConf 	 = conn.getAutenticazioneHttps();
         final ConnettoreConfigurazioneHttpBasic	httpConf	 = conn.getAutenticazioneHttp();
         
 	    final String endpointtype = httpsConf != null ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome();
@@ -1269,8 +1292,8 @@ public class ErogazioniApiHelper {
 							parametersPOST, false, endpointtype); // uso endpointtype per capire se è la prima volta che entro
 	
         
-        final ConnettoreConfigurazioneHttpsClient httpsClient = evalnull( () -> httpsConf.getClient() );
-      	final ConnettoreConfigurazioneHttpsServer httpsServer = evalnull( () -> httpsConf.getServer() );
+        final ConnettoreConfigurazioneHttpsClient httpsClient = httpsConf!=null ? evalnull( httpsConf::getClient ) : null;
+      	final ConnettoreConfigurazioneHttpsServer httpsServer = httpsConf!=null ? evalnull( httpsConf::getServer ) : null;
       	final ConnettoreConfigurazioneProxy 	  proxy   	  = conn.getProxy();
       	final ConnettoreConfigurazioneTimeout	  timeoutConf = conn.getTempiRisposta();
     	final String tokenPolicy = conn.getTokenPolicy(); 
@@ -1296,10 +1319,10 @@ public class ErogazioniApiHelper {
         final OneOfAPIImplAutenticazione authn = impl.getAutenticazione();
         
         // Vincolo rilasciato
-//        // Se sono in modalità SPCoop non posso specificare l'autenticazione
-//        if ( env.profilo == ProfiloEnum.SPCOOP && generaPortaApplicativa && authn != null ) {
-//        	throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile specificare l'autenticazione per un servizio spcoop");
-//        }
+        // Se sono in modalità SPCoop non posso specificare l'autenticazione
+        /**if ( env.profilo == ProfiloEnum.SPCOOP && generaPortaApplicativa && authn != null ) {
+        	throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile specificare l'autenticazione per un servizio spcoop");
+        }*/
         
         FonteEnum ruoliFonte = FonteEnum.QUALSIASI;
         String erogazioneRuolo = null;
@@ -1364,29 +1387,29 @@ public class ErogazioniApiHelper {
         
         if (isRichiedente) {
         	
-        	final APIImplAutorizzazioneAbilitataNew configAuthz_final = (APIImplAutorizzazioneAbilitataNew) authz;
+        	final APIImplAutorizzazioneAbilitataNew configAuthzFinal = (APIImplAutorizzazioneAbilitataNew) authz;
                     	
             // Se ho abilitata l'autorizzazione puntuale, devo aver anche abilitata l'autenticazione
         	if ( env.isSupportatoAutenticazioneSoggetti && 
-        			(authn == null || authn.getTipo() == TipoAutenticazioneEnum.DISABILITATO) ) {
-        		if(!generaPortaApplicativa || !env.isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazione) {
-        			throw FaultCode.RICHIESTA_NON_VALIDA.toException(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ABILITARE_AUTENTICAZIONE_PER_AUTORIZZAZIONE_PUNTUALE);
-        		}
+        			(authn == null || authn.getTipo() == TipoAutenticazioneEnum.DISABILITATO)  &&
+        			(!generaPortaApplicativa || !env.isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazione) 
+        			){
+        		throw FaultCode.RICHIESTA_NON_VALIDA.toException(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ABILITARE_AUTENTICAZIONE_PER_AUTORIZZAZIONE_PUNTUALE);
         	}
        	
-        	if ( !StringUtils.isEmpty(configAuthz_final.getSoggetto()) ) {
+        	if ( !StringUtils.isEmpty(configAuthzFinal.getSoggetto()) ) {
         		
         		CredenzialeTipo credTipo = evalnull( () -> Enums.credenzialeTipoFromTipoAutenticazione.get(authn.getTipo()) );
-        		Boolean appId = null; // TODO-APIKEY
+        		Boolean appId = null; // da fare APIKEY
         		Optional<String> soggettoCompatibile = getSoggettiCompatibiliAutorizzazione(credTipo, appId, env.idSoggetto, env)
         	        	.stream()
         	        	.map( IDSoggettoDB::getNome )
-        	        	.filter( s -> s.equals( configAuthz_final.getSoggetto() ) )
+        	        	.filter( s -> s.equals( configAuthzFinal.getSoggetto() ) )
         	        	.findAny();
         	
         		//Se ho scelto un soggetto, questo deve esistere ed essere compatibile con il profilo di autenticazione
 	        	if ( !soggettoCompatibile.isPresent() ) {
-	        		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto " + configAuthz_final.getSoggetto() + " scelto per l'autorizzazione puntuale non esiste o non è compatibile con la modalità di autenticazione scelta");
+	        		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto " + configAuthzFinal.getSoggetto() + " scelto per l'autorizzazione puntuale non esiste o non è compatibile con la modalità di autenticazione scelta");
 	        	}
         	}
         	
@@ -1394,18 +1417,20 @@ public class ErogazioniApiHelper {
         
         if (isRuoli) {
         	
-        	final APIImplAutorizzazioneAbilitataNew configAuthz_final = (APIImplAutorizzazioneAbilitataNew) authz;
+        	final APIImplAutorizzazioneAbilitataNew configAuthzFinal = (APIImplAutorizzazioneAbilitataNew) authz;
             
-        	if (!StringUtils.isEmpty(configAuthz_final.getRuolo())) {
+        	if (!StringUtils.isEmpty(configAuthzFinal.getRuolo())) {
 	        	RuoliCore ruoliCore = new RuoliCore(env.stationCore);
 	        	// Il ruolo deve esistere
 	        	org.openspcoop2.core.registry.Ruolo regRuolo = null;
 				try {
-					regRuolo = ruoliCore.getRuolo(configAuthz_final.getRuolo());
-				} catch (DriverConfigurazioneException e) {	}
+					regRuolo = ruoliCore.getRuolo(configAuthzFinal.getRuolo());
+				} catch (DriverConfigurazioneException e) {	
+					// ignore
+				}
 				
 				if (regRuolo == null) {
-					throw FaultCode.NOT_FOUND.toException("Non esiste nessun ruolo con nome " + configAuthz_final.getRuolo());
+					throw FaultCode.NOT_FOUND.toException("Non esiste nessun ruolo con nome " + configAuthzFinal.getRuolo());
 				}
         	}
         }
@@ -1439,7 +1464,7 @@ public class ErogazioniApiHelper {
 			throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml( inUsoMessage.toString() ));
 		}
 
-		/*final String tipoAutorString =	AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString( authz.getTipo(),
+		/**final String tipoAutorString =	AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString( authz.getTipo(),
 				isPuntuale,
 				isRuoli,
 				false,
@@ -1457,10 +1482,9 @@ public class ErogazioniApiHelper {
 			else if(impl instanceof Fruizione) {
 				canale = ((Fruizione)impl).getCanale();
 			}
-			if(canale!=null) {
-				if(!env.canali.contains(canale)) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il canale fornito '" + canale + "' non è presente nel registro");
-				}
+			if(canale!=null &&
+				!env.canali.contains(canale)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il canale fornito '" + canale + "' non è presente nel registro");
 			}
 		}
 		String canaleStato = null;
@@ -1489,8 +1513,8 @@ public class ErogazioniApiHelper {
         		impl.getConnettore().getEndpoint(),
         		null, 	// nome JMS
         		null, 	// tipo JMS,
-        		evalnull( () -> httpConf.getUsername() ),	
-        		evalnull( () -> httpConf.getPassword() ), 
+        		httpConf!=null ? evalnull( httpConf::getUsername ) : null,	
+        		httpConf!=null ? evalnull( httpConf::getPassword ) : null, 
         		null,   // initcont JMS,
         		null,   // urlpgk JMS,
         		null,   // provurl JMS 
@@ -1508,31 +1532,32 @@ public class ErogazioniApiHelper {
         		evalnull( () ->  httpsConf.getTipologia().toString() ),				// I valori corrispondono con con org.openspcoop2.utils.transport.http.SSLConstants
         		BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),				// this.httpshostverify,
         		(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
-        		evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
+        		httpsServer!=null ? evalnull( httpsServer::getTruststorePath ) : null,				// this.httpspath
 				evalnull( () -> ConnettoreHTTPApiHelper.getTruststoreType(httpsServer) ),		// this.httpstipo,
-				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
-				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
+				httpsServer!=null ? evalnull( httpsServer::getTruststorePassword ) : null,			// this.httpspwd,
+				httpsServer!=null ? evalnull( httpsServer::getAlgoritmo ) : null,					// this.httpsalgoritmo
 				httpsstato,	//
         		httpskeystore, 	
         		"", //  this.httpspwdprivatekeytrust
-        		evalnull( () -> httpsClient.getKeystorePath() ),					// httpspathkey
+        		httpsClient!=null ? evalnull( httpsClient::getKeystorePath ) : null,					// httpspathkey
         		evalnull( () -> ConnettoreHTTPApiHelper.getKeystoreType(httpsClient) ),	 		// httpstipokey, coincide con ConnettoriCostanti.TIPOLOGIE_KEYSTORE
-        		evalnull( () -> httpsClient.getKeystorePassword() ), 	 		// httpspwdkey
-        		evalnull( () -> httpsClient.getKeyPassword() ),	 				// httpspwdprivatekey
-        		evalnull( () -> httpsClient.getAlgoritmo() ),					// httpsalgoritmokey
-        		evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
-        		evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
-        		evalnull( () -> httpsServer.getTruststoreOcspPolicy()),				// httpsTrustStoreOCSPPolicy
+        		httpsClient!=null ? evalnull( httpsClient::getKeystorePassword ) : null, 	 		// httpspwdkey
+        		httpsClient!=null ? evalnull( httpsClient::getKeyPassword ) : null,	 				// httpspwdprivatekey
+        		httpsClient!=null ? evalnull( httpsClient::getAlgoritmo ) : null,					// httpsalgoritmokey
+        		httpsClient!=null ? evalnull( httpsClient::getKeyAlias ) : null,					// httpsKeyAlias
+        		httpsServer!=null ? evalnull( httpsServer::getTruststoreCrl ) : null,					// httpsTrustStoreCRLs
+        		httpsServer!=null ? evalnull( httpsServer::getTruststoreOcspPolicy) : null,				// httpsTrustStoreOCSPPolicy
+                httpsClient!=null ? evalnull( httpsClient::getKeystoreByokPolicy) : null,				// httpsKeyStoreBYOKPolicy
         		null, 								// tipoconn Da debug = null.	
         		asps.getVersione().toString(), //as.getVersione().toString(), 		// Versione aspc
         		false,								// validazioneDocumenti Da debug = false
         		null,								// Da Codice console
         		ServletUtils.boolToCheckBoxStatus(http_stato),	// "yes" se utilizziamo http.
         		ServletUtils.boolToCheckBoxStatus(proxy_enabled),			
-    			evalnull( () -> proxy.getHostname() ),
+        		proxy!=null ? evalnull( proxy::getHostname ) : null,
     			evalnull( () -> proxy.getPorta().toString() ),
-    			evalnull( () -> proxy.getUsername() ),
-    			evalnull( () -> proxy.getPassword() ),				
+    			proxy!=null ? evalnull( proxy::getUsername ) : null,
+    			proxy!=null ? evalnull( proxy::getPassword ) : null,				
     			ServletUtils.boolToCheckBoxStatus(tempiRisposta_enabled), 
     			evalnull( () -> timeoutConf.getConnectionTimeout().toString()),		// this.tempiRisposta_connectionTimeout, 
     			evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()),  // this.tempiRisposta_readTimeout, 
@@ -1585,7 +1610,23 @@ public class ErogazioniApiHelper {
         		evalnull( () -> fruitore.get().getNome() ),			// nomeFruitore
         		autenticazioneToken,
         		tokenPolicy,
-        		false, // erogazioneServizioApplicativoServerEnabled, TODO quando si aggiunge applicativo server
+        		
+				apiKey ? org.openspcoop2.web.lib.mvc.Costanti.CHECK_BOX_ENABLED : org.openspcoop2.web.lib.mvc.Costanti.CHECK_BOX_DISABLED, // autenticazioneApiKey
+				apiKey && 
+        			env.erogazioniHelper.isAutenticazioneApiKeyUseOAS3Names(
+        					httpApiKey!=null ? evalnull(httpApiKey::getApiKeyHeader) : null, 
+        					httpApiKey!=null ? evalnull(httpApiKey::getAppIdHeader) : null
+        		), // useOAS3Names
+        		apiKey && 
+        			env.erogazioniHelper.isAutenticazioneApiKeyUseAppId(
+        					httpApiKey!=null ? evalnull(httpApiKey::getAppId) : null
+        		), // useAppId
+        		httpApiKey!=null ? evalnull( httpApiKey::getApiKeyHeader ) : null, // apiKeyHeader
+        		httpApiKey!=null ? evalnull( httpApiKey::getApiKey ) : null, // apiKeyValue
+        		httpApiKey!=null ? evalnull( httpApiKey::getAppIdHeader ) : null, // appIdHeader
+        		httpApiKey!=null ? evalnull( httpApiKey::getAppId ) : null, // appIdValue	
+        		
+        		false, // erogazioneServizioApplicativoServerEnabled, 
     			null, // rogazioneServizioApplicativoServer
     			canaleStato, canale, gestioneCanaliEnabled
         	)) {
@@ -1616,6 +1657,7 @@ public class ErogazioniApiHelper {
 		final boolean proxy_enabled = conn.getProxy() != null;
 		final boolean tempiRisposta_enabled = conn.getTempiRisposta() != null; 
 		
+		final ConnettoreConfigurazioneApiKey httpApiKey = conn.getAutenticazioneApikey();
 	    final ConnettoreConfigurazioneHttps httpsConf 	 = conn.getAutenticazioneHttps();
 	    final ConnettoreConfigurazioneHttpBasic	httpConf	 = conn.getAutenticazioneHttp();
 
@@ -1627,8 +1669,8 @@ public class ErogazioniApiHelper {
 				ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, env.apsHelper, 
 							parametersPOST, false, endpointtype);
 
-	    final ConnettoreConfigurazioneHttpsClient httpsClient = evalnull( () -> httpsConf.getClient() );
-	  	final ConnettoreConfigurazioneHttpsServer httpsServer = evalnull( () -> httpsConf.getServer() );
+		final ConnettoreConfigurazioneHttpsClient httpsClient = httpsConf!=null ? evalnull( httpsConf::getClient ) : null;
+	  	final ConnettoreConfigurazioneHttpsServer httpsServer = httpsConf!=null ? evalnull( httpsConf::getServer ) : null;
 	  	final ConnettoreConfigurazioneProxy 	  proxy   	  = conn.getProxy();
 	  	final ConnettoreConfigurazioneTimeout	  timeoutConf = conn.getTempiRisposta();
 	  	final String tokenPolicy = conn.getTokenPolicy(); 
@@ -1647,8 +1689,8 @@ public class ErogazioniApiHelper {
 				conn.getEndpoint(),		// this.url,
 				null,	// this.nome,
 				null, 	// this.tipo,
-				evalnull( () -> httpConf.getUsername() ),
-				evalnull( () -> httpConf.getPassword() ),
+				httpConf!=null ? evalnull( httpConf::getUsername ) : null,
+				httpConf!=null ? evalnull( httpConf::getPassword ) : null,
 				null,	// this.initcont, 
 				null,	// this.urlpgk,
 				conn.getEndpoint(),	// this.url, 
@@ -1658,27 +1700,28 @@ public class ErogazioniApiHelper {
 				evalnull( () -> httpsConf.getTipologia().toString() ),				// this.httpstipologia
 				BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),	// this.httpshostverify,
 				(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
-				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
+				httpsServer!=null ? evalnull( httpsServer::getTruststorePath ) : null,				// this.httpspath
 				evalnull( () -> ConnettoreHTTPApiHelper.getTruststoreType(httpsServer) ),	// this.httpstipo,
-				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
-				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
+				httpsServer!=null ? evalnull( httpsServer::getTruststorePassword ) : null,			// this.httpspwd,
+				httpsServer!=null ? evalnull( httpsServer::getAlgoritmo ) : null,					// this.httpsalgoritmo
 				httpsstato,
 				httpskeystore,			// this.httpskeystore, 
 				"",																	//  this.httpspwdprivatekeytrust
-				evalnull( () -> httpsClient.getKeystorePath() ),				// pathkey
+				httpsClient!=null ? evalnull( httpsClient::getKeystorePath ) : null,				// pathkey
 				evalnull( () -> ConnettoreHTTPApiHelper.getKeystoreType(httpsClient) ), 		// this.httpstipokey
-				evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
-				evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
-				evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey,
-        		evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
-        		evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
-        		evalnull( () -> httpsServer.getTruststoreOcspPolicy()),				// httpsTrustStoreOCSPPolicy
+				httpsClient!=null ? evalnull( httpsClient::getKeystorePassword ) : null,			// this.httpspwdkey 
+				httpsClient!=null ? evalnull( httpsClient::getKeyPassword ) : null,				// this.httpspwdprivatekey,  
+				httpsClient!=null ? evalnull( httpsClient::getAlgoritmo ) : null,				// this.httpsalgoritmokey,
+				httpsClient!=null ? evalnull( httpsClient::getKeyAlias ) : null,					// httpsKeyAlias
+				httpsServer!=null ? evalnull( httpsServer::getTruststoreCrl ) : null,					// httpsTrustStoreCRLs
+				httpsServer!=null ? evalnull( httpsServer::getTruststoreOcspPolicy) : null,				// httpsTrustStoreOCSPPolicy
+		        httpsClient!=null ? evalnull( httpsClient::getKeystoreByokPolicy) : null,				// httpsKeyStoreBYOKPolicy
 			
 				ServletUtils.boolToCheckBoxStatus( proxy_enabled ),	
-				evalnull( () -> proxy.getHostname() ),
+				proxy!=null ? evalnull( proxy::getHostname ) : null,
 				evalnull( () -> proxy.getPorta().toString() ),
-				evalnull( () -> proxy.getUsername() ),
-				evalnull( () -> proxy.getPassword() ),
+				proxy!=null ? evalnull( proxy::getUsername ) : null,
+				proxy!=null ? evalnull( proxy::getPassword ) : null,
 				
 				ServletUtils.boolToCheckBoxStatus( tempiRisposta_enabled ),	
 				evalnull( () -> timeoutConf.getConnectionTimeout().toString()),	// this.tempiRisposta_connectionTimeout, 
@@ -1700,7 +1743,13 @@ public class ErogazioniApiHelper {
 				null,	// this.responseInputFileNameHeaders, 
 				null,	// this.responseInputDeleteAfterRead, 
 				null,	// this.responseInputWaitTime,
-				tokenPolicy,
+				tokenPolicy, 
+				
+				httpApiKey!=null ? evalnull( httpApiKey::getApiKeyHeader ) : null, 
+				httpApiKey!=null ? evalnull( httpApiKey::getApiKey ) : null,
+				httpApiKey!=null ? evalnull( httpApiKey::getAppIdHeader ) : null, 
+				httpApiKey!=null ? evalnull( httpApiKey::getAppId ): null, 
+				
 				listExtendedConnettore);			
 	}
 	

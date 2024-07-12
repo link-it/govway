@@ -55,6 +55,7 @@
 	<classpathentry excluding="*/jboss*|*/web.xml|*/applicationContext-*.xml|*/*.yaml|**/org.apache.cxf.Logger" kind="src" path="tools/rs/traccia/server/src"/>
 	<classpathentry kind="src" path="tools/command_line_interfaces/monitor_pdd/src"/>
 	<classpathentry kind="src" path="tools/command_line_interfaces/config_loader/src"/>
+	<classpathentry kind="src" path="tools/command_line_interfaces/govway_vault/src"/>
 	<classpathentry kind="src" path="tools/batch/statistiche/src"/>
 	<classpathentry kind="src" path="tools/batch/runtime-repository/src"/>
 	<classpathentry excluding="*/*.xml" kind="src" path="tools/connection_pool/src"/>

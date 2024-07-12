@@ -97,8 +97,14 @@ function postVersion_postBack(dataElementName) {
 		if(nome == "edit-mode")
 			document.form.elements[k].value = 'in_progress_postback';
 		
+		var tipo = document.form.elements[k].type;
+		if (tipo == "checkbox") {
+			if (!document.form.elements[k].checked){
+  			   addHidden(document.form, nome , 'no');
+			}
+		}
+		
 		if(dump) { 
-		    var tipo = document.form.elements[k].type;
 		    var valore = "";
 		    if (tipo == "text" || tipo == "file" || tipo == "hidden" || tipo == "textarea" || tipo == "number")
 			valore = document.form.elements[k].value;
@@ -128,10 +134,61 @@ function postVersion_postBack(dataElementName) {
 	    }
     }
     
-    if(navigationAnchor!=null){
-    	 document.form.action=navigationAnchor;
+    // Se la location url contiene dei parametri, vanno eliminati. Sono dovuti a precedenti eventi di postback via GET
+    var checkActionUrl = document.location.href;
+    var indexActionUrl = checkActionUrl.indexOf('?');
+    var newActionUrl = checkActionUrl;
+    //console.log('Precedente URL: ' + checkActionUrl);
+    if (indexActionUrl >0 && indexActionUrl < (checkActionUrl.length - 1) ){
+        var queryString = checkActionUrl.split('?')[1];
+        newActionUrl = checkActionUrl.split('?')[0] + '?';
+        /*
+        Il codice sottostante ricreava la url aggiungendo i parametri non presenti nella form. Questo non serve poichè tutti i parametri devono essere nella form.
+        
+        var parametri = queryString.split('&');
+        var parametriObj = {};
+        parametri.forEach(function(parametro) {
+           var coppia = parametro.split('=');
+           var nome = decodeURIComponent(coppia[0]);
+           var valore = decodeURIComponent(coppia[1]);
+           parametriObj[nome] = valore;
+        });
+        var firstParameter = true;
+        for (var nomeParametro in parametriObj) {
+          if (parametriObj.hasOwnProperty(nomeParametro)) {
+	          var valoreParametro = parametriObj[nomeParametro];
+              console.log(nomeParametro + ': ' + valoreParametro);
+              
+              var foundElement = false;
+              for (var k=0; k<document.form.elements.length; k++) {
+				 var nome = document.form.elements[k].name;
+				 if(nome == nomeParametro){
+					foundElement=true;
+				}
+			  }
+			  if(!foundElement){
+				 if(!firstParameter){
+					newActionUrl += "&";
+			 	 }
+			 	 else{
+					firstParameter=false;
+				 }
+				 newActionUrl += encodeURIComponent(nomeParametro) + "=" + encodeURIComponent(valoreParametro);
+			  }
+          }
+        }
+        */
     }
+    //console.log('Nuova URL: ' + newActionUrl);
     
+    /*if(navigationAnchor!=null){
+    	 document.form.action=navigationAnchor;
+    }*/
+    if(navigationAnchor!=null){
+    	newActionUrl += navigationAnchor;
+    }
+    document.form.action=newActionUrl
+        
     // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
 	for (var k=0; k<document.form.elements.length; k++) {
 		var nome = document.form.elements[k].name;
@@ -147,7 +204,8 @@ function postVersion_postBack(dataElementName) {
   	addHidden(document.form, tabSessionKey , tabValue);
   	addHidden(document.form, prevTabSessionKey , tabValue);
   }
-	
+  
+	//console.log('ACTION FINALE: ' + document.form.action);
     // form submit
     document.form.submit();
 }

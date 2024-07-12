@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.openspcoop2.core.byok.IDriverBYOK;
+import org.openspcoop2.core.byok.IDriverBYOKConfig;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -100,8 +102,8 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
-import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.cache.CacheResponse;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
@@ -328,11 +330,11 @@ public class RegistroServizi  {
 			Logger alogConsole,boolean raggiungibilitaTotale, boolean readObjectStatoBozza, 
 			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX, 
 			boolean prefillCache, CryptConfig cryptConfigSoggetti,
-			CacheType cacheType)throws DriverRegistroServiziException{
+			CacheType cacheType, IDriverBYOK driverBYOK)throws DriverRegistroServiziException{
 
 		try{ 
-			this.driverRegistroServizi = new java.util.HashMap<String,IDriverRegistroServiziGet>();
-			this.registriXML = new ArrayList<DriverRegistroServiziXML>();
+			this.driverRegistroServizi = new java.util.HashMap<>();
+			this.registriXML = new ArrayList<>();
 
 			if(alog!=null)
 				this.log = alog;
@@ -443,6 +445,11 @@ public class RegistroServizi  {
 						this.log.error(msg);
 						if(alogConsole!=null)
 							alogConsole.info(msg);
+					}
+					
+					if(driver instanceof IDriverBYOKConfig) {
+						IDriverBYOKConfig c = (IDriverBYOKConfig) driver;
+						c.initialize(driverBYOK, false, true);
 					}
 				}
 

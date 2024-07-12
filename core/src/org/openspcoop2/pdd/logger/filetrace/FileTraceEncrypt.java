@@ -37,6 +37,7 @@ import org.openspcoop2.security.keystore.JWKSetStore;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.PublicKeyStore;
 import org.openspcoop2.security.keystore.SecretKeyStore;
+import org.openspcoop2.security.keystore.SecretPasswordKeyDerivationConfig;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.JWK;
@@ -46,17 +47,21 @@ import org.openspcoop2.utils.certificate.KeyUtils;
 import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.SymmetricKeyUtils;
 import org.openspcoop2.utils.certificate.byok.BYOKConfig;
+import org.openspcoop2.utils.certificate.byok.BYOKCostanti;
 import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.HexBinaryUtilities;
 import org.openspcoop2.utils.security.Encrypt;
+import org.openspcoop2.utils.security.EncryptOpenSSLPass;
+import org.openspcoop2.utils.security.EncryptOpenSSLPassPBKDF2;
 import org.openspcoop2.utils.security.EncryptWrapKey;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWEOptions;
 import org.openspcoop2.utils.security.JsonEncrypt;
 import org.openspcoop2.utils.security.JsonUtils;
 import org.openspcoop2.utils.security.JwtHeaders;
+import org.openspcoop2.utils.security.OpenSSLEncryptionMode;
 import org.slf4j.Logger;
 
 import com.nimbusds.jose.jwk.KeyUse;
@@ -85,17 +90,20 @@ public class FileTraceEncrypt {
 	private static final String JAVA_SEPARATOR = ".";
 	
 	private String getKeystoreError(FileTraceEncryptConfig config) {
-		return "Accesso al keystore ["+config.getKeystoreType().getNome()+"] '"+config.getKeystorePath()+"' non riuscito";
+		return "Access to keystore ["+config.getKeystoreType().getNome()+"] '"+config.getKeystorePath()+"' failed";
 	}
 	private String getKeyError(FileTraceEncryptConfig config) {
-		return "Accesso alla chiave ["+config.getKeystoreType().getNome()+"] '"+config.getKeystorePath()+"' non riuscito";
+		return "Access to key ["+config.getKeystoreType().getNome()+"] '"+config.getKeystorePath()+"' failed";
 	}
+
+	private static final String KEYSTORE_PREFIX = "Keystore [";
 	
 	public String encrypt(FileTraceEncryptConfig config, 
 			String value) throws UtilsException {
 	
 		FileTraceEncryptKey fileTraceEncryptKey = new FileTraceEncryptKey();
 
+		boolean initPasswordKeyDerivation = false;
 		try {
 			switch (config.getKeystoreType()) {
 			case JKS:
@@ -113,8 +121,12 @@ public class FileTraceEncrypt {
 			case SYMMETRIC_KEY:
 				readSecretKey(fileTraceEncryptKey, config);
 				break;
+			case PASSWORD_KEY_DERIVATION:
+				readPasswordKeyDerivation(fileTraceEncryptKey, config);
+				initPasswordKeyDerivation = true;
+				break;
 			default:
-				throw new UtilsException("Keystore ["+config.getKeystoreType().getNome()+"] non supportato");
+				throw new UtilsException(KEYSTORE_PREFIX+config.getKeystoreType().getNome()+"] unsupported");
 			}
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
@@ -123,6 +135,9 @@ public class FileTraceEncrypt {
 		/**System.out.println("CONF ["+config.getName()+"] java["+config.isJavaEngine()+"] jose["+config.isJoseEngine()+"]");*/
 		if(config.isJavaEngine()) {
 			if(config.isKeyWrap()) {
+				if(initPasswordKeyDerivation) {
+					throw new UtilsException(KEYSTORE_PREFIX+config.getKeystoreType().getNome()+"] unusable with key wrap java mode");
+				}
 				return encJavaKeyWrap(fileTraceEncryptKey, config, value);
 			}
 			else {
@@ -130,8 +145,14 @@ public class FileTraceEncrypt {
 			}
 		} 
 		else if(config.isJoseEngine()) {
+			if(initPasswordKeyDerivation) {
+				throw new UtilsException(KEYSTORE_PREFIX+config.getKeystoreType().getNome()+"] unusable with jose mode");
+			}
 			return encJose(fileTraceEncryptKey, config, value);
 		} 
+		else if(config.isOpenSSLEngine()) {
+			return encOpenSSL(fileTraceEncryptKey, config, value);
+		}
 		else {
 			throw new UtilsException("Encrypt mode undefined");
 		}
@@ -213,7 +234,42 @@ public class FileTraceEncrypt {
 		}
 		/**}*/
 	}
-	private void readPublicKey(FileTraceEncryptKey fileTraceEncryptKey, FileTraceEncryptConfig config) throws UtilsException, SecurityException {
+	
+	private byte[] readKeyInline(FileTraceEncryptConfig config) throws SecurityException {
+		String keyInLine = config.getKeyInline();
+		byte [] key = null;
+		if(config.isKeyBase64Encoding()) {
+			key = Base64Utilities.decode(keyInLine.getBytes());
+		}
+		else if(config.isKeyHexEncoding()) {
+			try {
+				key = HexBinaryUtilities.decode(keyInLine);
+			}catch(Exception e) {
+				throw new SecurityException(e.getMessage());
+			}
+		}
+		else {
+			key = keyInLine.getBytes();
+		}
+		return key;
+	}
+	private byte[] readEncodedKeyFromPath(FileTraceEncryptConfig config) throws SecurityException {
+		byte [] encodedKey = GestoreKeystoreCache.getExternalResource(this.requestInfo, config.getKeyPath(), null).getResource();
+		byte [] key = null;
+		if(config.isKeyBase64Encoding()) {
+			key = Base64Utilities.decode(encodedKey);
+		}
+		else {
+			try {
+				key = HexBinaryUtilities.decode(new String(encodedKey));
+			}catch(Exception e) {
+				throw new SecurityException(e.getMessage());
+			}
+		}
+		return key;
+	}
+	
+	private String readPublicKeyAlgo(FileTraceEncryptConfig config) {
 		String algo = config.getKeyAlgorithm();
 		if(config.isJoseEngine() || config.isKeyWrap()) {
 			if(config.getKeyAlgorithm().contains(KeyUtils.ALGO_RSA)) {
@@ -232,7 +288,25 @@ public class FileTraceEncrypt {
 				algo = KeyUtils.ALGO_RSA;
 			}
 		}
-		PublicKeyStore publicKeyStore = GestoreKeystoreCache.getPublicKeyStore(this.requestInfo, config.getKeyPath(), algo);
+		return algo;
+	}
+	private void readPublicKey(FileTraceEncryptKey fileTraceEncryptKey, FileTraceEncryptConfig config) throws UtilsException, SecurityException {
+		String algo = readPublicKeyAlgo(config);
+		
+		PublicKeyStore publicKeyStore = null;
+		if(config.getKeyInline()!=null && StringUtils.isNotEmpty(config.getKeyInline())) {
+			byte [] key = readKeyInline(config);
+			publicKeyStore = GestoreKeystoreCache.getPublicKeyStore(this.requestInfo, key, algo);
+		}
+		else {
+			if(config.isKeyBase64Encoding() || config.isKeyHexEncoding()) {
+				byte [] key = readEncodedKeyFromPath(config);
+				publicKeyStore = GestoreKeystoreCache.getPublicKeyStore(this.requestInfo, key, algo);
+			}
+			else {
+				publicKeyStore = GestoreKeystoreCache.getPublicKeyStore(this.requestInfo, config.getKeyPath(), algo);
+			}
+		}
 		if(publicKeyStore==null) {
 			throw new UtilsException(getKeyError(config));
 		}
@@ -253,12 +327,40 @@ public class FileTraceEncrypt {
 	}
 	private void readSecretKey(FileTraceEncryptKey fileTraceEncryptKey, FileTraceEncryptConfig config) throws UtilsException, SecurityException {
 		String algo = config.isJoseEngine() ? SymmetricKeyUtils.ALGO_AES : config.getKeyAlgorithm();
-		SecretKeyStore secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, config.getKeyPath(), algo,
-				getBYOKRequestParams(config));
+		SecretKeyStore secretKeyStore = null;
+		if(config.getKeyInline()!=null && StringUtils.isNotEmpty(config.getKeyInline())) {
+			byte [] key = readKeyInline(config);
+			secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, key, algo,
+					getBYOKRequestParams(config));
+		}
+		else {
+			if(config.isKeyBase64Encoding() || config.isKeyHexEncoding()) {
+				byte [] key = readEncodedKeyFromPath(config);
+				secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, key, algo,
+						getBYOKRequestParams(config));
+			}
+			else {
+				secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, config.getKeyPath(), algo,
+						getBYOKRequestParams(config));
+			}
+		}
+		initSecretKey(secretKeyStore, fileTraceEncryptKey, config);
+	}
+	private void readPasswordKeyDerivation(FileTraceEncryptKey fileTraceEncryptKey, FileTraceEncryptConfig config) throws UtilsException, SecurityException {
+		fileTraceEncryptKey.pwdKeyDerivationConfig = new SecretPasswordKeyDerivationConfig(config.getPassword(), config.getPasswordType(), config.getPasswordIteration());
+		if(!config.isOpenSSLEngine() ) {
+			SecretKeyStore secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, fileTraceEncryptKey.pwdKeyDerivationConfig,
+					getBYOKRequestParams(config));
+			initSecretKey(secretKeyStore, fileTraceEncryptKey, config);
+		}
+	}
+	private void initSecretKey(SecretKeyStore secretKeyStore, FileTraceEncryptKey fileTraceEncryptKey, FileTraceEncryptConfig config) throws UtilsException, SecurityException {
 		if(secretKeyStore==null) {
 			throw new UtilsException(getKeyError(config));
 		}
 		fileTraceEncryptKey.key = secretKeyStore.getSecretKey();
+		fileTraceEncryptKey.iv = secretKeyStore.getIv();
+		fileTraceEncryptKey.salt = secretKeyStore.getSalt();
 		fileTraceEncryptKey.secret = true;
 		if(config.isJoseEngine()) {
 			if(config.getKeyId()!=null && StringUtils.isNotEmpty(config.getKeyId())) {
@@ -277,9 +379,17 @@ public class FileTraceEncrypt {
 	
 	private String encJava(FileTraceEncryptKey fileTraceEncryptKey, FileTraceEncryptConfig config, String value) throws UtilsException {
 		
-		Encrypt encrypt = new Encrypt(fileTraceEncryptKey.key);
+		Encrypt encrypt = null;
+		if(fileTraceEncryptKey.secret &&
+				fileTraceEncryptKey.iv!=null) {
+			encrypt = new Encrypt(fileTraceEncryptKey.key, fileTraceEncryptKey.iv);
+		}
+		else {
+			encrypt = new Encrypt(fileTraceEncryptKey.key);
+		}
 		
-		if(fileTraceEncryptKey.secret) {
+		if(fileTraceEncryptKey.secret &&
+				fileTraceEncryptKey.iv==null) {
 			encrypt.initIV(config.getContentAlgorithm());
 		}
 		
@@ -293,18 +403,23 @@ public class FileTraceEncrypt {
 			throw new UtilsException(e.getMessage(),e);
 		}
 		
+		if(fileTraceEncryptKey.secret &&
+				fileTraceEncryptKey.salt!=null){
+			encrypted = EncryptOpenSSLPass.formatOutput(fileTraceEncryptKey.salt, encrypted);
+		}
+		
 		String en = null;
-		if(config.isJavaBase64Encoding()) {
+		if(config.isBase64Encoding()) {
 			en = Base64Utilities.encodeAsString(encrypted);
 		}
-		else if(config.isJavaHexEncoding()) {
+		else if(config.isHexEncoding()) {
 			en = HexBinaryUtilities.encodeAsString(encrypted);
 		}
 		else {
 			throw new UtilsException("Java algorithm undefined in keystore ["+config.getKeystoreType().getNome()+"] '"+config.getKeystorePath()+"'");
 		}
 		if(fileTraceEncryptKey.secret) {
-			if(config.isJavaBase64Encoding()) {
+			if(config.isBase64Encoding()) {
 				return encrypt.getIVBase64AsString()+JAVA_SEPARATOR+en;
 			}
 			else {
@@ -335,17 +450,17 @@ public class FileTraceEncrypt {
 		}
 		
 		String en = null;
-		if(config.isJavaBase64Encoding()) {
+		if(config.isBase64Encoding()) {
 			en = Base64Utilities.encodeAsString(encrypted);
 		}
-		else if(config.isJavaHexEncoding()) {
+		else if(config.isHexEncoding()) {
 			en = HexBinaryUtilities.encodeAsString(encrypted);
 		}
 		else {
 			throw new UtilsException("Java algorithm undefined in keystore ["+config.getKeystoreType().getNome()+"] '"+config.getKeystorePath()+"'");
 		}
 
-		if(config.isJavaBase64Encoding()) {
+		if(config.isBase64Encoding()) {
 			return encrypt.getWrappedKeyBase64()+JAVA_SEPARATOR+encrypt.getIVBase64AsString()+JAVA_SEPARATOR+en;
 		}
 		else {
@@ -376,11 +491,58 @@ public class FileTraceEncrypt {
 		}
 		return encrypt.encrypt(value);
 	}
+	
+	private String encOpenSSL(FileTraceEncryptKey fileTraceEncryptKey, FileTraceEncryptConfig config, String value) throws UtilsException {
+		if(BYOKCostanti.isOpenSSLPBKDF2PasswordDerivationKeyMode(fileTraceEncryptKey.pwdKeyDerivationConfig.getPasswordEncryptionMode())) {
+			return encOpenSSLPBKDF2(fileTraceEncryptKey, config, value);
+		}
+		else {
+			return encOpenSSLStandard(fileTraceEncryptKey, config, value);
+		}
+	}
+	private String encOpenSSLStandard(FileTraceEncryptKey fileTraceEncryptKey, FileTraceEncryptConfig config, String value) throws UtilsException {
+		
+		SecretPasswordKeyDerivationConfig passwordKeyDerivationConfig = fileTraceEncryptKey.pwdKeyDerivationConfig;
+		
+		EncryptOpenSSLPass encrypt = new EncryptOpenSSLPass(passwordKeyDerivationConfig.getPassword(), 
+				OpenSSLEncryptionMode.toMode(passwordKeyDerivationConfig.getPasswordEncryptionMode()));
+		
+		if(config.isBase64Encoding()) {
+			return encrypt.encryptBase64AsString(value.getBytes());
+		}
+		else if(config.isHexEncoding()) {
+			return encrypt.encryptHexBinaryAsString(value.getBytes());
+		}
+		else {
+			throw new UtilsException("Encoding mode undefined");
+		}
+	}
+	private String encOpenSSLPBKDF2(FileTraceEncryptKey fileTraceEncryptKey, FileTraceEncryptConfig config, String value) throws UtilsException {
+		
+		SecretPasswordKeyDerivationConfig passwordKeyDerivationConfig = fileTraceEncryptKey.pwdKeyDerivationConfig;
+		
+		EncryptOpenSSLPassPBKDF2 encrypt = new EncryptOpenSSLPassPBKDF2(passwordKeyDerivationConfig.getPassword(), 
+				passwordKeyDerivationConfig.getPasswordIterator(), 
+				OpenSSLEncryptionMode.toMode(passwordKeyDerivationConfig.getPasswordEncryptionMode()));
+		
+		if(config.isBase64Encoding()) {
+			return encrypt.encryptBase64AsString(value.getBytes());
+		}
+		else if(config.isHexEncoding()) {
+			return encrypt.encryptHexBinaryAsString(value.getBytes());
+		}
+		else {
+			throw new UtilsException("Encoding mode undefined");
+		}
+	}
 }
 
 class FileTraceEncryptKey{
 	Key key = null;
+	byte[]iv = null;
+	byte[]salt = null;
 	boolean secret = false;
 	KeyStore ks = null;
 	JsonWebKeys jsonWebKeys = null;
+	SecretPasswordKeyDerivationConfig pwdKeyDerivationConfig = null;
 }

@@ -23,13 +23,18 @@ package org.openspcoop2.utils.certificate.byok;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.properties.PropertiesReader;
 import org.slf4j.Logger;
 
 /**
@@ -49,6 +54,22 @@ public class BYOKManager {
 	}
 	public static BYOKManager getInstance() {
 		return staticInstance;
+	}
+	public static String getSecurityEngineGovWayPolicy() {
+		if(staticInstance!=null) {
+			return staticInstance.getSecurityEngineGovWay();
+		}
+		return null;
+	}
+	public static String getSecurityRemoteEngineGovWayPolicy() {
+		if(staticInstance!=null) {
+			return staticInstance.getSecurityRemoteEngineGovWay();
+		}
+		return null;
+	}
+	public static boolean isEnabledBYOK() {
+		String securityManagerPolicy = BYOKManager.getSecurityEngineGovWayPolicy();
+		return securityManagerPolicy!=null && StringUtils.isNotEmpty(securityManagerPolicy);
 	}
 	
 	/*
@@ -77,7 +98,7 @@ public class BYOKManager {
 	 * ksm.<idKSM>.http.endpoint: [required] definisce l'endpoint del ksm
 	 * ksm.<idKSM>.http.method: [required] definisce il metodo HTTP utilzzato per connettersi al ksm
 	 * ksm.<idKSM>.http.header.<nome>: definisce un header HTTP che possiede il nome indicato nella proprietà stessa
-	 * ksm.<idKSM>.http.payload.inline [optional] defnisce il payload da utilizzare nella richiesta http
+	 * ksm.<idKSM>.http.payload.inline [optional] definisce il payload da utilizzare nella richiesta http
 	 * ksm.<idKSM>.http.payload.path [optional] alternativa alla precedente proprietà defnisce il path ad un file contenente il payload da utilizzare nella richiesta http
 	 * ksm.<idKSM>.http.username [optional] definisce la credenziale http-basic (username)
 	 * ksm.<idKSM>.http.password [optional] definisce la credenziale http-basic (password)
@@ -102,9 +123,13 @@ public class BYOKManager {
 	 * ksm.<idKSM>.https.clientAuth.key.alias: identifica la chiave privata
 	 * ksm.<idKSM>.https.clientAuth.key.password: password della chiave privata
      *
+     * ksm.<idKSM>.http.response.base64Encoded [optional; boolean] indicazione se la risposta è codificata in base64
+     * ksm.<idKSM>.http.response.hexEncoded [optional; boolean] indicazione se la risposta è codificata tramite una rappresentazione esadecimale
+     * ksm.<idKSM>.http.response.jsonPath [optional] se la risposta è un json (eventualmente dopo la decodificata base64/hex) consente di indicare un jsonPath per estrarre l'informazione da un singolo elemento
+     *
      * Configurazioni per ksm locale:
      * 
-     * ksm.<idKSM>.TODO
+     * ksm.<idKSM>.TERMINARE
 	 * 
 	 **/
 	
@@ -118,6 +143,13 @@ public class BYOKManager {
 	private List<String> unwrapLabels = new ArrayList<>();
 	private List<String> wrapTypes = new ArrayList<>();
 	private List<String> wrapLabels = new ArrayList<>();
+
+	private static final String UNKNOWN = "unknown";
+	
+	private HashMap<String, BYOKSecurityConfig> securityMapIDtoConfig = new HashMap<>();
+	
+	private String securityEngineGovWay = null;
+	private String securityRemoteEngineGovWay = null;
 	
 	private BYOKManager(File f, boolean throwNotExists, Logger log) throws UtilsException {
 		String prefixFile = "File '"+f.getAbsolutePath()+"'";
@@ -147,9 +179,10 @@ public class BYOKManager {
 	private void init(Properties p, Logger log) throws UtilsException {
 		
 		List<String> idKeystore = new ArrayList<>();
+		List<String> securityKeystore = new ArrayList<>();
 		
 		if(p!=null && !p.isEmpty()) {
-			init(p, idKeystore);
+			init(p, idKeystore, securityKeystore);
 		}
 		
 		if(!idKeystore.isEmpty()) {
@@ -160,31 +193,51 @@ public class BYOKManager {
 		else {
 			log.warn("La configurazione fornita per KSM non contiene alcun keystore");
 		}
+		
+		if(!securityKeystore.isEmpty()) {
+			for (String idK : securityKeystore) {
+				initSecurity(p, log, idK);		
+			}
+		}
+		else {
+			log.warn("La configurazione fornita per KSM non contiene alcun security manager");
+		}
+		
+		initSecurityGovWay(p);
 	}
-	private void init(Properties p, List<String> idKeystore) {
+	private void init(Properties p, List<String> idKeystore, List<String> securityKeystore) {
 		Enumeration<?> enKeys = p.keys();
 		while (enKeys.hasMoreElements()) {
 			Object object = enKeys.nextElement();
 			if(object instanceof String) {
 				String key = (String) object;
-				init(key, idKeystore);	
+				init(key, idKeystore, securityKeystore);	
 			}
 		}
 	}
-	private void init(String key, List<String> idKeystore) {
-		if(key.startsWith(BYOKCostanti.PROPERTY_PREFIX) && key.length()>(BYOKCostanti.PROPERTY_PREFIX.length())) {
-			String tmp = key.substring(BYOKCostanti.PROPERTY_PREFIX.length());
+	private void init(String key, List<String> idKeystore, List<String> securityKeystore) {
+		boolean isIdKeystore = initEngine(key, idKeystore, BYOKCostanti.PROPERTY_PREFIX);
+		if(!isIdKeystore) {
+			initEngine(key, securityKeystore, BYOKCostanti.SECURITY_PROPERTY_PREFIX);
+		}
+	}
+	private boolean initEngine(String key, List<String> list, String prefix) {
+		if(key.startsWith(prefix) && key.length()>(prefix.length())) {
+			String tmp = key.substring(prefix.length());
 			if(tmp!=null && tmp.contains(".")) {
 				int indeoOf = tmp.indexOf(".");
 				if(indeoOf>0) {
 					String idK = tmp.substring(0,indeoOf);
-					if(!idKeystore.contains(idK)) {
-						idKeystore.add(idK);
+					if(!list.contains(idK)) {
+						list.add(idK);
 					}
 				}
 			}
+			return true;
 		}
+		return false;
 	}
+	
 	private void init(Properties p, Logger log, String idK) throws UtilsException {
 		String prefix = BYOKCostanti.PROPERTY_PREFIX + idK + ".";
 		Properties pKeystore = Utilities.readProperties(prefix, p);
@@ -212,7 +265,7 @@ public class BYOKManager {
 			}
 		}
 		if(alreadyExists) {
-			throw new UtilsException("Same type found for ksm '"+this.ksmKeystoreMapTypeToID.get(ksmKeystore.getLabel())+"' e '"+idK+"'");
+			throw new UtilsException("Same type found for ksm '"+this.ksmKeystoreMapTypeToID.get(ksmKeystore.getType())+"' e '"+idK+"'");
 		}
 		this.ksmKeystoreMapTypeToID.put(ksmKeystore.getType(), idK);
 		
@@ -231,10 +284,34 @@ public class BYOKManager {
 		log.info(d);	
 	}
 	
+	private void initSecurity(Properties p, Logger log, String idK) throws UtilsException {
+		String prefix = BYOKCostanti.SECURITY_PROPERTY_PREFIX + idK + ".";
+		Properties pKeystore = Utilities.readProperties(prefix, p);
+		BYOKSecurityConfig securityConfig = new BYOKSecurityConfig(idK, pKeystore, log);
+				
+		this.securityMapIDtoConfig.put(idK, securityConfig);
+		String d = "Security manager "+idK+" registrato";
+		log.info(d);	
+	}
+	
+	private void initSecurityGovWay(Properties p) throws UtilsException {
+		
+		PropertiesReader pReader = new PropertiesReader(p, true);
+		
+		this.securityEngineGovWay = pReader.getValue_convertEnvProperties(BYOKCostanti.PROPERTY_GOVWAY_SECURITY);
+		if(this.securityEngineGovWay!=null && StringUtils.isEmpty(this.securityEngineGovWay)) {
+			this.securityEngineGovWay = null;
+		}
+		
+		this.securityRemoteEngineGovWay = pReader.getValue_convertEnvProperties(BYOKCostanti.PROPERTY_GOVWAY_SECURITY_RUNTIME);
+		if(this.securityRemoteEngineGovWay!=null && StringUtils.isEmpty(this.securityRemoteEngineGovWay)) {
+			this.securityRemoteEngineGovWay = null;
+		}
+	}
 	
 	public BYOKConfig getKSMConfigByType(String type) throws UtilsException {
 		if(!this.ksmKeystoreMapTypeToID.containsKey(type)) {
-			throw new UtilsException("KSM type '"+type+"' unknown");
+			throw new UtilsException("KSM type '"+type+"' "+UNKNOWN);
 		}
 		String idK = this.ksmKeystoreMapTypeToID.get(type);
 		if(!this.ksmKeystoreMapIDtoConfig.containsKey(idK)) {
@@ -245,7 +322,7 @@ public class BYOKManager {
 	
 	public BYOKConfig getKSMConfigByLabel(String label) throws UtilsException {
 		if(!this.ksmKeystoreMapLabelToID.containsKey(label)) {
-			throw new UtilsException("KSM label '"+label+"' unknown");
+			throw new UtilsException("KSM label '"+label+"' "+UNKNOWN);
 		}
 		String idK = this.ksmKeystoreMapLabelToID.get(label);
 		if(!this.ksmKeystoreMapIDtoConfig.containsKey(idK)) {
@@ -262,6 +339,60 @@ public class BYOKManager {
 			}
 		}
 		return l;
+	}
+	
+	public SortedMap<String> getKeystoreWrapConfigTypesLabels() throws UtilsException {
+		return getKeystoreConfigTypesLabels(true);
+	}
+	public SortedMap<String> getKeystoreUnwrapConfigTypesLabels() throws UtilsException {
+		return getKeystoreConfigTypesLabels(false);
+	}
+	private SortedMap<String> getKeystoreConfigTypesLabels(boolean wrap) throws UtilsException {
+		
+		SortedMap<String> sMap = new SortedMap<>();
+		
+		List<String> types = wrap ? this.wrapTypes : this.unwrapTypes;
+		List<String> labels = wrap ? this.wrapLabels : this.unwrapLabels;
+		
+		// SortedMap by label
+		if(types!=null && !types.isEmpty()) {
+			List<String> labelsDaOrdinare = new ArrayList<>(); 
+			Map<String, String> m = new HashMap<>();
+			for (int i = 0; i < types.size(); i++) {
+				String type = types.get(i);
+				String label = labels.get(i);
+				m.put(label, type);
+				labelsDaOrdinare.add(label);
+			}
+			
+			Collections.sort(labelsDaOrdinare);
+			for (String l : labelsDaOrdinare) {
+				sMap.add(m.get(l), l);	
+			}
+		}
+		
+		return sMap;
+	}
+	
+	public boolean isKSMUsedInSecurityWrapConfig(String id, StringBuilder securityId) {
+		return isKSMUsedInSecurityConfig(true, id, securityId);
+	}
+	public boolean isKSMUsedInSecurityUnwrapConfig(String id, StringBuilder securityId) {
+		return isKSMUsedInSecurityConfig(false, id, securityId	);
+	}
+	private boolean isKSMUsedInSecurityConfig(boolean wrap, String id, StringBuilder securityId) {
+		if(!this.securityMapIDtoConfig.isEmpty()) {
+			for (Map.Entry<String,BYOKSecurityConfig> entry : this.securityMapIDtoConfig.entrySet()) {
+				String confKsmId = wrap ? entry.getValue().getWrapId() : entry.getValue().getUnwrapId();
+				if(id.equals(confKsmId)){
+					if(securityId!=null) {
+						securityId.append(entry.getKey());
+					}
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	public boolean existsKSMConfigByType(String type) {
@@ -299,5 +430,125 @@ public class BYOKManager {
 	}
 	public List<String> getWrapLabels() {
 		return this.wrapLabels;
+	}
+	
+	public BYOKSecurityConfig getKSMSecurityConfig(String type) throws UtilsException {
+		if(!this.securityMapIDtoConfig.containsKey(type)) {
+			throw new UtilsException("KSM security config type '"+type+"' "+UNKNOWN);
+		}
+		BYOKSecurityConfig c = this.securityMapIDtoConfig.get(type);
+		if(c==null) {
+			throw new UtilsException("KSM security config type '"+type+"' "+UNKNOWN);
+		}
+		return c;
+	}
+	public List<String> getSecurityEngineTypes() {
+		List<String> l = new ArrayList<>();
+		if(!this.securityMapIDtoConfig.isEmpty()) {
+			for (String type : this.securityMapIDtoConfig.keySet()) {
+				l.add(type);
+			}
+		}
+		return l;
+	}
+	
+	public boolean existsSecurityEngineByType(String type) {
+		if(type==null) {
+			return false;
+		}
+		for (String i : this.securityMapIDtoConfig.keySet()) {
+			if(type.equalsIgnoreCase(i)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	public boolean isBYOKRemoteGovWayNodeUnwrapConfig() throws UtilsException {
+		return isBYOKRemoteGovWayNodeConfig(BYOKManager.getSecurityEngineGovWayPolicy(), false, true);
+	}
+	public boolean isBYOKRemoteGovWayNodeWrapConfig() throws UtilsException {
+		return isBYOKRemoteGovWayNodeConfig(BYOKManager.getSecurityEngineGovWayPolicy(), true, false);
+		
+	}
+	
+	public boolean isBYOKRemoteGovWayNodeUnwrapConfig(String securityManagerPolicy) throws UtilsException {
+		return isBYOKRemoteGovWayNodeConfig(securityManagerPolicy, false, true);
+	}
+	public boolean isBYOKRemoteGovWayNodeWrapConfig(String securityManagerPolicy) throws UtilsException {
+		return isBYOKRemoteGovWayNodeConfig(securityManagerPolicy, true, false);
+		
+	}
+	public boolean isBYOKRemoteGovWayNodeConfig(String securityManagerPolicy) throws UtilsException {
+		return isBYOKRemoteGovWayNodeConfig(securityManagerPolicy, true, true);
+	}
+	public boolean isBYOKRemoteGovWayNodeConfig(String securityManagerPolicy, boolean wrap, boolean unwrap) throws UtilsException {
+		
+		if(securityManagerPolicy==null || StringUtils.isEmpty(securityManagerPolicy)) {
+			return false;
+		}
+		
+		BYOKSecurityConfig secConfig = this.getKSMSecurityConfig(securityManagerPolicy);
+		
+		boolean govwayRuntime = false;
+		if(secConfig.getInputParameters()!=null && !secConfig.getInputParameters().isEmpty()) {
+			for (BYOKSecurityConfigParameter sec : secConfig.getInputParameters()) {
+				if(sec.getValue().contains(("${"+BYOKCostanti.GOVWAY_RUNTIME_CONTEXT+":"))) {
+					govwayRuntime = true;
+					break;
+				}
+			}
+		}
+		if(!govwayRuntime) {
+			return false;
+		}
+		
+		return isBYOKRemoteGovWayNodeConfig(secConfig, wrap, unwrap);		
+	}
+	private boolean isBYOKRemoteGovWayNodeConfig(BYOKSecurityConfig secConfig, boolean wrap, boolean unwrap) throws UtilsException {
+		// ne basta uno
+		
+		if(wrap) {
+			BYOKConfig c = this.getKSMConfigByType(secConfig.getWrapId());
+			if(BYOKEncryptionMode.REMOTE.equals(c.getEncryptionMode())) {
+				return true;
+			}
+		}
+		
+		if(unwrap) {
+			BYOKConfig c = this.getKSMConfigByType(secConfig.getUnwrapId());
+			if(BYOKEncryptionMode.REMOTE.equals(c.getEncryptionMode())) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private String getSecurityEngineGovWay() {
+		if(this.securityEngineGovWay==null || StringUtils.isEmpty(this.securityEngineGovWay)) {
+			return null;
+		}
+		return this.securityEngineGovWay;
+	}
+	private String getSecurityRemoteEngineGovWay() {
+		if(this.securityRemoteEngineGovWay==null || StringUtils.isEmpty(this.securityRemoteEngineGovWay)) {
+			return null;
+		}
+		return this.securityRemoteEngineGovWay;
+	}
+	public String getSecurityEngineGovWayDescription() {
+		if(this.securityEngineGovWay==null || StringUtils.isEmpty(this.securityEngineGovWay)) {
+			return "unactive";
+		}
+		else {
+			StringBuilder sb = new StringBuilder(this.securityEngineGovWay);
+			if(this.securityRemoteEngineGovWay!=null && StringUtils.isNotEmpty(this.securityRemoteEngineGovWay) && 
+					!this.securityEngineGovWay.equals(this.securityRemoteEngineGovWay)) {
+				sb.append(" (remote:").append(this.securityRemoteEngineGovWay).append(")");
+			}
+			return sb.toString();
+		}
 	}
 }

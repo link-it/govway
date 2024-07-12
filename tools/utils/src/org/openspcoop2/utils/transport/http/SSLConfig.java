@@ -24,6 +24,7 @@ package org.openspcoop2.utils.transport.http;
 import java.io.Serializable;
 import java.security.KeyStore;
 import java.security.cert.CertStore;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.LoggerBuffer;
@@ -82,6 +83,8 @@ public class SSLConfig implements Serializable  {
 	private String keyManagementAlgorithm;
 	// tipo del keystore
 	private String keyStoreType;
+	// BYOK Policy
+	private String keyStoreBYOKPolicy;
 
 	// HostName verifier
 	private boolean hostnameVerifier = true;
@@ -100,6 +103,9 @@ public class SSLConfig implements Serializable  {
 	private StringBuilder sbError;
 	private StringBuilder sbDebug;
 	private transient Logger logger;
+	
+	// Dynamic Map
+	private Map<String,Object> dynamicMap;
 	
 	@Override
 	public String toString() {
@@ -154,6 +160,8 @@ public class SSLConfig implements Serializable  {
 			sb.append("keyStoreType=").append(this.keyStoreType);
 			sb.append(" ");
 			sb.append("keyStorePassword=").append(includePassword? this.keyStorePassword : hidePassword(this.keyStorePassword) );
+			sb.append(" ");
+			sb.append("keyStoreBYOKPolicy=").append(this.keyStoreBYOKPolicy);
 			sb.append(" ");
 			sb.append("keyAlias=").append(this.keyAlias);
 			sb.append(" ");
@@ -314,6 +322,14 @@ public class SSLConfig implements Serializable  {
 		this.keyStoreType = keyStoreType;
 	}
 
+	public String getKeyStoreBYOKPolicy() {
+		return this.keyStoreBYOKPolicy;
+	}
+	
+	public void setKeyStoreBYOKPolicy(String keyStoreBYOKPolicy) {
+		this.keyStoreBYOKPolicy = keyStoreBYOKPolicy;
+	}
+	
 	public boolean isHostnameVerifier() {
 		return this.hostnameVerifier;
 	}
@@ -393,5 +409,12 @@ public class SSLConfig implements Serializable  {
 			lb.setLogDebug(this.logger);
 		}
 		return lb;
+	}
+	
+	public Map<String, Object> getDynamicMap() {
+		return this.dynamicMap;
+	}
+	public void setDynamicMap(Map<String, Object> dynamicMap) {
+		this.dynamicMap = dynamicMap;
 	}
 }

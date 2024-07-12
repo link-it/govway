@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -44,22 +45,27 @@ import org.slf4j.Logger;
 public class InvokerNodiRuntime {
 
 	private ConfigurazioneNodiRuntime configurazioneNodiRuntime = null;
-	private transient Logger log;
-	public InvokerNodiRuntime(Logger log, ConfigurazioneNodiRuntime config) throws Exception{
+	private Logger log;
+	public InvokerNodiRuntime(Logger log, ConfigurazioneNodiRuntime config) {
 		this.log = log;
 		this.configurazioneNodiRuntime = config;
 	}
 	
-	public boolean isJmxPdD_tipoAccessoOpenSPCoop(String alias)throws Exception {
+	public static final String RESOURCE_URL_LOCALE = "locale";
+	
+	public static final String PREFIX_HTTP_CODE = "[httpCode ";
+	private static final String PREFIX_ALIAS = "[alias:";
+	
+	public boolean isJmxPdD_tipoAccessoOpenSPCoop(String alias) {
 		return ConfigurazioneNodiRuntime.RESOURCE_TIPOLOGIA_ACCESSO_OPENSPCOOP.equals(this.configurazioneNodiRuntime.getTipoAccesso(alias))
 				||
 				ConfigurazioneNodiRuntime.RESOURCE_TIPOLOGIA_ACCESSO_GOVWAY.equals(this.configurazioneNodiRuntime.getTipoAccesso(alias));
 	}
 	
-	public Object getGestoreRisorseJMX(String alias)  throws Exception{
+	public Object getGestoreRisorseJMX(String alias)  throws UtilsException{
 		try {
 			if(isJmxPdD_tipoAccessoOpenSPCoop(alias)){
-				//System.out.println("=================== REMOTA OPENSPCOOP =======================");
+				/**System.out.println("=================== REMOTA OPENSPCOOP =======================");*/
 				String remoteUrl = this.configurazioneNodiRuntime.getResourceUrl(alias);
 				if(remoteUrl==null){
 					throw new Exception("Configurazione errata (pdd:"+alias+") accesso via check. Non e' stata indicata la url");
@@ -70,68 +76,72 @@ public class InvokerNodiRuntime {
 				org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay gestoreJMX = null;
 				
 				if(this.configurazioneNodiRuntime.getResourceUrl(alias)!=null && !"".equals(this.configurazioneNodiRuntime.getResourceUrl(alias))
-						&& !"locale".equals(this.configurazioneNodiRuntime.getResourceUrl(alias))
+						&& !RESOURCE_URL_LOCALE.equals(this.configurazioneNodiRuntime.getResourceUrl(alias))
 						){
-					//System.out.println("=================== REMOTA =======================");
+					/**System.out.println("=================== REMOTA =======================");*/
 					String remoteUrl = this.configurazioneNodiRuntime.getResourceUrl(alias);
 					String factory = this.configurazioneNodiRuntime.getFactory(alias);
 					if(factory==null){
-						throw new Exception("Configurazione errata (pdd:"+alias+") per l'accesso alla url ["+remoteUrl+"] via jmx. Non e' stata indicata una factory");
+						throw new UtilsException("Configurazione errata (pdd:"+alias+") per l'accesso alla url ["+remoteUrl+"] via jmx. Non e' stata indicata una factory");
 					}
 					String as = this.configurazioneNodiRuntime.getAs(alias);
 					if(as==null){
-						throw new Exception("Configurazione errata (pdd:"+alias+") per l'accesso alla url ["+remoteUrl+"] via jmx. Non e' stato indicato il tipo di application server");
+						throw new UtilsException("Configurazione errata (pdd:"+alias+") per l'accesso alla url ["+remoteUrl+"] via jmx. Non e' stato indicato il tipo di application server");
 					}
 					gestoreJMX = new org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay(as, factory, remoteUrl, 
 							this.configurazioneNodiRuntime.getUsername(alias), 
 							this.configurazioneNodiRuntime.getPassword(alias), this.log);
 				}
 				else{
-					//System.out.println("=================== LOCALE =======================");
+					/**System.out.println("=================== LOCALE =======================");*/
 					gestoreJMX = new org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay(this.log);
 					
+				}
+				
+				if(this.log==null) {
+					gestoreJMX.setLogActive(false);
 				}
 				
 				return gestoreJMX;
 			}
 		} catch (Exception e) {
-			throw e;
+			throw new UtilsException(e.getMessage(),e);
 		}
 	}
 	
-	private HttpResponse invokeHttp(String urlWithParameters, String alias, Boolean slowOperation) throws Exception {
+	private HttpResponse invokeHttp(String urlWithParameters, String alias, Boolean slowOperation) throws UtilsException {
 		String username = this.configurazioneNodiRuntime.getUsername(alias);
 		String password = this.configurazioneNodiRuntime.getPassword(alias);
 		boolean https = this.configurazioneNodiRuntime.isHttps(alias);
-		boolean https_verificaHostName = true;
-		boolean https_autenticazioneServer = true;
-		String https_truststorePath = null;
-		String https_truststoreType = null;
-		String https_truststorePassword = null;
+		boolean httpsVerificaHostName = true;
+		boolean httpsAutenticazioneServer = true;
+		String httpsTruststorePath = null;
+		String httpsTruststoreType = null;
+		String httpsTruststorePassword = null;
 		if(https) {
-			https_verificaHostName = this.configurazioneNodiRuntime.isHttps_verificaHostName(alias);
-			https_autenticazioneServer = this.configurazioneNodiRuntime.isHttps_autenticazioneServer(alias);
-			if(https_autenticazioneServer) {
-				https_truststorePath = this.configurazioneNodiRuntime.getHttps_autenticazioneServer_truststorePath(alias);
-				if(StringUtils.isEmpty(https_truststorePath)) {
-					throw new Exception("[alias:"+alias+"] TLS Truststore path non fornito");
+			httpsVerificaHostName = this.configurazioneNodiRuntime.isHttps_verificaHostName(alias);
+			httpsAutenticazioneServer = this.configurazioneNodiRuntime.isHttps_autenticazioneServer(alias);
+			if(httpsAutenticazioneServer) {
+				httpsTruststorePath = this.configurazioneNodiRuntime.getHttps_autenticazioneServer_truststorePath(alias);
+				if(StringUtils.isEmpty(httpsTruststorePath)) {
+					throw new UtilsException(PREFIX_ALIAS+alias+"] TLS Truststore path non fornito");
 				}
-				https_truststoreType = this.configurazioneNodiRuntime.getHttps_autenticazioneServer_truststoreType(alias);
-				if(StringUtils.isEmpty(https_truststoreType)) {
-					throw new Exception("[alias:"+alias+"] TLS Truststore type non fornito");
+				httpsTruststoreType = this.configurazioneNodiRuntime.getHttps_autenticazioneServer_truststoreType(alias);
+				if(StringUtils.isEmpty(httpsTruststoreType)) {
+					throw new UtilsException(PREFIX_ALIAS+alias+"] TLS Truststore type non fornito");
 				}
-				https_truststorePassword = this.configurazioneNodiRuntime.getHttps_autenticazioneServer_truststorePassword(alias);
-				if(StringUtils.isEmpty(https_truststorePassword)) {
-					throw new Exception("[alias:"+alias+"] TLS Truststore password non fornito");
+				httpsTruststorePassword = this.configurazioneNodiRuntime.getHttps_autenticazioneServer_truststorePassword(alias);
+				if(StringUtils.isEmpty(httpsTruststorePassword)) {
+					throw new UtilsException(PREFIX_ALIAS+alias+"] TLS Truststore password non fornito");
 				}
 			}
 		}
 		
-		Integer connectionTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
-		Integer readConnectionTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
+		/**Integer connectionTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
+		Integer readConnectionTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;*/
 		// Fix abbasso i tempi di default
-		connectionTimeout = 5000;
-		readConnectionTimeout = 5000;
+		Integer connectionTimeout = 5000;
+		Integer readConnectionTimeout = 5000;
 		String connectionTimeoutS = this.configurazioneNodiRuntime.getConnectionTimeout(alias);
 		if(connectionTimeoutS!=null) {
 			connectionTimeout = Integer.valueOf(connectionTimeoutS);
@@ -159,11 +169,11 @@ public class InvokerNodiRuntime {
 			httpRequest.setUsername(username);
 			httpRequest.setPassword(password);
 			httpRequest.setMethod(HttpRequestMethod.GET);
-			httpRequest.setHostnameVerifier(https_verificaHostName);
-			if(https_autenticazioneServer) {
-				httpRequest.setTrustStorePath(https_truststorePath);
-				httpRequest.setTrustStoreType(https_truststoreType);
-				httpRequest.setTrustStorePassword(https_truststorePassword);
+			httpRequest.setHostnameVerifier(httpsVerificaHostName);
+			if(httpsAutenticazioneServer) {
+				httpRequest.setTrustStorePath(httpsTruststorePath);
+				httpRequest.setTrustStoreType(httpsTruststoreType);
+				httpRequest.setTrustStorePassword(httpsTruststorePassword);
 			}
 			else {
 				httpRequest.setTrustAllCerts(true);
@@ -178,27 +188,27 @@ public class InvokerNodiRuntime {
 		return response;
 	}
 	
-	public String invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo) throws Exception{
-		return _invokeJMXMethod(alias, type, nomeRisorsa, nomeMetodo, false);
+	public String invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo) throws UtilsException{
+		return invokeJMXMethodEngine(alias, type, nomeRisorsa, nomeMetodo, false);
 	}
-	public String invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo, Boolean slowOperation) throws Exception{
-		return _invokeJMXMethod(alias, type, nomeRisorsa, nomeMetodo, slowOperation);
+	public String invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo, Boolean slowOperation) throws UtilsException{
+		return invokeJMXMethodEngine(alias, type, nomeRisorsa, nomeMetodo, slowOperation);
 	}
-	public String invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo, String parametro) throws Exception{
-		return _invokeJMXMethod(alias, type, nomeRisorsa, nomeMetodo, false, 
+	public String invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo, String parametro) throws UtilsException{
+		return invokeJMXMethodEngine(alias, type, nomeRisorsa, nomeMetodo, false, 
 				(parametro!=null && !"".equals(parametro)) ? parametro : null);
 	}
-	public String invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo, Boolean slowOperation, String parametro) throws Exception{
-		return _invokeJMXMethod(alias, type, nomeRisorsa, nomeMetodo, slowOperation, 
+	public String invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo, Boolean slowOperation, String parametro) throws UtilsException{
+		return invokeJMXMethodEngine(alias, type, nomeRisorsa, nomeMetodo, slowOperation, 
 				(parametro!=null && !"".equals(parametro)) ? parametro : null);
 	}
-	public String invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo, Object ... parametri ) throws Exception{
-		return _invokeJMXMethod(alias, type, nomeRisorsa, nomeMetodo, false, parametri );
+	public String invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo, Object ... parametri ) throws UtilsException{
+		return invokeJMXMethodEngine(alias, type, nomeRisorsa, nomeMetodo, false, parametri );
 	}
-	public String invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo, Boolean slowOperation, Object ... parametri ) throws Exception{
-		return _invokeJMXMethod(alias, type, nomeRisorsa, nomeMetodo, slowOperation, parametri );
+	public String invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo, Boolean slowOperation, Object ... parametri ) throws UtilsException{
+		return invokeJMXMethodEngine(alias, type, nomeRisorsa, nomeMetodo, slowOperation, parametri );
 	}
-	private String _invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo, Boolean slowOperation, Object ... parametri ) throws Exception{
+	private String invokeJMXMethodEngine(String alias, String type, String nomeRisorsa, String nomeMetodo, Boolean slowOperation, Object ... parametri ) throws UtilsException{
 		
 		Object gestore = this.getGestoreRisorseJMX(alias);
 		
@@ -215,10 +225,15 @@ public class InvokerNodiRuntime {
 					}
 				}
 				
-				String tmp = (String) ((org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay)gestore).invoke(this.configurazioneNodiRuntime.getDominio(alias), 
+				org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay gestoreJMXGovWay = ((org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay)gestore);
+				if(this.log==null) {
+					gestoreJMXGovWay.setLogActive(false);
+				}
+				
+				String tmp = (String) gestoreJMXGovWay.invoke(this.configurazioneNodiRuntime.getDominio(alias), 
 						type, nomeRisorsa, nomeMetodo, params, signatures);
 				if(tmp.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)){
-					throw new Exception(tmp); 
+					throw new UtilsException(tmp); 
 				}
 				return tmp;
 			}
@@ -244,7 +259,7 @@ public class InvokerNodiRuntime {
 									TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_PARAM_INT_VALUE_3, intValue.intValue()+"");
 								}
 								else {
-									throw new Exception("Gestore di tipo ["+gestore.getClass().getName()+"] non gestisce un numero maggiore di 3 parametri");
+									throw new UtilsException("Gestore di tipo ["+gestore.getClass().getName()+"] non gestisce un numero maggiore di 3 parametri");
 								}
 							}
 							else if(o instanceof Long) {
@@ -259,7 +274,7 @@ public class InvokerNodiRuntime {
 									TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_PARAM_LONG_VALUE_3, longValue.longValue()+"");
 								}
 								else {
-									throw new Exception("Gestore di tipo ["+gestore.getClass().getName()+"] non gestisce un numero maggiore di 3 parametri");
+									throw new UtilsException("Gestore di tipo ["+gestore.getClass().getName()+"] non gestisce un numero maggiore di 3 parametri");
 								}
 							}
 							else if(o instanceof Boolean) {
@@ -274,7 +289,7 @@ public class InvokerNodiRuntime {
 									TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_PARAM_BOOLEAN_VALUE_3, booleanValue.booleanValue()+"");
 								}
 								else {
-									throw new Exception("Gestore di tipo ["+gestore.getClass().getName()+"] non gestisce un numero maggiore di 3 parametri");
+									throw new UtilsException("Gestore di tipo ["+gestore.getClass().getName()+"] non gestisce un numero maggiore di 3 parametri");
 								}
 							}
 							else {
@@ -289,7 +304,7 @@ public class InvokerNodiRuntime {
 									TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_PARAM_VALUE_3, stringValue);
 								}
 								else {
-									throw new Exception("Gestore di tipo ["+gestore.getClass().getName()+"] non gestisce un numero maggiore di 3 parametri");
+									throw new UtilsException("Gestore di tipo ["+gestore.getClass().getName()+"] non gestisce un numero maggiore di 3 parametri");
 								}
 							}
 						}
@@ -300,7 +315,7 @@ public class InvokerNodiRuntime {
 				
 				HttpResponse response = invokeHttp(urlWithParameters, alias, slowOperation);
 				if(response.getResultHTTPOperation()!=200){
-					String error = "[httpCode "+response.getResultHTTPOperation()+"]";
+					String error = PREFIX_HTTP_CODE+response.getResultHTTPOperation()+"]";
 					if(response.getContent()!=null){
 						error+= " "+new String(response.getContent());
 					}
@@ -311,27 +326,31 @@ public class InvokerNodiRuntime {
 				}
 			}
 			else {
-				throw new Exception("Gestore di tipo ["+gestore.getClass().getName()+"] non gestito");
+				throw new UtilsException("Gestore di tipo ["+gestore.getClass().getName()+"] non gestito");
 			}
 		} catch (Exception e) {
-			throw e;
+			throw new UtilsException(e.getMessage(),e);
 		}
 	}
 	
-	public String readJMXAttribute(String alias, String type, String nomeRisorsa, String nomeAttributo) throws Exception{
+	public String readJMXAttribute(String alias, String type, String nomeRisorsa, String nomeAttributo) throws UtilsException{
 		return readJMXAttribute(alias, type, nomeRisorsa, nomeAttributo, false);
 	}
-	public String readJMXAttribute(String alias, String type, String nomeRisorsa, String nomeAttributo, Boolean slowOperation) throws Exception{
+	public String readJMXAttribute(String alias, String type, String nomeRisorsa, String nomeAttributo, Boolean slowOperation) throws UtilsException{
 		
 		Object gestore = this.getGestoreRisorseJMX(alias);
 		
 		try {
 			if(gestore instanceof org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay){
-				Object t = ((org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay)gestore).getAttribute(this.configurazioneNodiRuntime.getDominio(alias), type, nomeRisorsa, nomeAttributo);
+				org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay gestoreJMXGovWay = ((org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay)gestore);
+				if(this.log==null) {
+					gestoreJMXGovWay.setLogActive(false);
+				}
+				Object t = gestoreJMXGovWay.getAttribute(this.configurazioneNodiRuntime.getDominio(alias), type, nomeRisorsa, nomeAttributo);
 				if(t instanceof String){
 					String tmp = (String) t; 
 					if(tmp.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)){
-						throw new Exception(tmp); 
+						throw new UtilsException(tmp); 
 					}
 					return tmp;
 				}
@@ -352,7 +371,7 @@ public class InvokerNodiRuntime {
 				
 				HttpResponse response = invokeHttp(urlWithParameters, alias, slowOperation);
 				if(response.getResultHTTPOperation()!=200){
-					String error = "[httpCode "+response.getResultHTTPOperation()+"]";
+					String error = PREFIX_HTTP_CODE+response.getResultHTTPOperation()+"]";
 					if(response.getContent()!=null){
 						error+= " "+new String(response.getContent());
 					}
@@ -363,23 +382,27 @@ public class InvokerNodiRuntime {
 				}
 			}
 			else {
-				throw new Exception("Gestore di tipo ["+gestore.getClass().getName()+"] non gestito");
+				throw new UtilsException("Gestore di tipo ["+gestore.getClass().getName()+"] non gestito");
 			}
 		} catch (Exception e) {
-			throw e;
+			throw new UtilsException(e.getMessage(),e);
 		}
 	}
 	
-	public void setJMXAttribute(String alias, String type, String nomeRisorsa, String nomeAttributo, Object value) throws Exception{
+	public void setJMXAttribute(String alias, String type, String nomeRisorsa, String nomeAttributo, Object value) throws UtilsException{
 		setJMXAttribute(alias, type, nomeRisorsa, nomeAttributo, value, false);	
 	}
-	public void setJMXAttribute(String alias, String type, String nomeRisorsa, String nomeAttributo, Object value, Boolean slowOperation) throws Exception{
+	public void setJMXAttribute(String alias, String type, String nomeRisorsa, String nomeAttributo, Object value, Boolean slowOperation) throws UtilsException{
 		
 		Object gestore = this.getGestoreRisorseJMX(alias);
 		
 		try {
 			if(gestore instanceof org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay){
-				((org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay)gestore).setAttribute(this.configurazioneNodiRuntime.getDominio(alias), type, nomeRisorsa, nomeAttributo, value);
+				org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay gestoreJMXGovWay = ((org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay)gestore);
+				if(this.log==null) {
+					gestoreJMXGovWay.setLogActive(false);
+				}
+				gestoreJMXGovWay.setAttribute(this.configurazioneNodiRuntime.getDominio(alias), type, nomeRisorsa, nomeAttributo, value);
 			}
 			else if(gestore instanceof String){
 				String url = (String) gestore;
@@ -397,18 +420,18 @@ public class InvokerNodiRuntime {
 				
 				HttpResponse response = invokeHttp(urlWithParameters, alias, slowOperation);
 				if(response.getResultHTTPOperation()!=200){
-					String error = "[httpCode "+response.getResultHTTPOperation()+"]";
+					String error = PREFIX_HTTP_CODE+response.getResultHTTPOperation()+"]";
 					if(response.getContent()!=null){
 						error+= " "+new String(response.getContent());
 					}
-					throw new Exception(error);
+					throw new UtilsException(error);
 				}
 			}
 			else {
-				throw new Exception("Gestore di tipo ["+gestore.getClass().getName()+"] non gestito");
+				throw new UtilsException("Gestore di tipo ["+gestore.getClass().getName()+"] non gestito");
 			}
 		} catch (Exception e) {
-			throw e;
+			throw new UtilsException(e.getMessage(),e);
 		}
 	}
 	

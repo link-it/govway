@@ -1,0 +1,319 @@
+
+<project name="setup-cliConfigLoader" basedir=".">
+	
+	<description>
+        	SETUP CLI CONFIG LOADER
+	</description>
+
+	<import file="../../commons/utils.xml" />
+	
+	<!-- config_loader.cli.properties -->
+	<target name="cli_configLoader_properties_settings">
+
+		<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+		</concat>
+		
+		<!-- 
+		  PROTOCOL DEFAULT
+		  se abilitati verrano scelto nell'ordine:
+		  - trasparente
+		  - modipa
+		  - spcoop
+		  - as4
+		  - sdi
+		-->
+		<if>
+			<istrue value="${antinstaller_protocollo_trasparente}"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="protocolloDefault"/>
+					<param name="value" value="trasparente"/>
+				</antcall>
+			</then>
+			<elseif>
+				<istrue value="${antinstaller_protocollo_modipa}"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="protocolloDefault"/>
+						<param name="value" value="modipa"/>
+					</antcall>
+				</then>
+			</elseif>
+			<elseif>
+				<istrue value="${antinstaller_protocollo_spcoop}"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="protocolloDefault"/>
+						<param name="value" value="spcoop"/>
+					</antcall>
+				</then>
+			</elseif>
+			<elseif>
+				<istrue value="${antinstaller_protocollo_as4}"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="protocolloDefault"/>
+						<param name="value" value="as4"/>
+					</antcall>
+				</then>
+			</elseif>
+			<elseif>
+				<istrue value="${antinstaller_protocollo_sdi}"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="protocolloDefault"/>
+						<param name="value" value="sdi"/>
+					</antcall>
+				</then>
+			</elseif>
+		</if>
+		
+		<!-- BouncyCastle -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="security.addBouncyCastleProvider"/>
+			<param name="value" value="true"/>
+		</antcall>
+		
+		<!-- MAP -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="env.map.config"/>
+			<param name="value" value="${work_dir}/govway.map.properties"/>
+		</antcall>
+	
+		<!-- HSM CONFIG DIR -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="hsm.config"/>
+			<param name="value" value="${work_dir}/hsm.properties"/>
+		</antcall>
+		
+		<!-- BYOK -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="byok.config"/>
+			<param name="value" value="${work_dir}/byok.properties"/>
+		</antcall>
+		
+		<!-- Secrets -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="byok.env.secrets.config"/>
+			<param name="value" value="${work_dir}/govway.secrets.properties"/>
+		</antcall>
+		
+	</target>
+	
+	<!-- config_loader.cli.database.properties -->
+	<target name="cli_configLoader_database_properties_settings">
+		
+		<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+		</concat>
+				
+		<!-- TIPO DATABASE -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="tipoDatabase"/>
+			<param name="value" value="${antinstaller_tipo_database}"/>
+		</antcall>
+
+		<!-- Driver JDBC -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="driver"/>
+			<param name="value" value="${antinstaller_driver_jdbc_classname}"/>
+		</antcall>
+
+		<!-- Connection URL -->
+		<if>
+			<equals arg1="${antinstaller_config_db}" arg2="config"/>
+			<then>
+				<antcall target="-set_connection_url_jdbc">
+				    <param name="file" value="${file}"/>
+					<param name="jdbc_token" value="connection-url"/>
+					<param name="jdbc_tipo_database" value="${antinstaller_tipo_database}"/>
+					<param name="jdbc_dbhost" value="${antinstaller_dbhost_config}"/>
+					<param name="jdbc_dbport" value="${antinstaller_dbport_config}"/>
+					<param name="jdbc_dbname" value="${antinstaller_dbname_config}"/>
+					<param name="jdbc_oracle_mode" value="${antinstaller_oracle_mode_config}"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="username"/>
+					<param name="value" value="${antinstaller_dbusername_config}"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="password"/>
+					<param name="value" value="${antinstaller_dbpassword_config}"/>
+				</antcall>
+			</then>
+			<else>
+				<antcall target="-set_connection_url_jdbc">
+				    <param name="file" value="${file}"/>
+					<param name="jdbc_token" value="connection-url"/>
+					<param name="jdbc_tipo_database" value="${antinstaller_tipo_database}"/>
+					<param name="jdbc_dbhost" value="${antinstaller_dbhost}"/>
+					<param name="jdbc_dbport" value="${antinstaller_dbport}"/>
+					<param name="jdbc_dbname" value="${antinstaller_dbname}"/>
+					<param name="jdbc_oracle_mode" value="${antinstaller_oracle_mode}"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="username"/>
+					<param name="value" value="${antinstaller_dbusername}"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="password"/>
+					<param name="value" value="${antinstaller_dbpassword}"/>
+				</antcall>
+			</else>
+		</if>
+				
+	</target>
+
+	<target name="-set_connection_url_jdbc">
+		
+		<if>
+			<equals arg1="${jdbc_tipo_database}" arg2="db2"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="${jdbc_token}"/>
+					<param name="value" value="jdbc:db2://${jdbc_dbhost}:${jdbc_dbport}/${jdbc_dbname}"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${jdbc_tipo_database}" arg2="hsql"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="${jdbc_token}"/>
+					<param name="value" value="jdbc:hsqldb:hsql://${jdbc_dbhost}:${jdbc_dbport}/${jdbc_dbname}"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${jdbc_tipo_database}" arg2="mysql"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="${jdbc_token}"/>
+					<param name="value" value="jdbc:mysql://${jdbc_dbhost}:${jdbc_dbport}/${jdbc_dbname}?zeroDateTimeBehavior=convertToNull"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${jdbc_tipo_database}" arg2="oracle"/>
+			<then>
+				<if>
+					<equals arg1="${jdbc_oracle_mode}" arg2="serviceName" />
+					<then>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="${jdbc_token}"/>
+							<param name="value" value="jdbc:oracle:thin:@${jdbc_dbhost}:${jdbc_dbport}/${jdbc_dbname}"/>
+						</antcall>
+					</then>
+					<else>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="${jdbc_token}"/>
+							<param name="value" value="jdbc:oracle:thin:@${jdbc_dbhost}:${jdbc_dbport}:${jdbc_dbname}"/>
+						</antcall>
+					</else>
+				</if>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${jdbc_tipo_database}" arg2="postgresql"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="${jdbc_token}"/>
+					<param name="value" value="jdbc:postgresql://${jdbc_dbhost}:${jdbc_dbport}/${jdbc_dbname}"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${jdbc_tipo_database}" arg2="sqlserver"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="${jdbc_token}"/>
+					<param name="value" value="jdbc:sqlserver://${jdbc_dbhost}:${jdbc_dbport};databaseName=${jdbc_dbname}"/>
+				</antcall>
+			</then>
+		</if>
+	</target>
+	
+	
+	<!-- config_loader.cli.log4j2.properties -->
+	<target name="cli_configLoader_log4j_properties_settings">
+		
+		<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+		</concat>
+		
+		<!-- WORKING DIR -->
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="/var/govway/log"/>
+			<param name="value" value="${log_dir}"/>
+		</antcall>
+	
+
+		<if>
+			<equals arg1="${antinstaller_tools_system_out}" arg2="true" />
+			<then>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="#logger.config_loader_core.appenderRef.stdout.ref"/>
+					<param name="value" value="logger.config_loader_core.appenderRef.stdout.ref"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="#logger.config_loader_sql.appenderRef.stdout.ref"/>
+					<param name="value" value="logger.config_loader_sql.appenderRef.stdout.ref"/>
+				</antcall>
+			</then>
+		</if>
+	</target>
+	
+	<!-- console.audit.log4j2.properties -->
+	<target name="cli_configLoaders_console_audit_log4j_properties_settings">
+		
+		<available file="${file}" property="file.present"/>
+		
+		<if>
+			<istrue value="${file.present}"/>
+			<then>
+				<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+				</concat>
+				<!-- WORKING DIR -->
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="/var/govway/log"/>
+					<param name="value" value="${log_dir}"/>
+				</antcall>
+			</then>
+		</if>
+		
+	</target>
+		
+</project>

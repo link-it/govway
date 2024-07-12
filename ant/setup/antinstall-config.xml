@@ -34,6 +34,7 @@
 		   La proprietà verrà attivata quando la funzionalità sarà rilasciata stabile.
 	-->
         <hidden property="antinstaller_batchRuntimeRepository" value="false"/>
+        
     </page>
 
     <page name="modalitaInstallazione" type="input" displayText="Modalità Installazione" ifProperty="${antinstaller_architettura_avanzata_enabled}!=true">
@@ -73,6 +74,9 @@
 
 	<hidden property="antinstaller_batch_dir" value=""/>
 	<hidden property="antinstaller_batch_system_out" value=""/>
+	<hidden property="antinstaller_tools_system_out" value=""/>
+	<hidden property="antinstaller_tools_cliVault" value=""/>
+	<hidden property="antinstaller_tools_cliConfigLoader" value=""/>
 
     </page>
 
@@ -299,6 +303,9 @@
 	<!-- Utilizzabile su sistemi di provisioning avanzati -->
 	<hidden property="antinstaller_batch_dir" value=""/>
 	<hidden property="antinstaller_batch_system_out" value=""/>
+	<hidden property="antinstaller_tools_system_out" value=""/>
+	<hidden property="antinstaller_tools_cliVault" value=""/>
+	<hidden property="antinstaller_tools_cliConfigLoader" value=""/>
 
     </page>
 
@@ -345,6 +352,9 @@
 	<!-- Utilizzabile su sistemi di provisioning avanzati -->
 	<hidden property="antinstaller_batch_dir" value=""/>
 	<hidden property="antinstaller_batch_system_out" value=""/>
+	<hidden property="antinstaller_tools_system_out" value=""/>
+	<hidden property="antinstaller_tools_cliVault" value=""/>
+	<hidden property="antinstaller_tools_cliConfigLoader" value=""/>
 
     </page>
 
@@ -555,7 +565,7 @@
 		<comment displayText="- contenga almeno un carattere alfabetico, un numero ed un simbolo non alfanumerico"/>
 
     </page>
-
+    
     <page name="serviziRs" type="input" displayText="Configurazione Servizi">
 
 	<comment displayText="API Rest" bold="true"/>
@@ -745,7 +755,16 @@
 
     </page>
 
+    <page name="informazioniComplete" type="input" displayText="Configurazione Completata">
+
+		<comment displayText="La fase di predisposizione del software è stata completata."/>
+	        <comment displayText="Si raccomanda di far riferimento alla documentazione del prodotto"/>
+		<comment displayText="per attivare le modalità di cifratura delle informazioni confidenziali."/>
+	        <comment explanatoryText="       https://govway.org/documentazione/console/introduzione/infoConfidenziali.html" bold="true"/>
+
+    </page>
+
    <page name="Fine" displayText="Installazione" type="progress" showTargets="true"
-        target="setup,setup_datasource,setup_sql,setup_pdd,setup_govwayConsole,setup_govwayMonitor,setup_loader,setup_apiConfig,setup_apiMonitor,setup_batchStatistiche,setup_batchRuntimeRepository,setup_finished"/>
+        target="setup,setup_datasource,setup_sql,setup_pdd,setup_govwayConsole,setup_govwayMonitor,setup_loader,setup_apiConfig,setup_apiMonitor,setup_batchStatistiche,setup_batchRuntimeRepository,setup_cliVault,setup_cliConfigLoader,setup_finished"/>
 
 </installer>

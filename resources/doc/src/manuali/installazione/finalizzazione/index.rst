@@ -10,6 +10,24 @@ API. Il prodotto viene dispiegato con dei parametri di configurazione
 che possiedono dei valori di default relativamente alle seguenti
 tematiche:
 
+#. *GovWay Config Map*
+
+   La mappa '*govway.map.properties*' consente di definire una serie di variabili Java che possono essere riferite da tutte le proprietà presenti nei vari file di configurazione e dalle configurazioni attivate tramite la console di gestione, come descritto nella sezione :ref:`govwayConfigMap`.
+
+#. *Cifratura delle informazioni confidenziali*
+
+   GovWay supporta la gestione delle informazioni confidenziali salvate su database e delle chiavi/keystore presenti su filesystem attraverso la cifratura/decifratura mediante una master key, utilizzando un approccio HYOK (Hold Your Own Key) o BYOK (Bring Your Own Key).
+
+   Con l'approccio HYOK, le operazioni di cifratura e decifratura avvengono utilizzando una master key presente in un keystore locale (risiedente su filesystem) o all'interno di un HSM come descritto nella sezione :ref:`pkcs11Install`.
+
+   In alternativa, è possibile adottare una gestione BYOK, dove la master key è depositata su un servizio cloud. In questo caso, le operazioni di wrap-key e unwrap-key delle informazioni confidenziali vengono gestite tramite chiamate API esposte dal servizio cloud.
+   
+   Maggiori indicazioni a riguardo sono presenti nella sezione :ref:`byokInstall`.
+
+#. *GovWay Secrets*
+
+   La mappa '*govway.secrets.properties*' consente di definire una serie di variabili Java, in maniera simile a :ref:`govwayConfigMap`, con la differenza che i valori saranno forniti cifrati e GovWay si occuperà di decifrarli prima del loro caricamento nel sistema. Maggiori dettagli vengono forniti nella sezione :ref:`govwaySecretsMap`.
+
 #. *URL di Invocazione*
 
    Per conoscere l'url di invocazione di una API protetta da GovWay è
@@ -146,6 +164,9 @@ tematiche:
 .. toctree::
         :maxdepth: 2
 
+        map/index
+        byok/index
+        secrets/index
         urlInvocazione
 	multiTenant
 	cors

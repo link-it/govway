@@ -27,27 +27,27 @@ import javax.validation.Valid;
 public class ElencoProprieta  {
   
   @Schema(description = "")
-  private List<Proprieta> proprieta = null;
+  private List<ProprietaOpzioneCifratura> proprieta = null;
  /**
    * Get proprieta
    * @return proprieta
   **/
   @JsonProperty("proprieta")
   @Valid
-  public List<Proprieta> getProprieta() {
+  public List<ProprietaOpzioneCifratura> getProprieta() {
     return this.proprieta;
   }
 
-  public void setProprieta(List<Proprieta> proprieta) {
+  public void setProprieta(List<ProprietaOpzioneCifratura> proprieta) {
     this.proprieta = proprieta;
   }
 
-  public ElencoProprieta proprieta(List<Proprieta> proprieta) {
+  public ElencoProprieta proprieta(List<ProprietaOpzioneCifratura> proprieta) {
     this.proprieta = proprieta;
     return this;
   }
 
-  public ElencoProprieta addProprietaItem(Proprieta proprietaItem) {
+  public ElencoProprieta addProprietaItem(ProprietaOpzioneCifratura proprietaItem) {
     this.proprieta.add(proprietaItem);
     return this;
   }

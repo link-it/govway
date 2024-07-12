@@ -153,11 +153,13 @@
 				<include name="javassist-3.29.2-GA.jar"/>
 				<include name="ezmorph-1.0.6.jar" />
 				<include name="xom-1.2.11.jar" />
+				<include name="freemarker-2.3.31.jar" />
 				<include name="${xerces_jar}"/>
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>
 				<include name="${jakarta_activation_jar}"/>
+				<include name="velocity-*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/jackson">
 				<include name="*.jar"/>

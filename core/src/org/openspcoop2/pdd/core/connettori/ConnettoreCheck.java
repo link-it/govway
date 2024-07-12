@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.core.connettori;
 
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
@@ -51,6 +52,8 @@ import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
+import org.openspcoop2.pdd.core.byok.BYOKUnwrapPolicyUtilities;
+import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
@@ -62,6 +65,7 @@ import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.security.keystore.cache.GestoreOCSPResource;
 import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.ocsp.OCSPValidatorImpl;
 import org.openspcoop2.utils.io.Base64Utilities;
@@ -69,6 +73,7 @@ import org.openspcoop2.utils.regexp.RegExpUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.utils.transport.http.IBYOKUnwrapManager;
 import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 import org.openspcoop2.utils.transport.http.WrappedLogSSLSocketFactory;
@@ -787,14 +792,18 @@ public class ConnettoreCheck {
 		}
 	}
 		
-	private static void _checkHTTP(TipiConnettore tipoConnettore, Connettore connettore, Logger log) throws Exception {
+	private static void _checkHTTP(TipiConnettore tipoConnettore, Connettore connettore, Logger log) throws ConnettoreException, UtilsException, MalformedURLException {
 		
 		SSLConfig sslContextProperties = null;
+		Map<String,Object> dynamicMap = null;
 		
 		Map<String,String> properties = connettore.getProperties();
 		
 		if(TipiConnettore.HTTPS.equals(tipoConnettore)){
 			sslContextProperties = ConnettoreHTTPSProperties.readProperties(properties);
+			dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(null, null, null, 
+					log);
+			sslContextProperties.setDynamicMap(dynamicMap);
 		}
 		
 		Proxy.Type proxyType = null;
@@ -812,7 +821,7 @@ public class ConnettoreCheck {
 				proxyType = Proxy.Type.HTTP;
 			}
 			else{
-				throw new Exception( "Proprieta' '"+CostantiConnettori.CONNETTORE_HTTP_PROXY_TYPE
+				throw new ConnettoreException( "Proprieta' '"+CostantiConnettori.CONNETTORE_HTTP_PROXY_TYPE
 						+"' non corretta. Impostato un tipo sconosciuto ["+tipo+"] (valori ammessi: "+CostantiConnettori.CONNETTORE_HTTP_PROXY_TYPE_VALUE_HTTP
 						+","+CostantiConnettori.CONNETTORE_HTTP_PROXY_TYPE_VALUE_HTTPS+")");
 			}
@@ -821,7 +830,7 @@ public class ConnettoreCheck {
 			if(proxyHostname!=null){
 				proxyHostname = proxyHostname.trim();
 			}else{
-				throw new Exception( "Proprieta' '"+CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME+
+				throw new ConnettoreException( "Proprieta' '"+CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME+
 						"' non impostata, obbligatoria in presenza della proprietà '"+CostantiConnettori.CONNETTORE_HTTP_PROXY_TYPE+"'");
 			}
 			
@@ -829,13 +838,13 @@ public class ConnettoreCheck {
 			if(proxyPortTmp!=null){
 				proxyPortTmp = proxyPortTmp.trim();
 			}else{
-				throw new Exception( "Proprieta' '"+CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT+
+				throw new ConnettoreException( "Proprieta' '"+CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT+
 						"' non impostata, obbligatoria in presenza della proprietà '"+CostantiConnettori.CONNETTORE_HTTP_PROXY_TYPE+"'");
 			}
 			try{
 				proxyPort = Integer.parseInt(proxyPortTmp);
 			}catch(Exception e){
-				throw new Exception( "Proprieta' '"+CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT+"' non corretta: "+ConnettoreBase.readConnectionExceptionMessageFromException(e));
+				throw new ConnettoreException( "Proprieta' '"+CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT+"' non corretta: "+ConnettoreBase.readConnectionExceptionMessageFromException(e));
 			}
 			
 			
@@ -849,7 +858,7 @@ public class ConnettoreCheck {
 				proxyPassword = proxyPassword.trim();
 			}else{
 				if(proxyUsername!=null){
-					throw new Exception(  "Proprieta' '"+CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD
+					throw new ConnettoreException(  "Proprieta' '"+CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD
 							+"' non impostata, obbligatoria in presenza della proprietà '"+CostantiConnettori.CONNETTORE_HTTP_PROXY_USERNAME+"'");
 				}
 			}
@@ -861,7 +870,7 @@ public class ConnettoreCheck {
 			try{
 				debug = Boolean.valueOf(debugString);
 			}catch(Exception e){
-				throw new Exception( "Proprieta' '"+CostantiConnettori.CONNETTORE_DEBUG+"' non corretta ("+debugString+"): "+ConnettoreBase.readConnectionExceptionMessageFromException(e));
+				throw new ConnettoreException( "Proprieta' '"+CostantiConnettori.CONNETTORE_DEBUG+"' non corretta ("+debugString+"): "+ConnettoreBase.readConnectionExceptionMessageFromException(e));
 			}
 		}
 		
@@ -874,16 +883,25 @@ public class ConnettoreCheck {
 				String policyType = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
 				if(policyType!=null && StringUtils.isNotEmpty(policyType)) {
 					GestoreOCSPResource ocspResourceReader = new GestoreOCSPResource(null);
-					String crlInputConfig = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+					String crlInputConfig = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLS);
 					LoggerBuffer lb = new LoggerBuffer();
 					lb.setLogDebug(log);
 					lb.setLogError(log);
 					ocspValidator = new OCSPValidatorImpl(lb, crlInputConfig, policyType, ocspResourceReader);
 				}
 			}
-			
+
+			IBYOKUnwrapManager byokManager = null;
+			if(sslContextProperties.getKeyStoreLocation()!=null) {
+				try {
+					byokManager = BYOKUnwrapPolicyUtilities.getBYOKUnwrapManager(sslContextProperties.getKeyStoreBYOKPolicy(), dynamicMap);
+				}catch(Exception e) {
+					throw new UtilsException(e.getMessage(),e);
+				}
+			}
+				
 			StringBuilder bfSSLConfig = new StringBuilder();
-			sslContext = SSLUtilities.generateSSLContext(sslContextProperties, ocspValidator, bfSSLConfig);
+			sslContext = SSLUtilities.generateSSLContext(sslContextProperties, ocspValidator, byokManager, bfSSLConfig);
 			
 		}
 		
@@ -903,12 +921,12 @@ public class ConnettoreCheck {
 		try {
 			if(proxyType==null){
 				if(debug)
-					log.info("Creazione connessione alla URL ["+location+"]...");
+					logInfo(log,"Creazione connessione alla URL ["+location+"]...");
 				connection = url.openConnection();
 			}
 			else{
 				if(debug)
-					log.info("Creazione connessione alla URL ["+location+"] (via proxy "+
+					logInfo(log,"Creazione connessione alla URL ["+location+"] (via proxy "+
 								proxyHostname+":"+proxyPort+") (username["+proxyUsername+"] password["+proxyPassword+"])...");
 				
 				if(proxyUsername!=null){
@@ -965,7 +983,7 @@ public class ConnettoreCheck {
 			
 			// Gestione automatica del redirect
 			// The HttpURLConnection‘s follow redirect is just an indicator, in fact it won’t help you to do the “real” http redirection, you still need to handle it manually.
-			/*
+			/**
 			if(followRedirect){
 				this.httpConn.setInstanceFollowRedirects(true);
 			}
@@ -978,7 +996,7 @@ public class ConnettoreCheck {
 			// Proxy Authentication BASIC
 			if(proxyType!=null && proxyUsername!=null){
 				if(debug)
-					log.debug("Impostazione autenticazione per proxy (username["+proxyUsername+"] password["+proxyPassword+"]) ...");
+					logDebug(log,"Impostazione autenticazione per proxy (username["+proxyUsername+"] password["+proxyPassword+"]) ...");
 				if(proxyUsername!=null && proxyPassword!=null){
 					String authentication = proxyUsername + ":" + proxyPassword;
 					authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + Base64Utilities.encodeAsString(authentication.getBytes());
@@ -1008,7 +1026,7 @@ public class ConnettoreCheck {
 				readConnectionTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
 			}
 			if(debug)
-				log.info("Impostazione http timeout CT["+connectionTimeout+"] RT["+readConnectionTimeout+"]");
+				logInfo(log,"Impostazione http timeout CT["+connectionTimeout+"] RT["+readConnectionTimeout+"]");
 			httpConn.setConnectTimeout(connectionTimeout);
 			httpConn.setReadTimeout(readConnectionTimeout);
 			
@@ -1020,7 +1038,7 @@ public class ConnettoreCheck {
 				authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + Base64Utilities.encodeAsString(authentication.getBytes());
 				httpConn.setRequestProperty(HttpConstants.AUTHORIZATION,authentication);
 				if(debug)
-					log.info("Impostazione autenticazione (username:"+user+" password:"+password+") ["+authentication+"]");
+					logInfo(log,"Impostazione autenticazione (username:"+user+" password:"+password+") ["+authentication+"]");
 			}
 			
 			// Authentication Bearer Token
@@ -1029,20 +1047,43 @@ public class ConnettoreCheck {
 				String authorizationHeader = HttpConstants.AUTHORIZATION_PREFIX_BEARER+bearerToken;
 				httpConn.setRequestProperty(HttpConstants.AUTHORIZATION,authorizationHeader);
 				if(debug)
-					log.info("Impostazione autenticazione bearer ["+authorizationHeader+"]");
+					logInfo(log,"Impostazione autenticazione bearer ["+authorizationHeader+"]");
+			}
+			
+			// Authentication Api Key
+			String apiKey = properties.get(CostantiConnettori.CONNETTORE_APIKEY);
+			if(apiKey!=null && StringUtils.isNotEmpty(apiKey)){
+				String apiKeyHeader = properties.get(CostantiConnettori.CONNETTORE_APIKEY_HEADER);
+				if(apiKeyHeader==null || StringUtils.isEmpty(apiKeyHeader)) {
+					apiKeyHeader = CostantiConnettori.DEFAULT_HEADER_API_KEY;
+				}
+				httpConn.setRequestProperty(apiKeyHeader,apiKey);
+				if(debug)
+					logInfo(log,"Impostazione autenticazione api key ["+apiKeyHeader+"]=["+apiKey+"]");
+				
+				String appId = properties.get(CostantiConnettori.CONNETTORE_APIKEY_APPID);
+				if(appId!=null && StringUtils.isNotEmpty(appId)){
+					String appIdHeader = properties.get(CostantiConnettori.CONNETTORE_APIKEY_APPID_HEADER);
+					if(appIdHeader==null || StringUtils.isEmpty(appIdHeader)) {
+						appIdHeader = CostantiConnettori.DEFAULT_HEADER_APP_ID;
+					}
+					httpConn.setRequestProperty(appIdHeader,appId);
+					if(debug)
+						logInfo(log,"Impostazione autenticazione api key (app id) ["+appIdHeader+"]=["+appId+"]");
+				}
 			}
 			
 			// Check
 			connect = true;
 			if(debug)
-				log.debug("Connessione in corso ...");
+				logDebug(log,"Connessione in corso ...");
 			httpConn.connect();
 			if(debug)
-				log.debug("Connessione effettuata con successo");
+				logDebug(log,"Connessione effettuata con successo");
 		}
 		catch(Exception e) {
 			String msgException = ConnettoreBase.readConnectionExceptionMessageFromException(e);
-			throw new Exception(msgException, e);
+			throw new ConnettoreException(msgException, e);
 		}
 		finally {
 			try {
@@ -1054,7 +1095,7 @@ public class ConnettoreCheck {
 	}
 	
 	
-	public static boolean locationDefinedByVariable(String location) throws Exception {
+	public static boolean locationDefinedByVariable(String location) throws MalformedURLException {
 		if(StringUtils.isNotEmpty(location) && RegExpUtilities.isUrlDefinedByVariable(location)) {
 			boolean check = true;
 			if(location.contains("://")) {
@@ -1064,7 +1105,7 @@ public class ConnettoreCheck {
 						String protocol = location.substring(0, indexOf);
 						if(protocol!=null && RegExpUtilities.isDefinedByVariable(protocol)) {
 							check = false;
-							/*System.out.println("\n\n=================");
+							/**System.out.println("\n\n=================");
 							System.out.println("PROTOCOL '"+protocol+"'");
 							System.out.println("NON CONTROLLO, PROTOCOL CONTIENE VARIABILI");*/
 						}
@@ -1075,7 +1116,7 @@ public class ConnettoreCheck {
 								if(indexOfHostname>0) {
 									String hostname = other.substring(0, indexOfHostname);
 									check = hostname==null || !RegExpUtilities.isDefinedByVariable(hostname);
-									/*if(!check) {
+									/**if(!check) {
 										System.out.println("\n\n=================");
 										System.out.println("PROTOCOL '"+protocol+"'");
 										System.out.println("OTHER '"+other+"'");
@@ -1090,7 +1131,7 @@ public class ConnettoreCheck {
 							else {
 								// non vi è un contesto
 								check = !RegExpUtilities.isDefinedByVariable(location);
-								/*if(!check) {
+								/**if(!check) {
 									System.out.println("\n\n=================");
 									System.out.println("PROTOCOL '"+protocol+"'");
 									System.out.println("OTHER '"+other+"'");
@@ -1108,12 +1149,12 @@ public class ConnettoreCheck {
 				}
 			}
 			else {
-				//System.out.println("\n\n=================");
-				//System.out.println("COMPLETAMENTE VARIABILI");
+				/**System.out.println("\n\n=================");
+				System.out.println("COMPLETAMENTE VARIABILI");*/
 				check = false; // url completamente definita da variabili, non vi è nemmeno il protocol
 			}
 			if(!check) {
-				//System.out.println("NON CONTROLLO '"+location+"'!!!");
+				/**System.out.println("NON CONTROLLO '"+location+"'!!!");*/
 				return true;
 			}
 		}
@@ -1308,5 +1349,16 @@ public class ConnettoreCheck {
 			throw new ConnettoreException(e.getMessage(),e);
 		}
 			
+	}
+	
+	private static void logDebug(Logger log, String msg) {
+		if(log!=null) {
+			log.debug(msg);
+		}
+	}
+	private static void logInfo(Logger log, String msg) {
+		if(log!=null) {
+			log.info(msg);
+		}
 	}
 }

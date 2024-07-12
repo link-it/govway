@@ -269,6 +269,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 	        		null,							// httpsKeyAlias
 	        		null,							// httpsTrustStoreCRLs
 	        		null,							// httpsTrustStoreOCSPPolicy
+	        		null,							// httpsKeyStoreBYOKPolicy
 					null,							// proxy_enabled, 
 					null,							// proxy_hostname, 
 					null,							// proxy_port, 
@@ -335,10 +336,14 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 					env.userLogin,
 					env.apsCore,
 					env.apsHelper,
-	        		null, // nomeSAServer TODO quando si aggiunge applicativo server
+	        		null, // nomeSAServer
 	        		null, // identificazioneAttributiStato
 	        		null, //String [] attributeAuthoritySelezionate
-	        		null // attributeAuthorityAttributi
+	        		null, // attributeAuthorityAttributi
+	        		null, // apiKeyHeader
+					null, // apiKey,
+					null, // appIdHeader,
+					null // appId,
 				);
 
 		        

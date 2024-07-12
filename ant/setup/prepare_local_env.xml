@@ -104,6 +104,18 @@
 	<property name="required_lib_batchRuntimeRepository" location="${required_lib}"/>
 	<property name="src_batchRuntimeRepository" value="${batchRuntimeRepository}/src" />
 	<import file="${batchRuntimeRepository}/build.xml"/>
+	
+	<!-- CliVault -->
+	<property name="cliVault" value="${rootDir}/tools/command_line_interfaces/govway_vault/" />
+	<property name="required_lib_cliVault" location="${required_lib}"/>
+	<property name="src_cliVault" value="${cliVault}/src" />
+	<import file="${cliVault}/build.xml"/>
+	
+	<!-- CliConfigLoader -->
+	<property name="cliConfigLoader" value="${rootDir}/tools/command_line_interfaces/config_loader/" />
+	<property name="required_lib_cliConfigLoader" location="${required_lib}"/>
+	<property name="src_cliConfigLoader" value="${cliConfigLoader}/src" />
+	<import file="${cliConfigLoader}/build.xml"/>
 
 	<!-- Trasparente -->
 	<property name="trasparente" value="${rootDir}/protocolli/trasparente"/>

@@ -55,6 +55,7 @@ import org.openspcoop2.protocol.engine.ConfigurazioneFiltroServiziApplicativi;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.Certificate;
+import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
@@ -617,6 +618,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 					}
 				}
 				
+				boolean postBackViaPost = false;
+				
 				dati = this.addCredenzialiToDati(tipoOp, dati, tipoauth, oldtipoauth, utente, password, subject, principal, servlet, true, null, false, true, null, autenticazioneNessunaAbilitata,
 						tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword, listaAliasEstrattiCertificato, 
 						tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
@@ -626,7 +629,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 						changepwd,
 						multipleApiKey, appId, apiKey, visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
 						false, null, null, false,
-						SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(dominio), protocollo);
+						SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(dominio), protocollo,
+						postBackViaPost);
 			}
 		}
 		
@@ -1197,8 +1201,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 			
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
 	}
 
@@ -1389,8 +1393,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
 	}
 	private List<DataElement> creaEntry(boolean modalitaCompleta, boolean multiTenant, Boolean contaListe,
@@ -1975,8 +1979,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 
 		} catch (Exception e) {
-			this.log.error("Exception prepareSoggetti(Config)List: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError("Exception prepareSoggetti(Config)List: " + e.getMessage(), e);
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
 
 	}
@@ -2028,8 +2032,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
 	}
 	
@@ -2124,8 +2128,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
 	}
 
@@ -2151,8 +2155,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 			this.pd.addFilter(Filtri.FILTRO_TIPO_SOGGETTO, label, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
 	}
 	
@@ -2303,8 +2307,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
 	}
 
@@ -2530,11 +2534,11 @@ public class SoggettiHelper extends ConnettoriHelper {
 			
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
 	}
-	public void prepareSoggettiProprietaList(Soggetto soggettoRegistry, String id, ConsoleSearch ricerca,	List<Proprieta> lista) throws Exception {
+	public void prepareSoggettiProprietaList(Soggetto soggettoRegistry, String id, ConsoleSearch ricerca,	List<Proprieta> lista) throws DriverControlStationException {
 		try {
 			List<Parameter> parametersServletSoggettoChange = new ArrayList<>();
 			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id);
@@ -2610,8 +2614,16 @@ public class SoggettiHelper extends ConnettoriHelper {
 					e.add(de);
 
 					de = new DataElement();
-					if(ssp.getValore()!=null)
-						de.setValue(ssp.getValore().toString());
+					if(ssp.getValore()!=null) {
+						if(StringUtils.isNotEmpty(ssp.getValore()) &&
+								BYOKManager.isEnabledBYOK() &&
+								this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(ssp.getValore())) {
+							de.setValue(CostantiControlStation.VALORE_CIFRATO);
+						}
+						else {
+							de.setValue(ssp.getValore());
+						}
+					}
 					e.add(de);
 
 					dati.add(e);
@@ -2622,8 +2634,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
 		
 	}
@@ -2651,22 +2663,21 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
-		de.setType(DataElementType.TEXT_EDIT);
-		de.setRequired(true);
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_VALORE);
-		de.setValue(valore);
+		this.core.getLockUtilities().lockProperty(de, valore);
+		de.setRequired(true);
 		de.setSize(size);
 		dati.add(de);
 
 		return dati;
 	}
 	
-	public boolean soggettiProprietaCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean soggettiProprietaCheckData(TipoOperazione tipoOp) throws DriverControlStationException {
 		try {
 			String id = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			int idSogg = Integer.parseInt(id);
 			String nome = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_NOME);
-			String valore = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_VALORE);
+			String valore = this.getLockedParameter(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_VALORE, false);
 
 			// Campi obbligatori
 			if (nome.equals("") || valore.equals("")) {
@@ -2685,18 +2696,23 @@ public class SoggettiHelper extends ConnettoriHelper {
 				return false;
 			}
 
-			// Controllo che non ci siano spazi nei campi di testo
-			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
+			
+			if (nome.indexOf(" ") != -1) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
-			
-			// Check Lunghezza
-			if(this.checkLength255(nome, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROP_NOME)==false) {
+			if(!this.checkLength255(nome, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROP_NOME)) {
 				return false;
 			}
-			if(this.checkLength4000(valore, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROP_VALORE)==false) {
-				return false;
+			
+			if( !this.core.getDriverBYOKUtilities().isEnabledBYOK() || !this.core.getDriverBYOKUtilities().isWrappedWithAnyPolicy(valore) ){
+				if (valore.indexOf(" ") != -1) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+					return false;
+				}
+				if(!this.checkLength4000(valore, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROP_VALORE)) {
+					return false;
+				}
 			}
 
 			// Se tipoOp = add, controllo che la property non sia gia'
@@ -2727,8 +2743,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new DriverControlStationException(e.getMessage(),e);
 		}
 	}
 

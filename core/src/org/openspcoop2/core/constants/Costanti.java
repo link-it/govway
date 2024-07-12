@@ -128,6 +128,16 @@ public class Costanti {
 	public static final MapKey<String> RICHIESTA_INOLTRATA_BACKEND = Map.newMapKey("RICHIESTA_INOLTRATA_BACKEND");
 	public static final String RICHIESTA_INOLTRATA_BACKEND_VALORE = "true";
 	
+	public static final MapKey<String> DYNAMIC_MAP_CONTEXT = Map.newMapKey("DYNAMIC_MAP_CONTEXT");
+	@SuppressWarnings("unchecked")
+	public static java.util.Map<String,Object> readDynamicMap(org.openspcoop2.utils.Map<Object> context){
+		java.util.Map<String,Object> map = null;
+		if(context!=null && context.containsKey(Costanti.DYNAMIC_MAP_CONTEXT)) {
+			map = (java.util.Map<String,Object>) context.get(Costanti.DYNAMIC_MAP_CONTEXT);
+		}
+		return map;
+	}
+	
 	public static final List<MapKey<String>> CONTEXT_OBJECT = new ArrayList<MapKey<String>>();
 	static {
 		CONTEXT_OBJECT.add(Costanti.ID_TRANSAZIONE);

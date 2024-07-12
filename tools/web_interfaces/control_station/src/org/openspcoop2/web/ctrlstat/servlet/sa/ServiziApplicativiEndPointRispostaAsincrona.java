@@ -31,10 +31,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Connettore;
@@ -49,6 +51,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
@@ -168,7 +171,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			String proxyHostname = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
 			String proxyPort = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
 			String proxyUsername = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
-			String proxyPassword = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			String proxyPassword = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 				
 			// tempi risposta
 			String tempiRispostaEnabled = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
@@ -187,7 +190,36 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			String url = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			if(TipiConnettore.HTTP.toString().equals(endpointtype)){
 				user = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				password = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				password = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			}
+			
+			// api key
+			String autenticazioneApiKey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_API_KEY);
+			String apiKeyHeader = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_HEADER);
+			if(apiKeyHeader==null || StringUtils.isEmpty(apiKeyHeader)) {
+				apiKeyHeader = CostantiConnettori.DEFAULT_HEADER_API_KEY;
+			}
+			String apiKeyValue = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_VALUE);
+			String appIdHeader = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_APP_ID_HEADER);
+			if(appIdHeader==null || StringUtils.isEmpty(appIdHeader)) {
+				appIdHeader = CostantiConnettori.DEFAULT_HEADER_APP_ID;
+			}
+			String appIdValue = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE);
+			String useOAS3NamesTmp = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_NOMI_OAS);
+			boolean useOAS3Names=true;
+			if(useOAS3NamesTmp!=null && StringUtils.isNotEmpty(useOAS3NamesTmp)) {
+				useOAS3Names = ServletUtils.isCheckBoxEnabled(useOAS3NamesTmp);
+			}
+			else {
+				useOAS3Names = saHelper.isAutenticazioneApiKeyUseOAS3Names(apiKeyHeader, appIdHeader);
+			}
+			String useAppIdTmp = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_USE_APP_ID);
+			boolean useAppId=false;
+			if(useAppIdTmp!=null && StringUtils.isNotEmpty(useAppIdTmp)) {
+				useAppId = ServletUtils.isCheckBoxEnabled(useAppIdTmp);
+			}
+			else {
+				useAppId = saHelper.isAutenticazioneApiKeyUseAppId(appIdValue);
 			}
 			
 			// jms
@@ -200,7 +232,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			String sendas = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
 			if(TipiConnettore.JMS.toString().equals(endpointtype)){
 				user = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_USERNAME);
-				password = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
+				password = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
 			}
 			
 			// https
@@ -212,23 +244,24 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			boolean httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 			String httpspath = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 			String httpstipo = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
-			String httpspwd = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+			String httpspwd = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
 			String httpsalgoritmo = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
 			String httpsstatoS = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
 			boolean httpsstato = ServletUtils.isCheckBoxEnabled(httpsstatoS);
 			String httpskeystore = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
-			String httpspwdprivatekeytrust = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
+			String httpspwdprivatekeytrust = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
 			String httpspathkey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
 			String httpstipokey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
-			String httpspwdkey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
-			String httpspwdprivatekey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
+			String httpspwdkey = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
+			String httpspwdprivatekey = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 			String httpsalgoritmokey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 			String httpsKeyAlias = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
 			String httpsTrustStoreCRLs = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			String httpsTrustStoreOCSPPolicy = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+			String httpsKeyStoreBYOKPolicy = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				password = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				password = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			}
 			
 			// file
@@ -263,6 +296,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			
 			boolean erogazioneServizioApplicativoServerEnabled = false;
 			
+			boolean postBackViaPost = true;
+			
 			// Preparo il menu
 			saHelper.makeMenu();
 			
@@ -277,12 +312,12 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			InvocazionePorta invocazionePorta = sa.getInvocazionePorta();
 			RispostaAsincrona ra = sa.getRispostaAsincrona();
 			if(ra==null) {
-				throw new Exception("ServizioApplicativo con id '"+idSilInt+"' senza RispostaAsincrona");
+				throw new CoreException("ServizioApplicativo con id '"+idSilInt+"' senza RispostaAsincrona");
 			}
 			InvocazioneCredenziali cra = ra.getCredenziali();
 			Connettore connra = ra.getConnettore();
 			if(connra==null) {
-				throw new Exception("ServizioApplicativo con id '"+idSilInt+"' senza connettore in RispostaAsincrona");
+				throw new CoreException("ServizioApplicativo con id '"+idSilInt+"' senza connettore in RispostaAsincrona");
 			}
 			List<Property> cp = connra.getPropertyList();
 			
@@ -611,6 +646,36 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				
 				autenticazioneHttp = saHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 				
+				if(autenticazioneApiKey==null || StringUtils.isEmpty(autenticazioneApiKey)) {
+					for (int i = 0; i < connra.sizePropertyList(); i++) {
+						Property singlecp = cp.get(i);
+						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_APIKEY_HEADER)) {
+							apiKeyHeader = singlecp.getValore();
+						}
+						else if (singlecp.getNome().equals(CostantiDB.CONNETTORE_APIKEY)) {
+							apiKeyValue = singlecp.getValore();
+						}
+						else if (singlecp.getNome().equals(CostantiDB.CONNETTORE_APIKEY_APPID_HEADER)) {
+							appIdHeader = singlecp.getValore();
+						}
+						else if (singlecp.getNome().equals(CostantiDB.CONNETTORE_APIKEY_APPID)) {
+							appIdValue = singlecp.getValore();
+						}
+					}
+					
+					autenticazioneApiKey = saHelper.getAutenticazioneApiKey(autenticazioneApiKey, endpointtype, apiKeyValue);
+					if(ServletUtils.isCheckBoxEnabled(autenticazioneApiKey)) {
+						useOAS3Names = saHelper.isAutenticazioneApiKeyUseOAS3Names(apiKeyHeader, appIdHeader);
+						useAppId = saHelper.isAutenticazioneApiKeyUseAppId(appIdValue);
+					}
+					else {
+						apiKeyValue=null;
+						apiKeyHeader=null;
+						appIdHeader=null;
+						appIdValue=null;
+					}
+				}
+				
 				for (int i = 0; i < connra.sizePropertyList(); i++) {
 					Property singlecp = cp.get(i);
 					if (singlecp.getNome().equals(CostantiDB.CONNETTORE_HTTP_LOCATION) &&
@@ -674,6 +739,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					httpsKeyAlias = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_ALIAS);
 					httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLS);
 					httpsTrustStoreOCSPPolicy = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+					httpsKeyStoreBYOKPolicy = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
 					if (httpspathkey == null) {
 						httpsstato = false;
 						httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
@@ -699,12 +765,12 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 				}
 				if(httpshostverifyS==null || "".equals(httpshostverifyS)){
-					httpshostverifyS = "true";
-					httpshostverify = true;
+					httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
+					httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
 				}
 				if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
 					httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
-					httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
+					httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 				}
 				
 				// file
@@ -715,32 +781,32 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);	
 					requestOutputFileNameHeadersPermissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS);
 					String v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
-					if(v!=null && !"".equals(v)){
-						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-							requestOutputParentDirCreateIfNotExists = Costanti.CHECK_BOX_ENABLED_TRUE;
-						}
+					if(v!=null && !"".equals(v) &&
+						("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+						){
+						requestOutputParentDirCreateIfNotExists = Costanti.CHECK_BOX_ENABLED_TRUE;
 					}					
 					v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE);
-					if(v!=null && !"".equals(v)){
-						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-							requestOutputOverwriteIfExists = Costanti.CHECK_BOX_ENABLED_TRUE;
-						}
+					if(v!=null && !"".equals(v) &&
+						("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+						){
+						requestOutputOverwriteIfExists = Costanti.CHECK_BOX_ENABLED_TRUE;
 					}	
 					
 					v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_MODE);
-					if(v!=null && !"".equals(v)){
-						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-							responseInputMode = CostantiConfigurazione.ABILITATO.getValue();
-						}
+					if(v!=null && !"".equals(v) &&
+						("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+						){
+						responseInputMode = CostantiConfigurazione.ABILITATO.getValue();
 					}
 					if(CostantiConfigurazione.ABILITATO.getValue().equals(responseInputMode)){						
 						responseInputFileName = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE);
 						responseInputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS);
 						v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ);
-						if(v!=null && !"".equals(v)){
-							if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-								responseInputDeleteAfterRead = Costanti.CHECK_BOX_ENABLED_TRUE;
-							}
+						if(v!=null && !"".equals(v) &&
+							("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+							){
+							responseInputDeleteAfterRead = Costanti.CHECK_BOX_ENABLED_TRUE;
 						}						
 						responseInputWaitTime = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);						
 					}
@@ -759,7 +825,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						parentSA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
 						null, false,
 						integrationManagerEnabled,
-						TipoOperazione.CHANGE, null,null);
+						TipoOperazione.CHANGE, null,null,
+						postBackViaPost);
 				
 				dati = saHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
@@ -771,7 +838,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, 
 						httpspwdprivatekey, httpsalgoritmokey,
-						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 						tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,
 						nomeservizioApplicativo, idsil, null, null, null, null,
 						null, null, true,
@@ -785,7 +852,9 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						autenticazioneToken,tokenPolicy, forcePDND, forceOAuth,
 						listExtendedConnettore, forceEnabled,
 						nomeProtocollo, false, false
-						, false, erogazioneServizioApplicativoServerEnabled, null, null
+						, false, erogazioneServizioApplicativoServerEnabled, null, null,
+						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+						postBackViaPost
 						);
 				
 				dati = saHelper.addHiddenFieldsToDati(dati, provider, idAsps, idPorta);
@@ -818,7 +887,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						parentSA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
 						null, false,
 						integrationManagerEnabled,
-						TipoOperazione.CHANGE, null,null);
+						TipoOperazione.CHANGE, null,null,
+						postBackViaPost);
 				
 				dati = saHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
@@ -830,7 +900,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, 
 						httpspwdprivatekey, httpsalgoritmokey,
-						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 						tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,
 						nomeservizioApplicativo, idsil, null, null, null, null,
 						null, null, true,
@@ -844,7 +914,9 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						autenticazioneToken,tokenPolicy, forcePDND, forceOAuth,
 						listExtendedConnettore, forceEnabled,
 						nomeProtocollo, false, false
-						, false, erogazioneServizioApplicativoServerEnabled, null, null
+						, false, erogazioneServizioApplicativoServerEnabled, null, null,
+						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+						postBackViaPost
 						);
 				
 				dati = saHelper.addHiddenFieldsToDati(dati, provider, idAsps, idPorta);
@@ -912,7 +984,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					httpspathkey, httpstipokey,
 					httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey,
-					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
 					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
@@ -920,6 +992,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					tokenPolicy,
+					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
 					listExtendedConnettore);
 			ra.setConnettore(connra);
 			sa.setRispostaAsincrona(ra);

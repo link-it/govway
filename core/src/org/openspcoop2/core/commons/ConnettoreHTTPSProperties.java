@@ -134,8 +134,8 @@ public class ConnettoreHTTPSProperties extends SSLConfig implements Serializable
 		}else{
 			propertiesHTTPS.setTrustStoreType(KeyStore.getDefaultType()); // JKS
 		}
-		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs)!=null){
-			tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs).trim();
+		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLS)!=null){
+			tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLS).trim();
 			propertiesHTTPS.setTrustStoreCRLsLocation(tmp);
 		}
 		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY)!=null){
@@ -149,8 +149,8 @@ public class ConnettoreHTTPSProperties extends SSLConfig implements Serializable
 			String tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY).trim();
 			propertiesHTTPS.setTrustStoreOCSPPolicy(tmp);
 			
-			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs)!=null){
-				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs).trim();
+			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLS)!=null){
+				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLS).trim();
 				propertiesHTTPS.setTrustStoreCRLsLocation(tmp);
 			}
 		}
@@ -189,6 +189,10 @@ public class ConnettoreHTTPSProperties extends SSLConfig implements Serializable
 			propertiesHTTPS.setKeyStoreType(tmp);
 		}else{
 			propertiesHTTPS.setKeyStoreType(KeyStore.getDefaultType()); // JKS
+		}
+		if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY)!=null){
+			tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY).trim();
+			propertiesHTTPS.setKeyStoreBYOKPolicy(tmp);
 		}
 	}
 	private static void readSecureRandomConfig(java.util.Map<String,String> properties, ConnettoreHTTPSProperties propertiesHTTPS) throws CoreException {

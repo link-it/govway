@@ -38,6 +38,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.slf4j.Logger;
+import org.springframework.http.HttpStatus;
 
 /**     
  * HeadersFilter
@@ -85,7 +86,7 @@ public class HeadersFilter implements Filter {
 						ControlStationCore.logError("Errore rilevato durante l'headersFilter (reInit General Helper)",e);
 					}
 				}
-				AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig);
+				AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig, HttpStatus.INTERNAL_SERVER_ERROR);
 				// return so that we do not chain to other filters
 				return;
 			}catch(Exception eClose){

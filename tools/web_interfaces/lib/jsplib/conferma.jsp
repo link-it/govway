@@ -362,20 +362,8 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 		 	}
 		 	
 		 	if($(".spanIconCopyBox").length>0){
-		 		
-		 		function changeTooltipPosition(event) {
-		 			var tooltipX = event.pageX - 8;
-		 			var tooltipY = event.pageY + 8;
-		 			$('div.copyTooltip').css({top: tooltipY, left: tooltipX});
-		 		};
-		 		
-		 		function showTooltip(event) {
-		 			$('div.copyTooltip').remove();
-		 			$('<div class="copyTooltip">Copiato</div>').appendTo('body');
-		 			changeTooltipPosition(event);
-		 		};
-		 		
-        		$(".spanIconCopyBox").click(function(evt){
+
+		 		$(".spanIconCopyBox").click(function(evt){
         			var iconCopyBoxId = $(this).parent().attr('id');
         			var idx = iconCopyBoxId.substring(iconCopyBoxId.indexOf("_")+1);
         			// console.log(idx);
@@ -388,80 +376,237 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
         				}
         			}
     			});
-        		$(".spanIconCopyBox").mouseout(function(){
+        		
+		 		$(".spanIconCopyBox").mouseout(function(){
         			$('div.copyTooltip').remove();  
         		});
         	}
 	 });
 	 
-	 
-	 
-	 function copyTextToClipboard(text) {
-		  var textArea = document.createElement("textarea");
-
-		  //
-		  // *** This styling is an extra step which is likely not required. ***
-		  //
-		  // Why is it here? To ensure:
-		  // 1. the element is able to have focus and selection.
-		  // 2. if element was to flash render it has minimal visual impact.
-		  // 3. less flakyness with selection and copying which **might** occur if
-		  //    the textarea element is not visible.
-		  //
-		  // The likelihood is the element won't even render, not even a
-		  // flash, so some of these are just precautions. However in
-		  // Internet Explorer the element is visible whilst the popup
-		  // box asking the user for permission for the web page to
-		  // copy to the clipboard.
-		  //
-
-		  // Place in top-left corner of screen regardless of scroll position.
-		  textArea.style.position = 'fixed';
-		  textArea.style.top = 0;
-		  textArea.style.left = 0;
-
-		  // Ensure it has a small width and height. Setting to 1px / 1em
-		  // doesn't work as this gives a negative w/h on some browsers.
-		  textArea.style.width = '2em';
-		  textArea.style.height = '2em';
-
-		  // We don't need padding, reducing the size if it does flash render.
-		  textArea.style.padding = 0;
-
-		  // Clean up any borders.
-		  textArea.style.border = 'none';
-		  textArea.style.outline = 'none';
-		  textArea.style.boxShadow = 'none';
-
-		  // Avoid flash of white box if rendered for any reason.
-		  textArea.style.background = 'transparent';
-
-
-		  textArea.value = text;
-
-		  document.body.appendChild(textArea);
-		  textArea.focus();
-		  textArea.select();
-
-		  var successful = false;
-		  try {
-		    successful = document.execCommand('copy');
-		    
-		    if(successful) {
-		    	console.log('Valore Copiato ' + text);
-		    } else {
-		    	console.log('Copia non effettuata');
-		    }
-		  } catch (err) {
-			var successful = false;
-// 		    console.log('Oops, unable to copy');
-		  }
-
-		  document.body.removeChild(textArea);
-		  return successful;
-		}
 	</script>
 <%
 }
 %>
+
+<script type="text/javascript" nonce="<%= randomNonce %>">
+	$(document).ready(function(){
+	 	
+	// copia contenuto della modale secret
+  	if($("#iconCopy_dec").length>0){
+		$("#iconCopy_dec").click(function(evt){
+ 				var valueToCopy = $("#txtA_ne_dec").val();
+ 				var copiatoOK = copyTextToClipboard(valueToCopy);
+ 				
+ 				if(copiatoOK) {
+ 					showTooltip(evt);
+ 				}
+			});
+  		
+		$("#iconCopy_dec").mouseout(function(){
+  			$('div.copyTooltip').remove();  
+  		});
+  	}
+  	
+  	// visualizza secrets
+  	if($(".spanIconInfoBox-viewLock").length>0){
+  		$(".spanIconInfoBox-viewLock").click(function(){
+  			var iconInfoBoxId = $(this).parent().attr('id');
+  			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
+  			console.log(idx);
+  			if(idx) {
+				var title = $("#hidden_title_pwd_"+ idx + "_lock_view").val();
+				var label = $("#hidden_label_pwd_"+ idx + "_lock_view").val();
+				var body = $("#hidden_body_pwd_"+ idx+ "_lock_view").val();
+				var url = $("#hidden_url_pwd_"+ idx+ "_lock_view").val();
+				var valore = $("#__lk__pwd_"+ idx+ "").val();
+				mostraInformazioniCifrateModal(title,body,url,valore,label);
+  			}
+			});
+  	}
+  	
+  	// copia secrets
+  	if($(".spanIconInfoBox-copyLock").length>0){
+  		$(".spanIconInfoBox-copyLock").click(function(){
+  			var iconInfoBoxId = $(this).parent().attr('id');
+  			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
+  			console.log(idx);
+  			if(idx) {
+  				var label = $("#hidden_title_pwd_"+ idx + "_lock_copy").val();
+				var body = $("#hidden_body_pwd_"+ idx+ "_lock_copy").val();
+				var url = $("#hidden_url_pwd_"+ idx+ "_lock_copy").val();
+				var valore = $("#__lk__pwd_"+ idx+ "").val();
+				mostraAlertInformazioniCifrateModal(label,body,url,valore);
+  			}
+			});
+  	}
+  	
+  	// resize text area
+  	var txtA_ne_dec_width = 0;
+  	var txtA_ne_dec_height = 0;
+  	if($("#txtA_ne_dec").length>0){
+  		$("#txtA_ne_dec").mousedown(function(evt){
+  			var ta = $(this);
+  			
+  			txtA_ne_dec_width = ta.width();
+  				txtA_ne_dec_height= ta.height();
+  		});
+  		
+		$("#txtA_ne_dec").mouseup(function(evt){
+			var ta = $(this);
+			
+			if(ta.width() != txtA_ne_dec_width || ta.height() != txtA_ne_dec_height){
+			    //do Something
+			    console.log('resized');
+			 // ripristino ombreggiatura
+// 				$("#visualizzaInformazioniCifrateModal").dialog("close");
+// 				$("#visualizzaInformazioniCifrateModal").dialog("open");
+			  }
+		});
+  	}
+});
+	
+	function mostraDataElementInfoModal(title,body){
+		$("#dataElementInfoModal").prev().children('span').text(title);
+		$("#dataElementInfoModalBody").html(body);
+		$("#dataElementInfoModal").dialog("open");
+	}
+	
+	function mostraInformazioniCifrateModal(title,body,url,valore,label){
+		// se non passo un valore nella label lascio il titolo di default
+		if(!label) {
+			label = title;
+		}
+		
+		setValoriLock(url,valore,label);
+		
+		$("#txtA_ne_dec").val('');
+		$("#txtA_ne_dec").attr('style','');		
+		$("#iconCopy_dec").hide();
+		$("#txtA_ne_dec").hide();
+		$("#visualizzaInformazioniCifrateModalPropNota").show();
+		$("#visualizzaInformazioniCifrateModal").parent().children('.ui-dialog-buttonpane').show();
+		
+		$("#visualizzaInformazioniCifrateModal").prev().children('span').text(title);
+		$("#visualizzaInformazioniCifrateModalBodyNotaSpan").html(body);
+		$("#visualizzaInformazioniCifrateModal").dialog("open");
+	}
+		
+	function mostraAlertInformazioniCifrateModal(title,body,url,valore){
+		setValoriLock(url,valore);
+		
+		$("#alertInformazioniCifrateModalHeader").hide();
+		$("#alertInformazioniCifrateModal").prev().children('span').text(title);
+		$("#alertInformazioniCifrateModalBodyNotaSpan").html(body);
+		$("#alertInformazioniCifrateModal").dialog("open");
+	}
+	
+	function mostraDownloadInformazioniCifrateModal(title,body,url,azione){
+		setValoriLock(url,'');
+		
+		$("#downloadInformazioniCifrateModal").prev().children('span').text(title);
+		$("#downloadInformazioniCifrateModalBodyNotaSpan").html(body);
+		$("#downloadInformazioniCifrateModal").next().children('button').text(azione);
+		$("#downloadInformazioniCifrateModal").dialog("open");
+	}
+	
+	function mostraErroreInformazioniCifrateModal(body){
+		// imposto il messaggio ricevuto dal server
+		$("#erroreInformazioniCifrateModalHeaderDxRiga1Span").html(body);
+		$("#erroreInformazioniCifrateModal").dialog("open");
+	}
+	
+	function mostraEsitoOperazioneAjaxModal(data){
+		var esito = data.<%=Costanti.KEY_ESITO_JSON %>;
+		var dettaglio = data.<%=Costanti.KEY_DETTAGLIO_ESITO_JSON %>;
+		
+		if(esito == '<%= MessageType.ERROR.toString() %>'){
+			$("#operazioneAjaxModalHeaderSxIconOk").hide();
+			$("#operazioneAjaxModalHeaderSxIconKo").show();
+			$("#operazioneAjaxModal").prev().children('span').text('<%= Costanti.TITOLO_FINESTRA_MODALE_COPIA_MESSAGE_WARNING %>');
+		} else {
+			$("#operazioneAjaxModalHeaderSxIconOk").show();
+			$("#operazioneAjaxModalHeaderSxIconKo").hide();
+			$("#operazioneAjaxModal").prev().children('span').text('<%= Costanti.MESSAGE_TYPE_INFO_TITLE %>');
+		}
+		
+		// imposto il messaggio ricevuto dal server
+		$("#operazioneAjaxModalHeaderDxRiga1Span").html(dettaglio);
+		$("#operazioneAjaxModal").dialog("open");
+	}
+	
+</script>
+
+
+
+<div id="dataElementInfoModal" title="Info">
+	<div id="dataElementInfoModalBody" class="contenutoModal"></div>
+</div>
+<div id="visualizzaInformazioniCifrateModal" title="Visualizza Informazioni Cifrate">
+	<div id="visualizzaInformazioniCifrateModalBody" class="contenutoModal">
+		<div class="propDialog">
+			<div class="txtA_div_propDialog_dec">
+				<textarea id="txtA_ne_dec" readonly rows="3" cols="62" name="txtA_ne_dec" class="inputLinkLong"></textarea>
+			 	<div class="iconCopyBox" id="divIconInfo_dec">
+	      			<input type="hidden" name="__i_hidden_value_iconCopy_dec" id="hidden_value_iconCopy_dec"  value=""/>
+			      	<span class="spanIconCopyBox" title="Copia">
+						<i class="material-icons md-18" id="iconCopy_dec"><%= Costanti.ICON_COPY %></i>
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="propDialog" id="visualizzaInformazioniCifrateModalPropNota">
+		<div id="visualizzaInformazioniCifrateModalBodyNota" class="finestraDialogModalNota">
+			<span class="finestraDialogModalBodyNota" id="visualizzaInformazioniCifrateModalBodyNotaSpan"></span>
+		</div>
+	</div>
+</div>
+<div id="alertInformazioniCifrateModal" title="Attenzione">
+	<div id="alertInformazioniCifrateModalBody" class="contenutoModal">
+		<div class="propDialog">
+			<div id="alertInformazioniCifrateModalBodyNota" class="finestraDialogModalNota">
+				<span class="finestraDialogModalBodyNota" id="alertInformazioniCifrateModalBodyNotaSpan"></span>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="downloadInformazioniCifrateModal" title="Attenzione">
+	<div id="downloadInformazioniCifrateModalBody" class="contenutoModal">
+		<div class="propDialog">
+			<div id="downloadInformazioniCifrateModalBodyNota" class="finestraDialogModalNota">
+				<span class="finestraDialogModalBodyNota" id="downloadInformazioniCifrateModalBodyNotaSpan"></span>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="erroreInformazioniCifrateModal" title="Attenzione">
+	<div id="erroreInformazioniCifrateModalHeader" class="finestraDialogModalHeader">
+  		<div id="erroreInformazioniCifrateModalHeaderSx" class="finestraDialogModalHeaderSx">
+	  		<span class="icon-box">
+				<i class="material-icons md-48"><%= Costanti.ICON_DIALOG_HEADER %></i>
+			</span>
+		</div>
+		<div id="erroreInformazioniCifrateModalHeaderDx" class="finestraDialogModalHeaderDx">
+  			<div id="erroreInformazioniCifrateModalHeaderDxRiga1" class="finestraDialogModalHeaderDxRiga1">
+	  			<span class="" id="erroreInformazioniCifrateModalHeaderDxRiga1Span"></span>	
+			</div>
+		</div>
+	</div>
+</div>
+<div id="operazioneAjaxModal" title="Attenzione">
+	<div id="operazioneAjaxModalHeader" class="finestraDialogModalHeader">
+  		<div id="operazioneAjaxModalHeaderSx" class="finestraDialogModalHeaderSx">
+	  		<span class="icon-box">
+				<i id="operazioneAjaxModalHeaderSxIconKo" class="material-icons md-48"><%= Costanti.ICON_DIALOG_HEADER %></i>
+				<i id="operazioneAjaxModalHeaderSxIconOk" class="material-icons md-48"><%= Costanti.INFO_BUTTON_ICON_WHITE %></i>
+			</span>
+		</div>
+		<div id="operazioneAjaxModalHeaderDx" class="finestraDialogModalHeaderDx">
+  			<div id="operazioneAjaxModalHeaderDxRiga1" class="finestraDialogModalHeaderDxRiga1">
+	  			<span class="" id="operazioneAjaxModalHeaderDxRiga1Span"></span>	
+			</div>
+		</div>
+	</div>
+</div>
+
 

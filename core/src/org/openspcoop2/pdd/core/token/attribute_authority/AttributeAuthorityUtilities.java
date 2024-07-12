@@ -84,12 +84,15 @@ public class AttributeAuthorityUtilities {
 			throw new TokenException("JWS Signature key password undefined");
 		}
 		
+		String keystoreByokPolicy = policy.getRequestJwtSignKeystoreByokPolicy();
+		
 		KeystoreParams keystoreParams = new KeystoreParams();
 		keystoreParams.setPath(keystoreFile);
 		keystoreParams.setType(keystoreType);
 		keystoreParams.setPassword(keystorePassword);
 		keystoreParams.setKeyAlias(keyAlias);
 		keystoreParams.setKeyPassword(keyPassword);
+		keystoreParams.setByokPolicy(keystoreByokPolicy);
 		
 		fillKeyPairParamters(keystoreParams, keystoreType, policy);
 		
@@ -127,16 +130,16 @@ public class AttributeAuthorityUtilities {
 			throw new TokenException("La configurazione nell'AttributeAuthority "+policy.getName()+" non definisce il tipo di risposta come JWS");
 		}
 		Properties p = policy.getProperties().get(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID);
-		if(p!=null && p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE_FILE)) {
+		if(p!=null && p.containsKey(SecurityConstants.JOSE_KEYSTORE_FILE)) {
 			KeystoreParams keystoreParams = new KeystoreParams();
-			keystoreParams.setPath(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE));
-			String type = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
+			keystoreParams.setPath(p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE));
+			String type = p.getProperty(SecurityConstants.JOSE_KEYSTORE_TYPE);
 			if(type==null) {
 				type = KeystoreType.JKS.getNome();
 			}
 			keystoreParams.setType(type);
-			keystoreParams.setPassword(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_PSWD));
-			keystoreParams.setKeyAlias(p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS));
+			keystoreParams.setPassword(p.getProperty(SecurityConstants.JOSE_KEYSTORE_PSWD));
+			keystoreParams.setKeyAlias(p.getProperty(SecurityConstants.JOSE_KEYSTORE_KEY_ALIAS));
 			keystoreParams.setKeyPassword(p.getProperty(RSSecurityConstants.RSSEC_KEY_PSWD));
 			
 			fillKeyPairParamters(keystoreParams, type, p);
@@ -148,7 +151,7 @@ public class AttributeAuthorityUtilities {
 	}
 	private static void fillKeyPairParamters(KeystoreParams keystoreParams, String type, Properties p) throws TokenException {
 		if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(type)) {
-			String keystorePublicKeyFile = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE+".public");
+			String keystorePublicKeyFile = p.getProperty(SecurityConstants.JOSE_KEYSTORE_PUBLIC_KEY);
 			if(keystorePublicKeyFile==null) {
 				throw new TokenException("Public key file undefined");
 			}
@@ -158,7 +161,7 @@ public class AttributeAuthorityUtilities {
 		if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(type)
 				||
 			SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(type)) {
-			String keyPairAlgorithm = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE+".algorithm");
+			String keyPairAlgorithm = p.getProperty(SecurityConstants.JOSE_KEYSTORE_KEY_ALGORITHM);
 			if(keyPairAlgorithm==null) {
 				throw new TokenException("Key pair algorithm undefined");
 			}

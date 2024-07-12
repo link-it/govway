@@ -12,6 +12,8 @@ CREATE TABLE protocol_properties
 	name VARCHAR2(255) NOT NULL,
 	-- valore come stringa
 	value_string VARCHAR2(4000),
+	-- valore come stringa cifrato
+	enc_value_string CLOB,
 	-- valore come numero
 	value_number NUMBER,
 	-- valore true o false

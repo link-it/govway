@@ -148,7 +148,7 @@ public class ModIDynamicConfigurationApplicativiUtilities {
 						(BooleanConsoleItem) ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.BOOLEAN, ConsoleItemType.CHECKBOX,
 								ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_ID, ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_LABEL);
 				booleanConsoleItem.setDefaultValue(false);
-				booleanConsoleItem.setReloadOnChange(true);
+				booleanConsoleItem.setReloadOnChange(true, true);
 				configuration.addConsoleItem(booleanConsoleItem);
 				
 				ModIDynamicConfigurationKeystoreUtilities.addKeystoreConfig(configuration, false, true, true);
@@ -214,7 +214,7 @@ public class ModIDynamicConfigurationApplicativiUtilities {
 						(BooleanConsoleItem) ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.BOOLEAN, ConsoleItemType.CHECKBOX,
 								ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_ID, ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_LABEL);
 				booleanConsoleItem.setDefaultValue(false);
-				booleanConsoleItem.setReloadOnChange(true);
+				booleanConsoleItem.setReloadOnChange(true, true);
 				configuration.addConsoleItem(booleanConsoleItem);
 				
 				StringConsoleItem tokenPolicyItem = (StringConsoleItem) 
@@ -263,7 +263,7 @@ public class ModIDynamicConfigurationApplicativiUtilities {
 				if(!ConsoleOperationType.CHANGE.equals(consoleOperationType)){
 					tokenPolicyItem.setDefaultValue(ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED);
 				}
-				tokenPolicyItem.setReloadOnChange(false);
+				tokenPolicyItem.setReloadOnChange(false, true);
 				configuration.addConsoleItem(tokenPolicyItem);
 				
 				StringConsoleItem tokenClientIdItem = (StringConsoleItem) 
@@ -426,6 +426,11 @@ public class ModIDynamicConfigurationApplicativiUtilities {
 					keystoreTypeMODIItemValue.setValue(null);
 				}
 				
+				StringProperty keystoreByokPolicyMODIItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_BYOK_POLICY_ID);
+				if(keystoreByokPolicyMODIItemValue!=null) {
+					keystoreByokPolicyMODIItemValue.setValue(null);
+				}
+				
 				AbstractConsoleItem<?> profiloSicurezzaMessaggioAudienceItem = ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_ID);
 				if(profiloSicurezzaMessaggioAudienceItem!=null) {
 					profiloSicurezzaMessaggioAudienceItem.setType(ConsoleItemType.HIDDEN);
@@ -484,7 +489,7 @@ public class ModIDynamicConfigurationApplicativiUtilities {
 						}
 						tokenPolicyItem.setType(ConsoleItemType.SELECT);
 						tokenPolicyItem.setRequired(false);
-						tokenPolicyItem.setReloadOnChange(true);
+						tokenPolicyItem.setReloadOnChange(true, true);
 					}
 					else {
 						tokenPolicyItem.setNote(null);

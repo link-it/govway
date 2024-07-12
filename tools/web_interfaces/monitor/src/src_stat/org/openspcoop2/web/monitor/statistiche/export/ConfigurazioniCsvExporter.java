@@ -324,6 +324,8 @@ public class ConfigurazioniCsvExporter {
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_DEBUG);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_USERNAME);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_TOKEN);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_API_KEY);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_APP_ID);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_PROXY_ENDPOINT);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_PROXY_USERNAME);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_SSL_TYPE);
@@ -537,6 +539,8 @@ public class ConfigurazioniCsvExporter {
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_DEBUG);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_USERNAME);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_TOKEN);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_API_KEY);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_APP_ID);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_PROXY_ENDPOINT);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_PROXY_USERNAME);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_SSL_TYPE);
@@ -1366,21 +1370,21 @@ public class ConfigurazioniCsvExporter {
 							saOp2.getInvocazioneServizio().getCredenziali(), 
 							saOp2.getInvocazioneServizio().getGetMessage(), saOp2.getInvocazionePorta()));
 				} else {
-					// 15 colonne vuote
-					for (int i = 0; i < 15; i++) {
+					// 17 colonne vuote
+					for (int i = 0; i < 17; i++) {
 						oneLine.add("");
 					}
 				}
 			} else {
-				// 18 colonne vuote
-				for (int i = 0; i < 18; i++) {
+				// 20 colonne vuote
+				for (int i = 0; i < 20; i++) {
 					oneLine.add("");
 				}
 			}
 
 		} else {
-			// 19 colonne vuote
-			for (int i = 0; i < 19; i++) {
+			// 21 colonne vuote
+			for (int i = 0; i < 21; i++) {
 				oneLine.add("");
 			}
 		}
@@ -2038,8 +2042,8 @@ public class ConfigurazioniCsvExporter {
 					null, 
 					null, null));
 		} else {
-			// 15 colonne vuote
-			for (int i = 0; i < 15; i++) {
+			// 17 colonne vuote
+			for (int i = 0; i < 17; i++) {
 				oneLine.add("");
 			}
 		}
@@ -2060,16 +2064,18 @@ public class ConfigurazioniCsvExporter {
 	    3 Connettore (Debug)
 	    4 Connettore (Username)
 	    5 Connettore (Token)
-    	6 CONNETTORE_PROXY_ENDPOINT
-		7 CONNETTORE_PROXY_USERNAME
-		8 CONNETTORE_SSL_TYPE
-		9 CONNETTORE_HOSTNAME_VERIFIER
-		10 CONNETTORE_KEY_STORE
-		11 CONNETTORE_TRUST_STORE
-		12 CONNETTORE_HTTPS_KEY_STORE_LOCATION
-		13 CONNETTORE_HTTPS_TRUST_STORE_LOCATION
-		14 CONNETTORE_CLIENT_CERTIFICATE
-		15 CONNETTORE_ALTRE_CONFIGURAZIONI
+	    6 Connettore (API Key)
+	    7 Connettore (APP Id)
+    	8 CONNETTORE_PROXY_ENDPOINT
+		9 CONNETTORE_PROXY_USERNAME
+		10 CONNETTORE_SSL_TYPE
+		11 CONNETTORE_HOSTNAME_VERIFIER
+		12 CONNETTORE_KEY_STORE
+		13 CONNETTORE_TRUST_STORE
+		14 CONNETTORE_HTTPS_KEY_STORE_LOCATION
+		15 CONNETTORE_HTTPS_TRUST_STORE_LOCATION
+		16 CONNETTORE_CLIENT_CERTIFICATE
+		17 CONNETTORE_ALTRE_CONFIGURAZIONI
 	 * */
 	public  List<Object> printConnettore(Connettore connettore,String labelTipoConnettore,
 			InvocazioneCredenziali invCredenziali, 
@@ -2110,17 +2116,43 @@ public class ConfigurazioniCsvExporter {
 				mapProperties.put(5, token);
 			}
 			
-			//	8 CONNETTORE_SSL_TYPE
-			//	9 CONNETTORE_HOSTNAME_VERIFIER
-			//	10 CONNETTORE_KEY_STORE
-			//	11 CONNETTORE_TRUST_STORE
-			//	12 CONNETTORE_HTTPS_KEY_STORE_LOCATION
-			//	13 CONNETTORE_HTTPS_TRUST_STORE_LOCATION
-			//	14 CONNETTORE_CLIENT_CERTIFICATE
+			String apiKey = ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_APIKEY, connettore.getPropertyList());
+			if(apiKey!=null && StringUtils.isNotEmpty(apiKey)){
+				
+				String apiKeyHeader = ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_APIKEY_HEADER, connettore.getPropertyList());
+				if(apiKeyHeader==null || StringUtils.isEmpty(apiKeyHeader)) {
+					apiKeyHeader = CostantiConnettori.DEFAULT_HEADER_API_KEY;
+				}
+				
+				mapProperties.put(6, apiKeyHeader+": ***"
+						/**+apiKey informazioneSensibile*/
+						);
+				
+				String appId = ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_APIKEY_APPID, connettore.getPropertyList());
+				if(appId!=null && StringUtils.isNotEmpty(appId)){
+					
+					String appIdHeader = ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_APIKEY_APPID_HEADER, connettore.getPropertyList());
+					if(appIdHeader==null || StringUtils.isEmpty(appIdHeader)) {
+						appIdHeader = CostantiConnettori.DEFAULT_HEADER_APP_ID;
+					}
+					
+					mapProperties.put(7, appIdHeader+": "
+							+appId
+							);
+				}
+			}
+			
+			//	10 CONNETTORE_SSL_TYPE
+			//	11 CONNETTORE_HOSTNAME_VERIFIER
+			//	12 CONNETTORE_KEY_STORE
+			//	13 CONNETTORE_TRUST_STORE
+			//	14 CONNETTORE_HTTPS_KEY_STORE_LOCATION
+			//	15 CONNETTORE_HTTPS_TRUST_STORE_LOCATION
+			//	16 CONNETTORE_CLIENT_CERTIFICATE
 			if(TipiConnettore.HTTPS.getNome().equals(connettore.getTipo())){
-				mapProperties.put(8, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE, connettore.getPropertyList()));
-				mapProperties.put(9, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER, connettore.getPropertyList()));
-				mapProperties.put(11, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_TYPE, connettore.getPropertyList()));
+				mapProperties.put(10, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE, connettore.getPropertyList()));
+				mapProperties.put(11, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER, connettore.getPropertyList()));
+				mapProperties.put(13, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_TYPE, connettore.getPropertyList()));
 				
 				boolean trustAllCerts = false;
 				if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS)) {
@@ -2130,21 +2162,21 @@ public class ConfigurazioniCsvExporter {
 					}
 				}
 				if(trustAllCerts) {
-					mapProperties.put(13, "Trust all certificates");
+					mapProperties.put(15, "Trust all certificates");
 				}
 				else {
-					mapProperties.put(13, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION, connettore.getPropertyList()));
+					mapProperties.put(15, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION, connettore.getPropertyList()));
 				}
 
 
 				boolean invioCertificatoClient = false;
 				String cert = ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION, connettore.getPropertyList());
 				if(cert!=null){
-					mapProperties.put(12, cert); // 12 CONNETTORE_HTTPS_KEY_STORE_LOCATION
+					mapProperties.put(14, cert); // 14 CONNETTORE_HTTPS_KEY_STORE_LOCATION
 					invioCertificatoClient = true;
 				}
-				if(invioCertificatoClient){ //	10 CONNETTORE_KEY_STORE
-					mapProperties.put(10, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_TYPE, connettore.getPropertyList()));
+				if(invioCertificatoClient){ //	12 CONNETTORE_KEY_STORE
+					mapProperties.put(12, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_TYPE, connettore.getPropertyList()));
 				}
 			
 				String invioCertificatoClientLabel = invioCertificatoClient +"";
@@ -2154,19 +2186,19 @@ public class ConfigurazioniCsvExporter {
 						invioCertificatoClientLabel = certAlias;
 					}
 				}
-				mapProperties.put(14, invioCertificatoClientLabel); // 14 CONNETTORE_CLIENT_CERTIFICATE
+				mapProperties.put(16, invioCertificatoClientLabel); // 16 CONNETTORE_CLIENT_CERTIFICATE
 			}
 
 			String proxy = ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_TYPE, connettore.getPropertyList());
-			// 6 CONNETTORE_PROXY_ENDPOINT
-			// 7 CONNETTORE_PROXY_USERNAME
+			// 8 CONNETTORE_PROXY_ENDPOINT
+			// 9 CONNETTORE_PROXY_USERNAME
 			if(proxy!=null){
-				mapProperties.put(6, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME, connettore.getPropertyList())+CostantiConfigurazioni.LABEL_DOTS+
+				mapProperties.put(8, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME, connettore.getPropertyList())+CostantiConfigurazioni.LABEL_DOTS+
 						ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT, connettore.getPropertyList()));
 
 				String username = ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_USERNAME, connettore.getPropertyList());
 				if(username!=null){
-					mapProperties.put(7, username);
+					mapProperties.put(9, username);
 				}
 			}
 		}
@@ -2177,7 +2209,7 @@ public class ConfigurazioniCsvExporter {
 			sb.append(CostantiConfigurazioni.LABEL_TIPO_CODA_JMS).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_JMS_TIPO, connettore.getPropertyList())).append("\n");
 			sb.append(CostantiConfigurazioni.LABEL_CONNECTION_FACTORY).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_JMS_CONNECTION_FACTORY, connettore.getPropertyList())).append("\n");
 			sb.append(CostantiConfigurazioni.LABEL_SEND_AS).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_JMS_SEND_AS, connettore.getPropertyList()));
-			mapProperties.put(15, sb.toString()); //15 CONNETTORE_ALTRE_CONFIGURAZIONI
+			mapProperties.put(17, sb.toString()); //17 CONNETTORE_ALTRE_CONFIGURAZIONI
 
 			if(invCredenziali!=null){
 				mapProperties.put(4, invCredenziali.getUser());
@@ -2199,7 +2231,7 @@ public class ConfigurazioniCsvExporter {
 				sb.append(CostantiConfigurazioni.LABEL_INPUT_FILE_HEADER).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS, connettore.getPropertyList()));
 			}
 
-			mapProperties.put(15, sb.toString()); //15 CONNETTORE_ALTRE_CONFIGURAZIONI
+			mapProperties.put(17, sb.toString()); //17 CONNETTORE_ALTRE_CONFIGURAZIONI
 		}
 		else if(TipiConnettore.NULL.getNome().equals(connettore.getTipo())){
 			mapProperties.put(2, ConnettoreNULL.LOCATION);
@@ -2237,7 +2269,7 @@ public class ConfigurazioniCsvExporter {
 		else{
 
 			List<Property> list = connettore.getPropertyList();
-			if(list!=null && list.size()>0){
+			if(list!=null && !list.isEmpty()){
 				StringBuilder sb = new StringBuilder();
 				for (Property property : list) {
 					if(sb.length() > 0)
@@ -2246,7 +2278,7 @@ public class ConfigurazioniCsvExporter {
 					sb.append(property.getNome()).append(": ").append(property.getValore());
 				}
 
-				mapProperties.put(15, sb.toString()); //15 CONNETTORE_ALTRE_CONFIGURAZIONI
+				mapProperties.put(17, sb.toString()); //17 CONNETTORE_ALTRE_CONFIGURAZIONI
 			}
 		}
 		String debug = "false";
@@ -2255,8 +2287,8 @@ public class ConfigurazioniCsvExporter {
 		}
 		mapProperties.put(3, debug);
 
-		// aggiungo le 15 proprieta previste
-		for (int i = 1; i < 16; i++) {
+		// aggiungo le 17 proprieta previste
+		for (int i = 1; i < 18; i++) {
 			String valoreProprieta = mapProperties.get(i);
 
 			if(StringUtils.isNotEmpty(valoreProprieta))
@@ -2270,7 +2302,7 @@ public class ConfigurazioniCsvExporter {
 	
 	private String toStringProprieta(List<Proprieta> list) {
 		StringBuilder sb = new StringBuilder();
-		if(list!=null && list.size()>0) {
+		if(list!=null && !list.isEmpty()) {
 			for (Proprieta p : list) {
 				if(sb.length()>0) {
 					sb.append("\n");
@@ -2290,7 +2322,7 @@ public class ConfigurazioniCsvExporter {
 	
 	private String toStringAttributeAuthority(List<AttributeAuthority> list) {
 		StringBuilder sb = new StringBuilder();
-		if(list!=null && list.size()>0) {
+		if(list!=null && !list.isEmpty()) {
 			for (AttributeAuthority aa : list) {
 				if(sb.length()>0) {
 					sb.append("\n");

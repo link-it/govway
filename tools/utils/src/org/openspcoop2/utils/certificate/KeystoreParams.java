@@ -35,12 +35,15 @@ public class KeystoreParams {
 	private String password;
 	private String crls;
 	private String ocspPolicy;
+	private String byokPolicy;
 	private String keyAlias;
 	private String keyPassword;
 	
 	private String keyPairPublicKeyPath;
 	private byte[] keyPairPublicKey;
 	private String keyPairAlgorithm;
+	
+	private String description;
 	
 	public byte[] getStore() {
 		return this.store;
@@ -78,6 +81,12 @@ public class KeystoreParams {
 	public void setOcspPolicy(String ocspPolicy) {
 		this.ocspPolicy = ocspPolicy;
 	}
+	public String getByokPolicy() {
+		return this.byokPolicy;
+	}
+	public void setByokPolicy(String byokPolicy) {
+		this.byokPolicy = byokPolicy;
+	}
 	public String getKeyAlias() {
 		return this.keyAlias;
 	}
@@ -108,5 +117,12 @@ public class KeystoreParams {
 	}
 	public void setKeyPairAlgorithm(String keyPairAlgorithm) {
 		this.keyPairAlgorithm = keyPairAlgorithm;
+	}
+	
+	public String getDescription() {
+		return this.description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

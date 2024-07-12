@@ -123,7 +123,7 @@
 			<item type="textarea" name="keystoreFile" label="File" required="true">
 			    <property name="rs.security.keystore.file" properties="signaturePropRefId" />
 			</item>
-			<item type="text" name="keystorePassword" label="Password" required="true">
+			<item type="lock" name="keystorePassword" label="Password" required="true">
 				<conditions>
 					<condition not="true" and="true">
 						<equals name="keystoreType" value="jwk"/>
@@ -147,13 +147,16 @@
 				</conditions>
 			    <property name="rs.security.keystore.alias" properties="signaturePropRefId" />
 			</item>
-			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			<item type="lock" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
 				<conditions>
 					<condition not="true" and="false">
 						<equals name="keystoreType" value="jwk"/>
 					</condition>
 				</conditions>
 			    <property name="rs.security.key.password" properties="signaturePropRefId" />
+			</item>
+			<item type="select" name="keystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="rs.security.keystore.file.byok" properties="signaturePropRefId" />
 			</item>
 
 		</subsection>
@@ -172,7 +175,7 @@
 			<item type="textarea" name="secretkeystoreFile" label="File" required="true">
 			    <property name="rs.security.keystore.file" properties="signaturePropRefId" />
 			</item>
-			<item type="text" name="secretkeystorePassword" label="Password" required="true">
+			<item type="lock" name="secretkeystorePassword" label="Password" required="true">
 				<conditions>
 					<condition not="true" and="true">
 						<equals name="secretkeystoreType" value="jwk"/>
@@ -196,8 +199,11 @@
 				</conditions>
 			    <property name="rs.security.keystore.alias" properties="signaturePropRefId" />
 			</item>
-			<item type="text" name="secretkeystorePrivateKeyPassword" label="Password Chiave Segreta" required="true">
+			<item type="lock" name="secretkeystorePrivateKeyPassword" label="Password Chiave Segreta" required="true">
 			    <property name="rs.security.key.password" properties="signaturePropRefId" />
+			</item>
+			<item type="select" name="secretkeystoreByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="rs.security.keystore.file.byok" properties="signaturePropRefId" />
 			</item>
 
 		</subsection>		

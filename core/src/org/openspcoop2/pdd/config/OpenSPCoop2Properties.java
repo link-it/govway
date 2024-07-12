@@ -877,6 +877,9 @@ public class OpenSPCoop2Properties {
 				getGestoreCredenzialiPortaApplicativaProperties();
 			}
 			
+			this.getEnvMapConfig();
+			this.isEnvMapConfigRequired();
+			
 			this.getHSMConfig();
 			this.isHSMConfigRequired();
 			this.isHSMConfigUniqueProviderInstance();
@@ -887,6 +890,10 @@ public class OpenSPCoop2Properties {
 			
 			this.getBYOKConfig();
 			this.isBYOKConfigRequired();
+			this.isBYOKJmxWrapEnbled();
+			this.isBYOKJmxUnwrapEnbled();
+			this.getBYOKEnvSecretsConfig();
+			this.isBYOKEnvSecretsConfigRequired();
 			
 			this.getHttpUserAgent();
 			this.getHttpServer();
@@ -9877,6 +9884,57 @@ public class OpenSPCoop2Properties {
 	
 
 	
+	
+	
+	/* ********  MAP  ******** */
+	
+	private String getEnvMapConfig = null;
+	public String getEnvMapConfig(){
+		if(this.getEnvMapConfig==null){
+			String pName = "org.openspcoop2.pdd.env.map.config";
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					if(!"".equals(value)) {
+						this.getEnvMapConfig = value;
+					}
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, non verranno caricate variabili errore:"+e.getMessage(),e);
+				this.getEnvMapConfig = null;
+			}
+		}
+		return this.getEnvMapConfig;
+	}
+	
+	private Boolean isEnvMapConfigRequired= null;
+	public boolean isEnvMapConfigRequired(){
+		if(this.isEnvMapConfigRequired==null){
+			String pName = "org.openspcoop2.pdd.env.map.required";
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					this.isEnvMapConfigRequired = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isEnvMapConfigRequired = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isEnvMapConfigRequired = false;
+			}
+		}
+		return this.isEnvMapConfigRequired;
+	}
+	
+	
+	
+	
 	/* ********  HSM  ******** */
 	
 	private String getHSMConfig = null;
@@ -10066,6 +10124,96 @@ public class OpenSPCoop2Properties {
 			}
 		}
 		return this.isBYOKConfigRequired;
+	}
+	
+	private Boolean isBYOKJmxWrapEnbled= null;
+	public boolean isBYOKJmxWrapEnbled(){
+		if(this.isBYOKJmxWrapEnbled==null){
+			String pName = "org.openspcoop2.pdd.byok.jmx.wrap.enabled";
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					this.isBYOKJmxWrapEnbled = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isBYOKJmxWrapEnbled = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isBYOKJmxWrapEnbled = false;
+			}
+		}
+		return this.isBYOKJmxWrapEnbled;
+	}
+	
+	private Boolean isBYOKJmxUnwrapEnbled= null;
+	public boolean isBYOKJmxUnwrapEnbled(){
+		if(this.isBYOKJmxUnwrapEnbled==null){
+			String pName = "org.openspcoop2.pdd.byok.jmx.unwrap.enabled";
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					this.isBYOKJmxUnwrapEnbled = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isBYOKJmxUnwrapEnbled = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isBYOKJmxUnwrapEnbled = false;
+			}
+		}
+		return this.isBYOKJmxUnwrapEnbled;
+	}
+		
+	private String getBYOKEnvSecretsConfig = null;
+	public String getBYOKEnvSecretsConfig(){
+		if(this.getBYOKEnvSecretsConfig==null){
+			String pName = "org.openspcoop2.pdd.byok.env.secrets.config";
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					if(!"".equals(value)) {
+						this.getBYOKEnvSecretsConfig = value;
+					}
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, non verranno caricati secrets errore:"+e.getMessage(),e);
+				this.getBYOKEnvSecretsConfig = null;
+			}
+		}
+		return this.getBYOKEnvSecretsConfig;
+	}
+	
+	private Boolean isBYOKEnvSecretsConfigRequired= null;
+	public boolean isBYOKEnvSecretsConfigRequired(){
+		if(this.isBYOKEnvSecretsConfigRequired==null){
+			String pName = "org.openspcoop2.pdd.byok.env.secrets.required";
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					this.isBYOKEnvSecretsConfigRequired = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isBYOKEnvSecretsConfigRequired = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isBYOKEnvSecretsConfigRequired = false;
+			}
+		}
+		return this.isBYOKEnvSecretsConfigRequired;
 	}
 	
 	

@@ -20,9 +20,12 @@
 
 package org.openspcoop2.pdd.core.batch;
 
+import java.sql.SQLException;
 import java.util.Date;
 
+import org.openspcoop2.pdd.core.GestoreMessaggiException;
 import org.openspcoop2.utils.SortedMap;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.slf4j.Logger;
@@ -41,34 +44,41 @@ public class GestoreMessaggi extends AbstractGestore {
 	public GestoreMessaggi(boolean debug, boolean logQuery,
 			Logger logCore, Logger logSql,
 			int finestraSecondi, int refreshConnection,
-			Integer scadenzaMessaggi, String tipoRepositoryBuste) throws Exception {
+			Integer scadenzaMessaggi, String tipoRepositoryBuste) throws UtilsException {
 		super(TipoRuntimeRepository.MESSAGGI, debug, logQuery, logCore, logSql, finestraSecondi, refreshConnection, tipoRepositoryBuste);
 		this.scadenzaMessaggi = scadenzaMessaggi;
 	}
 	
 	@Override
-	public void process() throws Exception {
+	public void process() throws UtilsException {
 		
-		_process(false);
+		try {
+			processEngine(false);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(), e);
+		}
 		
 		if(this.scadenzaMessaggi!=null && this.scadenzaMessaggi>0) {
-			_process(true);
+			try {
+				processEngine(true);
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(), e);
+			}
 		}
 		
 	}
 		
-	private void _process(boolean scaduti) throws Exception {
+	private void processEngine(boolean scaduti) throws Exception {
 		
 		try{
 
 			// Calcolo data minima
 			Date minDate = org.openspcoop2.pdd.core.GestoreMessaggi.getOraRegistrazioneMinima(this.refreshConnection(), this.tipoDatabase, this.logQuery, this.logSql);
 			
-			if(minDate==null) {
-				if(this.debug) {
-					this.logCore.debug("Non esistono messaggi da eliminare");
-					return;
-				}
+			if(minDate==null &&
+				this.debug) {
+				this.logCoreDebug("Non esistono messaggi da eliminare");
+				return;
 			}
 			
 			Date now = DateManager.getDate();			
@@ -113,8 +123,8 @@ public class GestoreMessaggi extends AbstractGestore {
 			
 		}catch(Throwable e){
 			String msgErrore = "Errore durante la gestione del repository '"+this.tipoRuntimeRepository.getValue()+"': "+e.getMessage();
-			this.logCore.error(msgErrore,e );
-			throw new Exception(msgErrore,e);
+			this.logCoreError(msgErrore,e );
+			throw new UtilsException(msgErrore,e);
 		}finally {
 			this.closeConnection();
 		}
@@ -122,7 +132,7 @@ public class GestoreMessaggi extends AbstractGestore {
 	}
 	
 
-	private void cleanMessaggiInutili(Date leftInterval, Date rightInterval) throws Exception {
+	private void cleanMessaggiInutili(Date leftInterval, Date rightInterval) throws GestoreMessaggiException, SQLException {
 		String periodo = null;
 		if(this.debug) {
 			if(leftInterval!=null) {
@@ -136,47 +146,47 @@ public class GestoreMessaggi extends AbstractGestore {
 		// INBOX
 		
 		if(this.debug) {
-			this.logCore.debug(periodo+"Ricerca messaggi da eliminare in 'INBOX' ...");
+			this.logCoreDebug(periodo+"Ricerca messaggi da eliminare in 'INBOX' ...");
 		}
 		int count = org.openspcoop2.pdd.core.GestoreMessaggi.countMessaggiInutiliIntoInBox(this.refreshConnection(), this.tipoDatabase, this.logQuery, this.logSql, leftInterval, rightInterval);
 		if(this.debug) {
-			this.logCore.debug(periodo+"Trovati "+count+" messaggi da eliminare in 'INBOX'");
+			this.logCoreDebug(periodo+"Trovati "+count+" messaggi da eliminare in 'INBOX'");
 		}
 		if(count>0) {
 			if(this.debug) {
-				this.logCore.debug(periodo+"Eliminazione "+count+" messaggi in 'INBOX' ...");
+				this.logCoreDebug(periodo+"Eliminazione "+count+" messaggi in 'INBOX' ...");
 			}
 			SortedMap<Integer> eliminati = org.openspcoop2.pdd.core.GestoreMessaggi.deleteMessaggiInutiliIntoInBox(this.refreshConnection(), this.tipoDatabase, this.logQuery, this.logSql, 
 					leftInterval, rightInterval, this.repository);
 			if(this.debug) {
-				this.logCore.debug(periodo+"Eliminazione "+count+" messaggi in 'INBOX' completata ("+format(eliminati)+")");
+				this.logCoreDebug(periodo+"Eliminazione "+count+" messaggi in 'INBOX' completata ("+format(eliminati)+")");
 			}
 		}
 
 		// OUTBOX
 		
 		if(this.debug) {
-			this.logCore.debug(periodo+"Ricerca messaggi da eliminare in 'OUTBOX' ...");
+			this.logCoreDebug(periodo+"Ricerca messaggi da eliminare in 'OUTBOX' ...");
 		}
 		count = org.openspcoop2.pdd.core.GestoreMessaggi.countMessaggiInutiliIntoOutBox(this.refreshConnection(), this.tipoDatabase, this.logQuery, this.logSql, leftInterval, rightInterval);
 		if(this.debug) {
-			this.logCore.debug(periodo+"Trovati "+count+" messaggi da eliminare in 'OUTBOX'");
+			this.logCoreDebug(periodo+"Trovati "+count+" messaggi da eliminare in 'OUTBOX'");
 		}
 		if(count>0) {
 			if(this.debug) {
-				this.logCore.debug(periodo+"Eliminazione "+count+" messaggi in 'OUTBOX' ...");
+				this.logCoreDebug(periodo+"Eliminazione "+count+" messaggi in 'OUTBOX' ...");
 			}
 			SortedMap<Integer> eliminati = org.openspcoop2.pdd.core.GestoreMessaggi.deleteMessaggiInutiliIntoOutBox(this.refreshConnection(), this.tipoDatabase, this.logQuery, this.logSql, 
 					leftInterval, rightInterval, this.repository);
 			if(this.debug) {
-				this.logCore.debug(periodo+"Eliminazione "+count+" messaggi in 'OUTBOX' completata ("+format(eliminati)+")");
+				this.logCoreDebug(periodo+"Eliminazione "+count+" messaggi in 'OUTBOX' completata ("+format(eliminati)+")");
 			}
 		}
 		
 	}
 	
 	
-	private void cleanMessaggiScaduti(Date leftInterval, Date rightInterval) throws Exception {
+	private void cleanMessaggiScaduti(Date leftInterval, Date rightInterval) throws GestoreMessaggiException, SQLException {
 		String periodo = null;
 		if(this.debug) {
 			if(leftInterval!=null) {
@@ -190,40 +200,40 @@ public class GestoreMessaggi extends AbstractGestore {
 		// INBOX
 		
 		if(this.debug) {
-			this.logCore.debug(periodo+"Ricerca messaggi scaduti in 'INBOX' ...");
+			this.logCoreDebug(periodo+"Ricerca messaggi scaduti in 'INBOX' ...");
 		}
 		int count = org.openspcoop2.pdd.core.GestoreMessaggi.countMessaggiScadutiIntoInBox(this.refreshConnection(), this.tipoDatabase, this.logQuery, this.logSql, leftInterval, rightInterval, this.scadenzaMessaggi);
 		if(this.debug) {
-			this.logCore.debug(periodo+"Trovati "+count+" messaggi scaduti in 'INBOX'");
+			this.logCoreDebug(periodo+"Trovati "+count+" messaggi scaduti in 'INBOX'");
 		}
 		if(count>0) {
 			if(this.debug) {
-				this.logCore.debug(periodo+"Eliminazione "+count+" messaggi scaduti in 'INBOX' ...");
+				this.logCoreDebug(periodo+"Eliminazione "+count+" messaggi scaduti in 'INBOX' ...");
 			}
 			SortedMap<Integer> eliminati = org.openspcoop2.pdd.core.GestoreMessaggi.deleteMessaggiScadutiIntoInBox(this.refreshConnection(), this.tipoDatabase, this.logQuery, this.logSql, 
 					leftInterval, rightInterval, this.scadenzaMessaggi, this.repository);
 			if(this.debug) {
-				this.logCore.debug(periodo+"Eliminazione "+count+" messaggi scaduti in 'INBOX' completata ("+format(eliminati)+")");
+				this.logCoreDebug(periodo+"Eliminazione "+count+" messaggi scaduti in 'INBOX' completata ("+format(eliminati)+")");
 			}
 		}
 
 		// OUTBOX
 		
 		if(this.debug) {
-			this.logCore.debug(periodo+"Ricerca messaggi scaduti in 'OUTBOX' ...");
+			this.logCoreDebug(periodo+"Ricerca messaggi scaduti in 'OUTBOX' ...");
 		}
 		count = org.openspcoop2.pdd.core.GestoreMessaggi.countMessaggiScadutiIntoOutBox(this.refreshConnection(), this.tipoDatabase, this.logQuery, this.logSql, leftInterval, rightInterval, this.scadenzaMessaggi);
 		if(this.debug) {
-			this.logCore.debug(periodo+"Trovati "+count+" messaggi scaduti in 'OUTBOX'");
+			this.logCoreDebug(periodo+"Trovati "+count+" messaggi scaduti in 'OUTBOX'");
 		}
 		if(count>0) {
 			if(this.debug) {
-				this.logCore.debug(periodo+"Eliminazione "+count+" messaggi scaduti in 'OUTBOX' ...");
+				this.logCoreDebug(periodo+"Eliminazione "+count+" messaggi scaduti in 'OUTBOX' ...");
 			}
 			SortedMap<Integer> eliminati = org.openspcoop2.pdd.core.GestoreMessaggi.deleteMessaggiScadutiIntoOutBox(this.refreshConnection(), this.tipoDatabase, this.logQuery, this.logSql, 
 					leftInterval, rightInterval, this.scadenzaMessaggi, this.repository);
 			if(this.debug) {
-				this.logCore.debug(periodo+"Eliminazione "+count+" messaggi scaduti in 'OUTBOX' completata ("+format(eliminati)+")");
+				this.logCoreDebug(periodo+"Eliminazione "+count+" messaggi scaduti in 'OUTBOX' completata ("+format(eliminati)+")");
 			}
 		}
 		

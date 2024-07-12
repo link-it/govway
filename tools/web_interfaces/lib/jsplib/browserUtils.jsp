@@ -98,8 +98,8 @@ String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CS
 %>
 <script type="text/javascript" nonce="<%= randomNonce %>">
 var destElement;
-console.log("Windows HASH:");
-console.log(window.location.hash);
+//console.log("Windows HASH:");
+//console.log(window.location.hash);
 
 if(window.location.hash){
 	destElement = window.location.hash.substr(1);
@@ -217,7 +217,7 @@ if(tabValue != ''){
     sessionStorage.setItem(tabSessionKey, tabValue);
 }
 
-console.log('IDTab: ['+tabValue+']');
+// console.log('IDTab: ['+tabValue+']');
 </script>
 
 <script type="text/javascript" nonce="<%= randomNonce %>">

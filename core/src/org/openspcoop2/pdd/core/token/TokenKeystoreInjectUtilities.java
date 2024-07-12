@@ -21,6 +21,7 @@
 
 package org.openspcoop2.pdd.core.token;
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -34,6 +35,8 @@ import org.openspcoop2.pdd.core.controllo_traffico.ReadTimeoutContextParam;
 import org.openspcoop2.pdd.core.controllo_traffico.SogliaReadTimeout;
 import org.openspcoop2.pdd.core.controllo_traffico.TimeoutNotifier;
 import org.openspcoop2.pdd.core.controllo_traffico.TimeoutNotifierType;
+import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
+import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -59,6 +62,7 @@ public class TokenKeystoreInjectUtilities {
 	private IProtocolFactory<?> protocolFactory;
 	private Context context;
 	private IState state;
+	private Busta busta;
 	
 	private boolean portaDelegata;
 	private PortaDelegata pd;
@@ -70,12 +74,13 @@ public class TokenKeystoreInjectUtilities {
 	private int readConnectionTimeout = -1;
 	private boolean readConnectionTimeoutConfigurazioneGlobale = true;
 	
-	public TokenKeystoreInjectUtilities(Logger log, RequestInfo requestInfo,IProtocolFactory<?> protocolFactory,Context context,IState state) {
+	public TokenKeystoreInjectUtilities(Logger log, RequestInfo requestInfo,IProtocolFactory<?> protocolFactory,Context context,IState state,Busta busta) {
 		this.log = log;
 		this.requestInfo = requestInfo;
 		this.protocolFactory = protocolFactory;
 		this.context = context;
 		this.state = state;
+		this.busta = busta;
 	}
 		
 	public void initTokenPolicyValidazioneJwt(String nomePolicy,boolean portaDelegata, PortaDelegata pd, PortaApplicativa pa, Properties p) {
@@ -113,7 +118,8 @@ public class TokenKeystoreInjectUtilities {
 		
 		try {
 			boolean throwError = true;
-			JOSEUtils.injectKeystore(this.requestInfo, p, this.log, throwError); // serve per leggere il keystore dalla cache
+			Map<String,Object> dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(this.busta, this.requestInfo, this.context, this.log);
+			JOSEUtils.injectKeystore(this.requestInfo, dynamicMap, p, this.log, throwError); // serve per leggere il keystore dalla cache
 		}catch(SecurityException e) {
 			
 			String msgErrore = ConnettoreBase.readConnectionExceptionMessageFromException(e);

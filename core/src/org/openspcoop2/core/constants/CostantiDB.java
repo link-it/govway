@@ -54,12 +54,22 @@ public final class CostantiDB {
 	public static final String CONDITION_AND = " AND ";
 	public static final String CONDITION_OR = " OR ";
 	
+	/*ENC*/
+	public static final String ENC_PREFIX = "==";
+	
     /*COMMONS*/
 	public static final String COLUMN_ALIAS_COUNT = "count";
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_ID_PROPRIETARIO = "id_proprietario";
     public static final String CONNETTORI = "connettori";
+    public static final String CONNETTORI_COLUMN_NOME = "nome_connettore";
+    public static final String CONNETTORI_COLUMN_ENDPOINT_TYPE = "endpointtype";
+    public static final String CONNETTORI_COLUMN_ID_CONNETTORE_INV = "id_connettore_inv";
     public static final String CONNETTORI_CUSTOM = "connettori_custom";
+    public static final String CONNETTORI_CUSTOM_COLUMN_NAME = "name";
+    public static final String CONNETTORI_CUSTOM_COLUMN_VALUE = "value";
+    public static final String CONNETTORI_CUSTOM_COLUMN_ENC_VALUE = "enc_value";
+    public static final String CONNETTORI_CUSTOM_COLUMN_ID_CONNETTORE = "id_connettore";
     public static final String SOGGETTI = "soggetti";
     public static final String SOGGETTI_PDD = "soggetti_pdd";
     public static final String SOGGETTI_COLUMN_TIPO_SOGGETTO = "tipo_soggetto";
@@ -73,6 +83,7 @@ public final class CostantiDB {
     public static final String SOGGETTI_COLUMN_NOME_SOGGETTO_VIRTUALE = "nome_soggetto_virtuale";
     public static final String SOGGETTI_COLUMN_SUPERUSER = "superuser";
     
+    /*COMMONS PROPRIETA*/
     public static final String PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE = "utente_richiedente";
     public static final String PROPRIETA_OGGETTO_DATA_CREAZIONE = "data_creazione";
     public static final String PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA = "utente_ultima_modifica";
@@ -84,6 +95,17 @@ public final class CostantiDB {
     
     /*REGSERV*/
     public static final String PROTOCOL_PROPERTIES = "protocol_properties";
+    public static final String PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO = "tipo_proprietario";
+    public static final String PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO = "id_proprietario";
+    public static final String PROTOCOL_PROPERTIES_COLUMN_NAME = "name";
+    public static final String PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING = "value_string";
+    public static final String PROTOCOL_PROPERTIES_COLUMN_VALUE_ENCODING_STRING = "enc_value_string";
+    public static final String PROTOCOL_PROPERTIES_COLUMN_VALUE_NUMBER = "value_number";
+    public static final String PROTOCOL_PROPERTIES_COLUMN_VALUE_BOOLEAN = "value_boolean";
+    public static final String PROTOCOL_PROPERTIES_COLUMN_VALUE_BINARY = "value_binary";
+    public static final String PROTOCOL_PROPERTIES_COLUMN_FILENAME = "file_name";
+    public static final String PROTOCOL_PROPERTIES_COLUMN_ID = "id";
+    
     public static final String PDD = "pdd";
     public static final String PDD_COLUMN_NOME = "nome";
     public static final String PDD_COLUMN_TIPO = "tipo";
@@ -94,11 +116,20 @@ public final class CostantiDB {
     public static final String SOGGETTI_RUOLI = "soggetti_ruoli";
     public static final String SOGGETTI_CREDENZIALI = "soggetti_credenziali";
     public static final String SOGGETTI_PROPS = "soggetti_properties";
+    public static final String SOGGETTI_PROPS_COLUMN_NAME = "nome";
+    public static final String SOGGETTI_PROPS_COLUMN_VALUE = "valore";
+    public static final String SOGGETTI_PROPS_COLUMN_ENC_VALUE = "enc_value";
     public static final String SERVIZI = "servizi";
+    public static final String SERVIZI_COLUMN_TIPO_SERVIZIO = "tipo_servizio";
+    public static final String SERVIZI_COLUMN_NOME_SERVIZIO = "nome_servizio";
+    public static final String SERVIZI_COLUMN_VERSIONE_SERVIZIO = "versione_servizio";
     public static final String SERVIZI_COLUMN_ID_ACCORDO_REF = "id_accordo";
+    public static final String SERVIZI_COLUMN_ID_SOGGETTO_REF = "id_soggetto";
     public static final String SERVIZI_AZIONI = "servizi_azioni";
     public static final String SERVIZI_AZIONE = "servizi_azione";
     public static final String SERVIZI_FRUITORI = "servizi_fruitori";
+    public static final String SERVIZI_FRUITORI_ID_SOGGETTO_REF = "id_soggetto";
+    public static final String SERVIZI_FRUITORI_ID_SERVIZIO_REF = "id_servizio";
     public static final String SERVIZI_FRUITORI_AZIONI = "servizi_fruitori_azioni";
     public static final String SERVIZI_FRUITORI_AZIONE = "servizi_fruitori_azione";
     public static final String ACCORDI = "accordi";
@@ -106,6 +137,8 @@ public final class CostantiDB {
     public static final String PORT_TYPE = "port_type";
     public static final String PORT_TYPE_AZIONI = "port_type_azioni";
     public static final String PORT_TYPE_AZIONI_OPERATION_MESSAGES = "operation_messages";
+    public static final String ACCORDI_COLUMN_ID_ACCORDO_REF = "id_accordo";
+    public static final String ACCORDI_COLUMN_ID_REFERENTE_REF = "id_referente";
     public static final String API_RESOURCES = "api_resources";
     public static final String API_RESOURCES_RESPONSE = "api_resources_response";
     public static final String API_RESOURCES_MEDIA = "api_resources_media";
@@ -141,6 +174,8 @@ public final class CostantiDB {
     public static final String SERVIZI_APPLICATIVI_CREDENZIALI = "sa_credenziali";
     public static final String SERVIZI_APPLICATIVI_PROPS = "sa_properties";
     public static final String SERVIZI_APPLICATIVI_PROPS_COLUMN_NOME = "nome";
+    public static final String SERVIZI_APPLICATIVI_PROPS_COLUMN_VALUE = "valore";
+    public static final String SERVIZI_APPLICATIVI_PROPS_COLUMN_ENC_VALUE = "enc_value";
     public static final String SERVIZI_APPLICATIVI_PROPS_ID_SERVIZIO_APPLICATIVO_REF = "id_servizio_applicativo";
     public static final String PORTE_APPLICATIVE = "porte_applicative";
     public static final String PORTE_APPLICATIVE_SA = "porte_applicative_sa";
@@ -217,6 +252,9 @@ public final class CostantiDB {
     public static final String SERVIZI_PDD = "servizi_pdd";
     public static final String SERVIZI_PDD_FILTRI = "servizi_pdd_filtri";
     public static final String SYSTEM_PROPERTIES_PDD = "pdd_sys_props";
+    public static final String SYSTEM_PROPERTIES_PDD_COLUMN_NOME = "nome";
+    public static final String SYSTEM_PROPERTIES_PDD_COLUMN_VALUE = "valore";
+    public static final String SYSTEM_PROPERTIES_PDD_COLUMN_ENC_VALUE = "enc_value";
     public static final String CONFIGURAZIONE = "configurazione";
     public static final String CONFIGURAZIONE_CACHE_REGOLE = "config_cache_regole";
     public static final String ROUTING = "routing";
@@ -605,26 +643,82 @@ public final class CostantiDB {
     public static final String PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_COLUMN_ID_PORTA = "id_porta";
     public static final String PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_COLUMN_NOME = "nome";
     public static final String PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_COLUMN_VALORE = "valore";
+    public static final String PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_COLUMN_ENC_VALUE = "enc_value";
         
     /*COLONNE TABELLA PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE */
     public static final String PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_COLUMN_ID_PORTA = "id_porta";
     public static final String PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_COLUMN_NOME = "nome";
     public static final String PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_COLUMN_VALORE = "valore";
+    public static final String PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_COLUMN_ENC_VALUE = "enc_value";
 
+    /*COLONNE TABELLA PORTE_DELEGATE_AUTENTICAZIONE_PROP */
+    public static final String PORTE_DELEGATE_AUTENTICAZIONE_PROP_COLUMN_ID_PORTA = "id_porta";
+    public static final String PORTE_DELEGATE_AUTENTICAZIONE_PROP_COLUMN_NOME = "nome";
+    public static final String PORTE_DELEGATE_AUTENTICAZIONE_PROP_COLUMN_VALORE = "valore";
+    public static final String PORTE_DELEGATE_AUTENTICAZIONE_PROP_COLUMN_ENC_VALUE = "enc_value";
+    
+    /*COLONNE TABELLA PORTE_DELEGATE_AUTORIZZAZIONE_PROP */
+    public static final String PORTE_DELEGATE_AUTORIZZAZIONE_PROP_COLUMN_ID_PORTA = "id_porta";
+    public static final String PORTE_DELEGATE_AUTORIZZAZIONE_PROP_COLUMN_NOME = "nome";
+    public static final String PORTE_DELEGATE_AUTORIZZAZIONE_PROP_COLUMN_VALORE = "valore";
+    public static final String PORTE_DELEGATE_AUTORIZZAZIONE_PROP_COLUMN_ENC_VALUE = "enc_value";
+    
+    /*COLONNE TABELLA PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROP */
+    public static final String PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_ID_PORTA = "id_porta";
+    public static final String PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_NOME = "nome";
+    public static final String PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_VALORE = "valore";
+    public static final String PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_ENC_VALUE = "enc_value";
+    
+    /*COLONNE TABELLA PORTE_DELEGATE_PROP */
+    public static final String PORTE_DELEGATE_PROP_COLUMN_ID_PORTA = "id_porta";
+    public static final String PORTE_DELEGATE_PROP_COLUMN_NOME = "nome";
+    public static final String PORTE_DELEGATE_PROP_COLUMN_VALORE = "valore";
+    public static final String PORTE_DELEGATE_PROP_COLUMN_ENC_VALUE = "enc_value";
+    
+    
+    
     /*COLONNE TABELLA PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST */
     public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_ID_PORTA = "id_porta";
     public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_NOME = "nome";
     public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_VALORE = "valore";
+    public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_ENC_VALUE = "enc_value";
     
     /*COLONNE TABELLA PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE */
     public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_ID_PORTA = "id_porta";
     public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_NOME = "nome";
     public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_VALORE = "valore";
+    public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_ENC_VALUE = "enc_value";
+    
+    /*COLONNE TABELLA PORTE_APPLICATIVE_AUTENTICAZIONE_PROP */
+    public static final String PORTE_APPLICATIVE_AUTENTICAZIONE_PROP_COLUMN_ID_PORTA = "id_porta";
+    public static final String PORTE_APPLICATIVE_AUTENTICAZIONE_PROP_COLUMN_NOME = "nome";
+    public static final String PORTE_APPLICATIVE_AUTENTICAZIONE_PROP_COLUMN_VALORE = "valore";
+    public static final String PORTE_APPLICATIVE_AUTENTICAZIONE_PROP_COLUMN_ENC_VALUE = "enc_value";
+    
+    /*COLONNE TABELLA PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP */
+    public static final String PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP_COLUMN_ID_PORTA = "id_porta";
+    public static final String PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP_COLUMN_NOME = "nome";
+    public static final String PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP_COLUMN_VALORE = "valore";
+    public static final String PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP_COLUMN_ENC_VALUE = "enc_value";
+    
+    /*COLONNE TABELLA PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP */
+    public static final String PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_ID_PORTA = "id_porta";
+    public static final String PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_NOME = "nome";
+    public static final String PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_VALORE = "valore";
+    public static final String PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP_COLUMN_ENC_VALUE = "enc_value";
+    
+    /*COLONNE TABELLA PORTE_APPLICATIVE_PROP */
+    public static final String PORTE_APPLICATIVE_PROP_COLUMN_ID_PORTA = "id_porta";
+    public static final String PORTE_APPLICATIVE_PROP_COLUMN_NOME = "nome";
+    public static final String PORTE_APPLICATIVE_PROP_COLUMN_VALORE = "valore";
+    public static final String PORTE_APPLICATIVE_PROP_COLUMN_ENC_VALUE = "enc_value";
+    
     
     /*COLONNE TABELLA CONFIG_GENERIC_PROPERTY */
     public static final String CONFIG_GENERIC_PROPERTY_COLUMN_ID_PROPS = "id_props";
     public static final String CONFIG_GENERIC_PROPERTY_COLUMN_NOME = "nome";
     public static final String CONFIG_GENERIC_PROPERTY_COLUMN_VALORE = "valore";
+    public static final String CONFIG_GENERIC_PROPERTY_COLUMN_ENC_VALUE = "enc_value";
 
     /**
      * PROPRIETA SICUREZZA
@@ -685,6 +779,11 @@ public final class CostantiDB {
     public static final String CONNETTORE_HTTP_REDIRECT_FOLLOW = CostantiConnettori.CONNETTORE_HTTP_REDIRECT_FOLLOW;
     public static final String CONNETTORE_HTTP_REDIRECT_MAX_HOP = CostantiConnettori.CONNETTORE_HTTP_REDIRECT_MAX_HOP;
         
+    public static final String CONNETTORE_APIKEY_HEADER = CostantiConnettori.CONNETTORE_APIKEY_HEADER;
+    public static final String CONNETTORE_APIKEY = CostantiConnettori.CONNETTORE_APIKEY;
+    public static final String CONNETTORE_APIKEY_APPID_HEADER = CostantiConnettori.CONNETTORE_APIKEY_APPID_HEADER;
+    public static final String CONNETTORE_APIKEY_APPID = CostantiConnettori.CONNETTORE_APIKEY_APPID;
+    
     public static final String CONNETTORE_JMS_NOME = CostantiConnettori.CONNETTORE_LOCATION; //il nome del connettore sarebbe la proprieta location
     public static final String CONNETTORE_JMS_TIPO = CostantiConnettori.CONNETTORE_JMS_TIPO;
     public static final String CONNETTORE_USER = CostantiConnettori.CONNETTORE_USERNAME;
@@ -701,12 +800,13 @@ public final class CostantiDB {
     public static final String CONNETTORE_HTTPS_TRUST_STORE_PASSWORD = CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD;
     public static final String CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM = CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM;
     public static final String CONNETTORE_HTTPS_TRUST_STORE_TYPE = CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_TYPE;
-    public static final String CONNETTORE_HTTPS_TRUST_STORE_CRLS = CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs;
+    public static final String CONNETTORE_HTTPS_TRUST_STORE_CRLS = CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLS;
     public static final String CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY = CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY;
     public static final String CONNETTORE_HTTPS_KEY_STORE_LOCATION = CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION;
     public static final String CONNETTORE_HTTPS_KEY_STORE_PASSWORD = CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD;
     public static final String CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM = CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM;
     public static final String CONNETTORE_HTTPS_KEY_STORE_TYPE = CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_TYPE;
+    public static final String CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY = CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY;
     public static final String CONNETTORE_HTTPS_KEY_PASSWORD = CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD;
     public static final String CONNETTORE_HTTPS_KEY_ALIAS = CostantiConnettori.CONNETTORE_HTTPS_KEY_ALIAS;
     public static final String CONNETTORE_HTTPS_HOSTNAME_VERIFIER = CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER;
@@ -872,6 +972,8 @@ public final class CostantiDB {
     public static final String MODIPA_KEYSTORE_KEY_ALGORITHM = "modipaKeystoreKeyPairAlgo";
     
     public static final String MODIPA_KEYSTORE_PASSWORD = "modipaKeystorePassword";
+    
+    public static final String MODIPA_KEYSTORE_BYOK_POLICY = "modipaKeystoreByokPolicy";
     
     public static final String MODIPA_KEYSTORE_ARCHIVE = "modipaKeystoreArchive";
     public static final String MODIPA_KEYSTORE_CERTIFICATE = "modipaKeystoreCertificate";
@@ -1050,4 +1152,6 @@ public final class CostantiDB {
     public static final String HANDLER_EXIT = "Exit";
     public static final String HANDLER_INTEGRATION_MANAGER_REQUEST = "IntegrationManagerRequest";
     public static final String HANDLER_INTEGRATION_MANAGER_RESPONSE = "IntegrationManagerResponse";
+    
+    public static final String SICUREZZA_MESSAGGIO_SCHEMA_DEFAULT = "default";
 }

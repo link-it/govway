@@ -149,6 +149,10 @@ Examples:
 |connettore_fruizione_file_response_headers.json|[file] /tmp/abc.txt|
 |connettore_fruizione_file_response_wait.json|[file] /tmp/abc.txt|
 |connettore_fruizione_file_response_permissions.json|[file] /tmp/abc.txt|
+|connettore_fruizione_apikey.json|https://ginovadifretta.it/petstore|
+|connettore_fruizione_apikey_appid.json|https://ginovadifretta.it/petstore|
+|connettore_fruizione_apikey_appid_custom.json|https://ginovadifretta.it/petstore|
+|connettore_fruizione_apikey_custom.json|https://ginovadifretta.it/petstore|
 
 @UpdateConnettore400
 Scenario Outline: Erogazioni Update Connettore 400

@@ -50,8 +50,10 @@ String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CS
 <title><%= gd.getTitle() %></title>
 <link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="css/materialIcons/material-icons-fontface.css" type="text/css">
+<link rel="stylesheet" href="css/materialSymbols/material-symbols-fontface.css" type="text/css">
 <link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
 <link rel="stylesheet" href="css/materialIcons.css" type="text/css">
+<link rel="stylesheet" href="css/materialSymbols.css" type="text/css">
 <!-- JQuery lib-->
 <script type="text/javascript" src="js/jquery-1.4.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
@@ -73,9 +75,16 @@ var path = '<%= request.getContextPath()%>';
 <link rel="stylesheet" href="css/ui.core.css" type="text/css">
 <link rel="stylesheet" href="css/ui.theme.css" type="text/css">
 <link rel="stylesheet" href="css/ui.dialog.css" type="text/css">
+<link rel="stylesheet" href="css/ui.resizable.css" type="text/css">
 <link rel="stylesheet" href="css/ui.slider.css" type="text/css">
 <script type="text/javascript" src="js/ui.core.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/ui.dialog.js" nonce="<%= randomNonce %>"></script>
+<% if(
+		(customListViewName == null || "".equals(customListViewName))
+	|| (!"configurazione".equals(customListViewName) && !"connettoriMultipli".equals(customListViewName))
+	){ %>
+<script type="text/javascript" src="js/ui.resizable.js" nonce="<%= randomNonce %>"></script>
+<% }%>
 <script type="text/javascript" src="js/ui.slider.js" nonce="<%= randomNonce %>"></script>
 <link rel="stylesheet" href="css/bootstrap-tagsinput.css" type="text/css">
 <script type="text/javascript" src="js/jquery-on.js" nonce="<%= randomNonce %>"></script>
@@ -136,14 +145,8 @@ function CheckDati() {
 	    }
 	}
 	
-	function mostraDataElementInfoModal(title,body){
-		$("#dataElementInfoModal").prev().children('span').text(title);
-		$("#dataElementInfoModalBody").html(body);
-		$("#dataElementInfoModal").dialog("open");
-	}
-
         $(document).ready(function(){
-
+        	
         	// info
         	if($(".spanIconInfoBox").length>0){
         		$(".spanIconInfoBox").click(function(){
@@ -360,9 +363,6 @@ $(document).ready(function(){
 		<jsp:include page="/jsplib/templateFooter.jsp" flush="true" />
 	</tbody>
 </table>
-<div id="dataElementInfoModal" title="Info">
-	<div id="dataElementInfoModalBody" class="contenutoModal"></div>
-</div>
 <jsp:include page="/jsplib/conferma.jsp" flush="true" />
 </body>
 </html>

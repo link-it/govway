@@ -138,6 +138,16 @@ public class Costanti {
 	static {
     	typeJavaProperty = org.openspcoop2.pdd.core.dynamic.PropertiesReader.class.getName(); // uniformo con lo stesso reader
     }
+	
+	 public static final String MAP_ENV_JAVA_PROPERTY = "envj";
+	 public static final String MAP_ENV_JAVA_PROPERTY_PREFIX = "{"+MAP_ENV_JAVA_PROPERTY+":";
+	 private static String typeEnvJavaProperty = org.openspcoop2.pdd.core.dynamic.EnvironmentJavaPropertiesReader.class.getName();
+	 public static String getTypeEnvJavaProperty() {
+		 return typeEnvJavaProperty;
+	 }
+	 static {
+		 typeEnvJavaProperty = org.openspcoop2.pdd.core.dynamic.PropertiesReader.class.getName(); // uniformo con lo stesso reader
+	 }
     
     public static final String MAP_REQUEST = "request";
     public static final String MAP_RESPONSE = "response";

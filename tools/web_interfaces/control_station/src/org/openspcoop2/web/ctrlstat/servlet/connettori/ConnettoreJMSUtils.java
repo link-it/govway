@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
@@ -150,8 +151,12 @@ public class ConnettoreJMSUtils {
 			String user, String password, String initcont, String urlpgk,
 			String provurl, String connfact, String sendas, String objectName, TipoOperazione tipoOperazione,
 			String stato,
-			ControlStationCore core,ConsoleHelper consoleHelper,int pageSize){
+			ControlStationCore core,ConsoleHelper consoleHelper,int pageSize,
+			boolean postBackViaPost) throws UtilsException{
 		
+		if(postBackViaPost || objectName!=null || tipoOperazione!=null) {
+			// unused
+		}
 		
 		DataElement de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CODA);
@@ -216,9 +221,8 @@ public class ConnettoreJMSUtils {
 
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PASSWORD);
-		de.setValue(password);
-		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
+		core.getLockUtilities().lock(de, password);
 		de.setSize(pageSize);
 		dati.add(de);
 
@@ -259,7 +263,11 @@ public class ConnettoreJMSUtils {
 			String user, String password, String initcont, String urlpgk,
 			String provurl, String connfact, String sendas, String objectName, TipoOperazione tipoOperazione,
 			String stato,
-			ControlStationCore core,int pageSize){
+			ControlStationCore core,int pageSize) throws UtilsException{
+		
+		if(tipoOperazione!=null && stato!=null) {
+			 // nop
+		}
 		
 		DataElement de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_NOME_CODA);
@@ -290,9 +298,9 @@ public class ConnettoreJMSUtils {
 
 			de = new DataElement();
 			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PASSWORD);
-			de.setValue(password);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
+			core.getLockUtilities().lockHidden(de, password);
 			de.setSize(pageSize);
 			dati.add(de);
 		}

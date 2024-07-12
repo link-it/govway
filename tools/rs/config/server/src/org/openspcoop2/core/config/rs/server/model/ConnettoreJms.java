@@ -204,7 +204,7 @@ public class ConnettoreJms  implements OneOfApplicativoServerConnettore, OneOfCo
   **/
   @JsonProperty("password")
   @Valid
- @Size(max=255)  public String getPassword() {
+  public String getPassword() {
     return this.password;
   }
 

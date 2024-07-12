@@ -36,7 +36,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.utils.FiltroRicercaAllarmi;
@@ -144,11 +143,15 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.RuoliSoggetto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
+import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.mtom.MtomXomPackageInfo;
@@ -159,6 +162,7 @@ import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiRest;
 import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
+import org.openspcoop2.pdd.core.byok.BYOKUnwrapPolicyUtilities;
 import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPSProperties;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
@@ -171,6 +175,7 @@ import org.openspcoop2.pdd.core.controllo_traffico.SogliaReadTimeout;
 import org.openspcoop2.pdd.core.controllo_traffico.SoglieDimensioneMessaggi;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.InterceptorPolicyUtilities;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
+import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.token.AbstractPolicyToken;
@@ -206,6 +211,7 @@ import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.jose.JOSEUtils;
+import org.openspcoop2.security.message.utils.SecurityUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.cache.CacheType;
@@ -213,6 +219,7 @@ import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.IBYOKUnwrapManager;
 import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.slf4j.Logger;
 
@@ -5277,27 +5284,38 @@ public class ConfigurazionePdDReader {
 		boolean classpathSupported = false;
 		try {
 			if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+				IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+				
 				check = CertificateUtils.checkKeyPair(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyPairPublicKeyPath(), keystoreParams.getKeyPassword(), keystoreParams.getKeyPairAlgorithm(),
+						byokUnwrapManager,
 						false, //addCertificateDetails,  
-						separator);
+						separator, newLine);
 			}
 			else if(SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
 				throw new DriverConfigurazioneException("Nell'Applicativo "+sa.getNome()+" la configurazione ModI utilizza un keystore "+SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_LABEL+" non compatibile la firma dei messaggi");
 			}
 			else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
-				check = CertificateUtils.checkKeystoreJWKs(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyAlias(), 
+				IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+				
+				check = CertificateUtils.checkKeystoreJWKs(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyAlias(), byokUnwrapManager,
 						false, //addCertificateDetails,  
 						separator, newLine);
 			}
 			else {
+				IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+				
 				if(keystoreParams.getStore()!=null) {
-					check = CertificateUtils.checkKeyStore(CostantiLabel.STORE_CARICATO_BASEDATI, keystoreParams.getStore(), keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+					check = CertificateUtils.checkKeyStore(CostantiLabel.STORE_CARICATO_BASEDATI, keystoreParams.getStore(), keystoreParams.getType(), keystoreParams.getPassword(), 
+							byokUnwrapManager,
+							keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
 							sogliaWarningGiorni, 
 							addCertificateDetails, separator, newLine,
 							log);
 				}
 				else {
-					check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+					check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(), keystoreParams.getPassword(), 
+							byokUnwrapManager,
+							keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
 							sogliaWarningGiorni, 
 							addCertificateDetails, separator, newLine,
 							log);
@@ -5311,10 +5329,9 @@ public class ConfigurazionePdDReader {
 			byte[] cert = ModIUtils.getApplicativoKeystoreCertificate(sa.getProtocolPropertyList());
 			if(cert!=null && cert.length>0) {
 				try {
-					CertificateCheck checkSingleCertificate = CertificateUtils.checkSingleCertificate("Certificato associato al keystore ModI", cert, 
+					return CertificateUtils.checkSingleCertificate("Certificato associato al keystore ModI", cert, 
 							sogliaWarningGiorni, 
 							separator, newLine);
-					return checkSingleCertificate;
 				}catch(Exception t) {
 					throw new DriverConfigurazioneException(t.getMessage(),t);
 				}
@@ -5360,8 +5377,12 @@ public class ConfigurazionePdDReader {
 		}
 		
 		SSLConfig httpsProp = null;
+		Map<String,Object> dynamicMap = null;
 		try {
 			httpsProp = ConnettoreHTTPSProperties.readProperties(connettore.getProperties());
+			dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(null, null, null, 
+					log);
+			httpsProp.setDynamicMap(dynamicMap);
 		}catch(Exception t) {
 			throw new DriverConfigurazioneException(t.getMessage(),t);
 		}
@@ -5372,8 +5393,12 @@ public class ConfigurazionePdDReader {
 		
 		if(httpsProp.getKeyStoreLocation()!=null) {
 			try {
+				IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapPolicyUtilities.getBYOKUnwrapManager(httpsProp.getKeyStoreBYOKPolicy(), dynamicMap);
+				
 				check = CertificateUtils.checkKeyStore(httpsProp.getKeyStoreLocation(), classpathSupported, httpsProp.getKeyStoreType(), 
-						httpsProp.getKeyStorePassword(), httpsProp.getKeyAlias(), httpsProp.getKeyPassword(),
+						httpsProp.getKeyStorePassword(), 
+						byokUnwrapManager,
+						httpsProp.getKeyAlias(), httpsProp.getKeyPassword(),
 						sogliaWarningGiorni, 
 						false, //addCertificateDetails,  
 						separator, newLine,
@@ -5381,6 +5406,7 @@ public class ConfigurazionePdDReader {
 				
 				if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
 					storeDetails = CertificateUtils.toStringKeyStore(httpsProp.getKeyStoreLocation(), httpsProp.getKeyStoreType(),
+							httpsProp.getKeyStoreBYOKPolicy(),
 							httpsProp.getKeyAlias(), 
 							separator, newLine);
 				}
@@ -5448,8 +5474,12 @@ public class ConfigurazionePdDReader {
 		
 		if(keystoreParams!=null) {
 			try {
+				IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+				
 				check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(),
-						keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+						keystoreParams.getPassword(), 
+						byokUnwrapManager,
+						keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
 						sogliaWarningGiorni, 
 						false, //addCertificateDetails,  
 						separator, newLine,
@@ -5622,14 +5652,18 @@ public class ConfigurazionePdDReader {
 					
 				}
 				else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+					
 					if(keystoreParams.getPath().startsWith(JOSEUtils.HTTP_PROTOCOL) || keystoreParams.getPath().startsWith(JOSEUtils.HTTPS_PROTOCOL)) {
 						byte [] store = getStoreCertificatiTokenPolicy(policy, keystoreParams, log);
 						check = CertificateUtils.checkKeystoreJWKs(keystoreParams.getPath(), new String(store), keystoreParams.getKeyAlias(), 
+								byokUnwrapManager,
 								false, //addCertificateDetails,  
 								separator, newLine);
 					}
 					else{
 						check = CertificateUtils.checkKeystoreJWKs(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyAlias(), 
+								byokUnwrapManager,
 								false, //addCertificateDetails,  
 								separator, newLine);
 					}
@@ -5639,10 +5673,14 @@ public class ConfigurazionePdDReader {
 					}
 				}
 				else {	
+					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+					
 					if(keystoreParams.getPath().startsWith(JOSEUtils.HTTP_PROTOCOL) || keystoreParams.getPath().startsWith(JOSEUtils.HTTPS_PROTOCOL)) {
 						byte [] store = getStoreCertificatiTokenPolicy(policy, keystoreParams, log);
 						check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), store, keystoreParams.getType(),
-								keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+								keystoreParams.getPassword(), 
+								byokUnwrapManager,
+								keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
 								sogliaWarningGiorni, 
 								false, //addCertificateDetails,  
 								separator, newLine,
@@ -5650,7 +5688,9 @@ public class ConfigurazionePdDReader {
 					}
 					else {
 						check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(),
-								keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+								keystoreParams.getPassword(), 
+								byokUnwrapManager,
+								keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
 								sogliaWarningGiorni, 
 								false, //addCertificateDetails,  
 								separator, newLine,
@@ -5679,16 +5719,16 @@ public class ConfigurazionePdDReader {
 						byte [] store = getStoreCertificatiTokenPolicy(policy, truststoreParams, log);
 						check = CertificateUtils.checkPublicKey(truststoreParams.getPath(), store, truststoreParams.getKeyPairAlgorithm(),
 								false, //addCertificateDetails,  
-								separator);
+								separator, newLine);
 					}
 					else {
 						check = CertificateUtils.checkPublicKey(classpathSupported, truststoreParams.getPath(), truststoreParams.getKeyPairAlgorithm(),
 								false, //addCertificateDetails,  
-								separator);
+								separator, newLine);
 					}
 					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
 						storeDetails = CertificateUtils.toStringPublicKey(truststoreParams, 
-								separator);
+								separator, newLine);
 					}
 				}
 				else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(truststoreParams.getType())) {
@@ -5772,10 +5812,10 @@ public class ConfigurazionePdDReader {
 	
 	private static byte[] getStoreCertificatiTokenPolicy(AbstractPolicyToken policy,KeystoreParams truststoreParams, Logger log) throws TokenException, SecurityException {
 		Properties p = new Properties();
-		p.put(RSSecurityConstants.RSSEC_KEY_STORE_FILE, truststoreParams.getPath());
-		p.put(RSSecurityConstants.RSSEC_KEY_STORE_TYPE, truststoreParams.getType());
+		p.put(SecurityConstants.JOSE_KEYSTORE_FILE, truststoreParams.getPath());
+		p.put(SecurityConstants.JOSE_KEYSTORE_TYPE, truststoreParams.getType());
 		if(truststoreParams.getPassword()!=null) {
-			p.put(RSSecurityConstants.RSSEC_KEY_STORE_PSWD, truststoreParams.getPassword());
+			p.put(SecurityConstants.JOSE_KEYSTORE_PSWD, truststoreParams.getPassword());
 		}
 		TokenUtilities.injectJOSEConfigSsl(p, policy,
 				null, null);
@@ -5833,6 +5873,10 @@ public class ConfigurazionePdDReader {
 			else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(forwardInformazioniRaccolteMode)) {
     			// JWE Compact
     			truststoreParams = TokenUtilities.getForwardToJwtKeystoreParams(policy);
+    			keystoreParams = TokenUtilities.getForwardToJwtKeystoreParams(policy); // verifico con keystoreParams per adesso poichè cifro con chiave privata
+    			if(keystoreParams!=null) {
+    				truststoreParams=null;
+    			}
     		}
 		}catch(Exception t) {
 			throw new DriverConfigurazioneException(t.getMessage(),t);
@@ -5846,12 +5890,15 @@ public class ConfigurazionePdDReader {
 		if(keystoreParams!=null) {
 			try {
 				if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+					
 					check = CertificateUtils.checkKeyPair(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyPairPublicKeyPath(), keystoreParams.getKeyPassword(), keystoreParams.getKeyPairAlgorithm(),
+							byokUnwrapManager,
 							false, //addCertificateDetails,  
-							separator);
+							separator, newLine);
 					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
 						storeDetails = CertificateUtils.toStringKeyPair(keystoreParams, 
-								separator);
+								separator, newLine);
 					}
 				}
 				else if(SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
@@ -5859,7 +5906,10 @@ public class ConfigurazionePdDReader {
 					
 				}
 				else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
-					check = CertificateUtils.checkKeystoreJWKs(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyAlias(), 
+					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+					
+					check = CertificateUtils.checkKeystoreJWKs(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyAlias(),
+							byokUnwrapManager,
 							false, //addCertificateDetails,  
 							separator, newLine);
 					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
@@ -5867,9 +5917,13 @@ public class ConfigurazionePdDReader {
 								separator, newLine);
 					}
 				}
-				else {		
+				else {
+					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+					
 					check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(),
-							keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+							keystoreParams.getPassword(), 
+							byokUnwrapManager,
+							keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
 							sogliaWarningGiorni, 
 							false, //addCertificateDetails,  
 							separator, newLine,
@@ -5895,10 +5949,10 @@ public class ConfigurazionePdDReader {
 				else if(SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(truststoreParams.getType())) {
 					check = CertificateUtils.checkPublicKey(classpathSupported, truststoreParams.getPath(), truststoreParams.getKeyPairAlgorithm(),
 							false, //addCertificateDetails,  
-							separator);
+							separator, newLine);
 					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
 						storeDetails = CertificateUtils.toStringPublicKey(truststoreParams, 
-								separator);
+								separator, newLine);
 					}
 				}
 				else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(truststoreParams.getType())) {
@@ -6057,19 +6111,25 @@ public class ConfigurazionePdDReader {
 				}
 				
 				if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+					
 					check = CertificateUtils.checkKeyPair(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyPairPublicKeyPath(), keystoreParams.getKeyPassword(), keystoreParams.getKeyPairAlgorithm(),
+							byokUnwrapManager,
 							false, //addCertificateDetails,  
-							separator);
+							separator, newLine);
 					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
 						storeDetails = CertificateUtils.toStringKeyPair(keystoreParams, 
-								separator);
+								separator, newLine);
 					}
 				}
 				else if(SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
 					throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di SignedJWT utilizza un keystore "+SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_LABEL+" non compatibile con il criterio di validazione dei certificati");
 				}
 				else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+					
 					check = CertificateUtils.checkKeystoreJWKs(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyAlias(), 
+							byokUnwrapManager,
 							false, //addCertificateDetails,  
 							separator, newLine);
 					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
@@ -6078,8 +6138,12 @@ public class ConfigurazionePdDReader {
 					}
 				}
 				else {
+					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+					
 					check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(),
-							keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+							keystoreParams.getPassword(), 
+							byokUnwrapManager,
+							keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
 							sogliaWarningGiorni, 
 							false, //addCertificateDetails,  
 							separator, newLine,
@@ -6215,19 +6279,25 @@ public class ConfigurazionePdDReader {
 		if(keystoreParams!=null) {
 			try {
 				if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+					
 					check = CertificateUtils.checkKeyPair(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyPairPublicKeyPath(), keystoreParams.getKeyPassword(), keystoreParams.getKeyPairAlgorithm(),
+							byokUnwrapManager,
 							false, //addCertificateDetails,  
-							separator);
+							separator, newLine);
 					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
 						storeDetails = CertificateUtils.toStringKeyPair(keystoreParams, 
-								separator);
+								separator, newLine);
 					}
 				}
 				else if(SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
 					throw new DriverConfigurazioneException("Nell'Attribute Authority "+gp.getNome()+" la configurazione della richiesta JWS utilizza un keystore "+SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_LABEL+" non compatibile con il criterio di validazione dei certificati");
 				}
 				else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+					
 					check = CertificateUtils.checkKeystoreJWKs(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyAlias(), 
+							byokUnwrapManager,
 							false, //addCertificateDetails,  
 							separator, newLine);
 					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
@@ -6236,8 +6306,13 @@ public class ConfigurazionePdDReader {
 					}
 				}
 				else {
+					
+					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+					
 					check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(),
-							keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+							keystoreParams.getPassword(), 
+							byokUnwrapManager,
+							keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
 							sogliaWarningGiorni, 
 							false, //addCertificateDetails,  
 							separator, newLine,
@@ -6328,16 +6403,16 @@ public class ConfigurazionePdDReader {
 						byte [] store = getStoreCertificatiTokenPolicy(policy, keystoreParams, log);
 						check = CertificateUtils.checkPublicKey(keystoreParams.getPath(), store, keystoreParams.getKeyPairAlgorithm(),
 								false, //addCertificateDetails,  
-								separator);
+								separator, newLine);
 					}
 					else {
 						check = CertificateUtils.checkPublicKey(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyPairAlgorithm(),
 								false, //addCertificateDetails,  
-								separator);
+								separator, newLine);
 					}
 					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
 						storeDetails = CertificateUtils.toStringPublicKey(keystoreParams, 
-								separator);
+								separator, newLine);
 					}
 				}
 				else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
@@ -6358,10 +6433,14 @@ public class ConfigurazionePdDReader {
 					}
 				}
 				else {	
+					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+					
 					if(keystoreParams.getPath().startsWith(JOSEUtils.HTTP_PROTOCOL) || keystoreParams.getPath().startsWith(JOSEUtils.HTTPS_PROTOCOL)) {
 						byte [] store = getStoreCertificatiTokenPolicy(policy, keystoreParams, log);
 						check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), store, keystoreParams.getType(),
-								keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+								keystoreParams.getPassword(), 
+								byokUnwrapManager,
+								keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
 								sogliaWarningGiorni, 
 								false, //addCertificateDetails,  
 								separator, newLine,
@@ -6369,7 +6448,9 @@ public class ConfigurazionePdDReader {
 					}
 					else {
 						check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(),
-								keystoreParams.getPassword(), keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+								keystoreParams.getPassword(), 
+								byokUnwrapManager,
+								keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
 								sogliaWarningGiorni, 
 								false, //addCertificateDetails,  
 								separator, newLine,
@@ -6402,6 +6483,366 @@ public class ConfigurazionePdDReader {
 		
 		return check;
 	}
+	
+	public static final String ID_CONFIGURAZIONE_RICHIESTA_MESSAGE_SECURITY = "Configurazione Richiesta 'Message Security'";
+	public static final String ID_CONFIGURAZIONE_RISPOSTA_MESSAGE_SECURITY = "Configurazione Risposta 'Message Security'";
+	protected CertificateCheck checkCertificatiMessageSecurityErogazioneById(Connection connectionPdD,boolean useCache,
+			long idAsps, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		if(connectionPdD!=null) {
+			// nop
+		}
+		
+		if(useCache) {
+			throw new DriverConfigurazioneException("Not Implemented");
+		}
+		
+		AccordoServizioParteSpecifica asps = null;
+		IDServizio idServizio = null;
+		for (IDriverRegistroServiziGet driver : RegistroServiziReader.getDriverRegistroServizi().values()) {
+			if(driver instanceof DriverRegistroServiziDB) {
+				try {
+					DriverRegistroServiziDB driverDB = (DriverRegistroServiziDB) driver;
+					asps = driverDB.getAccordoServizioParteSpecifica(idAsps);
+					idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+				}catch(Exception e) {
+					throw new DriverConfigurazioneException(e.getMessage(),e);
+				}
+				break;
+			}
+			else {
+				throw new DriverConfigurazioneException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+			}
+		}
+		
+		DriverConfigurazioneDB driver = null;
+		if(this.configurazionePdD.getDriverConfigurazionePdD() instanceof DriverConfigurazioneDB) {
+			driver = (DriverConfigurazioneDB) this.configurazionePdD.getDriverConfigurazionePdD();
+		}
+		else {
+			throw new DriverConfigurazioneException("Not Implemented with driver '"+this.configurazionePdD.getDriverConfigurazionePdD().getClass().getName()+"'");
+		}
+		
+		List<MappingErogazionePortaApplicativa> list = this.configurazionePdD._getMappingErogazionePortaApplicativaList(idServizio, connectionPdD); // usa direttamente, senza cache, DriverConfigurazioneDB
+		List<PortaApplicativa> listPorta = new ArrayList<>();
+		if(list!=null && !list.isEmpty()) {
+			for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : list) {
+				listPorta.add(driver.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa()));
+			}
+		}
+		
+		return checkCertificatiMessageSecurityErogazioneById(list, listPorta,
+				sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.logger);
+	}
+	public static CertificateCheck checkCertificatiMessageSecurityErogazioneById(List<MappingErogazionePortaApplicativa> listMapping, List<PortaApplicativa> listPorta, 
+			int sogliaWarningGiorni,
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException {
+				
+		if(listPorta==null || listPorta.isEmpty()) {
+			throw new DriverConfigurazioneException("Param listPorta is null or empty");
+		}
+		if(listMapping==null || listMapping.isEmpty()) {
+			throw new DriverConfigurazioneException("Param listMapping is null or empty");
+		}
+		if(listMapping.size()!=listPorta.size()) {
+			throw new DriverConfigurazioneException("Param listPorta and listMapping are different");
+		}
+		
+		CertificateCheck check = null;
+		
+		for (int i = 0; i < listPorta.size(); i++) {
+			PortaApplicativa portaApplicativa = listPorta.get(i);
+			MappingErogazionePortaApplicativa mapping = listMapping.get(i);
+			
+			List<KeystoreParams> listKeystoreParams = SecurityUtils.readRequestKeystoreParams(portaApplicativa);
+			check = checkCertificatiMessageSecurityErogazioneById(true, mapping, listKeystoreParams, 
+					sogliaWarningGiorni,
+					addCertificateDetails, separator, newLine,
+					log);
+			if(check!=null) {
+				return check;
+			}
+			
+			listKeystoreParams = SecurityUtils.readResponseKeystoreParams(portaApplicativa);
+			check = checkCertificatiMessageSecurityErogazioneById(false, mapping, listKeystoreParams, 
+					sogliaWarningGiorni,
+					addCertificateDetails, separator, newLine,
+					log);
+			if(check!=null) {
+				return check;
+			}
+			
+		}
+				
+		check = new CertificateCheck();
+		check.setStatoCheck(StatoCheck.OK);
+		
+		return check;
+	}
+	public static CertificateCheck checkCertificatiMessageSecurityErogazioneById(boolean request, MappingErogazionePortaApplicativa mapping, List<KeystoreParams> listKeystoreParams, 
+			int sogliaWarningGiorni,
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException {
+		
+		CertificateCheck check = null;
+		
+		if(listKeystoreParams!=null && !listKeystoreParams.isEmpty()) {
+			for (KeystoreParams keystoreParams : listKeystoreParams) {
+				
+				String descrizioneGruppo = null;
+				if(!mapping.isDefault() || (mapping.getDescrizione()!=null && StringUtils.isNotEmpty(mapping.getDescrizione()) )) {
+					descrizioneGruppo = mapping.getDescrizione();
+				}
+				
+				check = checkCertificatiMessageSecurity(request, descrizioneGruppo, keystoreParams, 
+						sogliaWarningGiorni,
+						addCertificateDetails, separator, newLine,
+						log);
+				if(check!=null) {
+					return check;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	protected CertificateCheck checkCertificatiMessageSecurityFruizioneById(Connection connectionPdD,boolean useCache,
+			long idFruitore, 
+			int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		if(connectionPdD!=null) {
+			// nop
+		}
+		
+		if(useCache) {
+			throw new DriverConfigurazioneException("Not Implemented");
+		}
+		
+		IDServizio idServizio = null;
+		AccordoServizioParteSpecifica asps = null;
+		IDSoggetto idFruitoreObject = null;
+		Fruitore fruitore = null;
+		for (IDriverRegistroServiziGet driver : RegistroServiziReader.getDriverRegistroServizi().values()) {
+			if(driver instanceof DriverRegistroServiziDB) {
+				try {
+					DriverRegistroServiziDB driverDB = (DriverRegistroServiziDB) driver;
+					fruitore = driverDB.getServizioFruitore(idFruitore);
+					idFruitoreObject = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
+					asps = driverDB.getAccordoServizioParteSpecifica(fruitore.getIdServizio());
+					idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);		
+				}catch(Exception e) {
+					throw new DriverConfigurazioneException(e.getMessage(),e);
+				}
+				break;
+			}
+			else {
+				throw new DriverConfigurazioneException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+			}
+		}
+		if(fruitore==null) {
+			throw new DriverConfigurazioneException("Fruitore con id '"+idFruitore+"' non trovato");
+		}
+		
+		DriverConfigurazioneDB driver = null;
+		if(this.configurazionePdD.getDriverConfigurazionePdD() instanceof DriverConfigurazioneDB) {
+			driver = (DriverConfigurazioneDB) this.configurazionePdD.getDriverConfigurazionePdD();
+		}
+		else {
+			throw new DriverConfigurazioneException("Not Implemented with driver '"+this.configurazionePdD.getDriverConfigurazionePdD().getClass().getName()+"'");
+		}
+		
+		List<MappingFruizionePortaDelegata> list = this.configurazionePdD._getMappingFruizionePortaDelegataList(idFruitoreObject, idServizio, connectionPdD); // usa direttamente, senza cache, DriverConfigurazioneDB
+		List<PortaDelegata> listPorta = new ArrayList<>();
+		if(list!=null && !list.isEmpty()) {
+			for (MappingFruizionePortaDelegata mappingFruizionePortaDelegata : list) {
+				listPorta.add(driver.getPortaDelegata(mappingFruizionePortaDelegata.getIdPortaDelegata()));
+			}
+		}
+		
+		return checkCertificatiMessageSecurityFruizioneById(list, listPorta,
+				sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.logger);
+	}
+	public static CertificateCheck checkCertificatiMessageSecurityFruizioneById(List<MappingFruizionePortaDelegata> listMapping, List<PortaDelegata> listPorta,
+			int sogliaWarningGiorni,
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException {
+				
+		if(listPorta==null || listPorta.isEmpty()) {
+			throw new DriverConfigurazioneException("Param listPorta is null or empty");
+		}
+		if(listMapping==null || listMapping.isEmpty()) {
+			throw new DriverConfigurazioneException("Param listMapping is null or empty");
+		}
+		if(listMapping.size()!=listPorta.size()) {
+			throw new DriverConfigurazioneException("Param listPorta and listMapping are different");
+		}
+		
+		CertificateCheck check = null;
+		
+		for (int i = 0; i < listPorta.size(); i++) {
+			PortaDelegata portaDelegata = listPorta.get(i);
+			MappingFruizionePortaDelegata mapping = listMapping.get(i);
+			
+			List<KeystoreParams> listKeystoreParams = SecurityUtils.readRequestKeystoreParams(portaDelegata);
+			check = checkCertificatiMessageSecurityFruizioneById(true, mapping, listKeystoreParams, 
+					sogliaWarningGiorni,
+					addCertificateDetails, separator, newLine,
+					log);
+			if(check!=null) {
+				return check;
+			}
+			
+			listKeystoreParams = SecurityUtils.readResponseKeystoreParams(portaDelegata);
+			check = checkCertificatiMessageSecurityFruizioneById(false, mapping, listKeystoreParams, 
+					sogliaWarningGiorni,
+					addCertificateDetails, separator, newLine,
+					log);
+			if(check!=null) {
+				return check;
+			}
+			
+		}
+				
+		check = new CertificateCheck();
+		check.setStatoCheck(StatoCheck.OK);
+		
+		return check;
+	}
+	public static CertificateCheck checkCertificatiMessageSecurityFruizioneById(boolean request, MappingFruizionePortaDelegata mapping, List<KeystoreParams> listKeystoreParams, 
+			int sogliaWarningGiorni,
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException {
+		
+		CertificateCheck check = null;
+		
+		if(listKeystoreParams!=null && !listKeystoreParams.isEmpty()) {
+			for (KeystoreParams keystoreParams : listKeystoreParams) {
+				
+				String descrizioneGruppo = null;
+				if(!mapping.isDefault() || (mapping.getDescrizione()!=null && StringUtils.isNotEmpty(mapping.getDescrizione()) )) {
+					descrizioneGruppo = mapping.getDescrizione();
+				}
+				
+				check = checkCertificatiMessageSecurity(request, descrizioneGruppo, keystoreParams, 
+						sogliaWarningGiorni,
+						addCertificateDetails, separator, newLine,
+						log);
+				if(check!=null) {
+					return check;
+				}
+			}
+		}
+		
+		return null;
+	}
+		
+	
+	
+	private static CertificateCheck checkCertificatiMessageSecurity(boolean request, String descrizioneGruppo, KeystoreParams keystoreParams, 
+			int sogliaWarningGiorni,
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException {
+		
+		boolean classpathSupported = true;
+		
+		String storeDetails = null;
+		
+		if(keystoreParams!=null) {
+			try {
+				CertificateCheck check = null;
+				if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+					
+					check = CertificateUtils.checkKeyPair(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyPairPublicKeyPath(), keystoreParams.getKeyPassword(), keystoreParams.getKeyPairAlgorithm(),
+							byokUnwrapManager,
+							false, //addCertificateDetails,  
+							separator, newLine);
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = CertificateUtils.toStringKeyPair(keystoreParams, 
+								separator, newLine);
+					}
+				}
+				else if(SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+					check = CertificateUtils.checkPublicKey(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyPairAlgorithm(),
+								false, //addCertificateDetails,  
+								separator, newLine);
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = CertificateUtils.toStringPublicKey(keystoreParams, 
+								separator, newLine);
+					}
+				}
+				else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreParams.getType())) {
+					
+					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+					
+					check = CertificateUtils.checkKeystoreJWKs(classpathSupported, keystoreParams.getPath(), keystoreParams.getKeyAlias(),
+							byokUnwrapManager,
+							false, //addCertificateDetails,  
+							separator, newLine);
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = CertificateUtils.toStringTruststoreJWKs(keystoreParams, 
+								separator, newLine);
+					}
+				}
+				else {	
+					if(keystoreParams.getKeyPassword()!=null) {
+						IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
+						
+						check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(),
+								keystoreParams.getPassword(), 
+								byokUnwrapManager,
+								keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+								sogliaWarningGiorni, 
+								false, //addCertificateDetails,  
+								separator, newLine,
+								log);
+					}
+					else {
+						check = CertificateUtils.checkTrustStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(), 
+								keystoreParams.getPassword(), keystoreParams.getCrls(), keystoreParams.getOcspPolicy(),keystoreParams.getKeyAlias(),
+								sogliaWarningGiorni, 
+								false, //addCertificateDetails, 
+								separator, newLine,
+								log);
+					}
+					
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = CertificateUtils.toStringKeyStore(keystoreParams, 
+								separator, newLine);
+					}
+				}
+				
+				if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+					String id = request ? ID_CONFIGURAZIONE_RICHIESTA_MESSAGE_SECURITY : ID_CONFIGURAZIONE_RISPOSTA_MESSAGE_SECURITY;
+					if(descrizioneGruppo!=null && !org.openspcoop2.core.constants.Costanti.MAPPING_DESCRIZIONE_DEFAULT.equals(descrizioneGruppo)) {
+						id = id + " (" +descrizioneGruppo+")";
+					}
+					if(keystoreParams.getDescription()!=null && StringUtils.isNotEmpty(keystoreParams.getDescription())) {
+						id = id + " - " +keystoreParams.getDescription();
+					}
+					if(addCertificateDetails && storeDetails!=null) {
+						id = id + newLine + storeDetails;
+					}
+					check.setConfigurationId(id);	
+					
+					return check;
+				}	
+				
+			}catch(Exception t) {
+				throw new DriverConfigurazioneException(t.getMessage(),t);
+			}
+		}
+		
+		return null;
+	}
 
 	
 	private static CertificateCheck _checkConnettori(List<org.openspcoop2.core.config.Connettore> listConnettori, String tipo, int sogliaWarningGiorni, 
@@ -6417,8 +6858,12 @@ public class ConfigurazionePdDReader {
 				if(tipo==null || tipo.equalsIgnoreCase(tipoC)) {
 				
 					SSLConfig httpsProp = null;
+					Map<String,Object> dynamicMap = null;
 					try {
 						httpsProp = ConnettoreHTTPSProperties.readProperties(connettore.getProperties());
+						dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(null, null, null, 
+								log);
+						httpsProp.setDynamicMap(dynamicMap);
 					}catch(Exception t) {
 						throw new DriverConfigurazioneException(t.getMessage(),t);
 					}
@@ -6428,8 +6873,12 @@ public class ConfigurazionePdDReader {
 					
 					if(httpsProp.getKeyStoreLocation()!=null) {
 						try {
+							IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapPolicyUtilities.getBYOKUnwrapManager(httpsProp.getKeyStoreBYOKPolicy(), dynamicMap);
+							
 							check = CertificateUtils.checkKeyStore(httpsProp.getKeyStoreLocation(), classpathSupported, httpsProp.getKeyStoreType(), 
-									httpsProp.getKeyStorePassword(), httpsProp.getKeyAlias(), httpsProp.getKeyPassword(),
+									httpsProp.getKeyStorePassword(), 
+									byokUnwrapManager,
+									httpsProp.getKeyAlias(), httpsProp.getKeyPassword(),
 									sogliaWarningGiorni, 
 									false, //addCertificateDetails,  
 									separator, newLine,
@@ -6437,6 +6886,7 @@ public class ConfigurazionePdDReader {
 							
 							if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
 								storeDetails = CertificateUtils.toStringKeyStore(httpsProp.getKeyStoreLocation(), httpsProp.getKeyStoreType(),
+										httpsProp.getKeyStoreBYOKPolicy(),
 										httpsProp.getKeyAlias(), 
 										separator, newLine);
 							}
@@ -6487,7 +6937,6 @@ public class ConfigurazionePdDReader {
 		}
 		return null;
 	}
-
 
 
 
@@ -8361,9 +8810,12 @@ public class ConfigurazionePdDReader {
 		}
 	}
 
-	protected SystemProperties getSystemPropertiesPdD() throws DriverConfigurazioneException{
+	protected List<String> getEncryptedSystemPropertiesPdD() throws DriverConfigurazioneException{
+		return this.configurazionePdD.getEncryptedSystemPropertiesPdD();
+	}
+	protected SystemProperties getSystemPropertiesPdD(boolean forceDisableBYOKUse) throws DriverConfigurazioneException{
 		try{
-			return this.configurazionePdD.getSystemPropertiesPdD();
+			return this.configurazionePdD.getSystemPropertiesPdD(forceDisableBYOKUse);
 		}catch(DriverConfigurazioneNotFound dNot){
 			return null;
 		}

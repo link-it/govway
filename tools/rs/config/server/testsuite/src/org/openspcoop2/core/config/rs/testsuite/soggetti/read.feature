@@ -52,8 +52,8 @@ Scenario: Soggetti Get 200 OK (presenza di proprieta')
     When method get
     Then status 200
     And assert response.proprieta.length == 2
-    And match response.proprieta[*] contains { 'nome': 'NomeProprieta1', 'valore': 'ValoreProprieta1' }
-    And match response.proprieta[*] contains { 'nome': 'NomeProprieta2', 'valore': 'ValoreProprieta2' }
+    And match response.proprieta[*] contains { 'nome': 'NomeProprieta1', 'valore': 'ValoreProprieta1', 'encrypted': false }
+    And match response.proprieta[*] contains { 'nome': 'NomeProprieta2', 'valore': 'ValoreProprieta2', 'encrypted': false }
 
     # DELETE
 

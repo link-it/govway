@@ -23,6 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.byok.BYOKUtilities;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.rs.server.api.impl.ApiKeyInfo;
@@ -32,7 +33,7 @@ import org.openspcoop2.core.config.rs.server.model.AuthenticationApiKey;
 import org.openspcoop2.core.config.rs.server.model.DominioEnum;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import org.openspcoop2.core.config.rs.server.model.OneOfBaseCredenzialiCredenziali;
-import org.openspcoop2.core.config.rs.server.model.Proprieta4000;
+import org.openspcoop2.core.config.rs.server.model.Proprieta4000OpzioneCifratura;
 import org.openspcoop2.core.config.rs.server.model.Soggetto;
 import org.openspcoop2.core.config.rs.server.model.SoggettoItem;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -50,9 +51,12 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.pdd.core.autenticazione.ApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -68,14 +72,16 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
  * 
  */
 public class SoggettiApiHelper {
+	
+	private SoggettiApiHelper() {}
 
-	public static void validateCredentials(OneOfBaseCredenzialiCredenziali creds) throws Exception {
+	public static void validateCredentials(OneOfBaseCredenzialiCredenziali creds) {
 		if(creds!=null && ModalitaAccessoEnum.TOKEN.equals(creds.getModalitaAccesso())) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile associare credenziali di tipo '"+creds.getModalitaAccesso()+"' ad un soggetto");
 		}
 	}
 	
-	public static ApiKeyInfo createApiKey(OneOfBaseCredenzialiCredenziali creds, IDSoggetto idSoggetto, SoggettiCore soggettiCore, String protocollo) throws Exception {
+	public static ApiKeyInfo createApiKey(OneOfBaseCredenzialiCredenziali creds, IDSoggetto idSoggetto, SoggettiCore soggettiCore, String protocollo) throws DriverConfigurazioneException {
 		if(creds!=null && ModalitaAccessoEnum.API_KEY.equals(creds.getModalitaAccesso())) {
 			AuthenticationApiKey apiKey = (AuthenticationApiKey) creds;
 			boolean appId = Helper.isAppId(apiKey.isAppId());
@@ -147,7 +153,7 @@ public class SoggettiApiHelper {
 	// le informazioni di autenticazione nel caso esso sia un fruitore, noi consideriamo tutti fruitori.
 	
 	
-	public static void convert(Soggetto body, org.openspcoop2.core.registry.Soggetto ret, SoggettiEnv env, ApiKeyInfo keyInfo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverControlStationException, IllegalAccessException, InvocationTargetException, InstantiationException {
+	public static void convert(Soggetto body, org.openspcoop2.core.registry.Soggetto ret, SoggettiEnv env, ApiKeyInfo keyInfo) throws DriverRegistroServiziException, DriverControlStationException, IllegalAccessException, InvocationTargetException, InstantiationException, UtilsException {
 		
 		ret.setNome(body.getNome());
 		ret.setDescrizione(body.getDescrizione());		
@@ -159,15 +165,15 @@ public class SoggettiApiHelper {
 			if(!env.multitenant)
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Per registrare un nuovo soggetto interno passare alla modalità multitenant");
 			
-			String nome_pdd = env.pddCore.pddList(null, new ConsoleSearch(true)).stream()	
+			String nomePdd = env.pddCore.pddList(null, new ConsoleSearch(true)).stream()	
 					.filter(pdd -> PddTipologia.OPERATIVO.toString().equals(pdd.getTipo()))
 					.map( pdd -> pdd.getNome())
 					.findFirst().orElse("");
 			
-			if (nome_pdd.length() == 0) {
+			if (nomePdd.length() == 0) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Nessuna porta operativa da associare al soggetto interno");
 			}
-			ret.setPortaDominio(nome_pdd);
+			ret.setPortaDominio(nomePdd);
 		}
 		
 		if (env.soggettiCore.isSupportatoAutenticazioneSoggetti(env.tipo_protocollo) && body.getCredenziali() != null && body.getCredenziali().getModalitaAccesso() != null ) {
@@ -186,19 +192,32 @@ public class SoggettiApiHelper {
 			}
 		}
 	
+		convertPropertyList(body, ret, env);
+	}
+	
+	public static void convertPropertyList(Soggetto body, org.openspcoop2.core.registry.Soggetto ret, SoggettiEnv env) throws UtilsException {
 		ret.getProprietaList().clear();
 		if(body.getProprieta()!=null && !body.getProprieta().isEmpty()) {
-			for (Proprieta4000 proprieta : body.getProprieta()) {
+			for (Proprieta4000OpzioneCifratura proprieta : body.getProprieta()) {
 				org.openspcoop2.core.registry.Proprieta pRegistry = new org.openspcoop2.core.registry.Proprieta();
 				pRegistry.setNome(proprieta.getNome());
-				pRegistry.setValore(proprieta.getValore());
+				if(env.soggettiCore!=null && env.soggettiCore.getDriverBYOKUtilities()!=null && 
+						proprieta.isEncrypted()!=null && proprieta.isEncrypted().booleanValue()) {
+					pRegistry.setValore(env.soggettiCore.getDriverBYOKUtilities().wrap(proprieta.getValore()));
+				}
+				else {
+					if(proprieta.getValore().length()>4000) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException(CostantiControlStation.MESSAGGIO_ERRORE_VALORE_PROPRIETA_4000);
+					}
+					pRegistry.setValore(proprieta.getValore());
+				}
 				ret.addProprieta(pRegistry);
 			}
 		}
 	}
 	
 	public static final org.openspcoop2.core.registry.Soggetto soggettoApiToRegistro(Soggetto body, SoggettiEnv env, ApiKeyInfo keyInfo) 
-			throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverControlStationException, IllegalAccessException, InvocationTargetException, InstantiationException {
+			throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverControlStationException, IllegalAccessException, InvocationTargetException, InstantiationException, UtilsException {
 		
 		final org.openspcoop2.core.registry.Soggetto ret = new org.openspcoop2.core.registry.Soggetto();
 		convert(body, ret, env, keyInfo);
@@ -244,7 +263,7 @@ public class SoggettiApiHelper {
 	}
 	
 	public static final Soggetto soggettoRegistroToApi(org.openspcoop2.core.registry.Soggetto s, PddCore pddCore, SoggettiCore soggettiCore) 
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, DriverRegistroServiziException, DriverConfigurazioneException {
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, DriverConfigurazioneException {
 		Soggetto ret = new Soggetto();
 		ret.setNome(s.getNome());
 		ret.setDescrizione(s.getDescrizione());
@@ -263,18 +282,19 @@ public class SoggettiApiHelper {
 					ret.setDominio(DominioEnum.INTERNO);
 			}
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new UtilsRuntimeException(e);
 		}
 		
 		ret.setRuoli(soggettiCore.soggettiRuoliList(s.getId(), new ConsoleSearch()));
 	
 		if(s.sizeProprietaList()>0) {
 			for (org.openspcoop2.core.registry.Proprieta proprieta : s.getProprietaList()) {
-				Proprieta4000 p = new Proprieta4000();
+				Proprieta4000OpzioneCifratura p = new Proprieta4000OpzioneCifratura();
 				p.setNome(proprieta.getNome());
 				p.setValore(proprieta.getValore());
+				p.setEncrypted(BYOKUtilities.isWrappedValue(p.getValore()));
 				if(ret.getProprieta()==null) {
-					ret.setProprieta(new ArrayList<Proprieta4000>());
+					ret.setProprieta(new ArrayList<>());
 				}
 				ret.addProprietaItem(p);
 			}
@@ -318,11 +338,11 @@ public class SoggettiApiHelper {
 			int numRuoli = searchForCount.getNumEntries(Liste.SOGGETTI_RUOLI);
 			ret.setCountRuoli(numRuoli);
 	
-			String tipo_protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(s.getTipo());
-			ret.setProfilo(BaseHelper.profiloFromTipoProtocollo.get(tipo_protocollo));
+			String tipoProtocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(s.getTipo());
+			ret.setProfilo(BaseHelper.profiloFromTipoProtocollo.get(tipoProtocollo));
 		} 
 		catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new UtilsRuntimeException(e);
 		}
 		
 		return ret;

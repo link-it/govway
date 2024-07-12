@@ -29,9 +29,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.properties.PropertiesReader;
 import org.slf4j.Logger;
 
 /**
@@ -144,7 +144,8 @@ public class HSMManager {
 	}
 	private void init(Properties p, Logger log, boolean accessKeystore, String idK) throws UtilsException {
 		String prefix = HSMCostanti.PROPERTY_PREFIX + idK + ".";
-		Properties pKeystore = Utilities.readProperties(prefix, p);
+		PropertiesReader pReader = new PropertiesReader(p, true);
+		Properties pKeystore = pReader.readProperties_convertEnvProperties(prefix);
 		HSMKeystore hsmKeystore = new HSMKeystore(idK, pKeystore, log, accessKeystore);
 		
 		boolean alreadyExists = false;

@@ -2348,8 +2348,8 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			ServerProperties properties = ServerProperties.getInstance();
 
-			boolean aggiornaEsistenti = serverProperties.isUpdateInterfacciaApi_updateIfExists();
-			boolean eliminaNonPresentiNuovaInterfaccia = serverProperties.isUpdateInterfacciaApi_deleteIfNotFound();
+			boolean aggiornaEsistenti = serverProperties.isUpdateInterfacciaApiUpdateIfExists();
+			boolean eliminaNonPresentiNuovaInterfaccia = serverProperties.isUpdateInterfacciaApiDeleteIfNotFound();
 			List<IDResource> risorseEliminate = new ArrayList<IDResource>();
 			List<IDPortType> portTypeEliminati = new ArrayList<IDPortType>();
 			List<IDPortTypeAzione> operationEliminate = new ArrayList<IDPortTypeAzione>();

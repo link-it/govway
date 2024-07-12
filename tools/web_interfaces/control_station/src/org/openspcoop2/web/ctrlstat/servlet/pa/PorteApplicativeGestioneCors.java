@@ -213,6 +213,9 @@ public class PorteApplicativeGestioneCors extends Action {
 			
 			lstParam.add(new Parameter(labelPerPorta,  null));
 
+			// imposta menu' contestuale
+			porteApplicativeHelper.impostaComandiMenuContestualePA(idsogg, idAsps);
+			
 			// edit in progress
 			if (porteApplicativeHelper.isEditModeInProgress()) {
 				ServletUtils.setPageDataTitle(pd, lstParam);

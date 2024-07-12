@@ -34,7 +34,7 @@ public enum DataElementType {
 	TEXT_AREA("textarea"),TEXT_AREA_NO_EDIT("textarea-noedit"),
 	SELECT("select"), MULTI_SELECT("multi-select"),
 	TITLE("title"),SUBTITLE("subtitle"),
-	CRYPT("crypt"),
+	CRYPT("crypt"), LOCK("lock"),
 	CHECKBOX("checkbox"),
 	LINK("link"),
 	FILE("file"), MULTI_FILE("multi-file"),

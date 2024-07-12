@@ -215,17 +215,17 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 						gestioneToken.setForward(StatoFunzionalita.ABILITATO);
 						PolicyGestioneToken policyGestioneToken = TokenUtilities.convertTo(genericProperties, gestioneToken);
 						if(policyGestioneToken.isDynamicDiscovery()) {
-							httpsDynamicDiscovery = policyGestioneToken.isEndpointHttps();
+							httpsDynamicDiscovery = policyGestioneToken.isEndpointHttps(false, false);
 						}
 						if(!policyGestioneToken.isDynamicDiscovery()) {
 							if(policyGestioneToken.isValidazioneJWT() && policyGestioneToken.isValidazioneJWTLocationHttp()) {
-								httpsValidazioneJWT = policyGestioneToken.isEndpointHttps();
+								httpsValidazioneJWT = policyGestioneToken.isEndpointHttps(false, false);
 							}
 							if(policyGestioneToken.isIntrospection()) {
-								httpsIntrospection = policyGestioneToken.isEndpointHttps();
+								httpsIntrospection = policyGestioneToken.isEndpointHttps(true, false);
 							}
 							if(policyGestioneToken.isUserInfo()) {
-								httpsUserInfo = policyGestioneToken.isEndpointHttps();
+								httpsUserInfo = policyGestioneToken.isEndpointHttps(false, true);
 							}
 							if(policyGestioneToken.isValidazioneJWT()) {
 								String tokenType = policyGestioneToken.getTipoToken();

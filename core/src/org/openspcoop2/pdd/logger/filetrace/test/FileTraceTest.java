@@ -111,12 +111,16 @@ import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.resources.MapReader;
+import org.openspcoop2.utils.security.CipherInfo;
 import org.openspcoop2.utils.security.Decrypt;
+import org.openspcoop2.utils.security.DecryptOpenSSLPass;
+import org.openspcoop2.utils.security.DecryptOpenSSLPassPBKDF2;
 import org.openspcoop2.utils.security.DecryptWrapKey;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWTOptions;
 import org.openspcoop2.utils.security.JsonDecrypt;
 import org.openspcoop2.utils.security.JsonUtils;
+import org.openspcoop2.utils.security.OpenSSLEncryptionMode;
 import org.openspcoop2.utils.security.test.EncryptTest;
 import org.openspcoop2.utils.security.test.SignatureTest;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -144,16 +148,30 @@ public class FileTraceTest {
 	private static final List<String> ENCRYPT_TEST = new ArrayList<>();
 	static {
 		ENCRYPT_TEST.add("encJavaSymm");
+		ENCRYPT_TEST.add("encJavaSymmHex");
+		ENCRYPT_TEST.add("encJavaSymmInline");
+		ENCRYPT_TEST.add("encJavaSymmBase64Inline");
+		ENCRYPT_TEST.add("encJavaSymmOpenSSL");
+		ENCRYPT_TEST.add("encJavaSymmPBKDF2");
+		
 		ENCRYPT_TEST.add("encJoseSymm");
 		ENCRYPT_TEST.add("encJoseSymmDirect");
+		
+		ENCRYPT_TEST.add("encOpenSSLSymm");
+		ENCRYPT_TEST.add("encOpenSSLSymmHex");
+		ENCRYPT_TEST.add("encOpenSSLSymmPBKDF2");
+		ENCRYPT_TEST.add("encOpenSSLSymmPBKDF2Hex");
+		ENCRYPT_TEST.add("encOpenSSLSymmPBKDF2HexIter");
 		
 		ENCRYPT_TEST.add("encJavaJCEKS");
 		ENCRYPT_TEST.add("encJoseJCEKS");
 		ENCRYPT_TEST.add("encJoseJCEKSDirect");
 		
 		ENCRYPT_TEST.add("encJavaPublic");
+		ENCRYPT_TEST.add("encJavaPublicInline");
 		ENCRYPT_TEST.add("encJavaPublicWrapKey");
 		ENCRYPT_TEST.add("encJavaPublicWrapKeyHex");
+		ENCRYPT_TEST.add("encJavaPublicWrapKeyHexInline");
 		ENCRYPT_TEST.add("encJosePublic");
 		
 		ENCRYPT_TEST.add("encJavaJWKsSymm");
@@ -330,11 +348,15 @@ public class FileTraceTest {
 	
 	private static final String SECRET_KEY = "6d1d6fdeec3d92829cbadc000d3901a7"; 
 	
+	private static final String PASSWORD = "SegretoMoltoLungoE@D1ff1Cil!"; 
+	
 	public static void test(TipoPdD tipoPdD, boolean log4j, int esito, boolean requestWithPayload) throws Exception{
 		
 		File fSecret = null;
+		File fSecretHex = null;
 		File fKeystoreJCEKS = null;
 		File fPublic = null;
+		File fPublicHex = null;
 		File fPrivate = null;
 		File fJWKsSymm = null;
 		File fJWKsPub = null;
@@ -353,6 +375,14 @@ public class FileTraceTest {
 			fSecret = new File("/tmp/symmetric.secretkey");
 			FileSystemUtilities.writeFile(fSecret, SECRET_KEY.getBytes()); // test con 32
 			
+			fSecretHex = new File("/tmp/symmetric.hexSecretkey");
+			FileSystemUtilities.writeFile(fSecretHex, HexBinaryUtilities.encodeAsString(SECRET_KEY.getBytes()).getBytes()); // test con 32
+			
+			System.setProperty("SECRET_KEY_JAVA_SYMM_INLINE", SECRET_KEY);
+			System.setProperty("SECRET_KEY_JAVA_SYMM_BASE64_INLINE", Base64Utilities.encodeAsString(SECRET_KEY.getBytes()));
+			
+			System.setProperty("PASSWORD_OPENSSL_TEST", PASSWORD);
+			
 			try( InputStream isKeystoreJCEKS = EncryptTest.class.getResourceAsStream("/org/openspcoop2/utils/security/test/example.jceks")){
 				byte [] b = Utilities.getAsByteArray(isKeystoreJCEKS);
 				fKeystoreJCEKS = new File("/tmp/keystore.jceks");
@@ -362,6 +392,12 @@ public class FileTraceTest {
 			byte [] publicKey = Utilities.getAsByteArray(KeystoreTest.class.getResourceAsStream(KeystoreTest.PREFIX+"client-test.rsa.publicKey.pem"));
 			fPublic = new File("/tmp/publicKey.pem");
 			FileSystemUtilities.writeFile(fPublic, publicKey);
+			
+			fPublicHex = new File("/tmp/publicKeyHex.pem");
+			FileSystemUtilities.writeFile(fPublicHex, HexBinaryUtilities.encodeAsString(publicKey).getBytes());
+			
+			System.setProperty("PUBLIC_KEY_JAVA_INLINE", new String(publicKey));
+			System.setProperty("PUBLIC_KEY_JAVA_BASE64_INLINE", Base64Utilities.encodeAsString(publicKey));
 			
 			byte [] privateKey = Utilities.getAsByteArray(KeystoreTest.class.getResourceAsStream(KeystoreTest.PREFIX+"client-test.rsa.pkcs8.privateKey.der"));
 			fPrivate = new File("/tmp/privateKey.pem");
@@ -425,10 +461,12 @@ public class FileTraceTest {
 			Security.removeProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
 			
 			FileSystemUtilities.deleteFile(fSecret);
+			FileSystemUtilities.deleteFile(fSecretHex);
 			
 			FileSystemUtilities.deleteFile(fKeystoreJCEKS);
 			
 			FileSystemUtilities.deleteFile(fPublic);
+			FileSystemUtilities.deleteFile(fPublicHex);
 			FileSystemUtilities.deleteFile(fPrivate);
 			
 			FileSystemUtilities.deleteFile(fJWKsSymm);
@@ -1536,7 +1574,7 @@ public class FileTraceTest {
 	}
 	private static String getExpectedEncryptContent(String tipoTest, boolean requestWithPayload) {
 		
-		if("encJavaPublic".equals(tipoTest)) {
+		if("encJavaPublic".equals(tipoTest) || "encJavaPublicInline".equals(tipoTest)) {
 			// supporta solo una stringa corta di dati. Se troppo lunga si ottiene l'errore: 'too much data for RSA block'
 			return tipoTest+"|informazioneCorta";
 		}
@@ -1549,11 +1587,25 @@ public class FileTraceTest {
 		}
 	}
 	private static void verificaExpectedEncryptContent(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException, SecurityException, FileNotFoundException {
-		if("encJavaSymm".equals(tipoTest)) {
+		if("encJavaSymm".equals(tipoTest) || "encJavaSymmHex".equals(tipoTest) || "encJavaSymmInline".equals(tipoTest) || "encJavaSymmBase64Inline".equals(tipoTest)) {
 			verificaExpectedEncryptContentEncJavaSymm(tipoTest, requestWithPayload, trovato);
+		}
+		else if("encJavaSymmOpenSSL".equals(tipoTest)) {
+			verificaExpectedEncryptContentEncJavaSymmOpenSSL(tipoTest, requestWithPayload, trovato);
+		}
+		else if("encJavaSymmPBKDF2".equals(tipoTest)) {
+			verificaExpectedEncryptContentEncJavaSymmOpenSSLPBKDF2(tipoTest, requestWithPayload, trovato);
 		}
 		else if("encJoseSymm".equals(tipoTest) || "encJoseSymmDirect".equals(tipoTest)) {
 			verificaExpectedEncryptContentEncJose(tipoTest, requestWithPayload, trovato);
+		}
+		
+		else if("encOpenSSLSymm".equals(tipoTest) || "encOpenSSLSymmHex".equals(tipoTest)) {
+			verificaExpectedEncryptContentEncOpenSSL(tipoTest, requestWithPayload, trovato);
+		}
+		
+		else if("encOpenSSLSymmPBKDF2".equals(tipoTest) || "encOpenSSLSymmPBKDF2Hex".equals(tipoTest) || "encOpenSSLSymmPBKDF2HexIter".equals(tipoTest)) {
+			verificaExpectedEncryptContentEncOpenSSLPBKDF2(tipoTest, requestWithPayload, trovato);
 		}
 		
 		else if("encJavaJCEKS".equals(tipoTest)) {
@@ -1563,10 +1615,10 @@ public class FileTraceTest {
 			verificaExpectedEncryptContentEncJose(tipoTest, requestWithPayload, trovato);
 		}
 		
-		else if("encJavaPublic".equals(tipoTest)) {
+		else if("encJavaPublic".equals(tipoTest) || "encJavaPublicInline".equals(tipoTest)) {
 			verificaExpectedEncryptContentEncJavaPublic(tipoTest, requestWithPayload, trovato);
 		}
-		else if("encJavaPublicWrapKey".equals(tipoTest) || "encJavaPublicWrapKeyHex".equals(tipoTest)) {
+		else if("encJavaPublicWrapKey".equals(tipoTest) || "encJavaPublicWrapKeyHex".equals(tipoTest) || "encJavaPublicWrapKeyHexInline".equals(tipoTest)) {
 			verificaExpectedEncryptContentEncJavaPublicWrapKey(tipoTest, requestWithPayload, trovato);
 		}
 		else if("encJosePublic".equals(tipoTest)) {
@@ -1600,6 +1652,38 @@ public class FileTraceTest {
 		byte[]dataEncrypted = Base64Utilities.decode(tmp[1]);
 		Decrypt d = new Decrypt(SECRET_KEY.getBytes(), "AES", iv);
 		String decrypted = new String(d.decrypt(dataEncrypted, "AES/CBC/PKCS5Padding"));
+		
+		verifica(tipoTest, requestWithPayload, decrypted);
+	}
+	private static void verificaExpectedEncryptContentEncJavaSymmOpenSSL(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException {
+		String [] tmp = trovato.split("\\.");
+		if(tmp==null || tmp.length!=2) {
+			throw new UtilsException("Atteso formato iv.secret (base64)");
+		}
+		byte[]iv = Base64Utilities.decode(tmp[0]);
+		byte[]dataEncrypted = Base64Utilities.decode(tmp[1]);
+		
+		CipherInfo c = DecryptOpenSSLPass.buildCipherInfo(dataEncrypted, PASSWORD, null, OpenSSLEncryptionMode.AES_256_CBC);
+		
+		byte[]dataEncryptedWithoutSalt = DecryptOpenSSLPass.extractCipherBytes(dataEncrypted);
+		Decrypt d = new Decrypt(c.getEncodedKey(), "AES", iv);
+		String decrypted = new String(d.decrypt(dataEncryptedWithoutSalt, "AES/CBC/PKCS5Padding"));
+		
+		verifica(tipoTest, requestWithPayload, decrypted);
+	}
+	private static void verificaExpectedEncryptContentEncJavaSymmOpenSSLPBKDF2(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException {
+		String [] tmp = trovato.split("\\.");
+		if(tmp==null || tmp.length!=2) {
+			throw new UtilsException("Atteso formato iv.secret (base64)");
+		}
+		byte[]iv = Base64Utilities.decode(tmp[0]);
+		byte[]dataEncrypted = Base64Utilities.decode(tmp[1]);
+		
+		CipherInfo c = DecryptOpenSSLPassPBKDF2.buildCipherInfo(dataEncrypted, PASSWORD, 3000, OpenSSLEncryptionMode.AES_256_CBC);
+		
+		byte[]dataEncryptedWithoutSalt = DecryptOpenSSLPass.extractCipherBytes(dataEncrypted);
+		Decrypt d = new Decrypt(c.getEncodedKey(), "AES", iv);
+		String decrypted = new String(d.decrypt(dataEncryptedWithoutSalt, "AES/CBC/PKCS5Padding"));
 		
 		verifica(tipoTest, requestWithPayload, decrypted);
 	}
@@ -1732,6 +1816,47 @@ public class FileTraceTest {
 		verifica(tipoTest, requestWithPayload, 
 				"encJoseSymm".equals(tipoTest) ? "encJoseSymm|"+decrypted : decrypted);
 	}
+	private static void verificaExpectedEncryptContentEncOpenSSL(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException {
+		boolean base64 = false;
+		if("encOpenSSLSymm".equals(tipoTest) ) {
+			base64 = true;
+		}
+		DecryptOpenSSLPass d = new DecryptOpenSSLPass(PASSWORD, OpenSSLEncryptionMode.AES_256_CBC);
+		String decrypted = null;
+		if(base64) {
+			decrypted = new String(d.decryptBase64(trovato));
+		}
+		else {
+			decrypted = new String(d.decryptHexBinary(trovato));
+		}
+		
+		verifica(tipoTest, requestWithPayload, decrypted);
+	}
+	private static void verificaExpectedEncryptContentEncOpenSSLPBKDF2(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException {
+		boolean base64 = false;
+		if("encOpenSSLSymmPBKDF2".equals(tipoTest) ) {
+			base64 = true;
+		}
+		DecryptOpenSSLPassPBKDF2 d = null;
+		if("encOpenSSLSymmPBKDF2HexIter".equals(tipoTest) ) {
+			d = new DecryptOpenSSLPassPBKDF2(PASSWORD, 65535, OpenSSLEncryptionMode.AES_192_CBC);
+		}
+		else if("encOpenSSLSymmPBKDF2Hex".equals(tipoTest) ) {
+			d = new DecryptOpenSSLPassPBKDF2(PASSWORD, OpenSSLEncryptionMode.AES_128_CBC);
+		}
+		else {
+			d = new DecryptOpenSSLPassPBKDF2(PASSWORD, OpenSSLEncryptionMode.AES_256_CBC);
+		}
+		String decrypted = null;
+		if(base64) {
+			decrypted = new String(d.decryptBase64(trovato));
+		}
+		else {			
+			decrypted = new String(d.decryptHexBinary(trovato));
+		}
+		
+		verifica(tipoTest, requestWithPayload, decrypted);
+	}
 	
 	private static void verificaExpectedEncryptContentEncJavaJCEKS(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException, SecurityException {
 		String [] tmp = trovato.split("\\.");
@@ -1763,7 +1888,7 @@ public class FileTraceTest {
 		
 		boolean base64 = true;
 		String mode = "base64";
-		if("encJavaPublicWrapKeyHex".equals(tipoTest)) {
+		if("encJavaPublicWrapKeyHex".equals(tipoTest) || "encJavaPublicWrapKeyHexInline".equals(tipoTest)) {
 			base64 = false;
 			mode = "hex";
 		}

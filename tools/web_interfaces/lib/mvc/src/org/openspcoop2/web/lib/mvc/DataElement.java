@@ -32,6 +32,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.utils.UtilsRuntimeException;
 
 
 
@@ -132,6 +133,10 @@ public class DataElement implements Serializable {
 	
 	private Dialog dialog = null;
 	
+	private DataElementConfirm confirm = null;
+	
+	private boolean contextMenu = false;
+	
 	public String getIdToRemove() {
 		return this.idToRemove;
 	}
@@ -165,6 +170,7 @@ public class DataElement implements Serializable {
 		this.labelRight = null;
 		this.labelLink = null;
 		this.dataAttributes = new HashMap<>();
+		this.contextMenu = false;
 	}
 
 	public void setId(int i) {
@@ -176,6 +182,9 @@ public class DataElement implements Serializable {
 
 	public void setLabel(String s) {
 		this.label = s;
+	}
+	public String getOriginalLabel() {
+		return DataElement.getEscapedValue(DataElement.checkNull(this.label));
 	}
 	public String getLabel() {
 		return this.getLabel(true);
@@ -259,9 +268,39 @@ public class DataElement implements Serializable {
 		if(DataElementType.LINK.toString().equals(s)) {
 			this.styleClass = null;
 		}
+		// Carico la configurazione di default per il tipo password
+		if(DataElementType.LOCK.toString().equals(s)) {
+			throw new UtilsRuntimeException("Use method setLock(String value) instead of setType(DataElementType.LOCK)");
+		}
 	}
 	public String getType() {
 		return DataElement.checkNull(this.type);
+	}
+	
+	public void setLock(String value, boolean readOnly, boolean visualizzaInformazioniCifrate, boolean visualizzaIconaLucchetto, String warningMessage, String decoderServletName,Parameter ... parameter) {
+		this.setValue(value);
+		this.type = DataElementType.LOCK.toString();
+		this.password = new DataElementPassword();
+		this.password.setLockReadOnly(readOnly);
+		this.password.setLockVisualizzaInformazioniCifrate(visualizzaInformazioniCifrate);
+		this.password.setLockWarningMessage(warningMessage);
+		this.password.setLockVisualizzaIconaLucchetto(visualizzaIconaLucchetto); 
+		this.setUrl(decoderServletName, parameter);
+	}
+	
+	public void forceLockVisualizzazioneInputUtente(boolean isWrapped, boolean visualizzaInformazioniCifrate) {
+		if(this.password!=null) {
+			if(isWrapped) {
+				this.password.setLockForzaVisualizzazioneInputUtente(false);
+				this.password.setLockVisualizzaInformazioniCifrate(visualizzaInformazioniCifrate);
+				this.password.setLockUtilizzaInputPassword(false);
+			}
+			else {
+				this.password.setLockForzaVisualizzazioneInputUtente(true);
+				this.password.setLockVisualizzaInformazioniCifrate(false);
+				this.password.setLockUtilizzaInputPassword(false);
+			}
+		}
 	}
 	
 	public boolean isRequired() {
@@ -1050,4 +1089,26 @@ public class DataElement implements Serializable {
 		this.addStatus(tooltip, value, Costanti.ICON_PERSON);
 	}
 	
+	public DataElementConfirm getConfirm() {
+		return this.confirm;
+	}
+
+	public void setConfirm(DataElementConfirm confirm) {
+		this.confirm = confirm;
+	}
+	
+	public void setConfirm(String titolo, String messaggio, String testoBottoneAzione) {
+		this.confirm = new DataElementConfirm();
+		this.confirm.setTitolo(titolo);
+		this.confirm.setBody(messaggio);
+		this.confirm.setAzione(testoBottoneAzione);
+	}
+
+	public boolean isContextMenu() {
+		return this.contextMenu;
+	}
+
+	public void setContextMenu(boolean contextMenu) {
+		this.contextMenu = contextMenu;
+	}
 }

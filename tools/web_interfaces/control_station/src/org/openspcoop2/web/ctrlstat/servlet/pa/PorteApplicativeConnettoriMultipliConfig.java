@@ -341,6 +341,9 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);
+			
+			// imposta menu' contestuale
+			porteApplicativeHelper.impostaComandiMenuContestualePA(asps, protocollo);
 
 			if(	porteApplicativeHelper.isEditModeInProgress()){
 

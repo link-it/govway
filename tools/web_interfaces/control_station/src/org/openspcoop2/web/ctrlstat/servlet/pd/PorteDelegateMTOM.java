@@ -200,6 +200,9 @@ public class PorteDelegateMTOM extends Action {
 			
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);
+			
+			// imposto menu' contestuale
+			porteDelegateHelper.impostaComandiMenuContestualePD(idsogg, idAsps, idFruizione);
 
 			Parameter[] urlParms = { pId,pIdSoggetto,pIdAsps,pIdFrizione };
 			

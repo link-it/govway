@@ -658,12 +658,6 @@ function inizializzaSelectFiltro(){
 	}
 }
 
-function mostraDataElementInfoModal(title,body){
-	$("#dataElementInfoModal").prev().children('span').text(title);
-	$("#dataElementInfoModalBody").html(body);
-	$("#dataElementInfoModal").dialog("open");
-}
-
 	$(document).ready(function(){
 		// pannello ricerca che si apre e chiude iconaPanelLista
 		$("#panelListaRicercaHeader").click(function(){
@@ -724,9 +718,6 @@ $(document).ready(function(){
  			<img src="images/tema_link/alert_orange.png" alt="Attenzione"/>
  			<span>&Egrave; necessario selezionare almeno 1 elemento.</span>
  		</p>
-	</div>
-	<div id="dataElementInfoModal" title="Info">
-		<div id="dataElementInfoModalBody" class="contenutoModal"></div>
 	</div>
 <jsp:include page="/jsplib/conferma.jsp" flush="true" />
 </body>

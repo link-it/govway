@@ -24,12 +24,11 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.cxf.rs.security.jose.common.JoseConstants;
-import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
+import org.openspcoop2.security.message.constants.SecurityConstants;
 
 /**     
  * EncryptSenderProvider
@@ -52,13 +51,12 @@ public class EncryptSenderProvider extends TrustStoreSecurityProvider {
 		Properties defaultP = MultiPropertiesUtilities.getDefaultProperties(mapProperties);
 		
 		Properties p = mapProperties.get("encryptionPropRefId");
-		if(p!=null && p.size()>0) {
-			if(!p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE) && !p.containsKey(JoseConstants.RSSEC_KEY_STORE_JWKSET)) {
-				// altrimenti è stato fatto inject del keystore
-				String file = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
-				if(file!=null && StringUtils.isNotEmpty(file)) {
-					InputValidationUtils.validateTextAreaInput(file, "Encryption - KeyStore - File");
-				}
+		if(p!=null && p.size()>0 &&
+			!p.containsKey(SecurityConstants.JOSE_KEYSTORE) && !p.containsKey(SecurityConstants.JOSE_KEYSTORE_JWKSET)) {
+			// altrimenti è stato fatto inject del keystore
+			String file = p.getProperty(SecurityConstants.JOSE_KEYSTORE_FILE);
+			if(file!=null && StringUtils.isNotEmpty(file)) {
+				InputValidationUtils.validateTextAreaInput(file, "Encryption - KeyStore - File");
 			}
 		}
 		

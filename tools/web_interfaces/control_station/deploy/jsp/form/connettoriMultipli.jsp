@@ -1448,8 +1448,8 @@ function inizializzaSelectFiltro(){
 													
 													var htmlDiv = '<div id="tabsNavDiv" class="tabsNavDiv"></div>';
 													
-													var htmlNext = "<a id='nextTab' href='#' class='next-tab mover' rel='next'><i class=\"material-icons md-40 line-height-06\">chevron_right</i></a>";
-													var htmlPrev = "<a id='prevTab' href='#' class='prev-tab mover' rel='prev'><i class=\"material-icons md-40 line-height-06\">chevron_left</i></a>";
+													var htmlNext = "<a id='nextTab' href='#' class='next-tab mover' rel='next'><i class=\"material-icons md-40 line-height-06\"><%= Costanti.ICON_CHEVRON_RIGHT %></i></a>";
+													var htmlPrev = "<a id='prevTab' href='#' class='prev-tab mover' rel='prev'><i class=\"material-icons md-40 line-height-06\"><%= Costanti.ICON_CHEVRON_LEFT %></i></a>";
 													
 													// 1. attacco il div contentitore
 													$tabs.prepend(htmlDiv);

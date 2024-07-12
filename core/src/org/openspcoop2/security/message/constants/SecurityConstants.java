@@ -26,12 +26,14 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.cxf.rs.security.jose.common.JoseConstants;
 import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.apache.wss4j.common.ConfigurationConstants;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.dom.handler.WSHandlerConstants;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.CostantiLabel;
+import org.openspcoop2.security.keystore.MerlinProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.digest.Constants;
 
@@ -128,6 +130,13 @@ public class SecurityConstants {
     public static final String PART_ELEMENT = "Element";
     public static final String ATTACHMENT_INDEX_ALL =  "*";
     public static final String SOAP_NAMESPACE_TEMPLATE =  "SOAP_TEMPLATE_NS";
+    
+    public static final String SUFFIX_SSL = ".ssl";
+    public static final String SUFFIX_ALGORITHM = ".algorithm";
+    public static final String SUFFIX_PUBLIC_KEY = ".public";
+    public static final String SUFFIX_CRL = ".crl";
+    public static final String SUFFIX_OCSP = ".ocsp";
+    public static final String SUFFIX_BYOK = MerlinProvider.SUFFIX_BYOK;
     
     public static final String MODE_JSON = "json";
     public static final String MODE_COMPACT = "compact";
@@ -274,6 +283,43 @@ public class SecurityConstants {
     public static final String SAML_TOKEN_SOAP_FAULT = "SAMLTokenSOAPFault";
     public static final String SAML_TOKEN_PROBLEM_DETAILS = "SAMLTokenProblemDetails"; 
     
+    public static final String JOSE_KEYSTORE = RSSecurityConstants.RSSEC_KEY_STORE;
+    public static final String JOSE_KEYSTORE_JWKSET = JoseConstants.RSSEC_KEY_STORE_JWKSET;
+    public static final String JOSE_KEYSTORE_TYPE = RSSecurityConstants.RSSEC_KEY_STORE_TYPE;
+    public static final String JOSE_KEYSTORE_FILE = RSSecurityConstants.RSSEC_KEY_STORE_FILE;
+    public static final String JOSE_KEYSTORE_KEY_ALGORITHM = RSSecurityConstants.RSSEC_KEY_STORE_FILE+SUFFIX_ALGORITHM;
+    public static final String JOSE_KEYSTORE_PUBLIC_KEY = RSSecurityConstants.RSSEC_KEY_STORE_FILE+SUFFIX_PUBLIC_KEY;
+    public static final String JOSE_KEYSTORE_PSWD = RSSecurityConstants.RSSEC_KEY_STORE_PSWD;
+    public static final String JOSE_KEYSTORE_KEY_ALIAS = RSSecurityConstants.RSSEC_KEY_STORE_ALIAS;
+    public static final String JOSE_KEYSTORE_KEY_PSWD = RSSecurityConstants.RSSEC_KEY_PSWD;
+    public static final String JOSE_KEYSTORE_CRL = RSSecurityConstants.RSSEC_KEY_STORE+SUFFIX_CRL;
+    public static final String JOSE_KEYSTORE_OCSP_POLICY = RSSecurityConstants.RSSEC_KEY_STORE+SUFFIX_OCSP;
+    public static final String JOSE_KEYSTORE_BYOK_POLICY = RSSecurityConstants.RSSEC_KEY_STORE_FILE+SecurityConstants.SUFFIX_BYOK;
+    
+    public static final String JOSE_TRUSTSTORE_SSL_TYPE = RSSecurityConstants.RSSEC_KEY_STORE_TYPE+SUFFIX_SSL;
+    public static final String JOSE_TRUSTSTORE_SSL_FILE = RSSecurityConstants.RSSEC_KEY_STORE_FILE+SUFFIX_SSL;
+    public static final String JOSE_TRUSTSTORE_SSL_PSWD = RSSecurityConstants.RSSEC_KEY_STORE_PSWD+SUFFIX_SSL;
+    public static final String JOSE_TRUSTSTORE_SSL_CRL =  RSSecurityConstants.RSSEC_KEY_STORE+SUFFIX_SSL+SUFFIX_CRL;
+    public static final String JOSE_TRUSTSTORE_SSL_OCSP =  RSSecurityConstants.RSSEC_KEY_STORE+SUFFIX_SSL+SUFFIX_OCSP;
+	public static final String JOSE_TRUSTSTORE_SSL_TRUSTALL = RSSecurityConstants.RSSEC_KEY_STORE+".trustAll"+SUFFIX_SSL;
+	public static final String JOSE_TRUSTSTORE_SSL_CONNECTION_TIMEOUT = RSSecurityConstants.RSSEC_KEY_STORE+SUFFIX_SSL+".connectionTimeout";
+	public static final String JOSE_TRUSTSTORE_SSL_READ_TIMEOUT = RSSecurityConstants.RSSEC_KEY_STORE+SUFFIX_SSL+".readTimeout";
+	public static final String JOSE_TRUSTSTORE_SSL_HOSTNAME_VERIFIER = RSSecurityConstants.RSSEC_KEY_STORE+SUFFIX_SSL+".hostNameVerifier";
+	
+	private static final String JOSE_FORWARD_PROXY_PREFIX = "rs.security.forwardProxy.";
+	public static final String JOSE_FORWARD_PROXY_ENDPOINT = JOSE_FORWARD_PROXY_PREFIX+"endpoint";
+	public static final String JOSE_FORWARD_PROXY_HEADER = JOSE_FORWARD_PROXY_PREFIX+"header";
+	public static final String JOSE_FORWARD_PROXY_HEADER_BASE64 = JOSE_FORWARD_PROXY_PREFIX+"header.base64";
+	public static final String JOSE_FORWARD_PROXY_QUERY = JOSE_FORWARD_PROXY_PREFIX+"query";
+	public static final String JOSE_FORWARD_PROXY_QUERY_BASE64 = JOSE_FORWARD_PROXY_PREFIX+"query.base64";
+	
+	private static final String JOSE_PROXY_PREFIX = "rs.security.proxy.";
+	public static final String JOSE_PROXY_TYPE = JOSE_PROXY_PREFIX+"type";
+	public static final String JOSE_PROXY_HOSTNAME = JOSE_PROXY_PREFIX+"hostname";
+	public static final String JOSE_PROXY_PORT = JOSE_PROXY_PREFIX+"port";
+	public static final String JOSE_PROXY_USERNAME = JOSE_PROXY_PREFIX+"username";
+	public static final String JOSE_PROXY_PASSWORD = JOSE_PROXY_PREFIX+"password";
+    
     public static final String JOSE_KID = "joseKeyId";
     public static final String JOSE_KID_TRUE = "true";
     public static final String JOSE_KID_FALSE = "false";
@@ -317,11 +363,11 @@ public class SecurityConstants {
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_CRL =  "joseUseHeaders.truststore.crl";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_OCSP =  "joseUseHeaders.truststore.ocsp";
     
-    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_TYPE = RSSecurityConstants.RSSEC_KEY_STORE_TYPE+".ssl";
-    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_FILE = RSSecurityConstants.RSSEC_KEY_STORE_FILE+".ssl";
-    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_PASSWORD = RSSecurityConstants.RSSEC_KEY_STORE_PSWD+".ssl";
-    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_CRL =  RSSecurityConstants.RSSEC_KEY_STORE+".ssl.crl";
-    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_OCSP =  RSSecurityConstants.RSSEC_KEY_STORE+".ssl.ocsp";
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_TYPE = JOSE_TRUSTSTORE_SSL_TYPE;
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_FILE = JOSE_TRUSTSTORE_SSL_FILE;
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_PASSWORD = JOSE_TRUSTSTORE_SSL_PSWD;
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_CRL = JOSE_TRUSTSTORE_SSL_CRL;
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_OCSP = JOSE_TRUSTSTORE_SSL_OCSP;
     
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_REMOTE_STORE_PROVIDER = "joseUseHeaders.truststore.remoteStoreProvider";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_REMOTE_STORE_KEY_TYPE = "joseUseHeaders.truststore.remoteStoreKeyType";
@@ -335,6 +381,8 @@ public class SecurityConstants {
     public static final String JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PW_SUFFIX_ALIAS = ".alias";
     public static final String JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PW_SUFFIX_PW = ".password";
         
+    
+    
     public static final String TIMESTAMP_ACTION = ConfigurationConstants.TIMESTAMP;
     public static final String TIMESTAMP_TTL = ConfigurationConstants.TTL_TIMESTAMP;
     
@@ -570,12 +618,14 @@ public class SecurityConstants {
     public static final String SECRETKEYSTORE_FILE = "secretkeystoreFile";
     public static final String SECRETKEYSTORE_PASSWORD = "secretkeystorePassword";
     public static final String SECRETKEYSTORE_PRIVATE_KEY_PASSWORD = "secretkeystorePrivateKeyPassword";
+    public static final String SECRETKEYSTORE_BYOK_POLICY = "secretkeystoreByokPolicy";
     
     public static final String KEYSTORE_TYPE = "keystoreType";
     public static final String KEYSTORE_FILE = "keystoreFile";
     public static final String KEYSTORE_PASSWORD = "keystorePassword";
     public static final String KEYSTORE_PRIVATE_KEY_PASSWORD = "keystorePrivateKeyPassword";
     public static final String KEYSTORE_OCSP_POLICY = "keystoreOcspPolicy";
+    public static final String KEYSTORE_BYOK_POLICY = "keystoreByokPolicy";
      
     public static final String TRUSTSTORE_TYPE = "truststoreType";
     public static final String TRUSTSTORE_FILE = "truststoreFile";

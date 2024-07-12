@@ -1,0 +1,221 @@
+<project name="govway_cliVault" basedir="." default="build_cliVault">
+
+	<import file="local_env.xml" />
+	<import file="${openspcoop2}/ant/commons/as-check.xml" />
+	<import file="${openspcoop2}/ant/commons/git-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+	<import file="${openspcoop2}/ant/commons/utils.xml" />
+	
+	<!-- directory root -->
+	<property name="gitrepo_root" location="${openspcoop2}" />
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${openspcoop2.lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<!-- Properties -->
+	<property name="src_cliVault" location="src" />
+	<property name="build_cliVault" location="build" />
+	<property name="dist_cliVault" location="dist" />
+	<property name="doc_cliVault" location="doc" />
+	<property name="distrib_cliVault" location="distrib/govway-vault-cli" />
+	<property name="properties_cliVault" location="properties" />
+	<property name="script_cliVault" location="script" />
+
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/*README"/>
+			<exclude name="*.userlibraries"/>
+			<include name="commons/*"/>
+			<include name="cxf/*"/>
+			<include name="saaj/*"/>
+			<include name="jax/jaxb*"/>
+			<include name="javax/*"/>
+			<include name="log/*"/>
+			<include name="security/*"/>
+			<include name="shared/*"/>
+			<include name="soapbox/*"/>
+			<include name="spring/*"/>
+			<include name="spring-security/*"/>
+			<include name="stub/*"/>
+			<include name="testsuite/spring-jdbc-5.3.33.jar"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${openspcoop2.dist}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+
+
+	<!-- Clean -->
+	<target name="clean_cliVault">
+		<delete dir="${build_cliVault}" />
+		<delete dir="${dist_cliVault}" />
+		<delete dir="${distrib_cliVault}" />
+	</target>
+
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile_cliVault">
+		<mkdir dir="${build_cliVault}" />
+		<mkdir dir="${dist_cliVault}" />
+	</target>	
+
+
+	<target name="compile_cliVault" depends="init_compile_cliVault">
+
+		<!-- Info git -->
+		<runtarget target="checkgit" />
+		<!-- <echo message="GIT:[${jgit.jar.presente}]"/> -->
+				
+		<!-- org.openspcoop2.pdd.monitor.cli -->
+		<var name="packagesCompiled" value="org.openspcoop2.pdd.config.vault.cli" />
+		<antcall target="compile_src_openspcoop2">
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_cliVault}"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="cli-vault"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.pdd.config.vault.cli"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+			<param name="dist" value="${dist_cliVault}"/>
+			<param name="build" value="${build_cliVault}"/>
+		</antcall>
+				
+		<!-- Jar Complessivo -->
+		<!--
+		<antcall target="jar_2_jar_openspcoop2">
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="monitor-cli"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+		</antcall>
+		-->
+				
+		<!-- API -->
+		<if>
+			<istrue value="${buildAPI}"/>
+			<then>
+				<mkdir dir="${doc_cliVault}"/>
+			</then>
+		</if>
+		<antcall target="compile_api_openspcoop2">
+			<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
+			<param name="compile_src_openspcoop2.API_NAME" value="cli-vault"/>
+			<param name="compile_src_openspcoop2.API_DIR" value="${doc_cliVault}/api"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+			<param name="src" value="${src_cliVault}"/>
+			<param name="src" value="${src_cliVault}"/>
+			<param name="doc" value="${doc_cliVault}"/>
+			<param name="dist" value="${dist_cliVault}"/>
+		</antcall>
+			
+	</target>
+	<target name="build_cliVault" depends="compile_cliVault" />
+	
+	<target name="distrib_cliVault" depends="build_cliVault">
+		<mkdir dir="${distrib_cliVault}"/>
+		<mkdir dir="${distrib_cliVault}/jdbc"/>
+		<mkdir dir="${distrib_cliVault}/log"/>
+		<mkdir dir="${distrib_cliVault}/properties"/>
+		<copy todir="${distrib_cliVault}/properties">
+			<fileset dir="${properties_cliVault}" includes="*"/>
+		</copy>
+		<mkdir dir="${distrib_cliVault}/lib"/>
+		<copy todir="${distrib_cliVault}/lib">
+			<fileset dir="${dist_cliVault}" includes="openspcoop2_*.jar"/>
+		</copy>
+		<copy todir="${distrib_cliVault}/lib">
+			<fileset dir="${openspcoop2.dist}" includes="openspcoop2_*.jar"/>
+			<fileset dir="${openspcoop2.protocollo.trasparente.dist}" includes="openspcoop2_*.jar"/>
+			<fileset dir="${openspcoop2.protocollo.spcoop.dist}" includes="openspcoop2_*.jar"/>
+			<fileset dir="${openspcoop2.protocollo.modipa.dist}" includes="openspcoop2_*.jar"/>
+			<fileset dir="${openspcoop2.protocollo.sdi.dist}" includes="openspcoop2_*.jar"/>
+		</copy>
+		<copy todir="${distrib_cliVault}/lib">
+			<fileset dir="${openspcoop2.lib}/log" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/cxf" includes="cxf-rt-rs-security-jose-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/cxf" includes="cxf-rt-rs-json-basic-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/cxf" includes="cxf-core-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/cxf" includes="cxf-rt-security-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/cxf" includes="jakarta.ws.rs-api-2.1.6.jar"/>
+			<fileset dir="${openspcoop2.lib}/cxf" includes="javax.ws.rs-api-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/saaj" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/commons" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/spring" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/swagger" includes="*.jar" excludes="swagger-ui-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/openapi4j" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/jackson" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/javax" includes="javax.servlet-api-4.0.1.jar"/>
+			<fileset dir="${openspcoop2.lib}/jax" includes="jaxb-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/json" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/security" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="xercesImpl-2.12.2.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="jakarta.activation-1.2.2.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="joda-time-2.12.0.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="wsdl4j-1.6.3.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="snakeyaml-1.33-gov4j-1.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="freemarker-2.3.31.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="velocity-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/testsuite" includes="spring-jdbc-5.3.33.jar"/>
+			<fileset dir="${openspcoop2.lib}/wss4j" includes="wss4j-ws-security-common-2.4.1.jar"/>
+		</copy>
+		
+		<antcall target="-distrib_script_cliVault">
+			<param name="NomeScript" value="encrypt"/>
+			<param name="TipoOperazione" value="encrypt"/>
+                </antcall>
+		<antcall target="-distrib_script_cliVault">
+			<param name="NomeScript" value="decrypt"/>
+			<param name="TipoOperazione" value="decrypt"/>
+                </antcall>
+		<antcall target="-distrib_script_cliVault">
+			<param name="NomeScript" value="update"/>
+			<param name="TipoOperazione" value="update_config"/>
+                </antcall>
+	</target>
+
+	<target name="-distrib_script_cliVault">
+
+		<copy file="${script_cliVault}/run.sh" tofile="${distrib_cliVault}/${NomeScript}.sh"/>
+		<antcall target="replace_token">
+			<param name="file" value="${distrib_cliVault}/${NomeScript}.sh"/>
+			<param name="token" value="TIPO_OPERAZIONE"/>
+			<param name="value" value="${TipoOperazione}"/>
+                </antcall>
+		<antcall target="replace_token">
+			<param name="file" value="${distrib_cliVault}/${NomeScript}.sh"/>
+			<param name="token" value="NOME_SCRIPT"/>
+			<param name="value" value="${NomeScript}"/>
+                </antcall>
+		<chmod file="${distrib_cliVault}/${NomeScript}.sh" perm="a+x"/>
+
+		<copy file="${script_cliVault}/run.cmd" tofile="${distrib_cliVault}/${NomeScript}.cmd"/>
+		<antcall target="replace_token">
+			<param name="file" value="${distrib_cliVault}/${NomeScript}.cmd"/>
+			<param name="token" value="TIPO_OPERAZIONE"/>
+			<param name="value" value="${TipoOperazione}"/>
+                </antcall>
+		<antcall target="replace_token">
+			<param name="file" value="${distrib_cliVault}/${NomeScript}.cmd"/>
+			<param name="token" value="NOME_SCRIPT"/>
+			<param name="value" value="${NomeScript}"/>
+                </antcall>
+		<chmod file="${distrib_cliVault}/${NomeScript}.cmd" perm="a+x"/>
+
+
+	</target>
+	
+		
+	<!-- alias -->
+	<target name="build" depends="distrib_cliVault"/>
+	<target name="build_openspcoop2_cliVault_jar" depends="compile_cliVault"/>
+	<target name="clean" depends="clean_cliVault"/>
+
+</project>

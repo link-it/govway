@@ -183,6 +183,7 @@
 				<include name="joda-time-2.12.0.jar" />
 				<include name="reactive-streams-1.0.4.jar" />
 				<include name="commons-jcs3-core-3.1-gov4j-2.jar"/>
+				<include name="velocity-*.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/cxf">
 				<include name="cxf-core-*.jar" />

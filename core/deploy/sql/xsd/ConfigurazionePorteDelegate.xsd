@@ -21,15 +21,15 @@
                                 <linkit:sql-comment><![CDATA[**** Porte Delegate ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="porte-delegate" object-type="porte-delegate"/>
                                 <linkit:sql-table object-name="porte-delegate-sa" object-type="porte-delegate-sa"/>
-                                <linkit:sql-table object-name="porte-delegate-prop-autenticazione" object-type="NomeValore"/>
-                                <linkit:sql-table object-name="porte-delegate-prop-autorizzazione" object-type="NomeValore"/>
-                                <linkit:sql-table object-name="porte-delegate-prop-autorizzazione-contenuto" object-type="NomeValore"/>
+                                <linkit:sql-table object-name="porte-delegate-prop-autenticazione" object-type="NomeValoreConCifratura"/>
+                                <linkit:sql-table object-name="porte-delegate-prop-autorizzazione" object-type="NomeValoreConCifratura"/>
+                                <linkit:sql-table object-name="porte-delegate-prop-autorizzazione-contenuto" object-type="NomeValoreConCifratura"/>
 				<linkit:sql-table object-name="porte-delegate-prop-rate-limiting" object-type="NomeValore"/>
-                                <linkit:sql-table object-name="porte-delegate-prop" object-type="NomeValore"/>
+                                <linkit:sql-table object-name="porte-delegate-prop" object-type="NomeValoreConCifratura"/>
                                 <linkit:sql-table object-name="porte-delegate-mtom-request" object-type="MtomFlowParameter"/>
                                 <linkit:sql-table object-name="porte-delegate-mtom-response" object-type="MtomFlowParameter"/>
-                                <linkit:sql-table object-name="porte-delegate-security-request" object-type="NomeValoreAsText"/>
-                                <linkit:sql-table object-name="porte-delegate-security-response" object-type="NomeValoreAsText"/>
+                                <linkit:sql-table object-name="porte-delegate-security-request" object-type="NomeValoreAsTextConCifratura"/>
+                                <linkit:sql-table object-name="porte-delegate-security-response" object-type="NomeValoreAsTextConCifratura"/>
                                 <linkit:sql-table object-name="porte-delegate-correlazione" object-type="porte-delegate-correlazione"/>
                                 <linkit:sql-table object-name="porte-delegate-correlazione-risposta" object-type="porte-delegate-correlazione-risposta"/>
                                 <linkit:sql-table object-name="porte-delegate-ruoli" object-type="porte-delegate-ruoli"/>
@@ -1347,7 +1347,7 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
     
     
     
-    <xsd:element name="porte-delegate-prop-autenticazione" type="NomeValore">
+    <xsd:element name="porte-delegate-prop-autenticazione" type="NomeValoreConCifratura">
         <xsd:annotation>
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
@@ -1378,7 +1378,7 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
     
     
     
-    <xsd:element name="porte-delegate-prop-autorizzazione" type="NomeValore">
+    <xsd:element name="porte-delegate-prop-autorizzazione" type="NomeValoreConCifratura">
         <xsd:annotation>
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
@@ -1406,7 +1406,7 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
     </xsd:element>
     
     
-    <xsd:element name="porte-delegate-prop-autorizzazione-contenuto" type="NomeValore">
+    <xsd:element name="porte-delegate-prop-autorizzazione-contenuto" type="NomeValoreConCifratura">
         <xsd:annotation>
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
@@ -1468,7 +1468,7 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
     
     
     
-    <xsd:element name="porte-delegate-prop" type="NomeValore">
+    <xsd:element name="porte-delegate-prop" type="NomeValoreConCifratura">
         <xsd:annotation>
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
@@ -1546,7 +1546,7 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
     
     
     
-    <xsd:element name="porte-delegate-security-request" type="NomeValoreAsText">
+    <xsd:element name="porte-delegate-security-request" type="NomeValoreAsTextConCifratura">
         <xsd:annotation>
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
@@ -1570,7 +1570,7 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
     </xsd:element>
     
     
-    <xsd:element name="porte-delegate-security-response" type="NomeValoreAsText">
+    <xsd:element name="porte-delegate-security-response" type="NomeValoreAsTextConCifratura">
         <xsd:annotation>
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
@@ -1632,8 +1632,56 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
         </xsd:sequence>
     </xsd:complexType>
     
+    <xsd:complexType name="NomeValoreConCifratura">
+        <xsd:sequence>
+            <xsd:element name="id_porta" type="xsd:long">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:sql-column-mapping name="id_porta"/>
+                            <linkit:sql-ddl-column-comment>Identificativo della porta delegata [FK verso tabella porte_delegate(id)]</linkit:sql-ddl-column-comment>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="nome" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:sql-column-mapping name="nome"/>
+                            <linkit:sql-ddl-column-comment>Nome della proprietà</linkit:sql-ddl-column-comment>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="valore" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:sql-column-mapping name="valore"/>
+                            <linkit:sql-ddl-column-comment>Valore associato alla proprietà</linkit:sql-ddl-column-comment>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="enc_value" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="enc_value" text="true"/>
+                                <linkit:sql-ddl-column-comment>Valore cifrato associato alla proprietà</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+             </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
     
-    <xsd:complexType name="NomeValoreAsText">
+    <xsd:complexType name="NomeValoreAsTextConCifratura">
         <xsd:sequence>
             <xsd:element name="id_porta" type="xsd:long">
                 <xsd:annotation>
@@ -1668,6 +1716,17 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                     </xsd:appinfo>
                 </xsd:annotation>
             </xsd:element>
+            <xsd:element name="enc_value" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="enc_value" text="true"/>
+                                <linkit:sql-ddl-column-comment>Valore cifrato associato alla proprietà</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+             </xsd:element>
         </xsd:sequence>
     </xsd:complexType>
     

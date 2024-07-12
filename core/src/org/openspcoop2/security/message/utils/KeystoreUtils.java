@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
@@ -40,6 +41,8 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.byok.BYOKProvider;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -155,8 +158,11 @@ public class KeystoreUtils {
 			String storePath = encryptionStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_PATH);
 			String storeType = encryptionStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_TYPE);
 			String storePassword = encryptionStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD);
+			
+			BYOKRequestParams byokParams = getBYOKRequestParams(requestInfo, encryptionStoreProperties);
+			
 			if(StringUtils.isNotEmpty(storePath) && StringUtils.isNotEmpty(storeType) && StringUtils.isNotEmpty(storePassword)) {
-				merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, storePath, storeType, storePassword, aliasEncryptPassword);
+				merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, storePath, storeType, storePassword, aliasEncryptPassword, byokParams);
 			}
 			else {
 				merlinKeystore = new MerlinKeystore(encryptionStoreProperties, aliasEncryptPassword);
@@ -371,8 +377,11 @@ public class KeystoreUtils {
 			String storePath = decryptionStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_PATH);
 			String storeType = decryptionStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_TYPE);
 			String storePassword = decryptionStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD);
+			
+			BYOKRequestParams byokParams = getBYOKRequestParams(requestInfo, decryptionStoreProperties);
+			
 			if(StringUtils.isNotEmpty(storePath) && StringUtils.isNotEmpty(storeType) && StringUtils.isNotEmpty(storePassword)) {
-				merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, storePath, storeType, storePassword, aliasDecryptPassword);
+				merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, storePath, storeType, storePassword, aliasDecryptPassword, byokParams);
 			}
 			else {
 				merlinKeystore = new MerlinKeystore(decryptionStoreProperties, aliasDecryptPassword);
@@ -577,8 +586,11 @@ public class KeystoreUtils {
 			String storePath = signatureStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_PATH);
 			String storeType = signatureStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_TYPE);
 			String storePassword = signatureStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD);
+			
+			BYOKRequestParams byokParams = getBYOKRequestParams(requestInfo, signatureStoreProperties);
+			
 			if(StringUtils.isNotEmpty(storePath) && StringUtils.isNotEmpty(storeType) && StringUtils.isNotEmpty(storePassword)) {
-				merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, storePath, storeType, storePassword, aliasSignaturePassword);
+				merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, storePath, storeType, storePassword, aliasSignaturePassword, byokParams);
 			}
 			else {
 				merlinKeystore = new MerlinKeystore(signatureStoreProperties, aliasSignaturePassword);
@@ -769,8 +781,11 @@ public class KeystoreUtils {
 			String storePath = signatureStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_PATH);
 			String storeType = signatureStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_TYPE);
 			String storePassword = signatureStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD);
+
+			BYOKRequestParams byokParams = getBYOKRequestParams(requestInfo, signatureStoreProperties);
+			
 			if(StringUtils.isNotEmpty(storePath) && StringUtils.isNotEmpty(storeType) && StringUtils.isNotEmpty(storePassword)) {
-				merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, storePath, storeType, storePassword, aliasSignaturePassword);
+				merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, storePath, storeType, storePassword, aliasSignaturePassword, byokParams);
 			}
 			else {
 				merlinKeystore = new MerlinKeystore(signatureStoreProperties, aliasSignaturePassword);
@@ -906,5 +921,22 @@ public class KeystoreUtils {
 			}
 			return FileSystemUtilities.readBytesFromFile(f);
 		}
+	}
+	
+	private static BYOKRequestParams getBYOKRequestParams(RequestInfo requestInfo, Properties properties) throws UtilsException{
+		String keyStoreByokPolicy = properties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_PATH_BYOK);
+		BYOKRequestParams byokParams = null;
+		if (keyStoreByokPolicy != null) {
+			keyStoreByokPolicy = keyStoreByokPolicy.trim();
+			if(BYOKProvider.isPolicyDefined(keyStoreByokPolicy)){
+				try {
+					byokParams = BYOKProvider.getBYOKRequestParamsByUnwrapBYOKPolicy(keyStoreByokPolicy, 
+							requestInfo!=null && requestInfo.getDynamicMap()!=null ? requestInfo.getDynamicMap() : new HashMap<>() );
+				}catch(Exception e) {
+					throw new UtilsException(e.getMessage(),e);
+				}
+			}
+		}
+		return byokParams;
 	}
 }

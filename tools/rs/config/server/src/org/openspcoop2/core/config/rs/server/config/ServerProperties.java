@@ -26,6 +26,8 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.crypt.CryptConfig;
@@ -52,7 +54,7 @@ public class ServerProperties  {
 	private static ServerProperties serverProperties = null;
 	
 	
-	public ServerProperties(String confDir,Logger log) throws Exception {
+	public ServerProperties(String confDir,Logger log) throws CoreException {
 
 		if(log!=null)
 			this.log = log;
@@ -65,17 +67,18 @@ public class ServerProperties  {
 		try{  
 			properties = DatasourceProperties.class.getResourceAsStream("/rs-api-config.properties");
 			if(properties==null){
-				throw new Exception("File '/rs-api-config.properties' not found");
+				throw new CoreException("File '/rs-api-config.properties' not found");
 			}
 			propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'rs-api-config.properties': \n\n"+e.getMessage());
-		    throw new Exception("RS Api ConfigProperties initialize error: "+e.getMessage());
+			String errorMsg = "Riscontrato errore durante la lettura del file 'rs-api-config.properties': "+e.getMessage();
+			this.log.error(errorMsg,e);
+		    throw new CoreException("RS Api ConfigProperties initialize error: "+e.getMessage(), e);
 		}finally{
 		    try{
 				if(properties!=null)
 				    properties.close();
-		    }catch(Throwable er){
+		    }catch(Exception er){
 		    	// close
 		    }
 		}
@@ -127,6 +130,10 @@ public class ServerProperties  {
 
 	/* ********  M E T O D I  ******** */
 
+	private boolean parse(BooleanNullable b, boolean defaultValue) {
+		return (b!=null && b.getValue()!=null) ? b.getValue() : defaultValue;
+	}
+	
 	public String readProperty(boolean required,String property) throws UtilsException{
 		String tmp = this.reader.getValueConvertEnvProperties(property);
 		if(tmp==null){
@@ -139,6 +146,17 @@ public class ServerProperties  {
 		}else{
 			return tmp.trim();
 		}
+	}
+	
+	private BooleanNullable readBooleanProperty(boolean required,String property) throws UtilsException{
+		String tmp = this.readProperty(required, property);
+		if(tmp==null && !required) {
+			return BooleanNullable.NULL(); // se e' required viene sollevata una eccezione dal metodo readProperty
+		}
+		if(!"true".equalsIgnoreCase(tmp) && !"false".equalsIgnoreCase(tmp)){
+			throw new UtilsException("Property ["+property+"] with uncorrect value ["+tmp+"] (true/value expected)");
+		}
+		return Boolean.parseBoolean(tmp) ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
 	}
 	
 	public Properties getProperties() throws UtilsException{
@@ -185,11 +203,11 @@ public class ServerProperties  {
 		return Boolean.parseBoolean(this.readProperty(true, "validazioneDocumenti"));
 	}
 	
-	public boolean isUpdateInterfacciaApi_updateIfExists() throws UtilsException {
+	public boolean isUpdateInterfacciaApiUpdateIfExists() throws UtilsException {
 		return Boolean.parseBoolean(this.readProperty(true, "updateInterfacciaApi.updateIfExists"));
 	}
 	
-	public boolean isUpdateInterfacciaApi_deleteIfNotFound() throws UtilsException {
+	public boolean isUpdateInterfacciaApiDeleteIfNotFound() throws UtilsException {
 		return Boolean.parseBoolean(this.readProperty(true, "updateInterfacciaApi.deleteIfNotFound"));
 	}
 	
@@ -208,27 +226,31 @@ public class ServerProperties  {
 		String pName = "api.yaml.snakeLimits";
 		
 		try{  
+			Properties p = null;
 			String file = this.readProperty(false, pName);
 			if(file!=null && StringUtils.isNotEmpty(file)) {
 				File f = new File(file);
 				if(f.exists()) {
 					if(!f.isFile()) {
-						throw new Exception("Il file indicato '"+f.getAbsolutePath()+"' non è un file");
+						throw new UtilsException("Il file indicato '"+f.getAbsolutePath()+"' non è un file");
 					}
 					if(!f.canRead()) {
-						throw new Exception("Il file indicato '"+f.getAbsolutePath()+"' non è accessibile in lettura");
+						throw new UtilsException("Il file indicato '"+f.getAbsolutePath()+"' non è accessibile in lettura");
 					}
 					try(InputStream is = new FileInputStream(f)){
-						Properties p = new Properties();
+						p = new Properties();
 						p.load(is);
-						if (p != null && !p.isEmpty()){
+						if (!p.isEmpty()){
 							return p;
+						}
+						else {
+							p = null;
 						}
 					}
 				}
 			}
 		
-			return null;
+			return p;
 			
 		}catch(java.lang.Exception e) {
 			throw new UtilsException("Proprieta' '"+pName+"' non impostate, errore:"+e.getMessage(),e);
@@ -246,8 +268,23 @@ public class ServerProperties  {
 	public Boolean isConfigurazioneAllarmiEnabled() throws UtilsException{
 		return Boolean.parseBoolean(this.readProperty(true, "allarmi.enabled"));
 	}
-	public String getAllarmiConfigurazione() throws Exception{
+	public String getAllarmiConfigurazione() throws UtilsException {
 		return this.readProperty(true, "allarmi.configurazione");
+	}
+	
+	
+	public boolean isSecurityLoadBouncyCastleProvider() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "security.addBouncyCastleProvider");
+		return parse(b, false);
+	}
+	
+	
+	public String getEnvMapConfig() throws UtilsException{
+		return this.readProperty(false, "env.map.config");
+	}
+	public boolean isEnvMapConfigRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "env.map.required");
+		return this.parse(b, false);
 	}
 	
 	
@@ -257,6 +294,28 @@ public class ServerProperties  {
 	public boolean isHSMRequired() throws UtilsException {
 		return Boolean.parseBoolean(this.readProperty(true, "hsm.required"));
 	}
+	public boolean isHSMKeyPasswordConfigurable() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "hsm.keyPassword");
+		return this.parse(b, false);
+	}
+	
+	
+	
+	public String getBYOKConfigurazione() throws UtilsException{
+		return this.readProperty(false, "byok.config");
+	}
+	public boolean isBYOKRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "byok.required");
+		return parse(b, false);
+	}
+	public String getBYOKEnvSecretsConfig() throws UtilsException{
+		return this.readProperty(false, "byok.env.secrets.config");
+	}
+	public boolean isBYOKEnvSecretsConfigRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "byok.env.secrets.required");
+		return this.parse(b, false);
+	}
+	
 	
 	
 	public String getOCSPConfigurazione() throws UtilsException {
@@ -273,6 +332,11 @@ public class ServerProperties  {
 		return true;
 	}	
 
+	
+	public String getConfigurazioneNodiRuntime() throws UtilsException{
+		return this.readProperty(false, "configurazioni.configurazioneNodiRun");
+	}
+	
 	
 	
 	public String getSoggettoDefault(String protocollo) throws UtilsException {
@@ -296,11 +360,11 @@ public class ServerProperties  {
 	}
 	
 	
-	public Properties getConsolePasswordCryptConfig() throws Exception{
+	public Properties getConsolePasswordCryptConfig() throws UtilsException {
 		return this.reader.readPropertiesConvertEnvProperties("console.password.");
 	}
 	
-	public boolean isConsolePasswordCrypt_backwardCompatibility() throws Exception{
+	public boolean isConsolePasswordCryptBackwardCompatibility() throws UtilsException {
 		return "true".equalsIgnoreCase(this.readProperty(true, "console.password.crypt.backwardCompatibility"));
 	}
 

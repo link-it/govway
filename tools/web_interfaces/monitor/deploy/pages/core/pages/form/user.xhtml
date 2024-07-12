@@ -133,7 +133,6 @@
 							</c:if>
 							<c:if test="#{applicationBean.user and applicationBean.showCambiaPassword}">
 								<a4j:outputPanel layout="block" id="panelRoleUser" rendered="#{not empty utentiBean.user.id and utentiBean.user.id gt 0}">
-									
 										<h:inputHidden id="inUser" value="#{utentiBean.user.id}"/>
 										<link:fieldset legend="Password" rendered="#{not empty utentiBean.user.id and utentiBean.user.id gt 0}" collapsible="false" closed="false">
 											<link:prop label="Modifica">
@@ -143,6 +142,18 @@
 											</link:prop>
 											
 											<a4j:outputPanel layout="block" rendered="#{utentiBean.showFormCambiaPassword}" id="fieldFormPwdPanel">	
+												<script type="text/javascript" nonce="#{_csp_random_nonce}">
+														//<![CDATA[
+														   jQuery(document).ready(visualizzaComandoMostraPassword);
+														   
+														   function visualizzaComandoMostraPassword(){
+															   aggiungiComandoMostraPassword('_oldPwdChange');
+															   aggiungiComandoMostraPassword('_pwdChange');
+															   aggiungiComandoMostraPassword('conpwdChange');
+														   }
+														 //]]>
+												</script>
+											
 												<link:prop label="Vecchia" required="true" rendered="#{utentiBean.showVecchiaPassword}">
 													<h:inputSecret label="Vecchia" id="_oldPwdChange" value="#{utentiBean.vecchiaPassword}"  styleClass="inputLinkLong"/>
 												</link:prop>

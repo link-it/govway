@@ -20,6 +20,9 @@
 
 package org.openspcoop2.core.constants;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 
 /**
@@ -30,6 +33,8 @@ import org.openspcoop2.utils.transport.http.SSLUtilities;
  * @version $Rev$, $Date$
  */
 public class CostantiConnettori {
+	
+	private CostantiConnettori() {}
 	
 	
 	/** COMMONS PROPERTIES */
@@ -65,12 +70,18 @@ public class CostantiConnettori {
     
     public static final String CONNETTORE_HTTP_REDIRECT_FOLLOW = "followRedirects";
     public static final String CONNETTORE_HTTP_REDIRECT_MAX_HOP = "maxHopRedirect";
-    public static final String _CONNETTORE_HTTP_REDIRECT_NUMBER = "numberRedirect";
-    public static final String _CONNETTORE_HTTP_REDIRECT_ROUTE = "routeRedirect";
+    public static final String CONNETTORE_HTTP_REDIRECT_NUMBER = "numberRedirect";
+    public static final String CONNETTORE_HTTP_REDIRECT_ROUTE = "routeRedirect";
     
     public static final String CONNETTORE_HTTP_DATA_TRANSFER_MODE = "dataTransferMode";
     public static final String CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE = "transferChunkSize";
-
+    
+    public static final String CONNETTORE_APIKEY_HEADER = "apiKeyHeader";
+    public static final String CONNETTORE_APIKEY = "apiKey";
+    public static final String CONNETTORE_APIKEY_APPID_HEADER = "appIdHeader";
+    public static final String CONNETTORE_APIKEY_APPID = "appId";
+    public static final String DEFAULT_HEADER_API_KEY = "X-API-KEY";
+    public static final String DEFAULT_HEADER_APP_ID = "X-APP-ID";
     
 	/** JMS PROPERTIES */
 	
@@ -104,12 +115,13 @@ public class CostantiConnettori {
     public static final String CONNETTORE_HTTPS_TRUST_STORE_PASSWORD = "trustStorePassword";
     public static final String CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM = "trustManagementAlgorithm";
     public static final String CONNETTORE_HTTPS_TRUST_STORE_TYPE = "trustStoreType";
-    public static final String CONNETTORE_HTTPS_TRUST_STORE_CRLs = "trustStoreCRLs";
+    public static final String CONNETTORE_HTTPS_TRUST_STORE_CRLS = "trustStoreCRLs";
     public static final String CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY = "trustStoreOCSPPolicy";
     public static final String CONNETTORE_HTTPS_KEY_STORE_LOCATION = "keyStoreLocation";
     public static final String CONNETTORE_HTTPS_KEY_STORE_PASSWORD = "keyStorePassword";
     public static final String CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM = "keyManagementAlgorithm";
     public static final String CONNETTORE_HTTPS_KEY_STORE_TYPE = "keyStoreType";
+    public static final String CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY = "keyStoreBYOKPolicy";
     public static final String CONNETTORE_HTTPS_KEY_PASSWORD = "keyPassword";
     public static final String CONNETTORE_HTTPS_KEY_ALIAS = "keyAlias";
     public static final String CONNETTORE_HTTPS_HOSTNAME_VERIFIER = "hostnameVerifier";
@@ -162,4 +174,25 @@ public class CostantiConnettori {
     public static final String CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE = "generaTrasmissione";
     public static final String CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE_INVERTITA = "generaTrasmissioneInvertita";
     public static final String CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE_ANDATA_RITORNO = "generaTrasmissioneAndataRitorno";
+    
+    
+    
+    /** BYOK PROPERTIES */
+    
+    private static List<String> confidentials = new ArrayList<>();
+    public static List<String> getConfidentials() {
+		return confidentials;
+	}
+	static {
+    	confidentials.add(CONNETTORE_PASSWORD);
+    	confidentials.add(CONNETTORE_BEARER_TOKEN);
+    	confidentials.add(CONNETTORE_APIKEY);
+    	confidentials.add(CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+    	confidentials.add(CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
+    	confidentials.add(CONNETTORE_HTTPS_KEY_PASSWORD);
+    }
+    
+    public static boolean isConfidential(String nome) {
+    	return confidentials.contains(nome);
+    }
 }

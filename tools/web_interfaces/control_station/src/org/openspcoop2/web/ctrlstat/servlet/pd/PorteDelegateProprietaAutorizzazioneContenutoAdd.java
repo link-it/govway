@@ -78,7 +78,7 @@ public final class PorteDelegateProprietaAutorizzazioneContenutoAdd extends Acti
 			String idPorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(idPorta);
 			String nome = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-			String valore = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE);
+			String valore = porteDelegateHelper.getLockedParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE, false);
 			String idSoggFruitore = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			String idAsps = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
 			if(idAsps == null) 
@@ -86,6 +86,9 @@ public final class PorteDelegateProprietaAutorizzazioneContenutoAdd extends Acti
 			String idFruizione= porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
 			if(idFruizione == null) 
 				idFruizione = "";
+			
+			// Wrap value
+			valore = porteDelegateHelper.wrapValoreProprieta(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE, valore);
 			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();

@@ -46,3 +46,4 @@
 
 /* Rules for hover. */
 .material-icons:hover { color: ${a.hover.color}; }
+.md-nohover:hover { color: ${a.color}; }

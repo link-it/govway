@@ -965,6 +965,27 @@ public class ExporterUtils {
 					if(!idServiziCoinvolti.contains(idServizio)) {
 						idServiziCoinvolti.add(idServizio);
 					}
+					
+					// verifico accordi coinvolti dalla fruizione
+					if(archive.getAccordiServizioParteSpecifica()!=null && archive.getAccordiServizioParteSpecifica().size()>0) {
+						for (int j = 0; j < archive.getAccordiServizioParteSpecifica().size(); j++) {
+							IDServizio idServizioCheck =  archive.getAccordiServizioParteSpecifica().get(j).getIdAccordoServizioParteSpecifica();
+							if(idServizio.equals(idServizioCheck)) {
+								
+								String uriAccordoServizioParteComune = archive.getAccordiServizioParteSpecifica().get(j).getAccordoServizioParteSpecifica().getAccordoServizioParteComune();
+								try {
+									IDAccordo idApc = IDAccordoFactory.getInstance().getIDAccordoFromUri(uriAccordoServizioParteComune);
+									if(!idAccordiCoinvolti.contains(idApc)) {
+										idAccordiCoinvolti.add(idApc);
+									}
+								}catch(Exception e) {
+									ControlStationCore.logError("Fruitore["+idSoggettoSelezionato+"] AccordoServizioParteSpecifica ["+idServizio+"]: "+e.getMessage(), e);
+								}
+								
+								break;
+							}
+						}
+					}
 				}
 			}
 		}

@@ -54,19 +54,26 @@ public class GestoreRisorseJMX {
 	/** Logger */
 	protected Logger log = null;
 	protected void logInfo(String msg) {
-		if(this.log!=null) {
+		if(this.log!=null && this.logActive) {
 			this.log.info(msg);
 		}
 	}
 	protected void logDebug(String msg, Throwable e) {
-		if(this.log!=null) {
+		if(this.log!=null && this.logActive) {
 			this.log.debug(msg, e);
 		}
 	}
 	protected void logError(String msg, Throwable e) {
-		if(this.log!=null) {
+		if(this.log!=null && this.logActive) {
 			this.log.error(msg, e);
 		}
+	}
+	private boolean logActive = true;	
+	public boolean isLogActive() {
+		return this.logActive;
+	}
+	public void setLogActive(boolean logActive) {
+		this.logActive = logActive;
 	}
 	
 	private static final String MBEAN_SERVER_CONNECTION = "javax.management.MBeanServerConnection";

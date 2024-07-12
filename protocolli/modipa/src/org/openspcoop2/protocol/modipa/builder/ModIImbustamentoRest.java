@@ -38,7 +38,9 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.byok.BYOKUnwrapPolicyUtilities;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
+import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.token.parser.Claims;
@@ -71,6 +73,7 @@ import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeystoreType;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.digest.DigestEncoding;
@@ -1143,9 +1146,18 @@ public class ModIImbustamentoRest {
 				throw new ProtocolException("Configuration error; pattern '"+pattern+"' require x509 certificate, found '"+type+"' key");
 			}
 			
+			String keystoreByokPolicy = keystoreConfig.getSecurityMessageKeystoreByokPolicy();
+			BYOKRequestParams byokParams = null;
+			try {
+				byokParams = BYOKUnwrapPolicyUtilities.getBYOKRequestParams(keystoreByokPolicy, dynamicMap);
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+			
 			if(CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(keystoreConfig.getSecurityMessageKeystoreType())) {
 				try {
-					JWKSetStore jwtStore = GestoreKeystoreCache.getJwkSetStore(requestInfo, keystoreConfig.getSecurityMessageKeystorePath());
+					JWKSetStore jwtStore = GestoreKeystoreCache.getJwkSetStore(requestInfo, keystoreConfig.getSecurityMessageKeystorePath(), 
+							byokParams);
 					if(jwtStore==null) {
 						throw newProtocolExceptionAccessoKeystoreNonRiuscito(keystoreConfig.getSecurityMessageKeystoreType(),keystoreConfig.getSecurityMessageKeystorePath());
 					}
@@ -1157,7 +1169,8 @@ public class ModIImbustamentoRest {
 			else if(CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(keystoreConfig.getSecurityMessageKeystoreType())) {
 				try {
 					KeyPairStore keyPairStore = GestoreKeystoreCache.getKeyPairStore(requestInfo, keystoreConfig.getSecurityMessageKeystorePath(), keystoreConfig.getSecurityMessageKeystorePathPublicKey(), 
-							keystoreConfig.getSecurityMessageKeyPassword(), keystoreConfig.getSecurityMessageKeystoreKeyAlgorithm());
+							keystoreConfig.getSecurityMessageKeyPassword(), keystoreConfig.getSecurityMessageKeystoreKeyAlgorithm(), 
+							byokParams);
 					if(keyPairStore==null) {
 						throw newProtocolExceptionAccessoKeystoreNonRiuscito(keystoreConfig.getSecurityMessageKeystoreType(),keystoreConfig.getSecurityMessageKeystorePath());
 					}
@@ -1171,7 +1184,8 @@ public class ModIImbustamentoRest {
 				try {
 					MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo,
 							keystoreConfig.getSecurityMessageKeystorePath(), keystoreConfig.getSecurityMessageKeystoreType(), 
-							keystoreConfig.getSecurityMessageKeystorePassword());
+							keystoreConfig.getSecurityMessageKeystorePassword(),
+							byokParams);
 					if(merlinKs==null) {
 						throw newProtocolExceptionAccessoKeystoreNonRiuscito(keystoreConfig.getSecurityMessageKeystoreType(),keystoreConfig.getSecurityMessageKeystorePath());
 					}
@@ -1301,6 +1315,7 @@ public class ModIImbustamentoRest {
 				throw new ProtocolException(e.getMessage(),e);
 			}
 			try {
+				DynamicMapBuilderUtils.injectDynamicMap(busta, requestInfo, context, this.log);
 				joseSignature.process(messageSecurityContext, payload, context);
 			}catch(Exception e) {
 				throw new ProtocolException(e.getMessage(),e);

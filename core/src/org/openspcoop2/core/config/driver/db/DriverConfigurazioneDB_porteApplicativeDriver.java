@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.IExtendedInfo;
 import org.openspcoop2.core.config.AttributeAuthority;
@@ -674,7 +675,7 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 		try {
 			this.driver.logDebug("CRUDPortaApplicativa type = 1");
 
-			DriverConfigurazioneDB_porteApplicativeLIB.CRUDPortaApplicativa(1, aPA, con);
+			DriverConfigurazioneDB_porteApplicativeLIB.CRUDPortaApplicativa(1, aPA, con, this.driver.getDriverWrapBYOK());
 
 			this.driver.logDebug("Creazione PortaApplicativa [" + aPA.getId() + "] completato.");
 
@@ -717,7 +718,7 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 		try {
 			this.driver.logDebug("CRUDPortaApplicativa type = 2");
 
-			long id = DriverConfigurazioneDB_porteApplicativeLIB.CRUDPortaApplicativa(2, aPA, con);
+			long id = DriverConfigurazioneDB_porteApplicativeLIB.CRUDPortaApplicativa(2, aPA, con, this.driver.getDriverWrapBYOK());
 
 			this.driver.logDebug("Aggiornamento PortaApplicativa [" + id + "] completato.");
 
@@ -760,7 +761,7 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 		try {
 			this.driver.logDebug("CRUDPortaApplicativa type = 3");
 
-			long id = DriverConfigurazioneDB_porteApplicativeLIB.CRUDPortaApplicativa(3, aPA, con);
+			long id = DriverConfigurazioneDB_porteApplicativeLIB.CRUDPortaApplicativa(3, aPA, con, this.driver.getDriverWrapBYOK());
 
 			this.driver.logDebug("Cancellazione PortaApplicativa [" + id + "] completato.");
 
@@ -1776,7 +1777,22 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 				while (rs1.next()) {
 					secRfp = new MessageSecurityFlowParameter();
 					secRfp.setNome(rs1.getString("nome"));
-					secRfp.setValore(rs1.getString("valore"));
+					
+					String plainValue = rs1.getString("valore");
+					String encValue = rs1.getString("enc_value");
+					if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+						IDriverBYOK driverBYOK = this.driver.getDriverUnwrapBYOK();
+						if(driverBYOK!=null) {
+							secRfp.setValore(driverBYOK.unwrapAsString(encValue));
+						}
+						else {
+							secRfp.setValore(encValue);
+						}
+					}
+					else {
+						secRfp.setValore(plainValue);
+					}
+					
 					if(messageSecurity==null){
 						messageSecurity = new MessageSecurity();
 					}
@@ -1804,7 +1820,22 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 				while (rs1.next()) {
 					secResfp = new MessageSecurityFlowParameter();
 					secResfp.setNome(rs1.getString("nome"));
-					secResfp.setValore(rs1.getString("valore"));
+					
+					String plainValue = rs1.getString("valore");
+					String encValue = rs1.getString("enc_value");
+					if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+						IDriverBYOK driverBYOK = this.driver.getDriverUnwrapBYOK();
+						if(driverBYOK!=null) {
+							secResfp.setValore(driverBYOK.unwrapAsString(encValue));
+						}
+						else {
+							secResfp.setValore(encValue);
+						}
+					}
+					else {
+						secResfp.setValore(plainValue);
+					}
+					
 					if(messageSecurity==null){
 						messageSecurity = new MessageSecurity();
 					}
@@ -2037,7 +2068,22 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 					prop = new Proprieta();
 					prop.setId(rs.getLong("id"));
 					prop.setNome(rs.getString("nome"));
-					prop.setValore(rs.getString("valore"));
+					
+					String plainValue = rs.getString("valore");
+					String encValue = rs.getString("enc_value");
+					if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+						IDriverBYOK driverBYOK = this.driver.getDriverUnwrapBYOK();
+						if(driverBYOK!=null) {
+							prop.setValore(driverBYOK.unwrapAsString(encValue));
+						}
+						else {
+							prop.setValore(encValue);
+						}
+					}
+					else {
+						prop.setValore(plainValue);
+					}
+					
 					pa.addProprietaAutenticazione(prop);
 				}
 				rs.close();
@@ -2058,7 +2104,22 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 					prop = new Proprieta();
 					prop.setId(rs.getLong("id"));
 					prop.setNome(rs.getString("nome"));
-					prop.setValore(rs.getString("valore"));
+					
+					String plainValue = rs.getString("valore");
+					String encValue = rs.getString("enc_value");
+					if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+						IDriverBYOK driverBYOK = this.driver.getDriverUnwrapBYOK();
+						if(driverBYOK!=null) {
+							prop.setValore(driverBYOK.unwrapAsString(encValue));
+						}
+						else {
+							prop.setValore(encValue);
+						}
+					}
+					else {
+						prop.setValore(plainValue);
+					}
+					
 					pa.addProprietaAutorizzazione(prop);
 				}
 				rs.close();
@@ -2081,7 +2142,22 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 					prop = new Proprieta();
 					prop.setId(rs.getLong("id"));
 					prop.setNome(rs.getString("nome"));
-					prop.setValore(rs.getString("valore"));
+					
+					String plainValue = rs.getString("valore");
+					String encValue = rs.getString("enc_value");
+					if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+						IDriverBYOK driverBYOK = this.driver.getDriverUnwrapBYOK();
+						if(driverBYOK!=null) {
+							prop.setValore(driverBYOK.unwrapAsString(encValue));
+						}
+						else {
+							prop.setValore(encValue);
+						}
+					}
+					else {
+						prop.setValore(plainValue);
+					}
+					
 					pa.addProprietaAutorizzazioneContenuto(prop);
 				}
 				rs.close();
@@ -2128,7 +2204,22 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 					prop = new Proprieta();
 					prop.setId(rs.getLong("id"));
 					prop.setNome(rs.getString("nome"));
-					prop.setValore(rs.getString("valore"));
+					
+					String plainValue = rs.getString("valore");
+					String encValue = rs.getString("enc_value");
+					if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+						IDriverBYOK driverBYOK = this.driver.getDriverUnwrapBYOK();
+						if(driverBYOK!=null) {
+							prop.setValore(driverBYOK.unwrapAsString(encValue));
+						}
+						else {
+							prop.setValore(encValue);
+						}
+					}
+					else {
+						prop.setValore(plainValue);
+					}
+					
 					pa.addProprieta(prop);
 				}
 				rs.close();

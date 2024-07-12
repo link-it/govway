@@ -57,7 +57,7 @@ public class SortedMap<T> {
 	}
 	public void add(String key, T archive) throws UtilsException{
 		if(this.map.containsKey(key)){
-			throw new UtilsException("Archivio con chiave ["+key+"] gia' precedentemente caricato");
+			throw new UtilsException("Key ["+key+"] already exists");
 		}
 		this.list.add(key);
 		this.map.put(key, archive);

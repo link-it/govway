@@ -33,6 +33,7 @@ import java.util.Properties;
 
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.utils.FiltroRicercaAllarmi;
+import org.openspcoop2.core.byok.IDriverBYOKConfig;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.AccessoDatiAttributeAuthority;
@@ -92,15 +93,17 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.DBMappingUtils;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.plugins.IdPlugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
-import org.openspcoop2.core.plugins.IdPlugin;
-import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.dynamic.IRegistroPluginsReader;
 import org.openspcoop2.monitor.sdk.alarm.AlarmStatus;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.byok.DriverBYOK;
+import org.openspcoop2.pdd.core.byok.DriverBYOKUtilities;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.pdd.core.dynamic.TemplateSource;
@@ -117,8 +120,8 @@ import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
-import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.cache.CacheResponse;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
@@ -556,6 +559,14 @@ public class ConfigurazionePdD  {
 				}
 			}
 
+			if(this.driverConfigurazionePdD instanceof IDriverBYOKConfig) {
+				DriverBYOK driverBYOK = DriverBYOKUtilities.newInstanceDriverBYOKRuntimeNode(this.logger, false, true);
+				if(driverBYOK!=null) {
+					IDriverBYOKConfig c = (IDriverBYOKConfig) this.driverConfigurazionePdD;
+					c.initialize(driverBYOK, false, true);
+				}
+			}
+			
 		}catch(Exception e){
 			String msg = "Riscontrato errore durante l'inizializzazione della configurazione di OpenSPCoop: "+e.getMessage();
 			this.logError(msg,e);
@@ -5191,7 +5202,13 @@ public class ConfigurazionePdD  {
 		}
 	} 
 	
-	public SystemProperties getSystemPropertiesPdD() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public List<String> getEncryptedSystemPropertiesPdD() throws DriverConfigurazioneException{
+		return this.driverConfigurazionePdD.getEncryptedSystemPropertiesPdD();
+	}
+	public SystemProperties getSystemPropertiesPdD(boolean forceDisableBYOKUse) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		if(forceDisableBYOKUse && this.driverConfigurazionePdD instanceof DriverConfigurazioneDB) {
+			return ((DriverConfigurazioneDB)this.driverConfigurazionePdD).getSystemPropertiesPdDWithoutBIOK();
+		}
 		return this.driverConfigurazionePdD.getSystemPropertiesPdD();
 	}
 	public void updateSystemPropertiesPdD(SystemProperties systemProperties) throws DriverConfigurazioneException{

@@ -42,8 +42,8 @@ Scenario: CRUD TRACCIAMENTO
     When method get
     Then status 200
     And assert response.proprieta.length == 2
-    And match response.proprieta[*] contains { 'nome': 'NomeProprieta1', 'valore': 'ValoreProprieta1' }
-    And match response.proprieta[*] contains { 'nome': 'NomeProprieta2', 'valore': 'ValoreProprieta2' }
+    And match response.proprieta[*] contains { 'nome': 'NomeProprieta1', 'valore': 'ValoreProprieta1', 'encrypted': false }
+    And match response.proprieta[*] contains { 'nome': 'NomeProprieta2', 'valore': 'ValoreProprieta2', 'encrypted': false }
 
     #GET P1 CREATA
     Given url configUrl
@@ -111,8 +111,8 @@ Scenario: CRUD TRACCIAMENTO
     When method get
     Then status 200
     And assert response.proprieta.length == 2
-    And match response.proprieta[*] contains { 'nome': 'NomeProprieta1', 'valore': 'ValoreProprieta1' }
-    And match response.proprieta[*] contains { 'nome': 'NomeProprieta2modificato', 'valore': 'ValoreProprieta2modificato' }
+    And match response.proprieta[*] contains { 'nome': 'NomeProprieta1', 'valore': 'ValoreProprieta1', 'encrypted': false }
+    And match response.proprieta[*] contains { 'nome': 'NomeProprieta2modificato', 'valore': 'ValoreProprieta2modificato', 'encrypted': false }
 
     # DELETE P1
     Given url configUrl

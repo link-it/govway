@@ -37,13 +37,20 @@ public class SystemPropertiesReader extends PropertiesReader {
 	
 	private SystemProperties systemProperties;
 	
-	public SystemPropertiesReader(Logger log, RequestInfo requestInfo) throws DynamicException{
+	public SystemPropertiesReader(Logger log, RequestInfo requestInfo, boolean initFromJmx) throws DynamicException{
 		super(log);
 		try {
-			this.systemProperties = ConfigurazionePdDManager.getInstance().getSystemPropertiesPdDCached(requestInfo);
+			if(ConfigurazionePdDManager.getInstance()!=null && ConfigurazionePdDManager.getInstance().isInitializedConfigurazionePdDReader()) {
+				if(initFromJmx) {
+					this.systemProperties = ConfigurazionePdDManager.getInstance().getSystemPropertiesPdDNoCached(true);
+				}
+				else {
+					this.systemProperties = ConfigurazionePdDManager.getInstance().getSystemPropertiesPdDCached(requestInfo);
+				}
+			}
 		}catch(Exception e) {
 			throw new DynamicException(e.getMessage(),e);
-		}
+		}		
 	}
 		
 	@Override

@@ -74,6 +74,7 @@ public final class CostantiLabel {
 	public static final String CRL = "CRL";
 	public static final String CRLS = "CRLs";
 	public static final String OCSP_POLICY = "OCSP Policy";
+	public static final String BYOK_POLICY = "BYOK Policy";
 	public static final String KEY_ALIAS = "Key Alias";
 	public static final String CERTIFICATE_ALIAS = "Certificate Alias";
 	public static final String ALIAS = "Alias";
@@ -168,6 +169,9 @@ public final class CostantiLabel {
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_BEARER = "Autenticazione Bearer";
 	public static final String LABEL_CONNETTORE_BEARER_TOKEN = "Token";
 	
+	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_API_KEY = "Autenticazione API Key";
+	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_API_KEY_APP_ID = "App ID";
+	
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_TOKEN = "Autenticazione Token";
 	public static final String LABEL_CONNETTORE_TOKEN_POLICY = "Policy";
 	
@@ -177,6 +181,7 @@ public final class CostantiLabel {
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLS = "Auth Server - CRLs";
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_OCSP_POLICY = "Auth Server - OCSP Policy";
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE = "Auth Client - KeyStore";
+	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE_BYOK_POLICY = "Auth Client - BYOK Policy";
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEY_ALIAS = "Auth Client - Key Alias";
 	
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY = "Proxy";

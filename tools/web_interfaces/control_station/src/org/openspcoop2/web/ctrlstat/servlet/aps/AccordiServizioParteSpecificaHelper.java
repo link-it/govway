@@ -75,6 +75,7 @@ import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.ProprietaOggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.beans.AzioneSintetica;
@@ -120,6 +121,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.utils.ProprietaOggettoRegistro;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
@@ -864,7 +866,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey, 
-			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy,
+			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy, String httpsKeyStoreBYOKPolicy,
 			String tipoconn, String versione,
 			boolean validazioneDocumenti,  String backToStato,
 			String autenticazioneHttp,
@@ -881,8 +883,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String fruizioneAutorizzazioneAutenticati,String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
 			String protocollo,BinaryParameter allegatoXacmlPolicy,
 			String descrizione, String tipoFruitore, String nomeFruitore,
-			boolean autenticazioneToken, String tokenPolicy, boolean erogazioneServizioApplicativoServerEnabled,
-			String erogazioneServizioApplicativoServer, String canaleStato, String canale, boolean gestioneCanaliEnabled)	throws Exception {
+			boolean autenticazioneToken, String tokenPolicy,
+			String autenticazioneApiKey, boolean useOAS3Names, boolean useAppId, String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue,
+			boolean erogazioneServizioApplicativoServerEnabled, String erogazioneServizioApplicativoServer, String canaleStato, String canale, boolean gestioneCanaliEnabled)	throws Exception {
 
 		boolean isModalitaAvanzata = this.isModalitaAvanzata();
 
@@ -1137,7 +1140,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, 
 						httpspwdprivatekey, httpsalgoritmokey,
-						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 						tipoconn,autenticazioneHttp,
 						proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
 						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
@@ -1146,6 +1149,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken, tokenPolicy,
+						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
 						listExtendedConnettore,erogazioneServizioApplicativoServerEnabled,erogazioneServizioApplicativoServer)) {
 				return false;
 			}
@@ -1514,19 +1518,20 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey, 
-			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy,
+			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy, String httpsKeyStoreBYOKPolicy,
 			String tipoconn, 
 			boolean validazioneDocumenti, String backToStato,
 			String autenticazioneHttp,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
-			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
-			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
-			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
+			String tempiRispostaEnabled, String tempiRispostaConnectionTimeout, String tempiRispostaReadTimeout, String tempiRispostaTempoMedioRisposta,
+			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop,
+			String requestOutputFileName, String requestOutputFileNamePermissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeadersPermissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			String fruizioneServizioApplicativo,String fruizioneRuolo,String fruizioneAutenticazione,String fruizioneAutenticazioneOpzionale, TipoAutenticazionePrincipal fruizioneAutenticazionePrincipal, List<String> fruizioneAutenticazioneParametroList, String fruizioneAutorizzazione,
 			String fruizioneAutorizzazioneAutenticati,String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,BinaryParameter allegatoXacmlPolicy,
 			boolean autenticazioneToken, String tokenPolicy,
+			String autenticazioneApiKey, boolean useOAS3Names, boolean useAppId, String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue,
 			List<ExtendedConnettore> listExtendedConnettore)
 					throws Exception {
 		try {
@@ -1664,15 +1669,16 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey,
 						httpspwdprivatekey, httpsalgoritmokey,
-						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 						tipoconn,autenticazioneHttp,
 						proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
-						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-						requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
+						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken, tokenPolicy,
+						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
 						listExtendedConnettore,servizioApplicativoServerEnabled,servizioApplicativoServer)) {
 					return false;
 				}
@@ -2118,13 +2124,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						
 			String tipoProtocollo = this.apsCore.getProtocolloAssociatoTipoServizio(asps.getTipo());
 			
-			String tmpTitle = null;
-			if(gestioneFruitori) {
-				tmpTitle = this.getLabelServizioFruizione(tipoProtocollo, idSoggettoFruitore, asps);
-			}
-			else {
-				tmpTitle = this.getLabelServizioErogazione(tipoProtocollo, asps);
-			}
+			String tmpTitle = this.getLabelServizio(idSoggettoFruitore, gestioneFruitori, asps, tipoProtocollo);
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<>();
@@ -3454,14 +3454,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<>();
 
-			
+			Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
+			Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
+			Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
+			Parameter pIdSoggettoErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, asps.getIdSoggetto()+"");
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request).getValue();
 			String labelAzioni = this.getLabelAzioni(serviceBindingMessage); 
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 				lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
-				Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
-				Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
-				Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
+				
 				lstParam.add(new Parameter(servizioTmpTile, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, pIdServizio,pNomeServizio, pTipoServizio));
 				String labelConfigurazione = gestioneConfigurazioni ? ErogazioniCostanti.LABEL_ASPS_GESTIONE_CONFIGURAZIONI : 
 					(gestioneGruppi ? MessageFormat.format(ErogazioniCostanti.LABEL_ASPS_GESTIONE_GRUPPI_CON_PARAMETRO, labelAzioni) : AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE);
@@ -3615,6 +3616,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				configManager.leggiConfigurazioni(propertiesSourceConfiguration, true);
 				configurazioneGenerale = this.confCore.getConfigurazioneGenerale();
 			}
+			
+			impostaComandiMenuContestualePA(asps, protocollo, pNomeServizio, pTipoServizio, pIdSoggettoErogatore);
+		
 			
 			// preparo i dati
 			List<List<DataElement>> dati = new ArrayList<>();
@@ -4663,8 +4667,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			throw new Exception(e);
 		}
 	}
-
-
 	
 	private MappingErogazionePortaApplicativa getFiltroAzioneMappingErogazione(String filtroAzione, List<MappingErogazionePortaApplicativa> lista) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		if(StringUtils.isNotEmpty(filtroAzione) && !filtroAzione.equals(CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA)) {
@@ -5340,13 +5342,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<>();
-
+			Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
+			Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
+			
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request).getValue();
 			String labelAzioni = this.getLabelAzioni(serviceBindingMessage);
 			if(gestioneFruitori) {
 				if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
-					Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
-					Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
+					
 					lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_FRUIZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
 					lstParam.add(new Parameter(servizioTmpTile, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, pIdServizio,pNomeServizio, pTipoServizio, 
 							parametroTipoSoggettoFruitore, parametroNomeSoggettoFruitore));
@@ -5446,6 +5449,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				configManager.leggiConfigurazioni(propertiesSourceConfiguration, true);
 				configurazioneGenerale = this.confCore.getConfigurazioneGenerale();
 			}
+			
+			impostaComandiMenuContestualePD(idSoggFruitoreDelServizio, parametroTipoSoggettoFruitore,
+					parametroNomeSoggettoFruitore, asps, protocollo, pIdSoggettoErogatore, fru,
+					pIdFruitore, pNomeServizio, pTipoServizio);
 			
 			// preparo i dati
 			List<List<DataElement>> dati = new ArrayList<>();
@@ -6313,9 +6320,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		}
 	}
 
-
-	
-
 	private boolean addInfoCorrelata(TipoOperazione tipoOp, String portType, boolean modificaAbilitata, String servcorr, String oldStato,
 			String tipoProtocollo, ServiceBinding serviceBinding, List<DataElement> dati) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		boolean isModalitaAvanzata = this.isModalitaAvanzata();
@@ -6633,7 +6637,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setSelected(tipoProtocollo);
 			de.setType(DataElementType.SELECT);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 		}else {
 			de.setValue(tipoProtocollo);
 			de.setType(DataElementType.HIDDEN);
@@ -6656,7 +6660,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de.setType(DataElementType.SELECT);
 				de.setValues(soggettiFruitoriList);
 				de.setLabels(soggettiFruitoriListLabel);
-				de.setPostBack(true);
+				de.setPostBack_viaPOST(true);
 				de.setSelected(providerSoggettoFruitore);
 				dati.add(de);
 			} else {
@@ -6688,7 +6692,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de.setType(DataElementType.SELECT);
 				de.setValues(soggettiList);
 				de.setLabels(soggettiListLabel);
-				de.setPostBack(true);
+				de.setPostBack_viaPOST(true);
 				de.setSelected(provider);
 				dati.add(de);
 			} else {
@@ -6725,7 +6729,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ACCORDO);
 			de.setValues(accordiList);
 			de.setLabels(accordiListLabel);
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 			if (accordo != null)
 				de.setSelected(accordo);
 			
@@ -6927,7 +6931,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							de.setValues(ptList);
 							de.setLabels(ptList);
 							de.setSelected(portType);
-							de.setPostBack(true);
+							if(tipoOp.equals(TipoOperazione.ADD)) {
+								de.setPostBack_viaPOST(true);
+							}
+							else {
+								de.setPostBack(true);
+							}
 							if (!isModalitaAvanzata || this.apsCore.isPortTypeObbligatorioImplementazioniSOAP()) {
 								de.setRequired(true);
 							}
@@ -7106,7 +7115,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de.setType(DataElementType.SELECT);
 					de.setSize(this.getSize());
 					if(tipoOp.equals(TipoOperazione.ADD)) {
-						de.setPostBack(true);
+						de.setPostBack_viaPOST(true);
 					}
 				}
 				else {
@@ -7466,7 +7475,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de.setType(DataElementType.SELECT);
 				de.setValues(soggettiList);
 				de.setLabels(soggettiListLabel);
-				de.setPostBack(true);
+				de.setPostBack_viaPOST(true);
 				de.setSelected(provider);
 				dati.add(de);
 			} else {
@@ -10334,4 +10343,16 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		return listaParams;
 	}
 
+	protected ProprietaOggetto creaProprietaOggetto(AccordoServizioParteSpecifica asps, boolean gestioneFruitori, Fruitore fruitore, IDServizio idServizio, IDSoggetto idSoggettoFruitore) {
+		ProprietaOggetto pOggetto = null;
+		if(gestioneFruitori) {
+			pOggetto = ProprietaOggettoRegistro.mergeProprietaOggetto(fruitore.getProprietaOggetto(), idServizio, idSoggettoFruitore, this.porteDelegateCore, this); 
+		}
+		else {
+			pOggetto = ProprietaOggettoRegistro.mergeProprietaOggetto(asps.getProprietaOggetto(), idServizio, this.porteApplicativeCore, this.saCore, this); 
+		}
+		return pOggetto;
+	}
+	
+	
 }

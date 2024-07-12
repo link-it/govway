@@ -1,0 +1,23 @@
+{
+ 	"nome": "TestSuiteApplicativo",
+  "connettore": {
+    "endpoint": "https://ginovadifretta.it/petstore",
+    	"autenticazione_apikey":{
+               "api_key": "API_KEY_VALUE",
+               "api_key_header": "API_KEY_HEADER"
+        },
+    "proxy": {
+      "hostname": "localhost",
+      "porta": 4040,
+      "username": "test",
+      "password": "xxx"
+    },
+    "tempi_risposta": {
+      "connection_timeout": 10001,
+      "connection_read_timeout": 150200,
+      "tempo_medio_risposta": 134
+    },
+    "debug": false,
+    "tipo": "http"
+    }
+}

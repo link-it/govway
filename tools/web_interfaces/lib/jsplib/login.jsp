@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 <!DOCTYPE html>
+<%@page import="org.springframework.http.HttpStatus"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page session="true" import="java.util.List, org.openspcoop2.web.lib.mvc.*" %>
 
@@ -45,6 +46,15 @@ GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData
 //   }
 
 String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
+
+//Imposta uno status diverso da 200 se previsto.
+Object setErrorCodeObj = request.getAttribute(Costanti.REQUEST_ATTRIBUTE_SET_ERROR_CODE);
+
+if(setErrorCodeObj != null){
+	HttpStatus httpStatus = (HttpStatus) setErrorCodeObj;
+	response.setStatus(httpStatus.value());
+}
+
 %>
 <html lang="it">
 <head>
@@ -74,7 +84,9 @@ function CheckDati() {
 };
 </script>
 <link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="css/materialIcons/material-icons-fontface.css" type="text/css">
 <link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
+<link rel="stylesheet" href="css/materialIcons.css" type="text/css">
 <script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
 <!-- JQuery lib-->
 <script type="text/javascript" src="js/jquery-latest.js" nonce="<%= randomNonce %>"></script>

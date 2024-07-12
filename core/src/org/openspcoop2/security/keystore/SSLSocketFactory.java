@@ -21,6 +21,7 @@
 package org.openspcoop2.security.keystore;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 import javax.net.ssl.SSLContext;
 
@@ -31,6 +32,9 @@ import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.keystore.cache.GestoreOCSPResource;
 import org.openspcoop2.security.keystore.cache.GestoreOCSPValidator;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.byok.BYOKProvider;
+import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
+import org.openspcoop2.utils.transport.http.IBYOKUnwrapManager;
 import org.openspcoop2.utils.transport.http.IOCSPValidator;
 import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
@@ -80,14 +84,25 @@ public class SSLSocketFactory implements Serializable {
 				if(this.sslConfig!=null){
 					
 					// provo a leggere i keystore dalla cache
+					IBYOKUnwrapManager byokManager = null;
 					if(this.sslConfig.getKeyStoreLocation()!=null) {
+						BYOKRequestParams byokParams = null;
+						if(BYOKProvider.isPolicyDefined(this.sslConfig.getKeyStoreBYOKPolicy())){
+							byokParams = BYOKProvider.getBYOKRequestParamsByUnwrapBYOKPolicy(this.sslConfig.getKeyStoreBYOKPolicy(), 
+									this.sslConfig.getDynamicMap()!=null ? this.sslConfig.getDynamicMap() : new HashMap<>() );
+						}
 						try {
 							KeyStore keystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, this.sslConfig.getKeyStoreLocation(), 
-									this.sslConfig.getKeyStoreType(), this.sslConfig.getKeyStorePassword()).getKeyStore();
+									this.sslConfig.getKeyStoreType(), this.sslConfig.getKeyStorePassword(),
+									byokParams).getKeyStore();
 							this.sslConfig.setKeyStore(keystore.getKeystore(), keystore.isKeystoreHsm());
 						}catch(Exception e) {
 							String msgError = getErrorMessage(this.sslConfig.getKeyStoreLocation(),e,true);
 							this.sslConfig.getLoggerBuffer().error(msgError, e);
+						}
+						if(this.sslConfig.getKeyStore()==null && byokParams!=null) {
+							// operazione precedente non riuscita
+							byokManager = new BYOKUnwrapManager(this.sslConfig.getKeyStoreBYOKPolicy(), byokParams);
 						}
 					}
 					if(this.sslConfig.getTrustStoreLocation()!=null) {
@@ -128,7 +143,7 @@ public class SSLSocketFactory implements Serializable {
 					}
 					
 					StringBuilder bfSSLConfig = new StringBuilder();
-					SSLContext sslContext = SSLUtilities.generateSSLContext(this.sslConfig, ocspValidator, bfSSLConfig);
+					SSLContext sslContext = SSLUtilities.generateSSLContext(this.sslConfig, ocspValidator, byokManager, bfSSLConfig);
 					this.sslSocketFactoryObject = sslContext.getSocketFactory();
 					
 					if(this.sslConfig.getLoggerBuffer()!=null) {

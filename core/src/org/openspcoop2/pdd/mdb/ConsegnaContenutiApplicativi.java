@@ -1986,12 +1986,14 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				tokenForward = (TokenForward) oTokenForward;
 			}
 			if(tokenForward!=null) {
+				/**Vengono inviati header doppi se non iniziano con GovWay-
 				if(tokenForward.getTrasporto()!=null && tokenForward.getTrasporto().size()>0) {
 					propertiesTrasporto.putAll(tokenForward.getTrasporto());
 				}
 				if(tokenForward.getUrl()!=null && tokenForward.getUrl().size()>0) {
 					propertiesUrlBased.putAll(tokenForward.getUrl());
-				}
+				}*/
+				tokenForward.add(consegnaMessageTrasformato);
 			}
 			
 			// Risposte del connettore

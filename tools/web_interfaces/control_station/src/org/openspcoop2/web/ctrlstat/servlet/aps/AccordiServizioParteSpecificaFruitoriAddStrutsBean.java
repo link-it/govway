@@ -75,6 +75,7 @@ public class AccordiServizioParteSpecificaFruitoriAddStrutsBean {
 	protected String httpsKeyAlias;
 	protected String httpsTrustStoreCRLs;
 	protected String httpsTrustStoreOCSPPolicy;
+	protected String httpsKeyStoreBYOKPolicy;
 	protected String httpshostverifyS;
 	protected String httpsstatoS;
 	protected boolean httpshostverify;
@@ -101,6 +102,14 @@ public class AccordiServizioParteSpecificaFruitoriAddStrutsBean {
 
 	protected boolean autenticazioneToken = false;
 	protected String tokenPolicy = null;
+	
+	protected String autenticazioneApiKey = null;
+	protected boolean useOAS3Names=true;
+	protected boolean useAppId=false;
+	protected String apiKeyHeader = null;
+	protected String apiKeyValue = null;
+	protected String appIdHeader = null;
+	protected String appIdValue = null;
 	
 	protected String proxyEnabled;
 	protected String proxyHostname;

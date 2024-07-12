@@ -560,6 +560,7 @@ public class ModiErogazioniApiHelper {
 			datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_PASSWORD, true));
 			datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PASSWORD, true));
 			datiKeystore.setKeystorePath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PATH, true));
+			datiKeystore.setKeystoreByokPolicy(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_BYOK_POLICY, false));
 
 			ks.setDatiKeystore(datiKeystore);
 		} else if(keystoreModeString.equals(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE)) {
@@ -805,6 +806,7 @@ public class ModiErogazioniApiHelper {
 				datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_PASSWORD, true));
 				datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PASSWORD, true));
 				datiKeystore.setKeystorePath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PATH, true));
+				datiKeystore.setKeystoreByokPolicy(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_BYOK_POLICY, false));
 
 				ks.setDatiKeystore(datiKeystore);
 			} else if(keystoreModeString.equals(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE)) {
@@ -1990,6 +1992,7 @@ public class ModiErogazioniApiHelper {
 			p.addProperty(ModICostanti.MODIPA_KEY_PASSWORD, "");
 			p.addProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD, "");
 			p.addProperty(ModICostanti.MODIPA_KEYSTORE_PATH, "");
+			p.addProperty(ModICostanti.MODIPA_KEYSTORE_BYOK_POLICY, "");
 			
 		} else {
 
@@ -2025,6 +2028,7 @@ public class ModiErogazioniApiHelper {
 				p.addProperty(ModICostanti.MODIPA_KEY_PASSWORD, fsKeystore.getKeyPassword());
 				p.addProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD, fsKeystore.getKeystorePassword());
 				p.addProperty(ModICostanti.MODIPA_KEYSTORE_PATH, fsKeystore.getKeystorePath());
+				p.addProperty(ModICostanti.MODIPA_KEYSTORE_BYOK_POLICY, fsKeystore.getKeystoreByokPolicy());
 			} else {
 				ModIKeyStoreArchive archiveKeystore = (ModIKeyStoreArchive)keystoreRidefinito.getDatiKeystore();
 				p.addProperty(ModICostanti.MODIPA_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE);
@@ -2722,6 +2726,7 @@ public class ModiErogazioniApiHelper {
 		p.addProperty(ModICostanti.MODIPA_KEY_PASSWORD, "");
 		p.addProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD, "");
 		p.addProperty(ModICostanti.MODIPA_KEYSTORE_PATH, "");
+		p.addProperty(ModICostanti.MODIPA_KEYSTORE_BYOK_POLICY, "");
 	}
 	private static void setKeystoreRidefinitoProperties(ProtocolProperties p, ModIKeyStoreRidefinito keystoreRidefinito) {
 		p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE, ModICostanti.MODIPA_PROFILO_RIDEFINISCI);
@@ -2754,6 +2759,7 @@ public class ModiErogazioniApiHelper {
 			p.addProperty(ModICostanti.MODIPA_KEY_PASSWORD, fsKeystore.getKeyPassword());
 			p.addProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD, fsKeystore.getKeystorePassword());
 			p.addProperty(ModICostanti.MODIPA_KEYSTORE_PATH, fsKeystore.getKeystorePath());
+			p.addProperty(ModICostanti.MODIPA_KEYSTORE_BYOK_POLICY, fsKeystore.getKeystoreByokPolicy());
 		} else {
 			ModIKeyStoreArchive archiveKeystore = (ModIKeyStoreArchive)keystoreRidefinito.getDatiKeystore();
 			p.addProperty(ModICostanti.MODIPA_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE);

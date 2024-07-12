@@ -40,6 +40,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Connettore;
@@ -59,6 +60,7 @@ import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazio
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
@@ -242,10 +244,12 @@ public final class ServiziApplicativiChange extends Action {
 			String tipoCredenzialiSSLAliasCertificatoNotBefore= saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_BEFORE);
 			String tipoCredenzialiSSLAliasCertificatoNotAfter = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_AFTER); 
 			String tipoCredenzialiSSLVerificaTuttiICampi = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
-			if (tipoCredenzialiSSLVerificaTuttiICampi == null || StringUtils.isEmpty(tipoCredenzialiSSLVerificaTuttiICampi)) {
-				if(saHelper.isEditModeInProgress() && saHelper.getPostBackElementName()==null) { // prima volta
-					tipoCredenzialiSSLVerificaTuttiICampi = ConnettoriCostanti.DEFAULT_VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI;
-				}
+			if (
+					(tipoCredenzialiSSLVerificaTuttiICampi == null || StringUtils.isEmpty(tipoCredenzialiSSLVerificaTuttiICampi)) 
+					&&
+					(saHelper.isEditModeInProgress() && saHelper.getPostBackElementName()==null) 
+				){ // prima volta
+				tipoCredenzialiSSLVerificaTuttiICampi = ConnettoriCostanti.DEFAULT_VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI;
 			}
 			String tipoCredenzialiSSLConfigurazioneManualeSelfSigned= saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_MANUALE_SELF_SIGNED);
 			if (tipoCredenzialiSSLConfigurazioneManualeSelfSigned == null) {
@@ -331,7 +335,7 @@ public final class ServiziApplicativiChange extends Action {
 			String proxyHostname = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
 			String proxyPort = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
 			String proxyUsername = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
-			String proxyPassword = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			String proxyPassword = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 			
 			// tempi risposta
 			String tempiRispostaEnabled = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
@@ -350,7 +354,36 @@ public final class ServiziApplicativiChange extends Action {
 			String url = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			if(TipiConnettore.HTTP.toString().equals(endpointtype)){
 				user = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				password = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				password = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			}
+			
+			// api key
+			String autenticazioneApiKey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_API_KEY);
+			String apiKeyHeader = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_HEADER);
+			if(apiKeyHeader==null || StringUtils.isEmpty(apiKeyHeader)) {
+				apiKeyHeader = CostantiConnettori.DEFAULT_HEADER_API_KEY;
+			}
+			String apiKeyValue = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_VALUE);
+			String appIdHeader = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_APP_ID_HEADER);
+			if(appIdHeader==null || StringUtils.isEmpty(appIdHeader)) {
+				appIdHeader = CostantiConnettori.DEFAULT_HEADER_APP_ID;
+			}
+			String appIdValue = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE);
+			String useOAS3NamesTmp = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_NOMI_OAS);
+			boolean useOAS3Names=true;
+			if(useOAS3NamesTmp!=null && StringUtils.isNotEmpty(useOAS3NamesTmp)) {
+				useOAS3Names = ServletUtils.isCheckBoxEnabled(useOAS3NamesTmp);
+			}
+			else {
+				useOAS3Names = saHelper.isAutenticazioneApiKeyUseOAS3Names(apiKeyHeader, appIdHeader);
+			}
+			String useAppIdTmp = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_USE_APP_ID);
+			boolean useAppId=false;
+			if(useAppIdTmp!=null && StringUtils.isNotEmpty(useAppIdTmp)) {
+				useAppId = ServletUtils.isCheckBoxEnabled(useAppIdTmp);
+			}
+			else {
+				useAppId = saHelper.isAutenticazioneApiKeyUseAppId(appIdValue);
 			}
 			
 			// jms
@@ -363,7 +396,7 @@ public final class ServiziApplicativiChange extends Action {
 			String sendas = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
 			if(TipiConnettore.JMS.toString().equals(endpointtype)){
 				user = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_USERNAME);
-				password = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
+				password = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
 			}
 			
 			// https
@@ -375,23 +408,24 @@ public final class ServiziApplicativiChange extends Action {
 			boolean httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 			String httpspath = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 			String httpstipo = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
-			String httpspwd = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+			String httpspwd = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
 			String httpsalgoritmo = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
 			String httpsstatoS = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
 			boolean httpsstato = ServletUtils.isCheckBoxEnabled(httpsstatoS);
 			String httpskeystore = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
-			String httpspwdprivatekeytrust = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
+			String httpspwdprivatekeytrust = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
 			String httpspathkey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
 			String httpstipokey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
-			String httpspwdkey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
-			String httpspwdprivatekey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
+			String httpspwdkey = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
+			String httpspwdprivatekey = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 			String httpsalgoritmokey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 			String httpsKeyAlias = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
 			String httpsTrustStoreCRLs = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			String httpsTrustStoreOCSPPolicy = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+			String httpsKeyStoreBYOKPolicy = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				password = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				password = saHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			}
 			
 			// file
@@ -473,12 +507,12 @@ public final class ServiziApplicativiChange extends Action {
 			
 			InvocazioneServizio is = sa.getInvocazioneServizio();
 			if(is==null) {
-				throw new Exception("ServizioApplicativo con id '"+idServizioApplicativoLong+"' senza InvocazioneServizio");
+				throw new CoreException("ServizioApplicativo con id '"+idServizioApplicativoLong+"' senza InvocazioneServizio");
 			}
 			InvocazioneCredenziali cis = is.getCredenziali();
 			Connettore connis = is.getConnettore();
 			if(connis==null) {
-				throw new Exception("ServizioApplicativo con id '"+idServizioApplicativoLong+"' senza connettore in InvocazioneServizio");
+				throw new CoreException("ServizioApplicativo con id '"+idServizioApplicativoLong+"' senza connettore in InvocazioneServizio");
 			}
 			List<Property> cp = connis.getPropertyList();
 			
@@ -488,16 +522,15 @@ public final class ServiziApplicativiChange extends Action {
 					ServletExtendedConnettoreUtils.getExtendedConnettore(connis, ConnettoreServletType.SERVIZIO_APPLICATIVO_CHANGE, saHelper, 
 							(endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
 			
-			if (endpointtype == null) {
-				if(connis!=null){
-					if ((connis.getCustom()!=null && connis.getCustom()) && 
-							!TipiConnettore.HTTPS.toString().equals(connis.getTipo()) && 
-							!TipiConnettore.FILE.toString().equals(connis.getTipo())) {
-						endpointtype = TipiConnettore.CUSTOM.toString();
-						tipoconn = connis.getTipo();
-					} else
-						endpointtype = connis.getTipo();
-				}
+			if (endpointtype == null &&
+				connis!=null){
+				if ((connis.getCustom()!=null && connis.getCustom()) && 
+						!TipiConnettore.HTTPS.toString().equals(connis.getTipo()) && 
+						!TipiConnettore.FILE.toString().equals(connis.getTipo())) {
+					endpointtype = TipiConnettore.CUSTOM.toString();
+					tipoconn = connis.getTipo();
+				} else
+					endpointtype = connis.getTipo();
 			}
 			if(endpointtype==null){
 				endpointtype=TipiConnettore.DISABILITATO.toString();
@@ -537,7 +570,7 @@ public final class ServiziApplicativiChange extends Action {
 			
 			String labelApplicativi = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
 			String labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI;
-			if(saHelper.isModalitaCompleta()==false) {
+			if(!saHelper.isModalitaCompleta()) {
 				labelApplicativi = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
 				labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_APPLICATIVI_DI;
 			}
@@ -1017,13 +1050,15 @@ public final class ServiziApplicativiChange extends Action {
 							idSoggetto!=null && 
 							idSoggetto.getTipo()!=null && !"".equals(idSoggetto.getTipo()) && 
 							idSoggetto.getNome()!=null && !"".equals(idSoggetto.getNome());
-					if(appId==null || "".equals(appId)) {
-						if( saDefined ) {
-							IDServizioApplicativo idSA = new IDServizioApplicativo();
-							idSA.setNome(nomeParameter);
-							idSA.setIdSoggettoProprietario(idSoggetto);
-							appId = saCore.toAppId(nomeProtocollo, idSA, multipleApiKeysEnabled);
-						}
+					if(
+							(appId==null || "".equals(appId)) 
+							&&
+							( saDefined ) 
+						){
+						IDServizioApplicativo idSA = new IDServizioApplicativo();
+						idSA.setNome(nomeParameter);
+						idSA.setIdSoggettoProprietario(idSoggetto);
+						appId = saCore.toAppId(nomeProtocollo, idSA, multipleApiKeysEnabled);
 					}
 				}
 			}
@@ -1104,76 +1139,74 @@ public final class ServiziApplicativiChange extends Action {
 				}
 				
 				
-				if (tipoauthSA == null){
-					if (credenziali != null){
-						if(credenziali.getTipo()!=null)
-							tipoauthSA = credenziali.getTipo().toString();
-						utenteSA = credenziali.getUser();
-						passwordSA = credenziali.getPassword();
-						if(tipoauthSA!=null && ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(tipoauthSA)){
-							tipoCredenzialiSSLVerificaTuttiICampi = credenziali.isCertificateStrictVerification() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
+				if (tipoauthSA == null &&
+					credenziali != null){
+					if(credenziali.getTipo()!=null)
+						tipoauthSA = credenziali.getTipo().toString();
+					utenteSA = credenziali.getUser();
+					passwordSA = credenziali.getPassword();
+					if(tipoauthSA!=null && ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(tipoauthSA)){
+						tipoCredenzialiSSLVerificaTuttiICampi = credenziali.isCertificateStrictVerification() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
+					}
+					else if(tipoauthSA!=null && ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(tipoauthSA)){
+						tipoCredenzialiSSLVerificaTuttiICampi = credenziali.isCertificateStrictVerification() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
+						multipleApiKey = credenziali.isAppId() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
+						appId = credenziali.getUser();
+						apiKey = credenziali.getPassword();
+					}
+					principalSA = credenziali.getUser();
+					tokenClientIdSA = credenziali.getUser();
+					tokenPolicySA = credenziali.getTokenPolicy();
+					
+					tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoauthSA) && StringUtils.isNotEmpty(tokenClientIdSA);
+					if(tokenPolicySA!=null && !StringUtils.isEmpty(tokenPolicySA) && !CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicySA) &&
+						dominio!=null && SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(dominio) && 
+								nomeProtocollo!=null && saCore.isProfiloModIPA(nomeProtocollo)) {
+						tokenByPDND=saCore.isPolicyGestioneTokenPDND(tokenPolicySA);
+						tokenModiPDNDOauth=!tokenWithHttpsEnabledByConfigSA;
+					}
+					
+					if((tokenWithHttpsEnabledByConfigSA || tokenModiPDNDOauth)) {
+						if(!tokenByPDND && saCore.isPolicyGestioneTokenPDND(tokenPolicySA)) {
+							tokenPolicySA=null;
 						}
-						else if(tipoauthSA!=null && ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(tipoauthSA)){
-							tipoCredenzialiSSLVerificaTuttiICampi = credenziali.isCertificateStrictVerification() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
-							multipleApiKey = credenziali.isAppId() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
-							appId = credenziali.getUser();
-							apiKey = credenziali.getPassword();
+						else if(tokenByPDND && !saCore.isPolicyGestioneTokenPDND(tokenPolicySA)) {
+							tokenPolicySA = saCore.getDefaultPolicyGestioneTokenPDND();
 						}
-						principalSA = credenziali.getUser();
-						tokenClientIdSA = credenziali.getUser();
-						tokenPolicySA = credenziali.getTokenPolicy();
+					}
+					
+					if(credenziali.getCertificate() != null) {
+						tipoCredenzialiSSLFileCertificato.setValue(credenziali.getCertificate());
+						tipoCredenzialiSSLSorgente = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO;
+						tipoCredenzialiSSLVerificaTuttiICampi = credenziali.isCertificateStrictVerification() ? Costanti.CHECK_BOX_ENABLED :Costanti.CHECK_BOX_DISABLED;
 						
-						tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoauthSA) && StringUtils.isNotEmpty(tokenClientIdSA);
-						if(tokenPolicySA!=null && !StringUtils.isEmpty(tokenPolicySA) && !CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicySA)) {
-							if(dominio!=null && SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(dominio) && 
-									nomeProtocollo!=null && saCore.isProfiloModIPA(nomeProtocollo)) {
-								tokenByPDND=saCore.isPolicyGestioneTokenPDND(tokenPolicySA);
-								tokenModiPDNDOauth=!tokenWithHttpsEnabledByConfigSA;
-							}
+						try {
+							Certificate cSelezionato = ArchiveLoader.load(tipoCredenzialiSSLFileCertificato.getValue());
+							tipoCredenzialiSSLAliasCertificatoIssuer = cSelezionato.getCertificate().getIssuer().getNameNormalized();
+							tipoCredenzialiSSLAliasCertificatoSubject = cSelezionato.getCertificate().getSubject().getNameNormalized();
+							tipoCredenzialiSSLAliasCertificatoSelfSigned = cSelezionato.getCertificate().isSelfSigned() ? CostantiControlStation.LABEL_SI : CostantiControlStation.LABEL_NO;
+							tipoCredenzialiSSLAliasCertificatoSerialNumber = cSelezionato.getCertificate().getSerialNumber() + "";
+							tipoCredenzialiSSLAliasCertificatoType = cSelezionato.getCertificate().getType();
+							tipoCredenzialiSSLAliasCertificatoVersion = cSelezionato.getCertificate().getVersion() + "";
+							tipoCredenzialiSSLAliasCertificatoNotBefore = saHelper.getSdfCredenziali().format(cSelezionato.getCertificate().getNotBefore());
+							tipoCredenzialiSSLAliasCertificatoNotAfter = saHelper.getSdfCredenziali().format(cSelezionato.getCertificate().getNotAfter());
+						}catch(UtilsException e) {
+							pd.setMessage("Il Certificato selezionato non &egrave; valido: "+e.getMessage());
+							tipoCredenzialiSSLAliasCertificato = "";
+							tipoCredenzialiSSLAliasCertificatoSubject= "";
+							tipoCredenzialiSSLAliasCertificatoIssuer= "";
+							tipoCredenzialiSSLAliasCertificatoType= "";
+							tipoCredenzialiSSLAliasCertificatoVersion= "";
+							tipoCredenzialiSSLAliasCertificatoSerialNumber= "";
+							tipoCredenzialiSSLAliasCertificatoSelfSigned= "";
+							tipoCredenzialiSSLAliasCertificatoNotBefore= "";
+							tipoCredenzialiSSLAliasCertificatoNotAfter = "";
 						}
-						
-						if((tokenWithHttpsEnabledByConfigSA || tokenModiPDNDOauth)) {
-							if(!tokenByPDND && saCore.isPolicyGestioneTokenPDND(tokenPolicySA)) {
-								tokenPolicySA=null;
-							}
-							else if(tokenByPDND && !saCore.isPolicyGestioneTokenPDND(tokenPolicySA)) {
-								tokenPolicySA = saCore.getDefaultPolicyGestioneTokenPDND();
-							}
-						}
-						
-						if(credenziali.getCertificate() != null) {
-							tipoCredenzialiSSLFileCertificato.setValue(credenziali.getCertificate());
-							tipoCredenzialiSSLSorgente = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO;
-							tipoCredenzialiSSLVerificaTuttiICampi = credenziali.isCertificateStrictVerification() ? Costanti.CHECK_BOX_ENABLED :Costanti.CHECK_BOX_DISABLED;
-							
-							try {
-								Certificate cSelezionato = ArchiveLoader.load(tipoCredenzialiSSLFileCertificato.getValue());
-								tipoCredenzialiSSLAliasCertificatoIssuer = cSelezionato.getCertificate().getIssuer().getNameNormalized();
-								tipoCredenzialiSSLAliasCertificatoSubject = cSelezionato.getCertificate().getSubject().getNameNormalized();
-								tipoCredenzialiSSLAliasCertificatoSelfSigned = cSelezionato.getCertificate().isSelfSigned() ? CostantiControlStation.LABEL_SI : CostantiControlStation.LABEL_NO;
-								tipoCredenzialiSSLAliasCertificatoSerialNumber = cSelezionato.getCertificate().getSerialNumber() + "";
-								tipoCredenzialiSSLAliasCertificatoType = cSelezionato.getCertificate().getType();
-								tipoCredenzialiSSLAliasCertificatoVersion = cSelezionato.getCertificate().getVersion() + "";
-								tipoCredenzialiSSLAliasCertificatoNotBefore = saHelper.getSdfCredenziali().format(cSelezionato.getCertificate().getNotBefore());
-								tipoCredenzialiSSLAliasCertificatoNotAfter = saHelper.getSdfCredenziali().format(cSelezionato.getCertificate().getNotAfter());
-							}catch(UtilsException e) {
-								pd.setMessage("Il Certificato selezionato non &egrave; valido: "+e.getMessage());
-								tipoCredenzialiSSLAliasCertificato = "";
-								tipoCredenzialiSSLAliasCertificatoSubject= "";
-								tipoCredenzialiSSLAliasCertificatoIssuer= "";
-								tipoCredenzialiSSLAliasCertificatoType= "";
-								tipoCredenzialiSSLAliasCertificatoVersion= "";
-								tipoCredenzialiSSLAliasCertificatoSerialNumber= "";
-								tipoCredenzialiSSLAliasCertificatoSelfSigned= "";
-								tipoCredenzialiSSLAliasCertificatoNotBefore= "";
-								tipoCredenzialiSSLAliasCertificatoNotAfter = "";
-							}
-						} else {
-							subjectSA = credenziali.getSubject();
-							issuerSA = credenziali.getIssuer();
-							tipoCredenzialiSSLSorgente = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE;
-							tipoCredenzialiSSLConfigurazioneManualeSelfSigned = ( subjectSA != null && subjectSA.equals(issuerSA)) ? Costanti.CHECK_BOX_ENABLED :Costanti.CHECK_BOX_DISABLED;
-						}
+					} else {
+						subjectSA = credenziali.getSubject();
+						issuerSA = credenziali.getIssuer();
+						tipoCredenzialiSSLSorgente = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE;
+						tipoCredenzialiSSLConfigurazioneManualeSelfSigned = ( subjectSA != null && subjectSA.equals(issuerSA)) ? Costanti.CHECK_BOX_ENABLED :Costanti.CHECK_BOX_DISABLED;
 					}
 				}
 				if (tipoauthSA == null) {
@@ -1396,6 +1429,36 @@ public final class ServiziApplicativiChange extends Action {
 				
 				autenticazioneHttp = saHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 				
+				if(autenticazioneApiKey==null || StringUtils.isEmpty(autenticazioneApiKey)) {
+					for (int i = 0; i < connis.sizePropertyList(); i++) {
+						Property singlecp = cp.get(i);
+						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_APIKEY_HEADER)) {
+							apiKeyHeader = singlecp.getValore();
+						}
+						else if (singlecp.getNome().equals(CostantiDB.CONNETTORE_APIKEY)) {
+							apiKeyValue = singlecp.getValore();
+						}
+						else if (singlecp.getNome().equals(CostantiDB.CONNETTORE_APIKEY_APPID_HEADER)) {
+							appIdHeader = singlecp.getValore();
+						}
+						else if (singlecp.getNome().equals(CostantiDB.CONNETTORE_APIKEY_APPID)) {
+							appIdValue = singlecp.getValore();
+						}
+					}
+					
+					autenticazioneApiKey = saHelper.getAutenticazioneApiKey(autenticazioneApiKey, endpointtype, apiKeyValue);
+					if(ServletUtils.isCheckBoxEnabled(autenticazioneApiKey)) {
+						useOAS3Names = saHelper.isAutenticazioneApiKeyUseOAS3Names(apiKeyHeader, appIdHeader);
+						useAppId = saHelper.isAutenticazioneApiKeyUseAppId(appIdValue);
+					}
+					else {
+						apiKeyValue=null;
+						apiKeyHeader=null;
+						appIdHeader=null;
+						appIdValue=null;
+					}
+				}
+				
 				for (int i = 0; i < connis.sizePropertyList(); i++) {
 					Property singlecp = cp.get(i);
 					if (singlecp.getNome().equals(CostantiDB.CONNETTORE_HTTP_LOCATION) &&
@@ -1459,6 +1522,7 @@ public final class ServiziApplicativiChange extends Action {
 					httpsKeyAlias = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_ALIAS);
 					httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLS);
 					httpsTrustStoreOCSPPolicy = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
+					httpsKeyStoreBYOKPolicy = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY);
 					if (httpspathkey == null) {
 						httpsstato = false;
 						httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
@@ -1484,12 +1548,12 @@ public final class ServiziApplicativiChange extends Action {
 					httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 				}
 				if(httpshostverifyS==null || "".equals(httpshostverifyS)){
-					httpshostverifyS = "true";
-					httpshostverify = true;
+					httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
+					httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
 				}
 				if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
 					httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
-					httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
+					httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 				}
 				
 				// file
@@ -1500,32 +1564,32 @@ public final class ServiziApplicativiChange extends Action {
 					requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);
 					requestOutputFileNameHeadersPermissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS);	
 					String v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
-					if(v!=null && !"".equals(v)){
-						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-							requestOutputParentDirCreateIfNotExists = Costanti.CHECK_BOX_ENABLED_TRUE;
-						}
+					if(v!=null && !"".equals(v) &&
+						("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+						){
+						requestOutputParentDirCreateIfNotExists = Costanti.CHECK_BOX_ENABLED_TRUE;
 					}					
 					v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE);
-					if(v!=null && !"".equals(v)){
-						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-							requestOutputOverwriteIfExists = Costanti.CHECK_BOX_ENABLED_TRUE;
-						}
+					if(v!=null && !"".equals(v) &&
+						("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+						){
+						requestOutputOverwriteIfExists = Costanti.CHECK_BOX_ENABLED_TRUE;
 					}	
 					
 					v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_MODE);
-					if(v!=null && !"".equals(v)){
-						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-							responseInputMode = CostantiConfigurazione.ABILITATO.getValue();
-						}
+					if(v!=null && !"".equals(v) &&
+						("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+						){
+						responseInputMode = CostantiConfigurazione.ABILITATO.getValue();
 					}
 					if(CostantiConfigurazione.ABILITATO.getValue().equals(responseInputMode)){						
 						responseInputFileName = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE);
 						responseInputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS);
 						v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ);
-						if(v!=null && !"".equals(v)){
-							if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-								responseInputDeleteAfterRead = Costanti.CHECK_BOX_ENABLED_TRUE;
-							}
+						if(v!=null && !"".equals(v) &&
+							("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+							){
+							responseInputDeleteAfterRead = Costanti.CHECK_BOX_ENABLED_TRUE;
 						}						
 						responseInputWaitTime = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);						
 					}
@@ -1562,7 +1626,7 @@ public final class ServiziApplicativiChange extends Action {
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey,
 						httpspwdprivatekey, httpsalgoritmokey,
-						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 						tipoconn, connettoreDebug,
 						isConnettoreCustomUltimaImmagineSalvata, 
 						proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
@@ -1581,7 +1645,8 @@ public final class ServiziApplicativiChange extends Action {
 						autenticazioneToken,tokenPolicy,tipoSA, useAsClient,
 						integrationManagerEnabled, 
 						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
-						tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA);
+						tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
+						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiConfig(dati, consoleConfiguration,consoleOperationType, protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -1672,7 +1737,7 @@ public final class ServiziApplicativiChange extends Action {
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey,
 						httpspwdprivatekey, httpsalgoritmokey,
-						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 						tipoconn, connettoreDebug,
 						isConnettoreCustomUltimaImmagineSalvata, 
 						proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
@@ -1691,7 +1756,8 @@ public final class ServiziApplicativiChange extends Action {
 						autenticazioneToken,tokenPolicy,tipoSA, useAsClient,
 						integrationManagerEnabled, 
 						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
-						tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA);
+						tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
+						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiConfig(dati, consoleConfiguration,consoleOperationType, protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -2112,7 +2178,7 @@ public final class ServiziApplicativiChange extends Action {
 						httpspathkey, httpstipokey,
 						httpspwdkey, httpspwdprivatekey,
 						httpsalgoritmokey,
-						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy,
+						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 						proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
 						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
@@ -2120,6 +2186,7 @@ public final class ServiziApplicativiChange extends Action {
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						tokenPolicy,
+						apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
 						listExtendedConnettore);
 				is.setConnettore(connis);
 				
@@ -2198,10 +2265,10 @@ public final class ServiziApplicativiChange extends Action {
 
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
-			if(sbWarningCheck!=null && sbWarningCheck.length()>0) {
-				if(pd.getMessage()==null || StringUtils.isEmpty(pd.getMessage())) {
-					pd.setMessage(sbWarningCheck.toString(), MessageType.WARN);
-				}
+			if(sbWarningCheck!=null && sbWarningCheck.length()>0 &&
+				(pd.getMessage()==null || StringUtils.isEmpty(pd.getMessage())) 
+				){
+				pd.setMessage(sbWarningCheck.toString(), MessageType.WARN);
 			}
 			
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ForwardParams.CHANGE());

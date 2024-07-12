@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
-<project name="pddConfigLoader_LocalEnv" basedir=".">
+<project name="govway_cliConfigLoader_LocalEnv" basedir=".">
 
 	<!-- openspcoop2 -->
 	<property name="openspcoop2" location="../../../" />

@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.byok.IDriverBYOK;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.Connettore;
@@ -1061,12 +1062,27 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 
 					if(rispAsinc.getAutenticazione()!=null && InvocazioneServizioTipoAutenticazione.BASIC.equals(rispAsinc.getAutenticazione())){
 						InvocazioneCredenziali credenzialiRispA = new InvocazioneCredenziali();
-						credenzialiRispA.setPassword(rs.getString("passwordrisp"));
+						
+						String encValue = rs.getString("enc_passwordrisp");
+						String plainValue = rs.getString("passwordrisp");
+						if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+							IDriverBYOK driverBYOK = this.driver.getDriverUnwrapBYOK();
+							if(driverBYOK!=null) {
+								credenzialiRispA.setPassword(driverBYOK.unwrapAsString(encValue));
+							}
+							else {
+								credenzialiRispA.setPassword(encValue);
+							}
+						}
+						else {
+							credenzialiRispA.setPassword(plainValue);
+						}
+						
 						credenzialiRispA.setUser(rs.getString("utenterisp"));
 						rispAsinc.setCredenziali(credenzialiRispA);
 					}
 					
-					Connettore connettore = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettore, con);
+					Connettore connettore = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettore, con, this.driver.getDriverUnwrapBYOK());
 					rispAsinc.setConnettore(connettore);
 					rispAsinc.setGetMessage(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(getMsgRisp));
 
@@ -1099,7 +1115,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				InvocazioneServizio invServizio = null;				
 				if (idConnettore > 0 || (getMsgInv != null && !getMsgInv.equals("")) ) {
 					invServizio = new InvocazioneServizio();
-					Connettore connserv = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettore, con);
+					Connettore connserv = DriverConfigurazioneDB_connettoriLIB.getConnettore(idConnettore, con, this.driver.getDriverUnwrapBYOK());
 					invServizio.setConnettore(connserv);
 					invServizio.setGetMessage(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(getMsgInv));
 
@@ -1122,7 +1138,22 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					
 					if(invServizio.getAutenticazione()!=null && InvocazioneServizioTipoAutenticazione.BASIC.equals(invServizio.getAutenticazione())){
 						InvocazioneCredenziali credInvServ = new InvocazioneCredenziali();
-						credInvServ.setPassword(rs.getString("passwordinv"));
+						
+						String encValue = rs.getString("enc_passwordinv");
+						String plainValue = rs.getString("passwordinv");
+						if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+							IDriverBYOK driverBYOK = this.driver.getDriverUnwrapBYOK();
+							if(driverBYOK!=null) {
+								credInvServ.setPassword(driverBYOK.unwrapAsString(encValue));
+							}
+							else {
+								credInvServ.setPassword(encValue);
+							}
+						}
+						else {
+							credInvServ.setPassword(plainValue);
+						}
+						
 						credInvServ.setUser(rs.getString("utenteinv"));
 						invServizio.setCredenziali(credInvServ);
 					}
@@ -1259,7 +1290,22 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					
 					Proprieta proprieta = new Proprieta();
 					proprieta.setNome(rs.getString("nome"));
-					proprieta.setValore(rs.getString("valore"));
+					
+					String plainValue = rs.getString("valore");
+					String encValue = rs.getString("enc_value");
+					if(encValue!=null && StringUtils.isNotEmpty(encValue)) {
+						IDriverBYOK driverBYOK = this.driver.getDriverUnwrapBYOK();
+						if(driverBYOK!=null) {
+							proprieta.setValore(driverBYOK.unwrapAsString(encValue));
+						}
+						else {
+							proprieta.setValore(encValue);
+						}
+					}
+					else {
+						proprieta.setValore(plainValue);
+					}
+					
 					sa.addProprieta(proprieta);
 				
 				}
@@ -1269,13 +1315,16 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				
 				// Protocol Properties
 				try{
-					List<ProtocolProperty> listPP = DriverConfigurazioneDBLib.getListaProtocolProperty(sa.getId(), ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, this.driver.tipoDB);
-					if(listPP!=null && listPP.size()>0){
+					List<ProtocolProperty> listPP = DriverConfigurazioneDBLib.getListaProtocolProperty(sa.getId(), ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, 
+							this.driver.tipoDB, this.driver.getDriverUnwrapBYOK());
+					if(listPP!=null && !listPP.isEmpty()){
 						for (ProtocolProperty protocolProperty : listPP) {
 							sa.addProtocolProperty(protocolProperty);
 						}
 					}
-				}catch(DriverConfigurazioneNotFound dNotFound){}
+				}catch(DriverConfigurazioneNotFound dNotFound){
+					// ignore
+				}
 				
 				
 				return sa;
@@ -1402,7 +1451,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		try {
 			this.driver.logDebug("CRUDServizioApplicativo type = 1");
 			// creo soggetto
-			DriverConfigurazioneDB_serviziApplicativiLIB.CRUDServizioApplicativo(1, aSA, con);
+			DriverConfigurazioneDB_serviziApplicativiLIB.CRUDServizioApplicativo(1, aSA, con, this.driver.getDriverWrapBYOK());
 
 		} catch (Exception qe) {
 			error = true;
@@ -1448,7 +1497,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		try {
 			this.driver.logDebug("CRUDServizioApplicativo type = 2");
 			// creo soggetto
-			DriverConfigurazioneDB_serviziApplicativiLIB.CRUDServizioApplicativo(2, aSA, con);
+			DriverConfigurazioneDB_serviziApplicativiLIB.CRUDServizioApplicativo(2, aSA, con, this.driver.getDriverWrapBYOK());
 
 		} catch (Exception qe) {
 			error = true;
@@ -1489,7 +1538,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 		try {
 			this.driver.logDebug("CRUDServizioApplicativo type = 3");
 			// creo soggetto
-			DriverConfigurazioneDB_serviziApplicativiLIB.CRUDServizioApplicativo(3, aSA, con);
+			DriverConfigurazioneDB_serviziApplicativiLIB.CRUDServizioApplicativo(3, aSA, con, this.driver.getDriverWrapBYOK());
 
 		} catch (Exception qe) {
 			error = true;

@@ -22,6 +22,7 @@ package org.openspcoop2.security.keystore.cache;
 
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.SecretKeyStore;
+import org.openspcoop2.security.keystore.SecretPasswordKeyDerivationConfig;
 import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 
 /**
@@ -40,11 +41,19 @@ public class SecretKeyStoreCache extends AbstractKeystoreCache<SecretKeyStore> {
 		}
 		
 		if(params.length==1){
-			return createFromPath(key, params);
+			if(params[0] instanceof String) {
+				return createFromPath(key, params);
+			}
+			else {
+				return createFromPasswordKeyDerivation(params);
+			}
 		}
 		else if(params.length==2){
 			if(params[0] instanceof String) {
 				return createFromPath(key, params);
+			}
+			else if(params[0] instanceof SecretPasswordKeyDerivationConfig) {
+				return createFromPasswordKeyDerivation(params);
 			}
 			else {
 				return createFromByteArray(params);
@@ -96,6 +105,24 @@ public class SecretKeyStoreCache extends AbstractKeystoreCache<SecretKeyStore> {
 		}
 		else {
 			throw new SecurityException("Param[0] must be byte[] (secretKey)");
+		}
+	}
+	private SecretKeyStore createFromPasswordKeyDerivation(Object... params) throws SecurityException {
+		if(params[0] instanceof SecretPasswordKeyDerivationConfig) {
+			SecretPasswordKeyDerivationConfig secretPasswordKeyDerivationConfig = (SecretPasswordKeyDerivationConfig) params[0];
+			if(params.length==2){
+				if( ! (params[1] instanceof BYOKRequestParams) ){
+					throw new SecurityException("Param[1] must be BYOKRequestParams");
+				}
+				BYOKRequestParams requestParams = (BYOKRequestParams) params[1];
+				return new SecretKeyStore(secretPasswordKeyDerivationConfig, requestParams);
+			}
+			else {
+				return new SecretKeyStore(secretPasswordKeyDerivationConfig);
+			}
+		}
+		else {
+			throw new SecurityException("Param[0] must be SecretPasswordKeyDerivationConfig");
 		}
 	}
 
