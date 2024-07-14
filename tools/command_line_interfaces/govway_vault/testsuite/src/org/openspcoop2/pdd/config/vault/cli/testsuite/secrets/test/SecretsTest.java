@@ -707,6 +707,8 @@ public class SecretsTest extends ConfigLoader {
 		
 		checkExternalToolError();
 		
+		deleteConfig(ConfigLoader.TESTSUITE_BUNDLE_PLAIN_PATH); // per avere copertura su test JACOCO
+		
 		prepareConfig(false, null, ConfigLoader.TESTSUITE_BUNDLE_PLAIN_PATH);
 		/**
 		 * prepareConfig(false, null, TESTSUITE_BUNDLE_PROPRIETA_CIFRATE_PATH);
