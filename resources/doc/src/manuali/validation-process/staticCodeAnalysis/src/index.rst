@@ -62,6 +62,11 @@ Nei `sorgenti del progetto GovWay <https://github.com/link-it/govway/>`_ sono pr
 	- batch di generazione delle statistiche; `tools/batch/statistiche <https://github.com/link-it/govway/tree/master/tools/batch/statistiche>`_ (archivio: openspcoop2_batch-statistiche-<version>.jar)
 	- batch per la gestione del repository di runtime; `tools/batch/runtime-repository <https://github.com/link-it/govway/tree/master/tools/batch/runtime-repository>`_ (archivio: openspcoop2_batch-runtime-repository-<version>.jar)
 
+- *cli*; i tools a linea di comando:
+
+	- :ref:`byokInstallToolVaultCli`; `tools/command_line_interfaces/govway_vault <https://github.com/link-it/govway/tree/master/tools/command_line_interfaces/govway_vault>`_ (archivio: openspcoop2_cli-vault-<version>.jar)
+	- tool che offre le medesime funzionalità, descritte nella sezione :ref:`importa` della console di gestione, che consentono di importare configurazioni memorizzate in un archivio ottenuto con la funzionalità :ref:`esporta`; `tools/command_line_interfaces/config_loader <https://github.com/link-it/govway/tree/master/tools/command_line_interfaces/config_loader>`_ (archivio: openspcoop2_cli-configLoader-<version>.jar)
+
 .. toctree::
         :maxdepth: 2
         

@@ -1,9 +1,19 @@
 Prerequisiti:
 
 - le configurazioni che verranno caricate assumono l'esistenza delle chiavi in /etc/govway/keys già utilizzate dalle altre testsuite
+
 - si assumono configurati i listener https 8444 e 8445 utilizzate dalle altre testsuite
+
 - copiare i files src/configurazioni-govway/*.properties in /etc/govway/ (il byok dovrebbe quindi essere abilitato)
+
 - caricare lo script 'sql/init.sql' prima di far partire GovWay
+
+- Abilitare le seguenti proprietà nel file govway_local.properties 
+  
+  # Indicazione se e' abilitata l'esposizione delle operazioni wrap/unwrap via risorse jmx
+  org.openspcoop2.pdd.byok.jmx.wrap.enabled=true
+  org.openspcoop2.pdd.byok.jmx.unwrap.enabled=true
+
 
 Per avviare i test utilizzare il comando: ant run_test
 

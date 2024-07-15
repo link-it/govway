@@ -30,7 +30,9 @@ L'analisi viene effettuata su tutti i sorgenti descritti nella sezione :ref:`rel
 
 - api di configurazione e monitoraggio: rs-config, rs-monitor;
 
-- batch: batch-statistiche, batch-runtime-repository.
+- batch: batch-statistiche, batch-runtime-repository;
+
+- cli: cli-config-loader, cli-govway-vault.
 
 L'esempio seguente attiva l'analisi dei sorgenti solamente per il profilo di interoperabilità 'ModI':
 
