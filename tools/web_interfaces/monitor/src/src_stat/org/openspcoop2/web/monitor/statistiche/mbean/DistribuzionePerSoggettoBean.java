@@ -177,6 +177,7 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 			
 			switch (numeroDimensioni) {
 				case DIMENSIONI_3:
+				case DIMENSIONI_3_CUSTOM:
 					StatisticType statisticType = StatsUtils.checkStatisticType((StatsSearchForm) this.search, false);
 					grafico = JsonStatsUtils.getJsonHeatmapChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), this.getSlice(), statisticType, this.isVisualizzaTotaleNelleCelleGraficoHeatmap(), DynamicPdDBean.log);
 					break;
@@ -364,11 +365,13 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 			List<TipoLatenza> tipiLatenza = new ArrayList<TipoLatenza>();
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
+			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, 
+					((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(),    
 					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), false); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, 
+					((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(),
 					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());
 
 			if(useFaceContext){
@@ -463,11 +466,13 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 			List<TipoLatenza> tipiLatenza = new ArrayList<TipoLatenza>();
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
+			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione,
+					((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(), 
 					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), false); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, 
+					((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(), 
 					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());
 
 			if(useFaceContext){
@@ -562,11 +567,13 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 			List<TipoLatenza> tipiLatenza = new ArrayList<TipoLatenza>();
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
+			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, 
+					((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(), 
 					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), true); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, 
+					((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(), 
 					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());
 
 			if(useFaceContext){

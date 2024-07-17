@@ -621,6 +621,7 @@ paths:
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
         - $ref: '#/components/parameters/dimensioni_report'
+        - $ref: '#/components/parameters/dimensioni_report_custom_info'
       responses:
         "200":
           $ref: '#/components/responses/200ReportStatistico'
@@ -703,6 +704,7 @@ paths:
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
         - $ref: '#/components/parameters/dimensioni_report'
+        - $ref: '#/components/parameters/dimensioni_report_custom_info'
       responses:
         "200":
           $ref: '#/components/responses/200ReportStatistico'
@@ -786,6 +788,7 @@ paths:
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
         - $ref: '#/components/parameters/dimensioni_report'
+        - $ref: '#/components/parameters/dimensioni_report_custom_info'
       responses:
         "200":
           $ref: '#/components/responses/200ReportStatistico'
@@ -863,6 +866,7 @@ paths:
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
         - $ref: '#/components/parameters/dimensioni_report'
+        - $ref: '#/components/parameters/dimensioni_report_custom_info'
       responses:
         "200":
           $ref: '#/components/responses/200ReportStatistico'
@@ -944,6 +948,7 @@ paths:
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
         - $ref: '#/components/parameters/dimensioni_report'
+        - $ref: '#/components/parameters/dimensioni_report_custom_info'
       responses:
         "200":
           $ref: '#/components/responses/200ReportStatistico'
@@ -1029,6 +1034,7 @@ paths:
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
         - $ref: '#/components/parameters/dimensioni_report'
+        - $ref: '#/components/parameters/dimensioni_report_custom_info'
       responses:
         "200":
           $ref: '#/components/responses/200ReportStatistico'
@@ -1112,6 +1118,7 @@ paths:
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
         - $ref: '#/components/parameters/dimensioni_report'
+        - $ref: '#/components/parameters/dimensioni_report_custom_info'
       responses:
         "200":
           $ref: '#/components/responses/200ReportStatistico'
@@ -1194,6 +1201,7 @@ paths:
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
         - $ref: '#/components/parameters/dimensioni_report'
+        - $ref: '#/components/parameters/dimensioni_report_custom_info'
         - $ref: '#/components/parameters/claim'
       responses:
         "200":
@@ -1276,6 +1284,7 @@ paths:
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
         - $ref: '#/components/parameters/dimensioni_report'
+        - $ref: '#/components/parameters/dimensioni_report_custom_info'
       responses:
         "200":
           $ref: '#/components/responses/200ReportStatistico'
@@ -1794,9 +1803,17 @@ components:
     dimensioni_report:
       in: query
       name: dimensioni_report
-      description: Specifica le informaziono visualizzate nel report se senza data (2d) o con data (3d)
+      description: Specifica le informaziono visualizzate nel report se senza data (2d) o con data (3d) o con informazione personalizzata (3dcustom)
       schema:
         $ref: '#/components/schemas/DimensioniReportEnum'
+      required: false
+      
+    dimensioni_report_custom_info:
+      in: query
+      name: dimensioni_report_custom_info
+      description: Specifica l'informazione personalizzata visualizzata come 3 dimensione dei report
+      schema:
+        $ref: '#/components/schemas/DimensioniReportCustomEnum'
       required: false
       
     tipo_identificazione_applicativo:
@@ -1997,7 +2014,9 @@ components:
         - type: object
           properties:  
             dimensioni:
-              $ref: '#/components/schemas/DimensioniReportEnum' 
+              $ref: '#/components/schemas/DimensioniReportEnum'
+            custom_info:
+              $ref: '#/components/schemas/DimensioniReportCustomEnum'  
 
     TipoInformazioneReportNumeroTransazioni:
       type: object
@@ -2886,8 +2905,34 @@ components:
       enum:
         - 2d
         - 3d
+        - 3dcustom
       example: 2d
       default: 2d
+      
+    DimensioniReportCustomEnum:
+      type: string
+      enum:
+        - tag
+        - api
+        - api_implementation
+        - operation
+        - local_organization
+        - remote_organization
+        - client_organization
+        - provider_organization
+        - token_issuer
+        - token_clientid
+        - token_subject
+        - token_username
+        - token_email
+        - token_pdnd_organization
+        - principal
+        - client
+        - token_client
+        - ip_address
+        - result
+      example: tag
+      default: tag
 
     OccupazioneBandaEnum:
       type: string

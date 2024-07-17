@@ -32,6 +32,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.monitor.rs.server.config.DBManager;
 import org.openspcoop2.core.monitor.rs.server.config.LoggerProperties;
 import org.openspcoop2.core.monitor.rs.server.model.BaseOggettoWithSimpleName;
+import org.openspcoop2.core.monitor.rs.server.model.DimensioniReportCustomEnum;
 import org.openspcoop2.core.monitor.rs.server.model.DimensioniReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneFullSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroApiBase;
@@ -574,7 +575,8 @@ public class ReportisticaHelper {
 		wrap.overrideParameter(CostantiExporter.TIPO_REPORT, tipoReport.toString());
 	}
 
-	public static final void setTipoInformazioneReport(OpzioniGenerazioneReport opzioni, TipoInformazioneReportEnum tipoInformazioneReport, DimensioniReportEnum dimensioniReport) {
+	public static final void setTipoInformazioneReport(OpzioniGenerazioneReport opzioni, TipoInformazioneReportEnum tipoInformazioneReport, 
+			DimensioniReportEnum dimensioniReport, DimensioniReportCustomEnum dimensioniReportCustomInfo) {
 		TipoInformazioneReportEnum tipoInfo = tipoInformazioneReport!=null ? tipoInformazioneReport : TipoInformazioneReportEnum.NUMERO_TRANSAZIONI;
 		switch (tipoInfo) {
 		case NUMERO_TRANSAZIONI:
@@ -594,6 +596,10 @@ public class ReportisticaHelper {
 		if(dimensioniReport!=null && opzioni instanceof OpzioniGenerazioneReportDimensioni) {
 			OpzioniGenerazioneReportDimensioni o = (OpzioniGenerazioneReportDimensioni) opzioni;
 			o.setDimensioni(dimensioniReport);
+			if(dimensioniReportCustomInfo!=null && !DimensioniReportEnum._3DCUSTOM.equals(dimensioniReport)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Solamente con una dimensione '"+DimensioniReportEnum._3DCUSTOM.toString()+"' è possibile indicare una informazione custom da includere nel report");
+			}
+			o.setCustomInfo(dimensioniReportCustomInfo);
 		}
 	}
 	
@@ -647,6 +653,9 @@ public class ReportisticaHelper {
 			OpzioniGenerazioneReportDimensioni o = (OpzioniGenerazioneReportDimensioni) body;
 			if(o.getDimensioni()!=null) {
 				wrap.overrideParameter(CostantiExporter.DIMENSIONI_VISUALIZZATE, Enums.getNumeroDimensioniMap().get(o.getDimensioni()).getValue());
+			}
+			if(o.getCustomInfo()!=null) {
+				wrap.overrideParameter(CostantiExporter.DIMENSIONE_INFO_CUSTOM, Enums.getInformazioneDimensioneCustom().get(o.getCustomInfo()).getValue());
 			}
 		}
 	}

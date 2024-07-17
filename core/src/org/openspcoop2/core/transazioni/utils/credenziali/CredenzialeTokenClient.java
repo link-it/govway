@@ -20,6 +20,7 @@
 
 package org.openspcoop2.core.transazioni.utils.credenziali;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.utils.UtilsException;
@@ -60,8 +61,12 @@ public class CredenzialeTokenClient extends AbstractCredenziale {
 	public static String getApplicationAsString(IDServizioApplicativo applicativo) {
 		return applicativo.toFormatString();
 	}
-	public static IDServizioApplicativo getApplicationFromStringValue(String v) throws Exception {
-		return IDServizioApplicativo.toIDServizioApplicativo(v);
+	public static IDServizioApplicativo getApplicationFromStringValue(String v) throws CoreException {
+		try {
+			return IDServizioApplicativo.toIDServizioApplicativo(v);
+		}catch(Exception e) {
+			throw new CoreException(e.getMessage(),e);
+		}
 	}
 	
 	private static final String PREFIX_CLIENT_ID = "#C#";
@@ -114,7 +119,7 @@ public class CredenzialeTokenClient extends AbstractCredenziale {
 		}
 		return id; // ritorno lo stesso valore poichè l'informazione è stata salvata non strutturata (solo con il client id)
 	}
-	public static IDServizioApplicativo convertApplicationDBValueToOriginal(String id) throws Exception {
+	public static IDServizioApplicativo convertApplicationDBValueToOriginal(String id) throws CoreException {
 		String s = convertApplicationDBValueToOriginalAsString(id);
 		if(s!=null) {
 			return getApplicationFromStringValue(s);

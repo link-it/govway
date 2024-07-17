@@ -63,6 +63,16 @@
 	 			<rich:comboBox id="NumeroDimensioniCombo" value="#{search._value_numeroDimensioni}" defaultLabel="#{msg['stats.search.numeroDimensioni.defaultLabel']}"
 						enableManualInput="false" width="416" converter="selectItemConverter">
 					<f:selectItems value="#{search.dimensioniDisponibili}"/>
+					<a4j:support event="onselect" actionListener="#{search.numeroDimensioniListener}" reRender="altriCriteri"/>
+				</rich:comboBox>
+	 		</link:prop>
+ 		</a4j:outputPanel>
+ 		
+ 		 <a4j:outputPanel id="numeroDimensioniCustomCtr" layout="block" rendered="#{search.visualizzaNumeroDimensioniCustom}">
+	 		<link:prop label=" " required="true">
+	 			<rich:comboBox id="NumeroDimensioniCustomCombo" value="#{search._value_numeroDimensioniCustom}" defaultLabel="#{msg['stats.search.numeroDimensioniCustom.defaultLabel']}"
+						enableManualInput="false" width="416" converter="selectItemConverter">
+					<f:selectItems value="#{search.dimensioniCustomDisponibili}"/>
 				</rich:comboBox>
 	 		</link:prop>
  		</a4j:outputPanel>

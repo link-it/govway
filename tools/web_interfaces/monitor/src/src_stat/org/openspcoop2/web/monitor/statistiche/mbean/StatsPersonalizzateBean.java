@@ -477,11 +477,13 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 				}
 				headerLabel = CostantiGrafici.NOME_LABEL;
 				// creazione del report con Dynamic Report
-				report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
+				report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, 
+						((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(), 
 						tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), false);
 				
 				// scrittura del report sullo stream
-				ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+				ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, 
+						((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(),
 						tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());
 			}
 			
@@ -607,11 +609,13 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 				}
 				headerLabel = CostantiGrafici.NOME_LABEL;
 				// creazione del report con Dynamic Report
-				report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
+				report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, 
+						((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(), 
 						tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), false);
 				
 				// scrittura del report sullo stream
-				ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+				ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, 
+						((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(), 
 						tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());
 			}
 
@@ -738,11 +742,13 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 				}
 				headerLabel = CostantiGrafici.NOME_LABEL;
 				// creazione del report con Dynamic Report
-				report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
+				report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, 
+						((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(),
 						tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), true);
 				
 				// scrittura del report sullo stream
-				ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+				ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, 
+						((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(),
 						tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());
 			}
 

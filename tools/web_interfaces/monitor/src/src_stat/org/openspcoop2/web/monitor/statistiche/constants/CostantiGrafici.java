@@ -28,6 +28,8 @@ package org.openspcoop2.web.monitor.statistiche.constants;
  *
  */
 public class CostantiGrafici {
+	
+	private CostantiGrafici() {}
 
 	/** Costanti ereditate dal core...*/
 	
@@ -292,11 +294,11 @@ public class CostantiGrafici {
 	public static final String SEARCH_DISTRIBUZIONE_SOGGETTO_LOCALE = "distribuzioneSoggettoSearchForm";
 	public static final String SEARCH_DISTRIBUZIONE_PERSONALIZZATA = "statistichePersonalizzateSearchForm";
 	
-	public static final String ICONA_ANDAMENTO_TEMPORALE = "show_chart"; // "&#xE3C9;";
-	public static final String ICONA_BAR_CHART = "equalizer"; //"&#xE3C9;";
-	public static final String ICONA_LINE_CHART = "show_chart"; // "&#xE3C9;";
-	public static final String ICONA_PIE_CHART = "pie_chart"; // "&#xE3C9;";
-	public static final String ICONA_TABELLA = "view_quilt"; // "&#xE3C9;";
+	public static final String ICONA_ANDAMENTO_TEMPORALE = "show_chart"; /** "&#xE3C9;";*/
+	public static final String ICONA_BAR_CHART = "equalizer"; /** "&#xE3C9;"; */
+	public static final String ICONA_LINE_CHART = "show_chart"; /** "&#xE3C9;"; */
+	public static final String ICONA_PIE_CHART = "pie_chart"; /** "&#xE3C9;"; */
+	public static final String ICONA_TABELLA = "view_quilt"; /** "&#xE3C9;"; */
 	
 	public static final String PAGINA_REPORT_LABEL = "Report";
 	
@@ -320,5 +322,27 @@ public class CostantiGrafici {
 	
 	public static final String SEARCH_NUMERO_DIMENSIONI_2D_LABEL_KEY = "stats.search.numeroDimensioni.2d.label";
 	public static final String SEARCH_NUMERO_DIMENSIONI_3D_LABEL_KEY = "stats.search.numeroDimensioni.3d.label";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_KEY = "stats.search.numeroDimensioni.3dCustom.label";
+	
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TAG = "stats.search.numeroDimensioniCustom.tag";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_API = "stats.search.numeroDimensioniCustom.api";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_IMPLEMENTAZIONE_API = "stats.search.numeroDimensioniCustom.servizio";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_OPERAZIONE = "stats.search.numeroDimensioniCustom.azione";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_SOGGETTO_REMOTO = "stats.search.numeroDimensioniCustom.soggettoRemoto";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_SOGGETTO_LOCALE = "stats.search.numeroDimensioniCustom.soggettoLocale";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_SOGGETTO_FRUITORE = "stats.search.numeroDimensioniCustom.soggettoFruitore";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_SOGGETTO_EROGATORE = "stats.search.numeroDimensioniCustom.soggettoErogatore";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_APPLICATIVO_TRASPORTO = "stats.search.numeroDimensioniCustom.applicativoTrasporto";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_APPLICATIVO_TOKEN = "stats.search.numeroDimensioniCustom.applicativoToken";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TOKEN_CLIENT_ID = "stats.search.numeroDimensioniCustom.tokenInfo.clientID";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TOKEN_ISSUER = "stats.search.numeroDimensioniCustom.tokenInfo.issuer";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TOKEN_SUBJECT = "stats.search.numeroDimensioniCustom.tokenInfo.subject";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TOKEN_USERNAME = "stats.search.numeroDimensioniCustom.tokenInfo.username";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TOKEN_EMAIL = "stats.search.numeroDimensioniCustom.tokenInfo.email";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TOKEN_PDND_ORGANIZATION = "stats.search.numeroDimensioniCustom.tokenInfo.clientID.pdnd";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_PRINCIPAL = "stats.search.numeroDimensioniCustom.principal";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_INDIRIZZO_IP = "stats.search.numeroDimensioniCustom.indirizzoIP";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_ESITO = "stats.search.numeroDimensioniCustom.esito";
+
 
 }

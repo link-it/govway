@@ -51,9 +51,11 @@ import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione3D;
+import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione3DCustom;
 import org.openspcoop2.web.monitor.core.report.Colonna;
 import org.openspcoop2.web.monitor.core.report.Templates;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
+import org.openspcoop2.web.monitor.statistiche.bean.DimensioneCustom;
 import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
 import org.slf4j.Logger;
@@ -131,31 +133,38 @@ public class ExportUtils {
 		return builder;
 	}
 
-	public static JasperReportBuilder creaReportDistribuzione(List<ResDistribuzione> list,String titoloReport, Logger log,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+	public static JasperReportBuilder creaReportDistribuzione(List<ResDistribuzione> list,String titoloReport, Logger log,TipoVisualizzazione tipoVisualizzazione, 
+			NumeroDimensioni numeroDimensioni, DimensioneCustom numeroDimensioniCustom, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, TipoStatistica tipoStatistica, boolean convertRawData) {
-		return creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, numeroDimensioni, 
+		return creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, 
+				numeroDimensioni, numeroDimensioniCustom, 
 				tipiBanda, tipiLatenza, tipoStatistica, null, null, null, convertRawData);
 	}
 	
-	public static JasperReportBuilder creaReportDistribuzione(List<ResDistribuzione> list,String titoloReport, Logger log,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+	public static JasperReportBuilder creaReportDistribuzione(List<ResDistribuzione> list,String titoloReport, Logger log,TipoVisualizzazione tipoVisualizzazione, 
+			NumeroDimensioni numeroDimensioni, DimensioneCustom numeroDimensioniCustom, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, TipoStatistica tipoStatistica,
 			boolean distribuzionePerImplementazioneApi, 
 			boolean convertRawData) {
-		return creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, numeroDimensioni, 
+		return creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, 
+				numeroDimensioni, numeroDimensioniCustom, 
 				tipiBanda, tipiLatenza, tipoStatistica, null, null, null, 
 				distribuzionePerImplementazioneApi,
 				convertRawData);
 	}
 
-	public static JasperReportBuilder creaReportDistribuzione(List<ResDistribuzione> list,String titoloReport, Logger log,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+	public static JasperReportBuilder creaReportDistribuzione(List<ResDistribuzione> list,String titoloReport, Logger log,TipoVisualizzazione tipoVisualizzazione, 
+			NumeroDimensioni numeroDimensioni, DimensioneCustom numeroDimensioniCustom, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim,
 			boolean convertRawData) {
-		return creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, numeroDimensioni, 
+		return creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, 
+				numeroDimensioni, numeroDimensioniCustom, 
 				tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim,
 				false,
 				convertRawData);
 	}
-	private static JasperReportBuilder creaReportDistribuzione(List<ResDistribuzione> list,String titoloReport, Logger log,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+	private static JasperReportBuilder creaReportDistribuzione(List<ResDistribuzione> list,String titoloReport, Logger log,TipoVisualizzazione tipoVisualizzazione, 
+			NumeroDimensioni numeroDimensioni, DimensioneCustom numeroDimensioniCustom, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim,
 			boolean distribuzionePerImplementazioneApi,
 			boolean convertRawData) {
@@ -164,7 +173,8 @@ public class ExportUtils {
 			// non usato
 		}
 		
-		JRDataSource dataSource = getDatasourceDistribuzione(list, log, tipoVisualizzazione, numeroDimensioni,  
+		JRDataSource dataSource = getDatasourceDistribuzione(list, log, tipoVisualizzazione, 
+				numeroDimensioni, numeroDimensioniCustom,  
 				tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim, 
 				distribuzionePerImplementazioneApi,
 				convertRawData);
@@ -188,30 +198,39 @@ public class ExportUtils {
 		return builder;
 	}
 
-	public static void esportaCsv(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+	public static void esportaCsv(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+			NumeroDimensioni numeroDimensioni, DimensioneCustom numeroDimensioniCustom, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica) throws CoreException {
-		esportaCsv(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+		esportaCsv(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, 
+				numeroDimensioni, numeroDimensioniCustom,  
 				tipiBanda, tipiLatenza, tipoStatistica, null, null, null); 
 	}
-	public static void esportaCsv(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+	public static void esportaCsv(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+			NumeroDimensioni numeroDimensioni, DimensioneCustom numeroDimensioniCustom, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,
 			boolean distribuzionePerImplementazioneApi) throws CoreException {
-		esportaCsv(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+		esportaCsv(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, 
+				numeroDimensioni, numeroDimensioniCustom,  
 				tipiBanda, tipiLatenza, tipoStatistica, null, null, null,
 				false, distribuzionePerImplementazioneApi); 
 	}
-	public static void esportaCsv(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+	public static void esportaCsv(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+			NumeroDimensioni numeroDimensioni, DimensioneCustom numeroDimensioniCustom, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,String tipoRiconoscimento, String identificazione, String tokenClaim) throws CoreException {
-		esportaCsv(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni, 
+		esportaCsv(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, 
+				numeroDimensioni, numeroDimensioniCustom, 
 				tipiBanda,tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim, false);
 	}
-	public static void esportaCsv(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,
+	public static void esportaCsv(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+			NumeroDimensioni numeroDimensioni, DimensioneCustom numeroDimensioniCustom,
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim, boolean distribuzionePerEsiti) throws CoreException {
-		esportaCsv(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,
+		esportaCsv(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, 
+				numeroDimensioni, numeroDimensioniCustom,
 				tipiBanda, tipiLatenza, tipoStatistica,  tipoRiconoscimento, identificazione, tokenClaim, 
 				distribuzionePerEsiti, false);
 	}
-	private static void esportaCsv(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,
+	private static void esportaCsv(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+			NumeroDimensioni numeroDimensioni, DimensioneCustom numeroDimensioniCustom,
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim, 
 			boolean distribuzionePerEsiti, boolean distribuzionePerImplementazioneApi) throws CoreException {
 		
@@ -225,7 +244,8 @@ public class ExportUtils {
 		List<ColumnBuilder<?,?>> colonne = new ArrayList<ColumnBuilder<?,?>>();
 		
 		boolean distribuzione3d = numeroDimensioni!=null && NumeroDimensioni.DIMENSIONI_3.equals(numeroDimensioni);
-		if(distribuzione3d) {
+		boolean distribuzione3dCustom = numeroDimensioni!=null && NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(numeroDimensioni);
+		if(distribuzione3d || distribuzione3dCustom) {
 			switch (tipoStatistica) {
 			case DISTRIBUZIONE_ERRORI:
 			case DISTRIBUZIONE_AZIONE:
@@ -234,7 +254,12 @@ public class ExportUtils {
 			case DISTRIBUZIONE_SOGGETTO:
 			case STATISTICA_PERSONALIZZATA:
 				headerValueCategory = HEADER_VALUE_CATEGORY_DATA_3D;
-				headerValueLabel = MessageManager.getInstance().getMessage(Costanti.DATA_LABEL_KEY);
+				if(distribuzione3d) {
+					headerValueLabel = MessageManager.getInstance().getMessage(Costanti.DATA_LABEL_KEY);
+				}
+				else {
+					headerValueLabel = StatsUtils.getLabel(numeroDimensioniCustom);
+				}
 				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()));
 				break;
 			case ANDAMENTO_TEMPORALE:
@@ -428,30 +453,39 @@ public class ExportUtils {
 		}
 	}
 
-	public static void esportaPdf(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+	public static void esportaPdf(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+			NumeroDimensioni numeroDimensioni, DimensioneCustom numeroDimensioniCustom, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,
 			boolean distribuzionePerImplementazioneApi) throws IOException, JRException {
-		esportaPdf(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+		esportaPdf(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, 
+				numeroDimensioni, numeroDimensioniCustom,  
 				tipiBanda, tipiLatenza, tipoStatistica, null, null, null,
 				false, distribuzionePerImplementazioneApi);
 	}
-	public static void esportaPdf(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+	public static void esportaPdf(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+			NumeroDimensioni numeroDimensioni, DimensioneCustom numeroDimensioniCustom, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica) throws IOException, JRException {
-		esportaPdf(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+		esportaPdf(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, 
+				numeroDimensioni, numeroDimensioniCustom,  
 				tipiBanda, tipiLatenza, tipoStatistica, null, null, null);
 	}
-	public static void esportaPdf(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,  
+	public static void esportaPdf(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+			NumeroDimensioni numeroDimensioni, DimensioneCustom numeroDimensioniCustom,  
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,String tipoRiconoscimento, String identificazione, String tokenClaim) throws IOException, JRException {
-		esportaPdf(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+		esportaPdf(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, 
+				numeroDimensioni, numeroDimensioniCustom,  
 				tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim, false);
 	}
-	public static void esportaPdf(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,  
+	public static void esportaPdf(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+			NumeroDimensioni numeroDimensioni, DimensioneCustom numeroDimensioniCustom,  
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim,  boolean distribuzionePerEsiti) throws IOException, JRException {
-		esportaPdf(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+		esportaPdf(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, 
+				numeroDimensioni, numeroDimensioniCustom,  
 				tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim,  
 				distribuzionePerEsiti, false);
 	}
-	private static void esportaPdf(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,  
+	private static void esportaPdf(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+			NumeroDimensioni numeroDimensioni, DimensioneCustom numeroDimensioniCustom,  
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim,  
 			boolean distribuzionePerEsiti, boolean distribuzionePerImplementazioneApi) throws IOException, JRException {
 		
@@ -461,7 +495,8 @@ public class ExportUtils {
 		List<Colonna> colonne = new ArrayList<>();
 		
 		boolean distribuzione3d = numeroDimensioni!=null && NumeroDimensioni.DIMENSIONI_3.equals(numeroDimensioni);
-		if(distribuzione3d) {
+		boolean distribuzione3dCustom = numeroDimensioni!=null && NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(numeroDimensioni);
+		if(distribuzione3d || distribuzione3dCustom) {
 			switch (tipoStatistica) {
 			case DISTRIBUZIONE_ERRORI:
 			case DISTRIBUZIONE_AZIONE:
@@ -470,7 +505,11 @@ public class ExportUtils {
 			case DISTRIBUZIONE_SOGGETTO:
 			case STATISTICA_PERSONALIZZATA:
 				headerValueCategory = HEADER_VALUE_CATEGORY_DATA_3D;
-				headerValueLabel = MessageManager.getInstance().getMessage(Costanti.DATA_LABEL_KEY);
+				if(distribuzione3d) {
+					headerValueLabel = MessageManager.getInstance().getMessage(Costanti.DATA_LABEL_KEY);
+				} else {
+					headerValueLabel = StatsUtils.getLabel(numeroDimensioniCustom);
+				}
 				colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 				break;
 			case ANDAMENTO_TEMPORALE:
@@ -684,30 +723,39 @@ public class ExportUtils {
 			return buildColumnWithoutTextAdjust(label, category);
 		}
 	}
-	public static void esportaXls(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+	public static void esportaXls(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+			NumeroDimensioni numeroDimensioni, DimensioneCustom numeroDimensioniCustom, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica) throws CoreException {
-		esportaXls(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+		esportaXls(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, 
+				numeroDimensioni, numeroDimensioniCustom,  
 				tipiBanda, tipiLatenza, tipoStatistica, null, null, null);
 	}
-	public static void esportaXls(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+	public static void esportaXls(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+			NumeroDimensioni numeroDimensioni, DimensioneCustom numeroDimensioniCustom, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,
 			boolean distribuzionePerImplementazioneApi) throws CoreException {
-		esportaXls(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+		esportaXls(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, 
+				numeroDimensioni, numeroDimensioniCustom,  
 				tipiBanda, tipiLatenza, tipoStatistica, null, null, null,
 				false, distribuzionePerImplementazioneApi);
 	}
-	public static void esportaXls(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,  
+	public static void esportaXls(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+			NumeroDimensioni numeroDimensioni, DimensioneCustom numeroDimensioniCustom,  
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,String tipoRiconoscimento, String identificazione, String tokenClaim) throws CoreException {
-		esportaXls(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+		esportaXls(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, 
+				numeroDimensioni, numeroDimensioniCustom,  
 				tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim, false);
 	}	
-	public static void esportaXls(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,  
+	public static void esportaXls(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+			NumeroDimensioni numeroDimensioni, DimensioneCustom numeroDimensioniCustom,  
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,String tipoRiconoscimento, String identificazione, String tokenClaim, boolean distribuzionePerEsiti) throws CoreException {
-		esportaXls(outputStream, report, titoloReport, headerLabel,tipoVisualizzazione, numeroDimensioni,  
+		esportaXls(outputStream, report, titoloReport, headerLabel,tipoVisualizzazione, 
+				numeroDimensioni, numeroDimensioniCustom,  
 				tipiBanda, tipiLatenza,tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim, 
 				distribuzionePerEsiti, false);
 	}
-	private static void esportaXls(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,  
+	private static void esportaXls(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+			NumeroDimensioni numeroDimensioni, DimensioneCustom numeroDimensioniCustom,  
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,String tipoRiconoscimento, String identificazione, String tokenClaim, 
 			boolean distribuzionePerEsiti, boolean distribuzionePerImplementazioneApi) throws CoreException {
 		
@@ -725,7 +773,8 @@ public class ExportUtils {
 		List<ColumnBuilder<?,?>> colonne = new ArrayList<>();
 		
 		boolean distribuzione3d = numeroDimensioni!=null && NumeroDimensioni.DIMENSIONI_3.equals(numeroDimensioni);
-		if(distribuzione3d) {
+		boolean distribuzione3dCustom = numeroDimensioni!=null && NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(numeroDimensioni);
+		if(distribuzione3d || distribuzione3dCustom) {
 			switch (tipoStatistica) {
 			case DISTRIBUZIONE_ERRORI:
 			case DISTRIBUZIONE_AZIONE:
@@ -734,7 +783,11 @@ public class ExportUtils {
 			case DISTRIBUZIONE_SOGGETTO:
 			case STATISTICA_PERSONALIZZATA:
 				headerValueCategory = HEADER_VALUE_CATEGORY_DATA_3D;
-				headerValueLabel = MessageManager.getInstance().getMessage(Costanti.DATA_LABEL_KEY);
+				if(distribuzione3d) {
+					headerValueLabel = MessageManager.getInstance().getMessage(Costanti.DATA_LABEL_KEY);
+				} else {
+					headerValueLabel = StatsUtils.getLabel(numeroDimensioniCustom);
+				}
 				colonne.add(buildColumn(headerValueLabel, headerValueCategory));
 				break;
 			case ANDAMENTO_TEMPORALE:
@@ -1649,17 +1702,22 @@ public class ExportUtils {
 
 	}
 
-	private static JRDataSource getDatasourceDistribuzione (List<ResDistribuzione> list,Logger log,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+	private static JRDataSource getDatasourceDistribuzione (List<ResDistribuzione> list,Logger log,TipoVisualizzazione tipoVisualizzazione, 
+			NumeroDimensioni numeroDimensioni, DimensioneCustom numeroDimensioniCustom,
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim,
 			boolean distribuzionePerImplementazioneApi,
 			boolean convertRawData)  {
 
 		boolean distribuzione3d = numeroDimensioni!=null && NumeroDimensioni.DIMENSIONI_3.equals(numeroDimensioni);
+		boolean distribuzione3dCustom = numeroDimensioni!=null && NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(numeroDimensioni);
+		if(distribuzione3dCustom && numeroDimensioniCustom!=null) {
+			// nop
+		}
 		
 		// Scittura Intestazione
 		List<String> header = new ArrayList<>();
 
-		if(distribuzione3d) {
+		if(distribuzione3d || distribuzione3dCustom) {
 			switch (tipoStatistica) {
 			case DISTRIBUZIONE_ERRORI:
 			case DISTRIBUZIONE_AZIONE:
@@ -1784,7 +1842,8 @@ public class ExportUtils {
 			ResDistribuzione risultato = list.get(idx);
 
 			ResDistribuzione3D risultato3D = null; 
-			if(distribuzione3d) {
+			ResDistribuzione3DCustom risultato3Dcustom = null; 
+			if(distribuzione3d || distribuzione3dCustom) {
 				switch (tipoStatistica) {
 				case DISTRIBUZIONE_ERRORI:
 				case DISTRIBUZIONE_AZIONE:
@@ -1792,7 +1851,12 @@ public class ExportUtils {
 				case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
 				case DISTRIBUZIONE_SOGGETTO:
 				case STATISTICA_PERSONALIZZATA:
-					risultato3D = (ResDistribuzione3D) risultato; 
+					if(distribuzione3d) {
+						risultato3D = (ResDistribuzione3D) risultato;
+					}
+					else {
+						risultato3Dcustom = (ResDistribuzione3DCustom) risultato;
+					}
 					break;
 				case ANDAMENTO_TEMPORALE:
 					break;
@@ -1803,6 +1867,9 @@ public class ExportUtils {
 
 			if(distribuzione3d) {
 				oneLine.add(risultato3D!=null ? risultato3D.getDataFormattata() : "N.D.");
+			}
+			else if(distribuzione3dCustom) {
+				oneLine.add(risultato3Dcustom!=null ? risultato3Dcustom.getDatoCustom() : "N.D.");
 			}
 			
 			String label = (risultato!=null && risultato.getRisultato() != null) ? risultato.getRisultato() : "";
@@ -1852,4 +1919,5 @@ public class ExportUtils {
 		return dataSource;
 
 	}
+	
 }

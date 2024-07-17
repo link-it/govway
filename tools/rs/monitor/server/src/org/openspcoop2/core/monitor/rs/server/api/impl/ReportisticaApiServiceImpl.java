@@ -33,6 +33,7 @@ import org.openspcoop2.core.monitor.rs.server.config.DBManager;
 import org.openspcoop2.core.monitor.rs.server.config.LoggerProperties;
 import org.openspcoop2.core.monitor.rs.server.config.ServerProperties;
 import org.openspcoop2.core.monitor.rs.server.model.BaseOggettoWithSimpleName;
+import org.openspcoop2.core.monitor.rs.server.model.DimensioniReportCustomEnum;
 import org.openspcoop2.core.monitor.rs.server.model.DimensioniReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneFullSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneSimpleSearchEnum;
@@ -275,7 +276,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	    public byte[] getReportDistribuzioneApiBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, 
 	    		ProfiloEnum profilo, String soggetto, String idCluster, String soggettoRemoto, String tag, Boolean distinguiApiImplementata, 
 	    		EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport,
-	    		DimensioniReportEnum dimensioniReport) {
+	    		DimensioniReportEnum dimensioniReport, DimensioniReportCustomEnum dimensioniReportCustomInfo) {
 
 		IContext context = this.getContext();
 		try {
@@ -307,7 +308,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			OpzioniGenerazioneReportDimensioni opzioni = new OpzioniGenerazioneReportDimensioni();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);
-			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport, dimensioniReport);		
+			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport, dimensioniReport, dimensioniReportCustomInfo);		
 			ricerca.setReport(opzioni);
 
 			ricerca.setTag(tag);
@@ -385,7 +386,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
     public byte[] getReportDistribuzioneApplicativoBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, 
     		ProfiloEnum profilo, String soggetto, String idCluster, String soggettoRemoto, String soggettoErogatore,String soggettoMittente, String tag, String uriApiImplementata, 
     		String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, TipoIdentificazioneApplicativoEnum tipoIdentificazione, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport,
-    		DimensioniReportEnum dimensioniReport) {
+    		DimensioniReportEnum dimensioniReport, DimensioniReportCustomEnum dimensioniReportCustomInfo) {
 
 		IContext context = this.getContext();
 		try {
@@ -416,7 +417,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			OpzioniGenerazioneReportDimensioni opzioni = new OpzioniGenerazioneReportDimensioni();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);
-			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport, dimensioniReport);		
+			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport, dimensioniReport, dimensioniReportCustomInfo);		
 			ricerca.setReport(opzioni);
 
 			ricerca.setTag(tag);
@@ -493,7 +494,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
     public byte[] getReportDistribuzioneAzioneBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, 
     		ProfiloEnum profilo, String soggetto, String idCluster, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata, 
     		String nomeServizio, String tipoServizio, Integer versioneServizio, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport,
-    		DimensioniReportEnum dimensioniReport) {
+    		DimensioniReportEnum dimensioniReport, DimensioniReportCustomEnum dimensioniReportCustomInfo) {
 
 		IContext context = this.getContext();
 		try {
@@ -519,7 +520,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			OpzioniGenerazioneReportDimensioni opzioni = new OpzioniGenerazioneReportDimensioni();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);
-			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport, dimensioniReport);		
+			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport, dimensioniReport, dimensioniReportCustomInfo);		
 			ricerca.setReport(opzioni);
 
 			ricerca.setTag(tag);
@@ -593,7 +594,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
      */
 	@Override
     public byte[] getReportDistribuzioneErroriBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto, String idCluster, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport,
-    		DimensioniReportEnum dimensioniReport) {
+    		DimensioniReportEnum dimensioniReport, DimensioniReportCustomEnum dimensioniReportCustomInfo) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -620,7 +621,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			OpzioniGenerazioneReportDimensioni opzioni = new OpzioniGenerazioneReportDimensioni();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);
-			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport, dimensioniReport);		
+			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport, dimensioniReport, dimensioniReportCustomInfo);		
 			ricerca.setReport(opzioni);
 
 			ricerca.setTag(tag);
@@ -730,7 +731,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);
-			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport, null);		
+			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport, null, null);		
 			ricerca.setReport(opzioni);
 
 			ricerca.setTag(tag);
@@ -794,7 +795,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
     public byte[] getReportDistribuzioneIdAutenticatoBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, 
     		ProfiloEnum profilo, String soggetto, String idCluster, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata,
     		String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport,
-    		DimensioniReportEnum dimensioniReport) {
+    		DimensioniReportEnum dimensioniReport, DimensioniReportCustomEnum dimensioniReportCustomInfo) {
 
 		IContext context = this.getContext();
 		try {
@@ -822,7 +823,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			OpzioniGenerazioneReportDimensioni opzioni = new OpzioniGenerazioneReportDimensioni();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);
-			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport, dimensioniReport);		
+			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport, dimensioniReport, dimensioniReportCustomInfo);		
 			ricerca.setReport(opzioni);
 
 			ricerca.setTag(tag);
@@ -899,7 +900,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
     public byte[] getReportDistribuzioneSoggettoLocaleBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, 
     		ProfiloEnum profilo, String idCluster, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata, 
     		String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport,
-    		DimensioniReportEnum dimensioniReport) {
+    		DimensioniReportEnum dimensioniReport, DimensioniReportCustomEnum dimensioniReportCustomInfo) {
 
 		IContext context = this.getContext();
 		try {
@@ -925,7 +926,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			OpzioniGenerazioneReportDimensioni opzioni = new OpzioniGenerazioneReportDimensioni();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);
-			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport, dimensioniReport);		
+			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport, dimensioniReport, dimensioniReportCustomInfo);		
 			ricerca.setReport(opzioni);
 
 			ricerca.setTag(tag);
@@ -1001,7 +1002,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
     public byte[] getReportDistribuzioneSoggettoRemotoBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, 
     		ProfiloEnum profilo, String soggetto, String idCluster, String soggettoErogatore, String tag, String uriApiImplementata, 
     		String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport,
-    		DimensioniReportEnum dimensioniReport) {
+    		DimensioniReportEnum dimensioniReport, DimensioniReportCustomEnum dimensioniReportCustomInfo) {
 
 		IContext context = this.getContext();
 		try {
@@ -1029,7 +1030,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			OpzioniGenerazioneReportDimensioni opzioni = new OpzioniGenerazioneReportDimensioni();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);
-			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport, dimensioniReport);		
+			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport, dimensioniReport, dimensioniReportCustomInfo);		
 			ricerca.setReport(opzioni);
 
 			ricerca.setTag(tag);
@@ -1210,7 +1211,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
     public byte[] getReportDistribuzioneTokenInfoBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, 
     		TokenClaimDistribuzioneStatisticaEnum claim, ProfiloEnum profilo, String soggetto, String idCluster, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata, 
     		String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport,
-    		DimensioniReportEnum dimensioniReport) {
+    		DimensioniReportEnum dimensioniReport, DimensioniReportCustomEnum dimensioniReportCustomInfo) {
 
 		IContext context = this.getContext();
 		try {
@@ -1238,7 +1239,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			OpzioniGenerazioneReportDimensioni opzioni = new OpzioniGenerazioneReportDimensioni();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);
-			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport, dimensioniReport);		
+			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport, dimensioniReport, dimensioniReportCustomInfo);		
 			ricerca.setReport(opzioni);
 
 			ricerca.setTag(tag);
@@ -1313,7 +1314,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
     public byte[] getReportDistribuzioneIndirizzoIPBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, 
     		ProfiloEnum profilo, String soggetto, String idCluster, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata, 
     		String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport,
-    		DimensioniReportEnum dimensioniReport) {
+    		DimensioniReportEnum dimensioniReport, DimensioniReportCustomEnum dimensioniReportCustomInfo) {
 
     	IContext context = this.getContext();
 		try {
@@ -1341,7 +1342,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			OpzioniGenerazioneReportDimensioni opzioni = new OpzioniGenerazioneReportDimensioni();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);
-			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport, dimensioniReport);		
+			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport, dimensioniReport, dimensioniReportCustomInfo);		
 			ricerca.setReport(opzioni);
 
 			ricerca.setTag(tag);

@@ -95,7 +95,7 @@ public class Utilities {
 		request.setContent(content);
 		
 		if(!rest) {
-			request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, operazione);
+			request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\""+ operazione + "\"");
 		}
 		
 		if(relatesTo!=null) {

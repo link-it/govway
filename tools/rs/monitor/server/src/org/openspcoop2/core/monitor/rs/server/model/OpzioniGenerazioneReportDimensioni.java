@@ -27,6 +27,9 @@ public class OpzioniGenerazioneReportDimensioni extends OpzioniGenerazioneReport
   
   @Schema(description = "")
   private DimensioniReportEnum dimensioni = null;
+  
+  @Schema(description = "")
+  private DimensioniReportCustomEnum customInfo = null;
  /**
    * Get dimensioni
    * @return dimensioni
@@ -46,6 +49,25 @@ public class OpzioniGenerazioneReportDimensioni extends OpzioniGenerazioneReport
     return this;
   }
 
+ /**
+   * Get customInfo
+   * @return customInfo
+  **/
+  @JsonProperty("custom_info")
+  @Valid
+  public DimensioniReportCustomEnum getCustomInfo() {
+    return this.customInfo;
+  }
+
+  public void setCustomInfo(DimensioniReportCustomEnum customInfo) {
+    this.customInfo = customInfo;
+  }
+
+  public OpzioniGenerazioneReportDimensioni customInfo(DimensioniReportCustomEnum customInfo) {
+    this.customInfo = customInfo;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -53,6 +75,7 @@ public class OpzioniGenerazioneReportDimensioni extends OpzioniGenerazioneReport
     sb.append("class OpzioniGenerazioneReportDimensioni {\n");
     sb.append("    ").append(OpzioniGenerazioneReportDimensioni.toIndentedString(super.toString())).append("\n");
     sb.append("    dimensioni: ").append(OpzioniGenerazioneReportDimensioni.toIndentedString(this.dimensioni)).append("\n");
+    sb.append("    customInfo: ").append(OpzioniGenerazioneReportDimensioni.toIndentedString(this.customInfo)).append("\n");
     sb.append("}");
     return sb.toString();
   }

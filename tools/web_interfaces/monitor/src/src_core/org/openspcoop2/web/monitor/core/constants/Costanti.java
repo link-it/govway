@@ -112,6 +112,8 @@ public class Costanti {
 	public static final String DESCRIZIONE_LABEL_KEY = "commons.descrizione.label";
 	public static final String AZIONE_LABEL_KEY = "commons.azione.label";
 	public static final String SERVIZIO_APPLICATIVO_LABEL_KEY = "commons.applicativo.label";
+	public static final String SERVIZIO_APPLICATIVO_TOKEN_LABEL_KEY = "commons.applicativoToken.label";
+	public static final String TAG_LABEL_KEY = "commons.tag.label";
 	public static final String API_LABEL_KEY = "commons.api.label";
 	public static final String SERVIZIO_LABEL_KEY = "commons.servizio.label";
 	public static final String SOGGETTO_LABEL_KEY = "commons.soggetto.label";
@@ -123,6 +125,11 @@ public class Costanti {
 	public static final String FRUITORE_LABEL_KEY = "commons.fruitore.label";
 	public static final String TOKEN_INFO_KEY = "commons.tokenInfo.label";
 	public static final String TOKEN_CLIENT_ID_KEY = "commons.tokenInfo.clientID.label";
+	public static final String TOKEN_CLIENT_ID_PDND_ORGANIZZAZIONE_KEY = "commons.tokenInfo.clientID.pdnd.label";
+	public static final String TOKEN_ISSUER_KEY = "commons.tokenInfo.issuer.label";
+	public static final String TOKEN_SUBJECT_KEY = "commons.tokenInfo.subject.label";
+	public static final String TOKEN_USERNAME_KEY = "commons.tokenInfo.username.label";
+	public static final String TOKEN_EMAIL_KEY = "commons.tokenInfo.email.label";
 	public static final String IDENTIFICATIVO_AUTENTICATO_KEY = "commons.identificativoAutenticato.label";
 	public static final String INDIRIZZO_IP_KEY = "commons.indirizzoIP.label";
 	public static final String IDENTIFICAZIONE_TOKEN_KEY = "commons.identificazione.token.label";
@@ -150,6 +157,7 @@ public class Costanti {
 	public static final String SEARCH_MISSING_PARAMETERS_CLAIM_LABEL_KEY = "commons.search.missing_parameters.claim";
 	public static final String SEARCH_MISSING_PARAMETERS_VALORE_LABEL_KEY = "commons.search.missing_parameters.valore";
 	public static final String SEARCH_MISSING_PARAMETERS_TIPO_LABEL_KEY = "commons.search.missing_parameters.tipo";
+	public static final String SEARCH_MISSING_PARAMETERS_3D_INFO_LABEL_KEY = "commons.search.missing_parameters.3dInfo";
 	
 	public static final String SEARCH_TOKEN_ISSUER = "transazioni.search.sezioneFiltroRicercaLibera.tokenInfo.issuer.label";
 	public static final String SEARCH_TOKEN_CLIENT_ID = "transazioni.search.sezioneFiltroRicercaLibera.tokenInfo.clientID.label";

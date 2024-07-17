@@ -81,7 +81,7 @@ I dati da indicare per generare un report sono:
    -  **Visualizza Per**: è possibile scegliere il dato che si vuole visualizzare nel report tra:
       *Occupazione Banda*, in termini di KB gestiti, *Numero Transazioni* o *Tempo Medio Risposta*;
 
-   -  **2 o 3 Dimensioni (senza o con data)** (:numref:`mon_reportisticaFiltroDimensioni_fig`): ad eccezione della 'Distribuzione Temporale' e della 'Distribuzione per Esiti', e solamente per i report di tipo 'Bar Chart' o 'Tabella', è inoltre possibile scegliere se generare un report in 2 dimensioni (che non include la data) o in 3 dimensioni (includendo la data);
+   -  **2 o 3 Dimensioni (senza o con data)** (:numref:`mon_reportisticaFiltroDimensioni_fig`): ad eccezione della 'Distribuzione Temporale' e della 'Distribuzione per Esiti', e solo per i report di tipo 'Bar Chart' o 'Tabella', è possibile scegliere se generare un report in 2 dimensioni (senza includere la data) o in 3 dimensioni (includendo la data). In alternativa, è possibile generare un report in 3 dimensioni dove, al posto della data, è possibile indicare un'altra informazione desiderata (:numref:`mon_reportisticaFiltroDimensioniCustom_fig`).
 
       .. figure:: ../../_figure_monitoraggio/ReportisticaFiltroDimensioni.png
           :scale: 70%
@@ -89,6 +89,13 @@ I dati da indicare per generare un report sono:
           :name: mon_reportisticaFiltroDimensioni_fig
 
           Esempio di impostazione per generare un report a 2 o 3 dimensioni
+          
+      .. figure:: ../../_figure_monitoraggio/ReportisticaFiltroDimensioniCustom.png
+          :scale: 70%
+          :align: center
+          :name: mon_reportisticaFiltroDimensioniCustom_fig
+
+          Esempio di impostazione per generare un report a 3 dimensioni personalizzato
 
    -  **Tipo Banda** (:numref:`mon_reportisticaFiltroTipoBanda_fig`): scegliendo una visualizzazione per 'Occupazione Banda' è inoltre possibile selezionare il tipo di banda desiderata;
 

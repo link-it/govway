@@ -28,6 +28,7 @@ import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
+import org.openspcoop2.web.monitor.statistiche.bean.DimensioneCustom;
 import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 
 /**
@@ -258,6 +259,28 @@ public class CostantiExporter {
 	public static final NumeroDimensioni DIMENSIONI_VISUALIZZATE_DEFAULT = NumeroDimensioni.DIMENSIONI_2;
 	public static final String DIMENSIONI_VISUALIZZATE_2 = NumeroDimensioni.DIMENSIONI_2.getValue();
 	public static final String DIMENSIONI_VISUALIZZATE_3 = NumeroDimensioni.DIMENSIONI_3.getValue();
+	public static final String DIMENSIONI_VISUALIZZATE_3_CUSTOM = NumeroDimensioni.DIMENSIONI_3_CUSTOM.getValue();
+	
+	public static final String DIMENSIONE_INFO_CUSTOM = "dimensioneInfoCustom";
+	public static final String DIMENSIONE_INFO_CUSTOM_TAG = DimensioneCustom.TAG.getValue();
+	public static final String DIMENSIONE_INFO_CUSTOM_API = DimensioneCustom.API.getValue();
+	public static final String DIMENSIONE_INFO_CUSTOM_IMPLEMENTAZIONE_API = DimensioneCustom.IMPLEMENTAZIONE_API.getValue();
+	public static final String DIMENSIONE_INFO_CUSTOM_OPERAZIONE = DimensioneCustom.OPERAZIONE.getValue();
+	public static final String DIMENSIONE_INFO_CUSTOM_SOGGETTO_LOCALE = DimensioneCustom.SOGGETTO_LOCALE.getValue();
+	public static final String DIMENSIONE_INFO_CUSTOM_SOGGETTO_REMOTO = DimensioneCustom.SOGGETTO_REMOTO.getValue();
+	public static final String DIMENSIONE_INFO_CUSTOM_SOGGETTO_FRUITORE = DimensioneCustom.SOGGETTO_FRUITORE.getValue();
+	public static final String DIMENSIONE_INFO_CUSTOM_SOGGETTO_EROGATORE = DimensioneCustom.SOGGETTO_EROGATORE.getValue();
+	public static final String DIMENSIONE_INFO_CUSTOM_TOKEN_ISSUER = DimensioneCustom.TOKEN_ISSUER.getValue();
+	public static final String DIMENSIONE_INFO_CUSTOM_TOKEN_CLIENT_ID = DimensioneCustom.TOKEN_CLIENT_ID.getValue();
+	public static final String DIMENSIONE_INFO_CUSTOM_TOKEN_SUBJECT = DimensioneCustom.TOKEN_SUBJECT.getValue();
+	public static final String DIMENSIONE_INFO_CUSTOM_TOKEN_USERNAME = DimensioneCustom.TOKEN_USERNAME.getValue();
+	public static final String DIMENSIONE_INFO_CUSTOM_TOKEN_EMAIL = DimensioneCustom.TOKEN_EMAIL.getValue();
+	public static final String DIMENSIONE_INFO_CUSTOM_TOKEN_PDND_ORGANIZATION = DimensioneCustom.TOKEN_PDND_ORGANIZATION.getValue();
+	public static final String DIMENSIONE_INFO_CUSTOM_PRINCIPAL = DimensioneCustom.PRINCIPAL.getValue();
+	public static final String DIMENSIONE_INFO_CUSTOM_APPLICATIVO_TRASPORTO = DimensioneCustom.APPLICATIVO_TRASPORTO.getValue();
+	public static final String DIMENSIONE_INFO_CUSTOM_APPLICATIVO_TOKEN = DimensioneCustom.APPLICATIVO_TOKEN.getValue();
+	public static final String DIMENSIONE_INFO_CUSTOM_INDIRIZZO_IP = DimensioneCustom.INDIRIZZO_IP.getValue();
+	public static final String DIMENSIONE_INFO_CUSTOM_ESITO = DimensioneCustom.ESITO.getValue();
 	
 	public static final String CLAIM = "claim";
 	public static final String CLAIM_SUBJECT = "subject";

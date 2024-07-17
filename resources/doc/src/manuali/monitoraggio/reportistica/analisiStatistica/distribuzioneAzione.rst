@@ -50,3 +50,21 @@ Azioni/Risorse. Di seguito alcuni esempi di reports generabili.
     :name: mon_distribuzioneAzioneBar3D_fig
 
     Esempio di report grafico di distribuzione per azione (Bar Chart 3D sul numero di transazioni e sulle date)
+
+**Tabella 3D personalizzata per soggetto fruitore**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneAzioneTabella3Dcustom.png
+    :scale: 50%
+    :align: center
+    :name: mon_distribuzioneAzioneTabella3Dcustom_fig
+
+    Esempio di report tabellare di distribuzione per azione comprensivo di una distribuzione per soggetto fruitore
+
+**Grafico 'Bar Chart 3D' sul numero di transazioni personalizzato per soggetto fruitore**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneAzioneBar3Dcustom.png
+    :scale: 70%
+    :align: center
+    :name: mon_distribuzioneAzioneBar3Dcustom_fig
+
+    Esempio di report grafico di distribuzione per azione (Bar Chart 3D sul numero di transazioni e sui soggetti fruitori)
