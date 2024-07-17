@@ -77,6 +77,10 @@ I tipi di report che si possono generare sono:
    Consente di visualizzare la distribuzione delle transazioni rispetto
    ad uno dei claim ricavati dal token ottenuto nel corso
    dell'autenticazione della richiesta
+   
+-  Distribuzione per Token Info + Informazioni PDND
+
+   Consente di visualizzare la distribuzione delle transazioni rispetto alle informazioni recuperate tramite le API PDND, relative al clientId presente nel token ottenuto durante l'autenticazione della richiesta
 
 -  Distribuzione per Indirizzo IP
 
@@ -99,4 +103,5 @@ Per ogni report è possibile specificare dei criteri di filtro come descritto ne
 	distribuzioneApplicativo
 	distribuzioneIdAutenticato
 	distribuzioneTokenInfo
+	distribuzioneTokenInfoPDND
 	distribuzioneIndirizzoIP

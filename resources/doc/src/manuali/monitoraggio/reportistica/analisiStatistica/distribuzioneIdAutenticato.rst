@@ -51,3 +51,21 @@ processo di autenticazione (principal, username, ecc).
     :name: mon_distribuzionePrincipalBar3D_fig
 
     Esempio di Report di Distribuzione per Principal (Bar Chart 3D sul numero di transazioni e sulle date)
+
+**Tabella 3D personalizzata per tipo di errore**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzionePrincipalTabella3Dcustom.png
+    :scale: 50%
+    :align: center
+    :name: mon_distribuzionePrincipalTabella3Dcustom_fig
+
+    Esempio di Report di Distribuzione per Principal in formato tabellare comprensivo di una distribuzione per tipo di errore
+
+**Grafico 'Bar Chart 3D' sul numero di transazioni personalizzato per tipo di errore**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzionePrincipalBar3Dcustom.png
+    :scale: 70%
+    :align: center
+    :name: mon_distribuzionePrincipalBar3Dcustom_fig
+
+    Esempio di Report di Distribuzione per Principal (Bar Chart 3D sul numero di transazioni e sul tipo di errore)

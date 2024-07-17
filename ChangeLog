@@ -1,3 +1,10 @@
+2024-07-17  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor, ApiRsMonitoraggio]
+	Aggiunta funzionalità OP-1722
+	Nella funzionalità 'Analisi Statistica' è ora possibile produrre anche una distribuzione statistica in 3 dimensioni personalizzata, 
+	dove al posto della data è possibile selezionare l'informazione desiderata da includere nel report.
+
 2024-07-12  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, InstallerVersioneBinaria, GovWayConsole, GovWayMonitor, ApiRsConfigurazione, ApiRsMonitoraggio]

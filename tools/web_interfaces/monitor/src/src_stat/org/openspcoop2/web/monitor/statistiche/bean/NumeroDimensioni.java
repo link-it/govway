@@ -33,7 +33,7 @@ import org.openspcoop2.generic_project.beans.IEnumeration;
  */
 public enum NumeroDimensioni implements IEnumeration , Serializable , Cloneable{
 
-	DIMENSIONI_2 ("2d"), DIMENSIONI_3 ("3d");
+	DIMENSIONI_2 ("2d"), DIMENSIONI_3 ("3d"), DIMENSIONI_3_CUSTOM ("3d-custom");
 
 	/** Value */
 	private String value;
@@ -95,22 +95,23 @@ public enum NumeroDimensioni implements IEnumeration , Serializable , Cloneable{
 
 	public static NumeroDimensioni toEnumConstant(String value){
 		NumeroDimensioni res = null;
-		if(NumeroDimensioni.DIMENSIONI_2.getValue().equals(value)){
-			res = NumeroDimensioni.DIMENSIONI_2;
-		}else if(NumeroDimensioni.DIMENSIONI_3.getValue().equals(value)){
-			res = NumeroDimensioni.DIMENSIONI_3;
-		}  
-
+		for (NumeroDimensioni tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
 		return res;
 	}
 
 	public static IEnumeration toEnumConstantFromString(String value){
 		NumeroDimensioni res = null;
-		if(NumeroDimensioni.DIMENSIONI_2.toString().equals(value)){
-			res = NumeroDimensioni.DIMENSIONI_2;
-		}else if(NumeroDimensioni.DIMENSIONI_3.toString().equals(value)){
-			res = NumeroDimensioni.DIMENSIONI_3;
-		}  
+		for (NumeroDimensioni tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
 		return res;
 	}
 

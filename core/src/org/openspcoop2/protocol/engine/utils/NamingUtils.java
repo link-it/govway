@@ -37,6 +37,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 
 /**
  * PorteNamingUtils
@@ -46,32 +47,35 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
  * @version $Rev$, $Date$
  */
 public class NamingUtils {
+	
+	private NamingUtils() {}
 
 	
 	// PROTOCOLLI
 	
-	public static List<String> getLabelsProtocolli(List<String> protocolli) throws Exception{
-		if(protocolli==null || protocolli.size()<=0) {
-			return null;
+	public static List<String> getLabelsProtocolli(List<String> protocolli) throws ProtocolException{
+		List<String> l= null;
+		if(protocolli==null || protocolli.isEmpty()) {
+			return l;
 		}
-		List<String> l = new ArrayList<>();
+		l = new ArrayList<>();
 		for (String protocollo : protocolli) {
 			l.add(NamingUtils.getLabelProtocollo(protocollo));
 		}
 		return l;
 	}
 	
-	public static String getLabelProtocollo(String protocollo) throws Exception{
+	public static String getLabelProtocollo(String protocollo) throws ProtocolException{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		return protocolFactoryManager.getProtocolFactoryByName(protocollo).getInformazioniProtocol().getLabel();
 	}
 	
-	public static String getDescrizioneProtocollo(String protocollo) throws Exception{
+	public static String getDescrizioneProtocollo(String protocollo) throws ProtocolException {
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		return protocolFactoryManager.getProtocolFactoryByName(protocollo).getInformazioniProtocol().getDescription();
 	}
 	
-	public static String getWebSiteProtocollo(String protocollo) throws Exception{
+	public static String getWebSiteProtocollo(String protocollo) throws ProtocolException {
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		return protocolFactoryManager.getProtocolFactoryByName(protocollo).getInformazioniProtocol().getWebSite();
 	}
@@ -80,16 +84,16 @@ public class NamingUtils {
 	
 	// SOGGETTI
 	
-	public static String getLabelSoggetto(IDSoggetto idSoggetto) throws Exception{
+	public static String getLabelSoggetto(IDSoggetto idSoggetto) throws ProtocolException{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		String protocollo = protocolFactoryManager.getProtocolByOrganizationType(idSoggetto.getTipo());
 		return getLabelSoggetto(protocollo,	idSoggetto.getTipo(), idSoggetto.getNome());
 	}
 	
-	public static String getLabelSoggetto(String protocollo, IDSoggetto idSoggetto) throws Exception{
+	public static String getLabelSoggetto(String protocollo, IDSoggetto idSoggetto) throws ProtocolException{
 		return getLabelSoggetto(protocollo, idSoggetto.getTipo(), idSoggetto.getNome());
 	}
-	public static String getLabelSoggetto(String protocollo, String tipoSoggetto, String nomeSoggetto) throws Exception{
+	public static String getLabelSoggetto(String protocollo, String tipoSoggetto, String nomeSoggetto) throws ProtocolException{
 		StringBuilder bf = new StringBuilder();
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		if(protocolFactoryManager.getOrganizationTypes().get(protocollo).size()>1) {
@@ -107,7 +111,7 @@ public class NamingUtils {
 		return bf.toString();
 	}
 	
-	public static IDSoggetto getSoggettoFromLabel(String protocollo, String labelSoggetto) throws Exception{
+	public static IDSoggetto getSoggettoFromLabel(String protocollo, String labelSoggetto) throws ProtocolException{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		IProtocolFactory<?> protocolFactory = protocolFactoryManager.getProtocolFactoryByName(protocollo);
 		String tipoSoggettoDefault = protocolFactory.createProtocolConfiguration().getTipoSoggettoDefault();
@@ -128,12 +132,12 @@ public class NamingUtils {
 	
 	// APPLICATIVI
 	
-	public static String getLabelServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws Exception{
+	public static String getLabelServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws ProtocolException{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		String protocollo = protocolFactoryManager.getProtocolByOrganizationType(idServizioApplicativo.getIdSoggettoProprietario().getTipo());
 		return getLabelServizioApplicativo(protocollo, idServizioApplicativo);
 	}
-	public static String getLabelServizioApplicativo(String protocollo, IDServizioApplicativo idServizioApplicativo) throws Exception{
+	public static String getLabelServizioApplicativo(String protocollo, IDServizioApplicativo idServizioApplicativo) throws ProtocolException{
 		StringBuilder bf = new StringBuilder();
 		bf.append(idServizioApplicativo.getNome());
 		bf.append(" (");
@@ -146,28 +150,42 @@ public class NamingUtils {
 	
 	// API
 	
-	public static String getLabelAccordoServizioParteComune(AccordoServizioParteComune as) throws Exception{
+	private static IDAccordo getIDAccordoFromAccordo(AccordoServizioParteComune as) throws ProtocolException{
+		try {
+			return IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	public static String getLabelAccordoServizioParteComune(AccordoServizioParteComune as) throws ProtocolException{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		String protocollo = protocolFactoryManager.getProtocolByOrganizationType(as.getSoggettoReferente().getTipo());
-		return getLabelAccordoServizioParteComune(protocollo, IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as));
+		return getLabelAccordoServizioParteComune(protocollo, getIDAccordoFromAccordo(as));
 	}
-	public static String getLabelAccordoServizioParteComune(AccordoServizioParteComuneSintetico as) throws Exception{
+	private static IDAccordo getIDAccordoFromAccordo(AccordoServizioParteComuneSintetico as) throws ProtocolException{
+		try {
+			return IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	public static String getLabelAccordoServizioParteComune(AccordoServizioParteComuneSintetico as) throws ProtocolException{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		String protocollo = protocolFactoryManager.getProtocolByOrganizationType(as.getSoggettoReferente().getTipo());
-		return getLabelAccordoServizioParteComune(protocollo, IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as));
+		return getLabelAccordoServizioParteComune(protocollo, getIDAccordoFromAccordo(as));
 	}
-	public static String getLabelAccordoServizioParteComune(String protocollo, AccordoServizioParteComune as) throws Exception{
-		return getLabelAccordoServizioParteComune(protocollo, IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as));
+	public static String getLabelAccordoServizioParteComune(String protocollo, AccordoServizioParteComune as) throws ProtocolException{
+		return getLabelAccordoServizioParteComune(protocollo, getIDAccordoFromAccordo(as));
 	}
-	public static String getLabelAccordoServizioParteComune(IDAccordo idAccordo) throws Exception{
+	public static String getLabelAccordoServizioParteComune(IDAccordo idAccordo) throws ProtocolException{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		String protocollo = protocolFactoryManager.getProtocolByOrganizationType(idAccordo.getSoggettoReferente().getTipo());
 		return getLabelAccordoServizioParteComune(protocollo, idAccordo);
 	}
-	public static String getLabelAccordoServizioParteComune(String protocollo, IDAccordo idAccordo) throws Exception{
+	public static String getLabelAccordoServizioParteComune(String protocollo, IDAccordo idAccordo) throws ProtocolException{
 		return getLabelAccordoServizioParteComune(protocollo, idAccordo, true);
 	}
-	public static String getLabelAccordoServizioParteComune(String protocollo, IDAccordo idAccordo, boolean addSoggettoReferente) throws Exception{
+	public static String getLabelAccordoServizioParteComune(String protocollo, IDAccordo idAccordo, boolean addSoggettoReferente) throws ProtocolException{
 		StringBuilder bf = new StringBuilder();
 		bf.append(idAccordo.getNome());
 		bf.append(" v");
@@ -175,12 +193,11 @@ public class NamingUtils {
 		if(addSoggettoReferente) {
 			ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 			boolean supportatoSoggettoReferente = protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportoSoggettoReferenteAccordiParteComune();
-			if(supportatoSoggettoReferente) {
-				if(idAccordo.getSoggettoReferente()!=null){
-					bf.append(" (");
-					bf.append(getLabelSoggetto(protocollo, idAccordo.getSoggettoReferente().getTipo(), idAccordo.getSoggettoReferente().getNome()));
-					bf.append(")");
-				}
+			if(supportatoSoggettoReferente &&
+				idAccordo.getSoggettoReferente()!=null){
+				bf.append(" (");
+				bf.append(getLabelSoggetto(protocollo, idAccordo.getSoggettoReferente().getTipo(), idAccordo.getSoggettoReferente().getNome()));
+				bf.append(")");
 			}
 		}
 		return bf.toString();
@@ -188,7 +205,7 @@ public class NamingUtils {
 	
 	// SERVIZI
 	
-	public static String getLabelAccordoServizioParteSpecificaSenzaErogatore(String protocollo, String tipoServizio, String nomeServizio, Integer versioneInt) throws Exception{
+	public static String getLabelAccordoServizioParteSpecificaSenzaErogatore(String protocollo, String tipoServizio, String nomeServizio, Integer versioneInt) throws ProtocolException{
 		
 		String versione = "";
 		if(ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportoVersionamentoAccordiParteSpecifica()) {
@@ -210,28 +227,35 @@ public class NamingUtils {
 		}
 	}
 	
-	public static String getLabelAccordoServizioParteSpecifica(AccordoServizioParteSpecifica as) throws Exception{
+	private static IDServizio getIDAccordoFromAccordo(AccordoServizioParteSpecifica as) throws ProtocolException{
+		try {
+			return IDServizioFactory.getInstance().getIDServizioFromAccordo(as);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	public static String getLabelAccordoServizioParteSpecifica(AccordoServizioParteSpecifica as) throws ProtocolException{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		String protocollo = protocolFactoryManager.getProtocolByOrganizationType(as.getTipoSoggettoErogatore());
-		return getLabelAccordoServizioParteSpecifica(protocollo,IDServizioFactory.getInstance().getIDServizioFromAccordo(as));
+		return getLabelAccordoServizioParteSpecifica(protocollo,getIDAccordoFromAccordo(as));
 	}
-	public static String getLabelAccordoServizioParteSpecifica(String protocollo, AccordoServizioParteSpecifica as) throws Exception{
-		return getLabelAccordoServizioParteSpecifica(protocollo,IDServizioFactory.getInstance().getIDServizioFromAccordo(as));
+	public static String getLabelAccordoServizioParteSpecifica(String protocollo, AccordoServizioParteSpecifica as) throws ProtocolException{
+		return getLabelAccordoServizioParteSpecifica(protocollo,getIDAccordoFromAccordo(as));
 	}
-	public static String getLabelAccordoServizioParteSpecifica(IDServizio idServizio) throws Exception{
+	public static String getLabelAccordoServizioParteSpecifica(IDServizio idServizio) throws ProtocolException{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		String protocollo = protocolFactoryManager.getProtocolByOrganizationType(idServizio.getSoggettoErogatore().getTipo());
 		return getLabelAccordoServizioParteSpecifica(protocollo, idServizio);
 	}
-	public static String getLabelAccordoServizioParteSpecificaSenzaErogatore(IDServizio idServizio) throws Exception{
+	public static String getLabelAccordoServizioParteSpecificaSenzaErogatore(IDServizio idServizio) throws ProtocolException{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		String protocollo = protocolFactoryManager.getProtocolByServiceType(idServizio.getTipo());
 		return getLabelAccordoServizioParteSpecificaSenzaErogatore(protocollo, idServizio);
 	}
-	public static String getLabelAccordoServizioParteSpecificaSenzaErogatore(String protocollo, IDServizio idServizio) throws Exception{
+	public static String getLabelAccordoServizioParteSpecificaSenzaErogatore(String protocollo, IDServizio idServizio) throws ProtocolException{
 		return getLabelAccordoServizioParteSpecificaSenzaErogatore(protocollo, idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione());
 	}
-	public static String getLabelAccordoServizioParteSpecifica(String protocollo, IDServizio idServizio) throws Exception{
+	public static String getLabelAccordoServizioParteSpecifica(String protocollo, IDServizio idServizio) throws ProtocolException{
 		StringBuilder bf = new StringBuilder();
 		bf.append(getLabelAccordoServizioParteSpecificaSenzaErogatore(protocollo, idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione()));
 		bf.append(" (");
@@ -244,45 +268,50 @@ public class NamingUtils {
 	
 	// ACCORDI COOPERAZIONE
 	
-	public static String getLabelAccordoCooperazione(AccordoCooperazione ac) throws Exception{
+	private static IDAccordoCooperazione getIDAccordoFromAccordo(AccordoCooperazione ac) throws ProtocolException{
+		try {
+			return IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromAccordo(ac);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	public static String getLabelAccordoCooperazione(AccordoCooperazione ac) throws ProtocolException{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		String protocollo = protocolFactoryManager.getProtocolByOrganizationType(ac.getSoggettoReferente().getTipo());
-		return getLabelAccordoCooperazione(protocollo, IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromAccordo(ac));
+		return getLabelAccordoCooperazione(protocollo, getIDAccordoFromAccordo(ac));
 	}
-	public static String getLabelAccordoCooperazione(String protocollo, AccordoCooperazione ac) throws Exception{
-		return getLabelAccordoCooperazione(protocollo, IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromAccordo(ac));
+	public static String getLabelAccordoCooperazione(String protocollo, AccordoCooperazione ac) throws ProtocolException{
+		return getLabelAccordoCooperazione(protocollo, getIDAccordoFromAccordo(ac));
 	}
-	public static String getLabelAccordoCooperazione(IDAccordoCooperazione idAccordo) throws Exception{
+	public static String getLabelAccordoCooperazione(IDAccordoCooperazione idAccordo) throws ProtocolException{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		String protocollo = protocolFactoryManager.getProtocolByOrganizationType(idAccordo.getSoggettoReferente().getTipo());
 		return getLabelAccordoCooperazione(protocollo, idAccordo);
 	}
-	public static String getLabelAccordoCooperazione(String protocollo, IDAccordoCooperazione idAccordo) throws Exception{
+	public static String getLabelAccordoCooperazione(String protocollo, IDAccordoCooperazione idAccordo) throws ProtocolException{
 		StringBuilder bf = new StringBuilder();
 		bf.append(idAccordo.getNome());
 		bf.append(" v");
 		bf.append(idAccordo.getVersione());
-		//if(this.apcCore.isSupportatoSoggettoReferente(protocollo)) {
 		if(idAccordo.getSoggettoReferente()!=null){
 			bf.append(" (");
 			bf.append(getLabelSoggetto(protocollo, idAccordo.getSoggettoReferente().getTipo(), idAccordo.getSoggettoReferente().getNome()));
 			bf.append(")");
 		}
-		//}
 		return bf.toString();
 	}
 	
 	
 	// RISORSE
 	
-	public static String getLabelResource(org.openspcoop2.core.registry.Resource resource) throws Exception{
+	public static String getLabelResource(org.openspcoop2.core.registry.Resource resource) {
 		String method = null;
 		if(resource.getMethod()!=null) {
 			method = resource.getMethod().getValue();
 		}
 		return getLabelResource(method, resource.getPath());
 	}
-	public static String getLabelResource(org.openspcoop2.core.registry.beans.ResourceSintetica resource) throws Exception{
+	public static String getLabelResource(org.openspcoop2.core.registry.beans.ResourceSintetica resource) {
 		String method = null;
 		if(resource.getMethod()!=null) {
 			method = resource.getMethod().getValue();
@@ -290,7 +319,7 @@ public class NamingUtils {
 		return getLabelResource(method, resource.getPath());
 	}
 	
-	public static String getLabelResource(String httpmethodParam, String pathParam) throws Exception{
+	public static String getLabelResource(String httpmethodParam, String pathParam) {
 		String method = null;
 		if(httpmethodParam==null || "".equals(httpmethodParam)) {
 			//resourcePrefix = "*"; Non mettiamo nulla

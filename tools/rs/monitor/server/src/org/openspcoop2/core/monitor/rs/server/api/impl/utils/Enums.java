@@ -27,6 +27,7 @@ import java.util.Map;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 
 import org.openspcoop2.core.eventi.constants.TipoSeverita;
+import org.openspcoop2.core.monitor.rs.server.model.DimensioniReportCustomEnum;
 import org.openspcoop2.core.monitor.rs.server.model.DimensioniReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneFullSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
@@ -50,6 +51,7 @@ import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.utils.service.beans.DiagnosticoSeveritaEnum;
 import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
+import org.openspcoop2.web.monitor.statistiche.bean.DimensioneCustom;
 import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiExporter;
 
@@ -163,6 +165,53 @@ public class Enums {
 				NumeroDimensioni.DIMENSIONI_2);
 		Enums.toNumeroDimensioni.put(DimensioniReportEnum._3D,
 				NumeroDimensioni.DIMENSIONI_3);
+		Enums.toNumeroDimensioni.put(DimensioniReportEnum._3DCUSTOM,
+				NumeroDimensioni.DIMENSIONI_3_CUSTOM);
+	}
+	
+	private static final EnumMap<DimensioniReportCustomEnum, DimensioneCustom> toInformazioneDimensioneCustom = new EnumMap<>(DimensioniReportCustomEnum.class);
+	public static Map<DimensioniReportCustomEnum, DimensioneCustom> getInformazioneDimensioneCustom() {
+		return toInformazioneDimensioneCustom;
+	}
+	static {
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.TAG,
+				DimensioneCustom.TAG);
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.API,
+				DimensioneCustom.API);
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.API_IMPLEMENTATION,
+				DimensioneCustom.IMPLEMENTAZIONE_API);
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.OPERATION,
+				DimensioneCustom.OPERAZIONE);
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.LOCAL_ORGANIZATION,
+				DimensioneCustom.SOGGETTO_LOCALE);
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.REMOTE_ORGANIZATION,
+				DimensioneCustom.SOGGETTO_REMOTO);
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.CLIENT_ORGANIZATION,
+				DimensioneCustom.SOGGETTO_FRUITORE);
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.PROVIDER_ORGANIZATION,
+				DimensioneCustom.SOGGETTO_EROGATORE);
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.TOKEN_ISSUER,
+				DimensioneCustom.TOKEN_ISSUER);
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.TOKEN_CLIENTID,
+				DimensioneCustom.TOKEN_CLIENT_ID);
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.TOKEN_SUBJECT,
+				DimensioneCustom.TOKEN_SUBJECT);
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.TOKEN_USERNAME,
+				DimensioneCustom.TOKEN_USERNAME);
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.TOKEN_EMAIL,
+				DimensioneCustom.TOKEN_EMAIL);
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.TOKEN_PDND_ORGANIZATION,
+				DimensioneCustom.TOKEN_PDND_ORGANIZATION);
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.PRINCIPAL,
+				DimensioneCustom.PRINCIPAL);
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.CLIENT,
+				DimensioneCustom.APPLICATIVO_TRASPORTO);
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.TOKEN_CLIENT,
+				DimensioneCustom.APPLICATIVO_TOKEN);
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.IP_ADDRESS,
+				DimensioneCustom.INDIRIZZO_IP);
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.RESULT,
+				DimensioneCustom.ESITO);
 	}
 
 	public static final Map<OccupazioneBandaEnum, TipoBanda> toTipoBanda = new HashMap<>();

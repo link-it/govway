@@ -43,14 +43,14 @@ Di seguito alcuni esempi di report generabili.
 
     Esempio di report grafico di distribuzione per API (Pie Chart sul numero di transazioni)
 
-**Grafico 'Bar Chart' sul tempo medio di risposta**
+**Grafico 'Bar Chart' sul numero di transazioni**
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneAPIBar.png
     :scale: 50%
     :align: center
     :name: mon_distribuzioneApiBar_fig
 
-    Esempio di report grafico di distribuzione per API (Bar Chart sul tempo medio di risposta)
+    Esempio di report grafico di distribuzione per API (Bar Chart sul numero di transazioni)
 
 **Tabella 3D**
 
@@ -68,4 +68,22 @@ Di seguito alcuni esempi di report generabili.
     :align: center
     :name: mon_distribuzioneApiBar3D_fig
 
-    Esempio di report grafico di distribuzione per API (Bar Chart £D sul tempo medio di risposta e sulle date)
+    Esempio di report grafico di distribuzione per API (Bar Chart 3D sul tempo medio di risposta e sulle date)
+
+**Tabella 3D personalizzata per soggetto fruitore**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneAPITabella3Dcustom.png
+    :scale: 50%
+    :align: center
+    :name: mon_distribuzioneApiTabella3Dcustom_fig
+
+    Esempio di report tabellare di distribuzione per API comprensivo di una distribuzione per soggetto fruitore
+
+**Grafico 'Bar Chart 3D' sul tempo medio di risposta personalizzato per soggetto fruitore**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneAPIBar3Dcustom.png
+    :scale: 70%
+    :align: center
+    :name: mon_distribuzioneApiBar3Dcustom_fig
+
+    Esempio di report grafico di distribuzione per API (Bar Chart 3D sul tempo medio di risposta e sui soggetti fruitori)

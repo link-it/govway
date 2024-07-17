@@ -47,7 +47,7 @@
 				<rich:comboBox id="tipologiaCombo" value="#{sf_bean.tipologiaRicerca}" defaultLabel="Seleziona Tipologia" converter="selectItemConverter"
 						width="416" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">
 					<f:selectItems value="#{sf_bean.tipologieRicerca}"/>
-					<a4j:support status="mainStatus" event="onselect" reRender="searchPnl,filtriRicercaDatiMittente" actionListener="#{sf_bean.tipologiaRicercaListener}" />
+					<a4j:support status="mainStatus" event="onselect" reRender="searchPnl,filtriRicercaDatiMittente,numeroDimensioniCustomCtr" actionListener="#{sf_bean.tipologiaRicercaListener}" />
 				</rich:comboBox>
 			</link:prop>
 			<h:inputHidden value="#{sf_bean.tipologiaRicerca}" rendered="#{not sf_showTipologia}" />
@@ -479,7 +479,7 @@
 							<rich:comboBox id="identificazioneComboGroupBy" value="#{sf_bean.identificazione}" defaultLabel="Selezione #{msg['stats.search.identificazione']}" 
 									converter="selectItemConverter"	directInputSuggestions="true" width="416" enableManualInput="false">
 								<f:selectItems value="#{sf_bean.listaIdentificazioni}"/>
-								<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.identificazioneSelected}" limitToList="true"/>
+								<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.identificazioneSelected}" limitToList="true" reRender="altriCriteri"/>
 							</rich:comboBox>
 						</link:prop>				
 					
@@ -487,6 +487,7 @@
 							<rich:comboBox id="claimComboGroupBy" value="#{sf_bean.tokenClaim}" defaultLabel="Selezione #{msg['stats.search.claim']}" 
 									converter="selectItemConverter"	directInputSuggestions="true" width="416" enableManualInput="false">
 								<f:selectItems value="#{sf_bean.listaDistribuzioneTokenClaim}"/>
+								<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.claimSelected}" limitToList="true" reRender="altriCriteri"/>
 							</rich:comboBox>
 						</link:prop>
 					</a4j:outputPanel>

@@ -413,7 +413,8 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti(), false);
 			
 			// scrittura del report sullo stream
-			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, 
+					((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(),
 					tipiBanda,tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),null,null,null,
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti());
 
@@ -511,7 +512,8 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti(), false); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, 
+					((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(),
 					tipiBanda,tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),null,null,null,
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti());
 			response.flushBuffer();
@@ -610,7 +612,8 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti(), true);
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, 
+					((StatsSearchForm)this.search).getNumeroDimensioni(), ((StatsSearchForm)this.search).getNumeroDimensioniCustom(), 
 					tipiBanda,tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),null,null,null,
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti());
 

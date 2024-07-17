@@ -90,6 +90,12 @@
 									</f:facet>
 									<h:outputText value="#{item.dataFormattata}"/>
 								</rich:column>
+								<rich:column rendered="#{distribuzioneSASearchForm._value_numeroDimensioni == '3d-custom'}">
+									<f:facet name="header">
+										<h:outputText value="#{distribuzioneSASearchForm.labelNumeroDimensioniCustom}" />
+									</f:facet>
+									<h:outputText value="#{item.datoCustom}"/>
+								</rich:column>
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="#{distribuzionePerSABean.tipoFiltroDatiMittente}" />

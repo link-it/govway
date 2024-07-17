@@ -45,9 +45,14 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.regexp.RegExpException;
+import org.openspcoop2.utils.regexp.RegExpNotFoundException;
+import org.openspcoop2.utils.regexp.RegExpNotValidException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.transport.http.HttpServletCredential;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -59,6 +64,7 @@ import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioniGeneraliSearchForm;
+import org.openspcoop2.web.monitor.statistiche.bean.DimensioneCustom;
 import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 import org.openspcoop2.web.monitor.statistiche.bean.StatistichePersonalizzateSearchForm;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
@@ -624,7 +630,7 @@ public class ReportExporter extends HttpServlet{
 		return protocollo;
 	}
 	
-	private static void setParametersInSearchForm(HttpServletRequest req,StatsSearchForm statSearchForm, String protocollo) throws Exception{
+	private static void setParametersInSearchForm(HttpServletRequest req,StatsSearchForm statSearchForm, String protocollo) throws ParameterUncorrectException, RegExpException, RegExpNotValidException, RegExpNotFoundException, ProtocolException {
 		// Andare in ordine con l'xhtml dei search form
 		
 		
@@ -1151,15 +1157,7 @@ public class ReportExporter extends HttpServlet{
 			tipoVisualizzazioneEnum = TipoVisualizzazione.toEnumConstant(tipoVisualizzazione);
 			if(tipoVisualizzazioneEnum==null){
 				String [] values = TipoVisualizzazione.toArray();
-				StringBuilder sb = new StringBuilder();
-				if(values!=null && values.length>0) {
-					for (String tipo : values) {
-						if(sb.length()>0) {
-							sb.append(",");
-						}
-						sb.append(tipo);
-					}
-				}
+				StringBuilder sb = getAsStringBuilder(values);
 				throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_INFORMAZIONE_VISUALIZZATA+"' fornito possiede un valore '"+tipoVisualizzazione
 						+"' sconosciuto. I tipi supportati sono: "+sb.toString());
 			}
@@ -1190,15 +1188,7 @@ public class ReportExporter extends HttpServlet{
 					TipoBanda tmpBanda = TipoBanda.toEnumConstant(tmp[i]); 
 					if(tmpBanda==null){
 						String [] values = TipoBanda.toArray();
-						StringBuilder sb = new StringBuilder();
-						if(values!=null && values.length>0) {
-							for (String tipo : values) {
-								if(sb.length()>0) {
-									sb.append(",");
-								}
-								sb.append(tipo);
-							}
-						}
+						StringBuilder sb = getAsStringBuilder(values);
 						throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_BANDA_VISUALIZZATA+"' fornito possiede un valore '"+tmp[i]
 								+"' sconosciuto. I tipi supportati sono: "+sb.toString());
 					}	
@@ -1250,15 +1240,7 @@ public class ReportExporter extends HttpServlet{
 					TipoLatenza tmpLatenza = TipoLatenza.toEnumConstant(tmp[i]); 
 					if(tmpLatenza==null){
 						String [] values = TipoBanda.toArray();
-						StringBuilder sb = new StringBuilder();
-						if(values!=null && values.length>0) {
-							for (String tipo : values) {
-								if(sb.length()>0) {
-									sb.append(",");
-								}
-								sb.append(tipo);
-							}
-						}
+						StringBuilder sb = getAsStringBuilder(values);
 						throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_LATENZA_VISUALIZZATA+"' fornito possiede un valore '"+tmp[i]
 								+"' sconosciuto. I tipi supportati sono: "+sb.toString());
 					}	
@@ -1297,23 +1279,52 @@ public class ReportExporter extends HttpServlet{
 			dimensioniVisualizzateEnum = NumeroDimensioni.toEnumConstant(dimensioniVisualizzate);
 			if(dimensioniVisualizzateEnum==null){
 				String [] values = NumeroDimensioni.toArray();
-				StringBuilder sb = new StringBuilder();
-				if(values!=null && values.length>0) {
-					for (String tipo : values) {
-						if(sb.length()>0) {
-							sb.append(",");
-						}
-						sb.append(tipo);
-					}
-				}
+				StringBuilder sb = getAsStringBuilder(values);
 				throw new ParameterUncorrectException("Parametro '"+CostantiExporter.DIMENSIONI_VISUALIZZATE+"' fornito possiede un valore '"+dimensioniVisualizzate
 						+"' sconosciuto. I tipi supportati sono: "+sb.toString());
 			}
 		}
 		statSearchForm.setNumeroDimensioni(dimensioniVisualizzateEnum);
+		
+		
+		String dimensioniInfoCustom = req.getParameter(CostantiExporter.DIMENSIONE_INFO_CUSTOM);
+		DimensioneCustom dimensioniInfoCustomEnum = null;
+		if(dimensioniInfoCustom!=null){
+			dimensioniInfoCustom = dimensioniInfoCustom.trim();
+			dimensioniInfoCustomEnum = DimensioneCustom.toEnumConstant(dimensioniInfoCustom);
+			if(dimensioniInfoCustomEnum==null){
+				String [] values = DimensioneCustom.toArray();
+				StringBuilder sb = getAsStringBuilder(values);
+				throw new ParameterUncorrectException("Parametro '"+CostantiExporter.DIMENSIONE_INFO_CUSTOM+"' fornito possiede un valore '"+dimensioniInfoCustom
+						+"' sconosciuto. I tipi supportati sono: "+sb.toString());
+			}
+			statSearchForm.setNumeroDimensioniCustom(dimensioniInfoCustomEnum);
+			try {
+				SortedMap<String> map = statSearchForm.getDimensioniCustomDisponibiliAsMap();
+				if(!map.containsKey(dimensioniInfoCustomEnum.toString())) {
+					throw new ParameterUncorrectException("Informazione custom '"+dimensioniInfoCustomEnum.toString()+"' non supportata dal tipo di report");
+				}
+			}catch(Exception e) {
+				throw new ParameterUncorrectException("Parametro '"+CostantiExporter.DIMENSIONE_INFO_CUSTOM+"' non corretto: "+e.getMessage(),e);
+			}
+		}
+		statSearchForm.setNumeroDimensioniCustom(dimensioniInfoCustomEnum);
+		
 	}
 	
-	
+
+	private static StringBuilder getAsStringBuilder(String [] values) {
+		StringBuilder sb = new StringBuilder();
+		if(values!=null && values.length>0) {
+			for (String tipo : values) {
+				if(sb.length()>0) {
+					sb.append(",");
+				}
+				sb.append(tipo);
+			}
+		}
+		return sb;
+	}
 }
 
 class ParameterUncorrectException extends Exception {

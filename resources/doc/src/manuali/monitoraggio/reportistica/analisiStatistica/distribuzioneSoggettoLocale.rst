@@ -51,3 +51,21 @@ soggetti locali. Di seguito alcuni esempi di reports generabili.
     :name: mon_distribuzioneSoggettoBar3D_fig
 
     Esempio di report grafico di distribuzione per soggetto locale (Bar Chart 3D sul numero di transazioni e sulle date)
+    
+**Tabella 3D personalizzata per tipo di errore**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneSoggettoTabella3Dcustom.png
+    :scale: 50%
+    :align: center
+    :name: mon_distribuzioneSoggettoTabella3Dcustom_fig
+
+    Esempio di report tabellare che riporta la distribuzione per soggetto locale comprensivo di una distribuzione per tipo di errore
+
+**Grafico 'Bar Chart 3D' sul numero di transazioni personalizzato per tipo di errore**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneSoggettoBar3Dcustom.png
+    :scale: 70%
+    :align: center
+    :name: mon_distribuzioneSoggettoBar3Dcustom_fig
+
+    Esempio di report grafico di distribuzione per soggetto locale (Bar Chart 3D sul numero di transazioni e sul tipo di errore)

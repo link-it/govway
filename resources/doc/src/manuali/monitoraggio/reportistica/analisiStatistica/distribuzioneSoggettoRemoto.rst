@@ -51,3 +51,21 @@ Di seguito alcuni esempi di reports generabili.
     :name: mon_distribuzioneSoggettoRemotoBar3D_fig
 
     Esempio di Report di Distribuzione per Soggetto Remoto (Bar Chart 3D sul numero di transazioni e sulle date)
+    
+**Tabella 3D personalizzata per API**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneSoggettoRemotoTabella3Dcustom.png
+    :scale: 50%
+    :align: center
+    :name: mon_distribuzioneSoggettoRemotoTabella3Dcustom_fig
+
+    Esempio di report tabellare che riporta la distribuzione per soggetto remoto comprensivo di una distribuzione per API
+
+**Grafico 'Bar Chart 3D' sul numero di transazioni personalizzato per API**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneSoggettoRemotoBar3Dcustom.png
+    :scale: 70%
+    :align: center
+    :name: mon_distribuzioneSoggettoRemotoBar3Dcustom_fig
+
+    Esempio di report grafico di distribuzione per soggetto remoto (Bar Chart 3D sul numero di transazioni e sulla API)

@@ -51,3 +51,21 @@ di reports generabili.
     :name: mon_distribuzioneErroriBar3D_fig
 
     Esempio di Report di Distribuzione per Errori (Bar Chart 3D sul numero di transazioni e sulle date)
+    
+**Tabella 3D personalizzata per API**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneErroriTabella3Dcustom.png
+    :scale: 50%
+    :align: center
+    :name: mon_distribuzioneErroriTabella3Dcustom_fig
+
+    Esempio di Report di Distribuzione per Errori in formato tabellare comprensivo di una distribuzione per API
+    
+**Grafico 'Bar Chart 3D' sul numero di transazioni personalizzato per API**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneErroriBar3Dcustom.png
+    :scale: 70%
+    :align: center
+    :name: mon_distribuzioneErroriBar3Dcustom_fig
+
+    Esempio di Report di Distribuzione per Errori (Bar Chart 3D sul numero di transazioni e sulle API)

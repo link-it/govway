@@ -41,12 +41,14 @@ import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
+import org.openspcoop2.web.monitor.statistiche.bean.DimensioneCustom;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
 import org.openspcoop2.web.monitor.statistiche.constants.StatisticheCostanti;
@@ -1790,5 +1792,49 @@ public class StatsUtils {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", ApplicationBean.getInstance().getLocale());
 			return sdf.format(value);
 		}
+	}
+	
+	public static String getLabel(DimensioneCustom numeroDimensioniCustom) {
+		switch (numeroDimensioniCustom) {
+		case TAG:
+			return MessageManager.getInstance().getMessage(Costanti.TAG_LABEL_KEY);
+		case API:
+			return MessageManager.getInstance().getMessage(Costanti.API_LABEL_KEY);
+		case IMPLEMENTAZIONE_API:
+			return MessageManager.getInstance().getMessage(Costanti.SERVIZIO_LABEL_KEY);
+		case OPERAZIONE:
+			return MessageManager.getInstance().getMessage(Costanti.AZIONE_LABEL_KEY);
+		case SOGGETTO_LOCALE:
+			return MessageManager.getInstance().getMessage(Costanti.SOGGETTO_LOCALE_LABEL_KEY);
+		case SOGGETTO_REMOTO:
+			return MessageManager.getInstance().getMessage(Costanti.SOGGETTO_REMOTO_LABEL_KEY);
+		case SOGGETTO_FRUITORE:
+			return MessageManager.getInstance().getMessage(Costanti.FRUITORE_LABEL_KEY);
+		case SOGGETTO_EROGATORE:
+			return MessageManager.getInstance().getMessage(Costanti.EROGATORE_LABEL_KEY);
+		case TOKEN_ISSUER:
+			return MessageManager.getInstance().getMessage(Costanti.TOKEN_ISSUER_KEY);
+		case TOKEN_SUBJECT:
+			return MessageManager.getInstance().getMessage(Costanti.TOKEN_SUBJECT_KEY);
+		case TOKEN_CLIENT_ID:
+			return MessageManager.getInstance().getMessage(Costanti.TOKEN_CLIENT_ID_KEY);
+		case TOKEN_USERNAME:
+			return MessageManager.getInstance().getMessage(Costanti.TOKEN_USERNAME_KEY);
+		case TOKEN_EMAIL:
+			return MessageManager.getInstance().getMessage(Costanti.TOKEN_EMAIL_KEY);
+		case TOKEN_PDND_ORGANIZATION:
+			return MessageManager.getInstance().getMessage(Costanti.TOKEN_CLIENT_ID_PDND_ORGANIZZAZIONE_KEY);
+		case PRINCIPAL:
+			return MessageManager.getInstance().getMessage(Costanti.IDENTIFICATIVO_AUTENTICATO_KEY);
+		case APPLICATIVO_TRASPORTO:
+			return MessageManager.getInstance().getMessage(Costanti.SERVIZIO_APPLICATIVO_LABEL_KEY);
+		case APPLICATIVO_TOKEN:
+			return MessageManager.getInstance().getMessage(Costanti.SERVIZIO_APPLICATIVO_TOKEN_LABEL_KEY);
+		case INDIRIZZO_IP:
+			return MessageManager.getInstance().getMessage(Costanti.INDIRIZZO_IP_KEY);
+		case ESITO:
+			return MessageManager.getInstance().getMessage(Costanti.ESITO_LABEL_KEY);
+		}
+		return "N.D.";
 	}
 }

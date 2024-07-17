@@ -568,6 +568,7 @@ paths:
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
       - $ref: "#/components/parameters/dimensioni_report"
+      - $ref: "#/components/parameters/dimensioni_report_custom_info"
       responses:
         "200":
           $ref: "#/components/responses/200ReportStatistico"
@@ -647,6 +648,7 @@ paths:
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
       - $ref: "#/components/parameters/dimensioni_report"
+      - $ref: "#/components/parameters/dimensioni_report_custom_info"
       responses:
         "200":
           $ref: "#/components/responses/200ReportStatistico"
@@ -727,6 +729,7 @@ paths:
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
       - $ref: "#/components/parameters/dimensioni_report"
+      - $ref: "#/components/parameters/dimensioni_report_custom_info"
       responses:
         "200":
           $ref: "#/components/responses/200ReportStatistico"
@@ -801,6 +804,7 @@ paths:
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
       - $ref: "#/components/parameters/dimensioni_report"
+      - $ref: "#/components/parameters/dimensioni_report_custom_info"
       responses:
         "200":
           $ref: "#/components/responses/200ReportStatistico"
@@ -879,6 +883,7 @@ paths:
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
       - $ref: "#/components/parameters/dimensioni_report"
+      - $ref: "#/components/parameters/dimensioni_report_custom_info"
       responses:
         "200":
           $ref: "#/components/responses/200ReportStatistico"
@@ -961,6 +966,7 @@ paths:
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
       - $ref: "#/components/parameters/dimensioni_report"
+      - $ref: "#/components/parameters/dimensioni_report_custom_info"
       responses:
         "200":
           $ref: "#/components/responses/200ReportStatistico"
@@ -1041,6 +1047,7 @@ paths:
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
       - $ref: "#/components/parameters/dimensioni_report"
+      - $ref: "#/components/parameters/dimensioni_report_custom_info"
       responses:
         "200":
           $ref: "#/components/responses/200ReportStatistico"
@@ -1120,6 +1127,7 @@ paths:
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
       - $ref: "#/components/parameters/dimensioni_report"
+      - $ref: "#/components/parameters/dimensioni_report_custom_info"
       - $ref: "#/components/parameters/claim"
       responses:
         "200":
@@ -1199,6 +1207,7 @@ paths:
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
       - $ref: "#/components/parameters/dimensioni_report"
+      - $ref: "#/components/parameters/dimensioni_report_custom_info"
       responses:
         "200":
           $ref: "#/components/responses/200ReportStatistico"
@@ -1591,6 +1600,8 @@ components:
         properties:
           dimensioni:
             $ref: "#/components/schemas/DimensioniReportEnum"
+          custom_info:
+            $ref: "#/components/schemas/DimensioniReportCustomEnum"
     TipoInformazioneReportNumeroTransazioni:
       required:
       - "tipo"
@@ -2403,6 +2414,31 @@ components:
       enum:
       - "2d"
       - "3d"
+      - "3dcustom"
+    DimensioniReportCustomEnum:
+      type: "string"
+      example: "tag"
+      default: "tag"
+      enum:
+      - "tag"
+      - "api"
+      - "api_implementation"
+      - "operation"
+      - "local_organization"
+      - "remote_organization"
+      - "client_organization"
+      - "provider_organization"
+      - "token_issuer"
+      - "token_clientid"
+      - "token_subject"
+      - "token_username"
+      - "token_email"
+      - "token_pdnd_organization"
+      - "principal"
+      - "client"
+      - "token_client"
+      - "ip_address"
+      - "result"
     OccupazioneBandaEnum:
       type: "string"
       example: "banda_complessiva"
@@ -3474,10 +3510,18 @@ components:
       name: "dimensioni_report"
       in: "query"
       description: "Specifica le informaziono visualizzate nel report se senza data\
-        \ (2d) o con data (3d)"
+        \ (2d) o con data (3d) o con informazione personalizzata (3dcustom)"
       required: false
       schema:
         $ref: "#/components/schemas/DimensioniReportEnum"
+    dimensioni_report_custom_info:
+      name: "dimensioni_report_custom_info"
+      in: "query"
+      description: "Specifica l'informazione personalizzata visualizzata come 3 dimensione\
+        \ dei report"
+      required: false
+      schema:
+        $ref: "#/components/schemas/DimensioniReportCustomEnum"
     tipo_identificazione_applicativo:
       name: "tipo_identificazione"
       in: "query"

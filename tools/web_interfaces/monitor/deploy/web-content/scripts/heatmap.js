@@ -41,28 +41,29 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 	let svgId = id + "_svg";
 	
 	// calcolo margini 
-	var margin = {top: 130, right: 160, bottom: 30, left: 70.5};
+	var margin = {top: 130, right: 160, bottom: 30, left: 5};
   	var width = dp.size.w;
   	var	height = dp.size.h;
   	
 	// appendo oggetto svg al div scelto
-	var svg = d3.select(cId).append("svg")
-//  	.attr("width", width + margin.left + margin.right)
-//  	.attr("height", height + margin.top + margin.bottom)
-	.attr("id", svgId)
-  	.attr("width", width)
-  	.attr("height", height)
-  	.style("overflow", "hidden")
-  	.style("font-family", "Roboto")
-  	.append("g")
-  	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	var svgExt = d3.select(cId).append("svg");
+	//      .attr("width", width + margin.left + margin.right)
+//      .attr("height", height + margin.top + margin.bottom)
+	svgExt.attr("id", svgId)
+	   .attr("width", width)
+	   .attr("height", height)
+	   .style("overflow", "hidden")
+	   .style("font-family", "Roboto");
+	
+	var svg = svgExt.append("g")
+	   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
   	
   	// Label righe e colonne
 	var xLabels = dp.xSeries;
 	var yLabels = dp.ySeries;
   	
-  	
   	// calcolo eventuale shift verso destra per label asse y troppo lunghe
+	var spostamentoLateraleVersoDXCausaLabelAsseYLunghe = 0;
   	if(dp.noData != 0){
 		
 		var d = document.getElementById(id);
@@ -79,22 +80,25 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 	    	_label.setAttributeNS(null,"font-size", 14);
 	    	_label.setAttributeNS(null,"text-anchor", 'end');
 		     
-	     	_label.textContent =labelI;
+	     	_label.textContent =labelI.label;
 	        svgTmp.appendChild(_label);
 	        
 	        var _yAxisWidth = svgTmp.querySelector('text').getBBox().width;
-	        
+
+			console.log(_yAxisWidth);
+
 	        if (_yAxisWidth > maxw) maxw = _yAxisWidth;
 	        
 	         svgTmp.removeChild(_label);
         }
 	
+		// aggiungo lo spazio occupato dal box e dal trattino
+		maxw +=15;
+
 		 // shift del grafico verso destra se le label non stanno nello spazio di default
-		if(maxw > margin.left) {
-			// aggiorno altezza grafico
-			let svgIdSharp = "#" + svgId;        
-			var g = d3.select(svgIdSharp).select("g");
-			g.attr("transform", "translate(" + (maxw + 10) + "," + margin.top + ")");
+		if(maxw > (margin.left)) {
+			// sposto l'origine degli assi verso destra
+			spostamentoLateraleVersoDXCausaLabelAsseYLunghe = maxw + 10;
 		}
 	}
 	
@@ -104,13 +108,13 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 	
 	// Creazione asse X scales and axis:
 	var x = d3.scaleBand()
-  	.range([ 0, (width - 2 * margin.left)])
+  	.range([ 0, (width - 2 * margin.left - spostamentoLateraleVersoDXCausaLabelAsseYLunghe)])
   	.domain(asseXValues);
   	
   	// Creo un selettore per l'asse x
 	const xAxis = svg.append("g")
 		.attr("class", "c3-axis c3-axis-x") // Aggiungo le classi CSS della libreria c3 per riutilizzarne i selettori
-	    .attr("transform", "translate(0," + (height - 1.5 * margin.top) + ")")
+	    .attr("transform", "translate(" +spostamentoLateraleVersoDXCausaLabelAsseYLunghe +"," + (height - 1.5 * margin.top) + ")")
 	    .call(d3.axisBottom(x)
 	    	.tickValues(xLabels.map(function(item) { return item.valore; })) // Imposta i valori dei tick sull'asse X
 		    .tickFormat(function(valore) {
@@ -122,7 +126,7 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 		    })
 	    
 	    );
-	
+		
 	// Controllo se è impostata la visualizzazione delle label non orizzontali
 	if (dp.rotation != 0) {
 	    xAxis.selectAll("text")
@@ -147,6 +151,7 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 	  
 	svg.append("g")
 	  .attr("class", "c3-axis c3-axis-y") // Aggiungo le classi CSS della libreria c3 per riutilizzarne i selettori
+	  .attr("transform", "translate(" +spostamentoLateraleVersoDXCausaLabelAsseYLunghe +",0)")
 	  .call(d3.axisLeft(y))
 	  .selectAll("text")
 	  .style("font-size", 14)
@@ -365,7 +370,7 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
       		.enter()
       		.append("rect")
       		.attr("x", function(d) { 
-				return x(decodeHTML(d.x)); 
+				return x(decodeHTML(d.x)) + spostamentoLateraleVersoDXCausaLabelAsseYLunghe; 
 			})
       		.attr("y", function(d) { 
 				return y(decodeHTML(d.y)); 
@@ -412,7 +417,7 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 			.attr("dominant-baseline", "middle" )
 	   		.attr("x", function(d) {
 	            // Calcola la coordinata x del centro del rettangolo
-	            return x(decodeHTML(d.x)) + (x.bandwidth() / 2);
+	            return x(decodeHTML(d.x)) + spostamentoLateraleVersoDXCausaLabelAsseYLunghe + (x.bandwidth() / 2);
 	        })
 	        .attr("y", function(d) {
 	            // Calcola la coordinata y del centro del rettangolo

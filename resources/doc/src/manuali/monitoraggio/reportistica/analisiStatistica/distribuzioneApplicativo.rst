@@ -84,3 +84,21 @@ Di seguito alcuni esempi di report generabili.
 
     Esempio di report grafico di distribuzione per applicativo (Bar Chart 3D sul numero di transazioni e sulle date)
 
+**Tabella 3D degli applicativi identificati tramite credenziali di tipo 'trasporto' personalizzata per tipo di errore**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneApplicativoTabella3Dcustom.png
+    :scale: 50%
+    :align: center
+    :name: mon_distribuzioneApplicativoTabella3Dcustom_fig
+
+    Esempio di report tabellare di distribuzione per applicativo, identificato tramite credenziali di tipo 'trasporto', comprensivo di una distribuzione per tipo di errore
+
+**Grafico 'Bar Chart 3D' sul numero di transazioni personalizzato per tipo di errore**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneApplicativoBar3Dcustom.png
+    :scale: 70%
+    :align: center
+    :name: mon_distribuzioneApplicativoBar3Dcustom_fig
+
+    Esempio di report grafico di distribuzione per applicativo (Bar Chart 3D sul numero di transazioni e sul tipo di errore)
+

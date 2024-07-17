@@ -41,7 +41,9 @@ import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.web.monitor.core.bean.AbstractDateSearchForm;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
@@ -55,6 +57,7 @@ import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
 import org.openspcoop2.web.monitor.statistiche.constants.StatisticheCostanti;
+import org.openspcoop2.web.monitor.statistiche.utils.StatsUtils;
 import org.slf4j.Logger;
 
 /**
@@ -100,6 +103,10 @@ public class StatsSearchForm extends BaseSearchForm{
 	// Numero dimensioni 
 	private NumeroDimensioni numeroDimensioni;
 	protected String _value_numeroDimensioni;
+	
+	// Dimensioni custom 
+	private DimensioneCustom numeroDimensioniCustom;
+	protected String _value_numeroDimensioniCustom;
 
 	// Indicazione se il la distribuzione per soggetto è locale o remota. Vale solo per la distribuzione per soggetto.
 	// Negli altri casi è true per default per visualizzare la select list dei soggetti locali
@@ -153,6 +160,7 @@ public class StatsSearchForm extends BaseSearchForm{
 		this.setPeriodo(this.getPeriodoDefault()!=null ? this.getPeriodoDefault() : "Ultimo mese");
 		this.tipoReport=TipoReport.BAR_CHART;
 		this.numeroDimensioni = NumeroDimensioni.DIMENSIONI_2;
+		this.numeroDimensioniCustom = null;
 		this.setSortOrder(SortOrder.ASC);  
 		this.tipoVisualizzazione = TipoVisualizzazione.NUMERO_TRANSAZIONI;
 		this.tipoLatenza = TipoLatenza.LATENZA_TOTALE;
@@ -241,7 +249,7 @@ public class StatsSearchForm extends BaseSearchForm{
 			List<Integer> esiti = esitiProperties.getEsitiCodeOrderLabel(); // mantengo l'ordine
 			List<Integer> esitiOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
 			if(esiti!=null && !esiti.isEmpty()) {
-				List<Integer> esitiErrori = new ArrayList<Integer>();
+				List<Integer> esitiErrori = new ArrayList<>();
 				for (Integer esito : esiti) {
 					boolean found = false;
 					for (Integer esitoOk : esitiOk) {
@@ -290,9 +298,15 @@ public class StatsSearchForm extends BaseSearchForm{
 	@Override
 	protected String eseguiFiltra() {
 		
-		if(validateForm(this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO))==false) {
+		if(!validateForm(this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO))) {
 			return null;
 		}
+		
+		if(this.numeroDimensioni!=null && NumeroDimensioni.DIMENSIONI_3_CUSTOM.equals(this.numeroDimensioni.getValue()) &&
+			this.numeroDimensioniCustom==null) {
+			MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.SEARCH_MISSING_PARAMETERS_3D_INFO_LABEL_KEY));
+			return null;
+		} 
 		
 		this.dataInizioDellaRicerca = this.getDataInizio();
 		this.dataFineDellaRicerca = this.getDataFine();
@@ -526,6 +540,7 @@ public class StatsSearchForm extends BaseSearchForm{
 		}
 
 		this.numeroDimensioni = NumeroDimensioni.DIMENSIONI_2;
+		this.numeroDimensioniCustom = null;
 		this.setSortOrder(SortOrder.ASC); 
 		this.tipoVisualizzazione = TipoVisualizzazione.NUMERO_TRANSAZIONI;
 		this.tipoLatenza = TipoLatenza.LATENZA_TOTALE;
@@ -589,6 +604,27 @@ public class StatsSearchForm extends BaseSearchForm{
 		
 		// numero dimensioni
 		this.numeroDimensioni = NumeroDimensioni.DIMENSIONI_2;
+		this.numeroDimensioniCustom = null;
+	}
+	
+	public void numeroDimensioniListener(ActionEvent ae){
+
+		// numero dimensioni
+		this.numeroDimensioniCustom = null;
+		
+	}
+	
+	@Override
+	public void claimSelected(ActionEvent ae){
+		// numero dimensioni
+		this.numeroDimensioniCustom = null;
+	}
+	
+	@Override
+	public void identificazioneSelected(ActionEvent ae) {
+		super.identificazioneSelected(ae);
+		// numero dimensioni
+		this.numeroDimensioniCustom = null;
 	}
 
 	public void tipoLatenzaListener(ActionEvent ae){
@@ -765,7 +801,7 @@ public class StatsSearchForm extends BaseSearchForm{
 	}
 
 	public List<TipoBanda> getTipiBandaImpostati(){
-		List<TipoBanda> lst = new ArrayList<TipoBanda>();
+		List<TipoBanda> lst = new ArrayList<>();
 
 		if(this.getTipiBanda()!=null){
 			for (String tipoBanda : this.getTipiBanda()) {
@@ -835,7 +871,7 @@ public class StatsSearchForm extends BaseSearchForm{
 
 	public void set_value_modalitaTemporale(String _value_modalitaTemporale) {
 		if(StringUtils.isNotEmpty(_value_modalitaTemporale))
-			this.modalitaTemporale = (StatisticType) StatisticType.valueOf(_value_modalitaTemporale.toUpperCase());
+			this.modalitaTemporale = StatisticType.valueOf(_value_modalitaTemporale.toUpperCase());
 		else 
 			this.modalitaTemporale = null;
 	}
@@ -896,7 +932,11 @@ public class StatsSearchForm extends BaseSearchForm{
 	}
 
 	public void tipoReportSelected(ActionEvent ae){
+		if(ae!=null) {
+			// nop
+		}
 		this.numeroDimensioni = NumeroDimensioni.DIMENSIONI_2;
+		this.numeroDimensioniCustom = null;
 	}
 
 	public TipoStatistica getTipoStatistica() {
@@ -1094,6 +1134,7 @@ public class StatsSearchForm extends BaseSearchForm{
 		
 		dimensioniDisponibili.add(new SelectItem(NumeroDimensioni.DIMENSIONI_2.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_2D_LABEL_KEY)));
 		dimensioniDisponibili.add(new SelectItem(NumeroDimensioni.DIMENSIONI_3.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_LABEL_KEY)));
+		dimensioniDisponibili.add(new SelectItem(NumeroDimensioni.DIMENSIONI_3_CUSTOM.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_KEY)));
 		
 		return dimensioniDisponibili;
 	}
@@ -1126,6 +1167,181 @@ public class StatsSearchForm extends BaseSearchForm{
 		return tipoReportToCheck != null && (tipoReportToCheck.equals(TipoReport.TABELLA) || (tipoReportToCheck.equals(TipoReport.BAR_CHART) && this.isUseGraficiSVG()));
 	}
 	
+	public List<SelectItem> getDimensioniCustomDisponibili() throws UtilsException {
+		
+		SortedMap<String> map = getDimensioniCustomDisponibiliAsMap();
+		
+		List<SelectItem> dimensioniDisponibili = new ArrayList<>();
+		
+		dimensioniDisponibili.add(new SelectItem("--", "--"));
+		
+		for (String key : map.keys()) {
+			String value = map.get(key);
+			dimensioniDisponibili.add(new SelectItem(key, value));
+		}
+		
+		return dimensioniDisponibili;
+	}
+	public SortedMap<String> getDimensioniCustomDisponibiliAsMap() throws UtilsException {
+		SortedMap<String> dimensioniDisponibili = new SortedMap<>();
+		
+		if(!this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO)) {
+			dimensioniDisponibili.put(DimensioneCustom.TAG.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TAG));
+			dimensioniDisponibili.put(DimensioneCustom.API.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_API));
+			dimensioniDisponibili.put(DimensioneCustom.IMPLEMENTAZIONE_API.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_IMPLEMENTAZIONE_API));
+		}
+		if(!this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_AZIONE)) {
+			dimensioniDisponibili.put(DimensioneCustom.OPERAZIONE.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_OPERAZIONE));
+		}
+		
+		if(!this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SOGGETTO)) {
+			addDimensioniCustomSoggetto(dimensioniDisponibili);
+		}
+		
+		addDimensioniCustomApplicativo(dimensioniDisponibili);
+		
+		addDimensioniCustomToken(dimensioniDisponibili);
+		
+		if(!this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO) ||
+				(StringUtils.isEmpty(getRiconoscimento())) ||
+				!org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO.equals(getRiconoscimento())) {
+			dimensioniDisponibili.put(DimensioneCustom.PRINCIPAL.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_PRINCIPAL));
+		}
+		
+		if(!this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO) ||
+				(StringUtils.isEmpty(getRiconoscimento())) ||
+				!org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP.equals(getRiconoscimento())) {
+			dimensioniDisponibili.put(DimensioneCustom.INDIRIZZO_IP.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_INDIRIZZO_IP));
+		}
+		
+		if(!this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_ERRORI)) {
+			dimensioniDisponibili.put(DimensioneCustom.ESITO.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_ESITO));
+		}
+		
+		return dimensioniDisponibili;
+	}
+	private void addDimensioniCustomSoggetto(SortedMap<String> dimensioniDisponibili) throws UtilsException {
+		if(TipologiaRicerca.ingresso.equals(this.getTipologiaRicercaEnum()) || TipologiaRicerca.uscita.equals(this.getTipologiaRicercaEnum())){
+			if (this.getSoggettoLocale()==null || StringUtils.isBlank(this.getSoggettoLocale())) {
+				dimensioniDisponibili.put(DimensioneCustom.SOGGETTO_LOCALE.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_SOGGETTO_LOCALE));
+			}
+			if (this.getTipoNomeTrafficoPerSoggetto()==null || StringUtils.isBlank(this.getTipoNomeTrafficoPerSoggetto())) {
+				dimensioniDisponibili.put(DimensioneCustom.SOGGETTO_REMOTO.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_SOGGETTO_REMOTO));
+			}
+		}
+		else {
+			if (this.getTipoNomeMittente()==null || StringUtils.isBlank(this.getTipoNomeMittente())) {
+				dimensioniDisponibili.put(DimensioneCustom.SOGGETTO_FRUITORE.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_SOGGETTO_FRUITORE));
+			}
+			if (this.getTipoNomeDestinatario()==null || StringUtils.isBlank(this.getTipoNomeDestinatario())) {
+				dimensioniDisponibili.put(DimensioneCustom.SOGGETTO_EROGATORE.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_SOGGETTO_EROGATORE));
+			}
+		}
+	}
+	private void addDimensioniCustomApplicativo(SortedMap<String> dimensioniDisponibili) throws UtilsException {
+		if(!this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO) ||
+				(StringUtils.isEmpty(this.getRiconoscimento())) ||
+				!org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO.equals(this.getRiconoscimento()) ||
+				!org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TRASPORTO_KEY.equals(this.getIdentificazione())
+				) {
+			dimensioniDisponibili.put(DimensioneCustom.APPLICATIVO_TRASPORTO.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_APPLICATIVO_TRASPORTO));
+		}
+		if(!this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO) ||
+				(StringUtils.isEmpty(this.getRiconoscimento())) ||
+				!org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO.equals(this.getRiconoscimento()) ||
+				!org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.getIdentificazione())
+				) {
+			dimensioniDisponibili.put(DimensioneCustom.APPLICATIVO_TOKEN.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_APPLICATIVO_TOKEN));
+		}
+	}
+	private void addDimensioniCustomToken(SortedMap<String> dimensioniDisponibili) throws UtilsException {
+		org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = null;
+		if(this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO) &&
+				org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO.equals(this.getRiconoscimento())){
+			tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.toEnumConstant(this.getTokenClaim());
+		}
+		if(!this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO) ||
+				(StringUtils.isEmpty(this.getRiconoscimento())) ||
+				!org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO.equals(this.getRiconoscimento()) ||
+				!org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_CLIENT_ID.equals(tcm)
+				) {
+			dimensioniDisponibili.put(DimensioneCustom.TOKEN_CLIENT_ID.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TOKEN_CLIENT_ID));
+		}
+		if(!this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO) ||
+				(StringUtils.isEmpty(this.getRiconoscimento())) ||
+				!org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO.equals(this.getRiconoscimento()) ||
+				!org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_ISSUER.equals(tcm)
+				) {
+			dimensioniDisponibili.put(DimensioneCustom.TOKEN_ISSUER.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TOKEN_ISSUER));
+		}
+		if(!this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO) ||
+				(StringUtils.isEmpty(this.getRiconoscimento())) ||
+				!org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO.equals(this.getRiconoscimento()) ||
+				!org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_SUBJECT.equals(tcm)
+				) {
+			dimensioniDisponibili.put(DimensioneCustom.TOKEN_SUBJECT.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TOKEN_SUBJECT));
+		}
+		if(!this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO) ||
+				(StringUtils.isEmpty(this.getRiconoscimento())) ||
+				!org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO.equals(this.getRiconoscimento()) ||
+				!org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_USERNAME.equals(tcm)
+				) {
+			dimensioniDisponibili.put(DimensioneCustom.TOKEN_USERNAME.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TOKEN_USERNAME));
+		}
+		if(!this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO) ||
+				(StringUtils.isEmpty(this.getRiconoscimento())) ||
+				!org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO.equals(this.getRiconoscimento()) ||
+				!org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_EMAIL.equals(tcm)
+				) {
+			dimensioniDisponibili.put(DimensioneCustom.TOKEN_EMAIL.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TOKEN_EMAIL));
+		}
+		if(!this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO) ||
+				(StringUtils.isEmpty(this.getRiconoscimento())) ||
+				!org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO.equals(this.getRiconoscimento()) ||
+				!org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.equals(tcm)
+				) {
+			boolean showPDNDFilters = isShowPDNDFilters();
+			if(showPDNDFilters) {
+				dimensioniDisponibili.put(DimensioneCustom.TOKEN_PDND_ORGANIZATION.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TOKEN_PDND_ORGANIZATION));
+			}
+		}
+	}
+	
+	public String get_value_numeroDimensioniCustom() {
+		if(this.numeroDimensioniCustom == null){
+			return null;
+		}else{
+			return this.numeroDimensioniCustom.toString();
+		}
+	}
+
+	public void set_value_numeroDimensioniCustom(String valueNumeroDimensioniCustom) {
+		DimensioneCustom dc = (DimensioneCustom) DimensioneCustom.toEnumConstantFromString(valueNumeroDimensioniCustom);
+		this.setNumeroDimensioniCustom(dc); 
+	}
+
+	public DimensioneCustom getNumeroDimensioniCustom() {
+		return this.numeroDimensioniCustom;
+	}
+
+	public void setNumeroDimensioniCustom(DimensioneCustom numeroDimensioniCustom) {
+		this.numeroDimensioniCustom = numeroDimensioniCustom;
+	}
+	
+	public boolean isVisualizzaNumeroDimensioniCustom() {
+		
+		NumeroDimensioni numeroDimensioniToCheck = this.getNumeroDimensioni();
+		
+		return numeroDimensioniToCheck != null && numeroDimensioniToCheck.equals(NumeroDimensioni.DIMENSIONI_3_CUSTOM);
+	}
+	
+	public String getLabelNumeroDimensioniCustom() {
+		if(this.numeroDimensioniCustom!=null) {
+			return StatsUtils.getLabel(this.numeroDimensioniCustom);
+		}
+		return "N.D.";
+	}
+	
 	public boolean isVisualizzaGraficoBars() {
 		TipoReport tipoReportToCheck = this.getTipoReport();
 		NumeroDimensioni numeroDimensioniToCheck = this.getNumeroDimensioni();
@@ -1138,7 +1354,9 @@ public class StatsSearchForm extends BaseSearchForm{
 		TipoReport tipoReportToCheck = this.getTipoReport();
 		NumeroDimensioni numeroDimensioniToCheck = this.getNumeroDimensioni();
 		return (tipoReportToCheck != null && (tipoReportToCheck.equals(TipoReport.BAR_CHART) && this.isUseGraficiSVG())) &&
-				(numeroDimensioniToCheck != null && numeroDimensioniToCheck.equals(NumeroDimensioni.DIMENSIONI_3)) 
+				(numeroDimensioniToCheck != null && 
+					(numeroDimensioniToCheck.equals(NumeroDimensioni.DIMENSIONI_3) || numeroDimensioniToCheck.equals(NumeroDimensioni.DIMENSIONI_3_CUSTOM)
+				)) 
 				;
 	}
 }
