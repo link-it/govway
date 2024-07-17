@@ -132,6 +132,8 @@ seguenti:
 	
 		-	*manager*, contenente i file di configurazione da copiare nella directory di lavoro dell'ambiente dedicato alle console di configurazione e monitoraggio
 
+#. La fase di predisposizione del software è stata completata. Si raccomanda di attivare la ':ref:`byokInstallSecurityGovWay`'.
+
 #. Avviare l'application server con il relativo service oppure utilizzando la linea di comando:
 
     -  *<WILDFLY_HOME>/bin/standalone.sh*, nel caso di Wildfly.

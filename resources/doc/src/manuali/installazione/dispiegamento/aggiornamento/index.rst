@@ -19,6 +19,8 @@ L'aggiornamento richiede i seguenti step:
 
 -  :ref:`deploy_upd_properties`
 
+-  :ref:`deploy_upd_infoConfidenziali`
+
 -  Riavvio dell'Application Server
 
 .. toctree::
@@ -28,3 +30,4 @@ L'aggiornamento richiede i seguenti step:
 	datasource
 	archivi
 	properties
+	infoConfidenziale
