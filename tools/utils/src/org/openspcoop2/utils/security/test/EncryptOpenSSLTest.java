@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.security.Security;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsRuntimeException;
@@ -460,10 +461,16 @@ public class EncryptOpenSSLTest {
 	
 	
 	
-	
+	private static final String OPENSSL_COMMAND = "opensslCmd";
 	
 	private static String buildCommand(boolean base64, String ... args) {
-		StringBuilder sb = new StringBuilder("openssl");
+		
+		String opensslCommand = System.getProperty(OPENSSL_COMMAND);
+		if(opensslCommand==null || StringUtils.isEmpty(opensslCommand)) {
+			opensslCommand = "openssl";
+		}
+		
+		StringBuilder sb = new StringBuilder(opensslCommand);
 		if(args!=null && args.length>0) {
 			for (int i = 0; i < args.length; i++) {
 				if(OPENSSL_OPTION_BASE64.equals(args[i]) && !base64) {
