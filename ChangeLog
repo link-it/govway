@@ -1,5 +1,10 @@
 2024-07-17  Giuliano Pintori <pintori@link.it>
 
+	* [GovWayConsole]
+	È stata risolta una problematica nella gestione degli allegati di una erogazione o API, in cui il pulsante 'cestino' non funzionava correttamente, impedendo la rimozione di un file una volta caricato.
+
+2024-07-17  Giuliano Pintori <pintori@link.it>
+
 	* [GovWayMonitor, ApiRsMonitoraggio]
 	Aggiunta funzionalità OP-1722
 	Nella funzionalità 'Analisi Statistica' è ora possibile produrre anche una distribuzione statistica in 3 dimensioni personalizzata, 
