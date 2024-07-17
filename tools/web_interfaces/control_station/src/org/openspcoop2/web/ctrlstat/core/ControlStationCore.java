@@ -6068,7 +6068,8 @@ public class ControlStationCore {
 		boolean auditAbilitato = true;
 		try{
 			AuditAppender auditManager = ControlStationCore.getAuditManagerInstance(this.tipoDB);
-			auditManager.registraOperazioneAccesso(Tipologia.LOGIN, user,msg, this.isAuditingRegistrazioneElementiBinari);
+			auditManager.registraOperazioneAccesso(Tipologia.LOGIN, user,msg, this.isAuditingRegistrazioneElementiBinari,
+					this.driverBYOKUtilities);
 		}catch(AuditDisabilitatoException disabilitato){
 			ControlStationCore.logDebug("Auditing dell'operazione ["+msg+"] non effettuato: "+disabilitato.getMessage());
 			auditAbilitato = false;
@@ -6089,7 +6090,8 @@ public class ControlStationCore {
 		boolean auditAbilitato = true;
 		try{
 			AuditAppender auditManager = ControlStationCore.getAuditManagerInstance(this.tipoDB);
-			auditManager.registraOperazioneAccesso(Tipologia.LOGOUT, user,msg, this.isAuditingRegistrazioneElementiBinari);
+			auditManager.registraOperazioneAccesso(Tipologia.LOGOUT, user,msg, this.isAuditingRegistrazioneElementiBinari,
+					this.driverBYOKUtilities);
 
 		}catch(AuditDisabilitatoException disabilitato){
 			ControlStationCore.logDebug("Auditing dell'operazione ["+msg+"] non effettuato: "+disabilitato.getMessage());
@@ -6162,7 +6164,8 @@ public class ControlStationCore {
 						}
 					}
 
-					idOperazione[i] = auditManager.registraOperazioneInFaseDiElaborazione(tipoOperazione, asClone, user,msg, this.isAuditingRegistrazioneElementiBinari);
+					idOperazione[i] = auditManager.registraOperazioneInFaseDiElaborazione(tipoOperazione, asClone, user,msg, this.isAuditingRegistrazioneElementiBinari,
+							this.driverBYOKUtilities);
 
 				}else if(oggetto instanceof AccordoCooperazione){
 
@@ -6182,7 +6185,8 @@ public class ControlStationCore {
 						}
 					}
 
-					idOperazione[i] = auditManager.registraOperazioneInFaseDiElaborazione(tipoOperazione, acClone, user,msg, this.isAuditingRegistrazioneElementiBinari);
+					idOperazione[i] = auditManager.registraOperazioneInFaseDiElaborazione(tipoOperazione, acClone, user,msg, this.isAuditingRegistrazioneElementiBinari,
+							this.driverBYOKUtilities);
 
 				}else if(oggetto instanceof AccordoServizioParteSpecifica){
 
@@ -6216,10 +6220,12 @@ public class ControlStationCore {
 						}
 					}
 
-					idOperazione[i] = auditManager.registraOperazioneInFaseDiElaborazione(tipoOperazione, sClone, user,msg, this.isAuditingRegistrazioneElementiBinari);
+					idOperazione[i] = auditManager.registraOperazioneInFaseDiElaborazione(tipoOperazione, sClone, user,msg, this.isAuditingRegistrazioneElementiBinari,
+							this.driverBYOKUtilities);
 
 				}else {
-					idOperazione[i] = auditManager.registraOperazioneInFaseDiElaborazione(tipoOperazione, oggetto, user,msg, this.isAuditingRegistrazioneElementiBinari);
+					idOperazione[i] = auditManager.registraOperazioneInFaseDiElaborazione(tipoOperazione, oggetto, user,msg, this.isAuditingRegistrazioneElementiBinari,
+							this.driverBYOKUtilities);
 				}
 
 			}catch(AuditDisabilitatoException disabilitato){
