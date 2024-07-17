@@ -600,11 +600,13 @@ for (int i = 0; i < dati.size(); i++) {
 			                						<span class="icon-box">
 														<i class="material-icons md-16"><%= deIconName %></i>
 													</span>
-													<% if (!image.getOnClick().equals("")) { %>
+													<% if (!image.getOnClick().equals("")) {
+											  			String clickHandler = visualizzaAjaxStatus + "postVersion_" + image.getOnClick();
+														%>
 						            					<script type="text/javascript" nonce="<%= randomNonce %>">
 													      	 $(document).ready(function(){
 																	$('#<%=id %>').click(function() {
-																		<%= visualizzaAjaxStatus %>"postVersion_"<%= image.getOnClick() %>;
+																		<%= clickHandler %>
 																	});
 																});
 														</script>
