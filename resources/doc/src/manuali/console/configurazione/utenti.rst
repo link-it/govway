@@ -45,17 +45,6 @@ conseguentemente i permessi associabili a ciascun utente:
       quanto possono assumere l'identità di un qualunque utente del
       sistema.
 
--  *Altri Permessi (visibili solo configurazione specifica del
-   prodotto)*
-
-   -  *[P]* - Gestione delle entità di configurazione degli Accordi di
-      Cooperazione e Servizi Composti.
-
-   -  *[M]* - Accesso alle code messaggi sul gateway. Questa
-      autorizzazione consente ad esempio di consultare i messaggi
-      presenti nelle Message Box dell'Integration Manager ed
-      eventualmente effettuare delle rimozioni.
-
 L'applicazione, al termine dell'installazione, contiene una utenza
 (credenziali indicate durante l'esecuzione dell'installer) che permette
 di effettuare tutte le principali operazioni di gestione.
