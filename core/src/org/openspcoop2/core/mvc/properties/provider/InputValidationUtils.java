@@ -29,7 +29,14 @@ package org.openspcoop2.core.mvc.properties.provider;
 public class InputValidationUtils {
 	
 	private InputValidationUtils() {}
-
+	
+	public static void validateTextInput(String input, String fieldName) throws ProviderValidationException {
+		validateTextAreaInput(input, fieldName, true, false, false);
+	}
+	public static void validateTextInput(String input, String fieldName,boolean spaceEnabled) throws ProviderValidationException {
+		validateTextAreaInput(input, fieldName, spaceEnabled, false, false);
+	}
+	
 	public static void validateTextAreaInput(String input, String fieldName) throws ProviderValidationException {
 		validateTextAreaInput(input, fieldName, false, false, false);
 	}
