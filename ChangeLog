@@ -1,3 +1,10 @@
+2024-07-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, ProtocolloModIPA]
+	Risolto Bug OP-1735
+	(https://github.com/link-it/govway/issues/161)
+	Aggiunta validazione dei campi contenenti codici crittografici (es. clientId, KID relativi ai token pdnd).
+
 2024-07-17  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]

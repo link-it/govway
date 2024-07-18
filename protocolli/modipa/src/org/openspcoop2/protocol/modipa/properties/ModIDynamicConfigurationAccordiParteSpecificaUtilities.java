@@ -738,6 +738,62 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 				}
 			}
 			
+			// Keystore password
+			AbstractConsoleItem<?> keystorePasswordItem = 	
+					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+							ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_ID
+							);
+			if(keystorePasswordItem!=null) {
+				StringProperty keystoreItemValue = 
+						(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_ID);
+				if(keystoreItemValue!=null && keystoreItemValue.getValue()!=null && !"".equals(keystoreItemValue.getValue())) {
+					try {
+						InputValidationUtils.validateTextInput(keystoreItemValue.getValue(), 
+								ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_LABEL +" - "+
+								ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_LABEL);
+					}catch(Exception e) {
+						throw new ProtocolException(e.getMessage(),e);
+					}
+				}
+			}
+			
+			// Key password
+			AbstractConsoleItem<?> keyPasswordItem = 	
+					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+							ModIConsoleCostanti.MODIPA_KEY_PASSWORD_ID
+							);
+			if(keyPasswordItem!=null) {
+				StringProperty keystoreItemValue = 
+						(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_PASSWORD_ID);
+				if(keystoreItemValue!=null && keystoreItemValue.getValue()!=null && !"".equals(keystoreItemValue.getValue())) {
+					try {
+						InputValidationUtils.validateTextInput(keystoreItemValue.getValue(), 
+								ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_LABEL +" - "+
+								ModIConsoleCostanti.MODIPA_KEY_PASSWORD_LABEL);
+					}catch(Exception e) {
+						throw new ProtocolException(e.getMessage(),e);
+					}
+				}
+			}
+			// Key alias
+			AbstractConsoleItem<?> keyAliasItem = 	
+					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+							ModIConsoleCostanti.MODIPA_KEY_ALIAS_ID
+							);
+			if(keyAliasItem!=null) {
+				StringProperty keystoreItemValue = 
+						(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_ALIAS_ID);
+				if(keystoreItemValue!=null && keystoreItemValue.getValue()!=null && !"".equals(keystoreItemValue.getValue())) {
+					try {
+						InputValidationUtils.validateTextInput(keystoreItemValue.getValue(), 
+								ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_LABEL +" - "+
+								ModIConsoleCostanti.MODIPA_KEY_ALIAS_LABEL);
+					}catch(Exception e) {
+						throw new ProtocolException(e.getMessage(),e);
+					}
+				}
+			}
+			
 			// TrustStore Path
 			AbstractConsoleItem<?> truststorePathItem = 	
 					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
@@ -751,6 +807,25 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 						InputValidationUtils.validateTextAreaInput(truststorePathItemValue.getValue(), 
 								ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_CERTIFICATI_TRUSTSTORE_LABEL +" - "+
 										ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH_LABEL);
+					}catch(Exception e) {
+						throw new ProtocolException(e.getMessage(),e);
+					}
+				}
+			}
+			
+			// TrustStore Password
+			AbstractConsoleItem<?> truststorePasswordItem = 	
+					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+							ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD_ID
+							);
+			if(truststorePasswordItem!=null) {
+				StringProperty truststoreItemValue = 
+						(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD_ID);
+				if(truststoreItemValue!=null && truststoreItemValue.getValue()!=null && !"".equals(truststoreItemValue.getValue())) {
+					try {
+						InputValidationUtils.validateTextInput(truststoreItemValue.getValue(), 
+								ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_CERTIFICATI_TRUSTSTORE_LABEL +" - "+
+								ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD_LABEL);
 					}catch(Exception e) {
 						throw new ProtocolException(e.getMessage(),e);
 					}
@@ -815,6 +890,30 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 			}
 
 		}
+		
+		// validazione dati OAuth se forniti
+
+		StringProperty tokenIdentificativoClientItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO_ID);
+		if(tokenIdentificativoClientItemValue!=null && tokenIdentificativoClientItemValue.getValue()!=null && StringUtils.isNotEmpty(tokenIdentificativoClientItemValue.getValue())) {
+			try {
+				InputValidationUtils.validateTextAreaInput(tokenIdentificativoClientItemValue.getValue(), 
+						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO_LABEL);
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+		}
+		
+		StringProperty tokenKidItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_KID_ID);
+		if(tokenKidItemValue!=null && tokenKidItemValue.getValue()!=null && StringUtils.isNotEmpty(tokenKidItemValue.getValue())) {
+			try {
+				InputValidationUtils.validateTextAreaInput(tokenKidItemValue.getValue(), 
+						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_KID_LABEL);
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+		}
+
+		
 		
 		return true;
 	}
