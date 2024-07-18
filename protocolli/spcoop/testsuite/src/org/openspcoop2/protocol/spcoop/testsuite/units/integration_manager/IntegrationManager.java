@@ -23,6 +23,8 @@
 package org.openspcoop2.protocol.spcoop.testsuite.units.integration_manager;
 
 import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.List;
 
@@ -2947,128 +2949,144 @@ public class IntegrationManager extends GestioneViaJmx {
 	}
 	public static String gestioneProfiloOneway(String PD,String user,String password,Repository repository,Message msgAxisDaInviare, boolean attesaTerminazioneMessaggi,
 			String tipoSoggettoErogatore,String soggettoErogatore,String tipoServizio,String servizio,String azione) throws Exception{
-		// Costruzione msg di richiesta
-		SOAPEngine utility = new SOAPEngine(null);
-		utility.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false,addIDUnivoco);
-
-		// SPCoopMessage
-		Message msgAxis = null;
-		if(msgAxisDaInviare==null)
-			msgAxis = utility.getRequestMessage();
-		else
-			msgAxis = msgAxisDaInviare;
-		org.openspcoop2.pdd.services.axis14.IntegrationManagerMessage msg = new org.openspcoop2.pdd.services.axis14.IntegrationManagerMessage();
-		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		msgAxis.writeTo(bout);
-		bout.flush();
-		bout.close();
-		msg.setMessage(bout.toByteArray());
-		
-		// SPCoopHeader INFO
-		if(soggettoErogatore!=null || servizio!=null || azione!=null){
-			org.openspcoop2.pdd.services.axis14.ProtocolHeaderInfo h = new  org.openspcoop2.pdd.services.axis14.ProtocolHeaderInfo();
-			h.setTipoDestinatario(tipoSoggettoErogatore);
-			h.setDestinatario(soggettoErogatore);
-			h.setTipoServizio(tipoServizio);
-			h.setServizio(servizio);
-			h.setAzione(azione);
-			msg.setProtocolHeaderInfo(h);
-		}
-		
-		// IntegrationManager
-		org.openspcoop2.pdd.services.axis14.PD_PortType im_axis14 = null;
-		if(use_axis14_engine){
-			im_axis14 = getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"), 
-					user,password);
-		}
-		org.openspcoop2.pdd.services.cxf.PD im_cxf = null;
-		if(use_cxf_engine){
-			im_cxf = getIntegrationManagerPD_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"), 
-					user,password);
-		}
-		
-		org.openspcoop2.pdd.services.axis14.IntegrationManagerMessage msgRisposta = null;
-		if(use_axis14_engine){
-			msgRisposta = im_axis14.invocaPortaDelegata(PD, msg);
-		}
-		else if(use_cxf_engine){
-			org.openspcoop2.pdd.services.cxf.IntegrationManagerMessage msgRisposta_cxf = im_cxf.invocaPortaDelegata(PD, toIntegrationManagerMessage_cxf(msg));
-			msgRisposta = toIntegrationManagerMessage_axis14(msgRisposta_cxf);
-		}
-		
-		
-		// Msg di risposta
-		Message msgAxisResponse = Axis14SoapUtils.build(msgRisposta.getMessage(), false,false,false);
-		
-		// Test uguaglianza Body
-		if(msgAxisResponse.getSOAPBody()!=null && msgAxisResponse.getSOAPBody().hasChildNodes()){
-			Reporter.log("Controllo risposta ottenuta");
-			String idBody=org.openspcoop2.testsuite.core.Utilities.getIDFromOpenSPCoopOKMessage(SPCoopTestsuiteLogger.getInstance(),msgAxisResponse);
-		    // Controlla che sia uguale a quello ritornato nell'header della risposta
-		    if(idBody==null)
-		    	throw new TestSuiteException("ID e-Gov non presenta nella ricevuta OpenSPCoopOK.");
-		    if(msgRisposta.getProtocolHeaderInfo().getID()==null)
-		    	throw new TestSuiteException("ID e-Gov non presenta nell'header del trasporto della ricevuta.");
-		    if(msgRisposta.getProtocolHeaderInfo().getID().equals(idBody)==false)
-		    	throw new TestSuiteException("ID e-Gov presente nell'header del trasporto della ricevuta differisce dall'id egov presente nel messaggio OpenSPCoopOK della ricevuta.");
-		}
+		try {
+			// Costruzione msg di richiesta
+			Reporter.log("Costruzione ...");
+			SOAPEngine utility = new SOAPEngine(null);
+			utility.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false,addIDUnivoco);
+	
+			// SPCoopMessage
+			Message msgAxis = null;
+			if(msgAxisDaInviare==null)
+				msgAxis = utility.getRequestMessage();
+			else
+				msgAxis = msgAxisDaInviare;
+			org.openspcoop2.pdd.services.axis14.IntegrationManagerMessage msg = new org.openspcoop2.pdd.services.axis14.IntegrationManagerMessage();
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			msgAxis.writeTo(bout);
+			bout.flush();
+			bout.close();
+			msg.setMessage(bout.toByteArray());
+			
+			// SPCoopHeader INFO
+			if(soggettoErogatore!=null || servizio!=null || azione!=null){
+				org.openspcoop2.pdd.services.axis14.ProtocolHeaderInfo h = new  org.openspcoop2.pdd.services.axis14.ProtocolHeaderInfo();
+				h.setTipoDestinatario(tipoSoggettoErogatore);
+				h.setDestinatario(soggettoErogatore);
+				h.setTipoServizio(tipoServizio);
+				h.setServizio(servizio);
+				h.setAzione(azione);
+				msg.setProtocolHeaderInfo(h);
+			}
+			
+			// IntegrationManager
+			org.openspcoop2.pdd.services.axis14.PD_PortType im_axis14 = null;
+			if(use_axis14_engine){
+				Reporter.log("GetStub axis14 ...");
+				im_axis14 = getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"), 
+						user,password);
+			}
+			org.openspcoop2.pdd.services.cxf.PD im_cxf = null;
+			if(use_cxf_engine){
+				Reporter.log("GetStub cxf ...");
+				im_cxf = getIntegrationManagerPD_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"), 
+						user,password);
+			}
+			
+			org.openspcoop2.pdd.services.axis14.IntegrationManagerMessage msgRisposta = null;
+			if(use_axis14_engine){
+				Reporter.log("InvokePD axis14 ...");
+				msgRisposta = im_axis14.invocaPortaDelegata(PD, msg);
+			}
+			else if(use_cxf_engine){
+				org.openspcoop2.pdd.services.cxf.IntegrationManagerMessage msgRisposta_cxf = im_cxf.invocaPortaDelegata(PD, toIntegrationManagerMessage_cxf(msg));
+				Reporter.log("InvokePD cxf ...");
+				msgRisposta = toIntegrationManagerMessage_axis14(msgRisposta_cxf);
+			}
+			
+			
+			// Msg di risposta
+			Reporter.log("Build response ...");
+			Message msgAxisResponse = Axis14SoapUtils.build(msgRisposta.getMessage(), false,false,false);
+			
+			// Test uguaglianza Body
+			if(msgAxisResponse.getSOAPBody()!=null && msgAxisResponse.getSOAPBody().hasChildNodes()){
+				Reporter.log("Controllo risposta ottenuta");
+				String idBody=org.openspcoop2.testsuite.core.Utilities.getIDFromOpenSPCoopOKMessage(SPCoopTestsuiteLogger.getInstance(),msgAxisResponse);
+			    // Controlla che sia uguale a quello ritornato nell'header della risposta
+			    if(idBody==null)
+			    	throw new TestSuiteException("ID e-Gov non presenta nella ricevuta OpenSPCoopOK.");
+			    if(msgRisposta.getProtocolHeaderInfo().getID()==null)
+			    	throw new TestSuiteException("ID e-Gov non presenta nell'header del trasporto della ricevuta.");
+			    if(msgRisposta.getProtocolHeaderInfo().getID().equals(idBody)==false)
+			    	throw new TestSuiteException("ID e-Gov presente nell'header del trasporto della ricevuta differisce dall'id egov presente nel messaggio OpenSPCoopOK della ricevuta.");
+			}
+			    
+			// Identificativo della richiesta
+		    String identificativoRichiestaAsincrona=msgRisposta.getProtocolHeaderInfo().getID();
+		    if(repository!=null)
+		    	repository.add(identificativoRichiestaAsincrona);
 		    
-		// Identificativo della richiesta
-	    String identificativoRichiestaAsincrona=msgRisposta.getProtocolHeaderInfo().getID();
-	    if(repository!=null)
-	    	repository.add(identificativoRichiestaAsincrona);
-	    
-	    Reporter.log("[OneWay] Gestione richiesta con id="+identificativoRichiestaAsincrona+" effettata.");
-	    
-	    // Attesa terminazione messaggio
-	    org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties testsuiteProperties = 
-	    	org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance();
-	    org.openspcoop2.testsuite.core.TestSuiteProperties testsuitePropertiesLIB = 
-	    	org.openspcoop2.testsuite.core.TestSuiteProperties.getInstance();
-	    if(attesaTerminazioneMessaggi && testsuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
-	    	
-	    	DatabaseComponent dbFruitore = null;
-	    	DatabaseComponent dbErogatore = null;
-	    	try {
-	    	
-	    		/** DatabaseComponent */
-	    		dbFruitore = DatabaseProperties.getDatabaseComponentFruitore();
-	    		dbErogatore = DatabaseProperties.getDatabaseComponentErogatore();
-	    		
-				if(dbFruitore!=null){
-					long countTimeout = System.currentTimeMillis() + (1000* testsuitePropertiesLIB.getTimeoutProcessamentoMessaggiOpenSPCoop());
-					while(dbFruitore.getVerificatoreMessaggi().countMsgOpenSPCoop(identificativoRichiestaAsincrona)!=0 && countTimeout>System.currentTimeMillis()){
-						try{
-						Thread.sleep(testsuitePropertiesLIB.getCheckIntervalProcessamentoMessaggiOpenSPCoop());
-						}catch(Exception e){}
-					}
-				}
-				if(dbErogatore!=null){
-					long countTimeout = System.currentTimeMillis() + (1000*testsuitePropertiesLIB.getTimeoutProcessamentoMessaggiOpenSPCoop());
-					while(dbErogatore.getVerificatoreMessaggi().countMsgOpenSPCoop(identificativoRichiestaAsincrona)!=0 && countTimeout>System.currentTimeMillis()){
-						try{
+		    Reporter.log("[OneWay] Gestione richiesta con id="+identificativoRichiestaAsincrona+" effettata.");
+		    
+		    // Attesa terminazione messaggio
+		    org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties testsuiteProperties = 
+		    	org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance();
+		    org.openspcoop2.testsuite.core.TestSuiteProperties testsuitePropertiesLIB = 
+		    	org.openspcoop2.testsuite.core.TestSuiteProperties.getInstance();
+		    if(attesaTerminazioneMessaggi && testsuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+		    	
+		    	DatabaseComponent dbFruitore = null;
+		    	DatabaseComponent dbErogatore = null;
+		    	try {
+		    	
+		    		/** DatabaseComponent */
+		    		dbFruitore = DatabaseProperties.getDatabaseComponentFruitore();
+		    		dbErogatore = DatabaseProperties.getDatabaseComponentErogatore();
+		    		
+					if(dbFruitore!=null){
+						long countTimeout = System.currentTimeMillis() + (1000* testsuitePropertiesLIB.getTimeoutProcessamentoMessaggiOpenSPCoop());
+						while(dbFruitore.getVerificatoreMessaggi().countMsgOpenSPCoop(identificativoRichiestaAsincrona)!=0 && countTimeout>System.currentTimeMillis()){
+							try{
 							Thread.sleep(testsuitePropertiesLIB.getCheckIntervalProcessamentoMessaggiOpenSPCoop());
-						}catch(Exception e){}
+							}catch(Exception e){}
+						}
 					}
-				}
-	    	}catch(Exception e){
-	    		Reporter.log("[oneWay] Errore durante il controllo: "+e.getMessage());
-	    	}finally{
-	    		try{
-	    			if(dbFruitore!=null){
-	    				dbFruitore.close();
-	    			}
-	    		}catch(Exception e){}
-	    		try{
-	    			if(dbErogatore!=null){
-	    				dbErogatore.close();
-	    			}
-	    		}catch(Exception e){}
-	    	}
+					if(dbErogatore!=null){
+						long countTimeout = System.currentTimeMillis() + (1000*testsuitePropertiesLIB.getTimeoutProcessamentoMessaggiOpenSPCoop());
+						while(dbErogatore.getVerificatoreMessaggi().countMsgOpenSPCoop(identificativoRichiestaAsincrona)!=0 && countTimeout>System.currentTimeMillis()){
+							try{
+								Thread.sleep(testsuitePropertiesLIB.getCheckIntervalProcessamentoMessaggiOpenSPCoop());
+							}catch(Exception e){}
+						}
+					}
+		    	}catch(Exception e){
+		    		Reporter.log("[oneWay] Errore durante il controllo: "+e.getMessage());
+		    	}finally{
+		    		try{
+		    			if(dbFruitore!=null){
+		    				dbFruitore.close();
+		    			}
+		    		}catch(Exception e){}
+		    		try{
+		    			if(dbErogatore!=null){
+		    				dbErogatore.close();
+		    			}
+		    		}catch(Exception e){}
+		    	}
+			}
+		    
+		    
+		    return identificativoRichiestaAsincrona;
+		}catch(Exception e) {
+			Reporter.log("Failed: "+e.getMessage());
+			try(StringWriter sw = new StringWriter();
+					PrintWriter pw = new PrintWriter(sw);){
+				e.printStackTrace(pw);
+				Reporter.log("StackTrace: "+sw.toString());
+			}
+			throw e;
 		}
-	    
-	    
-	    return identificativoRichiestaAsincrona;
 	}
 	
 	private void utilityGetAndTestMsgInBOX(org.openspcoop2.pdd.services.axis14.MessageBox_PortType im_axis14,org.openspcoop2.pdd.services.cxf.MessageBox im_cxf,
