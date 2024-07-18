@@ -28,6 +28,7 @@ L'interfaccia per la creazione dell'erogazione, basata su una API con pattern "I
 
     + Riferimento X.509 (presente solo per API REST): il metodo per la localizzazione del certificato dell'applicativo mittente nel messaggio di richiesta. Il valore fornito deve corrispondere alla scelta operata dai mittenti.  I valori possibili sono quelli previsti nella specifica AGID.
     + TrustStore Certificati: Riferimento al truststore che contiene le CA, i certificati, CRL e policy OCSP da utilizzare per poter verificare i token di sicurezza ricevuti nelle richieste. È possibile mantenere l'impostazione di default che è stata fornita al momento dell'installazione del prodotto, oppure definire un diverso riferimento (opzione "Ridefinito") fornendo Path, Tipo, Password del TrustStore e criteri di verifica tramite CRL o OCSP.
+    + Time to Live (secondi): consente di modificare l'intervallo temporale di default (300 secondi) utilizzato per rifiutare i token creati precedentemente all'intervallo indicato.
     + Audience: valore del campo Audience atteso nel token di sicurezza della richiesta.
 
   .. figure:: ../../../../_figure_console/modipa_erogazione_richiesta.png
