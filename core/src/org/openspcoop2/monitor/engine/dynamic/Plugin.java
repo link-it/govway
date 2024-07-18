@@ -21,7 +21,9 @@
 package org.openspcoop2.monitor.engine.dynamic;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,6 +32,10 @@ import java.util.List;
 import org.openspcoop2.core.config.RegistroPlugin;
 import org.openspcoop2.core.config.RegistroPluginArchivio;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.regexp.RegExpException;
+import org.openspcoop2.utils.regexp.RegExpNotFoundException;
+import org.openspcoop2.utils.regexp.RegExpNotValidException;
 import org.openspcoop2.utils.resources.DynamicClassLoader;
 
 /**
@@ -62,7 +68,7 @@ public class Plugin implements Serializable {
 	
 	private transient DynamicClassLoader classLoader;
 	
-	public Plugin(RegistroPlugin plugin) throws Exception {
+	public Plugin(RegistroPlugin plugin) throws UtilsException, IOException, RegExpException, RegExpNotValidException, RegExpNotFoundException {
 		this.nome = plugin.getNome();
 		this.date = plugin.getData();
 		this.compatibilita = plugin.getCompatibilitaList();
@@ -70,52 +76,54 @@ public class Plugin implements Serializable {
 		List<URL> listUrl = new ArrayList<>();
 		
 		for (RegistroPluginArchivio pluginJar : plugin.getArchivioList()) {
-			PluginJar plug = null;
-			switch (pluginJar.getSorgente()) {
-			case JAR:
-				if(pluginJar.getContenuto()==null) {
-					throw new Exception("Archivio '"+pluginJar.getNome()+"' senza contenuto (sorgente: "+pluginJar.getSorgente()+")");
-				}
-				plug = new PluginJar(pluginJar.getNome(), pluginJar.getData(), pluginJar.getContenuto());
-				this.archivePlugin.add(plug);
-				listUrl.add(plug.getResourceURL());
-				break;
-			case URL:
-				if(pluginJar.getUrl()==null) {
-					throw new Exception("Archivio '"+pluginJar.getNome()+"' senza url (sorgente: "+pluginJar.getSorgente()+")");
-				}
-				plug = new PluginJar(pluginJar.getNome(), pluginJar.getData(), pluginJar.getUrl());
-				this.archivePlugin.add(plug);
-				listUrl.add(plug.getResourceURL());
-				break;
-			case DIR:
-				if(pluginJar.getDir()==null) {
-					throw new Exception("Archivio '"+pluginJar.getNome()+"' senza directory (sorgente: "+pluginJar.getSorgente()+")");
-				}
-				File fDir = new File(pluginJar.getDir());
-				if(!fDir.exists()) {
-					throw new Exception("Archivio '"+pluginJar.getNome()+"' indica una directory '"+fDir.getAbsolutePath()+"' non esistente (sorgente: "+pluginJar.getSorgente()+")");
-				}
-				if(fDir.isDirectory()) {
-					loadJar(pluginJar.getNome(), pluginJar.getData(), fDir, listUrl);
-				}
-				else {
-					plug = new PluginJar(pluginJar.getNome(), pluginJar.getData(), pluginJar.getDir());
-					this.archivePlugin.add(plug);
-					listUrl.add(plug.getResourceURL());
-				}
-				break;
-			}
-			
-			
+			init(pluginJar, listUrl);
 		}
 
 		this.classLoader = new DynamicClassLoader(listUrl.toArray(new URL[1]));
 	}
+	private void init(RegistroPluginArchivio pluginJar, List<URL> listUrl) throws UtilsException, IOException, RegExpException, RegExpNotValidException, RegExpNotFoundException {
+		String archivioPrefix = "Archivio '"+pluginJar.getNome()+"' ";
+		PluginJar plug = null;
+		switch (pluginJar.getSorgente()) {
+		case JAR:
+			if(pluginJar.getContenuto()==null) {
+				throw new UtilsException(archivioPrefix+"senza contenuto (sorgente: "+pluginJar.getSorgente()+")");
+			}
+			plug = new PluginJar(pluginJar.getNome(), pluginJar.getData(), pluginJar.getContenuto());
+			this.archivePlugin.add(plug);
+			listUrl.add(plug.getResourceURL());
+			break;
+		case URL:
+			if(pluginJar.getUrl()==null) {
+				throw new UtilsException(archivioPrefix+"senza url (sorgente: "+pluginJar.getSorgente()+")");
+			}
+			plug = new PluginJar(pluginJar.getNome(), pluginJar.getData(), pluginJar.getUrl());
+			this.archivePlugin.add(plug);
+			listUrl.add(plug.getResourceURL());
+			break;
+		case DIR:
+			if(pluginJar.getDir()==null) {
+				throw new UtilsException(archivioPrefix+"senza directory (sorgente: "+pluginJar.getSorgente()+")");
+			}
+			File fDir = new File(pluginJar.getDir());
+			if(!fDir.exists()) {
+				throw new UtilsException(archivioPrefix+"indica una directory '"+fDir.getAbsolutePath()+"' non esistente (sorgente: "+pluginJar.getSorgente()+")");
+			}
+			if(fDir.isDirectory()) {
+				loadJar(pluginJar.getNome(), pluginJar.getData(), fDir, listUrl);
+			}
+			else {
+				plug = new PluginJar(pluginJar.getNome(), pluginJar.getData(), pluginJar.getDir());
+				this.archivePlugin.add(plug);
+				listUrl.add(plug.getResourceURL());
+			}
+			break;
+		}
+	}
 	
-	private void loadJar(String nomePlugin, Date data, File dir, List<URL> listUrl) throws Exception {
+	private void loadJar(String nomePlugin, Date data, File dir, List<URL> listUrl) throws UtilsException, MalformedURLException, RegExpException, RegExpNotValidException, RegExpNotFoundException {
 		
-		List<File> dirs = new ArrayList<File>();
+		List<File> dirs = new ArrayList<>();
 		
 		File [] files = dir.listFiles();
 		if(files!=null && files.length>0) {
@@ -148,10 +156,9 @@ public class Plugin implements Serializable {
 	}
 	public ClassLoader getClassLoader(String tipoClasseCustomDaRicercare) {
 		
-		if(this.compatibilita!=null && !this.compatibilita.isEmpty()) {
-			if(!this.compatibilita.contains(tipoClasseCustomDaRicercare)) {
-				return null; // class loader non compatibile con il tipo cercato
-			}
+		if(this.compatibilita!=null && !this.compatibilita.isEmpty() &&
+			!this.compatibilita.contains(tipoClasseCustomDaRicercare)) {
+			return null; // class loader non compatibile con il tipo cercato
 		}
 		
 		return this.classLoader;
