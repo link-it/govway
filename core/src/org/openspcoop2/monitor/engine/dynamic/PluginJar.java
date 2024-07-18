@@ -21,10 +21,16 @@
 package org.openspcoop2.monitor.engine.dynamic;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.regexp.RegExpException;
+import org.openspcoop2.utils.regexp.RegExpNotFoundException;
+import org.openspcoop2.utils.regexp.RegExpNotValidException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 
@@ -52,15 +58,15 @@ public class PluginJar implements Serializable {
 	
 	private URL resourceURL;
 	
-	public PluginJar(String nome, Date data, byte[] contenuto) throws Exception {
+	public PluginJar(String nome, Date data, byte[] contenuto) throws UtilsException, IOException {
 		this.nome = nome;
 		this.date = data;
-		//this.content = contenuto;
+		/**this.content = contenuto;*/
 		this.fContent = FileSystemUtilities.createTempFile("plugin_"+this.nome, ".raw");
 		FileSystemUtilities.writeFile(this.fContent, contenuto);
 		this.resourceURL = this.fContent.toURI().toURL();
 	}
-	public PluginJar(String nome, Date data, String url) throws Exception {
+	public PluginJar(String nome, Date data, String url) throws RegExpException, RegExpNotValidException, RegExpNotFoundException, MalformedURLException {
 		this.nome = nome;
 		this.date = data;
 		this.url = url;
@@ -83,9 +89,7 @@ public class PluginJar implements Serializable {
 	
 	public void close() {
 		if(this.fContent!=null) {
-			if(!this.fContent.delete()) {
-				// ignore
-			}
+			FileSystemUtilities.deleteFile(this.fContent);
 		}
 	}
 	
