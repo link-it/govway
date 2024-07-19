@@ -606,6 +606,10 @@
 						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/lib/audit/src"/>
 					</else>
 				</if>
+				
+				<!-- Falsi positivi -->
+				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/audit/enum.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.audit.enum.falsePositives}"/>
 
 				<antcall target="-prepare">
 					<param name="analyzeType" value="web-lib-audit"/>

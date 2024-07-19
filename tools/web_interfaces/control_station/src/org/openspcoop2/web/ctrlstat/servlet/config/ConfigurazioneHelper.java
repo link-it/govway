@@ -16026,11 +16026,25 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN_CLAIMS);
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN_CLAIMS);
-					de.setValues(CostantiControlStation.TOKEN_VALUES_WITHOUT_ISSUER);
-					de.setLabels(CostantiControlStation.LABEL_TOKEN_VALUES_WITHOUT_ISSUER);
+					
+					boolean modiPdnd = applicativa && policy!=null && policy.getFiltro()!=null && 
+							org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(policy.getFiltro().getProtocollo());
+					if(modiPdnd) {
+						de.setValues(CostantiControlStation.TOKEN_VALUES_WITHOUT_ISSUER_CON_PDND_INFO);
+						de.setLabels(CostantiControlStation.LABEL_TOKEN_VALUES_WITHOUT_ISSUER_CON_PDND);
+					}
+					else {
+						de.setValues(CostantiControlStation.TOKEN_VALUES_WITHOUT_ISSUER);
+						de.setLabels(CostantiControlStation.LABEL_TOKEN_VALUES_WITHOUT_ISSUER);
+					}
 					de.setSelezionati(tokenSelezionatiSenzaIssuer);
 					de.setType(DataElementType.MULTI_SELECT);
-					de.setRows(4); 
+					if(modiPdnd) {
+						de.setRows(5);
+					}
+					else {
+						de.setRows(4);
+					}
 					de.setRequired(true);
 					dati.add(de);
 				}

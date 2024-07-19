@@ -22,6 +22,7 @@ package org.openspcoop2.core.controllo_traffico.beans;
 
 import java.io.Serializable;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -61,6 +62,7 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 	private String tokenUsername = QUALSIASI;
 	private String tokenClientId = QUALSIASI;
 	private String tokenEMail = QUALSIASI;
+	private String pdndOrganizationName = QUALSIASI;
 	
 
 	
@@ -103,13 +105,15 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 				this.tokenUsername.equals(filtro.getTokenUsername())
 				&&
 				this.tokenEMail.equals(filtro.getTokenEMail())
+				&&
+				this.pdndOrganizationName.equals(filtro.getPdndOrganizationName())
 				;
 		
 	}
 	
 	@Override
 	public boolean equals(Object param){
-		if(param==null || !(param instanceof IDUnivocoGroupByPolicy))
+		if(!(param instanceof IDUnivocoGroupByPolicy))
 			return false;
 		IDUnivocoGroupByPolicy id = (IDUnivocoGroupByPolicy) param;
 		return this.match(id);
@@ -433,6 +437,23 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 			bf.append(this.tokenEMail);
 		}
 		
+		if(!QUALSIASI.equals(this.pdndOrganizationName) || !filterGroupByNotSet){
+			if(filterGroupByNotSet){
+				if(bf.length()>0){
+					bf.append("\n");
+				}
+				bf.append("\t");
+			}
+			else{
+				bf.append(" ");
+			}
+			bf.append("PDNDOrganizationName:");
+			if(filterGroupByNotSet){
+				bf.append(" ");
+			}
+			bf.append(this.pdndOrganizationName);
+		}
+		
 		if(bf.length()<=0){
 			if(filterGroupByNotSet){
 				bf.append("\t");
@@ -744,6 +765,23 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 	}
 	
 	
+	public String getPdndOrganizationName() {
+		return this.pdndOrganizationName;
+	}
+	
+	public String getPdndOrganizationNameIfDefined() {
+		if(this.pdndOrganizationName!=null && !this.pdndOrganizationName.equals(QUALSIASI) ){
+			return this.pdndOrganizationName;
+		}
+		return null;
+	}
+
+	public void setPdndOrganizationName(String pdndOrganizationName) {
+		if(pdndOrganizationName!=null)
+			this.pdndOrganizationName = pdndOrganizationName;
+	}
+	
+	
 	
 	// **** UTILITIES ****
 	
@@ -798,6 +836,9 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 		
 		bf.append(id.tokenEMail);
 		bf.append("\n");
+		
+		bf.append(id.pdndOrganizationName);
+		bf.append("\n");
 			
 		if (id instanceof IDUnivocoGroupByPolicyMapId) {
 			// Aggiungo un ulteriore campo, per la map unica distribuita sul controllo traffico 
@@ -814,18 +855,19 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 		return bf.toString();
 	}
 	
-	public static IDUnivocoGroupByPolicy deserialize(String s) throws Exception{
+	public static IDUnivocoGroupByPolicy deserialize(String s) throws CoreException{
 		String [] tmp = s.split("\n");
 		if(tmp==null){
-			throw new Exception("Wrong Format");
+			throw new CoreException("Wrong Format");
 		}
 		int oldLength = 11;
 		int newLength = oldLength+1+5; // nella 3.1.0 aggiunto idAutenticato e 5 token claims
 		int newLength2 = newLength+1;	// Aggiunto uniqueMapId
 		int newLength3 = newLength2+1;	// nella 3.3.8 aggiunto servizioApplicativoToken
+		int newLength4 = newLength3+1;	// nella 3.3.15 aggiunto pdndOrganizationName
 		
-		if(tmp.length!=oldLength && tmp.length!=newLength && tmp.length!=newLength2 && tmp.length!=newLength3){
-			throw new Exception("Wrong Format (size: "+tmp.length+")");
+		if(tmp.length!=oldLength && tmp.length!=newLength && tmp.length!=newLength2 && tmp.length!=newLength3 && tmp.length!=newLength4){
+			throw new CoreException("Wrong Format (size: "+tmp.length+")");
 		}
 		
 		boolean idUnivocoGroupBy = false;
@@ -927,6 +969,9 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 			}
 			else if(i==18){
 				id.servizioApplicativoToken = tmp[i].trim();
+			}
+			else if(i==19){
+				id.pdndOrganizationName = tmp[i].trim();
 			}
 		}
 		return id;

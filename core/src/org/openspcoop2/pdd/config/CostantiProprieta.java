@@ -915,7 +915,41 @@ public class CostantiProprieta {
 	}
 	
 	
+	// ****  PDND *****
 	
+	private static final String PDND_ABORT_TRANSACTION_ORGANIZATION_READ_ERROR = "pdnd.readByApiInterop.organization.failed.abortTransaction";
+	private static final String PDND_ABORT_TRANSACTION_CLIENT_READ_ERROR = "pdnd.readByApiInterop.client.failed.abortTransaction";
+
+	private static final String PDND_ABORT_TRANSACTION_ORGANIZATION_NOT_AVAILABLE_RATE_LIMITING = "pdnd.rateLimitingByOrganization.infoNotAvailable.abortTransaction";
+	
+	public static final String PDND_VALUE_ENABLED = VALUE_ENABLED;
+	public static final String PDND_VALUE_DISABLED = VALUE_DISABLED;
+	
+	public static boolean isPdndReadByApiInteropOrganizationFailedAbortTransaction(List<Proprieta> proprieta, boolean defaultValue) {
+		String p = PDND_ABORT_TRANSACTION_ORGANIZATION_READ_ERROR;
+		String valueS = readValue(proprieta, p);
+		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
+			return valueS.equalsIgnoreCase(PDND_VALUE_ENABLED);
+		}
+		return defaultValue;
+	}
+	public static boolean isPdndReadByApiInteropClientFailedAbortTransaction(List<Proprieta> proprieta, boolean defaultValue) {
+		String p = PDND_ABORT_TRANSACTION_CLIENT_READ_ERROR;
+		String valueS = readValue(proprieta, p);
+		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
+			return valueS.equalsIgnoreCase(PDND_VALUE_ENABLED);
+		}
+		return defaultValue;
+	}
+	
+	public static boolean isPdndRateLimitingByOrganizationInfoNotAvailableAbortTransaction(List<Proprieta> proprieta, boolean defaultValue) {
+		String p = PDND_ABORT_TRANSACTION_ORGANIZATION_NOT_AVAILABLE_RATE_LIMITING;
+		String valueS = readValue(proprieta, p);
+		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
+			return valueS.equalsIgnoreCase(PDND_VALUE_ENABLED);
+		}
+		return defaultValue;
+	}
 	
 	
 	// METODI DI UTILITA GENERICI

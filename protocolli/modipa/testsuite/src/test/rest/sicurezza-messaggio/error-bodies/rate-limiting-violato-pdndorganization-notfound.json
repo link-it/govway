@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/429/TooManyRequests.html",
+    "title": "TooManyRequests",
+    "status": 429,
+    "detail": "Servizio Temporaneamente Non Erogabile [ERR-CP00]",
+    "govway_id": "#string"
+}

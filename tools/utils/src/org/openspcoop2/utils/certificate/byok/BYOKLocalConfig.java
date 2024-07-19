@@ -65,9 +65,9 @@ public class BYOKLocalConfig implements Serializable {
 	protected String publicKeyInline;
 	protected String publicKeyEncoding;
 	
-	protected String password;
-	protected String passwordType;
-	protected Integer passwordIteration;
+	protected String pw; // password
+	protected String pwType; // passwordType
+	protected Integer pwIteration; // passwordIteration
 	
 	protected String contentAlgorithm;
 	
@@ -261,17 +261,17 @@ public class BYOKLocalConfig implements Serializable {
 	
 	private void initPasswordEngine(String id, Properties p) throws UtilsException {
 		
-		this.password = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PWD, true);
+		this.pw = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PW, true);
 		
-		this.passwordType = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PWD_TYPE, false);
-		if(this.passwordType==null || StringUtils.isEmpty(this.passwordType.trim())) {
-			this.passwordType = BYOKCostanti.PROPERTY_LOCAL_PWD_TYPE_DEFAULT;
+		this.pwType = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PW_TYPE, false);
+		if(this.pwType==null || StringUtils.isEmpty(this.pwType.trim())) {
+			this.pwType = BYOKCostanti.PROPERTY_LOCAL_PW_TYPE_DEFAULT;
 		}
-		else if(!BYOKCostanti.getLocalPasswordTypes().contains(this.passwordType)) {
-			throw new UtilsException(UNSUPPORTED_PROPERTY_PREFIX+BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PWD_TYPE+VALUE_SEPARATOR+this.passwordType+"'");
+		else if(!BYOKCostanti.getLocalPasswordTypes().contains(this.pwType)) {
+			throw new UtilsException(UNSUPPORTED_PROPERTY_PREFIX+BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PW_TYPE+VALUE_SEPARATOR+this.pwType+"'");
 		}
 		
-		this.passwordIteration = BYOKConfig.getIntegerProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PWD_ITERATION, false);
+		this.pwIteration = BYOKConfig.getIntegerProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PWD_ITERATION, false);
 	}
 	
 	
@@ -360,15 +360,15 @@ public class BYOKLocalConfig implements Serializable {
 	}
 	
 	public String getPassword() {
-		return this.password;
+		return this.pw;
 	}
 	
 	public String getPasswordType() {
-		return this.passwordType;
+		return this.pwType;
 	}
 	
 	public Integer getPasswordIteration() {
-		return this.passwordIteration;
+		return this.pwIteration;
 	}
 	
 	public String getContentAlgorithm() {

@@ -1,3 +1,11 @@
+2024-07-19  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, ProtocolloModIPA]
+	Aggiunta funzionalità OP-1737
+	Aggiunta, nelle politiche di Rate Limiting, la possibilità di conteggiare per nome dell'organizzazione ottenuta accedendo alle API di interoperabilità della PDND. 
+	È stata inoltre aggiunta la possibilità di modificare il comportamento di default per far fallire la transazione 
+	nel caso in cui il recupero delle informazioni sul client o sull'organizzazione tramite API PDND fallisca.
+
 2024-07-18  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole, ProtocolloModIPA]

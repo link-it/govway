@@ -123,38 +123,38 @@ public class BYOKCostanti {
 	public static final String PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_INLINE = "local.publicKey.inline";
 	public static final String PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_ENCODING = "local.publicKey.encoding";
 	
-	public static final String PROPERTY_SUFFIX_LOCAL_PWD = "local.password";
-	public static final String PROPERTY_SUFFIX_LOCAL_PWD_TYPE = "local.password.type";
-	/**public static final String PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_128_CBC = "openssl-aes-128-cbc";
-	public static final String PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_192_CBC = "openssl-aes-192-cbc";*/
-	public static final String PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_256_CBC = "openssl-aes-256-cbc";
-	public static final String PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_128_CBC = "openssl-pbkdf2-aes-128-cbc";
-	public static final String PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_192_CBC = "openssl-pbkdf2-aes-192-cbc";
-	public static final String PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_256_CBC = "openssl-pbkdf2-aes-256-cbc";
+	public static final String PROPERTY_SUFFIX_LOCAL_PW = "local.password";
+	public static final String PROPERTY_SUFFIX_LOCAL_PW_TYPE = "local.password.type";
+	/**public static final String PROPERTY_LOCAL_PW_TYPE_OPENSSL_AES_128_CBC = "openssl-aes-128-cbc";
+	public static final String PROPERTY_LOCAL_PW_TYPE_OPENSSL_AES_192_CBC = "openssl-aes-192-cbc";*/
+	public static final String PROPERTY_LOCAL_PW_TYPE_OPENSSL_AES_256_CBC = "openssl-aes-256-cbc";
+	public static final String PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_128_CBC = "openssl-pbkdf2-aes-128-cbc";
+	public static final String PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_192_CBC = "openssl-pbkdf2-aes-192-cbc";
+	public static final String PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_256_CBC = "openssl-pbkdf2-aes-256-cbc";
 	private static final List<String> localPwdTypes = new ArrayList<>();
 	static {
-		/**localPwdTypes.add(PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_128_CBC);
-		localPwdTypes.add(PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_192_CBC);*/
-		localPwdTypes.add(PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_256_CBC);
-		localPwdTypes.add(PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_128_CBC);
-		localPwdTypes.add(PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_192_CBC);
-		localPwdTypes.add(PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_256_CBC);
+		/**localPwdTypes.add(PROPERTY_LOCAL_PW_TYPE_OPENSSL_AES_128_CBC);
+		localPwdTypes.add(PROPERTY_LOCAL_PW_TYPE_OPENSSL_AES_192_CBC);*/
+		localPwdTypes.add(PROPERTY_LOCAL_PW_TYPE_OPENSSL_AES_256_CBC);
+		localPwdTypes.add(PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_128_CBC);
+		localPwdTypes.add(PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_192_CBC);
+		localPwdTypes.add(PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_256_CBC);
 	}
 	public static List<String> getLocalPasswordTypes() {
 		return localPwdTypes;
 	}
 	public static boolean isOpenSSLPasswordDerivationKeyMode(String mode) {
-		return PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_256_CBC.equals(mode) ||
-				PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_128_CBC.equals(mode) ||
-				PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_192_CBC.equals(mode) ||
-				PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_256_CBC.equals(mode);
+		return PROPERTY_LOCAL_PW_TYPE_OPENSSL_AES_256_CBC.equals(mode) ||
+				PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_128_CBC.equals(mode) ||
+				PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_192_CBC.equals(mode) ||
+				PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_256_CBC.equals(mode);
 	}
 	public static boolean isOpenSSLPBKDF2PasswordDerivationKeyMode(String mode) {
-		return PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_128_CBC.equals(mode) ||
-				PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_192_CBC.equals(mode) ||
-				PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_256_CBC.equals(mode);
+		return PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_128_CBC.equals(mode) ||
+				PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_192_CBC.equals(mode) ||
+				PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_256_CBC.equals(mode);
 	}
-	public static final String PROPERTY_LOCAL_PWD_TYPE_DEFAULT = PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_256_CBC;
+	public static final String PROPERTY_LOCAL_PW_TYPE_DEFAULT = PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_256_CBC;
 	public static final String PROPERTY_SUFFIX_LOCAL_PWD_ITERATION = "local.password.iter";
 		
 	public static final String PROPERTY_SUFFIX_LOCAL_CONTENT_ALGORITHM = "local.algorithm";

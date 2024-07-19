@@ -851,7 +851,8 @@ public class GestoreKeystoreCache {
 	
 	
 	
-	public static RemoteStoreClientInfo getRemoteStoreClientInfo(RequestInfo requestInfo, String keyId, String clientId, RemoteStoreConfig remoteStoreConfig, IRemoteStoreProvider provider) throws SecurityException{
+	public static RemoteStoreClientInfo getRemoteStoreClientInfo(RequestInfo requestInfo, String keyId, String clientId, RemoteStoreConfig remoteStoreConfig, IRemoteStoreProvider provider,
+			org.openspcoop2.utils.Map<Object> context) throws SecurityException{
 		
 		String keyCache = RemoteStoreClientInfoCache.getKeyCache(remoteStoreConfig, keyId);
 		
@@ -864,9 +865,9 @@ public class GestoreKeystoreCache {
 		}
 		org.openspcoop2.security.keystore.RemoteStoreClientInfo k = null;
 		if(GestoreKeystoreCache.cacheEnabled)
-			k = GestoreKeystoreCache.remoteStoreClientInfoCache.getKeystoreAndCreateIfNotExists(keyCache, keyId, clientId, remoteStoreConfig, provider);
+			k = GestoreKeystoreCache.remoteStoreClientInfoCache.getKeystoreAndCreateIfNotExists(keyCache, keyId, clientId, remoteStoreConfig, provider, context);
 		else
-			k = new org.openspcoop2.security.keystore.RemoteStoreClientInfo(keyId, clientId, remoteStoreConfig, provider);
+			k = new org.openspcoop2.security.keystore.RemoteStoreClientInfo(keyId, clientId, remoteStoreConfig, provider, context);
 		if(useRequestInfo) {
 			requestInfo.getRequestConfig().addRemoteStoreClientInfo(keyCache, k, requestInfo.getIdTransazione());
 		}

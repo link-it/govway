@@ -17,6 +17,8 @@ Background:
     * def get_credenziale_by_refid = read('classpath:utils/credenziale_mittente.js')
 
     * def credenziale_max_feature = callonce read('classpath:utils/credenziale_mittente_max.feature')
+    
+    * def get_diagnostico = read('classpath:utils/get_diagnostico.js')
 
 
 
@@ -50,6 +52,8 @@ And match response == read('request.json')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
 And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0001'
+And match header X-RateLimit-Remaining == '1'
+And match header X-RateLimit-Limit == '2'
 
 # controlli cache pdnd
 
@@ -84,6 +88,12 @@ And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0001'
 * match pdndClientJson contains '"consumerId":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0001-aaaa-82e210e12345"'
 * match pdndClientJson contains '"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0001-bbbb-12345678f8dd"'
 
+# controllo applicazione filtro rate limiting
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(1), violate(0), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* match result[0].MESSAGGIO contains 'rispettate(1)'
+
 
 # Effettuo nuovamente l'invocazione, ora dovrebbe essere in cache
 
@@ -101,6 +111,8 @@ And match response == read('request.json')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
 And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0001'
+And match header X-RateLimit-Remaining == '0'
+And match header X-RateLimit-Limit == '2'
 
 # controlli cache pdnd
 
@@ -137,6 +149,41 @@ And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0001'
 * match pdndClientJson contains '"consumerId":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0001-aaaa-82e210e12345"'
 * match pdndClientJson contains '"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0001-bbbb-12345678f8dd"'
 
+# controllo applicazione filtro rate limiting
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(1), violate(0), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* match result[0].MESSAGGIO contains 'rispettate(1)'
+
+
+# Effettuo nuovamente l'invocazione, ora dovrebbe essere violata la policy di Rate Limiting
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestRecuperoInformazioniPDNDAuth/v1"
+And path 'test'
+And request read('request.json')
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient3', password: 'ApplicativoBlockingIDA01ExampleClient3' })
+And header simulazionepdnd-username = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-password = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDAuth/v1'
+When method post
+Then status 429
+And match response == read('error-bodies/rate-limiting-violato.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header PDND-ExternalId == '#notpresent'
+And match header X-RateLimit-Remaining == '0'
+And match header X-RateLimit-Limit == '2'
+
+# controllo applicazione filtro rate limiting
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(0), violate(1), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* match result[0].MESSAGGIO contains 'violate(1)'
+* def result = get_diagnostico(tiderogazione, 'Il numero massimo di richieste (rilevato:3 soglia:2) risulta raggiunto') 
+* match result[0].MESSAGGIO contains 'PDNDOrganizationName'
+
+
 
 
 
@@ -165,12 +212,15 @@ And header simulazionepdnd-username = 'ApplicativoBlockingIDA01'
 And header simulazionepdnd-password = 'ApplicativoBlockingIDA01'
 And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01'
 And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDIntegrity/v1'
+And header GovWay-TestSuite-PDND-RateLimiting = 'TestStandard';
 When method post
 Then status 200
 And match response == read('request.json')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
 And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0002'
+And match header X-RateLimit-Remaining == '1'
+And match header X-RateLimit-Limit == '2'
 
 # controlli cache pdnd
 
@@ -220,6 +270,12 @@ And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0002'
 * match pdndClientJson contains '"consumerId":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0002-aaaa-82e210e12345"'
 * match pdndClientJson contains '"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0002-bbbb-12345678f8dd"'
 
+# controllo applicazione filtro rate limiting
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(1), violate(0), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* match result[0].MESSAGGIO contains 'rispettate(1)'
+
 
 # Effettuo nuovamente l'invocazione, ora dovrebbe essere in cache
 
@@ -231,12 +287,15 @@ And header simulazionepdnd-username = 'ApplicativoBlockingIDA01'
 And header simulazionepdnd-password = 'ApplicativoBlockingIDA01'
 And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01'
 And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDIntegrity/v1'
+And header GovWay-TestSuite-PDND-RateLimiting = 'TestStandard';
 When method post
 Then status 200
 And match response == read('request.json')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
 And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0002'
+And match header X-RateLimit-Remaining == '0'
+And match header X-RateLimit-Limit == '2'
 
 # controlli cache pdnd
 
@@ -292,6 +351,42 @@ And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0002'
 * match pdndClientJson contains '"consumerId":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0002-aaaa-82e210e12345"'
 * match pdndClientJson contains '"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0002-bbbb-12345678f8dd"'
 
+# controllo applicazione filtro rate limiting
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(1), violate(0), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* match result[0].MESSAGGIO contains 'rispettate(1)'
+
+
+# Effettuo nuovamente l'invocazione, ora dovrebbe essere violata la policy di Rate Limiting
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestRecuperoInformazioniPDNDIntegrity/v1"
+And path 'test'
+And request read('request.json')
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header simulazionepdnd-username = 'ApplicativoBlockingIDA01'
+And header simulazionepdnd-password = 'ApplicativoBlockingIDA01'
+And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01'
+And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDIntegrity/v1'
+And header GovWay-TestSuite-PDND-RateLimiting = 'TestStandard';
+When method post
+Then status 429
+And match response == read('error-bodies/rate-limiting-violato.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header PDND-ExternalId == '#notpresent'
+And match header X-RateLimit-Remaining == '0'
+And match header X-RateLimit-Limit == '2'
+
+# controllo applicazione filtro rate limiting
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(0), violate(1), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* match result[0].MESSAGGIO contains 'violate(1)'
+* def result = get_diagnostico(tiderogazione, 'Il numero massimo di richieste (rilevato:3 soglia:2) risulta raggiunto') 
+* match result[0].MESSAGGIO contains 'PDNDOrganizationName'
+
+
 
 
 
@@ -323,12 +418,15 @@ And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
 And header simulazionepdnd-password = 'ApplicativoBlockingJWK'
 And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingJWK'
 And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDIntegrity/v1'
+And header GovWay-TestSuite-PDND-RateLimiting = 'TestMisto';
 When method post
 Then status 200
 And match response == read('request.json')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
 And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0003'
+And match header X-RateLimit-Remaining == '3'
+And match header X-RateLimit-Limit == '4'
 
 # controlli cache pdnd
 
@@ -367,6 +465,12 @@ And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0003'
 * match pdndClientJson contains '"consumerId":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0003-aaaa-82e210e12345"'
 * match pdndClientJson contains '"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0003-bbbb-12345678f8dd"'
 
+# controllo applicazione filtro rate limiting
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(1), violate(0), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* match result[0].MESSAGGIO contains 'rispettate(1)'
+
 
 # Invocazione con azione che prevede voucher e integrity
 
@@ -378,12 +482,15 @@ And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
 And header simulazionepdnd-password = 'ApplicativoBlockingJWK'
 And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingJWK'
 And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDIntegrity/v1'
+And header GovWay-TestSuite-PDND-RateLimiting = 'TestMisto';
 When method post
 Then status 200
 And match response == read('request.json')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
 And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0003'
+And match header X-RateLimit-Remaining == '2'
+And match header X-RateLimit-Limit == '4'
 
 # controlli cache pdnd
 
@@ -436,6 +543,12 @@ And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0003'
 * match pdndClientJson contains '"consumerId":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0003-aaaa-82e210e12345"'
 * match pdndClientJson contains '"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0003-bbbb-12345678f8dd"'
 
+# controllo applicazione filtro rate limiting
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(1), violate(0), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* match result[0].MESSAGGIO contains 'rispettate(1)'
+
 
 
 # Effettuo nuovamente l'invocazione, ora dovrebbe essere tutto in cache
@@ -448,12 +561,15 @@ And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
 And header simulazionepdnd-password = 'ApplicativoBlockingJWK'
 And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingJWK'
 And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDIntegrity/v1'
+And header GovWay-TestSuite-PDND-RateLimiting = 'TestMisto';
 When method post
 Then status 200
 And match response == read('request.json')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
 And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0003'
+And match header X-RateLimit-Remaining == '1'
+And match header X-RateLimit-Limit == '4'
 
 # controlli cache pdnd
 
@@ -507,6 +623,12 @@ And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0003'
 * match pdndClientJson contains '"consumerId":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0003-aaaa-82e210e12345"'
 * match pdndClientJson contains '"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0003-bbbb-12345678f8dd"'
 
+# controllo applicazione filtro rate limiting
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(1), violate(0), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* match result[0].MESSAGGIO contains 'rispettate(1)'
+
 
 # ulteriore invocazione
 
@@ -518,12 +640,15 @@ And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
 And header simulazionepdnd-password = 'ApplicativoBlockingJWK'
 And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingJWK'
 And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDIntegrity/v1'
+And header GovWay-TestSuite-PDND-RateLimiting = 'TestMisto';
 When method post
 Then status 200
 And match response == read('request.json')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
 And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0003'
+And match header X-RateLimit-Remaining == '0'
+And match header X-RateLimit-Limit == '4'
 
 # controlli cache pdnd
 
@@ -577,6 +702,40 @@ And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0003'
 * match pdndClientJson contains '"consumerId":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0003-aaaa-82e210e12345"'
 * match pdndClientJson contains '"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0003-bbbb-12345678f8dd"'
 
+# controllo applicazione filtro rate limiting
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(1), violate(0), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* match result[0].MESSAGGIO contains 'rispettate(1)'
+
+
+# Effettuo nuovamente l'invocazione, ora dovrebbe essere violata la policy di Rate Limiting
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestRecuperoInformazioniPDNDIntegrity/v1"
+And path 'test'
+And request read('request.json')
+And header Authorization = call basic ({ username: 'ApplicativoBlockingJWK', password: 'ApplicativoBlockingJWK' })
+And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
+And header simulazionepdnd-password = 'ApplicativoBlockingJWK'
+And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingJWK'
+And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDIntegrity/v1'
+And header GovWay-TestSuite-PDND-RateLimiting = 'TestMisto';
+When method post
+Then status 429
+And match response == read('error-bodies/rate-limiting-violato.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header PDND-ExternalId == '#notpresent'
+And match header X-RateLimit-Remaining == '0'
+And match header X-RateLimit-Limit == '4'
+
+# controllo applicazione filtro rate limiting
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(0), violate(1), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* match result[0].MESSAGGIO contains 'violate(1)'
+* def result = get_diagnostico(tiderogazione, 'Il numero massimo di richieste (rilevato:5 soglia:4) risulta raggiunto') 
+* match result[0].MESSAGGIO contains 'PDNDOrganizationName'
 
 
 
@@ -676,3 +835,236 @@ Then status 401
 * match pdndClientJson contains '"id":"'+formattedDateYYYYMMDD+'-'+formattedDateHHmm+'-0004-bbbb-12345678f8dd"'
 
 
+
+
+
+
+
+@getInformazioniClientOrganizationNonPresenteRateLimitingFailed
+Scenario: Test che non arricchisce le informazioni sul client prelevandole dalla PDND, test che prevede un errore in questo caso durante la gestione del rate limiting
+
+* def result = clean_remote_store_key('KID-ApplicativoBlockingIDA01ExampleClient3')
+* def result = clean_remote_store_key_client_id_prefix('DemoSoggettoFruitore/ApplicativoBlockingIDA01ExampleClient3')
+
+# Ricalcolo in ogni test per essere meno suscettibile al cambio minuto
+* def today = java.time.LocalDateTime.now()
+* def formatter = java.time.format.DateTimeFormatter.ofPattern("YY-MM-dd-HH-mm");
+* def formattedDate = today.format(formatter)
+* def formatterYYYYMMDD = java.time.format.DateTimeFormatter.ofPattern("YYYYMMdd");
+* def formattedDateYYYYMMDD = today.format(formatterYYYYMMDD)
+* def formatterHHmm = java.time.format.DateTimeFormatter.ofPattern("HHmm");
+* def formattedDateHHmm = today.format(formatterHHmm)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestRecuperoInformazioniPDNDRateLimitingSenzaPDNDOrganization/v1"
+And path 'failed'
+And request read('request.json')
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient3', password: 'ApplicativoBlockingIDA01ExampleClient3' })
+And header simulazionepdnd-username = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-password = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDRateLimitingSenzaPDNDOrganization/v1'
+When method post
+Then status 429
+And match response == read('error-bodies/rate-limiting-violato-pdndorganization-notfound.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header PDND-ExternalId == '#notpresent'
+
+# controllo applicazione filtro rate limiting
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(0), violate(0), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(1).') 
+* match result[0].MESSAGGIO contains 'inErrore(1)'
+* def result = get_diagnostico(tiderogazione, 'ha causato un errore: PDND Organization name not available') 
+* match result[0].MESSAGGIO contains 'PDND Organization name not available'
+
+
+
+
+
+@getInformazioniClientOrganizationNonPresenteRateLimitingAccept
+Scenario: Test che non arricchisce le informazioni sul client prelevandole dalla PDND, test che non prevede un errore in questo caso durante la gestione del rate limiting poichè definita una proprietà 'pdnd.rateLimitingByOrganization.infoNotAvailable.abortTransaction' che disattiva l'errore
+
+* def result = clean_remote_store_key('KID-ApplicativoBlockingIDA01ExampleClient3')
+* def result = clean_remote_store_key_client_id_prefix('DemoSoggettoFruitore/ApplicativoBlockingIDA01ExampleClient3')
+
+# Ricalcolo in ogni test per essere meno suscettibile al cambio minuto
+* def today = java.time.LocalDateTime.now()
+* def formatter = java.time.format.DateTimeFormatter.ofPattern("YY-MM-dd-HH-mm");
+* def formattedDate = today.format(formatter)
+* def formatterYYYYMMDD = java.time.format.DateTimeFormatter.ofPattern("YYYYMMdd");
+* def formattedDateYYYYMMDD = today.format(formatterYYYYMMDD)
+* def formatterHHmm = java.time.format.DateTimeFormatter.ofPattern("HHmm");
+* def formattedDateHHmm = today.format(formatterHHmm)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestRecuperoInformazioniPDNDRateLimitingSenzaPDNDOrganization/v1"
+And path 'accept'
+And request read('request.json')
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient3', password: 'ApplicativoBlockingIDA01ExampleClient3' })
+And header simulazionepdnd-username = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-password = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDRateLimitingSenzaPDNDOrganization/v1'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header PDND-ExternalId == '#notpresent'
+And match header X-RateLimit-Limit == '1000'
+
+# controllo applicazione filtro rate limiting
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(1), violate(0), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* match result[0].MESSAGGIO contains 'rispettate(1)'
+
+
+
+
+
+
+
+
+@getInformazioniClientOrganizationRecuperoClientFallitoAccept
+Scenario: Test che non arricchisce le informazioni sul client prelevandole dalla PDND, test che non prevede un errore nonostante il recupero delle informazioni non sia andato a buon fine (NOTA: nella govwayMonitor si vede la risoluzione solamente perche' e' lo stesso clientId usato e gia' risolto; ma dentro al token (usato dalla trasformazione che genera l'header 'PDND-ExternalId') le info non ci sono)
+
+* def result = clean_remote_store_key('KID-ApplicativoBlockingIDA01')
+* def result = clean_remote_store_key_client_id_prefix('DemoSoggettoFruitore/ApplicativoBlockingIDA01')
+
+# Ricalcolo in ogni test per essere meno suscettibile al cambio minuto
+* def today = java.time.LocalDateTime.now()
+* def formatter = java.time.format.DateTimeFormatter.ofPattern("YY-MM-dd-HH-mm");
+* def formattedDate = today.format(formatter)
+* def formatterYYYYMMDD = java.time.format.DateTimeFormatter.ofPattern("YYYYMMdd");
+* def formattedDateYYYYMMDD = today.format(formatterYYYYMMDD)
+* def formatterHHmm = java.time.format.DateTimeFormatter.ofPattern("HHmm");
+* def formattedDateHHmm = today.format(formatterHHmm)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestRecuperoInformazioniPDNDFallito/v1"
+And path 'clients'
+And request read('request.json')
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header simulazionepdnd-username = 'ApplicativoBlockingIDA01'
+And header simulazionepdnd-password = 'ApplicativoBlockingIDA01'
+And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01'
+And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDFallito/v1'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header PDND-ExternalId == '#notpresent'
+
+
+
+
+
+@getInformazioniClientOrganizationRecuperoClientFallitoError
+Scenario: Test che non arricchisce le informazioni sul client prelevandole dalla PDND, test che prevede un errore quando il recupero delle informazioni non sia andato a buon fine (NOTA: nella govwayMonitor si vede la risoluzione solamente perche' e' lo stesso clientId usato e gia' risolto; ma dentro al token (usato dalla trasformazione che genera l'header 'PDND-ExternalId') le info non ci sono)
+
+* def result = clean_remote_store_key('KID-ApplicativoBlockingIDA01ExampleClient3')
+* def result = clean_remote_store_key_client_id_prefix('DemoSoggettoFruitore/ApplicativoBlockingIDA01ExampleClient3')
+
+# Ricalcolo in ogni test per essere meno suscettibile al cambio minuto
+* def today = java.time.LocalDateTime.now()
+* def formatter = java.time.format.DateTimeFormatter.ofPattern("YY-MM-dd-HH-mm");
+* def formattedDate = today.format(formatter)
+* def formatterYYYYMMDD = java.time.format.DateTimeFormatter.ofPattern("YYYYMMdd");
+* def formattedDateYYYYMMDD = today.format(formatterYYYYMMDD)
+* def formatterHHmm = java.time.format.DateTimeFormatter.ofPattern("HHmm");
+* def formattedDateHHmm = today.format(formatterHHmm)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestRecuperoInformazioniPDNDFallito/v1"
+And path 'clientsError'
+And request read('request.json')
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient3', password: 'ApplicativoBlockingIDA01ExampleClient3' })
+And header simulazionepdnd-username = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-password = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDFallito/v1'
+When method post
+Then status 503
+And match response == read('error-bodies/pdnd-info-clients-non-presenti.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header PDND-ExternalId == '#notpresent'
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostico(tiderogazione, 'processo di gestione token') 
+* match result[0].MESSAGGIO contains 'SimulazionePDND-JWK-RecuperoInfoClient-ClientError'
+* match result[0].MESSAGGIO contains 'fallito, Retrieve external resource'
+* match result[0].MESSAGGIO contains 'TransformationRuleResponseFailed'
+
+
+
+
+@getInformazioniClientOrganizationRecuperoOrganizationFallitoAccept
+Scenario: Test che non arricchisce le informazioni sul client prelevandole dalla PDND, test che non prevede un errore nonostante il recupero delle informazioni relative all'organizzazione non sia andato a buon fine (NOTA: nella govwayMonitor si vede la risoluzione solamente perche' e' lo stesso clientId usato e gia' risolto; ma dentro al token (usato dalla trasformazione che genera l'header 'PDND-ExternalId') le info non ci sono)
+
+* def result = clean_remote_store_key('KID-ApplicativoBlockingIDA01')
+* def result = clean_remote_store_key_client_id_prefix('DemoSoggettoFruitore/ApplicativoBlockingIDA01')
+
+# Ricalcolo in ogni test per essere meno suscettibile al cambio minuto
+* def today = java.time.LocalDateTime.now()
+* def formatter = java.time.format.DateTimeFormatter.ofPattern("YY-MM-dd-HH-mm");
+* def formattedDate = today.format(formatter)
+* def formatterYYYYMMDD = java.time.format.DateTimeFormatter.ofPattern("YYYYMMdd");
+* def formattedDateYYYYMMDD = today.format(formatterYYYYMMDD)
+* def formatterHHmm = java.time.format.DateTimeFormatter.ofPattern("HHmm");
+* def formattedDateHHmm = today.format(formatterHHmm)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestRecuperoInformazioniPDNDFallito/v1"
+And path 'organizations'
+And request read('request.json')
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header simulazionepdnd-username = 'ApplicativoBlockingIDA01'
+And header simulazionepdnd-password = 'ApplicativoBlockingIDA01'
+And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01'
+And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDFallito/v1'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header PDND-ExternalId == '#notpresent'
+
+
+
+
+
+@getInformazioniClientOrganizationRecuperoOrganizationFallitoError
+Scenario: Test che non arricchisce le informazioni sul client prelevandole dalla PDND, test che prevede un errore quando il recupero delle informazioni relative all'organizzazione non sia andato a buon fine (NOTA: nella govwayMonitor si vede la risoluzione solamente perche' e' lo stesso clientId usato e gia' risolto; ma dentro al token (usato dalla trasformazione che genera l'header 'PDND-ExternalId') le info non ci sono)
+
+* def result = clean_remote_store_key('KID-ApplicativoBlockingIDA01ExampleClient3')
+* def result = clean_remote_store_key_client_id_prefix('DemoSoggettoFruitore/ApplicativoBlockingIDA01ExampleClient3')
+
+# Ricalcolo in ogni test per essere meno suscettibile al cambio minuto
+* def today = java.time.LocalDateTime.now()
+* def formatter = java.time.format.DateTimeFormatter.ofPattern("YY-MM-dd-HH-mm");
+* def formattedDate = today.format(formatter)
+* def formatterYYYYMMDD = java.time.format.DateTimeFormatter.ofPattern("YYYYMMdd");
+* def formattedDateYYYYMMDD = today.format(formatterYYYYMMDD)
+* def formatterHHmm = java.time.format.DateTimeFormatter.ofPattern("HHmm");
+* def formattedDateHHmm = today.format(formatterHHmm)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestRecuperoInformazioniPDNDFallito/v1"
+And path 'organizationsError'
+And request read('request.json')
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient3', password: 'ApplicativoBlockingIDA01ExampleClient3' })
+And header simulazionepdnd-username = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-password = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDFallito/v1'
+When method post
+Then status 503
+And match response == read('error-bodies/pdnd-info-clients-non-presenti.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header PDND-ExternalId == '#notpresent'
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostico(tiderogazione, 'processo di gestione token') 
+* match result[0].MESSAGGIO contains 'SimulazionePDND-JWK-RecuperoInfoClient-OrganizationError'
+* match result[0].MESSAGGIO contains 'fallito, Retrieve external resource'
+* match result[0].MESSAGGIO contains 'TransformationRuleResponseFailed'

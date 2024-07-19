@@ -73,13 +73,17 @@ public class DatiTransazione extends org.openspcoop2.utils.beans.BaseBean implem
 		
 	private Map<String, String> tokenClaims;
 	
+	private String pdndClientJson;
+	private String pdndOrganizationJson;
+	private String pdndOrganizationName;
+	
 	private IDServizioApplicativo idServizioApplicativoToken;
 
 
 	
 	public String getServiziApplicativiErogatoreAsString(){
 		StringBuilder bf = new StringBuilder();
-		if(this.listServiziApplicativiErogatori==null || this.listServiziApplicativiErogatori.size()<=0){
+		if(this.listServiziApplicativiErogatori==null || this.listServiziApplicativiErogatori.isEmpty()){
 			return null;
 		}
 		for (int i = 0; i < this.listServiziApplicativiErogatori.size(); i++) {
@@ -228,11 +232,32 @@ public class DatiTransazione extends org.openspcoop2.utils.beans.BaseBean implem
 		if(tokenClaims!=null && !tokenClaims.isEmpty()) {
 			for (String key : tokenClaims.keySet()) {
 				Object v = tokenClaims.get(key);
-				if(v!=null && v instanceof String) {
+				if(v instanceof String) {
 					this.tokenClaims.put(key, (String) v);
 				}
 			}
 		}
+	}
+	
+	public String getPdndClientJson() {
+		return this.pdndClientJson;
+	}
+	public void setPdndClientJson(String pdndClientJson) {
+		this.pdndClientJson = pdndClientJson;
+	}
+
+	public String getPdndOrganizationJson() {
+		return this.pdndOrganizationJson;
+	}
+	public void setPdndOrganizationJson(String pdndOrganizationJson) {
+		this.pdndOrganizationJson = pdndOrganizationJson;
+	}
+
+	public String getPdndOrganizationName() {
+		return this.pdndOrganizationName;
+	}
+	public void setPdndOrganizationName(String pdndOrganizationName) {
+		this.pdndOrganizationName = pdndOrganizationName;
 	}
 	
 	public IDServizioApplicativo getIdServizioApplicativoToken() {

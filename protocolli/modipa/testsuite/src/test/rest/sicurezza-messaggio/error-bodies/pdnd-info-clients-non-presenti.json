@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/503/APIUnavailable.html",
+    "title": "APIUnavailable",
+    "status": 503,
+    "detail": "#regex ^processo di gestione token.+",
+    "govway_id": "#string"
+}

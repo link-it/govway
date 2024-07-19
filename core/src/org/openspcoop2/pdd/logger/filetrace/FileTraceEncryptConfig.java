@@ -66,9 +66,9 @@ public class FileTraceEncryptConfig {
 	private String keyId;
 	private boolean keyWrap = false;
 	
-	private String password;
-	private String passwordType;
-	private Integer passwordIteration;
+	private String pw; // password
+	private String pwType; // passwordType
+	private Integer pwIteration; // passwordIteration
 	
 	private String contentAlgorithm;
 	
@@ -110,14 +110,14 @@ public class FileTraceEncryptConfig {
 	private static final String KEY_ID = ".key.id";
 	private static final String KEY_WRAP = ".key.wrap";
 	
-	public static final String PWD = ".password";
-	public static final String PWD_TYPE = ".password.type";
-	/**public static final String PWD_TYPE_OPENSSL_AES_128_CBC = BYOKCostanti.PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_128_CBC;
-	public static final String PWD_TYPE_OPENSSL_AES_192_CBC = BYOKCostanti.PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_192_CBC;*/
-	public static final String PWD_TYPE_OPENSSL_AES_256_CBC = BYOKCostanti.PROPERTY_LOCAL_PWD_TYPE_OPENSSL_AES_256_CBC;
-	public static final String PWD_TYPE_OPENSSL_PBKDF2_AES_128_CBC = BYOKCostanti.PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_128_CBC;
-	public static final String PWD_TYPE_OPENSSL_PBKDF2_AES_192_CBC = BYOKCostanti.PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_192_CBC;
-	public static final String PWD_TYPE_OPENSSL_PBKDF2_AES_256_CBC = BYOKCostanti.PROPERTY_LOCAL_PWD_TYPE_OPENSSL_PBKDF2_AES_256_CBC;
+	private static final String PW_VALUE = ".password";
+	private static final String PW_TYPE = ".password.type";
+	/**public static final String PW_TYPE_OPENSSL_AES_128_CBC = BYOKCostanti.PROPERTY_LOCAL_PW_TYPE_OPENSSL_AES_128_CBC;
+	public static final String PW_TYPE_OPENSSL_AES_192_CBC = BYOKCostanti.PROPERTY_LOCAL_PW_TYPE_OPENSSL_AES_192_CBC;*/
+	public static final String PW_TYPE_OPENSSL_AES_256_CBC = BYOKCostanti.PROPERTY_LOCAL_PW_TYPE_OPENSSL_AES_256_CBC;
+	public static final String PW_TYPE_OPENSSL_PBKDF2_AES_128_CBC = BYOKCostanti.PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_128_CBC;
+	public static final String PW_TYPE_OPENSSL_PBKDF2_AES_192_CBC = BYOKCostanti.PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_192_CBC;
+	public static final String PW_TYPE_OPENSSL_PBKDF2_AES_256_CBC = BYOKCostanti.PROPERTY_LOCAL_PW_TYPE_OPENSSL_PBKDF2_AES_256_CBC;
 	public static List<String> getLocalPasswordTypes() {
 		return BYOKCostanti.getLocalPasswordTypes();
 	}
@@ -127,8 +127,8 @@ public class FileTraceEncryptConfig {
 	public static boolean isOpenSSLPBKDF2PasswordDerivationKeyMode(String mode) {
 		return BYOKCostanti.isOpenSSLPBKDF2PasswordDerivationKeyMode(mode);
 	}
-	public static final String PWD_TYPE_DEFAULT = BYOKCostanti.PROPERTY_LOCAL_PWD_TYPE_DEFAULT;
-	public static final String PWD_ITERATION = ".password.iter";
+	private static final String PW_TYPE_DEFAULT = BYOKCostanti.PROPERTY_LOCAL_PW_TYPE_DEFAULT;
+	private static final String PW_ITERATION = ".password.iter";
 	
 	private static final String CONTENT_ALGORITHM = ".algorithm";
 	
@@ -420,30 +420,30 @@ public class FileTraceEncryptConfig {
 	private static void parsePassword(String encMode, Properties propertiesMap, 
 			FileTraceEncryptConfig c) throws UtilsException {
 		
-		String passwordPName = encMode+PWD;
+		String passwordPName = encMode+PW_VALUE;
 		String password = propertiesMap.getProperty(passwordPName);
 		if(password==null || StringUtils.isEmpty(password.trim())) {
 			throw new UtilsException(DEBUG_PREFIX+passwordPName+"'"+UNDEFINED);
 		}
-		c.password = password.trim();
+		c.pw = password.trim();
 		
-		String passwordTypePName = encMode+PWD_TYPE;
+		String passwordTypePName = encMode+PW_TYPE;
 		String passwordType = propertiesMap.getProperty(passwordTypePName);
 		if(passwordType==null || StringUtils.isEmpty(passwordType.trim())) {
-			c.passwordType = PWD_TYPE_DEFAULT;
+			c.pwType = PW_TYPE_DEFAULT;
 		}
 		else {
-			c.passwordType = passwordType.trim();
-			if(!getLocalPasswordTypes().contains(c.passwordType)) {
+			c.pwType = passwordType.trim();
+			if(!getLocalPasswordTypes().contains(c.pwType)) {
 				throw new UtilsException(DEBUG_PREFIX+passwordTypePName+"'"+INVALID);
 			}
 		}
 		
-		String passwordIterationPName = encMode+PWD_ITERATION;
+		String passwordIterationPName = encMode+PW_ITERATION;
 		String passwordIteration = propertiesMap.getProperty(passwordIterationPName);
 		if(passwordIteration!=null && StringUtils.isNotEmpty(passwordIteration.trim())) {
 			try {
-				c.passwordIteration = Integer.valueOf(passwordIteration);
+				c.pwIteration = Integer.valueOf(passwordIteration);
 			}catch(Exception e) {
 				throw new UtilsException(DEBUG_PREFIX+passwordIterationPName+"'"+INVALID+": "+e.getMessage());
 			}
@@ -562,15 +562,15 @@ public class FileTraceEncryptConfig {
 	}
 	
 	public String getPassword() {
-		return this.password;
+		return this.pw;
 	}
 	
 	public String getPasswordType() {
-		return this.passwordType;
+		return this.pwType;
 	}
 	
 	public Integer getPasswordIteration() {
-		return this.passwordIteration;
+		return this.pwIteration;
 	}
 	
 	public String getContentAlgorithm() {

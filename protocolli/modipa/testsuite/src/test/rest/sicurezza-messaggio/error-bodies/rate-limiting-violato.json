@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/429/LimitExceeded.html",
+    "title": "LimitExceeded",
+    "status": 429,
+    "detail": "Servizio Temporaneamente Non Erogabile [CP02]",
+    "govway_id": "#string"
+}
