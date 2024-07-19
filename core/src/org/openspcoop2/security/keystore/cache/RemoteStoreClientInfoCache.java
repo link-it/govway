@@ -39,7 +39,7 @@ public class RemoteStoreClientInfoCache extends AbstractKeystoreCache<RemoteStor
 		if(params==null){
 			throw new SecurityException("Params is null");
 		}
-		if(params.length==4){
+		if(params.length==5){
 			// key e' formata dalla tripla remoteStoreConfigName, keyId e RemoteKeyType
 			if( ! (params[0] instanceof String) ){
 				throw new SecurityException("Param[0] must be String");
@@ -53,16 +53,24 @@ public class RemoteStoreClientInfoCache extends AbstractKeystoreCache<RemoteStor
 			if( ! (params[3] instanceof IRemoteStoreProvider) ){
 				throw new SecurityException("Param[3] must be IRemoteStoreProvider");
 			}
+			if( ! (params[4] instanceof org.openspcoop2.utils.Map) ){
+				throw new SecurityException("Param[4] must be org.openspcoop2.utils.Map");
+			}
 			String keyId = (String) params[0];
 			String clientId = (String) params[1];
 			RemoteStoreConfig remoteStoreConfig = (RemoteStoreConfig) params[2];
 			IRemoteStoreProvider provider = (IRemoteStoreProvider) params[3];
-			return new RemoteStoreClientInfo(keyId, clientId, remoteStoreConfig, provider);
+			org.openspcoop2.utils.Map<Object> context = readMapUtils(params);
+			return new RemoteStoreClientInfo(keyId, clientId, remoteStoreConfig, provider, context);
 		}
 		else{
 			throw new SecurityException("Params [lenght:"+params.length+"] not supported");
 		}
 	}
+	@SuppressWarnings("unchecked")
+	private org.openspcoop2.utils.Map<Object> readMapUtils(Object... params){
+		return (org.openspcoop2.utils.Map<Object>) params[4];
+	} 
 
 	public static final String RESTORE_STORE_CLIENT_INFO_PREFIX = "RemoteStoreClientInfo ";
 	

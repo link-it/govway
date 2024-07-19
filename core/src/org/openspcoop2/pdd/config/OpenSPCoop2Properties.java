@@ -2603,6 +2603,7 @@ public class OpenSPCoop2Properties {
 				getGestoreChiaviPDNDclientInfoMaxLifeMinutes();
 				isGestoreChiaviPDNDclientsErrorAbortTransaction();
 				isGestoreChiaviPDNDorganizationsErrorAbortTransaction();
+				isGestoreChiaviPDNDRateLimitingInfoNotAvailableAbortTransaction();
 				isGestoreChiaviPDNDretrieveClientInfoAfterVoucherPDNDValidation();
 				isGestoreChiaviPDNDclientsTraceJsonResponse();
 				isGestoreChiaviPDNDorganizationsTraceJsonResponse();
@@ -32373,6 +32374,27 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.isGestoreChiaviPDNDorganizationsErrorAbortTransaction;
+	}
+	
+	private Boolean isGestoreChiaviPDNDRateLimitingInfoNotAvailableAbortTransaction = null;
+	public boolean isGestoreChiaviPDNDRateLimitingInfoNotAvailableAbortTransaction() throws CoreException {	
+		if(this.isGestoreChiaviPDNDRateLimitingInfoNotAvailableAbortTransaction==null){
+			String pName = "org.openspcoop2.pdd.gestorePDND.rateLimiting.infoNotAvailable.abortTransaction";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new CoreException("Proprieta' non impostata");
+				}
+				name = name.trim();
+				this.isGestoreChiaviPDNDRateLimitingInfoNotAvailableAbortTransaction = Boolean.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.isGestoreChiaviPDNDRateLimitingInfoNotAvailableAbortTransaction;
 	}
 	
 	private Boolean isGestoreChiaviPDNDretrieveClientInfoAfterVoucherPDNDValidation = null;

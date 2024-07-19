@@ -288,7 +288,7 @@ public class PDNDResolver {
 			String kid, String clientId) throws KeystoreException, SecurityException, UtilsException {
 		RemoteKeyType keyType = RemoteKeyType.JWK; // ignored
 		RemoteStoreProvider remoteStoreProvider = new RemoteStoreProvider(requestInfo, keyType);
-		RemoteStoreClientInfo rsci = GestoreKeystoreCache.getRemoteStoreClientInfo(requestInfo, kid, clientId, rsc, remoteStoreProvider);
+		RemoteStoreClientInfo rsci = GestoreKeystoreCache.getRemoteStoreClientInfo(requestInfo, kid, clientId, rsc, remoteStoreProvider, this.context);
 		if(rsci!=null &&
 			(rsci.getClientDetails()!=null || rsci.getOrganizationId()!=null || rsci.getOrganizationDetails()!=null) 
 			){

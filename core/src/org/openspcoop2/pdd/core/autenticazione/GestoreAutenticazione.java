@@ -1198,9 +1198,13 @@ public class GestoreAutenticazione {
     			
     			String organizationName = null;
     			if(securityTokenForContext!=null && securityTokenForContext.getPdnd()!=null){
-    				organizationName = securityTokenForContext.getPdnd().getOrganizationName(logger);
+    				try {
+    					organizationName = securityTokenForContext.getPdnd().getOrganizationName(logger);
+    				}catch(Exception e) {
+    					// ignore (nel caso non è presente un organizationJson non è possibile recuperarlo)
+    				}
     			}
-    			if(organizationName==null) {
+    			if(organizationName==null && informazioniTokenNormalizzate.getPdnd()!=null) {
     				organizationName = PDNDTokenInfo.readOrganizationNameFromPDNDMap(informazioniTokenNormalizzate.getPdnd());
     			}
     			if(organizationName!=null && StringUtils.isNotEmpty(organizationName)) {

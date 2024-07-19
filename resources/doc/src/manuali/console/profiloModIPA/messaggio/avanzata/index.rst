@@ -26,6 +26,10 @@ La gestione dei pattern di sicurezza messaggio possono essere personalizzati su 
 
 - :ref:`modipa_sicurezza_avanzate_intermediario`: è possibile indicare un soggetto come intermediario. Questo consente di autorizzare una richiesta proveniente da un soggetto identificato sul canale (l'intermediario), che risulta differente dal soggetto a cui appartiene l'applicativo identificato tramite token di sicurezza.
 
+- :ref:`modipa_sicurezza_avanzate_pdndFailed`: è possibile modificare il comportamento di default per far fallire la transazione in caso il recupero delle informazioni sul client o sull'organizzazione tramite :ref:`modipa_passiPreliminari_api_pdnd` fallisca.
+
+- :ref:`modipa_sicurezza_avanzate_pdndRateLimiting`: le politiche di rate limiting consentono di conteggiare le richieste o filtrare anche rispetto alle informazioni prelevate dalla PDND.
+
 
 .. toctree::
         :maxdepth: 2
@@ -40,4 +44,6 @@ La gestione dei pattern di sicurezza messaggio possono essere personalizzati su 
 	fruizione_scenari/index
 	purposeId
 	intermediario
+	pdndFailed
+	pdndRateLimiting
 

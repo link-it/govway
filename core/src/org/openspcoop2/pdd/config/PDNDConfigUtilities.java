@@ -21,8 +21,13 @@ package org.openspcoop2.pdd.config;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
@@ -141,7 +146,7 @@ public class PDNDConfigUtilities {
 	}
 	
 	
-	public static String readClientDetails(RemoteStoreConfig remoteStore, OpenSPCoop2Properties propertiesReader, String clientId, Logger log) throws CoreException {
+	public static String readClientDetails(RemoteStoreConfig remoteStore, OpenSPCoop2Properties propertiesReader, org.openspcoop2.utils.Map<Object> context, String clientId, Logger log) throws CoreException {
 		
 		String responseJson = null;
 		try {
@@ -153,7 +158,7 @@ public class PDNDConfigUtilities {
 			
 		}catch(Exception e) {
 			
-			if(propertiesReader.isGestoreChiaviPDNDclientsErrorAbortTransaction()) {
+			if(abortTransaction(false, propertiesReader, context, log)) {
 				throw new CoreException(e.getMessage(),e);
 			}
 			else {
@@ -166,9 +171,9 @@ public class PDNDConfigUtilities {
 		return responseJson;
 	}
 	
-	public static String readOrganizationId(OpenSPCoop2Properties propertiesReader, String clientDetails, Logger log) throws CoreException {
+	public static String readOrganizationId(OpenSPCoop2Properties propertiesReader, org.openspcoop2.utils.Map<Object> context, String clientDetails, Logger log) throws CoreException {
 		String jsonPath = propertiesReader.getGestoreChiaviPDNDclientsOrganizationJsonPath();
-		boolean readErrorAbortTransaction = propertiesReader.isGestoreChiaviPDNDorganizationsErrorAbortTransaction();
+		boolean readErrorAbortTransaction = abortTransaction(true, propertiesReader, context, log);
 		return readOrganizationId(jsonPath, readErrorAbortTransaction, clientDetails, log);
 	}
 	public static String readOrganizationId(String jsonPath, boolean readErrorAbortTransaction, String clientDetails, Logger log) throws CoreException {
@@ -188,7 +193,7 @@ public class PDNDConfigUtilities {
 		return null;
 	}
 	
-	public static String readOrganizationDetails(RemoteStoreConfig remoteStore, OpenSPCoop2Properties propertiesReader, String organizationId, Logger log) throws CoreException {
+	public static String readOrganizationDetails(RemoteStoreConfig remoteStore, OpenSPCoop2Properties propertiesReader, org.openspcoop2.utils.Map<Object> context, String organizationId, Logger log) throws CoreException {
 		
 		String responseJson = null;
 		try {
@@ -199,7 +204,7 @@ public class PDNDConfigUtilities {
 			responseJson = new String(response);
 			
 		}catch(Exception e) {
-			if(propertiesReader.isGestoreChiaviPDNDorganizationsErrorAbortTransaction()) {
+			if(abortTransaction(true, propertiesReader, context, log)) {
 				throw new CoreException(e.getMessage(),e);
 			}
 			else {
@@ -209,5 +214,37 @@ public class PDNDConfigUtilities {
 		}
 		
 		return responseJson;
+	}
+	
+	private static boolean abortTransaction(boolean organization, OpenSPCoop2Properties propertiesReader, org.openspcoop2.utils.Map<Object> context, Logger log) throws CoreException {
+		
+		boolean abort = organization ? propertiesReader.isGestoreChiaviPDNDorganizationsErrorAbortTransaction() : propertiesReader.isGestoreChiaviPDNDclientsErrorAbortTransaction();
+		
+		RequestInfo requestInfo = null;
+		if(context!=null && context.containsKey(Costanti.REQUEST_INFO)) {
+			Object o = context.get(Costanti.REQUEST_INFO);
+			if(o instanceof RequestInfo) {
+				requestInfo = (RequestInfo) o;
+			}
+		}
+		
+		if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null && 
+				StringUtils.isNotEmpty(requestInfo.getProtocolContext().getInterfaceName())) {
+			IDPortaApplicativa idPA = new IDPortaApplicativa();
+			idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
+			try {
+				PortaApplicativa pa = ConfigurazionePdDManager.getInstance().getPortaApplicativaSafeMethod(idPA, requestInfo);
+				if(pa!=null && pa.sizeProprieta()>0) {
+					abort = organization ? 
+							CostantiProprieta.isPdndReadByApiInteropOrganizationFailedAbortTransaction(pa.getProprieta(), abort)
+							:
+							CostantiProprieta.isPdndReadByApiInteropClientFailedAbortTransaction(pa.getProprieta(), abort);
+				}
+			}catch(Exception e) {
+				log.error("Accesso porta applicativa ["+requestInfo.getProtocolContext().getInterfaceName()+"] fallito: "+e.getMessage(),e);
+			}
+		}
+		return abort;
+		
 	}
 }

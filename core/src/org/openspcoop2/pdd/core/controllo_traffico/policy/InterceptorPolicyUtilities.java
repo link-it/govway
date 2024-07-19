@@ -21,12 +21,21 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
+import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
+import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -42,22 +51,22 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.CostantiProprieta;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.InRequestProtocolContext;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
+import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.slf4j.Logger;
-import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
-import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
-import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
-import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
-import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 
 /**     
  * InterceptorPolicyUtilities
@@ -74,7 +83,7 @@ public class InterceptorPolicyUtilities {
 	public static IDUnivocoGroupByPolicy convertToID(Logger log,DatiTransazione datiTransazione, AttivazionePolicyRaggruppamento policyGroupBy,
 			InRequestProtocolContext context) throws Exception{
 		
-		final String nonDisponibile = "-";//"n.d.";
+		final String nonDisponibile = "-"; /**"n.d.";*/
 		
 		IDUnivocoGroupByPolicy groupBy = new IDUnivocoGroupByPolicy();
 		
@@ -187,6 +196,19 @@ public class InterceptorPolicyUtilities {
 							groupBy.setTokenEMail(nonDisponibile);
 						}
 						break;
+					case PDND_ORGANIZATION_NAME:
+						if(datiTransazione.getPdndOrganizationName()!=null && StringUtils.isNotEmpty(datiTransazione.getPdndOrganizationName())) {
+							groupBy.setPdndOrganizationName(datiTransazione.getPdndOrganizationName());
+						}
+						else {
+							if(abortTransactionPdndOrganizationName(log, context.getPddContext())) {
+								throw new CoreException("PDND Organization name not available");
+							}
+							else {
+								groupBy.setPdndOrganizationName(nonDisponibile);
+							}
+						}
+						break;
 					default:
 						break;
 					}
@@ -195,6 +217,35 @@ public class InterceptorPolicyUtilities {
 		}
 		
 		return groupBy;
+	}
+	
+	private static boolean abortTransactionPdndOrganizationName(Logger log, Context context) throws CoreException {
+		
+		boolean abort = OpenSPCoop2Properties.getInstance().isGestoreChiaviPDNDRateLimitingInfoNotAvailableAbortTransaction();
+		
+		RequestInfo requestInfo = null;
+		if(context!=null && context.containsKey(Costanti.REQUEST_INFO)) {
+			Object o = context.get(Costanti.REQUEST_INFO);
+			if(o instanceof RequestInfo) {
+				requestInfo = (RequestInfo) o;
+			}
+		}
+		
+		if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null && 
+				StringUtils.isNotEmpty(requestInfo.getProtocolContext().getInterfaceName())) {
+			IDPortaApplicativa idPA = new IDPortaApplicativa();
+			idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
+			try {
+				PortaApplicativa pa = ConfigurazionePdDManager.getInstance().getPortaApplicativaSafeMethod(idPA, requestInfo);
+				if(pa!=null && pa.sizeProprieta()>0) {
+					abort = CostantiProprieta.isPdndRateLimitingByOrganizationInfoNotAvailableAbortTransaction(pa.getProprieta(), abort);
+				}
+			}catch(Exception e) {
+				log.error("Accesso porta applicativa ["+requestInfo.getProtocolContext().getInterfaceName()+"] fallito: "+e.getMessage(),e);
+			}
+		}
+		return abort;
+		
 	}
 	
 	public static DatiTransazione readDatiTransazione(InRequestProtocolContext context){
@@ -305,8 +356,8 @@ public class InterceptorPolicyUtilities {
 				AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false, requestInfo);
 				datiTransazione.setIdAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
 			}catch(Exception e) {
-				//System.out.println("["+(String) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)+"] Errore: "+e.getMessage());
-				//e.printStackTrace(System.out);
+				/**System.out.println("["+(String) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)+"] Errore: "+e.getMessage());
+				e.printStackTrace(System.out);*/
 				log.debug("Lettura AccordoServizioParteSpecifica ("+idServizio+") non riuscita: "+e.getMessage(),e);
 			}				
 		}
@@ -321,8 +372,8 @@ public class InterceptorPolicyUtilities {
 					datiTransazione.setTagsAccordoServizioParteComune(tags);
 				}
 			}catch(Exception e) {
-				//System.out.println("["+(String) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)+"] Errore: "+e.getMessage());
-				//e.printStackTrace(System.out);
+				/**System.out.println("["+(String) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)+"] Errore: "+e.getMessage());
+				e.printStackTrace(System.out);*/
 				log.debug("Lettura AccordoServizioParteSpecifica ("+idServizio+") non riuscita: "+e.getMessage(),e);
 			}	
 		}
@@ -339,7 +390,7 @@ public class InterceptorPolicyUtilities {
 		}
 		else if(idPA!=null){
 			
-			if(serviziApplicativiErogatori!=null && serviziApplicativiErogatori.size()>0){
+			if(serviziApplicativiErogatori!=null && !serviziApplicativiErogatori.isEmpty()){
 				for (int i = 0; i < serviziApplicativiErogatori.size(); i++) {
 					datiTransazione.getListServiziApplicativiErogatori().add(serviziApplicativiErogatori.get(i));
 				}
@@ -369,6 +420,20 @@ public class InterceptorPolicyUtilities {
 						datiTransazione.setTokenEMail(informazioniTokenNormalizzate.getUserInfo().getEMail());
 					}
 					datiTransazione.setTokenClaims(informazioniTokenNormalizzate.getClaims());
+					
+					SecurityToken securityToken = SecurityTokenUtilities.readSecurityToken(pddContext);
+					if(securityToken!=null && securityToken.getPdnd()!=null) {
+						datiTransazione.setPdndClientJson(securityToken.getPdnd().getClientJson());
+						datiTransazione.setPdndOrganizationJson(securityToken.getPdnd().getOrganizationJson());
+						try {
+							datiTransazione.setPdndOrganizationName(securityToken.getPdnd().getOrganizationName());
+						}catch(Exception e) {
+							/**System.out.println("["+(String) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)+"] Errore: "+e.getMessage());
+							e.printStackTrace(System.out);*/
+							log.debug("Lettura 'PDND Organization name' non riuscita: "+e.getMessage(),e);
+						}	
+					}
+					
 				}
 			}
 			
@@ -383,23 +448,22 @@ public class InterceptorPolicyUtilities {
 	}
 	
 	public static boolean checkRegisterThread(DatiTransazione datiTransazione){
-		boolean registerThread = true;
 		if(datiTransazione.getDominio()==null || 
 				datiTransazione.getDominio().getTipo()==null ||
 						datiTransazione.getDominio().getNome()==null || 
 						datiTransazione.getDominio().getCodicePorta()==null ){
-			registerThread = false; // i dati sul dominio ci devono essere
+			return false; // i dati sul dominio ci devono essere
 		}
-		else if(datiTransazione.getModulo()==null){
-			registerThread = false; // i dati sul modulo ci devono essere
+		if(datiTransazione.getModulo()==null){
+			return false; // i dati sul modulo ci devono essere
 		}
-		else if(datiTransazione.getIdTransazione()==null){
-			registerThread = false; // i dati sull'identificativo transazione ci devono essere
+		if(datiTransazione.getIdTransazione()==null){
+			return false; // i dati sull'identificativo transazione ci devono essere
 		}
-		else if(datiTransazione.getNomePorta()==null) {
-			registerThread = false; // i dati sul nome della porta ci deve essere
+		if(datiTransazione.getNomePorta()==null) {
+			return false; // i dati sul nome della porta ci deve essere
 		}
-		else if(
+		if(
 				TipoPdD.DELEGATA.equals(datiTransazione.getTipoPdD()) 
 				&&
 				(datiTransazione.getSoggettoFruitore()==null 
@@ -408,47 +472,44 @@ public class InterceptorPolicyUtilities {
 					||
 				datiTransazione.getSoggettoFruitore().getNome()==null)
 				){
-			registerThread = false; // i dati sul fruitore ci devono essere
+			return false; // i dati sul fruitore ci devono essere
 		}
-		else if(datiTransazione.getIdServizio()==null ||
+		if(datiTransazione.getIdServizio()==null ||
 				datiTransazione.getIdServizio().getSoggettoErogatore()==null || 
 				datiTransazione.getIdServizio().getSoggettoErogatore().getTipo()==null ||
 				datiTransazione.getIdServizio().getSoggettoErogatore().getNome()==null){
-			registerThread = false; // i dati sull'erogatore ci devono essere
+			return false; // i dati sull'erogatore ci devono essere
 		}
-		else if(datiTransazione.getIdServizio()==null ||
+		if(datiTransazione.getIdServizio()==null ||
 				datiTransazione.getIdServizio().getTipo()==null || datiTransazione.getIdServizio().getNome()==null || datiTransazione.getIdServizio().getVersione()==null){
-			registerThread = false; // i dati sul servizio ci devono essere
+			return false; // i dati sul servizio ci devono essere
 		}
-		else if(datiTransazione.getServizioApplicativoFruitore()==null && 
-				(datiTransazione.getListServiziApplicativiErogatori()==null || datiTransazione.getListServiziApplicativiErogatori().size()<=0)){
-			registerThread = false; // i dati sul servizio applicativo ci devono essere
+		if(datiTransazione.getServizioApplicativoFruitore()==null && 
+				(datiTransazione.getListServiziApplicativiErogatori()==null || datiTransazione.getListServiziApplicativiErogatori().isEmpty())){
+			return false; // i dati sul servizio applicativo ci devono essere
 		}
-		return registerThread;
+		return true;
 	}
 	
 	public static boolean filter(AttivazionePolicyFiltro filtro, DatiTransazione datiTransazione, IState state, RequestInfo requestInfo) throws Exception{
 		
 		if(filtro.isEnabled()){
 						
-			if(filtro.getProtocollo()!=null && !"".equals(filtro.getProtocollo())){
-				if(filtro.getProtocollo().equals(datiTransazione.getProtocollo())==false){
-					return false;
-				}
+			if(filtro.getProtocollo()!=null && !"".equals(filtro.getProtocollo()) &&
+				!filtro.getProtocollo().equals(datiTransazione.getProtocollo())){
+				return false;
 			}
 			
 			if(filtro.getRuoloPorta()!=null && !"".equals(filtro.getRuoloPorta().getValue()) && 
 					!RuoloPolicy.ENTRAMBI.equals(filtro.getRuoloPorta())){
 				
-				if(RuoloPolicy.DELEGATA.equals(filtro.getRuoloPorta())){
-					if(TipoPdD.DELEGATA.equals(datiTransazione.getTipoPdD())==false){
-						return false;
-					}
+				if(RuoloPolicy.DELEGATA.equals(filtro.getRuoloPorta()) &&
+					!TipoPdD.DELEGATA.equals(datiTransazione.getTipoPdD())){
+					return false;
 				}
-				if(RuoloPolicy.APPLICATIVA.equals(filtro.getRuoloPorta())){
-					if(TipoPdD.APPLICATIVA.equals(datiTransazione.getTipoPdD())==false){
-						return false;
-					}
+				if(RuoloPolicy.APPLICATIVA.equals(filtro.getRuoloPorta()) &&
+					!TipoPdD.APPLICATIVA.equals(datiTransazione.getTipoPdD())){
+					return false;
 				}
 				
 			}
@@ -459,7 +520,7 @@ public class InterceptorPolicyUtilities {
 				if(datiTransazione.getNomePorta()==null){
 					return false;
 				}
-				if(filtro.getNomePorta().equals(datiTransazione.getNomePorta())==false){
+				if(!filtro.getNomePorta().equals(datiTransazione.getNomePorta())){
 					return false;
 				}
 			}
@@ -490,7 +551,9 @@ public class InterceptorPolicyUtilities {
 						Soggetto soggetto = null;
 						try {
 							soggetto = registroManager.getSoggetto(idFruitore, null, requestInfo);
-						}catch(DriverRegistroServiziNotFound notFound) {}
+						}catch(DriverRegistroServiziNotFound notFound) {
+							// ignore
+						}
 						if(soggetto!=null && soggetto.getRuoli()!=null) {
 							for (int i = 0; i < soggetto.getRuoli().sizeRuoloList(); i++) {
 								if(soggetto.getRuoli().getRuolo(i).getNome().equals(filtro.getRuoloFruitore())) {
@@ -511,7 +574,9 @@ public class InterceptorPolicyUtilities {
 						ServizioApplicativo sa = null;
 						try {
 							sa = configPdDManager.getServizioApplicativo(idSA, requestInfo);
-						}catch(DriverConfigurazioneNotFound nofFound) {}
+						}catch(DriverConfigurazioneNotFound nofFound) {
+							// ignore
+						}
 						if(sa!=null && sa.getInvocazionePorta()!=null && sa.getInvocazionePorta().getRuoli()!=null) {
 							for (int i = 0; i < sa.getInvocazionePorta().getRuoli().sizeRuoloList(); i++) {
 								if(sa.getInvocazionePorta().getRuoli().getRuolo(i).getNome().equals(filtro.getRuoloFruitore())) {
@@ -532,7 +597,9 @@ public class InterceptorPolicyUtilities {
 						Soggetto soggetto = null;
 						try {
 							soggetto = registroManager.getSoggetto(datiTransazione.getIdServizioApplicativoToken().getIdSoggettoProprietario(), null, requestInfo);
-						}catch(DriverRegistroServiziNotFound notFound) {}
+						}catch(DriverRegistroServiziNotFound notFound) {
+							// ignore
+						}
 						if(soggetto!=null && soggetto.getRuoli()!=null) {
 							for (int i = 0; i < soggetto.getRuoli().sizeRuoloList(); i++) {
 								if(soggetto.getRuoli().getRuolo(i).getNome().equals(filtro.getRuoloFruitore())) {
@@ -547,7 +614,9 @@ public class InterceptorPolicyUtilities {
 					ServizioApplicativo sa = null;
 					try {
 						sa = configPdDManager.getServizioApplicativo(datiTransazione.getIdServizioApplicativoToken(), requestInfo);
-					}catch(DriverConfigurazioneNotFound nofFound) {}
+					}catch(DriverConfigurazioneNotFound nofFound) {
+						// ignore
+					}
 					if(sa!=null && sa.getInvocazionePorta()!=null && sa.getInvocazionePorta().getRuoli()!=null) {
 						for (int i = 0; i < sa.getInvocazionePorta().getRuoli().sizeRuoloList(); i++) {
 							if(sa.getInvocazionePorta().getRuoli().getRuolo(i).getNome().equals(filtro.getRuoloFruitore())) {
@@ -570,19 +639,18 @@ public class InterceptorPolicyUtilities {
 			if(datiTransazione.getIdServizioApplicativoToken()!=null && datiTransazione.getIdServizioApplicativoToken().getIdSoggettoProprietario()!=null &&
 					filtro.getTipoFruitore()!=null && !"".equals(filtro.getTipoFruitore()) &&
 					filtro.getNomeFruitore()!=null && !"".equals(filtro.getNomeFruitore()) &&
-					filtro.getServizioApplicativoFruitore()!=null && !"".equals(filtro.getServizioApplicativoFruitore())){
-				if(filtro.getTipoFruitore().equals(datiTransazione.getIdServizioApplicativoToken().getIdSoggettoProprietario().getTipo()) &&
-						filtro.getNomeFruitore().equals(datiTransazione.getIdServizioApplicativoToken().getIdSoggettoProprietario().getNome()) &&
-						filtro.getServizioApplicativoFruitore().equals(datiTransazione.getIdServizioApplicativoToken().getNome())) {
-					checkDatiFruitore = false; // match con l'applicativo token
-				}
+					filtro.getServizioApplicativoFruitore()!=null && !"".equals(filtro.getServizioApplicativoFruitore()) &&
+				filtro.getTipoFruitore().equals(datiTransazione.getIdServizioApplicativoToken().getIdSoggettoProprietario().getTipo()) &&
+				filtro.getNomeFruitore().equals(datiTransazione.getIdServizioApplicativoToken().getIdSoggettoProprietario().getNome()) &&
+				filtro.getServizioApplicativoFruitore().equals(datiTransazione.getIdServizioApplicativoToken().getNome())) {
+				checkDatiFruitore = false; // match con l'applicativo token
 			}
 			
 			if(checkDatiFruitore && filtro.getTipoFruitore()!=null && !"".equals(filtro.getTipoFruitore())){
 				if(datiTransazione.getSoggettoFruitore()==null){
 					return false;
 				}
-				if(filtro.getTipoFruitore().equals(datiTransazione.getSoggettoFruitore().getTipo())==false){
+				if(!filtro.getTipoFruitore().equals(datiTransazione.getSoggettoFruitore().getTipo())){
 					return false;
 				}
 			}
@@ -590,15 +658,14 @@ public class InterceptorPolicyUtilities {
 				if(datiTransazione.getSoggettoFruitore()==null){
 					return false;
 				}
-				if(filtro.getNomeFruitore().equals(datiTransazione.getSoggettoFruitore().getNome())==false){
+				if(!filtro.getNomeFruitore().equals(datiTransazione.getSoggettoFruitore().getNome())){
 					return false;
 				}
 			}
 			
-			if(checkDatiFruitore && filtro.getServizioApplicativoFruitore()!=null && !"".equals(filtro.getServizioApplicativoFruitore())){
-				if(filtro.getServizioApplicativoFruitore().equals(datiTransazione.getServizioApplicativoFruitore())==false){
-					return false;
-				}
+			if(checkDatiFruitore && filtro.getServizioApplicativoFruitore()!=null && !"".equals(filtro.getServizioApplicativoFruitore()) &&
+				!filtro.getServizioApplicativoFruitore().equals(datiTransazione.getServizioApplicativoFruitore())){
+				return false;
 			}
 						
 			if(filtro.getRuoloErogatore()!=null && !"".equals(filtro.getRuoloErogatore())){
@@ -632,7 +699,7 @@ public class InterceptorPolicyUtilities {
 				if(datiTransazione.getIdServizio().getSoggettoErogatore()==null){
 					return false;
 				}
-				if(filtro.getTipoErogatore().equals(datiTransazione.getIdServizio().getSoggettoErogatore().getTipo())==false){
+				if(!filtro.getTipoErogatore().equals(datiTransazione.getIdServizio().getSoggettoErogatore().getTipo())){
 					return false;
 				}
 			}
@@ -643,16 +710,16 @@ public class InterceptorPolicyUtilities {
 				if(datiTransazione.getIdServizio().getSoggettoErogatore()==null){
 					return false;
 				}
-				if(filtro.getNomeErogatore().equals(datiTransazione.getIdServizio().getSoggettoErogatore().getNome())==false){
+				if(!filtro.getNomeErogatore().equals(datiTransazione.getIdServizio().getSoggettoErogatore().getNome())){
 					return false;
 				}
 			}
 			
 			if(filtro.getServizioApplicativoErogatore()!=null && !"".equals(filtro.getServizioApplicativoErogatore())){
-				if(datiTransazione.getListServiziApplicativiErogatori()==null || datiTransazione.getListServiziApplicativiErogatori().size()<=0){
+				if(datiTransazione.getListServiziApplicativiErogatori()==null || datiTransazione.getListServiziApplicativiErogatori().isEmpty()){
 					return false;
 				}				
-				if(datiTransazione.getListServiziApplicativiErogatori().contains(filtro.getServizioApplicativoErogatore())==false){
+				if(!datiTransazione.getListServiziApplicativiErogatori().contains(filtro.getServizioApplicativoErogatore())){
 					return false;
 				}
 			}
@@ -677,7 +744,7 @@ public class InterceptorPolicyUtilities {
 				if(datiTransazione.getIdServizio()==null){
 					return false;
 				}
-				if(filtro.getTipoServizio().equals(datiTransazione.getIdServizio().getTipo())==false){
+				if(!filtro.getTipoServizio().equals(datiTransazione.getIdServizio().getTipo())){
 					return false;
 				}
 			}
@@ -685,7 +752,7 @@ public class InterceptorPolicyUtilities {
 				if(datiTransazione.getIdServizio()==null){
 					return false;
 				}
-				if(filtro.getNomeServizio().equals(datiTransazione.getIdServizio().getNome())==false){
+				if(!filtro.getNomeServizio().equals(datiTransazione.getIdServizio().getNome())){
 					return false;
 				}
 			}
@@ -722,36 +789,7 @@ public class InterceptorPolicyUtilities {
 			
 			if(filtro.getTokenClaims()!=null && !"".equals(filtro.getTokenClaims())){
 				Properties properties = PropertiesUtilities.convertTextToProperties(filtro.getTokenClaims());
-				boolean isOk = true;
-				if(properties!=null && properties.size()>0) {
-					for (Object o : properties.keySet()) {
-						if(o!=null && o instanceof String) {
-							String key = (String) o;
-							String value = properties.getProperty(key);
-							if(datiTransazione.getTokenClaims()==null || datiTransazione.getTokenClaims().isEmpty()) {
-								isOk = false;
-								break;
-							}
-							if(datiTransazione.getTokenClaims().containsKey(key)==false) {
-								isOk = false;
-								break;
-							}
-							String v = datiTransazione.getTokenClaims().get(key);
-							if(value==null || "".equals(value)) {
-								if (! (v == null || "".equals(v)) ) {
-									isOk = false;
-									break;
-								}
-							}
-							else {
-								if(!value.equals(v)) {
-									isOk = false;
-									break;
-								}
-							}
-						}
-					}
-				}
+				boolean isOk = filter(properties, datiTransazione.getTokenClaims());
 				if(!isOk) {
 					return false;
 				}
@@ -761,6 +799,43 @@ public class InterceptorPolicyUtilities {
 		
 		return true;
 		
+	}
+	
+	private static boolean filter(Properties properties, Map<String, String> datiTransazioneClaims) {
+		if(properties!=null && properties.size()>0) {
+			for (Object o : properties.keySet()) {
+				if(o instanceof String) {
+					String key = (String) o;
+					Boolean v = filterPropertyClaim(key, properties, datiTransazioneClaims);
+					if(v!=null) {
+						return v.booleanValue();
+					}
+				}
+			}
+		}
+		return true;
+	}
+	private static Boolean filterPropertyClaim(String key, Properties properties, Map<String, String> datiTransazioneClaims) {
+		Boolean b = null;
+		String value = properties.getProperty(key);
+		if(datiTransazioneClaims==null || datiTransazioneClaims.isEmpty()) {
+			return false;
+		}
+		if(!datiTransazioneClaims.containsKey(key)) {
+			return false;
+		}
+		String v = datiTransazioneClaims.get(key);
+		if(value==null || "".equals(value)) {
+			if (! (v == null || "".equals(v)) ) {
+				return false;
+			}
+		}
+		else {
+			if(!value.equals(v)) {
+				return false;
+			}
+		}
+		return b;
 	}
 	
 }

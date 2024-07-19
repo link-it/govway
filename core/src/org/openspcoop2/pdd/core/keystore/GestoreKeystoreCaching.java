@@ -471,8 +471,10 @@ public class GestoreKeystoreCaching {
 		org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.removeRemoteStore(requestInfo, keyId, keyType, remoteStoreConfig);
 	}
 	
-	public static RemoteStoreClientInfo getRemoteStoreClientInfo(RequestInfo requestInfo, String keyId, String clientId, RemoteStoreConfig remoteStoreConfig, IRemoteStoreProvider provider) throws SecurityException{
-		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getRemoteStoreClientInfo(requestInfo, keyId, clientId, remoteStoreConfig, provider);
+	public static RemoteStoreClientInfo getRemoteStoreClientInfo(RequestInfo requestInfo, String keyId, String clientId, RemoteStoreConfig remoteStoreConfig, IRemoteStoreProvider provider,
+			org.openspcoop2.utils.Map<Object> context) throws SecurityException{
+		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getRemoteStoreClientInfo(requestInfo, keyId, clientId, remoteStoreConfig, provider,
+				context);
 	}
 	public static void removeRemoteStoreClientInfo(RequestInfo requestInfo, String keyId, RemoteStoreConfig remoteStoreConfig) throws SecurityException{
 		org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.removeRemoteStoreClientInfo(requestInfo, keyId, remoteStoreConfig);
