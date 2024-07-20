@@ -749,6 +749,21 @@ public class SecretsTest extends ConfigLoader {
 	
 	
 	
+	@Test
+	public void step6aPulizia() throws UtilsException, HttpUtilsException, IOException {
+			
+		logCoreInfo("@step6aPulizia");
+		
+		checkExternalToolError();
+		
+		deleteConfig(ConfigLoader.TESTSUITE_BUNDLE_PLAIN_PATH); // per ripulire la base dati per i test
+		
+	}
+	
+	
+	
+	
+	
 	// UTILS
 	
 	
