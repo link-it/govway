@@ -1,18 +1,20 @@
 Miglioramenti alla funzionalità di Tracciamento
 ------------------------------------------------
 
-Migliorata funzionalità di tracciamento introducendo la possibilità di attivare il tracciamento su database e/o su file (FileTrace) in 4 momenti differenti della gestione di una richiesta:
+Migliorata funzionalità di tracciamento introducendo la possibilità di
+personalizzare l'aggiornamento delle tracce su database e/o su file (FileTrace) in
+corrispondenza dei 4 eventi principali della gestione di una richiesta:
 
 - Richiesta ricevuta
 - Richiesta in consegna
 - Risposta in consegna
 - Risposta consegnata
 
-Ogni fase è attivabile sia a livello di configurazione generale che sulla singola erogazione o fruizione. Inoltre, ogni fase è configurabile per far terminare la richiesta con errore in caso di tracciamento fallito o proseguire segnalando l'anomalia solamente nei log.
+La modalità di tracciamento può essere personalizzata sia a livello di configurazione generale che per le singole erogazioni o fruizioni. Inoltre, per ogni evento, GovWay può essere configurato per far terminare la richiesta con errore in caso di tracciamento fallito o proseguire segnalando l'anomalia solamente nei log.
 	
-Nel caso di richiesta terminata con un errore di tracciamento, è stato aggiunto un nuovo esito 'Tracciamento Fallito'.
+Per il caso di richiesta terminata con un errore di tracciamento è stato aggiunto il nuovo esito di 'Tracciamento Fallito'.
 
-Sono state attuate le seguenti migliorie agli aspetti di configurazione del tracciamento su file (FileTrace):
+Sono state introdotte le seguenti nuove funzionalità di tracciamento su file (FileTrace):
 
 - possibilità di attivare il tracciamento rispetto all'esito di una transazione;
 - maschera di configurazione sulla singola erogazione o fruizione che consente di indicare il file di configurazione e l'attivazione o meno del buffer dei messaggi;
