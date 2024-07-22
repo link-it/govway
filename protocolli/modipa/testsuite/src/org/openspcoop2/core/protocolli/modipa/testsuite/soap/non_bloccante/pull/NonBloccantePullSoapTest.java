@@ -1,4 +1,3 @@
-
 /*
  * GovWay - A customizable API Gateway 
  * https://govway.org
@@ -18,48 +17,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-
 package org.openspcoop2.core.protocolli.modipa.testsuite.soap.non_bloccante.pull;
 
-import static org.junit.Assert.assertEquals;
+import org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader;
+import com.intuit.karate.junit5.Karate;
+import com.intuit.karate.junit5.Karate.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader;
-
-import com.intuit.karate.Results;
-import com.intuit.karate.Runner;
-import com.intuit.karate.core.MockServer;
 import com.intuit.karate.resource.ResourceUtils;
-
+import com.intuit.karate.core.MockServer;
 
 /**
-* NonBloccantePullSoapTest
-*
-* @author Francesco Scarlato (scarlato@link.it)
-* @author $Author$
-* @version $Rev$, $Date$
-*/
-
+ * NonBloccantePullSoapTest
+ * 
+ * This class sets up the MockServer and runs the tests for each feature.
+ * 
+ * @version $Rev$, $Date$
+ */
 public class NonBloccantePullSoapTest extends ConfigLoader {
     
     // Il test instanzia due servlet: il mock, contattato dall'erogazione
     // e il proxy, contattato dalla fruizione.
     // Il server di mock si comporta come il server di echo, solo che è più
-    // flsessibile nel generare risposte.
+    // flessibile nel generare risposte.
     private static MockServer mock;
     private static MockServer proxy;
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
-	@BeforeClass
-    public static void beforeClass() {       
+    @BeforeAll
+    public static void beforeAll() {
         File file = ResourceUtils.getFileRelativeTo(NonBloccantePullSoapTest.class, "mock.feature");
         mock = MockServer
                 .feature(file)
@@ -69,25 +59,37 @@ public class NonBloccantePullSoapTest extends ConfigLoader {
 
         file = ResourceUtils.getFileRelativeTo(NonBloccantePullSoapTest.class, "proxy.feature");
         proxy = MockServer
-    			.feature(file)
-    			.args(new HashMap<String,Object>((Map) prop))
-    			.http(Integer.valueOf(prop.getProperty("http_port")))
-    			.build();
+                .feature(file)
+                .args(new HashMap<String,Object>((Map) prop))
+                .http(Integer.valueOf(prop.getProperty("http_port")))
+                .build();
     }
+// TODO mflag vedere se mettere le assert cambia nulla
     
+	@Test
+    Karate testAll() {
+        return Karate.run("classpath:test/soap/non-bloccante/pull/pull.feature",
+            "classpath:test/soap/non-bloccante/pull/pull-no-disclosure.feature").relativeTo(getClass());
+       //             assertEquals(0, results.getFailCount());
+
+     }
+
+/*
     @Test
-    public void test() {
-    	Results results = Runner.path(Arrays.asList( 
-    		    "classpath:test/soap/non-bloccante/pull/pull.feature",
-    		    "classpath:test/soap/non-bloccante/pull/pull-no-disclosure.feature"))
-    			.parallel(1);
-    	assertEquals(0, results.getFailCount());
+    Karate testPull() {
+        return Karate.run("classpath:test/soap/non-bloccante/pull/pull.feature").relativeTo(getClass());
     }
-        
-    @AfterClass
-    public static void afterClass() {
+
+    @Test
+    Karate testPullNoDisclosure() {
+        return Karate.run("classpath:test/soap/non-bloccante/pull/pull-no-disclosure.feature").relativeTo(getClass());
+    }
+    */
+
+    @AfterAll
+    public static void afterAll() {
         mock.stop();
         proxy.stop();
-    }     
-    
+    }
 }
+

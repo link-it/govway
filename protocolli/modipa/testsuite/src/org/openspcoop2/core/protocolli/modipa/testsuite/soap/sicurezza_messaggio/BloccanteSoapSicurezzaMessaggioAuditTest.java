@@ -17,44 +17,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-
 package org.openspcoop2.core.protocolli.modipa.testsuite.soap.sicurezza_messaggio;
 
-import static org.junit.Assert.assertEquals;
+import org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader;
+import com.intuit.karate.junit5.Karate;
+import com.intuit.karate.junit5.Karate.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader;
-
-import com.intuit.karate.Results;
-import com.intuit.karate.Runner;
-import com.intuit.karate.core.MockServer;
 import com.intuit.karate.resource.ResourceUtils;
-
+import com.intuit.karate.core.MockServer;
+import org.junit.jupiter.api.Assertions;
 
 /**
-* BloccanteSoapSicurezzaMessaggioAuditTest
-*
-* @author Francesco Scarlato (scarlato@link.it)
-* @author $Author$
-* @version $Rev$, $Date$
-*/
-
+ * BloccanteSoapSicurezzaMessaggioAuditTest
+ * 
+ * This class sets up the MockServer and runs the tests for each feature.
+ * 
+ * @version $Rev$, $Date$
+ */
 public class BloccanteSoapSicurezzaMessaggioAuditTest extends ConfigLoader {
     
     private static MockServer server;
     private static MockServer proxy;
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
-	@BeforeClass
-    public static void beforeClass() {       
+    @BeforeAll
+    public static void beforeAll() {       
         File file = ResourceUtils.getFileRelativeTo(BloccanteSoapSicurezzaMessaggioAuditTest.class, "mock.feature");
         server = MockServer
                 .feature(file)
@@ -64,26 +56,24 @@ public class BloccanteSoapSicurezzaMessaggioAuditTest extends ConfigLoader {
 
         file = ResourceUtils.getFileRelativeTo(BloccanteSoapSicurezzaMessaggioAuditTest.class, "proxy.feature");
         proxy = MockServer
-    			.feature(file)
-    			.args(new HashMap<String,Object>((Map) prop))
-    			.http(Integer.valueOf(prop.getProperty("http_port")))
-    			.build();
+                .feature(file)
+                .args(new HashMap<String,Object>((Map) prop))
+                .http(Integer.valueOf(prop.getProperty("http_port")))
+                .build();
     }
-    
-    
+    /* TODO: mflag sempre una sola
     @Test
-    public void test() {
-    	Results results = Runner.path(Arrays.asList( 
-    		    "classpath:test/soap/sicurezza-messaggio/audit.feature"))    		        			
-    			.parallel(1);
-    	assertEquals(0, results.getFailCount());
+    Karate testAudit() {
+        return Karate.run("classpath:test/soap/sicurezza-messaggio/audit.feature").relativeTo(getClass());
     }
-        
-        
-    @AfterClass
-    public static void afterClass() {
+            */
+	@Test
+    Karate testAll() {
+        return Karate.run("classpath:test/soap/sicurezza-messaggio/audit.feature").relativeTo(getClass());
+     }
+    @AfterAll
+    public static void afterAll() {
         proxy.stop();
         server.stop();
-    }     
-    
+   }
 }

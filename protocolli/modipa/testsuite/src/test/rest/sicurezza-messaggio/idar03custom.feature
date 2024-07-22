@@ -537,7 +537,7 @@ Scenario: Test con presenza sia dell'header Authorization che Custom-JWT-Signatu
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicatiMultipart/v1"
 And path 'resources', 1, 'M'
 And request read("richiestaConAllegati.bin")
-And header Content-Type = 'multipart/mixed; boundary=----=_Part_1_1678144365.1610454048429; type=text/xml'
+And header Content-Type = 'multipart/mixed; boundary="----=_Part_1_1678144365.1610454048429"; type="text/xml"'
 And header GovWay-TestSuite-Test-ID = 'idar03-custom-doppi-header-multipart'
 And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
 And header GovWay-Integration = integration_header_base64

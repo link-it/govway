@@ -27,10 +27,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Properties;
-import org.junit.BeforeClass;
+// import org.junit.BeforeClass;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import com.intuit.karate.FileUtils;
+import com.intuit.karate.junit5.Karate;
+import com.intuit.karate.junit5.Karate.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 /**
 * ConfigLoader
@@ -49,7 +53,7 @@ public class ConfigLoader {
         setupProperties();
 	}
 
-    @BeforeClass
+    @BeforeAll
     public static void setupProperties() {
     
         try(InputStream inputStream = ConfigLoader.class.getClassLoader().getResourceAsStream(propFileName);) {

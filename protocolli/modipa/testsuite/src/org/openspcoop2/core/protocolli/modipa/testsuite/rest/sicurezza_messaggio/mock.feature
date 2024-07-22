@@ -2,7 +2,6 @@ Feature: Server mock per il testing della sicurezza messaggio
 
 Background:
 
-    * def getRequestHeader = read('classpath:utils/get-request-header.js')
     * def encode_base64 = read('classpath:utils/encode-base64.js')
 
     * def isTest =
@@ -501,8 +500,12 @@ Scenario: isTest('multipart-request-form-data-idar0302') || isTest('multipart-re
     * match karate.request.header('Agid-JWT-Signature') == null
     * match karate.request.header('Authorization') == null
     * def responseStatus = 200
-    * def responseHeaders = { Content-Type: 'multipart/form-data; boundary="----=_Part_0_1037475674.1651780088034"' }
+    * def responseHeaders = { 'Content-Type': 'multipart/form-data; boundary="----=_Part_0_1037475674.1651780088034"' }
     * def response = read('classpath:test/rest/sicurezza-messaggio/multipart-request.bin')
+    * def responseHeaders = { 'Content-Type': 'multipart/form-data; boundary=----=_Part_0_1037475674.1651780088034' }
+    * def expectedResponse = read('classpath:test/rest/sicurezza-messaggio/multipart-request.bin')
+    * def actualResponse = karate.toString(response)
+
 
 Scenario: isTest('multipart-request-mixed-idar0302')
 
@@ -542,7 +545,7 @@ Scenario: isTest('idar03-custom-single-header') || isTest('idar03-custom-doppi-h
        'GovWay-Integration': integration_header_base64
     })
     """
-    * configure responseHeaders = newHeaders
+    * def responseHeaders = newHeaders
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 Scenario: isTest('idar03-custom-doppi-header-get-without-custom') || 
@@ -568,7 +571,7 @@ Scenario: isTest('idar03-custom-doppi-header-get-without-custom') ||
        'GovWay-Integration': integration_header_base64
     })
     """
-    * configure responseHeaders = newHeaders
+    * def responseHeaders = newHeaders
     * def response = null
 
 Scenario: isTest('idar03-custom-doppi-header-get-with-custom')
@@ -592,7 +595,7 @@ Scenario: isTest('idar03-custom-doppi-header-get-with-custom')
        'GovWay-Integration': integration_header_2_base64
     })
     """
-    * configure responseHeaders = newHeaders
+    * def responseHeaders = newHeaders
     * def response = null
 
 Scenario: isTest('idar03-custom-doppi-header-multipart')
@@ -616,7 +619,8 @@ Scenario: isTest('idar03-custom-doppi-header-multipart')
        'GovWay-Integration': integration_header_base64
     })
     """
-    * configure responseHeaders = newHeaders
+    * def responseHeaders = newHeaders
+    * print newHeaders
     * def response = read('classpath:test/rest/sicurezza-messaggio/richiestaConAllegati.bin')
 
 
@@ -745,7 +749,7 @@ Scenario: isTest('idar04-custom-header-pdnd')
        'GovWay-Integration': integration_header_base64
     })
     """
-    * configure responseHeaders = newHeaders
+    * def responseHeaders = newHeaders
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 Scenario: isTest('idar04-custom-header-pdnd-assenza-header-integrity-risposta')
@@ -767,7 +771,7 @@ Scenario: isTest('idar04-custom-header-pdnd-assenza-header-integrity-risposta')
        'GovWay-Integration': integration_header_base64
     })
     """
-    * configure responseHeaders = newHeaders
+    * def responseHeaders = newHeaders
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 Scenario: isTest('idar04-custom-header-pdnd-get-with-custom') ||
@@ -792,7 +796,7 @@ Scenario: isTest('idar04-custom-header-pdnd-get-with-custom') ||
        'GovWay-Integration': integration_header_base64
     })
     """
-    * configure responseHeaders = newHeaders
+    * def responseHeaders = newHeaders
     * def response = null
 
 

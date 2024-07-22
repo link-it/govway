@@ -14,7 +14,7 @@
       <property name="debug" value="true" />
 
       <!-- Risultati -->
-      <property name="output" location="RisultatiTestSuite" />
+      <property name="output" location="RisultatiTestSuiteV2" />
 
       <!-- Opzioni -->
       <property name="haltOnFailure" value="no"/>

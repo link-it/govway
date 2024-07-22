@@ -17,71 +17,72 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-
 package org.openspcoop2.core.protocolli.modipa.testsuite.rest.sicurezza_messaggio;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader;
-
 import com.intuit.karate.Results;
 import com.intuit.karate.Runner;
-import com.intuit.karate.core.MockServer;
+import com.intuit.karate.junit5.Karate;
+import com.intuit.karate.junit5.Karate.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import com.intuit.karate.resource.ResourceUtils;
+import com.intuit.karate.core.MockServer;
 
 
 /**
-* BloccanteRestSicurezzaMessaggioInformazioniPDNDTest
-*
-* @author Francesco Scarlato (scarlato@link.it)
-* @author $Author$
-* @version $Rev$, $Date$
-*/
-
+ * BloccanteRestSicurezzaMessaggioInformazioniPDNDTest
+ * 
+ * This class sets up the MockServer and Proxy for the Karate tests,
+ * and runs the tests for each feature.
+ * 
+ * @version $Rev$, $Date$
+ */
 public class BloccanteRestSicurezzaMessaggioInformazioniPDNDTest extends ConfigLoader {
-    
+
     private static MockServer server;
     private static MockServer proxy;
-    
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
-	@BeforeClass
-    public static void beforeClass() {       
-        File file = ResourceUtils.getFileRelativeTo(BloccanteRestSicurezzaMessaggioTest.class, "mock.feature");
+    @BeforeAll
+    public static void beforeAll() {
+        File file = ResourceUtils.getFileRelativeTo(BloccanteRestSicurezzaMessaggioInformazioniPDNDTest.class, "mock.feature");
         server = MockServer
                 .feature(file)
                 .args(new HashMap<String,Object>((Map) prop))
                 .http(Integer.valueOf(prop.getProperty("http_mock_port")))
                 .build();
 
-        file = ResourceUtils.getFileRelativeTo(BloccanteRestSicurezzaMessaggioTest.class, "proxy.feature");
+        file = ResourceUtils.getFileRelativeTo(BloccanteRestSicurezzaMessaggioInformazioniPDNDTest.class, "proxy.feature");
         proxy = MockServer
-    			.feature(file)
-    			.args(new HashMap<String,Object>((Map) prop))
-    			.http(Integer.valueOf(prop.getProperty("http_port")))
-    			.build();
+                .feature(file)
+                .args(new HashMap<String,Object>((Map) prop))
+                .http(Integer.valueOf(prop.getProperty("http_port")))
+                .build();
     }
     
-    @Test
-    public void test() {
-    	Results results = Runner.path(Arrays.asList( 
-    		    "classpath:test/rest/sicurezza-messaggio/getInformazioniPdnd.feature"))
-    			.parallel(1);
-    	assertEquals(0, results.getFailCount());
+    
+            @Test
+    Karate testAll() {
+        return Karate.run(
+		"classpath:test/rest/sicurezza-messaggio/getInformazioniPdnd.feature"
+        ).relativeTo(getClass());
     }
-        
-    @AfterClass
-    public static void afterClass() {
+    
+/* TODO: mflag sempre una sola feature
+    @Test
+    Karate testGetInformazioniPdnd() {
+        return Karate.run("classpath:test/rest/sicurezza-messaggio/getInformazioniPdnd.feature").relativeTo(getClass());
+    }
+  */
+  
+    
+    @AfterAll
+    public static void afterAll() {
         proxy.stop();
         server.stop();
-    }     
-    
+    }
 }

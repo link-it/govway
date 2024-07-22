@@ -1,0 +1,23 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+# Specifica il file XML da processare
+my $file = shift @ARGV;
+
+# Legge il contenuto del file
+local $/ = undef;
+open my $fh, '<', $file or die "Cannot open $file: $!";
+my $content = <$fh>;
+close $fh;
+
+# Primo comando Perl
+$content =~ s/message=".*?"//gs;
+
+# Secondo comando Perl
+$content =~ s/<!\[CDATA(.|\n|\r)*\]\]>//gs;
+
+# Scrive le modifiche nel file
+open $fh, '>', $file or die "Cannot write to $file: $!";
+print $fh $content;
+close $fh;

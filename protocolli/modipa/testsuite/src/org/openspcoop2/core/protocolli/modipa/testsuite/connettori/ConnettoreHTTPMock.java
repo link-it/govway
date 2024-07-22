@@ -23,6 +23,7 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.TransportUtils;
 
 /**
  * ConnettoreHTTPMock
@@ -44,11 +45,32 @@ public class ConnettoreHTTPMock extends ConnettoreHTTP {
 
 	@Override
 	protected void checkResponse() throws Exception{
-		if(HttpConstants.CONTENT_TYPE_PLAIN.equals(this.tipoRisposta) && this.isResponse!=null) {
-			String s = Utilities.getAsString(this.isResponse, Charset.UTF_8.getValue());
-			if(s!=null && s.contains("match failed")) {
-				throw new Exception("Karate failed: "+s);
+		if(HttpConstants.CONTENT_TYPE_PLAIN.equals(this.tipoRisposta)) {
+			boolean contentEmpty = true;
+			if(this.isResponse!=null){
+				contentEmpty = false;
+				String s = Utilities.getAsString(this.isResponse, Charset.UTF_8.getValue());
+				/*System.out.println("DEBUG s["+s+"]");*/
+				if(s!=null && s.length()==0){
+					contentEmpty=true;
+				}
+				if(s!=null && 
+					(s.contains("match failed") || s.contains("org.graalvm.polyglot.PolyglotException"))
+					) {
+					throw new Exception("Karate failed: "+s);
+				}
+				this.isResponse=new java.io.ByteArrayInputStream(s.getBytes());
 			}
+			/**System.out.println("DEBUG contentEmpty["+contentEmpty+"]");
+			System.out.println("DEBUG codice["+codice+"]");*/
+			/**if(contentEmpty && this.codice==500){
+				String server = TransportUtils.getObjectAsString(propertiesTrasportoRisposta, "server");
+				System.out.println("server server["+server+"]");
+				if(server!=null && server.toLowerCase().contains("armeria")){
+					throw new Exception("Karate failed 500: "+server);
+				}
+			}*/
+			
 		}
 	}
 }
