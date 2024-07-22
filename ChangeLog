@@ -5,7 +5,7 @@
 	- CVE-2024-32007, CVE-2024-41172: 
 		aggiornata libreria 'org.apache.cxf:*' alla versione 3.6.4
 		aggiornata libreria 'org.ow2.asm:asm' alla versione 9.7
-		aggiornata libreria 'com.fasterxml.woodstox:woodstox-core' alla versione 6.6.0
+		aggiornata libreria 'com.fasterxml.woodstox:woodstox-core' alla versione 6.6.2
 
 2024-07-19  Andrea Poli <apoli@link.it>
 
