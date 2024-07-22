@@ -784,7 +784,7 @@ public class ServletTestService extends HttpServlet {
 			String contentTypeEchoFormUrlEncoded = null;
 			String _form_urlencoded = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncoded");
 			if(_form_urlencoded!=null && _form_urlencoded.equalsIgnoreCase("true")){
-				if(req.getContentType()!=null && ContentTypeUtilities.isMatch(HttpConstants.CONTENT_TYPE_X_WWW_FORM_URLENCODED, req.getContentType())) {
+				if(req.getContentType()!=null && ContentTypeUtilities.isMatch(this.log, HttpConstants.CONTENT_TYPE_X_WWW_FORM_URLENCODED, req.getContentType())) {
 					Enumeration<String> en = req.getParameterNames();
 					if(en!=null) {
 						
