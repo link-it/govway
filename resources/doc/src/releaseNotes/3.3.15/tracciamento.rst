@@ -17,8 +17,13 @@ Per il caso di richiesta terminata con un errore di tracciamento è stato aggiun
 Sono state introdotte le seguenti nuove funzionalità di tracciamento su file (FileTrace):
 
 - possibilità di attivare il tracciamento rispetto all'esito di una transazione;
-- maschera di configurazione sulla singola erogazione o fruizione che consente di indicare il file di configurazione e l'attivazione o meno del buffer dei messaggi;
-- possibilità di utilizzare funzionalità di 'unwrap' della chiave per la cifratura dei dati.
+
+- è possibile modificare la configurazione di default per ogni singola erogazione o fruizione, nello specifico per:
+
+  - il file di configurazione che definisce il formato del log;
+  - l'attivazione o meno del buffer dei messaggi, che consente di registrare gli header HTTP e il contenuto del payload;
+
+- possibilità di utilizzare una chiave/keystore cifrata e specificare la policy necessaria per decifrarla, prima di utilizzarla per la cifratura dei dati registrati nel log.
 
 Nel menù principale la configurazione a livello globale del tracciamento e della registrazione messaggi è stata suddivisa in due voci distinte.
 

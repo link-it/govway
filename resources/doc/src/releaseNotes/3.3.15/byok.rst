@@ -20,7 +20,7 @@ La console di gestione è stata modificata per:
    - applicativo
    - configurazione globale
 
-E' stato inoltre realizzato il supporto per inizializzare una serie di variabili Java che potranno essere riferite in qualsiasi file di proprietà di GovWay presente nella 'directory-lavoro' e nelle configurazioni di GovWay (es. all'interno di una trasformazione).
+È stato inoltre realizzato il supporto per inizializzare una serie di variabili Java che potranno essere riferite in qualsiasi file di proprietà di GovWay presente nella 'directory-lavoro' e nelle configurazioni di GovWay (es. all'interno di una trasformazione).
 
 La definizione di una variabile può essere attuata all'interno di due file differenti:
 
