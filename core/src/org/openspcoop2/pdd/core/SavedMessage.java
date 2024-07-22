@@ -53,6 +53,8 @@ import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.Context;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.sdk.state.RequestInfoConfigUtilities;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
@@ -440,7 +442,22 @@ public class SavedMessage implements java.io.Serializable {
 	} 
 	
 	public void updateTransactionContext(Context transactionContext) throws UtilsException{
-		SavedMessagePSUtilities.updateTransactionContext(this, transactionContext);
+		RequestInfo requestInfoBackup = null;
+		java.util.Map<String,Object> dynamicContext = null;
+		try {
+			if(transactionContext!=null) {
+				requestInfoBackup =	RequestInfoConfigUtilities.normalizeRequestInfoBeforeSerialization(transactionContext);
+				dynamicContext = org.openspcoop2.core.constants.Costanti.removeDynamicMap(transactionContext);
+			}
+			SavedMessagePSUtilities.updateTransactionContext(this, transactionContext);
+		}finally {
+			if(requestInfoBackup!=null) {
+				RequestInfoConfigUtilities.restoreRequestInfoAfterSerialization(transactionContext, requestInfoBackup);
+			}
+			if(dynamicContext!=null) {
+				transactionContext.put(org.openspcoop2.core.constants.Costanti.DYNAMIC_MAP_CONTEXT, dynamicContext);
+			}
+		}
 	} 
 	
 	private void deleteMessageFile(File fileMsg) throws UtilsException {

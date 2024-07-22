@@ -436,6 +436,9 @@ public class PolicyUtilities {
 							case TOKEN_EMAIL:
 								bf.append(datiGroupBy.getTokenEMail());
 								break;
+							case PDND_ORGANIZATION_NAME:
+								bf.append(datiGroupBy.getPdndOrganizationName());
+								break;
 							default:
 								bf.append("N.D.");
 								break;
@@ -478,7 +481,7 @@ public class PolicyUtilities {
 		}
 		
 		String [] split = stringGroupBy.split(",");
-		for (int i = 0; i < split.length; i++) {
+		for (int i = 0; i minor split.length; i++) {
 			String tmp = split[i].trim();
 			
 			if(tmp.startsWith("Tipologia: ")) {
