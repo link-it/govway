@@ -1,3 +1,11 @@
+2024-07-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1739
+	Definendo una trasformazione in cui nella configurazione dell'area di applicabilità veniva impostato "Content-Type: application/json", 
+	la trasformazione non veniva applicata se nella richiesta o nella risposta era presente un header "Content-Type" con un valore contenente altre informazioni oltre al tipo base, 
+	ad esempio: "application/json; charset=utf-8".
+
 2024-07-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

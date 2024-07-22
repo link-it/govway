@@ -541,7 +541,7 @@ public class GestoreTrasformazioni {
 					// controllo contentType
 					this.logDebug(suffix+" check applicabilità tra i "+check.getApplicabilita().sizeContentTypeList()+" content types ");
 					if(check.getApplicabilita().sizeContentTypeList()>0 &&
-						!ContentTypeUtilities.isMatch(messageP.getContentType(), check.getApplicabilita().getContentTypeList())) {
+						!ContentTypeUtilities.isMatch(this.log, messageP.getContentType(), check.getApplicabilita().getContentTypeList())) {
 						continue;
 					}
 		
@@ -1013,7 +1013,7 @@ public class GestoreTrasformazioni {
 					}
 					
 					// controllo contentType
-					if(!ContentTypeUtilities.isMatch(message.getContentType(), check.getApplicabilita().getContentTypeList())) {
+					if(!ContentTypeUtilities.isMatch(this.log, message.getContentType(), check.getApplicabilita().getContentTypeList())) {
 						continue;
 					}
 		

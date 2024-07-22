@@ -105,7 +105,7 @@ public abstract class AbstractApiValidator   {
 										
 					if(requestBodyParametersList != null) {
 						for(ApiBodyParameter input: requestBodyParametersList) {
-							if(input.isAllMediaType() || ContentTypeUtilities.isMatch(baseTypeHttp, input.getMediaType())) {
+							if(input.isAllMediaType() || ContentTypeUtilities.isMatch(null, baseTypeHttp, input.getMediaType())) {
 								contentTypeSupported = true;
 								break;
 							} 
@@ -126,7 +126,7 @@ public abstract class AbstractApiValidator   {
 								findExactResponseCode = true;
 								if(output.sizeBodyParameters()>0) {
 									for(ApiBodyParameter outputBodyParameter: output.getBodyParameters()) {
-										if(outputBodyParameter.isAllMediaType() || ContentTypeUtilities.isMatch(baseTypeHttp, outputBodyParameter.getMediaType()) ) {
+										if(outputBodyParameter.isAllMediaType() || ContentTypeUtilities.isMatch(null, baseTypeHttp, outputBodyParameter.getMediaType()) ) {
 											contentTypeSupported = true;
 											break;
 										} 
@@ -142,7 +142,7 @@ public abstract class AbstractApiValidator   {
 						if(!contentTypeSupported && !findExactResponseCode && outputDefault!=null) {
 							if(outputDefault.sizeBodyParameters()>0) {
 								for(ApiBodyParameter outputBodyParameter: outputDefault.getBodyParameters()) {
-									if(outputBodyParameter.isAllMediaType() || ContentTypeUtilities.isMatch(baseTypeHttp, outputBodyParameter.getMediaType()) ) {
+									if(outputBodyParameter.isAllMediaType() || ContentTypeUtilities.isMatch(null, baseTypeHttp, outputBodyParameter.getMediaType()) ) {
 										contentTypeSupported = true;
 										break;
 									} 

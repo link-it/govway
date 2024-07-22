@@ -321,7 +321,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 				
 				boolean existsSecurityFlusso =  false;
 				if(securityMessageProfileNonFiltratoPDND!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfileNonFiltratoPDND)) {
-					existsSecurityFlusso = ModIPropertiesUtils.processSecurity(aspc, nomePortType, azione, request, 
+					existsSecurityFlusso = ModIPropertiesUtils.processSecurity(this.log,aspc, nomePortType, azione, request, 
 								msg, rest, this.modiProperties);
 				}
 					

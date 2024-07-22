@@ -4879,7 +4879,7 @@ public class InoltroBuste extends GenericLib{
 									validazioneAbilitata = hasContent && (isFault==false);
 								}
 								else {
-									validazioneAbilitata = ValidatoreMessaggiApplicativiRest.isValidazioneAbilitata(proprietaValidazioneContenutoApplicativoApplicativo, responseMessage, codiceRitornato);
+									validazioneAbilitata = ValidatoreMessaggiApplicativiRest.isValidazioneAbilitata(this.log,proprietaValidazioneContenutoApplicativoApplicativo, responseMessage, codiceRitornato);
 								}
 								if( validazioneAbilitata ){
 									

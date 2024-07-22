@@ -45,6 +45,8 @@ Sono stati risolti i seguenti bug:
 
 - (https://github.com/link-it/govway/issues/160) utilizzando un'architettura con database distinti per configurazione e runtime si otteneva un errore non bloccante riportato nei log del database, ad esempio su postgresql: "ERROR:  relation "db_info_console" does not exist at character 15 STATEMENT:  select * from db_info_console order by id DESC";
 
+- definendo una trasformazione in cui nella configurazione dell'area di applicabilità veniva impostato "Content-Type: application/json", la trasformazione non veniva applicata se nella richiesta o nella risposta era presente un header "Content-Type" con un valore contenente altre informazioni oltre al tipo base, ad esempio: "application/json; charset=utf-8";
+
 - nel profilo di interoperabilità 'Fatturazione Elettronica', la disabilitazione della validazione del nome della fattura tramite la proprietà 'org.openspcoop2.protocol.sdi.validazione.nomeFile.enable' causava il seguente errore bloccante se il nome della fattura era conforme a una fatturazione europea che iniziava con il codice 'UB' o 'II': 'Elemento [File] decodifica non riuscita: formato non conosciuto';
 
 - nella funzionalità di consegna asincrona, in alcuni casi limite con connettori con consegna in errore, lo stato della transazione non veniva aggiornato correttamente.
