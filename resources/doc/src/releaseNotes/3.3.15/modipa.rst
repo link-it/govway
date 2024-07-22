@@ -1,18 +1,17 @@
 Miglioramenti al Profilo di Interoperabilità 'ModI'
 ------------------------------------------------------
 
-È stato introdotto il supporto per il soggetto intermediario, che consente di autorizzare una richiesta proveniente da un soggetto identificato sul canale e da un applicativo appartenente a un soggetto differente, identificato tramite token di sicurezza.
+È stato introdotta la gestione del 'soggetto intermediario', che consente di autorizzare una richiesta proveniente da un soggetto identificato sul canale e da un applicativo appartenente a un soggetto differente, identificato tramite token di sicurezza.
 
 Nell'occasione, è stato affinato il processo di autenticazione:
 
-- Il processo di identificazione degli applicativi veniva inutilmente effettuato sull'autenticazione HTTPS attivata nelle erogazioni, poiché con tale profilo gli applicativi possono essere censiti solamente con credenziale di tipo 'token' o con certificato di firma; tale controllo è stato disattivato.
+- Il processo di identificazione degli applicativi veniva inutilmente attivato per l'autenticazione MTLS delle erogazioni, anche se con tale profilo gli applicativi possono essere censiti solamente con credenziale di tipo 'token' o con certificato di firma; tale controllo è stato pertanto eliminato.
 
-- I controlli di esistenza di un applicativo già registrato con lo stesso certificato sono stati migliorati al fine di escludere gli applicativi con profilo di interoperabilità 'ModI' di dominio esterno, poiché tali certificati non si riferiscono a credenziali TLS ma vengono utilizzati per firmare token di sicurezza.
-
+- I controlli di esistenza di un applicativo già registrato con lo stesso certificato sono stati affinati al fine di escludere gli applicativi con profilo di interoperabilità 'ModI' di un dominio esterno, poiché tali certificati non si riferiscono a credenziali TLS ma vengono utilizzati solo per firmare token di sicurezza.
 
 Sono stati apportati i seguenti miglioramenti alla funzionalità di integrazione con la PDND:
 
-- aggiunta, nelle politiche di Rate Limiting, la possibilità di conteggiare per nome dell'organizzazione ottenuta accedendo alle API di interoperabilità della PDND;
+- aggiunta, nelle politiche di Rate Limiting, la possibilità di conteggiare per nome dell'organizzazione ottenuta tramite le API di interoperabilità della PDND;
 
 - aggiunta la possibilità di modificare sulla singola erogazione o fruizione il comportamento di default per far fallire la transazione nel caso in cui il recupero delle informazioni sul client o sull'organizzazione tramite API PDND fallisca.
 

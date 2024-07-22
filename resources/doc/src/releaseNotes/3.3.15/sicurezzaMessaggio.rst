@@ -1,8 +1,8 @@
 Miglioramenti alla funzionalità di Sicurezza Messaggio
 ---------------------------------------------------------
 
-La funzionalità di verifica dei certificati, attuabile tramite la console di gestione, include adesso anche la validazione dei keystore riferiti nella configurazione della sicurezza dei messaggi. 
-	
+La funzionalità di verifica dei certificati, abilitabile tramite la console di gestione, include adesso anche la validazione dei keystore riferiti nella configurazione della sicurezza dei messaggi. 
+
 Inoltre, è stata aggiunta la possibilità di disabilitare la 'Compliance BSP 1.1' nella validazione di un messaggio contenente WS-Security Username Token.
 
 Infine sono state introdotte opzioni aggiuntive che consentono di modificare alcuni aspetti relativi alla sicurezza del messaggio attuata tramite la libreria 'wss4j', al fine di renderlo interoperabile con altre librerie più datate:
