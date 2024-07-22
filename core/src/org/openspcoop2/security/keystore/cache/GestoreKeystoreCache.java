@@ -776,6 +776,9 @@ public class GestoreKeystoreCache {
 	}
 	public static SecretKeyStore getSecretKeyStore(RequestInfo requestInfo, SecretPasswordKeyDerivationConfig config, 
 			BYOKRequestParams requestParams) throws SecurityException{
+		if(config==null) {
+			throw new SecurityException("SecretPasswordKeyDerivationConfig param undefined");
+		}
 		String keyParam = config.toKey();
 		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && config!=null;
 		if(useRequestInfo) {

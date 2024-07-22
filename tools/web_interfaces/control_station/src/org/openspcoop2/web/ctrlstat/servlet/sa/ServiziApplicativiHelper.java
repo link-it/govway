@@ -86,6 +86,7 @@ import org.openspcoop2.utils.crypt.PasswordGenerator;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
@@ -374,6 +375,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 			sa = this.saCore.getServizioApplicativo(idSA);
 
+			if(sa==null) {
+				throw new ControlStationCoreException("Servizi applicativo con id '"+idSA+"' non trovato");
+			}
+			
 			IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
 			idServizioApplicativo.setNome(sa.getNome());
 			idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
@@ -5057,7 +5062,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 			
 			List<Parameter> lstParam = new ArrayList<>();
-			if(!useIdSogg){
+			if(useIdSogg==null || !useIdSogg.booleanValue()){
 				lstParam.add(new Parameter(labelApplicativi, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST));
 				lstParam.add(new Parameter(sa.getNome(), ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()])));
 			} else {
