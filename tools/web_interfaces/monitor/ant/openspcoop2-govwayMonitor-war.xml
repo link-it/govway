@@ -200,7 +200,7 @@
 			<lib dir="${required_lib_govwayMonitor}/cxf">
 				<include name="cxf-core-*.jar" />
 				<include name="cxf-rt-*.jar" />
-				<include name="woodstox-core-6.6.1.jar" />
+				<include name="woodstox-core-6.6.2.jar" />
 				<include name="${stax2-api_jar}" />
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/saaj">
