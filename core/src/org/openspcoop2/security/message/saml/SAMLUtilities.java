@@ -53,12 +53,12 @@ public class SAMLUtilities {
 			else if(intValue.intValue() > 0){
 				dateTimeRes = dateTime.plusMinutes(intValue.intValue());
 			}
-			else if(intValue.intValue() < 0){
+			else {/**if(intValue.intValue() < 0){*/
 				dateTimeRes = dateTime.minusMinutes(intValue.intValue()*-1);
 			}
-			else {
+			/**else {
 				dateTimeRes = dateTime;
-			}
+			}*/
 			return dateTimeRes;
 		}
 		else {

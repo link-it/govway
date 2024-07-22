@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.byok.BYOKUtilities;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AttributeAuthority;
@@ -544,6 +545,9 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			BaseHelper.throwIfNull(body);	
 			
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
+			if(env.pdCore==null) {
+				throw new CoreException("PdCore not initialized");
+			}
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			
 			if ((body.getNome().indexOf(" ") != -1) || (body.getValore().indexOf(" ") != -1)) {
@@ -2840,7 +2844,10 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
                         
 			BaseHelper.throwIfNull(body);
 
-			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
+			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );
+			if(env.pdCore==null) {
+				throw new CoreException("PdCore not initialized");
+			}
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			
 			if ((body.getNome().indexOf(" ") != -1) || (body.getValore().indexOf(" ") != -1)) {

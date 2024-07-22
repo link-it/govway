@@ -60,9 +60,7 @@ public class ServerProperties  {
 		
 		/* ---- Lettura del cammino del file di configurazione ---- */
 		Properties propertiesReader = new Properties();
-		java.io.InputStream properties = null;
-		try{  
-			properties = DatasourceProperties.class.getResourceAsStream("/rs-api-monitor.properties");
+		try (java.io.InputStream properties = DatasourceProperties.class.getResourceAsStream("/rs-api-monitor.properties")){  
 			if(properties==null){
 				throw new UtilsException("File '/rs-api-monitor.properties' not found");
 			}
@@ -71,13 +69,6 @@ public class ServerProperties  {
 			String error="Riscontrato errore durante la lettura del file 'rs-api-monitor.properties': "+e.getMessage();
 			this.log.error(error);
 		    throw new UtilsException("RS Api MonitorProperties initialize error: "+e.getMessage());
-		}finally{
-		    try{
-				if(properties!=null)
-				    properties.close();
-		    }catch(Exception er){
-		    	// close
-		    }
 		}
 
 		this.reader = new ServerInstanceProperties(propertiesReader, this.log, confDir);

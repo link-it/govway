@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.byok.BYOKUtilities;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AttributeAuthority;
@@ -874,6 +875,9 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			BaseHelper.throwIfNull(body);			
 			
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			if(env.paCore==null) {
+				throw new CoreException("PaCore not initialized");
+			}
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			if ((body.getNome().indexOf(" ") != -1) || (body.getValore().indexOf(" ") != -1)) {
@@ -3312,6 +3316,9 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			BaseHelper.throwIfNull(body);
 			
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			if(env.paCore==null) {
+				throw new CoreException("PaCore not initialized");
+			}
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			if ((body.getNome().indexOf(" ") != -1) || (body.getValore().indexOf(" ") != -1)) {
