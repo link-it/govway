@@ -836,9 +836,6 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 		
 		bf.append(id.tokenEMail);
 		bf.append("\n");
-		
-		bf.append(id.pdndOrganizationName);
-		bf.append("\n");
 			
 		if (id instanceof IDUnivocoGroupByPolicyMapId) {
 			// Aggiungo un ulteriore campo, per la map unica distribuita sul controllo traffico 
@@ -851,6 +848,10 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 		bf.append("\n");
 	
 		bf.append(id.servizioApplicativoToken);
+		
+		bf.append("\n");
+		
+		bf.append(id.pdndOrganizationName);
 		
 		return bf.toString();
 	}

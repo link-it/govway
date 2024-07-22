@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.pdd.core.dynamic;
 
+import java.io.Serializable;
+
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -38,22 +40,31 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AttachmentsReader {
+public class AttachmentsReader implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private IDServizio idServizio;
 	private IDAccordo idAccordo;
-	private RegistroServiziManager registroServiziManager;
+	private transient RegistroServiziManager registroServiziManagerField;
 	private RequestInfo requestInfo;
 	
 	public AttachmentsReader(IDServizio idServizio, RequestInfo requestInfo) {
 		this.idServizio = idServizio;
-		this.registroServiziManager = RegistroServiziManager.getInstance();
+		this.registroServiziManagerField = RegistroServiziManager.getInstance();
 		this.requestInfo = requestInfo;
+	}
+	
+	private RegistroServiziManager getRegistroServiziManager() {
+		if(this.registroServiziManagerField==null) {
+			this.registroServiziManagerField = RegistroServiziManager.getInstance();
+		}
+		return this.registroServiziManagerField;
 	}
 	
 	private IDAccordo getIDAccordo() throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		if(this.idAccordo==null) {
-			AccordoServizioParteSpecifica asps = this.registroServiziManager.getAccordoServizioParteSpecifica(this.idServizio, null, false, this.requestInfo);
+			AccordoServizioParteSpecifica asps = this.getRegistroServiziManager().getAccordoServizioParteSpecifica(this.idServizio, null, false, this.requestInfo);
 			this.idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
 		}
 		return this.idAccordo;
@@ -64,13 +75,14 @@ public class AttachmentsReader {
 	}
 	public byte[] read(String nome, boolean throwNotFoundException) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		try {
-			return this.registroServiziManager.getAllegato(this.idServizio, nome, this.requestInfo).getByteContenuto();
+			return this.getRegistroServiziManager().getAllegato(this.idServizio, nome, this.requestInfo).getByteContenuto();
 		}catch(DriverRegistroServiziNotFound notFound) {
+			byte[] bNull = null;
 			if(throwNotFoundException) {
 				throw notFound;
 			}
 			else {
-				return null;
+				return bNull;
 			}
 		}
 	}
@@ -86,13 +98,14 @@ public class AttachmentsReader {
 	}
 	public byte[] readSemiformalDocumentation(String nome, TipiDocumentoSemiformale tipo, boolean throwNotFoundException) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		try {
-			return this.registroServiziManager.getSpecificaSemiformale(this.idServizio, tipo, nome, this.requestInfo).getByteContenuto();
+			return this.getRegistroServiziManager().getSpecificaSemiformale(this.idServizio, tipo, nome, this.requestInfo).getByteContenuto();
 		}catch(DriverRegistroServiziNotFound notFound) {
+			byte[] bNull = null;
 			if(throwNotFoundException) {
 				throw notFound;
 			}
 			else {
-				return null;
+				return bNull;
 			}
 		}
 	}
@@ -108,13 +121,14 @@ public class AttachmentsReader {
 	}
 	public byte[] readSecurityDocumentation(String nome, TipiDocumentoSicurezza tipo, boolean throwNotFoundException) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		try {
-			return this.registroServiziManager.getSpecificaSicurezza(this.idServizio, tipo, nome, this.requestInfo).getByteContenuto();
+			return this.getRegistroServiziManager().getSpecificaSicurezza(this.idServizio, tipo, nome, this.requestInfo).getByteContenuto();
 		}catch(DriverRegistroServiziNotFound notFound) {
+			byte[] bNull = null;
 			if(throwNotFoundException) {
 				throw notFound;
 			}
 			else {
-				return null;
+				return bNull;
 			}
 		}
 	}
@@ -130,13 +144,14 @@ public class AttachmentsReader {
 	}
 	public byte[] readServiceLevelDocumentation(String nome, TipiDocumentoLivelloServizio tipo, boolean throwNotFoundException) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		try {
-			return this.registroServiziManager.getSpecificaLivelloServizio(this.idServizio, tipo, nome, this.requestInfo).getByteContenuto();
+			return this.getRegistroServiziManager().getSpecificaLivelloServizio(this.idServizio, tipo, nome, this.requestInfo).getByteContenuto();
 		}catch(DriverRegistroServiziNotFound notFound) {
+			byte[] bNull = null;
 			if(throwNotFoundException) {
 				throw notFound;
 			}
 			else {
-				return null;
+				return bNull;
 			}
 		}
 	}
@@ -147,13 +162,14 @@ public class AttachmentsReader {
 	}
 	public byte[] readFromApi(String nome, boolean throwNotFoundException) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		try {
-			return this.registroServiziManager.getAllegato(getIDAccordo(), nome, this.requestInfo).getByteContenuto();
+			return this.getRegistroServiziManager().getAllegato(getIDAccordo(), nome, this.requestInfo).getByteContenuto();
 		}catch(DriverRegistroServiziNotFound notFound) {
+			byte[] bNull = null;
 			if(throwNotFoundException) {
 				throw notFound;
 			}
 			else {
-				return null;
+				return bNull;
 			}
 		}
 	}
@@ -169,13 +185,14 @@ public class AttachmentsReader {
 	}
 	public byte[] readSemiformalDocumentationFromApi(String nome, TipiDocumentoSemiformale tipo, boolean throwNotFoundException) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		try {
-			return this.registroServiziManager.getSpecificaSemiformale(getIDAccordo(), tipo, nome, this.requestInfo).getByteContenuto();
+			return this.getRegistroServiziManager().getSpecificaSemiformale(getIDAccordo(), tipo, nome, this.requestInfo).getByteContenuto();
 		}catch(DriverRegistroServiziNotFound notFound) {
+			byte[] bNull = null;
 			if(throwNotFoundException) {
 				throw notFound;
 			}
 			else {
-				return null;
+				return bNull;
 			}
 		}
 	}
