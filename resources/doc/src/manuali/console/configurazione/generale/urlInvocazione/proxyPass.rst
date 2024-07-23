@@ -1,27 +1,17 @@
-.. _configGenerale_urlInvocazione:
+.. _configGenerale_urlInvocazione_proxyPass:
 
-URL di Invocazione API
+Regole Proxy Pass
 ~~~~~~~~~~~~~~~~~~~~~~~
-
-Questa sezione visualizza:
-
--  *Base URL*: Indica il prefisso utilizzato per visualizzare le URL di Invocazione delle API.
-
--  *Base URL Fruizione*: permette di differenziare il prefisso utilizzato per visualizzare le URL di Invocazione delle fruizioni dalle erogazioni.
-
--  *Regole Proxy Pass*: tramite questa voce è possibile ridefinire le URL di Invocazioni, per specifiche fruizioni e/o erogazioni, allineandole a regole configurate su un revere proxy che media le comunicazioni http con GovWay.
-
-**Regole Proxy Pass**
 
 Questa sezione permette di ridefinire la modalità di visualizzazione delle Url di Invocazione delle API esposte da GovWay per assicurare che, in presenza di un reverse proxy che media le comunicazioni http con GovWay, sia possibile configurare opportunamente le url di invocazione delle API esposte da GovWay allineandole con le eventuali configurazioni specifiche realizzate sul reverse proxy.
 
-   .. note::
+.. note::
       La funzionalità permette di configurare come vengono visualizzate le URL di Invocazione sulla govwayConsole, per allinearsi ad un eventuale reverse proxy che media le comunicazioni http con GovWay. Le API, su GovWay, rimangono raggiungibili solamente sulle url originali e dovrà essere il reverse proxy ad effettuare la conversione rispetto a quella esposta.
 
 Le regole create sono visualizzate nella forma di elenco ordinato (:numref:`proxyPass_ListaRegole`). L'icona iniziale di ciascun elemento consente di modificarne la posizione. Per ogni regola viene visualizzato il suo stato, il nome e la descrizione.
 
-   .. figure:: ../../_figure_console/ElencoRegoleProxyPass.png
-    :scale: 100%
+.. figure:: ../../../_figure_console/ElencoRegoleProxyPass.png
+    :scale: 70%
     :align: center
     :name: proxyPass_ListaRegole
 
@@ -30,8 +20,8 @@ Le regole create sono visualizzate nella forma di elenco ordinato (:numref:`prox
 Per ogni regola (:numref:`proxyPass_addRegola`) deve essere obbligatoriamente definita una stringa libera o una espressione regolare utilizzata per individuare l'applicabilità della regola attraverso un confronto con il contesto dell'API. Il contesto è l'URL di Invocazione dell'API senza il prefisso Base URL.
 Inoltre per ogni regola è possibile indicare altri criteri di applicabilità opzionali quali eventuali profilo di interoperabilità, un soggetto, una tipologia (fruizione/erogazione) o un tipo di api (soap/rest). 
 
-   .. figure:: ../../_figure_console/AddRegolaProxyPass.png
-    :scale: 100%
+.. figure:: ../../../_figure_console/AddRegolaProxyPass.png
+    :scale: 70%
     :align: center
     :name: proxyPass_addRegola
 

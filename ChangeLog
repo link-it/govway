@@ -1,6 +1,12 @@
 2024-07-23  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole, GovWayCore]
+	Aggiunta funzionalità OP-1743
+	In presenza di regole di proxy pass, nella maschera di visualizzazione dell'URL di invocazione di una API erogata o fruita, viene ora visualizzata anche l'URL di invocazione interna.
+
+2024-07-23  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, GovWayCore]
 	Aggiunta funzionalità OP-1741
 	Nella configurazione di una token policy di negoziazione, è ora possibile indicare di utilizzare direttamente il payload di risposta HTTP come access token.
 

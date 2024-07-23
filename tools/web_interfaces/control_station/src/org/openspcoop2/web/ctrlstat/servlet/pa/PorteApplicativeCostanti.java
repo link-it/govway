@@ -893,7 +893,9 @@ public class PorteApplicativeCostanti {
 	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME = "Nome";
 	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_TEMPLATE = "Template";
 	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_URL_INVOCAZIONE = "URL";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_URL_INVOCAZIONE_INTERNA = "URL interna";
 	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_BASE_URL_INVOCAZIONE = "Base URL";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_BASE_URL_INVOCAZIONE_INTERNA = "Base URL interna";
 	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE = CONFIGURAZIONE;
 	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE = "Opzioni Avanzate";
 	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE_DI = "Opzioni Avanzate di ";
