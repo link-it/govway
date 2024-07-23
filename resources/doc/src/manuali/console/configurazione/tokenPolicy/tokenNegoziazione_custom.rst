@@ -80,6 +80,15 @@ Dal token endpoint si attende un formato della risposta che sia conforme al json
 
     Personalizzazione del formato della risposta
 
+In alternativa è possibile indicare di utilizzare direttamente il payload di risposta HTTP come access token. In questo scenario, mostrato nella figura :numref:`tokenNegoziazionePolicyCustomParserRaw`, dovrà essere definito l'intervallo temporale di validità del token acquisito.
+
+.. figure:: ../../_figure_console/TokenPolicy-negoziazione-custom-parser-raw.png
+    :scale: 100%
+    :align: center
+    :name: tokenNegoziazionePolicyCustomParserRaw
+
+    Utilizzo del payload di risposta HTTP come access token
+
 Infine è possibile indicare il nome di una classe che implementa una logica di parsing personalizzata. La classe deve implementare l’interfaccia "org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser" (:numref:`tokenNegoziazionePolicyCustomParserPlugin`).
 
 .. figure:: ../../_figure_console/TokenPolicy-negoziazione-custom-parser-plugin.png

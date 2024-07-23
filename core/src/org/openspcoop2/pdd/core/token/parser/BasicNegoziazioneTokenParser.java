@@ -70,6 +70,7 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 		switch (this.parser) {
 		case OAUTH2_RFC_6749:
 		case MAPPING:
+		case RAW:
 		case CUSTOM:
 			if(this.httpResponseCode!=null && 
 				(this.httpResponseCode.intValue() < 200 || this.httpResponseCode.intValue()>299)) {
@@ -83,8 +84,15 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 	@Override
 	public boolean isValid() {
 		
-		if(this.claims==null || this.claims.size()<=0) {
-			return false;
+		if(TipologiaClaimsNegoziazione.RAW.equals(this.parser)) {
+			if(this.raw==null || StringUtils.isEmpty(this.raw)) {
+				return false;
+			}
+		}
+		else {
+			if(this.claims==null || this.claims.size()<=0) {
+				return false;
+			}
 		}
 		
 		switch (this.parser) {
@@ -98,6 +106,7 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 			}
 			claim = TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
 			return !StringUtils.isEmpty(claim);
+		case RAW:
 		case CUSTOM:
 			return true;
 		}
@@ -115,6 +124,8 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 		case MAPPING:
 			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.RETRIEVE_TOKEN_PARSER_ACCESS_TOKEN);
 			return TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
+		case RAW:
+			return this.raw;
 		case CUSTOM:
 			return null;
 		}
@@ -130,6 +141,7 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 		case MAPPING:
 			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.RETRIEVE_TOKEN_PARSER_REFRESH_TOKEN);
 			return TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
+		case RAW:
 		case CUSTOM:
 			return null;
 		}
@@ -145,6 +157,7 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 		case MAPPING:
 			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.RETRIEVE_TOKEN_PARSER_TOKEN_TYPE);
 			return TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
+		case RAW:
 		case CUSTOM:
 			return null;
 		}
@@ -156,41 +169,48 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 		String tmpIn = null;
 		String tmpOn = null;
 		switch (this.parser) {
-		case OAUTH2_RFC_6749:
+		case OAUTH2_RFC_6749:{
 			tmpIn =  TokenUtilities.getClaimAsString(this.claims,ClaimsNegoziazione.OAUTH2_RFC_6749_EXPIRES_IN);
 			if(tmpIn==null || StringUtils.isEmpty(tmpIn)) {
 				tmpOn =  TokenUtilities.getClaimAsString(this.claims,ClaimsNegoziazione.AZURE_EXPIRES_ON);
 			}
 			break;
-		case MAPPING:
-			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.RETRIEVE_TOKEN_PARSER_EXPIRES_IN);
-			if(claimNames!=null && !claimNames.isEmpty()) {
-				tmpIn = TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
-			}
+		}
+		case MAPPING:{
+			tmpIn = parseMappingExpiresIn();
 			if(tmpIn==null || StringUtils.isEmpty(tmpIn)) {
-				claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.RETRIEVE_TOKEN_PARSER_EXPIRES_ON);
-				if(claimNames!=null && !claimNames.isEmpty()) {
-					tmpOn = TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
-				}
+				tmpOn = parseMappingExpiresOn();
 			}
 			break;
+		}
+		case RAW:{
+			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.RETRIEVE_TOKEN_PARSER_EXPIRES_IN_SECONDS);
+			if(claimNames!=null && !claimNames.isEmpty()) {
+				tmpIn = claimNames.get(0);
+			}
+			break;
+		}
 		case CUSTOM:
 			return null;
 		}
 		
-		if(tmpIn!=null) {
-			// The lifetime in seconds of the access token.  For example, the value "3600" denotes that the access token will
-			// expire in one hour from the time the response was generated.
-			return TokenUtils.convertLifeTimeInSeconds(this.now, tmpIn);
+		return parseDate(tmpIn, tmpOn);
+	}
+	private String parseMappingExpiresIn() {
+		List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.RETRIEVE_TOKEN_PARSER_EXPIRES_IN);
+		if(claimNames!=null && !claimNames.isEmpty()) {
+			return TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
 		}
-		
-		// provo a vedere se ci fosse un claim che indica la data di scadenza in forma https://www.rfc-editor.org/rfc/rfc7519#section-4.1.4
-		if(tmpOn!=null) {
-			return TokenUtils.parseTimeInSecond(tmpOn);
-		}
-		
 		return null;
 	}
+	private String parseMappingExpiresOn() {
+		List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.RETRIEVE_TOKEN_PARSER_EXPIRES_ON);
+		if(claimNames!=null && !claimNames.isEmpty()) {
+			return TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
+		}
+		return null;
+	}
+
 	
 	@Override
 	public Date getRefreshExpired() {
@@ -198,43 +218,61 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 		String tmpOn = null;
 		switch (this.parser) {
 		case OAUTH2_RFC_6749:
-			for (String claim : ClaimsNegoziazione.REFRESH_EXPIRE_IN_CUSTOM_CLAIMS) {
-				String tmpC =  TokenUtilities.getClaimAsString(this.claims, claim);
-				if(tmpC!=null && StringUtils.isNotEmpty(tmpC)) {
-					tmpIn = tmpC;
-					break;
-				}
-			}
-			
+			tmpIn = parseOauth2RFC6749RefreshExpiresIn();
 			if(tmpIn==null || StringUtils.isEmpty(tmpIn)) {
-				for (String claim : ClaimsNegoziazione.REFRESH_EXPIRE_ON_CUSTOM_CLAIMS) {
-					String tmpC =  TokenUtilities.getClaimAsString(this.claims, claim);
-					if(tmpC!=null && StringUtils.isNotEmpty(tmpC)) {
-						tmpOn = tmpC;
-						break;
-					}
-				}
+				tmpOn = parseOauth2RFC6749RefreshExpiresOn();
 			}
-			
 			break;
 			
 		case MAPPING:
-			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.RETRIEVE_TOKEN_PARSER_REFRESH_EXPIRES_IN);
-			if(claimNames!=null && !claimNames.isEmpty()) {
-				tmpIn = TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
-			}
+			tmpIn = parseMappingRefreshExpiresIn();
 			if(tmpIn==null || StringUtils.isEmpty(tmpIn)) {
-				claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.RETRIEVE_TOKEN_PARSER_REFRESH_EXPIRES_ON);
-				if(claimNames!=null && !claimNames.isEmpty()) {
-					tmpOn = TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
-				}
+				tmpOn = parseMappingRefreshExpiresOn();
 			}
 			break;
 			
+		case RAW:
 		case CUSTOM:
 			return null;
 		}
 		
+		return parseDate(tmpIn, tmpOn);
+	}
+	private String parseOauth2RFC6749RefreshExpiresIn() {
+		for (String claim : ClaimsNegoziazione.REFRESH_EXPIRE_IN_CUSTOM_CLAIMS) {
+			String tmpC =  TokenUtilities.getClaimAsString(this.claims, claim);
+			if(tmpC!=null && StringUtils.isNotEmpty(tmpC)) {
+				return tmpC;
+			}
+		}
+		return null;
+	}
+	private String parseOauth2RFC6749RefreshExpiresOn() {
+		for (String claim : ClaimsNegoziazione.REFRESH_EXPIRE_ON_CUSTOM_CLAIMS) {
+			String tmpC =  TokenUtilities.getClaimAsString(this.claims, claim);
+			if(tmpC!=null && StringUtils.isNotEmpty(tmpC)) {
+				return tmpC;
+			}
+		}
+		return null;
+	}
+	private String parseMappingRefreshExpiresIn() {
+		List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.RETRIEVE_TOKEN_PARSER_REFRESH_EXPIRES_IN);
+		if(claimNames!=null && !claimNames.isEmpty()) {
+			return TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
+		}
+		return null;
+	}
+	private String parseMappingRefreshExpiresOn() {
+		List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.RETRIEVE_TOKEN_PARSER_REFRESH_EXPIRES_ON);
+		if(claimNames!=null && !claimNames.isEmpty()) {
+			return TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
+		}
+		return null;
+	}
+	
+	
+	private Date parseDate(String tmpIn, String tmpOn) {
 		if(tmpIn!=null) {
 			// The lifetime in seconds of the access token.  For example, the value "3600" denotes that the access token will
 			// expire in one hour from the time the response was generated.
@@ -259,30 +297,37 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 			tmpScopes = TokenUtilities.getClaimAsString(this.claims,ClaimsNegoziazione.OAUTH2_RFC_6749_SCOPE);
 		}
 		else if(TipologiaClaimsNegoziazione.MAPPING.equals(this.parser)) {
-			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.RETRIEVE_TOKEN_PARSER_SCOPE);
-			List<String> tmpScopesList = TokenUtilities.getFirstClaimAsList(this.claims, claimNames);
-			List<String> lNull = null;
-			if(tmpScopesList!=null && !tmpScopesList.isEmpty()) {
-				List<String> scopes = new ArrayList<>();
-				for (String s : tmpScopesList) {
-					List<String> tmp = readScope(s);
-					if(tmp!=null && !tmp.isEmpty()) {
-						for (String sTmp : tmp) {
-							if(!scopes.contains(sTmp)) {
-								scopes.add(sTmp);
-							}
-						}
-					}
-				}
-				return scopes;
-			}
-			else {
-				return lNull;
-			}
+			return readMappingScopes();
 		}
 		
 		return readScope(tmpScopes);
 	}
+	public List<String> readMappingScopes() {
+		List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.RETRIEVE_TOKEN_PARSER_SCOPE);
+		List<String> tmpScopesList = TokenUtilities.getFirstClaimAsList(this.claims, claimNames);
+		List<String> lNull = null;
+		if(tmpScopesList!=null && !tmpScopesList.isEmpty()) {
+			return readMappingScopes(tmpScopesList);
+		}
+		else {
+			return lNull;
+		}
+	}
+	public List<String> readMappingScopes(List<String> tmpScopesList) {
+		List<String> scopes = new ArrayList<>();
+		for (String s : tmpScopesList) {
+			List<String> tmp = readScope(s);
+			if(tmp!=null && !tmp.isEmpty()) {
+				for (String sTmp : tmp) {
+					if(!scopes.contains(sTmp)) {
+						scopes.add(sTmp);
+					}
+				}
+			}
+		}
+		return scopes;
+	}
+	
 	private List<String> readScope(String tmpScopes) {
 		List<String> lNull = null;
 		if(tmpScopes!=null) {

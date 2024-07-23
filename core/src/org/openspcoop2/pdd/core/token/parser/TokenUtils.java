@@ -30,10 +30,12 @@ import java.util.Date;
  * @version $Rev$, $Date$
  */
 public class TokenUtils {
+	
+	private TokenUtils() {}
 
 	public static Date convertLifeTimeInSeconds(Date now, String exp) {
 		if(exp!=null) {
-			//System.out.println("PARSE ["+exp+"]");
+			/**System.out.println("PARSE ["+exp+"]");*/
 			
 			// The lifetime in seconds of the access token.  For example, the value "3600" denotes that the access token will
 			// expire in one hour from the time the response was generated.
@@ -47,9 +49,10 @@ public class TokenUtils {
 				expIn = expIn.multiply(BigDecimal.valueOf(1000l)); // trasformo in millisecondi
 				lMs = expIn.longValueExact();
 			}catch(ArithmeticException ae) {
-				//System.out.println("PARSE OVERFLOW ["+exp+"]");
-				lMs = Long.MAX_VALUE;
-				expIn = BigDecimal.valueOf(lMs);
+				/**System.out.println("PARSE OVERFLOW ["+exp+"]");*/
+				expIn = BigDecimal.valueOf(Long.MAX_VALUE);
+				lMs = expIn.longValueExact();
+				return new Date(lMs);
 			}
 			
 			if(lMs>0) {
@@ -58,9 +61,9 @@ public class TokenUtils {
 					expIn = expIn.add(BigDecimal.valueOf(now.getTime()));
 					lMs = expIn.longValueExact();
 				}catch(ArithmeticException ae) {
-					//System.out.println("PARSE OVERFLOW 2 ["+exp+"]");
-					lMs = Long.MAX_VALUE;
-					expIn = BigDecimal.valueOf(lMs);
+					/**System.out.println("PARSE OVERFLOW 2 ["+exp+"]");*/
+					expIn = BigDecimal.valueOf(Long.MAX_VALUE);
+					lMs = expIn.longValueExact();
 				}
 								
 				return new Date(lMs);
@@ -72,7 +75,7 @@ public class TokenUtils {
 	public static Date parseTimeInSecond(String dateS) {
 		if(dateS!=null) {
 			
-			//System.out.println("PARSE ["+dateS+"]");
+			/**System.out.println("PARSE ["+dateS+"]");*/
 			
 			//BigInteger date = new BigInteger(dateS); // Fix: per gestire formati con esponenti: es. 1.676363172E9
 			BigDecimal date = new BigDecimal(dateS);
@@ -83,9 +86,9 @@ public class TokenUtils {
 				date = date.multiply(BigDecimal.valueOf(1000l)); // trasformo in millisecondi
 				lMs = date.longValueExact();
 			}catch(ArithmeticException ae) {
-				//System.out.println("PARSE OVERFLOW ["+dateS+"]");
-				lMs = Long.MAX_VALUE;
-				date = BigDecimal.valueOf(lMs);
+				/**System.out.println("PARSE OVERFLOW ["+dateS+"]");*/
+				date = BigDecimal.valueOf(Long.MAX_VALUE);
+				lMs = date.longValueExact();
 			}
 			if(lMs>0) {
 				return new Date(lMs);

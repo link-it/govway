@@ -1,3 +1,9 @@
+2024-07-23  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, GovWayCore]
+	Aggiunta funzionalità OP-1741
+	Nella configurazione di una token policy di negoziazione, è ora possibile indicare di utilizzare direttamente il payload di risposta HTTP come access token.
+
 2024-07-22  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

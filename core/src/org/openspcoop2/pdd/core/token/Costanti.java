@@ -82,6 +82,8 @@ public class Costanti {
 	public static final String RETRIEVE_TOKEN_PARSER_REFRESH_EXPIRES_IN = "token.parser.refresh_expires_in";
 	public static final String RETRIEVE_TOKEN_PARSER_REFRESH_EXPIRES_ON = "token.parser.refresh_expires_on";
 	
+	public static final String RETRIEVE_TOKEN_PARSER_EXPIRES_IN_SECONDS = "token.parser.expires_in_sec"; // raw mode
+	
 	
 	
 	// Token Parser id

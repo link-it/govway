@@ -842,6 +842,44 @@ public class BasicNegoziazioneTokenParserTest {
 			}
 			
 		}
+		
+		
+		
+		
+		// Test 7
+		{
+			System.out.println("Test RawNegoziazioneTokenParser ...");
+			
+			Properties pMapping = new Properties();
+			pMapping.put(Costanti.RETRIEVE_TOKEN_PARSER_EXPIRES_IN_SECONDS, "3700");
+			
+			String rawResponse = "XXXX.YYYY.ZZZZ"; // access token raw
+			BasicNegoziazioneTokenParser tokenParser = new BasicNegoziazioneTokenParser(TipologiaClaimsNegoziazione.RAW, pMapping);
+			InformazioniNegoziazioneToken info = new InformazioniNegoziazioneToken(datiRichiesta, 200, rawResponse, tokenParser);
+						
+			if(!rawResponse.equals(info.getAccessToken())){
+				throw new Exception("Atteso access_token '"+rawResponse+"' trovato '"+info.getAccessToken()+"'");
+			}
+			
+			Date d = info.getExpiresIn();
+			if(d==null) {
+				throw new Exception("Data di scadenza non trovata");
+			}
+			Date now = DateManager.getDate();
+			if(!now.before(d)){
+				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			now = new Date(now.getTime() + (1000*60*60*1));
+			if(!now.before(d)){
+				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			now = new Date(now.getTime() + (1000*60*60*2));
+			if(now.before(d)){
+				throw new Exception("(3) Atteso token scaduto, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+
+			System.out.println("Test RawNegoziazioneTokenParser, access token regolare ok");
+		}
 	}
 
 }
