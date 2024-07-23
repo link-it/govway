@@ -50,6 +50,7 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.slf4j.Logger;
 
 /**
  * ModIBuilderUtils
@@ -715,7 +716,7 @@ public class ModIPropertiesUtils {
 		return false;
 	}
 
-	public static boolean processSecurity(AccordoServizioParteComune aspc, String nomePortType, String azione, boolean isRichiesta, 
+	public static boolean processSecurity(Logger log, AccordoServizioParteComune aspc, String nomePortType, String azione, boolean isRichiesta, 
 			OpenSPCoop2Message message, boolean rest, ModIProperties modiProperties) throws Exception {
 		boolean processSecurity = false;
 		String securityMessageApplicabilita = ModIPropertiesUtils.readPropertySecurityMessageApplicabilita(aspc, nomePortType, azione);
@@ -759,7 +760,7 @@ public class ModIPropertiesUtils {
 					List<String> check = readValues(securityMessageApplicabilitaRichiestaContentType);
 					if(!check.isEmpty()) {
 						try {
-							processSecurity = ContentTypeUtilities.isMatch(message.getContentType(), check);
+							processSecurity = ContentTypeUtilities.isMatch(log, message.getContentType(), check);
 						}catch(Exception e) {
 							throw new ProtocolException(e.getMessage(),e);
 						}
@@ -788,7 +789,7 @@ public class ModIPropertiesUtils {
 					List<String> check = readValues(securityMessageApplicabilitaRispostaContentType);
 					if(!check.isEmpty()) {
 						try {
-							processSecurity = ContentTypeUtilities.isMatch(message.getContentType(), check);
+							processSecurity = ContentTypeUtilities.isMatch(log, message.getContentType(), check);
 						}catch(Exception e) {
 							throw new ProtocolException(e.getMessage(),e);
 						}

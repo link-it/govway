@@ -184,13 +184,14 @@ public class CostantiConnettori {
 		return confidentials;
 	}
 	static {
-    	confidentials.add(CONNETTORE_PASSWORD);
+		confidentials.add(CONNETTORE_PASSWORD);
     	confidentials.add(CONNETTORE_BEARER_TOKEN);
     	confidentials.add(CONNETTORE_APIKEY);
     	confidentials.add(CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
     	confidentials.add(CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
     	confidentials.add(CONNETTORE_HTTPS_KEY_PASSWORD);
-    }
+    	confidentials.add(CONNETTORE_HTTP_PROXY_PASSWORD);
+	}
     
     public static boolean isConfidential(String nome) {
     	return confidentials.contains(nome);

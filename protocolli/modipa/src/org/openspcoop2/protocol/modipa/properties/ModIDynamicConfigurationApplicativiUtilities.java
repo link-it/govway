@@ -268,17 +268,19 @@ public class ModIDynamicConfigurationApplicativiUtilities {
 				
 				StringConsoleItem tokenClientIdItem = (StringConsoleItem) 
 						ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
-						ConsoleItemType.TEXT_EDIT,
+						ConsoleItemType.TEXT_AREA,
 						ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_ID, 
 						ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_LABEL);
+				tokenClientIdItem.setRows(ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_ROWS);
 				tokenClientIdItem.setRequired(true);
 				configuration.addConsoleItem(tokenClientIdItem);
 				
 				StringConsoleItem tokenKIDItem = (StringConsoleItem) 
 						ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
-						ConsoleItemType.TEXT_EDIT,
+						ConsoleItemType.TEXT_AREA,
 						ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_KID_ID, 
 						ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_KID_LABEL);
+				tokenKIDItem.setRows(ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_KID_ROWS);
 				tokenKIDItem.setRequired(false);
 				ConsoleItemInfo info = new ConsoleItemInfo(ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_KID_LABEL);
 				info.setHeaderBody(DynamicHelperCostanti.LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_INFO);
@@ -500,7 +502,7 @@ public class ModIDynamicConfigurationApplicativiUtilities {
 				
 				AbstractConsoleItem<?> tokenClientIdItem = ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_ID);
 				if(tokenClientIdItem!=null) {
-					tokenClientIdItem.setType(ConsoleItemType.TEXT_EDIT);
+					tokenClientIdItem.setType(ConsoleItemType.TEXT_AREA);
 					tokenClientIdItem.setRequired(true);
 					if(tokenPolicyDefined) {
 						tokenClientIdItem.setInfo(null);
@@ -517,7 +519,7 @@ public class ModIDynamicConfigurationApplicativiUtilities {
 				if(tokenKidItem!=null) {
 					// verifico se abilitato il certificato
 					if(booleanModeItemValue!=null && booleanModeItemValue.getValue()!=null && booleanModeItemValue.getValue().booleanValue()) {
-						tokenKidItem.setType(ConsoleItemType.TEXT_EDIT);
+						tokenKidItem.setType(ConsoleItemType.TEXT_AREA);
 					}
 					else {
 						tokenKidItem.setType(ConsoleItemType.HIDDEN);
@@ -835,6 +837,62 @@ public class ModIDynamicConfigurationApplicativiUtilities {
 				}
 			}
 			
+			// Keystore password
+			AbstractConsoleItem<?> keystorePasswordItem = 	
+					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+							ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_ID
+							);
+			if(keystorePasswordItem!=null) {
+				StringProperty keystoreItemValue = 
+						(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_ID);
+				if(keystoreItemValue!=null && keystoreItemValue.getValue()!=null && !"".equals(keystoreItemValue.getValue())) {
+					try {
+						InputValidationUtils.validateTextInput(keystoreItemValue.getValue(), 
+								ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_LABEL +" - "+
+								ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_LABEL);
+					}catch(Exception e) {
+						throw new ProtocolException(e.getMessage(),e);
+					}
+				}
+			}
+			
+			// Key password
+			AbstractConsoleItem<?> keyPasswordItem = 	
+					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+							ModIConsoleCostanti.MODIPA_KEY_PASSWORD_ID
+							);
+			if(keyPasswordItem!=null) {
+				StringProperty keystoreItemValue = 
+						(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_PASSWORD_ID);
+				if(keystoreItemValue!=null && keystoreItemValue.getValue()!=null && !"".equals(keystoreItemValue.getValue())) {
+					try {
+						InputValidationUtils.validateTextInput(keystoreItemValue.getValue(), 
+								ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_LABEL +" - "+
+								ModIConsoleCostanti.MODIPA_KEY_PASSWORD_LABEL);
+					}catch(Exception e) {
+						throw new ProtocolException(e.getMessage(),e);
+					}
+				}
+			}
+			// Key alias
+			AbstractConsoleItem<?> keyAliasItem = 	
+					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+							ModIConsoleCostanti.MODIPA_KEY_ALIAS_ID
+							);
+			if(keyAliasItem!=null) {
+				StringProperty keystoreItemValue = 
+						(StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_ALIAS_ID);
+				if(keystoreItemValue!=null && keystoreItemValue.getValue()!=null && !"".equals(keystoreItemValue.getValue())) {
+					try {
+						InputValidationUtils.validateTextInput(keystoreItemValue.getValue(), 
+								ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_LABEL +" - "+
+								ModIConsoleCostanti.MODIPA_KEY_ALIAS_LABEL);
+					}catch(Exception e) {
+						throw new ProtocolException(e.getMessage(),e);
+					}
+				}
+			}
+			
 			String tokenPolicyName = null;
 			if(!esterno) {
 				
@@ -871,6 +929,22 @@ public class ModIDynamicConfigurationApplicativiUtilities {
 					StringProperty tokenClientIdItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_ID);
 					if(tokenClientIdItemValue==null || tokenClientIdItemValue.getValue()==null || StringUtils.isEmpty(tokenClientIdItemValue.getValue())) {
 						throw new ProtocolException("Deve essere indicato un "+ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_LABEL);
+					}
+					try {
+						InputValidationUtils.validateTextAreaInput(tokenClientIdItemValue.getValue(), 
+								ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_LABEL);
+					}catch(Exception e) {
+						throw new ProtocolException(e.getMessage(),e);
+					}
+					
+					StringProperty tokenKidItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_KID_ID);
+					if(tokenKidItemValue!=null && tokenKidItemValue.getValue()!=null && StringUtils.isNotEmpty(tokenKidItemValue.getValue())) {
+						try {
+							InputValidationUtils.validateTextAreaInput(tokenKidItemValue.getValue(), 
+								ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_KID_LABEL);
+						}catch(Exception e) {
+							throw new ProtocolException(e.getMessage(),e);
+						}
 					}
 					
 					boolean tokenWithHttpsEnabled = false;

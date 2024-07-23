@@ -502,10 +502,12 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 				autenticazioneHttp = apsHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 				
 				if(autenticazioneApiKey==null || StringUtils.isEmpty(autenticazioneApiKey)) {
-					apiKeyHeader = props.get(CostantiDB.CONNETTORE_APIKEY_HEADER);
-					apiKeyValue = props.get(CostantiDB.CONNETTORE_APIKEY);
-					appIdHeader = props.get(CostantiDB.CONNETTORE_APIKEY_APPID_HEADER);
-					appIdValue = props.get(CostantiDB.CONNETTORE_APIKEY_APPID);
+					if(props!=null) {
+						apiKeyHeader = props.get(CostantiDB.CONNETTORE_APIKEY_HEADER);
+						apiKeyValue = props.get(CostantiDB.CONNETTORE_APIKEY);
+						appIdHeader = props.get(CostantiDB.CONNETTORE_APIKEY_APPID_HEADER);
+						appIdValue = props.get(CostantiDB.CONNETTORE_APIKEY_APPID);
+					}
 					
 					autenticazioneApiKey = apsHelper.getAutenticazioneApiKey(autenticazioneApiKey, endpointtype, apiKeyValue);
 					if(ServletUtils.isCheckBoxEnabled(autenticazioneApiKey)) {

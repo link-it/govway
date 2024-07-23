@@ -409,7 +409,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 									else{
 										rilevatoErrore = true;
 										bfExternal.append(CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_FALLITA);
-										if(stato.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)) {
+										if(stato!=null && stato.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)) {
 											bfExternal.append(stato.substring(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA.length()));
 										}
 										else {
@@ -1059,10 +1059,16 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					
 					String autenticazioneHttp = saHelper.getAutenticazioneHttp(null, endpointtype, user);
 					
-					String apiKeyValue = props.get(CostantiDB.CONNETTORE_APIKEY);
-					String apiKeyHeader = props.get(CostantiDB.CONNETTORE_APIKEY_HEADER);
-					String appIdValue = props.get(CostantiDB.CONNETTORE_APIKEY_APPID);
-					String appIdHeader = props.get(CostantiDB.CONNETTORE_APIKEY_APPID_HEADER);
+					String apiKeyValue = null;
+					String apiKeyHeader = null;
+					String appIdValue = null;
+					String appIdHeader = null;
+					if(props!=null) {
+						apiKeyValue = props.get(CostantiDB.CONNETTORE_APIKEY);
+						apiKeyHeader = props.get(CostantiDB.CONNETTORE_APIKEY_HEADER);
+						appIdValue = props.get(CostantiDB.CONNETTORE_APIKEY_APPID);
+						appIdHeader = props.get(CostantiDB.CONNETTORE_APIKEY_APPID_HEADER);
+					}
 					String autenticazioneApiKey = saHelper.getAutenticazioneApiKey(null, endpointtype, apiKeyValue);
 					boolean useOAS3Names=true;
 					boolean useAppId=false;

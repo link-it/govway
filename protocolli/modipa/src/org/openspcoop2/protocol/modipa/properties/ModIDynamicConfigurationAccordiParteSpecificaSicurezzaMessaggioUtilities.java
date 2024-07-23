@@ -1078,7 +1078,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 				ConsoleItemType.TEXT_AREA,
 				ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_KID_ID, 
 				ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_KID_LABEL);
-		profiloSicurezzaOauthKidItem.setRows(1);
+		profiloSicurezzaOauthKidItem.setRows(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_KID_ROWS);
 		ConsoleItemInfo info = new ConsoleItemInfo(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_KID_LABEL);
 		info.setHeaderBody(DynamicHelperCostanti.LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_INFO);
 		if(rest) {
@@ -1101,7 +1101,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 				ConsoleItemType.TEXT_AREA,
 				ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO_ID, 
 				ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO_LABEL);
-		profiloSicurezzaOauthIdentificativoItem.setRows(1);
+		profiloSicurezzaOauthIdentificativoItem.setRows(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO_ROWS);
 		info = new ConsoleItemInfo(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO_LABEL);
 		info.setHeaderBody(DynamicHelperCostanti.LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_INFO);
 		if(rest) {

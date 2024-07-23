@@ -129,11 +129,22 @@ public class Costanti {
 	public static final String RICHIESTA_INOLTRATA_BACKEND_VALORE = "true";
 	
 	public static final MapKey<String> DYNAMIC_MAP_CONTEXT = Map.newMapKey("DYNAMIC_MAP_CONTEXT");
-	@SuppressWarnings("unchecked")
 	public static java.util.Map<String,Object> readDynamicMap(org.openspcoop2.utils.Map<Object> context){
+		return readDynamicMapEngine(context, false);
+	}
+	public static java.util.Map<String,Object> removeDynamicMap(org.openspcoop2.utils.Map<Object> context){
+		return readDynamicMapEngine(context, true);
+	}
+	@SuppressWarnings("unchecked")
+	private static java.util.Map<String,Object> readDynamicMapEngine(org.openspcoop2.utils.Map<Object> context, boolean delete){
 		java.util.Map<String,Object> map = null;
 		if(context!=null && context.containsKey(Costanti.DYNAMIC_MAP_CONTEXT)) {
-			map = (java.util.Map<String,Object>) context.get(Costanti.DYNAMIC_MAP_CONTEXT);
+			if(delete) {
+				map = (java.util.Map<String,Object>) context.remove(Costanti.DYNAMIC_MAP_CONTEXT);
+			}
+			else {
+				map = (java.util.Map<String,Object>) context.get(Costanti.DYNAMIC_MAP_CONTEXT);
+			}
 		}
 		return map;
 	}

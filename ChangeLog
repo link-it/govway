@@ -1,3 +1,41 @@
+2024-07-23  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, GovWayCore]
+	Aggiunta funzionalità OP-1741
+	Nella configurazione di una token policy di negoziazione, è ora possibile indicare di utilizzare direttamente il payload di risposta HTTP come access token.
+
+2024-07-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1739
+	Definendo una trasformazione in cui nella configurazione dell'area di applicabilità veniva impostato "Content-Type: application/json", 
+	la trasformazione non veniva applicata se nella richiesta o nella risposta era presente un header "Content-Type" con un valore contenente altre informazioni oltre al tipo base, 
+	ad esempio: "application/json; charset=utf-8".
+
+2024-07-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2024-32007, CVE-2024-41172: 
+		aggiornata libreria 'org.apache.cxf:*' alla versione 3.6.4
+		aggiornata libreria 'org.ow2.asm:asm' alla versione 9.7
+		aggiornata libreria 'com.fasterxml.woodstox:woodstox-core' alla versione 6.6.2
+
+2024-07-19  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, ProtocolloModIPA]
+	Aggiunta funzionalità OP-1737
+	Aggiunta, nelle politiche di Rate Limiting, la possibilità di conteggiare per nome dell'organizzazione ottenuta accedendo alle API di interoperabilità della PDND. 
+	È stata inoltre aggiunta la possibilità di modificare il comportamento di default per far fallire la transazione 
+	nel caso in cui il recupero delle informazioni sul client o sull'organizzazione tramite API PDND fallisca.
+
+2024-07-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, ProtocolloModIPA]
+	Risolto Bug OP-1735
+	(https://github.com/link-it/govway/issues/161)
+	Aggiunta validazione dei campi contenenti codici crittografici (es. clientId, KID relativi ai token pdnd).
+
 2024-07-17  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]

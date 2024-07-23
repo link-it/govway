@@ -34,7 +34,9 @@ import jakarta.xml.soap.SOAPException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.mime.MultipartUtils;
+import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.slf4j.Logger;
 
 
 
@@ -189,36 +191,39 @@ public class ContentTypeUtilities {
 	
 	// match
 	
-	public static boolean isMatch(String contentType, String contentTypeAtteso) throws Exception {
+	public static boolean isMatch(Logger logNullable, String contentTypeParam, String contentTypeAtteso) throws UtilsException {
 		List<String> l = new ArrayList<>();
 		l.add(contentTypeAtteso);
-		return isMatch(contentType, l);
+		return isMatch(logNullable, contentTypeParam, l);
 	}
-	public static boolean isMatch(String contentType, List<String> contentTypeAttesi) throws Exception {
+	public static boolean isMatch(Logger logNullable, String contentTypeParam, List<String> contentTypeAttesi) throws UtilsException {
 		
-		if(contentTypeAttesi==null || contentTypeAttesi.size()<=0) {
+		if(contentTypeAttesi==null || contentTypeAttesi.isEmpty()) {
 			return true;
 		}
+		
+		String baseTypeHttp = ContentTypeUtilities.readBaseTypeFromContentType(contentTypeParam);
 		
 		boolean found = false;
 		for (String checkContentType : contentTypeAttesi) {
 			if("empty".equals(checkContentType)){
-				if(contentType==null || "".equals(contentType)) {
+				if(baseTypeHttp==null || "".equals(baseTypeHttp)) {
 					found = true;
 					break;
 				}
 			}
 			else {
-				if(contentType==null) {
+				if(baseTypeHttp==null) {
 					continue;
 				}
 				if(checkContentType==null || "".equals(checkContentType) ||
-						checkContentType.contains("/")==false ||
+						!checkContentType.contains("/") ||
 						checkContentType.startsWith("/") ||
 						checkContentType.endsWith("/")) {
-					throw new Exception("Configurazione errata, content type indicato ("+checkContentType+") possiede un formato non corretto (atteso: type/subtype)");
+					throw new UtilsException("Configurazione errata, content type indicato ("+checkContentType+") possiede un formato non corretto (atteso: type/subtype)");
 				}
 				String [] ctVerifica = checkContentType.split("/");
+				String contentTypeEscaped = null;
 				if(ctVerifica!=null && ctVerifica.length==2) {
 					StringBuilder bf = new StringBuilder();
 					String part1 = ctVerifica[0].trim();
@@ -227,7 +232,7 @@ public class ContentTypeUtilities {
 					}
 					else {
 						// escape special char
-						part1 = part1.replaceAll("\\+", "\\\\+");
+						part1 = part1.replace("+", "\\+");
 						bf.append(part1);
 					}
 					bf.append("/");
@@ -239,17 +244,49 @@ public class ContentTypeUtilities {
 						bf.append("(.+)");
 						String sub = part2.substring(1);
 						// escape special char
-						sub = sub.replaceAll("\\+", "\\\\+");
+						sub = sub.replace("+", "\\+");
 						bf.append(sub);
 					}
 					else {
 						// escape special char
-						part2 = part2.replaceAll("\\+", "\\\\+");
+						part2 = part2.replace("+", "\\+");
 						bf.append(part2);
 					}
-					checkContentType = bf.toString();
+					contentTypeEscaped = bf.toString();
 				}
-				if(RegularExpressionEngine.isMatch(contentType, checkContentType)) {
+				boolean isMatchEscaped = false; // gestisce le espressioni type/* e */*+xml
+				boolean isMatchRegExp = false; // gestisce le espressioni regexpType/regexpSubType
+				if(contentTypeEscaped!=null) {
+					try {
+						isMatchEscaped = RegularExpressionEngine.isMatch(baseTypeHttp, contentTypeEscaped);
+					}catch(RegExpNotFoundException notFound) {
+						// ignore
+					}catch(Exception e) {
+						throw new UtilsException(e.getMessage(),e);
+					}
+				}
+				if(!isMatchEscaped) {
+					try {
+						isMatchRegExp = RegularExpressionEngine.isMatch(baseTypeHttp, checkContentType);
+					}catch(RegExpNotFoundException notFound) {
+						// ignore
+					}catch(Exception e) {
+						if(contentTypeEscaped==null) {
+							throw new UtilsException(e.getMessage(),e);
+						}
+						else {
+							// ignore
+							// per evitare errori tipo:
+							//org.openspcoop2.utils.UtilsException: Validazione del pattern indicato [*/*son] fallita: Dangling meta character '*' near index 0
+							//                                                                        */*son
+							//                                                                        ^
+							if(logNullable!=null) {
+								logNullable.debug("isMatch failed: "+e.getMessage(),e);
+							}
+						}
+					}
+				}
+				if(isMatchEscaped || isMatchRegExp) {
 					found = true;
 					break;
 				}

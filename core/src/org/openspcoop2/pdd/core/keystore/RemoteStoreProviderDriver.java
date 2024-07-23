@@ -328,10 +328,10 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 	
 	
 	@Override
-	public RemoteStoreClientInfo readClientInfo(String keyId, String clientId, RemoteStoreConfig remoteConfig)
+	public RemoteStoreClientInfo readClientInfo(String keyId, String clientId, RemoteStoreConfig remoteConfig, org.openspcoop2.utils.Map<Object> context)
 			throws UtilsException {
 		try {
-			return readClientInfoEngine(keyId, clientId, remoteConfig);
+			return readClientInfoEngine(keyId, clientId, remoteConfig, context);
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -340,7 +340,7 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 	public static void setCreateEntryIfNotExists(boolean createEntryIfNotExists) {
 		RemoteStoreProviderDriver.createEntryIfNotExists = createEntryIfNotExists;
 	}
-	private RemoteStoreClientInfo readClientInfoEngine(String keyId, String clientId, RemoteStoreConfig remoteConfig) throws KeystoreException {
+	private RemoteStoreClientInfo readClientInfoEngine(String keyId, String clientId, RemoteStoreConfig remoteConfig, org.openspcoop2.utils.Map<Object> context) throws KeystoreException {
 		
 		RemoteStoreClientDetails clientDetails = null;
 		try {
@@ -370,13 +370,13 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 			
 			RemoteStoreConfig remoteConfigUse = (remoteConfig!=null && remoteConfig.isMultitenant()) ? remoteConfig : this.remoteStoreConfig;
 			
-			String clientJson = PDNDConfigUtilities.readClientDetails(remoteConfigUse, propertiesReader, clientId, this.log);
+			String clientJson = PDNDConfigUtilities.readClientDetails(remoteConfigUse, propertiesReader, context, clientId, this.log);
 			String organizationId = null;
 			String organizationJson = null;
 			if(clientJson!=null) {
-				organizationId = PDNDConfigUtilities.readOrganizationId(propertiesReader, clientJson, this.log);
+				organizationId = PDNDConfigUtilities.readOrganizationId(propertiesReader, context, clientJson, this.log);
 				if(organizationId!=null) {
-					organizationJson = PDNDConfigUtilities.readOrganizationDetails(remoteConfigUse, propertiesReader, organizationId, this.log);
+					organizationJson = PDNDConfigUtilities.readOrganizationDetails(remoteConfigUse, propertiesReader, context, organizationId, this.log);
 				}
 			}
 			

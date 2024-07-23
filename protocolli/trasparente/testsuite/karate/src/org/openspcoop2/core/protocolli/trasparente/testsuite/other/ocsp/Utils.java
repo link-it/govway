@@ -273,6 +273,10 @@ public class Utils {
 			request.addHeader("GovWay-TestSuite-JWS",buildJwt(operazione));
 		}
 		
+		if(TokenPolicyValidazioneTest.apiTLS.equals(api)) {
+			request.addHeader(HttpConstants.AUTHORIZATION,HttpConstants.AUTHORIZATION_PREFIX_BEARER+"TOKEN-OPACO");
+		}
+		
 		if(HttpRequestMethod.POST.equals(method) && HttpConstants.CONTENT_TYPE_SOAP_1_1.equals(contentType)) {
 			request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, operazione);
 		}
@@ -362,6 +366,17 @@ public class Utils {
 				error = org.openspcoop2.core.protocolli.trasparente.testsuite.pkcs11.x509.Utils.BAD_REQUEST;
 				msg = org.openspcoop2.core.protocolli.trasparente.testsuite.pkcs11.x509.Utils.BAD_REQUEST_MESSAGE;
 				errorHttpNull = true;
+			}
+			
+			else if(api.equals(TokenPolicyNegoziazioneTest.api)) {
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_NEGOZIAZIONE_TOKEN);
+			}
+			
+			else if(TokenPolicyValidazioneTest.apiTLS.equals(api)) {
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_TOKEN);
+				code = 401;
+				error = org.openspcoop2.core.protocolli.trasparente.testsuite.pkcs11.x509.Utils.INVALID_TOKEN;
+				msg = org.openspcoop2.core.protocolli.trasparente.testsuite.pkcs11.x509.Utils.INVALID_TOKEN_MESSAGE;
 			}
 			
 			String errorHttp = errorHttpNull ? null : error;
@@ -559,6 +574,9 @@ public class Utils {
 		}
 		
 		ConfigLoader.resetCachePrimoLivello();
+		if(TokenPolicyNegoziazioneTest.api.equals(api) || TokenPolicyValidazioneTest.apiTLS.equals(api)) {
+			ConfigLoader.resetCache(false, "GestioneToken");
+		}
 		
 		// attendo errore connection refused
 		if(get) {

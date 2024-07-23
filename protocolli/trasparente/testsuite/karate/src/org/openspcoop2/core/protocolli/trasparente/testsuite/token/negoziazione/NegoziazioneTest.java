@@ -1820,7 +1820,13 @@ public class NegoziazioneTest extends ConfigLoader {
 		else {
 			
 			long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_NEGOZIAZIONE_TOKEN);
-			verifyOk(response, 503, HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
+			if(NegoziazioneCustomTest.api_negoziazione.equals(api) && "raw".equals(operazione)) {
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.HTTP_5xx);
+				assertEquals(500, response.getResultHTTPOperation());
+			}
+			else {
+				verifyOk(response, 503, HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
+			}
 			
 			if(tokenInfoCheck==null || tokenInfoCheck.length==0) {
 				// una registrazione avviene comunque

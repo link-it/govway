@@ -63,7 +63,8 @@ public class RemoteStoreProvider implements IRemoteStoreProvider {
 	}
 	
 	@Override
-	public RemoteStoreClientInfo readClientInfo(String keyId, String clientId, RemoteStoreConfig remoteConfig)
+	public RemoteStoreClientInfo readClientInfo(String keyId, String clientId, RemoteStoreConfig remoteConfig,
+			org.openspcoop2.utils.Map<Object> context)
 			throws UtilsException {
 		throw new UtilsException("Not Implemented");
 	}

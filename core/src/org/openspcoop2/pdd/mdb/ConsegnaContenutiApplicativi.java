@@ -3735,7 +3735,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									validazioneAbilitata = hasContent && (isFault==false);
 								}
 								else {
-									validazioneAbilitata = ValidatoreMessaggiApplicativiRest.isValidazioneAbilitata(proprietaPorta, responseMessage, codiceRitornato);
+									validazioneAbilitata = ValidatoreMessaggiApplicativiRest.isValidazioneAbilitata(this.log,proprietaPorta, responseMessage, codiceRitornato);
 								}
 								if( validazioneAbilitata ){
 									

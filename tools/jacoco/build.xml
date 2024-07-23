@@ -1332,6 +1332,101 @@
 			</else>
                 </if>
 
+		<!-- CLI ConfigLoader -->
+		<var name="projectAnalyze" value="cli-config-loader"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_cli_configLoader" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_cli_configLoader" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_cli_configLoader}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="configLoader"/>
+					<equals arg1="${govway.group}" arg2="config-loader"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="tools/command_line_interfaces/config_loader/src"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},tools/command_line_interfaces/config_loader/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="cli-config-loader"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/command_line_interfaces/config_loader"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/command_line_interfaces/config_loader/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_cli-configLoader*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+                <!-- CLI GovWayVault -->
+		<var name="projectAnalyze" value="cli-govway-vault"/>
+		<if>
+                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
+                        <then>
+				<var name="_jacocoSkipProject_cli_govwayVault" value="false"/>                                
+                        </then>
+			<else>
+				<condition property="_jacocoSkipProject_cli_govwayVault" value="true" else="false">
+					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
+				</condition>	
+			</else>
+                </if>
+		<if>
+			<and>
+				<isfalse value="${_jacocoSkipProject_cli_govwayVault}"/>
+				<or>
+			                <equals arg1="${govway.group}" arg2="all"/>
+					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+					<equals arg1="${govway.group}" arg2="govwayVault"/>
+					<equals arg1="${govway.group}" arg2="govway-vault"/>
+				</or>
+			</and>
+                        <then>
+				<if>
+					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
+					<then>
+						<var name="jacoco.sources.analyze" value="tools/command_line_interfaces/govway_vault/src"/>
+					</then>
+					<else>
+						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},tools/command_line_interfaces/govway_vault/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="cli-govway-vault"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/command_line_interfaces/govway_vault"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/command_line_interfaces/govway_vault/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_cli-vault*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>
+
 
 		<!-- Execute jacoco-reports for ant -->
 		<echo message="Avvio analisi jacoco per i sorgenti: ${jacoco.sources.analyze}"/>
@@ -1375,6 +1470,8 @@
 					<fileset dir="${openspcoop2}/tools/rs/monitor/server/src"/>
 					<fileset dir="${openspcoop2}/tools/batch/statistiche/src"/>
 					<fileset dir="${openspcoop2}/tools/batch/runtime-repository/src"/>
+					<fileset dir="${openspcoop2}/tools/command_line_interfaces/config_loader/src"/>
+					<fileset dir="${openspcoop2}/tools/command_line_interfaces/govway_vault/src"/>
 				</sourcefiles>
 			</structure>
 			<!--  to produce reports in different formats.  -->

@@ -42,7 +42,7 @@ public class RemoteStoreClientInfo implements Serializable {
 	
 	private org.openspcoop2.utils.certificate.remote.RemoteStoreClientInfo clientInfo;
 	
-	public RemoteStoreClientInfo(String keyId, String clientId, RemoteStoreConfig remoteStoreConfig, IRemoteStoreProvider provider) throws SecurityException {
+	public RemoteStoreClientInfo(String keyId, String clientId, RemoteStoreConfig remoteStoreConfig, IRemoteStoreProvider provider, org.openspcoop2.utils.Map<Object> context) throws SecurityException {
 		try {
 			this.keyId = keyId;
 			if(keyId==null) {
@@ -59,7 +59,7 @@ public class RemoteStoreClientInfo implements Serializable {
 			if(this.remoteStoreName==null) {
 				throw new SecurityException("RemoteStoreConfig name undefined");
 			}
-			this.clientInfo = provider.readClientInfo(this.keyId, this.clientId, remoteStoreConfig);
+			this.clientInfo = provider.readClientInfo(this.keyId, this.clientId, remoteStoreConfig, context);
 		}catch(Exception e) {
 			throw new SecurityException(e.getMessage(),e);
 		}

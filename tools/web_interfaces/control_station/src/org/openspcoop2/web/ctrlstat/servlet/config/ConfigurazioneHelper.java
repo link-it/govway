@@ -15710,14 +15710,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		List<String> protocolli = null;
 		boolean groupByKey = false;
 		
-		if(policy.getGroupBy().isEnabled()){
+		if(policy!=null && policy.getGroupBy()!=null && policy.getGroupBy().isEnabled()){
 			
 			// protocollo
 			protocolli = this.confCore.getProtocolli();
 			
 			// group by by key se non sono richiesti campionamenti statistici
-			if(infoPolicy!=null && infoPolicy.isIntervalloUtilizzaRisorseStatistiche()==false && 
-					infoPolicy.isDegradoPrestazionaleUtilizzaRisorseStatistiche()==false){
+			if(infoPolicy!=null && !infoPolicy.isIntervalloUtilizzaRisorseStatistiche() && 
+					!infoPolicy.isDegradoPrestazionaleUtilizzaRisorseStatistiche()){
 				groupByKey = true;
 			}
 		}
@@ -15733,17 +15733,21 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.NOTE);
 		dati.add(de);
 		
+		boolean policyGropuByEnabled = policy!=null && policy.getGroupBy()!=null && policy.getGroupBy().isEnabled();
+		
 		// stato
 		addToDatiDataElementStato_postBackViaPOST(dati, ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_ENABLED, 
-				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_ENABLED_STATO, policy.getGroupBy().isEnabled(), true, false, false, false);
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_ENABLED_STATO, 
+				policyGropuByEnabled, 
+				true, false, false, false);
 		
-		/*
+		/**
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_ENABLED);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_ENABLED);
 		de.setType(DataElementType.SELECT);
 		de.setValues(ConfigurazioneCostanti.CONFIGURAZIONE_STATI_COLLEZIONAMENTO);
-		if(policy.getGroupBy().isEnabled()){
+		if(policyGropuByEnabled){
 			de.setSelected(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_COLLEZIONAMENTO_ABILITATO);
 			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_COLLEZIONAMENTO_ABILITATO);
 		}
@@ -15755,7 +15759,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.add(de);
 		*/
 		
-		if(policy.getGroupBy().isEnabled()){
+		if(policyGropuByEnabled){
 		
 			
 			// --- GENERALI ---
@@ -16026,11 +16030,25 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN_CLAIMS);
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN_CLAIMS);
-					de.setValues(CostantiControlStation.TOKEN_VALUES_WITHOUT_ISSUER);
-					de.setLabels(CostantiControlStation.LABEL_TOKEN_VALUES_WITHOUT_ISSUER);
+					
+					boolean modiPdnd = applicativa && policy.getFiltro()!=null && 
+							org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(policy.getFiltro().getProtocollo());
+					if(modiPdnd) {
+						de.setValues(CostantiControlStation.TOKEN_VALUES_WITHOUT_ISSUER_CON_PDND_INFO);
+						de.setLabels(CostantiControlStation.LABEL_TOKEN_VALUES_WITHOUT_ISSUER_CON_PDND);
+					}
+					else {
+						de.setValues(CostantiControlStation.TOKEN_VALUES_WITHOUT_ISSUER);
+						de.setLabels(CostantiControlStation.LABEL_TOKEN_VALUES_WITHOUT_ISSUER);
+					}
 					de.setSelezionati(tokenSelezionatiSenzaIssuer);
 					de.setType(DataElementType.MULTI_SELECT);
-					de.setRows(4); 
+					if(modiPdnd) {
+						de.setRows(5);
+					}
+					else {
+						de.setRows(4);
+					}
 					de.setRequired(true);
 					dati.add(de);
 				}

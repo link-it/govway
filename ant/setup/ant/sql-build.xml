@@ -87,6 +87,22 @@
 			<param name="token" value="@PDDCONSOLE_PASSWORD@"/>
 			<param name="value" value="${antinstaller_pddconsole_password_md5}"/>
 		</antcall>
+		<if>
+			<not>
+				<or>
+					<istrue value="${aantinstaller_stateful}"/>
+					<istrue value="${antinstaller_timer_consegna}"/>
+					<istrue value="${antinstaller_integration_manager}"/>
+				</or>
+			</not>
+			<then>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="'SCMAU'"/>
+					<param name="value" value="'SCAU'"/> <!-- elimino permesso M -->
+				</antcall>
+			</then>
+		</if>
 
 		<concat destfile="${file}" append="yes" >
 			<header filtering="no" trimleading="yes">

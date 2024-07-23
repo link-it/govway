@@ -320,6 +320,8 @@ public class ConfigLoader {
 									s.contains("Errore durante l'eliminazione del soggetto [spc/SoggettoInternoVaultTestFruitore]")
 									||
 									s.contains("Porta di Dominio [PdDENTE] non è eliminabile poichè di dominio interno")
+									||
+									s.contains("Errore durante l'eliminazione della porta di dominio [PdDENTE]")
 							)
 					)
 			) {

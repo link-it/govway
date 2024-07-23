@@ -27,11 +27,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.RegistroPlugin;
 import org.openspcoop2.core.config.RegistroPlugins;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
 
@@ -48,13 +50,11 @@ public class PluginManager {
 	
 	private Date expireDate;
 	private int expireSeconds;
-	//private Boolean semaphore_expire = true;
-	private final org.openspcoop2.utils.Semaphore lock_expire = new org.openspcoop2.utils.Semaphore("PluginManager-expire");
+	private final org.openspcoop2.utils.Semaphore lockExpire = new org.openspcoop2.utils.Semaphore("PluginManager-expire");
 	
-	private PluginsImage plugins_image = new PluginsImage();
-	private PluginsImage plugins_image_switch_old = null;
-	//private Boolean semaphore_image = true;
-	private final org.openspcoop2.utils.Semaphore lock_image = new org.openspcoop2.utils.Semaphore("PluginManager-image");
+	private PluginsImage pluginsImage = new PluginsImage();
+	private PluginsImage pluginsImageSwitchOld = null;
+	private final org.openspcoop2.utils.Semaphore lockImage = new org.openspcoop2.utils.Semaphore("PluginManager-image");
 
 	protected PluginManager(IRegistroPluginsReader registroPluginsReader, int expireSeconds) {
 		this.registroPluginsReader = registroPluginsReader;
@@ -67,26 +67,25 @@ public class PluginManager {
 			if(this.expireDate==null || nowDate.after(this.expireDate)) {
 				this.update(log, nowDate);
 			}
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			log.error("Update plugin image failed: "+t.getMessage(),t);
 		}
 	}
-	public void updateFromConsoleConfig(Logger log) throws Exception {
+	public void updateFromConsoleConfig(Logger log) {
 		try {
 			if(this.expireDate!=null) {
 				Date expired = new Date(this.expireDate.getTime()+1);
 				this.update(log, expired);
 			}
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			log.error("Update plugin image failed: "+t.getMessage(),t);
 		}
 	}
-	private void update(Logger log, Date nowDate) throws Exception {
+	private void update(Logger log, Date nowDate) throws UtilsException, CoreException {
 		
 		boolean update = false;
 		
-		//synchronized (this.semaphore_expire) {
-		this.lock_expire.acquire("update");
+		this.lockExpire.acquire("updateExpireDate");
 		try {
 			if(this.expireDate==null || nowDate.after(this.expireDate)) {
 				this.expireDate = new Date(nowDate.getTime()+(this.expireSeconds*1000));
@@ -95,7 +94,7 @@ public class PluginManager {
 				// gli altri thread che entrano in questo metodo trovano la lor nowDate inferiore ad expireDate
 			}
 		}finally {
-			this.lock_expire.release("update");
+			this.lockExpire.release("updateExpireDate");
 		}
 		
 		if(update) {
@@ -109,10 +108,9 @@ public class PluginManager {
 		}
 	}
 	
-	private void update(Logger log, RegistroPlugins pluginsParam) throws Exception {
+	private void update(Logger log, RegistroPlugins pluginsParam) throws UtilsException {
 		
-		//synchronized (this.semaphore_image) {
-		this.lock_image.acquire("update");
+		this.lockImage.acquire("update");
 		try {
 			
 			RegistroPlugins plugins = null;
@@ -125,8 +123,8 @@ public class PluginManager {
 	
 			// verifico prima quelli da eliminare
 			List<String> pluginDaEliminare = new ArrayList<>();
-			if(this.plugins_image!=null && !this.plugins_image.plugins.isEmpty()) {
-				for (String pluginName : this.plugins_image.plugins.keySet()) {
+			if(this.pluginsImage!=null && !this.pluginsImage.plugins.isEmpty()) {
+				for (String pluginName : this.pluginsImage.plugins.keySet()) {
 					boolean found = false;
 					if(plugins.sizePluginList()>0) {
 						for (RegistroPlugin pluginNew : plugins.getPluginList()) {
@@ -149,7 +147,7 @@ public class PluginManager {
 				HashMap<String, String> mapPosizioniToNomi = new HashMap<>();
 				for (RegistroPlugin pluginNew : plugins.getPluginList()) {
 					
-					if(StatoFunzionalita.ABILITATO.equals(pluginNew.getStato())==false) {
+					if(!StatoFunzionalita.ABILITATO.equals(pluginNew.getStato())) {
 						continue;
 					}
 					if(pluginNew.sizeArchivioList()<=0) {
@@ -160,10 +158,10 @@ public class PluginManager {
 					mapPosizioniToNomi.put(posPad, pluginNew.getNome());
 					
 					// check se esiste
-					if(this.plugins_image.plugins.containsKey(pluginNew.getNome())) {
+					if(this.pluginsImage!=null && this.pluginsImage.plugins.containsKey(pluginNew.getNome())) {
 						
 						// check se e' stato aggiornato
-						Plugin active = this.plugins_image.plugins.get(pluginNew.getNome());
+						Plugin active = this.pluginsImage.plugins.get(pluginNew.getNome());
 						if(pluginNew.getData().after(active.getDate())) {
 							
 							// Da aggiornare
@@ -173,7 +171,7 @@ public class PluginManager {
 							Plugin pluginNewInstance = null;
 							try {
 								pluginNewInstance = new Plugin(pluginNew);
-							}catch(Throwable e) {
+							}catch(Exception e) {
 								log.error("Errore durante l'istanziazione del plugin '"+pluginNew.getNome()+"': "+e.getMessage(),e);
 							}
 							if(pluginNewInstance!=null) {
@@ -193,7 +191,7 @@ public class PluginManager {
 						Plugin pluginNewInstance = null;
 						try {
 							pluginNewInstance = new Plugin(pluginNew);
-						}catch(Throwable e) {
+						}catch(Exception e) {
 							log.error("Errore durante l'istanziazione del plugin '"+pluginNew.getNome()+"': "+e.getMessage(),e);
 						}
 						if(pluginNewInstance!=null) {
@@ -210,27 +208,29 @@ public class PluginManager {
 					posizioni.addAll(mapPosizioniToNomi.keySet());
 					Collections.sort(posizioni);
 					for (String pos : posizioni) {
-						newImage.plugins_active_ordered.add(mapPosizioniToNomi.get(pos));
+						newImage.pluginsActiveOrdered.add(mapPosizioniToNomi.get(pos));
 					}
 				}
 			}
 			
 			// effettuo switch
-			this.plugins_image_switch_old = this.plugins_image;
-			this.plugins_image = newImage;
+			this.pluginsImageSwitchOld = this.pluginsImage;
+			this.pluginsImage = newImage;
 			
 			// Effettuo la chiusura di quelli da eliminare
 			if(!pluginDaEliminare.isEmpty()) {
 				for (String pluginName : pluginDaEliminare) {
 					try {
-						this.plugins_image_switch_old.plugins.get(pluginName).close();
-					}catch(Throwable t) {}
+						this.pluginsImageSwitchOld.plugins.get(pluginName).close();
+					}catch(Exception t) {
+						// ignore
+					}
 				}
 			}
-			this.plugins_image_switch_old = null;
+			this.pluginsImageSwitchOld = null;
 					
 		}finally {
-			this.lock_image.release("update");
+			this.lockImage.release("update");
 		}
 		
 	}
@@ -238,55 +238,57 @@ public class PluginManager {
 	public void close() {
 		
 		// Chiusura di tutti
-		//synchronized (this.semaphore_image) {
-		this.lock_image.acquireThrowRuntime("close");
+		this.lockImage.acquireThrowRuntime("close");
 		try {
 			
-			if(this.plugins_image!=null && this.plugins_image.plugins.size()>0) {
-				for (Plugin plugin : this.plugins_image.plugins.values()) {
+			if(this.pluginsImage!=null && this.pluginsImage.plugins.size()>0) {
+				for (Plugin plugin : this.pluginsImage.plugins.values()) {
 					try {
 						plugin.close();
-					}catch(Throwable t) {}
+					}catch(Exception t) {
+						// close
+					}
 				}
 			}
 			
-			if(this.plugins_image_switch_old!=null) {
-				if(this.plugins_image_switch_old.plugins.size()>0) {
-					for (Plugin plugin : this.plugins_image_switch_old.plugins.values()) {
-						try {
-							plugin.close();
-						}catch(Throwable t) {}
+			if(this.pluginsImageSwitchOld!=null &&
+				this.pluginsImageSwitchOld.plugins.size()>0) {
+				for (Plugin plugin : this.pluginsImageSwitchOld.plugins.values()) {
+					try {
+						plugin.close();
+					}catch(Exception t) {
+						// close
 					}
 				}
 			}
 			
 		}finally {
-			this.lock_image.release("close");
+			this.lockImage.release("close");
 		}
 	}
 	
 
-	public Class<?> findClass(Logger log, TipoPlugin tipoClasseDaRicercare, String className) throws Exception {
-		return this._findClass(log, tipoClasseDaRicercare, null, className, true);
+	public Class<?> findClass(Logger log, TipoPlugin tipoClasseDaRicercare, String className) throws ClassNotFoundException {
+		return this.findClassEngine(log, tipoClasseDaRicercare, null, className, true);
 	}
-	public Class<?> findClass(Logger log, TipoPlugin tipoClasseDaRicercare, String className, boolean searchDefaultClassLoader) throws Exception {
-		return this._findClass(log, tipoClasseDaRicercare, null, className, searchDefaultClassLoader);
-	}
-	
-	public Class<?> findClass(Logger log, String tipoClasseDaRicercare, String className) throws Exception {
-		return this._findClass(log, null, tipoClasseDaRicercare, className, true);
-	}
-	public Class<?> findClass(Logger log, String tipoClasseDaRicercare, String className, boolean searchDefaultClassLoader) throws Exception {
-		return this._findClass(log, null, tipoClasseDaRicercare, className, searchDefaultClassLoader);
+	public Class<?> findClass(Logger log, TipoPlugin tipoClasseDaRicercare, String className, boolean searchDefaultClassLoader) throws ClassNotFoundException {
+		return this.findClassEngine(log, tipoClasseDaRicercare, null, className, searchDefaultClassLoader);
 	}
 	
+	public Class<?> findClass(Logger log, String tipoClasseDaRicercare, String className) throws ClassNotFoundException {
+		return this.findClassEngine(log, null, tipoClasseDaRicercare, className, true);
+	}
+	public Class<?> findClass(Logger log, String tipoClasseDaRicercare, String className, boolean searchDefaultClassLoader) throws ClassNotFoundException {
+		return this.findClassEngine(log, null, tipoClasseDaRicercare, className, searchDefaultClassLoader);
+	}
 	
 	
-	private Class<?> _findClass(Logger log, TipoPlugin tipoClasseDaRicercare,String tipoClasseCustomDaRicercare, String className, boolean searchDefaultClassLoader) throws Exception {
+	
+	private Class<?> findClassEngine(Logger log, TipoPlugin tipoClasseDaRicercare,String tipoClasseCustomDaRicercare, String className, boolean searchDefaultClassLoader) throws ClassNotFoundException {
 
 		checkUpdate(log);
 		
-		// TODO: Gestire cache, serve ??
+		// Se server gestire tramite una cache
 
 		// Se abilitato prima cerco sempre nel classloader attuale.
 		// Il classloader dinamico verrà utilizzato SOLAMENTE se il tipo non viene risolto prima tramite i meccanismi standard. 
@@ -301,33 +303,13 @@ public class PluginManager {
 			}
 		}
 		
-		if(this.plugins_image!=null) { // potrebbe essere disabilitato
-			PluginsImage image = this.plugins_image; // lo assegno, in modo che se avviene un update, cambia il riferimento
+		if(this.pluginsImage!=null) { // potrebbe essere disabilitato
+			PluginsImage image = this.pluginsImage; // lo assegno, in modo che se avviene un update, cambia il riferimento
 			
-			if(image!=null && image.plugins_active_ordered.size()>0) {
-				List<String> list_plugins_active_ordered = image.plugins_active_ordered;
-				for (String pluginName : list_plugins_active_ordered) {
-					
-					Plugin plugin = image.plugins.get(pluginName);
-					if(plugin!=null) {
-						ClassLoader classLoader = null;
-						if(tipoClasseDaRicercare!=null) {
-							classLoader = plugin.getClassLoader(tipoClasseDaRicercare);
-						}else {
-							classLoader = plugin.getClassLoader(tipoClasseCustomDaRicercare);
-						}
-						if(classLoader!=null) {
-							Class<?> c = null;
-							try {
-								c = classLoader.loadClass(className);
-							}catch(ClassNotFoundException cNotFoun) {
-							}
-							if(c!=null) {
-								return c;
-							}
-						}
-					}
-					
+			if(!image.pluginsActiveOrdered.isEmpty()) {
+				Class<?> c = findClassEngine(image, tipoClasseDaRicercare, tipoClasseCustomDaRicercare, className);
+				if(c!=null) {
+					return c;
 				}
 			}
 		}
@@ -337,12 +319,47 @@ public class PluginManager {
 		}
 		return null;
 	}
+	private Class<?> findClassEngine(PluginsImage image, TipoPlugin tipoClasseDaRicercare, String tipoClasseCustomDaRicercare, String className){
+		List<String> listPluginsActiveOrdered = image.pluginsActiveOrdered;
+		for (String pluginName : listPluginsActiveOrdered) {
+			
+			Plugin plugin = image.plugins.get(pluginName);
+			if(plugin!=null) {
+				Class<?> c = findClassEngineByPlugin(plugin, tipoClasseDaRicercare, tipoClasseCustomDaRicercare, className);
+				if(c!=null) {
+					return c;
+				}
+			}
+			
+		}
+		return null;
+	}
+	private Class<?> findClassEngineByPlugin(Plugin plugin, TipoPlugin tipoClasseDaRicercare, String tipoClasseCustomDaRicercare, String className){
+		ClassLoader classLoader = null;
+		if(tipoClasseDaRicercare!=null) {
+			classLoader = plugin.getClassLoader(tipoClasseDaRicercare);
+		}else {
+			classLoader = plugin.getClassLoader(tipoClasseCustomDaRicercare);
+		}
+		if(classLoader!=null) {
+			Class<?> c = null;
+			try {
+				c = classLoader.loadClass(className);
+			}catch(ClassNotFoundException cNotFound) {
+				// ignore
+			}
+			if(c!=null) {
+				return c;
+			}
+		}
+		return null;
+	}
 
 }
 
 class PluginsImage {
 	
 	HashMap<String, Plugin> plugins = new HashMap<>();
-	List<String> plugins_active_ordered = new ArrayList<>();
+	List<String> pluginsActiveOrdered = new ArrayList<>();
 	
 }

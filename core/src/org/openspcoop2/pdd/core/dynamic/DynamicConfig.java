@@ -31,7 +31,7 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.slf4j.Logger;
 
 /**
- * PurposeId
+ * DynamicConfig
  *
  * @author Andrea Poli (apoli@link.it)
  * @author $Author$

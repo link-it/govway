@@ -50,6 +50,7 @@ import org.openspcoop2.pdd.config.vault.cli.testsuite.ConfigLoader;
 import org.openspcoop2.pdd.config.vault.cli.testsuite.TipoServizio;
 import org.openspcoop2.pdd.config.vault.cli.testsuite.Utilities;
 import org.openspcoop2.protocol.engine.constants.Costanti;
+import org.openspcoop2.security.keystore.MerlinProvider;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
@@ -201,6 +202,10 @@ public class SecretsTest extends ConfigLoader {
 	
 	private static final String STORE_PASSWORD_OPENSPCOOP = "openspcoop";
 	private static final String STORE_PASSWORD_OPENSPCOOP_JKS = "openspcoopjks";
+	
+	private static final String SIGNATURE_PROP_REF_ID = "signaturePropRefId";
+	private static final String DECRYPTION_PROP_REF_ID = "decryptionPropRefId";
+	private static final String ENCRYPTION_PROP_REF_ID = "encryptionPropRefId";
 	
 	private String getMessagePrefix(String origine, String found) {
 		return "["+origine+"] Found '"+found+"'; expected";
@@ -744,6 +749,21 @@ public class SecretsTest extends ConfigLoader {
 	
 	
 	
+	@Test
+	public void step6aPulizia() throws UtilsException, HttpUtilsException, IOException {
+			
+		logCoreInfo("@step6aPulizia");
+		
+		checkExternalToolError();
+		
+		deleteConfig(ConfigLoader.TESTSUITE_BUNDLE_PLAIN_PATH); // per ripulire la base dati per i test
+		
+	}
+	
+	
+	
+	
+	
 	// UTILS
 	
 	
@@ -854,15 +874,26 @@ public class SecretsTest extends ConfigLoader {
 	
 	private void updateByokPolicy(String oldPolicy, String newPolicy) {
 		
-		ConfigLoader.dbUtils.updateByokPolicyPorteMessageSecurity(oldPolicy, "decryptionPropRefId"+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiProprieta.RS_SECURITY_BYOK_POLICY, newPolicy);
-		ConfigLoader.dbUtils.updateByokPolicyPorteMessageSecurity(oldPolicy, "encryptionPropRefId"+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiProprieta.RS_SECURITY_BYOK_POLICY, newPolicy);
-		ConfigLoader.dbUtils.updateByokPolicyPorteMessageSecurity(oldPolicy, "signaturePropRefId"+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiProprieta.RS_SECURITY_BYOK_POLICY, newPolicy);
+		ConfigLoader.dbUtils.updateByokPolicyPorteMessageSecurity(oldPolicy, DECRYPTION_PROP_REF_ID+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiProprieta.RS_SECURITY_BYOK_POLICY, newPolicy);
+		ConfigLoader.dbUtils.updateByokPolicyPorteMessageSecurity(oldPolicy, ENCRYPTION_PROP_REF_ID+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiProprieta.RS_SECURITY_BYOK_POLICY, newPolicy);
+		ConfigLoader.dbUtils.updateByokPolicyPorteMessageSecurity(oldPolicy, SIGNATURE_PROP_REF_ID+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiProprieta.RS_SECURITY_BYOK_POLICY, newPolicy);
+		
+		List<String> listMerlinKeystore = new ArrayList<>();
+		listMerlinKeystore.add(Merlin.PREFIX+Merlin.KEYSTORE_FILE+MerlinProvider.SUFFIX_BYOK);
+		listMerlinKeystore.add(Merlin.OLD_PREFIX+Merlin.KEYSTORE_FILE+MerlinProvider.SUFFIX_BYOK);
+		listMerlinKeystore.add(Merlin.PREFIX+Merlin.OLD_KEYSTORE_FILE+MerlinProvider.SUFFIX_BYOK);
+		listMerlinKeystore.add(Merlin.OLD_PREFIX+Merlin.OLD_KEYSTORE_FILE+MerlinProvider.SUFFIX_BYOK);
+		for (String p : listMerlinKeystore) {
+			ConfigLoader.dbUtils.updateByokPolicyPorteMessageSecurity(oldPolicy, DECRYPTION_PROP_REF_ID+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+p, newPolicy);
+			ConfigLoader.dbUtils.updateByokPolicyPorteMessageSecurity(oldPolicy, ENCRYPTION_PROP_REF_ID+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+p, newPolicy);
+			ConfigLoader.dbUtils.updateByokPolicyPorteMessageSecurity(oldPolicy, SIGNATURE_PROP_REF_ID+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+p, newPolicy);
+		}
 		
 		ConfigLoader.dbUtils.updateByokPolicyConnettoriCustom(oldPolicy, CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY, newPolicy);
 		
-		ConfigLoader.dbUtils.updateByokPolicyGenericProperties(oldPolicy, "decryptionPropRefId"+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiProprieta.RS_SECURITY_BYOK_POLICY, newPolicy);
-		ConfigLoader.dbUtils.updateByokPolicyGenericProperties(oldPolicy, "encryptionPropRefId"+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiProprieta.RS_SECURITY_BYOK_POLICY, newPolicy);
-		ConfigLoader.dbUtils.updateByokPolicyGenericProperties(oldPolicy, "signaturePropRefId"+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiProprieta.RS_SECURITY_BYOK_POLICY, newPolicy);
+		ConfigLoader.dbUtils.updateByokPolicyGenericProperties(oldPolicy, DECRYPTION_PROP_REF_ID+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiProprieta.RS_SECURITY_BYOK_POLICY, newPolicy);
+		ConfigLoader.dbUtils.updateByokPolicyGenericProperties(oldPolicy, ENCRYPTION_PROP_REF_ID+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiProprieta.RS_SECURITY_BYOK_POLICY, newPolicy);
+		ConfigLoader.dbUtils.updateByokPolicyGenericProperties(oldPolicy, SIGNATURE_PROP_REF_ID+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiProprieta.RS_SECURITY_BYOK_POLICY, newPolicy);
 		ConfigLoader.dbUtils.updateByokPolicyGenericProperties(oldPolicy, org.openspcoop2.pdd.core.token.Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_BYOK_POLICY, newPolicy);
 		ConfigLoader.dbUtils.updateByokPolicyGenericProperties(oldPolicy, org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_BYOK_POLICY, newPolicy);
 		ConfigLoader.dbUtils.updateByokPolicyGenericProperties(oldPolicy, org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_REQUEST_JWT_SIGN_KEYSTORE_BYOK_POLICY, newPolicy);

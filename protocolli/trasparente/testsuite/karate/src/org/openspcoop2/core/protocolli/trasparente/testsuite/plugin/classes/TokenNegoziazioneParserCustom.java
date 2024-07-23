@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.openspcoop2.pdd.core.token.parser.BasicNegoziazioneTokenParser;
 import org.openspcoop2.pdd.core.token.parser.TipologiaClaimsNegoziazione;
+import org.openspcoop2.utils.UtilsRuntimeException;
 
 /**
 * TokenNegoziazioneParserCustom
@@ -55,7 +56,7 @@ public class TokenNegoziazioneParserCustom extends BasicNegoziazioneTokenParser 
 			}
 			Utilities.writeIdentificativoTest(id, tipoTest);
 		}catch(Exception e) {
-			throw new RuntimeException(e.getMessage(),e);
+			throw new UtilsRuntimeException(e.getMessage(),e);
 		}
 		
 		super.init(raw, claims);

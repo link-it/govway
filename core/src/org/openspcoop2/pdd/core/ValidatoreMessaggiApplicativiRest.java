@@ -48,6 +48,8 @@ import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.rest.RestUtilities;
 import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.pdd.config.CostantiProprieta;
@@ -62,6 +64,7 @@ import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.json.YAMLUtils;
 import org.openspcoop2.utils.openapi.OpenapiApi;
@@ -985,13 +988,13 @@ public class ValidatoreMessaggiApplicativiRest {
 		return defaultValue;
 	}
 	
-	public static boolean isValidazioneAbilitata(List<Proprieta> proprieta, OpenSPCoop2Message responseMessage, int codiceRitornato) throws Exception {
+	public static boolean isValidazioneAbilitata(Logger log, List<Proprieta> proprieta, OpenSPCoop2Message responseMessage, int codiceRitornato) throws UtilsException, MessageException, MessageNotSupportedException {
 		
 		OpenSPCoop2RestMessage<?> restMsg = responseMessage.castAsRest();
 		
 		// Controllo se validare risposte vuote
-		boolean default_validateEmptyResponse = true; // default. devo controllare gli header etc...
-		boolean validateEmptyResponse = readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_EMPTY_RESPONSE_ENABLED, default_validateEmptyResponse); 
+		boolean defaultValidateEmptyResponse = true; // default. devo controllare gli header etc...
+		boolean validateEmptyResponse = readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_EMPTY_RESPONSE_ENABLED, defaultValidateEmptyResponse); 
 		if(!validateEmptyResponse) {
 			boolean hasContent = restMsg.hasContent();
 			if(!hasContent) {
@@ -1002,8 +1005,8 @@ public class ValidatoreMessaggiApplicativiRest {
 		// Controllo se validare i fault generati da govway prima di arrivare alla validazione.
 		// Sono errori interni che potrebbero non essere definiti nell'interfaccia.
 		// per default questa validazione è disabilitata
-		boolean default_validateGovwayFault = false;
-		boolean validateGovwayFault = readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_FAULT_GOVWAY_ENABLED, default_validateGovwayFault);
+		boolean defaultValidateGovwayFault = false;
+		boolean validateGovwayFault = readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_FAULT_GOVWAY_ENABLED, defaultValidateGovwayFault);
 		if(!validateGovwayFault) {
 			boolean isFaultGovway = MessageRole.FAULT.equals(responseMessage.getMessageRole());
 			if(isFaultGovway) {
@@ -1012,20 +1015,19 @@ public class ValidatoreMessaggiApplicativiRest {
 		}
 		
 		// Controllo se validare problem detail
-		boolean default_validateProblemDetail = true; // dovrebbero far parte dell'interfaccia essendo generati dal server o dalla controparte (non sono fault generati da govway)
-		boolean validateProblemDetail = readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_PROBLEM_DETAIL_ENABLED, default_validateProblemDetail);
-		if(!validateProblemDetail) {
-			if(restMsg.isProblemDetailsForHttpApis_RFC7807()) {
-				return false;
-			}
+		boolean defaultValidateProblemDetail = true; // dovrebbero far parte dell'interfaccia essendo generati dal server o dalla controparte (non sono fault generati da govway)
+		boolean validateProblemDetail = readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_PROBLEM_DETAIL_ENABLED, defaultValidateProblemDetail);
+		if(!validateProblemDetail &&
+			restMsg.isProblemDetailsForHttpApis_RFC7807()) {
+			return false;
 		}
 		
 		// Controllo se validare solo determinati codici http
 		String valueS = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_ENABLED);
 		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
 			
-			boolean default_not = false; 
-			boolean not = readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_NOT, default_not);
+			boolean defaultNot = false; 
+			boolean not = readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_NOT, defaultNot);
 			
 			List<String> codici = new ArrayList<>();
 			if(valueS.contains(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_SEPARATOR)) {
@@ -1047,15 +1049,15 @@ public class ValidatoreMessaggiApplicativiRest {
 					if(codice.contains(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_INTERVAL_SEPARATOR)) {
 						String [] tmp = codice.split(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_INTERVAL_SEPARATOR);
 						if(tmp==null || tmp.length!=2) {
-							throw new Exception("Codice '"+codice+"' indicato nella proprietà '"+CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_SEPARATOR+"' possiede un formato errato; atteso: codiceMin-codiceMax");
+							throw new UtilsException("Codice '"+codice+"' indicato nella proprietà '"+CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_SEPARATOR+"' possiede un formato errato; atteso: codiceMin-codiceMax");
 						}
 						String codiceMin = tmp[0];
 						String codiceMax = tmp[1];
 						if(codiceMin==null || StringUtils.isEmpty(codiceMin.trim())) {
-							throw new Exception("Codice '"+codice+"' indicato nella proprietà '"+CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_SEPARATOR+"' possiede un formato errato (intervallo minimo non definito); atteso: codiceMin-codiceMax");
+							throw new UtilsException("Codice '"+codice+"' indicato nella proprietà '"+CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_SEPARATOR+"' possiede un formato errato (intervallo minimo non definito); atteso: codiceMin-codiceMax");
 						}
 						if(codiceMax==null || StringUtils.isEmpty(codiceMax.trim())) {
-							throw new Exception("Codice '"+codice+"' indicato nella proprietà '"+CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_SEPARATOR+"' possiede un formato errato (intervallo massimo non definito); atteso: codiceMin-codiceMax");
+							throw new UtilsException("Codice '"+codice+"' indicato nella proprietà '"+CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_SEPARATOR+"' possiede un formato errato (intervallo massimo non definito); atteso: codiceMin-codiceMax");
 						}
 						codiceMin = codiceMin.trim();
 						codiceMax = codiceMax.trim();
@@ -1063,16 +1065,16 @@ public class ValidatoreMessaggiApplicativiRest {
 						try {
 							codiceMinInt = Integer.valueOf(codiceMin);
 						}catch(Exception e) {
-							throw new Exception("Codice '"+codice+"' indicato nella proprietà '"+CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_SEPARATOR+"' contiene un intervallo minimo '"+codiceMin+"' che non è un numero intero");
+							throw new UtilsException("Codice '"+codice+"' indicato nella proprietà '"+CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_SEPARATOR+"' contiene un intervallo minimo '"+codiceMin+"' che non è un numero intero");
 						}
 						int codiceMaxInt = -1;
 						try {
 							codiceMaxInt = Integer.valueOf(codiceMax);
 						}catch(Exception e) {
-							throw new Exception("Codice '"+codice+"' indicato nella proprietà '"+CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_SEPARATOR+"' contiene un intervallo massimo '"+codiceMax+"' che non è un numero intero");
+							throw new UtilsException("Codice '"+codice+"' indicato nella proprietà '"+CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_SEPARATOR+"' contiene un intervallo massimo '"+codiceMax+"' che non è un numero intero");
 						}
 						if(codiceMaxInt<=codiceMinInt) {
-							throw new Exception("Codice '"+codice+"' indicato nella proprietà '"+CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_SEPARATOR+"' contiene un intervallo massimo '"+codiceMax+"' minore o uguale all'intervallo minimo '"+codiceMin+"'");
+							throw new UtilsException("Codice '"+codice+"' indicato nella proprietà '"+CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_SEPARATOR+"' contiene un intervallo massimo '"+codiceMax+"' minore o uguale all'intervallo minimo '"+codiceMin+"'");
 						}
 						if( (codiceMinInt <= codiceRitornato) && (codiceRitornato <= codiceMaxInt)) {
 							match = true;
@@ -1081,22 +1083,22 @@ public class ValidatoreMessaggiApplicativiRest {
 					}
 					else {
 						try {
-							int codiceInt = Integer.valueOf(codice);
+							int codiceInt = Integer.parseInt(codice);
 							if(codiceInt == codiceRitornato) {
 								match = true;
 								break;
 							}
 						}catch(Exception e) {
-							throw new Exception("Codice '"+codice+"' indicato nella proprietà '"+CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_SEPARATOR+"' non è un numero intero");
+							throw new UtilsException("Codice '"+codice+"' indicato nella proprietà '"+CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_RETURN_CODE_LIST_SEPARATOR+"' non è un numero intero");
 						}
 					}
 				}
 				
 				if(match) {
-					return not ? false : true ;
+					return !not ;
 				}
 				else {
-					return not ? true : false;
+					return not;
 				}
 			}
 		}
@@ -1106,8 +1108,8 @@ public class ValidatoreMessaggiApplicativiRest {
 		valueS = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_CONTENT_TYPE_LIST_ENABLED);
 		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
 			
-			boolean default_not = false; 
-			boolean not = readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_CONTENT_TYPE_NOT, default_not);
+			boolean defaultNot = false; 
+			boolean not = readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_CONTENT_TYPE_NOT, defaultNot);
 			
 			List<String> contentTypes = new ArrayList<>();
 			if(valueS.contains(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_CONTENT_TYPE_LIST_SEPARATOR)) {
@@ -1124,13 +1126,12 @@ public class ValidatoreMessaggiApplicativiRest {
 			if(contentTypes!=null && !contentTypes.isEmpty()) {
 				
 				String contentTypeRisposta = responseMessage.getContentType();
-				String baseTypeHttp = ContentTypeUtilities.readBaseTypeFromContentType(contentTypeRisposta);
-				
-				if(ContentTypeUtilities.isMatch(baseTypeHttp, contentTypes)) {
-					return not ? false : true ;
+								
+				if(ContentTypeUtilities.isMatch(log, contentTypeRisposta, contentTypes)) {
+					return !not ;
 				}
 				else {				
-					return not ? true : false;
+					return not;
 				}
 			}
 		}

@@ -5,6 +5,9 @@ Aggiornamento delle Informazioni confidenziali
 
 Il tool *govway-vault-cli* può essere utilizzato sulla base dati esistente sia per cifrare le informazioni confidenziali precedentemente salvate in chiaro, sia per aggiornarle utilizzando una differente master key.
 
+.. note::
+      Si consiglia di effettuare un backup della base dati prima di procedere con l'aggiornamento delle informazioni confidenziali.
+
 Il comando *update.sh*, se invocato senza parametri, visualizza nell'errore restituito gli argomenti attesi che dovranno essere forniti con l'invocazione:
 
 ::

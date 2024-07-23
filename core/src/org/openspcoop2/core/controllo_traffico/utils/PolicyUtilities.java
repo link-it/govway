@@ -43,7 +43,11 @@ import org.openspcoop2.utils.properties.PropertiesUtilities;
  * @version $Rev$, $Date$
  */
 public class PolicyUtilities {
+	
+	private PolicyUtilities() {}
 
+	private static final String DISABILITATO_LABEL = "Disabilitato";
+	
 	public static String toString(Integer statoAllarme){
 		
 		StringBuilder bf = new StringBuilder();
@@ -197,19 +201,7 @@ public class PolicyUtilities {
 			
 			if(filtro.getTokenClaims()!=null){
 				Properties properties = PropertiesUtilities.convertTextToProperties(filtro.getTokenClaims());
-				if(properties!=null && properties.size()>0) {
-					for (Object o : properties.keySet()) {
-						if(o!=null && o instanceof String) {
-							String key = (String) o;
-							String value = properties.getProperty(key);
-							if(bf.length()>0){
-								bf.append(", ");
-							}
-							bf.append("Token-").append(key).append(":");
-							bf.append(value);			
-						}
-					}
-				}
+				addStringFilter(properties, "Token-", bf);
 			}
 			
 			if(filtro.isInformazioneApplicativaEnabled()){
@@ -222,16 +214,30 @@ public class PolicyUtilities {
 
 		}
 		else{
-			bf.append("Disabilitato");
+			bf.append(DISABILITATO_LABEL);
 		}
 
 		return bf.toString();
 	}
-	
+	private static void addStringFilter(Properties properties, String prefix, StringBuilder bf) {
+		if(properties!=null && properties.size()>0) {
+			for (Object o : properties.keySet()) {
+				if(o instanceof String) {
+					String key = (String) o;
+					String value = properties.getProperty(key);
+					if(bf.length()>0){
+						bf.append(", ");
+					}
+					bf.append(prefix).append(key).append(":");
+					bf.append(value);			
+				}
+			}
+		}
+	}
 	
 	public static String toStringGroupBy(AttivazionePolicyRaggruppamento groupBy,IDUnivocoGroupByPolicy datiGroupBy, boolean printDati) {
 		if(printDati) {
-			return _toStringGroupBy(groupBy, datiGroupBy);
+			return toStringGroupByWithValues(groupBy, datiGroupBy);
 		}
 		StringBuilder bf = new StringBuilder("");
 		if(groupBy.isEnabled()){
@@ -317,14 +323,14 @@ public class PolicyUtilities {
 
 		}
 		else{
-			bf.append("Disabilitato");
+			bf.append(DISABILITATO_LABEL);
 		}
 
 		return bf.toString();
 	}
 	
 	
-	private static String _toStringGroupBy(AttivazionePolicyRaggruppamento groupBy,IDUnivocoGroupByPolicy datiGroupBy) {
+	private static String toStringGroupByWithValues(AttivazionePolicyRaggruppamento groupBy,IDUnivocoGroupByPolicy datiGroupBy) {
 		StringBuilder bf = new StringBuilder("");
 		if(groupBy.isEnabled()){
 
@@ -430,6 +436,9 @@ public class PolicyUtilities {
 							case TOKEN_EMAIL:
 								bf.append(datiGroupBy.getTokenEMail());
 								break;
+							case PDND_ORGANIZATION_NAME:
+								bf.append(datiGroupBy.getPdndOrganizationName());
+								break;
 							default:
 								bf.append("N.D.");
 								break;
@@ -458,21 +467,21 @@ public class PolicyUtilities {
 
 		}
 		else{
-			bf.append("Disabilitato");
+			bf.append(DISABILITATO_LABEL);
 		}
 
 		return bf.toString();
 	}
 	
-	/*
+	/**
 	public static IDUnivocoGroupByPolicy toIDUnivocoGroupByPolicy(String stringGroupBy) {
 		IDUnivocoGroupByPolicy id = new IDUnivocoGroupByPolicy();
-		if(stringGroupBy==null || stringGroupBy.equals("") || stringGroupBy.equals("Disabilitato")) {
+		if(stringGroupBy==null || stringGroupBy.equals("") || stringGroupBy.equals(DISABILITATO_LABEL)) {
 			return id;
 		}
 		
 		String [] split = stringGroupBy.split(",");
-		for (int i = 0; i < split.length; i++) {
+		for (int i = 0; i minor split.length; i++) {
 			String tmp = split[i].trim();
 			
 			if(tmp.startsWith("Tipologia: ")) {
@@ -532,19 +541,19 @@ public class PolicyUtilities {
 	}
 	*/
 	
-	public static String buildIdConfigurazioneEventoPerPolicy(ActivePolicy activePolicy, IDUnivocoGroupByPolicy datiGroupBy, String API) {
+	public static String buildIdConfigurazioneEventoPerPolicy(ActivePolicy activePolicy, IDUnivocoGroupByPolicy datiGroupBy, String api) {
 		AttivazionePolicy attivazionePolicy = activePolicy.getInstanceConfiguration();
-		return buildIdConfigurazioneEventoPerPolicy(attivazionePolicy, datiGroupBy, API);
+		return buildIdConfigurazioneEventoPerPolicy(attivazionePolicy, datiGroupBy, api);
 	}
-	public static String buildIdConfigurazioneEventoPerPolicy(AttivazionePolicy attivazionePolicy, IDUnivocoGroupByPolicy datiGroupBy, String API) {
+	public static String buildIdConfigurazioneEventoPerPolicy(AttivazionePolicy attivazionePolicy, IDUnivocoGroupByPolicy datiGroupBy, String api) {
 		// L'obiettivo è di generare un evento differente per ogni raggruppamento violato di una stessa policy
 		// All'interno di una stessa policy ci possono essere gruppi che non sono violati ed altri che lo sono
 		// Ad esempio se si raggruppa per soggetto fruitore, ci potranno essere soggetti che la violano, altri no.
 		// Si vuole un evento per ogni soggetto che viola la policy
 		boolean printDati = true;
 		String idPolicyConGruppo = PolicyUtilities.getNomeActivePolicy(attivazionePolicy.getAlias(), attivazionePolicy.getIdActivePolicy()); 
-		if(API!=null && !"".equals(API)) {
-			idPolicyConGruppo = idPolicyConGruppo + " - API: "+API;
+		if(api!=null && !"".equals(api)) {
+			idPolicyConGruppo = idPolicyConGruppo + " - API: "+api;
 		}
 		if(attivazionePolicy.getGroupBy().isEnabled()){
 			String toStringRaggruppamentoConDatiIstanza = PolicyUtilities.toStringGroupBy(attivazionePolicy.getGroupBy(), datiGroupBy, printDati);
@@ -568,16 +577,15 @@ public class PolicyUtilities {
 		StringBuilder sb = new StringBuilder();
 		sb.append(GLOBALE_PROPERTY).append(policyGlobale);
 		sb.append("\n").append(ID_ACTIVE_POLICY_PROPERTY).append(attivazionePolicy.getIdActivePolicy());
-		if(!policyGlobale) {
-			if(attivazionePolicy.getFiltro()!=null &&
-					attivazionePolicy.getFiltro().getNomePorta()!=null && 
-					StringUtils.isNotEmpty(attivazionePolicy.getFiltro().getNomePorta()) && 
-					attivazionePolicy.getFiltro().getRuoloPorta()!=null) {
-				String nomePorta = attivazionePolicy.getFiltro().getNomePorta();
-				String ruoloPorta = attivazionePolicy.getFiltro().getRuoloPorta().getValue();
-				sb.append("\n").append(RUOLO_PORTA_PROPERTY).append(ruoloPorta);
-				sb.append("\n").append(NOME_PORTA_PROPERTY).append(nomePorta);
-			}
+		if(!policyGlobale &&
+			attivazionePolicy.getFiltro()!=null &&
+				attivazionePolicy.getFiltro().getNomePorta()!=null && 
+				StringUtils.isNotEmpty(attivazionePolicy.getFiltro().getNomePorta()) && 
+				attivazionePolicy.getFiltro().getRuoloPorta()!=null) {
+			String nomePorta = attivazionePolicy.getFiltro().getNomePorta();
+			String ruoloPorta = attivazionePolicy.getFiltro().getRuoloPorta().getValue();
+			sb.append("\n").append(RUOLO_PORTA_PROPERTY).append(ruoloPorta);
+			sb.append("\n").append(NOME_PORTA_PROPERTY).append(nomePorta);
 		}
 		return sb.toString();
 	}
@@ -604,8 +612,7 @@ public class PolicyUtilities {
 			if(tmp!=null && tmp.length>1) {
 				String firstLine = tmp[1];
 				if(firstLine!=null && firstLine.startsWith(ID_ACTIVE_POLICY_PROPERTY) && firstLine.length()>ID_ACTIVE_POLICY_PROPERTY.length()) {
-					String s = firstLine.substring(ID_ACTIVE_POLICY_PROPERTY.length());
-					return s;
+					return firstLine.substring(ID_ACTIVE_POLICY_PROPERTY.length());
 				}
 			}
 		}
@@ -617,8 +624,7 @@ public class PolicyUtilities {
 			if(tmp!=null && tmp.length>2) {
 				String firstLine = tmp[2];
 				if(firstLine!=null && firstLine.startsWith(RUOLO_PORTA_PROPERTY) && firstLine.length()>RUOLO_PORTA_PROPERTY.length()) {
-					String s = firstLine.substring(RUOLO_PORTA_PROPERTY.length());
-					return s;
+					return firstLine.substring(RUOLO_PORTA_PROPERTY.length());
 				}
 			}
 		}
@@ -630,8 +636,7 @@ public class PolicyUtilities {
 			if(tmp!=null && tmp.length>3) {
 				String firstLine = tmp[3];
 				if(firstLine!=null && firstLine.startsWith(NOME_PORTA_PROPERTY) && firstLine.length()>NOME_PORTA_PROPERTY.length()) {
-					String s = firstLine.substring(NOME_PORTA_PROPERTY.length());
-					return s;
+					return firstLine.substring(NOME_PORTA_PROPERTY.length());
 				}
 			}
 		}
@@ -657,7 +662,7 @@ public class PolicyUtilities {
 		return datiGruppo;
 	}
 	
-	/*
+	/**
 	public static IDUnivocoGroupByPolicy extractIDUnivocoGroupByPolicyFromIdConfigurazioneEvento(String idConfigurazioneEvento) {
 		return toIDUnivocoGroupByPolicy(extractIDUnivocoGroupByPolicyFromIdConfigurazioneEventoAsString(idConfigurazioneEvento));
 	}

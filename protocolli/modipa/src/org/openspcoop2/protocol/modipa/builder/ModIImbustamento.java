@@ -289,7 +289,7 @@ public class ModIImbustamento {
 			
 			boolean existsSecurityFlusso =  false;
 			if(securityMessageProfileNonFiltratoPDND!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfileNonFiltratoPDND)) {
-				existsSecurityFlusso = ModIPropertiesUtils.processSecurity(aspc, nomePortType, azione, isRichiesta, 
+				existsSecurityFlusso = ModIPropertiesUtils.processSecurity(this.log, aspc, nomePortType, azione, isRichiesta, 
 						msg, rest, this.modiProperties);
 			}
 			
