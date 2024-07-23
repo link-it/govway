@@ -232,7 +232,7 @@ public class ContentTypeUtilities {
 					}
 					else {
 						// escape special char
-						part1 = part1.replace("\\+", "\\\\+");
+						part1 = part1.replace("+", "\\+");
 						bf.append(part1);
 					}
 					bf.append("/");
@@ -244,12 +244,12 @@ public class ContentTypeUtilities {
 						bf.append("(.+)");
 						String sub = part2.substring(1);
 						// escape special char
-						sub = sub.replace("\\+", "\\\\+");
+						sub = sub.replace("+", "\\+");
 						bf.append(sub);
 					}
 					else {
 						// escape special char
-						part2 = part2.replace("\\+", "\\\\+");
+						part2 = part2.replace("+", "\\+");
 						bf.append(part2);
 					}
 					contentTypeEscaped = bf.toString();

@@ -747,7 +747,7 @@ And match header X-RateLimit-Limit == '4'
 
 
 @getInformazioniClientOrganizationApiIDAUTH_NonValido
-Scenario: Test che arricchisce le informazioni sul client prelevandole dalla PDND, senza prima aver mai prelevata la chiave essendo solamente un pattern ID_AUTH
+Scenario: Test che arricchisce le informazioni sul client prelevandole dalla PDND, senza prima aver mai prelevata la chiave essendo solamente un pattern ID_AUTH. L'invocazione fallisce perchè il token non è valido.
 
 #* def result = clean_remote_store_key('ExampleClient2')
 * def result = clean_remote_store_key_client_id_prefix('http://client2')
