@@ -19,12 +19,15 @@
  */
 package org.openspcoop2.core.protocolli.trasparente.testsuite.other.ocsp;
 
+import java.io.File;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
@@ -41,6 +44,8 @@ public class TokenPolicyValidazioneTest extends ConfigLoader {
 	public static final String api = "TestOCSPTokenPolicy";
 	public static final String soggetto = "SoggettoInternoTest";
 	
+	public static final String apiTLS = "TestOCSPValidazioneTokenTls";
+	
 	public static final String opensslCommand = System.getProperty(Utils.PROPERTY_OCSP_OPENSSL_COMMAND);
 	
 	public static final int waitStartupServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STARTUP_SERVER));
@@ -48,6 +53,56 @@ public class TokenPolicyValidazioneTest extends ConfigLoader {
 	public static final int waitStopServer = Integer.valueOf(System.getProperty(Utils.PROPERTY_OCSP_WAIT_STOP_SERVER));
 	
 
+	
+	@Test
+	public void case2_certificateValid_tlsIntrospection() throws Exception {
+		
+		File f = new File("/tmp/introspectionResponse.json");
+		if(f.exists()) {
+			FileSystemUtilities.deleteFile(f);
+		}
+		
+		try {
+			
+			String json = "{\"active\":true,\"access_token\":\"2YotnFZFEjr1zCsicMWpAA\",\"token_type\":\"example\",\"expires_in\":3600 }";
+			FileSystemUtilities.writeFile(f, json.getBytes());
+			
+			Utils.composedTestSuccess(logCore, TipoServizio.EROGAZIONE, apiTLS, soggetto,
+					opensslCommand, waitStartupServer, waitStopServer,
+					"case2", 
+					Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED);
+		}finally {
+			FileSystemUtilities.deleteFile(f);
+		}
+	}
+	
+	
+	@Test
+	public void case3_certificateValid_tlsUserInfo() throws Exception {
+		
+		File f = new File("/tmp/userinfoResponse.json");
+		if(f.exists()) {
+			FileSystemUtilities.deleteFile(f);
+		}
+		
+		try {
+			
+			String json = "{\"access_token\":\"2YotnFZFEjr1zCsicMWpAA\",\"token_type\":\"example\",\"expires_in\":3600 }";
+			FileSystemUtilities.writeFile(f, json.getBytes());
+		
+			Utils.composedTestSuccess(logCore, TipoServizio.EROGAZIONE, apiTLS, soggetto,
+					opensslCommand, waitStartupServer, waitStopServer,
+					"case3", 
+					Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED);
+			
+		}finally {
+			FileSystemUtilities.deleteFile(f);
+		}
+	}
+	
+	
+	
+	
 	@Test
 	public void case2_certificateValid() throws Exception {
 		Utils.composedTestSuccess(logCore, TipoServizio.EROGAZIONE, api, soggetto,
