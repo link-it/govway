@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 
@@ -769,5 +770,79 @@ public class NegoziazioneCustomTest extends ConfigLoader {
 				"\"transactionId\":\""+idRichiestaOriginale+"\""
 				);
 		
+	}
+	
+	
+	
+	
+	
+	@Test
+	public void raw() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+	
+		String accessToken = "XXX-YYY-ZZZ";
+		Map<String, String> headers = new HashMap<>();
+		headers.put("test_raw_token", accessToken);
+		
+		
+		String endpoint = "http://127.0.0.1:8080/TestService/echo";
+		
+		HttpResponse response = NegoziazioneTest._test(logCore, api_negoziazione, "raw", headers,
+				false,
+				null,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"custom\"",
+				"\"endpoint\":\""+endpoint+"\"",
+				"\"accessToken\":\""+accessToken+"\"",
+				"\"policy\":\"TestNegoziazioneCustomRaw\"");
+		String idRichiestaOriginale = response.getHeaderFirstValue("GovWay-Transaction-ID");
+
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		headers.put("test_raw_token", accessToken+"-MODIFICATO");
+		
+		NegoziazioneTest._test(logCore, api_negoziazione, "raw", headers,
+				true,
+				"errore HTTP 500",
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"custom\"",
+				"\"endpoint\":\""+endpoint+"\"",
+				"\"accessToken\":\""+accessToken+"-MODIFICATO"+"\"",
+				"\"policy\":\"TestNegoziazioneCustomRaw\"");
+				
+		// ripristino la configurazione corretta
+		headers.put("test_raw_token", accessToken);
+		NegoziazioneTest._test(logCore, api_negoziazione, "raw", headers,
+				false,
+				null,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"custom\"",
+				"\"endpoint\":\""+endpoint+"\"",
+				"\"accessToken\":\""+accessToken+"\"",
+				"\"transactionId\":\""+idRichiestaOriginale+"\""
+				);
+		
+		// Aspetoo 10 secondi e dovrà essere rinegoziato
+		Utilities.sleep(10000);
+		
+		response = NegoziazioneTest._test(logCore, api_negoziazione, "raw", headers,
+				false,
+				null,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"custom\"",
+				"\"endpoint\":\""+endpoint+"\"",
+				"\"accessToken\":\""+accessToken+"\"",
+				"\"policy\":\"TestNegoziazioneCustomRaw\"");
+		idRichiestaOriginale = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		
+		NegoziazioneTest._test(logCore, api_negoziazione, "raw", headers,
+				false,
+				null,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"custom\"",
+				"\"endpoint\":\""+endpoint+"\"",
+				"\"accessToken\":\""+accessToken+"\"",
+				"\"transactionId\":\""+idRichiestaOriginale+"\""
+				);
 	}
 }

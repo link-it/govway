@@ -937,11 +937,24 @@
 			<item type="select" name="customTokenParserType" label="Tipo" default="OAUTH2_RFC_6749" reloadOnChange="true">
 				<values>
 					<value value="OAUTH2_RFC_6749" label="RFC 6749 - OAuth2"/> 
+					<value value="RAW" label="Usa payload come Token"/>
 					<value value="MAPPING" label="Personalizzato"/>
 					<value value="CUSTOM" label="Plugin"/>
 				</values>
 				<property name="policy.retrieveToken.claimsParser.custom" />
 			</item>
+			
+			<!-- RAW -->
+			<item type="text" name="rawTokenParserExpiresIn" label="Expires in" required="true" default="300" note="The lifetime in seconds of the access token">
+				<conditions>
+					<condition and="true">
+						<equals name="customTokenParserType" value="RAW"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.expires_in_sec" properties="retrieveTokenParserPropRefId" />
+			</item>
+			
+			<!-- CUSTOM -->
 			<item type="select" name="customTokenParserCustomPluginChoice" label="" reloadOnChange="true" >
 				<conditions>
 					<condition and="true">
@@ -959,7 +972,7 @@
 			   	<property name="policy.retrieveToken.claimsParser.className" />
 			</item>
 
-
+			<!-- MAPPING -->
 			<item type="text" name="customTokenParserTokenType" label="Token Type" required="true" default="token_type">
 				<conditions>
 					<condition and="true">
