@@ -91,8 +91,9 @@ And match header X-RateLimit-Limit == '2'
 # controllo applicazione filtro rate limiting
 
 * def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
-* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(1), violate(0), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
 * match result[0].MESSAGGIO contains 'rispettate(1)'
+* match result[0].MESSAGGIO contains 'violate(0)'
 
 
 # Effettuo nuovamente l'invocazione, ora dovrebbe essere in cache
@@ -152,8 +153,9 @@ And match header X-RateLimit-Limit == '2'
 # controllo applicazione filtro rate limiting
 
 * def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
-* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(1), violate(0), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
 * match result[0].MESSAGGIO contains 'rispettate(1)'
+* match result[0].MESSAGGIO contains 'violate(0)'
 
 
 # Effettuo nuovamente l'invocazione, ora dovrebbe essere violata la policy di Rate Limiting
@@ -178,8 +180,9 @@ And match header X-RateLimit-Limit == '2'
 # controllo applicazione filtro rate limiting
 
 * def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
-* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(0), violate(1), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
 * match result[0].MESSAGGIO contains 'violate(1)'
+* match result[0].MESSAGGIO contains 'rispettate(0)'
 * def result = get_diagnostico(tiderogazione, 'Il numero massimo di richieste (rilevato:3 soglia:2) risulta raggiunto') 
 * match result[0].MESSAGGIO contains 'PDNDOrganizationName'
 
@@ -273,8 +276,9 @@ And match header X-RateLimit-Limit == '2'
 # controllo applicazione filtro rate limiting
 
 * def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
-* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(1), violate(0), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
 * match result[0].MESSAGGIO contains 'rispettate(1)'
+* match result[0].MESSAGGIO contains 'violate(0)'
 
 
 # Effettuo nuovamente l'invocazione, ora dovrebbe essere in cache
@@ -354,8 +358,9 @@ And match header X-RateLimit-Limit == '2'
 # controllo applicazione filtro rate limiting
 
 * def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
-* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(1), violate(0), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
 * match result[0].MESSAGGIO contains 'rispettate(1)'
+* match result[0].MESSAGGIO contains 'violate(0)'
 
 
 # Effettuo nuovamente l'invocazione, ora dovrebbe essere violata la policy di Rate Limiting
@@ -381,8 +386,9 @@ And match header X-RateLimit-Limit == '2'
 # controllo applicazione filtro rate limiting
 
 * def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
-* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(0), violate(1), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
 * match result[0].MESSAGGIO contains 'violate(1)'
+* match result[0].MESSAGGIO contains 'rispettate(0)'
 * def result = get_diagnostico(tiderogazione, 'Il numero massimo di richieste (rilevato:3 soglia:2) risulta raggiunto') 
 * match result[0].MESSAGGIO contains 'PDNDOrganizationName'
 
@@ -468,8 +474,9 @@ And match header X-RateLimit-Limit == '4'
 # controllo applicazione filtro rate limiting
 
 * def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
-* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(1), violate(0), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
 * match result[0].MESSAGGIO contains 'rispettate(1)'
+* match result[0].MESSAGGIO contains 'violate(0)'
 
 
 # Invocazione con azione che prevede voucher e integrity
@@ -546,8 +553,9 @@ And match header X-RateLimit-Limit == '4'
 # controllo applicazione filtro rate limiting
 
 * def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
-* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(1), violate(0), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
 * match result[0].MESSAGGIO contains 'rispettate(1)'
+* match result[0].MESSAGGIO contains 'violate(0)'
 
 
 
@@ -626,8 +634,9 @@ And match header X-RateLimit-Limit == '4'
 # controllo applicazione filtro rate limiting
 
 * def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
-* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(1), violate(0), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
 * match result[0].MESSAGGIO contains 'rispettate(1)'
+* match result[0].MESSAGGIO contains 'violate(0)'
 
 
 # ulteriore invocazione
@@ -705,8 +714,9 @@ And match header X-RateLimit-Limit == '4'
 # controllo applicazione filtro rate limiting
 
 * def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
-* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(1), violate(0), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
 * match result[0].MESSAGGIO contains 'rispettate(1)'
+* match result[0].MESSAGGIO contains 'violate(0)'
 
 
 # Effettuo nuovamente l'invocazione, ora dovrebbe essere violata la policy di Rate Limiting
@@ -732,8 +742,9 @@ And match header X-RateLimit-Limit == '4'
 # controllo applicazione filtro rate limiting
 
 * def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
-* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(0), violate(1), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
 * match result[0].MESSAGGIO contains 'violate(1)'
+* match result[0].MESSAGGIO contains 'rispettate(0)'
 * def result = get_diagnostico(tiderogazione, 'Il numero massimo di richieste (rilevato:5 soglia:4) risulta raggiunto') 
 * match result[0].MESSAGGIO contains 'PDNDOrganizationName'
 
@@ -873,8 +884,10 @@ And match header PDND-ExternalId == '#notpresent'
 # controllo applicazione filtro rate limiting
 
 * def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
-* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(0), violate(0), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(1).') 
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(1).') 
 * match result[0].MESSAGGIO contains 'inErrore(1)'
+* match result[0].MESSAGGIO contains 'rispettate(0)'
+* match result[0].MESSAGGIO contains 'violate(0)'
 * def result = get_diagnostico(tiderogazione, 'ha causato un errore: PDND Organization name not available') 
 * match result[0].MESSAGGIO contains 'PDND Organization name not available'
 
@@ -916,8 +929,9 @@ And match header X-RateLimit-Limit == '1000'
 # controllo applicazione filtro rate limiting
 
 * def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
-* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(1), violate(0), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
 * match result[0].MESSAGGIO contains 'rispettate(1)'
+* match result[0].MESSAGGIO contains 'violate(0)'
 
 
 
