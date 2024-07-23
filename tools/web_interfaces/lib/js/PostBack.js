@@ -10,7 +10,7 @@ function postBack() {
 }
 function postBack(dataElementName) {
 	var theForm = document.form;
-    // document.form.action vale http://localhost:8080/govwayConsole/servlet.do
+    // theForm.action vale http://localhost:8080/govwayConsole/servlet.do
     // A me serve solo il pezzo /govwayConsole/servlet.do
     var firstSlash = theForm.action.indexOf("/");
     var secondSlash = theForm.action.indexOf("/", firstSlash+1);
@@ -152,54 +152,15 @@ function postVersion_postBack(dataElementName) {
     var newActionUrl = checkActionUrl;
     //console.log('Precedente URL: ' + checkActionUrl);
     if (indexActionUrl >0 && indexActionUrl < (checkActionUrl.length - 1) ){
-        var queryString = checkActionUrl.split('?')[1];
         newActionUrl = checkActionUrl.split('?')[0] + '?';
-        /*
-        Il codice sottostante ricreava la url aggiungendo i parametri non presenti nella form. Questo non serve poichè tutti i parametri devono essere nella form.
-        
-        var parametri = queryString.split('&');
-        var parametriObj = {};
-        parametri.forEach(function(parametro) {
-           var coppia = parametro.split('=');
-           var nome = decodeURIComponent(coppia[0]);
-           var valore = decodeURIComponent(coppia[1]);
-           parametriObj[nome] = valore;
-        });
-        var firstParameter = true;
-        for (var nomeParametro in parametriObj) {
-          if (parametriObj.hasOwnProperty(nomeParametro)) {
-	          var valoreParametro = parametriObj[nomeParametro];
-              console.log(nomeParametro + ': ' + valoreParametro);
-              
-              var foundElement = false;
-              for (var k=0; k<document.form.elements.length; k++) {
-				 var nome = document.form.elements[k].name;
-				 if(nome == nomeParametro){
-					foundElement=true;
-				}
-			  }
-			  if(!foundElement){
-				 if(!firstParameter){
-					newActionUrl += "&";
-			 	 }
-			 	 else{
-					firstParameter=false;
-				 }
-				 newActionUrl += encodeURIComponent(nomeParametro) + "=" + encodeURIComponent(valoreParametro);
-			  }
-          }
-        }
-        */
     }
     //console.log('Nuova URL: ' + newActionUrl);
     
-    /*if(navigationAnchor!=null){
-    	 document.form.action=navigationAnchor;
-    }*/
     if(navigationAnchor!=null){
-    	 theForm.action=navigationAnchor;
+    	 theForm.action+=navigationAnchor;
     }
-    theForm.action=newActionUrl
+    
+    theForm.action=newActionUrl;
         
     // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
 	for (var k=0; k<theForm.elements.length; k++) {
@@ -217,7 +178,7 @@ function postVersion_postBack(dataElementName) {
   	addHidden(theForm, prevTabSessionKey , tabValue);
   }
   
-	//console.log('ACTION FINALE: ' + document.form.action);
+	//console.log('ACTION FINALE: ' + theForm.action);
     // form submit
     theForm.submit();
 }
