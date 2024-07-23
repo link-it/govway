@@ -370,9 +370,11 @@ public class ErogazioniDetailsUtilities {
 				idPA = porteApplicativeCore.getIDPortaApplicativaAssociataDefault(idServizio);
 				paDefault = porteApplicativeCore.getPortaApplicativa(idPA);
 				canalePorta = paDefault.getCanale();
+				boolean analizeProxyPassRules = true;
 				UrlInvocazioneAPI urlInvocazioneConfig = confCore.getConfigurazioneUrlInvocazione(protocollo, RuoloContesto.PORTA_APPLICATIVA, serviceBinding, paDefault.getNome(), 
 						new IDSoggetto(paDefault.getTipoSoggettoProprietario(), paDefault.getNomeSoggettoProprietario()),
-								as, paDefault.getCanale());
+								as, paDefault.getCanale(),
+								analizeProxyPassRules);
 				urlInvocazione = urlInvocazioneConfig.getUrl();
 			} else {
 				urlInvocazione = "-";
@@ -448,8 +450,10 @@ public class ErogazioniDetailsUtilities {
 			String canalePorta = pdDefault.getCanale();
 						
 			// Url Invocazione
+			boolean analizeProxyPassRules = true;
 			UrlInvocazioneAPI urlInvocazioneConf = confCore.getConfigurazioneUrlInvocazione(protocollo, RuoloContesto.PORTA_DELEGATA, serviceBinding, pdDefault.getNome(), idSoggettoFruitore,
-					as, pdDefault.getCanale());
+					as, pdDefault.getCanale(),
+					analizeProxyPassRules);
 			urlInvocazione = urlInvocazioneConf.getUrl();
 			sb.append(newLine);
 			sb.append(PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE);

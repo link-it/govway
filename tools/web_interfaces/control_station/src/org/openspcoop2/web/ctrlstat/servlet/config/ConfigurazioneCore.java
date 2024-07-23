@@ -1309,7 +1309,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 	
 	public UrlInvocazioneAPI getConfigurazioneUrlInvocazione(String protocollo,
 			RuoloContesto ruolo, ServiceBinding serviceBinding, String interfaceName, IDSoggetto soggettoOperativo,
-			AccordoServizioParteComuneSintetico aspc, String canalePorta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, ProtocolException  {
+			AccordoServizioParteComuneSintetico aspc, String canalePorta, boolean analizeProxyPassRules) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, ProtocolException  {
 		
 		IProtocolFactory<?>protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 		
@@ -1334,7 +1334,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		String canale = CanaliUtils.getCanale(config!=null ? config.getGestioneCanali() : null, canaleApi, canalePorta);
 		
 		return UrlInvocazioneAPI.getConfigurazioneUrlInvocazione(configurazioneUrlInvocazione, protocolFactory, ruolo, serviceBinding, interfaceName, soggettoOperativo,
-				tags, canale);
+				tags, canale, analizeProxyPassRules);
 
 	}
 	

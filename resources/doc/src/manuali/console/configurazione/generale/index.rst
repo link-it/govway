@@ -46,7 +46,7 @@ possibile:
         :maxdepth: 2
 
 	multiTenant
-	urlInvocazione
+	urlInvocazione/index
 	cors
 	cachingRisposta
 	profili
