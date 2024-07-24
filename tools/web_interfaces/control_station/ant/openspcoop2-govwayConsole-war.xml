@@ -347,6 +347,7 @@
 				<include name="${commons_logging_jar}"/>
 				<include name="commons-lang3-3.13.0.jar"/>
 				<include name="commons-compress-1.26.0.jar"/>
+				<include name="commons-jcs3-core-3.1-gov4j-2.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayConsole}/console">
 				<include name="jquery-3.6.4.jar"/>
