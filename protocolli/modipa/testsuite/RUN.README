@@ -187,6 +187,10 @@ Prerequisiti:
 + HSM per TLS Keystore. Seguire le indicazioni descritte in pkcs11/PKCS11.README
   Poi 'cp tools/utils/src/org/openspcoop2/utils/certificate/test/govway_test_hsm.properties  /etc/govway/hsm.properties'
 
++ Nella console andare su Tracciamento 'Erogazioni' e 'Fruizioni' ed impostare su <abilitato>:
+    - Violazione Policy Rate Limiting
+  Questo perchè di base govway non traccia le transazioni quando è stata superata la soglia globale o quando è stata violata una policy di rate limiting.
+
 + Aggiungere in /etc/hosts la riga
 	127.0.0.1 Erogatore
 

@@ -2142,6 +2142,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE);
 			de.setType(DataElementType.TEXT);
 			String urlInvocazione = "";
+			String urlInvocazioneTooltip = null;
 
 			if(!isPddEsterna){
 				idPA = this.porteApplicativeCore.getIDPortaApplicativaAssociataDefault(idServizio);
@@ -2158,14 +2159,27 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				paConnettoreDaListaAPS = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, Costanti.CHECK_BOX_ENABLED_TRUE);
 				paConfigurazioneAltroApi = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_API, Costanti.CHECK_BOX_ENABLED_TRUE);
 				
+				boolean analizeProxyPassRules = true;
 				UrlInvocazioneAPI urlInvocazioneConfig = this.confCore.getConfigurazioneUrlInvocazione(protocollo, RuoloContesto.PORTA_APPLICATIVA, serviceBinding, paDefault.getNome(), 
 						new IDSoggetto(paDefault.getTipoSoggettoProprietario(), paDefault.getNomeSoggettoProprietario()),
-								as, paDefault.getCanale());
+								as, paDefault.getCanale(),
+								analizeProxyPassRules);
 				urlInvocazione = urlInvocazioneConfig.getUrl();
+				
+				UrlInvocazioneAPI urlInvocazioneConfigDefault = this.confCore.getConfigurazioneUrlInvocazione(protocollo, RuoloContesto.PORTA_APPLICATIVA, serviceBinding, paDefault.getNome(), 
+						new IDSoggetto(paDefault.getTipoSoggettoProprietario(), paDefault.getNomeSoggettoProprietario()),
+								as, paDefault.getCanale(),
+								!analizeProxyPassRules);
+				if(urlInvocazioneConfigDefault!=null && urlInvocazioneConfigDefault.getUrl()!=null && !urlInvocazioneConfigDefault.getUrl().equals(urlInvocazione)) {
+					urlInvocazioneTooltip = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_BASE_URL_INVOCAZIONE_INTERNA+": "+ urlInvocazioneConfigDefault.getUrl();
+				}
 			} else {
 				urlInvocazione = "-";
 			}
 			de.setValue(urlInvocazione);
+			if(urlInvocazioneTooltip!=null) {
+				de.setToolTip(urlInvocazioneTooltip);
+			}
 			List<Parameter> listParametersUrlInvocazione = new ArrayList<>();
 			listParametersUrlInvocazione.add(paIdSogg);
 			listParametersUrlInvocazione.add(paNomePorta);
@@ -2395,9 +2409,20 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			de = new DataElement();
 			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE);
 			de.setType(DataElementType.TEXT);
+			boolean analizeProxyPassRules = true;
 			UrlInvocazioneAPI urlInvocazione = this.confCore.getConfigurazioneUrlInvocazione(protocollo, RuoloContesto.PORTA_DELEGATA, serviceBinding, pdDefault.getNome(), idFruitore,
-					as, pdDefault.getCanale());
-			de.setValue(urlInvocazione.getUrl());
+					as, pdDefault.getCanale(),
+					analizeProxyPassRules);
+			String urlInvocazioneAPI = urlInvocazione.getUrl();
+			de.setValue(urlInvocazioneAPI);
+			
+			UrlInvocazioneAPI urlInvocazioneDefault = this.confCore.getConfigurazioneUrlInvocazione(protocollo, RuoloContesto.PORTA_DELEGATA, serviceBinding, pdDefault.getNome(), idFruitore,
+					as, pdDefault.getCanale(),
+					!analizeProxyPassRules);
+			if(urlInvocazioneDefault!=null && urlInvocazioneDefault.getUrl()!=null && !urlInvocazioneDefault.getUrl().equals(urlInvocazioneAPI)) {
+				de.setToolTip(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_BASE_URL_INVOCAZIONE_INTERNA+": "+urlInvocazioneDefault.getUrl());
+			}
+			
 			List<Parameter> listParametersUrlInvocazione = new ArrayList<>();
 			listParametersUrlInvocazione.add(pIdPD);
 			listParametersUrlInvocazione.add(pNomePD);

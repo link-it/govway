@@ -1231,8 +1231,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			if(asps!=null) {
 				soggettoOperativo = new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
 			}
+			boolean analizeProxyPassRules = true;
 			UrlInvocazioneAPI urlInvocazione = this.confCore.getConfigurazioneUrlInvocazione(protocollo, RuoloContesto.PORTA_APPLICATIVA, serviceBinding, nomePorta, soggettoOperativo,
-					aspc, canalePorta);
+					aspc, canalePorta,
+					analizeProxyPassRules);
 			
 			de = new DataElement();
 			if(ServiceBinding.SOAP.equals(serviceBinding)) {
@@ -1241,10 +1243,30 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			else {
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_BASE_URL_INVOCAZIONE);
 			}
-			de.setValue(urlInvocazione.getUrl());
+			String urlInvocazioneAPI = urlInvocazione.getUrl();
+			de.setValue(urlInvocazioneAPI);
 			de.setType(DataElementType.TEXT);
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA+"___LABEL");
 			dati.add(de);
+			
+			UrlInvocazioneAPI urlInvocazioneDefault = this.confCore.getConfigurazioneUrlInvocazione(protocollo, RuoloContesto.PORTA_APPLICATIVA, serviceBinding, nomePorta, soggettoOperativo,
+					aspc, canalePorta,
+					!analizeProxyPassRules);
+			
+			if(urlInvocazioneDefault!=null && urlInvocazioneDefault.getUrl()!=null && !urlInvocazioneDefault.getUrl().equals(urlInvocazioneAPI)) {
+				de = new DataElement();
+				if(ServiceBinding.SOAP.equals(serviceBinding)) {
+					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_URL_INVOCAZIONE_INTERNA);
+				}
+				else {
+					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_BASE_URL_INVOCAZIONE_INTERNA);
+				}
+				String urlInvocazioneAPIdefault = urlInvocazioneDefault.getUrl();
+				de.setValue(urlInvocazioneAPIdefault);
+				de.setType(DataElementType.TEXT);
+				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA+"___LABEL_INTERNA");
+				dati.add(de);
+			}
 		}
 		
 		de = new DataElement();

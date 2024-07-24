@@ -33,7 +33,6 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -90,7 +89,17 @@ public class UrlInvocazioneAPI implements Serializable {
 	public static UrlInvocazioneAPI getConfigurazioneUrlInvocazione(ConfigurazioneUrlInvocazione configurazioneUrlInvocazione, 
 			IProtocolFactory<?> protocolFactory, RuoloContesto ruolo, ServiceBinding serviceBinding, 
 			String interfaceName, IDSoggetto soggettoOperativo,
-			List<String> tags, String canale) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+			List<String> tags, String canale) throws DriverConfigurazioneException{
+		return getConfigurazioneUrlInvocazione(configurazioneUrlInvocazione, 
+				protocolFactory, ruolo, serviceBinding, 
+				interfaceName, soggettoOperativo,
+				tags, canale, true);
+	}
+	
+	public static UrlInvocazioneAPI getConfigurazioneUrlInvocazione(ConfigurazioneUrlInvocazione configurazioneUrlInvocazione, 
+			IProtocolFactory<?> protocolFactory, RuoloContesto ruolo, ServiceBinding serviceBinding, 
+			String interfaceName, IDSoggetto soggettoOperativo,
+			List<String> tags, String canale, boolean analizeProxyPassRules) throws DriverConfigurazioneException{
 		
 		if(configurazioneUrlInvocazione==null) {
 			configurazioneUrlInvocazione = new ConfigurazioneUrlInvocazione();
@@ -118,26 +127,28 @@ public class UrlInvocazioneAPI implements Serializable {
 		
 		// Colleziono regole compatibili
 		ConfigurazioneUrlInvocazioneRegola regola = null;
-		Map<String, ConfigurazioneUrlInvocazioneRegola> regole = new HashMap<>();
-		for (ConfigurazioneUrlInvocazioneRegola check : configurazioneUrlInvocazione.getRegolaList()) {
-			regole.put(check.getPosizione()+"", check);
-		}
-		if(regole.size()>0) {
-			List<String> posizioni = new ArrayList<>();
-			posizioni.addAll(regole.keySet());
-			Collections.sort(posizioni);
-			for (String posizione : posizioni) {
-				ConfigurazioneUrlInvocazioneRegola check = regole.get(posizione);
-				try {
-					//System.out.println("ESAMINO REGOLA ALLA POSIZIONE '"+posizione+"'");
-					String contesto = getContext(protocolFactory, ruolo, serviceBinding, interfaceNameNormalizzata);
-					if(isMatchRegolaUrlInvocazione(check, protocolFactory, ruolo, serviceBinding, contesto, soggettoOperativo)) { 
-						regola = processMatchRegolaUrlInvocazione(check, contesto,
-								tags, canale); // risolve eventuale match di espressioni regolari.
-						break;
-					}	
-				}catch(Exception e) {
-					protocolFactory.getLogger().error("Errore durante il processamento della regola-"+posizione+" '"+check.getNome()+"': "+e.getMessage(),e);
+		if(analizeProxyPassRules) {
+			Map<String, ConfigurazioneUrlInvocazioneRegola> regole = new HashMap<>();
+			for (ConfigurazioneUrlInvocazioneRegola check : configurazioneUrlInvocazione.getRegolaList()) {
+				regole.put(check.getPosizione()+"", check);
+			}
+			if(regole.size()>0) {
+				List<String> posizioni = new ArrayList<>();
+				posizioni.addAll(regole.keySet());
+				Collections.sort(posizioni);
+				for (String posizione : posizioni) {
+					ConfigurazioneUrlInvocazioneRegola check = regole.get(posizione);
+					try {
+						/**System.out.println("ESAMINO REGOLA ALLA POSIZIONE '"+posizione+"'");*/
+						String contesto = getContext(protocolFactory, ruolo, serviceBinding, interfaceNameNormalizzata);
+						if(isMatchRegolaUrlInvocazione(check, protocolFactory, ruolo, serviceBinding, contesto, soggettoOperativo)) { 
+							regola = processMatchRegolaUrlInvocazione(check, contesto,
+									tags, canale); // risolve eventuale match di espressioni regolari.
+							break;
+						}	
+					}catch(Exception e) {
+						protocolFactory.getLogger().error("Errore durante il processamento della regola-"+posizione+" '"+check.getNome()+"': "+e.getMessage(),e);
+					}
 				}
 			}
 		}
@@ -177,6 +188,10 @@ public class UrlInvocazioneAPI implements Serializable {
 			IProtocolFactory<?> protocolFactory, RuoloContesto ruolo, ServiceBinding serviceBinding, String interfaceNameNormalizzata) throws DriverConfigurazioneException {
 	
 		try {
+			
+			if(configurazioneUrlInvocazione!=null) {
+				// nop
+			}
 			
 			ConfigurazioneUrlInvocazioneRegola regola = new ConfigurazioneUrlInvocazioneRegola();
 			regola.setNome(CostantiConfigurazione.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_URL_INVOCAZIONE_DEFAULT_RULE_NAME);
@@ -275,7 +290,7 @@ public class UrlInvocazioneAPI implements Serializable {
 		else {
 			String contestDaVerificare = contesto;
 			if(contesto.startsWith("/")) {
-				if(check.getRegola().startsWith("/")==false) {
+				if(!check.getRegola().startsWith("/")) {
 					if(contesto.length()==1) {
 						contestDaVerificare = "";
 					}
@@ -302,10 +317,9 @@ public class UrlInvocazioneAPI implements Serializable {
 			try {
 				String contestoDaUsarePerVerifica = contestoParam;
 				boolean isMatch = RegularExpressionEngine.isMatch(contestoDaUsarePerVerifica, regola.getRegola());
-				if(!isMatch) {
-					if(contestoDaUsarePerVerifica.startsWith("/") && contestoDaUsarePerVerifica.length()>1) {
-						contestoDaUsarePerVerifica = contestoDaUsarePerVerifica.substring(1);
-					}
+				if(!isMatch &&
+					contestoDaUsarePerVerifica.startsWith("/") && contestoDaUsarePerVerifica.length()>1) {
+					contestoDaUsarePerVerifica = contestoDaUsarePerVerifica.substring(1);
 				}
 				
 				List<String> list = null;
@@ -343,9 +357,9 @@ public class UrlInvocazioneAPI implements Serializable {
 				regola.setContestoEsterno(newContesto);
 				regola.setBaseUrl(baseUrl);
 			}
-//			catch(RegExpNotFoundException notFound) { NON dovrebbe succedere, gestito prima con l'if
-//				return  null; 
-//			}
+			/**catch(RegExpNotFoundException notFound) { NON dovrebbe succedere, gestito prima con l'if
+				return  null; 
+			}*/
 			catch(Exception e) {
 				throw new DriverConfigurazioneException(e.getMessage(),e);
 			}
@@ -448,10 +462,9 @@ public class UrlInvocazioneAPI implements Serializable {
 						contextWithRestBinding = "";
 					}
 				}
-				else if(org.openspcoop2.protocol.manifest.constants.ServiceBinding.SOAP.equals(ctx.getBinding())) {
-					if(contextWithSoapBinding==null) {
-						contextWithSoapBinding = "";
-					}
+				else if(org.openspcoop2.protocol.manifest.constants.ServiceBinding.SOAP.equals(ctx.getBinding()) &&
+					contextWithSoapBinding==null) {
+					contextWithSoapBinding = "";
 				}
 			}
 			if(protocolFactory!=null && protocolFactory.getManifest().getWeb().sizeContextList()>0) {
@@ -466,10 +479,9 @@ public class UrlInvocazioneAPI implements Serializable {
 							contextWithRestBinding = ctx.getName();
 						}
 					}
-					else if(org.openspcoop2.protocol.manifest.constants.ServiceBinding.SOAP.equals(ctx.getBinding())) {
-						if(contextWithSoapBinding==null) {
-							contextWithSoapBinding = ctx.getName();
-						}
+					else if(org.openspcoop2.protocol.manifest.constants.ServiceBinding.SOAP.equals(ctx.getBinding()) &&
+						contextWithSoapBinding==null) {
+						contextWithSoapBinding = ctx.getName();
 					}
 				}
 			}
@@ -482,7 +494,7 @@ public class UrlInvocazioneAPI implements Serializable {
 				contextWithSoapBinding = contextWithoutBinding;
 			}
 			if(contextWithoutBinding==null) {
-				throw new Exception("Contesto senza uno specifico binding non indicato");
+				throw new DriverConfigurazioneException("Contesto senza uno specifico binding non indicato");
 			}
 			
 			String contestoEsterno = null;
@@ -517,14 +529,13 @@ public class UrlInvocazioneAPI implements Serializable {
 						}
 					}
 				}
-				else if(CostantiLabel.SDI_PROTOCOL_NAME.equalsIgnoreCase(protocolFactory.getProtocol())) {
-					if(RuoloContesto.PORTA_DELEGATA.equals(ruolo)) {
-						if(contestoEsterno.endsWith("out/")) {
-							contestoEsterno = contestoEsterno + "xml2soap/";
-						}
-						else if(contestoEsterno.endsWith("out")) {
-							contestoEsterno = contestoEsterno + "/xml2soap/";
-						}
+				else if(CostantiLabel.SDI_PROTOCOL_NAME.equalsIgnoreCase(protocolFactory.getProtocol()) &&
+					RuoloContesto.PORTA_DELEGATA.equals(ruolo)) {
+					if(contestoEsterno.endsWith("out/")) {
+						contestoEsterno = contestoEsterno + "xml2soap/";
+					}
+					else if(contestoEsterno.endsWith("out")) {
+						contestoEsterno = contestoEsterno + "/xml2soap/";
 					}
 				}
 			}
@@ -553,10 +564,9 @@ public class UrlInvocazioneAPI implements Serializable {
 				}
 			}
 						
-			if(contestoEsterno!=null) {
-				if(!contestoEsterno.startsWith("/")) {
-					contestoEsterno = "/"+contestoEsterno;
-				}
+			if(contestoEsterno!=null &&
+				!contestoEsterno.startsWith("/")) {
+				contestoEsterno = "/"+contestoEsterno;
 			}
 			
 			return contestoEsterno;

@@ -695,7 +695,9 @@ public class PorteDelegateCostanti {
 	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_VALORE = "Valore";
 	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO = CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO;
 	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_URL_INVOCAZIONE = "URL";
+	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_URL_INVOCAZIONE_INTERNA = "URL interna";
 	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_BASE_URL_INVOCAZIONE = "Base URL";
+	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_BASE_URL_INVOCAZIONE_INTERNA = "Base URL interna";
 	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE = "Descrizione";
 	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE_DI = "Descrizione di ";
 	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI;
