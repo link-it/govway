@@ -20,6 +20,7 @@ Background:
     
     * def get_diagnostico = read('classpath:utils/get_diagnostico.js')
 
+    * def decode_base64 = read('classpath:utils/decode-base64.js')
 
 
 
@@ -54,6 +55,9 @@ And match header Agid-JWT-Signature == '#notpresent'
 And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0001'
 And match header X-RateLimit-Remaining == '1'
 And match header X-RateLimit-Limit == '2'
+And match header GovWay-TestSuite-Reply-GovWay-Token-PDND-OrganizationName == 'Comune di Esempio '+formattedDate+' ApplicativoBlockingIDA01ExampleClient3'
+And match header GovWay-TestSuite-Reply-GovWay-Token-PDND-OrganizationCategory == 'Comuni e loro Consorzi e Associazioni'
+And match header GovWay-TestSuite-Reply-GovWay-Token-PDND-OrganizationExternal == 'IPA c_c000_'+formattedDate+'_0001'
 
 # controlli cache pdnd
 
@@ -114,6 +118,9 @@ And match header Agid-JWT-Signature == '#notpresent'
 And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0001'
 And match header X-RateLimit-Remaining == '0'
 And match header X-RateLimit-Limit == '2'
+And match header GovWay-TestSuite-Reply-GovWay-Token-PDND-OrganizationName == 'Comune di Esempio '+formattedDate+' ApplicativoBlockingIDA01ExampleClient3'
+And match header GovWay-TestSuite-Reply-GovWay-Token-PDND-OrganizationCategory == 'Comuni e loro Consorzi e Associazioni'
+And match header GovWay-TestSuite-Reply-GovWay-Token-PDND-OrganizationExternal == 'IPA c_c000_'+formattedDate+'_0001'
 
 # controlli cache pdnd
 
@@ -176,6 +183,9 @@ And match header Agid-JWT-Signature == '#notpresent'
 And match header PDND-ExternalId == '#notpresent'
 And match header X-RateLimit-Remaining == '0'
 And match header X-RateLimit-Limit == '2'
+And match header GovWay-TestSuite-Reply-GovWay-Token-PDND-OrganizationName == '#notpresent'
+And match header GovWay-TestSuite-Reply-GovWay-Token-PDND-OrganizationCategory == '#notpresent'
+And match header GovWay-TestSuite-Reply-GovWay-Token-PDND-OrganizationExternal == '#notpresent'
 
 # controllo applicazione filtro rate limiting
 
@@ -224,6 +234,29 @@ And match header Agid-JWT-Signature == '#notpresent'
 And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0002'
 And match header X-RateLimit-Remaining == '1'
 And match header X-RateLimit-Limit == '2'
+
+# controlli govway-token
+* def encodedHeaderGWToken = responseHeaders['GovWay-TestSuite-Reply-GovWay-Token'][0]
+* def decodedHeaderGWToken = decode_base64(encodedHeaderGWToken)
+* karate.log("Decoded: ", decodedHeaderGWToken)
+* json headerJsonGWToken = decodedHeaderGWToken
+* karate.log("Decoded as json: ", headerJsonGWToken)
+* def nomeOrganization = 'Comune di Esempio '+formattedDate+' ApplicativoBlockingIDA01'
+* def externalIdOrganization = 'c_c000_'+formattedDate+'_0002'
+* def headerJsonGWTokenExpected = 
+"""
+{ 
+   pdnd: {
+     organization: {
+        name: #(nomeOrganization), 
+        category: 'Comuni e loro Consorzi e Associazioni', 
+        externalOrigin: 'IPA',
+        externalId: #(externalIdOrganization)
+     }
+   }
+ }
+"""
+* match headerJsonGWToken contains deep headerJsonGWTokenExpected
 
 # controlli cache pdnd
 
@@ -300,6 +333,29 @@ And match header Agid-JWT-Signature == '#notpresent'
 And match header PDND-ExternalId == 'c_c000_'+formattedDate+'_0002'
 And match header X-RateLimit-Remaining == '0'
 And match header X-RateLimit-Limit == '2'
+
+# controlli govway-token
+* def encodedHeaderGWToken = responseHeaders['GovWay-TestSuite-Reply-GovWay-Token'][0]
+* def decodedHeaderGWToken = decode_base64(encodedHeaderGWToken)
+* karate.log("Decoded: ", decodedHeaderGWToken)
+* json headerJsonGWToken = decodedHeaderGWToken
+* karate.log("Decoded2: ", headerJsonGWToken)
+* def nomeOrganization = 'Comune di Esempio '+formattedDate+' ApplicativoBlockingIDA01'
+* def externalIdOrganization = 'c_c000_'+formattedDate+'_0002'
+* def headerJsonGWTokenExpected = 
+"""
+{ 
+   pdnd: {
+     organization: {
+        name: #(nomeOrganization), 
+        category: 'Comuni e loro Consorzi e Associazioni', 
+        externalOrigin: 'IPA',
+        externalId: #(externalIdOrganization)
+     }
+   }
+ }
+"""
+* match headerJsonGWToken contains deep headerJsonGWTokenExpected
 
 # controlli cache pdnd
 
@@ -382,6 +438,7 @@ And match header Agid-JWT-Signature == '#notpresent'
 And match header PDND-ExternalId == '#notpresent'
 And match header X-RateLimit-Remaining == '0'
 And match header X-RateLimit-Limit == '2'
+And match header GovWay-TestSuite-Reply-GovWay-Token == '#notpresent'
 
 # controllo applicazione filtro rate limiting
 
@@ -883,6 +940,9 @@ And match header PDND-ExternalId == '#notpresent'
 
 # controllo applicazione filtro rate limiting
 
+# Aspetto serializzazione diagnostica
+* java.lang.Thread.sleep(2000)
+
 * def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
 * def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(1).') 
 * match result[0].MESSAGGIO contains 'inErrore(1)'
@@ -927,6 +987,9 @@ And match header PDND-ExternalId == '#notpresent'
 And match header X-RateLimit-Limit == '1000'
 
 # controllo applicazione filtro rate limiting
+
+# Aspetto serializzazione diagnostica
+* java.lang.Thread.sleep(2000)
 
 * def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
 * def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
@@ -1004,6 +1067,9 @@ And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
 And match header PDND-ExternalId == '#notpresent'
 
+# Aspetto serializzazione diagnostica
+* java.lang.Thread.sleep(2000)
+
 * def tiderogazione = responseHeaders['GovWay-Transaction-ID'][0]
 * def result = get_diagnostico(tiderogazione, 'processo di gestione token') 
 * match result[0].MESSAGGIO contains 'SimulazionePDND-JWK-RecuperoInfoClient-ClientError'
@@ -1076,6 +1142,9 @@ And match response == read('error-bodies/pdnd-info-clients-non-presenti.json')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
 And match header PDND-ExternalId == '#notpresent'
+
+# Aspetto serializzazione diagnostica
+* java.lang.Thread.sleep(2000)
 
 * def tiderogazione = responseHeaders['GovWay-Transaction-ID'][0]
 * def result = get_diagnostico(tiderogazione, 'processo di gestione token') 

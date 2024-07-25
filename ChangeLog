@@ -1,5 +1,14 @@
 2024-07-25  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, ProtocolloModIPA]
+	Aggiunta funzionalità OP-1749
+	Le informazioni sull'organizzazione, recuperate tramite le API PDND, vengono ora propagate al backend tramite gli header di integrazione:
+	- GovWay-Token-PDND-OrganizationName
+	- GovWay-Token-PDND-OrganizationCategory
+	- GovWay-Token-PDND-OrganizationExternal
+
+2024-07-25  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole, GovWayCore]
 	Aggiunta funzionalità OP-1745
 	Aggiunta la possibilità di abilitare o disabilitare la funzionalità di 'encoded word' per i valori degli header HTTP, 
