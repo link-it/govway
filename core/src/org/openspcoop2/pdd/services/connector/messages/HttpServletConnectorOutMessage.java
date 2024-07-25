@@ -26,15 +26,25 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.IDService;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
@@ -55,16 +65,18 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 	protected HttpServletResponse res;
 	protected OutputStream outNullable;
 	protected IProtocolFactory<?> protocolFactory;
+	protected RequestInfo requestInfo;
 	protected String idModulo;
 	protected IDService idModuloAsIDService;
 	protected OpenSPCoop2Properties openspcoopProperties;
 	
 	
-	public HttpServletConnectorOutMessage(IProtocolFactory<?> protocolFactory, HttpServletResponse res,
+	public HttpServletConnectorOutMessage(RequestInfo requestInfo,IProtocolFactory<?> protocolFactory, HttpServletResponse res,
 			IDService idModuloAsIDService, String idModulo) throws ConnectorException{
 		try{
 			this.res = res;
 			this.protocolFactory = protocolFactory;
+			this.requestInfo = requestInfo;
 			this.idModuloAsIDService = idModuloAsIDService;
 			this.idModulo = idModulo;
 			this.openspcoopProperties =  OpenSPCoop2Properties.getInstance();
@@ -73,9 +85,9 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 		}
 	}
 
-	private void _sendHeaders(OpenSPCoop2Message msg) throws Exception {
+	private void sendHeadersEngine(OpenSPCoop2Message msg) throws ConnectorException, MessageException {
 		if(msg==null) {
-			throw new Exception("Message is null");
+			throw new ConnectorException("Message is null");
 		}
 		// Propago eventuali header http
 		OpenSPCoop2MessageProperties forwardHeader = null;
@@ -88,7 +100,7 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 		if(forwardHeader!=null && forwardHeader.size()>0){
 			Iterator<String> keys = forwardHeader.getKeys();
 			while (keys.hasNext()) {
-				String key = (String) keys.next();
+				String key = keys.next();
 				List<String> values = forwardHeader.getPropertyValues(key);
 				if(values!=null && !values.isEmpty()) {
 					for (String value : values) {
@@ -102,20 +114,24 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 	@Override
 	public void sendResponse(OpenSPCoop2Message msg, boolean consume) throws ConnectorException {
 		try{
+			if(msg==null) {
+				throw new ConnectorException("Message is null");
+			}
+			
 			// Propago eventuali header http
-			this._sendHeaders(msg);
+			this.sendHeadersEngine(msg);
 			
 			boolean hasContent = false;
 			
 			// il save e' necessario con i connettori directVM in caso di errori di validazione
-			if(msg!=null && ServiceBinding.SOAP.equals(msg.getServiceBinding())){
+			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
 				hasContent = true;
 				OpenSPCoop2SoapMessage soap = msg.castAsSoap();
 				if(soap.hasSOAPFault()){
 					soap.saveChanges();
 				}
 			}
-			if(msg!=null && ServiceBinding.REST.equals(msg.getServiceBinding())){
+			if(ServiceBinding.REST.equals(msg.getServiceBinding())){
 				OpenSPCoop2RestMessage<?> rest = msg.castAsRest();
 				hasContent = rest.hasContent();
 			}
@@ -152,7 +168,7 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 	public void sendResponseHeaders(OpenSPCoop2Message message) throws ConnectorException{
 		try{
 			// Propago eventuali header http
-			this._sendHeaders(message);
+			this.sendHeadersEngine(message);
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
@@ -160,13 +176,13 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 	
 	@Override
 	public void setHeader(String key,String value) throws ConnectorException{
-		_putHeader(key,value,false);
+		putHeaderEngine(key,value,false);
 	}
 	@Override
 	public void addHeader(String key,String value) throws ConnectorException{
-		_putHeader(key,value,true);
+		putHeaderEngine(key,value,true);
 	}
-	private void _putHeader(String key,String value, boolean add) throws ConnectorException{
+	private void putHeaderEngine(String key,String value, boolean add) throws ConnectorException{
 		try{
 			if(value==null) {
 				return;
@@ -176,31 +192,39 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 			Charset charsetRFC2047 = null;
 			RFC2047Encoding encodingAlgorithmRFC2047 = null;
 			boolean validazioneHeaderRFC2047 = false;
+			List<Proprieta> listProprieta = null;
 			if(this.idModuloAsIDService!=null){
 				switch (this.idModuloAsIDService) {
 				case PORTA_DELEGATA:
 				case PORTA_DELEGATA_INTEGRATION_MANAGER:
 				case PORTA_DELEGATA_XML_TO_SOAP:
-					encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi();
-					charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi();
-					encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi();
-					validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_ricezioneContenutiApplicativi();
+					encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValueRicezioneContenutiApplicativi();
+					charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValueRicezioneContenutiApplicativi();
+					encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValueRicezioneContenutiApplicativi();
+					validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValueRicezioneContenutiApplicativi();
+					listProprieta = readProprietaPortaDelegata();
 					break;
 				case PORTA_APPLICATIVA:
-					encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_ricezioneBuste();
-					charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_ricezioneBuste();
-					encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_ricezioneBuste();
-					validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_ricezioneBuste();
+					encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValueRicezioneBuste();
+					charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValueRicezioneBuste();
+					encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValueRicezioneBuste();
+					validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValueRicezioneBuste();
+					listProprieta = readProprietaPortaApplicativa();
 					break;
 				default:
 					break;
 				}
 			}
 			
+			encodingRFC2047 = CostantiProprieta.isConnettoriHeaderValueEncodingRFC2047ResponseEnabled(listProprieta, encodingRFC2047);
+			charsetRFC2047 = CostantiProprieta.getConnettoriHeaderValueEncodingRFC2047ResponseCharset(listProprieta, charsetRFC2047);
+			encodingAlgorithmRFC2047 = CostantiProprieta.getConnettoriHeaderValueEncodingRFC2047ResponseType(listProprieta, encodingAlgorithmRFC2047);
+			validazioneHeaderRFC2047 = CostantiProprieta.isConnettoriHeaderValidationResponseEnabled(listProprieta, validazioneHeaderRFC2047);
+			
 			if(encodingRFC2047){
-				if(RFC2047Utilities.isAllCharactersInCharset(value, charsetRFC2047)==false){
-					String encoded = RFC2047Utilities.encode(new String(value), charsetRFC2047, encodingAlgorithmRFC2047);
-					//System.out.println("@@@@ RESPONSE CODIFICA ["+value+"] in ["+encoded+"]");
+				if(!RFC2047Utilities.isAllCharactersInCharset(value, charsetRFC2047)){
+					String encoded = RFC2047Utilities.encode(new String(value.getBytes()), charsetRFC2047, encodingAlgorithmRFC2047);
+					/**System.out.println("@@@@ RESPONSE CODIFICA ["+value+"] in ["+encoded+"]");*/
 					this.putResponseHeader(validazioneHeaderRFC2047, key, encoded, add);
 				}
 				else{
@@ -214,6 +238,43 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
+	}
+	
+	private List<Proprieta> readProprietaPortaApplicativa(){
+		if(this.requestInfo!=null && this.requestInfo.getProtocolContext()!=null && this.requestInfo.getProtocolContext().getInterfaceName()!=null && 
+				StringUtils.isNotEmpty(this.requestInfo.getProtocolContext().getInterfaceName())) {
+			IDPortaApplicativa idPA = new IDPortaApplicativa();
+			idPA.setNome(this.requestInfo.getProtocolContext().getInterfaceName());
+			try {
+				PortaApplicativa pa = ConfigurazionePdDManager.getInstance().getPortaApplicativaSafeMethod(idPA, this.requestInfo);
+				if(pa!=null && pa.sizeProprieta()>0) {
+					return pa.getProprieta();
+				}
+			}catch(Exception e) {
+				if(this.protocolFactory!=null && this.protocolFactory.getLogger()!=null) {
+					this.protocolFactory.getLogger().error("Accesso porta applicativa ["+this.requestInfo.getProtocolContext().getInterfaceName()+"] fallito: "+e.getMessage(),e);
+				}
+			}
+		}
+		return null;
+	}
+	private List<Proprieta> readProprietaPortaDelegata(){
+		if(this.requestInfo!=null && this.requestInfo.getProtocolContext()!=null && this.requestInfo.getProtocolContext().getInterfaceName()!=null && 
+				StringUtils.isNotEmpty(this.requestInfo.getProtocolContext().getInterfaceName())) {
+			IDPortaDelegata idPD = new IDPortaDelegata();
+			idPD.setNome(this.requestInfo.getProtocolContext().getInterfaceName());
+			try {
+				PortaDelegata pd = ConfigurazionePdDManager.getInstance().getPortaDelegataSafeMethod(idPD, this.requestInfo);
+				if(pd!=null && pd.sizeProprieta()>0) {
+					return pd.getProprieta();
+				}
+			}catch(Exception e) {
+				if(this.protocolFactory!=null && this.protocolFactory.getLogger()!=null) {
+					this.protocolFactory.getLogger().error("Accesso porta applicativa ["+this.requestInfo.getProtocolContext().getInterfaceName()+"] fallito: "+e.getMessage(),e);
+				}
+			}
+		}
+		return null;
 	}
 	
 	private void putResponseHeader(boolean validazioneHeaderRFC2047, String key, String value, boolean add) {

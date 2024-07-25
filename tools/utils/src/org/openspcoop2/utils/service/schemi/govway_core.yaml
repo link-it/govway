@@ -157,7 +157,7 @@ components:
     data_fine:
       in: query
       name: data_fine
-      description: data inizio dell'intervallo di ricerca
+      description: data fine dell'intervallo di ricerca
       schema:
         type: string
         format: date-time

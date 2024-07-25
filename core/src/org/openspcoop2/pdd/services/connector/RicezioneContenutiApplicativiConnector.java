@@ -22,7 +22,6 @@
 
 package org.openspcoop2.pdd.services.connector;
 
-import java.io.IOException;
 import java.util.Date;
 
 import javax.servlet.ServletException;
@@ -65,29 +64,32 @@ public class RicezioneContenutiApplicativiConnector {
 
 	
 	public void doEngine(RequestInfo requestInfo, 
-			HttpServletRequest req, HttpServletResponse res, HttpRequestMethod method) throws ServletException, IOException {
+			HttpServletRequest req, HttpServletResponse res, HttpRequestMethod method) throws ServletException {
 		
 		Date dataAccettazioneRichiesta = DateManager.getDate();
 			
 		// Devo prima leggere l'API invocata per comprendere il service binding effettivo
-//		if(HttpRequestMethod.GET.equals(method)){
-//			java.util.Enumeration<?> parameters = req.getParameterNames();
-//			while(parameters.hasMoreElements()){
-//				String key = (String) parameters.nextElement();
-//				String value = req.getParameter(key);
-//				if("wsdl".equalsIgnoreCase(key) && (value==null || "".equals(value)) ){
-//					ConnectorDispatcherUtils.doWsdl(req, res, method, ID_SERVICE);
-//					return;
-//				}
-//			}
-//		}
-//		
-//		if(org.openspcoop2.message.constants.ServiceBinding.SOAP.equals(requestInfo.getIntegrationServiceBinding()) && !HttpRequestMethod.POST.equals(method)){
-//
-//			ConnectorDispatcherUtils.doMethodNotSupported(req, res, method, ID_SERVICE);
-//			return;
-//			
-//		}
+		if(method!=null) {
+			// nop
+		}
+		/**if(HttpRequestMethod.GET.equals(method)){
+			java.util.Enumeration<?> parameters = req.getParameterNames();
+			while(parameters.hasMoreElements()){
+				String key = (String) parameters.nextElement();
+				String value = req.getParameter(key);
+				if("wsdl".equalsIgnoreCase(key) && (value==null || "".equals(value)) ){
+					ConnectorDispatcherUtils.doWsdl(req, res, method, ID_SERVICE);
+					return;
+				}
+			}
+		}
+		
+		if(org.openspcoop2.message.constants.ServiceBinding.SOAP.equals(requestInfo.getIntegrationServiceBinding()) && !HttpRequestMethod.POST.equals(method)){
+
+			ConnectorDispatcherUtils.doMethodNotSupported(req, res, method, ID_SERVICE);
+			return;
+			
+		}*/
 		
 		
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
@@ -113,32 +115,35 @@ public class RicezioneContenutiApplicativiConnector {
 		try{
 			httpIn = new HttpServletConnectorInMessage(requestInfo, req, ID_SERVICE, ID_MODULO);
 		}catch(Exception e){
-			ConnectorUtils.getErrorLog().error("HttpServletConnectorInMessage init error: "+e.getMessage(),e);
-			throw new ServletException(e.getMessage(),e);
+			doError("HttpServletConnectorInMessage init error", e);
 		}
 		
 		IProtocolFactory<?> protocolFactory = null;
 		try{
 			protocolFactory = httpIn.getProtocolFactory();
-		}catch(Throwable e){}
+		}catch(Exception e){
+			// ignore
+		}
 		
 		HttpServletConnectorOutMessage httpOut = null;
 		try{
-			httpOut = new HttpServletConnectorOutMessage(protocolFactory, res, ID_SERVICE, ID_MODULO);
+			httpOut = new HttpServletConnectorOutMessage(requestInfo, protocolFactory, res, ID_SERVICE, ID_MODULO);
 		}catch(Exception e){
-			ConnectorUtils.getErrorLog().error("HttpServletConnectorOutMessage init error: "+e.getMessage(),e);
-			throw new ServletException(e.getMessage(),e);
+			doError("HttpServletConnectorOutMessage init error", e);
 		}
 			
 		try{
 			ricezioneContenutiApplicativi.process(httpIn, httpOut, dataAccettazioneRichiesta);
 		}catch(Exception e){
-			ConnectorUtils.getErrorLog().error("RicezioneContenutiApplicativi.process error: "+e.getMessage(),e);
-			throw new ServletException(e.getMessage(),e);
+			doError("RicezioneContenutiApplicativi.process error", e);
 		}
 			
 	}
 
-	
+	private void doError(String msg, Exception e) throws ServletException {
+		String msgError = msg+": "+e.getMessage();
+		ConnectorUtils.getErrorLog().error(msgError,e);
+		throw new ServletException(e.getMessage(),e);
+	}
 
 }

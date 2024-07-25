@@ -35,6 +35,8 @@ import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneCodifica;
 import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneSorgente;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.certificate.KeystoreType;
+import org.openspcoop2.utils.resources.Charset;
+import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 
 /**
  * Classe che raccoglie le proprieta
@@ -392,6 +394,151 @@ public class CostantiProprieta {
 		return readIntValueWithDefault(proprieta, CONNETTORE_TIMEOUT_INPUT_STREAM_REQUEST_TIMEOUT, -1) > 0;
 	}
 	
+	public static final String CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_RICHIESTA_ENABLED = "connettori.header.value.encodingRFC2047.request.enabled";
+	public static final String CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_RISPOSTA_ENABLED = "connettori.header.value.encodingRFC2047.response.enabled";
+	public static final String CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_ENABLED = "connettori.header.value.encodingRFC2047.enabled";
+	
+	public static boolean isConnettoriHeaderValueEncodingRFC2047RequestEnabled(List<Proprieta> proprieta, boolean defaultValue) {
+		String isEnabled = readValue(proprieta, CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_RICHIESTA_ENABLED);
+		if(isEnabled!=null && !"".equals(isEnabled)) {
+			if(CONNETTORE_VALUE_ENABLED.equals(isEnabled.trim())) {
+				return true;
+			}
+			else if(CONNETTORE_VALUE_DISABLED.equals(isEnabled.trim())) {
+				return false;
+			}
+		}
+		return readBooleanValueWithDefault(proprieta, CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_ENABLED, defaultValue, CONNETTORE_VALUE_ENABLED, CONNETTORE_VALUE_DISABLED);
+	}
+	public static boolean isConnettoriHeaderValueEncodingRFC2047ResponseEnabled(List<Proprieta> proprieta, boolean defaultValue) {
+		String isEnabled = readValue(proprieta, CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_RISPOSTA_ENABLED);
+		if(isEnabled!=null && !"".equals(isEnabled)) {
+			if(CONNETTORE_VALUE_ENABLED.equals(isEnabled.trim())) {
+				return true;
+			}
+			else if(CONNETTORE_VALUE_DISABLED.equals(isEnabled.trim())) {
+				return false;
+			}
+		}
+		return readBooleanValueWithDefault(proprieta, CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_ENABLED, defaultValue, CONNETTORE_VALUE_ENABLED, CONNETTORE_VALUE_DISABLED);
+	}
+	
+	public static final String CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_RICHIESTA_ENCODING = "connettori.header.value.encodingRFC2047.request.type";
+	public static final String CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_RISPOSTA_ENCODING = "connettori.header.value.encodingRFC2047.response.type";
+	public static final String CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_ENCODING = "connettori.header.value.encodingRFC2047.type";
+	
+	public static RFC2047Encoding getConnettoriHeaderValueEncodingRFC2047RequestType(List<Proprieta> proprieta, RFC2047Encoding defaultValue) {
+		return getConnettoriHeaderValueEncodingRFC2047Type(CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_RICHIESTA_ENCODING, proprieta, defaultValue);
+	}
+	public static RFC2047Encoding getConnettoriHeaderValueEncodingRFC2047ResponseType(List<Proprieta> proprieta, RFC2047Encoding defaultValue) {
+		return getConnettoriHeaderValueEncodingRFC2047Type(CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_RISPOSTA_ENCODING, proprieta, defaultValue);
+	}
+	private static RFC2047Encoding getConnettoriHeaderValueEncodingRFC2047Type(String pName, List<Proprieta> proprieta, RFC2047Encoding defaultValue) {
+		String type = readValue(proprieta, pName);
+		if(type!=null && !"".equals(type)) {
+			try {
+				RFC2047Encoding t = RFC2047Encoding.valueOf(type);
+				if(t!=null) {
+					return t;
+				}
+			}catch(Exception e) {
+				// ignore
+			}
+		}
+		type = readValue(proprieta, CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_ENCODING);
+		if(type!=null && !"".equals(type)) {
+			try {
+				RFC2047Encoding t = RFC2047Encoding.valueOf(type);
+				if(t!=null) {
+					return t;
+				}
+			}catch(Exception e) {
+				// ignore
+			}
+		}
+		return defaultValue;
+	}
+	
+	public static final String CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_RICHIESTA_CHARSET = "connettori.header.value.encodingRFC2047.request.charset";
+	public static final String CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_RISPOSTA_CHARSET = "connettori.header.value.encodingRFC2047.response.charset";
+	public static final String CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_CHARSET = "connettori.header.value.encodingRFC2047.charset";
+	
+	public static Charset getConnettoriHeaderValueEncodingRFC2047RequestCharset(List<Proprieta> proprieta, Charset defaultValue) {
+		return getConnettoriHeaderValueEncodingRFC2047Charset(CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_RICHIESTA_CHARSET, proprieta, defaultValue);
+	}
+	public static Charset getConnettoriHeaderValueEncodingRFC2047ResponseCharset(List<Proprieta> proprieta, Charset defaultValue) {
+		return getConnettoriHeaderValueEncodingRFC2047Charset(CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_RISPOSTA_CHARSET, proprieta, defaultValue);
+	}
+	private static Charset getConnettoriHeaderValueEncodingRFC2047Charset(String pName, List<Proprieta> proprieta, Charset defaultValue) {
+		String type = readValue(proprieta, pName);
+		if(type!=null && !"".equals(type)) {
+			Charset t =  parseCharset(type);
+			if(t!=null) {
+				return t;
+			}
+		}
+		type = readValue(proprieta, CONNETTORE_HEADER_VALUE_ENCODING_RFC2047_CHARSET);
+		if(type!=null && !"".equals(type)) {
+			Charset t =  parseCharset(type);
+			if(t!=null) {
+				return t;
+			}
+		}
+		return defaultValue;
+	}
+	private static Charset parseCharset(String type) {
+		if(type!=null && !"".equals(type)) {
+			try {
+				Charset t = Charset.toEnumConstant(type);
+				if(t!=null) {
+					return t;
+				}
+				else {
+					throw new CoreException("Type '"+type+"' invalid");
+				}
+			}catch(Exception e) {
+				// ignore
+				try {
+					Charset t = Charset.valueOf(type);
+					if(t!=null) {
+						return t;
+					}
+				}catch(Exception eInternal) {
+					// ignore
+				}
+			}
+		}
+		return null;
+	}
+	
+	public static final String CONNETTORE_HEADER_VALIDATION_RICHIESTA_ENABLED = "connettori.header.validation.request.enabled";
+	public static final String CONNETTORE_HEADER_VALIDATION_RISPOSTA_ENABLED = "connettori.header.validation.response.enabled";
+	public static final String CONNETTORE_HEADER_VALIDATION_ENABLED = "connettori.header.validation.enabled";
+	
+	public static boolean isConnettoriHeaderValidationRequestEnabled(List<Proprieta> proprieta, boolean defaultValue) {
+		String isEnabled = readValue(proprieta, CONNETTORE_HEADER_VALIDATION_RICHIESTA_ENABLED);
+		if(isEnabled!=null && !"".equals(isEnabled)) {
+			if(CONNETTORE_VALUE_ENABLED.equals(isEnabled.trim())) {
+				return true;
+			}
+			else if(CONNETTORE_VALUE_DISABLED.equals(isEnabled.trim())) {
+				return false;
+			}
+		}
+		return readBooleanValueWithDefault(proprieta, CONNETTORE_HEADER_VALIDATION_ENABLED, defaultValue, CONNETTORE_VALUE_ENABLED, CONNETTORE_VALUE_DISABLED);
+	}
+	public static boolean isConnettoriHeaderValidationResponseEnabled(List<Proprieta> proprieta, boolean defaultValue) {
+		String isEnabled = readValue(proprieta, CONNETTORE_HEADER_VALIDATION_RISPOSTA_ENABLED);
+		if(isEnabled!=null && !"".equals(isEnabled)) {
+			if(CONNETTORE_VALUE_ENABLED.equals(isEnabled.trim())) {
+				return true;
+			}
+			else if(CONNETTORE_VALUE_DISABLED.equals(isEnabled.trim())) {
+				return false;
+			}
+		}
+		return readBooleanValueWithDefault(proprieta, CONNETTORE_HEADER_VALIDATION_ENABLED, defaultValue, CONNETTORE_VALUE_ENABLED, CONNETTORE_VALUE_DISABLED);
+	}
 	
 	
 	// ****  CONNETTORI PROXY PASS *****

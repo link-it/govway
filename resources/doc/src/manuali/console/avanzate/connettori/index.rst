@@ -78,5 +78,6 @@ connettore built-in JMS e File.
 	tempiRisposta
 	httpOpzioniAvanzate
 	debug
+	encodedWord
 	jms
 	file
