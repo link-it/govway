@@ -84,7 +84,22 @@ public class DynamicPdDBeanUtils implements Serializable {
 	private static final long serialVersionUID = 1L; 
 
 	private transient Logger log = null;
-
+	private void logDebug(String msg) {
+		if(this.log!=null) {
+			this.log.debug(msg);
+		}
+	}
+	private void logError(String msg) {
+		if(this.log!=null) {
+			this.log.error(msg);
+		}
+	}
+	private void logError(String msg, Exception e) {
+		if(this.log!=null) {
+			this.log.error(msg,e);
+		}
+	}
+	
 	private transient IDynamicUtilsService dynamicUtilsService = null;
 
 	private static DynamicPdDBeanUtils instance = null;
@@ -120,7 +135,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 			Logger log) throws Exception{
 		this.log = log;
 		try{
-			this.log.debug("Init Dynamic Utils in corso...");
+			this.logDebug("Init Dynamic Utils in corso...");
 			if(serviceManager!=null) {
 				this.dynamicUtilsService = new DynamicUtilsService(serviceManager, pluginsServiceManager,
 						driverRegistroServiziDB, driverConfigurazioneDB);
@@ -131,9 +146,9 @@ public class DynamicPdDBeanUtils implements Serializable {
 			String fontName = PddMonitorProperties.getInstance(log).getConsoleFontFamilyName();
 			int fontStyle = PddMonitorProperties.getInstance(log).getConsoleFontStyle();
 			this.defaultFont = new Font(fontName,fontStyle, 14);
-			this.log.debug("Init Dynamic Utils in completato.");
+			this.logDebug("Init Dynamic Utils in completato.");
 		}catch(Exception e){
-			this.log.error("Si e' verificato un errore durante la init: " + e.getMessage(),e);
+			this.logError("Si e' verificato un errore durante la init: " + e.getMessage(),e);
 		}
 	}
 
@@ -418,11 +433,11 @@ public class DynamicPdDBeanUtils implements Serializable {
 		Map<String, String>  map = new HashMap<>();
 
 		//		if(idAccordo != null && nomeServizio != null){
-		this.log.debug("Get Lista Azioni from Servizio [nome: " + nomeServizio + "]");
+		this.logDebug("Get Lista Azioni from Servizio [nome: " + nomeServizio + "]");
 		try{
 			map = this.dynamicUtilsService.findAzioniFromServizio(tipoProtocollo,tipoServizio, nomeServizio,tipoErogatore,nomeErogatore,versioneServizio,val);
 		}catch(Exception e){
-			this.log.error("Si e' verificato un errore durante la ricerca  Azioni per il servizio"+nomeServizio+ "]",e);
+			this.logError("Si e' verificato un errore durante la ricerca  Azioni per il servizio"+nomeServizio+ "]",e);
 		}
 		return map;
 	}
@@ -461,11 +476,11 @@ public class DynamicPdDBeanUtils implements Serializable {
 	 */
 	public List<Map<String, Object>> findElencoServiziSoggettoErogatore(String tipoProtocollo,Soggetto erogatore){
 		List<Map<String, Object>>  list = null;
-		this.log.debug("Find Lista Servizi per il Soggetto Erogatore [" + (erogatore != null ? erogatore.getNomeSoggetto() : "Null")+ "]");
+		this.logDebug("Find Lista Servizi per il Soggetto Erogatore [" + (erogatore != null ? erogatore.getNomeSoggetto() : "Null")+ "]");
 		try{
 			list = this.dynamicUtilsService.findElencoServizi(tipoProtocollo,erogatore);
 		}catch(Exception e){
-			this.log.error("Si e' verificato un errore durante la ricerca dei servizi per il Soggetto Erogatore [" + (erogatore != null ? erogatore.getNomeSoggetto() : "Null")+ "]");
+			this.logError("Si e' verificato un errore durante la ricerca dei servizi per il Soggetto Erogatore [" + (erogatore != null ? erogatore.getNomeSoggetto() : "Null")+ "]");
 		}
 		return list;
 	}
@@ -546,7 +561,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 				}
 			}
 		}catch(Throwable e){
-			this.log.error("Si e' verificato un errore durante la ricerca dei servizi per il Soggetto Erogatore [" + (erogatore != null ? erogatore.getNomeSoggetto() : "Null")+ "]");
+			this.logError("Si e' verificato un errore durante la ricerca dei servizi per il Soggetto Erogatore [" + (erogatore != null ? erogatore.getNomeSoggetto() : "Null")+ "]");
 		}
 		return servizi;
 	}
@@ -606,7 +621,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 			}
 			
 		}catch(Exception e){
-			this.log.error("Si e' verificato un errore durante la ricerca degli Accordi di servizio il Soggetto [" + tipoSoggetto + "/" + nomeSoggetto+ "] Referente ["+isReferente+"], Erogatore ["+isErogatore+"]");
+			this.logError("Si e' verificato un errore durante la ricerca degli Accordi di servizio il Soggetto [" + tipoSoggetto + "/" + nomeSoggetto+ "] Referente ["+isReferente+"], Erogatore ["+isErogatore+"]");
 		}
 		return servizi;
 	}
@@ -892,7 +907,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 			}
 
 		}catch(Exception e){
-			this.log.error("Si e' verificato un errore durante la ricerca dei servizi per l'accordo ["+uriAccordoServizio+"] erogati dal Soggetto [" + tipoSoggetto + "/" + nomeSoggetto+ "]");
+			this.logError("Si e' verificato un errore durante la ricerca dei servizi per l'accordo ["+uriAccordoServizio+"] erogati dal Soggetto [" + tipoSoggetto + "/" + nomeSoggetto+ "]");
 		}
 		return servizi;
 	}
@@ -913,7 +928,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 				}
 			}
 		}catch(Throwable e){
-			this.log.error("Si e' verificato un errore durante il calcolo della lunghezza delle select items");
+			this.logError("Si e' verificato un errore durante il calcolo della lunghezza delle select items");
 		}
 		return lunghezzaToRet;
 	}
@@ -1217,7 +1232,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 				}
 			}
 		}catch(Exception e){
-			this.log.error("Si e' verificato un errore durante la ricerca dei servizi erogati dal Soggetto [" + tipoSoggetto + "/" + nomeSoggetto+ "]");
+			this.logError("Si e' verificato un errore durante la ricerca dei servizi erogati dal Soggetto [" + tipoSoggetto + "/" + nomeSoggetto+ "]");
 		}
 		return servizi;
 	}
@@ -1430,7 +1445,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 			}
 
 		}catch(Exception e){
-			this.log.error("Si e' verificato un errore durante la ricerca dei servizi erogati dal Soggetto [" + tipoSoggettoErogatore + "/" + nomeSoggettoErogatore+ "]");
+			this.logError("Si e' verificato un errore durante la ricerca dei servizi erogati dal Soggetto [" + tipoSoggettoErogatore + "/" + nomeSoggettoErogatore+ "]");
 		}
 		return servizi;
 	}
