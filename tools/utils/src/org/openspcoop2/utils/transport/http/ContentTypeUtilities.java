@@ -202,7 +202,7 @@ public class ContentTypeUtilities {
 			return true;
 		}
 		
-		String baseTypeHttp = ContentTypeUtilities.readBaseTypeFromContentType(contentTypeParam);
+		String baseTypeHttp = contentTypeParam!=null ? ContentTypeUtilities.readBaseTypeFromContentType(contentTypeParam) : null;
 		
 		boolean found = false;
 		for (String checkContentType : contentTypeAttesi) {
