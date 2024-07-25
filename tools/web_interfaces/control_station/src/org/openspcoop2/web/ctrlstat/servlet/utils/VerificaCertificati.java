@@ -114,16 +114,16 @@ public class VerificaCertificati extends HttpServlet {
 				AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 				SoggettiCore soggettiCore = new SoggettiCore(apsCore);
 				
-				String verificaCertificatiFromLista = apsHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CERTIFICATI_FROM_LISTA);
+				String verificaCertificatiFromLista = apsHelper.getParametroBoolean(CostantiControlStation.PARAMETRO_VERIFICA_CERTIFICATI_FROM_LISTA);
 				boolean arrivoDaLista = "true".equalsIgnoreCase(verificaCertificatiFromLista);
 				
 				boolean soloModI = false;
 				if(!arrivoDaLista) {
-					String par = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO);
+					String par = apsHelper.getParametroBoolean(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO);
 					soloModI = "true".equalsIgnoreCase(par);
 				}
 							
-				String id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
+				String id = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 				long idInt  = Long.parseLong(id);
 				AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idInt);
 				

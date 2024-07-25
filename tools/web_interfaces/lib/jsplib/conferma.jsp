@@ -450,7 +450,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 		setValoriLock(url,valore,label);
 		
 		$("#txtA_ne_dec").val('');
-		$("#txtA_ne_dec").attr('style','');		
+		$("#txtA_ne_dec").prop('style','');		
 		$("#iconCopy_dec").hide();
 		$("#txtA_ne_dec").hide();
 		$("#visualizzaInformazioniCifrateModalPropNota").show();
