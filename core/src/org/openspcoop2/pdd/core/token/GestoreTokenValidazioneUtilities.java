@@ -73,6 +73,7 @@ import org.openspcoop2.pdd.core.token.pd.EsitoGestioneTokenPortaDelegata;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.PDNDTokenInfo;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
 import org.openspcoop2.protocol.sdk.SecurityToken;
@@ -1159,6 +1160,90 @@ public class GestoreTokenValidazioneUtilities {
 								jsonNode.put("purposeId", pId);
 							}
 						}
+					}
+				}
+				if(informazioniTokenNormalizzate.getPdnd()!=null && !informazioniTokenNormalizzate.getPdnd().isEmpty()) {
+					
+					ObjectNode pdndNode = null;
+					ObjectNode organizationNode = null;
+					if(!op2headers) {
+						pdndNode = jsonUtils.newObjectNode();
+						organizationNode = jsonUtils.newObjectNode();
+						pdndNode.set("organization", organizationNode);
+					}
+					
+					boolean add = false;
+					
+					String organizationName = PDNDTokenInfo.readOrganizationNameFromPDNDMap(informazioniTokenNormalizzate.getPdnd());
+					if(organizationName!=null && StringUtils.isNotEmpty(organizationName) &&
+							set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PDND_ORGANIZATION_NAME).booleanValue()) {
+						if(op2headers) {
+							TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PDND_ORGANIZATION_NAME), organizationName);
+						}
+						else {
+							organizationNode.put("name", organizationName);
+							add = true;
+						}
+					}
+					
+					String organizationCategory = PDNDTokenInfo.readOrganizationCategoryFromPDNDMap(informazioniTokenNormalizzate.getPdnd());
+					if(organizationCategory!=null && StringUtils.isNotEmpty(organizationCategory) &&
+							set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PDND_ORGANIZATION_CATEGORY).booleanValue()) {
+						if(op2headers) {
+							TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PDND_ORGANIZATION_CATEGORY), organizationCategory);
+						}
+						else {
+							organizationNode.put("category", organizationCategory);
+							add = true;
+						}
+					}
+					
+					String organizationExternalOrigin = PDNDTokenInfo.readOrganizationExternalOriginFromPDNDMap(informazioniTokenNormalizzate.getPdnd());
+					String organizationExternalId = PDNDTokenInfo.readOrganizationExternalIdFromPDNDMap(informazioniTokenNormalizzate.getPdnd());
+					StringBuilder sbOrganizationExternal = new StringBuilder();
+					
+					if(organizationExternalOrigin!=null && StringUtils.isNotEmpty(organizationExternalOrigin)) {
+						sbOrganizationExternal.append(organizationExternalOrigin);
+						if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PDND_ORGANIZATION_EXTERNAL_ORIGIN).booleanValue()) {
+							if(op2headers) {
+								TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PDND_ORGANIZATION_EXTERNAL_ORIGIN), organizationExternalOrigin);
+							}
+							else {
+								organizationNode.put("externalOrigin", organizationExternalOrigin);
+								add = true;
+							}
+						}
+					}
+					if(organizationExternalId!=null && StringUtils.isNotEmpty(organizationExternalId)) {
+						if(sbOrganizationExternal.length()>0) {
+							sbOrganizationExternal.append(" ");
+						}
+						sbOrganizationExternal.append(organizationExternalId);
+						if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PDND_ORGANIZATION_EXTERNAL_ID).booleanValue()) {
+							if(op2headers) {
+								TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PDND_ORGANIZATION_EXTERNAL_ID), organizationExternalId);
+							}
+							else {
+								organizationNode.put("externalId", organizationExternalId);
+								add = true;
+							}
+						}
+					}
+					
+					String organizationExternal = sbOrganizationExternal.toString();
+					if(organizationExternal!=null && StringUtils.isNotEmpty(organizationExternal) &&
+							set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PDND_ORGANIZATION_EXTERNAL).booleanValue()) {
+						if(op2headers) {
+							TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PDND_ORGANIZATION_EXTERNAL), organizationExternal);
+						}
+						else {
+							organizationNode.put("external", organizationExternal);
+							add = true;
+						}
+					}
+					
+					if(!op2headers && add) {
+						jsonNode.set("pdnd", pdndNode);
 					}
 				}
 			}

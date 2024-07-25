@@ -43,6 +43,23 @@
         },
 	"jti": {"type": "string"},
         "purposeId": {"type": "string"},
+        "pdnd": {
+           "type": "object",
+           "properties": {
+               "organization": {
+		   "type": "object",
+		   "properties": {
+		       "name": {"type": "string"},
+		       "category": {"type": "string"},
+		       "external": {"type": "string"},
+		       "externalOrigin": {"type": "string"},
+		       "externalId": {"type": "string"}
+		   },
+		   "additionalProperties": false
+		}
+           },
+           "additionalProperties": false
+        },
         "claims": {
             "type": "array",
             "items": {
