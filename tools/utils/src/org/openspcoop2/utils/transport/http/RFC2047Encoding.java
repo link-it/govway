@@ -31,9 +31,9 @@ package org.openspcoop2.utils.transport.http;
 
 public enum RFC2047Encoding {
 
-	// You can specify either “B” or “Q” for the EncodingStyle parameter, indicating either Base64 or “Quoted-Printable” content-transfer-encoding, respectively.
-	// Oracle recommends using the “Q” encoding when most of the characters to be encoded are in the ASCII character set; 
-	// otherwise, you should use the “B” encoding. 	
+	/** You can specify either “B” or “Q” for the EncodingStyle parameter, indicating either Base64 or “Quoted-Printable” content-transfer-encoding, respectively.
+	 Oracle recommends using the “Q” encoding when most of the characters to be encoded are in the ASCII character set; 
+	 otherwise, you should use the “B” encoding.*/ 	
 	Q,B;
 	
 }

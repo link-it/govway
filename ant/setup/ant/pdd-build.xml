@@ -505,6 +505,11 @@
 			<param name="token" value="org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.debug"/>
 			<param name="value" value="false"/>
 		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.config.plugins.debug"/>
+			<param name="value" value="false"/>
+		</antcall>
 		
 		<!-- 
 		  PROTOCOL DEFAULT
@@ -1093,6 +1098,11 @@
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="logger.govway_resources.level"/>
+			<param name="value" value="ERROR"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="logger.govway_proxy.level "/>
 			<param name="value" value="ERROR"/>
 		</antcall>
 		

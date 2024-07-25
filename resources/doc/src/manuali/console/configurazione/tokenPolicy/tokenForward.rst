@@ -37,6 +37,9 @@ le seguenti informazioni:
    necessario specificare la modalità di inoltro dei dati selezionando
    una tra le opzioni seguenti:
 
+   .. note::
+         Le informazioni sull'organizzazione PDND sono presente solamente se è stata attivata l'integrazione con le API PDND descritta nella sezione :ref:`modipa_passiPreliminari_api_pdnd`
+
    -  *GovWay Headers*: I dati raccolti dal token vengono inseriti nei
       seguenti header HTTP:
 
@@ -58,6 +61,9 @@ le seguenti informazioni:
           GovWay-Token-EMail
 	  GovWay-Token-PurposeId
 	  GovWay-Token-Jti
+	  GovWay-Token-PDND-OrganizationName
+	  GovWay-Token-PDND-OrganizationCategory
+	  GovWay-Token-PDND-OrganizationExternal
 
    -  *GovWay JSON*: I dati raccolti dal token vengono inseriti in un
       oggetto JSON, il cui JsonSchema è il seguente:
@@ -109,6 +115,23 @@ le seguenti informazioni:
 		},
 		"jti": {"type": "string"},
 		"purposeId": {"type": "string"},
+		"pdnd": {
+		   "type": "object",
+		   "properties": {
+		       "organization": {
+			   "type": "object",
+			   "properties": {
+			       "name": {"type": "string"},
+			       "category": {"type": "string"},
+			       "external": {"type": "string"},
+			       "externalOrigin": {"type": "string"},
+			       "externalId": {"type": "string"}
+			   },
+			   "additionalProperties": false
+			}
+		   },
+		   "additionalProperties": false
+		}
 		"claims": {
 		    "type": "array",
 		    "items": {

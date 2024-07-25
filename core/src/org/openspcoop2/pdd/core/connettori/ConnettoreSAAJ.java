@@ -47,6 +47,7 @@ import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.core.Utilities;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.UtilsException;
@@ -277,16 +278,21 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 				boolean validazioneHeaderRFC2047 = false;
 				if(this.idModulo!=null){
 					if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-						encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
-						charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
-						encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
-						validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_consegnaContenutiApplicativi();
+						encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValueConsegnaContenutiApplicativi();
+						charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValueConsegnaContenutiApplicativi();
+						encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValueConsegnaContenutiApplicativi();
+						validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValueConsegnaContenutiApplicativi();
 					}else{
-						encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_inoltroBuste();
-						charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_inoltroBuste();
-						encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_inoltroBuste();
-						validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_inoltroBuste();
+						encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValueInoltroBuste();
+						charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValueInoltroBuste();
+						encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValueInoltroBuste();
+						validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValueInoltroBuste();
 					}
+					
+					encodingRFC2047 = CostantiProprieta.isConnettoriHeaderValueEncodingRFC2047RequestEnabled(this.proprietaPorta, encodingRFC2047);
+					charsetRFC2047 = CostantiProprieta.getConnettoriHeaderValueEncodingRFC2047RequestCharset(this.proprietaPorta, charsetRFC2047);
+					encodingAlgorithmRFC2047 = CostantiProprieta.getConnettoriHeaderValueEncodingRFC2047RequestType(this.proprietaPorta, encodingAlgorithmRFC2047);
+					validazioneHeaderRFC2047 = CostantiProprieta.isConnettoriHeaderValidationRequestEnabled(this.proprietaPorta, validazioneHeaderRFC2047);
 				}
 				this.forwardHttpRequestHeader();
 				if(this.propertiesTrasporto != null){

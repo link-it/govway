@@ -69,25 +69,25 @@ Per creare una tag version:
     find protocolli/ -name openspcoop2-manifest.xml | xargs grep webSite
 
 18. Sistemare docker-compose.yml e database presente in resources/scenari/scenari.zip
-   Per farlo, ad esempio se stiamo rilasciando la versione 3.3.1:
+   Per farlo, ad esempio se stiamo rilasciando la versione 3.3.15:
    - fare il clone di govway-docker
    - generare una versione dell'installer semi-definitiva (con master build version)
    - Come utenza root nella radice del progetto govway-docker:
-         ./build_image.sh  -t govway:3.3.6-preRilascio -v 3.3.6.build-473a622d4 -d postgresql -l <PATH_ASSOLUTO>/govway-installer-3.3.6.build-473a622d4.tgz
+         ./build_image.sh  -t govway:3.3.15-preRilascio -v 3.3.15.build-473a622d4 -d postgresql -l <PATH_ASSOLUTO>/govway-installer-3.3.15.build-473a622d4.tgz
    - Attendere per qualche minuto il completamento del build
    - Decomprimere resources/scenari/scenari.zip
    - Editare il file scenari/docker-compose.yml
    	. Commentare la riga (Attenzione all'indentazione):
-		#    image: linkitaly/govway:3.2.0_postgres
+		#    image: linkitaly/govway:3.3.14_postgres
 	. e aggiungere la direttiva:
-		image: govway:3.3.6-preRilascio
+		image: govway:3.3.15-preRilascio
    - Come utenza root avviare il database prima usando il comando, una volta posizionati dentro la directory scenari:
 	source env.sh; docker-compose up testdatabase
    - Eseguire prima l'installer pre rilascio per ottenere la patch SQL da applicare al database a partire dalla precedente versione
    - Come utenza root:
-	docker cp /var/tmp/GovWay_upgrade_3.3.6.sql PGSQL955:/tmp
-        docker exec -ti PGSQL955 /bin/bash
-        psql govwaydb govway -f /tmp/GovWay_upgrade_3.3.6.sql
+	docker cp /var/tmp/GovWay_upgrade_3.3.15.sql PGSQL16:/tmp
+        docker exec -ti PGSQL16 /bin/bash
+        psql govwaydb govway -f /tmp/GovWay_upgrade_3.3.15.sql
 	exit
    - Riportare eventuali aggiunte dei file esterni della nuova versione in scenari/data/govway/etc/
    - Si fa una prova del tutto sempre con utenza root:
@@ -103,21 +103,28 @@ Per creare una tag version:
         . ls /usr/share/licenses/govway/COPYING
         . ls /usr/share/licenses/govway/LICENSE
         . ls /usr/share/licenses/govway/README.txt
+        Verificare che l'immagine sia aggiornata:
+        . docker exec -u root -ti gateway /bin/bash
+        . apt update
+          . deve restituire: All packages are up to date.
+        . apt upgrade
+          . deve restituire: 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.      
         Alla fine chiudere il tutto con il comando (mandare in background lo starttest precedente):
 	./stoptest.sh
     - Editare nuovamente il file scenari/docker-compose.yml:
 	. Eliminare la direttiva:
-		image: govway:3.3.1-preRilascio
+		image: govway:3.3.15-preRilascio
 	. e scommentare facendo l'upgrade di versione dell'immagine ufficiale:
-		image: linkitaly/govway:3.3.1_postgres	
+		image: linkitaly/govway:3.3.15_postgres	
     - Ripulire i log:
 	. rm scenari/data/govway/log/* -rf
-    - !!Come utenza root ricreare l'archivio scenari.zip
-	NOTA: Senza utenza root non viene salvata la parte del database postgresql
+    - Utilizzare lo script (buildArchivioZipScenari.sh) per ricreare l'archivio 'scenari.zip'
+	NOTA: lo script utilizza l'utenza root pochè serve per salvare la parte del database postgresql
 
 19. Sistemare docker-compose.yml e database presente anche in resources/scenari/scenari_oauth_client_credentials/scenari_oauth_client_credentials.zip
     Sistemare anche il database utilizzando le medesime istruzioni del punto precedente.
     Come test di verifica usare i comandi descritti in: https://github.com/teamdigitale/api-gateway-tools/blob/master/gateways/govway/DOCKER.md
+    Generare il nuovo archivio 'scenari_oauth_client_credentials.zip' tramite lo script 'buildArchivioZipScenariOAuth.sh'
 
 20. Riprovare i scenari descritti in precedenza con l'ultima versione "MASTER" pubblicata su docker-hub
     - versione postgresql

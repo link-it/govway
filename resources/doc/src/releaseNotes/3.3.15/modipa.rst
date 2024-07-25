@@ -13,7 +13,9 @@ Sono stati apportati i seguenti miglioramenti alla funzionalità di integrazione
 
 - aggiunta, nelle politiche di Rate Limiting, la possibilità di conteggiare per nome dell'organizzazione ottenuta tramite le API di interoperabilità della PDND;
 
-- aggiunta la possibilità di modificare sulla singola erogazione o fruizione il comportamento di default per far fallire la transazione nel caso in cui il recupero delle informazioni sul client o sull'organizzazione tramite API PDND fallisca.
+- aggiunta la possibilità di modificare sulla singola erogazione o fruizione il comportamento di default per far fallire la transazione nel caso in cui il recupero delle informazioni sul client o sull'organizzazione tramite API PDND fallisca;
+
+- le informazioni sull'organizzazione, recuperate tramite le API PDND, vengono ora propagate al backend tramite gli header di integrazione: GovWay-Token-PDND-OrganizationName, GovWay-Token-PDND-OrganizationCategory e GovWay-Token-PDND-OrganizationExternal.
 
 Sono infine stati apportati i seguenti miglioramenti:
 

@@ -505,6 +505,9 @@ Di seguito vengono descritti i test del package 'connettori':
 - 'autenticazione', verifica la funzionalità di inoltro di credenziali (basic, api-key) al backend
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.autenticazione
 
+- 'header', verifica la funzionalità di inoltro di header HTTP codificati in encoded world (es. =?US-ASCII?Q?)
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.autenticazione
+
 Di seguito vengono descritti i test del package 'token':
 
 - 'attribute_authority', verifica l'interazione con le AttributeAuthority

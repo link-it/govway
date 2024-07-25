@@ -3,7 +3,7 @@ then
 	echo "Directory scenari non esistente"
 	exit 2
 fi
-rm scenari/data/govway/log/* -rf
+sudo su -c "rm scenari/data/govway/log/* -rf"
 rm scenari/plugin/DigestMapper/target/* -rf
 if [ -e scenari.zip ] 
 then
