@@ -17494,7 +17494,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return gestioneCors;
 	}
 	
-	public boolean checkDataConfigurazioneCorsPorta(TipoOperazione tipoOperazione,boolean showStato, String statoCorsPorta) throws DriverControlStationException{
+	public boolean checkDataConfigurazioneCorsPorta(TipoOperazione tipoOperazione,boolean showStato, String statoCorsPorta) throws DriverControlStationException, ValidationException{
 		
 		if(showStato) {
 			if(StringUtils.isEmpty(statoCorsPorta) || !(statoCorsPorta.equals(CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_DEFAULT) || statoCorsPorta.equals(CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_RIDEFINITO))) {
@@ -17564,7 +17564,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public boolean checkDataCors() throws DriverControlStationException {
+	public boolean checkDataCors() throws DriverControlStationException, ValidationException {
 		String corsStatoTmp = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_STATO);
 		boolean corsStato = ServletUtils.isCheckBoxEnabled(corsStatoTmp);
 		if(corsStato) {
@@ -17622,7 +17622,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					return false;
 				}
 				if(!corsAllAllowMethods) {
-					String corsAllowMethods =  this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS);
+					String corsAllowMethods =  this.getParametroCorsAllowMethods(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS);
 					if(StringUtils.isNotEmpty(corsAllowMethods)) {
 						List<String> asList = Arrays.asList(corsAllowMethods.split(","));
 						for (String string : asList) {
@@ -24154,6 +24154,50 @@ public class ConsoleHelper implements IConsoleHelper {
 			throw new ValidationException("Il parametro [" +parameterName + "] contiene un valore non valido.");
 		}
 		return this.getParameter(parameterName);
+	}
+	
+	public String getParametroCorsAllowMethods(String parameterName) throws ValidationException, DriverControlStationException {
+		return getParametroCorsAllowMethods(parameterName, true);
+	}
+	
+	public String getParametroCorsAllowMethods(String parameterName, boolean validate) throws ValidationException, DriverControlStationException{
+		if(validate && !this.validaParametroCorsAllowMethods(parameterName)) {
+			throw new ValidationException("Il parametro [" +parameterName + "] contiene un valore non valido.");
+		}
+		// in questo caso restituisco il valore originale che e' una lista di HTTPMethods
+		return Validatore.getInstance().getParametroOriginale(this.request, parameterName);
+	}
+	
+	/**
+	 * Validazione del parametro CorsAllowMethods
+	 * 
+	 * @param parameterToCheck
+	 * @return
+	 */
+	private boolean validaParametroCorsAllowMethods(String parameterToCheck) {
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(this.request, parameterToCheck);
+		
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, vuol dire che contiene la parola chiave DELETE
+		String [] split = parameterValueOriginale.split(",");
+		
+		if(split != null && split.length > 0) {
+			for (int i = 0; i < split.length; i++) {
+				String methodI = split[i];
+				
+				HttpMethod httpMethod = HttpMethod.toEnumConstant(methodI);
+				
+				if(httpMethod == null) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
 	}
 	
 	public void addProprietaOggetto(List<DataElement> dati, org.openspcoop2.core.registry.ProprietaOggetto pOggetto) {
