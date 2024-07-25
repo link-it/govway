@@ -58,6 +58,7 @@ import org.openspcoop2.message.soap.SOAPFaultCode;
 import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.id.UUIDUtilsGenerator;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.mime.MultipartUtils;
@@ -1043,10 +1044,25 @@ public class ServletTestService extends HttpServlet {
 						replyPrefix = replyPrefixHeaderString;
 					}
 					
+					boolean base64Reply = false;
+					String replyBase64HeaderString = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyHttpHeaderBase64Encoded");
+					if(replyBase64HeaderString!=null && "true".equals(replyBase64HeaderString)) {
+						base64Reply = true;
+					}
+					
 					for (String hdrName : tmp) {
 						List<String> reqHdr = TransportUtils.getHeaderValues(req, hdrName); 
 						if(reqHdr!=null && !reqHdr.isEmpty()) {
-							headers.put(replyPrefix+hdrName, reqHdr);
+							if(base64Reply) {
+								List<String> l = new ArrayList<>();
+								for (String r : reqHdr) {
+									l.add(Base64Utilities.encodeAsString(r.getBytes()));
+								}
+								headers.put(replyPrefix+hdrName, l);
+							}
+							else {
+								headers.put(replyPrefix+hdrName, reqHdr);
+							}
 						}
 					}
 				}

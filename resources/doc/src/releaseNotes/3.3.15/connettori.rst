@@ -7,3 +7,5 @@ Viene supportata anche la modalità 'App ID' che prevede oltre all'ApiKey un ide
 
 La configurazione permette anche di personalizzare il nome degli header http, rispetto a quanto indicato nella specifica 'OAS3 API Keys'.
 
+Inoltre è stata aggiunta la possibilità di abilitare o disabilitare la funzionalità di 'encoded word' per i valori degli header HTTP, oltre alla possibilità di personalizzarne gli aspetti di codifica per singole erogazioni o fruizioni di API attraverso la definizione di proprietà specifiche.
+

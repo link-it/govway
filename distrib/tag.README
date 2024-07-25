@@ -85,8 +85,8 @@ Per creare una tag version:
 	source env.sh; docker-compose up testdatabase
    - Eseguire prima l'installer pre rilascio per ottenere la patch SQL da applicare al database a partire dalla precedente versione
    - Come utenza root:
-	docker cp /var/tmp/GovWay_upgrade_3.3.6.sql PGSQL955:/tmp
-        docker exec -ti PGSQL955 /bin/bash
+	docker cp /var/tmp/GovWay_upgrade_3.3.6.sql PGSQL16:/tmp
+        docker exec -ti PGSQL16 /bin/bash
         psql govwaydb govway -f /tmp/GovWay_upgrade_3.3.6.sql
 	exit
    - Riportare eventuali aggiunte dei file esterni della nuova versione in scenari/data/govway/etc/

@@ -163,16 +163,21 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 		
 		if(this.idModulo!=null){
 			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-				this.encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
-				this.charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
-				this.encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
-				this.validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_consegnaContenutiApplicativi();
+				this.encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValueConsegnaContenutiApplicativi();
+				this.charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValueConsegnaContenutiApplicativi();
+				this.encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValueConsegnaContenutiApplicativi();
+				this.validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValueConsegnaContenutiApplicativi();
 			}else{
-				this.encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_inoltroBuste();
-				this.charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_inoltroBuste();
-				this.encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_inoltroBuste();
-				this.validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_inoltroBuste();
+				this.encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValueInoltroBuste();
+				this.charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValueInoltroBuste();
+				this.encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValueInoltroBuste();
+				this.validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValueInoltroBuste();
 			}
+			
+			this.encodingRFC2047 = CostantiProprieta.isConnettoriHeaderValueEncodingRFC2047RequestEnabled(this.proprietaPorta, this.encodingRFC2047);
+			this.charsetRFC2047 = CostantiProprieta.getConnettoriHeaderValueEncodingRFC2047RequestCharset(this.proprietaPorta, this.charsetRFC2047);
+			this.encodingAlgorithmRFC2047 = CostantiProprieta.getConnettoriHeaderValueEncodingRFC2047RequestType(this.proprietaPorta, this.encodingAlgorithmRFC2047);
+			this.validazioneHeaderRFC2047 = CostantiProprieta.isConnettoriHeaderValidationRequestEnabled(this.proprietaPorta, this.validazioneHeaderRFC2047);
 		}
 		
 		if(!this.forceDisable_proxyPassReverse) {

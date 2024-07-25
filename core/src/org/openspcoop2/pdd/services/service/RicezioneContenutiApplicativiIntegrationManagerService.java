@@ -450,15 +450,15 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				transportContext.put(PreInRequestContext.SERVLET_REQUEST, httpIn);
 			}catch(Exception e){
 				ConnectorUtils.getErrorLog().error("HttpServletConnectorInMessage init error: "+e.getMessage(),e);
-				//throw new ServletException(e.getMessage(),e);
+				/**throw new ServletException(e.getMessage(),e);*/
 			}
 			HttpServletConnectorOutMessage httpOut = null;
 			try{
-				httpOut = new HttpServletConnectorOutMessage(protocolFactory, res, IntegrationManager.ID_SERVICE, IntegrationManager.ID_MODULO);
+				httpOut = new HttpServletConnectorOutMessage(requestInfo, protocolFactory, res, IntegrationManager.ID_SERVICE, IntegrationManager.ID_MODULO);
 				transportContext.put(PreInRequestContext.SERVLET_RESPONSE, httpOut);
 			}catch(Exception e){
 				ConnectorUtils.getErrorLog().error("HttpServletConnectorOutMessage init error: "+e.getMessage(),e);
-				//throw new ServletException(e.getMessage(),e);
+				/**throw new ServletException(e.getMessage(),e);*/
 			}
 			preInRequestContext.setTransportContext(transportContext);	
 			preInRequestContext.setLogCore(logCore);
