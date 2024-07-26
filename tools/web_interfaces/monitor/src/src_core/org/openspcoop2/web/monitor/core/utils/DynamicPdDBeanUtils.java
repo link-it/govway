@@ -612,7 +612,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 				}
 			}
 			
-			if(lstLabelOrdinate.size() > 0) {
+			if(!lstLabelOrdinate.isEmpty()) {
 				Collections.sort(lstLabelOrdinate);
 				
 				for (String string : lstLabelOrdinate) {
@@ -620,6 +620,8 @@ public class DynamicPdDBeanUtils implements Serializable {
 				}
 			}
 			
+		}catch (RuntimeException e) { // spotbugs
+			this.logError("(Runtime) Si e' verificato un errore durante la ricerca degli Accordi di servizio il Soggetto [" + tipoSoggetto + "/" + nomeSoggetto+ "] Referente ["+isReferente+"], Erogatore ["+isErogatore+"]");
 		}catch(Exception e){
 			this.logError("Si e' verificato un errore durante la ricerca degli Accordi di servizio il Soggetto [" + tipoSoggetto + "/" + nomeSoggetto+ "] Referente ["+isReferente+"], Erogatore ["+isErogatore+"]");
 		}
@@ -906,6 +908,8 @@ public class DynamicPdDBeanUtils implements Serializable {
 				}
 			}
 
+		}catch (RuntimeException e) { // spotbugs
+			this.logError("(Runtime) Si e' verificato un errore durante la ricerca dei servizi per l'accordo ["+uriAccordoServizio+"] erogati dal Soggetto [" + tipoSoggetto + "/" + nomeSoggetto+ "]");
 		}catch(Exception e){
 			this.logError("Si e' verificato un errore durante la ricerca dei servizi per l'accordo ["+uriAccordoServizio+"] erogati dal Soggetto [" + tipoSoggetto + "/" + nomeSoggetto+ "]");
 		}
@@ -920,7 +924,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 		int lunghezza = 0;
 		Integer lunghezzaToRet = 0;
 		try{
-			if(listaSelectItem != null && listaSelectItem.size() > 0){
+			if(listaSelectItem != null && !listaSelectItem.isEmpty()){
 				for (SelectItem selectItem : listaSelectItem) {
 					String label = selectItem.getLabel() != null ? selectItem.getLabel() : (String) selectItem.getValue();
 					lunghezza = getFontWidth(label,font);
@@ -952,17 +956,17 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 
 	// UTILITIES misurazione dimensione text
-	public Integer getFontWidth(String text) throws Throwable{
+	public Integer getFontWidth(String text) {
 		return getFontWidth(text, this.getDefaultFont());
 	} 
 
-	public Integer getFontWidth(String text, String fontName, int fontStyle, int fontSize) throws Throwable{
+	public Integer getFontWidth(String text, String fontName, int fontStyle, int fontSize) {
 		Font fontToCheck = new Font(fontName,  fontStyle , fontSize);
 		return getFontWidth(text, fontToCheck);
 	} 
 
 
-	public Integer getFontWidth(String text, Font fontToCheck) throws Throwable{
+	public Integer getFontWidth(String text, Font fontToCheck) {
 		if(this.fontRenderContext == null){
 			if(this.affineTransform == null)
 				this.affineTransform = new AffineTransform();
@@ -973,17 +977,18 @@ public class DynamicPdDBeanUtils implements Serializable {
 		Rectangle2D rectangle2d = fontToCheck.getStringBounds(text, this.fontRenderContext);
 		return (int) rectangle2d.getWidth(); 
 	}	
-	//	public Integer getFontWidthWithFontMetrics(String text, String fontName, int fontStyle, int fontSize) throws Throwable{
-	//		Font fontToCheck = new Font(fontName,  fontStyle , fontSize);
-	//		return this.getFontWidthWithFontMetrics(text,fontToCheck);
-	//	} 
-	//	public Integer getFontWidthWithFontMetrics(String text, Font fontTocheck ) throws Throwable{
-	//		if(this.fm == null){
-	//			Canvas c = new Canvas();
-	//			this.fm = c.getFontMetrics(fontTocheck);
-	//		}
-	//		return this.fm.stringWidth(text);
-	//	}
+	/**	public Integer getFontWidthWithFontMetrics(String text, String fontName, int fontStyle, int fontSize) throws Throwable{
+			Font fontToCheck = new Font(fontName,  fontStyle , fontSize);
+			return this.getFontWidthWithFontMetrics(text,fontToCheck);
+		} 
+		public Integer getFontWidthWithFontMetrics(String text, Font fontTocheck ) throws Throwable{
+			if(this.fm == null){
+				Canvas c = new Canvas();
+				this.fm = c.getFontMetrics(fontTocheck);
+			}
+			return this.fm.stringWidth(text);
+		}
+		*/
 
 	/***
 	 * utilizzo Lucida sans come font di dafault poiche' e' generalmente presente nella jdk
@@ -1012,8 +1017,8 @@ public class DynamicPdDBeanUtils implements Serializable {
 	public List<Soggetto> getSoggettiErogatoreAutoComplete(String tipoProtocollo,String uriAccordoServizio, String input, boolean soloOperativi){
 		List<Soggetto> list = this.dynamicUtilsService.getSoggettiErogatoreAutoComplete(tipoProtocollo, uriAccordoServizio, input);
 
-		if(soloOperativi && list != null && list.size() >0) {
-			List<Soggetto> lstOperativi = new ArrayList<Soggetto>();
+		if(soloOperativi && list != null && !list.isEmpty()) {
+			List<Soggetto> lstOperativi = new ArrayList<>();
 
 			for (Soggetto soggetto : list) {
 				if(this.checkTipoPdd(soggetto.getServer(), TipoPdD.OPERATIVO))
@@ -1024,7 +1029,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 		}
 
 
-		return new ArrayList<Soggetto>();
+		return new ArrayList<>();
 	}
 
 	
@@ -1231,6 +1236,8 @@ public class DynamicPdDBeanUtils implements Serializable {
 					servizi.add(new SelectItem(mapElementi.get(string), string));  
 				}
 			}
+		}catch (RuntimeException e) { // spotbugs
+			this.logError("(Runtime) Si e' verificato un errore durante la ricerca dei servizi erogati dal Soggetto [" + tipoSoggetto + "/" + nomeSoggetto+ "]");
 		}catch(Exception e){
 			this.logError("Si e' verificato un errore durante la ricerca dei servizi erogati dal Soggetto [" + tipoSoggetto + "/" + nomeSoggetto+ "]");
 		}
@@ -1444,6 +1451,8 @@ public class DynamicPdDBeanUtils implements Serializable {
 				}
 			}
 
+		}catch (RuntimeException e) { // spotbugs
+			this.logError("(Runtime) Si e' verificato un errore durante la ricerca dei servizi erogati dal Soggetto [" + tipoSoggettoErogatore + "/" + nomeSoggettoErogatore+ "]");
 		}catch(Exception e){
 			this.logError("Si e' verificato un errore durante la ricerca dei servizi erogati dal Soggetto [" + tipoSoggettoErogatore + "/" + nomeSoggettoErogatore+ "]");
 		}

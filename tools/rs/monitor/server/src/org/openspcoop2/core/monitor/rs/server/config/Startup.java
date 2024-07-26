@@ -303,7 +303,8 @@ public class Startup implements ServletContextListener {
 			// inizializza nodi runtime
 			Startup.log.info("Inizializzazione NodiRuntime in corso...");
 			try {
-				ConfigurazioneNodiRuntime.initialize(serverProperties.getConfigurazioneNodiRuntime());
+				boolean configFileRequired = false;
+				ConfigurazioneNodiRuntime.initialize(serverProperties.getConfigurazioneNodiRuntime(), configFileRequired);
 			} catch (Exception e) {
 				doError("Errore durante l'inizializzazione del gestore dei nodi run",e);
 			}
