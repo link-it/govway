@@ -14,9 +14,10 @@ Il valore fornito dovrà essere decifrabile tramite uno dei security engine o KM
 
 La modalità di decifratura di default è definibile tramite la proprietà 'unwrap.default.mode', che può assumere i seguenti valori:
 
-- security: viene utilizzato il security engine riferito dall'identificativo riportato nella proprietà 'unwrap.default.id'. Se la proprietà 'unwrap.default.mode' non è definita, viene utilizzato il security engine di default descritto nella sezione :ref:`byokInstallSecurityGovWay` utilizzato per cifrare le informazioni confidenziali.
-
+- security: viene utilizzato il security engine riferito dall'identificativo riportato nella proprietà 'unwrap.default.id'. 
 - ksm: viene utilizzato il Key Management Service riferito dall'identificativo riportato nella proprietà 'unwrap.default.id'.
+
+Se la proprietà 'unwrap.default.mode' non viene definita, viene utilizzata la modalità security engine.
 
 ::
 

@@ -104,28 +104,33 @@ public class ConfigurazioneNodiRuntimeInit extends BaseThread {
 	
 	private boolean analyze() {
 		boolean finish = false;
-		List<String> aliases = this.configurazioneNodiRuntime.getAliases();
+		List<String> aliases = this.configurazioneNodiRuntime!=null ? this.configurazioneNodiRuntime.getAliases() : null;
 		if(aliases!=null && !aliases.isEmpty()) {
-			for (String alias : aliases) {
-				
-				boolean continueCheck = true;
-				
-				ConfigurazioneNodiRuntimeBYOKRemoteConfig remoteConfig = new ConfigurazioneNodiRuntimeBYOKRemoteConfig();
-				if(!this.configurazioneNodiRuntime.isActiveNode(this.log, 
-						alias, remoteConfig)) {
-					continueCheck = false;
-				}
-				
-				if(continueCheck && this.reInitSecretMaps &&
-						!reInitSecretMaps(this.configurazioneNodiRuntime, remoteConfig)) {
-					continueCheck = false;
-				}
-				
-				if(continueCheck &&
-					this.isCompleted(alias)) {
-					finish = true;
-					break; // non itero su altri nodi
-				}
+			finish = finish(aliases);
+		}
+		return finish;
+	}
+	private boolean finish(List<String> aliases) {
+		boolean finish = false;
+		for (String alias : aliases) {
+			
+			boolean continueCheck = true;
+			
+			ConfigurazioneNodiRuntimeBYOKRemoteConfig remoteConfig = new ConfigurazioneNodiRuntimeBYOKRemoteConfig();
+			if(!this.configurazioneNodiRuntime.isActiveNode(this.log, 
+					alias, remoteConfig)) {
+				continueCheck = false;
+			}
+			
+			if(continueCheck && this.reInitSecretMaps &&
+					!reInitSecretMaps(this.configurazioneNodiRuntime, remoteConfig)) {
+				continueCheck = false;
+			}
+			
+			if(continueCheck &&
+				this.isCompleted(alias)) {
+				finish = true;
+				break; // non itero su altri nodi
 			}
 		}
 		return finish;

@@ -60,6 +60,9 @@ public class ConfigurazioneNodiRuntime {
 	private static Map<String, ConfigurazioneNodiRuntime> staticInstanceMap = new HashMap<>();
 	private static final String PREFIX_DEFAULT = "";
 	public static void initialize(String path, ConfigurazioneNodiRuntimeProperties ... backwardCompatibilitiesProperties) throws UtilsException {
+		initialize(path, true, backwardCompatibilitiesProperties);
+	}
+	public static void initialize(String path, boolean configFileRequired, ConfigurazioneNodiRuntimeProperties ... backwardCompatibilitiesProperties) throws UtilsException {
 		
 		ConfigurazioneNodiRuntimeProperties cpClasspath = null;
 		try(InputStream is = ConfigurazioneNodiRuntime.class.getResourceAsStream("/"+RESOURCE_NAME);){
@@ -84,12 +87,18 @@ public class ConfigurazioneNodiRuntime {
 			}
 			else {
 				if(!f.exists()) {
-					throw new UtilsException("Configuration file '"+f.getAbsolutePath()+"' not exists");
+					if(configFileRequired) {
+						throw new UtilsException("Configuration file '"+f.getAbsolutePath()+"' not exists");
+					}
 				}
-				if(!f.canRead()) {
-					throw new UtilsException("Configuration file '"+f.getAbsolutePath()+"' cannot read");
+				else if(!f.canRead()) {
+					if(configFileRequired) {
+						throw new UtilsException("Configuration file '"+f.getAbsolutePath()+"' cannot read");
+					}
 				}
-				read = true;
+				else {
+					read = true;
+				}
 			}
 			if(read) {
 				try(FileInputStream fin = new FileInputStream(f)){

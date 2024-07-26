@@ -99,6 +99,7 @@
 
 	<large-select defaultValue="" property="antinstaller_versione_precedente" displayText="Versione Precedente">
 	    <!-- NOTA: non inserire più di 18 elementi, altrimenti la modalità './install.sh text' non esce da questa selezione -->
+	    <option value="3.3.14" text="3.3.14"/>
 	    <option value="3.3.13" text="3.3.13"/>
 	    <option value="3.3.12" text="3.3.12"/>
 	    <option value="3.3.11" text="3.3.11"/>
@@ -116,8 +117,8 @@
 	    <option value="3.2.2" text="3.2.2"/>
 	    <option value="3.2.1" text="3.2.1"/>
 	    <option value="3.2.0" text="3.2.0"/>
-	    <option value="3.1.1" text="3.1.1"/>
-	    <!-- <option value="3.1.0" text="3.1.0"/>
+	    <!-- <option value="3.1.1" text="3.1.1"/>
+	    <option value="3.1.0" text="3.1.0"/>
 	    <option value="3.0.1" text="3.0.1"/>
 	    <option value="3.0.0" text="3.0.0"/> -->
         </large-select>

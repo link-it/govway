@@ -62,7 +62,7 @@ import org.testng.annotations.Test;
  *  encryptAttachmentHeaders [value: boolean, default false]: Aggiunge gli header dell'Attachment all'interno del messaggio cifrato
  *  
  *  
- * @author Tommaso Burlon <tommaso.burlon@link.it>
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

@@ -220,10 +220,11 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 			charsetRFC2047 = CostantiProprieta.getConnettoriHeaderValueEncodingRFC2047ResponseCharset(listProprieta, charsetRFC2047);
 			encodingAlgorithmRFC2047 = CostantiProprieta.getConnettoriHeaderValueEncodingRFC2047ResponseType(listProprieta, encodingAlgorithmRFC2047);
 			validazioneHeaderRFC2047 = CostantiProprieta.isConnettoriHeaderValidationResponseEnabled(listProprieta, validazioneHeaderRFC2047);
-			
+			/**System.out.println("@@@@ encodingRFC2047["+encodingRFC2047+"] charsetRFC2047["+charsetRFC2047+"] encodingAlgorithmRFC2047["+encodingAlgorithmRFC2047+"] validazioneHeaderRFC2047["+validazioneHeaderRFC2047+"]");*/
 			if(encodingRFC2047){
+				/**System.out.println("@@@@ CONTROLLO '"+value+" rispetto a '"+charsetRFC2047+"': "+RFC2047Utilities.isAllCharactersInCharset(value, charsetRFC2047));*/
 				if(!RFC2047Utilities.isAllCharactersInCharset(value, charsetRFC2047)){
-					String encoded = RFC2047Utilities.encode(new String(value.getBytes()), charsetRFC2047, encodingAlgorithmRFC2047);
+					String encoded = RFC2047Utilities.encode((value+""), charsetRFC2047, encodingAlgorithmRFC2047);
 					/**System.out.println("@@@@ RESPONSE CODIFICA ["+value+"] in ["+encoded+"]");*/
 					this.putResponseHeader(validazioneHeaderRFC2047, key, encoded, add);
 				}

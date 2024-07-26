@@ -28,6 +28,9 @@
     <CookieProcessor className="org.apache.tomcat.util.http.LegacyCookieProcessor" />
   </Context>
 
+- Indicare come proprieta java: 
+  JAVA_OPTS="$JAVA_OPTS -Dfile.encoding=UTF-8"
+
 - Deve essere abilitato il TRACE METHOD http, altrimenti risulta '405 Not Allowed'
   Per farlo su wildfly aggiungere l'attributo disallowed-methods valorizzato vuoto in tutti gli http e https listener:
      <http-listener name="default" socket-binding="http" redirect-socket="https" disallowed-methods=""/>
