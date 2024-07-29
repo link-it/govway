@@ -113,7 +113,7 @@ public abstract class AbstractConsoleScan {
 			String contextId = zapClientApi.getContextId();
 			
 			if(consoleParams.getFalsePositives()!=null && !consoleParams.getFalsePositives().isEmpty()) {
-				ConsoleFalsePositive.addFalsePositives(consoleParams.getFalsePositives(), api, contextId);
+				FalsePositive.addFalsePositives(consoleParams.getFalsePositives(), api, contextId);
 			}
 			
 			ZAPReport report = new ZAPReport(args, AbstractConsoleScan.class.getName(), ZAPContext.PREFIX+" "+ConsoleParams.CONSOLE_USAGE, ZAPContext.START_ARGS+consoleParams.getConsoleArgs(), api);

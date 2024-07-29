@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.wsdl.Port;
 import javax.wsdl.Service;
@@ -32,6 +33,7 @@ import javax.wsdl.WSDLException;
 import org.apache.commons.lang.StringUtils;
 import org.ehcache.shadow.org.terracotta.utilities.io.Files;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.zaproxy.clientapi.core.ApiResponse;
@@ -49,8 +51,8 @@ public class Soap {
 
 	public static void main(String[] args) throws UtilsException, ClientApiException, WSDLException, URISyntaxException, org.openspcoop2.utils.wsdl.WSDLException, IOException {
 				
-		String openApiUsage = "soapPath|soapUrl soapTargetUrl";
-		int openApiArgs = 2;
+		String openApiUsage = "soapPath|soapUrl soapTargetUrl falsePositives";
+		int openApiArgs = 3;
 		ZAPContext context = new ZAPContext(args, Soap.class.getName(), openApiUsage+ZAPReport.SUFFIX);
 		
 		String usageMsg = ZAPContext.PREFIX+openApiUsage+ZAPReport.SUFFIX;
@@ -81,9 +83,36 @@ public class Soap {
 			targetUrl=targetUrl+"/";
 		}
 		
+		String falsePositivesArg = null;
+		if(args.length>(index+2)) {
+			falsePositivesArg = args[index+2];
+		}
+		if(falsePositivesArg==null || StringUtils.isEmpty(falsePositivesArg)) {
+			throw new UtilsException("ERROR: argument 'falsePositives' undefined"+usageMsg);
+		}
+		
+		File falsePositivesF = new File(falsePositivesArg);
+		String prefix = "ERROR: file argument 'falsePositives="+falsePositivesF.getAbsolutePath()+"' ";
+		if(!falsePositivesF.exists()) {
+			throw new UtilsException(prefix+"not exists"+usageMsg);
+		}
+		if(!falsePositivesF.canRead()) {
+			throw new UtilsException(prefix+"cannot read"+usageMsg);
+		}
+		
+		String content = FileSystemUtilities.readFile(falsePositivesF);
+		if(content==null || StringUtils.isEmpty(content)) {
+			throw new UtilsException(prefix+"is empty"+usageMsg);
+		}
+		List<FalsePositive> falsePositives = FalsePositive.parse(content);
+		
 		ClientApi api = context.getClientApi();
 		String contextName = context.getContextName();
 		String contextId = context.getContextId();
+		
+		if(falsePositives!=null && !falsePositives.isEmpty()) {
+			FalsePositive.addFalsePositives(falsePositives, api, contextId);
+		}
 		
 		ZAPReport report = new ZAPReport(args, Soap.class.getName(), ZAPContext.PREFIX+" "+openApiUsage, ZAPContext.START_ARGS+openApiArgs, api);
 		

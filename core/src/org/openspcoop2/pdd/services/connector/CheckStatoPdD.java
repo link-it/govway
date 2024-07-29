@@ -23,7 +23,10 @@
 package org.openspcoop2.pdd.services.connector;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,7 +36,20 @@ import jakarta.servlet.ServletException;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.statistiche.StatisticaInfo;
+import org.openspcoop2.core.statistiche.dao.IStatisticaInfoServiceSearch;
+import org.openspcoop2.generic_project.expression.IPaginatedExpression;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.monitor.engine.statistic.StatisticheGiornaliere;
+import org.openspcoop2.monitor.engine.statistic.StatisticheMensili;
+import org.openspcoop2.monitor.engine.statistic.StatisticheOrarie;
+import org.openspcoop2.monitor.engine.statistic.StatisticheSettimanali;
+import org.openspcoop2.pdd.config.DBStatisticheManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -51,7 +67,6 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpServletCredential;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
-import org.slf4j.Logger;
 
 /**
  * Servlet che serve per verificare l'installazione di OpenSPCoop.

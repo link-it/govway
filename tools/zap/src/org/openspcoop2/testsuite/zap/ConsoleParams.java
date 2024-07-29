@@ -56,7 +56,7 @@ public class ConsoleParams {
 	private String password;
 	private ConsoleScanTypes scanTypes;
 	private SortedMap<String> scanUrls;
-	private List<ConsoleFalsePositive> falsePositives;
+	private List<FalsePositive> falsePositives;
 	private String baseConfigDirName;
 	
 	private String usageMsg;
@@ -157,7 +157,7 @@ public class ConsoleParams {
 		if(content==null || StringUtils.isEmpty(content)) {
 			throw new UtilsException(prefix+"is empty"+this.usageMsg);
 		}
-		this.falsePositives = ConsoleFalsePositive.parse(content);
+		this.falsePositives = FalsePositive.parse(content);
 
 	}
 	
@@ -189,7 +189,7 @@ public class ConsoleParams {
 		return this.consoleArgs;
 	}
 	
-	public List<ConsoleFalsePositive> getFalsePositives() {
+	public List<FalsePositive> getFalsePositives() {
 		return this.falsePositives;
 	}
 	

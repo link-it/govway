@@ -7,26 +7,30 @@
 	<property name="openspcoop2.dist" value="${openspcoop2}/dist" />
 	<property name="openspcoop2.lib" value="${openspcoop2}/lib" />
 	<property name="required_lib" value="${openspcoop2.lib}"/>
-
+	<property name="zap_dir" location="." />
+	
 	<!-- Parametri connessione GovWay -->
 	<property name="govway.endpoint" value="http://127.0.0.1:8080"/>
 	<property name="govway.ente" value="ENTE"/>
+	<!-- Parametri API -->
+        <property name="govway.openapi.config.globalFalsePositives" value="${zap_dir}/config/openapi_globalFalsePositive.txt"/>
+        <property name="govway.soap.config.globalFalsePositives" value="${zap_dir}/config/soap_globalFalsePositive.txt"/>
 	<!-- Parametri connessione GovWay Console -->
 	<property name="govway.console.config.username" value="amministratore"/>
 	<property name="govway.console.config.password" value="123456"/>
-        <property name="govway.console.config.scanUrls" location="config/govwayConsole"/>
-	<property name="govway.console.config.scanUrls.templates" location="template/govwayConsole"/>
+        <property name="govway.console.config.scanUrls" value="${zap_dir}/config/govwayConsole"/>
+	<property name="govway.console.config.scanUrls.templates" value="${zap_dir}/template/govwayConsole"/>
 	<property name="govway.console.config.scanType.ajaxSpider" value="false"/>
 	<property name="govway.console.config.scanType.active" value="true"/>
-        <property name="govway.console.config.globalFalsePositives" location="config/govwayConsole_globalFalsePositive.txt"/>
+        <property name="govway.console.config.globalFalsePositives" value="${zap_dir}/config/govwayConsole_globalFalsePositive.txt"/>
 	<!-- Parametri connessione GovWay Monitor -->
 	<property name="govway.console.monitor.username" value="operatore"/>
 	<property name="govway.console.monitor.password" value="123456"/>
-	<property name="govway.console.monitor.scanUrls" location="config/govwayMonitor"/>
-	<property name="govway.console.monitor.scanUrls.templates" location="template/govwayMonitor"/>
+	<property name="govway.console.monitor.scanUrls" value="${zap_dir}/config/govwayMonitor"/>
+	<property name="govway.console.monitor.scanUrls.templates" value="${zap_dir}/template/govwayMonitor"/>
 	<property name="govway.console.monitor.scanType.ajaxSpider" value="false"/>
 	<property name="govway.console.monitor.scanType.active" value="true"/>
-        <property name="govway.console.monitor.globalFalsePositives" location="config/govwayMonitor_globalFalsePositive.txt"/>
+        <property name="govway.console.monitor.globalFalsePositives" value="${zap_dir}/config/govwayMonitor_globalFalsePositive.txt"/>
 
 	<!-- https://www.zaproxy.org/ -->
 	<!-- https://github.com/zaproxy/zap-api-java -->
@@ -45,10 +49,12 @@
 	<!-- Parametri verifica OpenAPI -->
 	<property name="zaproxy.openapi" value=""/>
 	<property name="zaproxy.openapi.targetUrl" value=""/>	
+	<property name="zaproxy.openapi.falsePositives" value=""/>
 
 	<!-- Parametri verifica SOAP -->
 	<property name="zaproxy.soap" value=""/>
 	<property name="zaproxy.soap.targetUrl" value=""/>
+	<property name="zaproxy.soap.falsePositives" value=""/>
 
 	<!-- Parametri verifica govwayConsole -->
 	<property name="zaproxy.govwayConsole.url" value=""/>

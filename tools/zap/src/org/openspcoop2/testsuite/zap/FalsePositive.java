@@ -38,9 +38,9 @@ import org.zaproxy.clientapi.core.ClientApiException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConsoleFalsePositive {
+public class FalsePositive {
 	
-	private ConsoleFalsePositive() {}
+	private FalsePositive() {}
 
 	private boolean enabled = false;
 	private String description;
@@ -78,9 +78,9 @@ public class ConsoleFalsePositive {
 	private static final String URLREGEXP_SUFFIX = ".urlRegExp";
 
 	
-	public static List<ConsoleFalsePositive> parse(String content) throws IOException, UtilsException{
+	public static List<FalsePositive> parse(String content) throws IOException, UtilsException{
 		
-		List<ConsoleFalsePositive> falsePositives = new ArrayList<>();
+		List<FalsePositive> falsePositives = new ArrayList<>();
 		
 		try(ByteArrayInputStream bin = new ByteArrayInputStream(content.getBytes())){
 			Properties p = new Properties();
@@ -99,7 +99,7 @@ public class ConsoleFalsePositive {
 			
 			if(!f.isEmpty()) {
 				for (String name : f) {
-					ConsoleFalsePositive fp = new ConsoleFalsePositive();
+					FalsePositive fp = new FalsePositive();
 					fp.setId(getProperty(p,name,ID_SUFFIX));
 					fp.setEnabled(Boolean.valueOf(getProperty(p,name,ENABLED_SUFFIX)));
 					fp.setDescription(getProperty(p,name,DESCRIPTION_SUFFIX));
@@ -120,9 +120,9 @@ public class ConsoleFalsePositive {
 		return value.trim();
 	}
 	
-	public static void addFalsePositives(List<ConsoleFalsePositive> falsePositives, ClientApi api, String contextId) throws ClientApiException {
+	public static void addFalsePositives(List<FalsePositive> falsePositives, ClientApi api, String contextId) throws ClientApiException {
 		if(!falsePositives.isEmpty()) {
-			for (ConsoleFalsePositive consoleFalsePositive : falsePositives) {
+			for (FalsePositive consoleFalsePositive : falsePositives) {
 				LoggerManager.info("Registrato falso positivo id:"+consoleFalsePositive.getId()+"; "+consoleFalsePositive.getDescription()+" [Url:"+consoleFalsePositive.getId()+"] [enabled:"+consoleFalsePositive.isEnabled()+"] ");
 				api.alertFilter.addAlertFilter(contextId, consoleFalsePositive.getId(), "-1", consoleFalsePositive.getUlrRegExp(), "true", null, consoleFalsePositive.isEnabled()+"");
 			}
