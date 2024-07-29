@@ -1,0 +1,30 @@
+#<nome>.enabled=true
+#<nome>.description=xxxx
+#<nome>.id=
+#<nome>.urlRegExp
+
+applicativiServer_authenticationRequestIdentified.enabled=true
+applicativiServer_authenticationRequestIdentified.description=La pagina presenta delle credenziali da configurare per veicolarle verso il backend
+applicativiServer_authenticationRequestIdentified.id=10111
+applicativiServer_authenticationRequestIdentified.urlRegExp=.*/govway/[A-Za-z0-9]+/api-config/v1/applicativi-server\?.*
+
+erogazioni_authenticationRequestIdentified.enabled=true
+erogazioni_authenticationRequestIdentified.description=La pagina presenta delle credenziali da configurare per veicolarle verso il backend
+erogazioni_authenticationRequestIdentified.id=10111
+erogazioni_authenticationRequestIdentified.urlRegExp=.*/govway/[A-Za-z0-9]+/api-config/v1/erogazioni\?.*
+
+fruizioni_authenticationRequestIdentified.enabled=true
+fruizioni_authenticationRequestIdentified.description=La pagina presenta delle credenziali da configurare per veicolarle verso il backend
+fruizioni_authenticationRequestIdentified.id=10111
+fruizioni_authenticationRequestIdentified.urlRegExp=.*/govway/[A-Za-z0-9]+/api-config/v1/fruizioni\?.*
+
+applicativi_authenticationRequestIdentified.enabled=true
+applicativi_authenticationRequestIdentified.description=La pagina richiede la creazione di un applicativo con le credenziali fornite
+applicativi_authenticationRequestIdentified.id=10111
+applicativi_authenticationRequestIdentified.urlRegExp=.*/govway/[A-Za-z0-9]+/api-config/v1/applicativi\?.*
+
+soggetti_authenticationRequestIdentified.enabled=true
+soggetti_authenticationRequestIdentified.description=La pagina richiede la creazione di un soggetto con le credenziali fornite
+soggetti_authenticationRequestIdentified.id=10111
+soggetti_authenticationRequestIdentified.urlRegExp=.*/govway/[A-Za-z0-9]+/api-config/v1/soggetti\?.*
+

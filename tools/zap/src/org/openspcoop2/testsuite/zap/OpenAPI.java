@@ -19,7 +19,12 @@
  */
 package org.openspcoop2.testsuite.zap;
 
+import java.io.File;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.zaproxy.clientapi.core.ApiResponse;
 import org.zaproxy.clientapi.core.ClientApi;
 
@@ -34,8 +39,8 @@ public class OpenAPI {
 
 	public static void main(String[] args) throws Exception {
 				
-		String openApiUsage = "openapiPath|openapiUrl openapiTargetUrl";
-		int openApiArgs = 2;
+		String openApiUsage = "openapiPath|openapiUrl openapiTargetUrl falsePositives";
+		int openApiArgs = 3;
 		ZAPContext context = new ZAPContext(args, OpenAPI.class.getName(), openApiUsage+ZAPReport.suffix);
 		
 		String usageMsg = ZAPContext.prefix+openApiUsage+ZAPReport.suffix;
@@ -66,9 +71,36 @@ public class OpenAPI {
 			targetUrl=targetUrl+"/";
 		}
 		
+		String falsePositivesArg = null;
+		if(args.length>(index+2)) {
+			falsePositivesArg = args[index+2];
+		}
+		if(falsePositivesArg==null || StringUtils.isEmpty(falsePositivesArg)) {
+			throw new UtilsException("ERROR: argument 'falsePositives' undefined"+usageMsg);
+		}
+		
+		File falsePositivesF = new File(falsePositivesArg);
+		String prefix = "ERROR: file argument 'falsePositives="+falsePositivesF.getAbsolutePath()+"' ";
+		if(!falsePositivesF.exists()) {
+			throw new UtilsException(prefix+"not exists"+usageMsg);
+		}
+		if(!falsePositivesF.canRead()) {
+			throw new UtilsException(prefix+"cannot read"+usageMsg);
+		}
+		
+		String content = FileSystemUtilities.readFile(falsePositivesF);
+		if(content==null || StringUtils.isEmpty(content)) {
+			throw new UtilsException(prefix+"is empty"+usageMsg);
+		}
+		List<FalsePositive> falsePositives = FalsePositive.parse(content);
+		
 		ClientApi api = context.getClientApi();
 		String contextName = context.getContextName();
 		String contextId = context.getContextId();
+		
+		if(falsePositives!=null && !falsePositives.isEmpty()) {
+			FalsePositive.addFalsePositives(falsePositives, api, contextId);
+		}
 		
 		ZAPReport report = new ZAPReport(args, OpenAPI.class.getName(), ZAPContext.prefix+" "+openApiUsage, ZAPContext.startArgs+openApiArgs, api);
 		

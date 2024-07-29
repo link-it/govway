@@ -23,8 +23,10 @@
 	<property name="zap_dir" location="." />
 	<property name="src_zap" value="${zap_dir}/src" />
 	<property name="build_zap" value="${zap_dir}/build" />
+	<property name="tmp_zap" value="${zap_dir}/tmp" />
 	<property name="scripts_zap" value="${zap_dir}/scripts" />
 
+	<property name="update_zap" value="${scripts_zap}/updateZAProxy.sh" />
 	<property name="run_zap" value="${scripts_zap}/runZAProxy.sh" />
 	<property name="stop_zap" value="${scripts_zap}/stopZAProxy.sh" />
 	<property name="wait_start_zap" value="${scripts_zap}/waitStartZAProxy.sh" />
@@ -73,6 +75,31 @@
                         </then>
                 </if>
 	</target>
+	<target name="-updateZapProxy" 
+        	description="Aggiorna ZAP Proxy" >
+
+                <if>
+                        <equals arg1="${zaproxy.home}" arg2="$${zaproxy.home}"/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.home' non fornito"/>
+                        </then>
+                </if>
+                <if>
+                        <equals arg1="${zaproxy.home}" arg2=""/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.home' non definito"/>
+                        </then>
+                </if>
+
+		<echo message="Update ZAP"/>
+
+		<!-- Run the java code  -->
+		<exec executable="${update_zap}">
+			<arg value="${zaproxy.home}"/>
+			<arg value="${zaproxy.port}" />
+			<arg value="${zaproxy.address}" />
+		</exec>
+	</target>
 	<target name="-runZapProxy" 
         	description="Esegue ZAP Proxy" >
 
@@ -102,6 +129,23 @@
 	</target>
 	<target name="-executeZap" depends="-checkZapProxyHome, build"
         	description="Esegue il target indicato" >
+        	
+        	<trycatch property="errorUpdate.message">
+			<try>
+				<parallel timeout="${zaproxy.timeout}" failonany="true">
+					<antcall target="-updateZapProxy" />
+				</parallel>
+			</try>
+
+			<catch>
+				<echo message="Update failed"/>
+			</catch>
+
+			<finally>
+				
+			</finally>
+		</trycatch>
+        	
 		<tstamp>
 			<format property="touch.time" pattern="yyyyMMdd_HHmmssSSS" />
 		</tstamp>
@@ -241,12 +285,25 @@
                                 <fail message="Parametro 'zaproxy.openapi.targetUrl' non definito"/>
                         </then>
                 </if>
+                
+                <if>
+                        <equals arg1="${zaproxy.openapi.falsePositives}" arg2="$${zaproxy.openapi.falsePositives}"/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.openapi.falsePositives' non fornito"/>
+                        </then>
+                </if>
+                <if>
+                        <equals arg1="${zaproxy.openapi.falsePositives}" arg2=""/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.openapi.falsePositives' non definito"/>
+                        </then>
+                </if>
 
 		<antcall target="-executeZap">
 			<param name="zap_target" value="-analizeOpenAPI"/>
 		</antcall>
 	</target>
-	<target name="-analizeOpenAPI">
+	<target name="-analizeOpenAPI">	
 		<echo message="OpenAPI Api Key: '${zap-api-key}'"/>
 		<java classname="org.openspcoop2.testsuite.zap.OpenAPI" fork="false">
 			<arg value="${zaproxy.address}" />
@@ -256,6 +313,7 @@
 			<arg value="${zaproxy.debug}" />
 			<arg value="${zaproxy.openapi}" />
 			<arg value="${zaproxy.openapi.targetUrl}" />
+			<arg value="${zaproxy.openapi.falsePositives}" />
 			<arg value="${zaproxy.report.title}" />
 			<arg value="${zaproxy.report.description}" />
 			<arg value="${zaproxy.report.includedConfidences}" />
@@ -299,6 +357,19 @@
                                 <fail message="Parametro 'zaproxy.soap.targetUrl' non definito"/>
                         </then>
                 </if>
+                
+                <if>
+                        <equals arg1="${zaproxy.soap.falsePositives}" arg2="$${zaproxy.soap.falsePositives}"/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.soap.falsePositives' non fornito"/>
+                        </then>
+                </if>
+                <if>
+                        <equals arg1="${zaproxy.soap.falsePositives}" arg2=""/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.soap.falsePositives' non definito"/>
+                        </then>
+                </if>
 
 		<antcall target="-executeZap">
 			<param name="zap_target" value="-analizeSoap"/>
@@ -314,6 +385,7 @@
 			<arg value="${zaproxy.debug}" />
 			<arg value="${zaproxy.soap}" />
 			<arg value="${zaproxy.soap.targetUrl}" />
+			<arg value="${zaproxy.soap.falsePositives}" />
 			<arg value="${zaproxy.report.title}" />
 			<arg value="${zaproxy.report.description}" />
 			<arg value="${zaproxy.report.includedConfidences}" />
@@ -399,9 +471,18 @@
 				<if>
 		                        <equals arg1="${analyzeTarget}" arg2="analizeOpenAPI"/>
 		                        <then>
+		                        	<delete file="${tmp_zap}/falsePositive.txt"/>
+						<basename property="configBaseNameGlobalFP" file="${govway.openapi.config.globalFalsePositives}"/>
+						<dirname property="configDirNameGlobalFP" file="${govway.openapi.config.globalFalsePositives}"/>
+						<concat destfile="${tmp_zap}/falsePositive.txt" append="no">
+							<filelist dir="${configDirNameGlobalFP}" files="${configBaseNameGlobalFP}"/>
+				 		</concat>
+						<echo message="FalsePositives file: '${tmp_zap}/falsePositive.txt'"/>
+		                        
 						<antcall target="analizeOpenAPI">
 							<param name="zaproxy.openapi" value="${analyzeInterface}"/>
 							<param name="zaproxy.openapi.targetUrl" value="${analyzeTargetUrl}"/>
+							<param name="zaproxy.openapi.falsePositives" value="${tmp_zap}/falsePositive.txt" />
 							<param name="zaproxy.report.dir" value="${zaproxy.report.dir}/${analyzeType}" />
 							<param name="zaproxy.report.fileNamePattern" value="zap_report_${analyzeType}.ext" />
 							<param name="zaproxy.report.title" value="${analyzeTitle}" />
@@ -412,9 +493,18 @@
 				<if>
 		                        <equals arg1="${analyzeTarget}" arg2="analizeSoap"/>
 		                        <then>
+						<delete file="${tmp_zap}/falsePositive.txt"/>
+						<basename property="configBaseNameGlobalFP" file="${govway.soap.config.globalFalsePositives}"/>
+						<dirname property="configDirNameGlobalFP" file="${govway.soap.config.globalFalsePositives}"/>
+						<concat destfile="${tmp_zap}/falsePositive.txt" append="no">
+							<filelist dir="${configDirNameGlobalFP}" files="${configBaseNameGlobalFP}"/>
+				 		</concat>
+						<echo message="FalsePositives file: '${tmp_zap}/falsePositive.txt'"/>
+		                        
 						<antcall target="analizeSoap">
 							<param name="zaproxy.soap" value="${analyzeInterface}"/>
 							<param name="zaproxy.soap.targetUrl" value="${analyzeTargetUrl}"/>
+							<param name="zaproxy.soap.falsePositives" value="${tmp_zap}/falsePositive.txt" />
 							<param name="zaproxy.report.dir" value="${zaproxy.report.dir}/${analyzeType}" />
 							<param name="zaproxy.report.fileNamePattern" value="zap_report_${analyzeType}.ext" />
 							<param name="zaproxy.report.title" value="${analyzeTitle}" />

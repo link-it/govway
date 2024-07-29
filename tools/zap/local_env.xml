@@ -7,10 +7,15 @@
 	<property name="openspcoop2.dist" value="${openspcoop2}/dist" />
 	<property name="openspcoop2.lib" value="${openspcoop2}/lib" />
 	<property name="required_lib" value="${openspcoop2.lib}"/>
-
+	<property name="zap_dir" location="." />
+	
 	<!-- Parametri connessione GovWay -->
 	<property name="govway.endpoint" value="http://127.0.0.1:8080"/>
 	<property name="govway.ente" value="ENTE"/>
+	<!-- Parametri API -->
+        <property name="govway.openapi.config.globalFalsePositives" value="${zap_dir}/config/openapi_globalFalsePositive.txt"/>
+        <property name="govway.soap.config.globalFalsePositives" value="${zap_dir}/config/soap_globalFalsePositive.txt"/>
+	<!-- Parametri connessione GovWay Console -->
 	<property name="govway.console.config.username" value="amministratore"/>
 	<property name="govway.console.config.password" value="123456"/>
 	<property name="govway.console.monitor.username" value="operatore"/>
@@ -33,10 +38,12 @@
 	<!-- Parametri verifica OpenAPI -->
 	<property name="zaproxy.openapi" value=""/>
 	<property name="zaproxy.openapi.targetUrl" value=""/>	
+	<property name="zaproxy.openapi.falsePositives" value=""/>
 
 	<!-- Parametri verifica SOAP -->
 	<property name="zaproxy.soap" value=""/>
 	<property name="zaproxy.soap.targetUrl" value=""/>
+	<property name="zaproxy.soap.falsePositives" value=""/>
 
 	<!-- Parametri verifica govwayConsole -->
 	<property name="zaproxy.govwayConsole.url" value=""/>
