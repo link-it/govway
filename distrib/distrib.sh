@@ -250,7 +250,7 @@ cd ${WORK_DIR}/
 
 if [ -z "${ANT_OPTS}" ]
 then
-	export ANT_OPTS="-Xmx1024m -XX:MaxMetaspaceSize=1024m"
+	export ANT_OPTS="-Xmx2048m -XX:MaxMetaspaceSize=2048m"
 fi
 echo "ANT_OPTS: ${ANT_OPTS}"
 
