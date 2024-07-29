@@ -43,12 +43,15 @@ import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorseThread;
 import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpServletCredential;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.slf4j.Logger;
 
 /**
  * Servlet che serve per verificare l'installazione di OpenSPCoop.
@@ -270,6 +273,14 @@ public class CheckStatoPdD extends HttpServlet {
 			return;
 		}
 		
+		try {
+			verificaInformazioniStatistiche(log, properties);
+		}catch(Exception t) {
+			String msg = "Statistics HealthCheck failed\n"+t.getMessage();
+			sendError(res, log, msg, 500, t); 
+			return;
+		}
+		
 		if(properties.isCheckHealthCheckApiRestEnabled()) {
 			String endpoint = properties.getCheckHealthCheckApiRestEndpoint();
 			
@@ -366,6 +377,237 @@ public class CheckStatoPdD extends HttpServlet {
 			}
 		}
 
+	}
+	
+	private void verificaInformazioniStatistiche(Logger log, OpenSPCoop2Properties properties) throws Exception {
+		
+		boolean verificaStatisticaOraria = properties.isCheckHealthCheckStatsHourlyEnabled();
+		boolean verificaStatisticaGiornaliera = properties.isCheckHealthCheckStatsDailyEnabled();
+		boolean verificaStatisticaSettimanale = properties.isCheckHealthCheckStatsWeeklyEnabled();
+		boolean verificaStatisticaMensile = properties.isCheckHealthCheckStatsMonthlyEnabled();
+		int verificaStatisticaOrariaSoglia = properties.getCheckHealthCheckStatsHourlyThreshold();
+		int verificaStatisticaGiornalieraSoglia = properties.getCheckHealthCheckStatsDailyThreshold();
+		int verificaStatisticaSettimanaleSoglia = properties.getCheckHealthCheckStatsWeeklyThreshold();
+		int verificaStatisticaMensileSoglia =properties.getCheckHealthCheckStatsMonthlyThreshold();
+		
+		if(!verificaStatisticaOraria && !verificaStatisticaGiornaliera && !verificaStatisticaSettimanale && !verificaStatisticaMensile) {
+			return;
+		}
+		
+		DAOFactoryProperties daoFactoryProperties = null;
+		Logger daoFactoryLogger = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+		DAOFactory daoFactory = DAOFactory.getInstance(daoFactoryLogger);
+		daoFactoryProperties = DAOFactoryProperties.getInstance(daoFactoryLogger);
+		
+		String tipoDatabase = properties.getDatabaseType();
+		if(tipoDatabase==null){
+			tipoDatabase = daoFactoryProperties.getTipoDatabase(new org.openspcoop2.core.statistiche.utils.ProjectInfo());
+		}
+		if(tipoDatabase==null){
+			throw new CoreException("Database type undefined");
+		}
+		
+		ServiceManagerProperties daoFactoryServiceManagerPropertiesStatistiche = daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance());
+		daoFactoryServiceManagerPropertiesStatistiche.setShowSql(false);	
+		daoFactoryServiceManagerPropertiesStatistiche.setDatabaseType(tipoDatabase);
+		
+		DBStatisticheManager dbStatisticheManager = DBStatisticheManager.getInstance();
+				
+		Resource r = null;
+		IDSoggetto dominio = properties.getIdentitaPortaDefaultWithoutProtocol();
+		String idModulo = "GovWayHealthCheck";
+		try{	
+			Connection con = null;
+			r = dbStatisticheManager.getResource(dominio, idModulo, null);
+			if(r==null){
+				throw new CoreException("Database resource not available");
+			}
+			con = (Connection) r.getResource();
+			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM = 
+					(org.openspcoop2.core.statistiche.dao.IServiceManager) daoFactory.getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),
+							con, daoFactoryServiceManagerPropertiesStatistiche, daoFactoryLogger);
+			IStatisticaInfoServiceSearch search = statisticheSM.getStatisticaInfoServiceSearch();
+			IPaginatedExpression pagExpr = search.newPaginatedExpression();
+			List<StatisticaInfo> list = search.findAll(pagExpr);
+			if(list==null || list.isEmpty()) {
+				throw new CoreException("No statistical report available");
+			}
+			Date dataUltimaGenerazioneOraria = null;
+			Date dataUltimaGenerazioneGiornaliera = null;
+			Date dataUltimaGenerazioneSettimanale = null;
+			Date dataUltimaGenerazioneMensile = null;
+			for (StatisticaInfo statisticaInfo : list) {
+				if(statisticaInfo.getTipoStatistica()==null) {
+					throw new CoreException("Found row without associated report type");
+				}
+				switch (statisticaInfo.getTipoStatistica()) {
+				case STATISTICHE_ORARIE:
+					dataUltimaGenerazioneOraria = statisticaInfo.getDataUltimaGenerazione();
+					break;
+				case STATISTICHE_GIORNALIERE:
+					dataUltimaGenerazioneGiornaliera = statisticaInfo.getDataUltimaGenerazione();
+					break;
+				case STATISTICHE_SETTIMANALI:
+					dataUltimaGenerazioneSettimanale = statisticaInfo.getDataUltimaGenerazione();
+					break;
+				case STATISTICHE_MENSILI:
+					dataUltimaGenerazioneMensile = statisticaInfo.getDataUltimaGenerazione();
+					break;
+				}
+			}
+			
+			// Se viene rilevata come ultimo intervallo temporale delle statistiche una data più vecchia dell'unità indicata nella soglia (relativamente al tipo di statistica) viene ritornato un errore
+			// Se si indica un valore '1' si richiede ad esempio che le statistiche siano aggiornate all'intervallo precedente. 
+			// Quindi ad es. all'ora precedente per l'orario, al giorno precedente per il giornaliero e cosi via... 
+			// Se si indica 0 si vuole imporre che le statistiche siano aggiornate (anche parzialmente) all'ultimo intervallo 
+			// NOTA: (potrebbe creare dei falsi negativi se la generazione delle statistiche avviene dopo il check)
+			StringBuilder bf = new StringBuilder();
+			Date now = DateManager.getDate();
+			
+			if(verificaStatisticaOraria) {
+				if(dataUltimaGenerazioneOraria==null) {
+					if(bf.length()>0) {
+						bf.append("\n");
+					}
+					bf.append("No hourly report detected");
+				}
+				else {
+					Date nowTruncate = StatisticheOrarie.getInstanceForUtils().truncDate(now, false);
+					Date dataUltimaGenerazioneTruncate = StatisticheOrarie.getInstanceForUtils().truncDate(dataUltimaGenerazioneOraria, false);
+					Date dataUltimaGenerazioneTruncateConAggiuntaSoglia = new Date(dataUltimaGenerazioneTruncate.getTime());
+					for (int i = 0; i < verificaStatisticaOrariaSoglia; i++) {
+						dataUltimaGenerazioneTruncateConAggiuntaSoglia = StatisticheOrarie.getInstanceForUtils().incrementDate(dataUltimaGenerazioneTruncateConAggiuntaSoglia, false);	
+					}
+					boolean sogliaNonRispettata = dataUltimaGenerazioneTruncateConAggiuntaSoglia.before(nowTruncate);
+					SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
+					String msg = getLogMessageStats("oraria",dataUltimaGenerazioneOraria, verificaStatisticaOrariaSoglia,
+							dataUltimaGenerazioneTruncate, dataUltimaGenerazioneTruncateConAggiuntaSoglia,
+							nowTruncate, sogliaNonRispettata);
+					log.debug(msg);
+	
+					if(sogliaNonRispettata) {
+						if(bf.length()>0) {
+							bf.append("\n");
+						}
+						bf.append("Hourly statistical information found whose last update is older than the allowed threshold ("+verificaStatisticaOrariaSoglia+"); last generation date: "+dateformat.format(dataUltimaGenerazioneOraria));
+					}
+				}
+			}
+			
+			if(verificaStatisticaGiornaliera) {
+				if(dataUltimaGenerazioneGiornaliera==null) {
+					if(bf.length()>0) {
+						bf.append("\n");
+					}
+					bf.append("No daily report detected");
+				}
+				else {
+					Date nowTruncate = StatisticheGiornaliere.getInstanceForUtils().truncDate(now, false);
+					Date dataUltimaGenerazioneTruncate = StatisticheGiornaliere.getInstanceForUtils().truncDate(dataUltimaGenerazioneGiornaliera, false);
+					Date dataUltimaGenerazioneTruncateConAggiuntaSoglia = new Date(dataUltimaGenerazioneTruncate.getTime());
+					for (int i = 0; i < verificaStatisticaGiornalieraSoglia; i++) {
+						dataUltimaGenerazioneTruncateConAggiuntaSoglia = StatisticheGiornaliere.getInstanceForUtils().incrementDate(dataUltimaGenerazioneTruncateConAggiuntaSoglia, false);	
+					}
+					boolean sogliaNonRispettata = dataUltimaGenerazioneTruncateConAggiuntaSoglia.before(nowTruncate);
+					SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
+					String msg = getLogMessageStats("giornaliera",dataUltimaGenerazioneGiornaliera, verificaStatisticaGiornalieraSoglia,
+							dataUltimaGenerazioneTruncate, dataUltimaGenerazioneTruncateConAggiuntaSoglia,
+							nowTruncate, sogliaNonRispettata);
+					log.debug(msg);
+	
+					if(sogliaNonRispettata) {
+						if(bf.length()>0) {
+							bf.append("\n");
+						}
+						bf.append("Daily statistical information found whose last update is older than the allowed threshold ("+verificaStatisticaGiornalieraSoglia+"); last generation date: "+dateformat.format(dataUltimaGenerazioneGiornaliera));
+					}
+				}
+			}
+			
+			if(verificaStatisticaSettimanale) {
+				if(dataUltimaGenerazioneSettimanale==null) {
+					if(bf.length()>0) {
+						bf.append("\n");
+					}
+					bf.append("No weekly report detected");
+				}
+				else {
+					Date nowTruncate = StatisticheSettimanali.getInstanceForUtils().truncDate(now, false);
+					Date dataUltimaGenerazioneTruncate = StatisticheSettimanali.getInstanceForUtils().truncDate(dataUltimaGenerazioneSettimanale, false);
+					Date dataUltimaGenerazioneTruncateConAggiuntaSoglia = new Date(dataUltimaGenerazioneTruncate.getTime());
+					for (int i = 0; i < verificaStatisticaSettimanaleSoglia; i++) {
+						dataUltimaGenerazioneTruncateConAggiuntaSoglia = StatisticheSettimanali.getInstanceForUtils().incrementDate(dataUltimaGenerazioneTruncateConAggiuntaSoglia, false);	
+					}
+					boolean sogliaNonRispettata = dataUltimaGenerazioneTruncateConAggiuntaSoglia.before(nowTruncate);
+					SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
+					String msg = getLogMessageStats("settimanale",dataUltimaGenerazioneSettimanale, verificaStatisticaSettimanaleSoglia,
+							dataUltimaGenerazioneTruncate, dataUltimaGenerazioneTruncateConAggiuntaSoglia,
+							nowTruncate, sogliaNonRispettata);
+					log.debug(msg);
+	
+					if(sogliaNonRispettata) {
+						if(bf.length()>0) {
+							bf.append("\n");
+						}
+						bf.append("Weekly statistical information found whose last update is older than the allowed threshold ("+verificaStatisticaSettimanaleSoglia+"); last-generation: "+dateformat.format(dataUltimaGenerazioneSettimanale));
+					}
+				}
+			}
+			
+			if(verificaStatisticaMensile) {
+				if(dataUltimaGenerazioneMensile==null) {
+					if(bf.length()>0) {
+						bf.append("\n");
+					}
+					bf.append("No monthly report detected");
+				}
+				else {
+					Date nowTruncate = StatisticheMensili.getInstanceForUtils().truncDate(now, false);
+					Date dataUltimaGenerazioneTruncate = StatisticheMensili.getInstanceForUtils().truncDate(dataUltimaGenerazioneMensile, false);
+					Date dataUltimaGenerazioneTruncateConAggiuntaSoglia = new Date(dataUltimaGenerazioneTruncate.getTime());
+					for (int i = 0; i < verificaStatisticaMensileSoglia; i++) {
+						dataUltimaGenerazioneTruncateConAggiuntaSoglia = StatisticheMensili.getInstanceForUtils().incrementDate(dataUltimaGenerazioneTruncateConAggiuntaSoglia, false);	
+					}
+					boolean sogliaNonRispettata = dataUltimaGenerazioneTruncateConAggiuntaSoglia.before(nowTruncate);
+					SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
+					String msg = getLogMessageStats("mensile",dataUltimaGenerazioneMensile, verificaStatisticaMensileSoglia,
+							dataUltimaGenerazioneTruncate, dataUltimaGenerazioneTruncateConAggiuntaSoglia,
+							nowTruncate, sogliaNonRispettata);
+					log.debug(msg);
+	
+					if(sogliaNonRispettata) {
+						if(bf.length()>0) {
+							bf.append("\n");
+						}
+						bf.append("Monthly statistical information found whose last update is older than the allowed threshold ("+verificaStatisticaMensileSoglia+"); last-generation: "+dateformat.format(dataUltimaGenerazioneMensile));
+					}
+				}
+			}
+			
+			if(bf.length()>0) {
+				throw new CoreException(bf.toString());
+			}
+			
+		}finally {
+			try{
+				if(r!=null) {
+					dbStatisticheManager.releaseResource(dominio, idModulo, r);
+				}
+			}catch(Exception eClose){
+				// ignore
+			}
+		}
+			
+	}
+	
+	private String getLogMessageStats(String tipo, Date dataUltimaGenerazione, int verificaStatisticaSoglia,
+			Date dataUltimaGenerazioneTruncate, Date dataUltimaGenerazioneTruncateConAggiuntaSoglia,
+			Date nowTruncate, boolean sogliaNonRispettata) {
+		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
+		return "Check [Statistica "+tipo+"], ultima data di generazione ["+dateformat.format(dataUltimaGenerazione)+
+				"] dataUltimaGenerazioneTruncate["+dateformat.format(dataUltimaGenerazioneTruncate)+"] soglia["+verificaStatisticaSoglia+
+				"] dataUltimaGenerazioneTruncateConAggiuntaSoglia["+dateformat.format(dataUltimaGenerazioneTruncateConAggiuntaSoglia)+
+				"] nowTruncate["+dateformat.format(nowTruncate)+"] sogliaNonRispettata["+sogliaNonRispettata+"]";
 	}
 
 	private void addParameter(List<Object> params, List<String> signatures, HttpServletRequest req) throws CoreException {

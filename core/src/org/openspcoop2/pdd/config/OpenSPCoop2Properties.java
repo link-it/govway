@@ -1951,6 +1951,22 @@ public class OpenSPCoop2Properties {
 					this.getCheckHealthCheckApiSoapEndpoint()==null) {
 					return false;
 				}
+				if(this.isCheckHealthCheckStatsHourlyEnabled() &&
+					this.getCheckHealthCheckStatsHourlyThreshold()<0) {
+					return false;
+				}
+				if(this.isCheckHealthCheckStatsDailyEnabled() &&
+					this.getCheckHealthCheckStatsDailyThreshold()<0) {
+					return false;
+				}
+				if(this.isCheckHealthCheckStatsWeeklyEnabled() &&
+					this.getCheckHealthCheckStatsWeeklyThreshold()<0) {
+					return false;
+				}
+				if(this.isCheckHealthCheckStatsMonthlyEnabled() &&
+					this.getCheckHealthCheckStatsMonthlyThreshold()<0) {
+					return false;
+				}
 			}
 			this.isCheckReadJMXResourcesEnabled();
 			this.getCheckReadJMXResourcesUsername();
@@ -20649,6 +20665,185 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.getCheckHealthCheckApiSoapEndpoint;
+	}
+	
+	private Boolean isCheckHealthCheckStatsHourlyEnabled = null;
+	public boolean isCheckHealthCheckStatsHourlyEnabled() {	
+		if(this.isCheckHealthCheckStatsHourlyEnabled==null){
+			String pName = "org.openspcoop2.pdd.check.healthCheck.reportStatistici.intervalloOrario.verifica";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					name="false";
+				}
+				name = name.trim();
+				this.isCheckHealthCheckStatsHourlyEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.isCheckHealthCheckStatsHourlyEnabled = false;
+			}    
+		}
+
+		return this.isCheckHealthCheckStatsHourlyEnabled;
+	}
+	
+	private Integer getCheckHealthCheckStatsHourlyThreshold = null;
+	public int getCheckHealthCheckStatsHourlyThreshold() {	
+		if(this.getCheckHealthCheckStatsHourlyThreshold==null){
+			String pName = "org.openspcoop2.pdd.check.healthCheck.reportStatistici.intervalloOrario.soglia";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, 1));
+					name="1";
+				}
+				name = name.trim();
+				this.getCheckHealthCheckStatsHourlyThreshold = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.getCheckHealthCheckStatsHourlyThreshold = -1;
+			}    
+		}
+
+		return this.getCheckHealthCheckStatsHourlyThreshold;
+	}
+	
+		
+	private Boolean isCheckHealthCheckStatsDailyEnabled = null;
+	public boolean isCheckHealthCheckStatsDailyEnabled() {	
+		if(this.isCheckHealthCheckStatsDailyEnabled==null){
+			String pName = "org.openspcoop2.pdd.check.healthCheck.reportStatistici.intervalloGiornaliero.verifica";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					name="false";
+				}
+				name = name.trim();
+				this.isCheckHealthCheckStatsDailyEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.isCheckHealthCheckStatsDailyEnabled = false;
+			}    
+		}
+
+		return this.isCheckHealthCheckStatsDailyEnabled;
+	}
+	
+	private Integer getCheckHealthCheckStatsDailyThreshold = null;
+	public int getCheckHealthCheckStatsDailyThreshold() {	
+		if(this.getCheckHealthCheckStatsDailyThreshold==null){
+			String pName = "org.openspcoop2.pdd.check.healthCheck.reportStatistici.intervalloGiornaliero.soglia";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, 1));
+					name="1";
+				}
+				name = name.trim();
+				this.getCheckHealthCheckStatsDailyThreshold = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.getCheckHealthCheckStatsDailyThreshold = -1;
+			}    
+		}
+
+		return this.getCheckHealthCheckStatsDailyThreshold;
+	}
+	
+	private Boolean isCheckHealthCheckStatsWeeklyEnabled = null;
+	public boolean isCheckHealthCheckStatsWeeklyEnabled() {	
+		if(this.isCheckHealthCheckStatsWeeklyEnabled==null){
+			String pName = "org.openspcoop2.pdd.check.healthCheck.reportStatistici.intervalloSettimanale.verifica";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					name="false";
+				}
+				name = name.trim();
+				this.isCheckHealthCheckStatsWeeklyEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.isCheckHealthCheckStatsWeeklyEnabled = false;
+			}    
+		}
+
+		return this.isCheckHealthCheckStatsWeeklyEnabled;
+	}
+	
+	private Integer getCheckHealthCheckStatsWeeklyThreshold = null;
+	public int getCheckHealthCheckStatsWeeklyThreshold() {	
+		if(this.getCheckHealthCheckStatsWeeklyThreshold==null){
+			String pName = "org.openspcoop2.pdd.check.healthCheck.reportStatistici.intervalloSettimanale.soglia";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, 1));
+					name="1";
+				}
+				name = name.trim();
+				this.getCheckHealthCheckStatsWeeklyThreshold = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.getCheckHealthCheckStatsWeeklyThreshold = -1;
+			}    
+		}
+
+		return this.getCheckHealthCheckStatsWeeklyThreshold;
+	}
+	
+
+	
+	private Boolean isCheckHealthCheckStatsMonthlyEnabled = null;
+	public boolean isCheckHealthCheckStatsMonthlyEnabled() {	
+		if(this.isCheckHealthCheckStatsMonthlyEnabled==null){
+			String pName = "org.openspcoop2.pdd.check.healthCheck.reportStatistici.intervalloMensile.verifica";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					name="false";
+				}
+				name = name.trim();
+				this.isCheckHealthCheckStatsMonthlyEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.isCheckHealthCheckStatsMonthlyEnabled = false;
+			}    
+		}
+
+		return this.isCheckHealthCheckStatsMonthlyEnabled;
+	}
+	
+	private Integer getCheckHealthCheckStatsMonthlyThreshold = null;
+	public int getCheckHealthCheckStatsMonthlyThreshold() {	
+		if(this.getCheckHealthCheckStatsMonthlyThreshold==null){
+			String pName = "org.openspcoop2.pdd.check.healthCheck.reportStatistici.intervalloMensile.soglia";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, 1));
+					name="1";
+				}
+				name = name.trim();
+				this.getCheckHealthCheckStatsMonthlyThreshold = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.getCheckHealthCheckStatsMonthlyThreshold = -1;
+			}    
+		}
+
+		return this.getCheckHealthCheckStatsMonthlyThreshold;
 	}
 	
 	private Boolean isCheckReadJMXResourcesEnabled = null;

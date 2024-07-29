@@ -1,3 +1,9 @@
+2024-07-29  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1750
+	È stata aggiunta, tra i controlli effettuati dal servizio di 'health check', una verifica dell'aggiornamento frequente dei campionamenti statistici.
+
 2024-07-25  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, ProtocolloModIPA]
