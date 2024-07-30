@@ -321,7 +321,7 @@ public class SingleFileExporter implements IExporter{
 
 				Traccia tracciaRichiesta = null;
 				Traccia tracciaRisposta  = null;
-				ArrayList<Traccia> tracce = new ArrayList<Traccia>();
+				ArrayList<Traccia> tracce = new ArrayList<>();
 				try{
 					tracciaRichiesta=this.tracciamentoService.getTraccia(RuoloMessaggio.RICHIESTA,properties);
 					tracce.add(tracciaRichiesta);
@@ -346,7 +346,7 @@ public class SingleFileExporter implements IExporter{
 				// gestione degli errori.
 				ArrayList<String> errori = new ArrayList<>(0);
 				
-				if(tracce.size()>0){
+				if(!tracce.isEmpty()){
 					// Add ZIP entry to output stream.
 					try{
 						this.zip.putNextEntry(new ZipEntry(transazioneDir+"tracce.xml"));
@@ -375,6 +375,7 @@ public class SingleFileExporter implements IExporter{
 									}
 								}
 								
+								tracciaBuilder.setOmitXmlDeclaration(true);
 								String traccia = tracciaBuilder.toString(tr,TipoSerializzazione.DEFAULT);
 							
 								in = new ByteArrayInputStream((newLine + traccia).getBytes());
@@ -417,7 +418,7 @@ public class SingleFileExporter implements IExporter{
 						
 						// se si sono riscontrati degli errori nella produzione delle tracce
 						// creo un file che contiene la descrizione di tali errori.
-						if (errori.size() > 0) {
+						if (!errori.isEmpty()) {
 							// Add ZIP entry to output stream.
 							this.zip.putNextEntry(new ZipEntry(transazioneDir+"tracce.xml.error"));
 
@@ -564,6 +565,7 @@ public class SingleFileExporter implements IExporter{
 						}
 					}
 					
+					diagnosticoBuilder.setOmitXmlDeclaration(true);
 					String msgDiagnostico = diagnosticoBuilder.toString(msg,TipoSerializzazione.DEFAULT);
 					in = new ByteArrayInputStream((newLine + msgDiagnostico).getBytes());
 					// Transfer bytes from the input stream to the ZIP file
@@ -707,7 +709,7 @@ public class SingleFileExporter implements IExporter{
 				this.transazioniExporterService.store(te);
 			}
 			
-			List<TransazioneBean> transazioni = new ArrayList<TransazioneBean>();
+			List<TransazioneBean> transazioni = new ArrayList<>();
 			
 			transazioni = this.transazioniService.findAll(start, limit);
 			
@@ -728,7 +730,7 @@ public class SingleFileExporter implements IExporter{
 					this.zip.flush();
 					this.zip.closeEntry();
 
-					while(transazioni.size()>0 && !stopExport){
+					while(!transazioni.isEmpty() && !stopExport){
 
 						export(rootDir,transazioni);
 

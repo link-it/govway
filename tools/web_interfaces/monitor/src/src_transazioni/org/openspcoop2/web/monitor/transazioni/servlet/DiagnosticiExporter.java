@@ -46,6 +46,7 @@ import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.XMLRootElement;
@@ -70,16 +71,24 @@ public class DiagnosticiExporter extends HttpServlet{
 
 	private static final long serialVersionUID = 1272767433184676700L;
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
+	
 	private static IDiagnosticDriver diagnosticiService = null;
+	public static void setDiagnosticiService(IDiagnosticDriver diagnosticiService) {
+		DiagnosticiExporter.diagnosticiService = diagnosticiService;
+	}
+
 	private static Boolean enableHeaderInfo = false;
+	public static void setEnableHeaderInfo(Boolean enableHeaderInfo) {
+		DiagnosticiExporter.enableHeaderInfo = enableHeaderInfo;
+	}
 
 	@Override
 	public void init() throws ServletException {
 		try{
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(DiagnosticiExporter.log);
-			DiagnosticiExporter.enableHeaderInfo = govwayMonitorProperties.isAttivoTransazioniExportHeader();
+			DiagnosticiExporter.setEnableHeaderInfo(govwayMonitorProperties.isAttivoTransazioniExportHeader());
 
-			diagnosticiService = govwayMonitorProperties.getDriverMsgDiagnostici();
+			DiagnosticiExporter.setDiagnosticiService(govwayMonitorProperties.getDriverMsgDiagnostici());
 		}catch(Exception e){
 			DiagnosticiExporter.log.error("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
 		}
@@ -103,7 +112,7 @@ public class DiagnosticiExporter extends HttpServlet{
 		try{
 			ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
 			if(context==null) {
-				throw new Exception("Context is null");
+				throw new CoreException("Context is null");
 			}
 			
 			ITransazioniService service = (ITransazioniService)context.getBean("transazioniService");
@@ -134,23 +143,14 @@ public class DiagnosticiExporter extends HttpServlet{
 
 			if(!exportConsentito){
 				
-				String msg_errore = "L'utente non dispone dei permessi necessari per effettuare l'export  dei messaggi diagnostici.";
-				String redirectUrl = req.getContextPath()+"/public/error.jsf?msg_errore=" + msg_errore;
+				String msgErrore = "L'utente non dispone dei permessi necessari per effettuare l'export  dei messaggi diagnostici.";
+				String redirectUrl = req.getContextPath()+"/public/error.jsf?msg_errore=" + msgErrore;
 				
 				response.sendRedirect(redirectUrl);
 				return;
 				
-//				throw new ExportException("Errore durante l'export dei messaggi diagnostici: i parametri indicati non sono validi!");
+				/**throw new ExportException("Errore durante l'export dei messaggi diagnostici: i parametri indicati non sono validi!");*/
 			}
-
-			// Be sure to retrieve the absolute path to the file with the required
-			// method
-			// filePath = pathToTheFile;
-
-			// This is another important attribute for the header of the response
-			// Here fileName, is a String with the name that you will suggest as a
-			// name to save as
-			// I use the same name as it is stored in the file system of the server.
 
 			String fileName = "Diagnostici.zip";
 
@@ -169,12 +169,12 @@ public class DiagnosticiExporter extends HttpServlet{
 
 			int start = 0;
 			int limit = 25;
-			List<TransazioneBean> transazioni = new ArrayList<TransazioneBean>();
+			List<TransazioneBean> transazioni = new ArrayList<>();
 
 			Utility.setLoginMBean((LoginBean)context.getBean("loginBean"));
 
 
-			if(isAll)
+			if(isAll!=null && isAll.booleanValue())
 				transazioni = service.findAll(start, limit);
 			else{
 				for (int j = 0; j < ids.length; j++) {
@@ -183,7 +183,7 @@ public class DiagnosticiExporter extends HttpServlet{
 			}
 
 
-			while(transazioni.size()>0){
+			while(!transazioni.isEmpty()){
 
 				for(TransazioneBean t: transazioni){
 					//recupero i diagnostici per questa transazione
@@ -191,7 +191,7 @@ public class DiagnosticiExporter extends HttpServlet{
 
 
 					//devo impostare solo l'idtransazione
-					//filter.setIdEgov(this.diagnosticiBean.getIdEgov());	
+					/**filter.setIdEgov(this.diagnosticiBean.getIdEgov());*/	
 					Map<String, String> properties = new HashMap<>();
 					properties.put("id_transazione", t.getIdTransazione());
 					filter.setProperties(properties);
@@ -200,7 +200,7 @@ public class DiagnosticiExporter extends HttpServlet{
 					List<MsgDiagnostico> list = diagnosticiService.getMessaggiDiagnostici(filter);
 					// Add ZIP entry to output stream.
 					zip.putNextEntry(new ZipEntry(/*++i + "_" + */t.getIdTransazione() + " (" + list.size() + " entries)" + ".xml"));
-					if(DiagnosticiExporter.enableHeaderInfo){
+					if(DiagnosticiExporter.enableHeaderInfo!=null && DiagnosticiExporter.enableHeaderInfo.booleanValue()){
 						zip.write(UtilityTransazioni.getHeaderTransazione(t).getBytes());
 					}
 					
@@ -227,6 +227,7 @@ public class DiagnosticiExporter extends HttpServlet{
 							}
 						}
 						
+						diagnosticoBuilder.setOmitXmlDeclaration(true);
 						String msgDiagnostico = diagnosticoBuilder.toString(msg,TipoSerializzazione.DEFAULT);
 						in = new ByteArrayInputStream((newLine + msgDiagnostico).getBytes());
 						// Transfer bytes from the input stream to the ZIP file
@@ -249,7 +250,7 @@ public class DiagnosticiExporter extends HttpServlet{
 
 				response.flushBuffer();
 
-				if(!isAll)
+				if(isAll==null || !isAll.booleanValue())
 					break;
 				else
 					transazioni = service.findAll(start, limit);
@@ -259,7 +260,7 @@ public class DiagnosticiExporter extends HttpServlet{
 			zip.close();
 		}catch(Throwable e){
 			DiagnosticiExporter.log.error(e.getMessage(),e);
-			//throw new ServletException(e.getMessage(),e);
+			/**throw new ServletException(e.getMessage(),e);*/
 		}
 	}
 
@@ -271,7 +272,7 @@ public class DiagnosticiExporter extends HttpServlet{
 		// Se l'array degli id ricevuto dalla richiesta e' vuoto o null non si puo' fare l'export
 		// e se l'array degli id in sessione non e' presente o e' vuoto non si puo' fare export.
 		if(ids == null || ids.length == 0 || idsFromSession ==null || idsFromSession.length == 0){
-			if(isAll==false)
+			if(!isAll)
 				return false;
 		}
 

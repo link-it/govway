@@ -36,6 +36,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.XMLRootElement;
@@ -72,16 +73,23 @@ public class TracceExporter extends HttpServlet{
 	private static final long serialVersionUID = 1272767433184676700L;
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
 	private static ITracciaDriver tracciamentoService = null;
-	
+		public static void setTracciamentoService(ITracciaDriver tracciamentoService) {
+		TracceExporter.tracciamentoService = tracciamentoService;
+	}
+
+
 	private static Boolean enableHeaderInfo = false;
-	
+	public static void setEnableHeaderInfo(Boolean enableHeaderInfo) {
+		TracceExporter.enableHeaderInfo = enableHeaderInfo;
+	}
+
 	@Override
 	public void init() throws ServletException {
 		try{
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(TracceExporter.log);
-			TracceExporter.enableHeaderInfo = govwayMonitorProperties.isAttivoTransazioniExportHeader();
+			TracceExporter.setEnableHeaderInfo(govwayMonitorProperties.isAttivoTransazioniExportHeader());
 			
-			tracciamentoService = govwayMonitorProperties.getDriverTracciamento();
+			TracceExporter.setTracciamentoService(govwayMonitorProperties.getDriverTracciamento());
 		}catch(Exception e){
 			TracceExporter.log.error("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
 		}
@@ -105,7 +113,7 @@ public class TracceExporter extends HttpServlet{
 		try{
 			ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
 			if(context==null) {
-				throw new Exception("Context is null");
+				throw new CoreException("Context is null");
 			}
 			
 			ITransazioniService service = (ITransazioniService)context.getBean("transazioniService");
@@ -137,24 +145,15 @@ public class TracceExporter extends HttpServlet{
 
 			if(!exportConsentito){
 				
-				String msg_errore = "L'utente non dispone dei permessi necessari per effettuare l'export delle tracce.";
-				String redirectUrl = req.getContextPath()+"/public/error.jsf?msg_errore=" + msg_errore;
+				String msgErrore = "L'utente non dispone dei permessi necessari per effettuare l'export delle tracce.";
+				String redirectUrl = req.getContextPath()+"/public/error.jsf?msg_errore=" + msgErrore;
 				
 				response.sendRedirect(redirectUrl);
 				return;
 				
-//				throw new ExportException("Errore durante l'export dei messaggi diagnostici: i parametri indicati non sono validi!");
+				/**throw new ExportException("Errore durante l'export dei messaggi diagnostici: i parametri indicati non sono validi!");*/
 			}
 			
-			// Be sure to retrieve the absolute path to the file with the required
-			// method
-			// filePath = pathToTheFile;
-
-			// This is another important attribute for the header of the response
-			// Here fileName, is a String with the name that you will suggest as a
-			// name to save as
-			// I use the same name as it is stored in the file system of the server.
-
 			String fileName = "Tracce.zip";
 
 			// Setto Proprietà Export File
@@ -167,13 +166,12 @@ public class TracceExporter extends HttpServlet{
 			
 			int start = 0;
 			int limit = 25;
-			List<TransazioneBean> transazioni = new ArrayList<TransazioneBean>();
-			//TransazioniSearchForm search = (TransazioniSearchForm)context.getBean("searchFormTransazioni");
+			List<TransazioneBean> transazioni = new ArrayList<>();
 			
 			Utility.setLoginMBean((LoginBean)context.getBean("loginBean"));
 			
 			
-			if(isAll)
+			if(isAll!=null && isAll.booleanValue())
 				transazioni = service.findAll(start, limit);
 			else{
 				for (int j = 0; j < ids.length; j++) {
@@ -181,47 +179,31 @@ public class TracceExporter extends HttpServlet{
 				}
 			}
 				
-			if(transazioni.size()>0){
+			if(!transazioni.isEmpty()){
 				//int i = 0;// progressivo per evitare entry duplicate nel file zip
 				// Create a buffer for reading the files
 				byte[] buf = new byte[1024];
 				ZipOutputStream zip = new ZipOutputStream(response.getOutputStream());
 				InputStream in = null;
 			
-				while(transazioni.size()>0){
+				while(!transazioni.isEmpty()){
 
 					for(TransazioneBean t: transazioni){
-						//recupero i diagnostici per questa transazione
+						//recupero le tracce per questa transazione
 
-
-						//devo impostare solo l'idtransazione
-						//filter.setIdEgov(this.diagnosticiBean.getIdEgov());	
-						Map<String, String> properties = new HashMap<>();
-						properties.put("id_transazione", t.getIdTransazione());
-
-						Traccia tracciaRichiesta = null;
-						Traccia tracciaRisposta  = null;
-						ArrayList<Traccia> tracce = new ArrayList<Traccia>();
-						try{
-							tracciaRichiesta=tracciamentoService.getTraccia(RuoloMessaggio.RICHIESTA,properties);
+						Traccia tracciaRichiesta = getTraccia(t.getIdTransazione(), RuoloMessaggio.RICHIESTA);
+						Traccia tracciaRisposta  = getTraccia(t.getIdTransazione(), RuoloMessaggio.RISPOSTA);
+						ArrayList<Traccia> tracce = new ArrayList<>();
+						if(tracciaRichiesta!=null) {
 							tracce.add(tracciaRichiesta);
-						}catch(DriverTracciamentoException e){
-							//ignore
-						}catch(DriverTracciamentoNotFoundException e){
-							//ignore
 						}
-						try{
-							tracciaRisposta = tracciamentoService.getTraccia(RuoloMessaggio.RISPOSTA,properties);
+						if(tracciaRisposta!=null) {
 							tracce.add(tracciaRisposta);
-						}catch(DriverTracciamentoException e){
-							//ignore
-						}catch(DriverTracciamentoNotFoundException e){
-							//ignore
 						}
-						if(tracce.size()>0){
+						if(!tracce.isEmpty()){
 							// Add ZIP entry to output stream.
 							zip.putNextEntry(new ZipEntry(/*++i + "_" + */t.getIdTransazione() + " (" + tracce.size() + " entries)" + ".xml"));
-							if(TracceExporter.enableHeaderInfo){
+							if(TracceExporter.enableHeaderInfo!=null && TracceExporter.enableHeaderInfo.booleanValue()){
 								zip.write(UtilityTransazioni.getHeaderTransazione(t).getBytes());
 							}	
 							
@@ -248,6 +230,7 @@ public class TracceExporter extends HttpServlet{
 									}
 								}
 								
+								tracciaBuilder.setOmitXmlDeclaration(true);
 								String traccia = tracciaBuilder.toString(tr, TipoSerializzazione.DEFAULT);
 								in = new ByteArrayInputStream((newLine + traccia).getBytes());
 								// Transfer bytes from the input stream to the ZIP file
@@ -272,7 +255,7 @@ public class TracceExporter extends HttpServlet{
 
 					response.flushBuffer();
 
-					if(!isAll)
+					if(isAll==null || !isAll.booleanValue())
 						break;
 					else
 						transazioni = service.findAll(start, limit);
@@ -286,9 +269,22 @@ public class TracceExporter extends HttpServlet{
 			
 		}catch(Throwable e){
 			TracceExporter.log.error(e.getMessage(),e);
-			//throw new ServletException(e.getMessage(),e);
+			/**throw new ServletException(e.getMessage(),e);*/
 		}
 	}
 	
-	
+	private Traccia getTraccia(String idTransazione, RuoloMessaggio ruolo) {
+		//devo impostare solo l'idtransazione
+		/**filter.setIdEgov(this.diagnosticiBean.getIdEgov());*/	
+		Map<String, String> properties = new HashMap<>();
+		properties.put("id_transazione", idTransazione);
+		
+		try{
+			return tracciamentoService.getTraccia(ruolo,properties);
+		}catch(DriverTracciamentoException|DriverTracciamentoNotFoundException e){
+			//ignore
+		}
+		
+		return null;
+	}
 }

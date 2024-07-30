@@ -452,6 +452,7 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 					ITracciaSerializer tracciaBuilder = pf.createTracciaSerializer();
 
 					try {
+						tracciaBuilder.setOmitXmlDeclaration(true);
 						String traccia = tracciaBuilder.toString(tr,TipoSerializzazione.DEFAULT);
 
 						in = new ByteArrayInputStream(

@@ -16,12 +16,12 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="outputFolder" elementType="Argument">
             <stringProp name="Argument.name">outputFolder</stringProp>
-            <stringProp name="Argument.value">${__P(outputFolder,/opt/local/GIT_GOV/JMeter/INPS/results/graph)}</stringProp>
+            <stringProp name="Argument.value">${__P(outputFolder,/opt/local/git_gov/JMeter/results/graph)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="joinedResults" elementType="Argument">
             <stringProp name="Argument.name">joinedResults</stringProp>
-            <stringProp name="Argument.value">${__P(joinedResults,/opt/local/GIT_GOV/JMeter/INPS/results/aggregatiConPlugin.csv)}</stringProp>
+            <stringProp name="Argument.value">${__P(joinedResults,/opt/local/git_gov/JMeter/results/aggregatiConPlugin.csv)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>

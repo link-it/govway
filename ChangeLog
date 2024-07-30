@@ -1,3 +1,8 @@
+2024-07-30  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Eliminata dichiarazione '<?xml' presente negli xml relativi alle tracce e ai diagnostici esportati tramite la console.
+
 2024-07-29  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

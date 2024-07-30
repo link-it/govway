@@ -53,6 +53,8 @@ import org.w3c.dom.Node;
  */
 
 public class XMLUtils  {
+	
+	private XMLUtils() {}
 
 	/** Validatore XSD */
 	static ValidatoreXSD validatoreXSD = null;
@@ -98,10 +100,7 @@ public class XMLUtils  {
 			validate(messaggioDiagnostico.getProtocollo(), motivoErroreValidazione);
 		}
 		
-		if(motivoErroreValidazione.length()!=size)
-			return false;
-		else
-			return true;
+		return motivoErroreValidazione.length()==size;
 
 	}
 	private static void validate(DominioDiagnostico dominio,StringBuilder motivoErroreValidazione){
@@ -141,19 +140,10 @@ public class XMLUtils  {
 	 * @throws XMLUtilsException
 	 */
 	public static MessaggioDiagnostico getMessaggioDiagnostico(Logger log,byte[] m) throws XMLUtilsException{
-		ByteArrayInputStream bin = null;
-		try{
-			bin = new ByteArrayInputStream(m);
+		try (ByteArrayInputStream bin = new ByteArrayInputStream(m);){
 			return XMLUtils.getMessaggioDiagnostico(log,bin);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
-		}finally{
-			try{
-				if(bin!=null)
-					bin.close();
-			}catch(Exception eClose){
-				// close
-			}
 		}
 	}
 	
@@ -165,19 +155,10 @@ public class XMLUtils  {
 	 * @throws XMLUtilsException
 	 */
 	public static MessaggioDiagnostico getMessaggioDiagnostico(Logger log,File m) throws XMLUtilsException{
-		FileInputStream fin = null;
-		try{
-			fin = new FileInputStream(m);
+		try (FileInputStream fin = new FileInputStream(m);){
 			return XMLUtils.getMessaggioDiagnostico(log,fin);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
-		}finally{
-			try{
-				if(fin!=null)
-					fin.close();
-			}catch(Exception eClose){
-				// close
-			}
 		}
 	}
 	
@@ -227,6 +208,9 @@ public class XMLUtils  {
 
 	public static MessaggioDiagnostico getMessaggioDiagnosticoFromJson(Logger log,InputStream is) throws XMLUtilsException{
 		try{			
+			if(log!=null) {
+				//nop
+			}
 			JsonJacksonDeserializer deserializer = new JsonJacksonDeserializer();
 			return deserializer.readMessaggioDiagnostico(is);
 		}catch(Exception e){
@@ -239,48 +223,60 @@ public class XMLUtils  {
 	
 	/* ----- Marshall ----- */
 	public static void generateMessaggioDiagnostico(MessaggioDiagnostico messaggioDiagnostico,File out) throws XMLUtilsException{
+		generateMessaggioDiagnostico(messaggioDiagnostico, out, false, false);
+	}
+	public static void generateMessaggioDiagnostico(MessaggioDiagnostico messaggioDiagnostico,File out,boolean prettyDocument, boolean omitXmlDeclaration) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validate(messaggioDiagnostico, risultatoValidazione)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validate(messaggioDiagnostico, risultatoValidazione)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
-			org.openspcoop2.utils.xml.JaxbUtils.objToXml(out.getName(),XMLUtils.generateMessaggioDiagnostico_engine(messaggioDiagnostico));
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(out.getName(),XMLUtils.generateMessaggioDiagnosticoEngine(messaggioDiagnostico, prettyDocument, omitXmlDeclaration));
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
 	}
 	
 	public static void generateMessaggioDiagnostico(MessaggioDiagnostico messaggioDiagnostico,String fileName) throws XMLUtilsException{
+		generateMessaggioDiagnostico(messaggioDiagnostico, fileName, false, false);
+	}
+	public static void generateMessaggioDiagnostico(MessaggioDiagnostico messaggioDiagnostico,String fileName,boolean prettyDocument, boolean omitXmlDeclaration) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validate(messaggioDiagnostico, risultatoValidazione)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validate(messaggioDiagnostico, risultatoValidazione)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
-			org.openspcoop2.utils.xml.JaxbUtils.objToXml(fileName,XMLUtils.generateMessaggioDiagnostico_engine(messaggioDiagnostico));
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(fileName,XMLUtils.generateMessaggioDiagnosticoEngine(messaggioDiagnostico, prettyDocument, omitXmlDeclaration));
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
 	}
 	
 	public static byte[] generateMessaggioDiagnostico(MessaggioDiagnostico messaggioDiagnostico) throws XMLUtilsException{
+		return generateMessaggioDiagnostico(messaggioDiagnostico,false, false);
+	}
+	public static byte[] generateMessaggioDiagnostico(MessaggioDiagnostico messaggioDiagnostico,boolean prettyDocument, boolean omitXmlDeclaration) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validate(messaggioDiagnostico, risultatoValidazione)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validate(messaggioDiagnostico, risultatoValidazione)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
-			return XMLUtils.generateMessaggioDiagnostico_engine(messaggioDiagnostico);
+			return XMLUtils.generateMessaggioDiagnosticoEngine(messaggioDiagnostico, prettyDocument, omitXmlDeclaration);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
 	}
 
 	public static void generateMessaggioDiagnostico(MessaggioDiagnostico messaggioDiagnostico,OutputStream out) throws XMLUtilsException{
+		generateMessaggioDiagnostico(messaggioDiagnostico, out, false, false);
+	}
+	public static void generateMessaggioDiagnostico(MessaggioDiagnostico messaggioDiagnostico,OutputStream out,boolean prettyDocument, boolean omitXmlDeclaration) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validate(messaggioDiagnostico, risultatoValidazione)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validate(messaggioDiagnostico, risultatoValidazione)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
-			out.write(XMLUtils.generateMessaggioDiagnostico_engine(messaggioDiagnostico));
+			out.write(XMLUtils.generateMessaggioDiagnosticoEngine(messaggioDiagnostico, prettyDocument, omitXmlDeclaration));
 			out.flush();
 			out.close();
 		}catch(Exception e){
@@ -289,32 +285,34 @@ public class XMLUtils  {
 	}
 	
 	public static String generateMessaggioDiagnosticoAsJson(MessaggioDiagnostico messaggioDiagnostico) throws XMLUtilsException{
+		return generateMessaggioDiagnosticoAsJson(messaggioDiagnostico, false);
+	}
+	public static String generateMessaggioDiagnosticoAsJson(MessaggioDiagnostico messaggioDiagnostico,boolean prettyDocument) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validate(messaggioDiagnostico, risultatoValidazione)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validate(messaggioDiagnostico, risultatoValidazione)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
-			return XMLUtils.generateMessaggioDiagnosticoAsJson_engine(messaggioDiagnostico);
+			return XMLUtils.generateMessaggioDiagnosticoAsJsonEngine(messaggioDiagnostico, prettyDocument);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
 	}
 	
-	private static byte[] generateMessaggioDiagnostico_engine(MessaggioDiagnostico messaggioDiagnostico) throws XMLUtilsException{
+	private static byte[] generateMessaggioDiagnosticoEngine(MessaggioDiagnostico messaggioDiagnostico,boolean prettyDocument, boolean omitXmlDeclaration) throws XMLUtilsException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			org.openspcoop2.utils.xml.JaxbUtils.objToXml(bout, MessaggioDiagnostico.class, messaggioDiagnostico);
-			byte[] dichiarazione = bout.toByteArray();
-			return dichiarazione;
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(bout, MessaggioDiagnostico.class, messaggioDiagnostico, prettyDocument, omitXmlDeclaration);
+			return bout.toByteArray();
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
 	}
 	
-	private static String generateMessaggioDiagnosticoAsJson_engine(MessaggioDiagnostico messaggioDiagnostico) throws XMLUtilsException{
+	private static String generateMessaggioDiagnosticoAsJsonEngine(MessaggioDiagnostico messaggioDiagnostico,boolean prettyDocument) throws XMLUtilsException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			messaggioDiagnostico.writeTo(bout, WriteToSerializerType.JSON_JACKSON);
+			messaggioDiagnostico.writeTo(bout, WriteToSerializerType.JSON_JACKSON, prettyDocument);
 			bout.flush();
 			bout.close();
 			return bout.toString();

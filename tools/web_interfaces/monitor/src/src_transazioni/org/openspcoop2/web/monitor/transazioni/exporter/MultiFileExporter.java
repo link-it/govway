@@ -308,6 +308,7 @@ public class MultiFileExporter implements IExporter{
 
 							IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tr.getProtocollo());
 							ITracciaSerializer tracciaBuilder = pf.createTracciaSerializer();
+							tracciaBuilder.setOmitXmlDeclaration(true);
 							String traccia = tracciaBuilder.toString(tr,TipoSerializzazione.DEFAULT);
 
 							in = new ByteArrayInputStream((newLine + traccia).getBytes());
@@ -415,6 +416,7 @@ public class MultiFileExporter implements IExporter{
 
 				IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(msg.getProtocollo());
 				IDiagnosticSerializer diagnosticoBuilder = pf.createDiagnosticSerializer();
+				diagnosticoBuilder.setOmitXmlDeclaration(true);
 				String diagnostico = diagnosticoBuilder.toString(msg,TipoSerializzazione.XML);
 
 				in = new ByteArrayInputStream((newLine + diagnostico).getBytes());
