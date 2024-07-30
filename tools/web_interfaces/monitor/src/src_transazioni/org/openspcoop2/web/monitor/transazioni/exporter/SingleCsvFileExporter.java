@@ -212,6 +212,7 @@ public class SingleCsvFileExporter implements IExporter{
 						}
 					}
 					
+					diagnosticoBuilder.setOmitXmlDeclaration(true);
 					String msgDiagnostico = diagnosticoBuilder.toString(msg,TipoSerializzazione.DEFAULT);
 					sbDiagnostici.append(newLine).append(msgDiagnostico);
 				}
@@ -282,6 +283,7 @@ public class SingleCsvFileExporter implements IExporter{
 						ITracciaSerializer tracciaBuilder = pf.createTracciaSerializer();
 
 						try {
+							tracciaBuilder.setOmitXmlDeclaration(true);
 							String traccia = tracciaBuilder.toString(tr,TipoSerializzazione.DEFAULT);
 							oneLine.add(traccia);
 						} catch (ProtocolException e) {

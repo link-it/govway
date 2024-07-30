@@ -65,136 +65,148 @@ public class TracciaSerializer extends BasicComponentFactory implements org.open
 	
 	protected AbstractXMLUtils xmlUtils;
 	
+	private boolean prettyDocument = false;
+	private boolean omitXmlDeclaration = false;
 
 	public TracciaSerializer(IProtocolFactory<?> factory) throws ProtocolException {
 		super(factory);
 		this.xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 	}
 
+	
+	@Override
+	public void setPrettyDocument(boolean v) {
+		this.prettyDocument = v;
+	}
+	@Override
+	public boolean isPrettyDocument() {
+		return this.prettyDocument;
+	}
+	@Override
+	public void setOmitXmlDeclaration(boolean v) {
+		this.omitXmlDeclaration = v;
+	}
+	@Override
+	public boolean isOmitXmlDeclaration() {
+		return this.omitXmlDeclaration;
+	}
 
 	
 	private org.openspcoop2.core.tracciamento.Traccia toTraccia(Traccia tracciaObject)
 			throws ProtocolException {
 		String tmpId = null;
+		org.openspcoop2.core.tracciamento.Traccia tracciaBase = null;
 		try{
 						
 			if(tracciaObject.sizeProperties()>0){
 				tmpId = tracciaObject.removeProperty(TracciaDriver.IDTRACCIA); // non deve essere serializzato
 			}		
-			org.openspcoop2.core.tracciamento.Traccia tracciaBase = tracciaObject.getTraccia();
+			tracciaBase = tracciaObject.getTraccia();
 			
 			// xml
-			if(tracciaBase!=null){
-				if(tracciaBase.getBustaRaw()==null){
-					if(tracciaObject.getBustaAsByteArray()!=null)
-						tracciaBase.setBustaRaw(new String(tracciaObject.getBustaAsByteArray()));
-					else if(tracciaObject.getBustaAsRawContent()!=null){			
-						try{
-							tracciaBase.setBustaRaw(tracciaObject.getBustaAsRawContent().toString(TipoSerializzazione.DEFAULT));
-						}catch(Exception e){
-							throw new Exception("Serializzazione RawContent non riuscita: "+e.getMessage(),e);
-						}
+			if(tracciaBase!=null &&
+				tracciaBase.getBustaRaw()==null){
+				if(tracciaObject.getBustaAsByteArray()!=null)
+					tracciaBase.setBustaRaw(new String(tracciaObject.getBustaAsByteArray()));
+				else if(tracciaObject.getBustaAsRawContent()!=null){			
+					try{
+						tracciaBase.setBustaRaw(tracciaObject.getBustaAsRawContent().toString(TipoSerializzazione.DEFAULT));
+					}catch(Exception e){
+						throw new ProtocolException("Serializzazione RawContent non riuscita: "+e.getMessage(),e);
 					}
 				}
 			}
 			
 			// Traduzioni da factory
 			ITraduttore protocolTraduttore = this.protocolFactory.createTraduttore();
-			if(tracciaBase!=null){
-				if(tracciaBase.getBusta()!=null){
-					if(tracciaBase.getBusta().getProfiloCollaborazione()!=null){
-						if(tracciaBase.getBusta().getProfiloCollaborazione().getBase()==null && 
-								tracciaBase.getBusta().getProfiloCollaborazione().getTipo()!=null){
-							tracciaBase.getBusta().getProfiloCollaborazione().setBase(this.getBaseValueProfiloCollaborazione(protocolTraduttore,tracciaBase.getBusta().getProfiloCollaborazione().getTipo()));
+			if(tracciaBase!=null &&
+				tracciaBase.getBusta()!=null){
+				if(tracciaBase.getBusta().getProfiloCollaborazione()!=null &&
+						tracciaBase.getBusta().getProfiloCollaborazione().getBase()==null && 
+						tracciaBase.getBusta().getProfiloCollaborazione().getTipo()!=null){
+					tracciaBase.getBusta().getProfiloCollaborazione().setBase(this.getBaseValueProfiloCollaborazione(protocolTraduttore,tracciaBase.getBusta().getProfiloCollaborazione().getTipo()));
+				}
+				if(tracciaBase.getBusta().getProfiloTrasmissione()!=null &&
+						tracciaBase.getBusta().getProfiloTrasmissione().getInoltro()!=null &&
+						tracciaBase.getBusta().getProfiloTrasmissione().getInoltro().getBase()==null && 
+						tracciaBase.getBusta().getProfiloTrasmissione().getInoltro().getTipo()!=null){
+					tracciaBase.getBusta().getProfiloTrasmissione().getInoltro().setBase(this.getBaseValueInoltro(protocolTraduttore,tracciaBase.getBusta().getProfiloTrasmissione().getInoltro().getTipo()));
+				}
+				if(tracciaBase.getBusta().getOraRegistrazione()!=null &&
+						tracciaBase.getBusta().getOraRegistrazione().getSorgente()!=null &&
+						tracciaBase.getBusta().getOraRegistrazione().getSorgente().getBase()==null && 
+						tracciaBase.getBusta().getOraRegistrazione().getSorgente().getTipo()!=null){
+					tracciaBase.getBusta().getOraRegistrazione().getSorgente().setBase(this.getBaseValueTipoTempo(protocolTraduttore,tracciaBase.getBusta().getOraRegistrazione().getSorgente().getTipo()));
+				}
+				if(tracciaBase.getBusta().getTrasmissioni()!=null && tracciaBase.getBusta().getTrasmissioni().sizeTrasmissioneList()>0){
+					for (Trasmissione trasmissione : tracciaBase.getBusta().getTrasmissioni().getTrasmissioneList()) {
+						if(trasmissione.getOraRegistrazione()!=null &&
+								trasmissione.getOraRegistrazione().getSorgente()!=null &&
+								trasmissione.getOraRegistrazione().getSorgente().getBase()==null &&
+								trasmissione.getOraRegistrazione().getSorgente().getTipo()!=null){
+							trasmissione.getOraRegistrazione().getSorgente().setBase(this.getBaseValueTipoTempo(protocolTraduttore,trasmissione.getOraRegistrazione().getSorgente().getTipo()));
 						}
 					}
-					if(tracciaBase.getBusta().getProfiloTrasmissione()!=null){
-						if(tracciaBase.getBusta().getProfiloTrasmissione().getInoltro()!=null){
-							if(tracciaBase.getBusta().getProfiloTrasmissione().getInoltro().getBase()==null && 
-									tracciaBase.getBusta().getProfiloTrasmissione().getInoltro().getTipo()!=null){
-								tracciaBase.getBusta().getProfiloTrasmissione().getInoltro().setBase(this.getBaseValueInoltro(protocolTraduttore,tracciaBase.getBusta().getProfiloTrasmissione().getInoltro().getTipo()));
-							}
+				}
+				if(tracciaBase.getBusta().getRiscontri()!=null && tracciaBase.getBusta().getRiscontri().sizeRiscontroList()>0){
+					for (Riscontro riscontro : tracciaBase.getBusta().getRiscontri().getRiscontroList()) {
+						if(riscontro.getOraRegistrazione()!=null &&
+							riscontro.getOraRegistrazione().getSorgente()!=null &&
+							riscontro.getOraRegistrazione().getSorgente().getBase()==null &&
+							riscontro.getOraRegistrazione().getSorgente().getTipo()!=null){
+							riscontro.getOraRegistrazione().getSorgente().setBase(this.getBaseValueTipoTempo(protocolTraduttore,riscontro.getOraRegistrazione().getSorgente().getTipo()));
 						}
 					}
-					if(tracciaBase.getBusta().getOraRegistrazione()!=null){
-						if(tracciaBase.getBusta().getOraRegistrazione().getSorgente()!=null){
-							if(tracciaBase.getBusta().getOraRegistrazione().getSorgente().getBase()==null && 
-									tracciaBase.getBusta().getOraRegistrazione().getSorgente().getTipo()!=null){
-								tracciaBase.getBusta().getOraRegistrazione().getSorgente().setBase(this.getBaseValueTipoTempo(protocolTraduttore,tracciaBase.getBusta().getOraRegistrazione().getSorgente().getTipo()));
-							}
+				}
+				if(tracciaBase.getBusta().getEccezioni()!=null && tracciaBase.getBusta().getEccezioni().sizeEccezioneList()>0){
+					for (Eccezione eccezione : tracciaBase.getBusta().getEccezioni().getEccezioneList()) {
+						if(eccezione.getCodice()!=null &&
+							eccezione.getCodice().getBase()==null && eccezione.getCodice().getTipo()!=null){
+							eccezione.getCodice().setBase(this.getBaseValueCodiceEccezione(protocolTraduttore,eccezione.getCodice().getTipo(), eccezione.getCodice().getSottotipo()));
 						}
-					}
-					if(tracciaBase.getBusta().getTrasmissioni()!=null && tracciaBase.getBusta().getTrasmissioni().sizeTrasmissioneList()>0){
-						for (Trasmissione trasmissione : tracciaBase.getBusta().getTrasmissioni().getTrasmissioneList()) {
-							if(trasmissione.getOraRegistrazione()!=null){
-								if(trasmissione.getOraRegistrazione().getSorgente()!=null){
-									if(trasmissione.getOraRegistrazione().getSorgente().getBase()==null &&
-											trasmissione.getOraRegistrazione().getSorgente().getTipo()!=null){
-										trasmissione.getOraRegistrazione().getSorgente().setBase(this.getBaseValueTipoTempo(protocolTraduttore,trasmissione.getOraRegistrazione().getSorgente().getTipo()));
-									}
-								}
-							}
+						if(eccezione.getContestoCodifica()!=null &&
+							eccezione.getContestoCodifica().getBase()==null && 
+							eccezione.getContestoCodifica().getTipo()!=null){
+							eccezione.getContestoCodifica().setBase(this.getBaseValueContestoCodifica(protocolTraduttore,eccezione.getContestoCodifica().getTipo()));
 						}
-					}
-					if(tracciaBase.getBusta().getRiscontri()!=null && tracciaBase.getBusta().getRiscontri().sizeRiscontroList()>0){
-						for (Riscontro riscontro : tracciaBase.getBusta().getRiscontri().getRiscontroList()) {
-							if(riscontro.getOraRegistrazione()!=null){
-								if(riscontro.getOraRegistrazione().getSorgente()!=null){
-									if(riscontro.getOraRegistrazione().getSorgente().getBase()==null &&
-											riscontro.getOraRegistrazione().getSorgente().getTipo()!=null){
-										riscontro.getOraRegistrazione().getSorgente().setBase(this.getBaseValueTipoTempo(protocolTraduttore,riscontro.getOraRegistrazione().getSorgente().getTipo()));
-									}
-								}
-							}
-						}
-					}
-					if(tracciaBase.getBusta().getEccezioni()!=null && tracciaBase.getBusta().getEccezioni().sizeEccezioneList()>0){
-						for (Eccezione eccezione : tracciaBase.getBusta().getEccezioni().getEccezioneList()) {
-							if(eccezione.getCodice()!=null){
-								if(eccezione.getCodice().getBase()==null && eccezione.getCodice().getTipo()!=null){
-									eccezione.getCodice().setBase(this.getBaseValueCodiceEccezione(protocolTraduttore,eccezione.getCodice().getTipo(), eccezione.getCodice().getSottotipo()));
-								}
-							}
-							if(eccezione.getContestoCodifica()!=null){
-								if(eccezione.getContestoCodifica().getBase()==null && 
-										eccezione.getContestoCodifica().getTipo()!=null){
-									eccezione.getContestoCodifica().setBase(this.getBaseValueContestoCodifica(protocolTraduttore,eccezione.getContestoCodifica().getTipo()));
-								}
-							}
-							if(eccezione.getRilevanza()!=null){
-								if(eccezione.getRilevanza().getBase()==null &&
-										eccezione.getRilevanza().getTipo()!=null){
-									eccezione.getRilevanza().setBase(this.getBaseValueRilevanzaEccezione(protocolTraduttore,eccezione.getRilevanza().getTipo()));
-								}
-							}
+						if(eccezione.getRilevanza()!=null &&
+							eccezione.getRilevanza().getBase()==null &&
+							eccezione.getRilevanza().getTipo()!=null){
+							eccezione.getRilevanza().setBase(this.getBaseValueRilevanzaEccezione(protocolTraduttore,eccezione.getRilevanza().getTipo()));
 						}
 					}
 				}
 			}
 							
-			return tracciaBase;
-
 		} catch(Exception e) {
-			this.log.error("XMLBuilder.buildElement_Tracciamento error: "+e.getMessage(),e);
-			throw new ProtocolException("XMLBuilder.buildElement_Tracciamento error: "+e.getMessage(),e);
+			logAndThrowError(e, "XMLBuilder.buildElement_Tracciamento error");
 		}
 		finally{
 			if(tmpId!=null && tracciaObject!=null){
 				tracciaObject.addProperty(TracciaDriver.IDTRACCIA, tmpId);
 			}
 		}
+		
+		return tracciaBase;
+	}
+	
+	private void logAndThrowError(Exception e, String msg) throws ProtocolException {
+		String er = msg+": "+e.getMessage();
+		this.log.error(er,e);
+		throw new ProtocolException(er,e);
 	}
 
 	@Override
 	public Element toElement(Traccia tracciaObject)
 			throws ProtocolException {
 		byte[] traccia = this.toByteArray(tracciaObject,TipoSerializzazione.XML);
+		Element el = null;
 		try{
-			return this.xmlUtils.newElement(traccia);
+			el = this.xmlUtils.newElement(traccia);
 		} catch(Exception e) {
-			this.log.error("TracciaSerializer.toElement error: "+e.getMessage(),e);
-			throw new ProtocolException("TracciaSerializer.toElement error: "+e.getMessage(),e);
+			logAndThrowError(e, "TracciaSerializer.toElement error");
 		}
+		return el;
 	}
 
 	@Override
@@ -209,6 +221,7 @@ public class TracciaSerializer extends BasicComponentFactory implements org.open
 	
 	protected ByteArrayOutputStream toByteArrayOutputStream(Traccia traccia, TipoSerializzazione tipoSerializzazione) throws ProtocolException {
 		
+		ByteArrayOutputStream ret = null;
 		try{
 		
 			org.openspcoop2.core.tracciamento.Traccia tracciaBase = this.toTraccia(traccia);
@@ -218,27 +231,32 @@ public class TracciaSerializer extends BasicComponentFactory implements org.open
 				case DEFAULT:
 					
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();
-					org.openspcoop2.core.tracciamento.utils.XMLUtils.generateTraccia(tracciaBase,bout);
+					org.openspcoop2.core.tracciamento.utils.XMLUtils.generateTraccia(tracciaBase,bout,this.prettyDocument,this.omitXmlDeclaration);
 					bout.flush();
 					bout.close();
-					return bout;
+					ret =  bout;
+					break;
 	
 				case JSON:
 					
 					bout = new ByteArrayOutputStream();
-					String s = org.openspcoop2.core.tracciamento.utils.XMLUtils.generateTracciaAsJson(tracciaBase);
+					String s = org.openspcoop2.core.tracciamento.utils.XMLUtils.generateTracciaAsJson(tracciaBase,this.prettyDocument);
 					bout.write(s.getBytes());
 					bout.flush();
 					bout.close();
-					return bout;
+					ret =  bout;
+					break;
 			}
 			
-			throw new Exception("Tipo ["+tipoSerializzazione+"] Non gestito");
+			if(ret==null) {
+				throw new ProtocolException("Tipo ["+tipoSerializzazione+"] Non gestito");
+			}
 			
 		} catch(Exception e) {
-			this.log.error("TracciaSerializer.toString error: "+e.getMessage(),e);
-			throw new ProtocolException("TracciaSerializer.toString error: "+e.getMessage(),e);
+			logAndThrowError(e, "TracciaSerializer.toString error");
 		}
+		
+		return ret;
 	}
 
 	
@@ -345,7 +363,7 @@ public class TracciaSerializer extends BasicComponentFactory implements org.open
 		List<TracciaExtInfo> list = null;
 		if(extInfoDefinitionList!=null && !extInfoDefinitionList.isEmpty()) {
 			
-			list = new ArrayList<TracciaExtInfo>();
+			list = new ArrayList<>();
 			TracciaExtInfo extInfoNoPrefix = new TracciaExtInfo();
 			extInfoNoPrefix.setEmpty(true);
 			list.add(extInfoNoPrefix);
@@ -393,7 +411,7 @@ public class TracciaSerializer extends BasicComponentFactory implements org.open
 							listKeys.add(proprieta.getNome());
 						}
 						java.util.Collections.sort(listKeys);
-						List<Proprieta> proprietaOrdinate = new ArrayList<Proprieta>();
+						List<Proprieta> proprietaOrdinate = new ArrayList<>();
 						for (String key : listKeys) {	
 							Proprieta p = extInfo.getProprieta(key);
 							proprietaOrdinate.add(p);

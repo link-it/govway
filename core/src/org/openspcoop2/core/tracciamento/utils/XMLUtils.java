@@ -68,6 +68,8 @@ import org.w3c.dom.Node;
  */
 
 public class XMLUtils  {
+	
+	private XMLUtils() {}
 
 	/** Validatore XSD */
 	static ValidatoreXSD validatoreXSD = null;
@@ -82,6 +84,7 @@ public class XMLUtils  {
 		}
 		return XMLUtils.validatoreXSD;
 	}
+	private static final String BUSTA_PREFIX = "Busta.";
 	public static boolean validate(Traccia traccia,StringBuilder motivoErroreValidazione){
 		
 		int size = motivoErroreValidazione.length();
@@ -125,10 +128,7 @@ public class XMLUtils  {
 			validate(traccia.getAllegati(), motivoErroreValidazione);
 		}
 		
-		if(motivoErroreValidazione.length()!=size)
-			return false;
-		else
-			return true;
+		return motivoErroreValidazione.length()==size;
 
 	}
 	private static void validate(Dominio dominio,StringBuilder motivoErroreValidazione){
@@ -189,15 +189,16 @@ public class XMLUtils  {
 		}
 	}
 	private static void validate(Soggetto soggetto,StringBuilder motivoErroreValidazione,String tipo){
+		String prefix = BUSTA_PREFIX+tipo+".identificativo";
 		if(soggetto.getIdentificativo()==null){
-			motivoErroreValidazione.append("Busta."+tipo+".identificativo non definita\n");
+			motivoErroreValidazione.append(prefix+" non definita\n");
 		}
 		else{
 			if(soggetto.getIdentificativo().getTipo()==null){
-				motivoErroreValidazione.append("Busta."+tipo+".identificativo.tipo non definita\n");
+				motivoErroreValidazione.append(prefix+".tipo non definita\n");
 			}
 			if(soggetto.getIdentificativo().getBase()==null){
-				motivoErroreValidazione.append("Busta."+tipo+".identificativo.base non definita\n");
+				motivoErroreValidazione.append(prefix+".base non definita\n");
 			}
 		}
 	}
@@ -211,16 +212,16 @@ public class XMLUtils  {
 	}
 	private static void validate(Servizio servizio,StringBuilder motivoErroreValidazione,String tipo){
 		if(servizio.getBase()==null){
-			motivoErroreValidazione.append("Busta."+tipo+".base non definita\n");
+			motivoErroreValidazione.append(BUSTA_PREFIX+tipo+".base non definita\n");
 		}
 	}
 	private static void validate(Data data,StringBuilder motivoErroreValidazione,String tipo){
 		if(data.getSorgente()!=null){
 			if(data.getSorgente().getBase()==null){
-				motivoErroreValidazione.append("Busta."+tipo+".sorgente.base non definita\n");
+				motivoErroreValidazione.append(BUSTA_PREFIX+tipo+".sorgente.base non definita\n");
 			}
 			if(data.getSorgente().getTipo()==null){
-				motivoErroreValidazione.append("Busta."+tipo+".sorgente.tipo non definita\n");
+				motivoErroreValidazione.append(BUSTA_PREFIX+tipo+".sorgente.tipo non definita\n");
 			}
 		}
 	}
@@ -241,14 +242,15 @@ public class XMLUtils  {
 				motivoErroreValidazione.append("Busta.tramissione["+i+"] non definita\n");
 			}
 			else{
+				String prefix = "tramissione["+i+"]";
 				if(tr.getOrigine()!=null){
-					validate(tr.getOrigine(), motivoErroreValidazione, "tramissione["+i+"].origine");
+					validate(tr.getOrigine(), motivoErroreValidazione, prefix+".origine");
 				}
 				if(tr.getDestinazione()!=null){
-					validate(tr.getDestinazione(), motivoErroreValidazione, "tramissione["+i+"].destinazione");
+					validate(tr.getDestinazione(), motivoErroreValidazione, prefix+".destinazione");
 				}
 				if(tr.getOraRegistrazione()!=null){
-					validate(tr.getOraRegistrazione(), motivoErroreValidazione, "tramissione["+i+"].ora-registrazione");
+					validate(tr.getOraRegistrazione(), motivoErroreValidazione, prefix+".ora-registrazione");
 				}
 			}
 		}
@@ -257,7 +259,7 @@ public class XMLUtils  {
 		for (int i = 0; i < riscontri.sizeRiscontroList(); i++) {
 			Riscontro r = riscontri.getRiscontro(i);
 			if(r==null){
-				motivoErroreValidazione.append("Busta.riscontro["+i+"] non definita\n");
+				motivoErroreValidazione.append("Busta.riscontro["+i+"] non definito\n");
 			}
 			else{
 				if(r.getOraRegistrazione()!=null){
@@ -268,35 +270,39 @@ public class XMLUtils  {
 	}
 	private static void validate(Eccezioni eccezioni,StringBuilder motivoErroreValidazione){
 		for (int i = 0; i < eccezioni.sizeEccezioneList(); i++) {
+			String prefix = "Busta.eccezione["+i+"]";
 			Eccezione e = eccezioni.getEccezione(i);
 			if(e==null){
-				motivoErroreValidazione.append("Busta.eccezione["+i+"] non definita\n");
+				motivoErroreValidazione.append(prefix+" non definita\n");
 			}
 			else{
-				if(e.getCodice()!=null){
-					if(e.getCodice().getBase()==null){
-						motivoErroreValidazione.append("Busta.eccezione["+i+"].codice.base non definita\n");
-					}
-					if(e.getCodice().getTipo()==null){
-						motivoErroreValidazione.append("Busta.eccezione["+i+"].codice.tipo non definita\n");
-					}
-				}
-				if(e.getContestoCodifica()!=null){
-					if(e.getContestoCodifica().getBase()==null){
-						motivoErroreValidazione.append("Busta.eccezione["+i+"].contesto-codifica.base non definita\n");
-					}
-					if(e.getContestoCodifica().getTipo()==null){
-						motivoErroreValidazione.append("Busta.eccezione["+i+"].contesto-codifica.tipo non definita\n");
-					}
-				}
-				if(e.getRilevanza()!=null){
-					if(e.getRilevanza().getBase()==null){
-						motivoErroreValidazione.append("Busta.eccezione["+i+"].rilevanza.base non definita\n");
-					}
-					if(e.getRilevanza().getTipo()==null){
-						motivoErroreValidazione.append("Busta.eccezione["+i+"].rilevanza.tipo non definita\n");
-					}
-				}
+				validate(prefix, e, motivoErroreValidazione);
+			}
+		}
+	}
+	private static void validate(String prefix, Eccezione e,StringBuilder motivoErroreValidazione){
+		if(e.getCodice()!=null){
+			if(e.getCodice().getBase()==null){
+				motivoErroreValidazione.append(prefix+".codice.base non definita\n");
+			}
+			if(e.getCodice().getTipo()==null){
+				motivoErroreValidazione.append(prefix+".codice.tipo non definita\n");
+			}
+		}
+		if(e.getContestoCodifica()!=null){
+			if(e.getContestoCodifica().getBase()==null){
+				motivoErroreValidazione.append(prefix+".contesto-codifica.base non definita\n");
+			}
+			if(e.getContestoCodifica().getTipo()==null){
+				motivoErroreValidazione.append(prefix+".contesto-codifica.tipo non definita\n");
+			}
+		}
+		if(e.getRilevanza()!=null){
+			if(e.getRilevanza().getBase()==null){
+				motivoErroreValidazione.append(prefix+".rilevanza.base non definita\n");
+			}
+			if(e.getRilevanza().getTipo()==null){
+				motivoErroreValidazione.append(prefix+".rilevanza.tipo non definita\n");
 			}
 		}
 	}
@@ -313,16 +319,17 @@ public class XMLUtils  {
 			motivoErroreValidazione.append("Busta.protocollo.identificativo non definito\n");
 		}
 		for (int i = 0; i < protocollo.sizeProprietaList(); i++) {
+			String prefix = "Busta.protocollo.proprieta["+i+"]";
 			Proprieta pp = protocollo.getProprieta(i);
 			if(pp==null){
-				motivoErroreValidazione.append("Busta.protocollo.proprieta["+i+"] non definito\n");
+				motivoErroreValidazione.append(prefix+" non definito\n");
 			}
 			else{
 				if(pp.getNome()==null){
-					motivoErroreValidazione.append("Busta.protocollo.proprieta["+i+"].nome non definito\n");
+					motivoErroreValidazione.append(prefix+".nome non definito\n");
 				}
 				if(pp.getValore()==null){
-					motivoErroreValidazione.append("Busta.protocollo.proprieta["+i+"]["+pp.getNome()+"].valore non definito\n");
+					motivoErroreValidazione.append(prefix+"["+pp.getNome()+"].valore non definito\n");
 				}
 			}
 		}
@@ -340,19 +347,10 @@ public class XMLUtils  {
 	 * @throws XMLUtilsException
 	 */
 	public static Traccia getTraccia(Logger log,byte[] m) throws XMLUtilsException{
-		ByteArrayInputStream bin = null;
-		try{
-			bin = new ByteArrayInputStream(m);
+		try (ByteArrayInputStream bin = new ByteArrayInputStream(m);){
 			return XMLUtils.getTraccia(log,bin);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
-		}finally{
-			try{
-				if(bin!=null)
-					bin.close();
-			}catch(Exception eClose){
-				// close
-			}
 		}
 	}
 	
@@ -364,19 +362,10 @@ public class XMLUtils  {
 	 * @throws XMLUtilsException
 	 */
 	public static Traccia getTraccia(Logger log,File m) throws XMLUtilsException{
-		FileInputStream fin = null;
-		try{
-			fin = new FileInputStream(m);
+		try (FileInputStream fin = new FileInputStream(m);){
 			return XMLUtils.getTraccia(log,fin);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
-		}finally{
-			try{
-				if(fin!=null)
-					fin.close();
-			}catch(Exception eClose){
-				// close
-			}
 		}
 	}
 	
@@ -427,6 +416,9 @@ public class XMLUtils  {
 
 	public static Traccia getTracciaFromJson(Logger log,InputStream is) throws XMLUtilsException{
 		try{			
+			if(log!=null) {
+				// ignore
+			}
 			JsonJacksonDeserializer deserializer = new JsonJacksonDeserializer();
 			return deserializer.readTraccia(is);
 		}catch(Exception e){
@@ -438,48 +430,60 @@ public class XMLUtils  {
 	
 	/* ----- Marshall ----- */
 	public static void generateTraccia(Traccia traccia,File out) throws XMLUtilsException{
+		generateTraccia(traccia, out, false, false);
+	}
+	public static void generateTraccia(Traccia traccia,File out,boolean prettyDocument, boolean omitXmlDeclaration) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validate(traccia, risultatoValidazione)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validate(traccia, risultatoValidazione)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
-			org.openspcoop2.utils.xml.JaxbUtils.objToXml(out.getName(),XMLUtils.generateTraccia_engine(traccia));
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(out.getName(),XMLUtils.generateTracciaEngine(traccia, prettyDocument, omitXmlDeclaration));
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
 	}
 	
 	public static void generateTraccia(Traccia traccia,String fileName) throws XMLUtilsException{
+		generateTraccia(traccia, fileName, false, false);
+	}
+	public static void generateTraccia(Traccia traccia,String fileName,boolean prettyDocument, boolean omitXmlDeclaration) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validate(traccia, risultatoValidazione)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validate(traccia, risultatoValidazione)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
-			org.openspcoop2.utils.xml.JaxbUtils.objToXml(fileName,XMLUtils.generateTraccia_engine(traccia));
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(fileName,XMLUtils.generateTracciaEngine(traccia, prettyDocument, omitXmlDeclaration));
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
 	}
 	
 	public static byte[] generateTraccia(Traccia traccia) throws XMLUtilsException{
+		return generateTraccia(traccia, false, false);
+	}
+	public static byte[] generateTraccia(Traccia traccia,boolean prettyDocument, boolean omitXmlDeclaration) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validate(traccia, risultatoValidazione)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validate(traccia, risultatoValidazione)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
-			return XMLUtils.generateTraccia_engine(traccia);
+			return XMLUtils.generateTracciaEngine(traccia, prettyDocument, omitXmlDeclaration);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
 	}
 
 	public static void generateTraccia(Traccia traccia,OutputStream out) throws XMLUtilsException{
+		generateTraccia(traccia, out, false, false);
+	}
+	public static void generateTraccia(Traccia traccia,OutputStream out, boolean prettyDocument, boolean omitXmlDeclaration) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validate(traccia, risultatoValidazione)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validate(traccia, risultatoValidazione)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
-			out.write(XMLUtils.generateTraccia_engine(traccia));
+			out.write(XMLUtils.generateTracciaEngine(traccia, prettyDocument, omitXmlDeclaration));
 			out.flush();
 			out.close();
 		}catch(Exception e){
@@ -488,32 +492,34 @@ public class XMLUtils  {
 	}
 	
 	public static String generateTracciaAsJson(Traccia traccia) throws XMLUtilsException{
+		return generateTracciaAsJson(traccia, false);
+	}
+	public static String generateTracciaAsJson(Traccia traccia, boolean prettyDocument) throws XMLUtilsException{
 		try{
 			StringBuilder risultatoValidazione = new StringBuilder();
-			if(XMLUtils.validate(traccia, risultatoValidazione)==false){
-				throw new Exception(risultatoValidazione.toString());
+			if(!XMLUtils.validate(traccia, risultatoValidazione)){
+				throw new XMLUtilsException(risultatoValidazione.toString());
 			}
-			return XMLUtils.generateTracciaAsJson_engine(traccia);
+			return XMLUtils.generateTracciaAsJsonEngine(traccia, prettyDocument);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
 	}
 	
-	private static byte[] generateTraccia_engine(Traccia traccia) throws XMLUtilsException{
+	private static byte[] generateTracciaEngine(Traccia traccia,boolean prettyDocument, boolean omitXmlDeclaration) throws XMLUtilsException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			org.openspcoop2.utils.xml.JaxbUtils.objToXml(bout, Traccia.class, traccia);
-			byte[] dichiarazione = bout.toByteArray();
-			return dichiarazione;
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(bout, Traccia.class, traccia, prettyDocument, omitXmlDeclaration);
+			return bout.toByteArray();
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
 	}
 	
-	private static String generateTracciaAsJson_engine(Traccia traccia) throws XMLUtilsException{
+	private static String generateTracciaAsJsonEngine(Traccia traccia,boolean prettyDocument) throws XMLUtilsException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			traccia.writeTo(bout, WriteToSerializerType.JSON_JACKSON);
+			traccia.writeTo(bout, WriteToSerializerType.JSON_JACKSON,prettyDocument);
 			bout.flush();
 			bout.close();
 			return bout.toString();
@@ -529,40 +535,34 @@ public class XMLUtils  {
 			org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
-			return XMLUtils.isTraccia_engine(elemXML);
+			return XMLUtils.isTracciaEngine(elemXML);
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}
 	public static boolean isTraccia(Document docXML){
 		try{
 			Element elemXML = docXML.getDocumentElement();
-			return XMLUtils.isTraccia_engine(elemXML);
+			return XMLUtils.isTracciaEngine(elemXML);
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}
 	public static boolean isTraccia(Element elemXML){
-		return isTraccia_engine(elemXML);
+		return isTracciaEngine(elemXML);
 	}
 	public static boolean isTraccia(Node nodeXml){
-		return isTraccia_engine(nodeXml);
+		return isTracciaEngine(nodeXml);
 	}
-	private static boolean isTraccia_engine(Node nodeXml){
+	private static boolean isTracciaEngine(Node nodeXml){
 		try{
-			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_DETTAGLIO_ECCEZIONE+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");
-			if(CostantiTracciamento.ROOT_LOCAL_NAME_TRACCIA.equals(nodeXml.getLocalName()) && 
-					CostantiTracciamento.TARGET_NAMESPACE.equals(nodeXml.getNamespaceURI() ) 
-				){
-				return true;
-			}
-			else{
-				return false;
-			}
+			/**System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_DETTAGLIO_ECCEZIONE+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");*/
+			return CostantiTracciamento.ROOT_LOCAL_NAME_TRACCIA.equals(nodeXml.getLocalName()) && 
+					CostantiTracciamento.TARGET_NAMESPACE.equals(nodeXml.getNamespaceURI() ) ;
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/** System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage()); */
 			return false;
 		}
 	}

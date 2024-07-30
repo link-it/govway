@@ -349,13 +349,27 @@ public abstract class BaseBean implements Serializable {
 		this.writeTo(out, WriteToSerializerType.XML_JAXB);
 	}
 	public void writeTo(OutputStream out,WriteToSerializerType type) throws UtilsException{
+		this.writeToEngine(out, type, null);
+	}
+	public void writeTo(OutputStream out,WriteToSerializerType type, boolean pretty) throws UtilsException{
+		this.writeToEngine(out, type, pretty);
+	}
+	private void writeToEngine(OutputStream out,WriteToSerializerType type, Boolean pretty) throws UtilsException{
 		try{
 			switch (type) {
 				case XML_JAXB:
-					JaxbUtils.objToXml(out, getClass(), this, true);
+					boolean xmlPretty = true;  /** backward compatibility;*/
+					if(pretty!=null) { 
+						xmlPretty = pretty.booleanValue();
+					}
+					JaxbUtils.objToXml(out, getClass(), this, xmlPretty);
 					break;
 				case JSON_JACKSON:
-					ISerializer jsonJacksonSerializer = SerializationFactory.getSerializer(SERIALIZATION_TYPE.JSON_JACKSON, new SerializationConfig());
+					SerializationConfig config = new SerializationConfig();
+					if(pretty!=null) {
+						config.setPrettyPrint(pretty.booleanValue());
+					}
+					ISerializer jsonJacksonSerializer = SerializationFactory.getSerializer(SERIALIZATION_TYPE.JSON_JACKSON, config);
 					jsonJacksonSerializer.writeObject(this, out);
 					break;
 				case JAVA:

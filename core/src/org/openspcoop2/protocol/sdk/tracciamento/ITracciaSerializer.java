@@ -80,4 +80,9 @@ public interface ITracciaSerializer extends IComponentFactory {
 	public default boolean isSupportedExtInfo() {
 		return false;
 	} 
+	public void setPrettyDocument(boolean v);
+	public boolean isPrettyDocument();
+	public void setOmitXmlDeclaration(boolean v);
+	public boolean isOmitXmlDeclaration();
+	
 }

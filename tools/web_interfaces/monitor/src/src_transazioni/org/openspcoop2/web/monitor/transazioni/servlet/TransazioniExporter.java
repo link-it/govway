@@ -21,6 +21,7 @@ package org.openspcoop2.web.monitor.transazioni.servlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -30,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -61,25 +63,52 @@ public class TransazioniExporter extends HttpServlet{
 	private static Logger log = LoggerManager.getPddMonitorCoreLogger();
 
 	private static Boolean enableHeaderInfo = false;
+	public static void setEnableHeaderInfo(Boolean enableHeaderInfo) {
+		TransazioniExporter.enableHeaderInfo = enableHeaderInfo;
+	}
+
 	private static Boolean enableConsegneInfo = false;
+	public static void setEnableConsegneInfo(Boolean enableConsegneInfo) {
+		TransazioniExporter.enableConsegneInfo = enableConsegneInfo;
+	}
+
 	private static Boolean mimeThrowExceptionIfNotFound = false;
+	public static void setMimeThrowExceptionIfNotFound(Boolean mimeThrowExceptionIfNotFound) {
+		TransazioniExporter.mimeThrowExceptionIfNotFound = mimeThrowExceptionIfNotFound;
+	}
+
 	private static boolean headersAsProperties = true;
+	public static void setHeadersAsProperties(boolean headersAsProperties) {
+		TransazioniExporter.headersAsProperties = headersAsProperties;
+	}
+
 	private static boolean contenutiAsProperties = false;
+	public static void setContenutiAsProperties(boolean contenutiAsProperties) {
+		TransazioniExporter.contenutiAsProperties = contenutiAsProperties;
+	}
+
 	private static ITracciaDriver tracciamentoService = null;
+	public static void setTracciamentoService(ITracciaDriver tracciamentoService) {
+		TransazioniExporter.tracciamentoService = tracciamentoService;
+	}
+
 	private static IDiagnosticDriver diagnosticiService = null; 
+	public static void setDiagnosticiService(IDiagnosticDriver diagnosticiService) {
+		TransazioniExporter.diagnosticiService = diagnosticiService;
+	}
 
 	@Override
 	public void init() throws ServletException {
 		try{
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(TransazioniExporter.log);
 
-			TransazioniExporter.enableHeaderInfo = govwayMonitorProperties.isAttivoTransazioniExportHeader();
-			TransazioniExporter.enableConsegneInfo = govwayMonitorProperties.isAttivoTransazioniExportConsegneMultiple();
-			TransazioniExporter.mimeThrowExceptionIfNotFound=govwayMonitorProperties.isTransazioniDownloadThrowExceptionMimeTypeNotFound();
-			headersAsProperties = govwayMonitorProperties.isAttivoTransazioniExportHeaderAsProperties();
-			contenutiAsProperties = govwayMonitorProperties.isAttivoTransazioniExportContenutiAsProperties();
-			tracciamentoService = govwayMonitorProperties.getDriverTracciamento();
-			diagnosticiService = govwayMonitorProperties.getDriverMsgDiagnostici();
+			TransazioniExporter.setEnableHeaderInfo(govwayMonitorProperties.isAttivoTransazioniExportHeader());
+			TransazioniExporter.setEnableConsegneInfo(govwayMonitorProperties.isAttivoTransazioniExportConsegneMultiple());
+			TransazioniExporter.setMimeThrowExceptionIfNotFound(govwayMonitorProperties.isTransazioniDownloadThrowExceptionMimeTypeNotFound());
+			TransazioniExporter.setHeadersAsProperties(govwayMonitorProperties.isAttivoTransazioniExportHeaderAsProperties());
+			TransazioniExporter.setContenutiAsProperties(govwayMonitorProperties.isAttivoTransazioniExportContenutiAsProperties());
+			TransazioniExporter.setTracciamentoService(govwayMonitorProperties.getDriverTracciamento());
+			TransazioniExporter.setDiagnosticiService(govwayMonitorProperties.getDriverMsgDiagnostici());
 		}catch(Exception e){
 			TransazioniExporter.log.error("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
 		}
@@ -103,7 +132,7 @@ public class TransazioniExporter extends HttpServlet{
 		try{
 			ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
 			if(context==null) {
-				throw new Exception("Context is null");
+				throw new CoreException("Context is null");
 			}
 
 			ITransazioniService service = (ITransazioniService)context.getBean("transazioniService");
@@ -177,22 +206,14 @@ public class TransazioniExporter extends HttpServlet{
 
 			if(!exportConsentito){
 
-				String msg_errore = "L'utente non dispone dei permessi necessari per effettuare l'export delle transazioni.";
-				String redirectUrl = req.getContextPath()+"/public/error.jsf?msg_errore=" + msg_errore;
+				String msgErrore = "L'utente non dispone dei permessi necessari per effettuare l'export delle transazioni.";
+				String redirectUrl = req.getContextPath()+"/public/error.jsf?msg_errore=" + msgErrore;
 
 				response.sendRedirect(redirectUrl);
 				return;
 
-				//				throw new ExportException("Errore durante l'export dei messaggi diagnostici: i parametri indicati non sono validi!");
+				/** throw new ExportException("Errore durante l'export dei messaggi diagnostici: i parametri indicati non sono validi!");*/
 			}
-			// Be sure to retrieve the absolute path to the file with the required
-			// method
-			// filePath = pathToTheFile;
-
-			// This is another important attribute for the header of the response
-			// Here fileName, is a String with the name that you will suggest as a
-			// name to save as
-			// I use the same name as it is stored in the file system of the server.
 
 			String fileName = "Transazioni.zip";
 
@@ -203,8 +224,6 @@ public class TransazioniExporter extends HttpServlet{
 			response.setStatus(200);
 			response.flushBuffer();
 
-
-			//TransazioniSearchForm search = (TransazioniSearchForm)context.getBean("searchFormTransazioni");
 
 			Utility.setLoginMBean((LoginBean)context.getBean("loginBean"));
 
@@ -222,20 +241,20 @@ public class TransazioniExporter extends HttpServlet{
 			SingleFileExporter sfe = new SingleFileExporter(response.getOutputStream(), prop, service,
 					tracciamentoService, diagnosticiService,null);
 
-			if(isAll){
-				//transazioni = service.findAll(start, limit);
+			if(isAll!=null && isAll.booleanValue()){
+				/**transazioni = service.findAll(start, limit);*/
 				sfe.export();
 			}else{
 				List<String> idTransazioni = new ArrayList<>();
-				for (int j = 0; j < ids.length; j++) {
-					idTransazioni.add(ids[j]);					
+				if(ids.length>0) {
+					idTransazioni.addAll(Arrays.asList(ids));
 				}
 				sfe.export(idTransazioni);
 			}		
 
 		}catch(Throwable e){
 			TransazioniExporter.log.error(e.getMessage(),e);
-			//throw new ServletException(e.getMessage(),e);
+			/**throw new ServletException(e.getMessage(),e);*/
 		}finally {
 			// reset login bean statico
 			Utility.setLoginMBean(null);
@@ -244,8 +263,8 @@ public class TransazioniExporter extends HttpServlet{
 
 	public static boolean checkTipiExport(String[] ex, String[] exFromSession){
 
-		//		if(ex == null || ex.length == 0 || exFromSession == null || exFromSession.length == 0)
-		//			return false;
+		/**		if(ex == null || ex.length == 0 || exFromSession == null || exFromSession.length == 0)
+					return false;*/
 
 		boolean exportTracce = false;
 		boolean exportDiagnostici = false;
@@ -289,9 +308,10 @@ public class TransazioniExporter extends HttpServlet{
 		if(exportDiagnostici != exportDiagnosticiFromSession)
 			return false;
 
-		if(exportTracce !=exportTracceFromSession)
+		/**if(exportTracce !=exportTracceFromSession)
 			return false;
 
-		return true;
+		return true;*/
+		return exportTracce==exportTracceFromSession;
 	}
 }
