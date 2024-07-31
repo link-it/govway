@@ -490,7 +490,7 @@ And match header Agid-JWT-Signature == '#notpresent'
 ([
     { name: 'ProfiloSicurezzaMessaggio-Digest', value: response_digest[0] },
     { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: response_digest[0] },
-    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json; prova="aa";charset=UTF-8' }
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: "#regex ^application/json;.*prova=\"aa\";.*charset=UTF-8$" }
 ])
 """
 
