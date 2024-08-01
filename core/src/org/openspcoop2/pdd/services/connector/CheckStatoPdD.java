@@ -143,6 +143,7 @@ public class CheckStatoPdD extends HttpServlet {
 		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
 			
 		// verifico se l'invocazione richiede una lettura di una risorsa jmx
+		boolean richiestaRisorsaJmx = false;
 		String resourceName = req.getParameter(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME);
 		if(resourceName!=null && !"".equals(resourceName)){
 
@@ -186,7 +187,8 @@ public class CheckStatoPdD extends HttpServlet {
 						if(attributeBooleanValue!=null){
 							v = Boolean.parseBoolean(attributeBooleanValue);
 						}
-						OpenSPCoop2Startup.gestoreRisorseJMX_staticInstance.setAttribute(resourceName, attributeName, v);	
+						OpenSPCoop2Startup.gestoreRisorseJMX_staticInstance.setAttribute(resourceName, attributeName, v);
+						richiestaRisorsaJmx = true; // se è stata richiesta una operazione jmx non si deve proseguire con il check	
 					}catch(Exception e){
 						String msg = "Aggiornamento attributo ["+attributeName+"] "+getMsgDellaRisorsaNonRiuscita(resourceName)+" (valore:"+attributeValue+"): "+e.getMessage();
 						sendError(res, log, msg, 500, e); 	
@@ -198,6 +200,7 @@ public class CheckStatoPdD extends HttpServlet {
 						Object value = OpenSPCoop2Startup.gestoreRisorseJMX_staticInstance.getAttribute(resourceName, attributeName);
 						res.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
 						res.getOutputStream().write(value.toString().getBytes());	
+						richiestaRisorsaJmx = true; // se è stata richiesta una operazione jmx non si deve proseguire con il check
 					}catch(Exception e){
 						String msg = "Lettura attributo ["+attributeName+"] "+getMsgDellaRisorsaNonRiuscita(resourceName)+": "+e.getMessage();
 						sendError(res, log, msg, 500, e); 	
@@ -231,7 +234,8 @@ public class CheckStatoPdD extends HttpServlet {
 				try{
 					Object value = OpenSPCoop2Startup.gestoreRisorseJMX_staticInstance.invoke(resourceName, methodName, params, signatures);
 					res.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
-					res.getOutputStream().write(value.toString().getBytes());	
+					res.getOutputStream().write(value.toString().getBytes());
+					richiestaRisorsaJmx = true; // se è stata richiesta una operazione jmx non si deve proseguire con il check
 				}catch(Exception e){
 					String msg = "Invocazione metodo ["+methodName+"] "+getMsgDellaRisorsaNonRiuscita(resourceName)+": "+e.getMessage();
 					sendError(res, log, msg, 500, e); 
@@ -244,6 +248,10 @@ public class CheckStatoPdD extends HttpServlet {
 				return;
 			}
 			
+		}
+		
+		if(richiestaRisorsaJmx) {
+			return; // se è stata richiesta una operazione jmx non si deve proseguire con il check
 		}
 			
 		
