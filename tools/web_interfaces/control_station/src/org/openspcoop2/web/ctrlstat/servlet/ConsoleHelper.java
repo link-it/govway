@@ -1541,6 +1541,15 @@ public class ConsoleHelper implements IConsoleHelper {
 		return inputValue;				
 	}
 	
+	public String getMessageParameter(String parameterName) throws ValidationException{
+		// restituisco il valore originale che e' una lista di HTTPMethods
+		String val = Validatore.getInstance().getParametroOriginale(this.request, parameterName);
+		
+		Validatore.getInstance().validate("Il valore del parametro [" + parameterName + "]:["+val+"]", val, null, true, true, org.openspcoop2.web.lib.mvc.security.Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA);
+		
+		return val;
+	}
+	
 	/***
 	 * cancella i file temporanei dei parametri binari del protocollo, da usare dopo il salvataggio dell'oggetto.
 	 * 

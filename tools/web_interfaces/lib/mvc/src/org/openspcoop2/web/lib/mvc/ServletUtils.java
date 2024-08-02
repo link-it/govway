@@ -92,7 +92,7 @@ public class ServletUtils {
 			}
 		}
 		
-		return HttpStatus.INTERNAL_SERVER_ERROR;
+		return HttpStatus.SERVICE_UNAVAILABLE;
 	}
 
 	/* ------ STRUTS - FORWARD ---- */

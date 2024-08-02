@@ -102,7 +102,7 @@ public class HeadersFilter implements Filter {
 						ControlStationCore.logError("Errore rilevato durante l'headersFilter (reInit General Helper)",e);
 					}
 				}
-				AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig, HttpStatus.INTERNAL_SERVER_ERROR);
+				AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig, HttpStatus.SERVICE_UNAVAILABLE);
 				// return so that we do not chain to other filters
 				return;
 			}catch(Exception eClose){

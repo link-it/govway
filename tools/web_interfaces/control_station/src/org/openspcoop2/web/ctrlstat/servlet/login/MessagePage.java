@@ -82,7 +82,7 @@ public class MessagePage extends Action {
 			}
 			
 			if(StringUtils.isBlank(destinazione)) {
-				String messageText = consoleHelper.getParameter(CostantiControlStation.PARAMETER_MESSAGE_TEXT);
+				String messageText = consoleHelper.getMessageParameter(CostantiControlStation.PARAMETER_MESSAGE_TEXT);
 				if(messageText == null) {
 					messageText = Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE;
 				}
