@@ -45,7 +45,7 @@ public class BaseStatus implements IStatus {
 	private String descrizione;
 
 	public BaseStatus() {
-
+		// nop
 	}
 
 	@Override

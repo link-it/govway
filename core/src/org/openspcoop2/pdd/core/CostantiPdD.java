@@ -419,7 +419,16 @@ public class CostantiPdD {
     
     public static final MapKey<String> BUSTA_RISPOSTA = Map.newMapKey("BustaProprietaHeaderIntegrazione");
     
+    public static final String CHECK_STATO_PDD_EXECUTE_HEALTH_CHECK_STATS = "executeHealthCheckStats";
+    public static final String CHECK_STATO_PDD_EXECUTE_HOURLY_HEALTH_CHECK_STATS = "executeHourlyHealthCheckStats";
+    public static final String CHECK_STATO_PDD_EXECUTE_DAILY_HEALTH_CHECK_STATS = "executeDailyHealthCheckStats";
+    public static final String CHECK_STATO_PDD_EXECUTE_WEEKLY_HEALTH_CHECK_STATS = "executeWeeklyHealthCheckStats";
+    public static final String CHECK_STATO_PDD_EXECUTE_MONTHLY_HEALTH_CHECK_STATS = "executeMonthlyHealthCheckStats";
     
+    public static final String CHECK_STATO_PDD_EXECUTE_HOURLY_HEALTH_CHECK_STATS_THRESHOLD = "hourlyHealthCheckStatsThreshold";
+    public static final String CHECK_STATO_PDD_EXECUTE_DAILY_HEALTH_CHECK_STATS_THRESHOLD = "dailyHealthCheckStatsThreshold";
+    public static final String CHECK_STATO_PDD_EXECUTE_WEEKLY_HEALTH_CHECK_STATS_THRESHOLD = "weeklyHealthCheckStatsThreshold";
+    public static final String CHECK_STATO_PDD_EXECUTE_MONTHLY_HEALTH_CHECK_STATS_THRESHOLD = "monthlyHealthCheckStatsThreshold";
     
     public static final String CHECK_STATO_PDD_METHOD_NAME = "methodName";
     public static final String CHECK_STATO_PDD_ATTRIBUTE_NAME = "attributeName";

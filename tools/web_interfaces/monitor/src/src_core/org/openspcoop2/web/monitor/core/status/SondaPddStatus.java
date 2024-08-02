@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.monitor.engine.constants.SondaStatus;
 import org.openspcoop2.monitor.engine.status.GatewayStatus;
 import org.openspcoop2.monitor.engine.status.IStatus;
@@ -61,18 +62,17 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 
 			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(this.log);
 
-			List<String> listaPdDMonitorate_StatusPdD = this.getListaPdDMonitorate_StatusPdD();
+			List<String> listaPdDMonitorateStatusPdD = this.getListaPdDMonitorate_StatusPdD();
 
 			ConfigurazioneNodiRuntime config = pddMonitorProperties.getConfigurazioneNodiRuntime();
 			
 			
-			for (String nomeSonda : listaPdDMonitorate_StatusPdD) {
+			for (String nomeSonda : listaPdDMonitorateStatusPdD) {
 				
 				String nomeNodoRuntime = nomeSonda;
-				if(listaPdDMonitorate_StatusPdD.size()==1 && SondaPddStatus.GATEWAY_DEFAULT.equals(nomeSonda)) {
-					if(!config.containsNode(nomeSonda) && config.containsNode(SondaPddStatus.ALIAS_DEFAULT)) {
-						nomeNodoRuntime = SondaPddStatus.ALIAS_DEFAULT;
-					}
+				if(listaPdDMonitorateStatusPdD.size()==1 && SondaPddStatus.GATEWAY_DEFAULT.equals(nomeSonda) &&
+					!config.containsNode(nomeSonda) && config.containsNode(SondaPddStatus.ALIAS_DEFAULT)) {
+					nomeNodoRuntime = SondaPddStatus.ALIAS_DEFAULT;
 				}
 				
 				String url = config.getCheckStatusUrl(nomeNodoRuntime); // leggo prima il file unico dei nodi, se presente (la configurazione backward non avrà questa impostata, poichè si tratta di una nuova proprietà)
@@ -84,15 +84,15 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 				}
 				if(url==null) {
 					String p1 = "statoPdD.sonde.standard."+nomeSonda+".url";
-					throw new Exception("Alternative Properties ["+p1+"] or [remoteAccess.url] not found");
+					throw new CoreException("Alternative Properties ["+p1+"] or [remoteAccess.url] not found");
 				}
 				
 				boolean https = false;
-				boolean https_verificaHostName = true;
-				boolean https_autenticazioneServer = true;
-				String https_truststorePath = null;
-				String https_truststoreType = null;
-				String https_truststorePassword = null;
+				boolean httpsVerificaHostName = true;
+				boolean httpsAutenticazioneServer = true;
+				String httpsTruststorePath = null;
+				String httpsTruststoreType = null;
+				String httpsTruststorePassword = null;
 				Integer connectionTimeout = null;
 				Integer readConnectionTimeout = null;
 				
@@ -122,52 +122,52 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 								
 				if(https) {
 					
-					String httpsP_verificaHostName = this.propertiesSonda.getProperty(nomeSonda+".https.verificaHostName");
-					if(httpsP_verificaHostName!=null) {
-						https_verificaHostName = "false".equals(httpsP_verificaHostName.trim()); // default true
+					String httpsPverificaHostName = this.propertiesSonda.getProperty(nomeSonda+".https.verificaHostName");
+					if(httpsPverificaHostName!=null) {
+						httpsVerificaHostName = "false".equals(httpsPverificaHostName.trim()); // default true
 					}
 					else {
-						https_verificaHostName = config.isHttps_verificaHostName(nomeNodoRuntime);
+						httpsVerificaHostName = config.isHttps_verificaHostName(nomeNodoRuntime);
 					}
 					
-					String httpsP_autenticazioneServer = this.propertiesSonda.getProperty(nomeSonda+".https.autenticazioneServer");
-					if(httpsP_autenticazioneServer!=null) {
-						https_autenticazioneServer = "false".equals(httpsP_autenticazioneServer.trim()); // default true
+					String httpsPautenticazioneServer = this.propertiesSonda.getProperty(nomeSonda+".https.autenticazioneServer");
+					if(httpsPautenticazioneServer!=null) {
+						httpsAutenticazioneServer = "false".equals(httpsPautenticazioneServer.trim()); // default true
 					}
 					else {
-						https_autenticazioneServer = config.isHttps_autenticazioneServer(nomeNodoRuntime);
+						httpsAutenticazioneServer = config.isHttps_autenticazioneServer(nomeNodoRuntime);
 					}
 				
-					if(https_autenticazioneServer) {
+					if(httpsAutenticazioneServer) {
 						
-						https_truststorePath = this.propertiesSonda.getProperty(nomeSonda+".https.autenticazioneServer.truststorePath");
-						if(https_truststorePath==null) {
-							https_truststorePath = config.getHttps_autenticazioneServer_truststorePath(nomeNodoRuntime);
+						httpsTruststorePath = this.propertiesSonda.getProperty(nomeSonda+".https.autenticazioneServer.truststorePath");
+						if(httpsTruststorePath==null) {
+							httpsTruststorePath = config.getHttps_autenticazioneServer_truststorePath(nomeNodoRuntime);
 						}
-						if(StringUtils.isEmpty(https_truststorePath)) {
-							throw new Exception("[gateway:"+nomeSonda+"] TLS Truststore path non fornito");
-						}
-						
-						https_truststoreType = this.propertiesSonda.getProperty(nomeSonda+".https.autenticazioneServer.truststoreType");
-						if(https_truststoreType==null) {
-							https_truststoreType = config.getHttps_autenticazioneServer_truststoreType(nomeNodoRuntime);
-						}
-						if(StringUtils.isEmpty(https_truststoreType)) {
-							throw new Exception("[gateway:"+nomeSonda+"] TLS Truststore type non fornito");
+						if(StringUtils.isEmpty(httpsTruststorePath)) {
+							throw new CoreException("[gateway:"+nomeSonda+"] TLS Truststore path non fornito");
 						}
 						
-						https_truststorePassword = this.propertiesSonda.getProperty(nomeSonda+".https.autenticazioneServer.truststorePassword");
-						if(https_truststorePassword==null) {
-							https_truststorePassword = config.getHttps_autenticazioneServer_truststorePassword(nomeNodoRuntime);
+						httpsTruststoreType = this.propertiesSonda.getProperty(nomeSonda+".https.autenticazioneServer.truststoreType");
+						if(httpsTruststoreType==null) {
+							httpsTruststoreType = config.getHttps_autenticazioneServer_truststoreType(nomeNodoRuntime);
 						}
-						if(StringUtils.isEmpty(https_truststorePassword)) {
-							throw new Exception("[gateway:"+nomeSonda+"] TLS Truststore password non fornito");
+						if(StringUtils.isEmpty(httpsTruststoreType)) {
+							throw new CoreException("[gateway:"+nomeSonda+"] TLS Truststore type non fornito");
+						}
+						
+						httpsTruststorePassword = this.propertiesSonda.getProperty(nomeSonda+".https.autenticazioneServer.truststorePassword");
+						if(httpsTruststorePassword==null) {
+							httpsTruststorePassword = config.getHttps_autenticazioneServer_truststorePassword(nomeNodoRuntime);
+						}
+						if(StringUtils.isEmpty(httpsTruststorePassword)) {
+							throw new CoreException("[gateway:"+nomeSonda+"] TLS Truststore password non fornito");
 						}
 					}
 				}
 				
 				GatewayStatus pddStat = new GatewayStatus();
-				//pddStat.setNome(nomeSonda);
+				/**pddStat.setNome(nomeSonda);*/
 				String descrizione = null;
 				if(config.containsNode(nomeNodoRuntime)) {
 					descrizione = config.getDescrizione(nomeNodoRuntime);
@@ -175,11 +175,11 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 				pddStat.setNome(descrizione!=null ? descrizione : nomeSonda);
 				pddStat.setUrl(url);
 				pddStat.setHttps(https);
-				pddStat.setHttps_verificaHostName(https_verificaHostName);
-				pddStat.setHttps_autenticazioneServer(https_autenticazioneServer);
-				pddStat.setHttps_autenticazioneServer_truststorePath(https_truststorePath);
-				pddStat.setHttps_autenticazioneServer_truststoreType(https_truststoreType);
-				pddStat.setHttps_autenticazioneServer_truststorePassword(https_truststorePassword);
+				pddStat.setHttps_verificaHostName(httpsVerificaHostName);
+				pddStat.setHttps_autenticazioneServer(httpsAutenticazioneServer);
+				pddStat.setHttps_autenticazioneServer_truststorePath(httpsTruststorePath);
+				pddStat.setHttps_autenticazioneServer_truststoreType(httpsTruststoreType);
+				pddStat.setHttps_autenticazioneServer_truststorePassword(httpsTruststorePassword);
 				if(connectionTimeout!=null) {
 					pddStat.setConnectionTimeout(connectionTimeout);
 				}
@@ -193,7 +193,7 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 			this.log.debug("Init Sonda Pdd Status completato.");
 
 		}catch(Exception e){
-			this.log.error("Si e' verificato un errore durante l'Init Sonda Pdd Status: " + e.getMessage(),e); 
+			this.logError("Si e' verificato un errore durante l'Init Sonda Pdd Status: " + e.getMessage(),e); 
 			throw e;
 		}
 	}

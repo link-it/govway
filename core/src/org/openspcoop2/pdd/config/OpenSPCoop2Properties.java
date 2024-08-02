@@ -1951,6 +1951,7 @@ public class OpenSPCoop2Properties {
 					this.getCheckHealthCheckApiSoapEndpoint()==null) {
 					return false;
 				}
+				this.isCheckHealthCheckStatsEnabled(); // le verifiche sotto vengono fatte lo stesso poichè la verifica della statistica può essere fatta on demand
 				if(this.isCheckHealthCheckStatsHourlyEnabled() &&
 					this.getCheckHealthCheckStatsHourlyThreshold()<0) {
 					return false;
@@ -20665,6 +20666,28 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.getCheckHealthCheckApiSoapEndpoint;
+	}
+	
+	private Boolean isCheckHealthCheckStatsEnabled = null;
+	public boolean isCheckHealthCheckStatsEnabled() {	
+		if(this.isCheckHealthCheckStatsEnabled==null){
+			String pName = "org.openspcoop2.pdd.check.healthCheck.reportStatistici.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					name="false";
+				}
+				name = name.trim();
+				this.isCheckHealthCheckStatsEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.isCheckHealthCheckStatsEnabled = false;
+			}    
+		}
+
+		return this.isCheckHealthCheckStatsEnabled;
 	}
 	
 	private Boolean isCheckHealthCheckStatsHourlyEnabled = null;

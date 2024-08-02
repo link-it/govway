@@ -61,45 +61,6 @@ Se invece vengono rilevati errori dopo che GovWay si è avviato correttamente vi
           < 
           Risorse di sistema non disponibili: [Database] Connessione al database GovWay non disponibile: javax.resource.ResourceException: IJ000453: Unable to get managed connection for java:/org.govway.datasource
 
-
-Tra i controlli previsti è inclusa anche una verifica dell'aggiornamento frequente dei campionamenti statistici. La configurazione di default, riportata di seguito, prevede un livello di soglia (1) in modo da verificare che le statistiche siano sempre aggiornate almeno all'intervallo precedente: ad esempio, all'ora precedente per il campionamento orario o al giorno precedente per il giornaliero. Può essere indicato anche un valore '0' per imporre che le statistiche siano aggiornate (anche parzialmente) all'ultimo intervallo; questo controllo stringente potrebbe creare dei falsi positivi.
-
-   ::
-
-      # ================================================
-      # Health check
-      ...
-      # Report statistici
-      # Consente di verificare l'aggiornamento frequente dei campionamenti statistici.
-      # Se viene rilevata una data più vecchia rispetto a quanto indicato nella soglia, il servizio di health check ritorna un errore.
-      # Funzionamento della soglia:
-      # - se viene indicato un valore '1' si richiede che le statistiche siano aggiornate all'intervallo precedente: ad esempio, all'ora precedente per il campionamento orario o al giorno precedente per il giornaliero;
-      # - può essere indicato anche un valore '0' per imporre che le statistiche siano aggiornate (anche parzialmente) all'ultimo intervallo; questo controllo stringente potrebbe creare dei falsi positivi.
-      org.openspcoop2.pdd.check.healthCheck.reportStatistici.intervalloOrario.verifica=true
-      org.openspcoop2.pdd.check.healthCheck.reportStatistici.intervalloOrario.soglia=1
-      org.openspcoop2.pdd.check.healthCheck.reportStatistici.intervalloGiornaliero.verifica=true
-      org.openspcoop2.pdd.check.healthCheck.reportStatistici.intervalloGiornaliero.soglia=1
-      # ================================================
-
-Di seguito un esempio di errore derivante da un campionamento statistico non correttamente aggiornato:
-
-       ::
-
-          > curl -v http://localhost:8080/govway/check
-          > GET /govway/check HTTP/1.1
-          > Host: localhost:8080
-          > User-Agent: curl/7.66.0
-          > Accept: */*
-          > 
-          < HTTP/1.1 500 Internal Server Error
-          < Connection: keep-alive
-          < Content-Type: text/plain
-          < Content-Length: 203
-          < Date: Mon, 10 Oct 2022 16:17:40 GMT
-          < 
-          Statistics HealthCheck failed
-          Hourly statistical information found whose last update is older than the allowed threshold (1); last generation date: 2024-07-29_15:00:00.000
-
 Oltre ai controlli standard, previsti per default sul servizio, è possibile abilitarne uno ulteriore che si occupa di invocare una API di HealthCheck configurata su GovWay. Per attivare questo controllo è ncessario editare il file *<directory-lavoro>/govway_local.properties* e abilitare l'health check per API REST e/o per API SOAP, indicando il corretto endpoint di esposizione dell'API:
 
    ::
@@ -116,4 +77,32 @@ Oltre ai controlli standard, previsti per default sul servizio, è possibile abi
       ...
       # ================================================
       
+Infine il servizio di 'health check' può essere invocato con dei parametri ad hoc per richiedere una verifica che i dati statistici risultino aggiornati; di seguito i parametri utilizzabili:
+
+- *executeHourlyHealthCheckStats=true* : verifica l'aggiornamento dei dati campionati per ora;
+- *executeDailyHealthCheckStats=true* : verifica l'aggiornamento dei dati campionati per giorno;
+- *executeHealthCheckStats=true* : verifica l'aggiornamento dei dati per qualsiasi campionamento attivo.
+
+La configurazione delle verifiche attive e i livelli di soglia di default possono essere configurati agendo nel file *<directory-lavoro>/govway_local.properties*, nella sezione 'Health check - Report statistici'.
+
+I livelli di soglia possono anche essere ridefiniti tramite i seguenti ulteriori parametri: hourlyHealthCheckStatsThreshold, dailyHealthCheckStatsThreshold e healthCheckStatsThreshold.
+
+Di seguito un esempio di errore derivante da un aggiornamento dei dati statistici orari non correttamente aggiornati:
+
+       ::
+
+          > curl -v http://localhost:8080/govway/check?executeHourlyHealthCheckStats=true&hourlyHealthCheckStatsThreshold=1
+          > GET /govway/check HTTP/1.1
+          > Host: localhost:8080
+          > User-Agent: curl/7.66.0
+          > Accept: */*
+          > 
+          < HTTP/1.1 500 Internal Server Error
+          < Connection: keep-alive
+          < Content-Type: text/plain
+          < Content-Length: 203
+          < Date: Mon, 10 Oct 2022 16:17:40 GMT
+          < 
+          Statistics HealthCheck failed
+          Hourly statistical information found whose last update is older than the allowed threshold (1); last generation date: 2024-07-29_15:00:00.000
 
