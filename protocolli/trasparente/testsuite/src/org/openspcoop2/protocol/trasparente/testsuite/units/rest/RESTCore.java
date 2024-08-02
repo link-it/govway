@@ -813,7 +813,11 @@ public class RESTCore {
 					if(contentTypeAttesoRisposta.equals("text/xml;") || contentTypeAttesoRisposta.equals("text/xml ;")) {
 						contentTypeAttesoRisposta = "text/xml";
 					}
-					Assert.assertEquals(contentTypeRisposta, contentTypeAttesoRisposta, "Content-Type del file di risposta ["+contentTypeRisposta+"] diverso da quello atteso ["+contentTypeAttesoRisposta+"]");
+					String contentTypeAttesoRisposta2 = contentTypeAttesoRisposta.replace(" ",""); // elimino gli spazi che vengono appiattiti in tomcat 9.0.91
+					boolean check1=contentTypeRisposta.equals(contentTypeAttesoRisposta);
+					boolean check2=contentTypeRisposta.equals(contentTypeAttesoRisposta2);
+					boolean esito = check1 || check2;
+					Assert.assertTrue(esito, "Content-Type del file di risposta ["+contentTypeRisposta+"] diverso da quello atteso ["+contentTypeAttesoRisposta+"] o atteso2["+contentTypeAttesoRisposta2+"]");
 				}
 
 				byte[] contentRisposta = httpResponse.getContent();

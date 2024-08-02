@@ -1,6 +1,12 @@
-2024-08-02  Andrea Poli <apoli@link.it>
+2024-08-05  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.15
+
+2024-08-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayMonitor]
+	Aggiunta possibilità di effettuare una verifica puntuale sull'aggiornamento dei dati statistici tramite il servizio di 'health check'.
+	Inoltre nella testata della console, lo stato di autodiagnosti riporta adesso anche l'informazione sullo stato di aggiornamento dei dati statistici.
 
 2024-08-01  Andrea Poli <apoli@link.it>
 
