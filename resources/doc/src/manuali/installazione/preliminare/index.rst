@@ -46,8 +46,8 @@ mancanti.
 La distribuzione GovWay è stata estesamente testata prima del rilascio
 sulla seguente piattaforma di riferimento:
 
--  *Openjdk 11 (version: 11.0.12+7)*
+-  *Openjdk 11 (version: 11.0.24+8)*
 
--  *PostgreSQL 9 (version: 9.2.24)*, *PostgreSQL 13 (version: 13.2)* e *Oracle 11g ExpressEdition (version: 11.2.0.2.0)*
+-  *PostgreSQL 13 (version: 13.7)*, *PostgreSQL 16 (version: 16.2)* e *Oracle 11g ExpressEdition (version: 11.2.0.2.0)*
 
--  *WildFly 18 (version: 18.0.1.Final)*, *WildFly 25 (version: 25.0.0.Final)*, *WildFly 26 (version: 26.1.1.Final)* e *Tomcat 9 (version: 9.0.31)*
+-  *WildFly 18 (version: 18.0.1.Final)*, *WildFly 25 (version: 25.0.0.Final)*, *WildFly 26 (version: 26.1.3.Final)* e *Tomcat 9 (version: 9.0.91)*
