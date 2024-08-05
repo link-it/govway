@@ -167,8 +167,8 @@ public class RESTIntegrazionePortaApplicativa {
 			
 			String version_jbossas = org.openspcoop2.protocol.trasparente.testsuite.core.Utilities.readApplicationServerVersion();
 			if((version_jbossas.startsWith("tomcat")) && "text/problem+json;charsetUTF-8".equals(contentType)) {
-				contentType = "text/problem+json; charsetutf-8=";
-				erroreAtteso = "In parameter list <; charsetutf-8=>, expected parameter value, got \"null\"";
+				contentType = "text/problem+json;charsetUTF-8";
+				erroreAtteso = "In parameter list <;charsetUTF-8>, expected '=', got \"null\"";
 			}
 			
 			String diag = "Il contenuto applicativo della risposta ricevuta non è processabile: Content-Type '"+contentType+"' presente nella risposta non valido: "+erroreAtteso;

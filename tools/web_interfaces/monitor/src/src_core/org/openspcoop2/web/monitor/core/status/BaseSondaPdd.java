@@ -42,6 +42,11 @@ public abstract class BaseSondaPdd implements ISondaPdd{
 	 */
 	private static final long serialVersionUID = 1L;
 	protected transient Logger log= null;
+	protected void logError(String msg, Exception e) {
+		if(this.log!=null) {
+			this.log.error(msg,e);
+		}
+	}
 	protected String name= null;
 	protected String identificativo = null;
 
@@ -50,7 +55,7 @@ public abstract class BaseSondaPdd implements ISondaPdd{
 
 	protected abstract void init() throws Exception;
 
-	public BaseSondaPdd(String identificativo, Logger log, Properties prop) throws Exception{
+	protected BaseSondaPdd(String identificativo, Logger log, Properties prop) throws Exception{
 
 		try{
 			this.log = log;
@@ -58,13 +63,13 @@ public abstract class BaseSondaPdd implements ISondaPdd{
 			this.identificativo = identificativo;
 
 			this.name = this.identificativo;
-			String name_tmp = this.propertiesSonda.getProperty("name");
-			if(name_tmp != null)
-				this.name = name_tmp;
+			String nameTmp = this.propertiesSonda.getProperty("name");
+			if(nameTmp != null)
+				this.name = nameTmp;
 
 			init();
 		}catch(Exception e){
-			this.log.error("Si e' verificato un errore durante l'Init Sonda "+identificativo+": " + e.getMessage(),e); 
+			this.logError("Si e' verificato un errore durante l'Init Sonda "+identificativo+": " + e.getMessage(),e); 
 			throw e;
 		}
 	}

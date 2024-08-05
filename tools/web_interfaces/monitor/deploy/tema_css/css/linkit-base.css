@@ -724,6 +724,10 @@ span[id$='iconLink']{
 	vertical-align: super;
 }
 
+.vertical-align-text-bottom {
+	vertical-align: text-bottom;
+}
+
 .padding-0 {
 	padding: 0px;
 }
