@@ -149,10 +149,13 @@ maintenance:
 name: GovWay
 platforms:
   - web
-releaseDate: '2024-02-06'
+releaseDate: '2024-08-05'
 softwareType: standalone/web
-softwareVersion: 3.3.14
+softwareVersion: 3.3.15
 url: 'https://github.com/link-it/govway'
 usedBy:
   - MISE - Ministero dello Sviluppo Economico
   - CSI Piemonte
+  - Comune di Preganziol
+  - Conservatorio di Musica di Foggia - Umberto Giordano
+  - Conservatorio di Musica di Livorno - Pietro Mascagni
