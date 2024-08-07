@@ -1652,7 +1652,7 @@ public class GestoreTokenValidazioneUtilities {
 				}	
 				
 			}catch(Exception e) {
-				throw new TokenException("JWT header validation failed; "+e.getMessage());
+				throw new TokenException("JWT header validation failed; "+e.getMessage(),e);
 			}
 			
 		}

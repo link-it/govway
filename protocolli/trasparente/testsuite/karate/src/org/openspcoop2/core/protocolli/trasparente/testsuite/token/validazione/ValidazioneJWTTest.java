@@ -46,6 +46,9 @@ public class ValidazioneJWTTest extends ConfigLoader {
 	public static final String validazione = "TestValidazioneToken-ValidazioneJWT";
 	
 	public static final String validazioneHeaderRFC9068 = "TestValidazioneToken-ValidazioneJWT-HeaderRFC9068";
+	public static final String validazioneHeaderRFC9068noCTY = "TestValidazioneToken-ValidazioneJWT-HeaderRFC9068noCTY";
+	public static final String validazioneHeaderRFC9068noTYP = "TestValidazioneToken-ValidazioneJWT-HeaderRFC9068noTYP";
+
 	public static final String validazioneHeader = "TestValidazioneToken-ValidazioneJWT-Header";
 		
 	@Test
@@ -1612,6 +1615,207 @@ public class ValidazioneJWTTest extends ConfigLoader {
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	@Test
+	public void successValidazioneHeaderRFC9068noCTY() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put("test-username", Utilities.username);
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWTHeader("at+jwt", 
+						"application/json", // anche se fornito viene ignorato 
+						null,
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazioneHeaderRFC9068noCTY, "success", headers,  null,
+				null,
+				null, mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void success2ValidazioneHeaderRFC9068noCTY() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put("test-username", Utilities.username);
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWTHeader("application/at+jwt", 
+						"application/JSON", // anche se fornito viene ignorato 
+						null,
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazioneHeaderRFC9068noCTY, "success", headers,  null,
+				null,
+				null, mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void invalidValidazioneHeaderTypRFC9068noCTY() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		String tokenInvalid = buildJWTHeader("AltroValore", "application/json", null,
+				null);
+		
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				tokenInvalid);
+		headers.put("test-username", Utilities.username);
+		
+		Utilities._test(logCore, validazioneHeaderRFC9068noCTY, "success", headers,  null,
+				"Validazione del token 'JWS' fallita: Token non valido: JWT header validation failed; Claim 'typ' with invalid value 'AltroValore'",
+				null, Utilities.getMapExpectedTokenInfoInvalid(tokenInvalid));
+	}
+	
+	@Test
+	public void successInvalidValidazioneHeaderCtyRFC9068() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		String tokenInvalid = buildJWTHeader("application/at+jwt", 
+				"ValoreNonCorretto", // anche se fornito viene ignorato 
+				null,
+				mapExpectedTokenInfo);
+		
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				tokenInvalid);
+		headers.put("test-username", Utilities.username);
+		
+		Utilities._test(logCore, validazioneHeaderRFC9068noCTY, "success", headers,  null,
+				null,
+				null, mapExpectedTokenInfo);
+
+	}
+	
+	@Test
+	public void successUndefinedValidazioneHeaderCtyRFC9068() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		String tokenInvalid = buildJWTHeader("application/at+jwt", 
+				null, // cty non fornito
+				null,
+				mapExpectedTokenInfo);
+		
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				tokenInvalid);
+		headers.put("test-username", Utilities.username);
+		
+		Utilities._test(logCore, validazioneHeaderRFC9068noCTY, "success", headers,  null,
+				null,
+				null, mapExpectedTokenInfo);
+
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	@Test
+	public void successValidazioneHeaderRFC9068noTYP() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put("test-username", Utilities.username);
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWTHeader("at+jwt", // anche se fornito viene ignorato 
+						"application/json", 
+						null,
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazioneHeaderRFC9068noTYP, "success", headers,  null,
+				null,
+				null, mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void successInvalidValidazioneHeaderTypRFC9068() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put("test-username", Utilities.username);
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWTHeader("AT+JWT/ValoreNonCorretto", // anche se fornito viene ignorato 
+						"application/json", 
+						null,
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazioneHeaderRFC9068noTYP, "success", headers,  null,
+				null,
+				null, mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void successUndefinedValidazioneHeaderTypRFC9068() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		String tokenInvalid = buildJWTHeader(null,  // cty non fornito
+				"application/json", 
+				null,
+				mapExpectedTokenInfo);
+		
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				tokenInvalid);
+		headers.put("test-username", Utilities.username);
+		
+		Utilities._test(logCore, validazioneHeaderRFC9068noTYP, "success", headers,  null,
+				null,
+				null, mapExpectedTokenInfo);
+
+	}
+	
+	@Test
+	public void invalidValidazioneHeaderCtyRFC9068noTYP() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		String tokenInvalid = buildJWTHeader(null, "AltroValore", null,
+				null);
+		
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				tokenInvalid);
+		headers.put("test-username", Utilities.username);
+		
+		Utilities._test(logCore, validazioneHeaderRFC9068noTYP, "success", headers,  null,
+				"Validazione del token 'JWS' fallita: Token non valido: JWT header validation failed; Claim 'cty' with invalid value 'AltroValore'",
+				null, Utilities.getMapExpectedTokenInfoInvalid(tokenInvalid));
+	}
 	
 	
 	
