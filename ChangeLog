@@ -1,3 +1,13 @@
+2024-08-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1754
+	(https://github.com/link-it/govway/issues/170)
+	Abilitando la validazione degli header in una Token Policy di Validazione e inserendo i valori attesi solo per i claim 'typ' e 'alg', 
+	si otteneva uno dei seguenti errori inattesi: 
+	- "JWT header validation failed; null"
+	- "JWT header validation failed; Expected claim 'cty' not found"
+
 2024-08-05  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.15
