@@ -118,8 +118,8 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 			String trasformazioneRichiestaContentType = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_REQ_CONTENT_TYPE);
 			String trasformazioneRestAbilitatoS = porteDelegateHelper.getParametroBoolean(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_REST_TRANSFORMATION);
 			boolean trasformazioneRestAbilitato =  trasformazioneRestAbilitatoS != null ? ServletUtils.isCheckBoxEnabled(trasformazioneRestAbilitatoS) : false;
-			String trasformazioneRestMethod = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_REST_METHOD);
-			String trasformazioneRestPath = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_REST_PATH);
+			String trasformazioneRestMethod = porteDelegateHelper.getParametroHttpMethod(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_REST_METHOD);
+			String trasformazioneRestPath = porteDelegateHelper.getParametroResourcePath(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_REST_PATH);
 			String trasformazioneSoapAbilitatoS = porteDelegateHelper.getParametroBoolean(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_SOAP_TRANSFORMATION);
 			boolean trasformazioneSoapAbilitato =  trasformazioneSoapAbilitatoS != null ? ServletUtils.isCheckBoxEnabled(trasformazioneSoapAbilitatoS) : false;
 			String trasformazioneSoapAction = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_SOAP_ACTION);

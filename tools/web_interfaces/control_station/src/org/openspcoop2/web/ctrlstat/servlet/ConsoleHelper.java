@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.net.URI;
 import java.net.URL;
 import java.sql.Connection;
 import java.text.MessageFormat;
@@ -19253,7 +19254,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 						
 						
-						String trasformazioneRestMethod = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_METHOD);
+						String trasformazioneRestMethod = this.getParametroHttpMethod(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_METHOD);
 						
 						if (StringUtils.isEmpty(trasformazioneRestMethod)) {
 							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
@@ -19261,7 +19262,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							return false;
 						}
 						
-						String trasformazioneRestPath = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH);
+						String trasformazioneRestPath = this.getParametroResourcePath(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH);
 						
 						if (StringUtils.isEmpty(trasformazioneRestPath)) {
 							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
@@ -23739,7 +23740,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(location!=null && !"".equals(location) && location.toLowerCase().startsWith("https")) {
 				String nomeConnettore = null;
 				try {
-					URL url = new URL( location );
+					URL url = new URI(location).toURL();//  new URL( location );
 					String host = url.getHost();
 					if(host==null || "".equals(host)) {
 						throw new DriverControlStationException("L'endpoint '"+host+"' non contiene un host");
@@ -24204,6 +24205,73 @@ public class ConsoleHelper implements IConsoleHelper {
 					return false;
 				}
 			}
+		}
+		
+		return true;
+	}
+	
+	public String getParametroHttpMethod(String parameterName) throws ValidationException, DriverControlStationException {
+		return getParametroHttpMethod(parameterName, true);
+	}
+	
+	public String getParametroHttpMethod(String parameterName, boolean validate) throws ValidationException, DriverControlStationException{
+		if(validate && !this.validaParametroHttpMethod(parameterName)) {
+			throw new ValidationException("Il parametro [" +parameterName + "] contiene un valore non valido.");
+		}
+		// in questo caso restituisco il valore originale che e' un valore della enum HTTPMethods
+		return Validatore.getInstance().getParametroOriginale(this.request, parameterName);
+	}
+	
+	/**
+	 * Validazione del parametro HttpMethod
+	 * 
+	 * @param parameterToCheck
+	 * @return
+	 */
+	private boolean validaParametroHttpMethod(String parameterToCheck) {
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(this.request, parameterToCheck);
+		
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, vuol dire che contiene la parola chiave DELETE
+		HttpMethod httpMethod = HttpMethod.toEnumConstant(parameterValueOriginale);
+		
+		return httpMethod != null;
+	}
+	
+	public String getParametroResourcePath(String parameterName) throws ValidationException, DriverControlStationException {
+		return getParametroResourcePath(parameterName, true);
+	}
+	
+	public String getParametroResourcePath(String parameterName, boolean validate) throws ValidationException, DriverControlStationException{
+		if(validate && !this.validaParametroResourcePath(parameterName)) {
+			throw new ValidationException("Il parametro [" +parameterName + "] contiene un valore non valido.");
+		}
+		// in questo caso restituisco il valore originale che e' una lista di HTTPMethods
+		return Validatore.getInstance().getParametroOriginale(this.request, parameterName);
+	}
+	
+	/**
+	 * Validazione del parametro HttpMethod
+	 * 
+	 * @param parameterToCheck
+	 * @return
+	 */
+	private boolean validaParametroResourcePath(String parameterToCheck) {
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(this.request, parameterToCheck);
+		
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		try {
+			Validatore.getInstance().validate("Il valore del parametro [" + parameterToCheck + "]:["+parameterValueOriginale+"]", parameterValueOriginale, null, true, false, org.openspcoop2.web.lib.mvc.security.Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA);
+		}catch(ValidationException e) {
+			return false;
 		}
 		
 		return true;
