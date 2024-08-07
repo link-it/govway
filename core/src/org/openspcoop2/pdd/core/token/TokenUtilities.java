@@ -101,16 +101,18 @@ public class TokenUtilities {
 	public static List<String> getClaims(Properties p, String name) {
 		String v = p.getProperty(name);
 		List<String> l = new ArrayList<>();
-		if(v.contains(",")) {
-			String [] tmp = v.split(",");
-			for (String s : tmp) {
-				if(StringUtils.isNotEmpty(s.trim())) {
-					l.add(s.trim());
+		if(v!=null) {
+			if(v.contains(",")) {
+				String [] tmp = v.split(",");
+				for (String s : tmp) {
+					if(StringUtils.isNotEmpty(s.trim())) {
+						l.add(s.trim());
+					}
 				}
 			}
-		}
-		else {
-			l.add(v.trim());
+			else {
+				l.add(v.trim());
+			}
 		}
 		return l;
 	}
