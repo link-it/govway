@@ -21,7 +21,7 @@
 package org.openspcoop2.core.registry.rest;
 
 import java.io.Serializable;
-import java.net.URL;
+import java.net.URI;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -75,7 +75,7 @@ public class RegistryAPI extends Api implements Serializable {
 			
 			this.setName(aspc.getNome());
 			this.setDescription(aspc.getDescrizione());
-			this.setBaseURL(new URL(baseURL));
+			this.setBaseURL(new URI(baseURL).toURL());
 			
 			if(aspc.sizeResourceList()>0) {
 				for (Resource resource : aspc.getResourceList()) {

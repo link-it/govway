@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -177,7 +178,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		HttpURLConnection httpConn = null;
 		if(this.configuration_path.startsWith("http://") || this.configuration_path.startsWith("file://")){
 			try{ 
-				URL url = new URL(this.configuration_path);
+				URL url = new URI(this.configuration_path).toURL();
 				URLConnection connection = url.openConnection();
 				httpConn = (HttpURLConnection) connection;
 				httpConn.setRequestMethod("GET");

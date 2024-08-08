@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class BaseSoggettoItem extends BaseItem {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String soggetto = null;
  /**
    * Get soggetto

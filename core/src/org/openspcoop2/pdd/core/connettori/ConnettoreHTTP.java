@@ -30,6 +30,7 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -127,7 +128,7 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 			this.buildLocation();		
 			if(this.debug)
 				this.logger.debug("Creazione URL ["+this.location+"]...");
-			URL url = new URL( this.location );	
+			URL url = new URI( this.location ).toURL();	
 
 			
 			// Collezione header di trasporto per dump

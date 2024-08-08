@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -158,7 +159,7 @@ public class Client {
 
 
 		// Create the connection where we're going to send the file.
-		URL url = new URL(SOAPUrl);
+		URL url = new URI(SOAPUrl).toURL();
 		URLConnection connection = url.openConnection();
 		HttpURLConnection httpConn = (HttpURLConnection) connection;
 

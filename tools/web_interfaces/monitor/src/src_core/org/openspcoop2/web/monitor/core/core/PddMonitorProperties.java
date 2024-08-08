@@ -862,7 +862,7 @@ public class PddMonitorProperties {
 		if(StringUtils.isNotBlank(localeLang)) {
 			if(StringUtils.isBlank(localeCountry))
 				localeCountry = "";
-			return new Locale(localeLang, localeCountry);
+			return Locale.of(localeLang, localeCountry);
 		}
 		
 		return null;

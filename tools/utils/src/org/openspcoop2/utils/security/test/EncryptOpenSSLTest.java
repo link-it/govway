@@ -515,7 +515,7 @@ public class EncryptOpenSSLTest {
 				// ignore
 			}
 			
-			Process process = Runtime.getRuntime().exec(fExecute.getAbsolutePath());
+			Process process = Runtime.getRuntime().exec(new String[]{fExecute.getAbsolutePath()});
 						
 			if(process.getInputStream()!=null) {
 				byte[] s = Utilities.getAsByteArray(process.getInputStream(), false);

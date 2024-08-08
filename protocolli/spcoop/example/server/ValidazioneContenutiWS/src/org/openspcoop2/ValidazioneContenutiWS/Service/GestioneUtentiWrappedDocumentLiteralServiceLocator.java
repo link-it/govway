@@ -27,6 +27,8 @@
 
 package org.openspcoop2.ValidazioneContenutiWS.Service;
 
+import java.net.URISyntaxException;
+
 /**
 *
 * @author Andrea Poli (apoli@link.it)
@@ -76,9 +78,9 @@ public class GestioneUtentiWrappedDocumentLiteralServiceLocator extends org.apac
 	public org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiWrappedDocumentLiteral getGestioneUtentiWrappedDocumentLiteral() throws javax.xml.rpc.ServiceException {
        java.net.URL endpoint;
         try {
-            endpoint = new java.net.URL(this.GestioneUtentiWrappedDocumentLiteral_address);
+            endpoint = new  java.net.URI(this.GestioneUtentiWrappedDocumentLiteral_address).toURL();
         }
-        catch (java.net.MalformedURLException e) {
+        catch (java.net.MalformedURLException | URISyntaxException e) {
             throw new javax.xml.rpc.ServiceException(e);
         }
         return getGestioneUtentiWrappedDocumentLiteral(endpoint);
@@ -109,7 +111,7 @@ public class GestioneUtentiWrappedDocumentLiteralServiceLocator extends org.apac
 	public java.rmi.Remote getPort(Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
         try {
             if (org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiWrappedDocumentLiteral.class.isAssignableFrom(serviceEndpointInterface)) {
-                org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiWrappedDocumentLiteralSoapBindingStub _stub = new org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiWrappedDocumentLiteralSoapBindingStub(new java.net.URL(this.GestioneUtentiWrappedDocumentLiteral_address), this);
+                org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiWrappedDocumentLiteralSoapBindingStub _stub = new org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiWrappedDocumentLiteralSoapBindingStub(new  java.net.URI(this.GestioneUtentiWrappedDocumentLiteral_address).toURL(), this);
                 _stub.setPortName(getGestioneUtentiWrappedDocumentLiteralWSDDServiceName());
                 return _stub;
             }

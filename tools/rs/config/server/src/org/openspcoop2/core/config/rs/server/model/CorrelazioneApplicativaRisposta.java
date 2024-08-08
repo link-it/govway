@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class CorrelazioneApplicativaRisposta extends CorrelazioneApplicativaBase {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private CorrelazioneApplicativaRispostaEnum identificazioneTipo = null;
   
   @Schema(description = "La semantica cambia in funzione del tipo:   * header-based: nome dell'header   * content-based: xpath o json path da applicare sul contenuto   * input-based: questo field non deve essere valorizzato poichè l'informazione applicativa viene estratta dagli header di integrazione   * template: template con parti dinamiche risolte a runtime da GovWay   * freemarker-template: freemarker template   * velocity-template: velocity template   * disabilitato:  questo field non deve essere valorizzato poichè la funzionalità di estrazione è disabilitata")

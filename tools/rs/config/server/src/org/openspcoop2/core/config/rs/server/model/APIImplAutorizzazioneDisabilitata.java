@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class APIImplAutorizzazioneDisabilitata  implements OneOfAPIImplAutorizzazione, OneOfControlloAccessiAutorizzazioneAutorizzazione, OneOfControlloAccessiAutorizzazioneViewAutorizzazione {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TipoAutorizzazioneEnum tipo = null;
  /**
    * Get tipo

@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class ModIKeyStoreRidefinito  implements OneOfErogazioneModIRestRispostaSicurezzaMessaggioKeystore, OneOfErogazioneModISoapRispostaSicurezzaMessaggioKeystore, OneOfFruizioneModIOAuthKeystore, OneOfFruizioneModIRestRichiestaSicurezzaMessaggioKeystore, OneOfFruizioneModISoapRichiestaSicurezzaMessaggioKeystore {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private StatoDefaultRidefinitoEnum modalita = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "tipologia", visible = true )
   @com.fasterxml.jackson.annotation.JsonSubTypes({
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreArchive.class, name = "archivio"),

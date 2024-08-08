@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class ApiModI  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private ApiModISicurezzaCanale sicurezzaCanale = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private ApiModISicurezzaMessaggio sicurezzaMessaggio = null;
  /**
    * Get sicurezzaCanale

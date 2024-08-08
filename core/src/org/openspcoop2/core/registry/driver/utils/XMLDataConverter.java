@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Connection;
@@ -570,7 +571,7 @@ public class XMLDataConverter {
 			HttpURLConnection httpConn = null;
 			if(sorgente.startsWith("http://") || sorgente.startsWith("file://")){
 				try{ 
-					URL url = new URL(sorgente);
+					URL url = new URI(sorgente).toURL();
 					URLConnection connection = url.openConnection();
 					httpConn = (HttpURLConnection) connection;
 					httpConn.setRequestMethod("GET");

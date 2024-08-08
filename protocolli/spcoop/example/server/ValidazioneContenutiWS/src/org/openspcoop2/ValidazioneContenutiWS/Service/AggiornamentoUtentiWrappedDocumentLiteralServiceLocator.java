@@ -27,6 +27,8 @@
 
 package org.openspcoop2.ValidazioneContenutiWS.Service;
 
+import java.net.URISyntaxException;
+
 /**
 *
 * @author Andrea Poli (apoli@link.it)
@@ -76,9 +78,9 @@ public class AggiornamentoUtentiWrappedDocumentLiteralServiceLocator extends org
 	public org.openspcoop2.ValidazioneContenutiWS.Service.AggiornamentoUtentiWrappedDocumentLiteral getAggiornamentoUtentiWrappedDocumentLiteral() throws javax.xml.rpc.ServiceException {
        java.net.URL endpoint;
         try {
-            endpoint = new java.net.URL(this.AggiornamentoUtentiWrappedDocumentLiteral_address);
+            endpoint = new  java.net.URI(this.AggiornamentoUtentiWrappedDocumentLiteral_address).toURL();
         }
-        catch (java.net.MalformedURLException e) {
+        catch (java.net.MalformedURLException | URISyntaxException e) {
             throw new javax.xml.rpc.ServiceException(e);
         }
         return getAggiornamentoUtentiWrappedDocumentLiteral(endpoint);
@@ -109,7 +111,7 @@ public class AggiornamentoUtentiWrappedDocumentLiteralServiceLocator extends org
 	public java.rmi.Remote getPort(Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
         try {
             if (org.openspcoop2.ValidazioneContenutiWS.Service.AggiornamentoUtentiWrappedDocumentLiteral.class.isAssignableFrom(serviceEndpointInterface)) {
-                org.openspcoop2.ValidazioneContenutiWS.Service.AggiornamentoUtentiWrappedDocumentLiteralSoapBindingStub _stub = new org.openspcoop2.ValidazioneContenutiWS.Service.AggiornamentoUtentiWrappedDocumentLiteralSoapBindingStub(new java.net.URL(this.AggiornamentoUtentiWrappedDocumentLiteral_address), this);
+                org.openspcoop2.ValidazioneContenutiWS.Service.AggiornamentoUtentiWrappedDocumentLiteralSoapBindingStub _stub = new org.openspcoop2.ValidazioneContenutiWS.Service.AggiornamentoUtentiWrappedDocumentLiteralSoapBindingStub(new  java.net.URI(this.AggiornamentoUtentiWrappedDocumentLiteral_address).toURL(), this);
                 _stub.setPortName(getAggiornamentoUtentiWrappedDocumentLiteralWSDDServiceName());
                 return _stub;
             }

@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ModIApplicativoEsterno  implements OneOfApplicativoModi {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private DominioEnum dominio = null;
   
   @Schema(description = "")

@@ -22,6 +22,7 @@ package org.openspcoop2.example.pdd.client.esitoidentificazione;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
@@ -139,7 +140,7 @@ public final class EsitoIdentificazione_EsitoIdentificazioneInterfaceEndpoint_Cl
                 if (wsdlFile.exists()) {
                     wsdlURL = wsdlFile.toURI().toURL();
                 } else {
-                    wsdlURL = new URL(url);
+                    wsdlURL = new URI(url).toURL();
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();

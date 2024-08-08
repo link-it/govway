@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class RegistrazioneTransazioniConfigurazioneBase  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TracciamentoTransazioniStato stato = null;
   
   @Schema(description = "")

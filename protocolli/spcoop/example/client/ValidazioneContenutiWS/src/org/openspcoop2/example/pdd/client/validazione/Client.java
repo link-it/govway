@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
@@ -394,7 +395,7 @@ public class Client {
                 System.out.println("Richiesta inviata:\n"+new String(b));
                 
                 // Create the connection where we're going to send the file.
-                URL urlC = new URL(SOAPUrl);
+                URL urlC = new URI(SOAPUrl).toURL();
                 URLConnection connection = urlC.openConnection();
                 HttpURLConnection httpConn = (HttpURLConnection) connection;
 

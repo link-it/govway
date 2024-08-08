@@ -25,6 +25,7 @@ package org.openspcoop2.example.pdd.client.as4.domibus;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 
@@ -87,9 +88,9 @@ public class DomibusClient {
 			URL wsdlLocation = null;
 			if(wsdlLocationPath == null){
 				System.out.println("WARNING : Default wsdl location: " + url+ "?wsdl" );
-				wsdlLocation = new URL(url+ "?wsdl");
+				wsdlLocation = new URI(url+ "?wsdl").toURL();
 			} else {
-				wsdlLocation = new URL(url.trim());
+				wsdlLocation = new URI(url.trim()).toURL();
 			}
 
 

@@ -29,7 +29,7 @@ import jakarta.validation.Valid;
 
 public class GruppoBase extends GruppoNome {
   
-  @Schema(example = "[\"az1\",\"az2\",\"az3\"]", required = true, description = "")
+  @Schema(example = "[\"az1\",\"az2\",\"az3\"]", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private List<String> azioni = new ArrayList<>();
  /**
    * Get azioni

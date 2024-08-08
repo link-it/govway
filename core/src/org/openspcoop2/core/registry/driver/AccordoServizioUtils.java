@@ -21,6 +21,7 @@
 package org.openspcoop2.core.registry.driver;
 
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -116,7 +117,7 @@ public class AccordoServizioUtils {
 				try{
 					String location = as.getWsdlConcettuale();
 					if(location.startsWith("http://") || location.startsWith("file://")){
-						URL url = new URL(location);
+						URL url = new URI(location).toURL();
 						wsdl = HttpUtilities.requestHTTPFile(url.toString());
 					}
 					else{
@@ -132,7 +133,7 @@ public class AccordoServizioUtils {
 					try{
 						String location = as.getWsdlLogicoErogatore();
 						if(location.startsWith("http://") || location.startsWith("file://")){
-							URL url = new URL(location);
+							URL url = new URI(location).toURL();
 							wsdl = HttpUtilities.requestHTTPFile(url.toString());
 						}
 						else{
@@ -147,7 +148,7 @@ public class AccordoServizioUtils {
 					try{
 						String location = as.getWsdlLogicoFruitore();
 						if(location.startsWith("http://") || location.startsWith("file://")){
-							URL url = new URL(location);
+							URL url = new URI(location).toURL();
 							wsdlFruitore = HttpUtilities.requestHTTPFile(url.toString());
 						}
 						else{
@@ -283,7 +284,7 @@ public class AccordoServizioUtils {
 				String location = as.getWsdlDefinitorio();
 				try{
 					if(location.startsWith("http://") || location.startsWith("file://")){
-						URL url = new URL(location);
+						URL url = new URI(location).toURL();
 						resource = HttpUtilities.requestHTTPFile(url.toString());
 						systemId = (new File(url.getFile())).getName();
 					}
@@ -332,7 +333,7 @@ public class AccordoServizioUtils {
 					String location = allegato.getFile();
 					try{
 						if(location.startsWith("http://") || location.startsWith("file://")){
-							URL url = new URL(location);
+							URL url = new URI(location).toURL();
 							resource = HttpUtilities.requestHTTPFile(url.toString());
 							systemId = (new File(url.getFile())).getName();
 						}
@@ -385,7 +386,7 @@ public class AccordoServizioUtils {
 					String location = specificaSemiformale.getFile();
 					try{
 						if(location.startsWith("http://") || location.startsWith("file://")){
-							URL url = new URL(location);
+							URL url = new URI(location).toURL();
 							resource = HttpUtilities.requestHTTPFile(url.toString());
 							systemId = (new File(url.getFile())).getName();
 						}

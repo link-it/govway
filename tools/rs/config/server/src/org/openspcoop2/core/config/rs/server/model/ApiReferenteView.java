@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 
 public class ApiReferenteView extends BaseItem {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String referente = null;
  /**
    * Get referente

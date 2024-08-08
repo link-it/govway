@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class BaseItem  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private ProfiloEnum profilo = null;
  /**
    * Get profilo

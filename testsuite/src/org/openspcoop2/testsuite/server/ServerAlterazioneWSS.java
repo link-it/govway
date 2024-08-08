@@ -91,7 +91,7 @@ public class ServerAlterazioneWSS extends ServerCore{
 			
 			// forward
 			org.apache.axis.soap.SOAPConnectionImpl connection = new  org.apache.axis.soap.SOAPConnectionImpl(); 	    
-			java.net.URL urlConnection = new java.net.URL(urlForward);
+			java.net.URL urlConnection = new  java.net.URI(urlForward).toURL();
 			Message responseMsg = (org.apache.axis.Message) connection.call(msg,urlConnection);
 			
 

@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class BaseKeyStoreArchive extends BaseKeyStore {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private byte[] keystoreArchivio = null;
  /**
    * Get keystoreArchivio

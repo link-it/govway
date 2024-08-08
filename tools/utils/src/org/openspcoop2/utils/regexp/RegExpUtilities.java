@@ -21,6 +21,7 @@
 package org.openspcoop2.utils.regexp;
 
 import java.io.File;
+import java.net.URISyntaxException;
 
 import org.openspcoop2.utils.UtilsException;
 
@@ -48,22 +49,22 @@ public class RegExpUtilities {
 	public static boolean isUrlDefinedByVariable(String url) throws java.net.MalformedURLException{
 		return isDefinedByVariable(url);
 	}
-	public static void validateUrl(String url) throws java.net.MalformedURLException{
+	public static void validateUrl(String url) throws java.net.MalformedURLException, URISyntaxException{
 		validateUrl(url, false);
 	}
-	public static void validateUrl(String url, boolean skipCheckUrlDefinedByVariable) throws java.net.MalformedURLException{
+	public static void validateUrl(String url, boolean skipCheckUrlDefinedByVariable) throws java.net.MalformedURLException, URISyntaxException{
 		boolean urlDefinedByVariable = isUrlDefinedByVariable(url);
 		if( (!urlDefinedByVariable) || (!skipCheckUrlDefinedByVariable) ) {
 			// se sono presenti le { } la url può essere costruita dinamicamente
-			java.net.URL testUrl = new java.net.URL(url);
+			java.net.URL testUrl = new  java.net.URI(url).toURL();
 			testUrl.toString();
 		}
 	}
 	
-	public static void validateUri(String uri) throws UtilsException,java.net.MalformedURLException{
+	public static void validateUri(String uri) throws UtilsException,java.net.MalformedURLException, URISyntaxException{
 		validateUri(uri, false);
 	}
-	public static void validateUri(String uri, boolean skipCheckUrlDefinedByVariable) throws UtilsException,java.net.MalformedURLException{
+	public static void validateUri(String uri, boolean skipCheckUrlDefinedByVariable) throws UtilsException,java.net.MalformedURLException, URISyntaxException{
 		if (uri.startsWith("http://")
 				|| uri.startsWith("file://")) {
 

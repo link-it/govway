@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyStore;
@@ -343,7 +344,7 @@ public class ClientHttpGenerico extends ClientCore{
 			// URL
 			if(this.portaDelegata==null)
 				this.portaDelegata="";
-			URL url=new URL(this.urlPortaDiDominio+this.portaDelegata);
+			URL url=new URI(this.urlPortaDiDominio+this.portaDelegata).toURL();
 			URLConnection connection = url.openConnection();
 			HttpURLConnection httpConn = (HttpURLConnection) connection;
 			this.conn = httpConn;

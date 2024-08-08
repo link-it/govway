@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ConfigurazioneApiCanale  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private ConfigurazioneCanaleEnum configurazione = null;
   
   @Schema(description = "")

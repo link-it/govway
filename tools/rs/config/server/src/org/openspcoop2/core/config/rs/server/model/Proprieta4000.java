@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class Proprieta4000  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String nome = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String valore = null;
  /**
    * Get nome

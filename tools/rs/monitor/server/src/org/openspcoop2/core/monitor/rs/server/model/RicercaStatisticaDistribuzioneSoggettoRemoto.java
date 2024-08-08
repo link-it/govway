@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class RicercaStatisticaDistribuzioneSoggettoRemoto extends RicercaBaseStatistica {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private OpzioniGenerazioneReportDimensioni report = null;
   
   @Schema(description = "")

@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -86,7 +87,7 @@ public abstract class AbstractXMLServiceManager<XML> {
 		HttpURLConnection httpConn = null;
 		if(this.xmlPath.startsWith("http://") || this.xmlPath.startsWith("file://")){
 			try{ 
-				URL url = new URL(this.xmlPath);
+				URL url = new URI(this.xmlPath).toURL();
 				URLConnection connection = url.openConnection();
 				httpConn = (HttpURLConnection) connection;
 				httpConn.setRequestMethod("GET");

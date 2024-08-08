@@ -27,16 +27,16 @@ import jakarta.validation.Valid;
 
 public class APIImplAutorizzazioneAbilitataNew  implements OneOfAPIImplAutorizzazione {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TipoAutorizzazioneEnum tipo = null;
   
-  @Schema(example = "false", required = true, description = "")
+  @Schema(example = "false", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private Boolean richiedente = true;
   
   @Schema(description = "")
   private String soggetto = null;
   
-  @Schema(example = "false", required = true, description = "")
+  @Schema(example = "false", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private Boolean ruoli = false;
   
   @Schema(description = "")

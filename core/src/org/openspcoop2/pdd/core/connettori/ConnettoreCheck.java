@@ -24,6 +24,8 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -792,7 +794,7 @@ public class ConnettoreCheck {
 		}
 	}
 		
-	private static void _checkHTTP(TipiConnettore tipoConnettore, Connettore connettore, Logger log) throws ConnettoreException, UtilsException, MalformedURLException {
+	private static void _checkHTTP(TipiConnettore tipoConnettore, Connettore connettore, Logger log) throws ConnettoreException, UtilsException, MalformedURLException, URISyntaxException {
 		
 		SSLConfig sslContextProperties = null;
 		Map<String,Object> dynamicMap = null;
@@ -911,7 +913,7 @@ public class ConnettoreCheck {
 		if(locationDefinedByVariable(location)) {
 			return;
 		}
-		URL url = new URL( location );
+		URL url = new URI( location ).toURL();
 		
 		
 		// Creazione Connessione
@@ -1272,7 +1274,7 @@ public class ConnettoreCheck {
 							String endpoint = getPropertyValue(connettore, CostantiConnettori.CONNETTORE_LOCATION);
 							if(endpoint!=null) {
 								try {
-									URL url = new URL(endpoint);
+									URL url = new URI(endpoint).toURL();
 									int port = url.getPort();
 									if(port<=0) {
 										if("https".equals(url.getProtocol())){
@@ -1325,7 +1327,7 @@ public class ConnettoreCheck {
 			if(location==null || "".equals(location)) {
 				throw new Exception("Il connettore non possiede un endpoint");
 			}
-			URL url = new URL( location );
+			URL url = new URI( location ).toURL();
 			String host = url.getHost();
 			if(host==null || "".equals(host)) {
 				throw new Exception("L'endpoint '"+host+"' non contiene un host");

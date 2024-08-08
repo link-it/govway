@@ -44,7 +44,7 @@ public class TransazioneExtContenutoMessaggioBody  {
   private TransazioneMessaggioFormatoEnum formato = null;
   @XmlElement(name="content_type", required = true)
   
-  @Schema(example = "application/json", required = true, description = "")
+  @Schema(example = "application/json", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String contentType = null;
   @XmlElement(name="content_length")
   

@@ -30,10 +30,10 @@ import jakarta.validation.Valid;
 
 public class ApiImplVersioneApiView extends BaseSoggettoItem {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String apiNome = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private Integer apiVersione = null;
   
   @Schema(description = "")
@@ -48,7 +48,7 @@ public class ApiImplVersioneApiView extends BaseSoggettoItem {
   @Schema(description = "")
   private String tipoServizio = null;
   
-  @Schema(example = "[1,2,3]", required = true, description = "")
+  @Schema(example = "[1,2,3]", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private List<Integer> versioni = new ArrayList<>();
  /**
    * Get apiNome

@@ -20,6 +20,7 @@
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.applicativo_server;
 
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -60,7 +61,7 @@ public class IntegrationManagerTest extends ConfigLoader {
 	
 
 	@Test
-	public void integrationManager() throws MalformedURLException, IntegrationManagerException_Exception {
+	public void integrationManager() throws MalformedURLException, IntegrationManagerException_Exception, URISyntaxException {
 		
 		String erogazione 							= "TestIntegrationManager";
 		String connettoreMessageBox 	= "Default";	

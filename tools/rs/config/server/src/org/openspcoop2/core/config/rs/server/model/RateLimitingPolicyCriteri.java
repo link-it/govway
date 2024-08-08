@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class RateLimitingPolicyCriteri  implements OneOfRateLimitingPolicyBaseConIdentificazioneConfigurazione {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private RateLimitingIdentificazionePolicyEnum identificazione = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private RateLimitingCriteriMetricaEnum metrica = null;
   
   @Schema(description = "")

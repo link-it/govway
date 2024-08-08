@@ -21,6 +21,8 @@
 package org.openspcoop2.message.rest;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -168,14 +170,14 @@ public class RestUtilities {
 	}
 	
 	public static String buildPassReverseUrl(TransportRequestContext transportRequestContext, String baseUrl, String redirectLocationUrlParam, String prefixGatewayUrl,
-			String interfaceName) throws MalformedURLException {
+			String interfaceName) throws MalformedURLException, URISyntaxException {
                
 		String r = baseUrl;
 		if(r.contains("?")) {
 			r = baseUrl.split("\\?")[0];
 		}
          
-		URL uri = new URL(r);
+		URL uri = new URI(r).toURL();
 		String rRelative= uri.getPath();
 		
 		String redirectLocationUrl = null;
@@ -273,7 +275,7 @@ public class RestUtilities {
 			else {
 				// relative
 				if(prefixGatewayUrl!=null) {
-					URL urlPrefixGatewayUrl = new URL(prefixGatewayUrl);
+					URL urlPrefixGatewayUrl = new URI(prefixGatewayUrl).toURL();
 					String urlPrefixGatewayUrlAsString = urlPrefixGatewayUrl.getPath();
 					bf.append(urlPrefixGatewayUrlAsString);
 					if(urlPrefixGatewayUrlAsString.endsWith("/")==false) {
@@ -350,14 +352,14 @@ public class RestUtilities {
 	}
 
 	public static String buildCookiePassReversePath(TransportRequestContext transportRequestContext, String baseUrl, String cookiePathParam, String prefixGatewayUrl,
-			String interfaceName) throws MalformedURLException {
+			String interfaceName) throws MalformedURLException, URISyntaxException {
         
 		String r = baseUrl;
 		if(r.contains("?")) {
 			r = baseUrl.split("\\?")[0];
 		}
          
-		URL uri = new URL(r);
+		URL uri = new URI(r).toURL();
 		String rRelative= uri.getPath();
 		
 		String cookiePath = null;
@@ -420,7 +422,7 @@ public class RestUtilities {
 			StringBuilder bf = new StringBuilder();
 			// relative
 			if(prefixGatewayUrl!=null) {
-				URL urlPrefixGatewayUrl = new URL(prefixGatewayUrl);
+				URL urlPrefixGatewayUrl = new URI(prefixGatewayUrl).toURL();
 				String urlPrefixGatewayUrlAsString = urlPrefixGatewayUrl.getPath();
 				bf.append(urlPrefixGatewayUrlAsString);
 				if(urlPrefixGatewayUrlAsString.endsWith("/")==false) {
@@ -490,14 +492,14 @@ public class RestUtilities {
 		}
 	}
 	
-	public static String buildCookiePassReverseDomain(TransportRequestContext transportRequestContext, String baseUrl, String cookieDomain, String prefixGatewayUrl) throws MalformedURLException {
+	public static String buildCookiePassReverseDomain(TransportRequestContext transportRequestContext, String baseUrl, String cookieDomain, String prefixGatewayUrl) throws URISyntaxException, MalformedURLException {
                
 		String r = baseUrl;
 		if(r.contains("?")) {
 			r = baseUrl.split("\\?")[0];
 		}
          
-		URL uri = new URL(r);
+		URL uri = new URI(r).toURL();
 		String rDomain= uri.getHost();
 		
 		if(cookieDomain!=null && cookieDomain.equalsIgnoreCase(rDomain)) {
@@ -510,13 +512,13 @@ public class RestUtilities {
 					HttpServletTransportRequestContext http = (HttpServletTransportRequestContext) transportRequestContext;
 					if(http.getHttpServletRequest()!=null) {
 						String requestUrl = http.getHttpServletRequest().getRequestURL().toString();
-						URL uriRequestUrl = new URL(requestUrl);
+						URL uriRequestUrl = new URI(requestUrl).toURL();
 						newDomain = uriRequestUrl.getHost();
 					}
 				}
 			}
 			else {
-				URL uriRequestUrl = new URL(prefixGatewayUrl);
+				URL uriRequestUrl = new URI(prefixGatewayUrl).toURL();
 				newDomain = uriRequestUrl.getHost();
 			}
 

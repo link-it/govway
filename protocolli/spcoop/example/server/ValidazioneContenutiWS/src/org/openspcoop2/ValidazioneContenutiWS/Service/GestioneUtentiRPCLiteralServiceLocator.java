@@ -28,6 +28,8 @@
 
 package org.openspcoop2.ValidazioneContenutiWS.Service;
 
+import java.net.URISyntaxException;
+
 /**
 *
 * @author Andrea Poli (apoli@link.it)
@@ -77,9 +79,9 @@ public class GestioneUtentiRPCLiteralServiceLocator extends org.apache.axis.clie
 	public org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiRPCLiteral getGestioneUtentiRPCLiteral() throws javax.xml.rpc.ServiceException {
        java.net.URL endpoint;
         try {
-            endpoint = new java.net.URL(this.GestioneUtentiRPCLiteral_address);
+            endpoint = new  java.net.URI(this.GestioneUtentiRPCLiteral_address).toURL();
         }
-        catch (java.net.MalformedURLException e) {
+        catch (java.net.MalformedURLException | URISyntaxException e) {
             throw new javax.xml.rpc.ServiceException(e);
         }
         return getGestioneUtentiRPCLiteral(endpoint);
@@ -110,7 +112,7 @@ public class GestioneUtentiRPCLiteralServiceLocator extends org.apache.axis.clie
 	public java.rmi.Remote getPort(Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
         try {
             if (org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiRPCLiteral.class.isAssignableFrom(serviceEndpointInterface)) {
-                org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiRPCLiteralSoapBindingStub _stub = new org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiRPCLiteralSoapBindingStub(new java.net.URL(this.GestioneUtentiRPCLiteral_address), this);
+                org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiRPCLiteralSoapBindingStub _stub = new org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiRPCLiteralSoapBindingStub(new  java.net.URI(this.GestioneUtentiRPCLiteral_address).toURL(), this);
                 _stub.setPortName(getGestioneUtentiRPCLiteralWSDDServiceName());
                 return _stub;
             }

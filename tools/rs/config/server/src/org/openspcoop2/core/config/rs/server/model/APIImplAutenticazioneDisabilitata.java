@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class APIImplAutenticazioneDisabilitata  implements OneOfAPIImplAutenticazione, OneOfControlloAccessiAutenticazioneAutenticazione, OneOfGruppoNuovaConfigurazioneAutenticazione {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TipoAutenticazioneEnum tipo = null;
  /**
    * Get tipo

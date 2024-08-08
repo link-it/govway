@@ -21,6 +21,8 @@
 package org.openspcoop2.example.pdd.server.stampadocumento;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import javax.xml.namespace.QName;
 import jakarta.xml.ws.Service;
@@ -46,8 +48,8 @@ public class StampaDocumentoService extends Service {
     static {
         URL url = null;
         try {
-            url = new URL("file:configurazionePdD/wsdl/implementativoErogatore.wsdl");
-        } catch (MalformedURLException e) {
+            url = new URI("file:configurazionePdD/wsdl/implementativoErogatore.wsdl").toURL();
+        } catch (MalformedURLException | URISyntaxException e) {
             System.err.println("Can not initialize the default wsdl from file:configurazionePdD/wsdl/implementativoErogatore.wsdl");
             // e.printStackTrace();
         }

@@ -27,13 +27,13 @@ import jakarta.validation.Valid;
 
 public class ErogazioneModISoap  implements OneOfErogazioneModi, OneOfErogazioneModIModi {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TipoApiEnum protocollo = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private ErogazioneModISoapRichiesta richiesta = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private ErogazioneModISoapRisposta risposta = null;
  /**
    * Get protocollo

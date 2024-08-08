@@ -28,13 +28,13 @@ import jakarta.validation.Valid;
 
 public class ApiServizio  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String nome = null;
   
   @Schema(description = "")
   private String descrizione = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private ProfiloCollaborazioneEnum profiloCollaborazione = null;
   
   @Schema(example = "false", description = "")

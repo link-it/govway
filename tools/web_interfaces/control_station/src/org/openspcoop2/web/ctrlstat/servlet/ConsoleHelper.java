@@ -23740,7 +23740,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(location!=null && !"".equals(location) && location.toLowerCase().startsWith("https")) {
 				String nomeConnettore = null;
 				try {
-					URL url = new URI(location).toURL();//  new URL( location );
+					URL url = new URI( location ).toURL();
 					String host = url.getHost();
 					if(host==null || "".equals(host)) {
 						throw new DriverControlStationException("L'endpoint '"+host+"' non contiene un host");

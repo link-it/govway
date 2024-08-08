@@ -27,19 +27,19 @@ import jakarta.validation.Valid;
 
 public class ConnettoreConfigurazioneTimeout  {
   
-  @Schema(example = "10000", required = true, description = "tempo massimo (in millisecondi) per instaurare una connessione")
+  @Schema(example = "10000", requiredMode = Schema.RequiredMode.REQUIRED, description = "tempo massimo (in millisecondi) per instaurare una connessione")
  /**
    * tempo massimo (in millisecondi) per instaurare una connessione  
   **/
   private Integer connectionTimeout = null;
   
-  @Schema(example = "150000", required = true, description = "tempo massimo (in millisecondi) per ricevere una risposta")
+  @Schema(example = "150000", requiredMode = Schema.RequiredMode.REQUIRED, description = "tempo massimo (in millisecondi) per ricevere una risposta")
  /**
    * tempo massimo (in millisecondi) per ricevere una risposta  
   **/
   private Integer connectionReadTimeout = null;
   
-  @Schema(example = "10000", required = true, description = "tempo medio (in millisecondi) atteso per ricevere una risposta")
+  @Schema(example = "10000", requiredMode = Schema.RequiredMode.REQUIRED, description = "tempo medio (in millisecondi) atteso per ricevere una risposta")
  /**
    * tempo medio (in millisecondi) atteso per ricevere una risposta  
   **/

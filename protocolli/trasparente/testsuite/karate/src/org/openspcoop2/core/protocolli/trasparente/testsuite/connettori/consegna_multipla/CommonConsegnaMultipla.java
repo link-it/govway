@@ -32,6 +32,8 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -257,10 +259,10 @@ public class CommonConsegnaMultipla {
 		}
 	}
 	
-	public static MessageBox getMessageBox(String username, String password) throws MalformedURLException {
+	public static MessageBox getMessageBox(String username, String password) throws MalformedURLException, URISyntaxException {
 		String url 	= System.getProperty("connettori.message_box.url");
 
-		URL wsdlLocation							= new URL(url+ "?wsdl");
+		URL wsdlLocation							= new URI(url+ "?wsdl").toURL();
 		MessageBoxService imMessageBoxService	= new MessageBoxService(wsdlLocation, SERVICE_NAME_MessageBox);
 		MessageBox imMessageBoxPort 						= imMessageBoxService.getMessageBox();
 		BindingProvider imProviderMessageBox 		= (BindingProvider) imMessageBoxPort;

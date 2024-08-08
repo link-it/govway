@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 
 public class GestioneCorsAccessControl  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private Boolean allAllowOrigins = true;
   
   @Schema(description = "")

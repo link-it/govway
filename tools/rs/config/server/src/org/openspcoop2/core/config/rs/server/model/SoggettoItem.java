@@ -28,10 +28,10 @@ import jakarta.validation.Valid;
 
 public class SoggettoItem extends BaseItem {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String nome = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private DominioEnum dominio = null;
   
   @Schema(example = "0", description = "")

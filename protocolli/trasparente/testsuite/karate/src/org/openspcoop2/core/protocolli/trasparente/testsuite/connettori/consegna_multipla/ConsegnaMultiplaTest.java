@@ -46,6 +46,7 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -733,7 +734,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 	
 	
 	@Test
-	public void integrationManager() throws MalformedURLException, IntegrationManagerException_Exception {
+	public void integrationManager() throws MalformedURLException, IntegrationManagerException_Exception, URISyntaxException {
 			
 		/**
 		 * Diversamente dalla consegna con notifiche, In questa erogazione la messageBox è fornita da un applicativo server.

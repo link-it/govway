@@ -31,20 +31,20 @@ public class ApiBase  {
   @Schema(description = "")
   private String referente = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "protocollo", visible = true )
   @com.fasterxml.jackson.annotation.JsonSubTypes({
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ApiInterfacciaRest.class, name = "rest"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ApiInterfacciaSoap.class, name = "soap")  })
   private OneOfApiBaseTipoInterfaccia tipoInterfaccia = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String nome = null;
   
   @Schema(example = "descrizione API", description = "")
   private String descrizione = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private Integer versione = null;
   
   @Schema(example = "[\"PagamentiTelematici\",\"Anagrafica\"]", description = "")

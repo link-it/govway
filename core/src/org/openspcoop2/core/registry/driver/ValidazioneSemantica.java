@@ -22,6 +22,7 @@
 package org.openspcoop2.core.registry.driver;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1952,8 +1953,8 @@ public class ValidazioneSemantica {
 
 	/* ------------------ UTILITY ------------------------------*/
 
-	private void validaUrl(String url) throws java.net.MalformedURLException {
-		java.net.URL testUrl = new java.net.URL(url);
+	private void validaUrl(String url) throws java.net.MalformedURLException, URISyntaxException {
+		java.net.URL testUrl = new  java.net.URI(url).toURL();
 		testUrl.toString();
 	}
 

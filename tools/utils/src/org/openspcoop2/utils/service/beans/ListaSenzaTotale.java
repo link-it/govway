@@ -27,13 +27,13 @@ import jakarta.validation.Valid;
 
 public class ListaSenzaTotale  {
   
-  @Schema(required = true, description = "The zero-ary offset index into the results")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "The zero-ary offset index into the results")
  /**
    * The zero-ary offset index into the results  
   **/
   private Long offset = null;
   
-  @Schema(required = true, description = "How many items to return at one time")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "How many items to return at one time")
  /**
    * How many items to return at one time  
   **/

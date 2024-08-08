@@ -39,14 +39,14 @@ import jakarta.validation.Valid;
 public class TransazioneEsito  {
   @XmlElement(name="codice", required = true)
   
-  @Schema(required = true, description = "Codice che rappresenta l'esito dell'invocazione. Può essere un http status per i protocolli basati su HTTP, o un altra codifica (es. OK/KO)")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "Codice che rappresenta l'esito dell'invocazione. Può essere un http status per i protocolli basati su HTTP, o un altra codifica (es. OK/KO)")
  /**
    * Codice che rappresenta l'esito dell'invocazione. Può essere un http status per i protocolli basati su HTTP, o un altra codifica (es. OK/KO)  
   **/
   private String codice = null;
   @XmlElement(name="descrizione", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String descrizione = null;
  /**
    * Codice che rappresenta l&#x27;esito dell&#x27;invocazione. Può essere un http status per i protocolli basati su HTTP, o un altra codifica (es. OK/KO)

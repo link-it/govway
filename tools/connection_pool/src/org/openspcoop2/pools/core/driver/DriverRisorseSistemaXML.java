@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -90,7 +91,7 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 		HttpURLConnection httpConn = null;
 		if(this.openspcoop2_pools_path.startsWith("http://") || this.openspcoop2_pools_path.startsWith("file://")){
 			try{ 
-				URL url = new URL(this.openspcoop2_pools_path);
+				URL url = new URI(this.openspcoop2_pools_path).toURL();
 				URLConnection connection = url.openConnection();
 				httpConn = (HttpURLConnection) connection;
 				httpConn.setRequestMethod("GET");

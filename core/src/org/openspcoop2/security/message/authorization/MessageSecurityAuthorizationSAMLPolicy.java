@@ -214,7 +214,7 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 								}
 								else if(d.getFile()!=null){
 									if(d.getFile().startsWith("http://") || d.getFile().startsWith("file://")){
-										URL url = new URL(d.getFile());
+										URL url = new URI(d.getFile()).toURL();
 										policy = HttpUtilities.requestHTTPFile(url.toString());
 									}
 									else{

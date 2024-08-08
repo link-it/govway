@@ -29,7 +29,7 @@ import jakarta.validation.Valid;
 
 public class ApiTags  {
   
-  @Schema(example = "[\"PagamentiTelematici\",\"Anagrafica\"]", required = true, description = "")
+  @Schema(example = "[\"PagamentiTelematici\",\"Anagrafica\"]", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private List<String> tags = new ArrayList<>();
  /**
    * Get tags

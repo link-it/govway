@@ -27,16 +27,16 @@ import jakarta.validation.Valid;
 
 public class ApiModISicurezzaMessaggioApplicabilitaCustom  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private ModISicurezzaMessaggioApplicabilitaEnum applicabilita = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private ModISicurezzaMessaggioApplicabilitaCustomEnum richiesta = null;
   
   @Schema(description = "")
   private String richiestaContentType = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private ModISicurezzaMessaggioApplicabilitaCustomEnum risposta = null;
   
   @Schema(description = "")

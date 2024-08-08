@@ -30,7 +30,7 @@ public class ApiImplInformazioniGenerali  {
   @Schema(description = "")
   private String tipo = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String nome = null;
   
   @Schema(description = "")

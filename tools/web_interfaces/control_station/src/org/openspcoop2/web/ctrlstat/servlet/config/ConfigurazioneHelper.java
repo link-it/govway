@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.config;
 
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
@@ -18625,7 +18625,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					
 					try {
-						new URL(urlArchivio);
+						new URI(urlArchivio).toURL();
 					}catch(Exception e) {
 						this.pd.setMessage("Il valore indicato nel campo '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_URL_ARCHIVIO+"' non rappresenta una URL valida.");
 						return false;

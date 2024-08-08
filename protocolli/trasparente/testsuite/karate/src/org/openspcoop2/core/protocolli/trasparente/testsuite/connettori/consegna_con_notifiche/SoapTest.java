@@ -49,6 +49,7 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -1384,7 +1385,7 @@ public class SoapTest extends ConfigLoader {
 	
 	
 	@Test
-	public void integrationManager() throws MalformedURLException, IntegrationManagerException_Exception {
+	public void integrationManager() throws MalformedURLException, IntegrationManagerException_Exception, URISyntaxException {
 		// Solo il connettore0 usa il servizio di message box, gli altri completano con 
 		// 200 e soap fault
 

@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 
 public class ApplicativoItem extends BaseSoggettoItem {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String nome = null;
   
   @Schema(example = "3", description = "")

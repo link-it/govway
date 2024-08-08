@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Date;
 
@@ -66,7 +68,7 @@ public class PluginJar implements Serializable {
 		FileSystemUtilities.writeFile(this.fContent, contenuto);
 		this.resourceURL = this.fContent.toURI().toURL();
 	}
-	public PluginJar(String nome, Date data, String url) throws RegExpException, RegExpNotValidException, RegExpNotFoundException, MalformedURLException {
+	public PluginJar(String nome, Date data, String url) throws RegExpException, RegExpNotValidException, RegExpNotFoundException, MalformedURLException, URISyntaxException {
 		this.nome = nome;
 		this.date = data;
 		this.url = url;
@@ -74,7 +76,7 @@ public class PluginJar implements Serializable {
 		String uriPattern = ".+://.+";
 		boolean matchUri = RegularExpressionEngine.isMatch(this.url, uriPattern);
 		if(matchUri) {
-			this.resourceURL = new URL(this.url);
+			this.resourceURL = new URI(this.url).toURL();
 		}
 		else {
 			File f = new File(this.url);
@@ -82,7 +84,7 @@ public class PluginJar implements Serializable {
 				this.resourceURL = f.toURI().toURL();
 			}
 			else {
-				this.resourceURL = new URL(this.url);
+				this.resourceURL = new URI(this.url).toURL();
 			}
 		}
 	}

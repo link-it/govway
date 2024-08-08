@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -183,7 +184,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 		HttpURLConnection httpConn = null;
 		if(this.registry_path.startsWith("http://") || this.registry_path.startsWith("file://")){
 			try{ 
-				URL url = new URL(this.registry_path);
+				URL url = new URI(this.registry_path).toURL();
 				URLConnection connection = url.openConnection();
 				httpConn = (HttpURLConnection) connection;
 				httpConn.setRequestMethod("GET");

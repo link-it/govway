@@ -23,6 +23,8 @@ package org.openspcoop2.utils.xml;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -837,9 +839,9 @@ public class XSDUtils {
 		}
 	}
 	
-	public String getBaseNameXSDLocation(String location) throws MalformedURLException{
+	public String getBaseNameXSDLocation(String location) throws MalformedURLException, URISyntaxException{
 		if(location.startsWith("http://") || location.startsWith("https://") || location.startsWith("file://")){
-			URL url = new URL(location);
+			URL url = new URI(location).toURL();
 			File fileUrl = new File(url.getFile());
 			return fileUrl.getName();
 		}

@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class Validazione extends ApiImplConfigurazioneStato {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private StatoFunzionalitaConWarningEnum stato = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TipoValidazioneEnum tipo = null;
   
   @Schema(example = "false", description = "")
