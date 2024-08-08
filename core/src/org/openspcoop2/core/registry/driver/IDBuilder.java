@@ -330,7 +330,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 	 * Ritorna gli oggetti gestiti
 	 * 
 	 * @return oggetti gestiti
-	 * @throws DriverException
+	 * @throws IOException
 	 */
 	@Override
 	public String[] getManagedObjects(boolean simpleName) throws IOException{
@@ -373,7 +373,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 	 * 
 	 * @param o
 	 * @return nome descrittivo dell'oggetto.
-	 * @throws DriverException
+	 * @throws IOException
 	 */
 	@Override
 	public String getSimpleName(Object o) throws IOException{

@@ -476,8 +476,9 @@ public class RegularExpressionEngine {
 	 * @param contenuto contenuto su cui applicare la ricerca
 	 * @param pattern Pattern di ricerca
 	 * @return indicazione se il contenuto rispetto il pattern
-	 * @throws ExpressionException
-	 * @throws ExpressionNotFoundException
+	 * @throws RegExpException
+	 * @throws RegExpNotValidException
+	 * @throws RegExpNotFoundException
 	 */
 	public static boolean isMatch(String contenuto, String pattern) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
 		return RegularExpressionEngine.isMatchEngine(contenuto, pattern, true, (RegularExpressionPatternCompileMode[])null);

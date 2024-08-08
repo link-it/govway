@@ -2656,7 +2656,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	 * Metodo che verica la connessione ad una risorsa.
 	 * Se la connessione non e' presente, viene lanciata una eccezione che contiene il motivo della mancata connessione
 	 * 
-	 * @throws DriverException eccezione che contiene il motivo della mancata connessione
+	 * @throws CoreException eccezione che contiene il motivo della mancata connessione
 	 */
 	@Override
 	public void isAlive() throws CoreException{

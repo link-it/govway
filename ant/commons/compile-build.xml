@@ -159,6 +159,8 @@
 			source="${classSourceVersion}" target="${classTargetVersion}" encoding="UTF-8">
 			<compilerarg value="-Xlint:unchecked"/>
 			<compilerarg value="-Xlint:deprecation"/>
+			<compilerarg value="-proc:full"/>
+
 			<src path="${compile_src_openspcoop2.SRC_DIR}"/>
 			<src path="${compile_src_openspcoop2.SRC_DIR_2}"/>
 			<src path="${compile_src_openspcoop2.SRC_DIR_3}"/>

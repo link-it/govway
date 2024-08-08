@@ -65,7 +65,7 @@ public interface IDBuilder {
 	 * Ritorna i nomi delle classi degli oggetti gestiti se simpleName=false, oppure un nome descrittivo.
 	 * 
 	 * @return oggetti gestiti
-	 * @throws DriverException
+	 * @throws IOException
 	 */
 	public String[] getManagedObjects(boolean simpleName) throws IOException; 
 	
@@ -75,7 +75,7 @@ public interface IDBuilder {
 	 * 
 	 * @param o
 	 * @return nome descrittivo dell'oggetto.
-	 * @throws DriverException
+	 * @throws IOException
 	 */
 	public String getSimpleName(Object o) throws IOException; 
 	

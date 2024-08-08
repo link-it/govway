@@ -56,8 +56,7 @@ public interface IStatisticFilter extends IFilter {
 	 * Make the negation of the expression
 	 * 
 	 * @return the instance of itself
-	 * @throws ExpressionNotImplementedException Method not implemented
-	 * @throws ExpressionException Error Processing
+	 * @throws SearchException
 	 */
 	@Override
 	public IStatisticFilter not() throws SearchException;
@@ -66,8 +65,7 @@ public interface IStatisticFilter extends IFilter {
 	 * Use the conjunction "AND" for all expressions
 	 * 
 	 * @return the instance of itself
-	 * @throws ExpressionNotImplementedException Method not implemented
-	 * @throws ExpressionException Error Processing
+	 * @throws SearchException
 	 */
 	@Override
 	public IStatisticFilter and() throws SearchException;
@@ -76,8 +74,7 @@ public interface IStatisticFilter extends IFilter {
 	 * Use the conjunction "OR" for all expressions
 	 * 
 	 * @return the instance of itself
-	 * @throws ExpressionNotImplementedException Method not implemented
-	 * @throws ExpressionException Error Processing
+	 * @throws SearchException
 	 */
 	@Override
 	public IStatisticFilter or() throws SearchException;
