@@ -1265,23 +1265,23 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String user = null;
 			String password = null;
 			
-			String connettoreDebug = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+			String connettoreDebug = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
 					
 			// token policy
-			String autenticazioneTokenS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
+			String autenticazioneTokenS = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			@SuppressWarnings("unused")
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			String tokenPolicy = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			
 			// proxy
-			String proxyEnabled = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			String proxyEnabled = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 			String proxyHostname = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
 			String proxyPort = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
 			String proxyUsername = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
 			String proxyPassword = this.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 			
 			// tempi risposta
-			String tempiRispostaEnabled = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+			String tempiRispostaEnabled = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
 			String tempiRispostaConnectionTimeout = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
 			String tempiRispostaReadTimeout = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
 			String tempiRispostaTempoMedioRisposta = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
@@ -1302,7 +1302,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 			// api key
 			@SuppressWarnings("unused")
-			String autenticazioneApiKey = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_API_KEY);
+			String autenticazioneApiKey = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_API_KEY);
 			String apiKeyHeader = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_HEADER);
 			if(apiKeyHeader==null || StringUtils.isEmpty(apiKeyHeader)) {
 				apiKeyHeader = CostantiConnettori.DEFAULT_HEADER_API_KEY;
@@ -1313,7 +1313,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				appIdHeader = CostantiConnettori.DEFAULT_HEADER_APP_ID;
 			}
 			String appIdValue = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE);
-			String useOAS3NamesTmp = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_NOMI_OAS);
+			String useOAS3NamesTmp = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_NOMI_OAS);
 			@SuppressWarnings("unused")
 			boolean useOAS3Names=true;
 			if(useOAS3NamesTmp!=null && StringUtils.isNotEmpty(useOAS3NamesTmp)) {
@@ -1322,7 +1322,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			else {
 				useOAS3Names = this.isAutenticazioneApiKeyUseOAS3Names(apiKeyHeader, appIdHeader);
 			}
-			String useAppIdTmp = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_USE_APP_ID);
+			String useAppIdTmp = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_USE_APP_ID);
 			@SuppressWarnings("unused")
 			boolean useAppId=false;
 			if(useAppIdTmp!=null && StringUtils.isNotEmpty(useAppIdTmp)) {
@@ -1348,15 +1348,15 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			// https
 			String httpsurl = url;
 			String httpstipologia = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
-			String httpshostverifyS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
+			String httpshostverifyS = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 			boolean httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
-			String httpsTrustVerifyCertS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
+			String httpsTrustVerifyCertS = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
 			boolean httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 			String httpspath = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 			String httpstipo = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 			String httpspwd = this.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
 			String httpsalgoritmo = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
-			String httpsstatoS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
+			String httpsstatoS = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
 			boolean httpsstato = ServletUtils.isCheckBoxEnabled(httpsstatoS);
 			String httpskeystore = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
 			String httpspwdprivatekeytrust = this.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
@@ -1441,23 +1441,23 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String user = null;
 			String password = null;
 			
-			String connettoreDebug = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+			String connettoreDebug = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
 					
 			// token policy
-			String autenticazioneTokenS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
+			String autenticazioneTokenS = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			@SuppressWarnings("unused")
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			String tokenPolicy = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			
 			// proxy
-			String proxyEnabled = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			String proxyEnabled = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 			String proxyHostname = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
 			String proxyPort = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
 			String proxyUsername = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
 			String proxyPassword = this.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 			
 			// tempi risposta
-			String tempiRispostaEnabled = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+			String tempiRispostaEnabled = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
 			String tempiRispostaConnectionTimeout = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
 			String tempiRispostaReadTimeout = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
 			String tempiRispostaTempoMedioRisposta = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
@@ -1478,7 +1478,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 			// api key
 			@SuppressWarnings("unused")
-			String autenticazioneApiKey = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_API_KEY);
+			String autenticazioneApiKey = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_API_KEY);
 			String apiKeyHeader = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_HEADER);
 			if(apiKeyHeader==null || StringUtils.isEmpty(apiKeyHeader)) {
 				apiKeyHeader = CostantiConnettori.DEFAULT_HEADER_API_KEY;
@@ -1489,7 +1489,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				appIdHeader = CostantiConnettori.DEFAULT_HEADER_APP_ID;
 			}
 			String appIdValue = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE);
-			String useOAS3NamesTmp = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_NOMI_OAS);
+			String useOAS3NamesTmp = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_NOMI_OAS);
 			@SuppressWarnings("unused")
 			boolean useOAS3Names=true;
 			if(useOAS3NamesTmp!=null && StringUtils.isNotEmpty(useOAS3NamesTmp)) {
@@ -1498,7 +1498,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			else {
 				useOAS3Names = this.isAutenticazioneApiKeyUseOAS3Names(apiKeyHeader, appIdHeader);
 			}
-			String useAppIdTmp = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_USE_APP_ID);
+			String useAppIdTmp = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_USE_APP_ID);
 			@SuppressWarnings("unused")
 			boolean useAppId=false;
 			if(useAppIdTmp!=null && StringUtils.isNotEmpty(useAppIdTmp)) {
@@ -1524,15 +1524,15 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			// https
 			String httpsurl = url;
 			String httpstipologia = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
-			String httpshostverifyS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
+			String httpshostverifyS = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 			boolean httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
-			String httpsTrustVerifyCertS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
+			String httpsTrustVerifyCertS = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
 			boolean httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 			String httpspath = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 			String httpstipo = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 			String httpspwd = this.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
 			String httpsalgoritmo = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
-			String httpsstatoS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
+			String httpsstatoS = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
 			boolean httpsstato = ServletUtils.isCheckBoxEnabled(httpsstatoS);
 			String httpskeystore = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
 			String httpspwdprivatekeytrust = this.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
@@ -2931,26 +2931,26 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				endpointtype = TipiConnettore.HTTP.toString();
 			}
 			tipoconn = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
-			autenticazioneHttp = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
+			autenticazioneHttp = this.getBooleanParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 			
-			connettoreDebug = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+			connettoreDebug = this.getBooleanParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
 						
 			// token policy
-			String autenticazioneTokenS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
+			String autenticazioneTokenS = this.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			String tokenPolicy = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			boolean forcePDND = false;
 			boolean forceOAuth = false;
 			
 			// proxy
-			proxyEnabled = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			proxyEnabled = this.getBooleanParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 			proxyHostname = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
 			proxyPort = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
 			proxyUsername = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
 			proxyPassword = this.getLockedParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 			
 			// tempi risposta
-			tempiRispostaEnabled = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+			tempiRispostaEnabled = this.getBooleanParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
 			tempiRispostaConnectionTimeout = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
 			tempiRispostaReadTimeout = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
 			tempiRispostaTempoMedioRisposta = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
@@ -2970,7 +2970,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			}
 			
 			// api key
-			String autenticazioneApiKey = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_API_KEY);
+			String autenticazioneApiKey = this.getBooleanParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_API_KEY);
 			String apiKeyHeader = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_HEADER);
 			if(apiKeyHeader==null || StringUtils.isEmpty(apiKeyHeader)) {
 				apiKeyHeader = CostantiConnettori.DEFAULT_HEADER_API_KEY;
@@ -2981,7 +2981,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				appIdHeader = CostantiConnettori.DEFAULT_HEADER_APP_ID;
 			}
 			String appIdValue = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE);
-			String useOAS3NamesTmp = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_NOMI_OAS);
+			String useOAS3NamesTmp = this.getBooleanParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_NOMI_OAS);
 			boolean useOAS3Names=true;
 			if(useOAS3NamesTmp!=null && StringUtils.isNotEmpty(useOAS3NamesTmp)) {
 				useOAS3Names = ServletUtils.isCheckBoxEnabled(useOAS3NamesTmp);
@@ -2989,7 +2989,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			else {
 				useOAS3Names = this.isAutenticazioneApiKeyUseOAS3Names(apiKeyHeader, appIdHeader);
 			}
-			String useAppIdTmp = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_USE_APP_ID);
+			String useAppIdTmp = this.getBooleanParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_USE_APP_ID);
 			boolean useAppId=false;
 			if(useAppIdTmp!=null && StringUtils.isNotEmpty(useAppIdTmp)) {
 				useAppId = ServletUtils.isCheckBoxEnabled(useAppIdTmp);
@@ -3014,15 +3014,15 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			// https
 			httpsurl = url;
 			httpstipologia = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
-			httpshostverifyS = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
+			httpshostverifyS = this.getBooleanParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 			httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
-			String httpsTrustVerifyCertS = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
+			String httpsTrustVerifyCertS = this.getBooleanParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
 			httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 			httpspath = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 			httpstipo = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 			httpspwd = this.getLockedParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
 			httpsalgoritmo = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
-			httpsstatoS = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
+			httpsstatoS = this.getBooleanParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
 			httpsstato = ServletUtils.isCheckBoxEnabled(httpsstatoS);
 			httpskeystore = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
 			httpspwdprivatekeytrust = this.getLockedParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
@@ -3352,6 +3352,22 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			}
 		}
 		return toReturn;
+	}
+	
+	private String getBooleanParameter(boolean readedDatiConnettori, Default defaultProperties, String name) throws Exception {
+		String value = null;
+		if(!readedDatiConnettori) {
+			value = this.getParametroBoolean(name);
+		}
+		if(value==null &&
+			defaultProperties!=null && defaultProperties.sizeProprietaList()>0) {
+			for (ProprietaDefault defaultProperty : defaultProperties.getProprietaList()) {
+				if(name.equals(defaultProperty.getNome())) {
+					return defaultProperty.getValore();
+				}
+			}
+		}
+		return value;
 	}
 
 	public String getParametroArchiveType(String parameterName) throws ValidationException, DriverControlStationException {

@@ -132,9 +132,9 @@ public class PorteDelegateConnettoreDefault extends Action {
 			
 			String endpointtype = porteDelegateHelper.readEndPointType();
 			String tipoconn = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO );
-			String autenticazioneHttp = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
+			String autenticazioneHttp = porteDelegateHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 
-			String connettoreDebug = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+			String connettoreDebug = porteDelegateHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
 			
 			// token policy
 			String autenticazioneTokenS = porteDelegateHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
@@ -142,14 +142,14 @@ public class PorteDelegateConnettoreDefault extends Action {
 			String tokenPolicy = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 						
 			// proxy
-			String proxyEnabled = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			String proxyEnabled = porteDelegateHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 			String proxyHostname = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
 			String proxyPort = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
 			String proxyUsername = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
 			String proxyPassword = porteDelegateHelper.getLockedParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 
 			// tempi risposta
-			String tempiRispostaEnabled = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+			String tempiRispostaEnabled = porteDelegateHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
 			String tempiRispostaConnectionTimeout = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
 			String tempiRispostaReadTimeout = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
 			String tempiRispostaTempoMedioRisposta = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
@@ -172,7 +172,7 @@ public class PorteDelegateConnettoreDefault extends Action {
 			}
 			
 			// api key
-			String autenticazioneApiKey = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_API_KEY);
+			String autenticazioneApiKey = porteDelegateHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_API_KEY);
 			String apiKeyHeader = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_HEADER);
 			if(apiKeyHeader==null || StringUtils.isEmpty(apiKeyHeader)) {
 				apiKeyHeader = CostantiConnettori.DEFAULT_HEADER_API_KEY;
@@ -183,7 +183,7 @@ public class PorteDelegateConnettoreDefault extends Action {
 				appIdHeader = CostantiConnettori.DEFAULT_HEADER_APP_ID;
 			}
 			String appIdValue = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE);
-			String useOAS3NamesTmp = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_NOMI_OAS);
+			String useOAS3NamesTmp = porteDelegateHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_NOMI_OAS);
 			boolean useOAS3Names=true;
 			if(useOAS3NamesTmp!=null && StringUtils.isNotEmpty(useOAS3NamesTmp)) {
 				useOAS3Names = ServletUtils.isCheckBoxEnabled(useOAS3NamesTmp);
@@ -191,7 +191,7 @@ public class PorteDelegateConnettoreDefault extends Action {
 			else {
 				useOAS3Names = porteDelegateHelper.isAutenticazioneApiKeyUseOAS3Names(apiKeyHeader, appIdHeader);
 			}
-			String useAppIdTmp = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_USE_APP_ID);
+			String useAppIdTmp = porteDelegateHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_API_KEY_USE_APP_ID);
 			boolean useAppId=false;
 			if(useAppIdTmp!=null && StringUtils.isNotEmpty(useAppIdTmp)) {
 				useAppId = ServletUtils.isCheckBoxEnabled(useAppIdTmp);
