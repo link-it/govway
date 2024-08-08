@@ -240,13 +240,13 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						for (String nome : apiValidatorStructure.getNodeValidatorePrincipale().keySet()) {
 							if(root.equals(nome)) {
 								schemaNodeRoot = apiValidatorStructure.getNodeValidatorePrincipale().get(nome);
-								uriSchemaNodeRoot = new URL(root);
+								uriSchemaNodeRoot = new URI(root).toURL();
 							}
 							else {
 								if(schemaMap==null) {
-									schemaMap = new HashMap<URL, JsonNode>();
+									schemaMap = new HashMap<>();
 								}
-								schemaMap.put(new URL(nome), apiValidatorStructure.getNodeValidatorePrincipale().get(nome));
+								schemaMap.put(new URI(nome).toURL(), apiValidatorStructure.getNodeValidatorePrincipale().get(nome));
 							}
 						}
 					}
@@ -319,9 +319,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 							schemaNodeRoot = jsonUtils.getAsNode(apiRaw);
 						}
 						normalizeRefs(schemaNodeRoot);
-						uriSchemaNodeRoot = new URL(root);
+						uriSchemaNodeRoot = new URI(root).toURL();
 						
-						if(readApiSchemas && api.getSchemas()!=null && api.getSchemas().size()>0) {
+						if(readApiSchemas && api.getSchemas()!=null && !api.getSchemas().isEmpty()) {
 							
 							for (ApiSchema apiSchema : api.getSchemas()) {
 								
@@ -355,9 +355,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 								}
 								normalizeRefs(schemaNodeInternal);
 								if(schemaMap==null) {
-									schemaMap = new HashMap<URL, JsonNode>();
+									schemaMap = new HashMap<>();
 								}
-								schemaMap.put(new URL(root+apiSchema.getName()), schemaNodeInternal);
+								schemaMap.put(new URI(root+apiSchema.getName()).toURL(), schemaNodeInternal);
 								
 							}
 							
@@ -908,7 +908,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	private String normalizePath(String path) throws ProcessingException {
 		if(path.startsWith("http://") || path.startsWith("https://") || path.startsWith("file://")){	
 			try {
-				URL url = new URL(path);
+				URL url = new URI(path).toURL();
 				File fileUrl = new File(url.getFile());
 				return fileUrl.getName();
 			}catch(Exception e) {
@@ -924,12 +924,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		List<JsonNode> listRef = node.findParents(OAI3SchemaKeywords.$REF);
 		if(listRef!=null) {
 			for (JsonNode jsonNodeRef : listRef) {
-				//System.out.println("REF ("+jsonNodeRef.getClass().getName()+") : "+jsonNodeRef);
-				if(jsonNodeRef instanceof ObjectNode) {
-					ObjectNode oNode = (ObjectNode) jsonNodeRef;
+				if(jsonNodeRef instanceof ObjectNode oNode) {
 					JsonNode valore = oNode.get(OAI3SchemaKeywords.$REF);
 					String ref = valore.asText();
-					//System.out.println("VALORE:"+v);
 					String path = getRefPath(ref);
 					if(path!=null) {
 						String normalizePath = normalizePath(path);

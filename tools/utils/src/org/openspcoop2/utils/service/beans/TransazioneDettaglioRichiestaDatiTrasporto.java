@@ -40,7 +40,7 @@ import jakarta.validation.Valid;
 public class TransazioneDettaglioRichiestaDatiTrasporto  {
   @XmlElement(name="data_ricezione", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private DateTime dataRicezione = null;
   @XmlElement(name="data_consegna")
   

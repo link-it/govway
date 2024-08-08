@@ -39,11 +39,11 @@ import jakarta.validation.Valid;
 public class TransazioneExtInformazioniApiBase extends TransazioneInformazioniApi {
   @XmlElement(name="informazioni_erogatore", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TransazioneExtInformazioniSoggetto informazioniErogatore = null;
   @XmlElement(name="tipo", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String tipo = null;
   @XmlElement(name="tags")
   

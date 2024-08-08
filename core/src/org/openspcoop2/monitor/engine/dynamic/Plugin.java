@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
@@ -68,7 +69,7 @@ public class Plugin implements Serializable {
 	
 	private transient DynamicClassLoader classLoader;
 	
-	public Plugin(RegistroPlugin plugin) throws UtilsException, IOException, RegExpException, RegExpNotValidException, RegExpNotFoundException {
+	public Plugin(RegistroPlugin plugin) throws UtilsException, IOException, RegExpException, RegExpNotValidException, RegExpNotFoundException, URISyntaxException {
 		this.nome = plugin.getNome();
 		this.date = plugin.getData();
 		this.compatibilita = plugin.getCompatibilitaList();
@@ -81,7 +82,7 @@ public class Plugin implements Serializable {
 
 		this.classLoader = new DynamicClassLoader(listUrl.toArray(new URL[1]));
 	}
-	private void init(RegistroPluginArchivio pluginJar, List<URL> listUrl) throws UtilsException, IOException, RegExpException, RegExpNotValidException, RegExpNotFoundException {
+	private void init(RegistroPluginArchivio pluginJar, List<URL> listUrl) throws UtilsException, IOException, RegExpException, RegExpNotValidException, RegExpNotFoundException, URISyntaxException {
 		String archivioPrefix = "Archivio '"+pluginJar.getNome()+"' ";
 		PluginJar plug = null;
 		switch (pluginJar.getSorgente()) {
@@ -121,7 +122,7 @@ public class Plugin implements Serializable {
 		}
 	}
 	
-	private void loadJar(String nomePlugin, Date data, File dir, List<URL> listUrl) throws UtilsException, MalformedURLException, RegExpException, RegExpNotValidException, RegExpNotFoundException {
+	private void loadJar(String nomePlugin, Date data, File dir, List<URL> listUrl) throws UtilsException, MalformedURLException, RegExpException, RegExpNotValidException, RegExpNotFoundException, URISyntaxException {
 		
 		List<File> dirs = new ArrayList<>();
 		

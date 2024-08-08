@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class RegistrazioneTransazioniConfigurazioneFiletraceMessaggio  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private Boolean headers = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private Boolean payload = null;
  /**
    * Get headers

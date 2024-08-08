@@ -21,6 +21,7 @@
 package org.openspcoop2.pdd.core.connettori.httpcore5;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -245,7 +246,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			this.buildLocation();		
 			if(this.debug)
 				this.logger.debug("Creazione URL ["+this.location+"]...");
-			URL url = new URL( this.location );	
+			URL url = new URI( this.location ).toURL();	
 			
 			
 			// Keep-alive

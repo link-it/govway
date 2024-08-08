@@ -30,7 +30,7 @@ import jakarta.validation.Valid;
 
 public class ListaApiRisorse extends Lista {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private List<ApiRisorsa> items = new ArrayList<>();
  /**
    * Get items

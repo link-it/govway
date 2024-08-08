@@ -23,6 +23,7 @@ package org.openspcoop2.example.pdd.client.im;
 
 
 import java.io.*;
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 
@@ -67,9 +68,9 @@ public class IntegrationManagerClient_cxf {
 			URL wsdlLocation = null;
 			if(wsdlLocationPath == null){
 				System.out.println("WARNING : Default wsdl location: " + url+ "?wsdl" );
-				wsdlLocation = new URL(url+ "?wsdl");
+				wsdlLocation = new URI(url+ "?wsdl").toURL();
 			} else {
-				wsdlLocation = new URL(url.trim());
+				wsdlLocation = new URI(url.trim()).toURL();
 			}
 
 

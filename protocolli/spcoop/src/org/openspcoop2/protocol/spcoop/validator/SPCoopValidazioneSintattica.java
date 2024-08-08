@@ -23,6 +23,7 @@
 package org.openspcoop2.protocol.spcoop.validator;
 
 
+import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -1751,7 +1752,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 		if(indTelematico != null && (indTelematico.equals("")==false)){ 
 			URL urlCheck = null;
 			try{	
-				urlCheck = new URL( indTelematico );
+				urlCheck = new URI( indTelematico ).toURL();
 				this.busta.setIndirizzoMittente(urlCheck.toString());
 			} catch(Exception e) {
 				this.busta.setIndirizzoMittente(indTelematico); // comunque lo imposto!
@@ -1836,7 +1837,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 		if(indTelematico != null && (indTelematico.equals("")==false)){ 
 			URL urlcheck = null;
 			try{	
-				urlcheck = new URL( indTelematico );
+				urlcheck = new URI( indTelematico ).toURL();
 				this.busta.setIndirizzoDestinatario(urlcheck.toString());
 			} catch(Exception e) {
 				this.busta.setIndirizzoDestinatario(indTelematico); // comunque lo imposto!
@@ -3116,7 +3117,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						if(errorFind==false && indTelematicoOrigine != null && (indTelematicoOrigine.equals("")==false)){ 
 							URL urlcheck = null;
 							try{	
-								urlcheck = new URL( indTelematicoOrigine );
+								urlcheck = new URI( indTelematicoOrigine ).toURL();
 								indTelematicoOrigine = urlcheck.toString();
 							} catch(Exception e) {
 								Eccezione ecc = new Eccezione();
@@ -3249,7 +3250,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						if(errorFind==false && indTelematicoDestinazione != null && (indTelematicoDestinazione.equals("")==false)){ 
 							URL urlcheck = null;
 							try{	
-								urlcheck = new URL( indTelematicoDestinazione );
+								urlcheck = new URI( indTelematicoDestinazione ).toURL();
 								indTelematicoDestinazione = urlcheck.toString();
 							} catch(Exception e) {
 								Eccezione ecc = new Eccezione();

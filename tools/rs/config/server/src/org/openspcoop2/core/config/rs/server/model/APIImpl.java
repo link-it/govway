@@ -45,7 +45,7 @@ public class APIImpl extends APIBaseImpl {
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutorizzazioneXACML.class, name = "xacml-Policy")  })
   private OneOfAPIImplAutorizzazione autorizzazione = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private BaseConnettoreHttp connettore = null;
  /**
    * Get autenticazione

@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ApiImplStato  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private Boolean abilitato = null;
  /**
    * Get abilitato

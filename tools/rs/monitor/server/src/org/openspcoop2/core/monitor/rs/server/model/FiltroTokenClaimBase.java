@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class FiltroTokenClaimBase  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TokenClaimSearchEnum claim = null;
  /**
    * Get claim

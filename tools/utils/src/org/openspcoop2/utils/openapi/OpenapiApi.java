@@ -21,7 +21,7 @@
 
 package org.openspcoop2.utils.openapi;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -192,7 +192,7 @@ public class OpenapiApi extends Api {
 				OAI3Context context = null;
 				OpenApi3 openApi4j = null;
 				try {
-					context = new OAI3Context(new URL("file:/"), schemaNodeRoot, null);
+					context = new OAI3Context(new URI("file:/").toURL(), schemaNodeRoot, null);
 					openApi4j = TreeUtil.json.convertValue(context.getBaseDocument(), OpenApi3.class);
 					openApi4j.setContext(context);
 				}catch(Throwable e) {

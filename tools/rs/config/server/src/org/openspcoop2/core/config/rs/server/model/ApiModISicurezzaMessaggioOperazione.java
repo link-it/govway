@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ApiModISicurezzaMessaggioOperazione  implements OneOfApiModIAzioneSoapSicurezzaMessaggio, OneOfApiModIRisorsaRestSicurezzaMessaggio {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private ModISicurezzaMessaggioOperazioneEnum stato = null;
  /**
    * Get stato

@@ -21,7 +21,7 @@
 
 package org.openspcoop2.protocol.as4.config;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
@@ -134,7 +134,7 @@ public class AS4ProtocolManager extends BasicManager {
 							}
 							org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.BackendInterface domibusPort = null;
 							org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.BackendService11 domibusService = null;
-							domibusService = new org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.BackendService11(new URL(url+"?wsdl"));
+							domibusService = new org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.BackendService11(new URI(url+"?wsdl").toURL());
 							domibusPort = domibusService.getBACKENDPORT();
 							BindingProvider imProviderMessageBox = (BindingProvider)domibusPort;
 							imProviderMessageBox.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);

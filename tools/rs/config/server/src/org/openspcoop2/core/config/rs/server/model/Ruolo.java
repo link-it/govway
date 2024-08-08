@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class Ruolo  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String nome = null;
   
   @Schema(example = "descrizione del ruolo", description = "")

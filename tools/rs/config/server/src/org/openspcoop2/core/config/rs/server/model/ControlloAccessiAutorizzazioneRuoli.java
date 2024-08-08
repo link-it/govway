@@ -29,7 +29,7 @@ import jakarta.validation.Valid;
 
 public class ControlloAccessiAutorizzazioneRuoli  {
   
-  @Schema(example = "[\"Ruolo1\",\"Ruolo2\",\"Ruolo3\"]", required = true, description = "")
+  @Schema(example = "[\"Ruolo1\",\"Ruolo2\",\"Ruolo3\"]", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private List<String> ruoli = new ArrayList<>();
  /**
    * Get ruoli

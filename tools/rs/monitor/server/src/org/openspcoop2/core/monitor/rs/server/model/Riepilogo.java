@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class Riepilogo  {
   
-  @Schema(example = "2", required = true, description = "Il numero di api per cui il soggetto è referente")
+  @Schema(example = "2", requiredMode = Schema.RequiredMode.REQUIRED, description = "Il numero di api per cui il soggetto è referente")
  /**
    * Il numero di api per cui il soggetto è referente  
   **/
@@ -36,25 +36,25 @@ public class Riepilogo  {
   @Schema(description = "")
   private String soggetto = null;
   
-  @Schema(example = "2", required = true, description = "Il numero di erogazioni del soggetto")
+  @Schema(example = "2", requiredMode = Schema.RequiredMode.REQUIRED, description = "Il numero di erogazioni del soggetto")
  /**
    * Il numero di erogazioni del soggetto  
   **/
   private Integer erogazioni = null;
   
-  @Schema(example = "2", required = true, description = "Il numero di fruizioni del soggetto")
+  @Schema(example = "2", requiredMode = Schema.RequiredMode.REQUIRED, description = "Il numero di fruizioni del soggetto")
  /**
    * Il numero di fruizioni del soggetto  
   **/
   private Integer fruizioni = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private Integer soggettiDominioInterno = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private Integer soggettiDominioEsterno = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private Integer applicativi = null;
  /**
    * Il numero di api per cui il soggetto è referente

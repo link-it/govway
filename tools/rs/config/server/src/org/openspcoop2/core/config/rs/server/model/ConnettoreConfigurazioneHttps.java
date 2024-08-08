@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ConnettoreConfigurazioneHttps  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private SslTipologiaEnum tipologia = null;
   
   @Schema(example = "false", description = "")

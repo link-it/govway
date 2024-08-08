@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ConnettoreFileRisposta  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String file = null;
   
   @Schema(description = "")

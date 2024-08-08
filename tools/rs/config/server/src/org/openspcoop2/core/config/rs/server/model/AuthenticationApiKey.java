@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class AuthenticationApiKey  implements OneOfBaseCredenzialiCredenziali {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private ModalitaAccessoEnum modalitaAccesso = null;
   
   @Schema(description = "")

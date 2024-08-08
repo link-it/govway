@@ -27,6 +27,8 @@
 
 package org.openspcoop2.ValidazioneContenutiWS.Service;
 
+import java.net.URISyntaxException;
+
 /**
 *
 * @author Andrea Poli (apoli@link.it)
@@ -76,9 +78,9 @@ public class GestioneUtentiStileIbridoServiceLocator extends org.apache.axis.cli
 	public org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiStileIbrido getGestioneUtentiStileIbrido() throws javax.xml.rpc.ServiceException {
        java.net.URL endpoint;
         try {
-            endpoint = new java.net.URL(this.GestioneUtentiStileIbrido_address);
+            endpoint = new  java.net.URI(this.GestioneUtentiStileIbrido_address).toURL();
         }
-        catch (java.net.MalformedURLException e) {
+        catch (java.net.MalformedURLException | URISyntaxException e) {
             throw new javax.xml.rpc.ServiceException(e);
         }
         return getGestioneUtentiStileIbrido(endpoint);
@@ -109,7 +111,7 @@ public class GestioneUtentiStileIbridoServiceLocator extends org.apache.axis.cli
 	public java.rmi.Remote getPort(Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
         try {
             if (org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiStileIbrido.class.isAssignableFrom(serviceEndpointInterface)) {
-                org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiStileIbridoSoapBindingStub _stub = new org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiStileIbridoSoapBindingStub(new java.net.URL(this.GestioneUtentiStileIbrido_address), this);
+                org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiStileIbridoSoapBindingStub _stub = new org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiStileIbridoSoapBindingStub(new  java.net.URI(this.GestioneUtentiStileIbrido_address).toURL(), this);
                 _stub.setPortName(getGestioneUtentiStileIbridoWSDDServiceName());
                 return _stub;
             }

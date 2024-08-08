@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.net.URI;
 import java.net.URL;
 import java.sql.Connection;
 import java.text.MessageFormat;
@@ -23730,7 +23731,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(location!=null && !"".equals(location) && location.toLowerCase().startsWith("https")) {
 				String nomeConnettore = null;
 				try {
-					URL url = new URL( location );
+					URL url = new URI( location ).toURL();
 					String host = url.getHost();
 					if(host==null || "".equals(host)) {
 						throw new DriverControlStationException("L'endpoint '"+host+"' non contiene un host");

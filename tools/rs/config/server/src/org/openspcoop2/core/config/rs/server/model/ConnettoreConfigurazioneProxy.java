@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class ConnettoreConfigurazioneProxy  {
   
-  @Schema(example = "proxy.ente.it", required = true, description = "")
+  @Schema(example = "proxy.ente.it", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String hostname = null;
   
-  @Schema(example = "8080", required = true, description = "")
+  @Schema(example = "8080", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private Integer porta = null;
   
   @Schema(example = "user", description = "")

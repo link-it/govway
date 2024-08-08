@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class ApiInterfacciaSoap  implements OneOfApiBaseTipoInterfaccia, OneOfApiInterfacciaViewTipoInterfaccia {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TipoApiEnum protocollo = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private FormatoSoapEnum formato = null;
  /**
    * Get protocollo

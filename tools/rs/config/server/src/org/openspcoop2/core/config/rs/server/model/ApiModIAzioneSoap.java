@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class ApiModIAzioneSoap  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private ApiModIPatternInterazioneSoap interazione = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "stato", visible = true )
   @com.fasterxml.jackson.annotation.JsonSubTypes({
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ApiModISicurezzaMessaggioOperazione.class, name = "api"),

@@ -40,27 +40,27 @@ import jakarta.validation.Valid;
 public class Diagnostico  {
   @XmlElement(name="data", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private DateTime data = null;
   @XmlElement(name="severita_codice", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String severitaCodice = null;
   @XmlElement(name="severita", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private DiagnosticoSeveritaEnum severita = null;
   @XmlElement(name="funzione", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String funzione = null;
   @XmlElement(name="codice", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String codice = null;
   @XmlElement(name="messaggio", required = true)
   
-  @Schema(example = "Generato messaggio di cooperazione di Errore con identificativo [0998f497-e05d-420a-a6b0-ff3bb718d2c4]", required = true, description = "")
+  @Schema(example = "Generato messaggio di cooperazione di Errore con identificativo [0998f497-e05d-420a-a6b0-ff3bb718d2c4]", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String messaggio = null;
  /**
    * Get data

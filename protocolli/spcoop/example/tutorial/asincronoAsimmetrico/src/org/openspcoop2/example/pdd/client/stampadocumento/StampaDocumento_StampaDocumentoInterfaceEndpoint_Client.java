@@ -22,6 +22,7 @@ package org.openspcoop2.example.pdd.client.stampadocumento;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -172,7 +173,7 @@ public final class StampaDocumento_StampaDocumentoInterfaceEndpoint_Client {
                 if (wsdlFile.exists()) {
                     wsdlURL = wsdlFile.toURI().toURL();
                 } else {
-                    wsdlURL = new URL(args[0]);
+                    wsdlURL = new URI(args[0]).toURL();
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();

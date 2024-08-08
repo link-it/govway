@@ -33,10 +33,10 @@ public class FiltroMittenteTokenClaim extends FiltroTokenClaimBase implements On
   @Schema(example = "false", description = "")
   private Boolean caseSensitive = true;
   
-  @Schema(example = "abc123", required = true, description = "")
+  @Schema(example = "abc123", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String id = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TipoFiltroMittenteEnum identificazione = null;
  /**
    * Get ricercaEsatta

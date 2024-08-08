@@ -27,6 +27,8 @@
 
 package org.openspcoop2.ValidazioneContenutiWS.Service;
 
+import java.net.URISyntaxException;
+
 /**
 *
 * @author Andrea Poli (apoli@link.it)
@@ -76,9 +78,9 @@ public class GestioneUtentiDocumentLiteralServiceLocator extends org.apache.axis
 	public org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiDocumentLiteral getGestioneUtentiDocumentLiteral() throws javax.xml.rpc.ServiceException {
        java.net.URL endpoint;
         try {
-            endpoint = new java.net.URL(this.GestioneUtentiDocumentLiteral_address);
+            endpoint = new  java.net.URI(this.GestioneUtentiDocumentLiteral_address).toURL();
         }
-        catch (java.net.MalformedURLException e) {
+        catch (java.net.MalformedURLException | URISyntaxException e) {
             throw new javax.xml.rpc.ServiceException(e);
         }
         return getGestioneUtentiDocumentLiteral(endpoint);
@@ -109,7 +111,7 @@ public class GestioneUtentiDocumentLiteralServiceLocator extends org.apache.axis
 	public java.rmi.Remote getPort(Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
         try {
             if (org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiDocumentLiteral.class.isAssignableFrom(serviceEndpointInterface)) {
-                org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiDocumentLiteralSoapBindingStub _stub = new org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiDocumentLiteralSoapBindingStub(new java.net.URL(this.GestioneUtentiDocumentLiteral_address), this);
+                org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiDocumentLiteralSoapBindingStub _stub = new org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiDocumentLiteralSoapBindingStub(new  java.net.URI(this.GestioneUtentiDocumentLiteral_address).toURL(), this);
                 _stub.setPortName(getGestioneUtentiDocumentLiteralWSDDServiceName());
                 return _stub;
             }

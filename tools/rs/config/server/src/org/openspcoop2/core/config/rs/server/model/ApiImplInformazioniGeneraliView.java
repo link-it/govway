@@ -31,7 +31,7 @@ public class ApiImplInformazioniGeneraliView extends BaseItem {
   @Schema(description = "")
   private String tipo = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String nome = null;
   
   @Schema(description = "")

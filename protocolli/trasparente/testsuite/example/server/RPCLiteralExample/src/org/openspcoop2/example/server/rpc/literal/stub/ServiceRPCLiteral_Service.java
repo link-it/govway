@@ -20,6 +20,8 @@
 package org.openspcoop2.example.server.rpc.literal.stub;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import javax.xml.namespace.QName;
 import jakarta.xml.ws.WebEndpoint;
@@ -45,8 +47,8 @@ public class ServiceRPCLiteral_Service extends Service {
     static {
         URL url = null;
         try {
-            url = new URL("/config/rpcLiteralExample.wsdl");
-        } catch (MalformedURLException e) {
+            url = new URI("/config/rpcLiteralExample.wsdl").toURL();
+        } catch (MalformedURLException | URISyntaxException e) {
             java.util.logging.Logger.getLogger(ServiceRPCLiteral_Service.class.getName())
                 .log(java.util.logging.Level.INFO,
                      "Can not initialize the default wsdl from {0}", "/config/rpcLiteralExample.wsdl");

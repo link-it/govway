@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class OpzioniGenerazioneReportBase  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private FormatoReportEnum formato = null;
   
   @Schema(description = "")

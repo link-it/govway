@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 
 public class FiltroEsito  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private EsitoTransazioneFullSearchEnum tipo = null;
   
   @Schema(description = "informazione utilizzata per escludere le richieste scartate; viene utilizzata solamente nel caso il tipo sia: qualsiasi, fallite, fallite_e_fault")

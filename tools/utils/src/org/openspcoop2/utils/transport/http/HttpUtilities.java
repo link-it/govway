@@ -30,6 +30,8 @@ import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.Key;
@@ -2332,7 +2334,7 @@ public class HttpUtilities {
 				boolean encodeBaseLocation = true; // la base location può contenere dei parametri
 				connectionUrl = TransportUtils.buildUrlWithParameters(parameters, request.getForwardProxyEndpoint(), encodeBaseLocation, LoggerWrapperFactory.getLogger(HttpUtilities.class));
 			}
-			URL url = new URL(connectionUrl);
+			URL url = new URI(connectionUrl).toURL();
 			URLConnection connection = null;
 			if(request.getProxyType()==null){
 				connection = url.openConnection();
@@ -3000,7 +3002,7 @@ public class HttpUtilities {
 	
 	/* ********* VALIDATE URI ************ */
 	
-	public static void validateUri(String uri,boolean checkEsistenzaFile) throws UtilsException,java.net.MalformedURLException{
+	public static void validateUri(String uri,boolean checkEsistenzaFile) throws UtilsException,java.net.MalformedURLException, URISyntaxException{
 		
 		if (uri.startsWith("http://")
 				|| uri.startsWith(TEST_FILE_ORIGIN)) {

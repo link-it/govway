@@ -39,15 +39,15 @@ import jakarta.validation.Valid;
 public class TransazioneInformazioniApi  {
   @XmlElement(name="erogatore", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String erogatore = null;
   @XmlElement(name="nome", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String nome = null;
   @XmlElement(name="versione", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private Integer versione = null;
   @XmlElement(name="operazione")
   

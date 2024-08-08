@@ -44,7 +44,7 @@ public class TransazioneDettaglioRisposta extends TransazioneDettaglioMessaggio 
   private DateTime dataRicezione = null;
   @XmlElement(name="data_consegna", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private DateTime dataConsegna = null;
   @XmlElement(name="esito_ricezione")
   

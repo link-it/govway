@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ErogazioneModISoapRisposta  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private ErogazioneModISoapRispostaSicurezzaMessaggio sicurezzaMessaggio = null;
  /**
    * Get sicurezzaMessaggio

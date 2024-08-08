@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ApiAllegatoItemSpecificaSemiformale extends ApiAllegatoItemGenerico implements OneOfApiAllegatoItemAllegato {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TipoSpecificaSemiformaleEnum tipoSpecifica = null;
  /**
    * Get tipoSpecifica

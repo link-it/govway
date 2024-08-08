@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.core.autorizzazione;
 
 import java.io.File;
 import java.io.Serializable;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -131,7 +132,7 @@ public class XACMLPolicyUtilities {
 							}
 							else if(d.getFile()!=null){
 								if(d.getFile().startsWith("http://") || d.getFile().startsWith("file://")){
-									URL url = new URL(d.getFile());
+									URL url = new URI(d.getFile()).toURL();
 									policy = HttpUtilities.requestHTTPFile(url.toString());
 								}
 								else{

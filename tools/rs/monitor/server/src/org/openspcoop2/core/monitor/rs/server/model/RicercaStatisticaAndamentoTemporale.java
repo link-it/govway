@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class RicercaStatisticaAndamentoTemporale extends RicercaBaseStatisticaSoggetti {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private OpzioniGenerazioneReportMultiLine report = null;
   
   @Schema(description = "")

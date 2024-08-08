@@ -30,7 +30,7 @@ import jakarta.validation.Valid;
 
 public class ListaTransazioni extends ListaSenzaTotale {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private List<ItemTransazione> items = new ArrayList<>();
  /**
    * Get items

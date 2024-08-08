@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class AuthenticationHttpsCertificato extends AuthenticationHttpsBaseCertificato implements OneOfAuthenticationHttpsCertificato {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TipoAutenticazioneHttps tipo = null;
  /**
    * Get tipo

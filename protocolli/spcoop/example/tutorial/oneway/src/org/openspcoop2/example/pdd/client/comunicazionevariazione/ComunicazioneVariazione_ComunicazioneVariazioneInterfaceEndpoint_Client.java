@@ -22,6 +22,7 @@ package org.openspcoop2.example.pdd.client.comunicazionevariazione;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
@@ -132,7 +133,7 @@ public final class ComunicazioneVariazione_ComunicazioneVariazioneInterfaceEndpo
                 if (wsdlFile.exists()) {
                     wsdlURL = wsdlFile.toURI().toURL();
                 } else {
-                    wsdlURL = new URL(args[0]);
+                    wsdlURL = new URI(args[0]).toURL();
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();

@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class AuthenticationHttpBasic  implements OneOfBaseCredenzialiCredenziali {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private ModalitaAccessoEnum modalitaAccesso = null;
   
-  @Schema(example = "user", required = true, description = "")
+  @Schema(example = "user", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String username = null;
   
   @Schema(example = "pwd", description = "")

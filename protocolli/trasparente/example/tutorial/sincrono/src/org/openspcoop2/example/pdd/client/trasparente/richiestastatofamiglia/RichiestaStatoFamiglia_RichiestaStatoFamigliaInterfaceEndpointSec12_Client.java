@@ -23,6 +23,7 @@ package org.openspcoop2.example.pdd.client.trasparente.richiestastatofamiglia;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import javax.xml.namespace.QName;
 import jakarta.xml.ws.BindingProvider;
@@ -131,7 +132,7 @@ public final class RichiestaStatoFamiglia_RichiestaStatoFamigliaInterfaceEndpoin
                 if (wsdlFile.exists()) {
                     wsdlURL = wsdlFile.toURI().toURL();
                 } else {
-                    wsdlURL = new URL(args[0]);
+                    wsdlURL = new URI(args[0]).toURL();
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();

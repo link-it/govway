@@ -39,11 +39,11 @@ import jakarta.validation.Valid;
 public class TransazioneExtTipo  {
   @XmlElement(name="profilo", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private ProfiloEnum profilo = null;
   @XmlElement(name="contesto", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TransazioneContestoEnum contesto = null;
   @XmlElement(name="id_cluster")
   

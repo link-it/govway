@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class ScopeItem  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String nome = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private ContestoEnum contesto = null;
  /**
    * Get nome

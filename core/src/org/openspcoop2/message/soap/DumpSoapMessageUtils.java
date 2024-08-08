@@ -477,11 +477,10 @@ public class DumpSoapMessageUtils {
 		/*if(o == null){
 			throw new MessageException("Dump error (return null reference)");
 		}*/
-		if(o instanceof String){
-			return ((String) o).getBytes();
+		if(o instanceof String str){
+			return str.getBytes();
 		}
-		else if(o instanceof java.io.ByteArrayOutputStream){
-			java.io.ByteArrayOutputStream bout = null;
+		else if(o instanceof java.io.ByteArrayOutputStream bout){
 			try{
 				bout = (java.io.ByteArrayOutputStream) o;
 				return bout.toByteArray();

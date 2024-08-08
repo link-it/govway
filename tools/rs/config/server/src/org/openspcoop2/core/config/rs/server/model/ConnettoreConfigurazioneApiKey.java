@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ConnettoreConfigurazioneApiKey  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String apiKey = null;
   
   @Schema(description = "")

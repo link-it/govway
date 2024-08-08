@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.net.URI;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.sql.Connection;
@@ -700,7 +701,7 @@ public class OpenSPCoop2Properties {
 				}else{
 					// validazione url
 					try{
-						URL v  = new URL(path);
+						URL v  = new URI(path).toURL();
 						v.toString();
 					}catch(Exception e){
 						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.location'. \n La url indicata non e' corretta ["+path+"].");
@@ -8496,7 +8497,7 @@ public class OpenSPCoop2Properties {
 						variant = variant.trim();
 					}
 					
-					this.localeSOAPFaultString = new Locale(language, country, variant);
+					this.localeSOAPFaultString = Locale.of(language, country, variant);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultString.language' non impostata, viene utilizzato il default="+Locale.getDefault());
 				}
@@ -29968,7 +29969,7 @@ public class OpenSPCoop2Properties {
 				else {
 					name = name.trim();
 					@SuppressWarnings("unused")
-					String s = (new URL(name)).toString();
+					String s = (new URI(name)).toString();
 					this.getControlloTrafficoGestorePolicyWSUrl = name;
 				}
 			} catch(java.lang.Exception e) {

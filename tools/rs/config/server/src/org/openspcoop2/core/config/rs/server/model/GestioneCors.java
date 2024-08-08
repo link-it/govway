@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class GestioneCors  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private Boolean ridefinito = false;
   
   @Schema(description = "")

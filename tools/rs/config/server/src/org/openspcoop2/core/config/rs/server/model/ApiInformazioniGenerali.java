@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class ApiInformazioniGenerali  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String nome = null;
   
-  @Schema(example = "1", required = true, description = "")
+  @Schema(example = "1", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private Integer versione = null;
  /**
    * Get nome

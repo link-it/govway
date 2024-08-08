@@ -25,7 +25,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.JarURLConnection;
-import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -108,13 +109,13 @@ public class JarUtilities {
 		}
 	}
 	
-	private static JarURLConnection getConnection(File jarFile,String jarEntry) throws MalformedURLException, IOException{
-		URL archivio = new URL ("file://" + jarFile.getCanonicalPath ());
+	private static JarURLConnection getConnection(File jarFile,String jarEntry) throws IOException, URISyntaxException{
+		URL archivio = new URI ("file://" + jarFile.getCanonicalPath ()).toURL();
 		String url = "jar:" + archivio.toExternalForm () + "!/";
 		if(jarEntry!=null){
 			url = url + jarEntry;
 		}
-		archivio = new URL (url);
+		archivio = new URI (url).toURL();
 		return (JarURLConnection) archivio.openConnection ();
 	}
 	

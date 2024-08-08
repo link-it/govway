@@ -20,6 +20,8 @@
 package org.openspcoop2.example.pdd.server.esitoidentificazione;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import javax.xml.namespace.QName;
 import jakarta.xml.ws.Service;
@@ -45,8 +47,8 @@ public class EsitoIdentificazioneService extends Service {
     static {
         URL url = null;
         try {
-            url = new URL("file:configurazionePdD/wsdl/implementativoFruitore.wsdl");
-        } catch (MalformedURLException e) {
+            url = new URI("file:configurazionePdD/wsdl/implementativoFruitore.wsdl").toURL();
+        } catch (MalformedURLException | URISyntaxException e) {
             System.err.println("Can not initialize the default wsdl from file:configurazionePdD/wsdl/implementativoFruitore.wsdl");
         }
         WSDL_LOCATION = url;

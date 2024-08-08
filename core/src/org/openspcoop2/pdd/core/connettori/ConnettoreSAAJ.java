@@ -24,6 +24,7 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -169,7 +170,7 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.logger!=null ? this.logger.getLogger() : null, this.requestMsg, ENDPOINT_TYPE, this.propertiesUrlBased, this.location,
 					this.getProtocolFactory(), this.idModulo);
 			
-			URL urlTest = new URL( this.location );
+			URL urlTest = new URI( this.location ).toURL();
 			URLConnection connectionTest = urlTest.openConnection();
 			HttpURLConnection httpConnTest = (HttpURLConnection) connectionTest;
 			httpConnTest.setRequestMethod( HttpRequestMethod.POST.name() );

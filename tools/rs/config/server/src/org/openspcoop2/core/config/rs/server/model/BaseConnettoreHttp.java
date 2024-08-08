@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class BaseConnettoreHttp  {
   
-  @Schema(example = "http://ente.it/servizio", required = true, description = "")
+  @Schema(example = "http://ente.it/servizio", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String endpoint = null;
   
   @Schema(description = "")

@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class RegistrazioneTransazioniConfigurazione extends ApiImplConfigurazioneStato {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private StatoDefaultRidefinitoEnum stato = null;
   
   @Schema(description = "")

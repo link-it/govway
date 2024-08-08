@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.modipa.example.rest.non_blocking.pull;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -76,7 +77,7 @@ public class Client {
 			address = address + "/";
 		}
 			
-		URL url = new URL(address);
+		URL url = new URI(address).toURL();
 		String basePath = url.getPath();
 		
 		String username = reader.getProperty("username");

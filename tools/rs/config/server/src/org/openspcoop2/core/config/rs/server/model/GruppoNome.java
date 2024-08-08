@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class GruppoNome  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String nome = null;
  /**
    * Get nome

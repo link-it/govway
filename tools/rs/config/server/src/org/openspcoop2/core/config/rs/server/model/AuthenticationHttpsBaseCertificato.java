@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class AuthenticationHttpsBaseCertificato  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private byte[] archivio = null;
   
   @Schema(example = "alias", description = "")
@@ -36,7 +36,7 @@ public class AuthenticationHttpsBaseCertificato  {
   @Schema(example = "changeit", description = "")
   private String password = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TipoKeystore tipoCertificato = null;
   
   @Schema(example = "false", description = "")

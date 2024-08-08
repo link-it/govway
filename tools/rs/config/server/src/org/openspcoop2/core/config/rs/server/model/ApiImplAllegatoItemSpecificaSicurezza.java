@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ApiImplAllegatoItemSpecificaSicurezza extends ApiImplAllegatoItemGenerico implements OneOfApiImplAllegatoItemAllegato {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TipoSpecificaSicurezzaEnum tipoSpecifica = null;
  /**
    * Get tipoSpecifica

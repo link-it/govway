@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ConnettoreNull  implements OneOfApplicativoServerConnettore, OneOfConnettoreErogazioneConnettore, OneOfConnettoreFruizioneConnettore {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private ConnettoreEnum tipo = null;
   
   @Schema(description = "")

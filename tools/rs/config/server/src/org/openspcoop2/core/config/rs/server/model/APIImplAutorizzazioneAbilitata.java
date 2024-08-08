@@ -28,13 +28,13 @@ import jakarta.validation.Valid;
 
 public class APIImplAutorizzazioneAbilitata  implements OneOfControlloAccessiAutorizzazioneAutorizzazione, OneOfControlloAccessiAutorizzazioneViewAutorizzazione {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TipoAutorizzazioneEnum tipo = null;
   
-  @Schema(example = "false", required = true, description = "")
+  @Schema(example = "false", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private Boolean richiedente = true;
   
-  @Schema(example = "false", required = true, description = "")
+  @Schema(example = "false", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private Boolean ruoli = false;
   
   @Schema(description = "")
@@ -55,13 +55,13 @@ public class APIImplAutorizzazioneAbilitata  implements OneOfControlloAccessiAut
   @Schema(description = "")
   private AllAnyEnum tokenRuoliRichiesti = null;
   
-  @Schema(example = "false", required = true, description = "")
+  @Schema(example = "false", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private Boolean scope = false;
   
   @Schema(description = "")
   private AllAnyEnum scopeRichiesti = null;
   
-  @Schema(example = "false", required = true, description = "")
+  @Schema(example = "false", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private Boolean token = false;
   
   @Schema(description = "Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola")

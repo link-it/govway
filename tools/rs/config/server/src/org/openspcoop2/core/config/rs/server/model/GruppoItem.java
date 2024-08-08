@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class GruppoItem extends GruppoBase {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private Boolean predefinito = null;
  /**
    * Get predefinito

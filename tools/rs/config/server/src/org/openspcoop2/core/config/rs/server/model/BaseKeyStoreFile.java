@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class BaseKeyStoreFile extends BaseKeyStore {
   
-  @Schema(example = "/path/to/keystore", required = true, description = "")
+  @Schema(example = "/path/to/keystore", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String keystorePath = null;
  /**
    * Get keystorePath

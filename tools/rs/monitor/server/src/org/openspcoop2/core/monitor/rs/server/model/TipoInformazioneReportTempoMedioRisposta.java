@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class TipoInformazioneReportTempoMedioRisposta  implements OneOfOpzioniGenerazioneReportTipoInformazione {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TipoInformazioneReportEnum tipo = null;
   
   @Schema(description = "")

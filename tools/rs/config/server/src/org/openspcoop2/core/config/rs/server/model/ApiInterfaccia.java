@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ApiInterfaccia  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private byte[] interfaccia = null;
  /**
    * Get interfaccia

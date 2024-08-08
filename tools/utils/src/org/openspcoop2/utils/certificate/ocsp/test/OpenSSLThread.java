@@ -98,7 +98,7 @@ public class OpenSSLThread extends AbstractBaseThread {
 				String command = FileSystemUtilities.readFile(this.fScript);
 				System.out.println("INVOKE from file '"+this.fScript.getAbsolutePath()+"':\n\t '"+command+"'");
 				
-				this.process = Runtime.getRuntime().exec(this.fScript.getAbsolutePath());
+				this.process = Runtime.getRuntime().exec(new String[] {this.fScript.getAbsolutePath()});
 				System.out.println("PROCESS FINISH");
 				//System.out.println("ESCE?");
 				

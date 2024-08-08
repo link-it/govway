@@ -27,13 +27,13 @@ import jakarta.validation.Valid;
 
 public class ErogazioneModIRest  implements OneOfErogazioneModi, OneOfErogazioneModIModi {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TipoApiEnum protocollo = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private ErogazioneModIRestRichiesta richiesta = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private ErogazioneModIRestRisposta risposta = null;
  /**
    * Get protocollo

@@ -242,7 +242,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 				ProtocolPropertiesUtils.getAbstractPropertyById(properties, AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_ENDPOINT_ID);
 		if(userMessagePartyEndpointValueItem.getValue()!=null) {
 			try {
-				URL url = new URL(userMessagePartyEndpointValueItem.getValue());
+				URL url = new URI(userMessagePartyEndpointValueItem.getValue()).toURL();
 				url.toString();
 			}catch(Exception e) {
 				throw new ProtocolException("Deve essere indicata una URL valida per il parametro '"+AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_ENDPOINT_LABEL+"'");

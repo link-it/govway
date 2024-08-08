@@ -41,15 +41,15 @@ import jakarta.validation.Valid;
 public class TransazioneBase  {
   @XmlElement(name="emittente", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String emittente = null;
   @XmlElement(name="data_emissione", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private DateTime dataEmissione = null;
   @XmlElement(name="id_traccia", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private UUID idTraccia = null;
   @XmlElement(name="id_conversazione")
   
@@ -57,11 +57,11 @@ public class TransazioneBase  {
   private String idConversazione = null;
   @XmlElement(name="ruolo", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TransazioneRuoloEnum ruolo = null;
   @XmlElement(name="esito", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TransazioneEsito esito = null;
  /**
    * Get emittente

@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class BaseKeyStore  {
   
-  @Schema(example = "pwd", required = true, description = "")
+  @Schema(example = "pwd", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String keystorePassword = null;
   
-  @Schema(example = "pwd", required = true, description = "password della chiave privata")
+  @Schema(example = "pwd", requiredMode = Schema.RequiredMode.REQUIRED, description = "password della chiave privata")
  /**
    * password della chiave privata  
   **/

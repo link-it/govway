@@ -39,11 +39,11 @@ import jakarta.validation.Valid;
 public class TransazioneContenutoMessaggioHeader  {
   @XmlElement(name="nome", required = true)
   
-  @Schema(example = "Content-Type", required = true, description = "")
+  @Schema(example = "Content-Type", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String nome = null;
   @XmlElement(name="valore", required = true)
   
-  @Schema(example = "application/json", required = true, description = "")
+  @Schema(example = "application/json", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String valore = null;
  /**
    * Get nome

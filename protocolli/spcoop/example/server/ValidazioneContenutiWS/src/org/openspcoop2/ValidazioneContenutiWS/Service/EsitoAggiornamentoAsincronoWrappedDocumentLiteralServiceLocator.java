@@ -27,6 +27,8 @@
 
 package org.openspcoop2.ValidazioneContenutiWS.Service;
 
+import java.net.URISyntaxException;
+
 /**
 *
 * @author Andrea Poli (apoli@link.it)
@@ -76,9 +78,9 @@ public class EsitoAggiornamentoAsincronoWrappedDocumentLiteralServiceLocator ext
 	public org.openspcoop2.ValidazioneContenutiWS.Service.EsitoAggiornamentoAsincronoWrappedDocumentLiteral getEsitoAggiornamentoAsincronoWrappedDocumentLiteral() throws javax.xml.rpc.ServiceException {
        java.net.URL endpoint;
         try {
-            endpoint = new java.net.URL(this.EsitoAggiornamentoAsincronoWrappedDocumentLiteral_address);
+            endpoint = new  java.net.URI(this.EsitoAggiornamentoAsincronoWrappedDocumentLiteral_address).toURL();
         }
-        catch (java.net.MalformedURLException e) {
+        catch (java.net.MalformedURLException | URISyntaxException e) {
             throw new javax.xml.rpc.ServiceException(e);
         }
         return getEsitoAggiornamentoAsincronoWrappedDocumentLiteral(endpoint);
@@ -109,7 +111,7 @@ public class EsitoAggiornamentoAsincronoWrappedDocumentLiteralServiceLocator ext
 	public java.rmi.Remote getPort(Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
         try {
             if (org.openspcoop2.ValidazioneContenutiWS.Service.EsitoAggiornamentoAsincronoWrappedDocumentLiteral.class.isAssignableFrom(serviceEndpointInterface)) {
-                org.openspcoop2.ValidazioneContenutiWS.Service.EsitoAggiornamentoAsincronoWrappedDocumentLiteralSoapBindingStub _stub = new org.openspcoop2.ValidazioneContenutiWS.Service.EsitoAggiornamentoAsincronoWrappedDocumentLiteralSoapBindingStub(new java.net.URL(this.EsitoAggiornamentoAsincronoWrappedDocumentLiteral_address), this);
+                org.openspcoop2.ValidazioneContenutiWS.Service.EsitoAggiornamentoAsincronoWrappedDocumentLiteralSoapBindingStub _stub = new org.openspcoop2.ValidazioneContenutiWS.Service.EsitoAggiornamentoAsincronoWrappedDocumentLiteralSoapBindingStub(new  java.net.URI(this.EsitoAggiornamentoAsincronoWrappedDocumentLiteral_address).toURL(), this);
                 _stub.setPortName(getEsitoAggiornamentoAsincronoWrappedDocumentLiteralWSDDServiceName());
                 return _stub;
             }

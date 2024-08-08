@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -95,7 +96,7 @@ public class XSDResourceResolver implements LSResourceResolver {
 				String baseName = null;
 				String parentName = null;
 				if(systemId.startsWith("http://") || systemId.startsWith("https://") || systemId.startsWith("file://")){
-					URL url = new URL(systemId);
+					URL url = new URI(systemId).toURL();
 					File fileUrl = new File(url.getFile());
 					baseName = fileUrl.getName();
 					if(fileUrl.getParentFile()!=null){
@@ -127,7 +128,7 @@ public class XSDResourceResolver implements LSResourceResolver {
 						//System.out.println("NON TROVATO, cerco con baseURI ["+baseURI+"]");
 						String ricerca = null;
 						if(baseURI.startsWith("http://") || baseURI.startsWith("file://")){	
-							URL url = new URL(baseURI);
+							URL url = new URI(baseURI).toURL();
 							File fileUrl = new File(url.getFile());
 							String baseNameParent = fileUrl.getName();
 							if(baseURI.length()>baseNameParent.length()){

@@ -303,14 +303,14 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 				String server = this.openApi.getServers().get(0).getUrl();
 				URL url = null;
 				try {
-					url = new URL(server);
+					url = new URI(server).toURL();
 				}catch(Exception e) {
 					// provo a verificare se il problema è che non e' stato definito il protocollo (es. in swagger lo 'schemes')
 					if(server!=null && server.startsWith("/")) {
 						if(!server.equals("/")) {
 							server = "http:"+server;
 							try {
-								url = new URL(server);
+								url = new URI(server).toURL();
 							}catch(Exception e2) {
 								// nop
 							}
