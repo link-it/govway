@@ -1,3 +1,8 @@
+2024-08-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunte utility per trattare gli attributi 'mustUnderstand' e 'actor' attraverso gli elementi 'request' e 'response' accessibili tramite trasformazioni.
+
 2024-08-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
