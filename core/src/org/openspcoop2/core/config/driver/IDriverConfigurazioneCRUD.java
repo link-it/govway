@@ -72,7 +72,7 @@ public interface IDriverConfigurazioneCRUD {
      *
      * @param idSoggetto id del soggetto da verificare
      * @return true se il soggetto esiste, false altrimenti
-	 * @throws DriverRegistroServiziException
+	 * @throws DriverConfigurazioneException
      */    
 	public boolean existsSoggetto(IDSoggetto idSoggetto) throws DriverConfigurazioneException;
 	
@@ -110,7 +110,7 @@ public interface IDriverConfigurazioneCRUD {
      *
      * @param idPD id della porta delegata da verificare
      * @return true se la porta delegata esiste, false altrimenti
-	 * @throws DriverRegistroServiziException 
+	 * @throws DriverConfigurazioneException 
      */    
 	public boolean existsPortaDelegata(IDPortaDelegata idPD) throws DriverConfigurazioneException;
 	
@@ -154,7 +154,7 @@ public interface IDriverConfigurazioneCRUD {
      * existsPortaApplicativa(IDPortaApplicativa idPA,boolean ricercaPuntuale) con il parametro ricercaPuntuale a true
      * @param idPA id della porta applicativa da verificare
      * @return true se la porta applicativa esiste, false altrimenti
-	 * @throws DriverRegistroServiziException 
+	 * @throws DriverConfigurazioneException 
      */    
 	public boolean existsPortaApplicativa(IDPortaApplicativa idPA) throws DriverConfigurazioneException;
  
@@ -194,7 +194,7 @@ public interface IDriverConfigurazioneCRUD {
      *
      * @param idServizioApplicativo id del servizio applicativo
      * @return true se il servizio applicativo esiste, false altrimenti
-	 * @throws DriverRegistroServiziException
+	 * @throws DriverConfigurazioneException
      */    
 	public boolean existsServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws DriverConfigurazioneException;
 	

@@ -42,8 +42,7 @@ public interface IFilter {
 	 * Make the negation of the expression
 	 * 
 	 * @return the instance of itself
-	 * @throws ExpressionNotImplementedException Method not implemented
-	 * @throws ExpressionException Error Processing
+	 * @throws SearchException
 	 */
 	public IFilter not() throws SearchException;
 	
@@ -51,8 +50,7 @@ public interface IFilter {
 	 * Use the conjunction "AND" for all expressions
 	 * 
 	 * @return the instance of itself
-	 * @throws ExpressionNotImplementedException Method not implemented
-	 * @throws ExpressionException Error Processing
+	 * @throws SearchException
 	 */
 	public IFilter and() throws SearchException;
 
@@ -60,8 +58,7 @@ public interface IFilter {
 	 * Use the conjunction "OR" for all expressions
 	 * 
 	 * @return the instance of itself
-	 * @throws ExpressionNotImplementedException Method not implemented
-	 * @throws ExpressionException Error Processing
+	 * @throws SearchException
 	 */
 	public IFilter or() throws SearchException;
 	
