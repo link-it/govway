@@ -20,11 +20,14 @@
 
 package org.openspcoop2.pdd.core.dynamic;
 
+import java.util.Iterator;
 import java.util.List;
 
 import jakarta.xml.soap.SOAPBody;
 import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
 import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.core.commons.CoreRuntimeException;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -98,6 +101,135 @@ public class ContentExtractor extends ContentReader {
 	
 	
 	// SOAP 
+	
+	// imposta in tutti gli header
+	public void setMustUnderstand(boolean value) throws DynamicException {
+		setMustUnderstand(value, null, null);
+	}
+	public void setMustUnderstand(boolean value, String localName, String namespace) throws DynamicException {
+		if(this.message!=null && ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {
+			try {
+			
+				OpenSPCoop2SoapMessage soapMsg = this.message.castAsSoap();
+				
+				SOAPHeader header = soapMsg.getSOAPHeader();
+				if(header!=null) {
+					Iterator<jakarta.xml.soap.Node> nodes = header.getChildElements();
+					if(nodes!=null) {
+						while (nodes.hasNext()) {
+							Node n = nodes.next();
+							setMustUnderstandEngine(n, value, localName, namespace);
+						}
+					}
+				}
+				
+			}catch(Exception t) {
+				throw new DynamicException(t.getMessage(),t);
+			}
+			
+		}
+	}
+	private void setMustUnderstandEngine(Node n, boolean value, String localName, String namespace) {
+		if(n instanceof SOAPHeaderElement) {
+			SOAPHeaderElement hdrE = (SOAPHeaderElement) n;
+			boolean setValue = true;
+			if(localName!=null && !localName.equals(hdrE.getLocalName())) {
+				setValue = false;
+			}
+			if(setValue && namespace!=null && !namespace.equals(hdrE.getNamespaceURI())) {
+				setValue = false;
+			}
+			if(setValue) {
+				hdrE.setMustUnderstand(value);
+			}
+		}
+	}
+	
+	// imposta in tutti gli header
+	public void setActor(String value) throws DynamicException {
+		setActor(value, null, null);
+	}
+	public void setActor(String value, String localName, String namespace) throws DynamicException {
+		if(this.message!=null && ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {
+			try {
+			
+				OpenSPCoop2SoapMessage soapMsg = this.message.castAsSoap();
+				
+				SOAPHeader header = soapMsg.getSOAPHeader();
+				if(header!=null) {
+					Iterator<jakarta.xml.soap.Node> nodes = header.getChildElements();
+					if(nodes!=null) {
+						while (nodes.hasNext()) {
+							Node n = nodes.next();
+							setActorEngine(n, value, localName, namespace);
+						}
+					}
+				}
+				
+			}catch(Exception t) {
+				throw new DynamicException(t.getMessage(),t);
+			}
+			
+		}
+	}
+	private void setActorEngine(Node n, String value, String localName, String namespace) {
+		if(n instanceof SOAPHeaderElement) {
+			SOAPHeaderElement hdrE = (SOAPHeaderElement) n;
+			boolean setValue = true;
+			if(localName!=null && !localName.equals(hdrE.getLocalName())) {
+				setValue = false;
+			}
+			if(setValue && namespace!=null && !namespace.equals(hdrE.getNamespaceURI())) {
+				setValue = false;
+			}
+			if(setValue) {
+				hdrE.setActor(value);
+			}
+		}
+	}
+	
+	// imposta in tutti gli header
+	public void setRole(String value) throws DynamicException {
+		setRole(value, null, null);
+	}
+	public void setRole(String value, String localName, String namespace) throws DynamicException {
+		if(this.message!=null && ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {
+			try {
+			
+				OpenSPCoop2SoapMessage soapMsg = this.message.castAsSoap();
+				
+				SOAPHeader header = soapMsg.getSOAPHeader();
+				if(header!=null) {
+					Iterator<jakarta.xml.soap.Node> nodes = header.getChildElements();
+					if(nodes!=null) {
+						while (nodes.hasNext()) {
+							Node n = nodes.next();
+							setRoleEngine(n, value, localName, namespace);
+						}
+					}
+				}
+				
+			}catch(Exception t) {
+				throw new DynamicException(t.getMessage(),t);
+			}
+			
+		}
+	}
+	private void setRoleEngine(Node n, String value, String localName, String namespace) throws SOAPException {
+		if(n instanceof SOAPHeaderElement) {
+			SOAPHeaderElement hdrE = (SOAPHeaderElement) n;
+			boolean setValue = true;
+			if(localName!=null && !localName.equals(hdrE.getLocalName())) {
+				setValue = false;
+			}
+			if(setValue && namespace!=null && !namespace.equals(hdrE.getNamespaceURI())) {
+				setValue = false;
+			}
+			if(setValue) {
+				hdrE.setRole(value);
+			}
+		}
+	}
 	
 	public void disableExceptionIfFoundMoreSecurityHeader() {
 		if(this.message!=null && ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {

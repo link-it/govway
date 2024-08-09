@@ -313,17 +313,27 @@ public class RestTest extends ConfigLoader {
 			request.setContent(payload);
 		}
 		
-		logCore.info("Test con resource "+resource+" ...");
-		
 		int THREADS = 5;
+		
+		logCore.info("Test [THREADS:"+THREADS+"] con resource '"+resource+"' errore '"+errore+"' ...");
 		
 		@SuppressWarnings("unchecked")
 		List<HttpResponse> responses = (List<HttpResponse>) ((ArrayList<HttpResponse>) org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeParallelRequests(request, THREADS)).clone();
+		
+		logCore.info("Test [THREADS:"+THREADS+"] con resource '"+resource+"' errore '"+errore+"' finito");
+		
 		for (var resp : responses) {
 			
-			long returnDate = DateManager.getTimeMillis();
-			result.add(returnDate);
+			if(resp!=null) {
 			
+				long returnDate = DateManager.getTimeMillis();
+				result.add(returnDate);
+				
+			}
+			
+		}
+			
+		for (var resp : responses) {		
 			String idTransazione = resp.getHeaderFirstValue("GovWay-Transaction-ID");
 			assertNotNull(idTransazione);
 			
