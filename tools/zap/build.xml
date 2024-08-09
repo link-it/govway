@@ -202,7 +202,7 @@
 	</target>
 	<target name="-reportInfos">
 		<echo message="ReportInfos Api Key: '${zap-api-key}'"/>
-		<java classname="org.openspcoop2.testsuite.zap.ReportInfos" fork="false">
+		<java classname="org.openspcoop2.testsuite.zap.ReportInfos" fork="true">
 			<arg value="${zaproxy.address}" />
 			<arg value="${zaproxy.port}" />
 			<arg value="${zaproxy.session}" />
@@ -223,7 +223,7 @@
 	</target>
 	<target name="-sessionManagementInfos">
 		<echo message="SessionManagementInfos Api Key: '${zap-api-key}'"/>
-		<java classname="org.openspcoop2.testsuite.zap.SessionManagementInfos" fork="false">
+		<java classname="org.openspcoop2.testsuite.zap.SessionManagementInfos" fork="true">
 			<arg value="${zaproxy.address}" />
 			<arg value="${zaproxy.port}" />
 			<arg value="${zaproxy.session}" />
@@ -244,7 +244,7 @@
 	</target>
 	<target name="-authenticationInfos">
 		<echo message="AuthenticationInfos Api Key: '${zap-api-key}'"/>
-		<java classname="org.openspcoop2.testsuite.zap.AuthenticationInfos" fork="false">
+		<java classname="org.openspcoop2.testsuite.zap.AuthenticationInfos" fork="true">
 			<arg value="${zaproxy.address}" />
 			<arg value="${zaproxy.port}" />
 			<arg value="${zaproxy.session}" />
@@ -305,7 +305,7 @@
 	</target>
 	<target name="-analizeOpenAPI">	
 		<echo message="OpenAPI Api Key: '${zap-api-key}'"/>
-		<java classname="org.openspcoop2.testsuite.zap.OpenAPI" fork="false">
+		<java classname="org.openspcoop2.testsuite.zap.OpenAPI" fork="true">
 			<arg value="${zaproxy.address}" />
 			<arg value="${zaproxy.port}" />
 			<arg value="${zaproxy.session}" />
@@ -377,7 +377,7 @@
 	</target>
 	<target name="-analizeSoap">
 		<echo message="SOAP Api Key: '${zap-api-key}'"/>
-		<java classname="org.openspcoop2.testsuite.zap.Soap" fork="false">
+		<java classname="org.openspcoop2.testsuite.zap.Soap" fork="true">
 			<arg value="${zaproxy.address}" />
 			<arg value="${zaproxy.port}" />
 			<arg value="${zaproxy.session}" />
@@ -600,7 +600,7 @@
 	</target>
 	<target name="-analizeGovWayConsole">
 		<echo message="GovWayConsole Api Key: '${zap-api-key}'"/>
-		<java classname="org.openspcoop2.testsuite.zap.GovWayConsole" fork="false">
+		<java classname="org.openspcoop2.testsuite.zap.GovWayConsole" fork="true">
 			<arg value="${zaproxy.address}" />
 			<arg value="${zaproxy.port}" />
 			<arg value="${zaproxy.session}" />
@@ -714,7 +714,7 @@
 	</target>
 	<target name="-analizeGovWayMonitor">
 		<echo message="GovWayMonitor Api Key: '${zap-api-key}'"/>
-		<java classname="org.openspcoop2.testsuite.zap.GovWayMonitor" fork="false">
+		<java classname="org.openspcoop2.testsuite.zap.GovWayMonitor" fork="true">
 			<arg value="${zaproxy.address}" />
 			<arg value="${zaproxy.port}" />
 			<arg value="${zaproxy.session}" />
