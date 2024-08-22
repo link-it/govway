@@ -22,7 +22,7 @@ function fn() {
       govwayDbConfig: { 
         username: 'govway',
         password: 'govway',
-        url: 'jdbc:postgresql://localhost:5432/govway',
+        url: 'jdbc:postgresql://localhost:5432/gw340test',
         driverClassName: 'org.postgresql.Driver'
       },
       configCred:  { username: 'amministratore', password: '123456'},

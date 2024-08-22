@@ -19,10 +19,9 @@
  */
 
 package org.openspcoop2.core.config.rs.testsuite;
-import org.junit.jupiter.api.Test;
-
-
 import com.intuit.karate.junit5.Karate;
+import com.intuit.karate.junit5.Karate.Test;
+
 
 
 /**
@@ -34,9 +33,11 @@ import com.intuit.karate.junit5.Karate;
 
 public 	class ApiConfigTestSuite {
 
-    @Karate.Test
-    public Karate testAll() {
+    
+    @Test
+    Karate testAll() {
         return Karate.run().relativeTo(getClass());
-    }
+
+     }
 }
 

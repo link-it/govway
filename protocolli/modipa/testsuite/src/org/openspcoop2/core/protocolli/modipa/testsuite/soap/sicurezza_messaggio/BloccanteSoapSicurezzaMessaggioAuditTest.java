@@ -61,16 +61,12 @@ public class BloccanteSoapSicurezzaMessaggioAuditTest extends ConfigLoader {
                 .http(Integer.valueOf(prop.getProperty("http_port")))
                 .build();
     }
-    /* TODO: mflag sempre una sola
-    @Test
-    Karate testAudit() {
-        return Karate.run("classpath:test/soap/sicurezza-messaggio/audit.feature").relativeTo(getClass());
-    }
-            */
+
 	@Test
     Karate testAll() {
         return Karate.run("classpath:test/soap/sicurezza-messaggio/audit.feature").relativeTo(getClass());
      }
+     
     @AfterAll
     public static void afterAll() {
         proxy.stop();

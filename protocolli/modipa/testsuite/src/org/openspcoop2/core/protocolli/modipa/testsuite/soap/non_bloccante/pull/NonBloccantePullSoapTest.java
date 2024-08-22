@@ -64,27 +64,13 @@ public class NonBloccantePullSoapTest extends ConfigLoader {
                 .http(Integer.valueOf(prop.getProperty("http_port")))
                 .build();
     }
-// TODO mflag vedere se mettere le assert cambia nulla
     
 	@Test
     Karate testAll() {
         return Karate.run("classpath:test/soap/non-bloccante/pull/pull.feature",
             "classpath:test/soap/non-bloccante/pull/pull-no-disclosure.feature").relativeTo(getClass());
-       //             assertEquals(0, results.getFailCount());
 
      }
-
-/*
-    @Test
-    Karate testPull() {
-        return Karate.run("classpath:test/soap/non-bloccante/pull/pull.feature").relativeTo(getClass());
-    }
-
-    @Test
-    Karate testPullNoDisclosure() {
-        return Karate.run("classpath:test/soap/non-bloccante/pull/pull-no-disclosure.feature").relativeTo(getClass());
-    }
-    */
 
     @AfterAll
     public static void afterAll() {

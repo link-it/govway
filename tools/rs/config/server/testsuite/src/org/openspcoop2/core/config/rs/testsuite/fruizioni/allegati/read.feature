@@ -300,6 +300,7 @@ Scenario: Allegati Fruizioni Download
     * call create ({ resourcePath: fruizione_petstore_path + '/allegati', body: allegato })
 
     * def allegatoDecodificato = call decodeBase64 allegato.allegato.documento
+    * def allegatoStringa = karate.toString(allegatoDecodificato)
 
     Given url configUrl
     And path fruizione_petstore_path, "allegati", allegato.allegato.nome, 'download'
@@ -307,7 +308,7 @@ Scenario: Allegati Fruizioni Download
     When method get
     Then status 200
     And match responseHeaders contains { 'Content-Type': ['text/plain'] }
-    * match response == allegatoDecodificato
+    * match response == allegatoStringa
 
     * call delete ({ resourcePath: fruizione_petstore_path + '/allegati/' + allegato.allegato.nome })
     * call delete ({ resourcePath: 'fruizioni/' + fruizione_key })
@@ -318,19 +319,25 @@ Scenario: Allegati Fruizioni Download
 @DownloadSpecificaSemiformale
 Scenario Outline: Fruizioni Download SpecificaSemiformale
 
-    * eval allegato_specificasemiformale.allegato.tipo_specifica = '<tipo_specifica>'
-    * eval allegato_specificasemiformale.allegato.nome = '<nome>'
-    * eval allegato_specificasemiformale.allegato.documento = '<contenuto>'
+    # * eval allegato_specificasemiformale.allegato.tipo_specifica = '<tipo_specifica>'
+    # * eval allegato_specificasemiformale.allegato.nome = '<nome>'
+    # * eval allegato_specificasemiformale.allegato.documento = '<contenuto>'
 
+    * eval karate.set('allegato_specificasemiformale.allegato.tipo_specifica', '<tipo_specifica>')
+    * eval karate.set('allegato_specificasemiformale.allegato.nome', '<nome>')
+    * eval karate.set('allegato_specificasemiformale.allegato.documento', '<contenuto>')
+ 
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'soggetti', body: erogatore })
     * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
     * call create ({ resourcePath: fruizione_petstore_path + '/allegati', body: allegato_specificasemiformale })
 
     * def allegatoDecodificato = call decodeBase64 allegato_specificasemiformale.allegato.documento
-
+    * def allegatoStringa = karate.toString(allegatoDecodificato)
+    
     Given url configUrl
     And path fruizione_petstore_path, "allegati", allegato_specificasemiformale.allegato.nome, 'download'
+    
     And header Authorization = govwayConfAuth
     When method get
     Then status 200
@@ -367,14 +374,15 @@ Scenario Outline: Fruizioni Download SpecificaLivelloServizio
     * call create ({ resourcePath: fruizione_petstore_path + '/allegati', body: allegato_specificalivelloservizio })
 
     * def allegatoDecodificato = call decodeBase64 allegato_specificalivelloservizio.allegato.documento
-
+    * def allegatoStringa = karate.toString(allegatoDecodificato)
+    
     Given url configUrl
     And path fruizione_petstore_path, "allegati", allegato_specificalivelloservizio.allegato.nome, 'download'
     And header Authorization = govwayConfAuth
     When method get
     Then status 200
     And match responseHeaders contains { 'Content-Type': ['<content_type>'] }
-    * match response == allegatoDecodificato
+    * match response == allegatoStringa
 
     * call delete ({ resourcePath: fruizione_petstore_path + '/allegati/' + allegato_specificalivelloservizio.allegato.nome })
     * call delete ({ resourcePath: 'fruizioni/' + fruizione_key })
@@ -402,14 +410,15 @@ Scenario Outline: Fruizioni Download SpecificaSicurezza
     * call create ({ resourcePath: fruizione_petstore_path + '/allegati', body: allegato_specificasicurezza })
 
     * def allegatoDecodificato = call decodeBase64 allegato_specificasicurezza.allegato.documento
-
+    * def allegatoStringa = karate.toString(allegatoDecodificato)
+    
     Given url configUrl
     And path fruizione_petstore_path, "allegati", allegato_specificasicurezza.allegato.nome, 'download'
     And header Authorization = govwayConfAuth
     When method get
     Then status 200
     And match responseHeaders contains { 'Content-Type': ['<content_type>'] }
-    * match response == allegatoDecodificato
+    * match response == allegatoStringa
 
     * call delete ({ resourcePath: fruizione_petstore_path + '/allegati/' + allegato_specificasicurezza.allegato.nome })
     * call delete ({ resourcePath: 'fruizioni/' + fruizione_key })

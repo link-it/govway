@@ -3,9 +3,13 @@ Feature: Delete Allegati
 Background:
 
 * call read('classpath:crud_commons.feature')
+* def randomize = read('classpath:randomize.js')
 
-* def api = read('api.json')
-* eval randomize(api, ["nome"])
+
+  * def api = read('classpath:org/openspcoop2/core/config/rs/testsuite/api/api.json')
+  * eval randomize(api, ["nome"])
+
+
 
 * def api_path = api.nome + '/' + api.versione
 * def allegato = read('allegato.json')

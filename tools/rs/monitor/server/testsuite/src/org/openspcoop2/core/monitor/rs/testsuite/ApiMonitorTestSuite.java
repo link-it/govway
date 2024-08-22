@@ -20,8 +20,8 @@
 
 package org.openspcoop2.core.monitor.rs.testsuite;
 
-import org.junit.jupiter.api.Test;
 import com.intuit.karate.junit5.Karate;
+import com.intuit.karate.junit5.Karate.Test;
 
 /**
  * ApplicativiTest
@@ -32,8 +32,9 @@ import com.intuit.karate.junit5.Karate;
 
 public 	class ApiMonitorTestSuite {
 
-    @Karate.Test
-    public Karate testAll() {
+    
+    @Test
+    Karate testAll() {
         return Karate.run().relativeTo(getClass());
     }
 }

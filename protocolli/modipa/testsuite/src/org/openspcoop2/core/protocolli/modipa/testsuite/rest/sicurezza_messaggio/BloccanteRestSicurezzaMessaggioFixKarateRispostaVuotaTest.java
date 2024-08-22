@@ -62,14 +62,6 @@ public class BloccanteRestSicurezzaMessaggioFixKarateRispostaVuotaTest extends C
                 .build();
     }
     
-    /* TODO: mflag sempre solo una feature 
-    @Test
-    Karate testIdarFixKarate() {
-        return Karate.run("classpath:test/rest/sicurezza-messaggio/idar-fix-karate.feature").relativeTo(getClass());
-    }
-    */
-    
-    
         @Test
     Karate testAll() {
         return Karate.run("classpath:test/rest/sicurezza-messaggio/idar-fix-karate.feature").relativeTo(getClass());

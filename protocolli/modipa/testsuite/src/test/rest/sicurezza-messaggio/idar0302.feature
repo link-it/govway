@@ -571,7 +571,7 @@ And header GovWay-TestSuite-Test-ID = 'multipart-request-form-data-idar0302'
 And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
 When method post
 Then status 200
-And match response == read('multipart-request.bin')
+And match response == karate.toString(read('multipart-request.bin'))
 And match header Authorization == null
 And match header Agid-JWT-Signature == null
 
@@ -587,7 +587,7 @@ And header GovWay-TestSuite-Test-ID = 'multipart-request-mixed-idar0302'
 And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
 When method post
 Then status 200
-And match response == read('multipart-request.bin')
+And match response == karate.toString(read('multipart-request.bin'))
 And match header Authorization == null
 And match header Agid-JWT-Signature == null
 
@@ -603,7 +603,7 @@ And header GovWay-TestSuite-Test-ID = 'multipart-request-dump-idar0302'
 And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
 When method post
 Then status 200
-And match response == read('multipart-request.bin')
+And match response == karate.toString(read('multipart-request.bin'))
 And match header Authorization == null
 And match header Agid-JWT-Signature == null
 

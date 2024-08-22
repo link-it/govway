@@ -1641,7 +1641,7 @@ Scenario: isTest('assenza-header-integrity-risposta')
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03/v1')
 
-    * rmHeader(responsetHeaders, 'Agid-JWT-Signature')
+    * rmHeader(responseHeaders, 'Agid-JWT-Signature')
 
 
 Scenario: isTest('assenza-header-digest-richiesta')
@@ -5656,9 +5656,11 @@ Scenario: isTest('idar03-custom-doppi-header-assenza-header-integrity-risposta')
 Scenario: isTest('idar03-custom-doppi-header-assenza-header-integrity-richiesta-metodo-get-senza-payload') ||
 		isTest('idar03-custom-doppi-header-assenza-header-integrity-richiesta-metodo-delete-senza-payload')
 
-    * def requestUri = '/resources/22/M/customAlways'
 
-    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1')
+    * def requestPath = '/'
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1/resources/22/M/customAlways')
+    
     
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/idar03-custom-doppi-header-assenza-header-integrity-richiesta.json')
@@ -5667,9 +5669,10 @@ Scenario: isTest('idar03-custom-doppi-header-assenza-header-integrity-richiesta-
 Scenario: isTest('idar03-custom-doppi-header-assenza-header-integrity-risposta-metodo-get-senza-payload') ||
 		isTest('idar03-custom-doppi-header-assenza-header-integrity-risposta-metodo-delete-senza-payload')
     
-    * def requestUri = '/resources/22/M'
+    * def requestPath = '/'
 
-    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1')
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1/resources/22/M')
+
 
 Scenario: isTest('idar03-custom-doppi-header-get-without-custom')
 
@@ -7017,13 +7020,13 @@ Scenario: isTest('solo-authorization-richiesta-idar04-jwk') ||
     * eval
     """
     if (isTest('solo-authorization-richiesta-idar04-jwk')) {
-      tipoTest = 'JWK'
+      karate.set('tipoTest','JWK')
     }
     """
     * eval
     """
     if (isTest('solo-authorization-richiesta-idar04-pdnd')) {
-      tipoTest = 'PDND'
+       karate.set('tipoTest', 'PDND')
     }
     """
 
@@ -7892,9 +7895,9 @@ Scenario: isTest('idar04-custom-header-pdnd-assenza-header-integrity-risposta')
 
 Scenario: isTest('idar04-custom-header-pdnd-assenza-header-integrity-richiesta-metodo-get-senza-payload')
 
-    * def requestUri = '/resources/22/M/customAlways'
+    * def requestPath = '/'
 
-    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04Custom-PDND/v1')
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04Custom-PDND/v1/resources/22/M/customAlways')
     
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/idar03-custom-single-header-assenza-header-integrity-richiesta.json')
@@ -7902,10 +7905,9 @@ Scenario: isTest('idar04-custom-header-pdnd-assenza-header-integrity-richiesta-m
 
 Scenario: isTest('idar04-custom-header-pdnd-assenza-header-integrity-risposta-metodo-get-senza-payload')
     
-    * def requestUri = '/resources/22/M'
-
-    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04Custom-PDND/v1')
-
+    * def requestPath = '/'
+    
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04Custom-PDND/v1/resources/22/M')
 
 Scenario: isTest('idar04-custom-header-pdnd-get-without-custom')
 

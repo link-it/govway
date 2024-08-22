@@ -6,8 +6,12 @@ function randomize(src, paths) {
 
     paths.forEach( function(path) {
                 
-        path = path.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
-        path = path.replace(/^\./, ''); // strip a leading dot
+        // mflag:
+        // Codice originale sembra copiato da: https://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-and-arrays-by-string-path/60553207#60553207
+        // le due istruzioni seguenti non servono: gli input non contengono elementi tra quadre e nemmeno . iniziali, ma sono invece path separati da . (es: src.credenziali.certificato.issuer)
+        // path = path.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+        // path = path.replace(/^\./, ''); // strip a leading dot
+
         var pathArray = path.split('.');        
         
         var target = src;
@@ -20,13 +24,19 @@ function randomize(src, paths) {
         if ( i == pathArray.length - 1) {
             var rnd = '' + java.util.UUID.randomUUID();
             // Rimuoviamo i - così non disturbiamo eventuali validatori 
-            target[pathArray[i]] = target[pathArray[i]] + rnd.replace(/-/g,'')
+            // modificato per non usare regexp: target[pathArray[i]] = target[pathArray[i]] + rnd.replace(/-/g,'')
+            var cleanedRnd = '';
+	    for (var j = 0; j < rnd.length; j++) {
+    		if (rnd[j] !== '-') {
+        	cleanedRnd += rnd[j];
+                }
+            }
+
+            target[pathArray[i]] = target[pathArray[i]] + cleanedRnd;
+
             // Limitiamo il campo a 32 caratteri
             target[pathArray[i]] = target[pathArray[i]].substring(0,32)
         }
-
     });
-    
 }
-
 

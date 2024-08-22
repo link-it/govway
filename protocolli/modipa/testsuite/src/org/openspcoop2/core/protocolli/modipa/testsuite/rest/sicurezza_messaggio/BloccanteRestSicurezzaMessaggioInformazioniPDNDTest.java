@@ -72,13 +72,6 @@ public class BloccanteRestSicurezzaMessaggioInformazioniPDNDTest extends ConfigL
         ).relativeTo(getClass());
     }
     
-/* TODO: mflag sempre una sola feature
-    @Test
-    Karate testGetInformazioniPdnd() {
-        return Karate.run("classpath:test/rest/sicurezza-messaggio/getInformazioniPdnd.feature").relativeTo(getClass());
-    }
-  */
-  
     
     @AfterAll
     public static void afterAll() {

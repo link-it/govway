@@ -1,4 +1,4 @@
-<project name="GovWayMonitorMondipaTestSuite" >
+<project name="GovWayMonitorMondipaTestSuite">
 
     <description>
         File di Script per la compilazione dell'interfaccia api rs per il Monitoraggio
@@ -14,13 +14,11 @@
     </taskdef>
 
     <path id="ant.classpath">
-        <pathelement location="/usr/share/java/ant/ant-junit.jar"/>
-        <pathelement location="/usr/share/java/ant/ant-launcher.jar"/>
-<!--        <pathelement location="/usr/share/java/ant/ant-junitlauncher.jar"/> -->
+        <pathelement location="${required_lib}/ant/ant-junit.jar"/>
     </path>
 
-    <path id="karate_testsuite" >
-        <fileset dir="${required_lib}/testsuite" >
+    <path id="karate_testsuite">
+        <fileset dir="${required_lib}/testsuite">
             <include name="hamcrest-core-1.3.jar"/>
             <include name="picocli-4.2.0.jar"/>
             <include name="logback-*.jar"/>
@@ -28,22 +26,19 @@
             <include name="thymeleaf-*.jar"/>
             <include name="attoparser-*.jar"/>
             <include name="unbescape-*.jar"/>
-
-<include name="junit-jupiter-5.9.3.jar"/>
-<include name="junit-jupiter-engine-*.jar"/>
-<include name="junit-platform-engine-*.jar"/>
-<include name="junit-platform-launcher-*.jar"/>
-<include name="junit-platform-console-*.jar"/>
-<include name="junit-platform-reporting-*.jar"/>
-<include name="junit-platform-commons*.jar"/>
-<include name="junit-jupiter-api*.jar"/>
-<!-- <include name="junit-4*.jar"/> -->
-
-	<include name="junit-vintage-engine*.jar"/>
+            <include name="junit-jupiter-5.9.3.jar"/>
+            <include name="junit-jupiter-engine-*.jar"/>
+            <include name="junit-platform-engine-*.jar"/>
+            <include name="junit-platform-launcher-*.jar"/>
+            <include name="junit-platform-console-*.jar"/>
+            <include name="junit-platform-reporting-*.jar"/>
+            <include name="junit-platform-commons*.jar"/>
+            <include name="junit-jupiter-api*.jar"/>
+            <!-- <include name="junit-4*.jar"/> -->
+            <include name="junit-vintage-engine*.jar"/>
             <include name="karate-core-1.4.1.jar"/>
-            
-                                <include name="karate-netty-*"/> <!-- Ensure this is included -->
-                    <include name="karate-apache-1.4.1.jar"/> <!-- Ensure this is included -->
+            <include name="karate-netty-*"/>
+            <include name="karate-apache-1.4.1.jar"/>
             <include name="karate-junit5-1.4.1.jar"/>
             <include name="postgresql-*.jar"/>
             <include name="antlr4-runtime-*.jar"/>
@@ -63,78 +58,69 @@
             <include name="netty-buffer-4.1.*.jar"/>
             <include name="armeria-*.jar"/>
             <include name="netty-codec-http-*.jar"/>
+            <include name="apiguardian-api-*.jar"/>
             <include name="js-*"/>
-                    <include name="opentest4j-1.2.0.jar"/>
+            <include name="opentest4j-1.2.0.jar"/>
         </fileset>
 
-<!-- deve diventare parte del fileset e cancellata la cartella cucumber sotto lib -->
-   <!--     <fileset dir="${required_lib}/cucumber">
-            <include name="cucumber-java-*.jar"/>
-            <include name="cucumber-junit-platform-engine-*.jar"/>
-            <include name="cucumber-core-*.jar"/>
-            <include name="cucumber-expressions-*.jar"/>
-            <include name="gherkin-*.jar"/>
-            <include name="cucumber-plugin-*.jar"/> 
-        </fileset>-->
-
-        <fileset dir="${required_lib}/jackson" >
+        <fileset dir="${required_lib}/jackson">
             <include name="*.jar"/>
         </fileset>
 
-        <fileset dir="${dir_jdbc}" >
+        <fileset dir="${dir_jdbc}">
             <include name="*.jar"/>
         </fileset>
-        <fileset dir="${required_lib}/commons" >
+        <fileset dir="${required_lib}/commons">
             <include name="*.jar"/>
         </fileset>
-        <fileset dir="${required_lib}/httpcore" >
+        <fileset dir="${required_lib}/httpcore">
             <include name="*.jar"/>
         </fileset>
-        <fileset dir="${required_lib}/log" >
+        <fileset dir="${required_lib}/log">
             <include name="*.jar"/>
         </fileset>
-        <fileset dir="${required_lib}/json" >
+        <fileset dir="${required_lib}/json">
             <include name="*.jar"/>
         </fileset>
-        <fileset dir="${required_lib}/spring" >
+        <fileset dir="${required_lib}/spring">
             <include name="*.jar"/>
         </fileset>
 
-        <fileset dir="${required_lib}/shared" >
+        <fileset dir="${required_lib}/shared">
             <include name="snakeyaml-2.1-gov4j-1.jar"/>
             <include name="joda-time-2.12.5.jar"/>
         </fileset>
-        <fileset dir="${required_lib}/cxf" >
+        <fileset dir="${required_lib}/cxf">
             <include name="asm-9.6.jar"/>
         </fileset>
-        <fileset dir="${openspcoop2.dist}" >
+        <fileset dir="${openspcoop2.dist}">
             <include name="*.jar"/>
         </fileset>
 
         <!-- prese dal build di java17 -->
-        <fileset dir="${required_lib}/swagger" >
+        <fileset dir="${required_lib}/swagger">
             <include name="classgraph-*.jar"/>
             <include name="*.jar"/>
-        </fileset> 
-    </path> 
+        </fileset>
+    </path>
 
-    <property name="src_testsuite" location="src" />
-    <property name="build_testsuite" location="build" />
-    <property name="dist_testsuite" location="dist" />
-    
-    
+    <property name="src_testsuite" location="src"/>
+    <property name="build_testsuite" location="build"/>
+    <property name="dist_testsuite" location="dist"/>
+
     <!-- Ripulisce la distribuzione -->
     <target name="clean">
         <delete dir="${build_testsuite}"/>
         <delete dir="log"/>
         <delete dir="target"/>
     </target>
+
     <target name="init">
         <mkdir dir="${build_testsuite}"/>
     </target>
 
     <!-- Compilazione del Client -->
-    <target name="build" depends="clean,init" description="compila" >
+    <target name="build" depends="clean,init" description="compila">
         <!-- Compile the java code  -->
         <javac includeantruntime="false" destdir="${build_testsuite}" debug="${debug}">
             <src path="${src_testsuite}"/>
@@ -160,385 +146,148 @@
     </target>
 
     <!-- Esecuzione dei test -->
-                <var name="karateparams" value=""/>
+    <var name="karateparams" value=""/>
 
     <target name="delete_config">
-        <echo message="Eliminazione configurazione in corso ..." />
+        <echo message="Eliminazione configurazione in corso..."/>
         <java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
-            <arg value="false" />
+            <arg value="false"/>
             <classpath>
-                <path refid="karate_testsuite" />
+                <path refid="karate_testsuite"/>
                 <pathelement path="${build_testsuite}"/>
             </classpath>
         </java>
-        <echo message="Eliminazione configurazione effettuata" />
+        <echo message="Eliminazione configurazione effettuata"/>
     </target>
 
     <target name="load_config">
-        <echo message="Caricamento configurazione in corso (delete) ..." />
+        <echo message="Caricamento configurazione in corso (delete)..."/>
         <java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
-            <arg value="false" />
+            <arg value="false"/>
             <classpath>
-                <path refid="karate_testsuite" />
+                <path refid="karate_testsuite"/>
                 <pathelement path="${build_testsuite}"/>
             </classpath>
         </java>
-        <echo message="Caricamento configurazione in corso (create) ..." />
+        <echo message="Caricamento configurazione in corso (create)..."/>
         <java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
-            <arg value="true" />
+            <arg value="true"/>
             <classpath>
-                <path refid="karate_testsuite" />
+                <path refid="karate_testsuite"/>
                 <pathelement path="${build_testsuite}"/>
             </classpath>
         </java>
-        <echo message="Caricamento configurazione completata" />
+        <echo message="Caricamento configurazione completata"/>
     </target>
-<!--
+
     <target name="run-tests">
         <if>
-            <equals arg1="${karate.options}" arg2="$${karate.options}"/>
+            <isset property="karate.options"/>
             <then>
-               <if>
-                  <equals arg1="${test}" arg2="$${test}"/>
-                     <then>               
-                         <antcall target="run-tests-without-options"/>
-                     </then>
-                     <else>
-                         <var name="karateparams" value="-DA=test"/>
-                         <antcall target="run-tests-with-options"/>
-                     </else>
-              </if>
+                <if>
+                    <isset property="test"/>
+                    <then>
+                        <antcall target="run-tests-with-options"/>
+                    </then>
+                </if>
             </then>
             <else>
-                <var name="karateparams" value="-Dkarate.options=${karate.options}"/>
-                <antcall target="run-tests-with-options"/>
+                <if>
+                    <isset property="test"/>
+                    <then>
+                        <antcall target="run-tests-with-class"/>
+                    </then>
+                    <else>
+                        <antcall target="run-tests-without-options"/>
+                    </else>
+                </if>
             </else>
         </if>
     </target>
-    
-    -->
-    
-    
-    
-    
-        <target name="run-tests">
-                                                <echo message="${karate.options}"/>
-                                                                                                <echo message="aaaaa $${karate.options}"/>
-<if>
-    <isset property="karate.options"/>
-            <then>
-               <if>
-                   <isset property="test"/>
-                     <then>               
-                         <antcall target="run-tests-with-options"/>
-                     </then>
-              </if>
-            </then>
-            <else>
-              <if>
-                  <isset property="test"/>
-                     <then>               
-                         <antcall target="run-tests-with-class"/>
-                     </then>
-                     <else>
-                         <antcall target="run-tests-without-options"/>
-                     </else>
-              </if>
-            </else>
-        </if>
-    </target>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
-<taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
-    <classpath>
-        <pathelement location="/usr/share/java/ant/ant-junit.jar"/>
-    </classpath>
-</taskdef>
-
-<taskdef name="junitlauncher" classname="org.apache.tools.ant.taskdefs.optional.junitlauncher.confined.JUnitLauncherTask">
-    <classpath>
-        <pathelement location="/usr/share/java/ant/ant-junitlauncher.jar"/>
-    </classpath>
-</taskdef>
-
-<taskdef name="junitreport" classname="org.apache.tools.ant.taskdefs.optional.junit.XMLResultAggregator">
-    <classpath refid="ant.classpath"/>
-</taskdef>
-
-
-
-
-
-
-
-
-<target name="run-tests-with-class">
-
-    <property name="filtertrace" value="true"/>
-    <mkdir dir="${output}/jreports"/>
-
-    <echo message="arg1: ${test} - arg2: ${karate.options}}"/>
-
-    <junitlauncher>
+    <taskdef name="junitlauncher" classname="org.apache.tools.ant.taskdefs.optional.junitlauncher.confined.JUnitLauncherTask">
         <classpath>
-            <path refid="karate_testsuite"/>
-            <pathelement path="${build_testsuite}"/>
-            <pathelement path="${required_lib}"/>
+            <pathelement location="${required_lib}/testsuite/ant-junitlauncher-1.10.12.jar"/>
         </classpath>
+    </taskdef>
 
-        <testclasses outputdir="${output}/jreports"> 
-        
-          <fileset dir="${build_testsuite}">
-            <include name="**/${test}.class"/>
-          </fileset>
+    <taskdef name="junitreport" classname="org.apache.tools.ant.taskdefs.optional.junit.XMLResultAggregator">
+        <classpath refid="ant.classpath"/>
+    </taskdef>
 
-          <fork> 
-	    <jvmarg value="-Dnashorn.args=- -no-deprecation-warning"/>
-	    <jvmarg value="-Djdk.module.illegalAccess=permit"/> 
-          </fork> 
-       
-          <listener type="legacy-brief" sendSysErr="false" sendSysOut="false" useLegacyReportingName="false"/> 
-          <listener type="legacy-xml" sendSysErr="false" sendSysOut="false" useLegacyReportingName="false" /> 
-          <listener type="legacy-plain" sendSysErr="false" sendSysOut="false" useLegacyReportingName="false"/>  
-               
-        </testclasses>
-    </junitlauncher>
-</target>
-
-
-
-
-
-
-<target name="run-tests-with-options">
-                   <echo message="karate optioins c'è"/>
-    <property name="filtertrace" value="true"/>
-    <mkdir dir="${output}/jreports"/>
-    <var name="karateparams" value="${karate.options}"/>
-    <echo message="arg12 ${test} - arg2: ${karate.options}"/>
-
-    <junitlauncher>
-        <classpath>
-            <path refid="karate_testsuite"/>
-            <pathelement path="${build_testsuite}"/>
-            <pathelement path="${required_lib}"/>
-        </classpath>
-
-        <testclasses outputdir="${output}/jreports"> 
-        
-          <fileset dir="${build_testsuite}">
-            <include name="**/${test}.class"/>
-          </fileset>
-
-          <fork> 
-      	<jvmarg value="-Dkarate.options=${karateparams}"/>
-	    <jvmarg value="-Dnashorn.args=- -no-deprecation-warning"/>
-	    <jvmarg value="-Djdk.module.illegalAccess=permit"/> 
-          </fork> 
-       
-          <listener type="legacy-brief" sendSysErr="false" sendSysOut="false" useLegacyReportingName="false"/> 
-          <listener type="legacy-xml" sendSysErr="false" sendSysOut="false" useLegacyReportingName="false" /> 
-          <listener type="legacy-plain" sendSysErr="false" sendSysOut="false" useLegacyReportingName="false"/>  
-               
-        </testclasses>
-    </junitlauncher>
-</target>
-
-
-
-<target name="run-tests-without-options">
-                                        <echo message="c'è anche tesr"/>
-    <property name="filtertrace" value="true"/>
-    <mkdir dir="${output}/jreports"/>
-
-    <junitlauncher>
-        <classpath>
-            <path refid="karate_testsuite"/>
-                            <pathelement path="${build_testsuite}"/>
-                            <pathelement path="${required_lib}"/>
-        </classpath>
-
-        <testclasses outputdir="${output}/jreports"> 
-        
-          <fileset dir="${build_testsuite}">
-             <include name="**/*Test.class"/>
-          </fileset>
-
-          <fork> 
-	    <jvmarg value="-Dnashorn.args=- -no-deprecation-warning"/>
-	    <jvmarg value="-Djdk.module.illegalAccess=permit"/> 
-          </fork> 
-       
-          <listener type="legacy-brief" sendSysErr="false" sendSysOut="false" useLegacyReportingName="false"/> 
-          <listener type="legacy-xml" sendSysErr="false" sendSysOut="false" useLegacyReportingName="false" /> 
-          <listener type="legacy-plain" sendSysErr="false" sendSysOut="false" useLegacyReportingName="false"/>  
-               
-        </testclasses>
-    </junitlauncher>
-</target>
-
-<!--
-	<target name="reports">
-        <mkdir dir="${output}/html"/>
-		<junitreport todir="${output}/html">
-
-			<fileset dir="${output}/jreports">
-				<include name="TEST-*.xml" />
-			</fileset>
-			<report format="frames" todir="${output}/html/" />
-		</junitreport>
-
-	</target>
-
-
-!! invece di sostituirlo con una stringa vuota serve sostituirlo con un messaggio utile, bisogna solo elimiare il failure messages e non gli error. Però gli errori me li mette tutti come failures
-	-->
-    <target name="filter-reports" >
-        <mkdir dir="${output}/filtered-jreports"/>
-        <copy todir="${output}/filtered-jreports">
-            <fileset dir="${output}/jreports">
-                <include name="TEST-*.xml" />
-            </fileset>
-        </copy>
-        <echo message="Applying filter to remove failure messages"/>
-<!--        <replaceregexp byline="false" flags="g" encoding="UTF-8"> -->
-        <replaceregexp  byline="false" flags="g" encoding="UTF-8">
-            <!--<regexp pattern="!\[CDATA\[.*?\]\]>"/> -->
-            <!-- <regexp pattern="!\[CDATA(.|\n)*\]\]>"/> -->
-            <regexp pattern="CDATA" />
-            <substitution expression="aaa" />
-            <fileset dir="${output}/filtered-jreports">
-                <include name="TEST-1.xml" />
-            </fileset>
-        </replaceregexp>
-    <!--    <echo message="Applying filter to remove error messages"/>
-        <replaceregexp byline="false" flags="g" encoding="UTF-8">
-            <regexp pattern="(?s)&lt;error message=&quot;.*?&quot;&gt;.*?&lt;/error&gt;" />
-            <substitution expression="" />
-            <fileset dir="${output}/filtered-jreports">
-                <include name="TEST-*.xml" />
-            </fileset>
-        </replaceregexp>
-        -->
+    <target name="run-tests-with-class">
+        <property name="filtertrace" value="true"/>
+        <mkdir dir="${output}/jreports"/>
+        <junitlauncher>
+            <classpath>
+                <path refid="karate_testsuite"/>
+                <pathelement path="${build_testsuite}"/>
+                <pathelement path="${required_lib}"/>
+            </classpath>
+            <testclasses outputdir="${output}/jreports">
+                <fileset dir="${build_testsuite}">
+                    <include name="**/${test}.class"/>
+                </fileset>
+                <fork>
+                    <jvmarg value="-Dnashorn.args=- -no-deprecation-warning"/>
+                    <jvmarg value="-Djdk.module.illegalAccess=permit"/>
+                </fork>
+                <listener type="legacy-brief" sendSysErr="false" sendSysOut="false" useLegacyReportingName="false"/>
+                <listener type="legacy-xml" sendSysErr="false" sendSysOut="false" useLegacyReportingName="false"/>
+                <listener type="legacy-plain" sendSysErr="false" sendSysOut="false" useLegacyReportingName="false"/>
+            </testclasses>
+        </junitlauncher>
     </target>
 
-
-
-
-
-
-
-    <target name="filter-reports3333" depends="init">
-        <copy todir="${output}/filtered-jreports">
-            <fileset dir="${output}/jreports">
-                <include name="/home/mflag/gitlab_linkit/govway2/govway_riparto_202406182148/protocolli/modipa/testsuite/RisultatiTestSuiteV2/filtered-jreports/TEST-org.openspcoop2.core.protocolli.modipa.testsuite.rest.sicurezza_messaggio.BloccanteRestSicurezzaMessaggioTest.xml" />
-                            </fileset>
-
-        </copy>
-       <exec executable="perl">
-            <arg value="-0777"/>
-            <arg value="-pi"/>
-            <arg value="-e"/>
-            <arg value="s/message=&quot;.*?&quot;//gs"/>
-            <arg value="/home/mflag/gitlab_linkit/govway2/govway_riparto_202406182148/protocolli/modipa/testsuite/RisultatiTestSuiteV2/filtered-jreports/TEST-org.openspcoop2.core.protocolli.modipa.testsuite.rest.sicurezza_messaggio.BloccanteRestSicurezzaMessaggioTest.xml"/>
-        </exec>
-
-        <!-- Esegui il secondo comando Perl -->
-        <exec executable="perl">
-            <arg value="-0777"/>
-            <arg value="-pi"/>
-            <arg value="-e"/>
-    <!--        <arg line="s/<![CDATA[(.|\n|\r)*]]>//gs"/> -->
-            <arg value="/home/mflag/gitlab_linkit/govway2/govway_riparto_202406182148/protocolli/modipa/testsuite/RisultatiTestSuiteV2/filtered-jreports/TEST-org.openspcoop2.core.protocolli.modipa.testsuite.rest.sicurezza_messaggio.BloccanteRestSicurezzaMessaggioTest.xml"/>
-        </exec>
+    <target name="run-tests-with-options">
+        <property name="filtertrace" value="true"/>
+        <mkdir dir="${output}/jreports"/>
+        <var name="karateparams" value="${karate.options}"/>
+        <junitlauncher>
+            <classpath>
+                <path refid="karate_testsuite"/>
+                <pathelement path="${build_testsuite}"/>
+                <pathelement path="${required_lib}"/>
+            </classpath>
+            <testclasses outputdir="${output}/jreports">
+                <fileset dir="${build_testsuite}">
+                    <include name="**/${test}.class"/>
+                </fileset>
+                <fork>
+                    <jvmarg value="-Dkarate.options=${karateparams}"/>
+                    <jvmarg value="-Dnashorn.args=- -no-deprecation-warning"/>
+                    <jvmarg value="-Djdk.module.illegalAccess=permit"/>
+                </fork>
+                <listener type="legacy-brief" sendSysErr="false" sendSysOut="false" useLegacyReportingName="false"/>
+                <listener type="legacy-xml" sendSysErr="false" sendSysOut="false" useLegacyReportingName="false"/>
+                <listener type="legacy-plain" sendSysErr="false" sendSysOut="false" useLegacyReportingName="false"/>
+            </testclasses>
+        </junitlauncher>
     </target>
 
-    <target name="run-perl-scripts">
-        <!-- Crea un file temporaneo contenente i comandi Perl -->
-        <echo file="temp_script.pl">
-            <![CDATA[
-                #!/usr/bin/perl
-                use strict;
-                use warnings;
-                local $/ = undef;
-                my $file = '1.xml';
-                open my $fh, '<', $file or die "Cannot open $file: $!";
-                my $content = <$fh>;
-                close $fh;
-
-                $content =~ s/message=".*?"//gs;
-                $content =~ s/<!\[CDATA\[(.|\n|\r)*\]\]>//gs;
-
-                open $fh, '>', $file or die "Cannot write to $file: $!";
-                print $fh $content;
-                close $fh;
-            ]]>
-        </echo>
-
-        <!-- Rendi eseguibile il file temporaneo -->
-        <chmod file="temp_script.pl" perm="755"/>
-
-        <!-- Esegui lo script Perl -->
-        <exec executable="./temp_script.pl"/>
-
-        <!-- Rimuovi il file temporaneo -->
-        <delete file="temp_script.pl"/>
+    <target name="run-tests-without-options">
+        <property name="filtertrace" value="true"/>
+        <mkdir dir="${output}/jreports"/>
+        <junitlauncher>
+            <classpath>
+                <path refid="karate_testsuite"/>
+                <pathelement path="${build_testsuite}"/>
+                <pathelement path="${required_lib}"/>
+            </classpath>
+            <testclasses outputdir="${output}/jreports">
+                <fileset dir="${build_testsuite}">
+                    <include name="**/*Test.class"/>
+                </fileset>
+                <fork>
+                    <jvmarg value="-Dnashorn.args=- -no-deprecation-warning"/>
+                    <jvmarg value="-Djdk.module.illegalAccess=permit"/>
+                </fork>
+                <listener type="legacy-brief" sendSysErr="false" sendSysOut="false" useLegacyReportingName="false"/>
+                <listener type="legacy-xml" sendSysErr="false" sendSysOut="false" useLegacyReportingName="false"/>
+                <listener type="legacy-plain" sendSysErr="false" sendSysOut="false" useLegacyReportingName="false"/>
+            </testclasses>
+        </junitlauncher>
     </target>
-
-
-
-
-
-
-
-
-    <target name="run-perl-scripts9999999">
-        <!-- Esegui lo script Perl -->
-        <exec executable="perl">
-            <arg value="perl"/>
-        </exec>
-    </target>
-
-
-
-
-
-
-
-
-
-
-
-
-    <target name="run-aaaaaaaaaaaaaaaaaaaaa">
-        <!-- Definisci il fileset per tutti i file XML nella cartella jreports e nelle sue sottocartelle -->
-        <fileset dir="${output}/jreports" includes="**/*.xml">
-            <filelist id="xml.files"/>
-        </fileset>
-
-        <!-- Esegui lo script Perl su ciascun file XML trovato -->
-        <foreach file="${file.list}" target="process-file"/>
-    </target>
-
-    <target name="process-file">
-        <exec executable="perl">
-            <arg value="perl"/>
-            <arg value="@{file}"/>
-        </exec>
-    </target>
-
-
-
-
 
     <taskdef resource="net/sf/antcontrib/antlib.xml">
         <classpath>
@@ -546,40 +295,21 @@
         </classpath>
     </taskdef>
 
-    
-    <target name="run-perl-scripts432432423">
-        <!-- Cerca tutti i file XML nella cartella jreports e nelle sue sottocartelle -->
-        <path id="xml.files">
-            <fileset dir="${output}/jreports" includes="**/*.xml"/>
-        </path>
-
-        <!-- Esegui lo script Perl su ciascun file XML trovato -->
-        <foreach target="process-file6666666666666" param="file">
-            <path refid="xml.files"/>
-        </foreach>
+    <target name="process-file">
+        <exec executable="./filter-reports.sh"/>
     </target>
-
-    <target name="process-file6666666666666">
-        <exec executable="perl">
-            <arg value="perl"/>
-            <arg value="${file}"/>
-        </exec>
-    </target>
-
-
-
-
 
     <!-- Task per generare il report HTML -->
     <target name="reports">
+        <antcall target="process-file"/>
         <mkdir dir="${output}/html"/>
         <junitreport todir="${output}/html">
-<!--            <fileset dir="${output}/filtered-jreports"> -->
-                <fileset dir="${output}/jreports">
-                <include name="TEST-*.xml" />
+            <fileset dir="${output}/jreports">
+                <include name="TEST-*.xml"/>
             </fileset>
-            <report format="frames" todir="${output}/html/" />
+            <report format="frames" todir="${output}/html/"/>
         </junitreport>
     </target>
 
 </project>
+

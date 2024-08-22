@@ -65,14 +65,6 @@ public class BloccanteRestSicurezzaMessaggioAuditTest extends ConfigLoader {
                 .build();
     }
 
-/*
-    @Test
-    Karate testAudit() {
-        return Karate.run("classpath:test/rest/sicurezza-messaggio/audit.feature").relativeTo(getClass());
-    }
-*/
-
-// TODO mflag: una sola feature ?
 
         @Test
     Karate testAll() {

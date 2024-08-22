@@ -67,25 +67,12 @@ public class BloccanteRestSicurezzaMessaggioFixKarateRichiestaVuotaTest extends 
         @Test
     Karate testAll() {
         return Karate.run(
-		"classpath:test/rest/sicurezza-messaggio/idar03-fix-karate.feature"
+		"classpath:test/rest/sicurezza-messaggio/idar03-fix-karate.feature",
+		    "classpath:test/rest/sicurezza-messaggio/idar04-fix-karate.feature"
         ).relativeTo(getClass());
     }
     
     
-    
-    
-    
-    
-/* TODO: mflag sempre una sola feature
-
-    @Test
-    Karate testIdar03FixKarate() {
-        return Karate.run("classpath:test/rest/sicurezza-messaggio/idar03-fix-karate.feature").relativeTo(getClass());
-    }
-	*/
-
-
-
     @AfterAll
     public static void afterAll() {
         proxy.stop();

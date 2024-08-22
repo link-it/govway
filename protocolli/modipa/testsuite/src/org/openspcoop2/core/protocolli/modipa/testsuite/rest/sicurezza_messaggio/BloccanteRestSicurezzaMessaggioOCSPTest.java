@@ -85,14 +85,8 @@ public class BloccanteRestSicurezzaMessaggioOCSPTest extends ConfigLoader {
     Karate testAll() {
         return Karate.run("classpath:test/rest/sicurezza-messaggio/idar01-ocsp.feature").relativeTo(getClass());
         }
-        
-/* TODO: mflag sempre una sola feature
-    @Test
-    Karate testIdar01OCSP() {
-        return Karate.run("classpath:test/rest/sicurezza-messaggio/idar01-ocsp.feature").relativeTo(getClass());
-    }
 
-*/
+
     @AfterAll
     public static void afterAll() {
         proxy.stop();

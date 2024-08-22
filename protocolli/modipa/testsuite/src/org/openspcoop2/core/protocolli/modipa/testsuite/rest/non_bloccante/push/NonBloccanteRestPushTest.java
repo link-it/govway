@@ -64,21 +64,6 @@ public class NonBloccanteRestPushTest extends ConfigLoader {
                 .http(Integer.valueOf(prop.getProperty("http_mock_port")))
                 .build();
     }
-// TODO: mflag
-// importante che non si fermi dopo un test, verificare che la assert non blocchi tutto, probabilmente è meglio una singola dopo
- 
-/* 
-    @Test
-    Karate testPush() {
-        return Karate.run("classpath:test/rest/non-bloccante/push/push.feature").relativeTo(getClass());
-    }
-
-    @Test
-    Karate testPushNoDisclosure() {
-        return Karate.run("classpath:test/rest/non-bloccante/push/push-no-disclosure.feature").relativeTo(getClass());
-    }
-*/
-
 
 
         @Test

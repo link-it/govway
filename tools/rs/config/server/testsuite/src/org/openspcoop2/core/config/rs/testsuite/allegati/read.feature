@@ -147,7 +147,7 @@ Scenario: Allegati Download
     When method get
     Then status 200
     And match responseHeaders contains { 'Content-Type': ['text/plain'] }
-    * match response == allegatoDecodificato
+    * match response == karate.toString(allegatoDecodificato)
     
     * call delete ({ resourcePath: 'api/' + api_path + '/allegati/' + allegato.allegato.nome, body: allegato })
     * call delete ({ resourcePath: "api/" + api_path })
@@ -170,7 +170,7 @@ Scenario Outline: SpecificaSemiformale Download
     When method get
     Then status 200
     And match responseHeaders contains { 'Content-Type': ['<content_type>'] }
-    * match response == allegatoDecodificato
+    * match karate.toString(response) == karate.toString(allegatoDecodificato)
     
     * call delete ({ resourcePath: 'api/' + api_path + '/allegati/' + allegato_specificasemiformale.allegato.nome, body: allegato_specificasemiformale })
     * call delete ({ resourcePath: "api/" + api_path })
@@ -192,6 +192,7 @@ Scenario Outline: SpecificaSemiformale Download Json
     * eval allegato_specificasemiformale.allegato.tipo_specifica = '<tipo_specifica>'
     * eval allegato_specificasemiformale.allegato.nome = '<nome>'
     * eval allegato_specificasemiformale.allegato.documento = '<contenuto>'
+
 
     * call create ({ resourcePath: "api", body: api })
     * call create ({ resourcePath: 'api/' + api_path + '/allegati', body: allegato_specificasemiformale })

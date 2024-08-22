@@ -502,9 +502,6 @@ Scenario: isTest('multipart-request-form-data-idar0302') || isTest('multipart-re
     * def responseStatus = 200
     * def responseHeaders = { 'Content-Type': 'multipart/form-data; boundary="----=_Part_0_1037475674.1651780088034"' }
     * def response = read('classpath:test/rest/sicurezza-messaggio/multipart-request.bin')
-    * def responseHeaders = { 'Content-Type': 'multipart/form-data; boundary=----=_Part_0_1037475674.1651780088034' }
-    * def expectedResponse = read('classpath:test/rest/sicurezza-messaggio/multipart-request.bin')
-    * def actualResponse = karate.toString(response)
 
 
 Scenario: isTest('multipart-request-mixed-idar0302')

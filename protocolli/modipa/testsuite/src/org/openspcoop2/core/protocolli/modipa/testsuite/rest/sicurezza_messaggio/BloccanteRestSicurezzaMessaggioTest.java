@@ -64,72 +64,7 @@ public class BloccanteRestSicurezzaMessaggioTest extends ConfigLoader {
                 .build();
     }
 
-/*
-    @Test
-    Karate testIdar01() {
-        return Karate.run("classpath:test/rest/sicurezza-messaggio/idar01.feature").relativeTo(getClass());
-    }
-    @Test
-    Karate testIdar01NoDisclosure() {
-        return Karate.run("classpath:test/rest/sicurezza-messaggio/idar01-no-disclosure.feature").relativeTo(getClass());
-        
-    }
-    @Test
-    Karate testIdar02() {
-        return Karate.run("classpath:test/rest/sicurezza-messaggio/idar02.feature").relativeTo(getClass());
-    }
 
-    @Test
-    Karate testIdar03() {
-        return Karate.run("classpath:test/rest/sicurezza-messaggio/idar03.feature").relativeTo(getClass());
-    }
-
-    @Test
-    Karate testIdar04() {
-        return Karate.run("classpath:test/rest/sicurezza-messaggio/idar04.feature").relativeTo(getClass());
-    }
-
-    @Test
-    Karate testIdar0402() {
-        return Karate.run("classpath:test/rest/sicurezza-messaggio/idar0402.feature").relativeTo(getClass());
-    }
-
-    @Test
-    Karate testIdar0302() {
-        return Karate.run("classpath:test/rest/sicurezza-messaggio/idar0302.feature").relativeTo(getClass());
-    }
-
-    @Test
-    Karate testIdar03custom() {
-        return Karate.run("classpath:test/rest/sicurezza-messaggio/idar03custom.feature").relativeTo(getClass());
-    }
-
-    @Test
-    Karate testIdar04custom() {
-        return Karate.run("classpath:test/rest/sicurezza-messaggio/idar04custom.feature").relativeTo(getClass());
-    }
-
-    @Test
-    Karate testAutorizzazioneMessaggio() {
-        return Karate.run("classpath:test/rest/sicurezza-messaggio/autorizzazioneMessaggio.feature").relativeTo(getClass());
-    }
-
-    @Test
-    Karate testAutorizzazioneToken() {
-        return Karate.run("classpath:test/rest/sicurezza-messaggio/autorizzazioneToken.feature").relativeTo(getClass());
-    }
-
-    @Test
-    Karate testAutorizzazioneMessaggioToken() {
-        return Karate.run("classpath:test/rest/sicurezza-messaggio/autorizzazioneMessaggioToken.feature").relativeTo(getClass());
-    }
-
-    @Test
-    Karate testNegoziazioneToken() {
-        return Karate.run("classpath:test/rest/sicurezza-messaggio/negoziazioneToken.feature").relativeTo(getClass());
-    }
-    
-    */
     
     @Test
     Karate testAll() {

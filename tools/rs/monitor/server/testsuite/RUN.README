@@ -32,10 +32,13 @@ Configurare l'ambiente di esecuzione dei test:
 Compilare i test con il comando 'ant clean build'
 
 Per eseguire tutti i test:
-  ant run_test
+  ant run-tests
+
+Per eseguire una sola classe java:
+ant run-tests -Dtest=ApiMonitorTestSuite
 
 Per eseguire una sola feature:
-  ant run_test -Dkarate.options=org/openspcoop2/core/monitor/rs/testsuite/transazioni/ricerca-transazioni.feature
+  ant run-tests -Dtest=ApiMonitorTestSuite -Dkarate.options='classpath:org/openspcoop2/core/monitor/rs/testsuite/transazioni/ricerca-transazioni.feature'
 
 Per eseguire un solo scenario all'interno della feature:
-  ant run_test -Dkarate.options="org/openspcoop2/core/monitor/rs/testsuite/transazioni/ricerca-transazioni.feature --tags=FiltroApi"
+  ant run-tests -Dtest=ApiMonitorTestSuite -Dkarate.options='classpath:org/openspcoop2/core/monitor/rs/testsuite/transazioni/ricerca-transazioni.feature --tags=FiltroApi'

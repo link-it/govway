@@ -16,6 +16,20 @@ Background:
     * url reportisticaUrl
     * configure headers = ({ "Authorization": govwayMonitorCred }) 
 
+* def escapeSlashes =
+"""
+function(str) {
+  var result = '';
+  for (var i = 0; i < str.length; i++) {
+    if (str[i] == '/') {
+      result += '\\/';
+    } else {
+      result += str[i];
+    }
+  }
+  return result;
+}
+"""
 
 
 @ReportBaseTipoQualsiasi
@@ -514,7 +528,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 * def today = Java.type('java.time.LocalDate').now()
 * def dataOggi = today.format(java.time.format.DateTimeFormatter.ofPattern('dd/MM/yy'))
 
-* def check_response_dimensioni = <filtro-report-formato>.contains('pdf') ? "PDF-1.4" : <filtro-report-formato>.contains('xml') ? check_response : <dimensioni-report>.contains('2d') ? check_response : <filtro-report-formato>.contains('json') ? dataOggi : "Data"
+* def check_response_dimensioni = <filtro-report-formato>.contains('pdf') ? "PDF-1.4" : <filtro-report-formato>.contains('xml') ? check_response : <dimensioni-report>.contains('2d') ? check_response : <filtro-report-formato>.contains('json') ? escapeSlashes(dataOggi) : "Data"
     
 	Given path <path-distribuzione>
 	And request filtro
@@ -685,7 +699,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 * def today = Java.type('java.time.LocalDate').now()
 * def dataOggi = today.format(java.time.format.DateTimeFormatter.ofPattern('dd/MM/yy'))
 
-* def check_response_dimensioni = <filtro-report-formato>.contains('pdf') ? "PDF-1.4" : <filtro-report-formato>.contains('xml') ? check_response : <dimensioni-report>.contains('2d') ? check_response : <filtro-report-formato>.contains('json') ? dataOggi : "Data"
+* def check_response_dimensioni = <filtro-report-formato>.contains('pdf') ? "PDF-1.4" : <filtro-report-formato>.contains('xml') ? check_response : <dimensioni-report>.contains('2d') ? check_response : <filtro-report-formato>.contains('json') ? escapeSlashes(dataOggi) : "Data"
     
 	Given path <path-distribuzione>
 	And request filtro
@@ -857,7 +871,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 * def today = Java.type('java.time.LocalDate').now()
 * def dataOggi = today.format(java.time.format.DateTimeFormatter.ofPattern('dd/MM/yy'))
 
-* def check_response_dimensioni = <filtro-report-formato>.contains('pdf') ? "PDF-1.4" : <filtro-report-formato>.contains('xml') ? check_response : <dimensioni-report>.contains('2d') ? check_response : <filtro-report-formato>.contains('json') ? dataOggi : "Data"
+* def check_response_dimensioni = <filtro-report-formato>.contains('pdf') ? "PDF-1.4" : <filtro-report-formato>.contains('xml') ? check_response : <dimensioni-report>.contains('2d') ? check_response : <filtro-report-formato>.contains('json') ? escapeSlashes(dataOggi) : "Data"
 
 	Given path <path-distribuzione>
 	And request filtro
@@ -885,7 +899,6 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 	Then match karate.toString(response) contains check_response
 	Then match karate.toString(response) contains check_response_dimensioni
 	* def response_erogazione = response
-    
 Examples:
 | nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-qualsiasi | filtro-tipo-fruizione | filtro-tipo-erogazione | filtro-report-formato | filtro-report-tipo | filtro-report-informazione | stringa-verifica | dimensioni-report |
 | 'tempo-medio-risposta-distribuzione-errori-csv (verifica 2d)' | 'distribuzione-errori' | { "tipo": "qualsiasi", "escludi_scartate": false } | null | 'qualsiasi' | 'erogazione' | 'erogazione' | 'csv' | 'table' | 'tempo_medio_risposta' | "Latenza Media" | '2d' |
@@ -1028,7 +1041,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 * def today = Java.type('java.time.LocalDate').now()
 * def dataOggi = today.format(java.time.format.DateTimeFormatter.ofPattern('dd/MM/yy'))
 
-* def check_response_dimensioni = <dimensioni-report>.contains('2d') ? check_response : dataOggi
+* def check_response_dimensioni = <dimensioni-report>.contains('2d') ? check_response : escapeSlashes(dataOggi)
 
 
 	Given path <path-distribuzione>

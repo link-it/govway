@@ -76,12 +76,6 @@ public class BloccanteSoapSicurezzaMessaggioOCSPTest extends ConfigLoader {
             t.printStackTrace(System.out);
         }
     }
-/* TODO: mflag sempre una sola feature
-    @Test
-    Karate testIdarFixKarate() {
-        return Karate.run("classpath:test/rest/sicurezza-messaggio/idar-fix-karate.feature").relativeTo(getClass());
-    }
-*/
 
 	@Test
     Karate testAll() {

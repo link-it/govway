@@ -20,10 +20,14 @@ Configurare l'ambiente di esecuzione dei test:
 Compilare i test con il comando 'ant clean build'
 
 Per eseguire tutti i test:
-  ant run_test
+  ant run-tests
+
+Per eseguire una sola classe java:
+ant run-tests -Dtest=ApiConfigTestSuite
 
 Per eseguire una sola feature:
-  ant run_test -Dkarate.options=org/openspcoop2/core/config/rs/testsuite/applicativi/create.feature
+  ant run-tests -Dtest=ApiConfigTestSuite -Dkarate.options=classpath:org/openspcoop2/core/config/rs/testsuite/applicativi/create.feature
 
 Per eseguire un solo scenario all'interno della feature:
-  ant run_test -Dkarate.options="org/openspcoop2/core/config/rs/testsuite/applicativi/create.feature --tags=Create204"
+  ant run-tests -Dtest=ApiConfigTestSuite -Dkarate.options="oclasspath:org/openspcoop2/core/config/rs/testsuite/applicativi/create.feature --tags=Create204"
+
