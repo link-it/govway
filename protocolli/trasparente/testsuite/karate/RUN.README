@@ -112,7 +112,9 @@
 - Nella console andare su Tracciamento 'Erogazioni' e 'Fruizioni' ed impostare su <abilitato>:
     - Violazione Policy Rate Limiting
     - Superamento Limite Richieste
-  Questo perchè di base govway non traccia le transazioni quando è stata superata la soglia globale o quando è stata violata una policy di rate limiting.
+    - CORS Preflight
+  In modo da avere 'Registra qualsiasi esito'.
+  Questo perchè di base govway non traccia le transazioni quando è stata superata la soglia globale o quando è stata violata una policy di rate limiting, o per le CORS Preflight.
 
 - Impostare in govway_local.properties 
 	org.openspcoop2.pdd.statistiche.generazione.baseOraria.timer.intervalloSecondi=8
@@ -509,7 +511,7 @@ Di seguito vengono descritti i test del package 'connettori':
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.autenticazione
 
 - 'header', verifica la funzionalità di inoltro di header HTTP codificati in encoded world (es. =?US-ASCII?Q?)
-   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.autenticazione
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.header
 
 Di seguito vengono descritti i test del package 'token':
 

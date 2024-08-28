@@ -73,12 +73,43 @@ public class RestTest extends ConfigLoader {
 		
 		request.setUrl(url);
 		
-		int tempoMax = 1500; // su oracle impiega piu' tempo
+		int tempoMax = 2000; // su oracle impiega piu' tempo
 		if(Utils.isJenkins()) {
 			tempoMax = 4000; 
 		}
 		
-		var responses = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeParallelRequests(request, 10);
+		var responses = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeParallelRequests(request, 1); // inizializzo la cache
+		for (var resp : responses) {
+			assertEquals(200, resp.getResultHTTPOperation());
+			
+			String idTransazione = resp.getHeaderFirstValue("GovWay-Transaction-ID");
+			assertNotNull(idTransazione);
+			
+			DBVerifier.verify(idTransazione, tempoMax);
+		}
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetAllCache(logCore);
+		
+		if(Utils.isJenkins()) {
+			tempoMax = 6000; // thread in parallelo 
+		}
+		
+		responses = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeParallelRequests(request, 10); // inizializzo la cache rispetto a più thread in parallelo
+		for (var resp : responses) {
+			assertEquals(200, resp.getResultHTTPOperation());
+			
+			String idTransazione = resp.getHeaderFirstValue("GovWay-Transaction-ID");
+			assertNotNull(idTransazione);
+			
+			DBVerifier.verify(idTransazione, tempoMax);
+		}
+		
+		tempoMax = 500;
+		if(Utils.isJenkins()) {
+			tempoMax = 4000; 
+		}
+		
+		responses = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeParallelRequests(request, 10);
 		for (var resp : responses) {
 			assertEquals(200, resp.getResultHTTPOperation());
 			

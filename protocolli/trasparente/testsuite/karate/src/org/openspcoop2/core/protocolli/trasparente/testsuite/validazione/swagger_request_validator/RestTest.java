@@ -196,7 +196,7 @@ public class RestTest extends ConfigLoader {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetAllCache(logCore);
 		
-		int tempoMax = 1000; // su oracle impiega piu' tempo
+		int tempoMax = 500; // su oracle impiega piu' tempo
 		if(Utils.isJenkins()) {
 			tempoMax = 1500; 
 		}
@@ -224,7 +224,7 @@ public class RestTest extends ConfigLoader {
 		
 		// rieseguo il test in parallelo
 		
-		tempoMax = 4000; // su oracle impiega piu' tempo
+		tempoMax = 1000; // su oracle impiega piu' tempo
 		if(Utils.isJenkins()) {
 			tempoMax = 5000; 
 		}
