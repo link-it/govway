@@ -359,7 +359,13 @@ public class Utils {
 		
 		try {
 			executor.shutdown();
-			executor.awaitTermination(20, TimeUnit.SECONDS);
+			boolean finished = false;
+			int check = 0;
+			while(!finished && check<10) {
+				log.info("check uscita "+check+" ...");
+				finished = executor.awaitTermination(20, TimeUnit.SECONDS);
+				log.info("check uscita "+check+": "+finished);
+			}
 		} catch (InterruptedException e) {
 			log.error("Le richieste hanno impiegato più di venti secondi!");
 			throw new RuntimeException(e);
