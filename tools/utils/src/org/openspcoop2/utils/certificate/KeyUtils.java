@@ -161,8 +161,8 @@ public class KeyUtils {
 		
 		try {
 			try (ByteArrayInputStream bin = new ByteArrayInputStream(privateKey);
-					InputStreamReader ir = new InputStreamReader(bin);){
-				PEMParser pemParser = new PEMParser(ir);
+					InputStreamReader ir = new InputStreamReader(bin);
+					PEMParser pemParser = new PEMParser(ir);){
 				JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
 				Object object = pemParser.readObject();
 				KeyPair kp = converter.getKeyPair((PEMKeyPair) object);
@@ -233,8 +233,8 @@ public class KeyUtils {
 		
 		try {
 			try (ByteArrayInputStream bin = new ByteArrayInputStream(privateKey);
-					InputStreamReader ir = new InputStreamReader(bin);){
-				PEMParser pemParser = new PEMParser(ir);
+					InputStreamReader ir = new InputStreamReader(bin);
+					PEMParser pemParser = new PEMParser(ir);){
 				JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
 				Object object = pemParser.readObject();
 				PEMEncryptedKeyPair pair = (PEMEncryptedKeyPair) object;
@@ -259,8 +259,8 @@ public class KeyUtils {
 		PKCS8EncryptedPrivateKeyInfo pair = null;
 		try {
 			try (ByteArrayInputStream bin = new ByteArrayInputStream(privateKey);
-					InputStreamReader ir = new InputStreamReader(bin);){
-				PEMParser parser = new PEMParser(ir);
+					InputStreamReader ir = new InputStreamReader(bin);
+					PEMParser parser = new PEMParser(ir);){
 				pair = (PKCS8EncryptedPrivateKeyInfo)parser.readObject();
 			}
 		}catch(Exception e) {

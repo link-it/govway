@@ -106,4 +106,11 @@ Upgrade to version 3.0.8, 4.5.2 or later.</vulnerabilityName>
      <packageUrl regex="true">^pkg:javascript/handlebars@.*$</packageUrl>
      <vulnerabilityName>Versions of `handlebars` prior to 3.0.8 or 4.5.3 are vulnerable to Arbitrary Code Execution. The package's lookup helper fails to properly validate templates, allowing attackers to submit templates that execute arbitrary JavaScript in the system. It is due to an incomplete fix for a [previous issue](https://www.npmjs.com/advisories/1316). This vulnerability can be used to run arbitrary code in a server processing Handlebars templates or on a victim's browser (effectively serving as Cross-Site Scripting)</vulnerabilityName>
   </suppress>
+  <suppress>
+     <notes><![CDATA[
+     file name: swagger-codegen-cli-3.0.46-gov4j-1.jar: jquery-1.8.3.min.js
+     ]]></notes>
+     <packageUrl regex="true">^pkg:javascript/jquery@.*$</packageUrl>
+     <vulnerabilityName>jquery issue: 162</vulnerabilityName>
+  </suppress>
 </suppressions>

@@ -428,19 +428,13 @@ public class DumpRestMessageUtils {
 			return (String) o;
 		}
 		else if(o instanceof java.io.ByteArrayOutputStream){
-			java.io.ByteArrayOutputStream bout = null;
-			try{
-				bout = (java.io.ByteArrayOutputStream) o;
-				return bout.toString();
-			}finally{
-				try{
-					if(bout!=null){
-						bout.close();
-					}
-				}catch(Exception eClose){
-					// close
-				}
+			String s = null;
+			try (java.io.ByteArrayOutputStream bout = (java.io.ByteArrayOutputStream) o;){
+				s = bout.toString();
+			}catch(Exception eClose){
+				// ignore exception close
 			}
+			return s;
 		}
 		else{
 			throw new MessageException("Dump error (return type "+o.getClass().getName()+" unknown)");
@@ -456,19 +450,13 @@ public class DumpRestMessageUtils {
 			return ((String) o).getBytes();
 		}
 		else if(o instanceof java.io.ByteArrayOutputStream){
-			java.io.ByteArrayOutputStream bout = null;
-			try{
-				bout = (java.io.ByteArrayOutputStream) o;
-				return bout.toByteArray();
-			}finally{
-				try{
-					if(bout!=null){
-						bout.close();
-					}
-				}catch(Exception eClose){
-					// close
-				}
+			byte[] b = null;
+			try (java.io.ByteArrayOutputStream bout = (java.io.ByteArrayOutputStream) o;){
+				b = bout.toByteArray();
+			}catch(Exception eClose){
+				// ignore exception close
 			}
+			return b;
 		}
 		else{
 			throw new MessageException("Dump error (return type "+o.getClass().getName()+" unknown)");

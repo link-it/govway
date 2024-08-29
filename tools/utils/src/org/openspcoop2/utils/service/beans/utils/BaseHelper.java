@@ -324,7 +324,8 @@ public class BaseHelper {
 				problem.addInvalidParam(msg, violation.getMessage(), null);
 			}
 			
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(Response.status(problem.getStatus()).entity(problem).type(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807).build());
+			Response response = Response.status(problem.getStatus()).entity(problem).type(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807).build();
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(response);
 		}
 	}
 	
