@@ -16,7 +16,31 @@
    </suppress>
    <suppress>
       <notes><![CDATA[
+      file name: richfaces-impl-3.3.4.Final-gov4j-4.jar: framework.pack.js
+      Viene utilizzato dalle console di gestione e monitoraggio adibite a funzioni di backoffice che non devono essere esposte al pubblico.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:javascript/jquery@.*$</packageUrl>
+      <vulnerabilityName>jquery issue: 162</vulnerabilityName>
+   </suppress>
+   <suppress>
+      <notes><![CDATA[
       file name: richfaces-impl-jsf2-3.3.4.Final.jar: framework.pack.js
+      Viene utilizzato dalle console di gestione e monitoraggio adibite a funzioni di backoffice che non devono essere esposte al pubblico.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:javascript/jquery@.*$</packageUrl>
+      <vulnerabilityName>jQuery 1.x and 2.x are End-of-Life and no longer receiving security updates</vulnerabilityName>
+   </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: richfaces-impl-jsf2-3.3.4.Final.jar: framework.pack.js
+      Viene utilizzato dalle console di gestione e monitoraggio adibite a funzioni di backoffice che non devono essere esposte al pubblico.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:javascript/jquery@.*$</packageUrl>
+      <vulnerabilityName>jquery issue: 162</vulnerabilityName>
+   </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: richfaces-impl-jsf2-3.3.4.Final.jar: jquery.js
       Viene utilizzato dalle console di gestione e monitoraggio adibite a funzioni di backoffice che non devono essere esposte al pubblico.
       ]]></notes>
       <packageUrl regex="true">^pkg:javascript/jquery@.*$</packageUrl>
@@ -28,7 +52,7 @@
       Viene utilizzato dalle console di gestione e monitoraggio adibite a funzioni di backoffice che non devono essere esposte al pubblico.
       ]]></notes>
       <packageUrl regex="true">^pkg:javascript/jquery@.*$</packageUrl>
-      <vulnerabilityName>jQuery 1.x and 2.x are End-of-Life and no longer receiving security updates</vulnerabilityName>
+      <vulnerabilityName>jquery issue: 162</vulnerabilityName>
    </suppress>
    <suppress>
       <notes><![CDATA[

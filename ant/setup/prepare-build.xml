@@ -102,7 +102,7 @@
 			<include name="reports/*"/>
 			<include name="httpcore/*"/>
 			<include name="wadl/*"/>
-			<include name="testsuite/spring-jdbc-5.3.34.jar"/> <!-- richiesto dal loader cli -->
+			<include name="testsuite/spring-jdbc-5.3.39.jar"/> <!-- richiesto dal loader cli -->
 		</fileset>
 	</path>		
 	<path id="classpath_dist" >

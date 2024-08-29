@@ -62,22 +62,24 @@ public class NodeSenderJMS extends AbstractCore implements INodeSender{
 		// Elimino dalla RequestInfo i dati "cached"
 		RequestInfo requestInfoBackup = null;
 		PdDContext pddContext = null;
+		java.util.Map<String,Object> dynamicContext = null;
 		if(msg instanceof GenericMessage) {
 			GenericMessage mm = (GenericMessage) msg;
 			pddContext = mm.getPddContext();
 			if(pddContext!=null) {
-				requestInfoBackup =	RequestInfoConfigUtilities.normalizeRequestInfoBeforeSerialization(pddContext); 
+				requestInfoBackup =	RequestInfoConfigUtilities.normalizeRequestInfoBeforeSerialization(pddContext);
+				dynamicContext = org.openspcoop2.core.constants.Costanti.removeDynamicMap(pddContext);
 			}
 		}		
 		try{
 			
 			JMSSender senderJMS = new JMSSender(codicePorta,idModulo,OpenSPCoop2Logger.getLoggerOpenSPCoopCore(), PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, this.getPddContext()));
-			if(senderJMS.send(destinazione,
-					msg,idMessaggio) == false){
+			if(!senderJMS.send(destinazione,
+					msg,idMessaggio)){
 				if(senderJMS.getException()!=null)
-					throw new Exception("Spedizione jms con errore: "+ senderJMS.getErrore(),senderJMS.getException());
+					throw new NodeException("Spedizione jms con errore: "+ senderJMS.getErrore(),senderJMS.getException());
 				else
-					throw new Exception("Spedizione jms con errore: "+ senderJMS.getErrore());
+					throw new NodeException("Spedizione jms con errore: "+ senderJMS.getErrore());
 			}else{
 				msgDiag.highDebug("ObjectMessage send via JMS.");
 			}
@@ -87,6 +89,9 @@ public class NodeSenderJMS extends AbstractCore implements INodeSender{
 		}finally {
 			if(requestInfoBackup!=null) {
 				RequestInfoConfigUtilities.restoreRequestInfoAfterSerialization(pddContext, requestInfoBackup);
+			}
+			if(dynamicContext!=null) {
+				pddContext.put(org.openspcoop2.core.constants.Costanti.DYNAMIC_MAP_CONTEXT, dynamicContext);
 			}
 		}
 	}
