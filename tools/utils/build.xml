@@ -120,7 +120,7 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/shared" >
-			<include name="joda-time-2.12.5.jar"/>
+			<include name="joda-time-2.12.7.jar"/>
 		</fileset>
 	</path>
 	<path id="classpath_run_openapi_dist" >
@@ -134,7 +134,7 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/shared">
-			<include name="snakeyaml-2.1-gov4j-1.jar"/>
+			<include name="snakeyaml-2.2-gov4j-1.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/commons">
 			<include name="commons-lang3-3.13.0.jar"/>

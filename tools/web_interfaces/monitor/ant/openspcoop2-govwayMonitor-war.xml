@@ -191,9 +191,9 @@
 				<include name="${xalan_serializer_jar}"/>	
 				<include name="xmlunit-legacy-2.10.0.jar" />
 				<include name="xmlunit-core-2.10.0.jar" />
-				<include name="snakeyaml-2.1-gov4j-1.jar" />
-				<include name="freemarker-2.3.32.jar" />
-				<include name="joda-time-2.12.5.jar" />
+				<include name="snakeyaml-2.2-gov4j-1.jar" />
+				<include name="freemarker-2.3.33.jar" />
+				<include name="joda-time-2.12.7.jar" />
 				<include name="reactive-streams-1.0.4.jar" />
 				<include name="velocity-*.jar"/>
 			</lib>

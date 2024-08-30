@@ -51,10 +51,10 @@
 			<include name="jakarta.activation-api-2.1.2.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/shared">
-			<include name="snakeyaml-2.1-gov4j-1.jar"/>
+			<include name="snakeyaml-2.2-gov4j-1.jar"/>
 			<include name="xercesImpl-*.jar"/>
 			<include name="xalan-*.jar"/>
-			<include name="joda-time-2.12.5.jar"/>
+			<include name="joda-time-2.12.7.jar"/>
 			<include name="mailapi-1.6.7.jar"/>
 			<include name="serializer-2.7.3.jar"/>
 			<include name="wsdl4j-1.6.3.jar"/>

@@ -191,17 +191,17 @@
 	<!-- shared -->
 	<archive path="/op2_3.4.dev/lib/shared/reactive-streams-1.0.4.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/reflections-0.10.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/shared/javassist-3.29.2-GA.jar"/>
-        <archive path="/op2_3.4.dev/lib/shared/aspectjrt-1.9.19.jar"/>
-	<archive path="/op2_3.4.dev/lib/shared/freemarker-2.3.32.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/javassist-3.30.2-GA.jar"/>
+        <archive path="/op2_3.4.dev/lib/shared/aspectjrt-1.9.22.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/freemarker-2.3.33.jar"/>
         <archive path="/op2_3.4.dev/lib/shared/velocity-engine-core-2.3.jar"/>
-	<archive path="/op2_3.4.dev/lib/shared/guava-32.1.2-jre.jar"/>
-	<archive path="/op2_3.4.dev/lib/shared/java-uuid-generator-4.2.0.jar"/>
-	<archive path="/op2_3.4.dev/lib/shared/joda-time-2.12.5.jar"/>
-	<archive path="/op2_3.4.dev/lib/shared/Saxon-HE-12.3-gov4j-1.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/guava-33.3.0-jre.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/java-uuid-generator-5.1.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/joda-time-2.12.7.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/Saxon-HE-12.5-gov4j-1.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/xmlresolver-5.2.0.jar"/>
         <archive path="/op2_3.4.dev/lib/shared/xom-1.3.5.jar"/>
-	<archive path="/op2_3.4.dev/lib/shared/snakeyaml-2.1-gov4j-1.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/snakeyaml-2.2-gov4j-1.jar"/>
         <archive path="/op2_3.4.dev/lib/shared/wsdl4j-1.6.3.jar"/>
         <archive path="/op2_3.4.dev/lib/shared/xalan-2.7.3.jar"/>
         <archive path="/op2_3.4.dev/lib/shared/serializer-2.7.3.jar"/>
@@ -210,9 +210,9 @@
 	<archive path="/op2_3.4.dev/lib/shared/xmlunit-legacy-2.10.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/xmlunit-core-2.10.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/ehcache-3.10.8.jar"/>
-	<archive path="/op2_3.4.dev/lib/shared/rhino-1.7.14.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/rhino-1.7.15.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/hazelcast-5.3.5.jar"/>
-	<archive path="/op2_3.4.dev/lib/shared/hibernate-core-6.2.7.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/hibernate-core-6.6.0.Final.jar"/>
 	<!-- spring -->
         <archive path="/op2_3.4.dev/lib/spring/spring-web-6.1.12.jar"/>
         <archive path="/op2_3.4.dev/lib/spring/spring-tx-6.1.12.jar"/>

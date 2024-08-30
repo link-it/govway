@@ -180,7 +180,7 @@
 				<include name="${neethi_jar}" />
 			</lib>
 			<lib dir="${libs}/shared">
-				<include name="joda-time-2.12.5.jar"/>
+				<include name="joda-time-2.12.7.jar"/>
 				<include name="${xerces_jar}"/>
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
