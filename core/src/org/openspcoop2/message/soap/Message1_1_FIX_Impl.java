@@ -33,7 +33,7 @@ import jakarta.xml.soap.SOAPException;
 import jakarta.xml.soap.SOAPMessage;
 import jakarta.xml.soap.SOAPPart;
 
-import org.apache.commons.io.input.CountingInputStream;
+import org.apache.commons.io.input.BoundedInputStream;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
@@ -59,7 +59,7 @@ public class Message1_1_FIX_Impl extends com.sun.xml.messaging.saaj.soap.ver1_1.
 	// Per questo motivo essite la classe 1_1 FIX che utilizza direttamente il messaggio fornito 
 	
 	private SOAPMessage msg; // messaggio fornito nel costruttore
-	private CountingInputStream cis;
+	private BoundedInputStream cis;
 	
 	
 	// Costruttori
@@ -97,7 +97,7 @@ public class Message1_1_FIX_Impl extends com.sun.xml.messaging.saaj.soap.ver1_1.
     	}
     }
 
-    public Message1_1_FIX_Impl(MimeHeaders headers, CountingInputStream in)
+    public Message1_1_FIX_Impl(MimeHeaders headers, BoundedInputStream in)
         throws IOException, SOAPExceptionImpl {
         super(headers, in);
         this.cis = in;
@@ -111,7 +111,7 @@ public class Message1_1_FIX_Impl extends com.sun.xml.messaging.saaj.soap.ver1_1.
     
     // CountingInputStream
     
-	public CountingInputStream getCountingInputStream(){
+	public BoundedInputStream getCountingInputStream(){
 		return this.cis;
 	}
 

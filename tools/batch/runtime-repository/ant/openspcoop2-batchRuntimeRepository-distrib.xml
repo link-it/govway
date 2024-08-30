@@ -39,7 +39,7 @@
 			<fileset dir="${openspcoop2.lib}" includes="saaj/saaj-impl-3.0.2-gov4j-1.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="shared/joda-time-2.12.7.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="shared/xercesImpl-2.12.2.jar"/>
-			<fileset dir="${openspcoop2.lib}" includes="jakarta/jakarta.activation-api-2.1.2.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="jakarta/jakarta.activation-api-2.1.3.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="shared/freemarker-2.3.33.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="shared/velocity-*.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="security/bcpkix-jdk18on-1.78.1.jar"/>

@@ -18,24 +18,25 @@
 		<jar.group.name>commons</jar.group.name>
 		
 		<commons.beanutils.version>1.9.4</commons.beanutils.version>
-		<commons.cli.version>1.5.0</commons.cli.version>
-		<commons.codec.version>1.16.0</commons.codec.version>
+		<commons.cli.version>1.9.0</commons.cli.version>
+		<commons.codec.version>1.17.1</commons.codec.version>
 		<commons.collections.version>3.2.2</commons.collections.version>
 		<commons.collections4.version>4.4</commons.collections4.version>
-		<commons.compress.version>1.26.0</commons.compress.version>
-		<commons.csv.version>1.10.0</commons.csv.version>
-		<commons.dbcp2.version>2.9.0</commons.dbcp2.version>
+		<commons.compress.version>1.27.1</commons.compress.version>
+		<commons.csv.version>1.11.0</commons.csv.version>
+		<commons.dbcp2.version>2.12.0</commons.dbcp2.version>
 		<commons.digester.version>2.1</commons.digester.version>
-		<commons.fileupload.version>2.0.0-M1</commons.fileupload.version>
-		<commons.io.version>2.13.0</commons.io.version>
-		<commons.jcs3-core.gov4j.version>3.1-gov4j-2</commons.jcs3-core.gov4j.version>
+		<commons.fileupload-core.version>2.0.0-M2</commons.fileupload-core.version>
+		<commons.fileupload-jakarta.version>2.0.0-M1</commons.fileupload-jakarta.version>
+		<commons.io.version>2.16.1</commons.io.version>
+		<commons.jcs3-core.gov4j.version>3.2.1-gov4j-1</commons.jcs3-core.gov4j.version>
 		<commons.lang.version>2.6</commons.lang.version>
-		<commons.lang3.version>3.13.0</commons.lang3.version>
+		<commons.lang3.version>3.16.0</commons.lang3.version>
 		<commons.logging.version>1.2</commons.logging.version>
 		<commons.math3.version>3.6.1</commons.math3.version>
-		<commons.net.version>3.9.0</commons.net.version>
-		<commons.pool2.version>2.11.1</commons.pool2.version>
-		<commons.validator.version>1.7</commons.validator.version>
+		<commons.net.version>3.11.1</commons.net.version>
+		<commons.pool2.version>2.12.0</commons.pool2.version>
+		<commons.validator.version>1.9.0</commons.validator.version>
 
 	</properties>
 
@@ -152,7 +153,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-fileupload2-core</artifactId>
-			<version>${commons.fileupload.version}</version>
+			<version>${commons.fileupload-core.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -163,7 +164,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-fileupload2-jakarta</artifactId>
-			<version>${commons.fileupload.version}</version>
+			<version>${commons.fileupload-jakarta.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

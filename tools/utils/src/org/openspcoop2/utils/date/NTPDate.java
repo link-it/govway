@@ -24,6 +24,7 @@ package org.openspcoop2.utils.date;
 
 import java.net.InetAddress;
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -115,7 +116,7 @@ public class NTPDate implements IDate {
 				}
 			}
 			if(NTPDate.defaultTimeout!=-1)
-				NTPDate.udpClient.setDefaultTimeout(NTPDate.defaultTimeout);
+				NTPDate.udpClient.setDefaultTimeout(Duration.ofMillis(NTPDate.defaultTimeout));
 			
 			// ipaddress 
 			String ipaddressS = properties.getProperty("ntp.server");

@@ -258,7 +258,7 @@ public class CompressorUtilities {
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			
 			org.apache.commons.compress.archivers.ArchiveOutputStream<?>  out = null;
-			org.apache.commons.compress.compressors.CompressorOutputStream compressorOut = null;
+			org.apache.commons.compress.compressors.CompressorOutputStream<?> compressorOut = null;
             switch (type) {
             case TAR:
 				out = new TarArchiveOutputStream(bout);

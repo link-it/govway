@@ -30,7 +30,7 @@ import jakarta.xml.soap.SOAPException;
 import jakarta.xml.soap.SOAPFault;
 import jakarta.xml.soap.SOAPMessage;
 
-import org.apache.commons.io.input.CountingInputStream;
+import org.apache.commons.io.input.BoundedInputStream;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.Costanti;
@@ -58,7 +58,7 @@ public class OpenSPCoop2Message_saaj_12_impl extends AbstractOpenSPCoop2Message_
 	}
 	
 	public OpenSPCoop2Message_saaj_12_impl(OpenSPCoop2MessageFactory messageFactory, MimeHeaders mhs, InputStream is) throws SOAPException, IOException{
-		super(messageFactory, new Message1_2_FIX_Impl(mhs, new CountingInputStream(is)));
+		super(messageFactory, new Message1_2_FIX_Impl(mhs, BoundedInputStream.builder().setInputStream(is).get()));
 	}
 	
 	public OpenSPCoop2Message_saaj_12_impl(OpenSPCoop2MessageFactory messageFactory, SOAPMessage msg) {	
@@ -74,7 +74,7 @@ public class OpenSPCoop2Message_saaj_12_impl extends AbstractOpenSPCoop2Message_
 	
 	public void initialize(long overhead){
 		getMessage1_2_FIX_Impl().setLazyAttachments(false);
-		this.incomingsize = getMessage1_2_FIX_Impl().getCountingInputStream().getByteCount() - overhead;
+		this.incomingsize = getMessage1_2_FIX_Impl().getCountingInputStream().getCount() - overhead;
 	}
 
 	private Message1_2_FIX_Impl getMessage1_2_FIX_Impl(){

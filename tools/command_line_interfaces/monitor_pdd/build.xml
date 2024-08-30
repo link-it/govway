@@ -71,9 +71,9 @@
 		<fileset dir="${openspcoop2.lib}/log" >
 			<include name="*.jar"/>
 		</fileset>
-		<pathelement path="${openspcoop2.lib}/jakarta/jakarta.activation-api-2.1.2.jar"/>
+		<pathelement path="${openspcoop2.lib}/jakarta/jakarta.activation-api-2.1.3.jar"/>
 		<pathelement path="${openspcoop2.lib}/commons/commons-logging-1.2.jar"/>
-		<pathelement path="${openspcoop2.lib}/commons/commons-codec-1.16.0.jar"/>
+		<pathelement path="${openspcoop2.lib}/commons/commons-codec-1.17.1.jar"/>
 		<pathelement path="${openspcoop2.lib}/shared/wsdl4j-1.6.3.jar"/>
 		<pathelement path="${openspcoop2.lib}/stub/cxf/*"/>
 		<fileset dir="${openspcoop2.dist}" includes="**/*.jar"/>

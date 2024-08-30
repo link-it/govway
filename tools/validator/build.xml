@@ -39,9 +39,9 @@
 		<pathelement path="${openspcoop2_lib}/shared/mailapi-1.6.7.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/xercesImpl-2.12.2.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/xml-apis-1.4.01.jar"/>
-		<pathelement path="${openspcoop2.lib}/jakarta/jakarta.activation-api-2.1.2.jar"/>
+		<pathelement path="${openspcoop2.lib}/jakarta/jakarta.activation-api-2.1.3.jar"/>
 		<pathelement path="${openspcoop2_lib}/commons/commons-logging-1.2.jar"/>
-		<pathelement path="${openspcoop2.lib}/commons/commons-codec-1.16.0.jar"/>
+		<pathelement path="${openspcoop2.lib}/commons/commons-codec-1.17.1.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/wsdl4j-1.6.3.jar"/>
 		<pathelement path="${openspcoop2_lib}/stub/cxf/*"/>
 		<pathelement path="${openspcoop2_lib}/security/xmlsec-3.0.3-gov4j-1.jar"/>

@@ -57,7 +57,7 @@
 			<include name="stub/cxf/*"/>
 			<include name="cxf/*.jar"/>
 			<include name="saaj/*.jar"/>
-			<include name="jakarta/jakarta.activation-api-2.1.2.jar"/>
+			<include name="jakarta/jakarta.activation-api-2.1.3.jar"/>
 			<include name="jakarta/jakarta.xml.ws-api-3.0.1.jar"/>
 			<include name="jakarta/jakarta.jws-api-3.0.0.jar"/>
 			<include name="jakarta/jakarta.xml.bind-api-3.0.1.jar"/>
@@ -76,7 +76,7 @@
 			<include name="cxf/*.jar"/>
 			<include name="saaj/*.jar"/>
 			<include name="jakarta/jakarta.annotation-api-2.1.1.jar"/>
-			<include name="jakarta/jakarta.activation-api-2.1.2.jar"/>
+			<include name="jakarta/jakarta.activation-api-2.1.3.jar"/>
 			<include name="jakarta/jakarta.xml.ws-api-3.0.1.jar"/>
 			<include name="jakarta/jakarta.jws-api-3.0.0.jar"/>
 			<include name="jakarta/jakarta.xml.bind-api-3.0.1.jar"/>

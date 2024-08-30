@@ -21,13 +21,13 @@
 		<var name="tmp" value="${tmp_prefix}/bcprov-jdk18on-1.78.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk18on-1.78.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/bcutil-jdk18on-1.78.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-codec-1.16.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-codec-1.17.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections-3.2.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections4-4.4.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.13.0.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs3-core-3.1-gov4j-2.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.16.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs3-core-3.2.1-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-lang-2.6.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.9.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.11.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-4.0.5-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-4.0.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-4.0.5.jar"/>
@@ -65,7 +65,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-expression-6.1.12.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-tx-6.1.12.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-web-6.1.12.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-6.2.3.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-6.3.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xalan-2.7.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xml-resolver-1.2.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlschema-core-2.3.1.jar"/>	
@@ -446,7 +446,7 @@
 				<matches string="${as}" pattern="wildfly29"/>
 			</or>
 			<then>
-				<unzip src="${required_lib}/jakarta/jakarta.mail-api-2.1.2.jar" dest="${build}/tmp/mailapi"/>
+				<unzip src="${required_lib}/jakarta/jakarta.mail-api-2.1.3.jar" dest="${build}/tmp/mailapi"/>
 				<concat destfile="${build}/tmp/mailapi/META-INF/mailcap" append="yes">
 					<filelist dir="${data_content_handler_dir}"
 				           files="mailcap"/>
@@ -662,18 +662,18 @@
 			</zipfileset>
 			<!-- Librerie richieste a run-time da OpenSPCoop (Shared Lib) -->
 			<zipfileset prefix="lib" dir="${required_lib}/commons">
-				<include name="commons-codec-1.16.0.jar"/>
+				<include name="commons-codec-1.17.1.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
 				<include name="commons-collections4-4.4.jar"/>
-				<include name="commons-io-2.13.0.jar"/>
-				<include name="commons-jcs3-core-3.1-gov4j-2.jar"/>
+				<include name="commons-io-2.16.1.jar"/>
+				<include name="commons-jcs3-core-3.2.1-gov4j-1.jar"/>
 				<include name="commons-lang-2.6.jar"/>
-				<include name="commons-net-3.9.0.jar"/>
-				<include name="commons-validator-1.7.jar"/>
+				<include name="commons-net-3.11.1.jar"/>
+				<include name="commons-validator-1.9.0.jar"/>
 				<include name="commons-beanutils-1.9.4.jar"/>
 				<include name="${commons_logging_jar}"/>
-				<include name="commons-lang3-3.13.0.jar"/>
-				<include name="commons-compress-1.26.0.jar"/>
+				<include name="commons-lang3-3.16.0.jar"/>
+				<include name="commons-compress-1.27.1.jar"/>
 				<include name="commons-fileupload2-*.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/security">

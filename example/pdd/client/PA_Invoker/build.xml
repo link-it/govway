@@ -52,11 +52,11 @@
 
 	<!-- Classpath -->
 	<path id="classpath_compile">
-		<fileset dir="${required_lib}" includes="commons/commons-codec-1.16.0.jar"/>
+		<fileset dir="${required_lib}" includes="commons/commons-codec-1.17.1.jar"/>
 		<fileset dir="${utils_dist}"/>
 	</path>
 	<path id="classpath_run">
-		<fileset dir="${required_lib}" includes="commons/commons-codec-1.16.0.jar"/>
+		<fileset dir="${required_lib}" includes="commons/commons-codec-1.17.1.jar"/>
 		<fileset dir="${utils_dist}"/>
 	</path>
 

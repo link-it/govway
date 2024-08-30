@@ -312,7 +312,7 @@ public class ConnectionSessionJMSPool implements java.io.Serializable  {
 			// before it is eligable for eviction due to idle time. 
 			// When non-positive, no object will be dropped from the pool due to idle time alone.
 			if(configuration.getIdle_idleObjectTimeout()>0) {
-				configPool.setMinEvictableIdleTime(Duration.ofMillis(configuration.getIdle_idleObjectTimeout())); //Default: 1800000L
+				configPool.setMinEvictableIdleDuration(Duration.ofMillis(configuration.getIdle_idleObjectTimeout())); //Default: 1800000L
 			}
 			// - testWhileIdle, indicates whether or not idle objects should be validated using the factory's 
 			// PoolableObjectFactory.validateObject(java.lang.Object) method. Objects that fail to validate will be dropped from the pool.

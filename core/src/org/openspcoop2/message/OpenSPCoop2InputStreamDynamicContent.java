@@ -32,21 +32,22 @@ import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class OpenSPCoop2InputStreamDynamicContent extends org.apache.commons.io.input.CountingInputStream {
+public class OpenSPCoop2InputStreamDynamicContent extends org.apache.commons.io.input.BoundedInputStream {
 
-	private org.apache.commons.io.input.CountingInputStream is;
+	private org.apache.commons.io.input.BoundedInputStream is;
 
 	private DumpByteArrayOutputStream buffer;
 	
 	private boolean isReadAll = false;
 	
-	public OpenSPCoop2InputStreamDynamicContent(org.apache.commons.io.input.CountingInputStream is, DumpByteArrayOutputStream buffer) {
+	@SuppressWarnings("deprecation")
+	public OpenSPCoop2InputStreamDynamicContent(org.apache.commons.io.input.BoundedInputStream is, DumpByteArrayOutputStream buffer) {
 		super(null);
 		this.is = is;
 		this.buffer = buffer;
 	}
 
-	public org.apache.commons.io.input.CountingInputStream getWrappedInputStream() {
+	public org.apache.commons.io.input.BoundedInputStream getWrappedInputStream() {
 		return this.is;
 	}
 	
@@ -108,23 +109,8 @@ public class OpenSPCoop2InputStreamDynamicContent extends org.apache.commons.io.
 //	}
 
 	@Override
-	public synchronized long getByteCount() {
-		return this.is.getByteCount();
-	}
-
-	@Override
-	public int getCount() {
+	public long getCount() {
 		return this.is.getCount();
-	}
-
-	@Override
-	public synchronized long resetByteCount() {
-		return this.is.resetByteCount();
-	}
-
-	@Override
-	public int resetCount() {
-		return this.is.resetCount();
 	}
 
 	@Override

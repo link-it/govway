@@ -48,7 +48,7 @@
 			<include name="swagger-core-2*.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/jakarta">
-			<include name="jakarta.activation-api-2.1.2.jar"/>
+			<include name="jakarta.activation-api-2.1.3.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/shared">
 			<include name="snakeyaml-2.2-gov4j-1.jar"/>
@@ -82,8 +82,8 @@
 		<fileset dir="${required_lib}/jakarta">
 			<include name="jakarta.annotation-api-2.1.1.jar"/>
 			<include name="jakarta.servlet-api-5.0.0.jar"/>
-			<include name="jakarta.mail-api-2.1.2.jar"/>
-			<include name="jakarta.activation-api-2.1.2.jar"/>
+			<include name="jakarta.mail-api-2.1.3.jar"/>
+			<include name="jakarta.activation-api-2.1.3.jar"/>
 			<include name="jakarta.xml.ws-api-3.0.1.jar"/>
 			<include name="jakarta.xml.bind-api-3.0.1.jar"/>
 			<include name="jakarta.jws-api-3.0.0.jar"/>

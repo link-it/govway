@@ -216,7 +216,7 @@
 		<if>
 			<matches string="${as}" pattern="tomcat.*"/>
 			<then>
-				<unzip src="${required_lib}/jakarta/jakarta.mail-api-2.1.2.jar" dest="${build_govwayConsole}/tmp/mailapi"/>
+				<unzip src="${required_lib}/jakarta/jakarta.mail-api-2.1.3.jar" dest="${build_govwayConsole}/tmp/mailapi"/>
 				<concat destfile="${build_govwayConsole}/tmp/mailapi/META-INF/mailcap" append="yes">
 					<filelist dir="${data_content_handler_dir}"
 				           files="mailcap"/>
@@ -341,13 +341,13 @@
 				<include name="commons-collections-3.2.2.jar" />
 				<include name="commons-digester-2.1.jar"/>
 				<include name="commons-fileupload2-*.jar" />
-				<include name="commons-io-2.13.0.jar" />
+				<include name="commons-io-2.16.1.jar" />
 				<include name="commons-lang-2.6.jar" />
-				<include name="commons-codec-1.16.0.jar"/>
+				<include name="commons-codec-1.17.1.jar"/>
 				<include name="${commons_logging_jar}"/>
-				<include name="commons-lang3-3.13.0.jar"/>
-				<include name="commons-compress-1.26.0.jar"/>
-				<include name="commons-jcs3-core-3.1-gov4j-2.jar"/>
+				<include name="commons-lang3-3.16.0.jar"/>
+				<include name="commons-compress-1.27.1.jar"/>
+				<include name="commons-jcs3-core-3.2.1-gov4j-1.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayConsole}/console">
 				<include name="jquery-3.6.4.jar"/>

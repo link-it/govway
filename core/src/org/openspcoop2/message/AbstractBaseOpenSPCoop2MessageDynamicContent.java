@@ -27,7 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.SequenceInputStream;
 
-import org.apache.commons.io.input.CountingInputStream;
+import org.apache.commons.io.input.BoundedInputStream;
 import org.apache.commons.io.output.CountingOutputStream;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.exception.MessageException;
@@ -48,7 +48,7 @@ import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
  */
 public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends AbstractBaseOpenSPCoop2Message {
 
-	protected CountingInputStream _countingInputStream;
+	protected BoundedInputStream _countingInputStream;
 	protected String contentType;
 	protected String contentTypeCharsetName = Charset.UTF_8.getValue();
 
@@ -139,7 +139,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 						}
 					}
 
-					this._countingInputStream = new CountingInputStream(normalizedIs);
+					this._countingInputStream = BoundedInputStream.builder().setInputStream(normalizedIs).get();
 					this.hasContent = true;
 				}
 
@@ -513,7 +513,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 	@Override
 	public long getIncomingMessageContentLength() {
 		if (this._countingInputStream != null) {
-			return this._countingInputStream.getByteCount();
+			return this._countingInputStream.getCount();
 		} else {
 			return super.getIncomingMessageContentLength();
 		}

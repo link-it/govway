@@ -24,7 +24,7 @@
 				<pathelement path="${required_lib}/jaxb/xsom-4.0.3.jar"/>
 				<pathelement path="${required_lib}/jaxb/rngom-4.0.3.jar"/>
 				<pathelement path="${required_lib}/jaxb/relaxng-datatype-4.0.3.jar"/>
-				<pathelement path="${required_lib}/jakarta/jakarta.activation-api-2.1.2.jar"/>
+				<pathelement path="${required_lib}/jakarta/jakarta.activation-api-2.1.3.jar"/>
 				<pathelement path="${required_lib}/jakarta/jakarta.xml.bind-api-3.0.1.jar"/>
 			</classpath>
 		</java>

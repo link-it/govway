@@ -26,7 +26,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.input.CountingInputStream;
+import org.apache.commons.io.input.BoundedInputStream;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -665,9 +665,9 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 					}
 					if(isParam!=null){
 					
-						CountingInputStream cis = null;
+						BoundedInputStream cis = null;
 						try{
-							cis = new CountingInputStream(isParam);
+							cis = BoundedInputStream.builder().setInputStream(isParam).get();
 							
 							if(this.imbustamentoConAttachment){
 								if(this.debug)
@@ -709,7 +709,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 							}
 							
 							if(this.responseMsg!=null){
-								this.responseMsg.updateIncomingMessageContentLength(cis.getByteCount());
+								this.responseMsg.updateIncomingMessageContentLength(cis.getCount());
 							}
 							
 						}finally{

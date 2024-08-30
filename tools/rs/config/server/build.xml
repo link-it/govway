@@ -97,7 +97,7 @@
 			<matches string="${as}" pattern="tomcat.*"/>
 		</or>
 		<then>
-			<var name="jakarta_activation_jar" value="jakarta.activation-api-2.1.2.jar"/>
+			<var name="jakarta_activation_jar" value="jakarta.activation-api-2.1.3.jar"/>
 		</then>
 	</if>	
 	<!-- jakarta_validation_jar -->

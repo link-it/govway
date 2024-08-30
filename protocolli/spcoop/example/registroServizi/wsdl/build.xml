@@ -79,13 +79,13 @@
 		<fileset dir="${required_lib}/saaj" includes="*.jar"/>
 		<fileset dir="${required_lib}/commons" includes="commons-collections-3.2.2.jar"/>
 		<fileset dir="${required_lib}/commons" includes="commons-lang-2.6.jar"/>
-		<fileset dir="${required_lib}/commons" includes="commons-lang3-3.13.0.jar"/>
+		<fileset dir="${required_lib}/commons" includes="commons-lang3-3.16.0.jar"/>
 		<fileset dir="${required_lib}/jakarta" includes="jakarta.annotation-api-2.1.1.jar"/>
 		<fileset dir="${required_lib}/jakarta" includes="jakarta.xml.ws-api-3.0.1.jar"/>
 		<fileset dir="${required_lib}/jakarta" includes="jakarta.jws-api-3.0.0.jar"/>
 		<fileset dir="${required_lib}/jakarta" includes="jakarta.xml.bind-api-3.0.1.jar"/>
                 <fileset dir="${required_lib}/jaxb" includes="*.jar"/>
-		<fileset dir="${required_lib}/jakarta" includes="jakarta.activation-api-2.1.2.jar"/>
+		<fileset dir="${required_lib}/jakarta" includes="jakarta.activation-api-2.1.3.jar"/>
 	</path>
 
 

@@ -91,7 +91,7 @@
 		<native2ascii src="${build}/tmpNative2ASCII_src" dest="${build}/tmpNative2ASCII_dest" />
 
 		<!-- Creazione mailapi contenente il corretto mailcap per OpenSPCoopDataHandler -->
-		<unzip src="${required_lib}/jakarta/jakarta.mail-api-2.1.2.jar" dest="${build}/tmp/mailapi"/>
+		<unzip src="${required_lib}/jakarta/jakarta.mail-api-2.1.3.jar" dest="${build}/tmp/mailapi"/>
 		<concat destfile="${build}/tmp/mailapi/META-INF/mailcap" append="yes">
 			<filelist dir="${data_content_handler_dir}"
                            files="mailcap"/>
@@ -251,18 +251,18 @@
 				<include name="openspcoop2_management_registro_search_stub.jar" />
 			</lib>
 			<lib dir="${required_lib}/commons">
-				<include name="commons-codec-1.16.0.jar"/>
+				<include name="commons-codec-1.17.1.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
 				<include name="commons-collections4-4.4.jar"/>
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-logging-1.2.jar"/> <!-- (non necessario in wildfly) -->
-				<include name="commons-net-3.9.0.jar"/>
-				<include name="commons-io-2.13.0.jar"/> <!-- (non necessario in wildfly) -->
-				<include name="commons-jcs3-core-3.1-gov4j-2.jar"/>
-				<include name="commons-validator-1.7.jar"/>
+				<include name="commons-net-3.11.1.jar"/>
+				<include name="commons-io-2.16.1.jar"/> <!-- (non necessario in wildfly) -->
+				<include name="commons-jcs3-core-3.2.1-gov4j-1.jar"/>
+				<include name="commons-validator-1.9.0.jar"/>
 				<include name="commons-beanutils-1.9.4.jar"/> <!--jmx mini console -->
-				<include name="commons-lang3-3.13.0.jar"/>
-				<include name="commons-compress-1.26.0.jar"/>
+				<include name="commons-lang3-3.16.0.jar"/>
+				<include name="commons-compress-1.27.1.jar"/>
 				<include name="commons-fileupload2-*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/log">
@@ -292,7 +292,7 @@
 				<include name="jakarta.ws.rs-api-3.1.0.jar"/>
 				<include name="jakarta.jms-api-3.1.0.jar"/> <!-- (non necessario in wildfly) -->
 				<include name="jakarta.ejb-api-4.0.1.jar"/> <!-- (non necessario in wildfly) -->
-				<include name="jakarta.activation-api-2.1.2.jar"/> <!-- (non necessario in wildfly) -->
+				<include name="jakarta.activation-api-2.1.3.jar"/> <!-- (non necessario in wildfly) -->
 				<include name="jakarta.xml.bind-api-3.0.1.jar"/> <!-- (non necessario in wildfly) -->
 				<include name="jakarta.xml.ws-api-3.0.1.jar"/> <!-- (non necessario in wildfly) -->
 				<include name="jakarta.servlet.jsp.jstl-api-3.0.0.jar"/> <!-- (non necessario in wildfly, richiesto per jmxconsole) -->
