@@ -70,19 +70,19 @@
 	<archive path="/op2_3.4.dev/lib/httpcore/httpcore5-h2-5.2.5.jar"/>
 	<archive path="/op2_3.4.dev/lib/httpcore/httpcore5-testing-5.2.5.jar"/>
 	<!-- jackson -->
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-annotations-2.15.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-core-2.15.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-databind-2.15.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-dataformat-xml-2.15.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-dataformat-yaml-2.15.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-datatype-joda-2.15.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-datatype-jsr310-2.15.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-jakarta-rs-base-2.15.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-jakarta-rs-json-provider-2.15.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-jakarta-rs-xml-provider-2.15.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-jakarta-rs-yaml-provider-2.15.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-module-jakarta-xmlbind-annotations-2.15.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-module-jsonSchema-2.15.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-annotations-2.17.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-core-2.17.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-databind-2.17.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-dataformat-xml-2.17.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-dataformat-yaml-2.17.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-datatype-joda-2.17.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-datatype-jsr310-2.17.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-jakarta-rs-base-2.17.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-jakarta-rs-json-provider-2.17.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-jakarta-rs-xml-provider-2.17.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-jakarta-rs-yaml-provider-2.17.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-module-jakarta-xmlbind-annotations-2.17.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-module-jsonSchema-2.17.2.jar"/>
 	<!-- jakarta -->
 	<archive path="/op2_3.4.dev/lib/jakarta/jakarta.servlet-api-5.0.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/jakarta/jakarta.jms-api-3.1.0.jar"/>
