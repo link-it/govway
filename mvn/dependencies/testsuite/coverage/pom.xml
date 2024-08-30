@@ -17,8 +17,8 @@
 
 		<jar.group.name>coverage</jar.group.name>
 		
-		<jacoco.version>0.8.8</jacoco.version>
-		<org.ow2.asm.version>9.5</org.ow2.asm.version>
+		<jacoco.version>0.8.12</jacoco.version>
+		<org.ow2.asm.version>9.7</org.ow2.asm.version>
 
 	</properties>
 
