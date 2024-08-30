@@ -4299,7 +4299,8 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		Class<?>[] classArguments = null;
 		Object[]values = null;
-		if(tipiSoggetto!=null) {
+		boolean driverXml = this.driverConfigurazionePdD instanceof DriverConfigurazioneXML;
+		if(tipiSoggetto!=null && !driverXml) {
 			if(includiApplicativiNonModI || includiApplicativiModIEsterni || includiApplicativiModIInterni) {
 				classArguments = new Class[] {String.class, String.class, List.class, boolean.class, boolean.class, boolean.class};
 				values = new Object[] {aSubject , aIssuer, tipiSoggetto, includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni}; // passo gli argomenti tramite array poich' aIssuer puo' essere null
@@ -4387,7 +4388,8 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		Class<?>[] classArguments = null;
 		Object[]values = null;
-		if(tipiSoggetto!=null) {
+		boolean driverXml = this.driverConfigurazionePdD instanceof DriverConfigurazioneXML;
+		if(tipiSoggetto!=null && !driverXml) {
 			if(includiApplicativiNonModI || includiApplicativiModIEsterni || includiApplicativiModIInterni) {
 				classArguments = new Class[] {CertificateInfo.class, boolean.class, List.class, boolean.class, boolean.class, boolean.class};
 				values = new Object[] {certificate , strictVerifier, tipiSoggetto, includiApplicativiNonModI, includiApplicativiModIEsterni, includiApplicativiModIInterni};
