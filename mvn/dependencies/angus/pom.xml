@@ -17,8 +17,8 @@
 
 		<jar.group.name>angus</jar.group.name>
 		
-		<angus-activation.version>2.0.1</angus-activation.version>
-		<angus-mail.version>2.0.2</angus-mail.version>
+		<angus-activation.version>2.0.2</angus-activation.version>
+		<angus-mail.version>2.0.3</angus-mail.version>
 
 	</properties>
 

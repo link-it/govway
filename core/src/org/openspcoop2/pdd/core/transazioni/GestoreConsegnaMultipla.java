@@ -343,7 +343,6 @@ public class GestoreConsegnaMultipla {
 			}
 		}
 	}
-	@SuppressWarnings("resource")
 	private void getConnectionAndSave(Object o, String protocol, boolean update, boolean throwNotFoundIfNotExists, IDPortaApplicativa idPA, 
 			IOpenSPCoopState openspcoopState, IState state, RequestInfo requestInfo, Context context,
 			String tipoOperazione, TransazioniSAProcessTimes times, boolean buildDetailsSA, boolean buildDetailsUpdateTransaction,

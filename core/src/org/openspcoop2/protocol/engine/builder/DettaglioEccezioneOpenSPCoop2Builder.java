@@ -60,7 +60,6 @@ import org.slf4j.Logger;
 public class DettaglioEccezioneOpenSPCoop2Builder {
 
 	/** Logger utilizzato per debug. */
-	@SuppressWarnings("unused")
 	private Logger log = null;
 	private org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory;
 	private ITraduttore traduttore;

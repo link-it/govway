@@ -67,7 +67,6 @@ import jakarta.servlet.http.HttpSession;
  */
 public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 
-	@SuppressWarnings("incomplete-switch")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 

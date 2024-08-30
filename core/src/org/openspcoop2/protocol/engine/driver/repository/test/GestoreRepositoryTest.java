@@ -216,7 +216,6 @@ public class GestoreRepositoryTest {
 		}
 	}
 	
-	@SuppressWarnings("resource")
 	private static void test(Connection con,TipiDatabase tipoDatabase) throws Exception{
 		
 	    Statement stmtDelete = null;

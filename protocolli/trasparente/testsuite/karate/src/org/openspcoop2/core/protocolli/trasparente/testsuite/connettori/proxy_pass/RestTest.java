@@ -72,7 +72,6 @@ public class RestTest extends ConfigLoader {
 	protected static String esempio_cookie_domain_tradotto_2 = NOME_COOKIE+"-C2"+"=36A06E750B31E8223B60D4FFA54D2E57; Domain=\""+DOMAIN+"\"; Path=/esempio/cambio/domain";
 	protected static String esempio_cookie_domain_non_tradotto = NOME_COOKIE+"-CNONTRADOTTO"+"=36A06E750B31E8223B60D4FFA54D2E57; Domain=NonTradotto; Path=/esempio/cambio/domain";
 	
-	@SuppressWarnings("unused")
 	protected static String HEADER_HTTP_CUSTOM_SET_COOKIE = "X-Custom-Set-Cookie";
 	
 	protected static String REQUEST_URI="http://127.0.0.1:8080";

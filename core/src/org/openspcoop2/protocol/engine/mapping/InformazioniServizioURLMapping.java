@@ -136,7 +136,6 @@ public class InformazioniServizioURLMapping {
 	// Dati ricevuti dal costruttore
 	private OpenSPCoop2Message msg;
 	private URLProtocolContext urlProtocolContext;
-	@SuppressWarnings("unused")
 	private Logger log;
 	
 	// Gestore delle properties

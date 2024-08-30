@@ -100,7 +100,6 @@ public class SPCoopImbustamento {
 	//private List<String> tipiServizi = null;
 	private SPCoopValidazioneSemantica validazioneSemantica = null;
 	private SPCoopValidazioneSintattica validazioneSintattica = null;
-	@SuppressWarnings("unused")
 	private ITraduttore traduttore = null;
 	private IProtocolManager protocolManager = null;
 	private IState state;

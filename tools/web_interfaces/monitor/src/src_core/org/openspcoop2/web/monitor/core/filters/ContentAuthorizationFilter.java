@@ -62,7 +62,6 @@ public class ContentAuthorizationFilter implements Filter {
 	private static Logger log = LoggerManager.getPddMonitorCoreLogger();
 
 	// configurazione filtro
-	@SuppressWarnings("unused")
 	private FilterConfig filterConfig = null;
 
 	// messaggio da visualizzare per l'utente

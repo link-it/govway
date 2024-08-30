@@ -56,7 +56,6 @@ public class DumpRestMessageUtils {
 	public static DumpMessaggio dumpMessage(OpenSPCoop2RestMessage<?> msg, boolean dumpAllBodyParts) throws MessageException{
 		return dumpMessage(msg, new DumpMessaggioConfig(), dumpAllBodyParts);
 	}
-	@SuppressWarnings("incomplete-switch")
 	public static DumpMessaggio dumpMessage(OpenSPCoop2RestMessage<?> msg,
 			DumpMessaggioConfig config,
 			boolean dumpAllBodyParts) throws MessageException{

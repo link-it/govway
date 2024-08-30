@@ -93,7 +93,6 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 	/** informazioni Servizio */
 	private Servizio infoServizio = null;
 	
-	@SuppressWarnings("unused")
 	private Context context;
 	
 

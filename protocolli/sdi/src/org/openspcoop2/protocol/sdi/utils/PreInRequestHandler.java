@@ -79,7 +79,6 @@ public class PreInRequestHandler implements org.openspcoop2.pdd.core.handlers.Pr
 			boolean attiva = false;
 			String sdiFatturazionePassiva = "/"+SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_RICEVI_NOTIFICA+"/";
 			String sdiFatturazionePassivaConTipo = "/sdi_"+SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_RICEVI_NOTIFICA+"/";
-			@SuppressWarnings("unused")
 			boolean passiva = false;
 			if( inMessage.getURLProtocolContext().getFunctionParameters().contains(sdiFatturazioneAttiva) 
 					||

@@ -98,9 +98,7 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 	private Date dataUltimaConsegna = null;
 
 	private static Boolean enableHeaderInfo = null;
-	@SuppressWarnings("unused")
 	private static boolean headersAsProperties = true;
-	@SuppressWarnings("unused")
 	private static boolean contenutiAsProperties = false;
 
 	private transient IProtocolFactory<?> protocolFactory;

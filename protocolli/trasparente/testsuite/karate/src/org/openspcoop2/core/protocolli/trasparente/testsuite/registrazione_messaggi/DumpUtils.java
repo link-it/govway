@@ -105,7 +105,7 @@ public class DumpUtils {
 		HttpRequest request = new HttpRequest();
 		
 		if(!rest) {
-			if(HttpConstants.CONTENT_TYPE_SOAP_1_2.equals(content)) {
+			if(HttpConstants.CONTENT_TYPE_SOAP_1_2.equals(contentType)) {
 				// NOTA: lo metto nella url per tenere, ma non e' corretto, andrebbe nel content-type
 				// per questi test di dump non e' comunque una informazione importante
 				url=url+"?"+HttpConstants.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION+"=test";
@@ -242,7 +242,7 @@ public class DumpUtils {
 		HttpRequest request = new HttpRequest();
 		
 		if(!rest) {
-			if(HttpConstants.CONTENT_TYPE_SOAP_1_2.equals(content)) {
+			if(HttpConstants.CONTENT_TYPE_SOAP_1_2.equals(contentType)) {
 				// NOTA: lo metto nella url per tenere, ma non e' corretto, andrebbe nel content-type
 				// per questi test di dump non e' comunque una informazione importante
 				url=url+"?"+HttpConstants.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION+"=test";

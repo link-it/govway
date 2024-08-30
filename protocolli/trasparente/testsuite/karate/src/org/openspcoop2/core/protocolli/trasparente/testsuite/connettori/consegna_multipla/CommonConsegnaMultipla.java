@@ -1099,8 +1099,8 @@ public class CommonConsegnaMultipla {
 		for (var requestExpectation : responsesByKind.keySet()) {
 			var responses = responsesByKind.get(requestExpectation);
 			if (requestExpectation.principaleSuperata) {
-				for (@SuppressWarnings("unused") var response : responses) {
-					for (@SuppressWarnings("unused") var connettore : CommonConsegnaMultipla.setSum(requestExpectation.connettoriFallimento,requestExpectation.connettoriSuccesso)) {
+				for (var response : responses) {
+					for (var connettore : CommonConsegnaMultipla.setSum(requestExpectation.connettoriFallimento,requestExpectation.connettoriSuccesso)) {
 						connettoriDaVerificare++;
 						String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
 						printAttesaAttiva("@waitPrimaConsegna TROVATO connettore["+connettore+"] response["+response.getResultHTTPOperation()+"] ["+id_transazione+"]");
@@ -1193,7 +1193,7 @@ public class CommonConsegnaMultipla {
 		for (var requestExpectation : responsesByKind.keySet()) {
 			var responses = responsesByKind.get(requestExpectation);
 			if (requestExpectation.principaleSuperata) {
-				for (@SuppressWarnings("unused") var response : responses) {
+				for (var response : responses) {
 					for (var connettore : requestExpectation.connettoriFallimento) {
 						if(connettoriEsclusiControllo!=null && connettoriEsclusiControllo.length>0) {
 							boolean find = false;

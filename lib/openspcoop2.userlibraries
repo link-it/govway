@@ -265,9 +265,9 @@
     </library>
     <library name="openspcoop2_3.4_lib_impl" systemlibrary="false">
 	<!-- angus (implementazione mail) -->
-        <archive path="/op2_3.4.dev/lib/angus/angus-activation-2.0.1.jar"/>
-        <archive path="/op2_3.4.dev/lib/angus/angus-mail-2.0.2.jar"/>
-        <archive path="/op2_3.4.dev/lib/angus/jakarta.mail-2.0.2.jar"/>
+        <archive path="/op2_3.4.dev/lib/angus/angus-activation-2.0.2.jar"/>
+        <archive path="/op2_3.4.dev/lib/angus/angus-mail-2.0.3.jar"/>
+        <archive path="/op2_3.4.dev/lib/angus/jakarta.mail-2.0.3.jar"/>
 	<!-- jaxb (implementazione jaxb) -->
         <archive path="/op2_3.4.dev/lib/jaxb/codemodel-4.0.3.jar"/>
         <archive path="/op2_3.4.dev/lib/jaxb/istack-commons-runtime-4.2.0.jar"/>

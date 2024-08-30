@@ -125,7 +125,6 @@ public class JMSReceiver {
 	 * @return true se la ricezione JMS e' andata a buon fine, false altrimenti.
 	 * 
 	 */
-	@SuppressWarnings("resource")
 	public boolean receive(String destinatario,String msgSelector,long timeout,long checkInterval){
 
 		Resource resource = null;

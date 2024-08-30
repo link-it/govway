@@ -65,7 +65,6 @@ import it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.constants.EsitoNotificaType;
 public class SDISbustamento {
 
 	private SDIBustaBuilder bustaBuilder = null;
-	@SuppressWarnings("unused")
 	public SDISbustamento(SDIBustaBuilder bustaBuilder){
 		this.bustaBuilder = bustaBuilder;
 	}

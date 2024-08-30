@@ -67,7 +67,6 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public final class AccordiCooperazioneAllegatiChange extends Action {
 
-	@SuppressWarnings("incomplete-switch")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 

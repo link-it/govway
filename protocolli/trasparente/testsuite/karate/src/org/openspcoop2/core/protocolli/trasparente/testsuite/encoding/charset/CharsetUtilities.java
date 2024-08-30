@@ -374,7 +374,7 @@ public class CharsetUtilities {
 			pattern = "//{http://govway.org/exampleAdd}TESTRISPOSTAADD/text()";
 			Element e = XMLUtils.getInstance().newElement(responseS.getBytes());
 			DynamicNamespaceContext dnc = new DynamicNamespaceContext();
-			dnc.equals(e);
+			/**dnc.equals(e);*/
 			v = AbstractXPathExpressionEngine.extractAndConvertResultAsString(e, dnc, new XPathExpressionEngine(), pattern, logCore);
 			assertEquals("RES", v);
 			

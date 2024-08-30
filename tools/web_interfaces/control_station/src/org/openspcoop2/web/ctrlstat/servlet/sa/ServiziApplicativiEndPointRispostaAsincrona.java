@@ -282,7 +282,6 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			
 			
 			String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
-			@SuppressWarnings("unused")
 			boolean gestioneErogatori = false;
 			if(tipologia!=null &&
 				AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
