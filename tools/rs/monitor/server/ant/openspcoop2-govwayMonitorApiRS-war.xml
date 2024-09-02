@@ -187,10 +187,10 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/reports">
-				<include name="poi-5.2.3.jar"/>
-				<include name="poi-ooxml-5.2.3.jar"/>
-				<include name="poi-ooxml-lite-5.2.3.jar"/>
-				<include name="xmlbeans-5.1.1.jar"/>
+				<include name="poi-5.3.0.jar"/>
+				<include name="poi-ooxml-5.3.0.jar"/>
+				<include name="poi-ooxml-lite-5.3.0.jar"/>
+				<include name="xmlbeans-5.2.1.jar"/>
 			</lib>
 			<lib dir="${required_lib}/pdf">
 				<include name="pdfbox-2.0.32.jar"/>
