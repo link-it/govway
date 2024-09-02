@@ -115,12 +115,12 @@
 	<archive path="/op2_3.4.dev/lib/json/accessors-smart-2.5.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/jettison-1.5.4.jar"/>
 	<!-- log -->
-        <archive path="/op2_3.4.dev/lib/log/slf4j-api-2.0.7-gov4j-1.jar"/>
-	<archive path="/op2_3.4.dev/lib/log/log4j-1.2-api-2.20.0.jar"/>
-        <archive path="/op2_3.4.dev/lib/log/log4j-api-2.20.0.jar"/>
-	<archive path="/op2_3.4.dev/lib/log/log4j-core-2.20.0.jar"/>
-	<archive path="/op2_3.4.dev/lib/log/log4j-slf4j2-impl-2.20.0.jar"/>
-	<archive path="/op2_3.4.dev/lib/log/log4j-jcl-2.20.0.jar"/>
+        <archive path="/op2_3.4.dev/lib/log/slf4j-api-2.0.16-gov4j-1.jar"/>
+	<archive path="/op2_3.4.dev/lib/log/log4j-1.2-api-2.23.1.jar"/>
+        <archive path="/op2_3.4.dev/lib/log/log4j-api-2.23.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/log/log4j-core-2.23.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/log/log4j-slf4j2-impl-2.23.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/log/log4j-jcl-2.23.1.jar"/>
 	<!-- lucene -->
         <archive path="/op2_3.4.dev/lib/lucene/lucene-core-9.7.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/lucene/lucene-codecs-9.7.0.jar"/>

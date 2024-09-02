@@ -171,7 +171,7 @@
 				<include name="wsdl4j-1.6.3.jar"/>
 			</lib>
 			<lib dir="${ws_validazione_lib}/log">
-				<include name="slf4j-api-2.0.7-gov4j-1.jar"/>
+				<include name="slf4j-api-2.0.16-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${ws_validazione_lib}/jakarta">

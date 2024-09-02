@@ -721,7 +721,7 @@
 				<include name="${redis_jar}"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/log">
-				<include name="slf4j-api-2.0.7-gov4j-1.jar"/>
+				<include name="slf4j-api-2.0.16-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/jmx">
