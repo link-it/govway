@@ -17,10 +17,10 @@
 
 		<jar.group.name>json</jar.group.name>
 		
-		<org.json.json.version>20231013</org.json.json.version>
+		<org.json.json.version>20240303</org.json.json.version>
 
-		<networknt_json-schema-validator.version>1.0.86</networknt_json-schema-validator.version>
-		<com-ethlo-time.version>1.7.3</com-ethlo-time.version>
+		<networknt_json-schema-validator.version>1.5.1</networknt_json-schema-validator.version>
+		<com-ethlo-time.version>1.10.2</com-ethlo-time.version>
 
 		<github-java-json-tools_json-schema-validator.version>2.2.14</github-java-json-tools_json-schema-validator.version>
 		<github-java-json-tools_json-schema-validator.gov4j.version>2.2.14-gov4j-1</github-java-json-tools_json-schema-validator.gov4j.version>
@@ -30,13 +30,13 @@
 		<github-java-json-tools_uri-template.version>0.10</github-java-json-tools_uri-template.version>
 		<btf.version>1.2</btf.version>
 		<msg-simple.version>1.1</msg-simple.version>
-		<failureaccess.version>1.0.1</failureaccess.version>
-		<libphonenumber.version>8.13.18</libphonenumber.version>
+		<failureaccess.version>1.0.2</failureaccess.version>
+		<libphonenumber.version>8.13.44</libphonenumber.version>
 
 		<json-path.version>2.9.0</json-path.version>
 		<json-path.gov4j.version>2.9.0-gov4j-1</json-path.gov4j.version>
-		<json-smart.version>2.5.0</json-smart.version>
-		<accessors-smart.version>2.5.0</accessors-smart.version>
+		<json-smart.version>2.5.1</json-smart.version>
+		<accessors-smart.version>2.5.1</accessors-smart.version>
 
 		<jettison.version>1.5.4</jettison.version>
 

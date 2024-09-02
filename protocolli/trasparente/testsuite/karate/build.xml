@@ -293,7 +293,7 @@
 					<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
 
 					<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
-					     (file:.../lib/json/accessors-smart-2.5.0.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
+					     (file:.../lib/json/accessors-smart-2.5.1.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
 					<!-- Modificato da deny a permit per non far comparire il messaggio (sono test): 
 						Caused by: java.lang.IllegalAccessError: class Log4jHotPatch (in unnamed module @0x7a356a0d) 
 							cannot access class jdk.internal.org.objectweb.asm.Opcodes (in module java.base) 
@@ -392,7 +392,7 @@
 											<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
 
 											<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
-											     (file:.../lib/json/accessors-smart-2.5.0.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
+											     (file:.../lib/json/accessors-smart-2.5.1.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
 											<!-- Modificato da deny a permit per non far comparire il messaggio (sono test): 
 												Caused by: java.lang.IllegalAccessError: class Log4jHotPatch (in unnamed module @0x7a356a0d) 
 													cannot access class jdk.internal.org.objectweb.asm.Opcodes (in module java.base) 
@@ -425,7 +425,7 @@
 											<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
 
 											<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
-											     (file:.../lib/json/accessors-smart-2.5.0.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
+											     (file:.../lib/json/accessors-smart-2.5.1.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
 											<!-- Modificato da deny a permit per non far comparire il messaggio (sono test): 
 												Caused by: java.lang.IllegalAccessError: class Log4jHotPatch (in unnamed module @0x7a356a0d) 
 													cannot access class jdk.internal.org.objectweb.asm.Opcodes (in module java.base) 
@@ -463,7 +463,7 @@
 											<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
 
 											<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
-											     (file:.../lib/json/accessors-smart-2.5.0.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
+											     (file:.../lib/json/accessors-smart-2.5.1.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
 											<!-- Modificato da deny a permit per non far comparire il messaggio (sono test): 
 												Caused by: java.lang.IllegalAccessError: class Log4jHotPatch (in unnamed module @0x7a356a0d) 
 													cannot access class jdk.internal.org.objectweb.asm.Opcodes (in module java.base) 
@@ -500,7 +500,7 @@
 											<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
 
 											<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
-											     (file:.../lib/json/accessors-smart-2.5.0.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
+											     (file:.../lib/json/accessors-smart-2.5.1.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
 											<!-- Modificato da deny a permit per non far comparire il messaggio (sono test): 
 												Caused by: java.lang.IllegalAccessError: class Log4jHotPatch (in unnamed module @0x7a356a0d) 
 													cannot access class jdk.internal.org.objectweb.asm.Opcodes (in module java.base) 
