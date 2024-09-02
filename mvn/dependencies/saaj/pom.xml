@@ -17,8 +17,8 @@
 
 		<jar.group.name>saaj</jar.group.name>
 		
-		<saaj-api.version>3.0.0</saaj-api.version>
-		<saaj-impl.gov4j.version>3.0.2-gov4j-1</saaj-impl.gov4j.version>
+		<saaj-api.version>3.0.2</saaj-api.version>
+		<saaj-impl.gov4j.version>3.0.4-gov4j-1</saaj-impl.gov4j.version>
 		<mimepull.version>1.10.0</mimepull.version>
 		<stax-ex.version>2.1.0</stax-ex.version>
 

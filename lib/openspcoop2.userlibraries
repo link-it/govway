@@ -174,8 +174,8 @@
 	<archive path="/op2_3.4.dev/lib/reports/poi-ooxml-lite-5.3.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/reports/xmlbeans-5.2.1.jar"/>
 	<!-- saaj -->
-	<archive path="/op2_3.4.dev/lib/saaj/jakarta.xml.soap-api-3.0.0.jar"/>
-	<archive path="/op2_3.4.dev/lib/saaj/saaj-impl-3.0.2-gov4j-1.jar"/>
+	<archive path="/op2_3.4.dev/lib/saaj/jakarta.xml.soap-api-3.0.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/saaj/saaj-impl-3.0.4-gov4j-1.jar"/>
 	<archive path="/op2_3.4.dev/lib/saaj/stax-ex-2.1.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/saaj/mimepull-1.10.0.jar"/>
 	<!-- security -->

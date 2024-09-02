@@ -53,7 +53,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xmlsec-api-4.3.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xmlsec-impl-4.3.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/java-support-8.4.2.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/saaj-impl-3.0.2-gov4j-1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/saaj-impl-3.0.4-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/stax-ex-2.1.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/mimepull-1.10.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aop-6.1.12.jar"/>

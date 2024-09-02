@@ -58,7 +58,7 @@
 	<path id="classpath_compile" >
 		<fileset dir="${openspcoop2_lib}" >
 			<include name="**/*.jar"/>
-			<exclude name="saajjakarta.xml.soap-api-3.0.0.jar"/> <!-- deve essere usata, con axis, l'interfaccia più vecchia presente in axis-saaj-1.4.jar -->
+			<exclude name="saajjakarta.xml.soap-api-3.0.2.jar"/> <!-- deve essere usata, con axis, l'interfaccia più vecchia presente in axis-saaj-1.4.jar -->
 		</fileset>
 		<fileset dir="deploy/lib" >
 			<include name="*.jar"/>
@@ -153,7 +153,7 @@
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/saaj">
 			<include name="*.jar"/>
-			<exclude name="jakarta.xml.soap-api-3.0.0.jar"/> <!-- deve essere usata, con axis, l'interfaccia più vecchia presente in axis-saaj-1.4.jar -->
+			<exclude name="jakarta.xml.soap-api-3.0.2.jar"/> <!-- deve essere usata, con axis, l'interfaccia più vecchia presente in axis-saaj-1.4.jar -->
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/jetty" >
 			<include name="*.jar"/>

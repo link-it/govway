@@ -101,8 +101,8 @@
 			<include name="*.jar"/>
 		</fileset>	
 		<fileset dir="${required_lib}/saaj">
-			<include name="jakarta.xml.soap-api-3.0.0.jar"/>
-			<include name="saaj-impl-3.0.2-gov4j-1.jar"/>
+			<include name="jakarta.xml.soap-api-3.0.2.jar"/>
+			<include name="saaj-impl-3.0.4-gov4j-1.jar"/>
 			<include name="stax-ex-2.1.0.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2.dist}">
