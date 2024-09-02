@@ -122,11 +122,11 @@
 	<archive path="/op2_3.4.dev/lib/log/log4j-slf4j2-impl-2.23.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/log/log4j-jcl-2.23.1.jar"/>
 	<!-- lucene -->
-        <archive path="/op2_3.4.dev/lib/lucene/lucene-core-9.7.0.jar"/>
-	<archive path="/op2_3.4.dev/lib/lucene/lucene-codecs-9.7.0.jar"/>
-	<archive path="/op2_3.4.dev/lib/lucene/lucene-misc-9.7.0.jar"/>
-	<archive path="/op2_3.4.dev/lib/lucene/lucene-queries-9.7.0.jar"/>
-	<archive path="/op2_3.4.dev/lib/lucene/lucene-suggest-9.7.0.jar"/>
+        <archive path="/op2_3.4.dev/lib/lucene/lucene-core-9.11.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/lucene/lucene-codecs-9.11.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/lucene/lucene-misc-9.11.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/lucene/lucene-queries-9.11.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/lucene/lucene-suggest-9.11.1.jar"/>
 	<!-- openapi4j -->
 	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-core-1.0.7-gov4j-jk7.jar"/>
 	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-parser-1.0.7-gov4j-jk7.jar"/>
