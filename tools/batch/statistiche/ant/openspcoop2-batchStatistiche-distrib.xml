@@ -46,10 +46,10 @@
                         <fileset dir="${openspcoop2.lib}" includes="security/bcpkix-jdk18on-1.78.1.jar"/>
                         <fileset dir="${openspcoop2.lib}" includes="security/bcprov-jdk18on-1.78.1.jar"/>
                         <fileset dir="${openspcoop2.lib}" includes="security/bcutil-jdk18on-1.78.1.jar"/>
-                        <fileset dir="${openspcoop2.lib}" includes="security/xmlsec-3.0.3-gov4j-1.jar"/>
+                        <fileset dir="${openspcoop2.lib}" includes="security/xmlsec-3.0.4.jar"/>
                         <fileset dir="${openspcoop2.lib}" includes="security/neethi-3.2.0.jar"/>
                         <fileset dir="${openspcoop2.lib}" includes="security/jasypt-1.9.3.jar"/>
-                        <fileset dir="${openspcoop2.lib}" includes="security/nimbus-jose-jwt-9.37.3.jar"/>
+                        <fileset dir="${openspcoop2.lib}" includes="security/nimbus-jose-jwt-9.40.jar"/>
 		</copy>
 
 		<mkdir dir="${distrib_batchStatistiche}/jdbc"/>

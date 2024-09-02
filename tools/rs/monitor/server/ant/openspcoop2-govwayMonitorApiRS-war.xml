@@ -112,7 +112,7 @@
 			</lib>
 			<lib dir="${openspcoop2.lib}/security">
 				<include name="neethi-3.2.0.jar"/>
-				<include name="xmlsec-3.0.3-gov4j-1.jar"/>
+				<include name="xmlsec-3.0.4.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/swagger">
 				<exclude name="${excludeSwagger}"/>

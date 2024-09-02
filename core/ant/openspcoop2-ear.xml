@@ -69,8 +69,8 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xalan-2.7.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xml-resolver-1.2.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlschema-core-2.3.1.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlsec-3.0.3-gov4j-1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/cryptacular-1.2.5.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlsec-3.0.4.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cryptacular-1.2.7.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jasypt-1.9.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wsdl4j-1.6.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-bindings-3.0.3.jar"/>	
@@ -681,11 +681,11 @@
 				<include name="bcpkix-jdk18on-1.78.1.jar"/>
 				<include name="bcutil-jdk18on-1.78.1.jar"/>
 				<include name="neethi-3.2.0.jar"/>
-				<include name="xmlsec-3.0.3-gov4j-1.jar"/>
-				<include name="cryptacular-1.2.5.jar"/>
+				<include name="xmlsec-3.0.4.jar"/>
+				<include name="cryptacular-1.2.7.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 				<include name="herasaf-xacml-core-3.0.2.jar"/>
-				<include name="nimbus-jose-jwt-9.37.3.jar"/>
+				<include name="nimbus-jose-jwt-9.40.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/wss4j">
 				<include name="*.jar"/>

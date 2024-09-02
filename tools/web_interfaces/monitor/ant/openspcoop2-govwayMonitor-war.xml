@@ -211,13 +211,13 @@
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="xmlsec-3.0.3-gov4j-1.jar"/>
+				<include name="xmlsec-3.0.4.jar"/>
 				<include name="neethi-3.2.0.jar" />
 				<include name="bcpkix-jdk18on-1.78.1.jar"/>
 				<include name="bcprov-jdk18on-1.78.1.jar"/>
 				<include name="bcutil-jdk18on-1.78.1.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
-				<include name="nimbus-jose-jwt-9.37.3.jar"/>
+				<include name="nimbus-jose-jwt-9.40.jar"/>
 			</lib>
 			<lib dir="${required_lib}/json">
 				<include name="*.jar"/>
