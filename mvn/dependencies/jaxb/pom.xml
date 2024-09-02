@@ -17,8 +17,8 @@
 
 		<jar.group.name>jaxb</jar.group.name>
 		
-		<glassfish.jaxb.version>4.0.3</glassfish.jaxb.version>
-		<com.sun.xml.bind.external.version>4.0.3</com.sun.xml.bind.external.version>
+		<glassfish.jaxb.version>4.0.5</glassfish.jaxb.version>
+		<com.sun.xml.bind.external.version>4.0.5</com.sun.xml.bind.external.version>
 		<istack-commons.version>4.2.0</istack-commons.version>
 
 	</properties>
