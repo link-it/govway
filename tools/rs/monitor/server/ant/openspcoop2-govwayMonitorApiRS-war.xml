@@ -193,8 +193,8 @@
 				<include name="xmlbeans-5.1.1.jar"/>
 			</lib>
 			<lib dir="${required_lib}/pdf">
-				<include name="pdfbox-2.0.27.jar"/>
-				<include name="fontbox-2.0.27.jar"/>	
+				<include name="pdfbox-2.0.32.jar"/>
+				<include name="fontbox-2.0.32.jar"/>	
 				<include name="boxable-1.7.0.jar"/>
 			</lib>
 			<!-- Mail api esteso con activation data handler openspcoop -->

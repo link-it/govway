@@ -17,7 +17,7 @@
 
 		<jar.group.name>pdf</jar.group.name>
 				
-		<pdfbox.version>2.0.27</pdfbox.version>
+		<pdfbox.version>2.0.32</pdfbox.version>
 		<boxable.version>1.7.0</boxable.version>
 
 	</properties>
