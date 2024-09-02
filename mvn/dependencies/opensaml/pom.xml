@@ -17,8 +17,8 @@
 
 		<jar.group.name>opensaml</jar.group.name>
 		
-		<java-support.version>8.4.0</java-support.version>
-		<opensaml.version>4.3.0</opensaml.version>
+		<java-support.version>8.4.2</java-support.version>
+		<opensaml.version>4.3.2</opensaml.version>
 
 	</properties>
 
