@@ -378,6 +378,7 @@
 				<include name="reactive-streams-1.0.4.jar" />
 				<include name="velocity-*.jar"/>
 				<include name="rhino-1.7.15.jar"/>
+				<include name="micrometer-observation-1.13.3.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayConsole}/cxf">
 				<include name="cxf-core-*.jar" />
