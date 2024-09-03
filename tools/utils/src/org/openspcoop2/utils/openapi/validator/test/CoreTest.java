@@ -463,7 +463,7 @@ public class CoreTest {
 						}
 						else {
 							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-								String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+								String msgErroreAtteso = "$: property 'a' is not defined in the schema and the schema does not allow additional properties";
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 								}
@@ -494,7 +494,7 @@ public class CoreTest {
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "$.name: is missing but it is required";
+							String msgErroreAtteso = "$: required property 'name' not found";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -674,7 +674,7 @@ public class CoreTest {
 						}
 						else {
 							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-								String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+								String msgErroreAtteso = "$: property 'a' is not defined in the schema and the schema does not allow additional properties";
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 								}
@@ -706,7 +706,7 @@ public class CoreTest {
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "$.name: is missing but it is required";
+							String msgErroreAtteso = "$: required property 'name' not found";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -738,7 +738,7 @@ public class CoreTest {
 						}
 						else {
 							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-								String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+								String msgErroreAtteso = "$: property 'a' is not defined in the schema and the schema does not allow additional properties";
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 								}
@@ -770,7 +770,7 @@ public class CoreTest {
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "$.code: is missing but it is required";
+							String msgErroreAtteso = "$: required property 'code' not found";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -812,7 +812,7 @@ public class CoreTest {
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+							String msgErroreAtteso = "$: property 'a' is not defined in the schema and the schema does not allow additional properties";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -842,7 +842,7 @@ public class CoreTest {
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "$.name: is missing but it is required";
+							String msgErroreAtteso = "$: required property 'name' not found";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -895,7 +895,7 @@ public class CoreTest {
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+							String msgErroreAtteso = "$: property 'a' is not defined in the schema and the schema does not allow additional properties";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -926,7 +926,7 @@ public class CoreTest {
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "$.name: is missing but it is required";
+							String msgErroreAtteso = "$: required property 'name' not found";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -957,7 +957,7 @@ public class CoreTest {
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+							String msgErroreAtteso = "$: property 'a' is not defined in the schema and the schema does not allow additional properties";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -988,7 +988,7 @@ public class CoreTest {
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "$.code: is missing but it is required";
+							String msgErroreAtteso = "$: required property 'code' not found";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -1027,7 +1027,7 @@ public class CoreTest {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 							String msgErroreAtteso = OpenAPILibrary.json_schema.equals(openAPILibrary) ?									
-									"$.a: is not defined in the schema and the schema does not allow additional properties" :
+									"$: property 'a' is not defined in the schema and the schema does not allow additional properties" :
 									"[ERROR][REQUEST][DELETE /pets @body] Object instance has properties which are not allowed by the schema: [\"a\"]";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -1049,7 +1049,7 @@ public class CoreTest {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
 							String msgErroreAtteso =  OpenAPILibrary.json_schema.equals(openAPILibrary) ?
-									"$.name: is missing but it is required" :
+									"$: required property 'name' not found" :
 									"[ERROR][REQUEST][DELETE /pets @body] Object has missing required properties ([\"name\"])";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
@@ -1103,7 +1103,7 @@ public class CoreTest {
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+							String msgErroreAtteso = "$: property 'a' is not defined in the schema and the schema does not allow additional properties";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -1134,7 +1134,7 @@ public class CoreTest {
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "$.name: is missing but it is required";
+							String msgErroreAtteso = "$: required property 'name' not found";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -1165,7 +1165,7 @@ public class CoreTest {
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+							String msgErroreAtteso = "$: property 'a' is not defined in the schema and the schema does not allow additional properties";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -1196,7 +1196,7 @@ public class CoreTest {
 					}
 					else {
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "$.code: is missing but it is required";
+							String msgErroreAtteso = "$: required property 'code' not found";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}

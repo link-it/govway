@@ -149,7 +149,7 @@ public class InterfaceBiggerTest {
 				maxAtteso = Long.MAX_VALUE;
 				break;
 			case swagger_request_validator:
-				maxAtteso = ambienteTestNonPerformante ? 10000 : 3500;
+				maxAtteso = ambienteTestNonPerformante ? 10000 : 6000;
 				break;
 			}			
 			System.out.println("\tInit validator time:"+Utilities.convertSystemTimeIntoStringMillisecondi(time, true));

@@ -35,7 +35,7 @@
 			<include name="commons/*"/>
 			<include name="cxf/*"/>
 			<include name="saaj/*"/>
-			<include name="jax/jaxb*"/>
+			<include name="jaxb/*"/>
 			<include name="jakarta/*"/>
 			<include name="log/*"/>
 			<include name="security/*"/>
@@ -152,10 +152,10 @@
 			<fileset dir="${openspcoop2.lib}/swagger" includes="*.jar" excludes="swagger-ui-*.jar"/>
 			<fileset dir="${openspcoop2.lib}/openapi4j" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/jackson" includes="*.jar"/>
-			<fileset dir="${openspcoop2.lib}/javax" includes="javax.servlet-api-4.0.1.jar"/>
-			<fileset dir="${openspcoop2.lib}/jax" includes="jaxb-*.jar"/>
-			<fileset dir="${openspcoop2.lib}/json" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/jakarta" includes="jakarta.servlet-api-5.0.0.jar"/>
 			<fileset dir="${openspcoop2.lib}/jakarta" includes="jakarta.activation-api-2.1.3.jar"/>
+			<fileset dir="${openspcoop2.lib}/jaxb" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/json" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/security" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="xercesImpl-2.12.2.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="joda-time-2.12.7.jar"/>

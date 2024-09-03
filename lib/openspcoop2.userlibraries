@@ -238,6 +238,7 @@
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-core-2.1.22.jar"/>
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-v3-2.1.22-gov4j-1.jar"/>
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-v2-converter-2.1.22.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-safe-url-resolver-2.1.22.jar"/>
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-1.0.71.jar"/>
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-core-1.6.14.jar"/>
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-models-1.6.14.jar"/>

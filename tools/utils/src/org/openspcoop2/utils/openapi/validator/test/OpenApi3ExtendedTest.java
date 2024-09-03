@@ -542,7 +542,9 @@ public class OpenApi3ExtendedTest {
 			String msgErroreAtteso = null;
 			switch (openAPILibrary) {
 			case json_schema:
-				msgErroreAtteso = "1028 $.allegati[0].documento.uri: is missing but it is required";
+				msgErroreAtteso = "$.allegati[0].documento: must be valid to one and only one schema, but 0 are valid\n"
+						+ "1028 $.allegati[0].documento: required property 'contenuto' not found\n"
+						+ "1028 $.allegati[0].documento: required property 'uri' not found";
 				break;
 			case openapi4j:
 				msgErroreAtteso = "body.allegati.0.documento: Field 'uri' is required.";
@@ -581,7 +583,10 @@ public class OpenApi3ExtendedTest {
 			String msgErroreAtteso = null;
 			switch (openAPILibrary) {
 			case json_schema:
-				msgErroreAtteso = "1008 $.allegati[0].documento.tipoDocumento: does not have a value in the enumeration [inline, riferimento-uri]";
+				msgErroreAtteso = "$.allegati[0].documento: must be valid to one and only one schema, but 0 are valid\n"
+						+ "1008 $.allegati[0].documento.tipoDocumento: does not have a value in the enumeration [\"inline\", \"riferimento-uri\"]\n"
+						+ "1028 $.allegati[0].documento: required property 'contenuto' not found\n"
+						+ "1008 $.allegati[0].documento.tipoDocumento: does not have a value in the enumeration [\"inline\", \"riferimento-uri\"]";
 				break;
 			case openapi4j:
 				msgErroreAtteso = "body.allegati.0.documento: Schema selection can't be made for discriminator 'tipoDocumento' with value 'riferimento-uriERRATA'.";
@@ -622,7 +627,11 @@ public class OpenApi3ExtendedTest {
 			String msgErroreAtteso = null;
 			switch (openAPILibrary) {
 			case json_schema:
-				msgErroreAtteso = "1028 $.allegati[1].documento.tipoDocumento: is missing but it is required";
+				msgErroreAtteso = "$.allegati[1].documento: must be valid to one and only one schema, but 0 are valid\n"
+						+ "1028 $.allegati[1].documento: required property 'tipoDocumento' not found\n"
+						+ "1028 $.allegati[1].documento: required property 'impronta' not found\n"
+						+ "1028 $.allegati[1].documento: required property 'tipoDocumento' not found\n"
+						+ "1028 $.allegati[1].documento: required property 'uri' not found";
 				break;
 			case openapi4j:
 				msgErroreAtteso = "body.allegati.1.documento: Property name in content 'tipoDocumento' is not set.";
@@ -637,7 +646,11 @@ public class OpenApi3ExtendedTest {
 			
 			switch (openAPILibrary) {
 			case json_schema:
-				msgErroreAtteso = "1028 $.allegati[1].documento.tipoDocumento: is missing but it is required"; // uso solito messaggio
+				msgErroreAtteso = "allegati[1].documento: must be valid to one and only one schema, but 0 are valid\n"
+						+ "1028 $.allegati[1].documento: required property 'tipoDocumento' not found\n"
+						+ "1028 $.allegati[1].documento: required property 'impronta' not found\n"
+						+ "1028 $.allegati[1].documento: required property 'tipoDocumento' not found\n"
+						+ "1028 $.allegati[1].documento: required property 'uri' not found"; // uso solito messaggio
 				break;
 			case openapi4j:
 				msgErroreAtteso = "From: body.<allOf>.allegati.1.<items>.<#/components/schemas/AllegatoRiferimentoMixed>.<allOf>.documento.<discriminator>";
@@ -2027,7 +2040,7 @@ public class OpenApi3ExtendedTest {
 				String msgErroreAtteso = null;
 				switch (openAPILibrary) {
 				case json_schema:
-					msgErroreAtteso = "1034 $.data: "+valore+" is an invalid date";
+					msgErroreAtteso = "$.data: does not match the date-time pattern must be a valid RFC 3339 date-time";
 					break;
 				case openapi4j:
 					msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
@@ -2090,7 +2103,7 @@ public class OpenApi3ExtendedTest {
 				String msgErroreAtteso = null;
 				switch (openAPILibrary) {
 				case json_schema:
-					msgErroreAtteso = "1034 $.data: "+valore+" is an invalid date";
+					msgErroreAtteso = "$.data: does not match the date-time pattern must be a valid RFC 3339 date-time";
 					break;
 				case openapi4j:
 					msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
@@ -2533,9 +2546,9 @@ public class OpenApi3ExtendedTest {
 					}
 					else {
 						msgErroreAtteso = "Content-Type '"+ct+"' (http response status '"+code+"') unsupported";
-						msgErroreAtteso2 = "1028 $.esito: is missing but it is required";
+						msgErroreAtteso2 = "$: required property 'esito' not found";
 						if(code.intValue() != 200) {
-							msgErroreAtteso2 = "1028 $.type: is missing but it is required";
+							msgErroreAtteso2 = "$: required property 'type' not found";
 						}
 					}
 					break;
@@ -2789,9 +2802,9 @@ public class OpenApi3ExtendedTest {
 				String msgErroreAtteso3 = null;
 				switch (openAPILibrary) {
 				case json_schema:
-					msgErroreAtteso = "1028 $.type: is missing but it is required";
-					msgErroreAtteso2 = "1028 $.title: is missing but it is required";
-					msgErroreAtteso3 = "1028 $.status: is missing but it is required";
+					msgErroreAtteso = "$: required property 'type' not found";
+					msgErroreAtteso2 = "$: required property 'title' not found";
+					msgErroreAtteso3 = "$: required property 'status' not found";
 					break;
 				case openapi4j:
 					msgErroreAtteso = "body: Field 'type' is required. (code: 1026)";
@@ -3104,7 +3117,7 @@ public class OpenApi3ExtendedTest {
 					case json_schema:
 						if(valore instanceof Integer) {
 							String tipoJava = valore instanceof Integer ? "integer" : "boolean";
-							msgErroreAtteso = "1029 $.stato1: "+tipoJava+" found, string expected";
+							msgErroreAtteso = "$.stato1: "+tipoJava+" found, string expected";
 						}
 						break;
 					case openapi4j:
@@ -3130,7 +3143,7 @@ public class OpenApi3ExtendedTest {
 					}
 					
 					if(openAPILibrary == OpenAPILibrary.json_schema) {
-						msgErroreAtteso = "does not have a value in the enumeration [si, no, yes, s, n, y, 0, 1, on, off]";
+						msgErroreAtteso = "$.stato1: does not have a value in the enumeration [\"SI\", \"NO\", \"YES\", \"S\", \"N\", \"Y\", \"0\", \"1\", \"ON\", \"OFF\"]";
 						if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 							System.out.println("\t "+tipoTest+" ERRORE!");
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
@@ -3216,7 +3229,7 @@ public class OpenApi3ExtendedTest {
 					}
 					
 					if(openAPILibrary == OpenAPILibrary.json_schema) {
-						msgErroreAtteso = "does not have a value in the enumeration [si, no, yes, s, n, y, 0, 1, on, off]";
+						msgErroreAtteso = "$.stato1: does not have a value in the enumeration [\"SI\", \"NO\", \"YES\", \"S\", \"N\", \"Y\", \"0\", \"1\", \"ON\", \"OFF\"]";
 						if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
 							System.out.println("\t "+tipoTest+" ERRORE!");
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");

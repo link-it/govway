@@ -89,6 +89,7 @@
 												<classfileset dir="build_testunits" includes="**/*.class"/>
 												<jvmarg value="-Dtestng.show.stack.frames=${testsuite.showStackFrames}" />
 												<jvmarg value="-Djenkins=${testsuite.env.jenkins}" />
+												<jvmarg value="--add-opens=java.base/java.util=ALL-UNNAMED" /> <!-- per consentire il setEnvProperty nel test FileTraceTest -->
 											</testng>
 										</jacoco:coverage>
 									</then>
@@ -99,6 +100,7 @@
 											<classfileset dir="build_testunits" includes="**/*.class"/>
 											<jvmarg value="-Dtestng.show.stack.frames=${testsuite.showStackFrames}" />
 											<jvmarg value="-Djenkins=${testsuite.env.jenkins}" />
+											<jvmarg value="--add-opens=java.base/java.util=ALL-UNNAMED" /> <!-- per consentire il setEnvProperty nel test FileTraceTest -->
 										</testng>
 									</else>
 								</if>

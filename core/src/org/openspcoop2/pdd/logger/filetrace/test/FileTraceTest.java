@@ -26,7 +26,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
@@ -231,12 +230,8 @@ public class FileTraceTest {
 		
 		FileSystemUtilities.mkdir(DIR_TMP);
 	}
-	@SuppressWarnings({ "unchecked" })
-	private static void updateEnv(String name, String val) throws ReflectiveOperationException {
-		Map<String, String> env = System.getenv();
-		Field field = env.getClass().getDeclaredField("m");
-	    field.setAccessible(true);
-	    ((Map<String, String>) field.get(env)).put(name, val);
+	private static void updateEnv(String name, String val) throws UtilsException {
+		Utilities.setEnvProperty(name, val);
 	}
 	
 	
