@@ -157,7 +157,7 @@ function postVersion_postBack(dataElementName) {
     //console.log('Nuova URL: ' + newActionUrl);
     
     if(navigationAnchor!=null){
-    	 theForm.action+=navigationAnchor;
+    	newActionUrl += navigationAnchor;
     }
     
     theForm.action=newActionUrl;

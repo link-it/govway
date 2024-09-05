@@ -32,8 +32,25 @@ function formHasParam(theForm, name){
 	for (var k=0; k<theForm.elements.length; k++) {
 		var nome = theForm.elements[k].name;
 		if (nome && nome.length > 0) {
-		    if ( nome == name){
+		    if ( nome === name){
 				return true;
+	    	}
+	    }
+    }
+
+	return false;
+}
+
+function elementIsCheckbox(theForm, name){
+	for (var k=0; k<theForm.elements.length; k++) {
+		var nome = theForm.elements[k].name;
+		if (nome && nome.length > 0) {
+		    if ( nome === name){
+				var tipo = theForm.elements[k].type;
+		
+				if (tipo === "checkbox") {
+					return true;
+				}				
 	    	}
 	    }
     }
@@ -43,7 +60,7 @@ function formHasParam(theForm, name){
 
 function addHidden(theForm, name, value) {
 	// controllo di sicurezza per evitare di aggiungere due volte il parametro con lo stesso nome.
-	if(!formHasParam(theForm,name)){
+	if(elementIsCheckbox(theForm, name) || !formHasParam(theForm,name)){
 	    // Create a hidden input element, and append it to the form:
 	    var input = document.createElement('input');
 	    input.type = 'hidden';
