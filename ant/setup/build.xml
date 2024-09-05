@@ -619,6 +619,37 @@
 	<target name="setup_sdi" depends="_setup_sdi"/>
 	<target name="_setup_sdi">
 		<copy file="${deploy_resources}/protocolli/sdi/sdi_local.properties" todir="${tmp_cfg}"/>
+		
+		<if>
+			<matches string="${build_for_as}" pattern="tomcat.*"/>
+			<then>
+				
+				<!-- impostazione proprieta' in sdi.properties -->
+				<fileset dir="${deploy_sw}" id="archiveSDI.txt">
+				        <include name="openspcoop2_sdi-protocol_*.jar"/>
+				</fileset>
+				<pathconvert pathsep=" " property="archiveSDI_name.txt" refid="archiveSDI.txt">
+				        <map from="${deploy_sw}/" to=""/>
+				</pathconvert>
+				<!-- <echo message="FILE_NAME [${archiveSDI_name.txt}]"/> -->
+				
+				<delete dir="${tmp_cfg}/JAR_SDI"/>
+				<unzip src="${deploy_sw}/${archiveSDI_name.txt}" dest="${tmp_cfg}/JAR_SDI"/>
+				<concat destfile="${tmp_cfg}/JAR_SDI/sdi.properties" append="yes" >
+
+# ----- Personalizzazione Setup GovWay (sdi) -------------
+				</concat>
+				<antcall target="set_property">
+					<param name="file" value="${tmp_cfg}/JAR_SDI/sdi.properties"/>
+					<param name="token" value="org.openspcoop2.protocol.sdi.tracce.dataSource"/>
+					<param name="value" value="${datasource_pdd_name}"/>
+				</antcall>
+				<delete file="${deploy_sw}/${archiveSDI_name.txt}"/>
+				<jar destfile="${deploy_sw}/${archiveSDI_name.txt}" basedir="${tmp_cfg}/JAR_SDI"/>
+				<delete dir="${tmp_cfg}/JAR_SDI"/>
+				
+			</then>
+		</if>
 	</target>
 
 	<target name="setup_pdd" depends="_setup_pdd"/>
