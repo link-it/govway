@@ -65,8 +65,8 @@ public class RegExpUtilities {
 		validateUri(uri, false);
 	}
 	public static void validateUri(String uri, boolean skipCheckUrlDefinedByVariable) throws UtilsException,java.net.MalformedURLException, URISyntaxException{
-		if (uri.startsWith("http://")
-				|| uri.startsWith("file://")) {
+		if (uri.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX)
+				|| uri.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)) {
 
 			RegExpUtilities.validateUrl(uri);
 

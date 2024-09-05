@@ -1045,6 +1045,18 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 						}
 					}
 					
+					String httpImpl = null;
+					if(httpImpl==null && props!=null){
+						String v = props.get(CostantiDB.CONNETTORE_HTTP_IMPL);
+						if(v!=null && !"".equals(v)){
+							
+							httpImpl = v.trim();
+							
+						}
+					}
+					
+					String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(saHelper, transferMode, redirectMode, httpImpl);
+					
 					String tokenPolicy = null;
 					boolean autenticazioneToken = false;
 					if(tokenPolicy==null && props!=null){
@@ -1054,8 +1066,6 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 							autenticazioneToken = true;
 						}
 					}
-					
-					String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(saHelper, transferMode, redirectMode);
 					
 					String autenticazioneHttp = saHelper.getAutenticazioneHttp(null, endpointtype, user);
 					
@@ -1400,7 +1410,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 							isConnettoreCustomUltimaImmagineSalvata, 
 							proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 							tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,

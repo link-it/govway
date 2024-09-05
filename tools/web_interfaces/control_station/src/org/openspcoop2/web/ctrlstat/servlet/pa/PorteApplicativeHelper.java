@@ -9923,7 +9923,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					return false;
 				}
 				if (((getmsgUsername.indexOf(" ") != -1) || (validaPassword && getmsgPassword.indexOf(" ") != -1))) {
-					this.pd.setMessage("Non inserire spazi nei campi di testo");
+					this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 					return false;
 				}
 				

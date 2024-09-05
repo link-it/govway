@@ -84,7 +84,7 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 	// Caused by: java.net.ProtocolException: HTTP method PATCH doesn't support output
 	//    at sun.net.www.protocol.http.HttpURLConnection.getOutputStream(HttpURLConnection.java:1081)
 
-
+	public static final String ENDPOINT_TYPE = "httpUrlConn";
 	
 	/* ********  F I E L D S  P R I V A T I  ******** */
 	
@@ -903,6 +903,15 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
     	}
     }
     
+	@Override
+	protected String getTipoImplConnettore() {
+		if(this.tipoConnettore!=null && StringUtils.isNotEmpty(this.tipoConnettore)) {
+			return this.tipoConnettore;
+		}
+		else {
+			return this.connettoreHttps ? ConnettoreHTTPS.ENDPOINT_TYPE : ConnettoreHTTP.ENDPOINT_TYPE;
+		}
+	}
     
     @Override
 	protected void setRequestHeader(String key,List<String> values) throws Exception {

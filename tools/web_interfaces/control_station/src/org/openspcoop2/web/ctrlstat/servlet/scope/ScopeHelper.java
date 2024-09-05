@@ -184,7 +184,7 @@ public class ScopeHelper extends ConsoleHelper{
 				if (nome.equals("")) {
 					tmpElenco = ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME;
 				}
-				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PREFISSO_DATI_INCOMPLETI_NECESSARIO_INDICARE + tmpElenco);
 				return false;
 			}
 

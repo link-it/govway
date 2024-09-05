@@ -127,10 +127,11 @@ public class ConnettorePluginApiHelper extends AbstractConnettoreApiHelper<Conne
 				null,	// evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()), //null,	// this.tempiRisposta_readTimeout, 
 				null,	// evalnull( () -> timeoutConf.getTempoMedioRisposta().toString()),	// this.tempiRisposta_tempoMedioRisposta,
 				"no",	// this.opzioniAvanzate, 
-				"", 	// this.transfer_mode, 
-				"", 	// this.transfer_mode_chunk_size, 
-				"", 	// this.redirect_mode, 
-				"", 	// this.redirect_max_hop,
+				"", 	// this.transferMode, 
+				"", 	// this.transferModeChunkSize, 
+				"", 	// this.redirectMode, 
+				"", 	// this.redirectMaxHop,
+				null,   // this.httpImpl
 				null,	// this.requestOutputFileName,
 				null,   // this.requestOutputFileName_permissions
 				null,	// this.requestOutputFileNameHeaders,
@@ -211,10 +212,11 @@ public class ConnettorePluginApiHelper extends AbstractConnettoreApiHelper<Conne
 				null, //null,	// this.tempiRisposta_readTimeout, 
 				null,	// this.tempiRisposta_tempoMedioRisposta,
 				"no",	// this.opzioniAvanzate, 
-				"", 	// this.transfer_mode, 
-				"", 	// this.transfer_mode_chunk_size, 
-				"", 	// this.redirect_mode, 
-				"", 	// this.redirect_max_hop,
+				"", 	// this.transferMode, 
+				"", 	// this.transferModeChunkSize, 
+				"", 	// this.redirectMode, 
+				"", 	// this.redirectMaxHop,
+				null,   // this.httpImpl
 				null,	// this.requestOutputFileName,
 				null,   // this.requestOutputFileName_permissions
 				null,	// this.requestOutputFileNameHeaders,
@@ -297,10 +299,11 @@ public class ConnettorePluginApiHelper extends AbstractConnettoreApiHelper<Conne
 						null, //null,	// this.tempiRisposta_readTimeout, 
 						null,	// this.tempiRisposta_tempoMedioRisposta,
 						"no",	// this.opzioniAvanzate, 
-						"", 	// this.transfer_mode, 
-						"", 	// this.transfer_mode_chunk_size, 
-						"", 	// this.redirect_mode, 
-						"", 	// this.redirect_max_hop,
+						"", 	// this.transferMode, 
+						"", 	// this.transferModeChunkSize, 
+						"", 	// this.redirectMode, 
+						"", 	// this.redirectMaxHop,
+						null,   // this.httpImpl
 						null,	// this.requestOutputFileName,
 						null,   // this.requestOutputFileName_permissions
 						null,	// this.requestOutputFileNameHeaders,

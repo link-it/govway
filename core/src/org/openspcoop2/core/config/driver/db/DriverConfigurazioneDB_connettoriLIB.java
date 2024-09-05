@@ -117,6 +117,8 @@ public class DriverConfigurazioneDB_connettoriLIB {
 		String redirectMode = null; // in caso di tipo http e https
 		Integer redirectMaxHop = null; // in caso di tipo http e https
 		
+		String httpImpl = null; // in caso di tipo http e https
+		
 		String tokenPolicy = null;
 		
 		String apiKey = null;
@@ -209,6 +211,12 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				redirectMaxHop = Integer.parseInt(valoreProperty);
 			}
 			
+			// HttImpl
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_HTTP_IMPL)){
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				httpImpl = valoreProperty;
+			}
+			
 			// TokenPolicy
 			if (nomeProperty.equals(CostantiDB.CONNETTORE_TOKEN_POLICY)){
 				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
@@ -285,6 +293,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				sqlQueryObject.addInsertField("transfer_mode_chunk_size", "?");
 				sqlQueryObject.addInsertField("redirect_mode", "?");
 				sqlQueryObject.addInsertField("redirect_max_hop", "?");
+				sqlQueryObject.addInsertField("http_impl", "?");
 				sqlQueryObject.addInsertField("nome", "?");
 				sqlQueryObject.addInsertField("tipo", "?");
 				sqlQueryObject.addInsertField("utente", "?");
@@ -333,6 +342,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				else{
 					stm.setNull(index++, Types.INTEGER);
 				}
+				stm.setString(index++, (isAbilitato ? httpImpl : null));
 				stm.setString(index++, isAbilitato ? nome : null);
 				stm.setString(index++, isAbilitato ? tipo : null);
 				stm.setString(index++, (isAbilitato ? utente : null));
@@ -426,7 +436,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				stm.setString(index++, isAbilitato ? appIdHeader : null);
 
 				DriverConfigurazioneDBLib.logDebug("CRUDConnettore CREATE : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, url, 
-						transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+						transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 						nome, tipo, utente, plainPassword, encPassword, 
 						initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore,debug,
 						proxy, proxyType, proxyHostname, proxyPort, proxyUsername, plainProxyPassword, encProxyPassword,
@@ -563,6 +573,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				sqlQueryObject.addUpdateField("transfer_mode_chunk_size", "?");
 				sqlQueryObject.addUpdateField("redirect_mode", "?");
 				sqlQueryObject.addUpdateField("redirect_max_hop", "?");
+				sqlQueryObject.addUpdateField("http_impl", "?");
 				sqlQueryObject.addUpdateField("nome", "?");
 				sqlQueryObject.addUpdateField("tipo", "?");
 				sqlQueryObject.addUpdateField("utente", "?");
@@ -612,6 +623,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				else{
 					stm.setNull(index++, Types.INTEGER);
 				}
+				stm.setString(index++, (isAbilitato ? httpImpl : null));
 				stm.setString(index++, isAbilitato ? nome : null);
 				stm.setString(index++, isAbilitato ? tipo: null);
 				stm.setString(index++, (isAbilitato ? utente : null));
@@ -709,7 +721,7 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				stm.executeUpdate();
 				stm.close();
 				DriverConfigurazioneDBLib.logDebug("CRUDConnettore UPDATE : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, url, 
-						transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+						transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 						nome, tipo, utente, plainPassword, encPassword, 
 						initcont, urlpkg, provurl, connectionfactory, sendas,nomeConnettore, debug,
 						proxy, proxyType, proxyHostname, proxyPort, proxyUsername, plainProxyPassword, encProxyPassword,
@@ -912,7 +924,10 @@ public class DriverConfigurazioneDB_connettoriLIB {
 					readConnettoreTransferMode(rs, connettore);
 					
 					// redirect_mode
-					readConnettoreRedirectMode(rs, connettore);					
+					readConnettoreRedirectMode(rs, connettore);
+					
+					// http_impl
+					readConnettoreHttpImpl(rs, connettore);
 					
 					// token policy
 					String tokenPolicy = rs.getString("token_policy");
@@ -1087,6 +1102,18 @@ public class DriverConfigurazioneDB_connettoriLIB {
 				prop.setValore(redirectMode.trim());
 				connettore.addProperty(prop);
 			}
+		}
+	}
+	
+	private static void readConnettoreHttpImpl(ResultSet rs, Connettore connettore) throws SQLException {
+		String httpImpl = rs.getString("http_impl");
+		if(httpImpl!=null && !"".equals(httpImpl)){
+			
+			Property prop = new Property();
+			prop.setNome(CostantiDB.CONNETTORE_HTTP_IMPL);
+			prop.setValore(httpImpl.trim());
+			connettore.addProperty(prop);
+			
 		}
 	}
 	

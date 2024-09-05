@@ -95,7 +95,7 @@ public class XSDResourceResolver implements LSResourceResolver {
 				
 				String baseName = null;
 				String parentName = null;
-				if(systemId.startsWith("http://") || systemId.startsWith("https://") || systemId.startsWith("file://")){
+				if(systemId.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || systemId.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTPS_PREFIX) || systemId.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 					URL url = new URI(systemId).toURL();
 					File fileUrl = new File(url.getFile());
 					baseName = fileUrl.getName();
@@ -127,7 +127,7 @@ public class XSDResourceResolver implements LSResourceResolver {
 					if(baseURI!=null){
 						//System.out.println("NON TROVATO, cerco con baseURI ["+baseURI+"]");
 						String ricerca = null;
-						if(baseURI.startsWith("http://") || baseURI.startsWith("file://")){	
+						if(baseURI.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || baseURI.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){	
 							URL url = new URI(baseURI).toURL();
 							File fileUrl = new File(url.getFile());
 							String baseNameParent = fileUrl.getName();

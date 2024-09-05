@@ -66,7 +66,7 @@ public abstract class AbstractXMLServiceManager<XML> {
 		/* --- XSD -- */
 		FileInputStream fXML = null;
 		try{
-			if(this.xmlPath.startsWith("http://") || this.xmlPath.startsWith("file://")){
+			if(this.xmlPath.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || this.xmlPath.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 				this.xsdValidator.valida(this.xmlPath);  
 			}else{
 				fXML = new FileInputStream(this.xmlPath);
@@ -85,7 +85,7 @@ public abstract class AbstractXMLServiceManager<XML> {
 		/* ---- InputStream ---- */
 		InputStream iStream = null;
 		HttpURLConnection httpConn = null;
-		if(this.xmlPath.startsWith("http://") || this.xmlPath.startsWith("file://")){
+		if(this.xmlPath.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || this.xmlPath.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 			try{ 
 				URL url = new URI(this.xmlPath).toURL();
 				URLConnection connection = url.openConnection();
@@ -223,7 +223,7 @@ public abstract class AbstractXMLServiceManager<XML> {
 		File fTest = null;
 		boolean refresh = forcedWithoutCheckModified;
 		if(forcedWithoutCheckModified==false){
-			if(this.xmlPath.startsWith("http://") || this.xmlPath.startsWith("file://")){
+			if(this.xmlPath.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || this.xmlPath.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 				long now = System.currentTimeMillis();
 				if( (now-this.lastModified) > (AbstractXMLServiceManager.timeoutRefresh*1000) ){
 					refresh=true;
@@ -243,7 +243,7 @@ public abstract class AbstractXMLServiceManager<XML> {
 				this.log.error("Refresh failure: "+e.getMessage(),e);
 				throw new ServiceException("Refresh failure: "+e.getMessage(),e);
 			}
-			if(this.xmlPath.startsWith("http://")==false && this.xmlPath.startsWith("file://")==false){
+			if(this.xmlPath.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX)==false && this.xmlPath.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)==false){
 				this.log.warn("Reloaded context.");
 			}
 			
@@ -257,7 +257,7 @@ public abstract class AbstractXMLServiceManager<XML> {
 	}
 	
 	public void checkRemoteXML() throws ServiceException{
-		if(this.xmlPath.startsWith("http://")){
+		if(this.xmlPath.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX)){
 			throw new ServiceException("You can not use the CRUD service with a remote XML");
 		}
 	}

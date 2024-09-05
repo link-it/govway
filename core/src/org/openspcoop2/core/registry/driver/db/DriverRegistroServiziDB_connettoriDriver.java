@@ -210,6 +210,9 @@ public class DriverRegistroServiziDB_connettoriDriver {
 					
 					// redirect_mode
 					readConnettoreRedirectMode(rs, connettore);	
+					
+					// http_impl
+					readConnettoreHttpImpl(rs, connettore);	
 								
 					// token policy
 					String tokenPolicy = rs.getString("token_policy");
@@ -390,6 +393,18 @@ public class DriverRegistroServiziDB_connettoriDriver {
 				prop.setValore(redirectMode.trim());
 				connettore.addProperty(prop);
 			}
+		}
+	}
+	
+	private static void readConnettoreHttpImpl(ResultSet rs, Connettore connettore) throws SQLException {
+		String httpImpl = rs.getString("http_impl");
+		if(httpImpl!=null && !"".equals(httpImpl)){
+			
+			Property prop = new Property();
+			prop.setNome(CostantiDB.CONNETTORE_HTTP_IMPL);
+			prop.setValore(httpImpl.trim());
+			connettore.addProperty(prop);
+			
 		}
 	}
 	

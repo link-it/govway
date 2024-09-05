@@ -1848,6 +1848,7 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_NOME_GRUPPO_GIA_ESISTENTE = "Il nome indicato è già stato assegnato ad un altro gruppo";
 	public static final String MESSAGGIO_ERRORE_NOME_GRUPPO_NON_PUO_ESSERE_VUOTA = "Deve essere indicato un nome per il gruppo";
 	public static final String MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE = "L'azione scelta &egrave; gi&agrave; presente";
+	public static final String MESSAGGIO_ERRORE_PREFISSO_DATI_INCOMPLETI_NECESSARIO_INDICARE = "Dati incompleti. &Egrave; necessario indicare: ";
 	
 	public static final String MESSAGGIO_ERRORE_XXX = "XXX";
 	public static final String MESSAGGIO_ERRORE_TRASPORTO = "trasporto";

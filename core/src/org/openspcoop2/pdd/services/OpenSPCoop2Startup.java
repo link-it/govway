@@ -1066,7 +1066,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}
 				
 				// DiagnosticInputStream
-				DiagnosticInputStream.setSetDateEmptyStream(propertiesReader.isConnettoriUseDiagnosticInputStream_setDateEmptyStream());
+				DiagnosticInputStream.setSetDateEmptyStream(propertiesReader.isConnettoriUseDiagnosticInputStreamSetDateEmptyStream());
 				OpenSPCoop2Startup.logStartupInfo("DiagnosticInputStream isSetDateEmptyStream: "+DiagnosticInputStream.isSetDateEmptyStream());
 				
 				// PipeUnblockedStream
@@ -2736,14 +2736,14 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}
 				
 				// https
-				if(propertiesReader.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi()) {
-					File dir = propertiesReader.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi();
+				if(propertiesReader.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationConsegnaContenutiApplicativi()) {
+					File dir = propertiesReader.getConnettoreHttpUrlHttpsRepositoryConsegnaContenutiApplicativi();
 					configMkdir.setCheckCanWrite(false);
 					FileSystemUtilities.mkdir(dir, configMkdir);
 					configMkdir.setCheckCanWrite(true);
 				}
-				if(propertiesReader.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste()) {
-					File dir = propertiesReader.getConnettoreHttp_urlHttps_repository_inoltroBuste();
+				if(propertiesReader.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationInoltroBuste()) {
+					File dir = propertiesReader.getConnettoreHttpUrlHttpsRepositoryInoltroBuste();
 					configMkdir.setCheckCanWrite(false);
 					FileSystemUtilities.mkdir(dir, configMkdir);
 					configMkdir.setCheckCanWrite(true);

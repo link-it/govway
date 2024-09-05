@@ -24232,7 +24232,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(this.request, parameterToCheck);
 		
 		// parametro originale e' vuoto o null allora e' valido
-		if(StringUtils.isEmpty(parameterValueOriginale)) {
+		if(StringUtils.isEmpty(parameterValueOriginale) || CostantiDB.API_RESOURCE_HTTP_METHOD_ALL_VALUE.equals(parameterValueOriginale)) {
 			return true;
 		}
 		

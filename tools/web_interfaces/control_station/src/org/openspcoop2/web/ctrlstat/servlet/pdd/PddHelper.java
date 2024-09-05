@@ -36,6 +36,7 @@ import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -228,7 +229,7 @@ public class PddHelper extends ConsoleHelper {
 				
 				// controllo spazi
 				if ((nome.indexOf(" ") != -1)) {
-					this.pd.setMessage("Non inserire spazi nei campi di testo");
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 					return false;
 				}
 				
@@ -244,13 +245,13 @@ public class PddHelper extends ConsoleHelper {
 					if (nome.equals("")) {
 						tmpElenco = "Nome";
 					}
-					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PREFISSO_DATI_INCOMPLETI_NECESSARIO_INDICARE + tmpElenco);
 					return false;
 				}
 
 				// Controllo che non ci siano spazi nei campi di testo
 				if ((nome.indexOf(" ") != -1)) {
-					this.pd.setMessage("Non inserire spazi nei campi di testo");
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 					return false;
 				}
 

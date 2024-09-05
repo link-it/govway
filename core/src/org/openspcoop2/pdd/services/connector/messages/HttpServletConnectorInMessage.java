@@ -127,10 +127,10 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			
 			if(this.openspcoopProperties!=null) {
 				if(IDService.PORTA_APPLICATIVA.equals(idModuloAsIDService) || IDService.PORTA_APPLICATIVA_NIO.equals(idModuloAsIDService)){
-					this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStream_ricezioneBuste();
+					this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStreamRicezioneBuste();
 				}
 				else {
-					this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi();
+					this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStreamRicezioneContenutiApplicativi();
 				}
 			}
 			

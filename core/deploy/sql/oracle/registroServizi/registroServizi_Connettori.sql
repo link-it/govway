@@ -58,6 +58,7 @@ CREATE TABLE connettori
 	api_key_header VARCHAR2(255),
 	app_id CLOB,
 	app_id_header VARCHAR2(255),
+	http_impl VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

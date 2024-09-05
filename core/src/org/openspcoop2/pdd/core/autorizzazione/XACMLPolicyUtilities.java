@@ -131,7 +131,7 @@ public class XACMLPolicyUtilities {
 								nomePolicy = d.getFile();
 							}
 							else if(d.getFile()!=null){
-								if(d.getFile().startsWith("http://") || d.getFile().startsWith("file://")){
+								if(d.getFile().startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || d.getFile().startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 									URL url = new URI(d.getFile()).toURL();
 									policy = HttpUtilities.requestHTTPFile(url.toString());
 								}

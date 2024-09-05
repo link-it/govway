@@ -111,6 +111,8 @@ public class DriverRegistroServiziDB_connettoriLIB {
 		String redirectMode = null; // in caso di tipo http e https
 		Integer redirectMaxHop = null; // in caso di tipo http e https
 		
+		String httpImpl = null; // in caso di tipo http e https
+		
 		String tokenPolicy = null;
 		
 		String apiKey = null;
@@ -210,6 +212,12 @@ public class DriverRegistroServiziDB_connettoriLIB {
 				redirectMaxHop = Integer.parseInt(valoreProperty);
 			}
 			
+			// HttpImpl
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_HTTP_IMPL)){
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				httpImpl = valoreProperty;
+			}
+			
 			// TokenPolicy
 			if (nomeProperty.equals(CostantiDB.CONNETTORE_TOKEN_POLICY)){
 				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
@@ -288,6 +296,7 @@ public class DriverRegistroServiziDB_connettoriLIB {
 				sqlQueryObject.addInsertField("transfer_mode_chunk_size", "?");
 				sqlQueryObject.addInsertField("redirect_mode", "?");
 				sqlQueryObject.addInsertField("redirect_max_hop", "?");
+				sqlQueryObject.addInsertField("http_impl", "?");
 				sqlQueryObject.addInsertField("nome", "?");
 				sqlQueryObject.addInsertField("tipo", "?");
 				sqlQueryObject.addInsertField("utente", "?");
@@ -336,6 +345,7 @@ public class DriverRegistroServiziDB_connettoriLIB {
 				else{
 					stm.setNull(index++, Types.INTEGER);
 				}
+				stm.setString(index++, (isAbilitato ? httpImpl : null));
 				stm.setString(index++, isAbilitato ? nome : null);
 				stm.setString(index++, isAbilitato ? tipo : null);
 				stm.setString(index++, (isAbilitato ? utente : null));
@@ -430,7 +440,7 @@ public class DriverRegistroServiziDB_connettoriLIB {
 				
 				DriverRegistroServiziDB_LIB.logDebug("CRUDConnettore CREATE : \n" + 
 						DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, endpointtype, url, 
-								transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+								transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 								nome, tipo, utente, plainPassword, encPassword, 
 								initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore, debug, 
 								proxy, proxyType, proxyHostname, proxyPort, proxyUsername, plainProxyPassword, encProxyPassword,
@@ -567,6 +577,7 @@ public class DriverRegistroServiziDB_connettoriLIB {
 				sqlQueryObject.addUpdateField("transfer_mode_chunk_size", "?");
 				sqlQueryObject.addUpdateField("redirect_mode", "?");
 				sqlQueryObject.addUpdateField("redirect_max_hop", "?");
+				sqlQueryObject.addUpdateField("http_impl", "?");
 				sqlQueryObject.addUpdateField("nome", "?");
 				sqlQueryObject.addUpdateField("tipo", "?");
 				sqlQueryObject.addUpdateField("utente", "?");
@@ -616,6 +627,7 @@ public class DriverRegistroServiziDB_connettoriLIB {
 				else{
 					stm.setNull(index++, Types.INTEGER);
 				}
+				stm.setString(index++, (isAbilitato ? httpImpl : null));
 				stm.setString(index++, isAbilitato ? nome : null);
 				stm.setString(index++, isAbilitato ? tipo : null);
 				stm.setString(index++, (isAbilitato ? utente : null));
@@ -712,7 +724,7 @@ public class DriverRegistroServiziDB_connettoriLIB {
 
 				DriverRegistroServiziDB_LIB.logDebug("CRUDConnettore UPDATE : \n" + 
 						DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, endpointtype, url, 
-								transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+								transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 								nome, tipo, utente, plainPassword, encPassword, 
 								initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore, debug,
 								proxy, proxyType, proxyHostname, proxyPort, proxyUsername, plainProxyPassword, encProxyPassword,

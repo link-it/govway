@@ -206,7 +206,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			String transferModeChunkSize = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
 			String redirectMode = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
 			String redirectMaxHop = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(saHelper, transferMode, redirectMode);
+			String httpImpl = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_HTTP_IMPL);
+			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(saHelper, transferMode, redirectMode, httpImpl);
 
 			// http
 			String url = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
@@ -429,7 +430,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					transferModeChunkSize = null;
 					redirectMode = null;
 					redirectMaxHop = null;
-					opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(saHelper, transferMode, redirectMode);
+					httpImpl = null;
+					opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(saHelper, transferMode, redirectMode, httpImpl);
 
 					// http
 					url = null;
@@ -845,6 +847,17 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					}
 				}
 
+				if(httpImpl==null && props!=null){
+					String v = props.get(CostantiDB.CONNETTORE_HTTP_IMPL);
+					if(v!=null && !"".equals(v)){
+
+						httpImpl = v.trim();
+
+					}
+				}
+				
+				opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(saHelper, transferMode, redirectMode, httpImpl);
+				
 				if(tokenPolicy==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_TOKEN_POLICY);
 					if(v!=null && !"".equals(v)){
@@ -852,8 +865,6 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						autenticazioneToken = true;
 					}
 				}
-
-				opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(saHelper, transferMode, redirectMode);
 
 				autenticazioneHttp = saHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 
@@ -1056,7 +1067,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						isConnettoreCustomUltimaImmagineSalvata, 
 						proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -1117,7 +1128,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						isConnettoreCustomUltimaImmagineSalvata, 
 						proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -1296,7 +1307,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 						proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,

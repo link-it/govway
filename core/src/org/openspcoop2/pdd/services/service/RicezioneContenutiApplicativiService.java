@@ -184,7 +184,7 @@ public class RicezioneContenutiApplicativiService {
 				}
 				if(openSPCoopProperties.isConnettoriUseTimeoutInputStream()) {
 					SogliaReadTimeout soglia = new SogliaReadTimeout();
-					soglia.setSogliaMs(openSPCoopProperties.getReadConnectionTimeout_ricezioneContenutiApplicativi());
+					soglia.setSogliaMs(openSPCoopProperties.getReadConnectionTimeoutRicezioneContenutiApplicativi());
 					soglia.setConfigurazioneGlobale(true);
 					soglia.setIdConfigurazione("GovWayCore");
 					req.setRequestReadTimeout(soglia);

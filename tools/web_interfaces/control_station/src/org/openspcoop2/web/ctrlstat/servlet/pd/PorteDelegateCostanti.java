@@ -983,7 +983,7 @@ public class PorteDelegateCostanti {
 	public static final String MESSAGGIO_ERRORE_LA_PROPRIETA_DI_MESSAGE_SECURITY_XX_E_GIA_STATO_ASSOCIATA_ALLA_PORTA_DELEGATA_YY = "La propriet&agrave; di message-security {0} &egrave; gi&agrave; stata associata alla porta delegata {1}";
 	public static final String MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_NOMI = "Non inserire spazi nei nomi";
 	public static final String MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_ALL_INIZIO_O_ALLA_FINE_DEI_VALORI = "Non inserire spazi all'inizio o alla fine dei valori";
-	public static final String MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO = "Non inserire spazi nei campi di testo";
+	public static final String MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO = CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO;
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_PATTERN_AZIONE = "Dati incompleti. &Egrave; necessario indicare: Pattern azione";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATA_TROVATA_NESSUNA_AZIONE_ASSOCIATA_AL_SERVIZIO_SCEGLIERE_UNA_DELLE_ALTRE_MODALITA = "Dati incompleti. Non &egrave; stata trovata nessuna azione associata al servizio. Scegliere una delle altre modalit&agrave;";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATA_TROVATA_NESSUNA_MODALITA_AZIONE = "Dati incompleti. Non &egrave; stata trovata nessuna Modalit&agrave; Azione";

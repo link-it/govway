@@ -57,7 +57,7 @@ public class NegoziazioneCustomTest extends ConfigLoader {
 		headers.put("test_expires_on", now+"");
 		
 		String suffix = "/govway/SoggettoInternoTest/AuthorizationServerCustomCredentialsDummy/v1/azure?resource=https://vault.azure.net&api-version=2019-08-01&azure_param_1=vAzureValue1&azure_param_2=vAzureValue2";
-		String endpoint = "http://"+host+":8080"+suffix;
+		String endpoint = org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX+host+":8080"+suffix;
 		
 		HttpResponse response = NegoziazioneTest._test(logCore, api_negoziazione, "azure", headers,
 				false,
@@ -505,7 +505,7 @@ public class NegoziazioneCustomTest extends ConfigLoader {
 		headers.put("test_expires_on", now+"");
 		
 		String suffix = "/govway/SoggettoInternoTest/AuthorizationServerCustomCredentialsDummy/v1/mapping_azure?resource=https://vault.azure.net&api-version=2019-08-01&azure_param_1=vAzureValue1&azure_param_2=vAzureValue2";
-		String endpoint = "http://"+host+":8080"+suffix;
+		String endpoint = org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX+host+":8080"+suffix;
 		
 		HttpResponse response = NegoziazioneTest._test(logCore, api_negoziazione, "mapping_azure", headers,
 				false,

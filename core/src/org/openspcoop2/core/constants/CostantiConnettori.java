@@ -76,6 +76,8 @@ public class CostantiConnettori {
     public static final String CONNETTORE_HTTP_DATA_TRANSFER_MODE = "dataTransferMode";
     public static final String CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE = "transferChunkSize";
     
+    public static final String CONNETTORE_HTTP_IMPL = "httpImpl";
+    
     public static final String CONNETTORE_APIKEY_HEADER = "apiKeyHeader";
     public static final String CONNETTORE_APIKEY = "apiKey";
     public static final String CONNETTORE_APIKEY_APPID_HEADER = "appIdHeader";

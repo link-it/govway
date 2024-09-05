@@ -2044,7 +2044,7 @@ public class HttpUtilities {
 		
 	}
 	
-	private static final String TEST_FILE_ORIGIN = "file://";
+	private static final String TEST_FILE_ORIGIN = org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX;
 	
 	public static HttpResponse httpInvoke(HttpRequest request) throws UtilsException{
 		
@@ -3004,7 +3004,7 @@ public class HttpUtilities {
 	
 	public static void validateUri(String uri,boolean checkEsistenzaFile) throws UtilsException,java.net.MalformedURLException, URISyntaxException{
 		
-		if (uri.startsWith("http://")
+		if (uri.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX)
 				|| uri.startsWith(TEST_FILE_ORIGIN)) {
 
 			if(checkEsistenzaFile)

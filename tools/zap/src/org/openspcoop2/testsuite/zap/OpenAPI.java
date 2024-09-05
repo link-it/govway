@@ -55,7 +55,7 @@ public class OpenAPI {
 		if(openapiPath==null || StringUtils.isEmpty(openapiPath)) {
 			throw new UtilsException("ERROR: argument 'openapiPath|openapiUrl' undefined"+usageMsg);
 		}
-		if(openapiPath.startsWith("http://") || openapiPath.startsWith("https://") || openapiPath.startsWith("file://")) {
+		if(openapiPath.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || openapiPath.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTPS_PREFIX) || openapiPath.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)) {
 			openapiUrl = openapiPath;
 			openapiPath = null;
 		}

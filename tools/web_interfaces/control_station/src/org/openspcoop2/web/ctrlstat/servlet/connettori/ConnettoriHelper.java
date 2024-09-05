@@ -49,6 +49,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.constants.ConnettoriHttpImpl;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.CostantiLabel;
@@ -110,6 +111,7 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+import org.openspcoop2.web.lib.mvc.security.exception.ValidationException;
 
 /**
  * ConnettoriHelper
@@ -236,10 +238,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 			
 			String tipologia = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
-			if(tipologia!=null) {
-				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
-					gestioneFruitori = true;
-				}
+			if(tipologia!=null &&
+				AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+				gestioneFruitori = true;
 			}
 			
 			
@@ -708,7 +709,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			Boolean isConnettoreCustomUltimaImmagineSalvata,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRispostaEnabled, String tempiRispostaConnectionTimeout, String tempiRispostaReadTimeout, String tempiRispostaTempoMedioRisposta,
-			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop,
+			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop, String httpImpl,
 			String requestOutputFileName, String requestOutputFileNamePermissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeadersPermissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
@@ -731,7 +732,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				isConnettoreCustomUltimaImmagineSalvata,
 				proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
 				tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-				opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+				opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 				requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 				requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 				responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -766,21 +767,21 @@ public class ConnettoriHelper extends ConsoleHelper {
 						tmpElenco = tmpElenco + ", "+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_VALORE;
 					}
 				}
-				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PREFISSO_DATI_INCOMPLETI_NECESSARIO_INDICARE + tmpElenco);
 				return false;
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
 			
 			// Lunghezza
-			if(this.checkLength255(nome, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_NOME)==false) {
+			if(!this.checkLength255(nome, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_NOME)) {
 				return false;
 			}
-			if(this.checkLength4000(valore, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_VALORE)==false) {
+			if(!this.checkLength4000(valore, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_VALORE)) {
 				return false;
 			}
 
@@ -921,7 +922,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 	}
 	
 	public List<DataElement> addOpzioniAvanzateHttpToDati(List<DataElement> dati,
-			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop,
+			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop, String httpImpl,
 			boolean postBackViaPost){
 		
 		boolean showOpzioniAvanzate = this.isModalitaAvanzata()
@@ -952,7 +953,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				transferMode = ConnettoriCostanti.DEFAULT_TIPO_DATA_TRANSFER;
 			}
 			de.setType(DataElementType.SELECT);
-			de.setValues(ConnettoriCostanti.TIPI_DATA_TRANSFER);
+			de.setValues(ConnettoriCostanti.getTipiDataTransfer());
 			if(postBackViaPost) {
 				de.setPostBack_viaPOST(true);
 			}
@@ -991,7 +992,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				redirectMode = ConnettoriCostanti.DEFAULT_GESTIONE_REDIRECT;
 			}
 			de.setType(DataElementType.SELECT);
-			de.setValues(ConnettoriCostanti.TIPI_GESTIONE_REDIRECT);
+			de.setValues(ConnettoriCostanti.getTipiGestioneRedirect());
 			if(postBackViaPost) {
 				de.setPostBack_viaPOST(true);
 			}
@@ -1020,11 +1021,36 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setValue(redirectMaxHop);
 		dati.add(de);
 		
+		// Http Impl
+		de = new DataElement();
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_HTTP_IMPL);
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_HTTP_IMPL);
+		if(showOpzioniAvanzate){
+			if(httpImpl==null || "".equals(httpImpl)){
+				httpImpl = ConnettoriCostanti.DEFAULT_TIPO_HTTP_IMPL;
+			}
+			de.setType(DataElementType.SELECT);
+			de.setValues(ConnettoriCostanti.getTipihttpimpl());
+			if(postBackViaPost) {
+				de.setPostBack_viaPOST(true);
+			}
+			else {
+				de.setPostBack(true);
+			}
+			de.setSelected(httpImpl);
+			de.setSize(this.getSize());
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+		}
+		de.setValue(httpImpl);
+		dati.add(de);
+		
 		return dati;
 	}
 	
 	public List<DataElement> addOpzioniAvanzateHttpToDatiAsHidden(List<DataElement> dati,
-			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop){
+			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop, String httpImpl){
 		
 		boolean showOpzioniAvanzate = this.isModalitaAvanzata()
 				&& ServletUtils.isCheckBoxEnabled(opzioniAvanzate);
@@ -1064,6 +1090,15 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(redirectMaxHop);
 		dati.add(de);
+		
+		
+		// Http Impl
+		de = new DataElement();
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_HTTP_IMPL);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(httpImpl);
+		dati.add(de);
+		
 		
 		return dati;
 	}
@@ -2147,7 +2182,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						String hexValue = null;
 						try {
 							hexValue = CertificateInfo.formatSerialNumberHex(tipoCredenzialiSSLAliasCertificatoSerialNumber,":");
-						}catch(Throwable t) {
+						}catch(Exception t) {
 							// ignore
 						}
 						if(hexValue!=null && StringUtils.isNotEmpty(hexValue)) {
@@ -2588,7 +2623,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			Boolean isConnettoreCustomUltimaImmagineSalvata,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRispostaEnabled, String tempiRispostaConnectionTimeout, String tempiRispostaReadTimeout, String tempiRispostaTempoMedioRisposta,
-			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop,
+			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop, String httpImpl,
 			String requestOutputFileName, String requestOutputFileNamePermissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeadersPermissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
@@ -2716,7 +2751,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						tipoconn, servletChiamante, elem1, elem2, elem3, elem4, elem5, elem6, elem7, stato, 
 						proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword, 
 						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta, 
-						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, 
+						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists, requestOutputOverwriteIfExists, 
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -2826,7 +2861,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
 				String tmpUrl = url;
 				if(
-						(url==null || "".equals(url) || "http://".equals(url) || "https://".equals(url) )
+						(url==null || "".equals(url) || org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX.equals(url) || org.openspcoop2.utils.Costanti.PROTOCOL_HTTPS_PREFIX.equals(url) )
 						&&
 						(endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString()))
 					) {
@@ -3093,7 +3128,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				// Opzioni Avanzate
 				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
-					this.addOpzioniAvanzateHttpToDati(dati, opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+					this.addOpzioniAvanzateHttpToDati(dati, opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 							postBackViaPost);
 				}
 				
@@ -3188,7 +3223,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
 				String tmpUrl = url;
 				if(
-						(url==null || "".equals(url) || "http://".equals(url) || "https://".equals(url) )
+						(url==null || "".equals(url) || org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX.equals(url) || org.openspcoop2.utils.Costanti.PROTOCOL_HTTPS_PREFIX.equals(url) )
 						&&
 						(endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) 
 					) {
@@ -3672,7 +3707,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				// Opzioni Avanzate
 				if (TipiConnettore.HTTP.toString().equals(endpointtype) || TipiConnettore.HTTPS.toString().equals(endpointtype)){
-					this.addOpzioniAvanzateHttpToDati(dati, opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+					this.addOpzioniAvanzateHttpToDati(dati, opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 							postBackViaPost);
 				}
 	
@@ -3714,12 +3749,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String elem4, String elem5, String elem6, String elem7, String stato,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRispostaEnabled, String tempiRispostaConnectionTimeout, String tempiRispostaReadTimeout, String tempiRispostaTempoMedioRisposta,
-			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop,
+			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop, String httpImpl,
 			String requestOutputFileName, String requestOutputFileNamePermissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeadersPermissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			boolean autenticazioneToken, String tokenPolicy,
-			String autenticazioneApiKey, boolean useOAS3Names, boolean useAppId, String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue) throws DriverControlStationException, UtilsException {
+			String autenticazioneApiKey, boolean useOAS3Names, boolean useAppId, String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue) throws UtilsException {
 
 		if(tipo!=null || servletChiamante!=null) {
 			// nop
@@ -3810,11 +3845,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 			de = new DataElement();
 			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
-			String defaultPrefixValue = "http://";
+			String defaultPrefixValue = org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX;
 			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-				defaultPrefixValue = "https://";
+				defaultPrefixValue = org.openspcoop2.utils.Costanti.PROTOCOL_HTTPS_PREFIX;
 			}
-			de.setValue((url != null) && !"".equals(url) && !"http://".equals(url) && !"https://".equals(url) ? url : defaultPrefixValue);
+			de.setValue((url != null) && !"".equals(url) && !org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX.equals(url) && !org.openspcoop2.utils.Costanti.PROTOCOL_HTTPS_PREFIX.equals(url) ? url : defaultPrefixValue);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			dati.add(de);
@@ -3902,7 +3937,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		
 		// Opzioni Avanzate
 		if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
-			this.addOpzioniAvanzateHttpToDatiAsHidden(dati, opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop);
+			this.addOpzioniAvanzateHttpToDatiAsHidden(dati, opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl);
 		}
 		
 		// Token Policy
@@ -3948,7 +3983,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 
 	// Controlla i dati dell'end-point
-	public boolean endPointCheckData(String protocollo, boolean servizioApplicativo, List<ExtendedConnettore> listExtendedConnettore) throws Exception {
+	public boolean endPointCheckData(String protocollo, boolean servizioApplicativo, List<ExtendedConnettore> listExtendedConnettore) throws CoreException {
 		try {
 
 			String endpointtype = this.readEndPointType();
@@ -3977,7 +4012,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String transferModeChunkSize = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
 			String redirectMode = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
 			String redirectMaxHop = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-			String opzioniAvanzate = getOpzioniAvanzate(this,transferMode, redirectMode);
+			String httpImpl = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_HTTP_IMPL);
+			String opzioniAvanzate = getOpzioniAvanzate(this,transferMode, redirectMode, httpImpl);
 						
 			// http
 			String url = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
@@ -4069,7 +4105,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					tipoconn, autenticazioneHttp,
 					proxyEnabled,proxyHostname,proxyPort,proxyUsername,proxyPassword,
 					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 					requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -4098,7 +4134,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String tipoconn, String autenticazioneHttp,
 			String proxyEnabled, String proxyHostname, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRispostaEnabled, String tempiRispostaConnectionTimeout, String tempiRispostaReadTimeout, String tempiRispostaTempoMedioRisposta,
-			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop,
+			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop, String httpImpl,
 			String requestOutputFileName, String requestOutputFileNamePermissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeadersPermissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
@@ -4194,7 +4230,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 				if (redirectMode == null)
 					redirectMode = "";
 				if (redirectMaxHop == null)
-					redirectMaxHop = "";			
+					redirectMaxHop = "";
+				if (httpImpl == null)
+					httpImpl = "";
 				if (requestOutputFileName == null)
 					requestOutputFileName = "";
 				if (requestOutputFileNamePermissions == null)
@@ -4241,6 +4279,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						(transferModeChunkSize.indexOf(" ") != -1) ||
 						(redirectMode.indexOf(" ") != -1) ||
 						(redirectMaxHop.indexOf(" ") != -1) ||
+						(httpImpl.indexOf(" ") != -1) ||
 						(requestOutputFileName.indexOf(" ") != -1) ||
 						(requestOutputFileNameHeaders.indexOf(" ") != -1) ||
 						(requestOutputFileNamePermissions.indexOf(" ") != -1) ||
@@ -4249,7 +4288,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						(responseInputFileNameHeaders.indexOf(" ") != -1) ||
 						(responseInputWaitTime.indexOf(" ") != -1) 
 						) {
-					this.pd.setMessage("Non inserire spazi nei campi di testo");
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 					return false;
 				}
 	
@@ -4407,7 +4446,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 						}
 					}
 					
-					
+					if(httpImpl!=null) {
+						// non servono controlli
+					}
 				}
 				
 				if(ServletUtils.isCheckBoxEnabled(autenticazioneHttp)){
@@ -4604,7 +4645,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						return false;
 					}
 					if(this.isProfiloModIPA(protocollo) && !servizioApplicativo && this.connettoriCore.isModipaFruizioniConnettoreCheckHttps() &&
-						!httpsurl.toLowerCase().trim().startsWith("https://")) {
+						!httpsurl.toLowerCase().trim().startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTPS_PREFIX)) {
 						this.pd.setMessage("Il profilo richiede una url con prefisso https://");
 						return false;
 					}
@@ -4690,7 +4731,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						return false;
 					}
 					
-					if(!httpsurl.toLowerCase().trim().startsWith("https://")) {
+					if(!httpsurl.toLowerCase().trim().startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTPS_PREFIX)) {
 						if(this.isProfiloModIPA(protocollo) && this.connettoriCore.isModipaFruizioniConnettoreCheckHttps()) {
 							this.pd.setMessage("Il profilo richiede una url con prefisso https://");
 							return false;
@@ -5037,7 +5078,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy, String httpsKeyStoreBYOKPolicy,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRispostaEnabled, String tempiRispostaConnectionTimeout, String tempiRispostaReadTimeout, String tempiRispostaTempoMedioRisposta,
-			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop,
+			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop, String httpImpl,
 			String requestOutputFileName, String requestOutputFileNamePermissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeadersPermissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
@@ -5249,13 +5290,26 @@ public class ConnettoriHelper extends ConsoleHelper {
 				connettore.addProperty(prop);
 			}
 			
+			if(ConnettoriHttpImpl.HTTP_CORE5.getNome().equals(httpImpl) ||
+					ConnettoriHttpImpl.HTTP_URL_CONNECTION.getNome().equals(httpImpl)){
+				
+				// nel caso di default non devo creare la proprietà
+				prop = new org.openspcoop2.core.registry.Property();
+				prop.setNome(CostantiDB.CONNETTORE_HTTP_IMPL);
+				prop.setValore(httpImpl);
+				connettore.addProperty(prop);
+				
+			}
+			
+			
+			// Token Policy
+			
 			if(tokenPolicy!=null && !"".equals(tokenPolicy) && !CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicy)) {
 				prop = new org.openspcoop2.core.registry.Property();
 				prop.setNome(CostantiDB.CONNETTORE_TOKEN_POLICY);
 				prop.setValore(tokenPolicy);
 				connettore.addProperty(prop);
 			}
-				
 			
 			// Extended
 			ExtendedConnettoreConverter.fillExtendedInfoIntoConnettore(listExtendedConnettore, connettore);
@@ -5314,7 +5368,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpsKeyAlias, String httpsTrustStoreCRLs, String httpsTrustStoreOCSPPolicy, String httpsKeyStoreBYOKPolicy,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRispostaEnabled, String tempiRispostaConnectionTimeout, String tempiRispostaReadTimeout, String tempiRispostaTempoMedioRisposta,
-			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop,
+			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop, String httpImpl,
 			String requestOutputFileName, String requestOutputFileNamePermissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeadersPermissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
@@ -5511,6 +5565,20 @@ public class ConnettoriHelper extends ConsoleHelper {
 				connettore.addProperty(prop);
 			}
 			
+			if(ConnettoriHttpImpl.HTTP_CORE5.getNome().equals(httpImpl) ||
+					ConnettoriHttpImpl.HTTP_URL_CONNECTION.getNome().equals(httpImpl)){
+				
+				// nel caso di default non devo creare la proprietà
+				prop = new org.openspcoop2.core.config.Property();
+				prop.setNome(CostantiDB.CONNETTORE_HTTP_IMPL);
+				prop.setValore(httpImpl);
+				connettore.addProperty(prop);
+				
+			}
+			
+			
+			// token Policy
+			
 			if(tokenPolicy!=null && !"".equals(tokenPolicy) && !CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicy)) {
 				prop = new org.openspcoop2.core.config.Property();
 				prop.setNome(CostantiDB.CONNETTORE_TOKEN_POLICY);
@@ -5560,13 +5628,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 		}
 	}
 
-	public static String getOpzioniAvanzate(ConsoleHelper helper,String transfer_mode, String redirect_mode) throws Exception{
+	public static String getOpzioniAvanzate(ConsoleHelper helper,String transferMode, String redirectMode, String httpImpl) throws DriverControlStationException, ValidationException {
 
 		String opzioniAvanzate = helper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
-		return getOpzioniAvanzate(opzioniAvanzate, transfer_mode, redirect_mode);
+		return getOpzioniAvanzate(opzioniAvanzate, transferMode, redirectMode, httpImpl);
 		
 	}
-	public static String getOpzioniAvanzate(String opzioniAvanzate,String transfer_mode, String redirect_mode){
+	public static String getOpzioniAvanzate(String opzioniAvanzate,String transferMode, String redirectMode, String httpImpl){
 		
 		if(opzioniAvanzate!=null && !"".equals(opzioniAvanzate)){
 			return opzioniAvanzate;
@@ -5575,7 +5643,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 		if(opzioniAvanzate==null || "".equals(opzioniAvanzate)){
 			opzioniAvanzate = Costanti.CHECK_BOX_DISABLED;
 		}
-		if( (transfer_mode!=null && !"".equals(transfer_mode)) || (redirect_mode!=null && !"".equals(redirect_mode)) ){
+		if( 
+				(transferMode!=null && !"".equals(transferMode)) || 
+				(redirectMode!=null && !"".equals(redirectMode))  || 
+				(httpImpl!=null && !"".equals(httpImpl)) 
+			){
 			opzioniAvanzate = Costanti.CHECK_BOX_ENABLED;
 		}
 		return opzioniAvanzate;
@@ -5642,7 +5714,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						tmpElenco = tmpElenco + ", "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD;
 					}
 				}
-				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PREFISSO_DATI_INCOMPLETI_NECESSARIO_INDICARE + tmpElenco);
 				return false;
 			}
 			if(!this.checkLength255(utente, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME)) {
@@ -5653,7 +5725,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			}
 			
 			if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC) && ((utente.indexOf(" ") != -1) || (validaPassword && password.indexOf(" ") != -1))) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
 			
@@ -5788,7 +5860,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					if (utente.equals("")) {
 						tmpElenco = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID;
 					}
-					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PREFISSO_DATI_INCOMPLETI_NECESSARIO_INDICARE + tmpElenco);
 					return false;
 				}
 				if(!this.checkLengthSubject_SSL_Principal(utente, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID)) {
@@ -5803,7 +5875,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				if (principal.equals("")) {
 					tmpElenco = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL;
 				}
-				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PREFISSO_DATI_INCOMPLETI_NECESSARIO_INDICARE + tmpElenco);
 				return false;
 			}
 			if(!this.checkLengthSubject_SSL_Principal(principal, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL)) {
@@ -5826,7 +5898,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				sb.append(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
 			}
 			if(sb.length()>0) {
-				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + sb.toString());
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PREFISSO_DATI_INCOMPLETI_NECESSARIO_INDICARE + sb.toString());
 				return false;
 			}
 			

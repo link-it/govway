@@ -219,7 +219,7 @@ public class IntrospectionDynamicDiscoveryTest extends ConfigLoader {
 	private static String buildDD(File f, String prefix, List<String> mapExpectedTokenInfo) {
 		
 		String hostname = StringUtils.isNotEmpty(prefix) ? "Erogatore" : "127.0.0.1";
-		String introspectionUri = "https://"+hostname+":8445/TestService/echo?existsQueryParameters=test_token&destFile="+f.getAbsolutePath()+"&destFileContentType=application/json";
+		String introspectionUri = org.openspcoop2.utils.Costanti.PROTOCOL_HTTPS_PREFIX+hostname+":8445/TestService/echo?existsQueryParameters=test_token&destFile="+f.getAbsolutePath()+"&destFileContentType=application/json";
 		return ValidazioneJWTDynamicDiscoveryTest.buildDD(prefix, mapExpectedTokenInfo,
 				TEST+"/jwkUri", introspectionUri, TEST+"/user", TEST+"/altro");
 		

@@ -58,6 +58,7 @@ CREATE TABLE connettori
 	api_key_header VARCHAR(255),
 	app_id TEXT,
 	app_id_header VARCHAR(255),
+	http_impl VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_connettori') NOT NULL,
 	-- unique constraints

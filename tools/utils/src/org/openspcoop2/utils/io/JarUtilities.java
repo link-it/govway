@@ -110,7 +110,7 @@ public class JarUtilities {
 	}
 	
 	private static JarURLConnection getConnection(File jarFile,String jarEntry) throws IOException, URISyntaxException{
-		URL archivio = new URI ("file://" + jarFile.getCanonicalPath ()).toURL();
+		URL archivio = new URI (org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX + jarFile.getCanonicalPath ()).toURL();
 		String url = "jar:" + archivio.toExternalForm () + "!/";
 		if(jarEntry!=null){
 			url = url + jarEntry;

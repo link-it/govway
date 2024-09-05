@@ -743,7 +743,7 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		try{
-			if(fileName.startsWith("http://") || fileName.startsWith("file://")){
+			if(fileName.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || fileName.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 				byte[] file = HttpUtilities.requestHTTPFile(fileName);
 				if(file==null)
 					throw new Exception("byte[] is null");

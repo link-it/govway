@@ -19,7 +19,7 @@
 				"key_alias": "client",
 				"keystore_tipo": "pkcs12"
 			},
-			"url_x5u": "http://"
+			"url_x5u": org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX
 		}
 	}
 }

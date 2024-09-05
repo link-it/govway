@@ -699,7 +699,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 													}
 													File file = this.fileSchema.get(normalizePath);
 													while(schemaRebuild.contains(path)) {
-														schemaRebuild = schemaRebuild.replace(path, "file://"+file.getAbsolutePath());
+														schemaRebuild = schemaRebuild.replace(path, org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+file.getAbsolutePath());
 													}
 												}
 											}
@@ -836,7 +836,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 											}
 											File file = this.fileSchema.get(normalizePath);
 											while(schemaRebuild.contains(path)) {
-												schemaRebuild = schemaRebuild.replace(path, "file://"+file.getAbsolutePath());
+												schemaRebuild = schemaRebuild.replace(path, org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+file.getAbsolutePath());
 											}
 										}
 									}
@@ -906,7 +906,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		return ref.trim().substring(ref.indexOf("#"), ref.length());
 	}
 	private String normalizePath(String path) throws ProcessingException {
-		if(path.startsWith("http://") || path.startsWith("https://") || path.startsWith("file://")){	
+		if(path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTPS_PREFIX) || path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){	
 			try {
 				URL url = new URI(path).toURL();
 				File fileUrl = new File(url.getFile());

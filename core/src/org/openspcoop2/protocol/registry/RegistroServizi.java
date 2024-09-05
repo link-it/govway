@@ -351,7 +351,7 @@ public class RegistroServizi  {
 
 				String path = registro.getLocation();
 				if(CostantiConfigurazione.REGISTRO_XML.equals(registro.getTipo())){
-					//if( (path.startsWith("http://")==false) && (path.startsWith("file://")==false) ){
+					//if( (path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX)==false) && (path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)==false) ){
 					while (path.indexOf("${")!=-1){
 						int indexStart = path.indexOf("${");
 						int indexEnd = path.indexOf("}");

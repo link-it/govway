@@ -840,7 +840,7 @@ public class XSDUtils {
 	}
 	
 	public String getBaseNameXSDLocation(String location) throws MalformedURLException, URISyntaxException{
-		if(location.startsWith("http://") || location.startsWith("https://") || location.startsWith("file://")){
+		if(location.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || location.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTPS_PREFIX) || location.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 			URL url = new URI(location).toURL();
 			File fileUrl = new File(url.getFile());
 			return fileUrl.getName();

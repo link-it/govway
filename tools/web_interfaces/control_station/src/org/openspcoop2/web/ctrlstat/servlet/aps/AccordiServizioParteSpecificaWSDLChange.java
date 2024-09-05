@@ -456,6 +456,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String transferModeChunkSize = null;
 			String redirectMode = null;
 			String redirectMaxHop = null;
+			String httpImpl = null;
 			String opzioniAvanzate = null;
 			// file
 			String requestOutputFileName = null;
@@ -658,6 +659,17 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					}
 				}
 				
+				if(httpImpl==null && props!=null){
+					String v = props.get(CostantiDB.CONNETTORE_HTTP_IMPL);
+					if(v!=null && !"".equals(v)){
+						
+						httpImpl = v.trim();
+						
+					}
+				}
+				
+				opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, transferMode, redirectMode, httpImpl);
+				
 				if(tokenPolicy==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_TOKEN_POLICY);
 					if(v!=null && !"".equals(v)){
@@ -665,8 +677,6 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 						autenticazioneToken = true;
 					}
 				}
-				
-				opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, transferMode, redirectMode);
 				
 				// http
 				if (url == null && props!=null) {
@@ -874,7 +884,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					isConnettoreCustomUltimaImmagineSalvata, 
 					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 					requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,

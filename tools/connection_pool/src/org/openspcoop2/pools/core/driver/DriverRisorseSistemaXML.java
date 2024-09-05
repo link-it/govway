@@ -89,7 +89,7 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 		/* ---- InputStream ---- */
 		InputStream iStream = null;
 		HttpURLConnection httpConn = null;
-		if(this.openspcoop2_pools_path.startsWith("http://") || this.openspcoop2_pools_path.startsWith("file://")){
+		if(this.openspcoop2_pools_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || this.openspcoop2_pools_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 			try{ 
 				URL url = new URI(this.openspcoop2_pools_path).toURL();
 				URLConnection connection = url.openConnection();
@@ -213,7 +213,7 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 
 		File fTest = null;
 		boolean refresh = false;
-		if(this.openspcoop2_pools_path.startsWith("http://") || this.openspcoop2_pools_path.startsWith("file://")){
+		if(this.openspcoop2_pools_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || this.openspcoop2_pools_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 			long now = System.currentTimeMillis();
 			if( (now-this.lastModified) > (DriverRisorseSistemaXML.timeoutRefresh*1000) ){
 				refresh=true;
@@ -232,7 +232,7 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 				this.log.error("DriverRisorseSistema refreshError: "+e.getMessage());
 				throw new DriverRisorseSistemaException("DriverRisorseSistema refreshError: "+e.getMessage());
 			}
-			if(this.openspcoop2_pools_path.startsWith("http://")==false && this.openspcoop2_pools_path.startsWith("file://")==false){
+			if(this.openspcoop2_pools_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX)==false && this.openspcoop2_pools_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)==false){
 				this.log.warn("Reloaded poolConfig context.");
 			}
 

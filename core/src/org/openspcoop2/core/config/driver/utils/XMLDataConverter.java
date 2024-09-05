@@ -705,7 +705,7 @@ public class XMLDataConverter {
 		}
 		FileInputStream fXML = null;
 		try{
-			if(sorgente.startsWith("http://") || sorgente.startsWith("file://")){
+			if(sorgente.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || sorgente.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 				validatoreRegistro.valida(sorgente);  
 			}else{
 				fXML = new FileInputStream(sorgente);
@@ -724,7 +724,7 @@ public class XMLDataConverter {
 		try{
 			InputStream iStream = null;
 			HttpURLConnection httpConn = null;
-			if(sorgente.startsWith("http://") || sorgente.startsWith("file://")){
+			if(sorgente.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || sorgente.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 				try{ 
 					URL url = new URI(sorgente).toURL();
 					URLConnection connection = url.openConnection();

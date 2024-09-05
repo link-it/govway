@@ -542,7 +542,7 @@ public class Integrazione extends GestioneViaJmx {
 				if(v==null){
 					throw new Exception("Valore dell'elemento WSA-To non definito");
 				}else{
-					String test = "http://"+collaborazioneSPCoopBase.getDestinatario().getTipo()+"_"+collaborazioneSPCoopBase.getDestinatario().getNome()+"" +
+					String test = org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX+collaborazioneSPCoopBase.getDestinatario().getTipo()+"_"+collaborazioneSPCoopBase.getDestinatario().getNome()+"" +
 							".govway.org/services/"+tipoServizio+"_"+nomeServizio+"/"+versione;
 					if(test.equals(v)==false){
 						throw new Exception("WSATo con valore ["+v+"] diverso da quello atteso ["+test+"]");
@@ -568,7 +568,7 @@ public class Integrazione extends GestioneViaJmx {
 				if(v==null){
 					throw new Exception("Valore dell'elemento WSA-From non definito");
 				}else{
-					String test = "http://"+collaborazioneSPCoopBase.getMittente().getTipo()+"_"+collaborazioneSPCoopBase.getMittente().getNome()+".govway.org";
+					String test = org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX+collaborazioneSPCoopBase.getMittente().getTipo()+"_"+collaborazioneSPCoopBase.getMittente().getNome()+".govway.org";
 					if(test.equals(v)==false){
 						throw new Exception("WSAFrom con valore ["+v+"] diverso da quello atteso ["+test+"]");
 					}
@@ -582,7 +582,7 @@ public class Integrazione extends GestioneViaJmx {
 				if(v==null){
 					throw new Exception("Valore dell'elemento WSA-Action non definito");
 				}else{
-					String test = "http://"+collaborazioneSPCoopBase.getDestinatario().getTipo()+"_"+collaborazioneSPCoopBase.getDestinatario().getNome()+
+					String test = org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX+collaborazioneSPCoopBase.getDestinatario().getTipo()+"_"+collaborazioneSPCoopBase.getDestinatario().getNome()+
 							".govway.org/services/"+tipoServizio+"_"+nomeServizio+"/"+versione+"/"+azione;
 					if(test.equals(v)==false){
 						throw new Exception("WSAAction con valore ["+v+"] diverso da quello atteso ["+test+"]");
@@ -3238,9 +3238,9 @@ public class Integrazione extends GestioneViaJmx {
 			headerAction.setMustUnderstand(false);
 			headerAction.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
 			
-			headerTo.setValue("http://"+this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"_"+this.collaborazioneSPCoopBase.getDestinatario().getNome()+
+			headerTo.setValue(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX+this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"_"+this.collaborazioneSPCoopBase.getDestinatario().getNome()+
 					".govway.org/services/"+CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"_"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO+"/1");
-			headerAction.setValue("http://"+this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"_"+this.collaborazioneSPCoopBase.getDestinatario().getNome()+
+			headerAction.setValue(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX+this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"_"+this.collaborazioneSPCoopBase.getDestinatario().getNome()+
 					".govway.org/services/"+CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"_"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO+"/1/"+
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE);
 			

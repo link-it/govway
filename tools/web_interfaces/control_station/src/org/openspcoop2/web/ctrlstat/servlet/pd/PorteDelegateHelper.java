@@ -3314,7 +3314,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						tmpElenco = tmpElenco + ", Valore";
 					}
 				}
-				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PREFISSO_DATI_INCOMPLETI_NECESSARIO_INDICARE + tmpElenco);
 				return false;
 			}
 

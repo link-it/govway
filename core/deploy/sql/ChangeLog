@@ -1,3 +1,9 @@
+2024-09-04  Andrea Poli <apoli@link.it>
+
+	Aggiunta possibilità di indicare l'implementazione utilizzata per il connettore di tipo 'http'
+	
+	ALTER TABLE connettori ADD COLUMN http_impl VARCHAR(255);
+
 2024-05-31  Andrea Poli <apoli@link.it>
 
 	Aggiunte colonne utilizzate per cifrare le informazioni confidenziali

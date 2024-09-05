@@ -212,7 +212,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			String transferModeChunkSize = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
 			String redirectMode = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
 			String redirectMaxHop = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(porteApplicativeHelper, transferMode, redirectMode);
+			String httpImpl = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_HTTP_IMPL);
+			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(porteApplicativeHelper, transferMode, redirectMode, httpImpl);
 
 			String user= null;
 			String password =null;
@@ -505,7 +506,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								transferModeChunkSize = null;
 								redirectMode = null;
 								redirectMaxHop = null;
-								opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(porteApplicativeHelper, transferMode, redirectMode);
+								httpImpl = null;
+								opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(porteApplicativeHelper, transferMode, redirectMode, httpImpl);
 	
 								// http
 								url = null;
@@ -1043,6 +1045,17 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						}
 					}
 
+					if(httpImpl==null && props!=null){
+						String v = props.get(CostantiDB.CONNETTORE_HTTP_IMPL);
+						if(v!=null && !"".equals(v)){
+
+							httpImpl = v.trim();
+
+						}
+					}
+					
+					opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(porteApplicativeHelper, transferMode, redirectMode, httpImpl);
+					
 					if(tokenPolicy==null && props!=null){
 						String v = props.get(CostantiDB.CONNETTORE_TOKEN_POLICY);
 						if(v!=null && !"".equals(v)){
@@ -1050,8 +1063,6 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							autenticazioneToken = true;
 						}
 					}
-
-					opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(porteApplicativeHelper, transferMode, redirectMode);
 
 					autenticazioneHttp = porteApplicativeHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 
@@ -1296,7 +1307,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							isConnettoreCustomUltimaImmagineSalvata, 
 							proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 							tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -1342,7 +1353,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							null, // elem8 
 							proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 							tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -1376,7 +1387,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						tipoconn,autenticazioneHttp,
 						proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -1441,7 +1452,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							isConnettoreCustomUltimaImmagineSalvata, 
 							proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 							tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -1487,7 +1498,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							null, // elem8 
 							proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 							tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -1809,7 +1820,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 								proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 								tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -1933,7 +1944,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 								proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 								tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,

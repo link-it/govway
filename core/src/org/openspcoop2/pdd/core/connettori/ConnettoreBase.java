@@ -482,10 +482,10 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		// Diagnostic Input Stream
 		if(this.idModulo!=null && this.msgDiagnostico!=null) {
 			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-				this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi();
+				this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStreamConsegnaContenutiApplicativi();
 			}
 			else {
-				this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStream_inoltroBuste();
+				this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStreamInoltroBuste();
 			}
 		}
 		

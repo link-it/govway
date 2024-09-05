@@ -1,3 +1,8 @@
+2024-09-05  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	È ora possibile scegliere, tra le opzioni avanzate di un connettore, quale implementazione della libreria HTTP utilizzare.
+
 2024-08-28  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

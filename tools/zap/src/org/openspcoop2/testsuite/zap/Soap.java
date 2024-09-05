@@ -66,7 +66,7 @@ public class Soap {
 		if(soapPath==null || StringUtils.isEmpty(soapPath)) {
 			throw new UtilsException("ERROR: argument 'soapPath|soapUrl' undefined"+usageMsg);
 		}
-		if(soapPath.startsWith("http://") || soapPath.startsWith("https://") || soapPath.startsWith("file://")) {
+		if(soapPath.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || soapPath.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTPS_PREFIX) || soapPath.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)) {
 			soapUrl = soapPath;
 			soapPath = null;
 		}

@@ -1976,6 +1976,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			msgDiag.mediumDebug("Inizializzazione connettore per la spedizione...");
 			//	Connettore per consegna
 			String tipoConnector = connettoreMsg.getTipoConnettore();
+			tipoConnector = ConnettoreUtils.formatTipoConnettore(this.propertiesReader, tipoConnector, connettoreMsg);
 			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_CONNETTORE, tipoConnector);
 			IConnettore connectorSender = null;
 
@@ -2098,12 +2099,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				DatiTempiRisposta datiTempiRisposta = ConnettoreUtilities.readDatiGlobaliTimeout(configurazionePdDManager, TipoPdD.APPLICATIVA, requestInfo, this.propertiesReader);
 				if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)==null){
 					connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT,
-							"" + ((datiTempiRisposta!=null && datiTempiRisposta.getConnectionTimeout()!=null) ? datiTempiRisposta.getConnectionTimeout().intValue() : this.propertiesReader.getConnectionTimeout_consegnaContenutiApplicativi()));
+							"" + ((datiTempiRisposta!=null && datiTempiRisposta.getConnectionTimeout()!=null) ? datiTempiRisposta.getConnectionTimeout().intValue() : this.propertiesReader.getConnectionTimeoutConsegnaContenutiApplicativi()));
 					connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT_GLOBALE, "true" );
 				}
 				if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT)==null){
 					connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT,
-							"" + ((datiTempiRisposta!=null && datiTempiRisposta.getReadConnectionTimeout()!=null) ? datiTempiRisposta.getReadConnectionTimeout().intValue() : this.propertiesReader.getReadConnectionTimeout_consegnaContenutiApplicativi()));
+							"" + ((datiTempiRisposta!=null && datiTempiRisposta.getReadConnectionTimeout()!=null) ? datiTempiRisposta.getReadConnectionTimeout().intValue() : this.propertiesReader.getReadConnectionTimeoutConsegnaContenutiApplicativi()));
 					connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT_GLOBALE, "true" );
 				}
 			}

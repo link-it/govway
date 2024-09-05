@@ -583,7 +583,7 @@ public class ErroriProperties {
 				
 		String site = null;
 		if(p!=null) {
-			if(p.startsWith("http://") || p.startsWith("https://")) {
+			if(p.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || p.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTPS_PREFIX)) {
 				return p;
 			}
 			else {

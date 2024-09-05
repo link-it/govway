@@ -210,7 +210,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String transferModeChunkSize = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
 			String redirectMode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
 			String redirectMaxHop = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, transferMode, redirectMode);
+			String httpImpl = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_HTTP_IMPL);
+			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, transferMode, redirectMode, httpImpl);
 			
 			// http
 			String url = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL  );
@@ -1148,6 +1149,17 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						}
 					}
 					
+					if(httpImpl==null && props!=null){
+						String v = props.get(CostantiDB.CONNETTORE_HTTP_IMPL);
+						if(v!=null && !"".equals(v)){
+							
+							httpImpl = v.trim();
+							
+						}
+					}
+										
+					opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, transferMode, redirectMode, httpImpl);
+					
 					if(tokenPolicy==null && props!=null){
 						String v = props.get(CostantiDB.CONNETTORE_TOKEN_POLICY);
 						if(v!=null && !"".equals(v)){
@@ -1155,8 +1167,6 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							autenticazioneToken = true;
 						}
 					}
-					
-					opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, transferMode, redirectMode);
 					
 					if (url == null) {
 						url = props.get(CostantiDB.CONNETTORE_HTTP_LOCATION);
@@ -1380,7 +1390,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								isConnettoreCustomUltimaImmagineSalvata, 
 								proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 								tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -1412,7 +1422,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								null, oldStatoPackage,
 								proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 								tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -1479,7 +1489,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					tipoconn,versione,validazioneDocumenti,backToStato,autenticazioneHttp,
 					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 					requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -1594,7 +1604,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							isConnettoreCustomUltimaImmagineSalvata, 
 							proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 							tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -1627,7 +1637,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null, oldStatoPackage,
 							proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 							tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -1724,7 +1734,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							isConnettoreCustomUltimaImmagineSalvata, 
 							proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 							tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+							opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 							requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -1763,7 +1773,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						null, oldStatoPackage,
 						proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 						tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+						opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 						requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -1986,7 +1996,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 					requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -2113,7 +2123,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								isConnettoreCustomUltimaImmagineSalvata, 
 								proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 								tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -2145,7 +2155,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								null, oldStatoPackage,
 								proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 								tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+								opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 								requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,

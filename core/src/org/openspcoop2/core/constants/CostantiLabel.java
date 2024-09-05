@@ -186,6 +186,12 @@ public final class CostantiLabel {
 	
 	public static final String LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY = "Proxy";
 	
+	public static final String LABEL_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE = "Modalità Data Transfer";
+	public static final String LABEL_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE = "Chunk Length (Bytes)";
+	public static final String LABEL_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE = "Gestione Redirect";
+	public static final String LABEL_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP = "Max Numero di Redirect";
+	public static final String LABEL_CONNETTORE_OPZIONI_AVANZATE_HTTP_IMPL = "Libreria Http";
+	
 	public static final String LABEL_CONNETTORE_JMS_NOME_CODA = "Nome";
 	public static final String LABEL_CONNETTORE_JMS_USERNAME = "Utente";
 	

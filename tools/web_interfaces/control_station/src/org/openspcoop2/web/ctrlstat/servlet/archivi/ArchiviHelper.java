@@ -1291,7 +1291,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String transferModeChunkSize = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
 			String redirectMode = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
 			String redirectMaxHop = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(this, transferMode, redirectMode);
+			String httpImpl = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_HTTP_IMPL);
+			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(this, transferMode, redirectMode, httpImpl);
 			
 			// http
 			String url = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
@@ -1410,7 +1411,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 					requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -1467,7 +1468,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String transferModeChunkSize = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
 			String redirectMode = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
 			String redirectMaxHop = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(this, transferMode, redirectMode);
+			String httpImpl = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_HTTP_IMPL);
+			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(this, transferMode, redirectMode, httpImpl);
 			
 			// http
 			String url = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
@@ -1583,7 +1585,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					httpsKeyAlias, httpsTrustStoreCRLs, httpsTrustStoreOCSPPolicy, httpsKeyStoreBYOKPolicy,
 					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 					requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -2906,6 +2908,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String transferModeChunkSize = null;
 			String redirectMode = null;
 			String redirectMaxHop = null;
+			String httpImpl = null;
 			String opzioniAvanzate = null;
 			
 			// file
@@ -2960,7 +2963,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			transferModeChunkSize = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
 			redirectMode = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
 			redirectMaxHop = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-			opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(this, transferMode, redirectMode);
+			httpImpl = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_HTTP_IMPL);
+			opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(this, transferMode, redirectMode, httpImpl);
 			
 			// http
 			url = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
@@ -3082,7 +3086,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					isConnettoreCustomUltimaImmagineSalvata, 
 					proxyEnabled, proxyHostname, proxyPort, proxyUsername, proxyPassword,
 					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 					requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,

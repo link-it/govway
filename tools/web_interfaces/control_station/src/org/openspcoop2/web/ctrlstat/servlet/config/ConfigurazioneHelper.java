@@ -1427,7 +1427,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						tmpElenco = tmpElenco + ", Valore";
 					}
 				}
-				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PREFISSO_DATI_INCOMPLETI_NECESSARIO_INDICARE + tmpElenco);
 				return false;
 			}
 
@@ -1634,7 +1634,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if (tiporotta.equals(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_GATEWAY) && ((tiposoggrotta.indexOf(" ") != -1) || (nomesoggrotta.indexOf(" ") != -1))) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
 
@@ -1697,11 +1697,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if ((tipo.indexOf(" ") != -1) || (nome.indexOf(" ") != -1)) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
 			if (tiporotta.equals(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_GATEWAY) && ((tiposoggrotta.indexOf(" ") != -1) || (nomesoggrotta.indexOf(" ") != -1))) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
 
@@ -1864,7 +1864,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && ((dimensionecache.indexOf(" ") != -1) || (idlecache.indexOf(" ") != -1) || (lifecache.indexOf(" ") != -1))) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
 
@@ -1943,13 +1943,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						tmpElenco = tmpElenco + ", "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO;
 					}
 				}
-				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PREFISSO_DATI_INCOMPLETI_NECESSARIO_INDICARE + tmpElenco);
 				return false;
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if ((nome.indexOf(" ") != -1) || (location.indexOf(" ") != -1)) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
 
@@ -2266,7 +2266,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if (inoltromin.indexOf(" ") != -1) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
 

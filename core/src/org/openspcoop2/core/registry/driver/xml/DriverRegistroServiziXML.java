@@ -163,7 +163,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 		/* --- Validazione XSD -- */
 		FileInputStream fXML = null;
 		try{
-			if(this.registry_path.startsWith("http://") || this.registry_path.startsWith("file://")){
+			if(this.registry_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || this.registry_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 				this.validatoreRegistro.valida(this.registry_path);  
 			}else{
 				fXML = new FileInputStream(this.registry_path);
@@ -182,7 +182,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 		/* ---- InputStream ---- */
 		InputStream iStream = null;
 		HttpURLConnection httpConn = null;
-		if(this.registry_path.startsWith("http://") || this.registry_path.startsWith("file://")){
+		if(this.registry_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || this.registry_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 			try{ 
 				URL url = new URI(this.registry_path).toURL();
 				URLConnection connection = url.openConnection();
@@ -324,7 +324,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 		File fTest = null;
 		boolean refresh = refreshForzato;
 		if(refreshForzato==false){
-			if(this.registry_path.startsWith("http://") || this.registry_path.startsWith("file://")){
+			if(this.registry_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || this.registry_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 				long now = DateManager.getTimeMillis();
 				if( (now-this.lastModified) > (DriverRegistroServiziXML.timeoutRefresh*1000) ){
 					refresh=true;
@@ -344,7 +344,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 				this.log.error("DriverRegistroServizi refreshError: "+e.getMessage());
 				throw new DriverRegistroServiziException("DriverRegistroServizi refreshError: "+e.getMessage());
 			}
-			if(this.registry_path.startsWith("http://")==false && this.registry_path.startsWith("file://")==false){
+			if(this.registry_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX)==false && this.registry_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)==false){
 				this.log.warn("Reloaded registry context.");
 			}
 

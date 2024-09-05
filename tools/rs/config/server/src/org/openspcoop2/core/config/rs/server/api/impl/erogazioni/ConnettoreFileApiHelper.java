@@ -138,10 +138,11 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 				null,	// evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()), //null,	// this.tempiRisposta_readTimeout, 
 				null,	// evalnull( () -> timeoutConf.getTempoMedioRisposta().toString()),	// this.tempiRisposta_tempoMedioRisposta,
 				"no",	// this.opzioniAvanzate, 
-				"", 	// this.transfer_mode, 
-				"", 	// this.transfer_mode_chunk_size, 
-				"", 	// this.redirect_mode, 
-				"", 	// this.redirect_max_hop,
+				"", 	// this.transferMode, 
+				"", 	// this.transferModeChunkSize, 
+				"", 	// this.redirectMode, 
+				"", 	// this.redirectMaxHop,
+				null,   // this.httpImpl
 				conn.getRichiesta().getFile(),	// this.requestOutputFileName,
 				conn.getRichiesta().getFilePermissions(),   // this.requestOutputFileName_permissions
 				conn.getRichiesta().getFileHeaders(),	// this.requestOutputFileNameHeaders,
@@ -246,10 +247,11 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 				null,
 				null,
 				"no",	// this.opzioniAvanzate, 
-				"", 	// this.transfer_mode, 
-				"", 	// this.transfer_mode_chunk_size, 
-				"", 	// this.redirect_mode, 
-				"", 	// this.redirect_max_hop,
+				"", 	// this.transferMode, 
+				"", 	// this.transferModeChunkSize, 
+				"", 	// this.redirectMode, 
+				"", 	// this.redirectMaxHop,
+				null,   // this.httpImpl
 				conn.getRichiesta().getFile(),	// this.requestOutputFileName,
 				conn.getRichiesta().getFilePermissions(),   // this.requestOutputFileName_permissions
 				conn.getRichiesta().getFileHeaders(),	// this.requestOutputFileNameHeaders,
@@ -345,10 +347,11 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 				null,
 				null,
 				"no",	// this.opzioniAvanzate, 
-				"", 	// this.transfer_mode, 
-				"", 	// this.transfer_mode_chunk_size, 
-				"", 	// this.redirect_mode, 
-				"", 	// this.redirect_max_hop,
+				"", 	// this.transferMode, 
+				"", 	// this.transferModeChunkSize, 
+				"", 	// this.redirectMode, 
+				"", 	// this.redirectMaxHop,
+				null,   // this.httpImpl
 				conn.getRichiesta().getFile(),	// this.requestOutputFileName,
 				conn.getRichiesta().getFilePermissions(),   // this.requestOutputFileName_permissions
 				conn.getRichiesta().getFileHeaders(),	// this.requestOutputFileNameHeaders,

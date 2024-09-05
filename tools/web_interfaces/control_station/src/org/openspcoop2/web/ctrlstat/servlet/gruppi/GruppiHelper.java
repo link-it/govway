@@ -39,6 +39,7 @@ import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
@@ -152,7 +153,7 @@ public class GruppiHelper extends ConsoleHelper{
 				if (nome.equals("")) {
 					tmpElenco = GruppiCostanti.LABEL_PARAMETRO_GRUPPO_NOME;
 				}
-				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PREFISSO_DATI_INCOMPLETI_NECESSARIO_INDICARE + tmpElenco);
 				return false;
 			}
 

@@ -56,6 +56,7 @@ CREATE TABLE connettori
 	api_key_header VARCHAR(255),
 	app_id CLOB,
 	app_id_header VARCHAR(255),
+	http_impl VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- unique constraints

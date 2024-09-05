@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
@@ -310,8 +311,13 @@ public abstract class ConnettoreExtBaseHTTP extends ConnettoreBaseHTTP {
 		}
 		return null;
 	}
-	protected String _getTipoConnettore() {
-		return this.connettoreHttps ? TipiConnettore.HTTPS.toString() : TipiConnettore.HTTP.toString();
+	protected String getTipoImplConnettore() {
+		if(this.tipoConnettore!=null && StringUtils.isNotEmpty(this.tipoConnettore)) {
+			return this.tipoConnettore;
+		}
+		else {
+			return this.connettoreHttps ? TipiConnettore.HTTPS.toString() : TipiConnettore.HTTP.toString();
+		}
 	}
 	protected void buildLocation() throws ConnettoreException {
 		if(this.redirectLocation!=null) {
@@ -332,7 +338,7 @@ public abstract class ConnettoreExtBaseHTTP extends ConnettoreBaseHTTP {
 		}
 		if(this.redirectLocation==null) {
 			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.logger!=null ? this.logger.getLogger() : null, this.requestMsg, 
-					this._getTipoConnettore(), 
+					this.getTipoImplConnettore(), 
 					this.propertiesUrlBased, this.location,
 					this.getProtocolFactory(), this.idModulo);
 		}

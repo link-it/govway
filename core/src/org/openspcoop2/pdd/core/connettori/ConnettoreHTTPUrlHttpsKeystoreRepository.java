@@ -48,11 +48,11 @@ public class ConnettoreHTTPUrlHttpsKeystoreRepository {
 	protected static boolean isEnabled(String idModulo, List<Proprieta> proprietaPorta) {
 		boolean urlHttpsOverrideJvmConfiguration = false;
 		if(ConsegnaContenutiApplicativi.ID_MODULO.equals(idModulo)){
-			urlHttpsOverrideJvmConfiguration = OpenSPCoop2Properties.getInstance().isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi();
+			urlHttpsOverrideJvmConfiguration = OpenSPCoop2Properties.getInstance().isConnettoreHttpUrlHttpsOverrideDefaultConfigurationConsegnaContenutiApplicativi();
 		}
 		else{
 			// InoltroBuste e InoltroRisposte
-			urlHttpsOverrideJvmConfiguration = OpenSPCoop2Properties.getInstance().isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste();
+			urlHttpsOverrideJvmConfiguration = OpenSPCoop2Properties.getInstance().isConnettoreHttpUrlHttpsOverrideDefaultConfigurationInoltroBuste();
 		}
 		
 		if(proprietaPorta!=null && !proprietaPorta.isEmpty()) {
@@ -90,8 +90,8 @@ public class ConnettoreHTTPUrlHttpsKeystoreRepository {
 		try {
 		
 			// Repository https
-			File repoDefault = this.fruizioni ? this.op2Properties.getConnettoreHttp_urlHttps_repository_inoltroBuste() :
-				this.op2Properties.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi();
+			File repoDefault = this.fruizioni ? this.op2Properties.getConnettoreHttpUrlHttpsRepositoryInoltroBuste() :
+				this.op2Properties.getConnettoreHttpUrlHttpsRepositoryConsegnaContenutiApplicativi();
 			String repositoryHttps = CostantiProprieta.getConnettoriHttpsEndpointJvmConfigOverrideRepository(proprietaPorta, 
 					repoDefault!=null ? repoDefault.getAbsolutePath() : null);
 			if(repositoryHttps!=null) {

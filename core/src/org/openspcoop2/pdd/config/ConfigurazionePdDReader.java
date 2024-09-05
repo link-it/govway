@@ -2748,7 +2748,7 @@ public class ConfigurazionePdDReader {
 			Context context,
 			IState state) throws DriverConfigurazioneException{
 
-		int defaultValue = this.openspcoopProperties.getReadConnectionTimeout_ricezioneContenutiApplicativi();
+		int defaultValue = this.openspcoopProperties.getReadConnectionTimeoutRicezioneContenutiApplicativi();
 		if(pd==null){
 			//configurazione di default
 			return ReadTimeoutConfigurationUtils.buildSogliaRequestTimeout(defaultValue, true, protocolFactory);
@@ -4037,7 +4037,7 @@ public class ConfigurazionePdDReader {
 			Context context,
 			IState state) throws DriverConfigurazioneException{
 
-		int defaultValue = this.openspcoopProperties.getReadConnectionTimeout_ricezioneBuste();
+		int defaultValue = this.openspcoopProperties.getReadConnectionTimeoutRicezioneBuste();
 		if(pa==null){
 			//configurazione di default
 			return ReadTimeoutConfigurationUtils.buildSogliaRequestTimeout(defaultValue, false, protocolFactory);

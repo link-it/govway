@@ -195,7 +195,7 @@ public class AccordoServizioWrapperUtilities {
 						
 			// Costruttore WSDL
 			Document document = null;
-			if(url.startsWith("http://") || url.startsWith("file://")){
+			if(url.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || url.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 				document = this.xmlUtils.newDocument(HttpUtilities.requestHTTPFile(url));
 			}else{
 				document = this.xmlUtils.newDocument(FileSystemUtilities.readBytesFromFile(url));

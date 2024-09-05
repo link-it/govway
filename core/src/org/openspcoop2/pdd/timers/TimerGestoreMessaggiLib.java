@@ -1168,7 +1168,7 @@ public class TimerGestoreMessaggiLib  {
 							if(connettore!=null){
 								tipoConnettore = connettore.getClass().getSimpleName();
 							}
-							int millisecondiScadenza = this.propertiesReader.getConnectionLife_inoltroBuste();
+							int millisecondiScadenza = this.propertiesReader.getConnectionLifeInoltroBuste();
 							Date now = DateManager.getDate();
 							Date scadenza = new Date(now.getTime()-millisecondiScadenza);
 							String tipoConnessione = "tipo:"+tipoConnettore+" porta:delegata id_busta:"+identificatoreConnessione;
@@ -1264,7 +1264,7 @@ public class TimerGestoreMessaggiLib  {
 							if(connettore!=null){
 								tipoConnettore = connettore.getClass().getSimpleName();
 							}
-							int millisecondiScadenza = this.propertiesReader.getConnectionLife_consegnaContenutiApplicativi();
+							int millisecondiScadenza = this.propertiesReader.getConnectionLifeConsegnaContenutiApplicativi();
 							Date now = DateManager.getDate();
 							Date scadenza = new Date(now.getTime()-millisecondiScadenza);
 							String tipoConnessione = "tipo:"+tipoConnettore+" porta:applicativa id_busta:"+identificatoreConnessione;

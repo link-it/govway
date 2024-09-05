@@ -156,7 +156,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		if(buildXsdValidator) {
 			FileInputStream fXML = null;
 			try{
-				if(this.configuration_path.startsWith("http://") || this.configuration_path.startsWith("file://")){
+				if(this.configuration_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || this.configuration_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 					this.validatoreConfigurazione.valida(this.configuration_path);  
 				}else{
 					fXML = new FileInputStream(this.configuration_path);
@@ -176,7 +176,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		/* ---- InputStream ---- */
 		InputStream iStream = null;
 		HttpURLConnection httpConn = null;
-		if(this.configuration_path.startsWith("http://") || this.configuration_path.startsWith("file://")){
+		if(this.configuration_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || this.configuration_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 			try{ 
 				URL url = new URI(this.configuration_path).toURL();
 				URLConnection connection = url.openConnection();
@@ -326,7 +326,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		File fTest = null;
 		boolean refresh = refreshForzato;
 		if(refreshForzato==false){
-			if(this.configuration_path.startsWith("http://") || this.configuration_path.startsWith("file://")){
+			if(this.configuration_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || this.configuration_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 				long now = DateManager.getTimeMillis();
 				if( (now-this.lastModified) > (DriverConfigurazioneXML.timeoutRefresh*1000) ){
 					refresh=true;
@@ -345,8 +345,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 				this.log.error("DriverConfigurazione refreshError: "+e.getMessage());
 				throw new DriverConfigurazioneException("DriverConfigurazione refreshError: "+e.getMessage());
 			}
-			if(this.configuration_path.startsWith("http://")==false &&
-				this.configuration_path.startsWith("file://")==false){
+			if(this.configuration_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX)==false &&
+				this.configuration_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)==false){
 				this.log.warn("Reloaded configuration context.");
 			}
 

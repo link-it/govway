@@ -191,7 +191,7 @@ public class Proxy extends HttpServlet {
 		if(protocolSchema==null || StringUtils.isEmpty(protocolSchema)) {
 			protocolSchema = req.getScheme();
 		}
-		String protocol = (protocolSchema!=null && protocolSchema.trim().toLowerCase().startsWith("https")) ? "https://" : "http://";
+		String protocol = (protocolSchema!=null && protocolSchema.trim().toLowerCase().startsWith("https")) ? org.openspcoop2.utils.Costanti.PROTOCOL_HTTPS_PREFIX : org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX;
 		
 		// hostname (solo in caso async-mode)
 		String hostnameAsync = null;

@@ -21,6 +21,8 @@
 
 package org.openspcoop2.core.constants;
 
+import org.openspcoop2.utils.UtilsException;
+
 /**
  * Contiene i tipi di transfer length utilizzati dai servizi PD e PA
  *
@@ -48,7 +50,7 @@ public enum TransferLengthModes {
 		return this.nome;
 	}
 	
-	public static TransferLengthModes getTransferLengthModes(String value) throws Exception{
+	public static TransferLengthModes getTransferLengthModes(String value) throws UtilsException{
 		if(TRANSFER_ENCODING_CHUNKED.toString().equals(value)){
 			return TRANSFER_ENCODING_CHUNKED;
 		}
@@ -59,7 +61,7 @@ public enum TransferLengthModes {
 			return WEBSERVER_DEFAULT;
 		}
 		else{
-			throw new Exception("Tipo transfer-length non supportato (valori supportati "+TransferLengthModes.stringValues()+"): "+value);
+			throw new UtilsException("Unknown type '"+value+"' (supported values: "+TransferLengthModes.stringValues()+"): "+value);
 		}
 	}
 	

@@ -310,11 +310,11 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	private void setSecureRandomSSLContext() throws ConnettoreException{
 		if(this.sslContextProperties!=null &&
 				!this.sslContextProperties.isSecureRandomSet() &&
-				this.openspcoopProperties.isConnettoreHttps_useSecureRandom()
+				this.openspcoopProperties.isConnettoreHttpsUseSecureRandom()
 				) {
 				this.sslContextProperties.setSecureRandom(true);
-				if(this.openspcoopProperties.getConnettoreHttps_secureRandomAlgo()!=null) {
-					this.sslContextProperties.setSecureRandomAlgorithm(this.openspcoopProperties.getConnettoreHttps_secureRandomAlgo());
+				if(this.openspcoopProperties.getConnettoreHttpsSecureRandomAlgo()!=null) {
+					this.sslContextProperties.setSecureRandomAlgorithm(this.openspcoopProperties.getConnettoreHttpsSecureRandomAlgo());
 				}
 			}
 	}

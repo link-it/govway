@@ -116,7 +116,7 @@ public class AccordoServizioUtils {
 			if(as.getWsdlConcettuale()!=null){
 				try{
 					String location = as.getWsdlConcettuale();
-					if(location.startsWith("http://") || location.startsWith("file://")){
+					if(location.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || location.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 						URL url = new URI(location).toURL();
 						wsdl = HttpUtilities.requestHTTPFile(url.toString());
 					}
@@ -132,7 +132,7 @@ public class AccordoServizioUtils {
 				if(as.getWsdlLogicoErogatore()!=null){
 					try{
 						String location = as.getWsdlLogicoErogatore();
-						if(location.startsWith("http://") || location.startsWith("file://")){
+						if(location.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || location.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 							URL url = new URI(location).toURL();
 							wsdl = HttpUtilities.requestHTTPFile(url.toString());
 						}
@@ -147,7 +147,7 @@ public class AccordoServizioUtils {
 				if(as.getWsdlLogicoFruitore()!=null){
 					try{
 						String location = as.getWsdlLogicoFruitore();
-						if(location.startsWith("http://") || location.startsWith("file://")){
+						if(location.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || location.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 							URL url = new URI(location).toURL();
 							wsdlFruitore = HttpUtilities.requestHTTPFile(url.toString());
 						}
@@ -283,7 +283,7 @@ public class AccordoServizioUtils {
 			}else{
 				String location = as.getWsdlDefinitorio();
 				try{
-					if(location.startsWith("http://") || location.startsWith("file://")){
+					if(location.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || location.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 						URL url = new URI(location).toURL();
 						resource = HttpUtilities.requestHTTPFile(url.toString());
 						systemId = (new File(url.getFile())).getName();
@@ -332,7 +332,7 @@ public class AccordoServizioUtils {
 				else{
 					String location = allegato.getFile();
 					try{
-						if(location.startsWith("http://") || location.startsWith("file://")){
+						if(location.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || location.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 							URL url = new URI(location).toURL();
 							resource = HttpUtilities.requestHTTPFile(url.toString());
 							systemId = (new File(url.getFile())).getName();
@@ -385,7 +385,7 @@ public class AccordoServizioUtils {
 				else{
 					String location = specificaSemiformale.getFile();
 					try{
-						if(location.startsWith("http://") || location.startsWith("file://")){
+						if(location.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || location.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 							URL url = new URI(location).toURL();
 							resource = HttpUtilities.requestHTTPFile(url.toString());
 							systemId = (new File(url.getFile())).getName();

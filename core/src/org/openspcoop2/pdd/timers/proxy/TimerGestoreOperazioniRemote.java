@@ -141,7 +141,7 @@ public class TimerGestoreOperazioniRemote extends BaseThread{
 		if(tmp!=null && StringUtils.isNotEmpty(tmp)) {
 			protocolSchema = tmp;
 		}
-		String protocol = (protocolSchema!=null && protocolSchema.trim().toLowerCase().startsWith("https")) ? "https://" : "http://";
+		String protocol = (protocolSchema!=null && protocolSchema.trim().toLowerCase().startsWith("https")) ? org.openspcoop2.utils.Costanti.PROTOCOL_HTTPS_PREFIX : org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX;
 		
 		// hostname (solo in caso async-mode)
 		String hostnameAsync = op2Properties.getProxyReadJMXResourcesAsyncProcessByTimerHostname();

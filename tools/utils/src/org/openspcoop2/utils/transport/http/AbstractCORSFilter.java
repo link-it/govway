@@ -615,7 +615,7 @@ public abstract class AbstractCORSFilter implements jakarta.servlet.Filter {
             return true;
         }
     	//  If uri-scheme is "file", the implementation MAY return an implementation-defined value.
-        if (origin.startsWith("file://")) {
+        if (origin.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)) {
             return true;
         }        
     	// Checks for encoded characters. Helps prevent CRLF injection.

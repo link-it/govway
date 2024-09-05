@@ -1538,7 +1538,7 @@ public class UtentiHelper extends ConsoleHelper {
 //					}
 				}
 				if(!tmpElenco.equals("")){
-					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PREFISSO_DATI_INCOMPLETI_NECESSARIO_INDICARE + tmpElenco);
 					return false;
 				}
 			}
@@ -1546,7 +1546,7 @@ public class UtentiHelper extends ConsoleHelper {
 			// Controllo che non ci siano spazi nei campi di testo
 //			if ((nomesu.indexOf(" ") != -1) || ( ServletUtils.isCheckBoxEnabled(changepwd) && ( (pwsu.indexOf(" ") != -1) || (confpwsu.indexOf(" ") != -1)))) {
 			if ((nomesu.indexOf(" ") != -1) || ( ServletUtils.isCheckBoxEnabled(changepwd) &&  pwsu.indexOf(" ") != -1 )) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
 			
@@ -1917,7 +1917,7 @@ public class UtentiHelper extends ConsoleHelper {
 				
 				// Controllo che non ci siano spazi nei campi di testo
 				if ((oldpw.indexOf(" ") != -1)) {
-					this.pd.setMessage("Non inserire spazi nei campi di testo");
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 					return false;
 				}
 			}
@@ -1930,7 +1930,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if ((newpw.indexOf(" ") != -1) || (confpw.indexOf(" ") != -1)) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
 
@@ -2668,7 +2668,7 @@ public class UtentiHelper extends ConsoleHelper {
 			
 			// Controllo che non ci siano spazi nei campi di testo
 			if ((oldpw.indexOf(" ") != -1)) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
 
@@ -2680,7 +2680,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if ((newpw.indexOf(" ") != -1) || (confpw.indexOf(" ") != -1)) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
 

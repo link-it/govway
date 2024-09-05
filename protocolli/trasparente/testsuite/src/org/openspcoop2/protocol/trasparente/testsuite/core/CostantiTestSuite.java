@@ -1018,7 +1018,7 @@ public class CostantiTestSuite {
 	public static final String TEST_HTTPS_ORIGIN_2 = "https://www.govway2.org";
 	public static final String TEST_HTTPS_ORIGIN_PORT_DIFFERENT = "https://www.govway2.org:8443";
 	
-	public static final String TEST_FILE_ORIGIN = "file://";
+	public static final String TEST_FILE_ORIGIN = org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX;
 	public static final String TEST_NULL_ORIGIN = "null";
 	
 	public static final String TEST_INVALID_ORIGIN_1 = "http://www.w3.org%0d%0a"; 

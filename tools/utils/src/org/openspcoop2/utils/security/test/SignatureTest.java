@@ -507,7 +507,7 @@ public class SignatureTest {
 						fKeystoreJKS, null, null, fTruststore, truststore, null, null, null);
 			}
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM.equals(tipoTest)) {
-				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
+				jwtHeader.setX509Url(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+fCertX509.getAbsolutePath()));
 				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM, useP11asTrustStore, 
 						fKeystoreJKS, null, null, fTruststore, truststore, jwtHeader, null, null);
 				jwtHeader.setX509Url(null);
@@ -523,7 +523,7 @@ public class SignatureTest {
 						fKeystoreP12, null, null, fTruststore, truststore, null, null, null);
 			}
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_PKCS12_HEADER_CUSTOM.equals(tipoTest)) {
-				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
+				jwtHeader.setX509Url(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+fCertX509.getAbsolutePath()));
 				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_PKCS12_HEADER_CUSTOM, useP11asTrustStore,
 						 fKeystoreP12, null, null, fTruststore, truststore, jwtHeader, null, null);
 				jwtHeader.setX509Url(null);
@@ -539,7 +539,7 @@ public class SignatureTest {
 						 null, keystoreP11, aliasP11, fTruststoreP11, truststoreP11, null, null, null);
 			}
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_PKCS11_HEADER_CUSTOM.equals(tipoTest)) {
-				jwtHeader.setX509Url(new URI("file://"+fCertX509_P11.getAbsolutePath()));
+				jwtHeader.setX509Url(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+fCertX509_P11.getAbsolutePath()));
 				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_PKCS11_HEADER_CUSTOM, useP11asTrustStore,
 						 null, keystoreP11, aliasP11, fTruststoreP11, truststoreP11, jwtHeader, null, null);
 				jwtHeader.setX509Url(null);
@@ -557,7 +557,7 @@ public class SignatureTest {
 						 fKeystoreJCEKS, null, null, fKeystoreJCEKS, null, null, null, null);
 			}
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipoTest)) {
-				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
+				jwtHeader.setX509Url(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+fCertX509.getAbsolutePath()));
 				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS_HEADER_CUSTOM, useP11asTrustStore,
 						 fKeystoreJCEKS, null, null, fKeystoreJCEKS, null, jwtHeader, null, null);
 				jwtHeader.setX509Url(null);
@@ -577,7 +577,7 @@ public class SignatureTest {
 			}
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_PKCS11_SECRET_HEADER_CUSTOM.equals(tipoTest)) {
 				if(runPKCS11SecretTest) {
-					jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
+					jwtHeader.setX509Url(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+fCertX509.getAbsolutePath()));
 					testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_PKCS11_SECRET_HEADER_CUSTOM, useP11asTrustStore,
 							 null, keystoreSecretP11, aliasSecretP11, fTruststoreP11, truststoreSecretP11, jwtHeader, null, null);
 					jwtHeader.setX509Url(null);
@@ -605,17 +605,17 @@ public class SignatureTest {
 			}
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_CRL_HEADER_CUSTOM.equals(tipoTest)) {
 				// valid
-				jwtHeader.setX509Url(new URI("file://"+fCertX509_crl_valid.getAbsolutePath()));
+				jwtHeader.setX509Url(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+fCertX509_crl_valid.getAbsolutePath()));
 				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_CRL_HEADER_CUSTOM, false,
 						fKeystore_crl_valid, null, "ExampleClient1", fTruststore_crl, truststoreCRL, jwtHeader, null, null,
 						crl, null);
 				// expired
-				jwtHeader.setX509Url(new URI("file://"+fCertX509_crl_expired.getAbsolutePath()));
+				jwtHeader.setX509Url(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+fCertX509_crl_expired.getAbsolutePath()));
 				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_CRL_HEADER_CUSTOM, false,
 						fKeystore_crl_expired, null, "ExampleClientScaduto", fTruststore_crl, truststoreCRL, jwtHeader, null, null,
 						crl, null);
 				// revoked
-				jwtHeader.setX509Url(new URI("file://"+fCertX509_crl_revoked.getAbsolutePath()));
+				jwtHeader.setX509Url(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+fCertX509_crl_revoked.getAbsolutePath()));
 				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_CRL_HEADER_CUSTOM, false,
 						fKeystore_crl_revoked, null, "ExampleClientRevocato", fTruststore_crl, truststoreCRL, jwtHeader, null, null,
 						crl, null);
@@ -662,12 +662,12 @@ public class SignatureTest {
 				Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 2); // lasciare alla posizione 1 il provider 'SUN'
 				try {
 					// valid
-					jwtHeader.setX509Url(new URI("file://"+fCertX509_ocsp_valid.getAbsolutePath()));
+					jwtHeader.setX509Url(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+fCertX509_ocsp_valid.getAbsolutePath()));
 					testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_OCSP_HEADER_CUSTOM, false,
 							fKeystore_ocsp_valid, null, "testclient", fTruststore_ocsp, truststoreOCSP, jwtHeader, null, null,
 							null, ocspValidator);
 					// revoked
-					jwtHeader.setX509Url(new URI("file://"+fCertX509_ocsp_revoked.getAbsolutePath()));
+					jwtHeader.setX509Url(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+fCertX509_ocsp_revoked.getAbsolutePath()));
 					testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_OCSP_HEADER_CUSTOM, false,
 							fKeystore_ocsp_revoked, null, "test", fTruststore_ocsp, truststoreOCSP, jwtHeader, null, null,
 							null, ocspValidator);
@@ -707,7 +707,7 @@ public class SignatureTest {
 			}
 
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipoTest)) {
-				jwtHeader.setJwkUrl(new URI("file://"+jwks_fTruststore.getAbsolutePath()));
+				jwtHeader.setJwkUrl(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+jwks_fTruststore.getAbsolutePath()));
 				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM, useP11asTrustStore,
 						 jwks_fKeystore, null, null, jwks_fTruststore, truststore, jwtHeader, null, null);
 				jwtHeader.setJwkUrl(null);
@@ -726,7 +726,7 @@ public class SignatureTest {
 			}
 
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipoTest)) {
-				jwtHeader.setJwkUrl(new URI("file://"+jwks_fTruststore.getAbsolutePath()));
+				jwtHeader.setJwkUrl(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+jwks_fTruststore.getAbsolutePath()));
 				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM, useP11asTrustStore,
 						 jwks_symmetric_fKeystore, null, null, jwks_symmetric_fKeystore, null, jwtHeader, null, null);
 				jwtHeader.setJwkUrl(null);
@@ -766,7 +766,7 @@ public class SignatureTest {
 				jwtHeader.addX509cert((X509Certificate)keystoreJKS.getCertificate(alias));
 				jwtHeader.setX509IncludeCertSha1(false);
 				jwtHeader.setX509IncludeCertSha256(true);
-				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
+				jwtHeader.setX509Url(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+fCertX509.getAbsolutePath()));
 				jwtHeader.setKid(alias);
 
 				testJsonKeystore(TipoTest.JSON_SIGNATURE_JKS_KEYSTORE_HEADER_CUSTOM, useP11asTrustStore,
@@ -801,7 +801,7 @@ public class SignatureTest {
 				jwtHeader.addX509cert((X509Certificate)keystoreP12.getCertificate(alias));
 				jwtHeader.setX509IncludeCertSha1(false);
 				jwtHeader.setX509IncludeCertSha256(true);
-				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
+				jwtHeader.setX509Url(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+fCertX509.getAbsolutePath()));
 				jwtHeader.setKid(alias);
 
 				testJsonKeystore(TipoTest.JSON_SIGNATURE_PKCS12_KEYSTORE_HEADER_CUSTOM, useP11asTrustStore,
@@ -836,7 +836,7 @@ public class SignatureTest {
 				jwtHeader.addX509cert((X509Certificate)keystoreP11.getCertificate(aliasP11));
 				jwtHeader.setX509IncludeCertSha1(false);
 				jwtHeader.setX509IncludeCertSha256(true);
-				jwtHeader.setX509Url(new URI("file://"+fCertX509_P11.getAbsolutePath()));
+				jwtHeader.setX509Url(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+fCertX509_P11.getAbsolutePath()));
 				jwtHeader.setKid(aliasP11);
 
 				testJsonKeystore(TipoTest.JSON_SIGNATURE_PKCS11_KEYSTORE_HEADER_CUSTOM, useP11asTrustStore,
@@ -864,7 +864,7 @@ public class SignatureTest {
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_JCEKS_KEYSTORE_HEADER_CUSTOM.equals(tipoTest)) {
 
 				jwtHeader.setKid(alias);
-				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
+				jwtHeader.setX509Url(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+fCertX509.getAbsolutePath()));
 
 				testJsonKeystore(TipoTest.JSON_SIGNATURE_JCEKS_KEYSTORE_HEADER_CUSTOM, useP11asTrustStore,
 						 keystoreJCEKS, keystoreJCEKS, alias, passwordChiavePrivata, jwtHeader);
@@ -893,7 +893,7 @@ public class SignatureTest {
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PKCS11_SECRET_KEYSTORE_HEADER_CUSTOM.equals(tipoTest)) {
 				if(runPKCS11SecretTest) {
 					jwtHeader.setKid(alias);
-					jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
+					jwtHeader.setX509Url(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+fCertX509.getAbsolutePath()));
 	
 					testJsonKeystore(TipoTest.JSON_SIGNATURE_PKCS11_SECRET_KEYSTORE_HEADER_CUSTOM, useP11asTrustStore,
 							keystoreSecretP11, keystoreSecretP11, aliasSecretP11, passwordChiavePrivata, jwtHeader);
@@ -966,7 +966,7 @@ public class SignatureTest {
 				jwtHeader.addX509cert((X509Certificate)truststoreCRL.getCertificate(aliasCrl));
 				jwtHeader.setX509IncludeCertSha1(false);
 				jwtHeader.setX509IncludeCertSha256(true);
-				jwtHeader.setX509Url(new URI("file://"+fCertX509_crl_valid.getAbsolutePath()));
+				jwtHeader.setX509Url(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+fCertX509_crl_valid.getAbsolutePath()));
 				jwtHeader.setKid(aliasCrl);
 
 				testJsonKeystore(TipoTest.JSON_SIGNATURE_CRL_KEYSTORE_HEADER_CUSTOM, false,
@@ -984,7 +984,7 @@ public class SignatureTest {
 				jwtHeader.addX509cert((X509Certificate)truststoreCRL.getCertificate(aliasCrl));
 				jwtHeader.setX509IncludeCertSha1(false);
 				jwtHeader.setX509IncludeCertSha256(true);
-				jwtHeader.setX509Url(new URI("file://"+fCertX509_crl_expired.getAbsolutePath()));
+				jwtHeader.setX509Url(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+fCertX509_crl_expired.getAbsolutePath()));
 				jwtHeader.setKid(aliasCrl);
 
 				testJsonKeystore(TipoTest.JSON_SIGNATURE_CRL_KEYSTORE_HEADER_CUSTOM, false,
@@ -1002,7 +1002,7 @@ public class SignatureTest {
 				jwtHeader.addX509cert((X509Certificate)truststoreCRL.getCertificate(aliasCrl));
 				jwtHeader.setX509IncludeCertSha1(false);
 				jwtHeader.setX509IncludeCertSha256(true);
-				jwtHeader.setX509Url(new URI("file://"+fCertX509_crl_revoked.getAbsolutePath()));
+				jwtHeader.setX509Url(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+fCertX509_crl_revoked.getAbsolutePath()));
 				jwtHeader.setKid(aliasCrl);
 
 				testJsonKeystore(TipoTest.JSON_SIGNATURE_CRL_KEYSTORE_HEADER_CUSTOM, false,
@@ -1070,7 +1070,7 @@ public class SignatureTest {
 					jwtHeader.addX509cert((X509Certificate)truststoreOCSP.getCertificate(aliasOcsp));
 					jwtHeader.setX509IncludeCertSha1(false);
 					jwtHeader.setX509IncludeCertSha256(true);
-					jwtHeader.setX509Url(new URI("file://"+fCertX509_ocsp_valid.getAbsolutePath()));
+					jwtHeader.setX509Url(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+fCertX509_ocsp_valid.getAbsolutePath()));
 					jwtHeader.setKid(aliasOcsp);
 	
 					testJsonKeystore(TipoTest.JSON_SIGNATURE_OCSP_KEYSTORE_HEADER_CUSTOM, false,
@@ -1088,7 +1088,7 @@ public class SignatureTest {
 					jwtHeader.addX509cert((X509Certificate)truststoreOCSP.getCertificate(aliasOcsp));
 					jwtHeader.setX509IncludeCertSha1(false);
 					jwtHeader.setX509IncludeCertSha256(true);
-					jwtHeader.setX509Url(new URI("file://"+fCertX509_ocsp_revoked.getAbsolutePath()));
+					jwtHeader.setX509Url(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+fCertX509_ocsp_revoked.getAbsolutePath()));
 					jwtHeader.setKid(aliasOcsp);
 	
 					testJsonKeystore(TipoTest.JSON_SIGNATURE_OCSP_KEYSTORE_HEADER_CUSTOM, false,
@@ -1125,7 +1125,7 @@ public class SignatureTest {
 
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_JWK_KEYS_HEADER_CUSTOM.equals(tipoTest)) {
 
-				jwtHeader.setJwkUrl(new URI("file://"+jwks_fTruststore.getAbsolutePath()));
+				jwtHeader.setJwkUrl(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+jwks_fTruststore.getAbsolutePath()));
 
 				testJsonJwkKeys(TipoTest.JSON_SIGNATURE_JWK_KEYS_HEADER_CUSTOM, useP11asTrustStore,
 						 jwks_keystore, jwks_truststore, truststore, alias, jwtHeader);
@@ -1150,7 +1150,7 @@ public class SignatureTest {
 
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_JWK_KEY_HEADER_CUSTOM.equals(tipoTest)) {
 
-				jwtHeader.setJwkUrl(new URI("file://"+jwks_fTruststore.getAbsolutePath()));
+				jwtHeader.setJwkUrl(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+jwks_fTruststore.getAbsolutePath()));
 
 				testJsonJwkKey(TipoTest.JSON_SIGNATURE_JWK_KEY_HEADER_CUSTOM, useP11asTrustStore,
 						 jwk_keystore, jwk_truststore, truststore, jwtHeader);
@@ -1176,7 +1176,7 @@ public class SignatureTest {
 
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_JWK_SYMMETRIC_KEYS_HEADER_CUSTOM.equals(tipoTest)) {
 
-				jwtHeader.setJwkUrl(new URI("file://"+jwks_symmetric_fKeystore.getAbsolutePath()));
+				jwtHeader.setJwkUrl(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+jwks_symmetric_fKeystore.getAbsolutePath()));
 
 				testJsonJwkKeys(TipoTest.JSON_SIGNATURE_JWK_SYMMETRIC_KEYS_HEADER_CUSTOM, useP11asTrustStore,
 						 jwks_symmetric_keystore, jwks_symmetric_keystore, null, alias, jwtHeader);
@@ -1198,7 +1198,7 @@ public class SignatureTest {
 
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_JWK_SYMMETRIC_KEY_HEADER_CUSTOM.equals(tipoTest)) {
 
-				jwtHeader.setJwkUrl(new URI("file://"+jwk_symmetric_fKeystore.getAbsolutePath()));
+				jwtHeader.setJwkUrl(new URI(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX+jwk_symmetric_fKeystore.getAbsolutePath()));
 
 				testJsonJwkKey(TipoTest.JSON_SIGNATURE_JWK_SYMMETRIC_KEY_HEADER_CUSTOM, useP11asTrustStore,
 						 jwk_symmetric_keystore, jwk_symmetric_keystore, null, jwtHeader);

@@ -32,6 +32,7 @@ import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.constants.ConnettoriHttpImpl;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipiConnettore;
@@ -39,11 +40,13 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.RestUtilities;
+import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCORE;
+import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPSCORE;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
@@ -86,7 +89,11 @@ public class ConnettoreUtils {
 		return "Errore durante la costruzione della location: "+e.getMessage();
 	}
 	
-	public static String getAndReplaceLocationWithBustaValues(IConnettore connector, ConnettoreMsg connettoreMsg,Busta busta,PdDContext pddContext,IProtocolFactory<?> protocolFactory,Logger log) throws ConnettoreException{
+	public static String getAndReplaceLocationWithBustaValues(IConnettore connector, ConnettoreMsg connettoreMsg,Busta busta,PdDContext pddContext,IProtocolFactory<?> protocolFactory,Logger log) {
+		
+		if(protocolFactory!=null) {
+			// nop
+		}
 		
 		boolean dynamicLocation = false;
 		
@@ -101,45 +108,15 @@ public class ConnettoreUtils {
 			location = ConnettoreStresstest.LOCATION;
 		}
 		else if(TipiConnettore.FILE.getNome().equals(connettoreMsg.getTipoConnettore())){
-			try{
-				location = ((ConnettoreFILE)connector).buildLocation(connettoreMsg);
-				//dynamicLocation = true; la dinamicita viene gia gestita nel metodo buildLocation
-			}catch(Exception e){
-				log.error(getErrorMessageBuildLocation(e),e);
-				location = "N.D.";
-			}
+			location = buildLocationFile(connector,  connettoreMsg, log);
+			//dynamicLocation = true; la dinamicita viene gia gestita nel metodo buildLocation
 		}
-		else if(ConnettoreRicezioneBusteDirectVM.TIPO.equals(connettoreMsg.getTipoConnettore())){
-			try{
-				((ConnettoreRicezioneBusteDirectVM)connector).validate(connettoreMsg);
-				((ConnettoreRicezioneBusteDirectVM)connector).buildLocation(connettoreMsg.getConnectorProperties(),false);
-				location = connector.getLocation();
+		else if(ConnettoreRicezioneBusteDirectVM.TIPO.equals(connettoreMsg.getTipoConnettore()) ||
+				ConnettoreRicezioneContenutiApplicativiDirectVM.TIPO.equals(connettoreMsg.getTipoConnettore()) ||
+				ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM.TIPO.equals(connettoreMsg.getTipoConnettore())){
+			location = buildLocationDirectVM(connector, connettoreMsg, log);
+			if(location!=null) {
 				dynamicLocation = true;
-			}catch(Exception e){
-				log.error(getErrorMessageBuildLocation(e),e);
-				location = "N.D.";
-			}
-		}
-		else if(ConnettoreRicezioneContenutiApplicativiDirectVM.TIPO.equals(connettoreMsg.getTipoConnettore())){
-			try{
-				((ConnettoreRicezioneContenutiApplicativiDirectVM)connector).validate(connettoreMsg);
-				((ConnettoreRicezioneContenutiApplicativiDirectVM)connector).buildLocation(connettoreMsg.getConnectorProperties(),false);
-				location = connector.getLocation();
-				dynamicLocation = true;
-			}catch(Exception e){
-				log.error(getErrorMessageBuildLocation(e),e);
-				location = "N.D.";
-			}
-		}
-		else if(ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM.TIPO.equals(connettoreMsg.getTipoConnettore())){
-			try{
-				((ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM)connector).validate(connettoreMsg);
-				((ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM)connector).buildLocation(connettoreMsg.getConnectorProperties(),false);
-				location = connector.getLocation();
-				dynamicLocation = true;
-			}catch(Exception e){
-				log.error(getErrorMessageBuildLocation(e),e);
-				location = "N.D.";
 			}
 		}
 		else{
@@ -149,6 +126,69 @@ public class ConnettoreUtils {
 			}
 		}
 		
+		if(location==null) {
+			location = "N.D.";
+		}
+		
+		return getAndReplaceLocationWithBustaValues(connector, connettoreMsg, location, busta, pddContext, log, dynamicLocation);
+	}
+	private static String buildLocationFile(IConnettore connector, ConnettoreMsg connettoreMsg,Logger log) {
+		String l = null;
+		try{
+			l = ((ConnettoreFILE)connector).buildLocation(connettoreMsg);
+			//dynamicLocation = true; la dinamicita viene gia gestita nel metodo buildLocation
+		}catch(Exception e){
+			log.error(getErrorMessageBuildLocation(e),e);
+		}
+		return l;
+	}
+	private static String buildLocationDirectVM(IConnettore connector, ConnettoreMsg connettoreMsg,Logger log) {
+		String l = null;
+		if(ConnettoreRicezioneBusteDirectVM.TIPO.equals(connettoreMsg.getTipoConnettore())) {
+			l = buildLocationRicezioneBusteDirectVM(connector, connettoreMsg, log);
+		}
+		else if(ConnettoreRicezioneContenutiApplicativiDirectVM.TIPO.equals(connettoreMsg.getTipoConnettore())){
+			l = buildLocationRicezioneContenutiApplicativiDirectVM(connector, connettoreMsg, log);
+		}
+		else {
+			l = buildLocationRicezioneContenutiApplicativiHTTPtoSOAPDirectVM(connector, connettoreMsg, log);
+		}
+		return l;
+	}
+	private static String buildLocationRicezioneBusteDirectVM(IConnettore connector, ConnettoreMsg connettoreMsg,Logger log) {
+		String l = null;
+		try{
+			((ConnettoreRicezioneBusteDirectVM)connector).validate(connettoreMsg);
+			((ConnettoreRicezioneBusteDirectVM)connector).buildLocation(connettoreMsg.getConnectorProperties(),false);
+			l = connector.getLocation();
+		}catch(Exception e){
+			log.error(getErrorMessageBuildLocation(e),e);
+		}
+		return l;
+	}
+	private static String buildLocationRicezioneContenutiApplicativiDirectVM(IConnettore connector, ConnettoreMsg connettoreMsg,Logger log) {
+		String l = null;
+		try{
+			((ConnettoreRicezioneContenutiApplicativiDirectVM)connector).validate(connettoreMsg);
+			((ConnettoreRicezioneContenutiApplicativiDirectVM)connector).buildLocation(connettoreMsg.getConnectorProperties(),false);
+			l = connector.getLocation();
+		}catch(Exception e){
+			log.error(getErrorMessageBuildLocation(e),e);
+		}
+		return l;
+	}
+	private static String buildLocationRicezioneContenutiApplicativiHTTPtoSOAPDirectVM(IConnettore connector, ConnettoreMsg connettoreMsg,Logger log) {
+		String l = null;
+		try{
+			((ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM)connector).validate(connettoreMsg);
+			((ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM)connector).buildLocation(connettoreMsg.getConnectorProperties(),false);
+			l = connector.getLocation();
+		}catch(Exception e){
+			log.error(getErrorMessageBuildLocation(e),e);
+		}
+		return l;
+	}
+	private static String getAndReplaceLocationWithBustaValues(IConnettore connector, ConnettoreMsg connettoreMsg,String location, Busta busta,PdDContext pddContext,Logger log,boolean dynamicLocation) {
 		if(location !=null && (!location.equals("")) ){
 			
 			// Keyword old
@@ -179,8 +219,11 @@ public class ConnettoreUtils {
 			IProtocolFactory<?> protocolFactory, String idModulo) throws ConnettoreException{
 		
 		if(TipiConnettore.HTTP.toString().equals(tipoConnettore) || 
-				TipiConnettore.HTTPS.toString().equals(tipoConnettore) ||
-				ConnettoreHTTPCORE.ENDPOINT_TYPE.equals(tipoConnettore)  ||
+				TipiConnettore.HTTPS.toString().equals(tipoConnettore)||
+				ConnettoreHTTP.ENDPOINT_TYPE.equals(tipoConnettore) ||
+				ConnettoreHTTPS.ENDPOINT_TYPE.equals(tipoConnettore) ||
+				ConnettoreHTTPCORE.ENDPOINT_TYPE.equals(tipoConnettore) ||
+				ConnettoreHTTPSCORE.ENDPOINT_TYPE.equals(tipoConnettore) ||
 				ConnettoreSAAJ.ENDPOINT_TYPE.equals(tipoConnettore)  ||
 				ConnettoreStresstest.ENDPOINT_TYPE.equals(tipoConnettore)){
 	
@@ -194,23 +237,7 @@ public class ConnettoreUtils {
 					forwardParameter = msg.getForwardUrlProperties(OpenSPCoop2Properties.getInstance().getSOAPServicesUrlParametersForwardConfig());
 				}
 				
-				Map<String, List<String>>  p = propertiesURLBased;
-				if(forwardParameter!=null && forwardParameter.size()>0){
-					if(p==null){
-						p = new HashMap<> ();
-					}
-					Iterator<String> keys = forwardParameter.getKeys();
-					while (keys.hasNext()) {
-						String key = keys.next();
-						List<String> values = forwardParameter.getPropertyValues(key);
-						if(values!=null && !values.isEmpty()){
-							if(p.containsKey(key)){
-								p.remove(key);
-							}
-							p.put(key, values);
-						}
-					}
-				}
+				Map<String, List<String>>  p = buildMapLocationWithURLBasedParameter(propertiesURLBased, forwardParameter);
 				
 				String location = locationParam;
 				if(ServiceBinding.REST.equals(msg.getServiceBinding())){
@@ -230,6 +257,26 @@ public class ConnettoreUtils {
 			}
 		}
 		return locationParam;
+	}
+	private static Map<String, List<String>> buildMapLocationWithURLBasedParameter(Map<String, List<String>> propertiesURLBased, OpenSPCoop2MessageProperties forwardParameter) {
+		Map<String, List<String>>  p = propertiesURLBased;
+		if(forwardParameter!=null && forwardParameter.size()>0){
+			if(p==null){
+				p = new HashMap<> ();
+			}
+			Iterator<String> keys = forwardParameter.getKeys();
+			while (keys.hasNext()) {
+				String key = keys.next();
+				List<String> values = forwardParameter.getPropertyValues(key);
+				if(values!=null && !values.isEmpty()){
+					if(p.containsKey(key)){
+						p.remove(key);
+					}
+					p.put(key, values);
+				}
+			}
+		}
+		return p;
 	}
 
 	public static String normalizeInterfaceName(OpenSPCoop2Message msg, String idModulo, IProtocolFactory<?> protocolFactory) throws ProtocolException {
@@ -261,13 +308,18 @@ public class ConnettoreUtils {
 	}
 	
 	public static String addProxyInfoToLocationForHTTPConnector(String tipoConnettore, Map<String, String> properties, String location){
-		if(TipiConnettore.HTTP.toString().equals(tipoConnettore) || 
-				TipiConnettore.HTTPS.toString().equals(tipoConnettore)){
-			if(properties.get(CostantiConnettori.CONNETTORE_HTTP_PROXY_TYPE)!=null){
-				String proxyHostname = properties.get(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME);
-				String proxyPort = properties.get(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT);
-				return location+" [proxy: "+proxyHostname+":"+proxyPort+"]";
-			}
+		if( 
+				(
+						TipiConnettore.HTTP.toString().equals(tipoConnettore) 
+						|| 
+						TipiConnettore.HTTPS.toString().equals(tipoConnettore)
+				)
+				&& 
+				properties.get(CostantiConnettori.CONNETTORE_HTTP_PROXY_TYPE)!=null
+			){
+			String proxyHostname = properties.get(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME);
+			String proxyPort = properties.get(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT);
+			return location+" [proxy: "+proxyHostname+":"+proxyPort+"]";
 		}
 		return location;
 	}
@@ -282,6 +334,120 @@ public class ConnettoreUtils {
 		return location;
 	}
 	
+	public static String formatTipoConnettore(OpenSPCoop2Properties props, String tipoConnector, ConnettoreMsg connettoreMsg) {
+		if(tipoConnector==null) {
+			return null;
+		}
+		
+		TipiConnettore t = TipiConnettore.toEnumFromName(tipoConnector); 
+		
+		if(!TipiConnettore.CUSTOM.equals(t) &&
+				!TipiConnettore.HTTP.equals(t) &&
+				!TipiConnettore.HTTPS.equals(t)) {
+			return tipoConnector;
+		}
+		
+		String newTipoConnettore = formatTipoConnettore(props, tipoConnector, t, connettoreMsg);
+		if(!tipoConnector.equals(newTipoConnettore)) {
+			connettoreMsg.setTipoConnettore(newTipoConnettore);
+		}
+		return newTipoConnettore;
+	}
+	private static String formatTipoConnettore(OpenSPCoop2Properties props, String tipoConnector, TipiConnettore t, ConnettoreMsg connettoreMsg) {
+		if(connettoreMsg.getConnectorProperties()!=null && !connettoreMsg.getConnectorProperties().isEmpty()) {
+			String impl = connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_HTTP_IMPL);
+			ConnettoriHttpImpl cImpl = ConnettoriHttpImpl.getConnettoreHttpImplSafe(impl);
+			if(cImpl!=null) {
+				return formatTipoConnettore(tipoConnector, t, cImpl);
+			}
+		}
+		
+		if(isHttp(t, tipoConnector) &&
+				props.getConnettoreLibreriaHttpDefault()!=null && StringUtils.isNotEmpty(props.getConnettoreLibreriaHttpDefault())) {
+			String tipo = props.getConnettoreLibreriaHttpDefault();
+			String classTipo = ClassNameProperties.getInstance().getConnettore(tipo);
+			String defaultHttp = ClassNameProperties.getInstance().getConnettore(TipiConnettore.HTTP.getNome());
+			if(classTipo.equals(defaultHttp)) {
+				return TipiConnettore.HTTP.getNome(); // per far finire nei log 'http'
+			}
+			else {
+				return tipo;
+			}
+		}
+		else if(isHttps(t, tipoConnector) &&
+			props.getConnettoreLibreriaHttpsDefault()!=null && StringUtils.isNotEmpty(props.getConnettoreLibreriaHttpsDefault())) {
+			String tipo = props.getConnettoreLibreriaHttpsDefault();
+			String classTipo = ClassNameProperties.getInstance().getConnettore(tipo);
+			String defaultHttps = ClassNameProperties.getInstance().getConnettore(TipiConnettore.HTTPS.getNome());
+			if(classTipo.equals(defaultHttps)) {
+				return TipiConnettore.HTTPS.getNome(); // per far finire nei log 'https'
+			}
+			else {
+				return tipo;
+			}
+		}
+		else {
+			return tipoConnector;
+		}
+	}
+	private static String formatTipoConnettore(String tipoConnector, TipiConnettore t, ConnettoriHttpImpl cImpl) {
+		switch (cImpl) {
+		case HTTP_CORE5: {
+			if(isHttp(t, tipoConnector)) {
+				return ConnettoreHTTPCORE.ENDPOINT_TYPE;
+			}
+			else if(isHttps(t, tipoConnector)) {
+				return ConnettoreHTTPSCORE.ENDPOINT_TYPE;
+			}
+			break;
+		}
+		case HTTP_URL_CONNECTION: {
+			if(isHttp(t, tipoConnector)) {
+				return ConnettoreHTTP.ENDPOINT_TYPE;
+			}
+			else if(isHttps(t, tipoConnector)) {
+				return ConnettoreHTTPS.ENDPOINT_TYPE;
+			}
+			break;
+		}
+		default: {
+			break;
+		}
+		}
+		return null;
+	}	
+	public static boolean isHttp(TipiConnettore t, String tipoConnector) {
+		return (t!=null &&
+			(
+					TipiConnettore.HTTP.equals(t) 
+					||
+					(
+							TipiConnettore.CUSTOM.equals(t) &&
+							(
+									ConnettoreHTTPCORE.ENDPOINT_TYPE.equals(tipoConnector) 
+									|| 
+									ConnettoreHTTP.ENDPOINT_TYPE.equals(tipoConnector)
+							)
+					)
+			)
+		);
+	}
+	public static boolean isHttps(TipiConnettore t, String tipoConnector) {
+		return (t!=null &&
+			(
+					TipiConnettore.HTTPS.equals(t) 
+					||
+					(
+							TipiConnettore.CUSTOM.equals(t) &&
+							(
+									ConnettoreHTTPSCORE.ENDPOINT_TYPE.equals(tipoConnector) 
+									|| 
+									ConnettoreHTTPS.ENDPOINT_TYPE.equals(tipoConnector)
+							)
+					)
+			)
+		);
+	}
 
 	public static void printDatiConnettore(org.openspcoop2.core.registry.Connettore connettore, String labelTipoConnettore, String labelNomeConnettore,
 			boolean connettoreStatic,
@@ -587,6 +753,49 @@ public class ConnettoreUtils {
 			}
 		}
 		
+		if(TipiConnettore.HTTP.getNome().equals(connettore.getTipo()) || TipiConnettore.HTTPS.getNome().equals(connettore.getTipo())){
+			
+			String dataTransferMode = getProperty(CostantiConnettori.CONNETTORE_HTTP_DATA_TRANSFER_MODE, connettore.getPropertyList());
+			if(dataTransferMode!=null) {
+				sb.append(newLine);
+				sb.append(CostantiLabel.LABEL_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+				sb.append(separator);
+				sb.append(dataTransferMode);
+				
+				String dataTransferChunked = getProperty(CostantiConnettori.CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE, connettore.getPropertyList());
+				if(dataTransferChunked!=null) {
+					sb.append(newLine);
+					sb.append(CostantiLabel.LABEL_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+					sb.append(separator);
+					sb.append(dataTransferChunked);
+				}
+			}
+			
+			String redirect = getProperty(CostantiConnettori.CONNETTORE_HTTP_REDIRECT_FOLLOW, connettore.getPropertyList());
+			if(redirect!=null) {
+				sb.append(newLine);
+				sb.append(CostantiLabel.LABEL_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+				sb.append(separator);
+				sb.append(redirect);
+				
+				String redirectHop = getProperty(CostantiConnettori.CONNETTORE_HTTP_REDIRECT_MAX_HOP, connettore.getPropertyList());
+				if(redirectHop!=null) {
+					sb.append(newLine);
+					sb.append(CostantiLabel.LABEL_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+					sb.append(separator);
+					sb.append(redirectHop);
+				}
+			}
+			
+			String impl = getProperty(CostantiConnettori.CONNETTORE_HTTP_IMPL, connettore.getPropertyList());
+			if(impl!=null) {
+				sb.append(newLine);
+				sb.append(CostantiLabel.LABEL_CONNETTORE_OPZIONI_AVANZATE_HTTP_IMPL);
+				sb.append(separator);
+				sb.append(impl);
+			}
+		}
+		
 		if(TipiConnettore.JMS.getNome().equals(connettore.getTipo())){
 			 
 			String username = null;
@@ -721,8 +930,7 @@ public class ConnettoreUtils {
 		if(!l.isEmpty()) {
 			StringBuilder sb = new StringBuilder();
 			for (Object object : l) {
-				if(object instanceof String) {
-					String s = (String) object;
+				if(object instanceof String s) {
 					if(sb.length()>0) {
 						sb.append(",");
 					}

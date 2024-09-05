@@ -65,6 +65,7 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autenticazione.WWWAuthenticateConfig;
 import org.openspcoop2.pdd.core.autorizzazione.container.IAutorizzazioneSecurityContainer;
 import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazionePortaApplicativa;
+import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneGatewayControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.INotify;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.TipoGestorePolicy;
@@ -693,7 +694,7 @@ public class OpenSPCoop2Properties {
 			if( CostantiConfigurazione.CONFIGURAZIONE_XML.equalsIgnoreCase(getTipoConfigurazionePDD()) ){
 
 				String path = getPathConfigurazionePDD();
-				if( (!path.startsWith("http://")) && (!path.startsWith("file://")) ){
+				if( (!path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX)) && (!path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)) ){
 					if( !(new File(path)).exists() ){
 						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.location'. \n Il file indicato non esiste ["+path+"].");
 						return false;
@@ -1457,39 +1458,71 @@ public class OpenSPCoop2Properties {
 				this.getLimitedInputStreamThresholdKb();
 			}
 			this.isConnettoriUseTimeoutInputStream();
-			this.getConnectionTimeout_consegnaContenutiApplicativi();
-			this.getConnectionTimeout_inoltroBuste();
-			this.getReadConnectionTimeout_consegnaContenutiApplicativi();
-			this.getReadConnectionTimeout_inoltroBuste();
-			this.getConnectionLife_consegnaContenutiApplicativi();
-			this.getConnectionLife_inoltroBuste();
-			this.getReadConnectionTimeout_ricezioneContenutiApplicativi();
-			this.getReadConnectionTimeout_ricezioneBuste();
+			this.getConnectionTimeoutConsegnaContenutiApplicativi();
+			this.getConnectionTimeoutInoltroBuste();
+			this.getReadConnectionTimeoutConsegnaContenutiApplicativi();
+			this.getReadConnectionTimeoutInoltroBuste();
+			this.getConnectionLifeConsegnaContenutiApplicativi();
+			this.getConnectionLifeInoltroBuste();
+			this.getReadConnectionTimeoutRicezioneContenutiApplicativi();
+			this.getReadConnectionTimeoutRicezioneBuste();
 			
 			this.getBIOConfigSyncClientMaxPerRoute();
 			this.getBIOConfigSyncClientMaxTotal();
 			
-			this.isConnettoriUseDiagnosticInputStream_inoltroBuste();
-			this.isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi();
-			this.isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi();
-			this.isConnettoriUseDiagnosticInputStream_ricezioneBuste();
-			this.isConnettoriUseDiagnosticInputStream_setDateEmptyStream();
+			this.isConnettoriUseDiagnosticInputStreamInoltroBuste();
+			this.isConnettoriUseDiagnosticInputStreamConsegnaContenutiApplicativi();
+			this.isConnettoriUseDiagnosticInputStreamRicezioneContenutiApplicativi();
+			this.isConnettoriUseDiagnosticInputStreamRicezioneBuste();
+			this.isConnettoriUseDiagnosticInputStreamSetDateEmptyStream();
+			
+			String tipoHttpDefault = getConnettoreLibreriaHttpDefault();
+			if(tipoHttpDefault!=null && StringUtils.isNotEmpty(tipoHttpDefault)) {
+				String classNameHttp = className.getConnettore(tipoHttpDefault);
+				if(classNameHttp == null){
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpDefault+"] nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					IConnettore c = (IConnettore) loaderOpenSPCoop.newInstance(classNameHttp);
+					c.toString();
+				}catch(Exception e){
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.libreriaHttpDefault'. \n La classe '"+classNameHttp+"' associata al tipo indicato non esiste ["+tipoHttpDefault+"]: "+e.getMessage(),e);
+					return false;
+				}	
+			}
+			
+			String tipoHttpsDefault = getConnettoreLibreriaHttpsDefault();
+			if(tipoHttpsDefault!=null && StringUtils.isNotEmpty(tipoHttpsDefault)) {
+				String classNameHttp = className.getConnettore(tipoHttpsDefault);
+				if(classNameHttp == null){
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpsDefault+"] nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					IConnettore c = (IConnettore) loaderOpenSPCoop.newInstance(classNameHttp);
+					c.toString();
+				}catch(Exception e){
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.libreriaHttpDefault'. \n La classe '"+classNameHttp+"' associata al tipo indicato non esiste ["+tipoHttpsDefault+"]: "+e.getMessage(),e);
+					return false;
+				}	
+			}
 			
 			// Connettore https
-			this.getConnettoreHttps_secureRandomAlgo();
-			this.isConnettoreHttps_useSecureRandom();
+			this.getConnettoreHttpsSecureRandomAlgo();
+			this.isConnettoreHttpsUseSecureRandom();
 			
 			// Connettore http (url https)
-			if(this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste()) {
-				this.getConnettoreHttp_urlHttps_repository_inoltroBuste();
+			if(this.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationInoltroBuste()) {
+				this.getConnettoreHttpUrlHttpsRepositoryInoltroBuste();
 			}
-			if(this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi()) {
-				this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi();
+			if(this.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationConsegnaContenutiApplicativi()) {
+				this.getConnettoreHttpUrlHttpsRepositoryConsegnaContenutiApplicativi();
 			}
-			if(this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste() ||
-					this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi()) {
-				if(this.isConnettoreHttp_urlHttps_cacheEnabled()) {
-					this.getConnettoreHttp_urlHttps_cacheSize();
+			if(this.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationInoltroBuste() ||
+					this.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationConsegnaContenutiApplicativi()) {
+				if(this.isConnettoreHttpUrlHttpsCacheEnabled()) {
+					this.getConnettoreHttpUrlHttpsCacheSize();
 				}
 			}
 
@@ -4064,7 +4097,7 @@ public class OpenSPCoop2Properties {
 
 				if(CostantiConfigurazione.CONFIGURAZIONE_XML.equalsIgnoreCase(getTipoConfigurazionePDD())){
 
-					if( (!indirizzo.startsWith("http://")) && (!indirizzo.startsWith("file://")) ){
+					if( (!indirizzo.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX)) && (!indirizzo.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)) ){
 						if(!indirizzo.startsWith("${")){
 							String root = getRootDirectory();
 							indirizzo = root+indirizzo;
@@ -14048,26 +14081,26 @@ public class OpenSPCoop2Properties {
 	 * @return Restituisce timeout per la istanziazione della connessione
 	 * 
 	 */
-	private Integer connectionTimeout_inoltroBuste = null;
-	public int getConnectionTimeout_inoltroBuste() {	
-		if(this.connectionTimeout_inoltroBuste==null){
+	private Integer connectionTimeoutInoltroBuste = null;
+	public int getConnectionTimeoutInoltroBuste() {	
+		if(this.connectionTimeoutInoltroBuste==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.connection.timeout");
 				if(name!=null){
 					name = name.trim();
-					this.connectionTimeout_inoltroBuste = java.lang.Integer.parseInt(name);
+					this.connectionTimeoutInoltroBuste = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.connection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_INOLTRO_BUSTE);
-					this.connectionTimeout_inoltroBuste = CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
+					this.connectionTimeoutInoltroBuste = CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.connection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_INOLTRO_BUSTE+", errore:"+e.getMessage(),e);
-				this.connectionTimeout_inoltroBuste = CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
+				this.connectionTimeoutInoltroBuste = CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
 			}  
 		}
 
-		return this.connectionTimeout_inoltroBuste;
+		return this.connectionTimeoutInoltroBuste;
 	}
 
 
@@ -14077,26 +14110,26 @@ public class OpenSPCoop2Properties {
 	 * @return Restituisce timeout per la istanziazione della connessione
 	 * 
 	 */
-	private Integer connectionTimeout_consegnaContenutiApplicativi = null;
-	public int getConnectionTimeout_consegnaContenutiApplicativi() {	
-		if(this.connectionTimeout_consegnaContenutiApplicativi==null){
+	private Integer connectionTimeoutConsegnaContenutiApplicativi = null;
+	public int getConnectionTimeoutConsegnaContenutiApplicativi() {	
+		if(this.connectionTimeoutConsegnaContenutiApplicativi==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.connection.timeout");
 				if(name!=null){
 					name = name.trim();
-					this.connectionTimeout_consegnaContenutiApplicativi = java.lang.Integer.parseInt(name);
+					this.connectionTimeoutConsegnaContenutiApplicativi = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.connection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI);
-					this.connectionTimeout_consegnaContenutiApplicativi = CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI;
+					this.connectionTimeoutConsegnaContenutiApplicativi = CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.connection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI+", errore:"+e.getMessage(),e);
-				this.connectionTimeout_consegnaContenutiApplicativi = CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI;
+				this.connectionTimeoutConsegnaContenutiApplicativi = CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI;
 			}  
 		}
 
-		return this.connectionTimeout_consegnaContenutiApplicativi;
+		return this.connectionTimeoutConsegnaContenutiApplicativi;
 	}
 
 
@@ -14106,26 +14139,26 @@ public class OpenSPCoop2Properties {
 	 * @return Restituisce timeout per la lettura dalla connessione
 	 * 
 	 */
-	private Integer readConnectionTimeout_inoltroBuste = null;
-	public int getReadConnectionTimeout_inoltroBuste() {	
-		if(this.readConnectionTimeout_inoltroBuste==null){
+	private Integer readConnectionTimeoutInoltroBuste = null;
+	public int getReadConnectionTimeoutInoltroBuste() {	
+		if(this.readConnectionTimeoutInoltroBuste==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.readConnection.timeout");
 				if(name!=null){
 					name = name.trim();
-					this.readConnectionTimeout_inoltroBuste = java.lang.Integer.parseInt(name);
+					this.readConnectionTimeoutInoltroBuste = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.readConnection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE);
-					this.readConnectionTimeout_inoltroBuste = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
+					this.readConnectionTimeoutInoltroBuste = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.readConnection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE+", errore:"+e.getMessage(),e);
-				this.readConnectionTimeout_inoltroBuste = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
+				this.readConnectionTimeoutInoltroBuste = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
 			}  
 		}
 
-		return this.readConnectionTimeout_inoltroBuste;
+		return this.readConnectionTimeoutInoltroBuste;
 	}
 
 
@@ -14135,26 +14168,26 @@ public class OpenSPCoop2Properties {
 	 * @return Restituisce timeout per la lettura dalla connessione
 	 * 
 	 */
-	private Integer readConnectionTimeout_consegnaContenutiApplicativi = null;
-	public int getReadConnectionTimeout_consegnaContenutiApplicativi() {	
-		if(this.readConnectionTimeout_consegnaContenutiApplicativi==null){
+	private Integer readConnectionTimeoutConsegnaContenutiApplicativi = null;
+	public int getReadConnectionTimeoutConsegnaContenutiApplicativi() {	
+		if(this.readConnectionTimeoutConsegnaContenutiApplicativi==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.readConnection.timeout");
 				if(name!=null){
 					name = name.trim();
-					this.readConnectionTimeout_consegnaContenutiApplicativi = java.lang.Integer.parseInt(name);
+					this.readConnectionTimeoutConsegnaContenutiApplicativi = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.readConnection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI);
-					this.readConnectionTimeout_consegnaContenutiApplicativi = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI;
+					this.readConnectionTimeoutConsegnaContenutiApplicativi = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.readConnection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI+", errore:"+e.getMessage(),e);
-				this.readConnectionTimeout_consegnaContenutiApplicativi = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI;
+				this.readConnectionTimeoutConsegnaContenutiApplicativi = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI;
 			}  
 		}
 
-		return this.readConnectionTimeout_consegnaContenutiApplicativi;
+		return this.readConnectionTimeoutConsegnaContenutiApplicativi;
 	}
 
 	/**
@@ -14163,26 +14196,26 @@ public class OpenSPCoop2Properties {
 	 * @return Restituisce timeout in millisecondi massimi durante il quale una connessione viene mantenuta aperta dalla PdD. 
 	 * 
 	 */
-	private Integer connectionLife_inoltroBuste = null;
-	public int getConnectionLife_inoltroBuste() {	
-		if(this.connectionLife_inoltroBuste==null){
+	private Integer connectionLifeInoltroBuste = null;
+	public int getConnectionLifeInoltroBuste() {	
+		if(this.connectionLifeInoltroBuste==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.connection.life");
 				if(name!=null){
 					name = name.trim();
-					this.connectionLife_inoltroBuste = java.lang.Integer.parseInt(name);
+					this.connectionLifeInoltroBuste = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.connection.life' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_LIFE_INOLTRO_BUSTE);
-					this.connectionLife_inoltroBuste = CostantiPdD.CONNETTORE_CONNECTION_LIFE_INOLTRO_BUSTE;
+					this.connectionLifeInoltroBuste = CostantiPdD.CONNETTORE_CONNECTION_LIFE_INOLTRO_BUSTE;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.connection.life' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_LIFE_INOLTRO_BUSTE+", errore:"+e.getMessage(),e);
-				this.connectionLife_inoltroBuste = CostantiPdD.CONNETTORE_CONNECTION_LIFE_INOLTRO_BUSTE;
+				this.connectionLifeInoltroBuste = CostantiPdD.CONNETTORE_CONNECTION_LIFE_INOLTRO_BUSTE;
 			}  
 		}
 
-		return this.connectionLife_inoltroBuste;
+		return this.connectionLifeInoltroBuste;
 	}
 
 
@@ -14192,73 +14225,73 @@ public class OpenSPCoop2Properties {
 	 * @return Restituisce timeout in millisecondi massimi durante il quale una connessione viene mantenuta aperta dalla PdD. 
 	 * 
 	 */
-	private Integer connectionLife_consegnaContenutiApplicativi = null;
-	public int getConnectionLife_consegnaContenutiApplicativi() {	
-		if(this.connectionLife_consegnaContenutiApplicativi==null){
+	private Integer connectionLifeConsegnaContenutiApplicativi = null;
+	public int getConnectionLifeConsegnaContenutiApplicativi() {	
+		if(this.connectionLifeConsegnaContenutiApplicativi==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.connection.life");
 				if(name!=null){
 					name = name.trim();
-					this.connectionLife_consegnaContenutiApplicativi = java.lang.Integer.parseInt(name);
+					this.connectionLifeConsegnaContenutiApplicativi = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.connection.life' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_LIFE_CONSEGNA_CONTENUTI_APPLICATIVI);
-					this.connectionLife_consegnaContenutiApplicativi = CostantiPdD.CONNETTORE_CONNECTION_LIFE_CONSEGNA_CONTENUTI_APPLICATIVI;
+					this.connectionLifeConsegnaContenutiApplicativi = CostantiPdD.CONNETTORE_CONNECTION_LIFE_CONSEGNA_CONTENUTI_APPLICATIVI;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.connection.life' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_LIFE_CONSEGNA_CONTENUTI_APPLICATIVI+", errore:"+e.getMessage(),e);
-				this.connectionLife_consegnaContenutiApplicativi = CostantiPdD.CONNETTORE_CONNECTION_LIFE_CONSEGNA_CONTENUTI_APPLICATIVI;
+				this.connectionLifeConsegnaContenutiApplicativi = CostantiPdD.CONNETTORE_CONNECTION_LIFE_CONSEGNA_CONTENUTI_APPLICATIVI;
 			}  
 		}
 
-		return this.connectionLife_consegnaContenutiApplicativi;
+		return this.connectionLifeConsegnaContenutiApplicativi;
 	}
 
 	
-	private Integer readConnectionTimeout_ricezioneContenutiApplicativi = null;
-	public int getReadConnectionTimeout_ricezioneContenutiApplicativi() {	
+	private Integer readConnectionTimeoutRicezioneContenutiApplicativi = null;
+	public int getReadConnectionTimeoutRicezioneContenutiApplicativi() {	
 		String pName = "org.openspcoop2.pdd.connettori.ricezioneContenutiApplicativi.readConnection.timeout";
-		if(this.readConnectionTimeout_ricezioneContenutiApplicativi==null){
+		if(this.readConnectionTimeoutRicezioneContenutiApplicativi==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
-					this.readConnectionTimeout_ricezioneContenutiApplicativi = java.lang.Integer.parseInt(name);
+					this.readConnectionTimeoutRicezioneContenutiApplicativi = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName,CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE));
-					this.readConnectionTimeout_ricezioneContenutiApplicativi = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
+					this.readConnectionTimeoutRicezioneContenutiApplicativi = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName,e,CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE),e);
-				this.readConnectionTimeout_ricezioneContenutiApplicativi = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
+				this.readConnectionTimeoutRicezioneContenutiApplicativi = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
 			}  
 		}
 
-		return this.readConnectionTimeout_ricezioneContenutiApplicativi;
+		return this.readConnectionTimeoutRicezioneContenutiApplicativi;
 	}
 	
-	private Integer readConnectionTimeout_ricezioneBuste = null;
-	public int getReadConnectionTimeout_ricezioneBuste() {	
+	private Integer readConnectionTimeoutRicezioneBuste = null;
+	public int getReadConnectionTimeoutRicezioneBuste() {	
 		String pName = "org.openspcoop2.pdd.connettori.ricezioneBuste.readConnection.timeout";
-		if(this.readConnectionTimeout_ricezioneBuste==null){
+		if(this.readConnectionTimeoutRicezioneBuste==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
-					this.readConnectionTimeout_ricezioneBuste = java.lang.Integer.parseInt(name);
+					this.readConnectionTimeoutRicezioneBuste = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName,CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE));
-					this.readConnectionTimeout_ricezioneBuste = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
+					this.readConnectionTimeoutRicezioneBuste = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName,e,CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE),e);
-				this.readConnectionTimeout_ricezioneBuste = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
+				this.readConnectionTimeoutRicezioneBuste = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
 			}  
 		}
 
-		return this.readConnectionTimeout_ricezioneBuste;
+		return this.readConnectionTimeoutRicezioneBuste;
 	}
 
 	
@@ -14312,218 +14345,267 @@ public class OpenSPCoop2Properties {
 	
 	
 	
-	private Boolean isConnettoriUseDiagnosticInputStream_inoltroBuste = null;
-	public boolean isConnettoriUseDiagnosticInputStream_inoltroBuste() {	
-		if(this.isConnettoriUseDiagnosticInputStream_inoltroBuste==null){
-			String pName = "org.openspcoop2.pdd.connettori.inoltroBuste.useDiagnosticInputStream";
+	private Boolean isConnettoriUseDiagnosticInputStreamInoltroBuste = null;
+	public boolean isConnettoriUseDiagnosticInputStreamInoltroBuste() {	
+		if(this.isConnettoriUseDiagnosticInputStreamInoltroBuste==null){
+			String pName = "org.openspcoop2.pdd.connettori.inoltroBuste.useDiagnosticInputStream"; 
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
-					this.isConnettoriUseDiagnosticInputStream_inoltroBuste = Boolean.parseBoolean(name);
+					this.isConnettoriUseDiagnosticInputStreamInoltroBuste = Boolean.parseBoolean(name);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isConnettoriUseDiagnosticInputStream_inoltroBuste = true;
+					this.isConnettoriUseDiagnosticInputStreamInoltroBuste = true;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isConnettoriUseDiagnosticInputStream_inoltroBuste = true;
+				this.isConnettoriUseDiagnosticInputStreamInoltroBuste = true;
 			}  
 		}
 
-		return this.isConnettoriUseDiagnosticInputStream_inoltroBuste;
+		return this.isConnettoriUseDiagnosticInputStreamInoltroBuste;
 	}
 	
-	private Boolean isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi = null;
-	public boolean isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi() {	
-		if(this.isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi==null){
+	private Boolean isConnettoriUseDiagnosticInputStreamConsegnaContenutiApplicativi = null;
+	public boolean isConnettoriUseDiagnosticInputStreamConsegnaContenutiApplicativi() {	
+		if(this.isConnettoriUseDiagnosticInputStreamConsegnaContenutiApplicativi==null){
 			String pName = "org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.useDiagnosticInputStream";
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
-					this.isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi = Boolean.parseBoolean(name);
+					this.isConnettoriUseDiagnosticInputStreamConsegnaContenutiApplicativi = Boolean.parseBoolean(name);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi = true;
+					this.isConnettoriUseDiagnosticInputStreamConsegnaContenutiApplicativi = true;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi = true;
+				this.isConnettoriUseDiagnosticInputStreamConsegnaContenutiApplicativi = true;
 			}  
 		}
 
-		return this.isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi;
+		return this.isConnettoriUseDiagnosticInputStreamConsegnaContenutiApplicativi;
 	}
 	
-	private Boolean isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi = null;
-	public boolean isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi() {	
-		if(this.isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi==null){
+	private Boolean isConnettoriUseDiagnosticInputStreamRicezioneContenutiApplicativi = null;
+	public boolean isConnettoriUseDiagnosticInputStreamRicezioneContenutiApplicativi() {	
+		if(this.isConnettoriUseDiagnosticInputStreamRicezioneContenutiApplicativi==null){
 			String pName = "org.openspcoop2.pdd.connettori.ricezioneContenutiApplicativi.useDiagnosticInputStream";
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
-					this.isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi = Boolean.parseBoolean(name);
+					this.isConnettoriUseDiagnosticInputStreamRicezioneContenutiApplicativi = Boolean.parseBoolean(name);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi = true;
+					this.isConnettoriUseDiagnosticInputStreamRicezioneContenutiApplicativi = true;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi = true;
+				this.isConnettoriUseDiagnosticInputStreamRicezioneContenutiApplicativi = true;
 			}  
 		}
 
-		return this.isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi;
+		return this.isConnettoriUseDiagnosticInputStreamRicezioneContenutiApplicativi;
 	}
 	
-	private Boolean isConnettoriUseDiagnosticInputStream_ricezioneBuste = null;
-	public boolean isConnettoriUseDiagnosticInputStream_ricezioneBuste() {	
-		if(this.isConnettoriUseDiagnosticInputStream_ricezioneBuste==null){
+	private Boolean isConnettoriUseDiagnosticInputStreamRicezioneBuste = null;
+	public boolean isConnettoriUseDiagnosticInputStreamRicezioneBuste() {	
+		if(this.isConnettoriUseDiagnosticInputStreamRicezioneBuste==null){
 			String pName = "org.openspcoop2.pdd.connettori.ricezioneBuste.useDiagnosticInputStream";
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
-					this.isConnettoriUseDiagnosticInputStream_ricezioneBuste = Boolean.parseBoolean(name);
+					this.isConnettoriUseDiagnosticInputStreamRicezioneBuste = Boolean.parseBoolean(name);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isConnettoriUseDiagnosticInputStream_ricezioneBuste = true;
+					this.isConnettoriUseDiagnosticInputStreamRicezioneBuste = true;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isConnettoriUseDiagnosticInputStream_ricezioneBuste = true;
+				this.isConnettoriUseDiagnosticInputStreamRicezioneBuste = true;
 			}  
 		}
 
-		return this.isConnettoriUseDiagnosticInputStream_ricezioneBuste;
+		return this.isConnettoriUseDiagnosticInputStreamRicezioneBuste;
 	}
 	
 	
-	private Boolean isConnettoriUseDiagnosticInputStream_setDateEmptyStream = null;
-	public boolean isConnettoriUseDiagnosticInputStream_setDateEmptyStream() {	
-		if(this.isConnettoriUseDiagnosticInputStream_setDateEmptyStream==null){
+	private Boolean isConnettoriUseDiagnosticInputStreamSetDateEmptyStream = null;
+	public boolean isConnettoriUseDiagnosticInputStreamSetDateEmptyStream() {	
+		if(this.isConnettoriUseDiagnosticInputStreamSetDateEmptyStream==null){
 			String pName = "org.openspcoop2.pdd.connettori.useDiagnosticInputStream.setDateEmptyStream";
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
-					this.isConnettoriUseDiagnosticInputStream_setDateEmptyStream = Boolean.parseBoolean(name);
+					this.isConnettoriUseDiagnosticInputStreamSetDateEmptyStream = Boolean.parseBoolean(name);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isConnettoriUseDiagnosticInputStream_setDateEmptyStream = false;
+					this.isConnettoriUseDiagnosticInputStreamSetDateEmptyStream = false;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isConnettoriUseDiagnosticInputStream_setDateEmptyStream = false;
+				this.isConnettoriUseDiagnosticInputStreamSetDateEmptyStream = false;
 			}  
 		}
 
-		return this.isConnettoriUseDiagnosticInputStream_setDateEmptyStream;
+		return this.isConnettoriUseDiagnosticInputStreamSetDateEmptyStream;
 	}
 	
+	private String getConnettoreLibreriaHttpDefault = null;
+	private Boolean getConnettoreLibreriaHttpDefaultRead = null;
+	public String getConnettoreLibreriaHttpDefault() {	
+		if(this.getConnettoreLibreriaHttpDefaultRead==null){
+			String pName = "org.openspcoop2.pdd.connettori.libreriaHttpDefault";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.getConnettoreLibreriaHttpDefault = name;
+				}
+				else {
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' per il connettore non impostata");
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}  
+			
+			this.getConnettoreLibreriaHttpDefaultRead=true;
+		}
+
+		return this.getConnettoreLibreriaHttpDefault;
+	}
+	
+	private String getConnettoreLibreriaHttpsDefault = null;
+	private Boolean getConnettoreLibreriaHttpsDefaultRead = null;
+	public String getConnettoreLibreriaHttpsDefault() {	
+		if(this.getConnettoreLibreriaHttpsDefaultRead==null){
+			String pName = "org.openspcoop2.pdd.connettori.libreriaHttpsDefault";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.getConnettoreLibreriaHttpsDefault = name;
+				}
+				else {
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' per il connettore non impostata");
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}  
+			
+			this.getConnettoreLibreriaHttpsDefaultRead=true;
+		}
+
+		return this.getConnettoreLibreriaHttpsDefault;
+	}
 	
 	
 
 	/* ***************** HTTPS  ************* */
 	
-	private Boolean isConnettoreHttps_useSecureRandom = null;
-	public boolean isConnettoreHttps_useSecureRandom() {	
-		if(this.isConnettoreHttps_useSecureRandom==null){
+	private Boolean isConnettoreHttpsUseSecureRandom = null;
+	public boolean isConnettoreHttpsUseSecureRandom() {	
+		if(this.isConnettoreHttpsUseSecureRandom==null){
 			String pName = "org.openspcoop2.pdd.connettori.secureRandom";
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
-					this.isConnettoreHttps_useSecureRandom = Boolean.parseBoolean(name);
+					this.isConnettoreHttpsUseSecureRandom = Boolean.parseBoolean(name);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isConnettoreHttps_useSecureRandom = false;
+					this.isConnettoreHttpsUseSecureRandom = false;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isConnettoreHttps_useSecureRandom = false;
+				this.isConnettoreHttpsUseSecureRandom = false;
 			}  
 		}
 
-		return this.isConnettoreHttps_useSecureRandom;
+		return this.isConnettoreHttpsUseSecureRandom;
 	}
-	private String getConnettoreHttps_secureRandomAlgo = null;
-	private Boolean getConnettoreHttps_secureRandomAlgoRead = null;
-	public String getConnettoreHttps_secureRandomAlgo() {	
-		if(this.getConnettoreHttps_secureRandomAlgoRead==null){
+	private String getConnettoreHttpsSecureRandomAlgo = null;
+	private Boolean getConnettoreHttpsSecureRandomAlgoRead = null;
+	public String getConnettoreHttpsSecureRandomAlgo() {	
+		if(this.getConnettoreHttpsSecureRandomAlgoRead==null){
 			String pName = "org.openspcoop2.pdd.connettori.secureRandomAlgorithm";
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
-					this.getConnettoreHttps_secureRandomAlgo = name;
+					this.getConnettoreHttpsSecureRandomAlgo = name;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop '"+pName+"', errore:"+e.getMessage(),e);
 			}  
 			
-			this.getConnettoreHttps_secureRandomAlgoRead=true;
+			this.getConnettoreHttpsSecureRandomAlgoRead=true;
 		}
 
-		return this.getConnettoreHttps_secureRandomAlgo;
+		return this.getConnettoreHttpsSecureRandomAlgo;
 	}
 	
-	private Boolean isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste = null;
-	public boolean isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste() {	
-		if(this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste==null){
+	private Boolean isConnettoreHttpUrlHttpsOverrideDefaultConfigurationInoltroBuste = null;
+	public boolean isConnettoreHttpUrlHttpsOverrideDefaultConfigurationInoltroBuste() {	
+		if(this.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationInoltroBuste==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.overrideDefaultConfiguration");
 				if(name!=null){
 					name = name.trim();
-					this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste = Boolean.parseBoolean(name);
+					this.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationInoltroBuste = Boolean.parseBoolean(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.overrideDefaultConfiguration' non impostata, viene utilizzato il default="+true);
-					this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste = true;
+					this.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationInoltroBuste = true;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.overrideDefaultConfiguration' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
-				this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste = true;
+				this.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationInoltroBuste = true;
 			}  
 		}
 
-		return this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste;
+		return this.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationInoltroBuste;
 	}
 	
-	private Boolean isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi = null;
-	public boolean isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi() {	
-		if(this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi==null){
+	private Boolean isConnettoreHttpUrlHttpsOverrideDefaultConfigurationConsegnaContenutiApplicativi = null;
+	public boolean isConnettoreHttpUrlHttpsOverrideDefaultConfigurationConsegnaContenutiApplicativi() {	
+		if(this.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationConsegnaContenutiApplicativi==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.overrideDefaultConfiguration");
 				if(name!=null){
 					name = name.trim();
-					this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi = Boolean.parseBoolean(name);
+					this.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationConsegnaContenutiApplicativi = Boolean.parseBoolean(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.overrideDefaultConfiguration' non impostata, viene utilizzato il default="+true);
-					this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi = true;
+					this.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationConsegnaContenutiApplicativi = true;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.overrideDefaultConfiguration' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
-				this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi = true;
+				this.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationConsegnaContenutiApplicativi = true;
 			}  
 		}
 
-		return this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi;
+		return this.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationConsegnaContenutiApplicativi;
 	}
 	
-	private File getConnettoreHttp_urlHttps_repository_inoltroBuste = null;
-	public File getConnettoreHttp_urlHttps_repository_inoltroBuste() throws CoreException {	
-		if(this.getConnettoreHttp_urlHttps_repository_inoltroBuste==null){
+	private File getConnettoreHttpUrlHttpsRepositoryInoltroBuste = null;
+	public File getConnettoreHttpUrlHttpsRepositoryInoltroBuste() throws CoreException {	
+		if(this.getConnettoreHttpUrlHttpsRepositoryInoltroBuste==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.repository");
@@ -14531,33 +14613,36 @@ public class OpenSPCoop2Properties {
 					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
-				this.getConnettoreHttp_urlHttps_repository_inoltroBuste = new File(name);
-				if(this.getConnettoreHttp_urlHttps_repository_inoltroBuste.exists()) {
-					if(this.getConnettoreHttp_urlHttps_repository_inoltroBuste.isDirectory()==false) {
-						throw newCoreExceptionNotDir(this.getConnettoreHttp_urlHttps_repository_inoltroBuste,true);
-					}
-					if(this.getConnettoreHttp_urlHttps_repository_inoltroBuste.canRead()==false) {
-						throw newCoreExceptionCannotRead(this.getConnettoreHttp_urlHttps_repository_inoltroBuste,true);
-					}
-					if(this.getConnettoreHttp_urlHttps_repository_inoltroBuste.canWrite()==false) {
-						throw newCoreExceptionCannotWrite(this.getConnettoreHttp_urlHttps_repository_inoltroBuste,true);
-					}
-				}
-				else {
-					// viene creata automaticamente
-				}
+				this.getConnettoreHttpUrlHttpsRepositoryInoltroBuste = new File(name);
+				checkConnettoreHttpUrlHttpsRepositoryInoltroBuste();
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.repository': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
 
-		return this.getConnettoreHttp_urlHttps_repository_inoltroBuste;
+		return this.getConnettoreHttpUrlHttpsRepositoryInoltroBuste;
+	}
+	private void checkConnettoreHttpUrlHttpsRepositoryInoltroBuste() throws CoreException {	
+		if(this.getConnettoreHttpUrlHttpsRepositoryInoltroBuste.exists()) {
+			if(!this.getConnettoreHttpUrlHttpsRepositoryInoltroBuste.isDirectory()) {
+				throw newCoreExceptionNotDir(this.getConnettoreHttpUrlHttpsRepositoryInoltroBuste,true);
+			}
+			if(!this.getConnettoreHttpUrlHttpsRepositoryInoltroBuste.canRead()) {
+				throw newCoreExceptionCannotRead(this.getConnettoreHttpUrlHttpsRepositoryInoltroBuste,true);
+			}
+			if(!this.getConnettoreHttpUrlHttpsRepositoryInoltroBuste.canWrite()) {
+				throw newCoreExceptionCannotWrite(this.getConnettoreHttpUrlHttpsRepositoryInoltroBuste,true);
+			}
+		}
+		else {
+			// viene creata automaticamente
+		}
 	}
 	
-	private File getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi = null;
-	public File getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi() throws CoreException {	
-		if(this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi==null){
+	private File getConnettoreHttpUrlHttpsRepositoryConsegnaContenutiApplicativi = null;
+	public File getConnettoreHttpUrlHttpsRepositoryConsegnaContenutiApplicativi() throws CoreException {	
+		if(this.getConnettoreHttpUrlHttpsRepositoryConsegnaContenutiApplicativi==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.repository");
@@ -14565,72 +14650,75 @@ public class OpenSPCoop2Properties {
 					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
-				this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi = new File(name);
-				if(this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.exists()) {
-					if(this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.isDirectory()==false) {
-						throw newCoreExceptionNotDir(this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi,true);
-					}
-					if(this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.canRead()==false) {
-						throw newCoreExceptionCannotRead(this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi,true);
-					}
-					if(this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi.canWrite()==false) {
-						throw newCoreExceptionCannotWrite(this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi,true);
-					}
-				}
-				else {
-					// viene creata automaticamente
-				}
+				this.getConnettoreHttpUrlHttpsRepositoryConsegnaContenutiApplicativi = new File(name);
+				checkConnettoreHttpUrlHttpsRepositoryConsegnaContenutiApplicativi();
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.repository': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
 
-		return this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi;
+		return this.getConnettoreHttpUrlHttpsRepositoryConsegnaContenutiApplicativi;
+	}
+	private void checkConnettoreHttpUrlHttpsRepositoryConsegnaContenutiApplicativi() throws CoreException {	
+		if(this.getConnettoreHttpUrlHttpsRepositoryConsegnaContenutiApplicativi.exists()) {
+			if(!this.getConnettoreHttpUrlHttpsRepositoryConsegnaContenutiApplicativi.isDirectory()) {
+				throw newCoreExceptionNotDir(this.getConnettoreHttpUrlHttpsRepositoryConsegnaContenutiApplicativi,true);
+			}
+			if(!this.getConnettoreHttpUrlHttpsRepositoryConsegnaContenutiApplicativi.canRead()) {
+				throw newCoreExceptionCannotRead(this.getConnettoreHttpUrlHttpsRepositoryConsegnaContenutiApplicativi,true);
+			}
+			if(!this.getConnettoreHttpUrlHttpsRepositoryConsegnaContenutiApplicativi.canWrite()) {
+				throw newCoreExceptionCannotWrite(this.getConnettoreHttpUrlHttpsRepositoryConsegnaContenutiApplicativi,true);
+			}
+		}
+		else {
+			// viene creata automaticamente
+		}
 	}
 	
-	private Boolean isConnettoreHttp_urlHttps_cacheEnabled = null;
-	public boolean isConnettoreHttp_urlHttps_cacheEnabled() {	
-		if(this.isConnettoreHttp_urlHttps_cacheEnabled==null){
+	private Boolean isConnettoreHttpUrlHttpsCacheEnabled = null;
+	public boolean isConnettoreHttpUrlHttpsCacheEnabled() {	
+		if(this.isConnettoreHttpUrlHttpsCacheEnabled==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.http.urlHttps.cache.enabled");
 				if(name!=null){
 					name = name.trim();
-					this.isConnettoreHttp_urlHttps_cacheEnabled = Boolean.parseBoolean(name);
+					this.isConnettoreHttpUrlHttpsCacheEnabled = Boolean.parseBoolean(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.http.urlHttps.cache.enabled' non impostata, viene utilizzato il default="+true);
-					this.isConnettoreHttp_urlHttps_cacheEnabled = true;
+					this.isConnettoreHttpUrlHttpsCacheEnabled = true;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.http.urlHttps.cache.enabled' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
-				this.isConnettoreHttp_urlHttps_cacheEnabled = true;
+				this.isConnettoreHttpUrlHttpsCacheEnabled = true;
 			}  
 		}
 
-		return this.isConnettoreHttp_urlHttps_cacheEnabled;
+		return this.isConnettoreHttpUrlHttpsCacheEnabled;
 	}
 	
-	private Integer getConnettoreHttp_urlHttps_cacheSize = null;
-	public int getConnettoreHttp_urlHttps_cacheSize() {	
-		if(this.getConnettoreHttp_urlHttps_cacheSize==null){
+	private Integer getConnettoreHttpUrlHttpsCacheSize = null;
+	public int getConnettoreHttpUrlHttpsCacheSize() {	
+		if(this.getConnettoreHttpUrlHttpsCacheSize==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.http.urlHttps.cache.size");
 				if(name!=null){
 					name = name.trim();
-					this.getConnettoreHttp_urlHttps_cacheSize = java.lang.Integer.parseInt(name);
+					this.getConnettoreHttpUrlHttpsCacheSize = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.http.urlHttps.cache.size' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_HTTP_URL_HTTPS_CACHE_SIZE);
-					this.getConnettoreHttp_urlHttps_cacheSize = CostantiPdD.CONNETTORE_HTTP_URL_HTTPS_CACHE_SIZE;
+					this.getConnettoreHttpUrlHttpsCacheSize = CostantiPdD.CONNETTORE_HTTP_URL_HTTPS_CACHE_SIZE;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.http.urlHttps.cache.size' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_HTTP_URL_HTTPS_CACHE_SIZE+", errore:"+e.getMessage(),e);
-				this.getConnettoreHttp_urlHttps_cacheSize = CostantiPdD.CONNETTORE_HTTP_URL_HTTPS_CACHE_SIZE;
+				this.getConnettoreHttpUrlHttpsCacheSize = CostantiPdD.CONNETTORE_HTTP_URL_HTTPS_CACHE_SIZE;
 			}  
 		}
 
-		return this.getConnettoreHttp_urlHttps_cacheSize;
+		return this.getConnettoreHttpUrlHttpsCacheSize;
 	}
 	
 	

@@ -778,6 +778,8 @@ public final class CostantiDB {
     
     public static final String CONNETTORE_HTTP_REDIRECT_FOLLOW = CostantiConnettori.CONNETTORE_HTTP_REDIRECT_FOLLOW;
     public static final String CONNETTORE_HTTP_REDIRECT_MAX_HOP = CostantiConnettori.CONNETTORE_HTTP_REDIRECT_MAX_HOP;
+    
+    public static final String CONNETTORE_HTTP_IMPL = CostantiConnettori.CONNETTORE_HTTP_IMPL;
         
     public static final String CONNETTORE_APIKEY_HEADER = CostantiConnettori.CONNETTORE_APIKEY_HEADER;
     public static final String CONNETTORE_APIKEY = CostantiConnettori.CONNETTORE_APIKEY;

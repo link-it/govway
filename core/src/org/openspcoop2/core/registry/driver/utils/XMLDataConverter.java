@@ -548,7 +548,7 @@ public class XMLDataConverter {
 		}
 		FileInputStream fXML = null;
 		try{
-			if(sorgente.startsWith("http://") || sorgente.startsWith("file://")){
+			if(sorgente.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || sorgente.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 				validatoreRegistro.valida(sorgente);  
 			}else{
 				fXML = new FileInputStream(sorgente);
@@ -569,7 +569,7 @@ public class XMLDataConverter {
 		try{
 			InputStream iStream = null;
 			HttpURLConnection httpConn = null;
-			if(sorgente.startsWith("http://") || sorgente.startsWith("file://")){
+			if(sorgente.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || sorgente.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 				try{ 
 					URL url = new URI(sorgente).toURL();
 					URLConnection connection = url.openConnection();
@@ -1208,7 +1208,7 @@ public class XMLDataConverter {
 	private byte [] gestioneBytesDocumenti_Wsdl_Wsbl(String documento) throws Exception{
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		if(documento!=null && (documento.equals("http://undefined")==false) ){
-			if(documento.startsWith("http://") || documento.startsWith("file://")){
+			if(documento.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || documento.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 				byte[] file = HttpUtilities.requestHTTPFile(documento);
 				if(file==null)
 					throw new Exception("byte[] is null");
@@ -1364,7 +1364,7 @@ public class XMLDataConverter {
 		
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		try{
-			if(fileName.startsWith("http://") || fileName.startsWith("file://")){
+			if(fileName.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || fileName.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 				byte[] file = HttpUtilities.requestHTTPFile(fileName);
 				if(file==null)
 					throw new Exception("byte[] is null");
@@ -1434,7 +1434,7 @@ public class XMLDataConverter {
 	
 	private String getNomeFile(String fileName){
 		String name = null;
-		if(fileName.startsWith("http://")){
+		if(fileName.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX)){
 			int index = fileName.lastIndexOf("/");
 			name = fileName.substring(index+1, fileName.length());
 		}

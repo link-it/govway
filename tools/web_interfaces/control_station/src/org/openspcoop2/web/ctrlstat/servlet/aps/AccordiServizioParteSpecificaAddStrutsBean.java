@@ -131,6 +131,7 @@ public class AccordiServizioParteSpecificaAddStrutsBean {
 	protected String transferModeChunkSize;
 	protected String redirectMode;
 	protected String redirectMaxHop;
+	protected String httpImpl;
 	protected String opzioniAvanzate;
 
 	// file

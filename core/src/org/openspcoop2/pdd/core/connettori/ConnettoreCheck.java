@@ -589,7 +589,7 @@ public class ConnettoreCheck {
 		if(httpProxyHost!=null) {
 			connettore = new Connettore();
 			
-			String url = "http://"+httpProxyHost+":"+(httpProxyPort!=null ? httpProxyPort : 80+"");
+			String url = org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX+httpProxyHost+":"+(httpProxyPort!=null ? httpProxyPort : 80+"");
 			addProperty(connettore, CostantiConnettori.CONNETTORE_LOCATION, url);
 			
 			/*
@@ -610,7 +610,7 @@ public class ConnettoreCheck {
 			if(httpsProxyHost!=null) {
 				connettore = new Connettore();
 				
-				String url = "http://"+httpsProxyHost+":"+(httpsProxyPort!=null ? httpsProxyPort : 80+"");
+				String url = org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX+httpsProxyHost+":"+(httpsProxyPort!=null ? httpsProxyPort : 80+"");
 				addProperty(connettore, CostantiConnettori.CONNETTORE_LOCATION, url);
 				
 				/*

@@ -88,18 +88,18 @@ public class ConnettoreUtilities {
 				datiTempiRisposta.setConnectionTimeout(configurazioneGenerale.getTempiRispostaFruizione().getConnectionTimeout());
 			}
 			else {
-				datiTempiRisposta.setConnectionTimeout(properties.getConnectionTimeout_inoltroBuste());
+				datiTempiRisposta.setConnectionTimeout(properties.getConnectionTimeoutInoltroBuste());
 			}
 			if(configurazioneGenerale.getTempiRispostaFruizione().getReadTimeout()!=null) {
 				datiTempiRisposta.setReadConnectionTimeout(configurazioneGenerale.getTempiRispostaFruizione().getReadTimeout());
 			}
 			else {
-				datiTempiRisposta.setReadConnectionTimeout(properties.getReadConnectionTimeout_inoltroBuste());
+				datiTempiRisposta.setReadConnectionTimeout(properties.getReadConnectionTimeoutInoltroBuste());
 			}
 		}
 		else {
-			datiTempiRisposta.setConnectionTimeout(properties.getConnectionTimeout_inoltroBuste());
-			datiTempiRisposta.setReadConnectionTimeout(properties.getReadConnectionTimeout_inoltroBuste());
+			datiTempiRisposta.setConnectionTimeout(properties.getConnectionTimeoutInoltroBuste());
+			datiTempiRisposta.setReadConnectionTimeout(properties.getReadConnectionTimeoutInoltroBuste());
 		}
 		return datiTempiRisposta;
 	}
@@ -110,18 +110,18 @@ public class ConnettoreUtilities {
 				datiTempiRisposta.setConnectionTimeout(configurazioneGenerale.getTempiRispostaErogazione().getConnectionTimeout());
 			}
 			else {
-				datiTempiRisposta.setConnectionTimeout(properties.getConnectionTimeout_consegnaContenutiApplicativi());
+				datiTempiRisposta.setConnectionTimeout(properties.getConnectionTimeoutConsegnaContenutiApplicativi());
 			}
 			if(configurazioneGenerale.getTempiRispostaErogazione().getReadTimeout()!=null) {
 				datiTempiRisposta.setReadConnectionTimeout(configurazioneGenerale.getTempiRispostaErogazione().getReadTimeout());
 			}
 			else {
-				datiTempiRisposta.setReadConnectionTimeout(properties.getReadConnectionTimeout_consegnaContenutiApplicativi());
+				datiTempiRisposta.setReadConnectionTimeout(properties.getReadConnectionTimeoutConsegnaContenutiApplicativi());
 			}
 		}
 		else {
-			datiTempiRisposta.setConnectionTimeout(properties.getConnectionTimeout_consegnaContenutiApplicativi());
-			datiTempiRisposta.setReadConnectionTimeout(properties.getReadConnectionTimeout_consegnaContenutiApplicativi());
+			datiTempiRisposta.setConnectionTimeout(properties.getConnectionTimeoutConsegnaContenutiApplicativi());
+			datiTempiRisposta.setReadConnectionTimeout(properties.getReadConnectionTimeoutConsegnaContenutiApplicativi());
 		}
 		return datiTempiRisposta;
 	}

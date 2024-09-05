@@ -1516,7 +1516,7 @@ public class PorteApplicativeCostanti {
 	public static final String MESSAGGIO_ERRORE_NON_E_POSSIBILE_MODIFICARE_IL_TIPO_DI_AUTENTICAZIONE_DA_XX_A_YY_POICHE_RISULTANO_ASSOCIATI_AL_SERVIZIO_DEI_FRUITORI_CON_CREDENZIALI_NON_COMPATIBILI_NELLA_MODALITA_DI_ACCESSO_CON_IL_NUOVO_TIPO_DI_AUTENTICAZIONE = "Non &egrave; possibile modificare il tipo di autenticazione da [{0}] a [{1}], poichè risultano associati al servizio dei fruitori con credenziali non compatibili, nella modalit&agrave; di accesso, con il nuovo tipo di autenticazione";
 	public static final String MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_L_AUTORIZZAZIONE_XX = "Indicare un nome per l'autorizzazione ''{0}''";
 	public static final String MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_L_AUTENTICAZIONE_XX = "Indicare un nome per l'autenticazione ''{0}''";
-	public static final String MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO = "Non inserire spazi nei campi di testo";
+	public static final String MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO = CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO;
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_PATTERN_AZIONE = "Dati incompleti. &Egrave; necessario indicare: Pattern azione";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATA_TROVATA_NESSUNA_AZIONE_ASSOCIATA_AL_SERVIZIO_SCEGLIERE_UNA_DELLE_ALTRE_MODALITA = "Dati incompleti. Non &egrave; stata trovata nessuna azione associata al servizio. Scegliere una delle altre modalit&agrave;";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATA_TROVATA_NESSUNA_MODALITA_AZIONE = "Dati incompleti. Non &egrave; stata trovata nessuna Modalit&agrave; Azione";

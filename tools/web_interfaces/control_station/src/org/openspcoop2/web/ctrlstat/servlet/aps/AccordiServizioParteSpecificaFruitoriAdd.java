@@ -224,7 +224,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			strutsBean.transferModeChunkSize = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
 			strutsBean.redirectMode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
 			strutsBean.redirectMaxHop = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-			strutsBean.opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, strutsBean.transferMode, strutsBean.redirectMode);
+			strutsBean.httpImpl = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_HTTP_IMPL);
+			strutsBean.opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, strutsBean.transferMode, strutsBean.redirectMode, strutsBean.httpImpl);
 
 			// http
 			strutsBean.url = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL  );
@@ -798,7 +799,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								isConnettoreCustomUltimaImmagineSalvata, 
 								strutsBean.proxyEnabled, strutsBean.proxyHostname, strutsBean.proxyPort, strutsBean.proxyUsername, strutsBean.proxyPassword,
 								strutsBean.tempiRispostaEnabled, strutsBean.tempiRispostaConnectionTimeout, strutsBean.tempiRispostaReadTimeout, strutsBean.tempiRispostaTempoMedioRisposta,
-								strutsBean.opzioniAvanzate, strutsBean.transferMode, strutsBean.transferModeChunkSize, strutsBean.redirectMode, strutsBean.redirectMaxHop,
+								strutsBean.opzioniAvanzate, strutsBean.transferMode, strutsBean.transferModeChunkSize, strutsBean.redirectMode, strutsBean.redirectMaxHop, strutsBean.httpImpl,
 								strutsBean.requestOutputFileName, strutsBean.requestOutputFileNamePermissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeadersPermissions,
 								strutsBean.requestOutputParentDirCreateIfNotExists,strutsBean.requestOutputOverwriteIfExists,
 								strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,
@@ -841,7 +842,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					strutsBean.tipoconn,strutsBean.validazioneDocumenti,null,strutsBean.autenticazioneHttp,
 					strutsBean.proxyEnabled, strutsBean.proxyHostname, strutsBean.proxyPort, strutsBean.proxyUsername, strutsBean.proxyPassword,
 					strutsBean.tempiRispostaEnabled, strutsBean.tempiRispostaConnectionTimeout, strutsBean.tempiRispostaReadTimeout, strutsBean.tempiRispostaTempoMedioRisposta,
-					strutsBean.opzioniAvanzate, strutsBean.transferMode, strutsBean.transferModeChunkSize, strutsBean.redirectMode, strutsBean.redirectMaxHop,
+					strutsBean.opzioniAvanzate, strutsBean.transferMode, strutsBean.transferModeChunkSize, strutsBean.redirectMode, strutsBean.redirectMaxHop, strutsBean.httpImpl,
 					strutsBean.requestOutputFileName, strutsBean.requestOutputFileNamePermissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeadersPermissions,
 					strutsBean.requestOutputParentDirCreateIfNotExists,strutsBean.requestOutputOverwriteIfExists,
 					strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,
@@ -949,7 +950,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							isConnettoreCustomUltimaImmagineSalvata, 
 							strutsBean.proxyEnabled, strutsBean.proxyHostname, strutsBean.proxyPort, strutsBean.proxyUsername, strutsBean.proxyPassword,
 							strutsBean.tempiRispostaEnabled, strutsBean.tempiRispostaConnectionTimeout, strutsBean.tempiRispostaReadTimeout, strutsBean.tempiRispostaTempoMedioRisposta,
-							strutsBean.opzioniAvanzate, strutsBean.transferMode, strutsBean.transferModeChunkSize, strutsBean.redirectMode, strutsBean.redirectMaxHop,
+							strutsBean.opzioniAvanzate, strutsBean.transferMode, strutsBean.transferModeChunkSize, strutsBean.redirectMode, strutsBean.redirectMaxHop, strutsBean.httpImpl,
 							strutsBean.requestOutputFileName, strutsBean.requestOutputFileNamePermissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeadersPermissions,
 							strutsBean.requestOutputParentDirCreateIfNotExists,strutsBean.requestOutputOverwriteIfExists,
 							strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,
@@ -1003,7 +1004,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						strutsBean.httpsKeyAlias, strutsBean.httpsTrustStoreCRLs, strutsBean.httpsTrustStoreOCSPPolicy, strutsBean.httpsKeyStoreBYOKPolicy,
 						strutsBean.proxyEnabled, strutsBean.proxyHostname, strutsBean.proxyPort, strutsBean.proxyUsername, strutsBean.proxyPassword,
 						strutsBean.tempiRispostaEnabled, strutsBean.tempiRispostaConnectionTimeout, strutsBean.tempiRispostaReadTimeout, strutsBean.tempiRispostaTempoMedioRisposta,
-						strutsBean.opzioniAvanzate, strutsBean.transferMode, strutsBean.transferModeChunkSize, strutsBean.redirectMode, strutsBean.redirectMaxHop,
+						strutsBean.opzioniAvanzate, strutsBean.transferMode, strutsBean.transferModeChunkSize, strutsBean.redirectMode, strutsBean.redirectMaxHop, strutsBean.httpImpl,
 						strutsBean.requestOutputFileName, strutsBean.requestOutputFileNamePermissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeadersPermissions,
 						strutsBean.requestOutputParentDirCreateIfNotExists,strutsBean.requestOutputOverwriteIfExists,
 						strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,
@@ -1114,7 +1115,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								isConnettoreCustomUltimaImmagineSalvata, 
 								strutsBean.proxyEnabled, strutsBean.proxyHostname, strutsBean.proxyPort, strutsBean.proxyUsername, strutsBean.proxyPassword,
 								strutsBean.tempiRispostaEnabled, strutsBean.tempiRispostaConnectionTimeout, strutsBean.tempiRispostaReadTimeout, strutsBean.tempiRispostaTempoMedioRisposta,
-								strutsBean.opzioniAvanzate, strutsBean.transferMode, strutsBean.transferModeChunkSize, strutsBean.redirectMode, strutsBean.redirectMaxHop,
+								strutsBean.opzioniAvanzate, strutsBean.transferMode, strutsBean.transferModeChunkSize, strutsBean.redirectMode, strutsBean.redirectMaxHop, strutsBean.httpImpl,
 								strutsBean.requestOutputFileName, strutsBean.requestOutputFileNamePermissions, strutsBean.requestOutputFileNameHeaders, strutsBean.requestOutputFileNameHeadersPermissions,
 								strutsBean.requestOutputParentDirCreateIfNotExists,strutsBean.requestOutputOverwriteIfExists,
 								strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,

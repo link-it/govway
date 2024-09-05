@@ -56,6 +56,7 @@ CREATE TABLE connettori
 	api_key_header VARCHAR(255),
 	app_id VARCHAR(max),
 	app_id_header VARCHAR(255),
+	http_impl VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints

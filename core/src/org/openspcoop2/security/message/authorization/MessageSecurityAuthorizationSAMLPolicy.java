@@ -197,7 +197,7 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 			String nomeServizio = busta.getServizio();
 			String azione = busta.getAzione() != null ? busta.getAzione() : "";
 	
-			String servizioKey = "http://"+tipoSoggettoErogatore+nomeSoggettoErogatore+".openspcoop2.org/servizi/"+tipoServizio+nomeServizio;
+			String servizioKey = org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX+tipoSoggettoErogatore+nomeSoggettoErogatore+".openspcoop2.org/servizi/"+tipoServizio+nomeServizio;
 			String azioneKey = servizioKey+"/" + azione;
 			
 	    	if(pdpLocal){
@@ -213,7 +213,7 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 									policy = d.getByteContenuto();	
 								}
 								else if(d.getFile()!=null){
-									if(d.getFile().startsWith("http://") || d.getFile().startsWith("file://")){
+									if(d.getFile().startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || d.getFile().startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 										URL url = new URI(d.getFile()).toURL();
 										policy = HttpUtilities.requestHTTPFile(url.toString());
 									}

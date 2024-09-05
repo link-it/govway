@@ -185,7 +185,7 @@ public class RicezioneBusteService  {
 				}
 				if(openSPCoopProperties.isConnettoriUseTimeoutInputStream()) {
 					SogliaReadTimeout soglia = new SogliaReadTimeout();
-					soglia.setSogliaMs(openSPCoopProperties.getReadConnectionTimeout_ricezioneBuste());
+					soglia.setSogliaMs(openSPCoopProperties.getReadConnectionTimeoutRicezioneBuste());
 					soglia.setConfigurazioneGlobale(true);
 					soglia.setIdConfigurazione("GovWayCore");
 					req.setRequestReadTimeout(soglia);

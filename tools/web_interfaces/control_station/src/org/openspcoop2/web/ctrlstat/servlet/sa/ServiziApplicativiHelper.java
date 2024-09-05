@@ -182,13 +182,13 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					 * "Conferma password"; } else { tmpElenco = tmpElenco + ", Conferma
 					 * password"; } }
 					 */
-					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PREFISSO_DATI_INCOMPLETI_NECESSARIO_INDICARE + tmpElenco);
 					return false;
 				}
 	
 				// Controllo che non ci siano spazi nei campi di testo
 				if (tipoauth.equals(CostantiConfigurazione.CREDENZIALE_BASIC.toString()) && ((utente.indexOf(" ") != -1) || (password.indexOf(" ") != -1))) {
-					this.pd.setMessage("Non inserire spazi nei campi di testo");
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 					return false;
 				}
 	
@@ -235,7 +235,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						return false;
 					}
 					if (((getmsgUsername.indexOf(" ") != -1) || (validaPassword && getmsgPassword.indexOf(" ") != -1))) {
-						this.pd.setMessage("Non inserire spazi nei campi di testo");
+						this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 						return false;
 					}
 					
@@ -348,7 +348,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			Boolean isConnettoreCustomUltimaImmagineSalvata,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRispostaEnabled, String tempiRispostaConnectionTimeout, String tempiRispostaReadTimeout, String tempiRispostaTempoMedioRisposta,
-			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop,
+			String opzioniAvanzate, String transferMode, String transferModeChunkSize, String redirectMode, String redirectMaxHop, String httpImpl,
 			String requestOutputFileName, String requestOutputFileNamePermissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeadersPermissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
@@ -1473,7 +1473,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					isConnettoreCustomUltimaImmagineSalvata, 
 					proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
 					tempiRispostaEnabled, tempiRispostaConnectionTimeout, tempiRispostaReadTimeout, tempiRispostaTempoMedioRisposta,
-					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop,
+					opzioniAvanzate, transferMode, transferModeChunkSize, redirectMode, redirectMaxHop, httpImpl,
 					requestOutputFileName, requestOutputFileNamePermissions, requestOutputFileNameHeaders, requestOutputFileNameHeadersPermissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -1565,7 +1565,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						tmpElenco = tmpElenco + ", "+ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER;
 					}
 				}
-				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PREFISSO_DATI_INCOMPLETI_NECESSARIO_INDICARE + tmpElenco);
 				return false;
 			}
 			
@@ -1591,11 +1591,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 			
 /**			if (tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_BASIC) && ((utente.indexOf(" ") != -1) || (password.indexOf(" ") != -1))) {
-//				this.pd.setMessage("Non inserire spazi nei campi di testo");
+//				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 //				return false;
 //			}*/
 			/**if (tipoauth.equals("ssl") && (subject.indexOf(" ") != -1)) {
-						this.pd.setMessage("Non inserire spazi nei campi di testo");
+						this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 						return false;
 					}*/
 

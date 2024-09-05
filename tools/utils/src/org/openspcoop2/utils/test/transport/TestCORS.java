@@ -72,7 +72,7 @@ public class TestCORS {
 	private static final String TEST_HTTPS_ORIGIN_2 = "https://www.govway2.org";
 	private static final String TEST_HTTPS_ORIGIN_PORT_DIFFERENT = "https://www.govway2.org:8443";
 	
-	private static final String TEST_FILE_ORIGIN = "file://";
+	private static final String TEST_FILE_ORIGIN = org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX;
 	private static final String TEST_NULL_ORIGIN = "null";
 	
 	private static final String TEST_INVALID_ORIGIN_1 = "http://www.w3.org\r\n"; 

@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.constants.ConnettoriHttpImpl;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TransferLengthModes;
@@ -179,6 +180,7 @@ public class ConnettoriCostanti {
 	public static final String PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE = "transfer_chunk_size";
 	public static final String PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE = "redirect_mode";
 	public static final String PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP = "redirect_max_hop";
+	public static final String PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_HTTP_IMPL = "http_impl";
 	
 	public static final String PARAMETRO_CONNETTORE_JMS_NOME_CODA = "nomeJms";
 	public static final String PARAMETRO_CONNETTORE_JMS_TIPO_CODA = "tipoJms";
@@ -312,10 +314,11 @@ public class ConnettoriCostanti {
 	public static final String LABEL_PARAMETRO_CONNETTORE_TEMPI_MILLISECONDI_NOTE = "Indicazione in millisecondi (ms)";
 	
 	public static final String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE = LABEL_CONNETTORE_OPZIONI_AVANZATE;
-	public static final String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE = "Modalità Data Transfer";
-	public static final String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE = "Chunk Length (Bytes)";
-	public static final String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE = "Gestione Redirect";
-	public static final String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP = "Max Numero di Redirect";
+	public static final String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE = CostantiLabel.LABEL_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE;
+	public static final String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE = CostantiLabel.LABEL_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE;
+	public static final String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE = CostantiLabel.LABEL_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE;
+	public static final String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP = CostantiLabel.LABEL_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP;
+	public static final String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_HTTP_IMPL = CostantiLabel.LABEL_CONNETTORE_OPZIONI_AVANZATE_HTTP_IMPL;
 	
 	public static final String LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY = CostantiLabel.LABEL_CONNETTORE_TOKEN_POLICY;
 	
@@ -534,11 +537,23 @@ public class ConnettoriCostanti {
 	public static final String[] TIPO_SEND_AS = { "TextMessage", "BytesMessage" };
 	
 	public static final String DEFAULT_TIPO_DATA_TRANSFER = "default"; 
-	public static final String[] TIPI_DATA_TRANSFER = { DEFAULT_TIPO_DATA_TRANSFER, TransferLengthModes.CONTENT_LENGTH.getNome() , TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome() };
-	
+	private static final String[] tipiDataTransfer = { DEFAULT_TIPO_DATA_TRANSFER, TransferLengthModes.CONTENT_LENGTH.getNome() , TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome() };
+	public static String[] getTipiDataTransfer() {
+		return tipiDataTransfer;
+	}
+
 	public static final String DEFAULT_GESTIONE_REDIRECT = "default"; 
-	public static final String[] TIPI_GESTIONE_REDIRECT = { DEFAULT_GESTIONE_REDIRECT, CostantiConfigurazione.ABILITATO.getValue() , CostantiConfigurazione.DISABILITATO.getValue() , };
-	
+	private static final String[] tipiGestioneRedirect = { DEFAULT_GESTIONE_REDIRECT, CostantiConfigurazione.ABILITATO.getValue() , CostantiConfigurazione.DISABILITATO.getValue() , };
+	public static String[] getTipiGestioneRedirect() {
+		return tipiGestioneRedirect;
+	}
+
+	public static final String DEFAULT_TIPO_HTTP_IMPL = "default"; 
+	private static final String[] tipiHttpImpl = { DEFAULT_TIPO_HTTP_IMPL, ConnettoriHttpImpl.HTTP_CORE5.getNome() , ConnettoriHttpImpl.HTTP_URL_CONNECTION.getNome() };
+	public static String[] getTipihttpimpl() {
+		return tipiHttpImpl;
+	}
+
 	public static final String DEFAULT_CONNETTORE_TYPE_CUSTOM = "custom";
 	
 	public static final  String[] TIPI_GESTIONE_RESPONSE_FILE = { CostantiConfigurazione.DISABILITATO.getValue(), CostantiConfigurazione.ABILITATO.getValue() };

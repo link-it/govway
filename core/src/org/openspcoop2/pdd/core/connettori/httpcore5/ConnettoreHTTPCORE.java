@@ -972,8 +972,13 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 		
 	
 	@Override
-	protected String _getTipoConnettore() {
-		return this.connettoreHttps ? ConnettoreHTTPSCORE.ENDPOINT_TYPE : ConnettoreHTTPCORE.ENDPOINT_TYPE;
+	protected String getTipoImplConnettore() {
+		if(this.tipoConnettore!=null && StringUtils.isNotEmpty(this.tipoConnettore)) {
+			return this.tipoConnettore;
+		}
+		else {
+			return this.connettoreHttps ? ConnettoreHTTPSCORE.ENDPOINT_TYPE : ConnettoreHTTPCORE.ENDPOINT_TYPE;
+		}
 	}
     
     @Override

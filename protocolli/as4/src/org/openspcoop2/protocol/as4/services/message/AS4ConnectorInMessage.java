@@ -162,7 +162,7 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 			//}
 			
 			if(this.openspcoopProperties!=null) {
-				this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStream_ricezioneBuste();
+				this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStreamRicezioneBuste();
 			}
 			
 			this.message.setTransportRequestContext(urlProtocolContext);
