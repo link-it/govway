@@ -2,7 +2,7 @@
 # metadata file that makes public software easily discoverable.
 # More info at https://github.com/italia/publiccode.yml
 
-publiccodeYmlVersion: '0.2'
+publiccodeYmlVersion: '0.4.0'
 applicationSuite: GovStar
 categories:
   - it-security
@@ -143,7 +143,7 @@ maintenance:
       name: Andrea Poli
   contractors:
     - name: Link.it
-      until: '2024-12-31'
+      until: '2027-12-31'
       website: 'https://www.link.it'
   type: community
 name: GovWay

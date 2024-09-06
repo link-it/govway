@@ -47,6 +47,9 @@ Per creare una tag version:
 13. Sistemare file publiccode.yml sia come ultima versione stabile che come eventuali nuove funzionalità.
     Non editare il file a mano, ma usare lo strumento: https://publiccode-editor.developers.italia.it/
     NOTA!!!!! Dentro il file publiccode.yml è presente anche una release date da aggiornare!!!!!!
+    
+13.1 Validare il file publiccode.yml con il seguente comando:
+    docker run -i italia/publiccode-parser-go /dev/stdin < publiccode.yml
 
 14. Verificare che con gli stresstest tramite benchmark si ottengano risultati simili o migliori della precedente versione.
     NOTA: farlo girare anche in locale per verificare che vi sia un tracciamento corretto (dati ricostruiti)
