@@ -1,3 +1,9 @@
+2024-09-06  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug
+	Nella distribuzione statistica a 3 dimensioni, personalizzata per esito, non venivano incluse le transazioni gestite con successo.
+
 2024-09-05  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloSDI]

@@ -10582,7 +10582,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				break;
 			}
 			case ESITO:{
-				filter.notEquals(model.ESITO, Costanti.INFORMAZIONE_VERSIONE_NON_DISPONIBILE);
+				filter.notEquals(model.ESITO, Costanti.INFORMAZIONE_ESITO_NON_DISPONIBILE);
 				filter.addGroupBy(model.ESITO);
 				break;
 			}
