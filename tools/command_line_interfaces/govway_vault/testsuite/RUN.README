@@ -8,12 +8,20 @@ Prerequisiti:
 
 - caricare lo script 'sql/init.sql' prima di far partire GovWay
 
-- Abilitare le seguenti proprietà nel file govway_local.properties 
+- abilitare le seguenti proprietà nel file govway_local.properties 
   
   # Indicazione se e' abilitata l'esposizione delle operazioni wrap/unwrap via risorse jmx
   org.openspcoop2.pdd.byok.jmx.wrap.enabled=true
   org.openspcoop2.pdd.byok.jmx.unwrap.enabled=true
 
+- configurare il file build/testsuite.properties con i puntamenti ai tool cli vault e loader, e al database
+
+- abilitare nel tool cli loader le seguenti proprietà nel file config_loader.cli.properties:
+
+  # Solamente se la seguente opzione viene abilitata, le eventuali policy globali (Token, Rate Limiting, Allarmi) presenti nell'archivio verranno importate
+  policy.enable=true
+  # Solamente se la seguente opzione viene abilitata, gli eventuali plugin (Classi, Archivi) presenti nell'archivio verranno importati
+  plugin.enable=true
 
 Per avviare i test utilizzare il comando: ant run_test
 

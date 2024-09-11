@@ -34,6 +34,8 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -54,6 +56,8 @@ public class DbUtils {
     private static final String AND_CONDITION=" AND ";
     private static final String SELECT_ID_FROM = "select id from ";
     private static final String WHERE = " WHERE ";
+    private static final String SELECT= "select ";
+    private static final String FROM= " from ";
     
     public final JdbcTemplate jdbc;
     
@@ -236,19 +240,22 @@ public class DbUtils {
     }
     
     public String getConnettoreCustomValue(String nomeConnettore, String nomeProprieta) throws UtilsException {
-    	long idConnettore = getColumnLongValue("id", CostantiDB.CONNETTORI, CostantiDB.CONNETTORI_COLUMN_NOME, nomeConnettore);
+    	Long l = getColumnLongValue("id", CostantiDB.CONNETTORI, CostantiDB.CONNETTORI_COLUMN_NOME, nomeConnettore);
+    	long idConnettore = (l!=null) ? l.longValue() : -1;
     	return getColumnValueById("value", CostantiDB.CONNETTORI_CUSTOM, CostantiDB.CONNETTORI_CUSTOM_COLUMN_ID_CONNETTORE, idConnettore,
     			"name", nomeProprieta);
     }
     public String getConnettoreCustomEncValue(String nomeConnettore, String nomeProprieta) throws UtilsException {
-    	long idConnettore = getColumnLongValue("id", CostantiDB.CONNETTORI, CostantiDB.CONNETTORI_COLUMN_NOME, nomeConnettore);
+    	Long l = getColumnLongValue("id", CostantiDB.CONNETTORI, CostantiDB.CONNETTORI_COLUMN_NOME, nomeConnettore);
+    	long idConnettore = (l!=null) ? l.longValue() : -1;
     	return getColumnValueById("enc_value", CostantiDB.CONNETTORI_CUSTOM, CostantiDB.CONNETTORI_CUSTOM_COLUMN_ID_CONNETTORE, idConnettore,
     			"name", nomeProprieta);
     }
     
     public String getNomeConnettoreByPortaApplicativa(String nomePortaDefault, String azione) throws UtilsException {
     	String nomeSA = getServizioApplicativoAssociatoPorta(nomePortaDefault, azione);
-    	long idConnettore = getColumnLongValue(CostantiDB.CONNETTORI_COLUMN_ID_CONNETTORE_INV, CostantiDB.SERVIZI_APPLICATIVI, "nome", nomeSA);
+    	Long l = getColumnLongValue(CostantiDB.CONNETTORI_COLUMN_ID_CONNETTORE_INV, CostantiDB.SERVIZI_APPLICATIVI, "nome", nomeSA);
+    	long idConnettore = (l!=null) ? l.longValue() : -1;
     	return getColumnValueById(CostantiDB.CONNETTORI_COLUMN_NOME, CostantiDB.CONNETTORI, "id", idConnettore);
     }
     
@@ -330,21 +337,24 @@ public class DbUtils {
     }
     
     public String getProtocolPropertyPropertyServizioStringValue(IDServizio idServizio, String propertyName) throws UtilsException {
-    	long idProprietario = getIdServizio(idServizio);
+    	Long l = getIdServizio(idServizio);
+    	long idProprietario = (l!=null) ? l.longValue() : -1;
     	return getColumnValueById(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING, CostantiDB.PROTOCOL_PROPERTIES, 
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO, idProprietario, 
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA.name(),
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME, propertyName);
     }
     public String getProtocolPropertyPropertyServizioStringEncValue(IDServizio idServizio, String propertyName) throws UtilsException {
-    	long idProprietario = getIdServizio(idServizio);
+    	Long l = getIdServizio(idServizio);
+    	long idProprietario = (l!=null) ? l.longValue() : -1;
     	return getColumnValueById(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_ENCODING_STRING, CostantiDB.PROTOCOL_PROPERTIES, 
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO, idProprietario, 
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA.name(),
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME, propertyName);
     }
     public byte[] getProtocolPropertyPropertyServizioBinaryValue(IDServizio idServizio, String propertyName) throws UtilsException {
-    	long idProprietario = getIdServizio(idServizio);
+    	Long l = getIdServizio(idServizio);
+    	long idProprietario = (l!=null) ? l.longValue() : -1;
     	return getColumnBinaryValueById(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_BINARY, CostantiDB.PROTOCOL_PROPERTIES, 
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO, idProprietario, 
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA.name(),
@@ -352,21 +362,24 @@ public class DbUtils {
     }
     
     public String getProtocolPropertyPropertyFruitoreStringValue(IDSoggetto fruitore, IDServizio idServizio, String propertyName) throws UtilsException {
-    	long idProprietario = getIdFruizione(fruitore, idServizio);
+    	Long l = getIdFruizione(fruitore, idServizio);
+    	long idProprietario = (l!=null) ? l.longValue() : -1;
     	return getColumnValueById(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING, CostantiDB.PROTOCOL_PROPERTIES, 
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO, idProprietario, 
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO, ProprietariProtocolProperty.FRUITORE.name(),
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME, propertyName);
     }
     public String getProtocolPropertyPropertyFruitoreStringEncValue(IDSoggetto fruitore, IDServizio idServizio, String propertyName) throws UtilsException {
-    	long idProprietario = getIdFruizione(fruitore, idServizio);
+    	Long l = getIdFruizione(fruitore, idServizio);
+    	long idProprietario = (l!=null) ? l.longValue() : -1;
     	return getColumnValueById(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_ENCODING_STRING, CostantiDB.PROTOCOL_PROPERTIES, 
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO, idProprietario, 
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO, ProprietariProtocolProperty.FRUITORE.name(),
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME, propertyName);
     }
     public byte[] getProtocolPropertyPropertyFruitoreBinaryValue(IDSoggetto fruitore, IDServizio idServizio, String propertyName) throws UtilsException {
-    	long idProprietario = getIdFruizione(fruitore, idServizio);
+    	Long l = getIdFruizione(fruitore, idServizio);
+    	long idProprietario = (l!=null) ? l.longValue() : -1;
     	return getColumnBinaryValueById(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_BINARY, CostantiDB.PROTOCOL_PROPERTIES, 
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO, idProprietario, 
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO, ProprietariProtocolProperty.FRUITORE.name(),
@@ -374,21 +387,24 @@ public class DbUtils {
     }
     
     public String getProtocolPropertyPropertyApplicativoStringValue(IDServizioApplicativo idServizioApplicativo, String propertyName) throws UtilsException {
-    	long idProprietario = getIdServizioApplicativo(idServizioApplicativo);
+    	Long l = getIdServizioApplicativo(idServizioApplicativo);
+    	long idProprietario = (l!=null) ? l.longValue() : -1;
     	return getColumnValueById(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING, CostantiDB.PROTOCOL_PROPERTIES, 
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO, idProprietario, 
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO.name(),
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME, propertyName);
     }
     public String getProtocolPropertyPropertyApplicativoStringEncValue(IDServizioApplicativo idServizioApplicativo, String propertyName) throws UtilsException {
-    	long idProprietario = getIdServizioApplicativo(idServizioApplicativo);
+    	Long l = getIdServizioApplicativo(idServizioApplicativo);
+    	long idProprietario = (l!=null) ? l.longValue() : -1;
     	return getColumnValueById(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_ENCODING_STRING, CostantiDB.PROTOCOL_PROPERTIES, 
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO, idProprietario, 
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO.name(),
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME, propertyName);
     }
     public byte[] getProtocolPropertyPropertyApplicativoBinaryValue(IDServizioApplicativo idServizioApplicativo, String propertyName) throws UtilsException {
-    	long idProprietario = getIdServizioApplicativo(idServizioApplicativo);
+    	Long l = getIdServizioApplicativo(idServizioApplicativo);
+    	long idProprietario = (l!=null) ? l.longValue() : -1;
     	return getColumnBinaryValueById(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_BINARY, CostantiDB.PROTOCOL_PROPERTIES, 
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_ID_PROPRIETARIO, idProprietario, 
     			CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO.name(),
@@ -417,7 +433,7 @@ public class DbUtils {
     }
     
     private List<String> getGenericPropertiesValue(String nomeColonna, String nomeProprieta, String tipo, String nome) throws UtilsException {
-    	String query = "select "+nomeColonna+" from "+CostantiDB.CONFIG_GENERIC_PROPERTY+" where "+
+    	String query = SELECT+nomeColonna+FROM+CostantiDB.CONFIG_GENERIC_PROPERTY+" where "+
     			"  ("+CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_NOME+"='"+nomeProprieta+"' OR "+CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_NOME+" LIKE '%"+nomeProprieta+"') "+
     			"AND "+CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_ID_PROPS+" in (select id from "+CostantiDB.CONFIG_GENERIC_PROPERTIES+" where tipo='"+tipo+"' AND nome='"+nome+"')";
     	logger.info(query);
@@ -491,7 +507,7 @@ public class DbUtils {
     	
     	String nomePorta = nomeAzione==null ? nomePortaDefault : getNomePorta(tabellaPadre, nomePortaDefault, nomeAzione);
     	
-    	String query = "select "+colonnaValue+" from "+tabella+" where "+
+    	String query = SELECT+colonnaValue+FROM+tabella+" where "+
     			"  ("+colonnaNome+"='"+nomeProprieta+"' OR "+colonnaNome+" LIKE '%"+nomeProprieta+"') "+
     			"AND id_porta in (select id from "+tabellaPadre+" where nome_porta='"+nomePorta+"')";
     	logger.info(query);
@@ -618,6 +634,10 @@ public class DbUtils {
     	if(oId instanceof Long) {
     		return (Long) oId;
     	}
+    	if(oId instanceof Integer) {
+    		// oracle
+    		return ((Integer) oId).longValue();
+    	}
     	if(oId==null) {
     		return null;
     	}
@@ -648,6 +668,10 @@ public class DbUtils {
     	if(oId instanceof Long) {
     		return (Long) oId;
     	}
+    	if(oId instanceof Integer) {
+    		// oracle
+    		return ((Integer) oId).longValue();
+    	}
     	if(oId==null) {
     		return null;
     	}
@@ -664,6 +688,10 @@ public class DbUtils {
     	if(oId instanceof Long) {
     		return (Long) oId;
     	}
+    	if(oId instanceof Integer) {
+    		// oracle
+    		return ((Integer) oId).longValue();
+    	}
     	if(oId==null) {
     		return null;
     	}
@@ -679,6 +707,10 @@ public class DbUtils {
     	if(oId instanceof Long) {
     		return (Long) oId;
     	}
+    	if(oId instanceof Integer) {
+    		// oracle
+    		return ((Integer) oId).longValue();
+    	}
     	if(oId==null) {
     		return null;
     	}
@@ -693,6 +725,10 @@ public class DbUtils {
     	if(oId instanceof Long) {
     		return (Long) oId;
     	}
+    	if(oId instanceof Integer) {
+    		// oracle
+    		return ((Integer) oId).longValue();
+    	}
     	if(oId==null) {
     		return null;
     	}
@@ -700,7 +736,7 @@ public class DbUtils {
     }
     
     private String getQueryBase(String colonna, String tabella, String colonnaId, Object colonnaIdValue) {
-    	String q = "select "+colonna+" from "+tabella+WHERE+colonnaId;
+    	String q = SELECT+colonna+FROM+tabella+WHERE+colonnaId;
     	if(colonnaIdValue instanceof String) {
     		q+="='"+colonnaIdValue+"'";
     	}
@@ -743,39 +779,48 @@ public class DbUtils {
     }
     
 
-    public void updateByokPolicyPorteMessageSecurity(String oldValue, String name,String securityPolicy) {
+    public void updateByokPolicyPorteMessageSecurity(String oldValue, String name,String securityPolicy) throws UtilsException {
     	updateByokPolicyPorteDelegateMessageSecurity(oldValue, name, securityPolicy);
     	updateByokPolicyPorteApplicativeMessageSecurity(oldValue, name, securityPolicy);
     }
-    public void updateByokPolicyPorteDelegateMessageSecurity(String oldValue, String name,String securityPolicy) {
+    public void updateByokPolicyPorteDelegateMessageSecurity(String oldValue, String name,String securityPolicy) throws UtilsException {
     	updateByokPolicy(oldValue, name, securityPolicy,
     			CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST, CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_COLUMN_VALORE, CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_COLUMN_NOME);
     	updateByokPolicy(oldValue, name, securityPolicy,
     			CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE, CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_COLUMN_VALORE, CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_COLUMN_NOME);
     }
-    public void updateByokPolicyPorteApplicativeMessageSecurity(String oldValue, String name,String securityPolicy) {
+    public void updateByokPolicyPorteApplicativeMessageSecurity(String oldValue, String name,String securityPolicy) throws UtilsException {
     	updateByokPolicy(oldValue, name, securityPolicy,
     			CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_COLUMN_NOME);
     	updateByokPolicy(oldValue, name, securityPolicy,
     			CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_VALORE, CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_NOME);
     }
-    public void updateByokPolicyConnettoriCustom(String oldValue, String name,String securityPolicy) {
+    public void updateByokPolicyConnettoriCustom(String oldValue, String name,String securityPolicy) throws UtilsException {
     	updateByokPolicy(oldValue, name, securityPolicy,
     			CostantiDB.CONNETTORI_CUSTOM, CostantiDB.CONNETTORI_CUSTOM_COLUMN_VALUE, CostantiDB.CONNETTORI_CUSTOM_COLUMN_NAME);
     }
-    public void updateByokPolicyGenericProperties(String oldValue, String name,String securityPolicy) {
+    public void updateByokPolicyGenericProperties(String oldValue, String name,String securityPolicy) throws UtilsException {
     	updateByokPolicy(oldValue, name, securityPolicy,
     			CostantiDB.CONFIG_GENERIC_PROPERTY, CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_VALORE, CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_NOME);
     }
-    public void updateByokPolicyProtocolProperties(String oldValue, String name,String securityPolicy) {
+    public void updateByokPolicyProtocolProperties(String oldValue, String name,String securityPolicy) throws UtilsException {
     	updateByokPolicy(oldValue, name, securityPolicy,
     			CostantiDB.PROTOCOL_PROPERTIES, CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING, CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME);
     }
     
     public void updateByokPolicy(String oldValue, String name,String securityPolicy,
-    		String table, String columnValue, String columnName) {
+    		String table, String columnValue, String columnName) throws UtilsException {
     	String update = "update "+table+" set "+columnValue+" = '"+securityPolicy+"' "+
-    			"WHERE "+columnName+"='"+name+"' AND "+columnValue+"='"+oldValue+"'";
+    			"WHERE "+columnName+"='"+name+"' AND ";
+    	/**update = update + columnValue+"='"+oldValue+"'";*/
+    	// campo clob, non gestito tramite condizione uguale su oracle
+    	try {
+    		ISQLQueryObject sqlQuery = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+    		update = update + sqlQuery.getWhereLikeCondition(columnValue, oldValue, true);
+    	}catch(Exception e) {
+    		throw new UtilsException(e.getMessage(),e);
+    	}
+    	
     	logger.info(update);
     	int r = this.update(update);
     	String m = "rows-updated:"+r;

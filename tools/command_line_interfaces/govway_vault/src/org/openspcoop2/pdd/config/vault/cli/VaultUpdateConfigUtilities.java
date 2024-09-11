@@ -42,6 +42,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.core.byok.DriverBYOK;
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
@@ -862,7 +863,10 @@ public class VaultUpdateConfigUtilities {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.CONNETTORI);
 			sqlQueryObject.addWhereIsNotNullCondition(nomeColonnaPlain);
-			sqlQueryObject.addWhereIsNotEmptyCondition(nomeColonnaPlain);
+			if(!TipiDatabase.ORACLE.equals(this.tipoDatabase)) {
+				// In oracle le stringhe vuote equivalgono a null
+				sqlQueryObject.addWhereIsNotEmptyCondition(nomeColonnaPlain);
+			}
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addOrderBy(CostantiDB.CONNETTORI_COLUMN_NOME);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
@@ -935,7 +939,10 @@ public class VaultUpdateConfigUtilities {
 			sqlQueryObject.addWhereCondition(CostantiDB.CONNETTORI+CONDITION_JOIN_ID+CostantiDB.CONNETTORI_CUSTOM+"."+CostantiDB.CONNETTORI_CUSTOM_COLUMN_ID_CONNETTORE);
 			sqlQueryObject.addWhereCondition(CostantiDB.CONNETTORI_CUSTOM+"."+CostantiDB.CONNETTORI_CUSTOM_COLUMN_NAME+"=?");
 			sqlQueryObject.addWhereIsNotNullCondition(CostantiDB.CONNETTORI_CUSTOM+"."+CostantiDB.CONNETTORI_CUSTOM_COLUMN_VALUE);
-			sqlQueryObject.addWhereIsNotEmptyCondition(CostantiDB.CONNETTORI_CUSTOM+"."+CostantiDB.CONNETTORI_CUSTOM_COLUMN_VALUE);
+			if(!TipiDatabase.ORACLE.equals(this.tipoDatabase)) {
+				// In oracle le stringhe vuote equivalgono a null
+				sqlQueryObject.addWhereIsNotEmptyCondition(CostantiDB.CONNETTORI_CUSTOM+"."+CostantiDB.CONNETTORI_CUSTOM_COLUMN_VALUE);
+			}
 			sqlQueryObject.addWhereCondition(true, true, CostantiDB.CONNETTORI_CUSTOM+"."+CostantiDB.CONNETTORI_CUSTOM_COLUMN_VALUE+"='"+CostantiDB.MODIPA_VALUE_UNDEFINED+"'"); // vale anche per security properties
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addOrderBy(CostantiDB.CONNETTORI_COLUMN_NOME);
@@ -1006,7 +1013,10 @@ public class VaultUpdateConfigUtilities {
 			sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, nomeColonnaCodificata, ALIAS_ENC_VALUE);
 			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
 			sqlQueryObject.addWhereIsNotNullCondition(nomeColonnaPlain);
-			sqlQueryObject.addWhereIsNotEmptyCondition(nomeColonnaPlain);
+			if(!TipiDatabase.ORACLE.equals(this.tipoDatabase)) {
+				// In oracle le stringhe vuote equivalgono a null
+				sqlQueryObject.addWhereIsNotEmptyCondition(nomeColonnaPlain);
+			}
 			sqlQueryObject.addOrderBy(aliasTipoSoggetto);
 			sqlQueryObject.addOrderBy(aliasNomeSoggetto);
 			sqlQueryObject.addOrderBy(aliasNomeSA);
@@ -1088,9 +1098,14 @@ public class VaultUpdateConfigUtilities {
 			sqlQueryObject.addWhereCondition(sqlQueryObjectOrName.createSQLConditions());
 
 			sqlQueryObject.addWhereIsNotNullCondition(nomeColonnaPlain);
-			sqlQueryObject.addWhereIsNotEmptyCondition(nomeColonnaPlain);
-			sqlQueryObject.addWhereCondition(true, true, tabella+"."+nomeColonnaPlain+"='"+CostantiDB.MODIPA_VALUE_UNDEFINED+"'"); // vale anche per security properties
-			
+			if(!TipiDatabase.ORACLE.equals(this.tipoDatabase)) {
+				// In oracle le stringhe vuote equivalgono a null
+				sqlQueryObject.addWhereIsNotEmptyCondition(nomeColonnaPlain);
+			}
+			// campo clob, non gestito tramite condizione uguale su oracle
+			/**sqlQueryObject.addWhereCondition(true, true, tabella+"."+nomeColonnaPlain+"='"+CostantiDB.MODIPA_VALUE_UNDEFINED+"'"); // vale anche per security properties*/
+			sqlQueryObject.addWhereCondition(true, true, sqlQueryObject.getWhereLikeCondition(tabella+"."+nomeColonnaPlain, CostantiDB.MODIPA_VALUE_UNDEFINED, true)); // vale anche per security properties
+						
 			sqlQueryObject.addOrderBy(aliasNomePorta);
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.setSelectDistinct(true);
@@ -1164,12 +1179,15 @@ public class VaultUpdateConfigUtilities {
 			sqlQueryObject.addWhereCondition(sqlQueryObjectOrName.createSQLConditions());
 			
 			sqlQueryObject.addWhereIsNotNullCondition(CostantiDB.CONFIG_GENERIC_PROPERTY+"."+CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_VALORE);
-			sqlQueryObject.addWhereIsNotEmptyCondition(CostantiDB.CONFIG_GENERIC_PROPERTY+"."+CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_VALORE);
+			if(!TipiDatabase.ORACLE.equals(this.tipoDatabase)) {
+				// In oracle le stringhe vuote equivalgono a null
+				sqlQueryObject.addWhereIsNotEmptyCondition(CostantiDB.CONFIG_GENERIC_PROPERTY+"."+CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_VALORE);
+			}
 			sqlQueryObject.addWhereCondition(true, true, CostantiDB.CONFIG_GENERIC_PROPERTY+"."+CostantiDB.CONFIG_GENERIC_PROPERTY_COLUMN_VALORE+"='"+CostantiDB.MODIPA_VALUE_UNDEFINED+"'"); // vale anche per generic properties
 			
 			sqlQueryObject.addOrderBy(aliasNomeConfig);
 			sqlQueryObject.setANDLogicOperator(true);
-			sqlQueryObject.setSelectDistinct(true);
+			/**sqlQueryObject.setSelectDistinct(true);*/ // Ritornando il field 'id' di CONFIG_GENERIC_PROPERTY il distinct non serve; lasciandolo si ottiene l'erore oracle: failed: ORA-00932: inconsistent datatypes: expected - got CLOB per via della colonna encValue ritornata  
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			stmRead = connectionSQL.prepareStatement(sqlQuery);
 			stmRead.setString(1, tipologia);
@@ -1222,7 +1240,10 @@ public class VaultUpdateConfigUtilities {
 			}
 			else {
 				sqlQueryObject.addWhereIsNotNullCondition(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING);
-				sqlQueryObject.addWhereIsNotEmptyCondition(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING);
+				if(!TipiDatabase.ORACLE.equals(this.tipoDatabase)) {
+					// In oracle le stringhe vuote equivalgono a null
+					sqlQueryObject.addWhereIsNotEmptyCondition(CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING);
+				}
 				sqlQueryObject.addWhereCondition(true, true, CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING+"='"+CostantiDB.MODIPA_VALUE_UNDEFINED+"'");
 			}
 			sqlQueryObject.setANDLogicOperator(true);
@@ -1426,7 +1447,10 @@ public class VaultUpdateConfigUtilities {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(tabella);
 			sqlQueryObject.addWhereIsNotNullCondition(nomeColonnaCodificata);
-			sqlQueryObject.addWhereIsNotEmptyCondition(nomeColonnaCodificata);
+			if(!TipiDatabase.ORACLE.equals(this.tipoDatabase)) {
+				// In oracle le stringhe vuote equivalgono a null
+				sqlQueryObject.addWhereIsNotEmptyCondition(nomeColonnaCodificata);
+			}
 			sqlQueryObject.addOrderBy(nomeColonna);
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();

@@ -1,13 +1,19 @@
+2024-09-11  Andrea Poli <apoli@link.it>
+
+	* [CliVault]
+	Risolto Bug #1522
+	Il tool command line 'govway-vault-cli' non funzionava su database oracle.
+
 2024-09-06  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor]
-	Risolto Bug
+	Risolto Bug #1520
 	Nella distribuzione statistica a 3 dimensioni, personalizzata per esito, non venivano incluse le transazioni gestite con successo.
 
 2024-09-05  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloSDI]
-	Risolto Bug
+	Risolto Bug #1521
 	(https://github.com/link-it/govway/issues/171)
 	Su Tomcat, durante la validazione di una richiesta di notifica di decorrenza termini, nei log diagnostici si manifestava la seguente anomalia:
 	"Eccezione INFO con codice [GOVWAY-5] - EccezioneValidazioneProtocollo: Traccia di una precedente fattura inviata, con identificativo SDI [xxx], non rilevata: Errore durante la ricerca del datasource..."
@@ -4386,7 +4392,7 @@
 
 2020-09-09  Andrea Poli <apoli@link.it>
 
-	* [GovWayCore, GovWayConsole, CommandLineLoader]
+	* [GovWayCore, GovWayConsole, CliConfigLoader]
 	Aggiunta funzionalità OP-1043
 	Realizzata una versione command-line del loader degli archivi zip esportabili tramite console.
 	Durante il lavoro sono stati risolti anche i seguenti problemi emersi, tutti relativi alla gestione delle proprietà binarie di un profilo di interoperabilità:

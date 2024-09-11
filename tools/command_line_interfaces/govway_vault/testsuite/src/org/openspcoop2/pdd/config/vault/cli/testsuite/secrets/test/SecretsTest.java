@@ -750,7 +750,7 @@ public class SecretsTest extends ConfigLoader {
 	
 	
 	@Test
-	public void step6aPulizia() throws UtilsException, HttpUtilsException, IOException {
+	public void step6aPulizia() throws UtilsException, IOException {
 			
 		logCoreInfo("@step6aPulizia");
 		
@@ -872,7 +872,7 @@ public class SecretsTest extends ConfigLoader {
 		}
 	}
 	
-	private void updateByokPolicy(String oldPolicy, String newPolicy) {
+	private void updateByokPolicy(String oldPolicy, String newPolicy) throws UtilsException {
 		
 		ConfigLoader.dbUtils.updateByokPolicyPorteMessageSecurity(oldPolicy, DECRYPTION_PROP_REF_ID+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiProprieta.RS_SECURITY_BYOK_POLICY, newPolicy);
 		ConfigLoader.dbUtils.updateByokPolicyPorteMessageSecurity(oldPolicy, ENCRYPTION_PROP_REF_ID+CostantiProprieta.KEY_PROPERTIES_CUSTOM_SEPARATOR+CostantiProprieta.RS_SECURITY_BYOK_POLICY, newPolicy);
@@ -2227,7 +2227,7 @@ public class SecretsTest extends ConfigLoader {
 		// binary
 		byte[] pkcs12 = ConfigLoader.dbUtils.getProtocolPropertyPropertyServizioBinaryValue(idServizio, CostantiDB.MODIPA_KEYSTORE_ARCHIVE);
 		String v = new String(pkcs12);
-		boolean expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+		boolean expected = v.startsWith(prefix) && v.length()>prefix.length();
 		assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+CostantiDB.MODIPA_KEYSTORE_ARCHIVE, v, prefix), 
 				expected);
 	}
@@ -2276,7 +2276,7 @@ public class SecretsTest extends ConfigLoader {
 		// binary
 		byte[] pkcs12 = ConfigLoader.dbUtils.getProtocolPropertyPropertyFruitoreBinaryValue(idFruitore, idServizio, CostantiDB.MODIPA_KEYSTORE_ARCHIVE);
 		String v = new String(pkcs12);
-		boolean expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+		boolean expected = v.startsWith(prefix) && v.length()>prefix.length();
 		assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+CostantiDB.MODIPA_KEYSTORE_ARCHIVE, v, prefix), 
 				expected);
 		
@@ -2342,7 +2342,7 @@ public class SecretsTest extends ConfigLoader {
 		// binary
 		byte[] pkcs12 = ConfigLoader.dbUtils.getProtocolPropertyPropertyApplicativoBinaryValue(idServizioApplicativo, CostantiDB.MODIPA_KEYSTORE_ARCHIVE);
 		String v = new String(pkcs12);
-		boolean expected = v!=null && v.startsWith(prefix) && v.length()>prefix.length();
+		boolean expected = v.startsWith(prefix) && v.length()>prefix.length();
 		assertTrue(getMessageExpectedStartsWith(prefissoServizio+PP_PREFIX+CostantiDB.MODIPA_KEYSTORE_ARCHIVE, v, prefix), 
 				expected);
 	}
