@@ -81,7 +81,8 @@ public class ConfigLoader {
             }
             
         }catch(Throwable t) {
-            throw new RuntimeException(t.getMessage(),t);
+        	t.printStackTrace(System.err);
+        	throw new RuntimeException(t.getMessage(),t);
         }
     }
     

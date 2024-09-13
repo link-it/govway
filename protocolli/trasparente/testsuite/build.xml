@@ -58,7 +58,6 @@
 	<path id="classpath_compile" >
 		<fileset dir="${openspcoop2_lib}" >
 			<include name="**/*.jar"/>
-			<exclude name="saajjakarta.xml.soap-api-3.0.2.jar"/> <!-- deve essere usata, con axis, l'interfaccia più vecchia presente in axis-saaj-1.4.jar -->
 		</fileset>
 		<fileset dir="deploy/lib" >
 			<include name="*.jar"/>
@@ -106,11 +105,8 @@
 		<fileset dir="${openspcoop2_lib}/ant" >
 			<include name="*.jar"/>
 		</fileset>
-		<fileset dir="${openspcoop2_lib}/testsuite" >
-			<include name="jcommander-1.82.jar"/>
-			<include name="testng-7.8.0.jar"/>
-			<include name="slf4j-testng-2.0.0.jar"/>
-			<include name="guice-5.1.0.jar"/>
+		<fileset dir="${openspcoop2_lib}/testsuite/testng" >
+			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/axis14" >
 			<include name="*.jar"/>
@@ -153,7 +149,6 @@
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/saaj">
 			<include name="*.jar"/>
-			<exclude name="jakarta.xml.soap-api-3.0.2.jar"/> <!-- deve essere usata, con axis, l'interfaccia più vecchia presente in axis-saaj-1.4.jar -->
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/jetty" >
 			<include name="*.jar"/>
@@ -185,13 +180,8 @@
 	</path>
 	
 	<!-- estensione per testNG -->
-	<taskdef resource="testngtasks" classpath="${openspcoop2_lib}/testsuite/testng-7.8.0.jar">
-		<classpath>
-			<fileset dir="${openspcoop2_lib}/log" >
-				<include name="*.jar"/>
-			</fileset>
-		</classpath>
-	</taskdef>
+	<taskdef classpathref="classpath_run"
+                 resource="testngtasks" classpath="${openspcoop2_lib}/testsuite/testng/testng-ant-1.0.0.jar"/>
 	
 	<!-- Ripulisce la distribuzione -->
 	<target name="clean_testunits">

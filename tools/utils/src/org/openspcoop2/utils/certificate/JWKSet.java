@@ -135,7 +135,7 @@ public class JWKSet {
 			try {
 				this.jwkSetCxf = this.engineCxf.jsonToJwkSet(this.jwkSetJson);
 			}catch(Exception e) {
-				/* Fix bug cxf che va in errore se il keystore è pretty print e la , tra una chiave e l'altra struttura json va a capo.
+				/** Fix bug cxf che va in errore se il keystore è pretty print e la , tra una chiave e l'altra struttura json va a capo.
 				 * Esempio:
 				 * {
 					  "keys" : [ 
@@ -154,10 +154,14 @@ public class JWKSet {
 					}
 					   ]
 					}
-				 *  Produce il seguente errore: "String index out of range: 0"
+				 *  Produce il seguente errore: "String index out of range: 0" (o da java 21 e nuove versioni un IndexOutOfBoundsException)
 				 * 
 				 **/
-				if(e.getMessage()!=null && e.getMessage().contains("String index out of range")) {
+				if(
+						(e.getMessage()!=null && e.getMessage().contains("String index out of range"))
+						|| 
+						(e instanceof IndexOutOfBoundsException)
+					) {
 					try {
 						JSONUtils jsonUtils = JSONUtils.getInstance();
 						JsonNode node = jsonUtils.getAsNode(this.jwkSetJson);

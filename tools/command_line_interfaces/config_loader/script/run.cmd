@@ -15,8 +15,10 @@ set BATCH_CONFIG=properties
 set BATCH_JDBC=jdbc
 
 set COMMAND="%JAVA_HOME%\bin\java"
+REM # per consentire il setEnv via govway.map.properties
+set JAVA_OPTS=%JAVA_OPTS% --add-opens=java.base/java.util=ALL-UNNAMED
 
-%COMMAND% -cp "%BATCH_CLASSPATH%/*";"%BATCH_CONFIG%";"%BATCH_JDBC%/*" org.openspcoop2.pdd.config.loader.cli.Loader TIPO_OPERAZIONE %*
+%COMMAND% %JAVA_OPTS% -cp "%BATCH_CLASSPATH%/*";"%BATCH_CONFIG%";"%BATCH_JDBC%/*" org.openspcoop2.pdd.config.loader.cli.Loader TIPO_OPERAZIONE %*
 
 
 goto end

@@ -14,13 +14,20 @@
 	</taskdef>
 
 	<path id="karate_testsuite" >
-		<fileset dir="${required_lib}/testsuite" >
-			<include name="hamcrest-core-1.3.jar"/>
-			<include name="junit-4.13.2.jar"/>
-			<include name="karate-*.jar"/>
-			<include name="picocli-4.2.0.jar"/>
-			<include name="logback-*.jar"/>
-			<include name="spring-jdbc-*.jar"/>
+		<fileset dir="${required_lib}/testsuite/karate09" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/testsuite/junit4" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/testsuite/logback" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/testsuite/httpcore4" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/testsuite/spring5" >
+			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${dir_jdbc}" >
 			<include name="*.jar"/>
@@ -28,16 +35,11 @@
 		<fileset dir="${required_lib}/commons" >
 			<include name="*.jar"/>
 		</fileset>
-		<fileset dir="${required_lib}/httpcore" >
-	  	    	<include name="*.jar"/>
-		</fileset>
 		<fileset dir="${required_lib}/log" >
 			<include name="*.jar"/>
+			<exclude name="log4j-slf4j2-impl-2.23.1.jar"/> <!-- per evitare errore SLF4J(W): Class path contains multiple SLF4J providers. (uso logback) -->
 		</fileset>
 		<fileset dir="${required_lib}/json" >
-			<include name="*.jar"/>
-		</fileset>
-		<fileset dir="${required_lib}/spring" >
 			<include name="*.jar"/>
 		</fileset>
                 <fileset dir="${required_lib}/shared" >
@@ -47,7 +49,14 @@
                 <fileset dir="${required_lib}/cxf" >
                         <include name="asm-9.7.jar"/>
                 </fileset>
-                <fileset dir="${openspcoop2.dist}" >
+	</path>
+	<path id="karate_testsuite_dist_govway_java11" >
+		<fileset dir="${openspcoop2.utils.dist_java11}" >
+                        <include name="*.jar"/>
+                </fileset>
+	</path>  
+	<path id="karate_testsuite_dist_govway" >
+		<fileset dir="${openspcoop2.dist}" >
                         <include name="*.jar"/>
                 </fileset>
 	</path> 
@@ -71,8 +80,10 @@
 		<!-- Compile the java code  -->
 		<javac includeantruntime="false" destdir="${build_testsuite}" debug="${debug}">
 			<src path="${src_testsuite}"/>
+			<exclude name="org/openspcoop2/core/protocolli/modipa/testsuite/handler/*"/>
 			<classpath>
 				<path refid="karate_testsuite"/>
+				<path refid="karate_testsuite_dist_govway_java11"/>
 			</classpath>
 		</javac>
 		<copy todir="${build_testsuite}">
@@ -80,6 +91,17 @@
 				<exclude name="**/*.java"/>
 			</fileset>
 		</copy>
+	</target>
+	<target name="build_plugin_handler" depends="clean,init" description="compila l'handler" > <!-- da compilare con java 21 -->
+		<!-- Compile the java code  -->
+		<javac includeantruntime="false" destdir="${build_testsuite}" debug="${debug}">
+			<src path="${src_testsuite}"/>
+			<include name="org/openspcoop2/core/protocolli/modipa/testsuite/handler/*"/>
+			<classpath>
+				<path refid="karate_testsuite"/>
+				<path refid="karate_testsuite_dist_govway"/>
+			</classpath>
+		</javac>
 		<jar jarfile="${dist_testsuite}/govway_modi_testsuite_handlers.jar">
 			<zipfileset dir="${build_testsuite}">
 				<include name="org/openspcoop2/core/protocolli/modipa/testsuite/handler/*"/>
@@ -89,24 +111,26 @@
 
 	<!-- Esecuzione dei test -->
 
-	<target name="delete_config">
+	<target name="delete_config"> <!-- da eseguire con java 21 -->
 		<echo message="Eliminazione configurazione in corso ..." />
 		<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
 			<arg value="false" />
 		        <classpath>
 		                <path refid="karate_testsuite" />
+				<path refid="karate_testsuite_dist_govway"/>
 		                <pathelement path="${build_testsuite}"/>
 		        </classpath>
 		</java>
 		<echo message="Eliminazione configurazione effettuata" />
 	</target>
 
-	<target name="load_config">
+	<target name="load_config"> <!-- da eseguire con java 21 -->
 		<echo message="Caricamento configurazione in corso (delete) ..." />
 		<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
 			<arg value="false" />
 		        <classpath>
 		                <path refid="karate_testsuite" />
+				<path refid="karate_testsuite_dist_govway"/>
 		                <pathelement path="${build_testsuite}"/>
 		        </classpath>
 		</java>
@@ -115,6 +139,7 @@
 			<arg value="true" />
 		        <classpath>
 		                <path refid="karate_testsuite" />
+				<path refid="karate_testsuite_dist_govway"/>
 		                <pathelement path="${build_testsuite}"/>
 		        </classpath>
 		</java>
@@ -148,11 +173,13 @@
 		<if>
 			<equals arg1="${loadEnabled}" arg2="true"/>
 			<then>
+				<!-- da eseguire con java 21 -->
 				<echo message="Caricamento configurazione in corso (delete) ..." />
 				<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
 					<arg value="false" />
 				        <classpath>
 				                <path refid="karate_testsuite" />
+						<path refid="karate_testsuite_dist_govway"/>
 				                <pathelement path="${build_testsuite}"/>
 				        </classpath>
 				</java>
@@ -161,6 +188,7 @@
 					<arg value="true" />
 				        <classpath>
 				                <path refid="karate_testsuite" />
+						<path refid="karate_testsuite_dist_govway"/>
 				                <pathelement path="${build_testsuite}"/>
 				        </classpath>
 				</java>
@@ -221,6 +249,7 @@
 							<jvmarg value="-Djdk.module.illegalAccess=permit"/>
 
 							<classpath refid="karate_testsuite" />
+							<classpath refid="karate_testsuite_dist_govway_java11"/>
 							<classpath location="${build_testsuite}" />
 
 							<formatter type="plain"/>			
@@ -253,6 +282,7 @@
 							<jvmarg value="-Djdk.module.illegalAccess=permit"/>
 
 							<classpath refid="karate_testsuite" />
+							<classpath refid="karate_testsuite_dist_govway_java11"/>
 							<classpath location="${build_testsuite}" />
 
 							<formatter type="plain"/>			
@@ -273,11 +303,13 @@
                 <if>
 			<equals arg1="${deleteEnabled}" arg2="true"/>
 			<then>
+				<!-- da eseguire con java 21 -->
 				<echo message="Eliminazione configurazione in corso ..." />
 				<java classname="org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader" fork="true">
 					<arg value="false" />
 				        <classpath>
 				                <path refid="karate_testsuite" />
+						<path refid="karate_testsuite_dist_govway"/>
 				                <pathelement path="${build_testsuite}"/>
 				        </classpath>
 				</java>

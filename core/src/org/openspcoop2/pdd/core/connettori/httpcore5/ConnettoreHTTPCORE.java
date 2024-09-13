@@ -42,6 +42,7 @@ import org.apache.hc.client5.http.classic.methods.HttpHead;
 import org.apache.hc.client5.http.classic.methods.HttpOptions;
 import org.apache.hc.client5.http.classic.methods.HttpPatch;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.classic.methods.HttpTrace;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
 import org.apache.hc.client5.http.config.ConnectionConfig;
@@ -299,7 +300,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 					this.httpRequest = new HttpPost(url.toString());
 					break;
 				case PUT:
-					this.httpRequest = new HttpPost(url.toString());
+					this.httpRequest = new HttpPut(url.toString());
 					break;
 				case OPTIONS:
 					this.httpRequest = new HttpOptions(url.toString());
@@ -723,7 +724,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 				this.contentLength = Long.parseLong(contentLengthHdr);
 			}
 			else {
-				if(this.httpEntityResponse.getContentLength()>0){
+				if(this.httpEntityResponse!=null && this.httpEntityResponse.getContentLength()>0){
 					this.contentLength = this.httpEntityResponse.getContentLength();
 				}
 			}
@@ -755,7 +756,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 					this.codice!=200 && this.codice!=202){
 					throw new ConnettoreException("Return code ["+this.codice+"] non consentito dal WS-I Basic Profile (http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html#HTTP_Success_Status_Codes)");
 				}
-				if(httpBody.isDoInput()){
+				if(httpBody.isDoInput() && this.httpEntityResponse!=null){
 					this.isResponse = this.httpEntityResponse.getContent();
 				}
 			}else{
@@ -835,12 +836,16 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 								this.location = this.location+" [redirect-location: "+redirectLocation+"]";
 					    	}
 							
-							this.isResponse = this.httpEntityResponse.getContent();
+							if(this.httpEntityResponse!=null) {
+								this.isResponse = this.httpEntityResponse.getContent();
+							}
 						}
 					}	
 				}
 				else {
-					this.isResponse = this.httpEntityResponse.getContent();
+					if(this.httpEntityResponse!=null) {
+						this.isResponse = this.httpEntityResponse.getContent();
+					}
 				}
 			}
 			
@@ -942,10 +947,6 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 	    		if(this.debug && this.logger!=null)
 	    			this.logger.debug("Chiusura httpEntityResponse...");
 	    		EntityUtils.consume(this.httpEntityResponse);			
-	    	}
-	    	
-	    	if(this.httpEntityResponse!=null){
-	    		// nop
 	    	}
 				
     	}catch(Exception t) {

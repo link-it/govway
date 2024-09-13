@@ -121,6 +121,7 @@
 				<include name="${xalan_serializer_jar}"/>
 				<include name="${jboss-logging_jar}"/>	
 				<include name="micrometer-observation-1.13.3.jar"/>
+				<include name="micrometer-commons-1.13.3.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/jackson">
 				<include name="*.jar"/>

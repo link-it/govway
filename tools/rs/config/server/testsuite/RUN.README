@@ -1,4 +1,7 @@
-NOTA!!:
+NOTA con java 11:
+- compilare il progetto ed eseguirlo con java 11
+
+NOTA x Tomcat:
   su Tomcat aggiungere la seguente opzione JVM in setenv.sh:
   JAVA_OPTS="$JAVA_OPTS -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true"
 

@@ -1,3 +1,13 @@
+NOTA con java 11:
+- compilare le utils con java11:
+  . cd tools/utils
+  . ant clean build -DskipJavaVersionCheck=true -DjavaSourceVersion=11 -DbuildAPI=false -Ddist_utils=dist_java11
+- compilare il progetto ed eseguirlo con java 11
+- tutti i test lanciarli con l'opzione: '-Dload=false -Ddelete=false'
+
+- per caricare le configurazioni deve invece essere utilizzato java21 con il comando: ant load_config
+  
+
 Prerequisiti:
 
 + Impostare multitenant attivo con:

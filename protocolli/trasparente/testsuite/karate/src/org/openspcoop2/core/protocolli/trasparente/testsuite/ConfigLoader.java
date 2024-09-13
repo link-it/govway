@@ -40,8 +40,6 @@ import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.resources.MapReader;
 import org.slf4j.Logger;
 
-import com.intuit.karate.FileUtils;
-
 /**
 * ConfigLoader
 *
@@ -157,7 +155,7 @@ public class ConfigLoader {
         org.slf4j.Logger logger = LoggerWrapperFactory.getLogger("com.intuit.karate");
 
         String configLoaderPath = prop.getProperty("config_loader_path");
-        String scriptPath = configLoaderPath + "/" + (FileUtils.isOsWindows() ? "createOrUpdate.cmd" : "createOrUpdate.sh");
+        String scriptPath = configLoaderPath + "/" + (Utilities.isOSWindows() ? "createOrUpdate.cmd" : "createOrUpdate.sh");
         String trasparenteBundle = new File(trasparenteBundlePath).getAbsolutePath();
 
         logger.debug("Script path: " + scriptPath);
@@ -237,7 +235,7 @@ public class ConfigLoader {
     public static void deleteConfig() throws Exception {
     	
         String configLoaderPath = prop.getProperty("config_loader_path");
-        String scriptPath = configLoaderPath + "/" + (FileUtils.isOsWindows() ? "delete.cmd" : "delete.sh");
+        String scriptPath = configLoaderPath + "/" + (Utilities.isOSWindows() ? "delete.cmd" : "delete.sh");
         String trasparenteBundle = new File("src/configurazioni-govway/trasparenteTestBundle.zip").getAbsolutePath();
         
         org.slf4j.Logger logger = LoggerWrapperFactory.getLogger("com.intuit.karate");

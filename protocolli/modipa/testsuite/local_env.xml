@@ -5,6 +5,7 @@
       <!-- root di OpenSPCoop -->
       <property name="openspcoop2" location="../../.."/>
       <property name="openspcoop2.dist" location="${openspcoop2}/core/dist"/>
+      <property name="openspcoop2.utils.dist_java11" location="${openspcoop2}/tools/utils/dist_java11"/> <!-- compilate in java 11 -->
       <property name="required_lib_govwayModiPATestSuite" location="${openspcoop2}/lib/"/>
       <property name="required_lib" value="${required_lib_govwayModiPATestSuite}"/>
       <property name="openspcoop2.lib" location="${required_lib_govwayModiPATestSuite}"/>

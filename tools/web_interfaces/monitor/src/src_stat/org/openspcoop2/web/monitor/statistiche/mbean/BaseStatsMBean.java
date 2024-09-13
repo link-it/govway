@@ -29,6 +29,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
@@ -108,6 +109,23 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 			this.visualizzaTotaleNelleCelleGraficoHeatmap = govwayMonitorProperties.isStatisticheVisualizzaValoriNelleCelleDelGraficoHeatmap();
 		} catch (Exception e) {
 			DynamicPdDBean.log.error(e.getMessage(), e);
+		}
+	}
+	
+	protected String gestioneErrore(boolean useFaceContext, Exception e) throws NotFoundException, ServiceException {
+		if(useFaceContext){
+			DynamicPdDBean.log.error(e.getMessage(), e);
+			this.addErroreDuranteRecuperoDati(e);
+			return null;
+		}
+		else{
+			DynamicPdDBean.log.debug(e.getMessage(), e);
+			if(e instanceof NotFoundException notFound) {
+				throw notFound;
+			}
+			else {
+				throw new ServiceException(e.getMessage(),e);
+			}
 		}
 	}
 	

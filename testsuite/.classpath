@@ -11,5 +11,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.4_lib"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.4_lib_stub"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.4_lib_stub_axis14"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.4_lib_testng"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

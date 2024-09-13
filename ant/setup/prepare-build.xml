@@ -97,7 +97,6 @@
 			<include name="openapi4j/*"/>
 			<include name="reports/*"/>
 			<include name="httpcore/*"/>
-			<include name="testsuite/spring-jdbc-6.1.12.jar"/> <!-- richiesto dal loader cli -->
 		</fileset>
 	</path>		
 	<path id="classpath_dist" >

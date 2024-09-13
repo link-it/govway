@@ -6,6 +6,7 @@ Background:
     * def setup = callonce read('classpath:prepare_tests.feature')
     * def configurazioneUrl = monitorUrl + '/reportistica/configurazione-api'
     
+    * def excelUtils = Java.type('org.openspcoop2.core.monitor.rs.testsuite.ExcelUtils') 
 
     * url configurazioneUrl
     * configure headers = ({ "Authorization": govwayMonitorCred }) 
@@ -115,16 +116,19 @@ Scenario: Esportazione Configurazione API in formato excel
     And params ({tipo: 'erogazione', nome_servizio: setup.erogazione_petstore.api_nome, versione_servizio: setup.erogazione_petstore.api_versione, formato_report: 'xls'})
     When method get
     Then status 200
-    Then match karate.toString(response) contains "Erogatore"
+    When def result = excelUtils.existsString(responseBytes, "Erogatore")
+    Then assert result == true
 
     Given path 'esporta'
     And request ({tipo: 'erogazione',formato: 'xls'})
     When method post
     Then status 200
-    Then match karate.toString(response) contains "Erogatore"
+    When def result = excelUtils.existsString(responseBytes, "Erogatore")
+    Then assert result == true
 
     Given path 'esporta'
     And request ({tipo: 'fruizione',formato: 'xls'})
     When method post
     Then status 200
-    Then match karate.toString(response) contains "Fruitore"
+    When def result = excelUtils.existsString(responseBytes, "Fruitore")
+    Then assert result == true

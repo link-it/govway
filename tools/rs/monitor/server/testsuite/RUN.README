@@ -1,3 +1,6 @@
+NOTA con java 11:
+- compilare il progetto ed eseguirlo con java 11
+
 Prerequisito:
 Configurare l'ambiente di esecuzione dei test:
 	- Sostituire in ./src/karate-config.js il nome del soggettoDefault con quello scelto per mezzo dell'installer di GovWay.

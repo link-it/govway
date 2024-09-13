@@ -14,13 +14,20 @@
 	</taskdef>
 
 	<path id="karate_testsuite" >
-		<fileset dir="${required_lib}/testsuite" >
-			<include name="hamcrest-core-1.3.jar"/>
-			<include name="junit-4.13.2.jar"/>
-			<include name="karate-*.jar"/>
-			<include name="picocli-4.2.0.jar"/>
-			<include name="logback-*.jar"/>
-			<include name="spring-jdbc-*.jar"/>
+		<fileset dir="${required_lib}/testsuite/karate09" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/testsuite/junit4" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/testsuite/logback" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/testsuite/httpcore4" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/testsuite/spring5" >
+			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${dir_jdbc}" >
 			<include name="*.jar"/>
@@ -28,16 +35,11 @@
 		<fileset dir="${required_lib}/commons" >
 			<include name="*.jar"/>
 		</fileset>
-		<fileset dir="${required_lib}/httpcore" >
-	  	    	<include name="*.jar"/>
-		</fileset>
 		<fileset dir="${required_lib}/log" >
 			<include name="*.jar"/>
+			<exclude name="log4j-slf4j2-impl-2.23.1.jar"/> <!-- per evitare errore SLF4J(W): Class path contains multiple SLF4J providers. (uso logback) -->
 		</fileset>
 		<fileset dir="${required_lib}/json" >
-			<include name="*.jar"/>
-		</fileset>
-		<fileset dir="${required_lib}/spring" >
 			<include name="*.jar"/>
 		</fileset>
                 <fileset dir="${required_lib}/shared" >
@@ -46,6 +48,12 @@
                 <fileset dir="${required_lib}/cxf" >
                         <include name="asm-9.7.jar"/>
                 </fileset>
+                <fileset dir="${required_lib}/reports" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/pdf" >
+			<include name="*.jar"/>
+		</fileset>
 	</path> 
 
 	<property name="src_testsuite" location="src" />

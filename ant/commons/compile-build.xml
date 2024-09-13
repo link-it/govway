@@ -65,12 +65,30 @@
 		<then>
 			<echo message="Java home: ${java_home}"/>
 			<echo message="Java version: ${ant.java.version}"/>
-			<fail message="E' richiesta una versione di java 21 o superiore"/>
+			<if>
+				<not>
+					<istrue value="${skipJavaVersionCheck}" />
+				</not>
+				<then>
+					<fail message="E' richiesta una versione di java 21 o superiore"/>
+				</then>
+			</if>
 		</then>
 	</if>
 	
 	<var name="classSourceVersion" value="21"/>
 	<var name="classTargetVersion" value="21"/>
+	<!-- il seguente if e' utilizzabile solo con skipJavaVersionCheck=true -->
+	<if>
+		<not>
+			<equals arg1="${javaSourceVersion}" arg2="$${javaSourceVersion}"/>
+		</not>
+	        <then>
+	                <echo message="!!!ATTENZIONE!!! Java source version impostata a v${javaSourceVersion}"/>
+	                <var name="classSourceVersion" value="${javaSourceVersion}"/>
+			<var name="classTargetVersion" value="${javaSourceVersion}"/>
+	        </then>
+	</if>
 	
 	<path id="classpath_jre" >
 		<fileset dir="${java_home}" >

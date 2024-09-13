@@ -40,6 +40,8 @@
 										<exclude name="**/swagger-codegen/*"/>
 										<exclude name="**/*README"/>
 										<exclude name="*.userlibraries"/>
+										<exclude name="**/testsuite/karate*/**"/>
+										<exclude name="**/testsuite/junit*/**"/>
 										<exclude name="**/applicationServer/**"/><!-- Non vanno aggiunti, poiche' la sua presenta fa fallire la serializzazione xml: java.lang.NoSuchMethodError: 'com.fasterxml.jackson.databind.cfg.MutableCoercionConfig com.fasterxml.jackson.dataformat.xml.XmlMapper.coercionConfigDefaults()' -->
 										<include name="**/*.jar"/>
 									</fileset>
@@ -51,7 +53,7 @@
 								<taskdef resource="net/sf/antcontrib/antlib.xml"
 									classpathref="classpath_run" />
 								<taskdef classpathref="classpath_run"
-								     resource="testngtasks" classpath="${rootDir}/lib/testsuite/testng-7.8.0.jar"/>
+								     resource="testngtasks" classpath="${rootDir}/lib/testsuite/testng/testng-ant-1.0.0.jar"/>
 
 								<delete dir="build_testunits"/>
 								<unzip dest="build_testunits">

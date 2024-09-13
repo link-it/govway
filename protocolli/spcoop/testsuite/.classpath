@@ -17,5 +17,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/op2_3.4.dev"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/op2_3.4.dev_testsuite"/>
 	<classpathentry kind="lib" path="/op2_3.4.dev/protocolli/spcoop/example/server/ValidazioneContenutiWS/deploy/stub_ws/validazioneContenutiWS_stub.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.4_lib_testng"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

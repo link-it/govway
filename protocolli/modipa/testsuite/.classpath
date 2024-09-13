@@ -8,5 +8,7 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.4_lib"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/op2_3.4.dev"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.4_lib_karate09"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.4_lib_junit4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

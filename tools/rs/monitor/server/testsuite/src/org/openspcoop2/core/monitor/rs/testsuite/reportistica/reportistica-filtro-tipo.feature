@@ -14,7 +14,10 @@ Background:
     * def intervallo_temporale = ({ data_inizio: setup.dataInizioMinuteZero, data_fine: getDate() })
 
     * url reportisticaUrl
-    * configure headers = ({ "Authorization": govwayMonitorCred }) 
+    * configure headers = ({ "Authorization": govwayMonitorCred })
+    
+    * def excelUtils = Java.type('org.openspcoop2.core.monitor.rs.testsuite.ExcelUtils') 
+    * def pdfUtils = Java.type('org.openspcoop2.core.monitor.rs.testsuite.PdfUtils')  
 
 
 
@@ -519,30 +522,6 @@ Examples:
 | 'distribuzione-token-info-subject-csv' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'csv' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
 | 'distribuzione-token-info-client-id-pdnd-csv' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id_pdnd_informazioni" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'csv' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
 | 'distribuzione-indirizzo-ip-csv' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'csv' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
-| 'distribuzione-temporale-xls' | 'distribuzione-temporale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
-| 'distribuzione-esiti-xls' | 'distribuzione-esiti' | null | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Ok" |
-| 'distribuzione-soggetto-remoto-xls' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
-| 'distribuzione-soggetto-locale-xls' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
-| 'distribuzione-api-xls' | 'distribuzione-api' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
-| 'distribuzione-azione-xls' | 'distribuzione-azione' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
-| 'distribuzione-applicativo-trasporto-xls' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
-| 'distribuzione-applicativo-token-xls' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
-| 'distribuzione-id-autenticato-xls' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
-| 'distribuzione-token-info-subject-xls' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
-| 'distribuzione-token-info-client-id-pdnd-xls' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id_pdnd_informazioni" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
-| 'distribuzione-indirizzo-ip-xls' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
-| 'distribuzione-temporale-pdf' | 'distribuzione-temporale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "PDF-1.4" |
-| 'distribuzione-esiti-pdf' | 'distribuzione-esiti' | null | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "PDF-1.4" |
-| 'distribuzione-soggetto-remoto-pdf' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "PDF-1.4" |
-| 'distribuzione-soggetto-locale-pdf' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "PDF-1.4" |
-| 'distribuzione-api-pdf' | 'distribuzione-api' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "PDF-1.4" |
-| 'distribuzione-azione-pdf' | 'distribuzione-azione' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "PDF-1.4" |
-| 'distribuzione-applicativo-trasporto-pdf' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "PDF-1.4" |
-| 'distribuzione-applicativo-token-pdf' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "PDF-1.4" |
-| 'distribuzione-id-autenticato-pdf' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "PDF-1.4" |
-| 'distribuzione-token-info-subject-pdf' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "PDF-1.4" |
-| 'distribuzione-token-info-client-id-pdnd-pdf' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id_pdnd_informazioni" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "PDF-1.4" |
-| 'distribuzione-indirizzo-ip-pdf' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "PDF-1.4" |
 | 'distribuzione-temporale-xml' | 'distribuzione-temporale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xml' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
 | 'distribuzione-esiti-xml' | 'distribuzione-esiti' | null | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xml' | 'table' | 'numero_transazioni' | "Ok" |
 | 'distribuzione-soggetto-remoto-xml' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xml' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
@@ -618,6 +597,154 @@ Examples:
 
 
 
+@ReportFullTipoCheckTotaliNumeroTransazioniXLS
+Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati per tipo (numero-transazioni)
+
+* def filtro =
+"""
+({
+		intervallo_temporale : intervallo_temporale,
+		unita_tempo: 'orario',
+		tipo: <filtro-tipo-qualsiasi>,
+    report: {
+      "formato": <filtro-report-formato>,
+      "tipo": <filtro-report-tipo>,
+      "tipo_informazione": {
+        "tipo": <filtro-report-informazione>
+      }
+    } 
+})
+"""  
+
+* eval if(<filtro-esito> != null) filtro.esito = <filtro-esito>
+* eval if(<filtro-claim> != null) filtro.claim = <filtro-claim>
+
+* eval if(<nome-statistica>.contains('distribuzione-applicativo-trasporto')) filtro.tipo_identificazione_applicativo = 'trasporto'
+
+* eval if(<nome-statistica>.contains('distribuzione-applicativo-token')) filtro.tipo_identificazione_applicativo = 'token'
+
+* def check_response = <stringa-verifica>
+    
+	Given path <path-distribuzione>
+	And request filtro
+	When method post
+	Then status 200
+	When def result_check_response = excelUtils.existsString(responseBytes, check_response)
+    	Then assert result_check_response == true
+	* def response_qualsiasi = response
+	
+	* eval filtro.tipo = <filtro-tipo-fruizione>
+	Given path <path-distribuzione>
+	And request filtro
+	When method post
+	Then status 200
+	When def result_check_response = excelUtils.existsString(responseBytes, check_response)
+    	Then assert result_check_response == true
+	* def response_fruizione = response
+	
+	* eval filtro.tipo = <filtro-tipo-erogazione>
+	Given path <path-distribuzione>
+	And request filtro
+	When method post
+	Then status 200
+	When def result_check_response = excelUtils.existsString(responseBytes, check_response)
+    	Then assert result_check_response == true
+	* def response_erogazione = response
+    
+Examples:
+| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-qualsiasi | filtro-tipo-fruizione | filtro-tipo-erogazione | filtro-report-formato | filtro-report-tipo | filtro-report-informazione | stringa-verifica |
+| 'distribuzione-temporale-xls' | 'distribuzione-temporale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-esiti-xls' | 'distribuzione-esiti' | null | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Ok" |
+| 'distribuzione-soggetto-remoto-xls' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-soggetto-locale-xls' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-api-xls' | 'distribuzione-api' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-azione-xls' | 'distribuzione-azione' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-applicativo-trasporto-xls' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-applicativo-token-xls' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-id-autenticato-xls' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-token-info-subject-xls' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-token-info-client-id-pdnd-xls' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id_pdnd_informazioni" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-indirizzo-ip-xls' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+
+
+
+
+
+@ReportFullTipoCheckTotaliNumeroTransazioniPDF
+Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati per tipo (numero-transazioni)
+
+* def filtro =
+"""
+({
+		intervallo_temporale : intervallo_temporale,
+		unita_tempo: 'orario',
+		tipo: <filtro-tipo-qualsiasi>,
+    report: {
+      "formato": <filtro-report-formato>,
+      "tipo": <filtro-report-tipo>,
+      "tipo_informazione": {
+        "tipo": <filtro-report-informazione>
+      }
+    } 
+})
+"""  
+
+* eval if(<filtro-esito> != null) filtro.esito = <filtro-esito>
+* eval if(<filtro-claim> != null) filtro.claim = <filtro-claim>
+
+* eval if(<nome-statistica>.contains('distribuzione-applicativo-trasporto')) filtro.tipo_identificazione_applicativo = 'trasporto'
+
+* eval if(<nome-statistica>.contains('distribuzione-applicativo-token')) filtro.tipo_identificazione_applicativo = 'token'
+
+* def check_response = <stringa-verifica>
+    
+	Given path <path-distribuzione>
+	And request filtro
+	When method post
+	Then status 200
+	When def result_check_response = pdfUtils.existsString(responseBytes, check_response)
+    	Then assert result_check_response == true
+	* def response_qualsiasi = response
+	
+	* eval filtro.tipo = <filtro-tipo-fruizione>
+	Given path <path-distribuzione>
+	And request filtro
+	When method post
+	Then status 200
+	When def result_check_response = pdfUtils.existsString(responseBytes, check_response)
+    	Then assert result_check_response == true
+	* def response_fruizione = response
+	
+	* eval filtro.tipo = <filtro-tipo-erogazione>
+	Given path <path-distribuzione>
+	And request filtro
+	When method post
+	Then status 200
+	When def result_check_response = pdfUtils.existsString(responseBytes, check_response)
+    	Then assert result_check_response == true
+	* def response_erogazione = response
+    
+Examples:
+| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-qualsiasi | filtro-tipo-fruizione | filtro-tipo-erogazione | filtro-report-formato | filtro-report-tipo | filtro-report-informazione | stringa-verifica |
+| 'distribuzione-temporale-pdf' | 'distribuzione-temporale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-esiti-pdf' | 'distribuzione-esiti' | null | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-soggetto-remoto-pdf' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-soggetto-locale-pdf' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-api-pdf' | 'distribuzione-api' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-azione-pdf' | 'distribuzione-azione' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-applicativo-trasporto-pdf' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-applicativo-token-pdf' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-id-autenticato-pdf' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-token-info-subject-pdf' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-token-info-client-id-pdnd-pdf' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id_pdnd_informazioni" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+| 'distribuzione-indirizzo-ip-pdf' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'numero_transazioni' | "Numero Transazioni" |
+
+
+
+
+
+
+
 @ReportFullTipoCheckTotaliOccupazioneBanda
 Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati per tipo (occupazione-banda)
 
@@ -683,30 +810,6 @@ Examples:
 | 'occupazione-banda-distribuzione-token-info-subject-csv' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'csv' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
 | 'occupazione-banda-distribuzione-token-info-client-id-pdnd-csv' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id_pdnd_informazioni" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'csv' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
 | 'occupazione-banda-distribuzione-indirizzo-ip-csv' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'csv' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
-| 'occupazione-banda-distribuzione-temporale-xls' | 'distribuzione-temporale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
-| 'occupazione-banda-distribuzione-esiti-xls' | 'distribuzione-esiti' | null | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Ok" |
-| 'occupazione-banda-distribuzione-soggetto-remoto-xls' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
-| 'occupazione-banda-distribuzione-soggetto-locale-xls' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
-| 'occupazione-banda-distribuzione-api-xls' | 'distribuzione-api' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
-| 'occupazione-banda-distribuzione-azione-xls' | 'distribuzione-azione' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
-| 'occupazione-banda-distribuzione-applicativo-trasporto-xls' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
-| 'occupazione-banda-distribuzione-applicativo-token-xls' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
-| 'occupazione-banda-distribuzione-id-autenticato-xls' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
-| 'occupazione-banda-distribuzione-token-info-subject-xls' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
-| 'occupazione-banda-distribuzione-token-info-client-id-pdnd-xls' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id_pdnd_informazioni" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
-| 'occupazione-banda-distribuzione-indirizzo-ip-xls' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
-| 'occupazione-banda-distribuzione-temporale-pdf' | 'distribuzione-temporale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "PDF-1.4" |
-| 'occupazione-banda-distribuzione-esiti-pdf' | 'distribuzione-esiti' | null | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "PDF-1.4" |
-| 'occupazione-banda-distribuzione-soggetto-remoto-pdf' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "PDF-1.4" |
-| 'occupazione-banda-distribuzione-soggetto-locale-pdf' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "PDF-1.4" |
-| 'occupazione-banda-distribuzione-api-pdf' | 'distribuzione-api' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "PDF-1.4" |
-| 'occupazione-banda-distribuzione-azione-pdf' | 'distribuzione-azione' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "PDF-1.4" |
-| 'occupazione-banda-distribuzione-applicativo-trasporto-pdf' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "PDF-1.4" |
-| 'occupazione-banda-distribuzione-applicativo-token-pdf' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "PDF-1.4" |
-| 'occupazione-banda-distribuzione-id-autenticato-pdf' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "PDF-1.4" |
-| 'occupazione-banda-distribuzione-token-info-subject-pdf' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "PDF-1.4" |
-| 'occupazione-banda-distribuzione-token-info-client-id-pdnd-pdf' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id_pdnd_informazioni" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "PDF-1.4" |
-| 'occupazione-banda-distribuzione-indirizzo-ip-pdf' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "PDF-1.4" |
 | 'occupazione-banda-distribuzione-temporale-xml' | 'distribuzione-temporale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xml' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
 | 'occupazione-banda-distribuzione-esiti-xml' | 'distribuzione-esiti' | null | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xml' | 'table' | 'occupazione_banda' | "Ok" |
 | 'occupazione-banda-distribuzione-soggetto-remoto-xml' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xml' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
@@ -782,6 +885,154 @@ Examples:
 
 
 
+
+@ReportFullTipoCheckTotaliOccupazioneBandaXLS
+Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati per tipo (occupazione-banda)
+
+* def filtro =
+"""
+({
+		intervallo_temporale : intervallo_temporale,
+		unita_tempo: 'orario',
+		tipo: <filtro-tipo-qualsiasi>,
+    report: {
+      "formato": <filtro-report-formato>,
+      "tipo": <filtro-report-tipo>,
+      "tipo_informazione": {
+        "tipo": <filtro-report-informazione>
+      }
+    } 
+})
+"""  
+
+* eval if(<filtro-esito> != null) filtro.esito = <filtro-esito>
+* eval if(<filtro-claim> != null) filtro.claim = <filtro-claim>
+
+* eval if(<nome-statistica>.contains('distribuzione-applicativo-trasporto')) filtro.tipo_identificazione_applicativo = 'trasporto'
+
+* eval if(<nome-statistica>.contains('distribuzione-applicativo-token')) filtro.tipo_identificazione_applicativo = 'token'
+
+* def check_response = <stringa-verifica>
+    
+	Given path <path-distribuzione>
+	And request filtro
+	When method post
+	Then status 200
+	When def result_check_response = excelUtils.existsString(responseBytes, check_response)
+    	Then assert result_check_response == true
+	* def response_qualsiasi = response
+	
+	* eval filtro.tipo = <filtro-tipo-fruizione>
+	Given path <path-distribuzione>
+	And request filtro
+	When method post
+	Then status 200
+	When def result_check_response = excelUtils.existsString(responseBytes, check_response)
+    	Then assert result_check_response == true
+	* def response_fruizione = response
+	
+	* eval filtro.tipo = <filtro-tipo-erogazione>
+	Given path <path-distribuzione>
+	And request filtro
+	When method post
+	Then status 200
+	When def result_check_response = excelUtils.existsString(responseBytes, check_response)
+    	Then assert result_check_response == true
+	* def response_erogazione = response
+    
+Examples:
+| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-qualsiasi | filtro-tipo-fruizione | filtro-tipo-erogazione | filtro-report-formato | filtro-report-tipo | filtro-report-informazione | stringa-verifica |
+| 'occupazione-banda-distribuzione-temporale-xls' | 'distribuzione-temporale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-esiti-xls' | 'distribuzione-esiti' | null | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Ok" |
+| 'occupazione-banda-distribuzione-soggetto-remoto-xls' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-soggetto-locale-xls' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-api-xls' | 'distribuzione-api' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-azione-xls' | 'distribuzione-azione' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-applicativo-trasporto-xls' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-applicativo-token-xls' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-id-autenticato-xls' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-token-info-subject-xls' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-token-info-client-id-pdnd-xls' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id_pdnd_informazioni" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-indirizzo-ip-xls' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+
+
+
+
+@ReportFullTipoCheckTotaliOccupazioneBandaPDF
+Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati per tipo (occupazione-banda)
+
+* def filtro =
+"""
+({
+		intervallo_temporale : intervallo_temporale,
+		unita_tempo: 'orario',
+		tipo: <filtro-tipo-qualsiasi>,
+    report: {
+      "formato": <filtro-report-formato>,
+      "tipo": <filtro-report-tipo>,
+      "tipo_informazione": {
+        "tipo": <filtro-report-informazione>
+      }
+    } 
+})
+"""  
+
+* eval if(<filtro-esito> != null) filtro.esito = <filtro-esito>
+* eval if(<filtro-claim> != null) filtro.claim = <filtro-claim>
+
+* eval if(<nome-statistica>.contains('distribuzione-applicativo-trasporto')) filtro.tipo_identificazione_applicativo = 'trasporto'
+
+* eval if(<nome-statistica>.contains('distribuzione-applicativo-token')) filtro.tipo_identificazione_applicativo = 'token'
+
+* def check_response = <stringa-verifica>
+    
+	Given path <path-distribuzione>
+	And request filtro
+	When method post
+	Then status 200
+	When def result_check_response = pdfUtils.existsString(responseBytes, check_response)
+    	Then assert result_check_response == true
+	* def response_qualsiasi = response
+	
+	* eval filtro.tipo = <filtro-tipo-fruizione>
+	Given path <path-distribuzione>
+	And request filtro
+	When method post
+	Then status 200
+	When def result_check_response = pdfUtils.existsString(responseBytes, check_response)
+    	Then assert result_check_response == true
+	* def response_fruizione = response
+	
+	* eval filtro.tipo = <filtro-tipo-erogazione>
+	Given path <path-distribuzione>
+	And request filtro
+	When method post
+	Then status 200
+	When def result_check_response = pdfUtils.existsString(responseBytes, check_response)
+    	Then assert result_check_response == true
+	* def response_erogazione = response
+    
+Examples:
+| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-qualsiasi | filtro-tipo-fruizione | filtro-tipo-erogazione | filtro-report-formato | filtro-report-tipo | filtro-report-informazione | stringa-verifica |
+| 'occupazione-banda-distribuzione-temporale-pdf' | 'distribuzione-temporale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-esiti-pdf' | 'distribuzione-esiti' | null | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-soggetto-remoto-pdf' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-soggetto-locale-pdf' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-api-pdf' | 'distribuzione-api' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-azione-pdf' | 'distribuzione-azione' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-applicativo-trasporto-pdf' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-applicativo-token-pdf' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-id-autenticato-pdf' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-token-info-subject-pdf' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-token-info-client-id-pdnd-pdf' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id_pdnd_informazioni" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+| 'occupazione-banda-distribuzione-indirizzo-ip-pdf' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'occupazione_banda' | "Occupazione Banda" |
+
+
+
+
+
+
+
 @ReportFullTipoCheckTotaliTempoMedioRisposta
 Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati per tipo (tempo-medio-risposta)
 
@@ -847,30 +1098,6 @@ Examples:
 | 'tempo-medio-risposta-distribuzione-token-info-subject-csv' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'csv' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
 | 'tempo-medio-risposta-distribuzione-token-info-client-id-pdnd-csv' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id_pdnd_informazioni" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'csv' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
 | 'tempo-medio-risposta-distribuzione-indirizzo-ip-csv' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'csv' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
-| 'tempo-medio-risposta-distribuzione-temporale-xls' | 'distribuzione-temporale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
-| 'tempo-medio-risposta-distribuzione-esiti-xls' | 'distribuzione-esiti' | null | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Ok" |
-| 'tempo-medio-risposta-distribuzione-soggetto-remoto-xls' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
-| 'tempo-medio-risposta-distribuzione-soggetto-locale-xls' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
-| 'tempo-medio-risposta-distribuzione-api-xls' | 'distribuzione-api' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
-| 'tempo-medio-risposta-distribuzione-azione-xls' | 'distribuzione-azione' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
-| 'tempo-medio-risposta-distribuzione-applicativo-trasporto-xls' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
-| 'tempo-medio-risposta-distribuzione-applicativo-token-xls' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
-| 'tempo-medio-risposta-distribuzione-id-autenticato-xls' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
-| 'tempo-medio-risposta-distribuzione-token-info-subject-xls' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
-| 'tempo-medio-risposta-distribuzione-token-info-client-id-pdnd-xls' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id_pdnd_informazioni" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
-| 'tempo-medio-risposta-distribuzione-indirizzo-ip-xls' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
-| 'tempo-medio-risposta-distribuzione-temporale-pdf' | 'distribuzione-temporale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "PDF-1.4" |
-| 'tempo-medio-risposta-distribuzione-esiti-pdf' | 'distribuzione-esiti' | null | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "PDF-1.4" |
-| 'tempo-medio-risposta-distribuzione-soggetto-remoto-pdf' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "PDF-1.4" |
-| 'tempo-medio-risposta-distribuzione-soggetto-locale-pdf' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "PDF-1.4" |
-| 'tempo-medio-risposta-distribuzione-api-pdf' | 'distribuzione-api' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "PDF-1.4" |
-| 'tempo-medio-risposta-distribuzione-azione-pdf' | 'distribuzione-azione' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "PDF-1.4" |
-| 'tempo-medio-risposta-distribuzione-applicativo-trasporto-pdf' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "PDF-1.4" |
-| 'tempo-medio-risposta-distribuzione-applicativo-token-pdf' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "PDF-1.4" |
-| 'tempo-medio-risposta-distribuzione-id-autenticato-pdf' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "PDF-1.4" |
-| 'tempo-medio-risposta-distribuzione-token-info-subject-pdf' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "PDF-1.4" |
-| 'tempo-medio-risposta-distribuzione-token-info-client-id-pdnd-pdf' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id_pdnd_informazioni" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "PDF-1.4" |
-| 'tempo-medio-risposta-distribuzione-indirizzo-ip-pdf' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "PDF-1.4" |
 | 'tempo-medio-risposta-distribuzione-temporale-xml' | 'distribuzione-temporale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xml' | 'table' | 'tempo_medio_risposta' | "Tempo Medio Risposta" |
 | 'tempo-medio-risposta-distribuzione-esiti-xml' | 'distribuzione-esiti' | null | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xml' | 'table' | 'tempo_medio_risposta' | "Ok" |
 | 'tempo-medio-risposta-distribuzione-soggetto-remoto-xml' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xml' | 'table' | 'tempo_medio_risposta' | "Tempo Medio Risposta" |
@@ -943,6 +1170,154 @@ Examples:
 | 'tempo-medio-risposta-distribuzione-token-info-subject-json-bar' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'json' | 'bar' | 'tempo_medio_risposta' | "Tempo Medio Risposta" |
 | 'tempo-medio-risposta-distribuzione-token-info-client-id-pdnd-json-bar' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id_pdnd_informazioni" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'json' | 'bar' | 'tempo_medio_risposta' | "Tempo Medio Risposta" |
 | 'tempo-medio-risposta-distribuzione-indirizzo-ip-json-bar' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'json' | 'bar' | 'tempo_medio_risposta' | "Tempo Medio Risposta" |
+
+
+
+
+
+
+@ReportFullTipoCheckTotaliTempoMedioRispostaXLS
+Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati per tipo (tempo-medio-risposta)
+
+* def filtro =
+"""
+({
+		intervallo_temporale : intervallo_temporale,
+		unita_tempo: 'orario',
+		tipo: <filtro-tipo-qualsiasi>,
+    report: {
+      "formato": <filtro-report-formato>,
+      "tipo": <filtro-report-tipo>,
+      "tipo_informazione": {
+        "tipo": <filtro-report-informazione>
+      }
+    } 
+})
+"""  
+
+* eval if(<filtro-esito> != null) filtro.esito = <filtro-esito>
+* eval if(<filtro-claim> != null) filtro.claim = <filtro-claim>
+
+* eval if(<nome-statistica>.contains('distribuzione-applicativo-trasporto')) filtro.tipo_identificazione_applicativo = 'trasporto'
+
+* eval if(<nome-statistica>.contains('distribuzione-applicativo-token')) filtro.tipo_identificazione_applicativo = 'token'
+
+* def check_response = <stringa-verifica>
+    
+	Given path <path-distribuzione>
+	And request filtro
+	When method post
+	Then status 200
+	When def result_check_response = excelUtils.existsString(responseBytes, check_response)
+    	Then assert result_check_response == true
+	* def response_qualsiasi = response
+	
+	* eval filtro.tipo = <filtro-tipo-fruizione>
+	Given path <path-distribuzione>
+	And request filtro
+	When method post
+	Then status 200
+	When def result_check_response = excelUtils.existsString(responseBytes, check_response)
+    	Then assert result_check_response == true
+	* def response_fruizione = response
+	
+	* eval filtro.tipo = <filtro-tipo-erogazione>
+	Given path <path-distribuzione>
+	And request filtro
+	When method post
+	Then status 200
+	When def result_check_response = excelUtils.existsString(responseBytes, check_response)
+    	Then assert result_check_response == true
+	* def response_erogazione = response
+    
+Examples:
+| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-qualsiasi | filtro-tipo-fruizione | filtro-tipo-erogazione | filtro-report-formato | filtro-report-tipo | filtro-report-informazione | stringa-verifica |
+| 'tempo-medio-risposta-distribuzione-temporale-xls' | 'distribuzione-temporale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+| 'tempo-medio-risposta-distribuzione-esiti-xls' | 'distribuzione-esiti' | null | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Ok" |
+| 'tempo-medio-risposta-distribuzione-soggetto-remoto-xls' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+| 'tempo-medio-risposta-distribuzione-soggetto-locale-xls' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+| 'tempo-medio-risposta-distribuzione-api-xls' | 'distribuzione-api' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+| 'tempo-medio-risposta-distribuzione-azione-xls' | 'distribuzione-azione' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+| 'tempo-medio-risposta-distribuzione-applicativo-trasporto-xls' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+| 'tempo-medio-risposta-distribuzione-applicativo-token-xls' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+| 'tempo-medio-risposta-distribuzione-id-autenticato-xls' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+| 'tempo-medio-risposta-distribuzione-token-info-subject-xls' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+| 'tempo-medio-risposta-distribuzione-token-info-client-id-pdnd-xls' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id_pdnd_informazioni" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+| 'tempo-medio-risposta-distribuzione-indirizzo-ip-xls' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'xls' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+
+
+
+
+
+@ReportFullTipoCheckTotaliTempoMedioRispostaPDF
+Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati per tipo (tempo-medio-risposta)
+
+* def filtro =
+"""
+({
+		intervallo_temporale : intervallo_temporale,
+		unita_tempo: 'orario',
+		tipo: <filtro-tipo-qualsiasi>,
+    report: {
+      "formato": <filtro-report-formato>,
+      "tipo": <filtro-report-tipo>,
+      "tipo_informazione": {
+        "tipo": <filtro-report-informazione>
+      }
+    } 
+})
+"""  
+
+* eval if(<filtro-esito> != null) filtro.esito = <filtro-esito>
+* eval if(<filtro-claim> != null) filtro.claim = <filtro-claim>
+
+* eval if(<nome-statistica>.contains('distribuzione-applicativo-trasporto')) filtro.tipo_identificazione_applicativo = 'trasporto'
+
+* eval if(<nome-statistica>.contains('distribuzione-applicativo-token')) filtro.tipo_identificazione_applicativo = 'token'
+
+* def check_response = <stringa-verifica>
+    
+	Given path <path-distribuzione>
+	And request filtro
+	When method post
+	Then status 200
+	When def result_check_response = pdfUtils.existsString(responseBytes, check_response)
+    	Then assert result_check_response == true
+	* def response_qualsiasi = response
+	
+	* eval filtro.tipo = <filtro-tipo-fruizione>
+	Given path <path-distribuzione>
+	And request filtro
+	When method post
+	Then status 200
+	When def result_check_response = pdfUtils.existsString(responseBytes, check_response)
+    	Then assert result_check_response == true
+	* def response_fruizione = response
+	
+	* eval filtro.tipo = <filtro-tipo-erogazione>
+	Given path <path-distribuzione>
+	And request filtro
+	When method post
+	Then status 200
+	When def result_check_response = pdfUtils.existsString(responseBytes, check_response)
+    	Then assert result_check_response == true
+	* def response_erogazione = response
+    
+Examples:
+| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-qualsiasi | filtro-tipo-fruizione | filtro-tipo-erogazione | filtro-report-formato | filtro-report-tipo | filtro-report-informazione | stringa-verifica |
+| 'tempo-medio-risposta-distribuzione-temporale-pdf' | 'distribuzione-temporale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+| 'tempo-medio-risposta-distribuzione-esiti-pdf' | 'distribuzione-esiti' | null | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "Ok" |
+| 'tempo-medio-risposta-distribuzione-soggetto-remoto-pdf' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+| 'tempo-medio-risposta-distribuzione-soggetto-locale-pdf' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+| 'tempo-medio-risposta-distribuzione-api-pdf' | 'distribuzione-api' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+| 'tempo-medio-risposta-distribuzione-azione-pdf' | 'distribuzione-azione' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+| 'tempo-medio-risposta-distribuzione-applicativo-trasporto-pdf' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+| 'tempo-medio-risposta-distribuzione-applicativo-token-pdf' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+| 'tempo-medio-risposta-distribuzione-id-autenticato-pdf' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+| 'tempo-medio-risposta-distribuzione-token-info-subject-pdf' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+| 'tempo-medio-risposta-distribuzione-token-info-client-id-pdnd-pdf' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id_pdnd_informazioni" | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+| 'tempo-medio-risposta-distribuzione-indirizzo-ip-pdf' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | 'qualsiasi' | 'fruizione' | 'erogazione' | 'pdf' | 'table' | 'tempo_medio_risposta' | "Latenza Media" |
+
 
 
 

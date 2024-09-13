@@ -14,12 +14,11 @@
 	</taskdef>
 
 	<path id="vault_testsuite">
-		<fileset dir="${required_lib}/testsuite">
-			<include name="hamcrest-core-1.3.jar"/>
-			<include name="junit-4.13.2.jar"/>
-			<include name="picocli-4.2.0.jar"/>
-			<include name="logback-*.jar"/>
-			<include name="spring-jdbc-*.jar"/>
+		<fileset dir="${required_lib}/testsuite/junit4">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/testsuite/logback">
+			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${dir_jdbc}">
 			<include name="*.jar"/>
@@ -32,6 +31,7 @@
 		</fileset>
 		<fileset dir="${required_lib}/log">
 			<include name="*.jar"/>
+			<exclude name="log4j-slf4j2-impl-2.23.1.jar"/> <!-- per evitare errore SLF4J(W): Class path contains multiple SLF4J providers. (uso logback) -->
 		</fileset>
 		<fileset dir="${required_lib}/json">
 			<include name="*.jar"/>
@@ -44,12 +44,10 @@
 			<include name="swagger-core-2*.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/shared">
-			<include name="snakeyaml-1.33-gov4j-1.jar"/>
+			<include name="snakeyaml-2.2-gov4j-1.jar"/>
 			<include name="xercesImpl-*.jar"/>
 			<include name="xalan-*.jar"/>
-			<include name="joda-time-2.12.0.jar"/>
-			<include name="mailapi-1.6.7.jar"/>
-			<include name="jakarta.activation-1.2.2.jar"/>
+			<include name="joda-time-2.12.7.jar"/>
 			<include name="serializer-2.7.3.jar"/>
 			<include name="wsdl4j-1.6.3.jar"/>
 		</fileset>
@@ -59,7 +57,7 @@
 			<include name="cxf-rt-rs-json-basic-*.jar"/>
 			<include name="cxf-rt-rs-security-jose-*.jar"/>
 			<include name="asm-9.7.jar"/>
-			<include name="woodstox-core-6.6.0.jar"/>
+			<include name="woodstox-core-6.6.2.jar"/>
 			<include name="xmlschema-core-2.3.1.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/security">
@@ -75,13 +73,12 @@
 		<fileset dir="${required_lib}/cxf">
 			<include name="*.jar"/>
 		</fileset>
-		<fileset dir="${required_lib}/javax">
-			<include name="javax.annotation-api-1.3.2.jar"/>
-			<include name="javax.servlet-api-4.0.1.jar"/>
+		<fileset dir="${required_lib}/jakarta">
+			<include name="jakarta.annotation-api-2.1.1.jar"/>
+			<include name="jakarta.servlet-api-5.0.0.jar"/>
 		</fileset>
-		<fileset dir="${required_lib}/jax">
-			<include name="jaxws-*.jar"/>
-			<include name="jaxb-*.jar"/>
+		<fileset dir="${required_lib}/jaxb">
+			<include name="*.jar"/>
 		</fileset>	
 		<fileset dir="${required_lib}/jackson">
 			<include name="jackson-*.jar"/>
@@ -90,9 +87,9 @@
 			<include name="*.jar"/>
 		</fileset>	
 		<fileset dir="${required_lib}/saaj">
-			<include name="javax.xml.soap-api-1.4.0.jar"/>
-			<include name="saaj-impl-1.5.3-gov4j-1.jar"/>
-			<include name="stax-ex-1.8.3.jar"/>
+			<include name="jakarta.xml.soap-api-3.0.2.jar"/>
+			<include name="saaj-impl-3.0.4-gov4j-1.jar"/>
+			<include name="stax-ex-2.1.0.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/wss4j">
 			<include name="*.jar"/>
@@ -130,6 +127,7 @@
 	<target name="plugin" depends="clean_plugin,init_plugin" description="produce l'archivio jar per i plugin">
 		<!-- Compile the java code  -->
 		<javac includeantruntime="false" destdir="${build_plugin}" debug="${debug}">
+			<compilerarg value="-proc:full"/>
 			<src path="${src_testsuite}/org/openspcoop2/pdd/config/vault/cli/testsuite/plugin/classes"/>
 			<classpath>
 				<path refid="vault_testsuite"/>
@@ -144,6 +142,7 @@
 	<target name="build" depends="clean,init" description="compila">
 		<!-- Compile the java code  -->
 		<javac includeantruntime="false" destdir="${build_testsuite}" debug="${debug}">
+			<compilerarg value="-proc:full"/>
 			<src path="${src_testsuite}"/>
 			<exclude name="org/openspcoop2/pdd/config/vault/cli/testsuite/plugin/classes/*" />
 			<classpath>

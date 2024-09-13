@@ -26,10 +26,25 @@
 	<property name="dist_utils" location="dist" />
 	<property name="doc_utils" location="doc" />
 
+	<!-- Libreria spring non compatibile con versioni precedenti di java -->
+	<var name="excludeSpringJars" value=""/>
+	<var name="excludeSpring5jars" value="**/testsuite/spring5/*"/>
+	<if>
+		<not>
+			<equals arg1="${javaSourceVersion}" arg2="$${javaSourceVersion}"/>
+		</not>
+		<then>
+			<echo message="!!!ATTENZIONE!!! Impostazione spring v5"/>
+			<var name="excludeSpringJars" value="**/spring/*"/>
+			<var name="excludeSpring5jars" value=""/>
+		</then>
+	</if>
 
 	<!-- CLASSPATH -->
 	<path id="classpath_compile" >
 		<fileset dir="${required_lib}" >
+			<exclude name="${excludeSpringJars}"/>
+			<exclude name="${excludeSpring5jars}"/>
 			<exclude name="**/axis14/*"/>
 			<exclude name="**/applicationServer/**/*.jar"/>
 			<exclude name="**/swagger-codegen/*"/>

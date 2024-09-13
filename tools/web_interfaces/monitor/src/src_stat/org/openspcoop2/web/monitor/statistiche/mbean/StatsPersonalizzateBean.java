@@ -37,6 +37,7 @@ import org.openspcoop2.core.statistiche.constants.TipoBanda;
 import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
@@ -400,7 +401,7 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 	public void esportaCsv(HttpServletResponse response) throws Exception {
 		this.esportaCsvEngine(response, false);
 	}
-	private String esportaCsvEngine(HttpServletResponse responseParam, boolean useFaceContext) throws ServiceException {
+	private String esportaCsvEngine(HttpServletResponse responseParam, boolean useFaceContext) throws ServiceException, NotFoundException {
 		log.debug("Export in formato CSV in corso...."); 
 		String fileExt = CostantiGrafici.CSV_EXTENSION;
 		String filename = this.getExportFilename()+fileExt;
@@ -510,7 +511,12 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 				MessageUtils.addErrorMsg(CostantiGrafici.CSV_EXPORT_MESSAGGIO_ERRORE);
 			}
 			else{
-				throw new ServiceException(e.getMessage(),e);
+				if(e instanceof NotFoundException notFound) {
+					throw notFound;
+				}
+				else {
+					throw new ServiceException(e.getMessage(),e);
+				}
 			}
 		}
 
@@ -534,7 +540,7 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 	public void esportaXls(HttpServletResponse response) throws Exception {
 		this.esportaXlsEngine(response, false);
 	}
-	private String esportaXlsEngine(HttpServletResponse responseParam, boolean useFaceContext) throws ServiceException {
+	private String esportaXlsEngine(HttpServletResponse responseParam, boolean useFaceContext) throws ServiceException, NotFoundException {
 		log.debug("Export in formato XLS in corso...."); 
 		String fileExt = CostantiGrafici.XLS_EXTENSION;
 		String filename = this.getExportFilename()+fileExt;
@@ -642,7 +648,12 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 				MessageUtils.addErrorMsg(CostantiGrafici.XLS_EXPORT_MESSAGGIO_ERRORE);
 			}
 			else{
-				throw new ServiceException(e.getMessage(),e);
+				if(e instanceof NotFoundException notFound) {
+					throw notFound;
+				}
+				else {
+					throw new ServiceException(e.getMessage(),e);
+				}
 			}
 		}
 
@@ -665,7 +676,7 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 	public void esportaPdf(HttpServletResponse response) throws Exception {
 		this.esportaPdfEngine(response, false);
 	}
-	private String esportaPdfEngine(HttpServletResponse responseParam, boolean useFaceContext) throws ServiceException {
+	private String esportaPdfEngine(HttpServletResponse responseParam, boolean useFaceContext) throws ServiceException, NotFoundException {
 		log.debug("Export in formato PDF in corso...."); 
 		String fileExt = CostantiGrafici.PDF_EXTENSION;
 		String filename = this.getExportFilename()+fileExt;
@@ -775,7 +786,12 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 				MessageUtils.addErrorMsg(CostantiGrafici.PDF_EXPORT_MESSAGGIO_ERRORE);
 			}
 			else{
-				throw new ServiceException(e.getMessage(),e);
+				if(e instanceof NotFoundException notFound) {
+					throw notFound;
+				}
+				else {
+					throw new ServiceException(e.getMessage(),e);
+				}
 			}
 		}
 

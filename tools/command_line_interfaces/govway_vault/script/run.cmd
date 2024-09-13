@@ -15,8 +15,10 @@ set VAULT_CONFIG=properties
 set VAULT_JDBC=jdbc
 
 set COMMAND="%JAVA_HOME%\bin\java"
+REM # per consentire il setEnv via govway.map.properties
+set JAVA_OPTS=%JAVA_OPTS% --add-opens=java.base/java.util=ALL-UNNAMED
 
-%COMMAND% -cp "%VAULT_CLASSPATH%/*";"%VAULT_CONFIG%";"%VAULT_JDBC%/*" org.openspcoop2.pdd.config.vault.cli.VaultTools TIPO_OPERAZIONE %*
+%COMMAND% %JAVA_OPTS% -cp "%VAULT_CLASSPATH%/*";"%VAULT_CONFIG%";"%VAULT_JDBC%/*" org.openspcoop2.pdd.config.vault.cli.VaultTools TIPO_OPERAZIONE %*
 
 
 goto end

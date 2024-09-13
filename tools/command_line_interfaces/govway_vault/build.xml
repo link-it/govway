@@ -44,7 +44,6 @@
 			<include name="spring/*"/>
 			<include name="spring-security/*"/>
 			<include name="stub/*"/>
-			<include name="testsuite/spring-jdbc-6.1.12.jar"/>
 		</fileset>
 	</path>
 	<path id="classpath_dist" >
@@ -144,8 +143,6 @@
 			<fileset dir="${openspcoop2.lib}/cxf" includes="cxf-rt-rs-json-basic-*.jar"/>
 			<fileset dir="${openspcoop2.lib}/cxf" includes="cxf-core-*.jar"/>
 			<fileset dir="${openspcoop2.lib}/cxf" includes="cxf-rt-security-*.jar"/>
-			<fileset dir="${openspcoop2.lib}/cxf" includes="jakarta.ws.rs-api-2.1.6.jar"/>
-			<fileset dir="${openspcoop2.lib}/cxf" includes="javax.ws.rs-api-*.jar"/>
 			<fileset dir="${openspcoop2.lib}/saaj" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/commons" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/spring" includes="*.jar"/>
@@ -153,18 +150,18 @@
 			<fileset dir="${openspcoop2.lib}/openapi4j" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/jackson" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/jakarta" includes="jakarta.servlet-api-5.0.0.jar"/>
+			<fileset dir="${openspcoop2.lib}/jakarta" includes="jakarta.activation-api-2.1.3.jar"/>
+			<fileset dir="${openspcoop2.lib}/jakarta" includes="jakarta.xml.bind-api-3.0.1.jar"/>
 			<fileset dir="${openspcoop2.lib}/jaxb" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/json" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/security" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="xercesImpl-2.12.2.jar"/>
-			<fileset dir="${openspcoop2.lib}/shared" includes="jakarta.activation-1.2.2.jar"/>
-			<fileset dir="${openspcoop2.lib}/shared" includes="joda-time-2.12.0.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="joda-time-2.12.7.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="wsdl4j-1.6.3.jar"/>
-			<fileset dir="${openspcoop2.lib}/shared" includes="snakeyaml-1.33-gov4j-1.jar"/>
-			<fileset dir="${openspcoop2.lib}/shared" includes="freemarker-2.3.31.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="snakeyaml-2.2-gov4j-1.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="freemarker-2.3.33.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="velocity-*.jar"/>
-			<fileset dir="${openspcoop2.lib}/testsuite" includes="spring-jdbc-6.1.12.jar"/>
-			<fileset dir="${openspcoop2.lib}/wss4j" includes="wss4j-ws-security-common-2.4.1.jar"/>
+			<fileset dir="${openspcoop2.lib}/wss4j" includes="wss4j-ws-security-common-3.0.3-gov4j-1.jar"/>
 		</copy>
 		
 		<antcall target="-distrib_script_cliVault">
