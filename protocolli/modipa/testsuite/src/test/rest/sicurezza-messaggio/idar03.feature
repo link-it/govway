@@ -16,7 +16,7 @@ Background:
 	  * def formatDate =
 		"""
 		function(time) {
-			var TokenUtils = Java.type("org.openspcoop2.pdd.core.token.parser.TokenUtils");
+			var TokenUtils = Java.type("org.openspcoop2.core.protocolli.modipa.testsuite.TokenUtils");
 		  var date = TokenUtils.parseTimeInSecond(time);
 		  var DateUtils = Java.type("org.openspcoop2.utils.date.DateUtils");
 		  return DateUtils.getSimpleDateFormatMs().format(date);

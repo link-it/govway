@@ -208,6 +208,7 @@ Prerequisiti:
 
 + HSM per TLS Keystore. Seguire le indicazioni descritte in pkcs11/PKCS11.README
   Poi 'cp tools/utils/src/org/openspcoop2/utils/certificate/test/govway_test_hsm.properties  /etc/govway/hsm.properties'
+  Infine posizionarsi nella directory pkcs11 ed eseguire lo script: 'updateCertificatiConfigurazione.sh'
 
 + Nella console andare su Tracciamento 'Erogazioni' e 'Fruizioni' ed impostare su <abilitato>:
     - Violazione Policy Rate Limiting

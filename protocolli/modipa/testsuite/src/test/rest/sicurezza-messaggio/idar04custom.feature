@@ -12,16 +12,6 @@ Background:
     * def result = callonce read('classpath:utils/jmx-enable-error-disclosure.feature')
     * configure afterFeature = function(){ karate.call('classpath:utils/jmx-disable-error-disclosure.feature'); }
 
-	  * def formatDate =
-		"""
-		function(time) {
-			var TokenUtils = Java.type("org.openspcoop2.pdd.core.token.parser.TokenUtils");
-		  var date = TokenUtils.parseTimeInSecond(time);
-		  var DateUtils = Java.type("org.openspcoop2.utils.date.DateUtils");
-		  return DateUtils.getSimpleDateFormatMs().format(date);
-		} 
-		"""
-
     * def integration_header = karate.readAsString('integration_info.json')
     * def integration_header_base64 = encode_base64(integration_header);
 
