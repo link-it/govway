@@ -1,3 +1,11 @@
+2024-09-19  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug #1523
+	Quando si navigava in liste interne a una singola erogazione o fruizione (ad esempio, gli applicativi autorizzati nel controllo degli accessi), 
+	il passaggio alla pagina successiva veniva erroneamente mantenuto anche quando si accedeva a una lista di un'altra erogazione o fruizione. 
+	Questo comportava una visualizzazione scorretta: nella seconda pagina potevano non esserci dati e non era più possibile tornare indietro alla pagina precedente.
+
 2024-09-11  Andrea Poli <apoli@link.it>
 
 	* [CliVault]

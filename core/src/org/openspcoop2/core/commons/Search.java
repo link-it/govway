@@ -47,10 +47,10 @@ public class Search implements Serializable, ISearch {
 	private Map<Integer, Integer> numEntries = null;
 	private Map<Integer, HashMap<String,String>> filter = null;
 
-	private static Integer PAGE_SIZE_DEFAULT = 20;
-	private static Integer INDEX_DEFAULT = 0;
+	private static Integer PAGE_SIZE_DEFAULT = org.openspcoop2.core.constants.Costanti.PAGE_SIZE_DEFAULT;
+	private static Integer INDEX_DEFAULT = org.openspcoop2.core.constants.Costanti.INDEX_DEFAULT;
 	private static String SEARCH_DEFAULT = org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED;
-	private static Integer NUM_ENTRIES_DEFAULT = 0;
+	private static Integer NUM_ENTRIES_DEFAULT = org.openspcoop2.core.constants.Costanti.NUM_ENTRIES_DEFAULT;
 	//private String FILTER_DEFAULT = org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED;
 
 	public Search() {

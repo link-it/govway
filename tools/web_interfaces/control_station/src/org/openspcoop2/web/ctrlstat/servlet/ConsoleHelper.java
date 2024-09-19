@@ -2502,12 +2502,18 @@ public class ConsoleHelper implements IConsoleHelper {
 
 			if (this.getParameter(Costanti.SEARCH_INDEX) != null) {
 				offset = Integer.parseInt(this.getParameter(Costanti.SEARCH_INDEX));
-				ricerca.setIndexIniziale(idLista, offset);
+			}else {
+				offset = Costanti.INDEX_DEFAULT;
 			}
+			ricerca.setIndexIniziale(idLista, offset);
+			
 			if (this.getParameter(Costanti.SEARCH_PAGE_SIZE) != null) {
 				limit = Integer.parseInt(this.getParameter(Costanti.SEARCH_PAGE_SIZE));
-				ricerca.setPageSize(idLista, limit);
+			}else {
+				limit = Costanti.PAGE_SIZE_DEFAULT;
 			}
+			ricerca.setPageSize(idLista, limit);
+			
 			if (this.getParameter(Costanti.SEARCH) != null) {
 				search = this.getParameter(Costanti.SEARCH);
 				search = search.trim();
