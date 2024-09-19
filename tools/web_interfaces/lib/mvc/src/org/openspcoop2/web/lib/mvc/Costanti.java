@@ -83,6 +83,10 @@ public class Costanti {
 	public static final String SEARCH_PARAMETER_NOTE = "Attenzione! &Egrave; attualmente impostato il filtro di ricerca con la stringa ''${0}''";
 	public static final String SEARCH_PARAMETER_NAME_FAKE_NAME = "__fake__search__";
 	
+	public static final Integer INDEX_DEFAULT = org.openspcoop2.core.constants.Costanti.INDEX_DEFAULT;
+	public static final Integer PAGE_SIZE_DEFAULT = org.openspcoop2.core.constants.Costanti.PAGE_SIZE_DEFAULT;	
+	public static final Integer NUM_ENTRIES_DEFAULT = org.openspcoop2.core.constants.Costanti.NUM_ENTRIES_DEFAULT;
+	
 	/** POSTBACK FUNCTION */
 	
 	public static final String POSTBACK_ELEMENT_NAME = "postBackElementName"; //nome dell'element che ha scaturito il postBack

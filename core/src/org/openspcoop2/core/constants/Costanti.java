@@ -246,4 +246,9 @@ public class Costanti {
 	public static final String VALUE_PARAMETRO_CUSTOM_IN_SELECT =  "custom";
 	
 	public static final String LABEL_PARAMETRO_CUSTOM_IN_SELECT = "plugin";
+	
+	/* DIMENSIONI PARAMETRI RICERCA */
+	public static final Integer INDEX_DEFAULT = 0;
+	public static final Integer PAGE_SIZE_DEFAULT = 20;	
+	public static final Integer NUM_ENTRIES_DEFAULT = 0;
 }
