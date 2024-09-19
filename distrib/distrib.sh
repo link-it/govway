@@ -341,12 +341,12 @@ then
 		exit 2
 	fi
 
-	/bin/cp -f validation-process/_build/pdf/*.pdf ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-ProcessoValidazione-${TAG_FULL_VERSION}.pdf
-	if [ ! -e ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-ProcessoValidazione-${TAG_FULL_VERSION}.pdf ]
-	then
-		errorPrintln "Generazione della documentazione fallita: GovWay-ProcessoValidazione-${TAG_FULL_VERSION}.pdf non generato"
-		exit 2
-	fi
+	#/bin/cp -f validation-process/_build/pdf/*.pdf ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-ProcessoValidazione-${TAG_FULL_VERSION}.pdf
+	#if [ ! -e ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-ProcessoValidazione-${TAG_FULL_VERSION}.pdf ]
+	#then
+	#	errorPrintln "Generazione della documentazione fallita: GovWay-ProcessoValidazione-${TAG_FULL_VERSION}.pdf non generato"
+	#	exit 2
+	#fi
 
 	/bin/cp -f vulnerability-management/_build/pdf/*.pdf ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-GestioneVulnerabilita-${TAG_FULL_VERSION}.pdf
 	if [ ! -e ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-GestioneVulnerabilita-${TAG_FULL_VERSION}.pdf ]
@@ -361,7 +361,7 @@ else
 	/bin/cp -f pdf/GovWay-ManualeUtente.pdf ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-ManualeUtente-${TAG_FULL_VERSION}.pdf	
 	/bin/cp -f pdf/GovWay-ManualeInstallazione.pdf ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-ManualeInstallazione-${TAG_FULL_VERSION}.pdf	
 	/bin/cp -f pdf/GovWay-ManualeMonitoraggio.pdf ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-ManualeMonitoraggio-${TAG_FULL_VERSION}.pdf
-	/bin/cp -f pdf/GovWay-ProcessoValidazione.pdf ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-ProcessoValidazione-${TAG_FULL_VERSION}.pdf	
+	# /bin/cp -f pdf/GovWay-ProcessoValidazione.pdf ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-ProcessoValidazione-${TAG_FULL_VERSION}.pdf	
 	/bin/cp -f pdf/GovWay-GestioneVulnerabilita.pdf ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-GestioneVulnerabilita-${TAG_FULL_VERSION}.pdf
 fi
 popd >> ${LOG_FILE} 2>&1
