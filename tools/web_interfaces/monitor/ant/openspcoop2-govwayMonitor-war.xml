@@ -107,6 +107,12 @@
 			</then>
 		</if>
 
+		<!-- govway.msgDiagnostici.properties -->
+		<mkdir dir="${build_govwayMonitor}/tmpNative2ASCII_src" />
+		<mkdir dir="${build_govwayMonitor}/tmpNative2ASCII_dest" />
+		<copy file="${properties_govwayMonitor}/govway.msgDiagnostici.properties" todir="${build_govwayMonitor}/tmpNative2ASCII_src" />
+		<native2ascii src="${build_govwayMonitor}/tmpNative2ASCII_src" dest="${build_govwayMonitor}/tmpNative2ASCII_dest" />
+
 		<war destfile="${dist_govwayMonitor}/govwayMonitor.war" webxml="${build_govwayMonitor_war}/WEB-INF/web.xml">
 
 			<!-- Informazioni sulla versione -->
@@ -151,6 +157,9 @@
 			<classes dir="${build_govwayMonitor}/tmp">
 				<include name="daoFactory.properties" />
 				<include name="monitor.properties" />
+			</classes>
+			<classes dir="${build_govwayMonitor}/tmpNative2ASCII_dest">
+				<include name="govway.msgDiagnostici.properties" />
 			</classes>
 			<lib dir="${required_lib_govwayMonitor}/commons">
 				<include name="commons-beanutils-1.9.4.jar" />
@@ -281,6 +290,10 @@
 			</fileset>
 		</war>
 		<delete dir="${build_govwayMonitor}/tmp" />
+		<delete file="${build_govwayMonitor}/tmpNative2ASCII_dest/govway.msgDiagnostici.properties" deleteonexit="true"/>
+		<delete dir="${build_govwayMonitor}/tmpNative2ASCII_dest" deleteonexit="true"/>
+		<delete file="${build_govwayMonitor}/tmpNative2ASCII_src/govway.msgDiagnostici.properties" deleteonexit="true"/>
+		<delete dir="${build_govwayMonitor}/tmpNative2ASCII_src" deleteonexit="true"/>
 		
 	</target>
 	

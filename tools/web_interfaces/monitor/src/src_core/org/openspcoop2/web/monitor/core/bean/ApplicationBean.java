@@ -20,18 +20,29 @@
 package org.openspcoop2.web.monitor.core.bean;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.Filtri;
+import org.openspcoop2.core.commons.ISearch;
+import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.Search;
+import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.utils.PluginsDriverUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.IVersionInfo;
@@ -379,19 +390,42 @@ public class ApplicationBean implements Serializable {
 		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_ALLARMI))
 			return false;
 
+		if(!this.existsPluginAllarmi()) {
+			return false;
+		}
+		
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 
 		// gli allarmi sono visualizzabili dall' operatore
-		if (
-				this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)				|| 
-				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
-			return true;
-
-		return false;
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)	|| 
+				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE));
+	}
+	
+	private boolean existsPluginAllarmi() {
+		try {
+			String tipoDatabase = DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			String datasourceJNDIName = DAOFactoryProperties.getInstance(log).getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			Properties datasourceJNDIContext = DAOFactoryProperties.getInstance(log).getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+	
+			DriverConfigurazioneDB driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
+			Connection con = null;
+			try {
+				con = driverConfigDB.getConnection("existsPluginAllarmi");
+				ISearch ricercaPlugin = new Search(true);
+				ricercaPlugin.addFilter( Liste.CONFIGURAZIONE_PLUGINS_CLASSI, Filtri.FILTRO_TIPO_PLUGIN_CLASSI, TipoPlugin.ALLARME.toString());
+				List<Plugin> p = PluginsDriverUtils.pluginsClassiList(ricercaPlugin, con, log, tipoDatabase);
+				return p!=null && !p.isEmpty();
+			}finally {
+				driverConfigDB.releaseConnection("existsPluginAllarmi", con);
+			}
+		}catch(Exception e) {
+			log.error(e.getMessage(),e);
+			return false;
+		}
 	}
 
 

@@ -155,7 +155,10 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.transazioni" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.trasformazioni" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.logger" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.logger.record" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.logger.traccia" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.logger.diagnostica" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.logger.dump" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.logger.filetrace" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.mdb" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.mdb.threads" />

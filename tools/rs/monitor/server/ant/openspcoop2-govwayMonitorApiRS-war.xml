@@ -73,6 +73,13 @@
                         </then>
                 </if>
 
+
+		<!-- govway.msgDiagnostici.properties -->
+		<mkdir dir="${build_govwayMonitorApiRS}/tmpNative2ASCII_src" />
+		<mkdir dir="${build_govwayMonitorApiRS}/tmpNative2ASCII_dest" />
+		<copy file="${properties_govwayMonitorApiRS}/govway.msgDiagnostici.properties" todir="${build_govwayMonitorApiRS}/tmpNative2ASCII_src" />
+		<native2ascii src="${build_govwayMonitorApiRS}/tmpNative2ASCII_src" dest="${build_govwayMonitorApiRS}/tmpNative2ASCII_dest" />
+
 		<war destfile="${dist_govwayMonitorApiRS}/govwayAPIMonitor.war" webxml="${src_govwayMonitorApiRS}/WEB-INF/web.xml">
 
 			<webinf dir="${tmp_jboss_conf}">
@@ -204,6 +211,9 @@
 			</lib>
 			<classes dir="${build_govwayMonitorApiRS}/properties">
 				<include name="rs-api-monitor.datasource.properties"/>
+			</classes>
+			<classes dir="${build_govwayMonitorApiRS}/tmpNative2ASCII_dest">
+				<include name="govway.msgDiagnostici.properties" />
 			</classes>			
 			<classes dir="${properties_govwayMonitorApiRS}">
 				<include name="rs-api-monitor.properties"/>
@@ -211,11 +221,16 @@
 				<include name="rs-api-monitor.log4j2.properties"/>
 				<include name="messages_it.properties"/>
 				<include name="log4j2.properties"/>
+				<include name="daoFactory.properties"/>
 			</classes>
 			
 			<classes dir="${build_govwayMonitorApiRS}/config" />
 		
 		</war>
+		<delete file="${build_govwayMonitorApiRS}/tmpNative2ASCII_dest/govway.msgDiagnostici.properties" deleteonexit="true"/>
+		<delete dir="${build_govwayMonitorApiRS}/tmpNative2ASCII_dest" deleteonexit="true"/>
+		<delete file="${build_govwayMonitorApiRS}/tmpNative2ASCII_src/govway.msgDiagnostici.properties" deleteonexit="true"/>
+		<delete dir="${build_govwayMonitorApiRS}/tmpNative2ASCII_src" deleteonexit="true"/>
 
 	</target>
 	

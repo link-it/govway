@@ -2183,8 +2183,9 @@ public class ConsoleHelper implements IConsoleHelper {
 
 				dimensioneEntries = 7; // configurazione, controllo del traffico, tracciamento, registrazioneMessaggi, policy, aa e audit
 				
-				if(this.core.isConfigurazioneAllarmiEnabled())
+				if(this.core.isVisualizzaConfigurazioneAllarmiEnabled()) { // configurazione allarmi (solo se sono stati caricati dei plugin di tipo allarme)
 					dimensioneEntries++; // configurazione allarmi
+				}
 				
 				dimensioneEntries++; // gruppi
 
@@ -2252,7 +2253,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI+"?"+
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE+"="+ConfigurazioneCostanti.VALORE_PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE_REGISTRAZIONE_MESSAGGI;
 				index++;
-				if(this.core.isConfigurazioneAllarmiEnabled()) { // configurazione allarmi
+				if(this.core.isVisualizzaConfigurazioneAllarmiEnabled()) { // configurazione allarmi (solo se sono stati caricati dei plugin di tipo allarme)
 					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI;
 					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_LIST;
 					index++;	

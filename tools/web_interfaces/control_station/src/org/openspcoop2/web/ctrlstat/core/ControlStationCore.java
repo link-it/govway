@@ -107,6 +107,7 @@ import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
 import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -7698,6 +7699,39 @@ public class ControlStationCore {
 				idPD.setNome(allarme.getFiltro().getNomePorta());
 				driver.getDriverConfigurazioneDB().updateProprietaOggetto(idPD, superUser);
 			}
+		}
+	}
+	
+	public boolean isVisualizzaConfigurazioneAllarmiEnabled() {
+		if(!this.configurazioneAllarmiEnabled) {
+			return false;
+		}
+		int numeroPluginRegistrati = countPluginsAllarmi();
+		return numeroPluginRegistrati>0;
+	}
+	private int countPluginsAllarmi() {
+		Connection con = null;
+		String nomeMetodo = "countPluginsAllarmi";
+		DriverControlStationDB driver = null;
+
+		try {
+			//String applicabilita, boolean soloAbilitati
+			
+			ISearch ricercaPlugin = new ConsoleSearch(true);
+			ricercaPlugin.addFilter( Liste.CONFIGURAZIONE_PLUGINS_CLASSI, Filtri.FILTRO_TIPO_PLUGIN_CLASSI, TipoPlugin.ALLARME.toString());
+			
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			List<Plugin> p = driver.pluginsClassiList(ricercaPlugin);
+			return p!=null ? p.size() : 0;
+			
+		} catch (Exception e) {
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			return -1;
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
 	

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.utils.transport.TransportUtils;
 
 /**     
@@ -47,38 +48,42 @@ public class PropertiesSerializator {
 		this.properties = properties;
 	}
 	
-	public String convertToDBColumnValue() throws Exception{
+	public String convertToDBColumnValue() throws CoreException{
 		
 		StringBuilder bf = new StringBuilder();
 		
 		if(this.properties!=null && !this.properties.isEmpty()) {
-			for (String key : this.properties.keySet()) {
+			for (Map.Entry<String,List<String>> entry : this.properties.entrySet()) {
+				String key = entry.getKey();
 				if(key.contains(" ")){
-					throw new Exception("Chiave ["+key+"] contiene il carattere ' ' non ammesso");
+					throw new CoreException("Chiave ["+key+"] contiene il carattere ' ' non ammesso");
 				}
 				List<String> values = this.properties.get(key);
-				if(values!=null && !values.isEmpty()) {
-					for (String value : values) {
-						//if(value.contains("\n")){
-							//throw new Exception("Valore ["+value+"] della chiave ["+key+"] contiene il carattere '\\n' non ammesso");
-						//}
-						while(value.contains("\n")){
-							value = value.replace("\n", TEMPLATE_RITORNO_A_CAPO);
-						}
-						if(bf.length()>0){
-							bf.append("\n");
-						}
-						bf.append(key).append("=").append(value);		
-					}
-				}
+				addDBColumnValue(values, bf, key);
 			}
 		}
 		
 		return bf.toString();
 		
 	}
+	private void addDBColumnValue(List<String> values, StringBuilder bf, String key) {
+		if(values!=null && !values.isEmpty()) {
+			for (String value : values) {
+				/**if(value.contains("\n")){
+					throw new Exception("Valore ["+value+"] della chiave ["+key+"] contiene il carattere '\\n' non ammesso");
+				}*/
+				while(value.contains("\n")){
+					value = value.replace("\n", TEMPLATE_RITORNO_A_CAPO);
+				}
+				if(bf.length()>0){
+					bf.append("\n");
+				}
+				bf.append(key).append("=").append(value);		
+			}
+		}
+	}
 	
-	public static Map<String, List<String>> convertoFromDBColumnValue(String dbValue) throws Exception{
+	public static Map<String, List<String>> convertoFromDBColumnValue(String dbValue) throws CoreException{
 		
 		Map<String, List<String>> map = new HashMap<>();
 		
@@ -95,7 +100,7 @@ public class PropertiesSerializator {
 					continue;
 				}
 				if(keyValue.length<2){
-					throw new Exception("Valore ["+keyValueTmp+"] non contiene una coppia key=value");
+					throw new CoreException("Valore ["+keyValueTmp+"] non contiene una coppia key=value");
 				}
 				String key = keyValue[0];
 				String value = keyValueTmp.substring((key+"=").length());
