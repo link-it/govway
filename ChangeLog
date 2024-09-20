@@ -1,3 +1,9 @@
+2024-09-20  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolta la seguente vulnerabilità relative ai jar di terza parte:
+	- CVE-2024-45801 aggiornata libreria 'org.webjars:swagger-ui' alla versione 4.19.1
+
 2024-09-19  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]
