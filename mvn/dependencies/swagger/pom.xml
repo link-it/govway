@@ -17,7 +17,7 @@
 
 		<jar.group.name>swagger</jar.group.name>
 		
-		<swagger-ui.version>4.15.0</swagger-ui.version>
+		<swagger-ui.version>4.19.1</swagger-ui.version>
 		<classgraph.version>4.8.149</classgraph.version>
 		<swagger.v3.version>2.2.4</swagger.v3.version>
 		<swagger.parser.v3.version>2.1.6</swagger.parser.v3.version>
