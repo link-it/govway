@@ -2064,17 +2064,18 @@ public class ConnettoriHelper extends ConsoleHelper {
 					
 					
 					// 1a. Checkbox 'Verifica tutti i campi' + nota: attenzione questa opzione richiede l'aggiornamento del certificato a scadenza
+					
+					boolean verificaCompleta = false;
+					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSubject)) {
+						verificaCompleta = ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi);
+					}
+					
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
 					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
-					boolean verificaCompleta = false;
 					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSubject)) {
 						de.setType(DataElementType.CHECKBOX);
-						verificaCompleta = ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi);
 						de.setSelected(verificaCompleta);
-						if(!verificaCompleta) {
-							de.setNote(ConnettoriCostanti.NOTE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_SOLO_SUBJECT_ISSUER);
-						}
 						de.setSize(this.getSize());
 						de.setLabelAffiancata(true);
 						if(postBackViaPost) {
@@ -2088,6 +2089,16 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setValue(tipoCredenzialiSSLVerificaTuttiICampi);
 					}
 					dati.add(de);
+					
+					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSubject) && !verificaCompleta) {
+						de = new DataElement();
+						de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI_NOTE_DISABLE);
+						de.setType(DataElementType.NOTE);
+						de.setBold(true);
+						de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_SOLO_SUBJECT_ISSUER);
+						de.setValue(ConnettoriCostanti.NOTE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_SOLO_SUBJECT_ISSUER);
+						dati.add(de);
+					}
 					
 //						Subject:
 					de = new DataElement();
@@ -6163,17 +6174,18 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 								
 				// 1a. Checkbox 'Verifica tutti i campi' + nota: attenzione questa opzione richiede l'aggiornamento del certificato a scadenza
+				
+				boolean verificaCompleta = false;
+				if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSubject)) {
+					verificaCompleta = ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi);
+				}
+				
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
-				boolean verificaCompleta = false;
 				if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSubject)) {
 					de.setType(DataElementType.CHECKBOX);
-					verificaCompleta = ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi);
 					de.setSelected(verificaCompleta);
-					if(!verificaCompleta) {
-						de.setNote(ConnettoriCostanti.NOTE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_SOLO_SUBJECT_ISSUER);
-					}
 					de.setSize(this.getSize());
 					de.setLabelAffiancata(true);
 					de.setPostBack(true);
@@ -6182,7 +6194,17 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setValue(tipoCredenzialiSSLVerificaTuttiICampi);
 				}
 				dati.add(de);
-								
+
+				if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSubject) && !verificaCompleta) {
+					de = new DataElement();
+					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI_NOTE_DISABLE);
+					de.setType(DataElementType.NOTE);
+					de.setBold(true);
+					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_SOLO_SUBJECT_ISSUER);
+					de.setValue(ConnettoriCostanti.NOTE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_SOLO_SUBJECT_ISSUER);
+					dati.add(de);
+				}
+				
 //						Subject:
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
