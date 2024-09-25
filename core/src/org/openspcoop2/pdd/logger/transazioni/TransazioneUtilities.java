@@ -48,6 +48,7 @@ import org.openspcoop2.core.transazioni.TransazioneExtendedInfo;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.core.transazioni.constants.RuoloTransazione;
 import org.openspcoop2.core.transazioni.constants.TipoAPI;
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.core.transazioni.utils.PropertiesSerializator;
 import org.openspcoop2.core.transazioni.utils.TempiElaborazioneUtils;
 import org.openspcoop2.core.transazioni.utils.credenziali.AbstractCredenzialeList;
@@ -93,6 +94,7 @@ import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
+import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.utils.EsitiProperties;
@@ -384,7 +386,18 @@ public class TransazioneUtilities {
 			if(FaseTracciamento.OUT_RESPONSE.equals(fase) || FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
 				if (info.getInputResponseMessageSize()!=null && info.getInputResponseMessageSize()>0 &&
 					transaction!=null && transaction.getDataIngressoRisposta()!=null) { // altrimenti non ha senso, poichè non c'è stato un vero inoltro verso il backend
-					transactionDTO.setRispostaIngressoBytes(info.getInputResponseMessageSize());
+					
+					boolean add = false;
+					if(info.getContext()!=null) {
+						Object o = info.getContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_RESPONSE_START_DATE);
+						if(o instanceof Date) {
+							add = true;
+						}
+					}
+					
+					if(add) {
+						transactionDTO.setRispostaIngressoBytes(info.getInputResponseMessageSize());
+					}
 				}
 	
 				// ** dimensione_uscita_risposta **
@@ -586,18 +599,36 @@ public class TransazioneUtilities {
 			if (info.getInputRequestMessageSize()!=null && info.getInputRequestMessageSize()>0){
 				transactionDTO.setRichiestaIngressoBytes(info.getInputRequestMessageSize());
 			}
+			if(transactionDTO.getRichiestaIngressoBytes()==null &&
+					FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
+				transactionDTO.setRichiestaIngressoBytes(readDimensioneFromDumpBinario(TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO, transaction));
+			}
 
 			// dimensione_uscita_richiesta
-			if(FaseTracciamento.OUT_REQUEST.equals(fase) || FaseTracciamento.OUT_RESPONSE.equals(fase) || FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
-				if (info.getOutputRequestMessageSize()!=null && info.getOutputRequestMessageSize()>0 &&
-					transactionDTO.getDataUscitaRichiesta()!=null) { // altrimenti non ha senso, poichè non c'è stato un vero inoltro verso il backend
-					transactionDTO.setRichiestaUscitaBytes(info.getOutputRequestMessageSize());
-				}
+			if( 
+					(FaseTracciamento.OUT_REQUEST.equals(fase) || FaseTracciamento.OUT_RESPONSE.equals(fase) || FaseTracciamento.POST_OUT_RESPONSE.equals(fase))
+					&& 
+					(info.getOutputRequestMessageSize()!=null && info.getOutputRequestMessageSize()>0 &&
+						transactionDTO.getDataUscitaRichiesta()!=null) // altrimenti non ha senso, poichè non c'è stato un vero inoltro verso il backend
+				) {
+				transactionDTO.setRichiestaUscitaBytes(info.getOutputRequestMessageSize());
+			}
+			if(transactionDTO.getRichiestaUscitaBytes()==null &&
+					FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
+				transactionDTO.setRichiestaUscitaBytes(readDimensioneFromDumpBinario(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO, transaction));
 			}
 
 			// dimensione_ingresso_risposta
 			// dimensione_uscita_risposta
-			// Gestite prima per la doppia fase, come per l'esito
+			// Gestite prima per la doppia fase, come per l'esito: faccio una ulteriore verifica se siamo nell'ultima fase e sono null
+			if(transactionDTO.getRispostaIngressoBytes()==null &&
+					FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
+				transactionDTO.setRispostaIngressoBytes(readDimensioneFromDumpBinario(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO, transaction));
+			}
+			if(transactionDTO.getRispostaUscitaBytes()==null &&
+					FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
+				transactionDTO.setRispostaUscitaBytes(readDimensioneFromDumpBinario(TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO, transaction));
+			}
 
 
 			// ** Dati Pdd **
@@ -1293,6 +1324,17 @@ public class TransazioneUtilities {
 						msgDiag);
 			}
 		}
+	}
+	
+	private Long readDimensioneFromDumpBinario(TipoMessaggio tipoMessaggio, Transaction transaction) {
+		if(transaction!=null && !transaction.getMessaggi().isEmpty()) {
+			for (Messaggio msg : transaction.getMessaggi()) {
+				if(tipoMessaggio.equals(msg.getTipoMessaggio()) && msg.getBody()!=null){
+					return Long.valueOf(msg.getBody().size());
+				}
+			}
+		}
+		return null;
 	}
 	
 	private void setFaultInfo(Transazione transactionDTO, 
