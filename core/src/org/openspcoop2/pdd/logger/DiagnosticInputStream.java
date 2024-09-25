@@ -45,10 +45,14 @@ public class DiagnosticInputStream extends FilterInputStream {
 
 	private static final String COMPLETATA = "completata";
 	private static final String FALLITA = "fallita";
+	
 	public static final MapKey<String> DIAGNOSTIC_INPUT_STREAM_REQUEST_COMPLETE_DATE = Map.newMapKey("DiagnosticInputStreamRequestCompleteDate");
 	public static final MapKey<String> DIAGNOSTIC_INPUT_STREAM_REQUEST_ERROR_DATE = Map.newMapKey("DiagnosticInputStreamRequestErrorDate");
+	public static final MapKey<String> DIAGNOSTIC_INPUT_STREAM_REQUEST_START_DATE = Map.newMapKey("DiagnosticInputStreamRequestStartDate");
+	
 	public static final MapKey<String> DIAGNOSTIC_INPUT_STREAM_RESPONSE_COMPLETE_DATE = Map.newMapKey("DiagnosticInputStreamResponseCompleteDate");
 	public static final MapKey<String> DIAGNOSTIC_INPUT_STREAM_RESPONSE_ERROR_DATE = Map.newMapKey("DiagnosticInputStreamResponseErrorDate");
+	public static final MapKey<String> DIAGNOSTIC_INPUT_STREAM_RESPONSE_START_DATE = Map.newMapKey("DiagnosticInputStreamResponseStartDate");
 	
 	private InputStream isWrapped = null;
 	private String idModuloFunzionale;
@@ -78,6 +82,8 @@ public class DiagnosticInputStream extends FilterInputStream {
 		this.ctx = ctx;
 		
 		this.isWrapped = inputStream;
+		
+		registerStartDate();
 	}
 	
 	public InputStream getIsWrapped() {
@@ -140,6 +146,13 @@ public class DiagnosticInputStream extends FilterInputStream {
 		}
 	}
 
+	private void registerStartDate() {
+		if(this.ctx!=null && this.isWrapped!=null) {
+			Date d = DateManager.getDate();
+			this.ctx.put(this.request ? DIAGNOSTIC_INPUT_STREAM_REQUEST_START_DATE : DIAGNOSTIC_INPUT_STREAM_RESPONSE_START_DATE, d);
+		}
+	}
+	
 	private void registerDate(Throwable t) {
 		if(this.ctx!=null && 
 				(this.readSomeBytes 

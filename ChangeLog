@@ -1,3 +1,10 @@
+2024-09-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayMonito]
+	Risolto Bug #1524
+	Esaminando i dettagli del messaggio di risposta presenti in una transazione fallita per indisponibilità del backend, 
+	viene erroneamente indicata una dimensione di una ipotetica risposta ricevuta, che non può esistere a causa del fallimento della connessione al backend.
+
 2024-09-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
