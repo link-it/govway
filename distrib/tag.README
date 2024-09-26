@@ -141,4 +141,6 @@ Per creare una tag version:
 
 23. Verificare licenze in 'third-party-licenses' siano tutte aggiornate alle versioni delle lib utilizzate
 
-24. (PVersion) Creazione versione tag
+24. !!! NOTA !!! Quando si effettua il commit pre-rilascio usare il messaggio 'Predisposto rilascio <versione>'; sarà usato da jenkins per collezionare le evidenze.
+
+25. (PVersion) Creazione versione tag
