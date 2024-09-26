@@ -1,9 +1,19 @@
 2024-09-26  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Aggiunta funzionalità #1525
+	È stata aggiunta un'opzione che permette di disabilitare, su singola erogazione o fruizione, il controllo della validità (scadenza) del certificato X.509 utilizzato per firmare un token. 
+	Questo consente di accettare token firmati con certificati scaduti.
+	È stata inoltre introdotta una configurazione che permette di eseguire la verifica della validità del certificato di firma solo se il certificato non è presente nel truststore utilizzato per la validazione 
+	(ad esempio, quando nel truststore è presente solo la CA). 
+	Con questa impostazione, un certificato scaduto verrà accettato se è presente nel truststore; in caso contrario, la transazione verrà rifiutata.
+
+2024-09-25  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole]
 	La maschera di caricamento di un certificato in un applicativo o in un soggetto è stata rivista per rendere più chiaro cosa comporta disabilitare la verifica del certificato.
 
-2024-09-26  Andrea Poli <apoli@link.it>
+2024-09-25  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayMonito]
 	Risolto Bug #1524

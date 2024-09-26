@@ -248,6 +248,7 @@ public class SecurityConstants {
     public static final String SIGNATURE_DIGEST_ALGORITHM = ConfigurationConstants.SIG_DIGEST_ALGO;
     public static final String SIGNATURE_ALGORITHM = ConfigurationConstants.SIG_ALGO;
     public static final String SIGNATURE_KEY_IDENTIFIER = ConfigurationConstants.SIG_KEY_ID;
+    public static final String SIGNATURE_VALIDITY_CHECK = "signatureValidityCheck";
     public static final String SIGNATURE_CRL = "signatureCRL";
     public static final String SIGNATURE_OCSP = "signatureOCSP";
     public static final String SIGNATURE_VERIFICATION_PROPERTY_REF_ID = ConfigurationConstants.SIG_VER_PROP_REF_ID;
@@ -360,6 +361,7 @@ public class SecurityConstants {
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_FILE = "joseUseHeaders.truststore.file";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_KEY_PAIR_ALGORITHM = "joseUseHeaders.truststore.file.algorithm";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_PASSWORD = "joseUseHeaders.truststore.password";
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_VALIDITY_CHECK =  "joseUseHeaders.truststore.validityCheck";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_CRL =  "joseUseHeaders.truststore.crl";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_OCSP =  "joseUseHeaders.truststore.ocsp";
     

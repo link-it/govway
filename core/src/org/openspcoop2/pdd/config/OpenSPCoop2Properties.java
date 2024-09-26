@@ -160,6 +160,7 @@ import org.openspcoop2.utils.openapi.validator.OpenAPILibrary;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.security.CertificateValidityCheck;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
@@ -2200,6 +2201,7 @@ public class OpenSPCoop2Properties {
 			this.getGestioneTokenIatTimeCheckFutureToleranceMilliseconds();
 			this.isGestioneTokenExpTimeCheck();
 			this.getGestioneTokenExpTimeCheckToleranceMilliseconds();
+			this.getGestioneTokenValidityCheck();
 			this.isGestioneTokenSaveSourceTokenInfo();
 			this.isGestioneTokenSaveTokenInfoValidationFailed();
 			this.isGestioneTokenSaveTokenInfoValidationFailedExcludeJwtSignature();
@@ -2249,10 +2251,11 @@ public class OpenSPCoop2Properties {
 			this.initGestioneRetrieveTokenCacheKey();
 						
 			// Gestione AttributeAuthority
-			this.isGestioneAttributeAuthority_debug();
+			this.isGestioneAttributeAuthorityDebug();
 			this.getGestioneAttributeAuthorityLockPermits();
-			this.isGestioneAttributeAuthority_saveSourceAttributeResponseInfo();
-			this.isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate();
+			this.isGestioneAttributeAuthoritySaveSourceAttributeResponseInfo();
+			this.isGestioneAttributeAuthorityTransazioniRegistrazioneAttributiInformazioniNormalizzate();
+			this.getGestioneAttributeAuthorityValidityCheck();
 			
 			// Statistiche via jmx Console
 			this.isStatisticheViaJmx();
@@ -23385,6 +23388,34 @@ public class OpenSPCoop2Properties {
 		return this.getGestioneTokenExpTimeCheckToleranceMilliseconds;
 	}
 	
+	private CertificateValidityCheck getGestioneTokenValidityCheck = null;
+	public CertificateValidityCheck getGestioneTokenValidityCheck(){
+
+		String pName = "org.openspcoop2.pdd.gestioneToken.validityCheck";
+		if(this.getGestioneTokenValidityCheck==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.getGestioneTokenValidityCheck = CertificateValidityCheck.parseCertificateValidityCheck(value);
+					if(this.getGestioneTokenValidityCheck==null) {
+						throw new CoreException("Opzione '"+value+"' sconosciuta");
+					}
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.getGestioneTokenValidityCheck = CertificateValidityCheck.ENABLED;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
+				this.getGestioneTokenValidityCheck = CertificateValidityCheck.ENABLED;
+			}
+		}
+
+		return this.getGestioneTokenValidityCheck;
+	}
+	
 	private Boolean isGestioneTokenSaveSourceTokenInfo = null;
 	public boolean isGestioneTokenSaveSourceTokenInfo(){
 
@@ -24647,29 +24678,29 @@ public class OpenSPCoop2Properties {
 	
 	/* ------------- Gestione Attribute Authority ---------------------*/
 	
-	private Boolean isGestioneAttributeAuthority_debug = null;
-	public boolean isGestioneAttributeAuthority_debug(){
+	private Boolean isGestioneAttributeAuthorityDebug = null;
+	public boolean isGestioneAttributeAuthorityDebug(){
 
 		String pName = "org.openspcoop2.pdd.gestioneAttributeAuthority.debug";
-		if(this.isGestioneAttributeAuthority_debug==null){
+		if(this.isGestioneAttributeAuthorityDebug==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isGestioneAttributeAuthority_debug = Boolean.parseBoolean(value);
+					this.isGestioneAttributeAuthorityDebug = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isGestioneAttributeAuthority_debug = false;
+					this.isGestioneAttributeAuthorityDebug = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isGestioneAttributeAuthority_debug = false;
+				this.isGestioneAttributeAuthorityDebug = false;
 			}
 		}
 
-		return this.isGestioneAttributeAuthority_debug;
+		return this.isGestioneAttributeAuthorityDebug;
 	}
 	
 	private Boolean getGestioneAttributeAuthorityLockPermitsRead = null;
@@ -24701,54 +24732,82 @@ public class OpenSPCoop2Properties {
 		return this.getGestioneAttributeAuthorityLockPermits;
 	}
 	
-	private Boolean isGestioneAttributeAuthority_saveSourceAttributeResponseInfo = null;
-	public boolean isGestioneAttributeAuthority_saveSourceAttributeResponseInfo(){
+	private Boolean isGestioneAttributeAuthoritySaveSourceAttributeResponseInfo = null;
+	public boolean isGestioneAttributeAuthoritySaveSourceAttributeResponseInfo(){
 
 		String pName = "org.openspcoop2.pdd.gestioneAttributeAuthority.saveSourceAttributeResponseInfo";
-		if(this.isGestioneAttributeAuthority_saveSourceAttributeResponseInfo==null){
+		if(this.isGestioneAttributeAuthoritySaveSourceAttributeResponseInfo==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isGestioneAttributeAuthority_saveSourceAttributeResponseInfo = Boolean.parseBoolean(value);
+					this.isGestioneAttributeAuthoritySaveSourceAttributeResponseInfo = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isGestioneAttributeAuthority_saveSourceAttributeResponseInfo = false;
+					this.isGestioneAttributeAuthoritySaveSourceAttributeResponseInfo = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isGestioneAttributeAuthority_saveSourceAttributeResponseInfo = false;
+				this.isGestioneAttributeAuthoritySaveSourceAttributeResponseInfo = false;
 			}
 		}
 
-		return this.isGestioneAttributeAuthority_saveSourceAttributeResponseInfo;
+		return this.isGestioneAttributeAuthoritySaveSourceAttributeResponseInfo;
 	}
 	
-	private Boolean isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate = null;
-	public boolean isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate(){
+	private Boolean isGestioneAttributeAuthorityTransazioniRegistrazioneAttributiInformazioniNormalizzate = null;
+	public boolean isGestioneAttributeAuthorityTransazioniRegistrazioneAttributiInformazioniNormalizzate(){
 
 		String pName = "org.openspcoop2.pdd.gestioneAttributeAuthority.transazioniRegistrazioneAttributiInformazioniNormalizzate";
-		if(this.isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate==null){
+		if(this.isGestioneAttributeAuthorityTransazioniRegistrazioneAttributiInformazioniNormalizzate==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate = Boolean.parseBoolean(value);
+					this.isGestioneAttributeAuthorityTransazioniRegistrazioneAttributiInformazioniNormalizzate = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate = false;
+					this.isGestioneAttributeAuthorityTransazioniRegistrazioneAttributiInformazioniNormalizzate = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate = false;
+				this.isGestioneAttributeAuthorityTransazioniRegistrazioneAttributiInformazioniNormalizzate = false;
 			}
 		}
 
-		return this.isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate;
+		return this.isGestioneAttributeAuthorityTransazioniRegistrazioneAttributiInformazioniNormalizzate;
+	}
+	
+	private CertificateValidityCheck getGestioneAttributeAuthorityValidityCheck = null;
+	public CertificateValidityCheck getGestioneAttributeAuthorityValidityCheck(){
+
+		String pName = "org.openspcoop2.pdd.gestioneAttributeAuthority.validityCheck";
+		if(this.getGestioneAttributeAuthorityValidityCheck==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.getGestioneAttributeAuthorityValidityCheck = CertificateValidityCheck.parseCertificateValidityCheck(value);
+					if(this.getGestioneAttributeAuthorityValidityCheck==null) {
+						throw new CoreException("Opzione '"+value+"' sconosciuta");
+					}
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.getGestioneAttributeAuthorityValidityCheck = CertificateValidityCheck.ENABLED;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
+				this.getGestioneAttributeAuthorityValidityCheck = CertificateValidityCheck.ENABLED;
+			}
+		}
+
+		return this.getGestioneAttributeAuthorityValidityCheck;
 	}
 	
 	

@@ -1,7 +1,7 @@
 Bug Fix
 -------
 
-Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
+Sono state risolte le seguenti vulnerabilità relative alle librerie di terza parte:
 
 - CVE-2024-32007, CVE-2024-41172: 
 

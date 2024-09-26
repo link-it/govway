@@ -26,6 +26,7 @@ import java.security.cert.X509Certificate;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.generic_project.exception.NotFoundException;
@@ -56,6 +57,7 @@ import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.certificate.remote.IRemoteStoreProvider;
 import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
+import org.openspcoop2.utils.security.CertificateValidityCheck;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWTOptions;
 import org.openspcoop2.utils.security.JsonDecrypt;
@@ -255,6 +257,14 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				if(this.detached) {
 					detachedSignature = this.readDetachedSignatureFromMessage(messageSecurityContext.getIncomingProperties(), 
 							restJsonMessage, JOSECostanti.JOSE_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION);
+				}
+				
+				String signatureValidityCheck = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_VALIDITY_CHECK);
+				if(signatureValidityCheck!=null && StringUtils.isNotEmpty(signatureValidityCheck)) {
+					CertificateValidityCheck c = CertificateValidityCheck.parseCertificateValidityCheck(signatureValidityCheck);
+					if(c!=null) {
+						this.jsonVerifierSignature.setValidityCheck(c);
+					}
 				}
 				
 				String signatureCRL = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_CRL);
@@ -468,6 +478,14 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 								encryptionKeyAlgorithm, encryptionContentAlgorithm, options);	
 					}
 
+				}
+				
+				String encryptionValidityCheck = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_VALIDITY_CHECK);
+				if(encryptionValidityCheck!=null && StringUtils.isNotEmpty(encryptionValidityCheck)) {
+					CertificateValidityCheck c = CertificateValidityCheck.parseCertificateValidityCheck(encryptionValidityCheck);
+					if(c!=null) {
+						this.jsonDecrypt.setValidityCheck(c);
+					}
 				}
 				
 				String encryptionCRL = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_CRL);

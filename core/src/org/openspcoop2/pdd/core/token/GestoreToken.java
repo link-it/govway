@@ -2342,7 +2342,7 @@ public class GestoreToken {
 			return list.get(0);
 		}
 		else {
-			return new InformazioniAttributi(OpenSPCoop2Properties.getInstance().isGestioneAttributeAuthority_saveSourceAttributeResponseInfo(), list.toArray(new InformazioniAttributi[1]));
+			return new InformazioniAttributi(OpenSPCoop2Properties.getInstance().isGestioneAttributeAuthoritySaveSourceAttributeResponseInfo(), list.toArray(new InformazioniAttributi[1]));
 		}
 	}
 

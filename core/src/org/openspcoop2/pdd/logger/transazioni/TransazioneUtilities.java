@@ -137,7 +137,7 @@ public class TransazioneUtilities {
 		this.transazioniRegistrazioneTempiElaborazione = configTransazioni!=null && StatoFunzionalita.ABILITATO.equals(configTransazioni.getTempiElaborazione());
 		this.transazioniRegistrazioneTokenInformazioniNormalizzate = configTransazioni!=null && StatoFunzionalita.ABILITATO.equals(configTransazioni.getToken());
 		this.transazioniRegistrazioneAttributiInformazioniNormalizzate = configTransazioni!=null && StatoFunzionalita.ABILITATO.equals(configTransazioni.getToken()) &&
-				openspcoopProperties.isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate(); // per adesso la configurazione avviene via govway.properties
+				openspcoopProperties.isGestioneAttributeAuthorityTransazioniRegistrazioneAttributiInformazioniNormalizzate(); // per adesso la configurazione avviene via govway.properties
 		this.transazioniRegistrazioneRetrieveTokenSaveAsTokenInfo = configTransazioni!=null && StatoFunzionalita.ABILITATO.equals(configTransazioni.getToken()) &&
 				openspcoopProperties.isGestioneRetrieveToken_saveAsTokenInfo(); // per adesso la configurazione avviene via govway.properties
 	}
