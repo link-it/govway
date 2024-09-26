@@ -835,20 +835,28 @@ public class JsonUtils {
 	
 	public static void validate(CertificateInfo certificatoInfo,
 			KeyStore trustStoreCertificatiX509, CertStore crlX509, IOCSPValidator ocspValidatorX509, String headerName,
-			boolean verifaCA) throws UtilsException {
+			boolean verifaCA,
+			CertificateValidityCheck validityCheck) throws UtilsException {
 		if(trustStoreCertificatiX509!=null) {
 			String prefisso = headerName!=null ? ("Certificato presente nell'header '"+headerName+"' ") : "Certificato di firma ";
 			if(verifaCA && !certificatoInfo.isVerified(trustStoreCertificatiX509, true)) {
 				throw new UtilsException(prefisso+"non è verificabile rispetto alle CA conosciute");
 			}
-			try {
-				certificatoInfo.checkValid();
-			}catch(CertificateExpiredException e) {
-				throw new UtilsException(prefisso+"scaduto: "+e.getMessage(),e);
-			}catch(CertificateNotYetValidException e) {
-				throw new UtilsException(prefisso+"non ancora valido: "+e.getMessage(),e);
-			}catch(Exception e) {
-				throw new UtilsException(prefisso+getErrorNonValido(e),e);
+			if(validityCheck==null // default
+					||
+					CertificateValidityCheck.ENABLED.equals(validityCheck)
+					||
+					(CertificateValidityCheck.IF_NOT_IN_TRUSTSTORE.equals(validityCheck) && !trustStoreCertificatiX509.existsCertificateBySubject(certificatoInfo.getCertificate().getSubjectX500Principal()))
+				) {
+				try {
+					certificatoInfo.checkValid();
+				}catch(CertificateExpiredException e) {
+					throw new UtilsException(prefisso+"scaduto: "+e.getMessage(),e);
+				}catch(CertificateNotYetValidException e) {
+					throw new UtilsException(prefisso+"non ancora valido: "+e.getMessage(),e);
+				}catch(Exception e) {
+					throw new UtilsException(prefisso+getErrorNonValido(e),e);
+				}
 			}
 			if(ocspValidatorX509!=null) {
 				try {

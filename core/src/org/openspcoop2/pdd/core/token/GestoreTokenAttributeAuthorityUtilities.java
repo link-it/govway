@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -57,6 +58,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -107,6 +109,7 @@ import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
+import org.openspcoop2.utils.security.CertificateValidityCheck;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWSOptions;
 import org.openspcoop2.utils.security.JWTOptions;
@@ -228,6 +231,17 @@ public class GestoreTokenAttributeAuthorityUtilities {
 								if(oKeystore instanceof java.security.KeyStore) {
 									java.security.KeyStore keystore = (java.security.KeyStore) oKeystore;
 			    					jsonCompactVerify = new JsonVerifySignature(keystore, options);
+			    					
+			    					CertificateValidityCheck validityCheck = OpenSPCoop2Properties.getInstance().getGestioneAttributeAuthorityValidityCheck();
+			    					List<Proprieta> proprieta = null;
+			    		    		if(pa!=null) {
+			    		    			proprieta = pa.getProprietaList();
+			    		    		}
+			    		    		else if(pd!=null) {
+			    		    			proprieta = pd.getProprietaList();
+			    		    		}
+			    		    		validityCheck = CostantiProprieta.getAttributeAuthorityCertificateValidityCheck(proprieta, validityCheck);
+			    		    		jsonCompactVerify.setValidityCheck(validityCheck);
 			    					
 		    						String signatureOCSP = policyAttributeAuthority.getResponseJwsOcspPolicy();
 		    						String signatureCRL = policyAttributeAuthority.getResponseJwsCrl();
@@ -818,7 +832,7 @@ public class GestoreTokenAttributeAuthorityUtilities {
 		connettoreMsg.setConnectorProperties(new java.util.HashMap<>());
 		connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION, endpoint);
 		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-		boolean debug = properties.isGestioneAttributeAuthority_debug();	
+		boolean debug = properties.isGestioneAttributeAuthorityDebug();	
 		if(debug) {
 			connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_DEBUG, true+"");
 		}

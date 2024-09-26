@@ -36,6 +36,7 @@ import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneSorgente;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.resources.Charset;
+import org.openspcoop2.utils.security.CertificateValidityCheck;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 
 /**
@@ -154,6 +155,64 @@ public class CostantiProprieta {
 	public static final String VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_CONTENT_TYPE_LIST_ENABLED = "validation.contentType";
 	public static final String VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_CONTENT_TYPE_LIST_SEPARATOR = ",";
 	public static final String VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_CONTENT_TYPE_NOT = "validation.contentType.not";	
+	
+	
+	
+	
+	// ****  TOKEN VALIDATION *****
+	
+	public static final String TOKEN_VALIDATION_VALUE_ENABLED = CertificateValidityCheck.CONFIG_VALUE_ENABLED;
+	public static final String TOKEN_VALIDATION_VALUE_DISABLED = CertificateValidityCheck.CONFIG_VALUE_DISABLED;
+	public static final String TOKEN_VALIDATION_VALUE_IF_NOT_IN_TRUSTSTORE = CertificateValidityCheck.CONFIG_VALUE_IF_NOT_IN_TRUSTSTORE;
+	
+	public static final String TOKEN_VALIDATION_VALIDITY_CHECK = "tokenValidation.validityCheck";
+	
+	public static CertificateValidityCheck getTokenValidationCertificateValidityCheck(List<Proprieta> proprieta, CertificateValidityCheck defaultValue) {
+		String v = readValue(proprieta, TOKEN_VALIDATION_VALIDITY_CHECK);
+		if(v!=null && !StringUtils.isEmpty(v)){
+			v=v.trim();
+			CertificateValidityCheck c = CertificateValidityCheck.parseCertificateValidityCheck(v);
+			if(c!=null) {
+				return c;
+			}
+		}
+		return defaultValue;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// ****  ATTRIBUTE AUTHORITY *****
+	
+	public static final String ATTRIBUTE_AUTHORITY_VALUE_ENABLED = CertificateValidityCheck.CONFIG_VALUE_ENABLED;
+	public static final String ATTRIBUTE_AUTHORITY_VALUE_DISABLED = CertificateValidityCheck.CONFIG_VALUE_DISABLED;
+	public static final String ATTRIBUTE_AUTHORITY_VALUE_IF_NOT_IN_TRUSTSTORE = CertificateValidityCheck.CONFIG_VALUE_IF_NOT_IN_TRUSTSTORE;
+	
+	public static final String ATTRIBUTE_AUTHORITY_VALIDITY_CHECK = "attributeAuthority.validityCheck";
+	
+	
+	public static CertificateValidityCheck getAttributeAuthorityCertificateValidityCheck(List<Proprieta> proprieta, CertificateValidityCheck defaultValue) {
+		String v = readValue(proprieta, ATTRIBUTE_AUTHORITY_VALIDITY_CHECK);
+		if(v!=null && !StringUtils.isEmpty(v)){
+			v=v.trim();
+			CertificateValidityCheck c = CertificateValidityCheck.parseCertificateValidityCheck(v);
+			if(c!=null) {
+				return c;
+			}
+		}
+		return defaultValue;
+	}
+	
+	
+	
+	
+	
+	
 	
 	
 	

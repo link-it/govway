@@ -115,18 +115,21 @@ public class DBVerifier {
 		}
 		assertEquals(msg,esitoExpected, esito.longValue());
 
+		boolean skipCheckTokenInfo = tokenInfoCheck!=null && tokenInfoCheck.length==1 && tokenInfoCheck[0]!=null && tokenInfoCheck[0].equals("skipCheckTokenInfo");
 		
-		Object otoken_info = row.get("token_info");
-		assertNotNull(msg,otoken_info);
-		assertTrue(msg+" otoken_info classe '"+otoken_info.getClass().getName()+"'", (otoken_info instanceof String));
-		String tokenInfo = null;
-		if(otoken_info instanceof String) {
-			tokenInfo = (String)otoken_info;
-		}
-		assertNotNull(msg+" (token info string)",tokenInfo);
-		if(tokenInfoCheck!=null && tokenInfoCheck.length>0) {
-			for (String info: tokenInfoCheck) {
-				assertTrue(msg+" tokenInfo contains '"+info+"' (token:"+tokenInfo+")", (tokenInfo.contains(info)));
+		if(!skipCheckTokenInfo) {
+			Object otoken_info = row.get("token_info");
+			assertNotNull(msg,otoken_info);
+			assertTrue(msg+" otoken_info classe '"+otoken_info.getClass().getName()+"'", (otoken_info instanceof String));
+			String tokenInfo = null;
+			if(otoken_info instanceof String) {
+				tokenInfo = (String)otoken_info;
+			}
+			assertNotNull(msg+" (token info string)",tokenInfo);
+			if(tokenInfoCheck!=null && tokenInfoCheck.length>0) {
+				for (String info: tokenInfoCheck) {
+					assertTrue(msg+" tokenInfo contains '"+info+"' (token:"+tokenInfo+")", (tokenInfo.contains(info)));
+				}
 			}
 		}
 		

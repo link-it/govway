@@ -24,7 +24,9 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -32,6 +34,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.token.validazione.ValidazioneJWTTest;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
@@ -54,6 +57,17 @@ import net.minidev.json.JSONObject;
 */
 public class RestTest extends ConfigLoader {
 
+	private static final String API = "TestAttributeAuthority";
+	private static final String API_VALIDITY_CHECK = "TestAttributeAuthority-ValidityCheck";
+	
+	private static final String EXAMPLE_CLIENT_1 = "ExampleClient1";
+	private static final String EXAMPLE_CLIENT_SCADUTO = "ExampleClientScaduto";
+	
+	private static final String ERRORE_CERTIFICATO_SCADUTO = "Certificato presente nell'header 'x5c' scaduto: certificate expired";
+	
+	private static final String TIPO_TEST_VALIDITY_CHECK = "validityCheck"; 
+	
+	
 	// *** singleAA: autorizzazione per contenuti (AA JWS Bearer) ***
 	@Test
 	public void erogazione_singleAA_authzContenuti() throws Exception {
@@ -961,8 +975,652 @@ public class RestTest extends ConfigLoader {
 	
 
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	@Test
+	public void useX5CvalidityCheckCertNonScadutoTrustStoreCertificatiDefault() throws Exception {
+		useX5CvalidityCheckCertNonScadutoTrustStoreCertificatiDefault(TipoServizio.EROGAZIONE);
+	}
+	@Test
+	public void useX5CvalidityCheckCertNonScadutoTrustStoreCertificatiDefaultFruizione() throws Exception {
+		useX5CvalidityCheckCertNonScadutoTrustStoreCertificatiDefault(TipoServizio.FRUIZIONE);
+	}
+	private void useX5CvalidityCheckCertNonScadutoTrustStoreCertificatiDefault(TipoServizio tipoServizio) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		File fTmp = FileSystemUtilities.createTempFile("token.trustCertificati.validityCheck.default", ".jwt");
+		try {
+		
+			AAHeaderMap map = new AAHeaderMap();
+			map.httpHeaders.put("tokenjwtresponse",fTmp.getAbsolutePath());
+			
+			List<String> mapExpectedTokenInfo = new ArrayList<>();
+			String token = ValidazioneJWTTest.buildJWTwithX5C(EXAMPLE_CLIENT_1, 
+					mapExpectedTokenInfo);
+			FileSystemUtilities.writeFile(fTmp, token.getBytes());
+			
+			_test(tipoServizio, "trustCertificati.validityCheck.default",
+					TIPO_TEST_VALIDITY_CHECK, 
+					null, 
+					map);
+			
+		}finally {
+			FileSystemUtilities.deleteFile(fTmp);
+		}
+	}
+	
+	
+	
+	@Test
+	public void useX5CvalidityCheckCertNonScadutoTrustStoreCADefault() throws Exception {
+		useX5CvalidityCheckCertNonScadutoTrustStoreCADefault(TipoServizio.EROGAZIONE);
+	}
+	@Test
+	public void useX5CvalidityCheckCertNonScadutoTrustStoreCADefaultFruizione() throws Exception {
+		useX5CvalidityCheckCertNonScadutoTrustStoreCADefault(TipoServizio.FRUIZIONE);
+	}
+	private void useX5CvalidityCheckCertNonScadutoTrustStoreCADefault(TipoServizio tipoServizio) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		File fTmp = FileSystemUtilities.createTempFile("token.trustCA.validityCheck.default", ".jwt");
+		try {
+		
+			AAHeaderMap map = new AAHeaderMap();
+			map.httpHeaders.put("tokenjwtresponse",fTmp.getAbsolutePath());
+			
+			List<String> mapExpectedTokenInfo = new ArrayList<>();
+			String token = ValidazioneJWTTest.buildJWTwithX5C(EXAMPLE_CLIENT_1, 
+					mapExpectedTokenInfo);
+			FileSystemUtilities.writeFile(fTmp, token.getBytes());
+			
+			_test(tipoServizio, "trustCA.validityCheck.default",
+					TIPO_TEST_VALIDITY_CHECK, 
+					null, 
+					map);
+			
+		}finally {
+			FileSystemUtilities.deleteFile(fTmp);
+		}
+	}
+	
+	
+	@Test
+	public void useX5CvalidityCheckCertScadutoTrustStoreCertificatiDefault() throws Exception {
+		useX5CvalidityCheckCertScadutoTrustStoreCertificatiDefault(TipoServizio.EROGAZIONE);
+	}
+	@Test
+	public void useX5CvalidityCheckCertScadutoTrustStoreCertificatiDefaultFruizione() throws Exception {
+		useX5CvalidityCheckCertScadutoTrustStoreCertificatiDefault(TipoServizio.FRUIZIONE);
+	}
+	private void useX5CvalidityCheckCertScadutoTrustStoreCertificatiDefault(TipoServizio tipoServizio) throws Exception {
+				
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		File fTmp = FileSystemUtilities.createTempFile("token.trustCertificati.validityCheck.default", ".jwt");
+		try {
+		
+			AAHeaderMap map = new AAHeaderMap();
+			map.httpHeaders.put("tokenjwtresponse",fTmp.getAbsolutePath());
+			
+			List<String> mapExpectedTokenInfo = new ArrayList<>();
+			String token = ValidazioneJWTTest.buildJWTwithX5C(EXAMPLE_CLIENT_SCADUTO, 
+					mapExpectedTokenInfo);
+			FileSystemUtilities.writeFile(fTmp, token.getBytes());
+			
+			_test(tipoServizio, "trustCertificati.validityCheck.default",
+					TIPO_TEST_VALIDITY_CHECK, 
+					ERRORE_CERTIFICATO_SCADUTO, 
+					map);
+			
+		}finally {
+			FileSystemUtilities.deleteFile(fTmp);
+		}
+	}
+	
+	
+	
+	@Test
+	public void useX5CvalidityCheckCertScadutoTrustStoreCADefault() throws Exception {
+		useX5CvalidityCheckCertScadutoTrustStoreCADefault(TipoServizio.EROGAZIONE);
+	}
+	@Test
+	public void useX5CvalidityCheckCertScadutoTrustStoreCADefaultFruizione() throws Exception {
+		useX5CvalidityCheckCertScadutoTrustStoreCADefault(TipoServizio.FRUIZIONE);
+	}
+	private void useX5CvalidityCheckCertScadutoTrustStoreCADefault(TipoServizio tipoServizio) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		File fTmp = FileSystemUtilities.createTempFile("token.trustCA.validityCheck.default", ".jwt");
+		try {
+		
+			AAHeaderMap map = new AAHeaderMap();
+			map.httpHeaders.put("tokenjwtresponse",fTmp.getAbsolutePath());
+			
+			List<String> mapExpectedTokenInfo = new ArrayList<>();
+			String token = ValidazioneJWTTest.buildJWTwithX5C(EXAMPLE_CLIENT_SCADUTO, 
+					mapExpectedTokenInfo);
+			FileSystemUtilities.writeFile(fTmp, token.getBytes());
+			
+			_test(tipoServizio, "trustCA.validityCheck.default",
+					TIPO_TEST_VALIDITY_CHECK, 
+					ERRORE_CERTIFICATO_SCADUTO, 
+					map);
+			
+		}finally {
+			FileSystemUtilities.deleteFile(fTmp);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	@Test
+	public void useX5CvalidityCheckCertNonScadutoTrustStoreCertificatiTrue() throws Exception {
+		useX5CvalidityCheckCertNonScadutoTrustStoreCertificatiTrue(TipoServizio.EROGAZIONE);
+	}
+	@Test
+	public void useX5CvalidityCheckCertNonScadutoTrustStoreCertificatiTrueFruizione() throws Exception {
+		useX5CvalidityCheckCertNonScadutoTrustStoreCertificatiTrue(TipoServizio.FRUIZIONE);
+	}
+	private void useX5CvalidityCheckCertNonScadutoTrustStoreCertificatiTrue(TipoServizio tipoServizio) throws Exception {
+				
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		File fTmp = FileSystemUtilities.createTempFile("token.trustCertificati.validityCheck.true", ".jwt");
+		try {
+		
+			AAHeaderMap map = new AAHeaderMap();
+			map.httpHeaders.put("tokenjwtresponse",fTmp.getAbsolutePath());
+			
+			List<String> mapExpectedTokenInfo = new ArrayList<>();
+			String token = ValidazioneJWTTest.buildJWTwithX5C(EXAMPLE_CLIENT_1, 
+					mapExpectedTokenInfo);
+			FileSystemUtilities.writeFile(fTmp, token.getBytes());
+			
+			_test(tipoServizio, "trustCertificati.validityCheck.true",
+					TIPO_TEST_VALIDITY_CHECK, 
+					null, 
+					map);
+			
+		}finally {
+			FileSystemUtilities.deleteFile(fTmp);
+		}
+	}
+	
+	
+	
+	@Test
+	public void useX5CvalidityCheckCertNonScadutoTrustStoreCATrue() throws Exception {
+		useX5CvalidityCheckCertNonScadutoTrustStoreCATrue(TipoServizio.EROGAZIONE);
+	}
+	@Test
+	public void useX5CvalidityCheckCertNonScadutoTrustStoreCATrueFruizione() throws Exception {
+		useX5CvalidityCheckCertNonScadutoTrustStoreCATrue(TipoServizio.FRUIZIONE);
+	}
+	private void useX5CvalidityCheckCertNonScadutoTrustStoreCATrue(TipoServizio tipoServizio) throws Exception {
+				
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		File fTmp = FileSystemUtilities.createTempFile("token.trustCA.validityCheck.true", ".jwt");
+		try {
+			
+			AAHeaderMap map = new AAHeaderMap();
+			map.httpHeaders.put("tokenjwtresponse",fTmp.getAbsolutePath());
+			
+			List<String> mapExpectedTokenInfo = new ArrayList<>();
+			String token = ValidazioneJWTTest.buildJWTwithX5C(EXAMPLE_CLIENT_1, 
+					mapExpectedTokenInfo);
+			FileSystemUtilities.writeFile(fTmp, token.getBytes());
+			
+			_test(tipoServizio, "trustCA.validityCheck.true",
+					TIPO_TEST_VALIDITY_CHECK, 
+					null, 
+					map);
+			
+		}finally {
+			FileSystemUtilities.deleteFile(fTmp);
+		}
+	}
+	
+	
+	@Test
+	public void useX5CvalidityCheckCertScadutoTrustStoreCertificatiTrue() throws Exception {
+		useX5CvalidityCheckCertScadutoTrustStoreCertificatiTrue(TipoServizio.EROGAZIONE);
+	}
+	@Test
+	public void useX5CvalidityCheckCertScadutoTrustStoreCertificatiTrueFruizione() throws Exception {
+		useX5CvalidityCheckCertScadutoTrustStoreCertificatiTrue(TipoServizio.FRUIZIONE);
+	}
+	private void useX5CvalidityCheckCertScadutoTrustStoreCertificatiTrue(TipoServizio tipoServizio) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		File fTmp = FileSystemUtilities.createTempFile("token.trustCertificati.validityCheck.true", ".jwt");
+		try {
+		
+			AAHeaderMap map = new AAHeaderMap();
+			map.httpHeaders.put("tokenjwtresponse",fTmp.getAbsolutePath());
+			
+			List<String> mapExpectedTokenInfo = new ArrayList<>();
+			String token = ValidazioneJWTTest.buildJWTwithX5C(EXAMPLE_CLIENT_SCADUTO, 
+					mapExpectedTokenInfo);
+			FileSystemUtilities.writeFile(fTmp, token.getBytes());
+			
+			_test(tipoServizio, "trustCertificati.validityCheck.true",
+					TIPO_TEST_VALIDITY_CHECK, 
+					ERRORE_CERTIFICATO_SCADUTO, 
+					map);
+			
+		}finally {
+			FileSystemUtilities.deleteFile(fTmp);
+		}
+	}
+	
+	
+	
+	@Test
+	public void useX5CvalidityCheckCertScadutoTrustStoreCATrue() throws Exception {
+		useX5CvalidityCheckCertScadutoTrustStoreCATrue(TipoServizio.EROGAZIONE);
+	}
+	@Test
+	public void useX5CvalidityCheckCertScadutoTrustStoreCATrueFruizione() throws Exception {
+		useX5CvalidityCheckCertScadutoTrustStoreCATrue(TipoServizio.FRUIZIONE);
+	}
+	private void useX5CvalidityCheckCertScadutoTrustStoreCATrue(TipoServizio tipoServizio) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		File fTmp = FileSystemUtilities.createTempFile("token.trustCA.validityCheck.true", ".jwt");
+		try {
+		
+			AAHeaderMap map = new AAHeaderMap();
+			map.httpHeaders.put("tokenjwtresponse",fTmp.getAbsolutePath());
+			
+			List<String> mapExpectedTokenInfo = new ArrayList<>();
+			String token = ValidazioneJWTTest.buildJWTwithX5C(EXAMPLE_CLIENT_SCADUTO, 
+					mapExpectedTokenInfo);
+			FileSystemUtilities.writeFile(fTmp, token.getBytes());
+			
+			_test(tipoServizio, "trustCA.validityCheck.true",
+					TIPO_TEST_VALIDITY_CHECK, 
+					ERRORE_CERTIFICATO_SCADUTO, 
+					map);
+			
+		}finally {
+			FileSystemUtilities.deleteFile(fTmp);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	@Test
+	public void useX5CvalidityCheckCertNonScadutoTrustStoreCertificatiFalse() throws Exception {
+		useX5CvalidityCheckCertNonScadutoTrustStoreCertificatiFalse(TipoServizio.EROGAZIONE);
+	}
+	@Test
+	public void useX5CvalidityCheckCertNonScadutoTrustStoreCertificatiFalseFruizione() throws Exception {
+		useX5CvalidityCheckCertNonScadutoTrustStoreCertificatiFalse(TipoServizio.FRUIZIONE);
+	}
+	private void useX5CvalidityCheckCertNonScadutoTrustStoreCertificatiFalse(TipoServizio tipoServizio) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		File fTmp = FileSystemUtilities.createTempFile("token.trustCertificati.validityCheck.false", ".jwt");
+		try {
+		
+			AAHeaderMap map = new AAHeaderMap();
+			map.httpHeaders.put("tokenjwtresponse",fTmp.getAbsolutePath());
+			
+			List<String> mapExpectedTokenInfo = new ArrayList<>();
+			String token = ValidazioneJWTTest.buildJWTwithX5C(EXAMPLE_CLIENT_1, 
+					mapExpectedTokenInfo);
+			FileSystemUtilities.writeFile(fTmp, token.getBytes());
+			
+			_test(tipoServizio, "trustCertificati.validityCheck.false",
+					TIPO_TEST_VALIDITY_CHECK, 
+					null, 
+					map);
+			
+		}finally {
+			FileSystemUtilities.deleteFile(fTmp);
+		}
+	}
+	
+	
+	
+	@Test
+	public void useX5CvalidityCheckCertNonScadutoTrustStoreCAFalse() throws Exception {
+		useX5CvalidityCheckCertNonScadutoTrustStoreCAFalse(TipoServizio.EROGAZIONE);
+	}
+	@Test
+	public void useX5CvalidityCheckCertNonScadutoTrustStoreCAFalseFruizione() throws Exception {
+		useX5CvalidityCheckCertNonScadutoTrustStoreCAFalse(TipoServizio.FRUIZIONE);
+	}
+	private void useX5CvalidityCheckCertNonScadutoTrustStoreCAFalse(TipoServizio tipoServizio) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		File fTmp = FileSystemUtilities.createTempFile("token.trustCA.validityCheck.false", ".jwt");
+		try {
+		
+			AAHeaderMap map = new AAHeaderMap();
+			map.httpHeaders.put("tokenjwtresponse",fTmp.getAbsolutePath());
+			
+			List<String> mapExpectedTokenInfo = new ArrayList<>();
+			String token = ValidazioneJWTTest.buildJWTwithX5C(EXAMPLE_CLIENT_1, 
+					mapExpectedTokenInfo);
+			FileSystemUtilities.writeFile(fTmp, token.getBytes());
+			
+			_test(tipoServizio, "trustCA.validityCheck.false",
+					TIPO_TEST_VALIDITY_CHECK, 
+					null, 
+					map);
+			
+		}finally {
+			FileSystemUtilities.deleteFile(fTmp);
+		}
+	}
+	
+	
+	@Test
+	public void useX5CvalidityCheckCertScadutoTrustStoreCertificatiFalse() throws Exception {
+		useX5CvalidityCheckCertScadutoTrustStoreCertificatiFalse(TipoServizio.EROGAZIONE);
+	}
+	@Test
+	public void useX5CvalidityCheckCertScadutoTrustStoreCertificatiFalseFruizione() throws Exception {
+		useX5CvalidityCheckCertScadutoTrustStoreCertificatiFalse(TipoServizio.FRUIZIONE);
+	}
+	private void useX5CvalidityCheckCertScadutoTrustStoreCertificatiFalse(TipoServizio tipoServizio) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		File fTmp = FileSystemUtilities.createTempFile("token.trustCertificati.validityCheck.false", ".jwt");
+		try {
+		
+			AAHeaderMap map = new AAHeaderMap();
+			map.httpHeaders.put("tokenjwtresponse",fTmp.getAbsolutePath());
+			
+			List<String> mapExpectedTokenInfo = new ArrayList<>();
+			String token = ValidazioneJWTTest.buildJWTwithX5C(EXAMPLE_CLIENT_SCADUTO, 
+					mapExpectedTokenInfo);
+			FileSystemUtilities.writeFile(fTmp, token.getBytes());
+			
+			_test(tipoServizio, "trustCertificati.validityCheck.false",
+					TIPO_TEST_VALIDITY_CHECK, 
+					null, 
+					map);
+			
+		}finally {
+			FileSystemUtilities.deleteFile(fTmp);
+		}
+	}
+	
+	
+	
+	@Test
+	public void useX5CvalidityCheckCertScadutoTrustStoreCAFalse() throws Exception {
+		useX5CvalidityCheckCertScadutoTrustStoreCAFalse(TipoServizio.EROGAZIONE);
+	}
+	@Test
+	public void useX5CvalidityCheckCertScadutoTrustStoreCAFalseFruizione() throws Exception {
+		useX5CvalidityCheckCertScadutoTrustStoreCAFalse(TipoServizio.FRUIZIONE);
+	}
+	private void useX5CvalidityCheckCertScadutoTrustStoreCAFalse(TipoServizio tipoServizio) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		File fTmp = FileSystemUtilities.createTempFile("token.trustCA.validityCheck.false", ".jwt");
+		try {
+		
+			AAHeaderMap map = new AAHeaderMap();
+			map.httpHeaders.put("tokenjwtresponse",fTmp.getAbsolutePath());
+			
+			List<String> mapExpectedTokenInfo = new ArrayList<>();
+			String token = ValidazioneJWTTest.buildJWTwithX5C(EXAMPLE_CLIENT_SCADUTO, 
+					mapExpectedTokenInfo);
+			FileSystemUtilities.writeFile(fTmp, token.getBytes());
+			
+			_test(tipoServizio, "trustCA.validityCheck.false",
+					TIPO_TEST_VALIDITY_CHECK, 
+					null, 
+					map);
+			
+		}finally {
+			FileSystemUtilities.deleteFile(fTmp);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	@Test
+	public void useX5CvalidityCheckCertNonScadutoTrustStoreCertificatiIfNotInTruststore() throws Exception {
+		useX5CvalidityCheckCertNonScadutoTrustStoreCertificatiIfNotInTruststore(TipoServizio.EROGAZIONE);
+	}
+	@Test
+	public void useX5CvalidityCheckCertNonScadutoTrustStoreCertificatiIfNotInTruststoreFruizione() throws Exception {
+		useX5CvalidityCheckCertNonScadutoTrustStoreCertificatiIfNotInTruststore(TipoServizio.FRUIZIONE);
+	}
+	private void useX5CvalidityCheckCertNonScadutoTrustStoreCertificatiIfNotInTruststore(TipoServizio tipoServizio) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		File fTmp = FileSystemUtilities.createTempFile("token.trustCertificati.validityCheck.ifNotInTruststore", ".jwt");
+		try {
+		
+			AAHeaderMap map = new AAHeaderMap();
+			map.httpHeaders.put("tokenjwtresponse",fTmp.getAbsolutePath());
+			
+			List<String> mapExpectedTokenInfo = new ArrayList<>();
+			String token = ValidazioneJWTTest.buildJWTwithX5C(EXAMPLE_CLIENT_1, 
+					mapExpectedTokenInfo);
+			FileSystemUtilities.writeFile(fTmp, token.getBytes());
+			
+			_test(tipoServizio, "trustCertificati.validityCheck.ifNotInTruststore",
+					TIPO_TEST_VALIDITY_CHECK, 
+					null, 
+					map);
+			
+		}finally {
+			FileSystemUtilities.deleteFile(fTmp);
+		}
+	}
+	
+	
+	
+	@Test
+	public void useX5CvalidityCheckCertNonScadutoTrustStoreCAIfNotInTruststore() throws Exception {
+		useX5CvalidityCheckCertNonScadutoTrustStoreCAIfNotInTruststore(TipoServizio.EROGAZIONE);
+	}
+	@Test
+	public void useX5CvalidityCheckCertNonScadutoTrustStoreCAIfNotInTruststoreFruizione() throws Exception {
+		useX5CvalidityCheckCertNonScadutoTrustStoreCAIfNotInTruststore(TipoServizio.FRUIZIONE);
+	}
+	private void useX5CvalidityCheckCertNonScadutoTrustStoreCAIfNotInTruststore(TipoServizio tipoServizio) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		File fTmp = FileSystemUtilities.createTempFile("token.trustCA.validityCheck.ifNotInTruststore", ".jwt");
+		try {
+		
+			AAHeaderMap map = new AAHeaderMap();
+			map.httpHeaders.put("tokenjwtresponse",fTmp.getAbsolutePath());
+			
+			List<String> mapExpectedTokenInfo = new ArrayList<>();
+			String token = ValidazioneJWTTest.buildJWTwithX5C(EXAMPLE_CLIENT_1, 
+					mapExpectedTokenInfo);
+			FileSystemUtilities.writeFile(fTmp, token.getBytes());
+			
+			_test(tipoServizio, "trustCA.validityCheck.ifNotInTruststore",
+					TIPO_TEST_VALIDITY_CHECK, 
+					null, 
+					map);
+			
+		}finally {
+			FileSystemUtilities.deleteFile(fTmp);
+		}
+	}
+	
+	
+	@Test
+	public void useX5CvalidityCheckCertScadutoTrustStoreCertificatiIfNotInTruststore() throws Exception {
+		useX5CvalidityCheckCertScadutoTrustStoreCertificatiIfNotInTruststore(TipoServizio.EROGAZIONE);
+	}
+	@Test
+	public void useX5CvalidityCheckCertScadutoTrustStoreCertificatiIfNotInTruststoreFruizione() throws Exception {
+		useX5CvalidityCheckCertScadutoTrustStoreCertificatiIfNotInTruststore(TipoServizio.FRUIZIONE);
+	}
+	private void useX5CvalidityCheckCertScadutoTrustStoreCertificatiIfNotInTruststore(TipoServizio tipoServizio) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		File fTmp = FileSystemUtilities.createTempFile("token.trustCertificati.validityCheck.ifNotInTruststore", ".jwt");
+		try {
+		
+			AAHeaderMap map = new AAHeaderMap();
+			map.httpHeaders.put("tokenjwtresponse",fTmp.getAbsolutePath());
+			
+			List<String> mapExpectedTokenInfo = new ArrayList<>();
+			String token = ValidazioneJWTTest.buildJWTwithX5C(EXAMPLE_CLIENT_SCADUTO, 
+					mapExpectedTokenInfo);
+			FileSystemUtilities.writeFile(fTmp, token.getBytes());
+			
+			_test(tipoServizio, "trustCertificati.validityCheck.ifNotInTruststore",
+					TIPO_TEST_VALIDITY_CHECK, 
+					null, 
+					map);
+			
+		}finally {
+			FileSystemUtilities.deleteFile(fTmp);
+		}
+	}
+	
+	
+	
+	@Test
+	public void useX5CvalidityCheckCertScadutoTrustStoreCAIfNotInTruststore() throws Exception {
+		useX5CvalidityCheckCertScadutoTrustStoreCAIfNotInTruststore(TipoServizio.EROGAZIONE);
+	}
+	@Test
+	public void useX5CvalidityCheckCertScadutoTrustStoreCAIfNotInTruststoreFruizione() throws Exception {
+		useX5CvalidityCheckCertScadutoTrustStoreCAIfNotInTruststore(TipoServizio.FRUIZIONE);
+	}
+	private void useX5CvalidityCheckCertScadutoTrustStoreCAIfNotInTruststore(TipoServizio tipoServizio) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		File fTmp = FileSystemUtilities.createTempFile("token.trustCA.validityCheck.ifNotInTruststore", ".jwt");
+		try {
+		
+			AAHeaderMap map = new AAHeaderMap();
+			map.httpHeaders.put("tokenjwtresponse",fTmp.getAbsolutePath());
+			
+			List<String> mapExpectedTokenInfo = new ArrayList<>();
+			String token = ValidazioneJWTTest.buildJWTwithX5C(EXAMPLE_CLIENT_SCADUTO, 
+					mapExpectedTokenInfo);
+			FileSystemUtilities.writeFile(fTmp, token.getBytes());
+			
+			_test(tipoServizio, "trustCA.validityCheck.ifNotInTruststore",
+					TIPO_TEST_VALIDITY_CHECK, 
+					ERRORE_CERTIFICATO_SCADUTO, 
+					map);
+			
+		}finally {
+			FileSystemUtilities.deleteFile(fTmp);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	private static HttpResponse _test(
 			TipoServizio tipoServizio,String operazione,
+			String tipoTest, String msgErrore,
+			AAHeaderMap map) throws Exception {
+		
+		String api = TIPO_TEST_VALIDITY_CHECK.equals(tipoTest) ? API_VALIDITY_CHECK : API;
+		
+		return _test(
+				tipoServizio, api, operazione,
+				tipoTest, msgErrore,
+				 map);
+	}
+	private static HttpResponse _test(
+			TipoServizio tipoServizio,String api, String operazione,
 			String tipoTest, String msgErrore,
 			AAHeaderMap map) throws Exception {
 		
@@ -970,8 +1628,8 @@ public class RestTest extends ConfigLoader {
 		byte[]content = Bodies.getJson(Bodies.SMALL_SIZE).getBytes();
 
 		String url = tipoServizio == TipoServizio.EROGAZIONE
-				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/TestAttributeAuthority/v1/"+operazione
-				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TestAttributeAuthority/v1/"+operazione;
+				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+api+"/v1/"+operazione
+				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+api+"/v1/"+operazione;
 		
 		HttpRequest request = new HttpRequest();
 		request.setReadTimeout(20000);
@@ -1006,7 +1664,7 @@ public class RestTest extends ConfigLoader {
 			int code = -1;
 			String error = null;
 			String msg = null;
-			if(tipoTest.contains("authzContenuti")) {
+			if(tipoTest.contains("authzContenuti") || TIPO_TEST_VALIDITY_CHECK.equals(tipoTest)) {
 				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
 				code = 403;
 				error = AUTHORIZATION_CONTENT_DENY;
@@ -1040,7 +1698,12 @@ public class RestTest extends ConfigLoader {
 			verifyOk(response, 200);
 		}
 		
-		DBVerifier.verify(idTransazione, esitoExpected, msgErrore, map.toArray_expectedAttributes());
+		if(TIPO_TEST_VALIDITY_CHECK.equals(tipoTest)) {
+			DBVerifier.verify(idTransazione, esitoExpected, msgErrore, "skipCheckTokenInfo");
+		}
+		else {
+			DBVerifier.verify(idTransazione, esitoExpected, msgErrore, map.toArray_expectedAttributes());
+		}
 		
 		return response;
 		

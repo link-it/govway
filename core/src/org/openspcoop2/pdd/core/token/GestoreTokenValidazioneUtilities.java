@@ -35,6 +35,7 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.CostantiConnettori;
@@ -49,6 +50,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.rest.OpenSPCoop2Message_binary_impl;
 import org.openspcoop2.message.utils.WWWAuthenticateErrorCode;
 import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.PDNDResolver;
@@ -94,6 +96,7 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.security.CertificateValidityCheck;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWEOptions;
 import org.openspcoop2.utils.security.JWSOptions;
@@ -422,6 +425,26 @@ public class GestoreTokenValidazioneUtilities {
 				if(oKeystore instanceof java.security.KeyStore) {
 					java.security.KeyStore keystore = (java.security.KeyStore) oKeystore;
 					jsonCompactVerify = new JsonVerifySignature(keystore, options);
+					
+					CertificateValidityCheck validityCheck = OpenSPCoop2Properties.getInstance().getGestioneTokenValidityCheck();
+					List<Proprieta> proprieta = null;
+		    		if(datiInvocazione instanceof DatiInvocazionePortaApplicativa) {
+		    			DatiInvocazionePortaApplicativa dati = (DatiInvocazionePortaApplicativa)datiInvocazione;
+		    			if(dati.getPa()!=null) {
+		    				proprieta = dati.getPa().getProprietaList();
+		    			}
+		    			else if(dati.getPd()!=null) {
+		    				proprieta = dati.getPd().getProprietaList();
+		    			}
+		    		}
+		    		else if(datiInvocazione instanceof DatiInvocazionePortaDelegata) {
+		    			DatiInvocazionePortaDelegata dati = (DatiInvocazionePortaDelegata)datiInvocazione;
+		    			if(dati.getPd()!=null) {
+		    				proprieta = dati.getPd().getProprietaList();
+		    			}
+		    		}
+		    		validityCheck = CostantiProprieta.getTokenValidationCertificateValidityCheck(proprieta, validityCheck);
+		    		jsonCompactVerify.setValidityCheck(validityCheck);
 					
 					String signatureOCSP = policyGestioneToken.getValidazioneJWTOcspPolicy();
 					String signatureCRL = policyGestioneToken.getValidazioneJWTCrl();

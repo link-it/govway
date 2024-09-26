@@ -105,6 +105,10 @@ public class JsonDecrypt {
 		this.ocspValidatorX509 = ocspValidator;
 	}
 	
+	private CertificateValidityCheck validityCheck = CertificateValidityCheck.ENABLED; // validazione (date) del certificato utilizzato per firmare il token 	
+	public void setValidityCheck(CertificateValidityCheck validityCheck) {
+		this.validityCheck = validityCheck;
+	}
 	
 	public JsonDecrypt(Properties props, JWTOptions options) throws UtilsException{
 		try {
@@ -487,7 +491,9 @@ public class JsonDecrypt {
 					byte [] cer = Base64Utilities.decode(jweHeaders.getX509Chain().get(0));
 					CertificateInfo certificatoInfo = ArchiveLoader.load(cer).getCertificate();
 					if(this.trustStoreVerificaCertificatiX509!=null) {
-						JsonUtils.validate(certificatoInfo, this.trustStoreVerificaCertificatiX509, this.crlX509, this.ocspValidatorX509, JwtHeaders.JWT_HDR_X5C, true);
+						JsonUtils.validate(certificatoInfo, 
+								this.trustStoreVerificaCertificatiX509, this.crlX509, this.ocspValidatorX509, JwtHeaders.JWT_HDR_X5C, true,
+								this.validityCheck);
 					}
 					providerBuild = getProviderX509(certificatoInfo, keyAlgo, contentAlgo);
 				}catch(Exception e) {
@@ -553,7 +559,9 @@ public class JsonDecrypt {
 					if(x509) {
 						CertificateInfo certificatoInfo = ArchiveLoader.load(cer).getCertificate();
 						if(this.trustStoreVerificaCertificatiX509!=null) {
-							JsonUtils.validate(certificatoInfo, this.trustStoreVerificaCertificatiX509, this.crlX509, this.ocspValidatorX509, JwtHeaders.JWT_HDR_X5U, true);
+							JsonUtils.validate(certificatoInfo, 
+									this.trustStoreVerificaCertificatiX509, this.crlX509, this.ocspValidatorX509, JwtHeaders.JWT_HDR_X5U, true,
+									this.validityCheck);
 						}
 						providerBuild = getProviderX509(certificatoInfo, keyAlgo, contentAlgo);
 					}
@@ -608,10 +616,14 @@ public class JsonDecrypt {
 							
 							// La validazione serve per verificare la data e il crl
 							if(this.trustStoreVerificaCertificatiX509!=null) {
-								JsonUtils.validate(new CertificateInfo(x509CertificateBuild, this.kid), this.trustStoreVerificaCertificatiX509, this.crlX509, this.ocspValidatorX509, JwtHeaders.JWT_HDR_KID, false);
+								JsonUtils.validate(new CertificateInfo(x509CertificateBuild, this.kid), 
+										this.trustStoreVerificaCertificatiX509, this.crlX509, this.ocspValidatorX509, JwtHeaders.JWT_HDR_KID, false,
+										this.validityCheck);
 							}
 							else {
-								JsonUtils.validate(new CertificateInfo(x509CertificateBuild, this.kid), this.keyStore, this.crlX509, this.ocspValidatorX509, JwtHeaders.JWT_HDR_KID, false);
+								JsonUtils.validate(new CertificateInfo(x509CertificateBuild, this.kid), 
+										this.keyStore, this.crlX509, this.ocspValidatorX509, JwtHeaders.JWT_HDR_KID, false,
+										this.validityCheck);
 							}
 							
 							CertificateInfo certificatoInfo = new CertificateInfo(x509CertificateBuild, this.kid);
@@ -650,10 +662,14 @@ public class JsonDecrypt {
 						
 						// La validazione serve per verificare la data e il crl
 						if(this.trustStoreVerificaCertificatiX509!=null) {
-							JsonUtils.validate(new CertificateInfo(x509CertificateBuild, hdr), this.trustStoreVerificaCertificatiX509, this.crlX509, this.ocspValidatorX509, hdr, false);
+							JsonUtils.validate(new CertificateInfo(x509CertificateBuild, hdr), 
+									this.trustStoreVerificaCertificatiX509, this.crlX509, this.ocspValidatorX509, hdr, false,
+									this.validityCheck);
 						}
 						else {
-							JsonUtils.validate(new CertificateInfo(x509CertificateBuild, hdr), this.keyStore, this.crlX509, this.ocspValidatorX509, hdr, false);
+							JsonUtils.validate(new CertificateInfo(x509CertificateBuild, hdr), 
+									this.keyStore, this.crlX509, this.ocspValidatorX509, hdr, false,
+									this.validityCheck);
 						}
 						
 						CertificateInfo certificatoInfo = new CertificateInfo(x509CertificateBuild, "x5t");
@@ -679,7 +695,9 @@ public class JsonDecrypt {
 			if(this.x509Certificate!=null && this.trustStoreVerificaCertificatiX509!=null) {
 				try {
 					CertificateInfo certificatoInfo = new CertificateInfo(this.x509Certificate, "x509");
-					JsonUtils.validate(certificatoInfo, this.trustStoreVerificaCertificatiX509, this.crlX509, this.ocspValidatorX509, null, true);
+					JsonUtils.validate(certificatoInfo, 
+							this.trustStoreVerificaCertificatiX509, this.crlX509, this.ocspValidatorX509, null, true,
+							this.validityCheck);
 				}catch(Exception e) {
 					throw new UtilsException(e.getMessage(),e);
 				}

@@ -3,7 +3,7 @@
 Bug Fix 3.3.15.p1
 ------------------
 
-Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
+Sono state risolte le seguenti vulnerabilità relative alle librerie di terza parte:
 
 - CVE-2024-38808, CVE-2024-38809: aggiornata libreria 'org.springframework:\*' alla versione 5.3.39;
 
@@ -20,7 +20,11 @@ Sono stati risolti i seguenti bug:
 	
 	- "Eccezione INFO con codice [GOVWAY-5] - EccezioneValidazioneProtocollo: Traccia di una precedente fattura inviata, con identificativo SDI [xxx], non rilevata: Errore durante la ricerca del datasource..."
 
-Inoltre, sono state aggiunte utility per trattare gli attributi mustUnderstand e actor attraverso gli elementi request e response accessibili tramite trasformazioni.
+Inoltre sono state aggiunte utility:
+
+- per trattare gli attributi mustUnderstand e actor attraverso gli elementi request e response accessibili tramite trasformazioni;
+
+- è stata aggiunta un'opzione che permette di disabilitare, su singola erogazione o fruizione, il controllo della validità (scadenza) del certificato X.509 utilizzato per firmare un token; la verifica può anche essere condizionata alla presenza o meno del certificato nel truststore.
 
 Per la console di gestione sono stati risolti i seguenti bug:
 
@@ -32,6 +36,6 @@ Per la console di monitoraggio sono stati risolti i seguenti bug:
 
 - nella distribuzione statistica a 3 dimensioni, personalizzata per esito, non venivano incluse le transazioni gestite con successo;
 
-- esaminando i dettagli del messaggio di risposta presenti in una transazione fallita per indisponibilità del backend, veniva erroneamente indicata una dimensione di una ipotetica risposta ricevuta, che non può esistere a causa del fallimento della connessione al backend.
+- in caso di transazioni fallite per indisponibilità del backend, veniva erroneamente riportata una dimensione per una risposta inesistente nei dettagli del messaggio di risposta, sia quando la richiesta era diretta verso il dominio interno che verso quello esterno, nonostante nessuna risposta potesse esistere a causa del fallimento della connessione.
 
 Infine è stata corretta una anomalia presente all'interno del tool command line 'govway-vault-cli' che ne impediva il funzionamento su database oracle.
