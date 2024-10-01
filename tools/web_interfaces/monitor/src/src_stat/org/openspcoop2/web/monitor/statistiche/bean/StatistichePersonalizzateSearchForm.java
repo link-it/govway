@@ -20,6 +20,7 @@
 package org.openspcoop2.web.monitor.statistiche.bean;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -62,11 +63,14 @@ import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dynamic.Statistiche;
 import org.openspcoop2.web.monitor.core.dynamic.components.BaseComponent;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.ricerche.ModuloRicerca;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.openspcoop2.web.monitor.statistiche.constants.StatisticheCostanti;
 import org.openspcoop2.web.monitor.statistiche.dao.IStatisticaPersonalizzataService;
 import org.openspcoop2.web.monitor.statistiche.mbean.StatsPersonalizzateBean;
 import org.slf4j.Logger;
@@ -88,13 +92,24 @@ implements StatisticsContext{
 
 	private IStatisticaPersonalizzataService service;
 
-	private Map<String, Statistiche> tabellaStatistichePersonalizzate = new HashMap<String, Statistiche>();
+	private Map<String, Statistiche> tabellaStatistichePersonalizzate = new HashMap<>();
 
-	private List<Parameter<?>> statisticaSelezionataParameters = new ArrayList<Parameter<?>>();
+	private List<Parameter<?>> statisticaSelezionataParameters = new ArrayList<>();
 
 	private String valoriRisorsa[] = null;
 
 	private StatsPersonalizzateBean mBean = null;
+	
+	private static List<String> elencoFieldsRicercaDaIgnorare = new ArrayList<>();	
+	
+	static {
+		// aggiungo tutti i fields delle super classi
+		elencoFieldsRicercaDaIgnorare.addAll(Arrays.asList(Costanti.SEARCH_FORM_FIELDS_DA_NON_SALVARE));
+		// aggiungo i field delle statistiche base
+		elencoFieldsRicercaDaIgnorare.addAll(Arrays.asList(StatisticheCostanti.SEARCH_FORM_FIELDS_DA_NON_SALVARE));
+		// aggiungo i field di questa classe
+		elencoFieldsRicercaDaIgnorare.addAll(Arrays.asList(StatisticheCostanti.STATISTICHE_PERSONALIZZATE_SEARCH_FORM_FIELDS_DA_NON_SALVARE));
+	}
 
 	@Override
 	public TipiDatabase getDatabaseType() {
@@ -120,8 +135,8 @@ implements StatisticsContext{
 
 	public void initSearchForm() {
 		this.setTipoReport(TipoReport.BAR_CHART);
-		this.tabellaStatistichePersonalizzate = new HashMap<String, Statistiche>();
-		this.statisticaSelezionataParameters = new ArrayList<Parameter<?>>();
+		this.tabellaStatistichePersonalizzate = new HashMap<>();
+		this.statisticaSelezionataParameters = new ArrayList<>();
 		this.setStatistichePersonalizzate(null);
 		this.setStatisticaSelezionata(null);
 		this.setFiltro(null);
@@ -140,12 +155,12 @@ implements StatisticsContext{
 				return this.tabellaStatistichePersonalizzate;
 
 			if (this.tabellaStatistichePersonalizzate == null)
-				this.tabellaStatistichePersonalizzate = new HashMap<String, Statistiche>();
+				this.tabellaStatistichePersonalizzate = new HashMap<>();
 
 			List<ConfigurazioneStatistica> stats = this.service.getStatisticheByValues(idAccordo, nomeServizioKey, this.getNomeAzione());
 
 			Statistiche statistiche = new Statistiche();
-			if (stats != null && stats.size() > 0) {
+			if (stats != null && !stats.isEmpty()) {
 				for (ConfigurazioneStatistica s : stats) {
 					statistiche.addStatistica(s);
 				}
@@ -177,7 +192,7 @@ implements StatisticsContext{
 			this.setStatisticaSelezionata(null);
 			this.setStatistichePersonalizzate(null);
 			this.setNomeStatisticaPersonalizzata(null);
-			this.statisticaSelezionataParameters = new ArrayList<Parameter<?>>();
+			this.statisticaSelezionataParameters = new ArrayList<>();
 			this.setFiltro(null);
 			this.tabellaStatistichePersonalizzate = null;
 
@@ -491,7 +506,7 @@ implements StatisticsContext{
 
 	@Override
 	public Map<String, Parameter<?>> getParameters() {
-		Map<String, Parameter<?>> map = new TreeMap<String, Parameter<?>>();
+		Map<String, Parameter<?>> map = new TreeMap<>();
 
 		if(this.getStatisticaSelezionataParameters() != null){
 			for (Parameter<?> param : this.getStatisticaSelezionataParameters()) {
@@ -551,12 +566,12 @@ implements StatisticsContext{
 
 	public List<SelectItem> getIntervalliTemporali() {
 
-		List<SelectItem> res = new ArrayList<SelectItem>();
+		List<SelectItem> res = new ArrayList<>();
 
 		// se selezionata una statistica allora recupero le modalita dal loader corrispondente alla statistica scelta
 		if (this.getStatisticaSelezionata() != null) {
 
-			List<StatisticType> listaStatisticTypes = new ArrayList<StatisticType>();
+			List<StatisticType> listaStatisticTypes = new ArrayList<>();
 
 			try {
 				IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(this.getStatisticaSelezionata().getPlugin().getTipoPlugin(),this.getStatisticaSelezionata().getPlugin().getTipo(),
@@ -720,7 +735,7 @@ implements StatisticsContext{
 		return this.valoriRisorsa;
 	}
 
-	public void setValoriRisorsa(String valoreRisorsa[]) {
+	public void setValoriRisorsa(String[] valoreRisorsa) {
 		this.valoriRisorsa = valoreRisorsa;
 	}
 
@@ -736,7 +751,7 @@ implements StatisticsContext{
 				log.error(e.getMessage(), e);
 			}
 
-			if(valoriRisorse != null && valoriRisorse.size() > 0){
+			if(valoriRisorse != null && !valoriRisorse.isEmpty()){
 				this.valoriRisorsa = new String[1];
 				this.valoriRisorsa[0] = valoriRisorse.get(0);
 			}
@@ -810,5 +825,25 @@ implements StatisticsContext{
 	@Override
 	public CRUDType getTipoOperazione() {
 		return CRUDType.SEARCH;
+	}
+	
+	@Override
+	public ModuloRicerca getModulo() {
+		return ModuloRicerca.STATISTICHE_PERSONALIZZATE;
+	}
+	
+	@Override
+	public String getModalitaRicerca() {
+		return this.getTipoDistribuzione();
+	}
+	
+	@Override
+	public boolean isVisualizzaComandoSalvaRicerca() {
+		return true;
+	}
+
+	@Override
+	public List<String> getElencoFieldRicercaDaIgnorare() {
+		return elencoFieldsRicercaDaIgnorare;
 	}
 }

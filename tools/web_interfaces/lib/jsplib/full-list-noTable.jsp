@@ -108,6 +108,8 @@ if (hidden!=null && !hidden.isEmpty()) {
 					    	index++;
 						}
 						String dataScrollerTopLabel = "Visualizzati record ["+index+"-"+(v.size()+pd.getIndex())+"] su " + pd.getNumEntries();
+						
+						List<String> idsDaVisualizzareSelezionati =  pd.getIdsDaVisualizzareSelezionati();
 						%>
 					
 						<!-- data scroller top -->
@@ -232,10 +234,24 @@ if (hidden!=null && !hidden.isEmpty()) {
 						  	
 							if (pd.getSelect()) {
 								String checkBoxStyle = labels!=null ? "" : " tdText-16" ;
+								String checkBoxSelected = " ";
+								
+								if(idsDaVisualizzareSelezionati.contains(idToRemove)) {
+									checkBoxSelected = " checked='true'";
+								}
+								
+								String idCheckbox = "_" + (idToRemove!=null ? idToRemove : i);
 							   %>
 								<td class="tdText<%=checkBoxStyle %>">
 							   		<div align="center">
-							   			<input id='_<% if(idToRemove!=null) out.write(idToRemove);else out.write(""+i); %>' type="checkbox" name="selectcheckbox" value='<% if(idToRemove!=null) out.write(idToRemove);else out.write(""+i); %>'/>
+							   			<input id="<%=idCheckbox %>" type="checkbox" name="selectcheckbox" value='<% if(idToRemove!=null) out.write(idToRemove);else out.write(""+i); %>' <%=checkBoxSelected %>/>
+							   			<script type="text/javascript" nonce="<%= randomNonce %>">
+										      $(document).ready(function(){
+													$('#<%=idCheckbox %>').click(function() {
+														singleCheckboxListener(document.form, $(this).is(':checked'));
+													});
+												});
+										  </script>
 							   		</div>
 							   	</td><%
 							 }

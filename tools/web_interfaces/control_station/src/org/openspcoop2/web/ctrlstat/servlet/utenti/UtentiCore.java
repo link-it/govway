@@ -382,4 +382,25 @@ public class UtentiCore extends ControlStationCore {
 		}
 
 	}
+	
+	public int countUserRicerchePubbliche(String login) throws DriverUsersDBException {
+		Connection con = null;
+		String nomeMetodo = "countUserRicerchePubbliche";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverUsersDB().countRicerche(login, null, null,"pubblica", null, null);
+
+		} catch (Exception e) {
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverUsersDBException(getPrefixError(nomeMetodo,  e),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
 }

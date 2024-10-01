@@ -20,6 +20,7 @@
 package org.openspcoop2.web.monitor.transazioni.bean;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -70,6 +71,7 @@ import org.openspcoop2.web.monitor.core.dynamic.Ricerche;
 import org.openspcoop2.web.monitor.core.dynamic.components.BaseComponent;
 import org.openspcoop2.web.monitor.core.filters.BrowserFilter;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.ricerche.ModuloRicerca;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
@@ -142,6 +144,15 @@ Context, Cloneable {
 	private boolean visualizzaLiveCustomEnabled = false;
 	private boolean visualizzaLiveCustomColonnaRuoloTransazioneEnabled = false;
 	private boolean visualizzaConsegneMultipleCustomEnabled = false;
+	
+	private static List<String> elencoFieldsRicercaDaIgnorare = new ArrayList<>();	
+	
+	static {
+		// aggiungo tutti i fields delle super classi
+		elencoFieldsRicercaDaIgnorare.addAll(Arrays.asList(Costanti.SEARCH_FORM_FIELDS_DA_NON_SALVARE));
+		// aggiungo i field di questa classe
+		elencoFieldsRicercaDaIgnorare.addAll(Arrays.asList(TransazioniCostanti.SEARCH_FORM_FIELDS_DA_NON_SALVARE));
+	}
 	
 	public TransazioniSearchForm(){
 		super();
@@ -556,7 +567,7 @@ Context, Cloneable {
 	}
 	
 	@Override
-	public List<SelectItem> getTipologieRicerca() throws Exception {
+	public List<SelectItem> getTipologieRicerca() {
 		
 		if(this.isLive()) {
 			return super.getTipologieRicerca();
@@ -1535,5 +1546,41 @@ Context, Cloneable {
 	@Override
 	public List<SelectItem> getEsitiContesto() {
 		return getEsitiContesto(true);
+	}
+	
+	@Override
+	public ModuloRicerca getModulo() {
+		return ModuloRicerca.TRANSAZIONI;
+	}
+	
+	@Override
+	public String getModalitaRicerca() {
+		return this.getModalitaRicercaStorico();
+	}
+	
+	@Override
+	public boolean isShowFiltroRicercheUtente() {
+		boolean ricerchePresenti = super.isShowFiltroRicercheUtente();
+		
+		// devono esserci delle ricerche definite per la sezione ma non si deve vedere nelle ricerche per Id Transazione o Id Messaggio
+		return ricerchePresenti && !ModalitaRicercaTransazioni.ID_TRANSAZIONE.getValue().equals(this.getModalitaRicercaStorico()) 
+				&& !ModalitaRicercaTransazioni.ID_MESSAGGIO.getValue().equals(this.getModalitaRicercaStorico()) 
+				&& !ModalitaRicercaTransazioni.ID_APPLICATIVO_BASE.getValue().equals(this.getModalitaRicercaStorico())
+				 && !Costanti.PERIODO_LIVE.equals(this.getPeriodo())
+				;
+	}
+	
+	@Override
+	public boolean isVisualizzaComandoSalvaRicerca() {
+		// il tasto salva non deve apparire nel live e nei casi in cui non si visualizza il filtro
+		return !ModalitaRicercaTransazioni.ID_TRANSAZIONE.getValue().equals(this.getModalitaRicercaStorico()) 
+				&& !ModalitaRicercaTransazioni.ID_MESSAGGIO.getValue().equals(this.getModalitaRicercaStorico()) 
+				&& !ModalitaRicercaTransazioni.ID_APPLICATIVO_BASE.getValue().equals(this.getModalitaRicercaStorico())
+				 && !Costanti.PERIODO_LIVE.equals(this.getPeriodo());
+	}
+	
+	@Override
+	public List<String> getElencoFieldRicercaDaIgnorare() {
+		return elencoFieldsRicercaDaIgnorare;
 	}
 }

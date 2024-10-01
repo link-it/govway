@@ -69,7 +69,10 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 	<SCRIPT type="text/javascript" nonce="<%= randomNonce %>">
 		var nomeServlet_Custom_Ok = '';
 		var nomeServlet_Custom_No = '';
-		
+		var paramsStringFR = '<%= params %>';
+		if (paramsStringFR != null && paramsStringFR != ""){
+			paramsStringFR = ((paramsStringFR[0] === '?' || paramsStringFR[0] === '&') ? paramsStringFR.substr(1) : paramsStringFR);
+		}
 	</SCRIPT>
 	<jsp:include page="/jsp/confermaCustom.jsp" flush="true" />
 	<SCRIPT type="text/javascript" nonce="<%= randomNonce %>">
@@ -92,14 +95,23 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 				
 			  addHidden(theForm, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_CONFERMA %>');
 			  
-			  //aggiungo parametro csfr
-			  //if(csrfToken != ''){
-			  //	addHidden(theForm, csrfTokenKey , csrfToken);
-			  //}
+			  if (paramsStringFR != null && paramsStringFR != ""){
+		   		   var pairs = ((paramsStringFR[0] === '?' || paramsStringFR[0] === '&') ? paramsStringFR.substr(1) : paramsStringFR).split('&');
+		   		   for (var i = 0; i < pairs.length; i++) {
+		   		       var pair = pairs[i].split('=');
+		   		       addHidden(theForm, pair[0] , pair[1]);
+		   		   }
+		   	   }
 				
 				theForm.submit();
 			} else {
 				var destinazione = '<%=request.getContextPath()%>/'+nomeServlet_Custom_Ok +params;
+				
+				if (paramsStringFR != null && paramsStringFR != ""){
+					destinazione += '&';
+					destinazione += paramsStringFR;
+				}
+				
 				//addTabID
 				destinazione = addTabIdParam(destinazione,true);
 				
@@ -130,14 +142,23 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 				
 				  addHidden(theForm, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_ANNULLA %>');
 				  
-				  //aggiungo parametro csfr
-				  //if(csrfToken != ''){
-				  //	addHidden(theForm, csrfTokenKey , csrfToken);
-				  //}
+				  if (paramsStringFR != null && paramsStringFR != ""){
+			   		   var pairs = ((paramsStringFR[0] === '?' || paramsStringFR[0] === '&') ? paramsStringFR.substr(1) : paramsStringFR).split('&');
+			   		   for (var i = 0; i < pairs.length; i++) {
+			   		       var pair = pairs[i].split('=');
+			   		       addHidden(theForm, pair[0] , pair[1]);
+			   		   }
+			   	   }
 				
 				theForm.submit();
 			} else {
 				var destinazione = '<%=request.getContextPath()%>/'+nomeServlet_Custom_No +params;
+				
+				if (paramsStringFR != null && paramsStringFR != ""){
+					destinazione += '&';
+					destinazione += paramsStringFR;
+				}
+				
 				//addTabID
 				destinazione = addTabIdParam(destinazione,true);
 				

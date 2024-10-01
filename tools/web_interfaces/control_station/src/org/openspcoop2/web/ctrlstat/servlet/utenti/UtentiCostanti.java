@@ -107,7 +107,7 @@ public class UtentiCostanti {
 	
 	public static final String STRUTS_FORWARD_INFO = "Info";
 	public static final String STRUTS_FORWARD_PERMESSI_OK = "PermessiOk";
-	
+	public static final String STRUTS_FORWARD_CONFIRM = "Confirm";
 	
 	/* */
 	public static final String OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE = "WELCOME_SCREEN"; 
@@ -170,6 +170,7 @@ public class UtentiCostanti {
 	public static final String PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE = "isAccordiCooperazione";
 	public static final String PARAMETRO_UTENTI_SINGLE_SU_SERVIZI = "singleSuS";
 	public static final String PARAMETRO_UTENTI_SINGLE_SU_ACCORDI_COOPERAZIONE = "singleSuAC";
+	public static final String PARAMETRO_UTENTI_SINGLE_SU_RICERCHE_UTENTE = "singleSuRU";
 	public static final String PARAMETRO_UTENTI_MODALITA_PREFIX = "mod_";
 	public static final String PARAMETRO_UTENTI_PROTOCOLLO = "protocollo";
 	public static final String PARAMETRO_UTENTI_ABILITAZIONI_SOGGETTI_ALL = "isSoggettiAll";
@@ -289,5 +290,8 @@ public class UtentiCostanti {
 	public static final String MESSAGGIO_ERRORE_NOME_SERVIZIO_OBBLIGATORIO = "Selezionare un servizio";
 	public static final String MESSAGGIO_ERRORE_PASSWORD_GIA_UTILIZZATA = "La password scelta non deve corrispondere ad una precedente password";
 	public static final String MESSAGGIO_ERRORE_PASSWORD_NUOVE_DIFFERENTI = "Le password inserite nei campi Nuova e Conferma Nuova non corrispondono";
+	
+	public static final String MESSAGGIO_ALERT_UTENTE_CON_RICERCHE = "La rimozione dell''utente {0} comporter&agrave; l''eliminazione delle sue ricerche pubbliche. <br><br>";
+	public static final String MESSAGGIO_ALERT_UTENTI_CON_RICERCHE = "La rimozione dell''utente {0} comporter&agrave; l''eliminazione delle loro ricerche pubbliche. <br><br>";
 	
 }

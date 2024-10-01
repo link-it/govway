@@ -12,6 +12,7 @@
 	<!-- Utility -->
 	<bean id="loginBean" class="org.openspcoop2.web.monitor.core.bean.LoginBean" scope="session">
 		<property name="loginDao" ref="loginDAO"/>
+		<property name="ricercheUtenteService" ref="ricercheUtenteService"/>
 	</bean>
 	
 	<!-- Object Mapping -->
@@ -23,5 +24,19 @@
 	<bean id="genericService" class="org.openspcoop2.web.monitor.core.dao.GenericService" scope="request">
 	</bean>
 	
+	<!-- Ricerche Utente -->
+	<bean id="searchFormRicercheUtente" class="org.openspcoop2.web.monitor.core.bean.RicercheUtenteSearchForm" scope="session"/>
+	
+	<bean id="ricercheUtenteService" class="org.openspcoop2.web.monitor.core.dao.RicercheUtenteService" scope="request">
+		<property name="search" ref="searchFormRicercheUtente"/>
+	</bean>
+	<bean id="ricercheUtenteBean" class="org.openspcoop2.web.monitor.core.mbean.RicercheUtenteBean" scope="request">
+		<property name="service" ref="ricercheUtenteService"/>
+		<property name="search" ref="searchFormRicercheUtente"/>
+		<property name="ricercheFile" ref="fileUploadBean"/>
+	</bean>
+	
+	<!-- FileUplaoad Bean -->
+	<bean id="fileUploadBean" class="org.openspcoop2.web.monitor.core.bean.FileUploadBean" scope="session" />
 </beans>
 

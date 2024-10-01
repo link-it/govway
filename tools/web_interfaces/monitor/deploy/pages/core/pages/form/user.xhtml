@@ -16,6 +16,7 @@
 			</style>
 			<div class="form-container">
 				<a4j:keepAlive beanName="utentiBean" />
+				<a4j:keepAlive beanName="ricercheUtenteBean" />
 				<rich:panel id="panelDettaglioUtente">
 					<f:facet name="header">
 						<h:outputText id="outDettagliUtente" value="#{utentiBean.profilo}" />
@@ -169,6 +170,22 @@
 										</link:fieldset>
 								</a4j:outputPanel>
 							</c:if>
+							
+							<a4j:outputPanel layout="block" id="panelRicercheUser" rendered="#{not empty utentiBean.user.id and utentiBean.user.id gt 0}">
+								<link:fieldset legend="Ricerche" rendered="#{not empty utentiBean.user.id and utentiBean.user.id gt 0}" collapsible="false" closed="false">
+									<a4j:outputPanel layout="block" styleClass="prop">
+				
+										<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+										<a4j:outputPanel layout="block" styleClass="divNoEdit">
+											<a4j:htmlCommandLink id="history-iconLink" styleClass="icon-details" 
+												action="#{utentiBean.ricerche}" value="#{utentiBean.labelLinkRicerche}"
+												actionListener="#{ricercheUtenteBean.search.initSearchListener}" >
+											</a4j:htmlCommandLink>
+										</a4j:outputPanel>
+									</a4j:outputPanel>
+								</link:fieldset>
+							</a4j:outputPanel>
+							
 							<a4j:outputPanel layout="block" styleClass="buttonrow"  rendered="#{true}" id="buttonFormPwdPanel">
 								<a4j:commandButton id="salvaProfiloBtn" styleClass="icon-save margin-left-24" action="#{utentiBean.salvaProfilo}" value="Salva" reRender="panelDettaglioUtente"/>
 							</a4j:outputPanel>

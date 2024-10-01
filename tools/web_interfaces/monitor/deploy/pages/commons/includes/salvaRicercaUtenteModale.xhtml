@@ -1,0 +1,97 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:link="http://www.link.it">
+	<f:loadBundle var="msg" basename="messages" /> 
+	
+	<a4j:outputPanel id="salvaRicercaUtenteCtr" layout="block" styleClass="" rendered="#{true}">
+				
+		<h:form id="formPreparaFormSalvaRicerca" rendered="#{true}">
+        	<input type="hidden" id="_csrfFormValidaFormSalvaRicerca" name="_csrf" value="#{loginBean.csrf}"/>
+			<a4j:outputPanel layout="block" ajaxRendered="false">
+				<a4j:jsFunction name="preparaFormSalvaRicerca" reRender="salvaRicercaCtr,panelFormsalvaRicercaContainer" actionListener="#{loginBean.salvaRicercaForm.initFormListener}" limitToList="true">
+	       		</a4j:jsFunction>
+	       	</a4j:outputPanel>
+       	</h:form>
+       	
+       	<h:form id="formValidaSalvaRicerca" rendered="#{true}">
+        	<input type="hidden" id="_csrfFormValidaFormSalvaRicerca" name="_csrf" value="#{loginBean.csrf}"/>
+			<a4j:outputPanel layout="block" ajaxRendered="false">
+				<a4j:jsFunction name="validaFormSalvaRicerca" reRender="salvaRicercaCtr,panelFormsalvaRicercaContainer" action="#{loginBean.salvaRicercaForm.validaForm}" limitToList="true">
+        		</a4j:jsFunction>
+        	</a4j:outputPanel>
+        </h:form>
+        
+		<rich:modalPanel id="salvaRicercaModalPnl" showWhenRendered="false" width="800" styleClass="overflow-auto" autosized="true">
+			<f:facet name="header">
+				<h:outputText id="salvaRicercaModalPnlHeaderText" value="#{msg['commons.salvaRicerca.modal.titolo']}" />
+			</f:facet>
+			<f:facet name="controls">	
+				<h:panelGroup id="panelChiudisalvaRicerca">
+	                <h:graphicImage value="/images/tema_link/clear_white.png" id="nascondiModaleSalvaRicercaImg"/>
+	                <rich:componentControl id="componentPluginSalvaRicerca" for="salvaRicercaModalPnl" attachTo="nascondiModaleSalvaRicercaImg" operation="hide" event="onclick"/>
+	            </h:panelGroup>
+			</f:facet>
+			<a4j:outputPanel id="salvaRicercaCtr" ajaxRendered="true">
+				<h:panelGroup  styleClass="errors" layout="block" rendered="#{not empty loginBean.salvaRicercaForm.salvaRicercaErrorMessage}">
+						<h:panelGroup rendered="#{not empty loginBean.salvaRicercaForm.salvaRicercaErrorMessage}">
+								<p>
+									<em>
+										<h:outputText value="Si sono verificati degli errori:"/>
+									</em>
+								</p>
+							<div class="errorsSpacer"/>
+							</h:panelGroup>
+						<h:outputText id="salvaRicercaErrors"  
+							value="#{loginBean.salvaRicercaForm.salvaRicercaErrorMessage}"
+							rendered="#{not empty loginBean.salvaRicercaForm.salvaRicercaErrorMessage}" />
+				</h:panelGroup>
+				<script type="text/javascript" nonce="#{_csp_random_nonce}">
+					//<![CDATA[
+					   function salvaRicercaOk (){
+						   return '#{loginBean.salvaRicercaForm.salvaRicercaErrorMessage}' == '';
+					   } 
+						 //]]>	
+					</script>
+			</a4j:outputPanel>
+			<p class="legend">
+				<strong>Note:</strong> (<em>*</em>) Campi obbligatori 
+			</p>
+			<h:form id="formSalvaRicerca" prependId="false">
+				<a4j:outputPanel layout="block" id="panelFormsalvaRicercaContainer" ajaxRendered="false">
+					<input type="hidden" id="_csrfFormSalvaRicerca" name="_csrf" value="#{loginBean.csrf}"/>
+					<div class="form-container noborder"> 
+						<link:fieldset legend="#{msg['commons.salvaRicerca.modal.fieldset.datiRicerca']}" collapsible="false">
+							<link:prop label="#{msg['commons.salvaRicerca.modal.label']}" required="true">
+								<h:inputText id="nomeRicerca" value="#{loginBean.salvaRicercaForm.label}" styleClass="inputLinkLong"/>
+							</link:prop>
+							<link:prop label="#{msg['commons.salvaRicerca.modal.descrizione']}" required="true">
+								<h:inputTextarea id="descrizioneRicerca" value="#{loginBean.salvaRicercaForm.descrizione}" cols="60" rows="#{5}" styleClass="inputLinkLong"/>
+							</link:prop>
+							<link:prop label="#{msg['commons.salvaRicerca.modal.visibilita']}" required="true">
+								<h:selectOneRadio id="privacyRicerca" value="#{loginBean.salvaRicercaForm.visibilita}" styleClass="controlset">
+									<f:selectItem itemValue="pubblica" itemLabel="#{msg['commons.salvaRicerca.modal.pubblica']}"/>
+									<f:selectItem itemValue="privata" itemLabel="#{msg['commons.salvaRicerca.modal.privata']}"/>
+								</h:selectOneRadio>
+							</link:prop>
+						</link:fieldset>
+						<div class="buttonrowmodal">
+							<a4j:commandButton id="salvaRicercaButton" value="#{msg['commons.salvaRicerca.modal.buttonSalva']}"
+								styleClass="icon-csv positive" process="panelFormsalvaRicercaContainer,searchPnl" 
+								action="#{loginBean.salvaRicercaCorrente}" reRender="salvaRicercaCtr,searchPnl" 
+								oncomplete="validaFormSalvaRicerca(); if(salvaRicercaOk()) {#{rich:component('salvaRicercaModalPnl')}.hide();}" >
+								<f:setPropertyActionListener value="#{sf_bean}" target="#{loginBean.salvaRicercaForm.search}" />
+								<f:setPropertyActionListener value="#{sf_bean.modulo}" target="#{loginBean.salvaRicercaForm.modulo}" />
+							 	<f:setPropertyActionListener value="#{sf_bean.modalitaRicerca}" target="#{loginBean.salvaRicercaForm.modalitaRicerca}" />
+							</a4j:commandButton>
+						</div>
+					</div>
+				</a4j:outputPanel>
+			</h:form>
+		</rich:modalPanel>
+	</a4j:outputPanel>
+</ui:composition>

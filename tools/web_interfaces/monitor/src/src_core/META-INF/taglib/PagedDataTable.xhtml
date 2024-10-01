@@ -43,6 +43,9 @@
 		<c:if test="#{empty rowClasses}">
 			<c:set var="rowClasses" value="even,odd"/>
 		</c:if>
+		<c:if test="#{empty nascondiTabellaSeNoRisultati}">
+			<c:set var="nascondiTabellaSeNoRisultati" value="true"/>
+		</c:if>
 		<a4j:outputPanel id="#{id}_nodata" layout="block" styleClass="tableNoData pnl-display-none">
 			<a4j:outputPanel layout="block" styleClass="buttonrow">
 				<h:outputText value="Trovati 0 Risultati" styleClass="tableNoData" />
@@ -53,9 +56,15 @@
 				 jQuery(document).ready(function() {
 					visualizzaTastoRimuovi('#{id}','#{id}_deleteBtn');
 					visualizzaColonnaSelectAll('#{id}');
-					visualizzaMessaggioNoData('#{id}');
 				 });
 			</script>
+			<c:if test="#{nascondiTabellaSeNoRisultati == true}">
+				<script type="text/javascript" nonce="#{_csp_random_nonce}">
+				 jQuery(document).ready(function() {
+					visualizzaMessaggioNoData('#{id}');
+				 });
+				</script>
+			</c:if>
 			<c:if test="#{useCount == true}">
 				<style type="text/css" nonce="#{_csp_random_nonce}">
 					table[id$="#{id}_ds_top_table"] { padding-bottom: 4px; line-height: 0px;}
@@ -437,7 +446,7 @@
 	      	</a4j:outputPanel>
  		</a4j:outputPanel>
  		
-		<rich:modalPanel id="#{id}_deleteConfirmation" width="350" height="200">
+		<rich:modalPanel id="#{id}_deleteConfirmation" width="400" height="200">
 		   <f:facet name="header">
 		   	<h:outputText value="Conferma Operazione" />
 		   </f:facet>

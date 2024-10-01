@@ -20,10 +20,24 @@
 package org.openspcoop2.web.monitor.core.bean;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
+
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
+import org.openspcoop2.web.monitor.core.core.Utility;
+import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.ricerche.FiltriRicercaPersonalizzata;
+import org.openspcoop2.web.monitor.core.ricerche.ModuloRicerca;
+import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.openspcoop2.web.monitor.core.utils.RicercheUtils;
 
 /****
  * AbstractDateSearchForm
@@ -42,10 +56,18 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 	protected Date dataFine;
 	private Date dataRicerca;
 	private boolean useDataRicerca = false;
+	
+	private String ricercaUtente;
+	
+	@Override
+	public void initSearchListener(ActionEvent ae){
+		super.initSearchListener(ae);
+		this.ricercaUtente = null;
+	}
 
 	public String getPeriodo() {
 		if (this.periodo == null) {
-			this.periodo = "Ultimo mese";
+			this.periodo = Costanti.PERIODO_ULTIMO_MESE;
 			this.setPeriodo(this.periodo);
 		}
 
@@ -127,7 +149,7 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 		today_without_second_and_ms.clear(Calendar.SECOND);
 		today_without_second_and_ms.clear(Calendar.MILLISECOND);
 		
-		if ("Ultima ora".equals(this.periodo)) {
+		if (Costanti.PERIODO_ULTIMA_ORA.equals(this.periodo)) {
 			
 			// Intervallo che definisce esattamente l'ultima ora a partire da adesso
 			
@@ -138,7 +160,7 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 			this.dataInizio = lasth.getTime();
 
 		}
-		else if ("Ultime 12 ore".equals(this.periodo)) {
+		else if (Costanti.PERIODO_ULTIME_12_ORE.equals(this.periodo)) {
 			
 			// Intervallo che definisce esattamente le ultime 12 ore a partire da adesso
 			
@@ -148,7 +170,7 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 			lasth.add(Calendar.HOUR_OF_DAY, -12);
 			this.dataInizio = lasth.getTime();
 
-		}else if ("Ultime 24 ore".equals(this.periodo)) {
+		}else if (Costanti.PERIODO_ULTIME_24_ORE.equals(this.periodo)) {
 			
 			// Intervallo che definisce esattamente le ultime 24 ore a partire da adesso
 			
@@ -158,7 +180,7 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 			ieri.add(Calendar.DATE, -1);
 			this.dataInizio = ieri.getTime();
 
-		}else if ("Ieri".equals(this.periodo)) {
+		}else if (Costanti.PERIODO_IERI.equals(this.periodo)) {
 			
 			// Intervallo che definisce esattamente la giornata precedente ad oggi
 			
@@ -174,7 +196,7 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 			ieri.clear(Calendar.MILLISECOND);
 			this.dataInizio = ieri.getTime();
 
-		} else if ("Ultima settimana".equals(this.periodo)) {
+		} else if (Costanti.PERIODO_ULTIMA_SETTIMANA.equals(this.periodo)) {
 			
 			// Intervallo che definisce la settimana passato più la giornata di oggi parziale (un totale di 8 giorni)
 			
@@ -186,7 +208,7 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 			lastWeek.add(Calendar.DATE, -7);
 			this.dataInizio = lastWeek.getTime();
 
-		} else if ("Ultimo mese".equals(this.periodo)) {
+		} else if (Costanti.PERIODO_ULTIMO_MESE.equals(this.periodo)) {
 			
 			// Intervallo che definisce il mese passato più la giornata di oggi parziale
 			
@@ -198,7 +220,7 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 			lastMonth.add(Calendar.DATE, -30);
 			this.dataInizio = lastMonth.getTime();
 
-		} else if ("Ultimo anno".equals(this.periodo)) {
+		} else if (Costanti.PERIODO_ULTIMO_ANNO.equals(this.periodo)) {
 			
 			// Intervallo che definisce l'ultimo anno passato più la giornata di oggi parziale
 			
@@ -224,12 +246,12 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 				this.dataInizio = ieri.getTime();
 				
 			}else{
-				if(this.lastPeriodo.equals("Personalizzato")){
+				if(this.lastPeriodo.equals(Costanti.PERIODO_PERSONALIZZATO)){
 					// se il precedente era personalizzato lascio le date che c'erano
 					this.dataInizio = lastDataInizio;
 					this.dataFine = lastDataFine;
 				}
-				else if ("Ieri".equals(this.lastPeriodo)) {
+				else if (Costanti.PERIODO_IERI.equals(this.lastPeriodo)) {
 					
 					// Intervallo che definisce esattamente la giornata precedente ad oggi
 					
@@ -245,7 +267,7 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 					ieri.clear(Calendar.MILLISECOND);
 					this.dataInizio = ieri.getTime();
 				}
-				else if(this.lastPeriodo.equals("Ultima ora")){
+				else if(this.lastPeriodo.equals(Costanti.PERIODO_ULTIMA_ORA)){
 					
 					// Intervallo che definisce esattamente l'ultima ora a partire da adesso
 					
@@ -256,7 +278,7 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 					this.dataInizio = lasth.getTime();
 					
 				}
-				else if(this.lastPeriodo.equals("Ultime 12 ore")){
+				else if(this.lastPeriodo.equals(Costanti.PERIODO_ULTIME_12_ORE)){
 						
 					// Intervallo che definisce esattamente le ultime 12 ore a partire da adesso
 					
@@ -267,7 +289,7 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 					this.dataInizio = lasth.getTime();
 					
 				}
-				else if ("Ultime 24 ore".equals(this.lastPeriodo)) {
+				else if (Costanti.PERIODO_ULTIME_24_ORE.equals(this.lastPeriodo)) {
 					
 					// Intervallo che definisce esattamente le ultime 24 ore a partire da adesso
 					
@@ -278,7 +300,7 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 					this.dataInizio = ieri.getTime();
 
 				}
-				else if ("Ultima settimana".equals(this.lastPeriodo)){
+				else if (Costanti.PERIODO_ULTIMA_SETTIMANA.equals(this.lastPeriodo)){
 					
 					// Intervallo che definisce la settimana passato più la giornata di oggi parziale (un totale di 8 giorni)
 					
@@ -291,7 +313,7 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 					this.dataInizio = lastWeek.getTime();
 					
 				} 
-				else if ("Ultimo mese".equals(this.lastPeriodo)) {
+				else if (Costanti.PERIODO_ULTIMO_MESE.equals(this.lastPeriodo)) {
 					
 					// Intervallo che definisce il mese passato più la giornata di oggi parziale
 					
@@ -304,7 +326,7 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 					this.dataInizio = lastMonth.getTime();
 					
 				} 
-				else if(this.lastPeriodo.equals("Ultimo anno")){
+				else if(this.lastPeriodo.equals(Costanti.PERIODO_ULTIMO_ANNO)){
 					
 					// Intervallo che definisce l'ultimo anno passato più la giornata di oggi parziale
 					
@@ -325,14 +347,14 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 	}
 	
 	public boolean isPeriodoPersonalizzato() {
-		return "Personalizzato".equals(this.periodo);
+		return Costanti.PERIODO_PERSONALIZZATO.equals(this.periodo);
 	}
 	public boolean isPeriodoUltime12ore() {
-		return "Ultime 12 ore".equals(this.periodo);
+		return Costanti.PERIODO_ULTIME_12_ORE.equals(this.periodo);
 	}
 	
 	public boolean isLastPeriodoPersonalizzato() {
-		return "Personalizzato".equals(this.lastPeriodo);
+		return Costanti.PERIODO_PERSONALIZZATO.equals(this.lastPeriodo);
 	}
 	
 	public Date getDataInizio() {
@@ -340,7 +362,6 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 	}
 
 	public void setDataInizio(Date dataInizio) {
-		//this.dataInizio = dataInizio;
 		if(dataInizio!=null){
 			Calendar c = Calendar.getInstance();
 			c.setTime(dataInizio);
@@ -358,7 +379,6 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 	}
 
 	public void setDataFine(Date dataFine) {
-		//this.dataFine = dataFine;
 		if(dataFine!=null){
 			Calendar c = Calendar.getInstance();
 			c.setTime(dataFine);
@@ -372,12 +392,10 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 	}
 
 	public void dataInizioChangeListener(javax.faces.event.ValueChangeEvent evt){
-		//		log.debug(this.dataInizio); 
 		this.setDataInizio((Date) evt.getNewValue());
 	}
 
 	public void dataFineChangeListener(javax.faces.event.ValueChangeEvent evt){
-		//		log.debug(this.dataInizio); 
 		this.setDataFine((Date) evt.getNewValue());
 	}
 
@@ -410,5 +428,90 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 	
 	public void congelaDataRicerca() {
 		this.useDataRicerca = true;
+	}
+	
+	public String getRicercaUtente() {
+		return this.ricercaUtente;
+	}
+
+	public void setRicercaUtente(String ricercaUtente) {
+		this.ricercaUtente = ricercaUtente;
+	}
+	
+	public void ricercaUtenteSelected(ActionEvent ae) {
+		// valorizza filtri in funzione della ricerca salvata
+		String ricercaUtenteTmp = this.ricercaUtente;
+		
+		if(!ricercaUtenteTmp.equals(Costanti.NON_SELEZIONATO)) {
+		
+			String[] ricercaIds = ricercaUtenteTmp.split("_");
+			long idUtente = Long.parseLong(ricercaIds[0]);
+			long idRicerca = Long.parseLong(ricercaIds[1]);
+			
+			RicercaUtenteBean ricercaPersonalizzata = Utility.getRicercaPersonalizzata(idUtente, idRicerca);
+			
+			JSONUtils jsonUtils = JSONUtils.getInstance();
+			
+			FiltriRicercaPersonalizzata filtriRicercaPersonalizzata = null;
+			try {
+				filtriRicercaPersonalizzata = jsonUtils.getAsObject(ricercaPersonalizzata.getRicerca(), FiltriRicercaPersonalizzata.class);
+				
+				this.ripulisci();
+				
+				RicercheUtils.applyFieldsToBean(this, filtriRicercaPersonalizzata.getFiltri());
+				
+				this.ricercaUtente = ricercaUtenteTmp;
+			} catch (UtilsException e) {
+				LoggerManager.getPddMonitorCoreLogger().error("Errore durante il caricamento della ricerca selezionata: "+e.getMessage(),e);
+				MessageUtils.addErrorMsg("Caricamento della ricerca non riuscito.");
+			}
+		} else {
+			// reset filtro ricerca
+			this.ripulisci();
+		}
+	}
+	
+	public abstract ModuloRicerca getModulo();
+	
+	public abstract String getModalitaRicerca();
+	
+	public abstract boolean isVisualizzaComandoSalvaRicerca();
+	
+	public abstract List<String> getElencoFieldRicercaDaIgnorare();
+	
+	public abstract String getProtocolloRicerca();
+	
+	public abstract String getSoggettoRicerca();
+	
+	public Map<String, Object> getFiltriImpostati(){
+		return RicercheUtils.getNonNullFields(this, this.getElencoFieldRicercaDaIgnorare());
+	}
+	
+	public boolean isShowFiltroRicercheUtente() {
+		return !this.getRicercheUtente().isEmpty();
+	}
+	
+	public List<SelectItem> getRicercheUtente() {
+		return this.getRicercheUtenteInner(this.getModulo(), this.getModalitaRicerca(), this.getProtocolloRicerca(), this.getSoggettoRicerca());
+	}
+	
+	private List<SelectItem> getRicercheUtenteInner(ModuloRicerca modulo, String modalitaRicerca, String protocollo, String soggetto) {
+		List<SelectItem> ricercheUtente = new ArrayList<>();
+		
+		List<RicercaUtenteBean> ricerche = Utility.getRicerchePersonalizzate(modulo, modalitaRicerca, protocollo, soggetto);
+		
+		if(!ricerche.isEmpty()) {
+			ricercheUtente.add(new SelectItem(Costanti.NON_SELEZIONATO, Costanti.NON_SELEZIONATO));
+		
+			for (RicercaUtenteBean ricercaPersonalizzata : ricerche) {
+				String idRicerca = ricercaPersonalizzata.getId_utente() + "_" + ricercaPersonalizzata.getId();
+				ricercheUtente.add(new SelectItem(idRicerca, ricercaPersonalizzata.getLabel()));
+			}
+		}
+		return ricercheUtente;
+	}
+	
+	public String inviaFormRicerca() {
+		return null;
 	}
 }

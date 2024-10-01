@@ -93,7 +93,7 @@ function aggiungiComandoMostraPassword(inputPasswordId){
       // toggle the eye slash icon
       jQuery(this).text(passwordInput.type === 'password' ? iconVisibility : iconVisibilityOff);
       var tooltip = passwordInput.type === "password" ? iconVisibilityTooltip : iconVisibilityOffTooltip;
-      jQuery(this).attr('title', tooltip);
+      jQuery(this).prop('title', tooltip);
       
     });
 }

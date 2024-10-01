@@ -30,7 +30,6 @@ import java.util.Map;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
@@ -53,12 +52,16 @@ import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
+import org.openspcoop2.web.monitor.core.bean.RicercaUtenteBean;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.ricerche.ModuloRicerca;
 import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 import org.slf4j.Logger;
+
+import jakarta.servlet.http.HttpSession;
 
 /**
  * Utility
@@ -1093,5 +1096,25 @@ public class Utility {
 		if(lb!= null){
 			lb.setFilterResult(filterName, message, statusCode);
 		}
+	}
+
+	public static List<RicercaUtenteBean> getRicerchePersonalizzate(ModuloRicerca modulo, String modalitaRicerca, String protocollo, String soggetto) {
+		LoginBean lb = getLoginBean();
+
+		if(lb!= null && lb.isLoggedIn()){
+			return lb.getRicerchePersonalizzate(modulo, modalitaRicerca, protocollo, soggetto);
+		}
+		
+		return new ArrayList<>();
+	}
+	
+	public static RicercaUtenteBean getRicercaPersonalizzata(long idUtente, long idRicerca) {
+		LoginBean lb = getLoginBean();
+
+		if(lb!= null && lb.isLoggedIn()){
+			return lb.getRicercaPersonalizzata(idUtente, idRicerca);
+		}
+		
+		return null;
 	}
 }

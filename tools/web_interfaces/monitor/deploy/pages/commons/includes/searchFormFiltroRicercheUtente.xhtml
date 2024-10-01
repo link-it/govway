@@ -1,0 +1,29 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" />
+    
+    <c:if test="#{empty visualizzaSubTitle}">
+		<c:set var="visualizzaSubTitle" value="false"/>
+	</c:if>
+    
+    <a4j:outputPanel id="panelRicercheUtente" layout="block"  rendered="#{sf_bean.showFiltroRicercheUtente}" >
+    	<a4j:outputPanel id="panelRicercheUtenteSubTitle" layout="block"  rendered="#{visualizzaSubTitle}" styleClass="subtitle">
+			<h:outputText id="idRicUtente" value="#{msg['commons.search.sezioneFiltroRicercheUtente.label']}" styleClass="subtitle"/>
+		</a4j:outputPanel>
+    
+		<link:prop label="#{msg['commons.search.filtroRicercheUtente']}">
+			<rich:comboBox id="ricercaUtenteCombo" value="#{sf_bean.ricercaUtente}" converter="selectItemConverter" 
+				defaultLabel="Seleziona Ricerca" directInputSuggestions="true" width="416" enableManualInput="false" >
+				<f:selectItems value="#{sf_bean.ricercheUtente}"/>
+				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.ricercaUtenteSelected}" reRender="#{idsToRefresh}" limitToList="true"/>
+			</rich:comboBox>
+		</link:prop>
+	</a4j:outputPanel>
+   	
+</ui:composition>

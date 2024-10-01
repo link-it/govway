@@ -9,8 +9,12 @@
 	<f:loadBundle var="msg" basename="messages" /> 
 	
 	<a4j:outputPanel id="searchPnl" ajaxRendered="false">
-		
+	
 			<h:inputHidden value="#{sf_bean.usaSVG}" id="sf_usaSVG"/> 
+			
+			<a4j:outputPanel id="distribuzioneSearchPnlSubtitle" styleClass="subtitle" layout="block" rendered="#{true}">
+				<h:outputText id="idTipoAnalisi" value="Analisi Statistica" styleClass="subtitle"/>
+			</a4j:outputPanel>
 			
 			<a4j:outputPanel id="panelProtocollo" layout="block"  rendered="#{sf_bean.showListaProtocolli}" >
 				<link:prop label="#{applicationBean.labelProfilo}">
@@ -42,6 +46,12 @@
 				<ui:param name="sf_labelTrafficoPerSoggetto" value="#{sf_labelTrafficoPerSoggetto}" />
 				<ui:param name="tipo_filtro_soggetti" value="soggetto_locale" />
 		 	</ui:include>
+		 	
+		 	<ui:include src="/commons/includes/searchFormFiltroRicercheUtente.xhtml">
+				<ui:param name="sf_mbean" value="#{sf_mbean}" />
+				<ui:param name="sf_bean" value="#{sf_bean}"  />
+				<ui:param name="idsToRefresh" value="searchPnl,altriCriteri" />
+			</ui:include>
 		 	
 	 		<link:prop label="#{msg['stats.search.tipoRicerca']}" rendered="#{sf_showTipologia}">
 				<rich:comboBox id="tipologiaCombo" value="#{sf_bean.tipologiaRicerca}" defaultLabel="Seleziona Tipologia" converter="selectItemConverter"

@@ -38,6 +38,13 @@
 								layout="block">
 								<input type="hidden" id="_csrfFormEventiSearchPanel" name="_csrf" value="#{loginBean.csrf}"/>
 								
+								<ui:include src="/commons/includes/searchFormFiltroRicercheUtente.xhtml">
+									<ui:param name="sf_mbean" value="#{eventiBean}" />
+									<ui:param name="sf_bean" value="#{searchFormEventi}"  />
+									<ui:param name="idsToRefresh" value="searchPnl,altriCriteri" />
+									<ui:param name="visualizzaSubTitle" value="true" />
+								</ui:include>
+								
 								<a4j:outputPanel id="dataCtr" layout="block">
 								
 									<div class="subtitle">
@@ -166,6 +173,11 @@
 								reRender="panelPaginaRicerca" rendered="#{true}"
 								action="#{searchFormEventi.ripulisci}"
 								oncomplete="completa(event)" />
+							<a4j:commandButton id="salvaRicerca-iconLink" value="#{msg['commons.salvaRicerca.label']}"
+								styleClass="icon-csv positive" process="searchPnl" rendered="#{searchFormEventi.visualizzaComandoSalvaRicerca}"
+								action="#{searchFormEventi.inviaFormRicerca}"  
+								oncomplete="preparaFormSalvaRicerca();Richfaces.showModalPanel('salvaRicercaModalPnl');  return false;" >
+							</a4j:commandButton>
 						</div>
 					</a4j:form>
 				</div>
@@ -303,6 +315,12 @@
 					</script>
 				</a4j:outputPanel>
 			</a4j:outputPanel>
+			
+			<ui:include src="/commons/includes/salvaRicercaUtenteModale.xhtml">
+	               	<ui:param name="mBean" value="#{eventiBean}" />
+	               	<ui:param name="sf_bean" value="#{searchFormEventi}"  />
+	               	<ui:param name="loginBean" value="#{loginBean}"  />
+	           	</ui:include>
 		</a4j:outputPanel>
 	</ui:define>
 </ui:composition>

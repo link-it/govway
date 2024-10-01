@@ -4,4 +4,12 @@
 		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
 		<load-on-startup>0</load-on-startup>
 	</servlet>
+	<servlet>
+		<servlet-name>RicercheUpload</servlet-name>
+		<servlet-class>org.openspcoop2.web.monitor.core.servlet.UploadServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>RicercheExporter</servlet-name>
+		<servlet-class>org.openspcoop2.web.monitor.core.servlet.RicercheExporter</servlet-class>
+	</servlet>
 	

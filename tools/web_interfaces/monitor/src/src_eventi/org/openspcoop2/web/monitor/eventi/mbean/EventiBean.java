@@ -21,6 +21,7 @@ package org.openspcoop2.web.monitor.eventi.mbean;
 
 import org.openspcoop2.core.eventi.constants.TipoSeverita;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.IService;
@@ -156,7 +157,7 @@ public class EventiBean extends PdDBaseBean<EventoBean, Long, IService<EventoBea
 
 		this.tipiSeverita = new ArrayList<SelectItem>();
 
-		this.tipiSeverita.add(new SelectItem(EventiSearchForm.NON_SELEZIONATO));
+		this.tipiSeverita.add(new SelectItem(Costanti.NON_SELEZIONATO));
 		this.tipiSeverita.add(new SelectItem(TipoSeverita.FATAL.getValue()));
 		this.tipiSeverita.add(new SelectItem(TipoSeverita.ERROR.getValue()));
 		this.tipiSeverita.add(new SelectItem(TipoSeverita.WARN.getValue()));

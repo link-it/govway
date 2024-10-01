@@ -84,6 +84,7 @@ import org.openspcoop2.utils.csv.Printer;
 import org.openspcoop2.web.monitor.core.report.Colonna;
 import org.openspcoop2.web.monitor.core.report.ReportDataSource;
 import org.openspcoop2.web.monitor.core.report.Templates;
+import org.openspcoop2.web.monitor.core.utils.IgnoreCaseComp;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGenerale;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPA;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPA.DettaglioSA;
@@ -92,7 +93,6 @@ import org.openspcoop2.web.monitor.statistiche.bean.DettaglioRateLimiting;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiExporter;
 import org.openspcoop2.web.monitor.statistiche.utils.ConfigurazioniUtils;
-import org.openspcoop2.web.monitor.statistiche.utils.IgnoreCaseComp;
 import org.openspcoop2.web.monitor.transazioni.exporter.ExportException;
 import org.slf4j.Logger;
 

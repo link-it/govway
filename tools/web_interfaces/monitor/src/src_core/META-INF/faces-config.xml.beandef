@@ -68,6 +68,11 @@
 			<property-class>org.openspcoop2.web.monitor.core.dao.IUserService</property-class>
 			<value>#{userService}</value>
 		</managed-property>
+		<managed-property>
+			<property-name>ricercheUtenteService</property-name>
+			<property-class>org.openspcoop2.web.monitor.core.dao.RicercheUtenteService</property-class>
+			<value>#{ricercheUtenteService}</value>
+		</managed-property>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>utenteBean</managed-bean-name>
@@ -107,6 +112,16 @@
 			<property-name>msgMgr</property-name>
 			<property-class>org.openspcoop2.web.monitor.core.utils.MessageManager</property-class>
 			<value>#{messageManager}</value>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>ricercheUtenteDM</managed-bean-name>
+		<managed-bean-class>org.openspcoop2.web.monitor.core.datamodel.RicercheUtenteDM</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+		<managed-property>
+			<property-name>dataProvider</property-name>
+			<property-class>org.openspcoop2.web.monitor.core.dao.IRicercheUtenteService</property-class>
+			<value>#{ricercheUtenteService}</value>
 		</managed-property>
 	</managed-bean>
 	<navigation-rule>
@@ -162,6 +177,35 @@
 		<navigation-case>
 			<from-outcome>loginSuccess</from-outcome>
 			<to-view-id>/commons/pages/welcome.jsf?usaSVG=true</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/core/pages/form/user.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>ricercheUtente</from-outcome>
+			<to-view-id>/core/pages/list/ricercheUtenteList.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/core/pages/list/ricercheUtenteList.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>editUser</from-outcome>
+			<to-view-id>/core/pages/form/user.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>modificaRicercaUtente</from-outcome>
+			<to-view-id>/core/pages/form/modificaRicercaUtente.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/core/pages/form/modificaRicercaUtente.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>editUser</from-outcome>
+			<to-view-id>/core/pages/form/user.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>ricercheUtente</from-outcome>
+			<to-view-id>/core/pages/list/ricercheUtenteList.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<validator>

@@ -86,6 +86,8 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 	
 	private boolean visualizzaTotaleNelleCelleGraficoHeatmap = false;
 	
+	private String tipoDistribuzione = CostantiGrafici.TIPO_DISTRIBUZIONE_TEMPORALE;
+	
 	// private boolean enableSpecialFilters = false;
 	// private SelectItem[] specialFilters;
 
@@ -560,5 +562,17 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 	}
 	public void setVisualizzaTotaleNelleCelleGraficoHeatmap(boolean visualizzaTotaleNelleCelleGraficoHeatmap) {
 		this.visualizzaTotaleNelleCelleGraficoHeatmap = visualizzaTotaleNelleCelleGraficoHeatmap;
+	}
+	
+	public void setTipoDistribuzione(String tipoDistribuzione) {
+		this.tipoDistribuzione = tipoDistribuzione;
+		
+		if(this.search != null) {
+			((StatsSearchForm)this.search).setTipoDistribuzione(tipoDistribuzione);
+		}
+	}
+	
+	public String getTipoDistribuzione() {
+		return this.tipoDistribuzione;
 	}
 }

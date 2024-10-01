@@ -57,8 +57,10 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
+import org.openspcoop2.web.lib.users.dao.RicercaUtente;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.UserObjects;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -1092,6 +1094,9 @@ public class DriverUsersDB {
 			
 			_deleteListeUtente(connectionDB, idUser);
 			
+			// cancellazione ricerche personalizzate
+			deleteRicercheUtenteEngine(connectionDB, idUser);
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addDeleteTable(CostantiDB.USERS);
 			sqlQueryObject.addWhereCondition("login = ?");
@@ -1275,7 +1280,32 @@ public class DriverUsersDB {
 		}
 	}
 	
-	private long _getIdUser(Connection connectionDB, User user) throws Exception {
+	private void deleteRicercheUtenteEngine(Connection connectionDB, long idUser) throws SQLQueryObjectException, SQLException  {
+		
+		PreparedStatement stm = null;
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addDeleteTable(CostantiDB.USERS_RICERCHE);
+			sqlQueryObject.addWhereCondition("id_utente = ?");
+			String sqlQuery = sqlQueryObject.createSQLDelete();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			stm.setLong(1, idUser);
+			stm.executeUpdate();
+			stm.close();
+		} finally {
+
+			//Chiudo statement and resultset
+			try {
+				if (stm != null)
+					stm.close();
+			} catch (Exception e) {
+				//ignore
+			}
+		}
+	}
+	
+	private long _getIdUser(Connection connectionDB, User user) throws DriverUsersDBException, SQLQueryObjectException, SQLException {
 		
 		if (user == null)
 			throw new DriverUsersDBException("[DriverUsersDB::_getIdUser] Parametro non valido.");
@@ -1295,7 +1325,7 @@ public class DriverUsersDB {
 		return idUser;
 			
 	}
-	private long _getIdUser(Connection connectionDB, String login) throws Exception {
+	private long _getIdUser(Connection connectionDB, String login) throws DriverUsersDBException, SQLQueryObjectException, SQLException {
 		
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -1319,7 +1349,7 @@ public class DriverUsersDB {
 				idUser = rs.getLong("id");
 			}
 			if(idUser<=0) {
-				throw new Exception("Impossibile recuperare id utente con login ["+login+"]");
+				throw new DriverUsersDBException("Impossibile recuperare id utente con login ["+login+"]");
 			}
 			rs.close();
 			stm.close();
@@ -2544,6 +2574,856 @@ public class DriverUsersDB {
 				// ignore exception
 			}
 			releaseConnection(connectionDB);
+		}
+	}
+	
+	// Ricerche personalizzate
+	
+	/**
+	 * Restituisce l'elenco degli ricerche personalizzate per l'utenza <var>login</var>
+	 * 
+	 * Dati un modulo e una modalita ricerca le ricerche che un utente puo' utilizzare sono date dall'union tra
+	 * le ricerche di cui e' proprietario e eventuali ricerche con visibilita pubblica create da altri utenti. 
+	 * 
+	 * @param login Identificatore di un utente
+	 * @param modulo filtro per modulo
+	 * @param modalitaRicerca filtro per modalita ricerca
+	 *               
+	 * @return Elenco delle ricerche individuate
+	 */
+	public List<RicercaUtente> listaRicercheDisponibiliPerUtente(String login, String modulo, String modalitaRicerca, String protocollo, String soggetto) throws DriverUsersDBException {
+		if (login == null)
+			throw new DriverUsersDBException("[listaRicerche] Parametri Non Validi");
+
+		Connection connectionDB = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		List<RicercaUtente> stati = new ArrayList<>();
+		try {
+			// Get Connection
+			connectionDB = getConnection();
+			
+			Long idUtente = null;
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addFromTable(CostantiDB.USERS);
+			sqlQueryObject.addSelectField(CostantiDB.USERS+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
+			
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			int index = 1;
+			stm.setString(index++, login);
+			
+			rs = stm.executeQuery();
+			if (rs.next()) {
+				idUtente = rs.getLong("id");
+			}
+			rs.close();
+			stm.close();
+			
+			if (idUtente == null)
+				throw new DriverUsersDBException("[DriverUsersDB::cancellaRicerca] User [" + login + "] non esistente.");
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addFromTable(CostantiDB.USERS_RICERCHE);
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".id");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".id_utente");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".label");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".modulo");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".modalita_ricerca");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".visibilita");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".ricerca");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".descrizione");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".data_creazione");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".protocollo");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".soggetto");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".modulo = ?");
+			if(modalitaRicerca != null) {
+				sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".modalita_ricerca = ?");
+			}
+			if(protocollo != null) {
+				sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".protocollo = ?");
+			}
+			if(soggetto != null) {
+				sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".soggetto = ?");
+			}
+			// or sul proprietario
+			sqlQueryObject.addWhereCondition(false, false, 
+					CostantiDB.USERS_RICERCHE+".id_utente = ?", 
+					CostantiDB.USERS_RICERCHE+".id_utente != ? AND " + CostantiDB.USERS_RICERCHE+".visibilita = ?");
+			
+			sqlQueryObject.addOrderBy(CostantiDB.USERS_RICERCHE+".label");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			index = 1;
+			stm.setString(index++, modulo);
+			if(modalitaRicerca != null) {
+				stm.setString(index++, modalitaRicerca);
+			}
+			if(protocollo != null) {
+				stm.setString(index++, protocollo);
+			}
+			if(soggetto != null) {
+				stm.setString(index++, soggetto);
+			}
+			stm.setLong(index++, idUtente);
+			stm.setLong(index++, idUtente);
+			stm.setString(index++, "pubblica");
+			
+			rs = stm.executeQuery();
+			while (rs.next()) {
+				RicercaUtente ricercaPersonalizzata = new RicercaUtente();
+				ricercaPersonalizzata.setId(rs.getLong("id"));
+				ricercaPersonalizzata.setId_utente(rs.getLong("id_utente"));
+				ricercaPersonalizzata.setLabel(rs.getString("label"));
+				ricercaPersonalizzata.setModulo(rs.getString("modulo"));
+				ricercaPersonalizzata.setModalitaRicerca(rs.getString("modalita_ricerca"));
+				ricercaPersonalizzata.setVisibilita(rs.getString("visibilita"));
+				ricercaPersonalizzata.setRicerca(rs.getString("ricerca"));
+				ricercaPersonalizzata.setDescrizione(rs.getString("descrizione"));
+				ricercaPersonalizzata.setDataCreazione(rs.getTimestamp("data_creazione"));
+				ricercaPersonalizzata.setProtocollo(rs.getString("protocollo"));
+				ricercaPersonalizzata.setSoggetto(rs.getString("soggetto"));
+				
+				stati.add(ricercaPersonalizzata);
+			}
+			rs.close();
+			stm.close();
+
+			return stati;
+		} catch (SQLException se) {
+			throw new DriverUsersDBException("[DriverUsersDB::listaRicerche] SqlException: " + se.getMessage(),se);
+		} catch (Exception ex) {
+			throw new DriverUsersDBException("[DriverUsersDB::listaRicerche] Exception: " + ex.getMessage(),ex);
+		} finally {
+			try {
+				if(rs!=null) {
+					rs.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if(stm!=null) {
+					stm.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			releaseConnection(connectionDB);
+
+		}
+	}
+	
+	/**
+	 * Restituisce l'elenco degli ricerche personalizzate per l'utenza <var>login</var>
+	 * 
+	 * @param login Identificatore di un utente
+	 * @param offset offset ricerca
+	 * @param limit limit ricerca
+	 * @param modulo filtro per modulo
+	 * @param modalitaRicerca filtro per modalita ricerca
+	 * @param visibilita filtro per visibilita
+	 *               
+	 * @return Elenco delle ricerche individuate
+	 */
+	public List<RicercaUtente> listaRicerche(String login, Integer offset, Integer limit, 
+			String modulo, String modalitaRicerca, String visibilita, 
+			String protocollo, String soggetto) throws DriverUsersDBException {
+		if (login == null)
+			throw new DriverUsersDBException("[listaRicerche] Parametri Non Validi");
+
+		Connection connectionDB = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		List<RicercaUtente> stati = new ArrayList<>();
+		try {
+			// Get Connection
+			connectionDB = getConnection();
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addFromTable(CostantiDB.USERS);
+			sqlQueryObject.addFromTable(CostantiDB.USERS_RICERCHE);
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".id");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".id_utente");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".label");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".modulo");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".modalita_ricerca");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".visibilita");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".ricerca");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".descrizione");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".data_creazione");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".protocollo");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".soggetto");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE+".id_utente = "+CostantiDB.USERS+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
+			
+			if(modulo != null) {
+				sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".modulo = ?");	
+			}
+			if(modalitaRicerca != null) {
+				sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".modalita_ricerca = ?");	
+			}
+			if(visibilita != null) {
+				sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".visibilita = ?");	
+			}
+			if(protocollo != null) {
+				sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".protocollo = ?");
+			}
+			if(soggetto != null) {
+				sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".soggetto = ?");
+			}
+			
+			sqlQueryObject.addOrderBy(CostantiDB.USERS_RICERCHE+".modulo");
+			sqlQueryObject.addOrderBy(CostantiDB.USERS_RICERCHE+".label");
+			sqlQueryObject.setSortType(true);
+			if(limit != null) {
+				sqlQueryObject.setLimit(limit);
+			}
+			if(offset != null) {
+				sqlQueryObject.setOffset(offset);
+			}
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			int index = 1;
+			stm.setString(index++, login);
+			
+			if(modulo != null) {
+				stm.setString(index++, modulo);	
+			}
+			if(modalitaRicerca != null) {
+				stm.setString(index++, modalitaRicerca);	
+			}
+			if(visibilita != null) {
+				stm.setString(index++, visibilita);	
+			}
+			if(protocollo != null) {
+				stm.setString(index++, protocollo);	
+			}
+			if(soggetto != null) {
+				stm.setString(index++, soggetto);	
+			}
+			
+			rs = stm.executeQuery();
+			while (rs.next()) {
+				RicercaUtente ricercaPersonalizzata = new RicercaUtente();
+				ricercaPersonalizzata.setId(rs.getLong("id"));
+				ricercaPersonalizzata.setId_utente(rs.getLong("id_utente"));
+				ricercaPersonalizzata.setLabel(rs.getString("label"));
+				ricercaPersonalizzata.setModulo(rs.getString("modulo"));
+				ricercaPersonalizzata.setModalitaRicerca(rs.getString("modalita_ricerca"));
+				ricercaPersonalizzata.setVisibilita(rs.getString("visibilita"));
+				ricercaPersonalizzata.setRicerca(rs.getString("ricerca"));
+				ricercaPersonalizzata.setDescrizione(rs.getString("descrizione"));
+				ricercaPersonalizzata.setDataCreazione(rs.getTimestamp("data_creazione"));
+				ricercaPersonalizzata.setProtocollo(rs.getString("protocollo"));
+				ricercaPersonalizzata.setSoggetto(rs.getString("soggetto"));
+				
+				stati.add(ricercaPersonalizzata);
+			}
+			rs.close();
+			stm.close();
+
+			return stati;
+		} catch (SQLException se) {
+			throw new DriverUsersDBException("[DriverUsersDB::listaRicerche] SqlException: " + se.getMessage(),se);
+		} catch (Exception ex) {
+			throw new DriverUsersDBException("[DriverUsersDB::listaRicerche] Exception: " + ex.getMessage(),ex);
+		} finally {
+			try {
+				if(rs!=null) {
+					rs.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if(stm!=null) {
+					stm.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			releaseConnection(connectionDB);
+
+		}
+	}
+	
+	/**
+	 * Restituisce la ricerca personalizzata per l'utenza <var>login</var>
+	 * 
+	 * @param login Identificatore di un utente
+	 * @param id identificativo della ricerca
+	 *               
+	 * @return Ricerca individuata
+	 */
+	public RicercaUtente leggiRicerca(String login, long id) throws DriverUsersDBException {
+		if (login == null)
+			throw new DriverUsersDBException("[leggiRicerca] Parametri Non Validi");
+
+		Connection connectionDB = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		RicercaUtente ricercaPersonalizzata = null;
+		try {
+			// Get Connection
+			connectionDB = getConnection();
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addFromTable(CostantiDB.USERS);
+			sqlQueryObject.addFromTable(CostantiDB.USERS_RICERCHE);
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".id");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".id_utente");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".label");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".modulo");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".modalita_ricerca");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".visibilita");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".ricerca");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".descrizione");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".data_creazione");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".protocollo");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".soggetto");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE+".id_utente = "+CostantiDB.USERS+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".id = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			int index = 1;
+			stm.setString(index++, login);
+			stm.setLong(index++, id);
+			
+			rs = stm.executeQuery();
+			if (rs.next()) {
+				ricercaPersonalizzata = new RicercaUtente();
+				ricercaPersonalizzata.setId(rs.getLong("id"));
+				ricercaPersonalizzata.setId_utente(rs.getLong("id_utente"));
+				ricercaPersonalizzata.setLabel(rs.getString("label"));
+				ricercaPersonalizzata.setModulo(rs.getString("modulo"));
+				ricercaPersonalizzata.setModalitaRicerca(rs.getString("modalita_ricerca"));
+				ricercaPersonalizzata.setVisibilita(rs.getString("visibilita"));
+				ricercaPersonalizzata.setRicerca(rs.getString("ricerca"));
+				ricercaPersonalizzata.setDescrizione(rs.getString("descrizione"));
+				ricercaPersonalizzata.setDataCreazione(rs.getTimestamp("data_creazione"));
+				ricercaPersonalizzata.setProtocollo(rs.getString("protocollo"));
+				ricercaPersonalizzata.setSoggetto(rs.getString("soggetto"));
+			}
+			rs.close();
+			stm.close();
+			
+			if (ricercaPersonalizzata == null)
+				throw new DriverUsersDBException("[DriverUsersDB::leggiRicerca] Ricerca [id:" + id + "] dell'utente ["+ login +"] non esistente.");
+
+			return ricercaPersonalizzata;
+		} catch (SQLException se) {
+			throw new DriverUsersDBException("[DriverUsersDB::leggiRicerca] SqlException: " + se.getMessage(),se);
+		} catch (Exception ex) {
+			throw new DriverUsersDBException("[DriverUsersDB::leggiRicerca] Exception: " + ex.getMessage(),ex);
+		} finally {
+			try {
+				if(rs!=null) {
+					rs.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if(stm!=null) {
+					stm.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			releaseConnection(connectionDB);
+
+		}
+	}
+	
+	/**
+	 * Restituisce la ricerca personalizzata per l'utenza <var>login</var>
+	 * 
+	 * @param login Identificatore di un utente
+	 * @param id identificativo della ricerca
+	 *               
+	 * @return Ricerca individuata
+	 */
+	public RicercaUtente leggiRicerca(long idUtente, long id) throws DriverUsersDBException {
+		Connection connectionDB = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		RicercaUtente ricercaPersonalizzata = null;
+		try {
+			// Get Connection
+			connectionDB = getConnection();
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addFromTable(CostantiDB.USERS_RICERCHE);
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".id");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".id_utente");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".label");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".modulo");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".modalita_ricerca");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".visibilita");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".ricerca");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".descrizione");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".data_creazione");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".protocollo");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".soggetto");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE+".id_utente = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".id = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			int index = 1;
+			stm.setLong(index++, idUtente);
+			stm.setLong(index++, id);
+			
+			rs = stm.executeQuery();
+			if (rs.next()) {
+				ricercaPersonalizzata = new RicercaUtente();
+				ricercaPersonalizzata.setId(rs.getLong("id"));
+				ricercaPersonalizzata.setId_utente(rs.getLong("id_utente"));
+				ricercaPersonalizzata.setLabel(rs.getString("label"));
+				ricercaPersonalizzata.setModulo(rs.getString("modulo"));
+				ricercaPersonalizzata.setModalitaRicerca(rs.getString("modalita_ricerca"));
+				ricercaPersonalizzata.setVisibilita(rs.getString("visibilita"));
+				ricercaPersonalizzata.setRicerca(rs.getString("ricerca"));
+				ricercaPersonalizzata.setDescrizione(rs.getString("descrizione"));
+				ricercaPersonalizzata.setDataCreazione(rs.getTimestamp("data_creazione"));
+				ricercaPersonalizzata.setProtocollo(rs.getString("protocollo"));
+				ricercaPersonalizzata.setSoggetto(rs.getString("soggetto"));
+			}
+			rs.close();
+			stm.close();
+			
+			if (ricercaPersonalizzata == null)
+				throw new DriverUsersDBException("[DriverUsersDB::leggiRicerca] Ricerca [id:" + id + "] [idUtente:"+ idUtente +"] non esistente.");
+
+			return ricercaPersonalizzata;
+		} catch (SQLException se) {
+			throw new DriverUsersDBException("[DriverUsersDB::leggiRicerca] SqlException: " + se.getMessage(),se);
+		} catch (Exception ex) {
+			throw new DriverUsersDBException("[DriverUsersDB::leggiRicerca] Exception: " + ex.getMessage(),ex);
+		} finally {
+			try {
+				if(rs!=null) {
+					rs.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if(stm!=null) {
+					stm.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			releaseConnection(connectionDB);
+
+		}
+	}
+	
+	/**
+	 * Cancella tutte le ricerche personalizzate per l'utenza <var>login</var>
+	 * 
+	 * @param login Identificatore di un utente
+	 *               
+	 * @return Ricerca individuata
+	 */
+	public void cancellaRicerche(String login) throws DriverUsersDBException {
+		this.cancellaRicercaEngine(login, null);
+	}
+	
+	/**
+	 * Cancella la ricerca personalizzata per l'utenza <var>login</var>
+	 * 
+	 * @param login Identificatore di un utente
+	 * @param id identificativo della ricerca
+	 *               
+	 * @return Ricerca individuata
+	 */
+	public void cancellaRicerca(String login, long id) throws DriverUsersDBException {
+		this.cancellaRicercaEngine(login, id);
+	}
+	
+	/**
+	 * Cancella le ricerche personalizzate per l'utenza <var>login</var>
+	 * 
+	 * @param login Identificatore di un utente
+	 * @param id identificativo della ricerca (se null cancella tutte le ricerche)
+	 *               
+	 * @return Ricerca individuata
+	 */
+	private void cancellaRicercaEngine(String login, Long id) throws DriverUsersDBException {
+		if (login == null)
+			throw new DriverUsersDBException("[cancellaRicerca] Parametri Non Validi");
+
+		Connection connectionDB = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		try {
+			// Get Connection
+			connectionDB = getConnection();
+			
+			Long idUtente = null;
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addFromTable(CostantiDB.USERS);
+			sqlQueryObject.addSelectField(CostantiDB.USERS+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
+			
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			int index = 1;
+			stm.setString(index++, login);
+			
+			rs = stm.executeQuery();
+			if (rs.next()) {
+				idUtente = rs.getLong("id");
+			}
+			rs.close();
+			stm.close();
+			
+			if (idUtente == null)
+				throw new DriverUsersDBException("[DriverUsersDB::cancellaRicerca] User [" + login + "] non esistente.");
+			
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addDeleteTable(CostantiDB.USERS_RICERCHE);
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".id_utente = ?");
+			if(id != null) {
+				sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".id = ?");
+			}
+			sqlQueryObject.setANDLogicOperator(true);
+
+			sqlQuery = sqlQueryObject.createSQLDelete();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			index = 1;
+			stm.setLong(index++, idUtente);
+			if(id != null) {
+				stm.setLong(index++, id);
+			}
+			
+			int res = stm.executeUpdate();
+			rs.close();
+			stm.close();
+			
+			this.log.debug("Cancellate {} ricerche associate all'utente {}.", res, login);
+		} catch (SQLException se) {
+			throw new DriverUsersDBException("[DriverUsersDB::cancellaRicerca] SqlException: " + se.getMessage(),se);
+		} catch (Exception ex) {
+			throw new DriverUsersDBException("[DriverUsersDB::cancellaRicerca] Exception: " + ex.getMessage(),ex);
+		} finally {
+			try {
+				if(rs!=null) {
+					rs.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if(stm!=null) {
+					stm.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			releaseConnection(connectionDB);
+
+		}
+	}
+	
+	/**
+	 * Restituisce il numero delle ricerche personalizzate per l'utenza <var>login</var>
+	 * 
+	 * @param login Identificatore di un utente
+	 * @param modulo filtro per modulo
+	 * @param modalitaRicerca filtro per modalita ricerca
+	 * @param visibilita filtro per visibilita
+	 *               
+	 * @return Elenco delle ricerche individuate
+	 */
+	public int countRicerche(String login, String modulo, String modalitaRicerca, String visibilita, 
+			String protocollo, String soggetto) throws DriverUsersDBException {
+		if (login == null)
+			throw new DriverUsersDBException("[countStati] Parametri Non Validi");
+
+		Connection connectionDB = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		int count = 0;
+		try {
+			// Get Connection
+			connectionDB = getConnection();
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addFromTable(CostantiDB.USERS);
+			sqlQueryObject.addFromTable(CostantiDB.USERS_RICERCHE);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE+".id_utente = "+CostantiDB.USERS+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
+			if(modulo != null) {
+				sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".modulo = ?");	
+			}
+			if(modalitaRicerca != null) {
+				sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".modalita_ricerca = ?");	
+			}
+			if(visibilita != null) {
+				sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".visibilita = ?");	
+			}	
+			if(protocollo != null) {
+				sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".protocollo = ?");
+			}
+			if(soggetto != null) {
+				sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".soggetto = ?");
+			}
+			
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			int index = 1;
+			stm.setString(index++, login);
+			
+			if(modulo != null) {
+				stm.setString(index++, modulo);	
+			}
+			if(modalitaRicerca != null) {
+				stm.setString(index++, modalitaRicerca);	
+			}
+			if(visibilita != null) {
+				stm.setString(index++, visibilita);	
+			}
+			if(protocollo != null) {
+				stm.setString(index++, protocollo);	
+			}
+			if(soggetto != null) {
+				stm.setString(index++, soggetto);	
+			}
+			
+			rs = stm.executeQuery();
+			if (rs.next()) {
+				count = rs.getInt(1);
+			}
+			rs.close();
+			stm.close();
+
+			return count;
+		} catch (SQLException se) {
+			throw new DriverUsersDBException("[DriverUsersDB::countStati] SqlException: " + se.getMessage(),se);
+		} catch (Exception ex) {
+			throw new DriverUsersDBException("[DriverUsersDB::countStati] Exception: " + ex.getMessage(),ex);
+		} finally {
+			try {
+				if(rs!=null) {
+					rs.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if(stm!=null) {
+					stm.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			releaseConnection(connectionDB);
+
+		}
+	}
+	
+	/**
+	 * Salva una nuova ricerca per l'utente <var>login</var>
+	 * 
+	 * @param login Identificatore di un utente
+	 * @param ricercaPersonalizzata Ricerca da aggiungere
+	 *               
+	 */
+	public Long insertRicerca(String login, RicercaUtente ricercaPersonalizzata) throws DriverUsersDBException {
+		if (login == null || ricercaPersonalizzata == null)
+			throw new DriverUsersDBException("[salvaRicerca] Parametri Non Validi");
+
+		Connection connectionDB = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		try {
+			// Get Connection
+			connectionDB = getConnection();
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addFromTable(CostantiDB.USERS);
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			stm.setString(1, login);
+			rs = stm.executeQuery();
+			
+			Long idUtente = null; 
+			while (rs.next()) {
+				idUtente = rs.getLong("id");
+			}
+			rs.close();
+			stm.close();
+			
+			// nuova ricerca
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addInsertTable(CostantiDB.USERS_RICERCHE);
+			sqlQueryObject.addInsertField("id_utente","?");
+			sqlQueryObject.addInsertField("label","?");
+			sqlQueryObject.addInsertField("modulo","?");
+			sqlQueryObject.addInsertField("modalita_ricerca","?");
+			sqlQueryObject.addInsertField("visibilita","?");
+			sqlQueryObject.addInsertField("ricerca","?");
+			sqlQueryObject.addInsertField("descrizione","?");
+			sqlQueryObject.addInsertField("data_creazione","?");
+			sqlQueryObject.addInsertField("protocollo","?");
+			sqlQueryObject.addInsertField("soggetto","?");
+			
+			sqlQuery = sqlQueryObject.createSQLInsert();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			int index = 1;
+			stm.setLong(index++, idUtente);
+			stm.setString(index++, ricercaPersonalizzata.getLabel());
+			stm.setString(index++, ricercaPersonalizzata.getModulo());
+			stm.setString(index++, ricercaPersonalizzata.getModalitaRicerca());
+			stm.setString(index++, ricercaPersonalizzata.getVisibilita());
+			stm.setString(index++, ricercaPersonalizzata.getRicerca());
+			stm.setString(index++, ricercaPersonalizzata.getDescrizione());
+			Timestamp dataCreazione = new Timestamp(ricercaPersonalizzata.getDataCreazione().getTime());
+			stm.setTimestamp(index++, dataCreazione);
+			stm.setString(index++, ricercaPersonalizzata.getProtocollo());
+			stm.setString(index++, ricercaPersonalizzata.getSoggetto());
+			stm.executeUpdate();
+			stm.close();
+			
+			// recupero il nuovo id
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addSelectMaxField("id","max");
+			sqlQueryObject.addFromTable(CostantiDB.USERS_RICERCHE);
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".id_utente = ?");
+			
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			index = 1;
+			stm.setLong(index++, idUtente);
+			
+			rs = stm.executeQuery();
+			
+			Long idRicerca = null; 
+			while (rs.next()) {
+				idRicerca = rs.getLong("max");
+			}
+			rs.close();
+			stm.close();
+			
+			return idRicerca;
+		} catch (SQLException se) {
+			throw new DriverUsersDBException("[DriverUsersDB::salvaRicerca] SqlException: " + se.getMessage(),se);
+		} catch (Exception ex) {
+			throw new DriverUsersDBException("[DriverUsersDB::salvaRicerca] Exception: " + ex.getMessage(),ex);
+		} finally {
+			try {
+				if(rs!=null) {
+					rs.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if(stm!=null) {
+					stm.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			releaseConnection(connectionDB);
+		}
+	}
+	
+	/**
+	 * Aggiorna la ricerca dell'utente <var>login</var>
+	 * 
+	 * @param login Identificatore di un utente
+	 * @param ricercaPersonalizzata Ricerca da aggiornre
+	 *               
+	 */
+	public void updateRicerca(String login, RicercaUtente ricercaPersonalizzata) throws DriverUsersDBException {
+		if (login == null || ricercaPersonalizzata == null)
+			throw new DriverUsersDBException("[updateRicerca] Parametri Non Validi");
+
+		Connection connectionDB = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		try {
+			// Get Connection
+			connectionDB = getConnection();
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addFromTable(CostantiDB.USERS);
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			stm.setString(1, login);
+			rs = stm.executeQuery();
+			
+			Long idUtente = null; 
+			while (rs.next()) {
+				idUtente = rs.getLong("id");
+			}
+			rs.close();
+			stm.close();
+			
+			// nuova ricerca
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addUpdateTable(CostantiDB.USERS_RICERCHE);
+			sqlQueryObject.addUpdateField("label", "?");
+			sqlQueryObject.addUpdateField("visibilita","?");
+			sqlQueryObject.addUpdateField("descrizione","?");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".id_utente = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".id = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			sqlQuery = sqlQueryObject.createSQLUpdate();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			int index = 1;
+			stm.setString(index++, ricercaPersonalizzata.getLabel());
+			stm.setString(index++, ricercaPersonalizzata.getVisibilita());
+			stm.setString(index++, ricercaPersonalizzata.getDescrizione());
+			stm.setLong(index++, idUtente);
+			stm.setLong(index++, ricercaPersonalizzata.getId());
+			stm.executeUpdate();
+			stm.close();
+
+		} catch (SQLException se) {
+			throw new DriverUsersDBException("[DriverUsersDB::updateRicerca] SqlException: " + se.getMessage(),se);
+		} catch (Exception ex) {
+			throw new DriverUsersDBException("[DriverUsersDB::updateRicerca] Exception: " + ex.getMessage(),ex);
+		} finally {
+			try {
+				if(rs!=null) {
+					rs.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if(stm!=null) {
+					stm.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			releaseConnection(connectionDB);
+
 		}
 	}
 }

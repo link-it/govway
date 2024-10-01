@@ -87,7 +87,7 @@ public class PageData implements Serializable {
 	private boolean showAjaxStatusBottoneRipulisci = true;
 	
 	private List<DataElement> comandiAzioneBarraTitoloDettaglioElemento;
-	
+	private List<String> idsDaVisualizzareSelezionati;
 	
 	Dialog dialog = null;
 
@@ -134,6 +134,7 @@ public class PageData implements Serializable {
 		this.paginazione = true;
 		this.comandiAzioneBarraTitoloDettaglioElemento = new ArrayList<>();
 		this.setInserisciSearch(true);
+		this.idsDaVisualizzareSelezionati = new ArrayList<>();
 	}
 
 	public void setPageDescription(String s) {
@@ -1025,4 +1026,13 @@ public class PageData implements Serializable {
 	public void setInserisciSearch(boolean inserisciSearch) {
 		this.inserisciSearch = inserisciSearch;
 	}
+
+	public List<String> getIdsDaVisualizzareSelezionati() {
+		return this.idsDaVisualizzareSelezionati;
+	}
+
+	public void setIdsDaVisualizzareSelezionati(List<String> idsDaVisualizzareSelezionati) {
+		this.idsDaVisualizzareSelezionati = idsDaVisualizzareSelezionati;
+	}
+	
 }

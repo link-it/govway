@@ -10,6 +10,7 @@
     
  <a4j:region renderRegionOnly="true"> 
 		<a4j:outputPanel id="searchPnl" ajaxRendered="false" layout="block">
+			
 			<input type="hidden" id="_csrfFormSearchTransazioni" name="_csrf" value="#{loginBean.csrf}"/>
 			
 			<a4j:outputPanel id="idModalitaRicercaPnl" layout="block" 
@@ -106,6 +107,12 @@
 					<h:inputHidden value="#{sf_nomeDestinatario}" rendered="#{sf_tipologiaRicerca eq 'ingresso'}" />
 				</h:panelGroup>
 			</a4j:outputPanel>
+			
+			<ui:include src="/commons/includes/searchFormFiltroRicercheUtente.xhtml">
+				<ui:param name="sf_mbean" value="#{sf_mbean}" />
+				<ui:param name="sf_bean" value="#{sf_bean}"  />
+				<ui:param name="idsToRefresh" value="searchPnl,altriCriteri" />
+			</ui:include>
 			
 			<a4j:outputPanel id="panelFunzionePorta" layout="block" rendered="#{sf_bean.integrationManagerEnabled and sf_bean.modalitaRicercaStorico == 'intervalloTemporale'}">
 				<link:prop label="#{msg['transazioni.search.funzionePorta']}">

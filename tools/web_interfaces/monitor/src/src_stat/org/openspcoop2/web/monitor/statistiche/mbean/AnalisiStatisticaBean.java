@@ -83,7 +83,7 @@ public class AnalisiStatisticaBean implements Serializable {
 
 	public List<SelectItem> getTipiDistribuzione() {
 		if(this.tipiDistribuzione == null){
-			this.tipiDistribuzione = new ArrayList<SelectItem>();
+			this.tipiDistribuzione = new ArrayList<>();
 
 			this.tipiDistribuzione.add(new SelectItem(CostantiGrafici.TIPO_DISTRIBUZIONE_TEMPORALE, MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TEMPORALE_LABEL_KEY))); 
 			this.tipiDistribuzione.add(new SelectItem(CostantiGrafici.TIPO_DISTRIBUZIONE_ESITI, MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ESITI_LABEL_KEY)));
@@ -113,7 +113,7 @@ public class AnalisiStatisticaBean implements Serializable {
 	}
 
 	public List<GruppoAnalisiStatistica> getTipiAnalisiStatistica() {
-		this.tipiAnalisiStatistica = new ArrayList<GruppoAnalisiStatistica>();
+		this.tipiAnalisiStatistica = new ArrayList<>();
 
 		GruppoAnalisiStatistica gruppoAndamentoTemporale = new GruppoAnalisiStatistica();
 		gruppoAndamentoTemporale.setLabel(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TEMPORALE_LABEL_KEY));
@@ -323,6 +323,8 @@ public class AnalisiStatisticaBean implements Serializable {
 
 	public void setDistribuzione(String tipoDistribuzioneTmp) {
 		if(this.tipoDistribuzione != null && this.mBean != null) {
+			this.mBean.setTipoDistribuzione(this.tipoDistribuzione);
+			
 			if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_TEMPORALE)) {
 				//this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_TEMPORALE, StatsSearchForm.class);
 				((AndamentoTemporaleBean) this.mBean).initSearchListenerAndamentoTemporale(null); 
@@ -412,6 +414,14 @@ public class AnalisiStatisticaBean implements Serializable {
 	public String filtra(){
 		if(this.mBean != null && this.mBean.getSearch() != null){
 			return this.mBean.getSearch().filtra();
+		}
+
+		return null;
+	}
+	
+	public String inviaFormRicerca(){
+		if(this.mBean != null && this.mBean.getSearch() != null){
+			return this.mBean.getSearch().inviaFormRicerca();
 		}
 
 		return null;

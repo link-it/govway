@@ -72,6 +72,14 @@ public class ContentAuthorizationCostanti {
 
 		// Password Utenti
 		"/core/pages/form/user.jsf",
+		
+		// Ricerche Utente
+		"/core/pages/list/ricercheUtenteList.jsf",
+		"/core/pages/form/modificaRicercaUtente.jsf",
+		
+		//Servlet Ricerche Utente
+		"/ricercheUpload",
+		"/ricercheExporter",
 
 		// Stats
 		"/stat/pages/list/configurazioniGenerali.jsf",
@@ -101,6 +109,14 @@ public class ContentAuthorizationCostanti {
 			
 		// Configurazione Utenti
 		"/core/pages/form/user.jsf",
+		
+		// Ricerche Utente
+		"/core/pages/list/ricercheUtenteList.jsf",
+		"/core/pages/form/modificaRicercaUtente.jsf",
+
+		//Servlet Ricerche Utente
+		"/ricercheUpload",
+		"/ricercheExporter",
 	};
 
 	// Elenco delle pagine che sono disponibili al ruolo operatore
@@ -131,6 +147,14 @@ public class ContentAuthorizationCostanti {
 
 		// Configurazione Utenti
 		"/core/pages/form/user.jsf",
+		
+		// Ricerche Utente
+		"/core/pages/list/ricercheUtenteList.jsf",
+		"/core/pages/form/modificaRicercaUtente.jsf",
+		
+		//Servlet Ricerche Utente
+		"/ricercheUpload",
+		"/ricercheExporter",
 		
 		// Servlet Exporter
 		"/diagnosticiexporter",
@@ -209,6 +233,12 @@ public class ContentAuthorizationCostanti {
 		//Utenti
 		{"/core/pages/form/user.jsf",ApplicationBean.FUNZIONALITA_UTENTI},
 		{"/core/pages/form/userPasswordScaduta.jsf",ApplicationBean.FUNZIONALITA_UTENTI},
+		{"/core/pages/list/ricercheUtenteList.jsf",ApplicationBean.FUNZIONALITA_UTENTI},
+		{"/core/pages/form/modificaRicercaUtente.jsf",ApplicationBean.FUNZIONALITA_UTENTI},
+		
+		//Servlet Ricerche Utente
+		{"/ricercheUpload",ApplicationBean.FUNZIONALITA_UTENTI},
+		{"/ricercheExporter",ApplicationBean.FUNZIONALITA_UTENTI},
 
 		// Stats
 		{"/stat/pages/form/analisiStatistica.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},

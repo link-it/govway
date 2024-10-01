@@ -264,15 +264,15 @@ public class CostantiGrafici {
 	public static final String TOOLTIPS_STRING_PATTERN_TOOLTIP= "{tooltip}";
 	
 	
-	public static final String TIPO_DISTRIBUZIONE_TEMPORALE = "temporale";
-	public static final String TIPO_DISTRIBUZIONE_ESITI = "esiti";
-	public static final String TIPO_DISTRIBUZIONE_ERRORI = "errori";
-	public static final String TIPO_DISTRIBUZIONE_AZIONE = "azione";
-	public static final String TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO = "servizio_applicativo";
-	public static final String TIPO_DISTRIBUZIONE_SERVIZIO = "servizio";
-	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO = "soggetto_remoto";
-	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE = "soggetto_locale";
-	public static final String TIPO_DISTRIBUZIONE_PERSONALIZZATA = "personalizzata";
+	public static final String TIPO_DISTRIBUZIONE_TEMPORALE = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TIPO_DISTRIBUZIONE_TEMPORALE;
+	public static final String TIPO_DISTRIBUZIONE_ESITI = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TIPO_DISTRIBUZIONE_ESITI;
+	public static final String TIPO_DISTRIBUZIONE_ERRORI = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TIPO_DISTRIBUZIONE_ERRORI;
+	public static final String TIPO_DISTRIBUZIONE_AZIONE = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TIPO_DISTRIBUZIONE_AZIONE;
+	public static final String TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO;
+	public static final String TIPO_DISTRIBUZIONE_SERVIZIO = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO;
+	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO;
+	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE;
+	public static final String TIPO_DISTRIBUZIONE_PERSONALIZZATA = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TIPO_DISTRIBUZIONE_PERSONALIZZATA;
 	
 	public static final String MBEAN_DISTRIBUZIONE_TEMPORALE = "andamentoTemporaleBean";
 	public static final String MBEAN_DISTRIBUZIONE_ESITI = "andamentoTemporaleBean";

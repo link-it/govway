@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2024 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -17,28 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.web.monitor.statistiche.utils;
-
-import java.text.Collator;
+package org.openspcoop2.web.monitor.eventi.constants;
 
 /**
- * IgnoreCaseComp
- * 
- * @author Pintori Giuliano (pintori@link.it)
+ * EventiCostanti 
+ *
+ * @author Giuliano Pintori (pintori@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
- *
  */
-public class IgnoreCaseComp implements java.util.Comparator<String> {
-	private Collator col;
+public class EventiCostanti {
 
-	public IgnoreCaseComp() {
-		this.col = Collator.getInstance();
-		this.col.setStrength(Collator.PRIMARY);
-	}
-
-	@Override
-	public int compare(String strA, String strB) {
-		return this.col.compare(strA, strB);
-	}
+	private EventiCostanti() {}
+	
+	public static final String[] SEARCH_FORM_FIELDS_DA_NON_SALVARE= {
+			"severitaDefault"	
+		};
 }

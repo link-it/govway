@@ -21,22 +21,20 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.utenti;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
+import org.apache.commons.lang3.StringUtils;
 import org.govway.struts.action.Action;
 import org.govway.struts.action.ActionForm;
 import org.govway.struts.action.ActionForward;
 import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -50,6 +48,10 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.users.dao.Permessi;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.lib.users.dao.UserObjects;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * suDel
@@ -87,6 +89,7 @@ public final class UtentiDel extends Action {
 			String objToRemove = utentiHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			String singleSuServizi = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_SERVIZI);
 			String singleSuAccordiCooperazione = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_ACCORDI_COOPERAZIONE);
+			String actionConfirm = utentiHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 	
 			UtentiCore utentiCore = new UtentiCore();
 			SoggettiCore soggettiCore = new SoggettiCore(utentiCore);
@@ -96,7 +99,8 @@ public final class UtentiDel extends Action {
 			int[] idToRemove = new int[objTok.countTokens()];
 			List<User> utentiDaRimuovere = new ArrayList<>();
 			List<String> nomiUtentiDaRimuovere = new ArrayList<>();
-	
+			List<String> idsUtentiDaEliminare = new ArrayList<>();
+			
 			int k = 0;
 			while (objTok.hasMoreElements()) {
 				String id = objTok.nextToken();
@@ -104,6 +108,7 @@ public final class UtentiDel extends Action {
 				User user = utentiCore.getUser(Long.parseLong(id));
 				utentiDaRimuovere.add(user);
 				nomiUtentiDaRimuovere.add(user.getLogin());
+				idsUtentiDaEliminare.add(id);
 			}
 			
 			// controllo protocolli associati agli utenti che provo ad eliminare
@@ -155,6 +160,7 @@ public final class UtentiDel extends Action {
 					nomiUtentiDaRimuovere = newList;
 				}
 			}
+			
 			
 			
 			
@@ -315,6 +321,8 @@ public final class UtentiDel extends Action {
 				}
 			}
 			
+			List<String> utentiConRicercheDaNonEliminare = new ArrayList<>();
+			List<Long> idUtentiEliminati = new ArrayList<>();
 			boolean paginaSu = paginaSuAccordi || paginaSuServizi;
 			// CHECK
 			String msg = msgServizi + msgAccordi;
@@ -348,6 +356,16 @@ public final class UtentiDel extends Action {
 				return ServletUtils.getStrutsForward(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.DEL(), UtentiCostanti.STRUTS_FORWARD_INFO);	
 
 			} else {
+				
+				boolean forceDeleteUtenteConRicerche = false;
+				if(actionConfirm != null) { // conferma eliminazione arrivata, controllo che sia ok
+					if(actionConfirm.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK)) {
+						forceDeleteUtenteConRicerche = true;
+					}
+					
+					// indico quali select list si devono visualizzare
+					pd.setIdsDaVisualizzareSelezionati(idsUtentiDaEliminare);
+				}
 	
 				// Elimino gli utenti e ritorno la pagina a lista
 				for (int i = 0; i < nomiUtentiDaRimuovere.size(); i++) {
@@ -406,18 +424,101 @@ public final class UtentiDel extends Action {
 								}
 							}
 							
-							// Alla fine, elimino l'utente
-					        oggetti.add(mySU);
-					        tipoModifica.add(CostantiControlStation.PERFORM_OPERATION_DELETE);
-							int[] operationTypes = new int[tipoModifica.size()];
-							for (int cO = 0; cO < tipoModifica.size(); cO++)
-								operationTypes[cO] = tipoModifica.get(cO);
-							utentiCore.performOperationMultiTypes(userLogin, utentiHelper.smista(), operationTypes, oggetti.toArray());
-							if (usersWithU.contains(nomesu))
-								usersWithU.remove(nomesu);
+							// check ricerche e cancellazione non confermata
+							if(utentiHelper.hasRicerchePubbliche(mySU) && !forceDeleteUtenteConRicerche) {
+								utentiConRicercheDaNonEliminare.add(nomesu);
+							} else {
+								// Alla fine, elimino l'utente
+								idUtentiEliminati.add(mySU.getId());
+						        oggetti.add(mySU);
+						        tipoModifica.add(CostantiControlStation.PERFORM_OPERATION_DELETE);
+								int[] operationTypes = new int[tipoModifica.size()];
+								for (int cO = 0; cO < tipoModifica.size(); cO++)
+									operationTypes[cO] = tipoModifica.get(cO);
+								utentiCore.performOperationMultiTypes(userLogin, utentiHelper.smista(), operationTypes, oggetti.toArray());
+								if (usersWithU.contains(nomesu))
+									usersWithU.remove(nomesu);
+							}
 					    }
 					}
 				}
+				
+				// se le utenze da eliminare hanno delle ricerche mostro la schermata di conferma
+				if(!utentiConRicercheDaNonEliminare.isEmpty()) {
+					if(actionConfirm == null) { // primo accesso , mostro la schermata di conferma
+						
+						// Preparo il menu
+						utentiHelper.makeMenu();
+			
+						// tengo solo gli id di quelli che non ho eliminato
+						List<Long> idUtentiNonEliminati = new ArrayList<>();
+						
+						objTok = new StringTokenizer(objToRemove, ",");
+						while (objTok.hasMoreElements()) {
+							String id = objTok.nextToken();
+							
+							long l = Long.parseLong(id);
+							if(!idUtentiEliminati.contains(l)) {
+								idUtentiNonEliminati.add(l);
+							}
+						}
+						
+						// mando avanti e indietro gli id residui
+						String objToRemoveRimasti = StringUtils.join(idUtentiNonEliminati,",");
+			
+						Parameter pObjToRemoveRimasti = new Parameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE, objToRemoveRimasti);
+						
+						request.setAttribute(Costanti.PARAMETER_NAME_PARAMS, pObjToRemoveRimasti.toString());
+
+						// indico quali select list si devono visualizzare
+						pd.setIdsDaVisualizzareSelezionati(idsUtentiDaEliminare);
+							
+						String msgPre = "Attenzione: <br><br>";
+						
+						String msgErroreRicerche = "";
+						
+						if(utentiConRicercheDaNonEliminare.size() == 1) {
+							msgErroreRicerche = MessageFormat.format(UtentiCostanti.MESSAGGIO_ALERT_UTENTE_CON_RICERCHE, utentiConRicercheDaNonEliminare.get(0));
+						} else {
+							msgErroreRicerche = MessageFormat.format(UtentiCostanti.MESSAGGIO_ALERT_UTENTI_CON_RICERCHE, StringUtils.join(utentiConRicercheDaNonEliminare,", "));
+						}
+						
+						String msgPost ="Confermi l'eliminazione?";
+						
+						String pre = Costanti.HTML_MODAL_SPAN_PREFIX;
+						String post = Costanti.HTML_MODAL_SPAN_SUFFIX;
+						pd.setMessage(pre + msgPre + msgErroreRicerche + msgPost + post, Costanti.MESSAGE_TYPE_CONFIRM);
+
+						String[][] bottoni = { 
+								{ Costanti.LABEL_MONITOR_BUTTON_ANNULLA, 
+									Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_PREFIX +
+									Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_SUFFIX
+									
+								},
+								{ Costanti.LABEL_MONITOR_BUTTON_CONFERMA,
+									Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_PREFIX +
+									Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_SUFFIX }};
+
+						pd.setBottoni(bottoni);
+						
+						// Preparo la lista
+						
+						ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session,ConsoleSearch.class);
+				
+						int idLista = Liste.SU;
+				
+						ricerca = utentiHelper.checkSearchParameters(idLista, ricerca);
+				
+						List<User> lista = utentiCore.userList(ricerca);
+				
+						utentiHelper.prepareUtentiList(ricerca, lista, utentiCore.isSinglePdD());
+						
+						ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
+						
+						return ServletUtils.getStrutsForward(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.DEL());	
+					} 
+				}
+				
 				
 				if(msgErroreModalita!=null) {
 					if (!msg.equals("")) {

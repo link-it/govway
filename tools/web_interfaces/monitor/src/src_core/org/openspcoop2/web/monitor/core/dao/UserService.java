@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.web.monitor.core.dao;
 
+import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 
@@ -26,10 +27,12 @@ import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.lib.users.dao.UserPassword;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.slf4j.Logger;
 
@@ -43,20 +46,33 @@ import org.slf4j.Logger;
  */
 public class UserService implements IUserService {
 
-	private static Logger log =  LoggerManager.getPddMonitorSqlLogger();
+	private transient Logger log = null;
 
 	private org.openspcoop2.web.lib.users.DriverUsersDB utenteDAO;
 
 
 	public UserService() {
-
+		this.log = LoggerManager.getPddMonitorSqlLogger();
 		try {
 
 			// init Service Manager utenti
-			this.utenteDAO = (org.openspcoop2.web.lib.users.DriverUsersDB) DAOFactory.getInstance(UserService.log).getServiceManager(org.openspcoop2.web.lib.users.ProjectInfo.getInstance());
+			this.utenteDAO = (org.openspcoop2.web.lib.users.DriverUsersDB) DAOFactory.getInstance(this.log).getServiceManager(org.openspcoop2.web.lib.users.ProjectInfo.getInstance());
 
 		} catch (Exception e) {
-			UserService.log.error(e.getMessage(), e);
+			this.log.error(e.getMessage(), e);
+		}
+	}
+	
+	public UserService(Connection con, boolean autoCommit, ServiceManagerProperties serviceManagerProperties, Logger log) {
+		this.log =  log;
+		
+		try {
+
+			// init Service Manager utenti
+			this.utenteDAO = (org.openspcoop2.web.lib.users.DriverUsersDB) DAOFactory.getInstance(this.log).getServiceManager(org.openspcoop2.web.lib.users.ProjectInfo.getInstance(), con, autoCommit, serviceManagerProperties, this.log);
+
+		} catch (Exception e) {
+			this.log.error(e.getMessage(), e);
 		}
 	}
 
@@ -72,7 +88,7 @@ public class UserService implements IUserService {
 
 	@Override
 	public void delete(User obj) throws Exception {
-		throw new NotImplementedException("Operazione non disponibile");
+		throw new NotImplementedException(Costanti.OPERAZIONE_NON_DISPONIBILE);
 	}
 
 	@Override
@@ -89,7 +105,7 @@ public class UserService implements IUserService {
 		try {
 			return this.utenteDAO.getUser(key);
 		} catch (DriverUsersDBException e) {
-			UserService.log.error(e.getMessage(), e);
+			this.log.error(e.getMessage(), e);
 		}
 
 		return null;
@@ -97,29 +113,29 @@ public class UserService implements IUserService {
 
 	@Override
 	public void store(User obj) throws Exception {
-		throw new NotImplementedException("Operazione non disponibile");
+		throw new NotImplementedException(Costanti.OPERAZIONE_NON_DISPONIBILE);
 	}
 
 	@Override
 	public void deleteAll() throws Exception {
-		throw new NotImplementedException("Operazione non disponibile");
+		throw new NotImplementedException(Costanti.OPERAZIONE_NON_DISPONIBILE);
 	}
 
 	@Override
 	public Stato getTableState(String nomeTabella,User utente) {
 		Stato state = null;
-		UserService.log.debug("Get Table State [utente: " + utente.getLogin() + "]");
+		this.log.debug("Get Table State [utente: {}]",utente.getLogin());
 		try {
-			state = this.utenteDAO.getStato(utente.getLogin(), nomeTabella.toString());
+			state = this.utenteDAO.getStato(utente.getLogin(), nomeTabella);
 			if(state == null) {
 				state = new Stato();
-				state.setOggetto(nomeTabella.toString());
+				state.setOggetto(nomeTabella);
 				state.setStato(null);
 			}
 			return state;			
 
 		} catch (DriverUsersDBException e) {
-			UserService.log.error(e.getMessage(), e);
+			this.log.error(e.getMessage(), e);
 		}
 
 		return null;
@@ -130,26 +146,26 @@ public class UserService implements IUserService {
 		try {
 			this.utenteDAO.saveStato(user.getLogin(), stato.getOggetto(), stato.getStato());
 		} catch (DriverUsersDBException e) {
-			UserService.log.error(e.getMessage(), e);
+			this.log.error(e.getMessage(), e);
 		}
 	}
 	
 	@Override
-	public void savePassword(Long idUser, String login, String newPassword, Date dataAggiornamentoPassword) throws Exception {
+	public void savePassword(Long idUser, String login, String newPassword, Date dataAggiornamentoPassword) throws DriverUsersDBException {
 		try {
 			this.utenteDAO.savePassword(idUser, login, newPassword, dataAggiornamentoPassword);
 		} catch (DriverUsersDBException e) {
-			UserService.log.error(e.getMessage(), e);
+			this.log.error(e.getMessage(), e);
 			throw e;
 		}
 	}
 	
 	@Override
-	public void savePasswordStorico(Long idUser, String login, String newPassword, Date dataAggiornamentoPassword, List<UserPassword> storicoPassword) throws Exception {
+	public void savePasswordStorico(Long idUser, String login, String newPassword, Date dataAggiornamentoPassword, List<UserPassword> storicoPassword) throws DriverUsersDBException {
 		try {
 			this.utenteDAO.savePassword(idUser, login, newPassword, dataAggiornamentoPassword, storicoPassword);
 		} catch (DriverUsersDBException e) {
-			UserService.log.error(e.getMessage(), e);
+			this.log.error(e.getMessage(), e);
 			throw e;
 		}
 	}
@@ -164,7 +180,7 @@ public class UserService implements IUserService {
 
 			this.utenteDAO.saveProtocolloUtilizzatoPddMonitor(login, modalita);
 		} catch (DriverUsersDBException e) {
-			UserService.log.error(e.getMessage(), e);
+			this.log.error(e.getMessage(), e);
 			throw new ServiceException(e);
 		}
 	}
@@ -179,7 +195,7 @@ public class UserService implements IUserService {
 
 			this.utenteDAO.saveSoggettoUtilizzatoPddMonitor(login, soggetto);
 		} catch (DriverUsersDBException e) {
-			UserService.log.error(e.getMessage(), e);
+			this.log.error(e.getMessage(), e);
 			throw new ServiceException(e);
 		}
 	}

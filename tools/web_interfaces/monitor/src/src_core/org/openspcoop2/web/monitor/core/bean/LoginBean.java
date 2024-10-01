@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -47,8 +48,11 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.IVersionInfo;
 import org.openspcoop2.utils.Semaphore;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.resources.MapReader;
+import org.openspcoop2.web.lib.users.DriverUsersDBException;
+import org.openspcoop2.web.lib.users.dao.RicercaUtente;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
@@ -56,11 +60,14 @@ import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
+import org.openspcoop2.web.monitor.core.dao.RicercheUtenteService;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.filters.ContentAuthorizationFilter;
 import org.openspcoop2.web.monitor.core.filters.CsrfFilter;
 import org.openspcoop2.web.monitor.core.filters.HeadersFilter;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.ricerche.ModuloRicerca;
+import org.openspcoop2.web.monitor.core.ricerche.SalvaRicercaForm;
 import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.slf4j.Logger;
@@ -85,7 +92,7 @@ public class LoginBean extends AbstractLoginBean {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private Logger log = LoggerManager.getPddMonitorCoreLogger();
+	private transient Logger log = LoggerManager.getPddMonitorCoreLogger();
 
 	private String loginErrorMessage = null;
 
@@ -128,6 +135,8 @@ public class LoginBean extends AbstractLoginBean {
 	
 	private Map<String, String> filtersErrorMsg;
 	private Map<String, Integer> filtersErrorStatus;
+
+	private transient SalvaRicercaForm salvaRicercaForm;
 	
 	public LoginBean(boolean initDao){
 		super(initDao);
@@ -167,6 +176,8 @@ public class LoginBean extends AbstractLoginBean {
 			this.checkPasswordExpire = PddMonitorProperties.getInstance(this.log).isCheckPasswordExpire(this.passwordVerifier);
 			
 			this.salvaModificheProfiloSuDB = PddMonitorProperties.getInstance(this.log).isModificaProfiloUtenteDaLinkAggiornaDB();
+			
+			this.salvaRicercaForm = new SalvaRicercaForm();
 
 		} catch (Exception e) {
 			this.log.error("Errore durante la configurazione del logout: " + e.getMessage(),e);
@@ -179,6 +190,7 @@ public class LoginBean extends AbstractLoginBean {
 		
 		if(this.isInitDao()){
 			this.setLoginDao(new DBLoginDAO());
+			this.setRicercheUtenteService(new RicercheUtenteService());
 		}
 		
 		this.filtersErrorMsg = new HashMap<>();
@@ -1260,7 +1272,6 @@ public class LoginBean extends AbstractLoginBean {
 	    	// in alternativa questa pagina e' sempre una pagina di sessione scaduta forzo il 401
 	    	if(errorStatus == null) {
 	    		errorStatus = HttpStatus.UNAUTHORIZED.value();
-//		    	msgException = ContentAuthorizationFilter.MSG_AUTH_ERRORE;
 	    	}
 		}
     	
@@ -1274,5 +1285,56 @@ public class LoginBean extends AbstractLoginBean {
 
 	public void setErrorStatus(Integer errorStatus) {
 		// donothing
+	}
+
+	public SalvaRicercaForm getSalvaRicercaForm() {
+		return this.salvaRicercaForm;
+	}
+
+	public void setSalvaRicercaForm(SalvaRicercaForm salvaRicercaForm) {
+		this.salvaRicercaForm = salvaRicercaForm;
+	}
+
+	public List<RicercaUtenteBean> getRicerchePersonalizzate(ModuloRicerca modulo, String modalitaRicerca, String protocollo, String soggetto) {
+		String moduloS = modulo != null ? modulo.toString() : null;
+		// se nel menu' utente non e' selezionata una modalita' allora non filtro per modalita'
+		if(protocollo != null && protocollo.equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) {		
+			protocollo = null;
+		}
+		
+		// se nel menu' utente non e' selezionata un soggetto allora non filtro per soggetto
+		if(soggetto != null && soggetto.equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) {
+			soggetto = null;
+		}
+		
+		return this.ricercheUtenteService.listaRicercheDisponibiliPerUtente(this.getUtente().getLogin(), moduloS, modalitaRicerca, protocollo, soggetto);
+	}
+	
+	public RicercaUtenteBean getRicercaPersonalizzata(long idUtente, long idRicerca) {
+		return this.ricercheUtenteService.leggiRicercaPersonalizzata(idUtente, idRicerca); 
+	}
+	
+	public String salvaRicercaCorrente() {
+		
+		if(this.salvaRicercaForm.eseguiValidazioneForm()) {
+		
+			RicercaUtente nuovaRicerca = null;
+			try {
+				nuovaRicerca = this.salvaRicercaForm.getRicerca();
+				this.ricercheUtenteService.insertRicerca(this.getUtente().getLogin(), nuovaRicerca);
+				
+				// imposto la ricerca form di ricerca
+				this.salvaRicercaForm.impostaIdRicercaSalvata(this.getUtente().getId(),nuovaRicerca.getId());
+				
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Ricerca " + this.salvaRicercaForm.getLabel()+ " salvata correttamente")); 
+			} catch (UtilsException e) {
+				this.log.error("Errore durante il salvataggio della ricerca corrente: "+e.getMessage(),e);
+				MessageUtils.addErrorMsg("Salvataggio della ricerca corrente non riuscito.");
+			} catch (DriverUsersDBException e) {
+				this.log.error("Si e' verificato un errore in fase di salvataggio: " + e.getMessage(), e);
+				MessageUtils.addErrorMsg("Impossibile completare l'operazione. Si prega di riprovare pi\u00F9 tardi.");
+			}
+		}
+	return null;
 	}
 }

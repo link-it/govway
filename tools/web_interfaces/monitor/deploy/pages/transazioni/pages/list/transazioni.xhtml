@@ -170,6 +170,11 @@ xmlns="http://www.w3.org/1999/xhtml"
 											rendered="#{searchFormTransazioni.periodo eq 'Live'}"
 											action="#{searchFormTransazioni.ripulisciLive}"
 											oncomplete="completa(event)" />
+									 <a4j:commandButton id="salvaRicerca-iconLink" value="#{msg['commons.salvaRicerca.label']}"
+										styleClass="icon-csv positive" process="searchPnl" rendered="#{searchFormTransazioni.visualizzaComandoSalvaRicerca}"
+										action="#{searchFormTransazioni.inviaFormRicerca}"  
+										oncomplete="preparaFormSalvaRicerca();Richfaces.showModalPanel('salvaRicercaModalPnl');  return false;" >
+									</a4j:commandButton>
 								</a4j:outputPanel>
 							</h:form>						
 					</div>
@@ -620,6 +625,12 @@ xmlns="http://www.w3.org/1999/xhtml"
 						 //]]>	
 					</script>
 				</a4j:outputPanel>
+				
+				<ui:include src="/commons/includes/salvaRicercaUtenteModale.xhtml">
+	               	<ui:param name="mBean" value="#{transazioniBean}" />
+	               	<ui:param name="sf_bean" value="#{searchFormTransazioni}"  />
+	               	<ui:param name="loginBean" value="#{loginBean}"  />
+	           	</ui:include>
 				
 			</a4j:outputPanel>
 			
