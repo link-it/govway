@@ -154,6 +154,7 @@ import org.openspcoop2.utils.date.IDate;
 import org.openspcoop2.utils.digest.IDigestReader;
 import org.openspcoop2.utils.id.IUniqueIdentifierGenerator;
 import org.openspcoop2.utils.io.ArchiveType;
+import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStreamFactory;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
 import org.openspcoop2.utils.json.JsonSchemaValidatorConfig.ADDITIONAL;
@@ -1468,8 +1469,24 @@ public class OpenSPCoop2Properties {
 			this.getReadConnectionTimeoutRicezioneContenutiApplicativi();
 			this.getReadConnectionTimeoutRicezioneBuste();
 			
-			this.getBIOConfigSyncClientMaxPerRoute();
-			this.getBIOConfigSyncClientMaxTotal();
+			this.getBIOConfigSyncClientMaxPerRoute("qualsiasi", -1);
+			this.getBIOConfigSyncClientMaxTotal("qualsiasi", -1);
+			this.getBIOConfigSyncClientValidateAfterInactivity("qualsiasi", -1);
+			if(!this.isBIOConfigSyncClientUseCustomMessageObjectEntity()) {
+				this.getBIOConfigSyncClientPipedUnblockedStreamBuffer();
+				this.getBIOConfigSyncClientApplicativeThreadPoolSize();
+			}
+			
+			if(this.isNIOEnabled()) {
+				if(this.isNIOConfigAsyncRequestStreamEnabled()) {
+					this.getNIOConfigAsyncRequestPipedUnblockedStreamBuffer();
+					this.getNIOConfigAsyncRequestApplicativeThreadPoolSize();
+				}
+				if(this.isNIOConfigAsyncResponseStreamEnabled()) {
+					this.getNIOConfigAsyncResponsePipedUnblockedStreamBuffer();
+					this.getNIOConfigAsyncResponseApplicativeThreadPoolSize();
+				}
+			}
 			
 			this.isConnettoriUseDiagnosticInputStreamInoltroBuste();
 			this.isConnettoriUseDiagnosticInputStreamConsegnaContenutiApplicativi();
@@ -14301,7 +14318,7 @@ public class OpenSPCoop2Properties {
 	/* ***************** BIO  ************* */
 	
 	private Integer getBIOConfigSyncClientMaxPerRoute = null;
-	public int getBIOConfigSyncClientMaxPerRoute() {	
+	private int getBIOConfigSyncClientMaxPerRoute() {	
 		if(this.getBIOConfigSyncClientMaxPerRoute==null){
 			String pName = "org.openspcoop2.pdd.connettori.syncClient.maxPerRoute";
 			try{ 
@@ -14323,8 +14340,26 @@ public class OpenSPCoop2Properties {
 		return this.getBIOConfigSyncClientMaxPerRoute;
 	}
 	
+	private Map<String,Integer> getBIOConfigSyncClientMaxPerRouteMap = null;
+	public Integer getBIOConfigSyncClientMaxPerRoute(String hostname, int port) {	
+		if(this.getBIOConfigSyncClientMaxPerRouteMap==null){
+			String pNamePrefix = "org.openspcoop2.pdd.connettori.syncClient.maxPerRoute.";
+			this.getBIOConfigSyncClientMaxPerRouteMap=new HashMap<>();
+			
+			Properties p = null;
+			try {
+				p = this.reader.readPropertiesConvertEnvProperties(pNamePrefix);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pNamePrefix+"'.<nome>, errore:"+e.getMessage(),e);
+			} 
+			initBIOConfigSyncClientMap(this.getBIOConfigSyncClientMaxPerRouteMap, p, pNamePrefix);
+
+		}
+		return getBIOConfigSyncClientMap(this.getBIOConfigSyncClientMaxPerRouteMap, hostname, port, getBIOConfigSyncClientMaxPerRoute());
+	}
+	
 	private Integer getBIOConfigSyncClientMaxTotal = null;
-	public int getBIOConfigSyncClientMaxTotal() {	
+	private int getBIOConfigSyncClientMaxTotal() {	
 		if(this.getBIOConfigSyncClientMaxTotal==null){
 			String pName = "org.openspcoop2.pdd.connettori.syncClient.maxTotal";
 			try{ 
@@ -14346,7 +14381,348 @@ public class OpenSPCoop2Properties {
 		return this.getBIOConfigSyncClientMaxTotal;
 	}
 	
+	private Map<String,Integer> getBIOConfigSyncClientMaxTotalMap = null;
+	public Integer getBIOConfigSyncClientMaxTotal(String hostname, int port) {	
+		if(this.getBIOConfigSyncClientMaxTotalMap==null){
+			String pNamePrefix = "org.openspcoop2.pdd.connettori.syncClient.maxTotal.";
+			this.getBIOConfigSyncClientMaxTotalMap=new HashMap<>();
+			
+			Properties p = null;
+			try {
+				p = this.reader.readPropertiesConvertEnvProperties(pNamePrefix);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pNamePrefix+"'.*, errore:"+e.getMessage(),e);
+			} 
+			initBIOConfigSyncClientMap(this.getBIOConfigSyncClientMaxTotalMap, p, pNamePrefix);
+
+		}
+		return getBIOConfigSyncClientMap(this.getBIOConfigSyncClientMaxTotalMap, hostname, port, getBIOConfigSyncClientMaxTotal());
+	}
 	
+	private Integer getBIOConfigSyncClientValidateAfterInactivity = null;
+	private Boolean getBIOConfigSyncClientValidateAfterInactivityRead = null;
+	private Integer getBIOConfigSyncClientValidateAfterInactivity() {	
+		if(this.getBIOConfigSyncClientValidateAfterInactivityRead==null){
+			String pName = "org.openspcoop2.pdd.connettori.syncClient.validateAfterInactivity";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.getBIOConfigSyncClientValidateAfterInactivity = java.lang.Integer.parseInt(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata");
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}  
+			
+			this.getBIOConfigSyncClientValidateAfterInactivityRead = true;
+		}
+
+		return this.getBIOConfigSyncClientValidateAfterInactivity;
+	}
+	
+	private Map<String,Integer> getBIOConfigSyncClientValidateAfterInactivityMap = null;
+	public Integer getBIOConfigSyncClientValidateAfterInactivity(String hostname, int port) {	
+		if(this.getBIOConfigSyncClientValidateAfterInactivityMap==null){
+			String pNamePrefix = "org.openspcoop2.pdd.connettori.syncClient.validateAfterInactivity.";
+			this.getBIOConfigSyncClientValidateAfterInactivityMap=new HashMap<>();
+			
+			Properties p = null;
+			try {
+				p = this.reader.readPropertiesConvertEnvProperties(pNamePrefix);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pNamePrefix+"'.*, errore:"+e.getMessage(),e);
+			} 
+			initBIOConfigSyncClientMap(this.getBIOConfigSyncClientValidateAfterInactivityMap, p, pNamePrefix);
+
+		}
+		return getBIOConfigSyncClientMap(this.getBIOConfigSyncClientValidateAfterInactivityMap, hostname, port, getBIOConfigSyncClientValidateAfterInactivity());
+	}
+	
+	
+	private void initBIOConfigSyncClientMap(Map<String,Integer> map, Properties p, String pNamePrefix) {
+		if(p!=null && p.size()>0) {
+			Enumeration<Object> en = p.keys();
+			while (en.hasMoreElements()) {
+				Object o = en.nextElement();
+				initBIOConfigSyncClientMap(map, o, p, pNamePrefix);
+			}
+		}
+	}
+	private void initBIOConfigSyncClientMap(Map<String,Integer> map, Object o, Properties p, String pNamePrefix) {
+		if(o instanceof String key) {
+			String v = p.getProperty(key);
+			try {
+				if(v!=null){
+					v = v.trim();
+					int vInt = java.lang.Integer.parseInt(v);
+					map.put(key, vInt);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pNamePrefix+"'.key impostata vuota");
+				}
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pNamePrefix+"'.key possiede un valore ["+v+"] non corretto, errore:"+e.getMessage(),e);
+			}  
+		}
+	}
+	private Integer getBIOConfigSyncClientMap(Map<String,Integer> map, String hostname, int port, Integer defaultValue) {
+		if(map==null || map.isEmpty()) {
+			return defaultValue;
+		}
+		String key = hostname+"."+port;
+		String key2 = hostname+":"+port; // NOTA: usare lo \ con i due punti nel file di proprietà 'org.openspcoop2.pdd.connettori.syncClient.<nomeProperty>.localhost\:8090=valoreintero'
+		if(map.containsKey(key)) {
+			return map.get(key);
+		}
+		else if(map.containsKey(key2)) {
+			return map.get(key2);
+		}
+		else if(map.containsKey(hostname)) {
+			return map.get(hostname);
+		}
+		return defaultValue;
+	}
+	
+	private Boolean isBIOConfigSyncClientUseCustomMessageObjectEntity = null;
+	public boolean isBIOConfigSyncClientUseCustomMessageObjectEntity() {	
+		if(this.isBIOConfigSyncClientUseCustomMessageObjectEntity==null){
+			String pName = "org.openspcoop2.pdd.connettori.syncClient.useCustomMessageObjectEntity";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.isBIOConfigSyncClientUseCustomMessageObjectEntity = java.lang.Boolean.parseBoolean(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.isBIOConfigSyncClientUseCustomMessageObjectEntity = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.isBIOConfigSyncClientUseCustomMessageObjectEntity = true;
+			}  
+		}
+
+		return this.isBIOConfigSyncClientUseCustomMessageObjectEntity;
+	}
+	
+	private Integer getBIOConfigSyncClientPipedUnblockedStreamBuffer = null;
+	public int getBIOConfigSyncClientPipedUnblockedStreamBuffer() {	
+		if(this.getBIOConfigSyncClientPipedUnblockedStreamBuffer==null){
+			String pName = "org.openspcoop2.pdd.connettori.syncClient.pipedUnblockedStream.buffer";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.getBIOConfigSyncClientPipedUnblockedStreamBuffer = java.lang.Integer.parseInt(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER);
+					this.getBIOConfigSyncClientPipedUnblockedStreamBuffer = PipedUnblockedStreamFactory.SIZE_BUFFER;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER+", errore:"+e.getMessage(),e);
+				this.getBIOConfigSyncClientPipedUnblockedStreamBuffer = PipedUnblockedStreamFactory.SIZE_BUFFER;
+			}  
+		}
+
+		return this.getBIOConfigSyncClientPipedUnblockedStreamBuffer;
+	}
+	
+	private Integer getBIOConfigSyncClientApplicativeThreadPoolSize = null;
+	public int getBIOConfigSyncClientApplicativeThreadPoolSize() {	
+		if(this.getBIOConfigSyncClientApplicativeThreadPoolSize==null){
+			String pName = "org.openspcoop2.pdd.connettori.syncClient.applicativeThreadPool.size";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.getBIOConfigSyncClientApplicativeThreadPoolSize = java.lang.Integer.parseInt(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+100);
+					this.getBIOConfigSyncClientApplicativeThreadPoolSize = 100;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+100+", errore:"+e.getMessage(),e);
+				this.getBIOConfigSyncClientApplicativeThreadPoolSize = 100;
+			}  
+		}
+
+		return this.getBIOConfigSyncClientApplicativeThreadPoolSize;
+	}
+	
+	
+	/* ***************** NIO  ************* */
+	
+	private Boolean isNIOEnabled = null;
+	public boolean isNIOEnabled() {	
+		if(this.isNIOEnabled==null){
+			String pName = "org.openspcoop2.pdd.connettori.async";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.isNIOEnabled = java.lang.Boolean.parseBoolean(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false);
+					this.isNIOEnabled = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
+				this.isNIOEnabled = false;
+			}  
+		}
+
+		return this.isNIOEnabled;
+	}
+	
+	private Boolean isNIOConfigAsyncRequestStreamEnabled = null;
+	public boolean isNIOConfigAsyncRequestStreamEnabled() {	
+		if(this.isNIOConfigAsyncRequestStreamEnabled==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncRequest.stream";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.isNIOConfigAsyncRequestStreamEnabled = java.lang.Boolean.parseBoolean(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.isNIOConfigAsyncRequestStreamEnabled = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.isNIOConfigAsyncRequestStreamEnabled = true;
+			}  
+		}
+
+		return this.isNIOConfigAsyncRequestStreamEnabled;
+	}
+	
+	private Integer getNIOConfigAsyncRequestPipedUnblockedStreamBuffer = null;
+	public int getNIOConfigAsyncRequestPipedUnblockedStreamBuffer() {	
+		if(this.getNIOConfigAsyncRequestPipedUnblockedStreamBuffer==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncRequest.pipedUnblockedStream.buffer";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.getNIOConfigAsyncRequestPipedUnblockedStreamBuffer = java.lang.Integer.parseInt(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER);
+					this.getNIOConfigAsyncRequestPipedUnblockedStreamBuffer = PipedUnblockedStreamFactory.SIZE_BUFFER;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER+", errore:"+e.getMessage(),e);
+				this.getNIOConfigAsyncRequestPipedUnblockedStreamBuffer = PipedUnblockedStreamFactory.SIZE_BUFFER;
+			}  
+		}
+
+		return this.getNIOConfigAsyncRequestPipedUnblockedStreamBuffer;
+	}
+	
+	private Integer getNIOConfigAsyncRequestApplicativeThreadPoolSize = null;
+	public int getNIOConfigAsyncRequestApplicativeThreadPoolSize() {	
+		if(this.getNIOConfigAsyncRequestApplicativeThreadPoolSize==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncRequest.applicativeThreadPool.size";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.getNIOConfigAsyncRequestApplicativeThreadPoolSize = java.lang.Integer.parseInt(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+100);
+					this.getNIOConfigAsyncRequestApplicativeThreadPoolSize = 100;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+100+", errore:"+e.getMessage(),e);
+				this.getNIOConfigAsyncRequestApplicativeThreadPoolSize = 100;
+			}  
+		}
+
+		return this.getNIOConfigAsyncRequestApplicativeThreadPoolSize;
+	}
+	
+	
+	
+	private Boolean isNIOConfigAsyncResponseStreamEnabled = null;
+	public boolean isNIOConfigAsyncResponseStreamEnabled() {	
+		if(this.isNIOConfigAsyncResponseStreamEnabled==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncResponse.stream";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.isNIOConfigAsyncResponseStreamEnabled = java.lang.Boolean.parseBoolean(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.isNIOConfigAsyncResponseStreamEnabled = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.isNIOConfigAsyncResponseStreamEnabled = true;
+			}  
+		}
+
+		return this.isNIOConfigAsyncResponseStreamEnabled;
+	}
+	
+	private Integer getNIOConfigAsyncResponsePipedUnblockedStreamBuffer = null;
+	public int getNIOConfigAsyncResponsePipedUnblockedStreamBuffer() {	
+		if(this.getNIOConfigAsyncResponsePipedUnblockedStreamBuffer==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncResponse.pipedUnblockedStream.buffer";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.getNIOConfigAsyncResponsePipedUnblockedStreamBuffer = java.lang.Integer.parseInt(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER);
+					this.getNIOConfigAsyncResponsePipedUnblockedStreamBuffer = PipedUnblockedStreamFactory.SIZE_BUFFER;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER+", errore:"+e.getMessage(),e);
+				this.getNIOConfigAsyncResponsePipedUnblockedStreamBuffer = PipedUnblockedStreamFactory.SIZE_BUFFER;
+			}  
+		}
+
+		return this.getNIOConfigAsyncResponsePipedUnblockedStreamBuffer;
+	}
+	
+	private Integer getNIOConfigAsyncResponseApplicativeThreadPoolSize = null;
+	public int getNIOConfigAsyncResponseApplicativeThreadPoolSize() {	
+		if(this.getNIOConfigAsyncResponseApplicativeThreadPoolSize==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncResponse.applicativeThreadPool.size";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.getNIOConfigAsyncResponseApplicativeThreadPoolSize = java.lang.Integer.parseInt(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+100);
+					this.getNIOConfigAsyncResponseApplicativeThreadPoolSize = 100;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+100+", errore:"+e.getMessage(),e);
+				this.getNIOConfigAsyncResponseApplicativeThreadPoolSize = 100;
+			}  
+		}
+
+		return this.getNIOConfigAsyncResponseApplicativeThreadPoolSize;
+	}
+	
+	
+	
+	/* ***************** OTHER  ************* */
 	
 	private Boolean isConnettoriUseDiagnosticInputStreamInoltroBuste = null;
 	public boolean isConnettoriUseDiagnosticInputStreamInoltroBuste() {	

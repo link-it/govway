@@ -160,6 +160,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceConfig;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.mdb.InoltroBuste;
+import org.openspcoop2.pdd.services.connector.ConnectorApplicativeThreadPool;
 import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
@@ -2690,6 +2691,21 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			
+			
+			/* ----------- Inizializzazione Connettori ------------ */
+			try{
+				ConnectorApplicativeThreadPool.initialize(propertiesReader);				
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Inizializzazione Applicative Thread Pool per i connettori");
+				return;
+			}
+			
+			
+			
+			
+			
+			
 			/* ----------- Inizializzazione Mailcap Activation per Gestione Attachments ------------ */
 			try{
 				MailcapActivationReader.initDataContentHandler(OpenSPCoop2Startup.log,propertiesReader.isTunnelSOAP_loadMailcap());
@@ -4065,6 +4081,15 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		}catch(Throwable e){
 			// ignore
 		}
+		
+		
+		// Connettori 
+		try{
+			ConnectorApplicativeThreadPool.shutdown();				
+		}catch(Throwable e){
+			// ignore
+		}
+		
 		
 		// ID Cluster
 		try{

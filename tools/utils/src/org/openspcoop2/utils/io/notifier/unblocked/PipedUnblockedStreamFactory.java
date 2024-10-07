@@ -25,47 +25,51 @@ import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
 
 /**
- * IPipedUnblockedStream
+ * PipedUnblockedStreamFactory
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
 public class PipedUnblockedStreamFactory {
+	
+	private PipedUnblockedStreamFactory() {}
 
-	private static boolean USE_PIPED_BYTES_STREAM_IMPL = true; 
-	private static boolean USE_PIPED_BYTE_ARRAY_OUTPUT_STREAM_IMPL = false; 
-	private static String CLASSNAME_IMPL = null;
+	public static final int SIZE_BUFFER = 65536;
+	
+	private static boolean usePipedBytesStreamImpl = true; 
+	private static boolean usePipedByteArrayOutputStreamImpl = false; 
+	private static String classNameImpl = null;
 	
 	public static void setImplementation(String className) {
 		if(org.openspcoop2.utils.io.notifier.unblocked.PipedBytesStream.class.getName().equals(className)) {
-			USE_PIPED_BYTES_STREAM_IMPL = true;
-			USE_PIPED_BYTE_ARRAY_OUTPUT_STREAM_IMPL = false;
-			CLASSNAME_IMPL = null;
+			usePipedBytesStreamImpl = true;
+			usePipedByteArrayOutputStreamImpl = false;
+			classNameImpl = null;
 		}
 		else if(org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStream.class.getName().equals(className)) {
-			USE_PIPED_BYTES_STREAM_IMPL = false;
-			USE_PIPED_BYTE_ARRAY_OUTPUT_STREAM_IMPL = true;
-			CLASSNAME_IMPL = null;
+			usePipedBytesStreamImpl = false;
+			usePipedByteArrayOutputStreamImpl = true;
+			classNameImpl = null;
 		}
 		else {
-			USE_PIPED_BYTES_STREAM_IMPL = false;
-			USE_PIPED_BYTE_ARRAY_OUTPUT_STREAM_IMPL = false;
-			CLASSNAME_IMPL = className;
+			usePipedBytesStreamImpl = false;
+			usePipedByteArrayOutputStreamImpl = false;
+			classNameImpl = className;
 		}
 	}
 	
 	public static IPipedUnblockedStream newPipedUnblockedStream(Logger log, long sizeBuffer, int timeoutMs, String source) throws IOException {
 		try {
 			IPipedUnblockedStream pipe = null;
-			if(USE_PIPED_BYTES_STREAM_IMPL) {
+			if(usePipedBytesStreamImpl) {
 				pipe = new org.openspcoop2.utils.io.notifier.unblocked.PipedBytesStream();
 			}
-			else if(USE_PIPED_BYTE_ARRAY_OUTPUT_STREAM_IMPL) {
+			else if(usePipedByteArrayOutputStreamImpl) {
 				pipe = new org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStream();
 			}
 			else {
-				pipe = (IPipedUnblockedStream) new Loader().newInstance(CLASSNAME_IMPL);
+				pipe = (IPipedUnblockedStream) new Loader().newInstance(classNameImpl);
 			}
 			pipe.init(log, sizeBuffer, timeoutMs, source);
 			return pipe;

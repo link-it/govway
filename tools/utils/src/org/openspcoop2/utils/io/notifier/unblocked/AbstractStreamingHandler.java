@@ -33,7 +33,7 @@ import org.openspcoop2.utils.UtilsException;
 public abstract class AbstractStreamingHandler extends PipedUnblockedStream implements Callable<ResultStreamingHandler> {
 	
 	
-	public AbstractStreamingHandler(Logger log, long sizeBuffer) throws Exception {
+	protected AbstractStreamingHandler(Logger log, long sizeBuffer) throws Exception {
 		super();
 		super.init(log,sizeBuffer,-1,"StreamingHandler");
 	}

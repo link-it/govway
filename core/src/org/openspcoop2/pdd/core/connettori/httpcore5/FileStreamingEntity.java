@@ -17,49 +17,56 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+package org.openspcoop2.pdd.core.connettori.httpcore5;
 
-package org.openspcoop2.utils.io.notifier.unblocked;
-
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStream;
+
+import org.apache.hc.core5.http.io.entity.AbstractHttpEntity;
 
 /**
- * PipedOutputStream
+ * FileStreamingEntity
  *
- * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class PipedUnblockedOutputStream extends OutputStream {
+public class FileStreamingEntity extends AbstractHttpEntity {
 
-	private IPipedUnblockedStream wrappedPipe;
+	private File f;
+	private boolean chunked;
 	
-	public PipedUnblockedOutputStream(IPipedUnblockedStream wrappedPipe) {
-		this.wrappedPipe = wrappedPipe;
+	public FileStreamingEntity(File f, org.apache.hc.core5.http.ContentType ct, String contentEncoding) {
+		super(ct, contentEncoding, 
+				true); // chunked
+		this.f = f;
+		this.chunked = true;
 	}
 
 	@Override
-	public void write(int b) throws IOException {
-		this.wrappedPipe.write((byte)b);
+    public final boolean isRepeatable() {
+        return true;
+    }
+	
+	@Override
+	public InputStream getContent() throws IOException, UnsupportedOperationException {
+		return new FileInputStream(this.f);
 	}
 
 	@Override
-	public void write(byte[] b) throws IOException {
-		this.wrappedPipe.write(b);
+	public boolean isStreaming() {
+		return this.chunked;
 	}
 
-	@Override
-	public void write(byte[] b, int off, int len) throws IOException {
-		this.wrappedPipe.write(b, off, len);
-	}
-
-	@Override
-	public void flush() throws IOException {
-		// nop
-	}
+    @Override
+    public final long getContentLength() {
+        return this.f.length();
+    }
 
 	@Override
 	public void close() throws IOException {
-		this.wrappedPipe.close();
+		// nop
 	}
+	
 }

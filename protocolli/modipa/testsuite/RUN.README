@@ -76,6 +76,16 @@ Prerequisiti:
 
 	Controllare la corrispondenza delle properties <jmx_cache_username> e <jmx_cache_password> con i valori di sopra.
 
++ Nel file /etc/govway/govway_local.properties abilitare le seguenti proprietà:
+
+	# Praticamente faccio riverificare sempre la connessione
+	org.openspcoop2.pdd.connettori.syncClient.validateAfterInactivity.localhost\:8090=1
+	org.openspcoop2.pdd.connettori.syncClient.validateAfterInactivity.localhost\:8091=1
+
+	# In alternativa alle proprietà suddette devo tornare ad usare l'implementazione httpUrlConn
+	#org.openspcoop2.pdd.connettori.libreriaHttpDefault=httpUrlConn
+	#org.openspcoop2.pdd.connettori.libreriaHttpsDefault=httpsUrlConn
+
 + Compilare e deployare il servizio di echo sotto <example/pdd/server/testService>
 
 	NOTA: aggiornarlo all'ultima versione

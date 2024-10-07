@@ -163,6 +163,7 @@ public class RicezioneContenutiApplicativiService {
 		/* ------------  PreInHandler (PreInAcceptRequestContext) ------------- */
 		
 		PreInAcceptRequestContext preInAcceptRequestContext = null;
+		SogliaReadTimeout sogliaReadTimeout = null;
 		if (openSPCoopProperties != null && OpenSPCoop2Startup.initialize) {
 		
 			// build context
@@ -183,11 +184,11 @@ public class RicezioneContenutiApplicativiService {
 					req.setRequestLimitedStream(soglia);
 				}
 				if(openSPCoopProperties.isConnettoriUseTimeoutInputStream()) {
-					SogliaReadTimeout soglia = new SogliaReadTimeout();
-					soglia.setSogliaMs(openSPCoopProperties.getReadConnectionTimeoutRicezioneContenutiApplicativi());
-					soglia.setConfigurazioneGlobale(true);
-					soglia.setIdConfigurazione("GovWayCore");
-					req.setRequestReadTimeout(soglia);
+					sogliaReadTimeout = new SogliaReadTimeout();
+					sogliaReadTimeout.setSogliaMs(openSPCoopProperties.getReadConnectionTimeoutRicezioneContenutiApplicativi());
+					sogliaReadTimeout.setConfigurazioneGlobale(true);
+					sogliaReadTimeout.setIdConfigurazione("GovWayCore");
+					req.setRequestReadTimeout(sogliaReadTimeout);
 				}
 				req.setThresholdContext(null, 
 					openSPCoopProperties.getDumpBinarioInMemoryThreshold(), openSPCoopProperties.getDumpBinarioRepository());
@@ -418,13 +419,13 @@ public class RicezioneContenutiApplicativiService {
 			}
 			boolean useTimeoutInputStream = configPdDManager.isConnettoriUseTimeoutInputStream(pd);
 			if(useTimeoutInputStream) {
-				SogliaReadTimeout timeout = configPdDManager.getRequestReadTimeout(pd,
+				sogliaReadTimeout = configPdDManager.getRequestReadTimeout(pd,
 						requestInfo,
 						protocolFactory, 
 						context!=null ? context.getPddContext() : null,
 						null);
-				if(timeout!=null && timeout.getSogliaMs()>0) {
-					req.setRequestReadTimeout(timeout);
+				if(sogliaReadTimeout!=null && sogliaReadTimeout.getSogliaMs()>0) {
+					req.setRequestReadTimeout(sogliaReadTimeout);
 				}
 				else {
 					req.disableReadTimeout();
@@ -468,6 +469,12 @@ public class RicezioneContenutiApplicativiService {
 						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 			RicezioneContenutiApplicativiServiceUtils.emitTransaction(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
 			return;
+		}
+		
+		// Riporto in context il timeout della richiesta
+		if(context!=null && context.getPddContext()!=null &&
+			sogliaReadTimeout!=null && sogliaReadTimeout.getSogliaMs()>0) {
+				context.getPddContext().put(CostantiPdD.REQUEST_READ_TIMEOUT, sogliaReadTimeout.getSogliaMs());
 		}
 		
 		// API Soap supporta solo POST e ?wsdl

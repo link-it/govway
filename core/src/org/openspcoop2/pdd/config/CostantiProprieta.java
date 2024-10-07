@@ -598,6 +598,20 @@ public class CostantiProprieta {
 		}
 		return readBooleanValueWithDefault(proprieta, CONNETTORE_HEADER_VALIDATION_ENABLED, defaultValue, CONNETTORE_VALUE_ENABLED, CONNETTORE_VALUE_DISABLED);
 	}
+
+	public static final String CONNETTORE_POOL_CONNECTION_MAX_PER_ROUTE = "connettori.connection.pool.maxPerRoute";
+	public static final String CONNETTORE_POOL_CONNECTION_MAX_TOTAL = "connettori.connection.pool.maxTotal";
+	public static final String CONNETTORE_POOL_CONNECTION_VALIDATE_AFTER_INACTIVITY = "connettori.connection.pool.validateAfterInactivity";
+	
+	public static Integer getConnettoriConnectionPoolMaxPerRoute(List<Proprieta> proprieta, Integer defaultValue) {
+		return readIntegerValueWithDefault(proprieta, CONNETTORE_POOL_CONNECTION_MAX_PER_ROUTE, defaultValue);
+	}
+	public static Integer getConnettoriConnectionPoolMaxTotal(List<Proprieta> proprieta, Integer defaultValue) {
+		return readIntegerValueWithDefault(proprieta, CONNETTORE_POOL_CONNECTION_MAX_TOTAL, defaultValue);
+	}
+	public static Integer getConnettoriConnectionPoolValidateAfterInactivity(List<Proprieta> proprieta, Integer defaultValue) {
+		return readIntegerValueWithDefault(proprieta, CONNETTORE_POOL_CONNECTION_VALIDATE_AFTER_INACTIVITY, defaultValue);
+	}
 	
 	
 	// ****  CONNETTORI PROXY PASS *****
@@ -1188,6 +1202,17 @@ public class CostantiProprieta {
 		return defaultValue;
 	}
 	private static int readIntValueWithDefault(List<Proprieta> proprieta, String nome, int defaultValue) {
+		String valueS = readValue(proprieta, nome);
+		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
+			try {
+				return Integer.valueOf(valueS);
+			}catch(Exception e) {
+				// ignore
+			}
+		}
+		return defaultValue;
+	}
+	private static Integer readIntegerValueWithDefault(List<Proprieta> proprieta, String nome, Integer defaultValue) {
 		String valueS = readValue(proprieta, nome);
 		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
 			try {

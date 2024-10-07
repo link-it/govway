@@ -170,10 +170,27 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
     }
     
     public static boolean isConnectionTimeoutException(Exception e, String message){
-		return "connect timed out".equals(message) && (e instanceof java.net.SocketTimeoutException);
+    	return (
+    				"connect timed out".equals(message) // http url connection
+    				||
+    				(message!=null && message.contains("Connect timed out")) // httpcore5
+    			)
+    			&&
+    			(e instanceof java.net.SocketTimeoutException);
 	}
     public static boolean containsConnectionTimeoutException(Exception e, String message){
-		return message!=null && message.contains("connect timed out") && (e instanceof java.net.SocketTimeoutException || Utilities.existsInnerException(e, java.net.SocketTimeoutException.class));
+		return message!=null && 
+				( 
+						message.contains("connect timed out") // http url connection
+						||
+						message.contains("Connect timed out") // httpcore5
+				)
+				&& 
+				(
+						e instanceof java.net.SocketTimeoutException 
+						|| 
+						Utilities.existsInnerException(e, java.net.SocketTimeoutException.class)
+				);
 	}
     protected void processConnectionTimeoutException(int timeout, boolean configurazioneGlobale, Exception e, String message) {
     	try {

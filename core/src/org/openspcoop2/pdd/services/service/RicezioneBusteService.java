@@ -165,6 +165,7 @@ public class RicezioneBusteService  {
 		/* ------------  PreInHandler (PreInAcceptRequestContext) ------------- */
 		
 		PreInAcceptRequestContext preInAcceptRequestContext = null;
+		SogliaReadTimeout sogliaReadTimeout = null;
 		if (openSPCoopProperties != null && OpenSPCoop2Startup.initialize) {
 			// build context
 			preInAcceptRequestContext = new PreInAcceptRequestContext();
@@ -184,11 +185,11 @@ public class RicezioneBusteService  {
 					req.setRequestLimitedStream(soglia);
 				}
 				if(openSPCoopProperties.isConnettoriUseTimeoutInputStream()) {
-					SogliaReadTimeout soglia = new SogliaReadTimeout();
-					soglia.setSogliaMs(openSPCoopProperties.getReadConnectionTimeoutRicezioneBuste());
-					soglia.setConfigurazioneGlobale(true);
-					soglia.setIdConfigurazione("GovWayCore");
-					req.setRequestReadTimeout(soglia);
+					sogliaReadTimeout = new SogliaReadTimeout();
+					sogliaReadTimeout.setSogliaMs(openSPCoopProperties.getReadConnectionTimeoutRicezioneBuste());
+					sogliaReadTimeout.setConfigurazioneGlobale(true);
+					sogliaReadTimeout.setIdConfigurazione("GovWayCore");
+					req.setRequestReadTimeout(sogliaReadTimeout);
 				}
 				req.setThresholdContext(null, 
 					openSPCoopProperties.getDumpBinarioInMemoryThreshold(), openSPCoopProperties.getDumpBinarioRepository());
@@ -415,13 +416,13 @@ public class RicezioneBusteService  {
 			}
 			boolean useTimeoutInputStream = configPdDManager.isConnettoriUseTimeoutInputStream(pa);
 			if(useTimeoutInputStream) {
-				SogliaReadTimeout timeout = configPdDManager.getRequestReadTimeout(pa,
+				sogliaReadTimeout = configPdDManager.getRequestReadTimeout(pa,
 						requestInfo,
 						protocolFactory, 
 						context!=null ? context.getPddContext() : null,
 						null);
-				if(timeout!=null && timeout.getSogliaMs()>0) {
-					req.setRequestReadTimeout(timeout);
+				if(sogliaReadTimeout!=null && sogliaReadTimeout.getSogliaMs()>0) {
+					req.setRequestReadTimeout(sogliaReadTimeout);
 				}
 				else {
 					req.disableReadTimeout();
@@ -467,6 +468,11 @@ public class RicezioneBusteService  {
 			return;
 		}
 		
+		// Riporto in context il timeout della richiesta
+		if(context!=null && context.getPddContext()!=null &&
+			sogliaReadTimeout!=null && sogliaReadTimeout.getSogliaMs()>0) {
+				context.getPddContext().put(CostantiPdD.REQUEST_READ_TIMEOUT, sogliaReadTimeout.getSogliaMs());
+		}
 		
 		// API Soap supporta solo POST e ?wsdl
 		if(ServiceBinding.SOAP.equals(requestInfo.getProtocolServiceBinding())){

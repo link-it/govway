@@ -28,6 +28,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -35,6 +38,7 @@ import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.hc.client5.http.ConnectionKeepAliveStrategy;
+import org.apache.hc.client5.http.HttpRoute;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -47,6 +51,7 @@ import org.apache.hc.client5.http.classic.methods.HttpTrace;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
@@ -65,6 +70,8 @@ import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.FileEntity;
 import org.apache.hc.core5.http.io.entity.InputStreamEntity;
+import org.apache.hc.core5.pool.PoolStats;
+import org.apache.hc.core5.util.TimeValue;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
@@ -72,16 +79,22 @@ import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_soap_impl;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
-import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.message.utils.MessageWriteToRunnable;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 import org.openspcoop2.pdd.core.connettori.ConnettoreExtBaseHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
+import org.openspcoop2.pdd.services.connector.ConnectorApplicativeThreadPool;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
+import org.openspcoop2.utils.io.notifier.unblocked.IPipedUnblockedStream;
+import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedOutputStream;
+import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStreamFactory;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
@@ -111,6 +124,10 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 		
 	private HttpUriRequestBase httpRequest;
 	
+	@SuppressWarnings("unused")
+	private CloseableHttpClient cloasebleHttpClient;
+	
+	private DumpByteArrayOutputStream cloasebleDumpBout;
 	
 	/* Costruttori */
 	public ConnettoreHTTPCORE(){
@@ -120,9 +137,42 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 		super(https);
 	}
 	
+	private static final boolean THREAD_CHECK_POOL = false;
+	private static void setThreadCheckPool(PoolingHttpClientConnectionManager connectionManager) {
+		ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+		executorService.scheduleAtFixedRate(() -> {
+			
+			System.out.println("\n\n\nPRIMA");
+			print(connectionManager);
+						
+		    connectionManager.closeExpired();
+		    connectionManager.closeIdle(TimeValue.ofSeconds(30));
+		    
+		    System.out.println("DOPO");
+			print(connectionManager);
+		    
+		    
+		}, 30, 30, TimeUnit.SECONDS);
+	}
+	private static void print(PoolingHttpClientConnectionManager connectionManager) {
+		// Statistiche totali
+	    PoolStats totalStats = connectionManager.getTotalStats();
+	    System.out.println("  Totali - In uso: " + totalStats.getLeased() + "; Disponibili: " +
+	                       totalStats.getAvailable() + "; In attesa: " + totalStats.getPending());
+
+	    // Ottieni tutte le rotte gestite dal connection manager
+	    Set<HttpRoute> routes = connectionManager.getRoutes();
+
+	    for (HttpRoute route : routes) {
+	    	PoolStats routeStats = connectionManager.getStats(route);
+	        System.out.println("  Rotta: " + route + " - In uso: " + routeStats.getLeased() +
+	                           "; Disponibili: " + routeStats.getAvailable() +
+	                           "; In attesa: " + routeStats.getPending());
+	    }
+	}
 	
 	private static Map<String, PoolingHttpClientConnectionManager> cmMap = new HashMap<>();
-	private static synchronized void initialize(String key, SSLConnectionSocketFactory sslConnectionSocketFactory, long connectionTimeout){
+	private static synchronized void initialize(String key, SSLConnectionSocketFactory sslConnectionSocketFactory, ConnettoreHttpPoolParams poolParams, long connectionTimeout){
 		if(!ConnettoreHTTPCORE.cmMap.containsKey(key)){
 						
 			PoolingHttpClientConnectionManager cm = null;
@@ -136,26 +186,38 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 				cm = new PoolingHttpClientConnectionManager();
 			}
 			
-			OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
-			
-			// Increase max total connection to 200
-			cm.setMaxTotal(op2Properties.getBIOConfigSyncClientMaxTotal());
-			// Increase default max connection per route to 20
-			cm.setDefaultMaxPerRoute(op2Properties.getBIOConfigSyncClientMaxPerRoute());
-			// Increase max connections for localhost:80 to 50
+			// Increase max total connection
+			cm.setMaxTotal(poolParams.getMaxTotal());
+			// Increase default max connection per route
+			cm.setDefaultMaxPerRoute(poolParams.getDefaultMaxPerRoute());
+			// Increase max connections for localhost:80
 			/**HttpHost localhost = new HttpHost("locahost", 80);
 			cm.setMaxPerRoute(new HttpRoute(localhost), 50);*/
 			 
 			ConnectionConfig.Builder buider = ConnectionConfig.custom();
 			buider.setConnectTimeout(connectionTimeout, TimeUnit.MILLISECONDS);
+			/**
+			 * specifica l'intervallo di tempo di inattività dopo il quale le connessioni persistenti dovrebbero essere convalidate prima di essere riutilizzate. 
+			 * Questo è importante per evitare l'uso di connessioni che potrebbero essere state chiuse dal server o interrotte per altri motivi.
+			 * Un parametro troppo basso, a meno che non ci sia una necessità specifica, non va usato poiché ciò potrebbe introdurre un overhead significativo e influire sulle prestazioni complessive dell'applicazione.
+			 **/
+			if(poolParams.getValidateAfterInactivity()!=null) {
+				buider.setValidateAfterInactivity(poolParams.getValidateAfterInactivity().intValue(), TimeUnit.MILLISECONDS);
+			}
 			ConnectionConfig config = buider.build();
 			cm.setDefaultConnectionConfig(config);
+			
+			if(THREAD_CHECK_POOL) {
+				setThreadCheckPool(cm);
+			}
 			
 			ConnettoreHTTPCORE.cmMap.put(key, cm);
 		}
 	}
 	
-	private HttpClient buildHttpClient(long connectionTimeout, ConnectionKeepAliveStrategy keepAliveStrategy, SSLSocketFactory sslSocketFactory, boolean usePool) throws UtilsException{
+	private CloseableHttpClient buildHttpClient(ConnettoreHttpPoolParams poolParams, long connectionTimeout, 
+			ConnectionKeepAliveStrategy keepAliveStrategy, SSLSocketFactory sslSocketFactory, boolean usePool,
+			ConnettoreHttpRequestInterceptor httpRequestInterceptor) throws UtilsException{
 		
 		HttpClientBuilder httpClientBuilder = HttpClients.custom();
 			
@@ -163,12 +225,14 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 		
 		String prefixCT = "connTimeout["+connectionTimeout+"] ";
 		
+		String prefixPoolParams = " "+poolParams.toString()+ " ";
+		
 		String key = null;
 		if(this.sslContextProperties!=null){
-			key = prefixCT + "https " +this.sslContextProperties.toString();
+			key = prefixCT + prefixPoolParams + "https " +this.sslContextProperties.toString();
 		}
 		else {
-			key = prefixCT + "http";
+			key = prefixCT + prefixPoolParams + "http";
 		}
 		
 		SSLConnectionSocketFactory sslConnectionSocketFactory = null;
@@ -197,7 +261,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 						
 			// Caso con pool
 			if(!ConnettoreHTTPCORE.cmMap.containsKey(key)){
-				ConnettoreHTTPCORE.initialize(key, sslConnectionSocketFactory, connectionTimeout);
+				ConnettoreHTTPCORE.initialize(key, sslConnectionSocketFactory, poolParams, connectionTimeout);
 			}
 			
 			PoolingHttpClientConnectionManager cm = ConnettoreHTTPCORE.cmMap.get(key);
@@ -227,6 +291,10 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 		/**System.out.println("PRESA LA CONNESSIONE AVAILABLE["+cm.getTotalStats().getAvailable()+"] LEASED["
 				+cm.getTotalStats().getLeased()+"] MAX["+cm.getTotalStats().getMax()+"] PENDING["+cm.getTotalStats().getPending()+"]");
 		System.out.println("-----GET CONNECTION [END] ----");*/
+		
+		if(httpRequestInterceptor!=null) {
+			httpClientBuilder.addRequestInterceptorLast(httpRequestInterceptor);
+		}
 		
 		return httpClientBuilder.build();
 	}
@@ -275,11 +343,22 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 				connectionTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
 			}
 			
+			// Lettura Parametri Pool
+			ConnettoreHttpPoolParams poolParams = new ConnettoreHttpPoolParams(this.openspcoopProperties, url, this.proprietaPorta);
+			
+			// Creazione interceptor
+			ConnettoreHttpRequestInterceptor httpRequestInterceptor = null;
+			if(this.debug) {
+				this.recHeaderForInterceptor = new HashMap<>();
+				httpRequestInterceptor = new ConnettoreHttpRequestInterceptor(this.logger, this.recHeaderForInterceptor);
+			}
 			
 			// Creazione Connessione
 			if(this.debug)
 				this.logger.info("Creazione connessione alla URL ["+this.location+"]...",false);
-			HttpClient httpClient = buildHttpClient(connectionTimeout, keepAliveStrategy, buildSSLContextFactory(), ConnettoreHTTPCORE.USE_POOL);
+			HttpClient httpClient = buildHttpClient(poolParams, connectionTimeout, keepAliveStrategy, buildSSLContextFactory(), 
+					ConnettoreHTTPCORE.USE_POOL,
+					httpRequestInterceptor);
 			
 			// HttpMethod
 			if(this.httpMethod==null){
@@ -368,24 +447,9 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			// Impostazione transfer-length
 			if(this.debug)
 				this.logger.debug("Impostazione transfer-length...");
-			boolean transferEncodingChunked = false;
-			TransferLengthModes tlm = null;
-			int chunkLength = -1;
-			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-				tlm = this.openspcoopProperties.getTransferLengthModes_consegnaContenutiApplicativi();
-				chunkLength = this.openspcoopProperties.getChunkLength_consegnaContenutiApplicativi();
-			}
-			else{
-				// InoltroBuste e InoltroRisposte
-				tlm = this.openspcoopProperties.getTransferLengthModes_inoltroBuste();
-				chunkLength = this.openspcoopProperties.getChunkLength_inoltroBuste();
-			}
-			transferEncodingChunked = TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(tlm);
-			if(transferEncodingChunked){
-				/**this.httpConn.setChunkedStreamingMode(chunkLength);*/
-			}
+			boolean transferEncodingChunked = TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(this.tlm);
 			if(this.debug)
-				this.logger.info("Impostazione transfer-length effettuata (chunkLength:"+chunkLength+"): "+tlm,false);
+				this.logger.info("Impostazione transfer-length effettuata (chunkLength:"+this.chunkLength+"): "+this.tlm,false);
 			
 			
 			
@@ -405,7 +469,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			}
 			if(this.debug)
 				this.logger.info("Impostazione http timeout CT["+connectionTimeout+"] RT["+readConnectionTimeout+"]",false);
-			requestConfigBuilder.setConnectionRequestTimeout(connectionTimeout, TimeUnit.MILLISECONDS);
+			requestConfigBuilder.setConnectionRequestTimeout(connectionTimeout, TimeUnit.MILLISECONDS); // quanto tempo il client aspetterà per ottenere una connessione dal pool.
 			/** requestConfigBuilder.setConnectTimeout(connectionTimeout, TimeUnit.MILLISECONDS); spostato in initialize della connnection */
 			requestConfigBuilder.setResponseTimeout(readConnectionTimeout, TimeUnit.MILLISECONDS);
 			
@@ -593,6 +657,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			
 			// Preparazione messaggio da spedire
 			// Spedizione byte
+			MessageWriteToRunnable messageWriteToRunnable = null;
 			if(httpBody.isDoOutput()){
 				boolean consumeRequestMessage = true;
 				if(this.followRedirects && !gestioneRedirectTramiteLibrerieApache){
@@ -600,57 +665,105 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 				}
 				if(this.debug)
 					this.logger.debug("Spedizione byte (consume-request-message:"+consumeRequestMessage+")...");
-				boolean hasContentRestBuilded = false;
-				boolean hasContentRest = false;
+				boolean hasContentBuilded = false;
+				boolean hasContent = false;
 				OpenSPCoop2RestMessage<?> restMessage = null;
+				AbstractOpenSPCoop2Message_soap_impl<?> soapMessage = null;
 				if(this.isRest) {
 					restMessage = this.requestMsg.castAsRest();
-					hasContentRest = restMessage.hasContent();
-					hasContentRestBuilded = restMessage.isContentBuilded();
+					hasContent = restMessage.hasContent();
+					hasContentBuilded = restMessage.isContentBuilded();
 				}
-				if(this.isDumpBinarioRichiesta() || this.isSoap || hasContentRestBuilded || !consumeRequestMessage) {
-					DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+				else if(this.requestMsg instanceof AbstractOpenSPCoop2Message_soap_impl<?>) {
+					soapMessage = (AbstractOpenSPCoop2Message_soap_impl<?>) this.requestMsg;
+					hasContent = soapMessage.hasContent();
+					hasContentBuilded = soapMessage.isContentBuilded();
+				}
+				
+				if(
+						(!transferEncodingChunked) ||  // se non è transferEncodingChunked, bisogna conoscere il content length
+						this.isDumpBinarioRichiesta() || // dump abilitato o come debug o su db
+						(this.isSoap && soapMessage==null) || // soap non ti dipo AbstractOpenSPCoop2Message_soap_impl (metodi hasContent e isContentBuilded non disponibili)
+						hasContentBuilded || // contenuto della richiesta già in memoria
+						!consumeRequestMessage // non devo consumare la richiesta
+					) {
+					this.cloasebleDumpBout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
 							TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
 					try {
 						if(this.isSoap && this.sbustamentoSoap){
 							if(this.debug)
 								this.logger.debug("Sbustamento...");
-							TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,bout);
+							TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,this.cloasebleDumpBout);
 						}else{
-							this.requestMsg.writeTo(bout, consumeRequestMessage);
+							this.requestMsg.writeTo(this.cloasebleDumpBout, consumeRequestMessage);
 						}
-						bout.flush();
-						bout.close();
+						this.cloasebleDumpBout.flush();
+						this.cloasebleDumpBout.close();
 						if(this.isDumpBinarioRichiesta()) {
-							this.dumpBinarioRichiestaUscita(bout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
+							this.dumpBinarioRichiestaUscita(this.cloasebleDumpBout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
 						}
 						
 						HttpEntity httpEntity = null;
 						String baseMimeType = ContentTypeUtilities.readBaseTypeFromContentType(contentTypeRichiesta);
 						org.apache.hc.core5.http.ContentType ct = org.apache.hc.core5.http.ContentType.create(baseMimeType);
-						if(bout.isSerializedOnFileSystem()) {
-							httpEntity = new FileEntity(bout.getSerializedFile(), ct);
+						if(this.cloasebleDumpBout.isSerializedOnFileSystem()) {
+							if(transferEncodingChunked) {
+								httpEntity = new FileStreamingEntity(this.cloasebleDumpBout.getSerializedFile(), ct, null);
+							}
+							else {
+								httpEntity = new FileEntity(this.cloasebleDumpBout.getSerializedFile(), ct);
+							}
 						}
 						else {
-							httpEntity = new ByteArrayEntity(bout.toByteArray(), ct);
+							httpEntity = new ByteArrayEntity(this.cloasebleDumpBout.toByteArray(), ct, transferEncodingChunked);
 						}
 						this.httpRequest.setEntity(httpEntity);
 					}finally {
-						try {
-							bout.clearResources();
-						}catch(Exception t) {
-							this.logger.error("Release resources failed: "+t.getMessage(),t);
+						if(!this.cloasebleDumpBout.isSerializedOnFileSystem()) { // sennò devo rilasciare il file dopo aver fatto la send
+							try {
+								this.cloasebleDumpBout.clearResources();
+							}catch(Exception t) {
+								this.logger.error("Release resources failed: "+t.getMessage(),t);
+							}finally {
+								this.cloasebleDumpBout = null;
+							}
 						}
 					}
 				}
 				else {
-					// Siamo per forza rest con contenuto non costruito
-					if(hasContentRest) {
-						InputStream isRequest = this.requestMsg.castAsRest().getInputStream();
+					// Siamo per forza rest o soap con contenuto non costruito
+					if(hasContent) {
 						String baseMimeType = ContentTypeUtilities.readBaseTypeFromContentType(contentTypeRichiesta);
 						org.apache.hc.core5.http.ContentType ct = org.apache.hc.core5.http.ContentType.create(baseMimeType);
-						HttpEntity httpEntity = new InputStreamEntity(isRequest, ct);
-						this.httpRequest.setEntity(httpEntity);
+												
+						boolean useMessageObjectEntity = this.openspcoopProperties.isBIOConfigSyncClientUseCustomMessageObjectEntity();
+						if(useMessageObjectEntity) {
+							MessageObjectEntity moe = new MessageObjectEntity(this.requestMsg, consumeRequestMessage, ct, null);
+							this.httpRequest.setEntity(moe);
+						}
+						else {
+							InputStream isRequest = null;
+							if(this.isRest) {
+								isRequest = restMessage.getInputStream();
+							}
+							else {
+								int requestReadTimeout = readConnectionTimeout; // uso lo stesso tempo impostato per l'attesa della risposta 
+								if(this.getPddContext()!=null && this.getPddContext().containsKey(CostantiPdD.REQUEST_READ_TIMEOUT)) {
+									Object o = this.getPddContext().get(CostantiPdD.REQUEST_READ_TIMEOUT);
+									if(o instanceof Integer t) {
+										requestReadTimeout = t;
+									}
+								}
+								requestReadTimeout = requestReadTimeout + 1000; // aggiungo un ulteriore secondo per far scattare prima il timeout sull'input stream
+								isRequest = PipedUnblockedStreamFactory.newPipedUnblockedStream(this.logger.getLogger(), this.openspcoopProperties.getBIOConfigSyncClientPipedUnblockedStreamBuffer(), 
+										requestReadTimeout, "Request");
+								PipedUnblockedOutputStream puos = new PipedUnblockedOutputStream((IPipedUnblockedStream) isRequest);
+								messageWriteToRunnable = new MessageWriteToRunnable(this.logger.getLogger(), this.requestMsg, puos, consumeRequestMessage);
+								ConnectorApplicativeThreadPool.executeInSyncRequestPool(messageWriteToRunnable); // la scrittura si fermerà su buffer e poi prenderà a funzionare mentre viene letto l'input stream dal connettore httpcore
+							}
+							HttpEntity httpEntity = new InputStreamEntity(isRequest, ct);
+							this.httpRequest.setEntity(httpEntity);
+						}
 					}
 				}
 			}
@@ -675,6 +788,18 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			/** DEPRECATO: ClassicHttpResponse httpResponse = (ClassicHttpResponse) httpClient.execute(this.httpRequest); */
 			ClassicHttpResponse httpResponse = httpClient.executeOpen(httpHost, this.httpRequest, 
 					null); //new BasicHttpContext()); the context to use for the execution, or {@code null} to use the default context
+			if(this.cloasebleDumpBout!=null) { 
+				try {
+					this.cloasebleDumpBout.clearResources();
+				}catch(Exception t) {
+					this.logger.error("Release resources failed: "+t.getMessage(),t);
+				}finally {
+					this.cloasebleDumpBout = null;	
+				}
+			}
+			if(messageWriteToRunnable!=null && messageWriteToRunnable.getException()!=null) {
+				throw messageWriteToRunnable.getException();
+			}
 			this.httpEntityResponse = httpResponse.getEntity();
 			
 			
@@ -919,7 +1044,17 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			this.processReadTimeoutException(readConnectionTimeout, readConnectionTimeoutConfigurazioneGlobale, e, msgErrore);
 			
 			return false;
-		} 
+		} finally {
+			// se per caso non l'ho ancora chiuso lo faccio
+			if(this.cloasebleDumpBout!=null) { 
+				try {
+					this.cloasebleDumpBout.clearResources();
+					this.cloasebleDumpBout = null;
+				}catch(Exception t) {
+					this.logger.error("Release resources failed: "+t.getMessage(),t);
+				}
+			}
+		}
 
 	}
 
@@ -955,6 +1090,26 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
     		}
 			listExceptionChiusura.add(t);
 		}
+    	/**
+    	 * 
+    	 * NOTA: Non bisogna chiudere il CloseableHttpClient dopo ogni richiesta quando si utilizza un pool di connessioni. 
+    	 * Bisogna mantenerlo aperto per permettere al pool di gestire e riutilizzare le connessioni, migliorando così le prestazioni dell'applicazione. 
+    	 * 
+    	 */
+    	/**try{
+			// chiusura della connessione
+    		if(this.cloasebleHttpClient!=null){
+	    		if(this.debug && this.logger!=null)
+	    			this.logger.debug("Chiusura cloasebleHttpClient...");
+	    		this.cloasebleHttpClient.close(org.apache.hc.core5.io.CloseMode.GRACEFUL); // tenta di chiudere le connessioni in modo ordinato, permettendo alle richieste in corso di completarsi.
+	    	}
+				
+    	}catch(Exception t) {
+    		if(this.logger!=null) {
+				this.logger.debug("Chiusura cloasebleHttpClient fallita: "+t.getMessage(),t);
+    		}
+			listExceptionChiusura.add(t);
+		}*/
     	try{
 	    	// super.disconnect (Per risorse base)
 	    	super.disconnect();
@@ -982,11 +1137,15 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 		}
 	}
     
+	private Map<String,List<String>> recHeaderForInterceptor = null;
     @Override
 	protected void setRequestHeader(String key, List<String> values) throws Exception {
     	if(values!=null && !values.isEmpty()) {
     		for (String value : values) {
-    			this.httpRequest.addHeader(key,value);		
+    			this.httpRequest.addHeader(key,value);
+    			if(this.recHeaderForInterceptor!=null) {
+    				this.recHeaderForInterceptor.put(key,values);
+    			}
 			}
     	}
     }

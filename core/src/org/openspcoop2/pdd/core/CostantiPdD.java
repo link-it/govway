@@ -939,6 +939,9 @@ public class CostantiPdD {
     
     
     public static final MapKey<String> FILTRO_DUPLICATI_TEST = Map.newMapKey("FILTRO_DUPLICATI_TEST");
+    
+    
+    public static final MapKey<String> REQUEST_READ_TIMEOUT = Map.newMapKey("REQUEST_READ_TIMEOUT");
 }
 
 

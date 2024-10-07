@@ -1105,6 +1105,11 @@
 			<param name="token" value="logger.govway_proxy.level "/>
 			<param name="value" value="ERROR"/>
 		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="logger.org_apache_hc.level"/>
+			<param name="value" value="ERROR"/>
+		</antcall>
 		
 		<!-- Monitoraggio -->
 		<if>

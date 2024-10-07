@@ -61,12 +61,11 @@ public class PipedInputOutputStreamHandler implements StreamingHandler {
 	// ID classe streamingHandler
 	private String idStreamingHandler;
 	
-	public PipedInputOutputStreamHandler(String id, AbstractStreamingHandler streamingHandler, Logger log) throws Exception {
+	public PipedInputOutputStreamHandler(String id, AbstractStreamingHandler streamingHandler, Logger log) {
 		
 		this.log = log;
 		
 		//inizializzo la pipe di stream attraverso la quale eseguire la validazione
-		//this.out = new PipedOutputStream();
 		this.streamingHandler = streamingHandler;
 		this.idStreamingHandler = id;
 		
@@ -77,6 +76,9 @@ public class PipedInputOutputStreamHandler implements StreamingHandler {
 		this.submitThreadExecution = this.executor.submit(this.streamingHandler);
 	}
 	
+	private void logError(String msg, Exception e) {
+		this.log.error(msg, e);
+	}
 	
 	
 	// ** Metodi interfaccia StreamingHandler **
@@ -95,17 +97,17 @@ public class PipedInputOutputStreamHandler implements StreamingHandler {
 	@Override
 	public void feed(byte[] b) throws IOException {
 		
-		//System.out.println("@@PIPE@@ feed ["+b.length+"] bytes ...");
+		/**System.out.println("@@PIPE@@ feed ["+b.length+"] bytes ...");*/
 		
 		try{
 			if(!this.closed) {
 				// in.isPrematureEnd() ci dice se il processo attuato dallo streaming handler e' gia' terminato
 				// b == -1 significa che lo stream è finito
 				if(this.streamingHandler.isPrematureEnd()){
-					//System.out.println("@@PIPE@@ feed ["+b.length+"] bytes: END");
+					/**System.out.println("@@PIPE@@ feed ["+b.length+"] bytes: END");*/
 					this.end();
 				}else {
-					//System.out.println("@@PIPE@@ feed ["+b.length+"] bytes: WRITE");
+					/**System.out.println("@@PIPE@@ feed ["+b.length+"] bytes: WRITE");*/
 					this.streamingHandler.write(b);
 				}
 			}
@@ -118,7 +120,7 @@ public class PipedInputOutputStreamHandler implements StreamingHandler {
 	@Override
 	public void end() throws IOException {
 		
-		//System.out.println("@@PIPE@@ END");
+		/**System.out.println("@@PIPE@@ END");*/
 		closeResources();
 		
 	}
@@ -126,7 +128,7 @@ public class PipedInputOutputStreamHandler implements StreamingHandler {
 	@Override
 	public void closeResources() throws IOException {
 		
-		//System.out.println("@@PIPE@@ CLOSE RESOURCES ...");
+		/**System.out.println("@@PIPE@@ CLOSE RESOURCES ...");*/
 		IOException ioException = null;
 		
 		if(!this.closed) {
@@ -138,18 +140,10 @@ public class PipedInputOutputStreamHandler implements StreamingHandler {
 				
 				// Fermo esecutore del thread
 				this.executor.shutdown();				
-				try {
-	
-					 if (!this.executor.awaitTermination(20, TimeUnit.SECONDS)) {
-						 this.executor.shutdownNow();
-					 }
-				 } catch (InterruptedException pCaught) {	
-					 this.executor.shutdownNow();
-					 Thread.currentThread().interrupt();	
-				 }
+				awaitTermination();
 								
 			}catch(Throwable e){
-				if(e!=null && e instanceof InterruptedException) {
+				if(e instanceof InterruptedException) {
 					Thread.currentThread().interrupt();	
 				}
 				this.log.error("["+this.idStreamingHandler+"] end error",e);
@@ -157,30 +151,41 @@ public class PipedInputOutputStreamHandler implements StreamingHandler {
 			}
 		}
 		
-		//System.out.println("@@PIPE@@ RETRIVE RESULT ...");
+		/**System.out.println("@@PIPE@@ RETRIVE RESULT ...");*/
 		retrieveResult();
-		//System.out.println("@@PIPE@@ RETRIVED RESULT");
+		/**System.out.println("@@PIPE@@ RETRIVED RESULT");*/
 		
-		//System.out.println("@@PIPE@@ Release resource...");
+		/**System.out.println("@@PIPE@@ Release resource...");*/
 		this.releaseResource(); 
-		//System.out.println("@@PIPE@@ Release resource ok");
+		/**System.out.println("@@PIPE@@ Release resource ok");*/
 		
 		if(ioException!=null){
 			throw ioException;
 		}
 		
 	}
+	private void awaitTermination() {
+		try {
+			
+			 if (!this.executor.awaitTermination(20, TimeUnit.SECONDS)) {
+				 this.executor.shutdownNow();
+			 }
+		 } catch (InterruptedException pCaught) {	
+			 this.executor.shutdownNow();
+			 Thread.currentThread().interrupt();	
+		 }
+	}
 
 	private void retrieveResult() {
 		
-		if(this.retrieveResult == false){
+		if(!this.retrieveResult){
 			try {
 								
 				// Recupero risultato
 				if(this.submitThreadExecution!=null){
-					//System.out.println("@@PIPE@@ RETRIVE RESULT submitThreadExecution.get()...");
+					/**System.out.println("@@PIPE@@ RETRIVE RESULT submitThreadExecution.get()...");*/
 					this.resultThreadExecution = this.submitThreadExecution.get();
-					//System.out.println("@@PIPE@@ RETRIVE RESULT submitThreadExecution.get() ok");
+					/**System.out.println("@@PIPE@@ RETRIVE RESULT submitThreadExecution.get() ok");*/
 				}
 				
 				// Recupero eventuali errori non lanciati nella exception del metodo call() (Utile negli scenari in cui l'errore viene capito in streaming all'interno del thread)
@@ -189,7 +194,7 @@ public class PipedInputOutputStreamHandler implements StreamingHandler {
 								
 			}catch(Throwable e){
 				
-				if(e !=null && e instanceof InterruptedException) {
+				if(e instanceof InterruptedException) {
 					Thread.currentThread().interrupt();
 				}
 				
@@ -201,7 +206,7 @@ public class PipedInputOutputStreamHandler implements StreamingHandler {
 				this.log.error("["+this.idStreamingHandler+"] end error",e);
 				// Non devo rilanciare gli errori, la logica e' rimandata a chi usa gli handler.
 				// Devo solo salvare gli errori
-				// throw new IOException(e.getMessage());
+				/** throw new IOException(e.getMessage()); */
 			}
 			finally{
 				// Risultati letti
@@ -213,14 +218,14 @@ public class PipedInputOutputStreamHandler implements StreamingHandler {
 	private void releaseResource() throws IOException{
 		try {
 			if(!this.closed) {
-				//this.out = null;
+				/**this.out = null;*/
 				this.streamingHandler.close();
 				this.streamingHandler = null;
 				this.submitThreadExecution = null;
 				this.closed = true;
 			}
 		}catch(Exception e){
-			this.log.error("["+this.idStreamingHandler+"] closeResources error",e);
+			this.logError("["+this.idStreamingHandler+"] closeResources error",e);
 			throw new IOException(e.getMessage());
 		}
 	}
