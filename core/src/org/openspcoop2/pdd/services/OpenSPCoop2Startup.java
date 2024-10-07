@@ -123,6 +123,7 @@ import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
 import org.openspcoop2.pdd.core.byok.DriverBYOK;
 import org.openspcoop2.pdd.core.byok.DriverBYOKUtilities;
 import org.openspcoop2.pdd.core.cache.GestoreCacheCleaner;
+import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCOREConnectionManager;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneGatewayControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.INotify;
@@ -2701,6 +2702,14 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 			
+			/* ----------- Inizializzazione BIO Client ------------ */
+			try{
+				ConnettoreHTTPCOREConnectionManager.initialize();
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Inizializzazione BIO Client Manager");
+				return;
+			}
+			
 			
 			
 			
@@ -4086,6 +4095,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		// Connettori 
 		try{
 			ConnectorApplicativeThreadPool.shutdown();				
+		}catch(Throwable e){
+			// ignore
+		}
+		try{
+			ConnettoreHTTPCOREConnectionManager.stop();
 		}catch(Throwable e){
 			// ignore
 		}

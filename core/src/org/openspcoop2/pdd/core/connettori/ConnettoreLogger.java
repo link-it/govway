@@ -47,13 +47,17 @@ public class ConnettoreLogger {
 		this.pddContext = pddContext;
 		
 		Object oIdTransazione = this.pddContext.getObject(Costanti.ID_TRANSAZIONE);
-		if(oIdTransazione!=null && (oIdTransazione instanceof String)){
-			this.idTransazione = (String) oIdTransazione;
+		if(oIdTransazione instanceof String id){
+			this.idTransazione = id;
 		}
 		
 		this.loggerConnettore = OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori();
 		
 		this.loggerCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+	}
+	
+	public String getIdTransazione() {
+		return this.idTransazione;
 	}
 	
 	public Logger getLogger(){
@@ -85,49 +89,56 @@ public class ConnettoreLogger {
 	}
 	
 	public void error(String msg){
-		this.loggerCore.error(this.buildMsg(msg));
+		String errorMsg = this.buildMsg(msg);
+		this.loggerCore.error(errorMsg);
 		if(this.debug){
-			this.loggerConnettore.error(this.buildMsg(msg));
+			this.loggerConnettore.error(errorMsg);
 		}
 	}
 	
 	public void error(String msg, Throwable t){
-		this.loggerCore.error(this.buildMsg(msg),t);
+		String errorMsg = this.buildMsg(msg);
+		this.loggerCore.error(errorMsg,t);
 		if(this.debug){
-			this.loggerConnettore.error(this.buildMsg(msg),t);
+			this.loggerConnettore.error(errorMsg,t);
 		}
 	}
 	
 	public void warn(String msg){
-		this.loggerCore.warn(this.buildMsg(msg));
+		String warnMsg = this.buildMsg(msg);
+		this.loggerCore.warn(warnMsg);
 		if(this.debug){
-			this.loggerConnettore.warn(this.buildMsg(msg));
+			this.loggerConnettore.warn(warnMsg);
 		}
 	}
 	public void warn(String msg, Throwable t){
-		this.loggerCore.warn(this.buildMsg(msg),t);
+		String warnMsg = this.buildMsg(msg);
+		this.loggerCore.warn(warnMsg,t);
 		if(this.debug){
-			this.loggerConnettore.warn(this.buildMsg(msg),t);
+			this.loggerConnettore.warn(warnMsg,t);
 		}
 	}
 
 	public void info(String msg, boolean logInCore){
+		String infoMsg = this.buildMsg(msg);
 		if(logInCore){
-			this.loggerCore.info(this.buildMsg(msg));
+			this.loggerCore.info(infoMsg);
 		}
 		if(this.debug){
-			this.loggerConnettore.info(this.buildMsg(msg));
+			this.loggerConnettore.info(infoMsg);
 		}
 	}
 	
 	public void debug(String msg){
 		if(this.debug){
-			this.loggerConnettore.debug(this.buildMsg(msg));
+			String debugMsg = this.buildMsg(msg);
+			this.loggerConnettore.debug(debugMsg);
 		}
 	}
 	public void debug(String msg, Throwable t){
 		if(this.debug){
-			this.loggerConnettore.debug(this.buildMsg(msg), t);
+			String debugMsg = this.buildMsg(msg);
+			this.loggerConnettore.debug(debugMsg, t);
 		}
 	}
 

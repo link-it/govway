@@ -226,6 +226,10 @@ public class OpenSPCoop2Properties {
 		return "Proprietà di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+defaultValue;
 	}
 	
+	private String getMessaggioProprietaNonImpostata(String pName){
+		return "Proprietà di openspcoop '"+pName+"' non impostata";
+	}
+	
 	private String getMessaggioProprietaNonImpostata(String pName, Exception e, int defaultValue){
 		return getMessaggioProprietaNonImpostata(pName, e, defaultValue+"");
 	}
@@ -1469,9 +1473,14 @@ public class OpenSPCoop2Properties {
 			this.getReadConnectionTimeoutRicezioneContenutiApplicativi();
 			this.getReadConnectionTimeoutRicezioneBuste();
 			
-			this.getBIOConfigSyncClientMaxPerRoute("qualsiasi", -1);
-			this.getBIOConfigSyncClientMaxTotal("qualsiasi", -1);
+			this.getBIOConfigSyncClientMaxPerRoute("qualsiasiRotta", -1);
+			this.getBIOConfigSyncClientMaxTotal("qualsiasiTotal", -1);
 			this.getBIOConfigSyncClientValidateAfterInactivity("qualsiasi", -1);
+			this.getBIOConfigSyncClientCloseIdleConnectionsAfterSeconds();
+			this.getBIOConfigSyncClientCloseIdleConnectionsCheckIntervalSeconds();
+			this.isBIOConfigSyncClientCloseIdleConnectionsDebug();
+			this.getBIOConfigSyncClientExpireUnusedAfterSeconds();
+			this.getBIOConfigSyncClientCloseUnusedAfterSeconds();
 			if(!this.isBIOConfigSyncClientUseCustomMessageObjectEntity()) {
 				this.getBIOConfigSyncClientPipedUnblockedStreamBuffer();
 				this.getBIOConfigSyncClientApplicativeThreadPoolSize();
@@ -14411,7 +14420,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getBIOConfigSyncClientValidateAfterInactivity = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata");
+					this.logWarn(getMessaggioProprietaNonImpostata(pName));
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -14485,6 +14494,121 @@ public class OpenSPCoop2Properties {
 		return defaultValue;
 	}
 	
+	private Integer getBIOConfigSyncClientCloseIdleConnectionsAfterSeconds = null;
+	private Boolean getBIOConfigSyncClientCloseIdleConnectionsAfterSecondsRead = null;
+	public Integer getBIOConfigSyncClientCloseIdleConnectionsAfterSeconds() {	
+		if(this.getBIOConfigSyncClientCloseIdleConnectionsAfterSecondsRead==null){
+			String pName = "org.openspcoop2.pdd.connettori.syncClient.closeIdleConnectionsAfterSeconds";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.getBIOConfigSyncClientCloseIdleConnectionsAfterSeconds = java.lang.Integer.parseInt(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata");
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}  
+			this.getBIOConfigSyncClientCloseIdleConnectionsAfterSecondsRead = true;
+		}
+
+		return this.getBIOConfigSyncClientCloseIdleConnectionsAfterSeconds;
+	}
+	
+	private Integer getBIOConfigSyncClientCloseIdleConnectionsCheckIntervalSeconds = null;
+	public Integer getBIOConfigSyncClientCloseIdleConnectionsCheckIntervalSeconds() {	
+		if(this.getBIOConfigSyncClientCloseIdleConnectionsCheckIntervalSeconds==null){
+			String pName = "org.openspcoop2.pdd.connettori.syncClient.closeIdleConnectionsCheckIntervalSeconds";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.getBIOConfigSyncClientCloseIdleConnectionsCheckIntervalSeconds = java.lang.Integer.parseInt(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS);
+					this.getBIOConfigSyncClientCloseIdleConnectionsCheckIntervalSeconds = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS+", errore:"+e.getMessage(),e);
+				this.getBIOConfigSyncClientCloseIdleConnectionsCheckIntervalSeconds = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS;
+			}  
+		}
+
+		return this.getBIOConfigSyncClientCloseIdleConnectionsCheckIntervalSeconds;
+	}
+	
+	private Integer getBIOConfigSyncClientExpireUnusedAfterSeconds = null;
+	public Integer getBIOConfigSyncClientExpireUnusedAfterSeconds() {	
+		if(this.getBIOConfigSyncClientExpireUnusedAfterSeconds==null){
+			String pName = "org.openspcoop2.pdd.connettori.syncClient.expireUnusedAfterSeconds";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.getBIOConfigSyncClientExpireUnusedAfterSeconds = java.lang.Integer.parseInt(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS);
+					this.getBIOConfigSyncClientExpireUnusedAfterSeconds = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS+", errore:"+e.getMessage(),e);
+				this.getBIOConfigSyncClientExpireUnusedAfterSeconds = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS;
+			}  
+		}
+
+		return this.getBIOConfigSyncClientExpireUnusedAfterSeconds;
+	}
+	
+	private Integer getBIOConfigSyncClientCloseUnusedAfterSeconds = null;
+	public Integer getBIOConfigSyncClientCloseUnusedAfterSeconds() {	
+		if(this.getBIOConfigSyncClientCloseUnusedAfterSeconds==null){
+			String pName = "org.openspcoop2.pdd.connettori.syncClient.closeUnusedAfterSeconds";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.getBIOConfigSyncClientCloseUnusedAfterSeconds = java.lang.Integer.parseInt(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS);
+					this.getBIOConfigSyncClientCloseUnusedAfterSeconds = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS+", errore:"+e.getMessage(),e);
+				this.getBIOConfigSyncClientCloseUnusedAfterSeconds = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS;
+			}  
+		}
+
+		return this.getBIOConfigSyncClientCloseUnusedAfterSeconds;
+	}
+	
+	private Boolean isBIOConfigSyncClientCloseIdleConnectionsDebug = null;
+	public boolean isBIOConfigSyncClientCloseIdleConnectionsDebug() {	
+		if(this.isBIOConfigSyncClientCloseIdleConnectionsDebug==null){
+			String pName = "org.openspcoop2.pdd.connettori.syncClient.closeIdleConnections.debug";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.isBIOConfigSyncClientCloseIdleConnectionsDebug = java.lang.Boolean.parseBoolean(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.isBIOConfigSyncClientCloseIdleConnectionsDebug = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.isBIOConfigSyncClientCloseIdleConnectionsDebug = true;
+			}  
+		}
+
+		return this.isBIOConfigSyncClientCloseIdleConnectionsDebug;
+	}
+	
 	private Boolean isBIOConfigSyncClientUseCustomMessageObjectEntity = null;
 	public boolean isBIOConfigSyncClientUseCustomMessageObjectEntity() {	
 		if(this.isBIOConfigSyncClientUseCustomMessageObjectEntity==null){
@@ -14542,12 +14666,12 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getBIOConfigSyncClientApplicativeThreadPoolSize = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+100);
-					this.getBIOConfigSyncClientApplicativeThreadPoolSize = 100;
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_POOL_SIZE);
+					this.getBIOConfigSyncClientApplicativeThreadPoolSize = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_POOL_SIZE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+100+", errore:"+e.getMessage(),e);
-				this.getBIOConfigSyncClientApplicativeThreadPoolSize = 100;
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_POOL_SIZE+", errore:"+e.getMessage(),e);
+				this.getBIOConfigSyncClientApplicativeThreadPoolSize = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_POOL_SIZE;
 			}  
 		}
 
@@ -14637,12 +14761,12 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getNIOConfigAsyncRequestApplicativeThreadPoolSize = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+100);
-					this.getNIOConfigAsyncRequestApplicativeThreadPoolSize = 100;
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_REQUEST_POOL_SIZE);
+					this.getNIOConfigAsyncRequestApplicativeThreadPoolSize = CostantiPdD.CONNETTORE_NIO_ASYNC_REQUEST_POOL_SIZE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+100+", errore:"+e.getMessage(),e);
-				this.getNIOConfigAsyncRequestApplicativeThreadPoolSize = 100;
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_REQUEST_POOL_SIZE+", errore:"+e.getMessage(),e);
+				this.getNIOConfigAsyncRequestApplicativeThreadPoolSize = CostantiPdD.CONNETTORE_NIO_ASYNC_REQUEST_POOL_SIZE;
 			}  
 		}
 
@@ -14708,12 +14832,12 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getNIOConfigAsyncResponseApplicativeThreadPoolSize = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+100);
-					this.getNIOConfigAsyncResponseApplicativeThreadPoolSize = 100;
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_RESPONSE_POOL_SIZE);
+					this.getNIOConfigAsyncResponseApplicativeThreadPoolSize = CostantiPdD.CONNETTORE_NIO_ASYNC_RESPONSE_POOL_SIZE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+100+", errore:"+e.getMessage(),e);
-				this.getNIOConfigAsyncResponseApplicativeThreadPoolSize = 100;
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_RESPONSE_POOL_SIZE+", errore:"+e.getMessage(),e);
+				this.getNIOConfigAsyncResponseApplicativeThreadPoolSize = CostantiPdD.CONNETTORE_NIO_ASYNC_RESPONSE_POOL_SIZE;
 			}  
 		}
 

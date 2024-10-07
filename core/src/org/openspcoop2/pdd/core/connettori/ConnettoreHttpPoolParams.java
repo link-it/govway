@@ -17,14 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.pdd.core.connettori.httpcore5;
-
-import java.net.URL;
-import java.util.List;
-
-import org.openspcoop2.core.config.Proprieta;
-import org.openspcoop2.pdd.config.CostantiProprieta;
-import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+package org.openspcoop2.pdd.core.connettori;
 
 /**
  * ConnettoreHttpPoolParams
@@ -34,21 +27,6 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
  * @version $Rev$, $Date$
  */
 public class ConnettoreHttpPoolParams {
-
-	public ConnettoreHttpPoolParams(OpenSPCoop2Properties openspcoopProperties, URL url, List<Proprieta> proprietaPorta) {
-		
-		String host = url.getHost();
-		int port = url.getPort();
-		
-		this.maxTotal = openspcoopProperties.getBIOConfigSyncClientMaxTotal(host, port);
-		this.maxTotal = CostantiProprieta.getConnettoriConnectionPoolMaxTotal(proprietaPorta, this.maxTotal);
-		
-		this.defaultMaxPerRoute = openspcoopProperties.getBIOConfigSyncClientMaxPerRoute(host, port);
-		this.defaultMaxPerRoute = CostantiProprieta.getConnettoriConnectionPoolMaxPerRoute(proprietaPorta, this.defaultMaxPerRoute);
-		
-		Integer validateAfterInactivityDefault = openspcoopProperties.getBIOConfigSyncClientValidateAfterInactivity(host, port);
-		this.validateAfterInactivity = CostantiProprieta.getConnettoriConnectionPoolValidateAfterInactivity(proprietaPorta, validateAfterInactivityDefault);
-	}
 	
 	private Integer validateAfterInactivity; 
 	private int maxTotal;
@@ -78,10 +56,10 @@ public class ConnettoreHttpPoolParams {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("maxTotal[").append(this.maxTotal).append("]");
-		sb.append(" maxPerRoute[").append(this.defaultMaxPerRoute).append("]");
+		sb.append("maxTotal:").append(this.maxTotal);
+		sb.append(" ").append("maxPerRoute:").append(this.defaultMaxPerRoute);
 		if(this.validateAfterInactivity!=null && this.validateAfterInactivity.intValue()>0) {
-			sb.append(" validateAfterInactivity[").append(this.validateAfterInactivity.intValue()).append("]");
+			sb.append(" ").append("validateAfterInactivity:").append(this.validateAfterInactivity.intValue());
 		}
 		return sb.toString();
 	}

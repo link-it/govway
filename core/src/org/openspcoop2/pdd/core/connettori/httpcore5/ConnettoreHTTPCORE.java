@@ -28,17 +28,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.hc.client5.http.ConnectionKeepAliveStrategy;
-import org.apache.hc.client5.http.HttpRoute;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -49,29 +41,15 @@ import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.classic.methods.HttpTrace;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
-import org.apache.hc.client5.http.config.ConnectionConfig;
-import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
-import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
-import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
-import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
 import org.apache.hc.core5.http.ClassicHttpResponse;
-import org.apache.hc.core5.http.ConnectionReuseStrategy;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHost;
-import org.apache.hc.core5.http.config.Registry;
-import org.apache.hc.core5.http.config.RegistryBuilder;
-import org.apache.hc.core5.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.FileEntity;
 import org.apache.hc.core5.http.io.entity.InputStreamEntity;
-import org.apache.hc.core5.pool.PoolStats;
-import org.apache.hc.core5.util.TimeValue;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
@@ -85,11 +63,11 @@ import org.openspcoop2.message.utils.MessageWriteToRunnable;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 import org.openspcoop2.pdd.core.connettori.ConnettoreExtBaseHTTP;
+import org.openspcoop2.pdd.core.connettori.ConnettoreHttpPoolParams;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.services.connector.ConnectorApplicativeThreadPool;
 import org.openspcoop2.utils.NameValue;
-import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.io.notifier.unblocked.IPipedUnblockedStream;
@@ -101,8 +79,6 @@ import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.RFC2047Utilities;
-import org.openspcoop2.utils.transport.http.SSLUtilities;
-import org.openspcoop2.utils.transport.http.WrappedLogSSLSocketFactory;
 
 /**
  * Connettore che utilizza la libreria httpcore5
@@ -115,9 +91,10 @@ import org.openspcoop2.utils.transport.http.WrappedLogSSLSocketFactory;
 public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 
 	public static final String ENDPOINT_TYPE = "httpcore";
+	public static final String ID_HTTPCORE = "HTTPCore5-BIO";
+
+	private static final String MSG_RELEASE_RESOURCES_FAILED = "Release resources failed: ";
 	
-	
-	private static final boolean USE_POOL = true;
 	private static boolean gestioneRedirectTramiteLibrerieApache = false; // con l'implementazione di govway, vengono registrati gli hop nei diagnostici 
 	
 	private HttpEntity httpEntityResponse = null;
@@ -136,170 +113,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 	public ConnettoreHTTPCORE(boolean https){
 		super(https);
 	}
-	
-	private static final boolean THREAD_CHECK_POOL = false;
-	private static void setThreadCheckPool(PoolingHttpClientConnectionManager connectionManager) {
-		ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-		executorService.scheduleAtFixedRate(() -> {
-			
-			System.out.println("\n\n\nPRIMA");
-			print(connectionManager);
-						
-		    connectionManager.closeExpired();
-		    connectionManager.closeIdle(TimeValue.ofSeconds(30));
-		    
-		    System.out.println("DOPO");
-			print(connectionManager);
-		    
-		    
-		}, 30, 30, TimeUnit.SECONDS);
-	}
-	private static void print(PoolingHttpClientConnectionManager connectionManager) {
-		// Statistiche totali
-	    PoolStats totalStats = connectionManager.getTotalStats();
-	    System.out.println("  Totali - In uso: " + totalStats.getLeased() + "; Disponibili: " +
-	                       totalStats.getAvailable() + "; In attesa: " + totalStats.getPending());
-
-	    // Ottieni tutte le rotte gestite dal connection manager
-	    Set<HttpRoute> routes = connectionManager.getRoutes();
-
-	    for (HttpRoute route : routes) {
-	    	PoolStats routeStats = connectionManager.getStats(route);
-	        System.out.println("  Rotta: " + route + " - In uso: " + routeStats.getLeased() +
-	                           "; Disponibili: " + routeStats.getAvailable() +
-	                           "; In attesa: " + routeStats.getPending());
-	    }
-	}
-	
-	private static Map<String, PoolingHttpClientConnectionManager> cmMap = new HashMap<>();
-	private static synchronized void initialize(String key, SSLConnectionSocketFactory sslConnectionSocketFactory, ConnettoreHttpPoolParams poolParams, long connectionTimeout){
-		if(!ConnettoreHTTPCORE.cmMap.containsKey(key)){
-						
-			PoolingHttpClientConnectionManager cm = null;
-			if(sslConnectionSocketFactory!=null) {
-				Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder
-				        .<ConnectionSocketFactory> create().register("https", sslConnectionSocketFactory)
-				        .build();
-				cm = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
-			}
-			else {
-				cm = new PoolingHttpClientConnectionManager();
-			}
-			
-			// Increase max total connection
-			cm.setMaxTotal(poolParams.getMaxTotal());
-			// Increase default max connection per route
-			cm.setDefaultMaxPerRoute(poolParams.getDefaultMaxPerRoute());
-			// Increase max connections for localhost:80
-			/**HttpHost localhost = new HttpHost("locahost", 80);
-			cm.setMaxPerRoute(new HttpRoute(localhost), 50);*/
-			 
-			ConnectionConfig.Builder buider = ConnectionConfig.custom();
-			buider.setConnectTimeout(connectionTimeout, TimeUnit.MILLISECONDS);
-			/**
-			 * specifica l'intervallo di tempo di inattività dopo il quale le connessioni persistenti dovrebbero essere convalidate prima di essere riutilizzate. 
-			 * Questo è importante per evitare l'uso di connessioni che potrebbero essere state chiuse dal server o interrotte per altri motivi.
-			 * Un parametro troppo basso, a meno che non ci sia una necessità specifica, non va usato poiché ciò potrebbe introdurre un overhead significativo e influire sulle prestazioni complessive dell'applicazione.
-			 **/
-			if(poolParams.getValidateAfterInactivity()!=null) {
-				buider.setValidateAfterInactivity(poolParams.getValidateAfterInactivity().intValue(), TimeUnit.MILLISECONDS);
-			}
-			ConnectionConfig config = buider.build();
-			cm.setDefaultConnectionConfig(config);
-			
-			if(THREAD_CHECK_POOL) {
-				setThreadCheckPool(cm);
-			}
-			
-			ConnettoreHTTPCORE.cmMap.put(key, cm);
-		}
-	}
-	
-	private CloseableHttpClient buildHttpClient(ConnettoreHttpPoolParams poolParams, long connectionTimeout, 
-			ConnectionKeepAliveStrategy keepAliveStrategy, SSLSocketFactory sslSocketFactory, boolean usePool,
-			ConnettoreHttpRequestInterceptor httpRequestInterceptor) throws UtilsException{
 		
-		HttpClientBuilder httpClientBuilder = HttpClients.custom();
-			
-		// Imposta Contesto SSL se attivo
-		
-		String prefixCT = "connTimeout["+connectionTimeout+"] ";
-		
-		String prefixPoolParams = " "+poolParams.toString()+ " ";
-		
-		String key = null;
-		if(this.sslContextProperties!=null){
-			key = prefixCT + prefixPoolParams + "https " +this.sslContextProperties.toString();
-		}
-		else {
-			key = prefixCT + prefixPoolParams + "http";
-		}
-		
-		SSLConnectionSocketFactory sslConnectionSocketFactory = null;
-		if(this.sslContextProperties!=null && 
-				(!usePool || !ConnettoreHTTPCORE.cmMap.containsKey(key))){
-			if(this.debug) {
-				String clientCertificateConfigurated = this.sslContextProperties.getKeyStoreLocation();
-				sslSocketFactory = new WrappedLogSSLSocketFactory(sslSocketFactory, 
-						this.logger.getLogger(), this.logger.buildMsg(""),
-						clientCertificateConfigurated);
-			}		
-			
-			StringBuilder bfLog = new StringBuilder();
-			HostnameVerifier hostnameVerifier = SSLUtilities.generateHostnameVerifier(this.sslContextProperties, bfLog, 
-					this.logger.getLogger(), this.loader);
-			if(this.debug)
-				this.logger.debug(bfLog.toString());
-			
-			if(hostnameVerifier==null) {
-				hostnameVerifier = new DefaultHostnameVerifier();
-			}
-			sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslSocketFactory, hostnameVerifier);
-		}
-		
-		if(usePool) {
-						
-			// Caso con pool
-			if(!ConnettoreHTTPCORE.cmMap.containsKey(key)){
-				ConnettoreHTTPCORE.initialize(key, sslConnectionSocketFactory, poolParams, connectionTimeout);
-			}
-			
-			PoolingHttpClientConnectionManager cm = ConnettoreHTTPCORE.cmMap.get(key);
-			
-			/**System.out.println("-----GET CONNECTION [START] ----");
-			System.out.println("PRIMA CLOSE AVAILABLE["+cm.getTotalStats().getAvailable()+"] LEASED["
-					+cm.getTotalStats().getLeased()+"] MAX["+cm.getTotalStats().getMax()+"] PENDING["+cm.getTotalStats().getPending()+"]");
-			 BLOCKED ConnettoreHTTPCORE.cm.closeExpiredConnections();
-			 BLOCKED ConnettoreHTTPCORE.cm.closeIdleConnections(30, java.util.concurrent.TimeUnit.SECONDS);
-			System.out.println("DOPO CLOSE AVAILABLE["+cm.getTotalStats().getAvailable()+"] LEASED["
-					+cm.getTotalStats().getLeased()+"] MAX["+cm.getTotalStats().getMax()+"] PENDING["+cm.getTotalStats().getPending()+"]");*/
-			httpClientBuilder.setConnectionManager(cm);
-		}
-		else {
-			/**if(sslConnectionSocketFactory!=null) {
-				httpClientBuilder.setSSLSocketFactory(sslConnectionSocketFactory);		
-			}*/
-		}
-		
-		ConnectionReuseStrategy defaultClientConnectionReuseStrategy = new DefaultConnectionReuseStrategy();
-		httpClientBuilder.setConnectionReuseStrategy(defaultClientConnectionReuseStrategy);
-		
-		if(keepAliveStrategy!=null){
-			httpClientBuilder.setKeepAliveStrategy(keepAliveStrategy);
-		}
-				
-		/**System.out.println("PRESA LA CONNESSIONE AVAILABLE["+cm.getTotalStats().getAvailable()+"] LEASED["
-				+cm.getTotalStats().getLeased()+"] MAX["+cm.getTotalStats().getMax()+"] PENDING["+cm.getTotalStats().getPending()+"]");
-		System.out.println("-----GET CONNECTION [END] ----");*/
-		
-		if(httpRequestInterceptor!=null) {
-			httpClientBuilder.addRequestInterceptorLast(httpRequestInterceptor);
-		}
-		
-		return httpClientBuilder.build();
-	}
-	
-	
 	@Override
 	protected boolean sendHTTP(ConnettoreMsg request) {
 		
@@ -328,7 +142,12 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			if(this.isDumpBinarioRichiesta()) {
 				propertiesTrasportoDebug = new HashMap<>();
 			}
-
+			
+			// ConnettoreHTTPCOREConnectionConfig
+			ConnettoreHTTPCOREConnectionConfig config = new ConnettoreHTTPCOREConnectionConfig();
+			config.setDebug(this.debug);
+			config.setSslContextProperties(this.sslContextProperties);
+			
 			
 			// Lettura connectionTimeout
 			if(this.properties.get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)!=null){
@@ -342,9 +161,13 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			if(connectionTimeout==-1){
 				connectionTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
 			}
+			config.setConnectionTimeout(connectionTimeout);
+			
 			
 			// Lettura Parametri Pool
-			ConnettoreHttpPoolParams poolParams = new ConnettoreHttpPoolParams(this.openspcoopProperties, url, this.proprietaPorta);
+			ConnettoreHttpPoolParams poolParams = ConnettoreHttpPoolParamsBuilder.newConnettoreHttpPoolParams(this.openspcoopProperties, url, this.proprietaPorta);
+			config.setHttpPoolParams(poolParams);
+			
 			
 			// Creazione interceptor
 			ConnettoreHttpRequestInterceptor httpRequestInterceptor = null;
@@ -353,13 +176,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 				httpRequestInterceptor = new ConnettoreHttpRequestInterceptor(this.logger, this.recHeaderForInterceptor);
 			}
 			
-			// Creazione Connessione
-			if(this.debug)
-				this.logger.info("Creazione connessione alla URL ["+this.location+"]...",false);
-			HttpClient httpClient = buildHttpClient(poolParams, connectionTimeout, keepAliveStrategy, buildSSLContextFactory(), 
-					ConnettoreHTTPCORE.USE_POOL,
-					httpRequestInterceptor);
-			
+						
 			// HttpMethod
 			if(this.httpMethod==null){
 				throw new ConnettoreException("HttpRequestMethod non definito");
@@ -397,7 +214,6 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			if(this.httpMethod==null){
 				throw new ConnettoreException("HttpRequest non definito ?");
 			}
-			RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
 			
 			
 			
@@ -469,36 +285,26 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			}
 			if(this.debug)
 				this.logger.info("Impostazione http timeout CT["+connectionTimeout+"] RT["+readConnectionTimeout+"]",false);
-			requestConfigBuilder.setConnectionRequestTimeout(connectionTimeout, TimeUnit.MILLISECONDS); // quanto tempo il client aspetterà per ottenere una connessione dal pool.
-			/** requestConfigBuilder.setConnectTimeout(connectionTimeout, TimeUnit.MILLISECONDS); spostato in initialize della connnection */
-			requestConfigBuilder.setResponseTimeout(readConnectionTimeout, TimeUnit.MILLISECONDS);
+			config.setReadTimeout(readConnectionTimeout);
 			
 
-
-			
-			
-			
 			// Gestione automatica del redirect
 			if(this.followRedirects) {
 				if(gestioneRedirectTramiteLibrerieApache && !this.isRest) {
-					requestConfigBuilder.setRedirectsEnabled(true);
-					requestConfigBuilder.setCircularRedirectsAllowed(true);
+					config.setFollowRedirect(true);
 					if(this.maxNumberRedirects>0) {
-						requestConfigBuilder.setMaxRedirects(this.maxNumberRedirects);
+						config.setMaxNumberRedirects(this.maxNumberRedirects);
 					}
 				}
 				else {
-					requestConfigBuilder.setRedirectsEnabled(false);
+					config.setFollowRedirect(false);
 				}
 			}
 			else {
-				requestConfigBuilder.setRedirectsEnabled(false);
+				config.setFollowRedirect(false);
 			}
 
-			
-			
-			
-			
+
 			// Authentication BASIC
 			if(this.debug)
 				this.logger.debug("Impostazione autenticazione...");
@@ -520,7 +326,6 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			}
 			
 			
-			
 			// Authentication Token
 			NameValue nv = this.getTokenHeader();
 	    	if(nv!=null) {
@@ -533,8 +338,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 	    		}
 	    	}
 	    	
-	    	
-	    	
+	    	    	
 	    	// Authentication Api Key
 			String apiKey = this.properties.get(CostantiConnettori.CONNETTORE_APIKEY);
 			if(apiKey!=null && StringUtils.isNotEmpty(apiKey)){
@@ -559,8 +363,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			}
 	    	
 	    	
-	    	
-	    	
+			
 	    	// ForwardProxy
 	    	if(this.forwardProxy_headerName!=null && this.forwardProxy_headerValue!=null) {
 	    		if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
@@ -573,7 +376,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 	    	}
 
 			
-			
+	    	
 			// Impostazione Proprieta del trasporto
 			if(this.debug)
 				this.logger.debug("Impostazione header di trasporto...");
@@ -615,13 +418,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			}
 			
 			
-			
-			
-			
-			
-			
-			
-			
+
 			// Aggiunga del SoapAction Header in caso di richiesta SOAP
 			// spostato sotto il forwardHeader per consentire alle trasformazioni di modificarla
 			if(this.isSoap && !this.sbustamentoSoap){
@@ -723,7 +520,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 							try {
 								this.cloasebleDumpBout.clearResources();
 							}catch(Exception t) {
-								this.logger.error("Release resources failed: "+t.getMessage(),t);
+								this.logger.error(MSG_RELEASE_RESOURCES_FAILED+t.getMessage(),t);
 							}finally {
 								this.cloasebleDumpBout = null;
 							}
@@ -775,8 +572,15 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			}
 			
 			
+			// Creazione Connessione
+			if(this.debug)
+				this.logger.info("Creazione connessione alla URL ["+this.location+"]...",false);
+			ConnettoreHTTPCOREConnection conn = ConnettoreHTTPCOREConnectionManager.getConnettoreHTTPCOREConnection(config, buildSSLContextFactory(), 
+					this.loader, this.logger, keepAliveStrategy, httpRequestInterceptor);
+			HttpClient httpClient = conn.getHttpclient();
+			
 			// Imposto Configurazione
-			this.httpRequest.setConfig(requestConfigBuilder.build());
+			this.httpRequest.setConfig(conn.getRequestConfig());
 			
 			
 			
@@ -792,7 +596,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 				try {
 					this.cloasebleDumpBout.clearResources();
 				}catch(Exception t) {
-					this.logger.error("Release resources failed: "+t.getMessage(),t);
+					this.logger.error(MSG_RELEASE_RESOURCES_FAILED+t.getMessage(),t);
 				}finally {
 					this.cloasebleDumpBout = null;	
 				}
@@ -952,7 +756,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 						
 					}else{
 						if(this.isSoap) {
-							throw new ConnettoreException("Gestione redirect (code:"+this.codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non attiva");
+							throw new ConnettoreException("Gestione redirect [soap] (code:"+this.codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non attiva");
 						}
 						else {
 							this.logger.debug("Gestione redirect (code:"+this.codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non attiva");
@@ -999,7 +803,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			
 			/* ------------  Gestione Risposta ------------- */
 			
-			this.normalizeInputStreamResponse((int)readConnectionTimeout, readConnectionTimeoutConfigurazioneGlobale);
+			this.normalizeInputStreamResponse(readConnectionTimeout, readConnectionTimeoutConfigurazioneGlobale);
 			
 			this.initCheckContentTypeConfiguration();
 			
@@ -1051,7 +855,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 					this.cloasebleDumpBout.clearResources();
 					this.cloasebleDumpBout = null;
 				}catch(Exception t) {
-					this.logger.error("Release resources failed: "+t.getMessage(),t);
+					this.logger.error(MSG_RELEASE_RESOURCES_FAILED+t.getMessage(),t);
 				}
 			}
 		}
@@ -1062,34 +866,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 	@Override
 	public void disconnect() throws ConnettoreException{
 		List<Exception> listExceptionChiusura = new ArrayList<>();
-		try{
-			// Gestione finale della connessione    		
-    		if(this.isResponse!=null){
-	    		if(this.debug && this.logger!=null)
-	    			this.logger.debug("Chiusura socket...");
-	    		this.isResponse.close();
-			}				
-		}
-		catch(Exception t) {
-			if(this.logger!=null) {
-				this.logger.debug("Chiusura socket fallita: "+t.getMessage(),t);
-			}
-			listExceptionChiusura.add(t);
-    	}
-    	try{
-			// Gestione finale della connessione
-    		if(this.httpEntityResponse!=null){
-	    		if(this.debug && this.logger!=null)
-	    			this.logger.debug("Chiusura httpEntityResponse...");
-	    		EntityUtils.consume(this.httpEntityResponse);			
-	    	}
-				
-    	}catch(Exception t) {
-    		if(this.logger!=null) {
-				this.logger.debug("Chiusura connessione fallita: "+t.getMessage(),t);
-    		}
-			listExceptionChiusura.add(t);
-		}
+		releaseResponse(listExceptionChiusura);
     	/**
     	 * 
     	 * NOTA: Non bisogna chiudere il CloseableHttpClient dopo ogni richiesta quando si utilizza un pool di connessioni. 
@@ -1125,7 +902,36 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			throw new ConnettoreException("Chiusura connessione non riuscita: "+multiException.getMessage(),multiException);
 		}
     }
-		
+	private void releaseResponse(List<Exception> listExceptionChiusura) {
+		try{
+			// Gestione finale della connessione    		
+    		if(this.isResponse!=null){
+	    		if(this.debug && this.logger!=null)
+	    			this.logger.debug("Chiusura socket...");
+	    		this.isResponse.close();
+			}				
+		}
+		catch(Exception t) {
+			if(this.logger!=null) {
+				this.logger.debug("Chiusura socket fallita: "+t.getMessage(),t);
+			}
+			listExceptionChiusura.add(t);
+    	}
+    	try{
+			// Gestione finale della connessione
+    		if(this.httpEntityResponse!=null){
+	    		if(this.debug && this.logger!=null)
+	    			this.logger.debug("Chiusura httpEntityResponse...");
+	    		EntityUtils.consume(this.httpEntityResponse);			
+	    	}
+				
+    	}catch(Exception t) {
+    		if(this.logger!=null) {
+				this.logger.debug("Chiusura connessione fallita: "+t.getMessage(),t);
+    		}
+			listExceptionChiusura.add(t);
+		}
+	}
 	
 	@Override
 	protected String getTipoImplConnettore() {
