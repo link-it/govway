@@ -166,7 +166,7 @@
 				<include name="commons-digester-2.1.jar"/>
 				<include name="commons-discovery-0.5.jar"/>
 				<include name="commons-fileupload-1.5.jar" />
-				<include name="commons-io-2.11.0.jar" />
+				<include name="commons-io-2.15.1.jar" />
 				<include name="commons-lang-2.6.jar" />
 				<include name="${commons_logging_jar}"/>
 				<include name="commons-lang3-3.12.0.jar"/>

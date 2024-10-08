@@ -192,7 +192,7 @@ public class MTOMUtilities {
 	            javax.xml.transform.stream.StreamSource ssi = (javax.xml.transform.stream.StreamSource) _echo_imageDataResponse.value;
 	            Document dResponse = null;
 	            if(ssi.getReader()!=null){
-	    	        ReaderInputStream ris = new ReaderInputStream(ssi.getReader(),StandardCharsets.UTF_8);
+	            	ReaderInputStream ris = ReaderInputStream.builder().setCharset(StandardCharsets.UTF_8).setReader(ssi.getReader()).get();
 	    	        dResponse = XMLUtils.getInstance().newDocument(ris);
 	            }
 	            else{
@@ -583,7 +583,7 @@ public class MTOMUtilities {
         javax.xml.transform.stream.StreamSource ssi = (javax.xml.transform.stream.StreamSource) echoRespone.getImageDataResponse();
         Document dResponse = null;
         if(ssi.getReader()!=null){
-	        ReaderInputStream ris = new ReaderInputStream(ssi.getReader(),StandardCharsets.UTF_8);
+        	ReaderInputStream ris = ReaderInputStream.builder().setCharset(StandardCharsets.UTF_8).setReader(ssi.getReader()).get();
 	        dResponse = XMLUtils.getInstance().newDocument(ris);
         }
         else{

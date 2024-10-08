@@ -235,7 +235,11 @@ public class CommonsNetSender extends Sender {
 					writer.write(mail.getBody().getMessage());
 				}
 				else{
-					WriterOutputStream ww = new WriterOutputStream(writer,Charset.forName("UTF-8"));
+					WriterOutputStream ww = 
+							WriterOutputStream.builder()
+							  .setWriter(writer)
+	                          .setCharset(org.openspcoop2.utils.resources.Charset.UTF_8.getValue())
+	                          .get();
 					multipart.writeTo(ww);
 					ww.flush();
 					ww.close();

@@ -1191,7 +1191,7 @@ public class ServletTestService extends HttpServlet {
 					//int read;
 					OutputStream outStr = null;
 					if(oneway || this.thresholdRequestDump<=0 || this.repositoryRequestDump==null) {
-						outStr = NullOutputStream.NULL_OUTPUT_STREAM;
+						outStr = NullOutputStream.INSTANCE;
 					}
 					else {						
 						outStr = new DumpByteArrayOutputStream(this.thresholdRequestDump, this.repositoryRequestDump, null, "RichiestaTestService");
@@ -1871,7 +1871,7 @@ public class ServletTestService extends HttpServlet {
 		return bout.toByteArray();
 	}
 	private void consumeThrottling(InputStream is, int throttlingBytes, int throttlingMs) throws Exception {
-		NullOutputStream bout = NullOutputStream.NULL_OUTPUT_STREAM;
+		NullOutputStream bout = NullOutputStream.INSTANCE;
 		byte [] buffer = new byte[throttlingBytes];
 		int letti = 0;
 		while((letti = is.read(buffer))!=-1) {

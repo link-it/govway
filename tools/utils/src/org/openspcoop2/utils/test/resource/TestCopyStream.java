@@ -47,7 +47,7 @@ public class TestCopyStream {
 			// errore timeout
 			{1024*1024*10, 120000, false, -1, false}, // 10MB
 			{1024*1024*10, 2, true, -1, false}, // 10MB
-			{1024*1024*10, 2, true, 1024*1024*10, false}, // 10MB
+			{1024*1024*12, 2, true, 1024*1024*10, false}, // 10MB
 			
 			// errore limit exceeded
 			{1024*1024*10, -1, false, 1024*1024*10, false}, // 10MB

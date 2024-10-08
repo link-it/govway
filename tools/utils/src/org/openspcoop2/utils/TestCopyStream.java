@@ -52,6 +52,7 @@ public class TestCopyStream {
 		test(size, -1,false, 1024*10, true); // atteso timeout dopo 10K
 		test(size, 6000, false, 1024*10, true); // atteso timeout dopo 10K
 		test(size, 60, true, 1024*1024*1024, false); // atteso timeout dopo 60ms
+		test(size, 2, true, 1024*1024*1024, false); // atteso timeout dopo 2ms
 		
 		// init resources: 1MB
 		size = 1024*1024;
@@ -60,6 +61,8 @@ public class TestCopyStream {
 		// init resources: 1KB
 		size = 1024;
 		test(size, timeoutMs, false, size, false);
+		
+		System.out.println("\n\n\nTESTSUITE COMPLETATA");
 		
 	}
 	

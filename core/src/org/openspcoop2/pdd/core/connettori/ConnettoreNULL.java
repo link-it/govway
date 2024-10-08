@@ -220,7 +220,7 @@ public class ConnettoreNULL extends ConnettoreBase {
 				}
 			}
 			else {
-				org.apache.commons.io.output.NullOutputStream nullOutputStream = org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
+				org.apache.commons.io.output.NullOutputStream nullOutputStream = org.apache.commons.io.output.NullOutputStream.INSTANCE;
 				if(this.isSoap && this.sbustamentoSoap){
 					this.logger.debug("Sbustamento...");
 					TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,nullOutputStream);

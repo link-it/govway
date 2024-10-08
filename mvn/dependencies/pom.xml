@@ -111,6 +111,7 @@
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2023-35116.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2023-4759.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2023-4586.xml</suppressionFile>
+								<suppressionFile>${owasp.falsePositives.dir}/CVE-2024-9329.xml</suppressionFile>
 							</suppressionFiles>
 							<nvdApiDelay>120000</nvdApiDelay><!-- 2 minuti -->
 							<nvdMaxRetryCount>3</nvdMaxRetryCount> <!-- 3 max tentativi visto il timeout alto -->

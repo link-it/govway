@@ -457,7 +457,7 @@ public class ServicesUtils {
 			}
 			else if(TransferLengthModes.CONTENT_LENGTH.equals(transferLengthMode)){
 				if(message!=null){
-					message.writeTo(NullOutputStream.NULL_OUTPUT_STREAM, false);
+					message.writeTo(NullOutputStream.INSTANCE, false);
 					connectorOutMessage.setContentLength((int)message.getOutgoingMessageContentLength());
 				}
 			}

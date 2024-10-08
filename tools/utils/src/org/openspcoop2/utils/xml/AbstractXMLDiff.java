@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Reader;
-import java.nio.charset.Charset;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -331,7 +330,10 @@ public abstract class AbstractXMLDiff {
 				}
 				else if(o instanceof Reader){
 					Reader r = (Reader) o;
-					ris = new ReaderInputStream(r,Charset.forName("UTF-8"));
+					ris = ReaderInputStream.builder()
+							.setReader(r)
+                            .setCharset(org.openspcoop2.utils.resources.Charset.UTF_8.getValue())
+                            .get();
 					return db.parse( ris );
 				}
 				else{

@@ -140,8 +140,14 @@ public class CopyCharStream {
 	public static void copyChannels(final Reader reader, final Writer writer) throws UtilsException {
 		try {
 			try(
-					ReaderInputStream src = new ReaderInputStream(reader, CharEncoding.UTF_8);
-					WriterOutputStream dest = new WriterOutputStream(writer, CharEncoding.UTF_8);
+					ReaderInputStream src = ReaderInputStream.builder()
+							   .setReader(reader)
+							   .setCharset(CharEncoding.UTF_8)
+							   .get(); 
+					WriterOutputStream dest = WriterOutputStream.builder()
+								.setWriter(writer)
+								.setCharset(CharEncoding.UTF_8)
+								.get();
 				){
 			final ReadableByteChannel inputChannel = Channels.newChannel(src);
 			final WritableByteChannel outputChannel = Channels.newChannel(dest);
@@ -174,7 +180,10 @@ public class CopyCharStream {
 	public static void copy(File from,Writer writer) throws UtilsException{
 		try{
 			try(
-					WriterOutputStream dest = new WriterOutputStream(writer, CharEncoding.UTF_8);
+					WriterOutputStream dest = WriterOutputStream.builder()
+							.setWriter(writer)
+							.setCharset(CharEncoding.UTF_8)
+							.get(); 
 				){
 				Files.copy(from.toPath(), dest);
 			}
@@ -199,7 +208,10 @@ public class CopyCharStream {
 	public static void copy(Reader reader, File to) throws UtilsException{
 		try{
 			try(
-					ReaderInputStream from = new ReaderInputStream(reader, CharEncoding.UTF_8);
+					ReaderInputStream from = ReaderInputStream.builder()
+					   .setReader(reader)
+					   .setCharset(CharEncoding.UTF_8)
+					   .get(); 
 				){
 				Files.copy(from, to.toPath());
 			}
@@ -210,7 +222,10 @@ public class CopyCharStream {
 	public static void copy(Reader reader, File to, CopyOption ... options) throws UtilsException{
 		try{
 			try(
-					ReaderInputStream from = new ReaderInputStream(reader, CharEncoding.UTF_8);
+					ReaderInputStream from = ReaderInputStream.builder()
+					   .setReader(reader)
+					   .setCharset(CharEncoding.UTF_8)
+					   .get(); 
 				){
 				Files.copy(from, to.toPath(), options);
 			}
