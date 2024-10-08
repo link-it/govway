@@ -1,6 +1,17 @@
 2024-10-09  Andrea Poli <apoli@link.it>
 
+	* [ProtocolloModIPA]
+	Risolto Bug #1528
+	Nella configurazione di un'API ModI con pattern INTEGRITY_REST, 
+	scegliere l'header HTTP Custom-JWT-Signature comporta che la gestione dell’integrità non venga eseguita in modo integrato, ma sia demandata all’applicazione. 
+	Dato questo comportamento, la maschera di configurazione non era del tutto intuitiva e poteva far pensare che si stesse solo modificando il nome dell'header HTTP, 
+	mentre cambia anche la modalità di gestione dell’integrità. 
+	È stata quindi aggiunta una nota esplicativa per chiarire meglio il funzionamento.
+
+2024-10-09  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
+	Risolto Bug #1529
 	Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
 	- CVE-2024-47554: 
 		aggiornata libreria 'commons-io:commons-io' alla versione 2.15.1
