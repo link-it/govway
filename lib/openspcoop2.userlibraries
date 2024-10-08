@@ -9,7 +9,7 @@
         <archive path="/op2_3.4.dev/lib/commons/commons-logging-1.2.jar"/>
         <archive path="/op2_3.4.dev/lib/commons/commons-lang-2.6.jar"/>
 	<archive path="/op2_3.4.dev/lib/commons/commons-lang3-3.16.0.jar"/>
-        <archive path="/op2_3.4.dev/lib/commons/commons-io-2.16.1.jar"/>
+        <archive path="/op2_3.4.dev/lib/commons/commons-io-2.17.0.jar"/>
         <archive path="/op2_3.4.dev/lib/commons/commons-jcs3-core-3.2.1-gov4j-1.jar"/>
         <archive path="/op2_3.4.dev/lib/commons/commons-fileupload2-core-2.0.0-M2.jar"/>
 	<archive path="/op2_3.4.dev/lib/commons/commons-fileupload2-jakarta-2.0.0-M1.jar"/>
@@ -122,11 +122,11 @@
 	<archive path="/op2_3.4.dev/lib/log/log4j-slf4j2-impl-2.23.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/log/log4j-jcl-2.23.1.jar"/>
 	<!-- lucene -->
-        <archive path="/op2_3.4.dev/lib/lucene/lucene-core-9.11.1.jar"/>
-	<archive path="/op2_3.4.dev/lib/lucene/lucene-codecs-9.11.1.jar"/>
-	<archive path="/op2_3.4.dev/lib/lucene/lucene-misc-9.11.1.jar"/>
-	<archive path="/op2_3.4.dev/lib/lucene/lucene-queries-9.11.1.jar"/>
-	<archive path="/op2_3.4.dev/lib/lucene/lucene-suggest-9.11.1.jar"/>
+        <archive path="/op2_3.4.dev/lib/lucene/lucene-core-9.12.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/lucene/lucene-codecs-9.12.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/lucene/lucene-misc-9.12.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/lucene/lucene-queries-9.12.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/lucene/lucene-suggest-9.12.0.jar"/>
 	<!-- openapi4j -->
 	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-core-1.0.7-gov4j-jk7.jar"/>
 	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-parser-1.0.7-gov4j-jk7.jar"/>
@@ -193,7 +193,7 @@
 	<archive path="/op2_3.4.dev/lib/shared/javassist-3.30.2-GA.jar"/>
         <archive path="/op2_3.4.dev/lib/shared/aspectjrt-1.9.22.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/freemarker-2.3.33.jar"/>
-        <archive path="/op2_3.4.dev/lib/shared/velocity-engine-core-2.3.jar"/>
+        <archive path="/op2_3.4.dev/lib/shared/velocity-engine-core-2.4.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/guava-33.3.0-jre.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/java-uuid-generator-5.1.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/joda-time-2.12.7.jar"/>

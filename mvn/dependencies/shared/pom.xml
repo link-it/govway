@@ -23,7 +23,7 @@
 		<aspectjrt.version>1.9.22.1</aspectjrt.version>
 		<aspectjweaver.version>1.9.22.1</aspectjweaver.version>
 		<freemarker.version>2.3.33</freemarker.version>
-		<velocity-core.version>2.3</velocity-core.version>
+		<velocity-core.version>2.4</velocity-core.version>
 		<velocity-tools.version>3.1</velocity-tools.version>
 		<guava.version>33.3.0-jre</guava.version>
 		<java-uuid-generator.version>5.1.0</java-uuid-generator.version>

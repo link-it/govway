@@ -154,7 +154,7 @@
 				<include name="**/*.properties"/>
 			</classes>
 			<lib dir="${libs}/commons">
-				<include name="commons-io-2.16.1.jar"/>
+				<include name="commons-io-2.17.0.jar"/>
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-codec-1.17.1.jar"/>
 				<include name="${commons_logging_jar}"/>

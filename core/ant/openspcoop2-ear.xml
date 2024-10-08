@@ -24,7 +24,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-codec-1.17.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections-3.2.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections4-4.4.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.16.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.17.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs3-core-3.2.1-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-lang-2.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.11.1.jar"/>
@@ -665,7 +665,7 @@
 				<include name="commons-codec-1.17.1.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
 				<include name="commons-collections4-4.4.jar"/>
-				<include name="commons-io-2.16.1.jar"/>
+				<include name="commons-io-2.17.0.jar"/>
 				<include name="commons-jcs3-core-3.2.1-gov4j-1.jar"/>
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-net-3.11.1.jar"/>

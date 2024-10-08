@@ -144,7 +144,7 @@
 				<include name="commons-lang3-3.16.0.jar"/>
 				<include name="commons-beanutils-1.9.4.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
-				<include name="commons-io-2.16.1.jar"/>
+				<include name="commons-io-2.17.0.jar"/>
 				<include name="commons-codec-1.17.1.jar"/>
 				<include name="${commons_logging_jar}"/>
 			</lib>

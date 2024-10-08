@@ -28,7 +28,7 @@
 		<commons.digester.version>2.1</commons.digester.version>
 		<commons.fileupload-core.version>2.0.0-M2</commons.fileupload-core.version>
 		<commons.fileupload-jakarta.version>2.0.0-M1</commons.fileupload-jakarta.version>
-		<commons.io.version>2.16.1</commons.io.version>
+		<commons.io.version>2.17.0</commons.io.version>
 		<commons.jcs3-core.gov4j.version>3.2.1-gov4j-1</commons.jcs3-core.gov4j.version>
 		<commons.lang.version>2.6</commons.lang.version>
 		<commons.lang3.version>3.16.0</commons.lang3.version>

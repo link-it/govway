@@ -122,7 +122,7 @@
 			</lib>
 			<lib dir="${required_lib}/commons">
 				<include name="commons-codec-1.17.1.jar"/>
-				<include name="commons-io-2.16.1.jar"/>
+				<include name="commons-io-2.17.0.jar"/>
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
 				<include name="${commons_logging_jar}"/>
