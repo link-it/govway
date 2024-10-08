@@ -62,6 +62,7 @@ import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
@@ -85,10 +86,14 @@ public class ConnettoreUtils {
 			return location;
 	}
 	
+	public static String getPrefixRedirect(int codice, String redirectLocation) {
+		return "Gestione redirect (code:"+codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") ";
+	} 
+	
 	private static String getErrorMessageBuildLocation(Exception e) {
 		return "Errore durante la costruzione della location: "+e.getMessage();
 	}
-	
+
 	public static String getAndReplaceLocationWithBustaValues(IConnettore connector, ConnettoreMsg connettoreMsg,Busta busta,PdDContext pddContext,IProtocolFactory<?> protocolFactory,Logger log) {
 		
 		if(protocolFactory!=null) {

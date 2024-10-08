@@ -57,7 +57,7 @@ public class ConnettoreHTTPCOREConnectionEvictor extends AbstractConnettoreConne
 				}
 			}
 			
-			return true;
+			return ConnettoreHTTPCOREConnectionManager.USE_POOL_CONNECTION; // devo continuare l'analisi delle connessione solo se uso un pool delle connessioni; ha senso solo per il nio
 		}
     	
     	return false;

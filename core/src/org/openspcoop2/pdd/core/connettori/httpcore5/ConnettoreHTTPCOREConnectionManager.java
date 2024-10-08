@@ -74,6 +74,11 @@ public class ConnettoreHTTPCOREConnectionManager {
 	
 	// ******** STATIC **********
 
+	private static final org.openspcoop2.utils.Semaphore semaphorePoolingConnectionManager = new org.openspcoop2.utils.Semaphore(ConnettoreHTTPCORE.ID_HTTPCORE+"-PoolingConnectionManager"); // usato per instanziare una pool
+	
+	public static final boolean USE_POOL_CONNECTION = false; // ha senso solo con il NIO dove si utilizza una sola connessione
+	private static final org.openspcoop2.utils.Semaphore semaphoreConnection = new org.openspcoop2.utils.Semaphore(ConnettoreHTTPCORE.ID_HTTPCORE+"-ConnectionManager"); // usato per negoziare una connessione da un pool
+	
 	static Map<String, PoolingHttpClientConnectionManager> mapPoolingConnectionManager = new HashMap<>();
 	static Map<String, ConnettoreHTTPCOREConnection> mapConnection = new HashMap<>();
 	
@@ -98,71 +103,81 @@ public class ConnettoreHTTPCOREConnectionManager {
 		}
 	}
 	
-	private static synchronized void initialize(String key, SSLConnectionSocketFactory sslConnectionSocketFactory, ConnettoreHTTPCOREConnectionConfig connectionConfig) throws ConnettoreException {
+	private static void initialize(String key, SSLConnectionSocketFactory sslConnectionSocketFactory, 
+			ConnettoreHTTPCOREConnectionConfig connectionConfig, ConnettoreLogger logger) throws ConnettoreException {
 		
-		if(!ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.containsKey(key)){
-		
-			try {			
-				PoolingHttpClientConnectionManagerBuilder poolingConnectionManagerBuilder = PoolingHttpClientConnectionManagerBuilder.create();
-				
-				if(sslConnectionSocketFactory!=null) {
-					poolingConnectionManagerBuilder.setSSLSocketFactory(sslConnectionSocketFactory);
-				}
-				else {
-					poolingConnectionManagerBuilder.useSystemProperties();
-				}
-								
-				// LAX: Higher concurrency but with lax connection max limit guarantees.
-				// STRICT: Strict connection max limit guarantees.
-				poolingConnectionManagerBuilder.setPoolConcurrencyPolicy(PoolConcurrencyPolicy.LAX);
-
-				// FIFO: Re-use all connections equally preventing them from becoming idle and expiring.
-				// LIFO: Re-use as few connections as possible making it possible for connections to become idle and expire.
-				poolingConnectionManagerBuilder.setConnPoolPolicy(PoolReusePolicy.FIFO);
-				
-	
-				// PoolingNHttpClientConnectionManager maintains a maximum limit of connection on a per route basis and in total. 
-				// Per default this implementation will create no more than than 2 concurrent connections per given route and no more 20 connections in total.
-				// For many real-world applications these limits may prove too constraining, especially if they use HTTP as a transport protocol for their services. 
-				// Connection limits, however, can be adjusted using ConnPoolControl methods.
-				// Increase max total connection
-				ConnettoreHttpPoolParams poolParams = connectionConfig.getHttpPoolParams();
-				Integer defaultMaxPerRoute = poolParams.getDefaultMaxPerRoute();
-				Integer maxTotal = poolParams.getMaxTotal();
-				if(maxTotal!=null && maxTotal>0) {
-					poolingConnectionManagerBuilder.setMaxConnTotal(poolParams.getMaxTotal());
-				}
-				// Increase default max connection per route
-				if(defaultMaxPerRoute!=null && defaultMaxPerRoute>0) {
-					poolingConnectionManagerBuilder.setMaxConnPerRoute(poolParams.getDefaultMaxPerRoute());
-				}
-				// Increase max connections for localhost:80
-				/**HttpHost localhost = new HttpHost("locahost", 80);
-				poolingConnectionManagerBuilder.setMaxPerRoute(new HttpRoute(localhost), 50);*/
-				
-				ConnectionConfig config = buildConnectionConfig(poolParams, connectionConfig.getConnectionTimeout());
-				poolingConnectionManagerBuilder.setDefaultConnectionConfig(config);
-				
-				PoolingHttpClientConnectionManager poolingConnectionManager = poolingConnectionManagerBuilder.build();
-								
-				/** Gestito con 'setSSLSocketFactory' 
-	               if(sslConnectionSocketFactory!=null) {
-	                       Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder
-	                               .<ConnectionSocketFactory> create().register("https", sslConnectionSocketFactory)
-	                               .build();
-	                       cm = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
-	               }
-	               else {
-	                       cm = new PoolingHttpClientConnectionManager();
-	               }
-				 */
-				
-				ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.put(key, poolingConnectionManager);
-				
-			}catch(Exception t) {
-				throw new ConnettoreException(t.getMessage(),t);
-			}
+		String idTransazione = logger!=null ? logger.getIdTransazione() : null;
+		try {
+			semaphorePoolingConnectionManager.acquire("initPoolingConnectionManager",idTransazione);
+		}catch(Exception t) {
+			throw new ConnettoreException(t.getMessage(),t);
+		}
+		try {
+			if(!ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.containsKey(key)){
 			
+				try {			
+					PoolingHttpClientConnectionManagerBuilder poolingConnectionManagerBuilder = PoolingHttpClientConnectionManagerBuilder.create();
+					
+					if(sslConnectionSocketFactory!=null) {
+						poolingConnectionManagerBuilder.setSSLSocketFactory(sslConnectionSocketFactory);
+					}
+					else {
+						poolingConnectionManagerBuilder.useSystemProperties();
+					}
+									
+					// LAX: Higher concurrency but with lax connection max limit guarantees.
+					// STRICT: Strict connection max limit guarantees.
+					poolingConnectionManagerBuilder.setPoolConcurrencyPolicy(PoolConcurrencyPolicy.LAX);
+	
+					// FIFO: Re-use all connections equally preventing them from becoming idle and expiring.
+					// LIFO: Re-use as few connections as possible making it possible for connections to become idle and expire.
+					poolingConnectionManagerBuilder.setConnPoolPolicy(PoolReusePolicy.FIFO);
+					
+		
+					// PoolingNHttpClientConnectionManager maintains a maximum limit of connection on a per route basis and in total. 
+					// Per default this implementation will create no more than than 2 concurrent connections per given route and no more 20 connections in total.
+					// For many real-world applications these limits may prove too constraining, especially if they use HTTP as a transport protocol for their services. 
+					// Connection limits, however, can be adjusted using ConnPoolControl methods.
+					// Increase max total connection
+					ConnettoreHttpPoolParams poolParams = connectionConfig.getHttpPoolParams();
+					Integer defaultMaxPerRoute = poolParams.getDefaultMaxPerRoute();
+					Integer maxTotal = poolParams.getMaxTotal();
+					if(maxTotal!=null && maxTotal>0) {
+						poolingConnectionManagerBuilder.setMaxConnTotal(poolParams.getMaxTotal());
+					}
+					// Increase default max connection per route
+					if(defaultMaxPerRoute!=null && defaultMaxPerRoute>0) {
+						poolingConnectionManagerBuilder.setMaxConnPerRoute(poolParams.getDefaultMaxPerRoute());
+					}
+					// Increase max connections for localhost:80
+					/**HttpHost localhost = new HttpHost("locahost", 80);
+					poolingConnectionManagerBuilder.setMaxPerRoute(new HttpRoute(localhost), 50);*/
+					
+					ConnectionConfig config = buildConnectionConfig(poolParams, connectionConfig.getConnectionTimeout());
+					poolingConnectionManagerBuilder.setDefaultConnectionConfig(config);
+					
+					PoolingHttpClientConnectionManager poolingConnectionManager = poolingConnectionManagerBuilder.build();
+									
+					/** Gestito con 'setSSLSocketFactory' 
+		               if(sslConnectionSocketFactory!=null) {
+		                       Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder
+		                               .<ConnectionSocketFactory> create().register("https", sslConnectionSocketFactory)
+		                               .build();
+		                       cm = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+		               }
+		               else {
+		                       cm = new PoolingHttpClientConnectionManager();
+		               }
+					 */
+					
+					ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.put(key, poolingConnectionManager);
+					
+				}catch(Exception t) {
+					throw new ConnettoreException(t.getMessage(),t);
+				}
+			}
+		}finally {
+			semaphorePoolingConnectionManager.release("initPoolingConnectionManager",idTransazione);
 		}
 		
 	}
@@ -256,16 +271,14 @@ public class ConnettoreHTTPCOREConnectionManager {
 		}
 	}
 	
-	private static final org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore(ConnettoreHTTPCORE.ID_HTTPCORE+"-ConnectionManager");
-	
 	private static void init(ConnettoreHTTPCOREConnectionConfig connectionConfig,SSLSocketFactory sslSocketFactory,
 			Loader loader, ConnettoreLogger logger, 
 			ConnectionKeepAliveStrategy keepAliveStrategy,
 			ConnettoreHttpRequestInterceptor httpRequestInterceptor) throws ConnettoreException {
-		String key = connectionConfig.toKeyConnectionManager();
+		String key = connectionConfig.toKeyConnection();
 		String idTransazione = logger!=null ? logger.getIdTransazione() : null;
 		try {
-			semaphore.acquire("initConnection",idTransazione);
+			semaphoreConnection.acquire("initConnection",idTransazione);
 		}catch(Exception t) {
 			throw new ConnettoreException(t.getMessage(),t);
 		}
@@ -278,17 +291,17 @@ public class ConnettoreHTTPCOREConnectionManager {
 				mapConnection.put(key, resource);
 			}
 		}finally {
-			semaphore.release("initConnection",idTransazione);
+			semaphoreConnection.release("initConnection",idTransazione);
 		}
 	}
 	private static ConnettoreHTTPCOREConnection update(ConnettoreHTTPCOREConnectionConfig connectionConfig,SSLSocketFactory sslSocketFactory,
 			Loader loader, ConnettoreLogger logger, 
 			ConnectionKeepAliveStrategy keepAliveStrategy,
 			ConnettoreHttpRequestInterceptor httpRequestInterceptor) throws ConnettoreException {
-		String key = connectionConfig.toKeyConnectionManager();
+		String key = connectionConfig.toKeyConnection();
 		String idTransazione = logger!=null ? logger.getIdTransazione() : null;
 		try {
-			semaphore.acquire("updateConnection",idTransazione);
+			semaphoreConnection.acquire("updateConnection",idTransazione);
 		}catch(Exception t) {
 			throw new ConnettoreException(t.getMessage(),t);
 		}
@@ -304,7 +317,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 			mapConnection.put(key, resource);
 			return resource;
 		}finally {
-			semaphore.release("updateConnection",idTransazione);
+			semaphoreConnection.release("updateConnection",idTransazione);
 		}
 	}
 
@@ -321,10 +334,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 			
 			// ** Redirect **
 			setRedirect(requestConfigBuilder, connectionConfig);
-			
-			// ** Proxy **
-			setProxy(requestConfigBuilder, connectionConfig);
-			
+						
 			RequestConfig requestConfig = requestConfigBuilder.build();
 			
 			// Pool
@@ -334,7 +344,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 				SSLConnectionSocketFactory sslConnectionSocketFactory = buildSSLConnectionSocketFactory(connectionConfig,
 						sslSocketFactory,
 						loader, logger);
-				ConnettoreHTTPCOREConnectionManager.initialize(keyPool, sslConnectionSocketFactory, connectionConfig);
+				ConnettoreHTTPCOREConnectionManager.initialize(keyPool, sslConnectionSocketFactory, connectionConfig, logger);
 			}
 			PoolingHttpClientConnectionManager cm = ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.get(keyPool);
 			
@@ -363,13 +373,15 @@ public class ConnettoreHTTPCOREConnectionManager {
 				httpClientBuilder.setRedirectStrategy(DefaultRedirectStrategy.INSTANCE);
 			}
 			
+			setProxy(httpClientBuilder, connectionConfig);
+			
 			CloseableHttpClient httpclient = httpClientBuilder.build();
 			
 			OpenSPCoop2Properties op2 = OpenSPCoop2Properties.getInstance();
 			int expireUnusedAfterSeconds = op2.getBIOConfigSyncClientExpireUnusedAfterSeconds(); 
 			int closeUnusedAfterSeconds = op2.getBIOConfigSyncClientCloseUnusedAfterSeconds(); 
 			
-			return  new ConnettoreHTTPCOREConnection(key, httpclient, requestConfig,
+			return new ConnettoreHTTPCOREConnection(key, httpclient, requestConfig,
 					expireUnusedAfterSeconds, closeUnusedAfterSeconds);
 			
 		} catch ( Exception t ) {
@@ -403,9 +415,10 @@ public class ConnettoreHTTPCOREConnectionManager {
 		requestConfigBuilder.setCircularRedirectsAllowed(true); // da file properties
 		requestConfigBuilder.setMaxRedirects(connectionConfig.getMaxNumberRedirects());
 	}
-	private static void setProxy(RequestConfig.Builder requestConfigBuilder, AbstractConnettoreConnectionConfig connectionConfig) {
+	private static void setProxy(HttpClientBuilder httpClientBuilder, AbstractConnettoreConnectionConfig connectionConfig) {
 		if(connectionConfig.getProxyHost()!=null && connectionConfig.getProxyPort()!=null) {
-			requestConfigBuilder.setProxy(new HttpHost(connectionConfig.getProxyHost(), connectionConfig.getProxyPort()));
+			HttpHost proxy = new HttpHost(connectionConfig.getProxyHost(), connectionConfig.getProxyPort());
+			httpClientBuilder.setProxy(proxy);
 		}
 	}
 	private static SSLConnectionSocketFactory buildSSLConnectionSocketFactory(AbstractConnettoreConnectionConfig connectionConfig,
@@ -435,16 +448,14 @@ public class ConnettoreHTTPCOREConnectionManager {
 		return sslConnectionSocketFactory;
 	}
 	
-	private static final boolean USE_POOL = true;
-
 	public static ConnettoreHTTPCOREConnection getConnettoreHTTPCOREConnection(ConnettoreHTTPCOREConnectionConfig connectionConfig,SSLSocketFactory sslSocketFactory,
 			Loader loader, ConnettoreLogger logger,
 			ConnectionKeepAliveStrategy keepAliveStrategy,
 			ConnettoreHttpRequestInterceptor httpRequestInterceptor) throws ConnettoreException  {
 		
 		ConnettoreHTTPCOREConnection connection = null;
-		if(USE_POOL) {
-			String key = connectionConfig.toKeyConnectionManager();
+		if(USE_POOL_CONNECTION) {
+			String key = connectionConfig.toKeyConnection();
 			if(!mapConnection.containsKey(key)) {
 				init(connectionConfig, sslSocketFactory,
 						loader, logger,

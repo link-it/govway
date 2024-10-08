@@ -29,6 +29,7 @@
 		<!-- Compile the java code  -->
 		<javac debug="true" includeantruntime="false" destdir="${build_client}">
 			<src path="${src_client}"/>
+			<compilerarg value="-proc:full"/>
 			<classpath>
 				<path refid="classpath_compile"/>
 			</classpath>

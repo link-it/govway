@@ -148,14 +148,14 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 			else{
 				if(this.debug)
 					this.logger.info("Creazione connessione alla URL ["+this.location+"] (via proxy "+
-								this.proxyHostname+":"+this.proxyPort+") (username["+this.proxyUsername+"] password["+this.proxyPassword+"])...",false);
+								this.proxyHostname+":"+this.proxyPort+") (username["+this.proxyUsername+"] psw["+this.proxyPassword+"])...",false);
 					
 				if(this.proxyUsername!=null){
 					//The problem with the 2nd code is that it sets a new default Authenticator and 
 					// I don't want to do that, because this proxy is only used by a part of the application 
 					// and a different part of the application could be using a different proxy.
 					// Vedi articolo: http://stackoverflow.com/questions/34877470/basic-proxy-authentification-for-https-urls-returns-http-1-0-407-proxy-authentic
-					// Authenticator.setDefault(new HttpAuthenticator(this.proxyUsername, this.proxyPassword));
+					/** Authenticator.setDefault(new HttpAuthenticator(this.proxyUsername, this.proxyPassword));*/
 					
 					// Soluzione attuale:
 					// Dopo aver instaurato la connesione, più sotto nel codice, viene creato l'header Proxy-Authorization
@@ -190,23 +190,21 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 				}
 			}
 			else {
-				if(this.debug && (this.httpConn instanceof HttpsURLConnection)) {
-					HttpsURLConnection httpsConn = (HttpsURLConnection) this.httpConn;
-					if(httpsConn.getSSLSocketFactory()!=null) {
-						SSLSocketFactory sslSocketFactory = httpsConn.getSSLSocketFactory();
-						String clientCertificateConfigurated = SSLUtilities.getJvmHttpsClientCertificateConfigurated();
-						sslSocketFactory = new WrappedLogSSLSocketFactory(sslSocketFactory, 
-								this.logger.getLogger(), this.logger.buildMsg(""),
-								clientCertificateConfigurated);
-						httpsConn.setSSLSocketFactory(sslSocketFactory);
-					}
+				if(this.debug && (this.httpConn instanceof HttpsURLConnection httpsConn) &&
+					httpsConn.getSSLSocketFactory()!=null) {
+					SSLSocketFactory sslSocketFactory = httpsConn.getSSLSocketFactory();
+					String clientCertificateConfigurated = SSLUtilities.getJvmHttpsClientCertificateConfigurated();
+					sslSocketFactory = new WrappedLogSSLSocketFactory(sslSocketFactory, 
+							this.logger.getLogger(), this.logger.buildMsg(""),
+							clientCertificateConfigurated);
+					httpsConn.setSSLSocketFactory(sslSocketFactory);
 				}
 			}
 
 			
 			// Gestione automatica del redirect
 			// The HttpURLConnection‘s follow redirect is just an indicator, in fact it won’t help you to do the “real” http redirection, you still need to handle it manually.
-			/*
+			/**
 			if(followRedirect){
 				this.httpConn.setInstanceFollowRedirects(true);
 			}
@@ -259,7 +257,7 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 					contentTypeRichiesta = this.requestMsg.getContentType();
 				}
 				if(contentTypeRichiesta==null){
-					throw new Exception("Content-Type del messaggio da spedire non definito");
+					throw new ConnettoreException("Content-Type del messaggio da spedire non definito");
 				}
 			}
 			else{
@@ -275,7 +273,7 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 			
 			// HttpMethod
 			if(this.httpMethod==null){
-				throw new Exception("HttpRequestMethod non definito");
+				throw new ConnettoreException("HttpRequestMethod non definito");
 			}
 
 			
@@ -284,7 +282,7 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 				this.logger.debug("Impostazione transfer-length...");			
 			if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(this.tlm)){
 				HttpUtilities.setChunkedStreamingMode(this.httpConn, this.chunkLength, this.httpMethod, contentTypeRichiesta);
-				//this.httpConn.setChunkedStreamingMode(chunkLength);
+				/**this.httpConn.setChunkedStreamingMode(chunkLength);*/
 			}
 			if(this.debug)
 				this.logger.info("Impostazione transfer-length effettuata (chunkLength:"+this.chunkLength+"): "+this.tlm,false);
@@ -350,8 +348,9 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 	    			this.requestMsg.getTransportRequestContext().removeHeader(nv.getName()); // Fix: senno sovrascriveva il vecchio token
 	    		}
 	    		setRequestHeader(nv.getName(),nv.getValue(), propertiesTrasportoDebug);
-	    		if(this.debug)
+	    		if(this.debug) {
 					this.logger.info("Impostazione autenticazione token (header-name '"+nv.getName()+"' value '"+nv.getValue()+"')",false);
+	    		}
 	    	}
 	    	
 	    	
@@ -386,8 +385,9 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 	    			this.requestMsg.getTransportRequestContext().removeHeader(this.forwardProxy_headerName); // Fix: senno sovrascriveva il vecchio token
 	    		}
 	    		setRequestHeader(this.forwardProxy_headerName,this.forwardProxy_headerValue, propertiesTrasportoDebug);
-	    		if(this.debug)
+	    		if(this.debug) {
 					this.logger.info("Impostazione ForwardProxy (header-name '"+this.forwardProxy_headerName+"' value '"+this.forwardProxy_headerValue+"')",false);
+	    		}
 	    	}
 	    	
 			
@@ -398,23 +398,22 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 			if(this.propertiesTrasporto != null){
 				Iterator<String> keys = this.propertiesTrasporto.keySet().iterator();
 				while (keys.hasNext()) {
-					String key = (String) keys.next();
+					String key = keys.next();
 					List<String> values = this.propertiesTrasporto.get(key);
-					if(this.debug) {
-			    		if(values!=null && !values.isEmpty()) {
-			        		for (String value : values) {
-			        			this.logger.info("Set Transport Header ["+key+"]=["+value+"]",false);
-			        		}
-			    		}
+					if(this.debug &&
+			    		values!=null && !values.isEmpty()) {
+						for (String value : values) {
+							this.logger.info("Set Transport Header ["+key+"]=["+value+"]",false);
+						}
 			    	}
 					
 					if(this.encodingRFC2047){
 						List<String> valuesEncoded = new ArrayList<>();
 						if(values!=null && !values.isEmpty()) {
 			        		for (String value : values) {
-			        			if(RFC2047Utilities.isAllCharactersInCharset(value, this.charsetRFC2047)==false){
-									String encoded = RFC2047Utilities.encode(new String(value), this.charsetRFC2047, this.encodingAlgorithmRFC2047);
-									//System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");
+			        			if(!RFC2047Utilities.isAllCharactersInCharset(value, this.charsetRFC2047)){
+									String encoded = RFC2047Utilities.encode(value+"", this.charsetRFC2047, this.encodingAlgorithmRFC2047);
+									/**System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");*/
 									if(this.debug)
 										this.logger.info("RFC2047 Encoded value in ["+encoded+"] (charset:"+this.charsetRFC2047+" encoding-algorithm:"+this.encodingAlgorithmRFC2047+")",false);
 									valuesEncoded.add(encoded);
@@ -435,7 +434,7 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 			
 			// Aggiunga del SoapAction Header in caso di richiesta SOAP
 			// spostato sotto il forwardHeader per consentire alle trasformazioni di modificarla
-			if(this.isSoap && this.sbustamentoSoap == false){
+			if(this.isSoap && !this.sbustamentoSoap){
 				if(this.debug)
 					this.logger.debug("Impostazione soap action...");
 				boolean existsTransportProperties = false;
@@ -464,18 +463,15 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 				this.logger.info("Impostazione "+this.httpMethod+"...",false);
 			HttpUtilities.setStream(this.httpConn, this.httpMethod, contentTypeRichiesta);
 			HttpBodyParameters httpBody = new  HttpBodyParameters(this.httpMethod, contentTypeRichiesta);
-//			this.httpConn.setRequestMethod( method );
-//			this.httpConn.setDoOutput(false);
-//			this.httpConn.setDoInput(true);
 
 			
 			// Spedizione byte
-			boolean httpBody_isDoOutput = httpBody.isDoOutput();
+			boolean httpBodyIsDoOutput = httpBody.isDoOutput();
 			if(!httpBody.isDoOutput() && request.isForceSendContent()) {
 				this.httpConn.setDoOutput(true);
-				httpBody_isDoOutput = true;
+				httpBodyIsDoOutput = true;
 			}
-			if(httpBody_isDoOutput){
+			if(httpBodyIsDoOutput){
 				boolean consumeRequestMessage = true;
 				if(this.followRedirects){
 					consumeRequestMessage = false;
@@ -609,7 +605,7 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 				this.mimeTypeAttachment = TransportUtils.getObjectAsString(mapHeaderHttpResponse, this.openspcoopProperties.getTunnelSOAPKeyWordMimeType_headerTrasporto());
 				if(this.mimeTypeAttachment==null)
 					this.mimeTypeAttachment = HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP;
-				//System.out.println("IMB["+imbustamentoConAttachment+"] MIME["+mimeTypeAttachment+"]");
+				/**System.out.println("IMB["+imbustamentoConAttachment+"] MIME["+mimeTypeAttachment+"]");*/
 			}
 
 			// Ricezione Risposta
@@ -633,7 +629,7 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 					if(this.followRedirects){
 								
 						if(redirectLocation==null){
-							throw new Exception("Non è stato rilevato l'header HTTP ["+HttpConstants.REDIRECT_LOCATION+"] necessario alla gestione del Redirect (code:"+this.codice+")"); 
+							throw new ConnettoreException("Non è stato rilevato l'header HTTP ["+HttpConstants.REDIRECT_LOCATION+"] necessario alla gestione del Redirect (code:"+this.codice+")"); 
 						}
 						
 						TransportUtils.removeObject(request.getConnectorProperties(), CostantiConnettori.CONNETTORE_LOCATION);
@@ -658,23 +654,22 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 						this.logger.warn("(hope:"+(this.numberRedirect+1)+") Redirect verso ["+redirectLocation+"] ...");
 						
 						if(this.numberRedirect==this.maxNumberRedirects){
-							throw new Exception("Gestione redirect (code:"+this.codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non consentita ulteriormente, sono già stati gestiti "+this.maxNumberRedirects+" redirects: "+this.routeRedirect);
+							throw new ConnettoreException(ConnettoreUtils.getPrefixRedirect(this.codice, redirectLocation)+"non consentita ulteriormente, sono già stati gestiti "+this.maxNumberRedirects+" redirects: "+this.routeRedirect);
 						}
 						
-						boolean acceptOnlyReturnCode_307 = false;
+						boolean acceptOnlyReturnCode307 = false;
 						if(this.isSoap) {
 							if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-								acceptOnlyReturnCode_307 = this.openspcoopProperties.isAcceptOnlyReturnCode_307_consegnaContenutiApplicativi();
+								acceptOnlyReturnCode307 = this.openspcoopProperties.isAcceptOnlyReturnCode_307_consegnaContenutiApplicativi();
 							}
 							else{
 								// InoltroBuste e InoltroRisposte
-								acceptOnlyReturnCode_307 = this.openspcoopProperties.isAcceptOnlyReturnCode_307_inoltroBuste();
+								acceptOnlyReturnCode307 = this.openspcoopProperties.isAcceptOnlyReturnCode_307_inoltroBuste();
 							}
 						}
-						if(acceptOnlyReturnCode_307){
-							if(this.codice!=307){
-								throw new Exception("Return code ["+this.codice+"] (redirect "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non consentito dal WS-I Basic Profile (http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html#HTTP_Redirect_Status_Codes)");
-							}
+						if(acceptOnlyReturnCode307 &&
+							this.codice!=307){
+							throw new ConnettoreException("Return code ["+this.codice+"] (redirect "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non consentito dal WS-I Basic Profile (http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html#HTTP_Redirect_Status_Codes)");
 						}
 						// Annullo precedente immagine
 						this.clearRequestHeader();
@@ -685,7 +680,7 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 						try {
 							return this.send(request); // caching ricorsivo non serve
 						}finally {
-							/*System.out.println("CHECK ["+redirectLocation+"]");
+							/**System.out.println("CHECK ["+redirectLocation+"]");
 							if(this.responseMsg!=null) {
 								System.out.println("MSG ["+this.responseMsg.getContentType()+"]");
 								this.responseMsg.writeTo(System.out, false);
@@ -694,10 +689,10 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 						
 					}else{
 						if(this.isSoap) {
-							throw new Exception("Gestione redirect (code:"+this.codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non attiva");
+							throw new ConnettoreException(ConnettoreUtils.getPrefixRedirect(this.codice, redirectLocation)+"non attiva");
 						}
 						else {
-							this.logger.debug("Gestione redirect (code:"+this.codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non attiva");
+							this.logger.debug(ConnettoreUtils.getPrefixRedirect(this.codice, redirectLocation)+"non attiva");
 							
 							if(this.location!=null && redirectLocation!=null){
 								this.location = this.location+" [redirect-location: "+redirectLocation+"]";
@@ -713,10 +708,9 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 					}
 				}
 				else{
-					if(this.isSoap && this.acceptOnlyReturnCode_202_200){
-						if(this.codice!=200 && this.codice!=202){
-							throw new Exception("Return code ["+this.codice+"] non consentito dal WS-I Basic Profile (http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html#HTTP_Success_Status_Codes)");
-						}
+					if(this.isSoap && this.acceptOnlyReturnCode_202_200 &&
+						this.codice!=200 && this.codice!=202){
+						throw new ConnettoreException("Return code ["+this.codice+"] non consentito dal WS-I Basic Profile (http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html#HTTP_Success_Status_Codes)");
 					}
 					if(httpBody.isDoInput()){
 						this.isResponse = this.httpConn.getInputStream();
@@ -748,22 +742,21 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 			
 			this.initCheckContentTypeConfiguration();
 			
-			if(this.isDumpBinarioRisposta()){
-				if(!this.dumpResponse(this.propertiesTrasportoRisposta)) {
-					return false;
-				}
+			if(this.isDumpBinarioRisposta() &&
+				!this.dumpResponse(this.propertiesTrasportoRisposta)) {
+				return false;
 			}
 			
 			if(this.isRest){
 							
-				if(this.doRestResponse()==false){
+				if(!this.doRestResponse()){
 					return false;
 				}
 				
 			}
 			else{
 			
-				if(this.doSoapResponse()==false){
+				if(!this.doSoapResponse()){
 					return false;
 				}
 				
@@ -798,7 +791,7 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
      */
     @Override
 	public void disconnect() throws ConnettoreException{
-		List<Throwable> listExceptionChiusura = new ArrayList<Throwable>();
+		List<Throwable> listExceptionChiusura = new ArrayList<>();
 		try{
 			// Gestione finale della connessione
 	    	if(this.isResponse!=null){
@@ -817,8 +810,9 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 	
 			// fine HTTP.
 	    	if(this.httpConn!=null){
-	    		if(this.debug && this.logger!=null)
+	    		if(this.debug && this.logger!=null) {
 					this.logger.debug("Chiusura connessione...");
+	    		}
 	    		try {
 	    			// FIX: https://docs.oracle.com/javase/8/docs/technotes/guides/net/http-keepalive.html
 	    			/*
@@ -861,7 +855,7 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
     		throw new ConnettoreException("Chiusura connessione non riuscita: "+e.getMessage(),e);
     	}
 		
-		if(listExceptionChiusura!=null && !listExceptionChiusura.isEmpty()) {
+		if(!listExceptionChiusura.isEmpty()) {
 			org.openspcoop2.utils.UtilsMultiException multiException = new org.openspcoop2.utils.UtilsMultiException(listExceptionChiusura.toArray(new Throwable[1]));
 			throw new ConnettoreException("Chiusura connessione non riuscita: "+multiException.getMessage(),multiException);
 		}

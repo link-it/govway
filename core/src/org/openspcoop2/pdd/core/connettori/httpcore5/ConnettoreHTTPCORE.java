@@ -65,6 +65,7 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 import org.openspcoop2.pdd.core.connettori.ConnettoreExtBaseHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHttpPoolParams;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
+import org.openspcoop2.pdd.core.connettori.ConnettoreUtils;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.services.connector.ConnectorApplicativeThreadPool;
 import org.openspcoop2.utils.NameValue;
@@ -148,7 +149,6 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			config.setDebug(this.debug);
 			config.setSslContextProperties(this.sslContextProperties);
 			
-			
 			// Lettura connectionTimeout
 			if(this.properties.get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)!=null){
 				try{
@@ -231,7 +231,26 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			// Alcune implementazioni richiedono di aggiornare il Content-Type
 			this.requestMsg.updateContentType();
 			
-						
+					
+			
+			
+			
+			// Proxy Authentication BASIC
+			if(this.proxyType!=null && this.proxyUsername!=null){
+				if(this.debug)
+					this.logger.debug("Impostazione autenticazione per proxy (username["+this.proxyUsername+"] password["+this.proxyPassword+"]) ...");
+				if(this.proxyUsername!=null && this.proxyPassword!=null){
+					String authentication = this.proxyUsername + ":" + this.proxyPassword;
+					authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + Base64Utilities.encodeAsString(authentication.getBytes());
+					this.setRequestHeader(HttpConstants.PROXY_AUTHORIZATION,authentication, propertiesTrasportoDebug);
+					if(this.debug)
+						this.logger.info("Impostazione autenticazione per proxy (username["+this.proxyUsername+"] password["+this.proxyPassword+"]) ["+authentication+"]",false);
+				}
+			}
+			
+			
+			
+			
 			
 			// Impostazione Content-Type della Spedizione su HTTP
 	        
@@ -573,8 +592,19 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			
 			
 			// Creazione Connessione
-			if(this.debug)
-				this.logger.info("Creazione connessione alla URL ["+this.location+"]...",false);
+			if(this.proxyType==null){
+				if(this.debug) {
+					this.logger.info("Creazione connessione alla URL ["+this.location+"]...",false);
+				}
+			}
+			else {
+				if(this.debug) {
+					this.logger.info("Creazione connessione alla URL ["+this.location+"] (via proxy "+
+								this.proxyHostname+":"+this.proxyPort+") (username["+this.proxyUsername+"] psw["+this.proxyPassword+"])...",false);
+				}
+				config.setProxyHost(this.proxyHostname);
+				config.setProxyPort(this.proxyPort);
+			}
 			ConnettoreHTTPCOREConnection conn = ConnettoreHTTPCOREConnectionManager.getConnettoreHTTPCOREConnection(config, buildSSLContextFactory(), 
 					this.loader, this.logger, keepAliveStrategy, httpRequestInterceptor);
 			HttpClient httpClient = conn.getHttpclient();
@@ -721,7 +751,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 						this.logger.warn("(hope:"+(this.numberRedirect+1)+") Redirect verso ["+redirectLocation+"] ...");
 						
 						if(this.numberRedirect==this.maxNumberRedirects){
-							throw new ConnettoreException("Gestione redirect (code:"+this.codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non consentita ulteriormente, sono già stati gestiti "+this.maxNumberRedirects+" redirects: "+this.routeRedirect);
+							throw new ConnettoreException(ConnettoreUtils.getPrefixRedirect(this.codice, redirectLocation)+"non consentita ulteriormente, sono già stati gestiti "+this.maxNumberRedirects+" redirects: "+this.routeRedirect);
 						}
 						
 						boolean acceptOnlyReturnCode307 = false;
@@ -756,10 +786,10 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 						
 					}else{
 						if(this.isSoap) {
-							throw new ConnettoreException("Gestione redirect [soap] (code:"+this.codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non attiva");
+							throw new ConnettoreException(ConnettoreUtils.getPrefixRedirect(this.codice, redirectLocation)+"non attiva");
 						}
 						else {
-							this.logger.debug("Gestione redirect (code:"+this.codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non attiva");
+							this.logger.debug(ConnettoreUtils.getPrefixRedirect(this.codice, redirectLocation)+"non attiva");
 							
 							if(this.location!=null && redirectLocation!=null){
 								this.location = this.location+" [redirect-location: "+redirectLocation+"]";

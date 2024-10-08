@@ -59,6 +59,9 @@ public abstract class AbstractConnettoreConnectionConfig {
 	public String toKeyConnectionManager() {
 		return toString(true);
 	}
+	public String toKeyConnection() {
+		return toString(false);
+	}
 	public String toString(boolean onlyForConnectionManager) {
 		StringBuilder bf = new StringBuilder(this.type);
 		if(onlyForConnectionManager) {

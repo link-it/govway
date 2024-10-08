@@ -972,7 +972,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de = new DataElement();
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
-		if(showOpzioniAvanzate && TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transferMode)){
+		if(showOpzioniAvanzate && TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transferMode) &&
+				ConnettoriHttpImpl.HTTP_URL_CONNECTION.getNome().equals(httpImpl)){
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setSize(this.getSize());
 		}
