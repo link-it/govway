@@ -699,7 +699,7 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 						!agidPresente) {
 						profiloSicurezzaMessaggioHeaderItemValue.setValue(null);
 					}
-										
+					
 				}
 				
 				((StringConsoleItem)profiloSicurezzaMessaggioHeaderItem).clearMapLabelValues();
@@ -817,6 +817,9 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 					if(profiloSicurezzaMessaggioHeaderCustomModeItem!=null) {
 						profiloSicurezzaMessaggioHeaderCustomModeItem.setType(ConsoleItemType.SELECT);
 					}
+					if(profiloSicurezzaMessaggioHeaderItem!=null) {
+						profiloSicurezzaMessaggioHeaderItem.setNote(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_NOTE);
+					}
 				}
 				else {
 					if(profiloSicurezzaMessaggioHeaderCustomItem!=null) {
@@ -833,6 +836,9 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 						if(profiloSicurezzaMessaggioHeaderCustomModeItemValue!=null) {
 							profiloSicurezzaMessaggioHeaderCustomModeItemValue.setValue(null);
 						}
+					}
+					if(profiloSicurezzaMessaggioHeaderItem!=null) {
+						profiloSicurezzaMessaggioHeaderItem.setNote(null);
 					}
 				}
 			}
