@@ -675,7 +675,9 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 			AbstractConsoleItem<?> profiloSicurezzaMessaggioHeaderCustomModeItem = 	
 					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_ID);
 			if(isSicurezza01 || isSicurezza02 || isSicurezza03 || isSicurezza04) {
-				profiloSicurezzaMessaggioHeaderItem.setType(ConsoleItemType.SELECT);
+				if(profiloSicurezzaMessaggioHeaderItem!=null) {
+					profiloSicurezzaMessaggioHeaderItem.setType(ConsoleItemType.SELECT);
+				}
 				
 				StringProperty profiloSicurezzaMessaggioHeaderItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_ID);
 				if(profiloSicurezzaMessaggioHeaderItemValue!=null && ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ID.equals(postBackElementName)){
@@ -702,7 +704,9 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 					
 				}
 				
-				((StringConsoleItem)profiloSicurezzaMessaggioHeaderItem).clearMapLabelValues();
+				if(profiloSicurezzaMessaggioHeaderItem!=null) {
+					((StringConsoleItem)profiloSicurezzaMessaggioHeaderItem).clearMapLabelValues();
+				}
 				
 				if(sicurezzaSoloSullaRispostaPerIdar04) {
 					
