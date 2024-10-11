@@ -20,6 +20,7 @@
 
 package org.openspcoop2.utils.certificate;
 
+import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -813,6 +814,19 @@ public class CertificateUtils {
 			java.io.StringWriter sw = new java.io.StringWriter();
 		    try (org.bouncycastle.openssl.jcajce.JcaPEMWriter pw = new org.bouncycastle.openssl.jcajce.JcaPEMWriter(sw)) {
 		        pw.writeObject(cert);
+		    }
+		    sw.flush();
+		    sw.close();
+		    return sw.toString();
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(), e);
+		}
+	}
+	public static String toPEM(PrivateKey privateKey) throws UtilsException {
+		try {
+			java.io.StringWriter sw = new java.io.StringWriter();
+		    try (org.bouncycastle.openssl.jcajce.JcaPEMWriter pw = new org.bouncycastle.openssl.jcajce.JcaPEMWriter(sw)) {
+		        pw.writeObject(privateKey);
 		    }
 		    sw.flush();
 		    sw.close();

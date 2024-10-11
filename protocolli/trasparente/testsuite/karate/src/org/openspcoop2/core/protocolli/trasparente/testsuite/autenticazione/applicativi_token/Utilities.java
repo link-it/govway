@@ -48,6 +48,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.security.JOSESerialization;
@@ -658,7 +659,7 @@ public class Utilities {
 					}
 					
 				} catch (Exception e) {
-					throw new RuntimeException(e);
+					throw new UtilsRuntimeException(e.getMessage(),e);
 				}
 			}
 			
@@ -706,7 +707,7 @@ public class Utilities {
 				}
 
 			} catch (Throwable e) {
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 			
 		}

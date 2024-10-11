@@ -3,7 +3,7 @@
 
     <protocol name="spcoop" label="SPCoop"
     	descrizione="Invio e Ricezione di Buste e-Gov previste dal Sistema Pubblico di Cooperazione (SPCoop)"
-	webSite="https://www.openspcoop.org/openspcoop/specifiche-spcoop/">
+	webSite="https://govway.org/download/specifiche-spcoop/">
     	<!-- webSite="http://www.agid.gov.it/agenda-digitale/infrastrutture-architetture/sistema-pubblico-connettivita/cooperazione-applicativa">-->
     	<factory>org.openspcoop2.protocol.spcoop.SPCoopFactory</factory>
     	<transaction 
