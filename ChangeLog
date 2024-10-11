@@ -1,3 +1,12 @@
+2024-10-11  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1530
+	Quando si definivano erogazioni o fruizioni con gruppi di configurazioni specifiche per operazioni, 
+	eventuali modifiche alla configurazione CORS venivano applicate solo alle operazioni del gruppo predefinito, 
+	mentre per le operazioni degli altri gruppi si continuava a utilizzare la configurazione di default.
+	Nell'intervento sono stati aggiunti test per il connettore http che verificano l'opzione avanzata 'Modalità Data Transfer' e l'utilizzo di un proxy http.
+
 2024-10-09  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]

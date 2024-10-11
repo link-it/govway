@@ -1311,7 +1311,22 @@ public class RicezioneContenutiApplicativi {
 			}
 			
 			if(httpServletRequest!=null && HttpRequestMethod.OPTIONS.name().equalsIgnoreCase(httpServletRequest.getMethod())) {
-				if(portaDelegata!=null) {
+				
+				Object nomePortaObject = pddContext.getObject(CostantiPdD.NOME_PORTA_INVOCATA);
+				String nomePortaS = null;
+				if(nomePortaObject instanceof String) {
+					nomePortaS = (String) nomePortaObject;
+				}
+				PortaDelegata pdDefault = null;
+				if(nomePortaS!=null) {
+					IDPortaDelegata idPDdefault = new IDPortaDelegata();
+					idPDdefault.setNome(nomePortaS);
+					pdDefault = configurazionePdDReader.getPortaDelegataSafeMethod(idPDdefault, requestInfo);
+				}
+				if(pdDefault!=null) {
+					cors = configurazionePdDReader.getConfigurazioneCORS(pdDefault);
+				}
+				else if(portaDelegata!=null) {
 					cors = configurazionePdDReader.getConfigurazioneCORS(portaDelegata);
 				}
 				else {

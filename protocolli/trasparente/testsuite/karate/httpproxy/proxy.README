@@ -1,0 +1,39 @@
+Come prerequisito all'installazione:
+   yum install openssl-devel 
+   yum install python-devel 
+   yum install gcc
+   yum install libxml2-devel 
+   yum install libxslt-devel
+   yum install python3
+
+La testsuite richiede l'installazione del proxy 'mitmproxy':
+   pip install mitmproxy
+   o meglio:
+   pip3 install mitmproxy
+   
+Cosi lo avvia con una schermata per seguire le comunicazioni:
+mitmproxy --mode regular --listen-port 8888
+
+Cosi lo avvia in background:
+mitmdump --mode regular --listen-port 8888 -w logfile.mitm
+
+Se si ottiene un errore: "File "/usr/local/lib/python3.7/site-packages/jinja2/filters.py", line 13, in <module>
+    from markupsafe import soft_unicode
+ImportError: cannot import name 'soft_unicode' from 'markupsafe' (/usr/local/lib64/python3.7/site-packages/markupsafe/__init__.py)"
+
+Vedere la versione installata di 'pip3 show markupsafe'
+
+Eventualmente installare una vecchia versione con il comando:
+    pip3 install markupsafe==2.0.1
+
+Usare opzione '--set ssl_insecure=true' per accettare connessioni https con certificati selfsigned.
+mitmdump --mode regular --listen-port 8888 -w logfile.mitm --set ssl_insecure=true
+
+Usare opzione '--certs pathCerts' dove in certs va messa sia la chiave privata che pubblica in PEM encoded.
+Questa opzione serve per esporre la comunicazione https del proxy con tale certificato
+
+Per aggiungere una autenticazione http-basic usare le configurazioni presenti in:
+- basic_auth.py: richiede una autenticazione con le credenziali definite nel file stesso
+- basic_auth_with_response.py: a differenza della precedente configurazione, in caso di credenziali non trovate ritorna un messaggio text/plain nel payload http della risposta
+Per usare la configurazione con autenticazione http-basic      
+mitmdump --mode regular --listen-port 8888 -w logfile.mitm --set ssl_insecure=true -s basic_auth.py

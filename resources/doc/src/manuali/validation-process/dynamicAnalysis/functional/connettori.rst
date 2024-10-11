@@ -21,6 +21,7 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <htt
 - `connettori.forward_proxy <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/connettori/forward_proxy>`_; viene verificata la funzionalità :ref:`avanzate_govway_proxy`.
 - `connettori.autenticazione <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/connettori/autenticazione>`_; viene verificata la funzionalità :ref:`avanzate_connettori_http` e :ref:`avanzate_connettori_apikey`.
 - `connettori.header <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/connettori/header>`_; viene verificata la funzionalità 'MIME encoded-word' descritta nella sezione :ref:`avanzate_connettori_encodedWord`.
+- `connettori.opzioni_avanzate <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/connettori/opzioni_avanzate>`_; viene verificata l'opzione avanzata 'Modalità Data Transfer' descritta nella sezione :ref:`avanzate_connettori_httpOpzioniAvanzate` e la configurazione che consente di utilizzare un proxy http come descritto nella sezione :ref:`avanzate_connettori_proxy`.
 
 Evidenze disponibili in:
 
@@ -38,6 +39,7 @@ Evidenze disponibili in:
 - `risultati dei test del gruppo 'connettori.forward_proxy' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriForwardProxy/html/>`_ 
 - `risultati dei test del gruppo 'connettori.autenticazione' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriAutenticazione/html/>`_ 
 - `risultati dei test del gruppo 'connettori.header' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriHeader/html/>`_ 
+- `risultati dei test del gruppo 'connettori.opzioni_avanzate' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriOpzioniAvanzate/html/>`_ 
 
 Sono inoltre disponibili ulteriori test realizzati tramite il tool `TestNG <https://testng.org/doc/>`_ i cui sorgenti sono disponibili in `protocolli/spcoop/testsuite/src <https://github.com/link-it/govway/tree/master/protocolli/spcoop/testsuite/src/org/openspcoop2/protocol/spcoop/testsuite/units/connettori>`_ relativamente ai seguenti gruppi:
 

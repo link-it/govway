@@ -1707,7 +1707,22 @@ public class RicezioneBuste {
 			}
 			
 			if(httpServletRequest!=null && HttpRequestMethod.OPTIONS.name().equalsIgnoreCase(httpServletRequest.getMethod())) {
-				if(pa!=null) {
+				
+				Object nomePortaObject = pddContext.getObject(CostantiPdD.NOME_PORTA_INVOCATA);
+				String nomePortaS = null;
+				if(nomePortaObject instanceof String) {
+					nomePortaS = (String) nomePortaObject;
+				}
+				PortaApplicativa paDefault = null;
+				if(nomePortaS!=null) {
+					IDPortaApplicativa idPAdefault = new IDPortaApplicativa();
+					idPAdefault.setNome(nomePortaS);
+					paDefault = configurazionePdDReader.getPortaApplicativaSafeMethod(idPAdefault, requestInfo);
+				}
+				if(paDefault!=null) {
+					cors = configurazionePdDReader.getConfigurazioneCORS(paDefault);
+				}
+				else if(pa!=null) {
 					cors = configurazionePdDReader.getConfigurazioneCORS(pa);
 				}
 				else {

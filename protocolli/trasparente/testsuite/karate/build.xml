@@ -70,6 +70,8 @@
 		<fileset dir="${required_lib}/security">
 			<include name="neethi-3.2.0.jar"/>
 			<include name="bcprov-jdk18on-1.78.1.jar"/>
+			<include name="bcpkix-jdk18on-1.78.1.jar"/>
+			<include name="bcutil-jdk18on-1.78.1.jar"/>
 			<include name="nimbus-jose-jwt-9.40.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/stub/cxf">

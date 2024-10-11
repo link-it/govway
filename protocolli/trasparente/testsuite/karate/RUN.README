@@ -357,6 +357,9 @@
   INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-attribute-authority-TestForwardProxyAA','true');
   INSERT INTO pdd_sys_props (nome, valore) VALUES ('tag-TestForwardProxyConnettoriTokenValidazione-govway-proxy-attribute-authority-response-jwt-validation-TestForwardProxyAARispostaJwt','true');
 
+- Per i test via http proxy:
+  
+  Assicurarsi che funzioni il comando 'mitmdump' descritto nella directory httpproxy
 
 
 
@@ -512,6 +515,9 @@ Di seguito vengono descritti i test del package 'connettori':
 
 - 'header', verifica la funzionalità di inoltro di header HTTP codificati in encoded world (es. =?US-ASCII?Q?)
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.header
+   
+- 'opzioni_avanzate', verifica le funzionalità avanzate dei connettori (serializzazione content-transfer-encoding o content-lenth, http-proxy, ...)
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.opzioni_avanzate
 
 Di seguito vengono descritti i test del package 'token':
 
