@@ -37,6 +37,7 @@ import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.EJBUtils;
@@ -520,80 +521,95 @@ public class SbustamentoRisposte extends GenericLib {
 				}
 				
 				// Gestione ERRORE
-				msgDiag.mediumDebug("Invio eventuale messaggio di errore al servizio applicativo (gestione errore)...");
-				if(sendRispostaApplicativa){
-					Eccezione eccezioneDaInviareServizioApplicativo = 
-							Eccezione.getEccezioneValidazione(ErroriCooperazione.ERRORE_GENERICO_PROTOCOLLO_NON_CORRETTO.getErroreCooperazione(), protocolFactory);
-					ErroreIntegrazione erroreIntegrazioneDaInviareServizioApplicativo = null;
-					if(msgErroreProtocolloValido){
-						if(bustaRisposta.sizeListaEccezioni()>1){
-							StringBuilder bfDescrizione = new StringBuilder();
-							for(int k=0; k<bustaRisposta.sizeListaEccezioni();k++){
-								Eccezione eccListaEccezioni = bustaRisposta.getEccezione(k);
-								if(eccListaEccezioni.getDescrizione(protocolFactory)!=null)
-									bfDescrizione.append("["+traduttore.toString(eccListaEccezioni.getCodiceEccezione(),eccListaEccezioni.getSubCodiceEccezione())+"] "+eccListaEccezioni.getDescrizione(protocolFactory)+"\n");
-							}
-							if(bfDescrizione.length()>0)
-								eccezioneDaInviareServizioApplicativo.setDescrizione(bfDescrizione.toString());
-						}else{
-							if(bustaRisposta.sizeListaEccezioni()==1){
-								eccezioneDaInviareServizioApplicativo = bustaRisposta.getEccezione(0);
-							}
-							else{
-								if(dettaglioEccezione!=null && dettaglioEccezione.getExceptions()!=null && dettaglioEccezione.getExceptions().sizeExceptionList()>0){
-									org.openspcoop2.core.eccezione.details.Eccezione e = dettaglioEccezione.getExceptions().getException(0);
-									if(org.openspcoop2.core.eccezione.details.constants.TipoEccezione.PROTOCOL.equals(e.getType())){
-										ErroreCooperazione msgErroreCooperazione =
-												new ErroreCooperazione(e.getDescription(), traduttore.toCodiceErroreCooperazione(e.getCode()));
-										eccezioneDaInviareServizioApplicativo = new Eccezione(msgErroreCooperazione, false, SbustamentoRisposte.ID_MODULO ,protocolFactory);
+				boolean inoltraClientBustaRispostaErroreRicevuta = OpenSPCoop2Properties.getInstance().isErroreApplicativoInoltraClientBustaRispostaErroreRicevuta(protocolFactory.getProtocol());
+				boolean sbustamentoInformazioniProtocolloRisposta = true; 
+				try{		
+					sbustamentoInformazioniProtocolloRisposta = configurazionePdDManager.invocazionePortaDelegataSbustamentoInformazioniProtocollo(sa);
+				}catch(Exception e){
+					msgDiag.logErroreGenerico(e, "acquisizione informazione sbustamentoInformazioniProtocolloRisposta");
+				}
+				if(sendRispostaApplicativa && msgErroreProtocolloValido &&
+						!sbustamentoInformazioniProtocolloRisposta && // sbustamento protocollo (es. spcoop) disabilitato
+						inoltraClientBustaRispostaErroreRicevuta // disabilitata la gestione dell'errore applicativo specifico
+						) {
+					// proseguio con una gestione classica ritornando esattamente la busta errore ricevuta al client
+				}
+				else {
+					msgDiag.mediumDebug("Invio eventuale messaggio di errore al servizio applicativo (gestione errore)...");
+					if(sendRispostaApplicativa){
+						Eccezione eccezioneDaInviareServizioApplicativo = 
+								Eccezione.getEccezioneValidazione(ErroriCooperazione.ERRORE_GENERICO_PROTOCOLLO_NON_CORRETTO.getErroreCooperazione(), protocolFactory);
+						ErroreIntegrazione erroreIntegrazioneDaInviareServizioApplicativo = null;
+						if(msgErroreProtocolloValido){
+							if(bustaRisposta.sizeListaEccezioni()>1){
+								StringBuilder bfDescrizione = new StringBuilder();
+								for(int k=0; k<bustaRisposta.sizeListaEccezioni();k++){
+									Eccezione eccListaEccezioni = bustaRisposta.getEccezione(k);
+									if(eccListaEccezioni.getDescrizione(protocolFactory)!=null)
+										bfDescrizione.append("["+traduttore.toString(eccListaEccezioni.getCodiceEccezione(),eccListaEccezioni.getSubCodiceEccezione())+"] "+eccListaEccezioni.getDescrizione(protocolFactory)+"\n");
+								}
+								if(bfDescrizione.length()>0)
+									eccezioneDaInviareServizioApplicativo.setDescrizione(bfDescrizione.toString());
+							}else{
+								if(bustaRisposta.sizeListaEccezioni()==1){
+									eccezioneDaInviareServizioApplicativo = bustaRisposta.getEccezione(0);
+								}
+								else{
+									if(dettaglioEccezione!=null && dettaglioEccezione.getExceptions()!=null && dettaglioEccezione.getExceptions().sizeExceptionList()>0){
+										org.openspcoop2.core.eccezione.details.Eccezione e = dettaglioEccezione.getExceptions().getException(0);
+										if(org.openspcoop2.core.eccezione.details.constants.TipoEccezione.PROTOCOL.equals(e.getType())){
+											ErroreCooperazione msgErroreCooperazione =
+													new ErroreCooperazione(e.getDescription(), traduttore.toCodiceErroreCooperazione(e.getCode()));
+											eccezioneDaInviareServizioApplicativo = new Eccezione(msgErroreCooperazione, false, SbustamentoRisposte.ID_MODULO ,protocolFactory);
+										}else{
+	//										erroreIntegrazioneDaInviareServizioApplicativo = 
+	//												new ErroreIntegrazione(e.getDescrizione(), traduttore.toCodiceErroreIntegrazione(e.getCodiceAAA(), propertiesReader.getProprietaGestioneErrorePD(protocolManager).getFaultPrefixCode()));
+											// Se e' arrivato un details di errore di integrazione, comunque genero una busta di errore di processamento, visto che di fatto ho ricevuto questa.
+											eccezioneDaInviareServizioApplicativo = Eccezione.
+													getEccezioneProcessamento(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreProcessamento(e.getDescription()), protocolFactory);
+										}
 									}else{
-//										erroreIntegrazioneDaInviareServizioApplicativo = 
-//												new ErroreIntegrazione(e.getDescrizione(), traduttore.toCodiceErroreIntegrazione(e.getCodiceAAA(), propertiesReader.getProprietaGestioneErrorePD(protocolManager).getFaultPrefixCode()));
-										// Se e' arrivato un details di errore di integrazione, comunque genero una busta di errore di processamento, visto che di fatto ho ricevuto questa.
-										eccezioneDaInviareServizioApplicativo = Eccezione.
-												getEccezioneProcessamento(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreProcessamento(e.getDescription()), protocolFactory);
+										eccezioneDaInviareServizioApplicativo = new Eccezione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione(), false, SbustamentoRisposte.ID_MODULO, protocolFactory);
 									}
-								}else{
-									eccezioneDaInviareServizioApplicativo = new Eccezione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione(), false, SbustamentoRisposte.ID_MODULO, protocolFactory);
 								}
 							}
 						}
-					}
-					else{
-						if(errors.size()>1){
-							StringBuilder bfDescrizione = new StringBuilder();
-							for(int k=0; k<errors.size();k++){
-								Eccezione error = errors.get(k);
-								if(error.getDescrizione(protocolFactory)!=null)
-									bfDescrizione.append("["+traduttore.toString(error.getCodiceEccezione(),error.getSubCodiceEccezione())+"] "+error.getDescrizione(protocolFactory)+"\n");
+						else{
+							if(errors.size()>1){
+								StringBuilder bfDescrizione = new StringBuilder();
+								for(int k=0; k<errors.size();k++){
+									Eccezione error = errors.get(k);
+									if(error.getDescrizione(protocolFactory)!=null)
+										bfDescrizione.append("["+traduttore.toString(error.getCodiceEccezione(),error.getSubCodiceEccezione())+"] "+error.getDescrizione(protocolFactory)+"\n");
+								}
+								if(bfDescrizione.length()>0)
+									eccezioneDaInviareServizioApplicativo.setDescrizione(bfDescrizione.toString());
+							}else{
+								eccezioneDaInviareServizioApplicativo = errors.get(0);
 							}
-							if(bfDescrizione.length()>0)
-								eccezioneDaInviareServizioApplicativo.setDescrizione(bfDescrizione.toString());
-						}else{
-							eccezioneDaInviareServizioApplicativo = errors.get(0);
 						}
-					}
-					OpenSPCoop2Message responseMessageError = null;
-					if(eccezioneDaInviareServizioApplicativo!=null){
-						responseMessageError = this.generatoreErrore.build(pddContext, IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR,
-								eccezioneDaInviareServizioApplicativo,
-								richiestaDelegata.getIdServizio().getSoggettoErogatore(),dettaglioEccezione,
-								parseException);
+						OpenSPCoop2Message responseMessageError = null;
+						if(eccezioneDaInviareServizioApplicativo!=null){
+							responseMessageError = this.generatoreErrore.build(pddContext, IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR,
+									eccezioneDaInviareServizioApplicativo,
+									richiestaDelegata.getIdServizio().getSoggettoErogatore(),dettaglioEccezione,
+									parseException);
+						}else{
+							responseMessageError = this.generatoreErrore.build(pddContext, IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR,
+									erroreIntegrazioneDaInviareServizioApplicativo,null,
+									parseException);
+						}
+						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRiferimentoMessaggio,pd,sa);
+						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"BustaErrore");
 					}else{
-						responseMessageError = this.generatoreErrore.build(pddContext, IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR,
-								erroreIntegrazioneDaInviareServizioApplicativo,null,
-								parseException);
+						ejbUtils.releaseInboxMessage(false); 
+						esito.setStatoInvocazione(EsitoLib.ERRORE_NON_GESTITO,"BustaErrore");
 					}
-					ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRiferimentoMessaggio,pd,sa);
-					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"BustaErrore");
-				}else{
-					ejbUtils.releaseInboxMessage(false); 
-					esito.setStatoInvocazione(EsitoLib.ERRORE_NON_GESTITO,"BustaErrore");
+					msgDiag.mediumDebug("Rilascio connessione...");
+					openspcoopstate.releaseResource();
+					esito.setEsitoInvocazione(true); 
+					return esito; // Non devo utilizzare una busta malformata
 				}
-				msgDiag.mediumDebug("Rilascio connessione...");
-				openspcoopstate.releaseResource();
-				esito.setEsitoInvocazione(true); 
-				return esito; // Non devo utilizzare una busta malformata
 			}
 
 

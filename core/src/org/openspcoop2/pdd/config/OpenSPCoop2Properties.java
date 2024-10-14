@@ -1126,6 +1126,9 @@ public class OpenSPCoop2Properties {
 			this.getProblemRFC7807_transactionId_claim();
 			this.getProblemRFC7807_code_claim();
 			this.getProblemRFC7807_type_claim();
+			
+			// Risposta Errore
+			this.isErroreApplicativoInoltraClientBustaRispostaErroreRicevuta(Costanti.TRASPARENTE_PROTOCOL_NAME);
 
 			// IdentitaPdD
 			if( this.getIdentitaPortaDefault() == null  ){
@@ -8953,6 +8956,55 @@ public class OpenSPCoop2Properties {
 	}
 
 
+	private Boolean isErroreApplicativoInoltraClientBustaRispostaErroreRicevuta = null;
+	public boolean isErroreApplicativoInoltraClientBustaRispostaErroreRicevuta(){
+		if(this.isErroreApplicativoInoltraClientBustaRispostaErroreRicevuta==null){
+			String pName = "org.openspcoop2.pdd.erroreApplicativo.inoltraClientBustaRispostaErroreRicevuta";
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isErroreApplicativoInoltraClientBustaRispostaErroreRicevuta = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isErroreApplicativoInoltraClientBustaRispostaErroreRicevuta = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isErroreApplicativoInoltraClientBustaRispostaErroreRicevuta = false;
+			}
+		}
+
+		return this.isErroreApplicativoInoltraClientBustaRispostaErroreRicevuta;
+	}
+	
+	private Map<String,Boolean> isErroreApplicativoInoltraClientBustaRispostaErroreRicevutaMap = new HashMap<>();
+	public boolean isErroreApplicativoInoltraClientBustaRispostaErroreRicevuta(String protocollo){
+		Boolean v = this.isErroreApplicativoInoltraClientBustaRispostaErroreRicevutaMap.get(protocollo);
+		if(v==null){
+			String pName = "org.openspcoop2.pdd.erroreApplicativo.inoltraClientBustaRispostaErroreRicevuta."+protocollo;
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					v = Boolean.parseBoolean(value);
+				}else{
+					v = isErroreApplicativoInoltraClientBustaRispostaErroreRicevuta(); // default per qualsiasi protocollo
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, isErroreApplicativoInoltraClientBustaRispostaErroreRicevuta()),e);
+				v = isErroreApplicativoInoltraClientBustaRispostaErroreRicevuta();
+			}
+			this.isErroreApplicativoInoltraClientBustaRispostaErroreRicevutaMap.put(protocollo, v);
+		}
+
+		return v;
+	}
+	
 
 
 
