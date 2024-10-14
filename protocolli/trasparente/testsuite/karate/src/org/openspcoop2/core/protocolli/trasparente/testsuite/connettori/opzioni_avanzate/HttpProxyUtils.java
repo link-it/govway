@@ -57,7 +57,7 @@ public class HttpProxyUtils {
 	public static final String ACTION_HTTPS_AUTH = "httpsAuth";
 	public static final String ACTION_HTTPS_CUSTOM_AUTH = "httpsCustomAuth";
 	
-	public static final String PROPERTY_MITMDUMP_OPENSSL_COMMAND = "mitmdump.mitmdumpCommand";
+	public static final String PROPERTY_MITMDUMP_OPENSSL_COMMAND = "mitmdump.command";
 	public static final String PROPERTY_MITMDUMP_WAIT_STARTUP_SERVER = "mitmdump.waitStartupServer";
 	public static final String PROPERTY_MITMDUMP_WAIT_STOP_SERVER = "mitmdump.waitStopServer";
 	

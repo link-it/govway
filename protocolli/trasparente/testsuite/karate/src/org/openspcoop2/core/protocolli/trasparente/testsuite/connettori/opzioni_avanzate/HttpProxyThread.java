@@ -244,7 +244,7 @@ public class HttpProxyThread extends AbstractBaseThread {
 	public static HttpProxyThread newHttpProxyThreadAuth(String command, int waitStartupServer, String username, String password) throws Exception {
 		return newHttpProxyThreadNoAuth(command, waitStartupServer, PORT_AUTH, username, password);
 	}
-	private static HttpProxyThread newHttpProxyThreadNoAuth(String opensslCommand, int waitStartupServer, int port, String username, String password) throws Exception {
+	private static HttpProxyThread newHttpProxyThreadNoAuth(String command, int waitStartupServer, int port, String username, String password) throws Exception {
 		
 		 boolean started = false;
 		 int index = 0;
@@ -252,7 +252,7 @@ public class HttpProxyThread extends AbstractBaseThread {
 		 int tentativi = 30; // quando succede l'errore di indirizzo già utilizzato è perchè impiega molto tempo a rilasciare la porta in ambiente jenkins
 		 while(!started && index<tentativi) {
 		 
-			 httpProxyThread = new HttpProxyThread(opensslCommand, port, username, password);
+			 httpProxyThread = new HttpProxyThread(command, port, username, password);
 			 try {
 				 try {
 					 httpProxyThread.start();
