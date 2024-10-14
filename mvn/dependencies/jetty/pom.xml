@@ -17,7 +17,7 @@
 
 		<jar.group.name>jetty</jar.group.name>
 		
-		<jetty.version>10.0.16</jetty.version>
+		<jetty.version>12.0.12</jetty.version>
 
 	</properties>
 
