@@ -240,7 +240,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 									checkBoxSelected = " checked='true'";
 								}
 								
-								String idCheckbox = "_" + (idToRemove!=null ? idToRemove : i);
+								String idCheckbox = ServletUtils.normalizeId("_" + (idToRemove!=null ? idToRemove : i));
 							   %>
 								<td class="tdText<%=checkBoxStyle %>">
 							   		<div align="center">

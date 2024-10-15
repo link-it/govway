@@ -1297,4 +1297,16 @@ public class ServletUtils {
 	public static void setErrorStatusCodeInRequestAttribute(HttpServletRequest request, HttpStatus httpStatus){
 		request.setAttribute(Costanti.REQUEST_ATTRIBUTE_SET_ERROR_CODE, httpStatus);
 	}
+	
+	/**
+	 * Elimina il carattere ':' dall'identificativo passato come parametro, gli id contenenti i ':' non sono validi in jquery
+	 * @return
+	 */
+	public static String normalizeId(String input) {
+		if(input == null) {
+			return null;
+		}
+		
+		return input.replaceAll("[:/]", "_");
+	}
 }
