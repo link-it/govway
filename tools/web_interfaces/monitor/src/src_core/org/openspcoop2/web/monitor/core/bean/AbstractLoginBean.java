@@ -35,6 +35,8 @@ import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
 import org.openspcoop2.web.monitor.core.dao.ILoginDAO;
+import org.openspcoop2.web.monitor.core.dao.IRicercheUtenteService;
+import org.openspcoop2.web.monitor.core.dao.RicercheUtenteService;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.slf4j.Logger;
@@ -65,6 +67,7 @@ public abstract class AbstractLoginBean implements Serializable{
 	private boolean initDao = false;
 	private boolean applicationLogin = true;
 	protected transient ILoginDAO loginDao;
+	protected transient IRicercheUtenteService ricercheUtenteService;
 	private transient Map<String, Soggetto> mapSoggetti = null;
 
 //	public static final String LOGIN_BEAN_SESSION_ATTRIBUTE_NAME = "scopedTarget.loginBean"; // nome del login bean in sessione quando e' gestito dal roxy aspectj
@@ -84,6 +87,7 @@ public abstract class AbstractLoginBean implements Serializable{
 		this.initDao = false;
 
 		this.loginDao = new DBLoginDAO(con, autoCommit, serviceManagerProperties, log);
+		this.ricercheUtenteService = new RicercheUtenteService(con, autoCommit, serviceManagerProperties, log);
 		
 		init();
 	}
@@ -91,9 +95,10 @@ public abstract class AbstractLoginBean implements Serializable{
 	protected void init() {
 		if (this.initDao) {
 			this.loginDao = new DBLoginDAO();
+			this.ricercheUtenteService = new RicercheUtenteService();
 		}
 		
-		this.mapSoggetti = new HashMap<String, Soggetto>();
+		this.mapSoggetti = new HashMap<>();
 	}
 
 	public void setLoginDao(ILoginDAO loginDao) {
@@ -102,6 +107,14 @@ public abstract class AbstractLoginBean implements Serializable{
 
 	public ILoginDAO getLoginDao() {
 		return this.loginDao;
+	}
+
+	public IRicercheUtenteService getRicercheUtenteService() {
+		return this.ricercheUtenteService;
+	}
+
+	public void setRicercheUtenteService(IRicercheUtenteService ricercheUtenteService) {
+		this.ricercheUtenteService = ricercheUtenteService;
 	}
 
 	public String logout() {
@@ -153,8 +166,6 @@ public abstract class AbstractLoginBean implements Serializable{
 
 	public String getUsername() {
 		return this.username;
-//		UserDetailsBean u = this.getLoggedUser();
-//		return u != null ? u.getUsername() : null;
 	}
 
 	public void setUsername(String username) {
@@ -163,8 +174,6 @@ public abstract class AbstractLoginBean implements Serializable{
 
 	public String getPwd() {
 		return this.pwd;
-//		UserDetailsBean u = this.getLoggedUser();
-//		return u != null ? u.getPassword() : null;
 	}
 
 	public void setPwd(String pwd) {

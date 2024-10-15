@@ -33,10 +33,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.slf4j.Logger;
-
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo.BrowserFamily;
-import org.openspcoop2.web.monitor.core.utils.Costanti;
 
 /****
  * IEFilter Filtro JSF che fissa la visualizzazione dell'applicazione in modalita IE-8 Compatibile, per i browser con versione &gt;=8

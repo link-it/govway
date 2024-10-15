@@ -106,6 +106,8 @@ if (hidden!=null && !hidden.isEmpty()) {
 						}
 						String dataScrollerTopLabel = "Visualizzati record ["+index+"-"+(v.size()+pd.getIndex())+"] su " + pd.getNumEntries();
 						
+						List<String> idsDaVisualizzareSelezionati =  pd.getIdsDaVisualizzareSelezionati();
+						
 						if (pd.isPaginazione()){
 						%>
 					
@@ -234,10 +236,24 @@ if (hidden!=null && !hidden.isEmpty()) {
 						  	}
 						  	
 							if (pd.getSelect()) {
+								String checkBoxSelected = " ";
+								
+								if(idsDaVisualizzareSelezionati.contains(idToRemove)) {
+									checkBoxSelected = " checked='true'";
+								}
+								
+								String idCheckbox = "_" + (idToRemove!=null ? idToRemove : i);
 							   %>
 								<td class="tdText">
 							   		<div align="center">
-							   			<input id='_<% if(idToRemove!=null) out.write(idToRemove);else out.write(""+i); %>' type="checkbox" name="selectcheckbox" value='<% if(idToRemove!=null) out.write(idToRemove);else out.write(""+i); %>'/>
+							   			<input id="<%=idCheckbox %>" type="checkbox" name="selectcheckbox" value='<% if(idToRemove!=null) out.write(idToRemove);else out.write(""+i); %>' <%=checkBoxSelected %>/>
+							   			<script type="text/javascript" nonce="<%= randomNonce %>">
+										      $(document).ready(function(){
+													$('#<%=idCheckbox %>').click(function() {
+														singleCheckboxListener(document.form, $(this).is(':checked'));
+													});
+												});
+										  </script>
 							   		</div>
 							   	</td><%
 							 }

@@ -34,10 +34,12 @@
 				<a4j:keepAlive beanName="configurazioniGeneraliBean" />
 				<div class="form-container noborder">
 					<h:form prependId="false">
-						<div class="subtitle">
-							<h:outputText id="idTemporale" value="#{msg['configurazioniGenerali.search.sezioneFiltroDatiServizio.label']}" styleClass="subtitle"/>
-						</div>
 						<a4j:outputPanel id="searchPnl" ajaxRendered="false" layout="block">
+							
+							<div class="subtitle">
+								<h:outputText id="idTemporale" value="#{msg['configurazioniGenerali.search.sezioneFiltroDatiServizio.label']}" styleClass="subtitle"/>
+							</div>
+						
 							<input type="hidden" id="_csrfFormRicercaConfigurazioni" name="_csrf" value="#{loginBean.csrf}"/>
 							<link:prop label="Tipologia">
 								<rich:comboBox id="tipologiaTransazioniCombo" value="#{configurazioniGeneraliSearchForm._value_tipologiaTransazioni}" 
@@ -66,6 +68,12 @@
 									<ui:param name="sf_mbean" value="#{configurazioniGeneraliBean}" />
 								</ui:include>
 							</a4j:outputPanel>
+							
+							<ui:include src="/commons/includes/searchFormFiltroRicercheUtente.xhtml">
+								<ui:param name="sf_mbean" value="#{configurazioniGeneraliBean}" />
+								<ui:param name="sf_bean" value="#{configurazioniGeneraliSearchForm}"  />
+								<ui:param name="idsToRefresh" value="searchPnl,altriCriteri" />
+							</ui:include>
 	
 							<a4j:outputPanel layout="block" id="gruppiComboCtr">
 								<ui:include src="/stat/includes/searchFormConfigurazioniGeneraliFiltroGruppi.xhtml">
@@ -93,6 +101,11 @@
 								rendered="#{true}"
 								action="#{configurazioniGeneraliSearchForm.ripulisci}"
 							 />
+							 <a4j:commandButton id="salvaRicerca-iconLink" value="#{msg['commons.salvaRicerca.label']}"
+								styleClass="icon-csv positive" process="searchPnl" rendered="#{configurazioniGeneraliSearchForm.visualizzaComandoSalvaRicerca}"
+								action="#{configurazioniGeneraliSearchForm.inviaFormRicerca}"  
+								oncomplete="preparaFormSalvaRicerca();Richfaces.showModalPanel('salvaRicercaModalPnl');  return false;" >
+							</a4j:commandButton>
 						</div>
 					</h:form>
 				</div>
@@ -271,6 +284,12 @@
 						</a4j:outputPanel>
 					</h:form>
 				</rich:modalPanel>
+				
+				<ui:include src="/commons/includes/salvaRicercaUtenteModale.xhtml">
+	               	<ui:param name="mBean" value="#{configurazioniGeneraliBean}" />
+	               	<ui:param name="sf_bean" value="#{configurazioniGeneraliSearchForm}"  />
+	               	<ui:param name="loginBean" value="#{loginBean}"  />
+	           	</ui:include>
 		</a4j:outputPanel>
 	</ui:define>
 </ui:composition>

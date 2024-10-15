@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 
 
 /**

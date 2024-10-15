@@ -20,14 +20,21 @@
 package org.openspcoop2.web.monitor.eventi.bean;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.faces.event.ActionEvent;
 
 import org.openspcoop2.web.monitor.core.bean.AbstractDateSearchForm;
 import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.constants.TipoMatch;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.ricerche.ModuloRicerca;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.openspcoop2.web.monitor.eventi.constants.EventiCostanti;
 import org.slf4j.Logger;
 
 
@@ -44,8 +51,6 @@ public class EventiSearchForm extends AbstractDateSearchForm {
 	
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
 
-	public static final String NON_SELEZIONATO = "--"; 
-	
 	private String severita;
 	private String tipo;
 	private String codice;
@@ -58,7 +63,16 @@ public class EventiSearchForm extends AbstractDateSearchForm {
 	
 	private String canale;
 
-	private String severitaDefault = EventiSearchForm.NON_SELEZIONATO;
+	private String severitaDefault = Costanti.NON_SELEZIONATO;
+	
+	private static List<String> elencoFieldsRicercaDaIgnorare = new ArrayList<>();	
+	
+	static {
+		// aggiungo tutti i fields delle super classi
+		elencoFieldsRicercaDaIgnorare.addAll(Arrays.asList(Costanti.SEARCH_FORM_FIELDS_DA_NON_SALVARE));
+		// aggiungo i field di questa classe
+		elencoFieldsRicercaDaIgnorare.addAll(Arrays.asList(EventiCostanti.SEARCH_FORM_FIELDS_DA_NON_SALVARE));
+	}
 
 	@Override
 	protected String ripulisciValori(){
@@ -76,11 +90,6 @@ public class EventiSearchForm extends AbstractDateSearchForm {
 		}
 		ripulisciValori();
 	}
-
-
-//	public void setImpostazioniSeverita(String defaultValue){
-//		this.severitaDefault = defaultValue;
-//	}
 
 	@Override
 	public void initSearchListener(ActionEvent ae) {
@@ -103,7 +112,7 @@ public class EventiSearchForm extends AbstractDateSearchForm {
 		
 		this.canale = null;
 		
-		this.severitaDefault = EventiSearchForm.NON_SELEZIONATO;
+		this.severitaDefault = Costanti.NON_SELEZIONATO;
 		this.executeQuery = false;
 	}
 
@@ -251,4 +260,33 @@ public class EventiSearchForm extends AbstractDateSearchForm {
 		return super.getDefaultPrintPeriodoBehaviour();
 	}
 
+	@Override
+	public ModuloRicerca getModulo() {
+		return ModuloRicerca.EVENTI;
+	}
+	
+	@Override
+	public String getModalitaRicerca() {
+		return null;
+	}
+	
+	@Override
+	public boolean isVisualizzaComandoSalvaRicerca() {
+		return true;
+	}
+	
+	@Override
+	public List<String> getElencoFieldRicercaDaIgnorare() {
+		return elencoFieldsRicercaDaIgnorare;
+	}
+	
+	@Override
+	public String getProtocolloRicerca() {
+		return null;
+	}
+	
+	@Override
+	public String getSoggettoRicerca() {
+		return null;
+	}
 }

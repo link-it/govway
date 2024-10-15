@@ -165,6 +165,11 @@
 					<h:form>
 						<a4j:outputPanel id="searchPnl" ajaxRendered="false" layout="block">
 							<input type="hidden" id="_csrfFormAllarmiSearchPanel" name="_csrf" value="#{loginBean.csrf}"/>
+							
+							<a4j:outputPanel id="datiAllarmiPnlSubtitle" styleClass="subtitle" layout="block" rendered="#{true}">
+								<h:outputText id="idDatiAllarmi" value="Dati Allarme" styleClass="subtitle"/>
+							</a4j:outputPanel>
+							
 							<link:prop label="Tipologia">
 								<rich:comboBox id="tipologiaTransazioniCombo" value="#{searchFormAllarmi.tipologiaAllarme}" 
 										defaultLabel="Seleziona Tipologia Allarme" converter="selectItemConverter"
@@ -175,34 +180,40 @@
 								</rich:comboBox>
 							</link:prop>
 							
-							<a4j:outputPanel id="panelFiltriApis" layout="block" rendered="#{searchFormAllarmi.tipologiaAllarme != 'configurazione'}">
-								<a4j:outputPanel id="panelProtocollo" layout="block" rendered="#{searchFormAllarmi.showListaProtocolli}"
+							<a4j:outputPanel id="panelFiltriApis" layout="block">
+								<a4j:outputPanel id="panelProtocollo" layout="block" rendered="#{searchFormAllarmi.showListaProtocolli and searchFormAllarmi.tipologiaAllarme != 'configurazione'}"
 									ajaxRendered="true">
 									<link:prop label="#{applicationBean.labelProfilo}">
 										<rich:comboBox id="protocolloCombo" value="#{searchFormAllarmi.protocollo}"
 											converter="selectItemConverter" defaultLabel="Seleziona #{applicationBean.labelProfilo}" enableManualInput="false" directInputSuggestions="true" width="416">
 											<f:selectItems value="#{searchFormAllarmi.protocolli}" />
 											<a4j:support status="mainStatus" event="onselect" actionListener="#{searchFormAllarmi.protocolloSelected}"
-												reRender="soggettoErogatoreComboCtr,gruppiComboCtr,servizioComboCtr" />
+												reRender="soggettoErogatoreComboCtr,gruppiComboCtr,servizioComboCtr,panelRicercheUtente" />
 										</rich:comboBox>
 									</link:prop>
 								</a4j:outputPanel>
 								
-								<a4j:outputPanel layout="block" id="soggettoErogatoreComboCtr">
+								<a4j:outputPanel layout="block" id="soggettoErogatoreComboCtr" rendered="#{searchFormAllarmi.tipologiaAllarme != 'configurazione'}">
 									<ui:include src="/stat/includes/searchFormConfigurazioniGeneraliFiltroSoggetto.xhtml">
 										<ui:param name="sf_bean" value="#{searchFormAllarmi}" />
 										<ui:param name="sf_mbean" value="#{allarmiBean}" />
 									</ui:include>
 								</a4j:outputPanel>
+								
+								<ui:include src="/commons/includes/searchFormFiltroRicercheUtente.xhtml">
+									<ui:param name="sf_mbean" value="#{allarmiBean}" />
+									<ui:param name="sf_bean" value="#{searchFormAllarmi}"  />
+									<ui:param name="idsToRefresh" value="searchPnl,altriCriteri" />
+								</ui:include>
 		
-								<a4j:outputPanel layout="block" id="gruppiComboCtr">
+								<a4j:outputPanel layout="block" id="gruppiComboCtr" rendered="#{searchFormAllarmi.tipologiaAllarme != 'configurazione'}">
 									<ui:include src="/stat/includes/searchFormConfigurazioniGeneraliFiltroGruppi.xhtml">
 										<ui:param name="sf_bean" value="#{searchFormAllarmi}" />
 										<ui:param name="sf_mbean" value="#{allarmiBean}" />
 									</ui:include>
 								</a4j:outputPanel>
 		
-								<a4j:outputPanel layout="block" id="servizioComboCtr">
+								<a4j:outputPanel layout="block" id="servizioComboCtr" rendered="#{searchFormAllarmi.tipologiaAllarme != 'configurazione'}">
 									<ui:include src="/stat/includes/searchFormConfigurazioniGeneraliFiltroServizio.xhtml">
 										<ui:param name="sf_bean" value="#{searchFormAllarmi}" />
 										<ui:param name="sf_mbean" value="#{allarmiBean}" />
@@ -257,6 +268,11 @@
 									rendered="#{true}"
 									action="#{searchFormAllarmi.ripulisci}"
 								 />
+							<a4j:commandButton id="salvaRicerca-iconLink" value="#{msg['commons.salvaRicerca.label']}"
+								styleClass="icon-csv positive" process="searchPnl" rendered="#{searchFormAllarmi.visualizzaComandoSalvaRicerca}"
+								action="#{searchFormAllarmi.inviaFormRicerca}"  
+								oncomplete="preparaFormSalvaRicerca();Richfaces.showModalPanel('salvaRicercaModalPnl');  return false;" >
+							</a4j:commandButton>
 						</div>			
 					</h:form>		
 				</div>
@@ -420,6 +436,12 @@
 					</link:dataTable>
 				</h:form>
 			</a4j:outputPanel>
+			
+			<ui:include src="/commons/includes/salvaRicercaUtenteModale.xhtml">
+               	<ui:param name="mBean" value="#{allarmiBean}" />
+               	<ui:param name="sf_bean" value="#{searchFormAllarmi}"  />
+               	<ui:param name="loginBean" value="#{loginBean}"  />
+           	</ui:include>
 		</a4j:outputPanel>
 	</ui:define>
 </ui:composition>

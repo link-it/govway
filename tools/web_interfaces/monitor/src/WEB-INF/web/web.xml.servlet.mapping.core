@@ -3,3 +3,11 @@
 		<servlet-name>Faces Servlet</servlet-name>
 		<url-pattern>*.jsf</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>RicercheUpload</servlet-name>
+		<url-pattern>/ricercheUpload</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>RicercheExporter</servlet-name>
+		<url-pattern>/ricercheExporter</url-pattern>
+	</servlet-mapping>

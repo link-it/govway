@@ -80,6 +80,9 @@ div.errorsSpacer {
 	width: 50%;
 }
 
+#caricaRichercheErrorsPlaceHolder{
+	margin: 0px 0px 20px 0px;
+}
 
 div.errors,
 div.messages-errors,

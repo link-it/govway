@@ -31,9 +31,6 @@
 					<a4j:jsFunction name="refreshPnl" reRender="altriCriteri"/>
 					<a4j:outputPanel id="distribuzioneSearchPnl" ajaxRendered="false">
 						<input type="hidden" id="_csrfFormDistribuzioneSearchPnl" name="_csrf" value="#{loginBean.csrf}"/>
-						<a4j:outputPanel id="distribuzioneSearchPnlSubtitle" styleClass="subtitle" layout="block" rendered="#{analisiStatisticaBean.mBean.search.showListaProtocolli}">
-							<h:outputText id="idTipoAnalisi" value="Analisi Statistica" styleClass="subtitle"/>
-						</a4j:outputPanel>
 						
 						<h:inputHidden value="#{analisiStatisticaBean.tipoDistribuzione}" />
 						
@@ -92,8 +89,19 @@
 						<a4j:commandButton styleClass="icon-refresh" action="#{analisiStatisticaBean.filtra}" value="Genera Report"  process="distribuzioneSearchPnl" id="generaReport" />
 						<a4j:commandButton id="svuota" value="Ripulisci" styleClass="icon-refresh" process="distribuzioneSearchPnl"
 							reRender="distribuzioneSearchPnl" rendered="#{true}" action="#{analisiStatisticaBean.ripulisci}"	/>
+						<a4j:commandButton id="salvaRicerca-iconLink" value="#{msg['commons.salvaRicerca.label']}"
+							styleClass="icon-csv positive" process="distribuzioneSearchPnl" rendered="#{analisiStatisticaBean.mBean.search.visualizzaComandoSalvaRicerca}"
+							action="#{analisiStatisticaBean.inviaFormRicerca}"  
+							oncomplete="preparaFormSalvaRicerca();Richfaces.showModalPanel('salvaRicercaModalPnl');  return false;" >
+						</a4j:commandButton>
 					</h:panelGroup>
 				</h:form>
+				
+				<ui:include src="/commons/includes/salvaRicercaUtenteModale.xhtml">
+	               	<ui:param name="mBean" value="#{analisiStatisticaBean.mBean}" />
+	               	<ui:param name="sf_bean" value="#{analisiStatisticaBean.mBean.search}"  />
+	               	<ui:param name="loginBean" value="#{loginBean}"  />
+	           	</ui:include>
 			</div>
 		</rich:panel>
 	 	<rich:spacer height="4"/>	

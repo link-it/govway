@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.web.monitor.statistiche.constants;
 
+import org.openspcoop2.web.monitor.core.constants.Costanti;
+
 /**
  * StatisticheCostanti
  * 
@@ -33,20 +35,20 @@ public class StatisticheCostanti {
 
 	/* CHIAVI PROPERTIES DA FILE messages_it.properties */ 
 	
-	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_DISTRIBUZIONE_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.distribuzione.label";
-	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_PERSONALIZZATA_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.personalizzata.label";
-	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.label";
-	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_IDENTIFICATIVO_AUTENTICATO_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.identificativoAutenticato.label";
-	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_INDIRIZZO_IP_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.indirizzoIP.label";
-	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_APPLICATIVO_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.applicativo.label";
-	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ERRORI_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.errori.label";
-	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_AZIONE_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.azione.label";
-	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SERVIZIO_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.servizio.label";
-	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.soggettoLocale.label";
-	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.soggettoRemoto.label";
-	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ESITI_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.esiti.label";
-	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TEMPORALE_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.temporale.label";
-	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_MITTENTE_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.mittente.label";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_DISTRIBUZIONE_LABEL_KEY = Costanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_DISTRIBUZIONE_LABEL_KEY;
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_PERSONALIZZATA_LABEL_KEY = Costanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_PERSONALIZZATA_LABEL_KEY;
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_LABEL_KEY = Costanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_LABEL_KEY;
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_IDENTIFICATIVO_AUTENTICATO_LABEL_KEY = Costanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_IDENTIFICATIVO_AUTENTICATO_LABEL_KEY;
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_INDIRIZZO_IP_LABEL_KEY = Costanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_INDIRIZZO_IP_LABEL_KEY;
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_APPLICATIVO_LABEL_KEY = Costanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_APPLICATIVO_LABEL_KEY;
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ERRORI_LABEL_KEY = Costanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ERRORI_LABEL_KEY;
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_AZIONE_LABEL_KEY = Costanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_AZIONE_LABEL_KEY;
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SERVIZIO_LABEL_KEY = Costanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SERVIZIO_LABEL_KEY;
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE_LABEL_KEY = Costanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE_LABEL_KEY;
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO_LABEL_KEY = Costanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO_LABEL_KEY;
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ESITI_LABEL_KEY = Costanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ESITI_LABEL_KEY;
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TEMPORALE_LABEL_KEY = Costanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TEMPORALE_LABEL_KEY;
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_MITTENTE_LABEL_KEY = Costanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_MITTENTE_LABEL_KEY;
 	
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_ISSUER_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.issuer.label";
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_CLIENT_ID_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.clientID.label";
@@ -119,4 +121,34 @@ public class StatisticheCostanti {
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_CLIENTID_PDNDINFO = "stats.search.claim.clientIdConPDND";
 	
 	public static final String  STATS_ANALISI_STATISTICA_HEATMAP_TOOLTIP_CATEGORIA_ALTRI_PATTERN_KEY = "stats.analisiStatistica.heatmap.tooltip.categoriaAltri.pattern";
+	
+	public static final String[] SEARCH_FORM_FIELDS_DA_NON_SALVARE= {
+			"_value_tipoReport",
+			"opened",
+			"_value_modalitaTemporale",
+			"_value_tipoVisualizzazione",
+			"_value_tipoBanda",
+			"_value_tipoLatenza",
+			"_value_tipoStatistica",
+			"_value_numeroDimensioni",
+			"_value_numeroDimensioniCustom",
+			"distribuzionePerSoggettoRemota",
+			"andamentoTemporalePerEsiti",
+			"isMostraUnitaTempoDistribuzioneNonTemporale",
+			"isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato",
+			"andamentoTemporalePerEsiti",
+			"statisticheLatenzaPortaEnabled",
+			"usaSVG",
+			"isCloned",
+			"action",
+			"periodoDellaRicerca",
+	};
+	
+	public static final String[] STATISTICHE_PERSONALIZZATE_SEARCH_FORM_FIELDS_DA_NON_SALVARE= {
+			"filtroReport",
+			"service",
+			"statisticaSelezionataParameters",
+			"tabellaStatistichePersonalizzate",
+			"mBean",
+	};
 }

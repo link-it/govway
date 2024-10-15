@@ -51,6 +51,7 @@ import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.core.Utils;
+import org.openspcoop2.web.monitor.core.dao.IRicercheUtenteService;
 import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.dao.UserService;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -93,6 +94,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 	private PasswordVerifier passwordVerifier = null;
 	
 	private boolean salvaModificheProfiloInSessione = false;
+	private transient IRicercheUtenteService ricercheUtenteService;
 	
 	public UtentiBean() {
 		this.service = new UserService();
@@ -801,5 +803,22 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 			
 			this.user.getStati().add(statoIntevalloTemporaleHomePage);
 		}
+	}
+	
+	public String ricerche() {
+		return "ricercheUtente";
+	}
+	
+	public String getLabelLinkRicerche() {
+		int numeroRicerche = this.ricercheUtenteService.totaleRicercheUtente(this.user.getLogin());
+		return MessageManager.getInstance().getMessageWithParamsFromResourceBundle("commons.ricercheUtente.linkConCount", numeroRicerche);
+	}
+
+	public IRicercheUtenteService getRicercheUtenteService() {
+		return this.ricercheUtenteService;
+	}
+
+	public void setRicercheUtenteService(IRicercheUtenteService ricercheUtenteService) {
+		this.ricercheUtenteService = ricercheUtenteService;
 	}
 }

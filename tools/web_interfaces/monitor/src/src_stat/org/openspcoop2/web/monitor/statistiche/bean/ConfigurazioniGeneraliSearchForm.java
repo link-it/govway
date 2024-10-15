@@ -20,17 +20,20 @@
 package org.openspcoop2.web.monitor.statistiche.bean;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.ricerche.ModuloRicerca;
+import org.slf4j.Logger;
 
 /**
  * ConfigurazioniGeneraliSearchForm
@@ -45,8 +48,13 @@ public class ConfigurazioniGeneraliSearchForm extends BaseSearchForm implements 
 	private static Logger log = LoggerManager.getPddMonitorCoreLogger();
 	private PddRuolo tipologiaTransazioni = null;
 	
-	public static final String NON_SELEZIONATO = "--"; 
-
+	private static List<String> elencoFieldsRicercaDaIgnorare = new ArrayList<>();	
+	
+	static {
+		// aggiungo tutti i fields delle super classi
+		elencoFieldsRicercaDaIgnorare.addAll(Arrays.asList(Costanti.SEARCH_FORM_FIELDS_DA_NON_SALVARE));
+	}
+	
 	public ConfigurazioniGeneraliSearchForm(){
 		super();
 		try {
@@ -108,12 +116,32 @@ public class ConfigurazioniGeneraliSearchForm extends BaseSearchForm implements 
 	
 	
 	@Override
-	public List<SelectItem> getTipologieRicerca() throws Exception {
-		List<SelectItem> listaTipologie = new ArrayList<SelectItem>();
+	public List<SelectItem> getTipologieRicerca() {
+		List<SelectItem> listaTipologie = new ArrayList<>();
 		
 		listaTipologie.add(new SelectItem(PddRuolo.APPLICATIVA.toString(),"Erogazione"));
 		listaTipologie.add(new SelectItem(PddRuolo.DELEGATA.toString(),"Fruizione"));
 		
 		return listaTipologie;
+	}
+	
+	@Override
+	public ModuloRicerca getModulo() {
+		return ModuloRicerca.CONFIGURAZIONI;
+	}
+	
+	@Override
+	public String getModalitaRicerca() {
+		return null;
+	}
+	
+	@Override
+	public boolean isVisualizzaComandoSalvaRicerca() {
+		return true;
+	}
+	
+	@Override
+	public List<String> getElencoFieldRicercaDaIgnorare() {
+		return elencoFieldsRicercaDaIgnorare;
 	}
 }

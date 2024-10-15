@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/templates/defaultTemplate.xhtml">
+	<f:loadBundle var="msg" basename="messages" />
+	
+		<ui:define name="navbar">
+			<ul>
+				<li>
+					<a4j:htmlCommandLink value="Profilo utente" action="editUser" actionListener="#{loginBean.nuovoTokenCsrfListener}" />
+				</li>
+				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+				<li>
+					<a4j:htmlCommandLink action="ricercheUtente" value="#{msg['commons.ricercheUtente.titoloPagina']}" />
+				</li>
+				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+				<li><h:outputText id="msgLabelRicercaUtente" value="#{ricercheUtenteBean.selectedElement.label}" styleClass="ultimo-path"/></li>
+			</ul>	
+		</ui:define>
+		<ui:define name="body">
+			<div class="form-container">
+				<a4j:keepAlive beanName="utentiBean" />
+				<a4j:keepAlive beanName="ricercheUtenteBean" />
+				<rich:panel id="panelDettaglioRicerca">
+					<f:facet name="header">
+						<h:outputText id="outDettagliUtente" value="#{ricercheUtenteBean.selectedElement.label}" />
+					</f:facet>
+					<h:form id="formRoleUser" prependId="false">
+						<a4j:outputPanel id="formPnl" ajaxRendered="false" layout="block">
+							<input type="hidden" id="_csrfFormPnl" name="_csrf" value="#{loginBean.csrf}"/>
+							<a4j:outputPanel rendered="#{true}">
+								<p class="legend" id="pCampiObbligatori">
+									<strong>Note:</strong> (<em>*</em>) Campi obbligatori 
+								</p>
+							</a4j:outputPanel>
+							<link:fieldset legend="#{msg['commons.salvaRicerca.modal.fieldset.datiRicerca']}" collapsible="false">
+								<link:prop label="#{msg['commons.salvaRicerca.modal.label']}" required="true">
+									<h:inputText id="nomeRicerca" value="#{ricercheUtenteBean.selectedElement.label}" styleClass="inputLinkLong"/>
+								</link:prop>
+								<link:prop label="#{msg['commons.salvaRicerca.modal.descrizione']}" required="true">
+									<h:inputTextarea id="descrizioneRicerca" value="#{ricercheUtenteBean.selectedElement.descrizione}" cols="60" rows="#{5}" styleClass="inputLinkLong inputTextWidthAuto"/>
+								</link:prop>
+								<link:prop label="#{msg['commons.salvaRicerca.modal.visibilita']}" required="true">
+									<h:selectOneRadio id="privacyRicerca" value="#{ricercheUtenteBean.selectedElement.visibilita}" styleClass="controlset">
+										<f:selectItem itemValue="pubblica" itemLabel="#{msg['commons.salvaRicerca.modal.pubblica']}"/>
+										<f:selectItem itemValue="privata" itemLabel="#{msg['commons.salvaRicerca.modal.privata']}"/>
+									</h:selectOneRadio>
+								</link:prop>
+							</link:fieldset>
+							
+							<a4j:outputPanel layout="block" styleClass="buttonrow"  rendered="#{true}" id="buttonFormPwdPanel">
+								<a4j:commandButton id="salvaRicercaBtn" styleClass="icon-save margin-left-24" 
+									action="#{ricercheUtenteBean.aggiornaRicerca}" value="Salva" reRender="panelDettaglioRicerca"/>
+							</a4j:outputPanel>
+						</a4j:outputPanel>
+					</h:form>
+				</rich:panel>
+			</div>
+		</ui:define>
+</ui:composition>

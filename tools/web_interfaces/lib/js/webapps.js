@@ -530,6 +530,26 @@ function checkAll(){
 	}
 }
 
+function singleCheckboxListener(theForm, state){
+
+	var totalCheckboxes = theForm.selectcheckbox.length; // Get total number of checkboxes except #selectAll
+
+	var selectedCheckboxes = 0;
+	for (var c = 0; c < theForm.selectcheckbox.length; c++) {
+		if(theForm.selectcheckbox[c].checked === true){
+			selectedCheckboxes ++;
+		}
+	}
+	    
+    if (state === true) {
+        if (selectedCheckboxes === totalCheckboxes) {
+            $('#chkAll').prop('checked', true); // Select #selectAll if all other checkboxes are selected
+        }
+    } else {
+        $('#chkAll').prop('checked', false); // Deselect #selectAll if a checkbox is unchecked
+    }
+}
+
 function SelectAll(theForm) {
   if (n > 1) {
     for (var c = 0; c < theForm.selectcheckbox.length; c++)

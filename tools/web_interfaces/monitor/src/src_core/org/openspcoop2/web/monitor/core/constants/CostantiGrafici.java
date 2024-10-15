@@ -121,4 +121,14 @@ public class CostantiGrafici {
 	
 	public static final String Y_LABEL_KEY= "yLabel";
 	public static final String Y_KEY= "y";
+	
+	public static final String TIPO_DISTRIBUZIONE_TEMPORALE = "temporale";
+	public static final String TIPO_DISTRIBUZIONE_ESITI = "esiti";
+	public static final String TIPO_DISTRIBUZIONE_ERRORI = "errori";
+	public static final String TIPO_DISTRIBUZIONE_AZIONE = "azione";
+	public static final String TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO = "servizio_applicativo";
+	public static final String TIPO_DISTRIBUZIONE_SERVIZIO = "servizio";
+	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO = "soggetto_remoto";
+	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE = "soggetto_locale";
+	public static final String TIPO_DISTRIBUZIONE_PERSONALIZZATA = "personalizzata";
 }

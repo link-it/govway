@@ -33,6 +33,8 @@ import javax.faces.model.SelectItem;
  *
  */
 public class Costanti {
+	
+	private Costanti() {}
 
 	public static final String LABEL_MENU_MODALITA_CORRENTE_WITH_PARAM = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_COMPACT+": {0}";
 	public static final String LABEL_MENU_SOGGETTO_CORRENTE_WITH_PARAM = "Soggetto: {0}";
@@ -59,15 +61,34 @@ public class Costanti {
 	
 	public static final String NON_SELEZIONATO = "--";
 	
-	public static final String SEPARATORE_TIPO_NOME = org.openspcoop2.web.monitor.core.utils.Costanti.SEPARATORE_TIPO_NOME;
-	public static final String SOGGETTO_SERVIZIO_SEPARATORE_CON_PARENTISI_APERTA = org.openspcoop2.web.monitor.core.utils.Costanti.SOGGETTO_SERVIZIO_SEPARATORE_CON_PARENTISI_APERTA;
-	public static final String SOGGETTO_SERVIZIO_SEPARATORE_CON_PARENTISI_CHIUSA = org.openspcoop2.web.monitor.core.utils.Costanti.SOGGETTO_SERVIZIO_SEPARATORE_CON_PARENTISI_CHIUSA;
+	public static final String SEPARATORE_TIPO_NOME = "/";
+	public static final String SEPARATORE_VERSIONE = ":";
+	public static final String SOGGETTO_SERVIZIO_SEPARATORE_CON_PARENTISI_APERTA = " (";
+	public static final String SOGGETTO_SERVIZIO_SEPARATORE_CON_PARENTISI_CHIUSA = ")";
 	
 	public static final String LABEL_PARAMETRO_RISORSA = "Risorsa";
 	public static final String LABEL_PARAMETRO_AZIONE = "Azione";
 	
 	public static final String LABEL_INFORMAZIONE_NON_DISPONIBILE = "Informazione non disponibile";
 	public static final String LABEL_INFORMAZIONE_NON_PIU_PRESENTE = "Informazione non piu' presente";
+	
+	public static final String LABEL_EROGAZIONE_FRUIZIONE = "Erogazione/Fruizione";
+	public static final String LABEL_FRUIZIONE = "Fruizione";
+	public static final String LABEL_EROGAZIONE = "Erogazione";
+	
+	
+	public static final String PERIODO_ULTIMA_SETTIMANA = "Ultima settimana";
+	public static final String PERIODO_PERSONALIZZATO = "Personalizzato";
+	public static final String PERIODO_ULTIMO_ANNO = "Ultimo anno";
+	public static final String PERIODO_IERI = "Ieri";
+	public static final String PERIODO_ULTIME_24_ORE = "Ultime 24 ore";
+	public static final String PERIODO_ULTIME_12_ORE = "Ultime 12 ore";
+	public static final String PERIODO_ULTIMA_ORA = "Ultima ora";
+	public static final String PERIODO_ULTIMO_MESE = "Ultimo mese";
+	public static final String PERIODO_LIVE = "Live";
+	
+	public static final String TIPO_RICERCA_IM = "im";
+	public static final String TIPO_RICERCA_SPCOOP = "spcoop";
 	
 	public static final String VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO = "tokenInfo";
 	public static final String VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO = "identificativoAutenticato";
@@ -168,6 +189,55 @@ public class Costanti {
 	public static final String SEARCH_PDND_PREFIX_ORGANIZATION_NAME = "transazioni.search.sezioneFiltroRicercaLibera.pdndPrefix.organization.name.label";
 	public static final String SEARCH_PDND_ORGANIZATION_NAME = "transazioni.search.sezioneFiltroRicercaLibera.pdnd.organization.name.label";
 	
+	public static final String SALVA_RICERCA_MISSING_PARAMETER_LABEL_LABEL_KEY = "commons.salvaRicerca.missing_parameter.label";
+	public static final String SALVA_RICERCA_MISSING_PARAMETER_DESCRIZIONE_LABEL_KEY = "commons.salvaRicerca.missing_parameter.descrizione";
+	public static final String SALVA_RICERCA_MISSING_PARAMETER_VISIBILITA_LABEL_KEY = "commons.salvaRicerca.missing_parameter.visibilita";
+	
+	public static final String SALVA_RICERCA_INVALID_PARAMETER_LABEL_DIMENSIONE_NON_VALIDA_LABEL_KEY = "commons.salvaRicerca.invalid_parameter.label.dimensioneNonValida";
+	public static final String SALVA_RICERCA_INVALID_PARAMETER_DESCRIZIONE_DIMENSIONE_NON_VALIDA_LABEL_KEY = "commons.salvaRicerca.invalid_parameter.descrizione.dimensioneNonValida";
+	
+	public static final String RICERCHE_UTENTE_LINK_CON_COUNT_LABEL_KEY = "commons.ricercheUtente.linkConCount";
+	
+	public static final String RICERCHE_UTENTE_MODULO_TRANSAZIONI_LABEL_KEY = "commons.ricercheUtente.modulo.transazioni.label";
+	public static final String RICERCHE_UTENTE_MODULO_STATISTICHE_LABEL_KEY = "commons.ricercheUtente.modulo.statistiche.label";
+	public static final String RICERCHE_UTENTE_MODULO_STATISTICHE_PERSONALIZZATE_LABEL_KEY = "commons.ricercheUtente.modulo.statistichePersonalizzate.label";
+	public static final String RICERCHE_UTENTE_MODULO_CONFIGURAZIONI_LABEL_KEY= "commons.ricercheUtente.modulo.configurazioni.label";
+	public static final String RICERCHE_UTENTE_MODULO_EVENTI_LABEL_KEY = "commons.ricercheUtente.modulo.eventi.label";
+	public static final String RICERCHE_UTENTE_MODULO_ALLARMI_LABEL_KEY = "commons.ricercheUtente.modulo.allarmi.label";
+	public static final String RICERCHE_UTENTE_VISIBILITA_PRIVATA_LABEL_KEY = "commons.salvaRicerca.modal.privata";
+	public static final String RICERCHE_UTENTE_VISIBILITA_PUBBLICA_LABEL_KEY = "commons.salvaRicerca.modal.pubblica";
+	public static final String RICERCHE_UTENTE_FORM_FIELD_FILE_LABEL_KEY = "commons.ricercheUtente.importaRicerche.label";
+	
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_LABEL_KEY = "transazioni.search.tipoRicerca.temporale.label";
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_MITTENTE_LABEL_KEY = "transazioni.search.tipoRicerca.mittente.label";
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_LABEL_KEY = "transazioni.search.tipoRicerca.id.label";
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_RICERCA_BASE_LABEL_KEY = "transazioni.search.tipoRicerca.temporale.ricercaTemporale.label"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_RICERCA_LIBERA_LABEL_KEY = "transazioni.search.tipoRicerca.temporale.ricercaLibera.label"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_TOKEN_INFO_LABEL_KEY = "transazioni.search.tipoRicerca.mittente.ricercaTokenInfo.label"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_SOGGETTO_LABEL_KEY = "transazioni.search.tipoRicerca.mittente.ricercaSoggetto.label"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_APPLICATIVO_LABEL_KEY = "transazioni.search.tipoRicerca.mittente.ricercaApplicativo.label"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_IDENTIFICATIVO_AUTENTICATO_LABEL_KEY = "transazioni.search.tipoRicerca.mittente.ricercaIdentificativoAutenticato.label"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_INDIRIZZO_IP_LABEL_KEY = "transazioni.search.tipoRicerca.mittente.ricercaIndirizzoIP.label"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LABEL_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoApplicativo.label"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_BASE_LABEL_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoApplicativo.lvl2.ricercaBase.label"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_AVANZATA_LABEL_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoApplicativo.lvl2.ricercaLibera.label"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_MESSAGGIO_LABEL_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoMessaggio.label"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_LABEL_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoTransazione.label"; 
+
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_DISTRIBUZIONE_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.distribuzione.label";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_PERSONALIZZATA_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.personalizzata.label";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.label";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_IDENTIFICATIVO_AUTENTICATO_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.identificativoAutenticato.label";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_INDIRIZZO_IP_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.indirizzoIP.label";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_APPLICATIVO_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.applicativo.label";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ERRORI_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.errori.label";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_AZIONE_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.azione.label";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SERVIZIO_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.servizio.label";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.soggettoLocale.label";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.soggettoRemoto.label";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ESITI_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.esiti.label";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TEMPORALE_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.temporale.label";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_MITTENTE_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.mittente.label";
 	
 	/* Home page utente*/
 	
@@ -202,4 +272,111 @@ public class Costanti {
 	// Identificativi tasti salvataggio
 	public static final String ID_BUTTON_SALVA_PROFILO = "salvaProfiloBtn";
 	public static final String ID_BUTTON_SALVA_PASSWORD = "modificaPwd";
+	
+	public static final String OPERAZIONE_NON_DISPONIBILE = "Operazione non disponibile";
+	public static final String ERRORE_GENERICO = "ERRORE_GENERICO";
+	
+	public static final String OPERAZIONE_NON_CONSENTITA = "Operazione non consentita";
+
+	/* NOMI PARAMETRI */
+	
+	public static final String USER_AGENT_HEADER_NAME = "User-Agent";
+	
+	/* COSTANTI NOMI FILE PROPERTIES */
+	
+	public static final String APP_CACHE_PROPERTIES_PATH = "monitor.jcs.properties";
+	public static final String APP_CACHE_PROPERTIES_LOCAL_PATH = "monitor_local.jcs.properties";
+	public static final String APP_CACHE_PROPERTIES = "MONITOR_CACHE_PROPERTIES";
+	
+	public static final String APP_LOG_PROPERTIES_PATH = "monitor.log4j2.properties";
+	public static final String APP_LOG_PROPERTIES_LOCAL_PATH = "monitor_local.log4j2.properties";
+	public static final String APP_LOG_PROPERTIES = "MONITOR_LOG_PROPERTIES";
+	
+	public static final String APP_PROPERTIES_PATH = "monitor.properties";
+	public static final String APP_PROPERTIES_LOCAL_PATH = "monitor_local.properties";
+	public static final String APP_PROPERTIES = "MONITOR_PROPERTIES";
+	
+	/* RICERCHE */
+
+	public static final String VALUE_VISIBILITA_RICERCA_UTENTE_PRIVATA = "privata";
+	public static final String VALUE_VISIBILITA_RICERCA_UTENTE_PUBBLICA = "pubblica";
+	
+	public static final String PARAMETER_IDS = "ids";
+	public static final String PARAMETER_IS_ALL = "isAll";
+	
+	public static final String PARAMETER_IDS_ORIGINALI = "idsOriginali";
+	public static final String PARAMETER_IS_ALL_ORIGINALE = "isAllOriginale";
+	
+	public static final String RICERCHE_EXPORTER_SERVLET_NAME = "ricercheExporter";
+	
+	public static final String[] SEARCH_FORM_FIELDS_DA_NON_SALVARE= {
+			// AbstractCoreSearchForm
+			"numeroPagine",
+			"pageSize",
+			"currentPage",
+			"currentSearchSize",
+			"start",
+			"limit",
+			"restoreSearch",
+			"totalCount",
+			"useCount",
+			"executeQuery",
+			"aggiornamentoDatiAbilitato",
+			"visualizzaSelezioneDimensionePagina",
+			"visualizzaFiltroAperto",
+			"detached",
+			"wrappedKeys",
+			// AbstractDateSearchForm
+			"lastPeriodo",
+			"periodo",
+			"periodoDefault",
+			"dataInizio",
+			"dataFine",
+			"dataRicerca",
+			"useDataRicerca",
+			"ricercaUtente",
+			// BaseSearchForm
+			"log",
+			"visualizzaIdCluster",
+			"visualizzaIdClusterAsSelectList",
+			"listIdCluster",
+			"listLabelIdCluster",
+			"visualizzaCanali",
+			"listCanali",
+			"mapCanaleToNodi",
+			"defaultTipologiaRicerca",
+			"_tipologiaRicercaEntrambiEnabled",
+			"escludiRichiesteScartate",
+			"attivoIntegrationManagerMessageBox",
+			"labelTipoNomeMittente",
+			"labelTipoNomeDestinatario",
+			"labelTipoNomeTrafficoPerSoggetto",
+			"labelTipoNomeSoggettoLocale",
+			"labelApi",
+			"labelNomeServizio",
+			"labelNomeAzione",
+			"ricerchePersonalizzate",
+			"ricercaSelezionata",
+			"statistichePersonalizzate",
+			"statisticaSelezionata",
+			"ricerchePersonalizzateAttive",
+			"statistichePersonalizzateAttive",
+			"protocolli",
+			"checkSoggettoPddMonitor",
+			"filtro",
+			"intervalloRefresh",
+			"tempoMassimoRefreshLive",
+			"user",
+			"sortOrder",
+			"sortField",
+			"sortOrders",
+			TIPODATABASE,
+			"isSearchFormEsitoConsegnaMultiplaEnabled",
+			// da tutti i form
+			"elencoFieldsRicercaDaIgnorare",
+			"isCloned",
+			"protocolCloned",
+			"tipoNomeSoggettoLocaleCloned",
+	};
+	
 }

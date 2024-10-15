@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.lib.users.dao.UserPassword;
@@ -42,9 +43,9 @@ public interface IUserService extends IService<User, String>{
 
 	public void saveTableState(String nomeTabella, User user, Stato stato);
 	
-	public void savePassword(Long idUser, String login, String newPassword, Date dataAggiornamentoPassword) throws Exception;
+	public void savePassword(Long idUser, String login, String newPassword, Date dataAggiornamentoPassword) throws DriverUsersDBException;
 	
-	public void savePasswordStorico(Long idUser, String login, String newPassword, Date dataAggiornamentoPassword, List<UserPassword> storicoPassword) throws Exception;
+	public void savePasswordStorico(Long idUser, String login, String newPassword, Date dataAggiornamentoPassword, List<UserPassword> storicoPassword) throws DriverUsersDBException;
 	
 	public void salvaModalita(String login, String modalita) throws NotFoundException, ServiceException;
 	

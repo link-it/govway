@@ -8,7 +8,7 @@ function singleCheckboxListener( inputId, state , showSelectAll, _totRows , _row
 		 if(_useCount){
 	    	if(state && _totRows>_rows ){
 	        	if(size >= allSize){
-	        		jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_checkAll']").attr("checked","on");
+	        		jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_checkAll']").prop("checked", true);
 	        		jQuery("[id$='"+inputId+"_selectedInfoLbl']").show().text("Selezionati "+size+" elementi su "+_totRows);
 	        		jQuery("[id$='"+inputId+"_selectedInfoPipe1']").show();
 	        	    jQuery("[id$='"+inputId+"_selectAllLink']").show().text("Seleziona tutti i "+_totRows+" elementi");
@@ -18,16 +18,16 @@ function singleCheckboxListener( inputId, state , showSelectAll, _totRows , _row
 	       		jQuery("[id$='"+inputId+"_selectedInfoPipe1']").hide();
 	       		jQuery("[id$='"+inputId+"_selectAllLink']").hide();
 	       		jQuery("[id$='"+inputId+"_undoSelectAllLink']").hide();         
-	       		jQuery("[id$='"+inputId+"_selectedAllChbx']").removeAttr("checked"); 
-	       		jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_checkAll']").removeAttr("checked");
+	       		jQuery("[id$='"+inputId+"_selectedAllChbx']").prop("checked", false); 
+	       		jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_checkAll']").prop("checked", false);
 	        }
 	    } else {
 	    	if(state){
 	    		if(size >= allSize){
-	    			jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_checkAll']").attr("checked","on");
+	    			jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_checkAll']").prop("checked", true);
 	    		}
 	    	} else {
-	    		jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_checkAll']").removeAttr("checked");
+	    		jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_checkAll']").prop("checked", false);
 	    	}
 	    	
 	    	if(size > 0){
@@ -57,9 +57,9 @@ function checkAllCheckboxesInTable( inputId, state ,showSelectAll, _totRows, _ro
   //var tid = ":"+inputId+"_tbl";
 	 var tid = inputId+"_tbl";
     if(state){
-    	size = jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_column_ckb']").not("[id$='selectedAllChbx']").attr("checked","on").length;
+    	size = jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_column_ckb']").not("[id$='selectedAllChbx']").prop("checked", true).length;
     }else{
-    	jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_column_ckb']").removeAttr("checked");
+    	jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_column_ckb']").prop("checked", false);
     	size=0;
     }
 
@@ -74,10 +74,10 @@ function checkAllCheckboxesInTable( inputId, state ,showSelectAll, _totRows, _ro
 	       		jQuery("[id$='"+inputId+"_selectedInfoPipe1']").hide();
 	       		jQuery("[id$='"+inputId+"_selectAllLink']").hide();
 	       		jQuery("[id$='"+inputId+"_undoSelectAllLink']").hide();         
-	       		jQuery("[id$='"+inputId+"_selectedAllChbx']").removeAttr("checked");     		
+	       		jQuery("[id$='"+inputId+"_selectedAllChbx']").prop("checked", false);     		
 	        }
         } else {
-        	jQuery("[id$='"+inputId+"_selectedAllChbx']").removeAttr("checked");
+        	jQuery("[id$='"+inputId+"_selectedAllChbx']").prop("checked", false);
         	if(state){
         		jQuery("[id$='"+inputId+"_selectedInfoLbl']").show().text("Selezionati "+size+" elementi");
         		jQuery("[id$='"+inputId+"_selectedInfoPipe1']").show();
@@ -108,24 +108,24 @@ function selectAllListener(inputId, selectAll, _totRows, _useCount, _labelSelezi
 	 var tid = inputId+"_tbl";
 	if(_useCount){
 		if(selectAll){
-			jQuery("[id$='"+inputId+"_selectedAllChbx']").attr("checked","on");
+			jQuery("[id$='"+inputId+"_selectedAllChbx']").prop("checked", true);
 			jQuery("[id$='"+inputId+"_selectedInfoLbl']").show().text("Selezionati tutti i "+_totRows+" elementi");
 			jQuery("[id$='"+inputId+"_selectedInfoPipe1']").show();
 			jQuery("[id$='"+inputId+"_selectAllLink']").hide();
 			jQuery("[id$='"+inputId+"_undoSelectAllLink']").show().text("Annulla selezione.");
 		}else{
-			jQuery("[id$='"+inputId+"_selectedAllChbx']").removeAttr("checked");
+			jQuery("[id$='"+inputId+"_selectedAllChbx']").prop("checked", false);
 			jQuery("[id$='"+inputId+"_selectedInfoLbl']").hide();
 			jQuery("[id$='"+inputId+"_selectedInfoPipe1']").hide();
 	   		jQuery("[id$='"+inputId+"_selectAllLink']").hide();
 	   		jQuery("[id$='"+inputId+"_undoSelectAllLink']").hide();
-	   		//jQuery("div [id$='"+inputId+"'] input:checkbox").removeAttr("checked");
-	   		jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_column_ckb']").removeAttr("checked");
-	   		jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_checkAll']").removeAttr("checked");
+	   		//jQuery("div [id$='"+inputId+"'] input:checkbox").prop("checked", false);
+	   		jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_column_ckb']").prop("checked", false);
+	   		jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_checkAll']").prop("checked", false);
 		}
     } else {
     	if(selectAll){
-    		jQuery("[id$='"+inputId+"_selectedAllChbx']").attr("checked","on");
+    		jQuery("[id$='"+inputId+"_selectedAllChbx']").prop("checked", true);
     		jQuery("[id$='"+inputId+"_selectedInfoLbl']").show().text(_labelSelezionaPrimiElementi);
     		jQuery("[id$='"+inputId+"_selectedInfoPipe1']").show();
 			jQuery("[id$='"+inputId+"_selectAllTableItemsLink']").show();
@@ -134,9 +134,9 @@ function selectAllListener(inputId, selectAll, _totRows, _useCount, _labelSelezi
 	    	jQuery("[id$='"+inputId+"_selectedInfoPipe3']").hide();
 	    	jQuery("[id$='"+inputId+"_undoSelectAllLink']").show();
     	} else {
-    		jQuery("[id$='"+inputId+"_selectedAllChbx']").removeAttr("checked");
-    		jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_column_ckb']").removeAttr("checked");
-	   		jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_checkAll']").removeAttr("checked");
+    		jQuery("[id$='"+inputId+"_selectedAllChbx']").prop("checked", false);
+    		jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_column_ckb']").prop("checked", false);
+	   		jQuery("table [id$='"+tid+"'] input:checkbox[id$='"+inputId+"_checkAll']").prop("checked", false);
     		jQuery("[id$='"+inputId+"_selectedInfoLbl']").hide();
     		jQuery("[id$='"+inputId+"_selectedInfoPipe1']").hide();
     		jQuery("[id$='"+inputId+"_selectAllTableItemsLink']").hide();
@@ -181,7 +181,7 @@ function getSelectedRows(inputId){
 }
 
 function getSelectedAllValue(inputId){
-	return jQuery("[id$='"+inputId+"_selectedAllChbx']").attr("checked");
+	return jQuery("[id$='"+inputId+"_selectedAllChbx']").prop("checked");
 }
 
 function visualizzaPannelloComandi(containerId){
@@ -208,9 +208,9 @@ function abilitaColonnaSelectAll(containerId){
 	var n = jQuery("div [id$='"+containerId+"_tbl'] input:checkbox[id$='column_ckb']").length;
 	var thCheckAll = jQuery("[id$='"+containerId+"_tbl:"+containerId+"_checkAll']"); 
 	if(n==0){
-		thCheckAll.attr('disabled',true);
+		thCheckAll.prop('disabled',true);
 	}else{
-		thCheckAll.attr('disabled',false);
+		thCheckAll.prop('disabled',false);
 	}
 };
 

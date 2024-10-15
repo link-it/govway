@@ -1,3 +1,11 @@
+2024-10-15  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità #71
+	I criteri di ricerca nello storico delle transazioni effettuate tramite la console di monitoraggio possono ora essere salvati, rendendoli disponibili per un accesso rapido in futuro.
+	Le ricerche possono essere salvate con visibilità privata, risultando così disponibili solo all'utente che le ha create, oppure con visibilità pubblica, per renderle accessibili a tutti gli utenti.
+	Inoltre, è possibile salvare anche i criteri di generazione dei report statistici.
+
 2024-10-14  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloSPCoop]

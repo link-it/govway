@@ -1,0 +1,474 @@
+<ui:composition template="/templates/defaultTemplate.xhtml"
+xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:link="http://www.link.it">
+	<f:loadBundle var="msg" basename="messages" />
+		
+	<ui:define name="navbar">
+		<ul>
+			<li>
+				<a4j:htmlCommandLink value="Profilo utente" action="editUser" actionListener="#{loginBean.nuovoTokenCsrfListener}" />
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li><h:outputText id="msgLabelRicercheUtente" value="#{msg['commons.ricercheUtente.titoloPagina']}" styleClass="ultimo-path"/></li>
+		</ul>	
+	</ui:define>	
+	<ui:define name="body">
+		<a4j:keepAlive beanName="utentiBean" />
+		<a4j:keepAlive beanName="ricercheUtenteBean" />
+		<a4j:outputPanel id="panelPaginaRicerca" layout="block">
+			<rich:simpleTogglePanel id="panelFiltri1" opened="#{searchFormRicercheUtente.visualizzaFiltroAperto}"
+				label="RicercheUtente" switchType="client">
+				<f:facet name="openMarker">
+					<a4j:outputPanel id="openMarkerPnl" stuleClass="icon-search-box">
+						<input type="hidden" id="_csrfFormTogglePanel" name="_csrf" value="#{loginBean.csrf}"/>
+						<i class="material-icons md-24" id="iconaSearchOpen">&#xE8B6;</i>
+						<rich:toolTip for="openMarkerPnl" value="#{msg['commons.search.filtroRicerca.visualizza.tooltip']}" />
+					</a4j:outputPanel>
+				</f:facet>
+				
+				<f:facet name="closeMarker">
+					<a4j:outputPanel id="closeMarkerPnl" stuleClass="icon-search-box">
+						<i class="material-icons md-24" id="iconaSearchOpen">&#xE8B6;</i>
+						<rich:toolTip for="closeMarkerPnl" value="#{msg['commons.search.filtroRicerca.nascondi.tooltip']}" />
+					</a4j:outputPanel>
+				</f:facet>
+	
+				<div class="form-container noborder">
+	
+					<a4j:form id="formSearchRicercheUtente" prependId="false" ajaxSingle="true"
+						ajaxSubmit="true">
+						<a4j:region id="genSearchPnl" renderRegionOnly="true">
+							<a4j:outputPanel id="searchPnl" ajaxRendered="false" layout="block">
+								<input type="hidden" id="_csrfFormRicercheUtenteSearchPanel" name="_csrf" value="#{loginBean.csrf}"/>
+								
+								<a4j:outputPanel id="filtriCtr" layout="block">
+								
+									<div class="subtitle">
+										<h:outputText id="idSezioneFiltri" value="#{msg['commons.ricercheUtente.search.sezioneFiltri.label']}" styleClass="subtitle"/>
+									</div>
+								
+									<link:prop label="#{msg['commons.ricercheUtente.search.modulo.label']}" labelId="labelPeriodoCombo">
+										<rich:comboBox id="periodoCombo" value="#{searchFormRicercheUtente.filtroModulo}" 
+											defaultLabel="Seleziona Modulo" converter="selectItemConverter" 
+											width="416" enableManualInput="false">
+											<f:selectItems value="#{ricercheUtenteBean.listaModuli}" />
+											<a4j:support status="mainStatus" event="onselect" reRender="modalitaRicercaCtr,searchPnl"  
+												actionListener="#{searchFormRicercheUtente.filtroModuloSelected}"/>
+										</rich:comboBox>
+									</link:prop>
+										
+								</a4j:outputPanel>
+								
+								<a4j:outputPanel id="modalitaRicercaCtr" layout="block" rendered="#{searchFormRicercheUtente.visualizzaFiltroModalitaRicerca}">					
+									<link:prop label="#{msg['commons.ricercheUtente.search.modalitaRicerca.label']}">
+										<rich:comboBox id="modalitaRicerca" value="#{searchFormRicercheUtente.filtroModalitaRicerca}"
+											 defaultLabel="Seleziona Modalità Ricerca" converter="selectItemConverter" 
+											width="416" enableManualInput="false">
+											<f:selectItems value="#{ricercheUtenteBean.listaModalitaRicerca}" />
+										</rich:comboBox>
+									</link:prop>
+								</a4j:outputPanel>
+								
+							</a4j:outputPanel>
+						</a4j:region>
+						<div class="buttonrow">
+							<a4j:commandButton id="filtra" value="Cerca"
+								styleClass="icon-refresh" process="genSearchPnl"
+								reRender="panelPaginaRicerca" rendered="#{true}"
+								action="#{searchFormRicercheUtente.filtra}" oncomplete="completaRicerca(event)" />
+							<a4j:commandButton id="svuota" value="Ripulisci"
+								styleClass="icon-refresh" process="genSearchPnl"
+								reRender="panelPaginaRicerca" rendered="#{true}"
+								action="#{searchFormRicercheUtente.ripulisci}"
+								oncomplete="completa(event)" />
+						</div>
+					</a4j:form>
+				</div>
+			</rich:simpleTogglePanel>
+	
+			<div class="spacer"></div>
+	
+			<a4j:outputPanel id="ricercheUtenteTbl" layout="block" styleClass="panelLista" rendered="#{true}">
+			
+				<script type="text/javascript" nonce="#{_csp_random_nonce}">
+					//<![CDATA[
+					   jQuery(document).ready(nascondiChk);
+					   
+					   function nascondiChk(){
+						
+						   jQuery("th[id$='colEsitoImgheader']").css('padding','8px');
+						   jQuery("th[id$='colEsitoImgheader']").css('width','16px');
+						   
+						   // nascondi il tasto esporta se la tabella e' vuota
+						   visualizzaTastoEsporta('tableRicercheUtente','esportaButton-iconLink');
+					   }
+					   
+					   function completa(evt){   }
+					   
+					   function completaRicerca(evt){   
+						   collapseSearchPanel('panelFiltri1');
+					   }
+					   
+					   function collapseSearchPanel(panelId) {  
+					    	 if (SimpleTogglePanelManager.panels.get(panelId).status == "true")  
+						       SimpleTogglePanelManager.toggleOnClient('onclick', panelId);  
+					 	}
+					   
+					   function visualizzaTastoEsporta(containerId,exportButtonId){
+							 var n = jQuery("div [id$='"+containerId+"_tbl'] input:checkbox[id$='column_ckb']").length;
+							 var exportBtn = jQuery("[id$='" + exportButtonId + "']");
+							if(n==0){
+								exportBtn.hide();
+							}else{
+								exportBtn.show();
+							}
+						};
+					 //]]>	
+				</script>
+				
+				<h:form>
+					<input type="hidden" id="_csrfFormTabellaRicercheUtente" name="_csrf" value="#{loginBean.csrf}"/>
+					<link:dataTable value="#{ricercheUtenteDM}" id="tableRicercheUtente"
+						mBean="#{ricercheUtenteBean}" showSelectAll="true"
+						selectionMapTarget="#{ricercheUtenteBean.selectedIds[item]}"
+						headerText="Lista RicercheUtente" enableDelete="true"
+						reRenderIds="ricercheUtenteTbl" mostraComandiFooterSelezionePageSize="true"
+						useCount="#{searchFormRicercheUtente.useCount}"
+						nascondiTabellaSeNoRisultati="false"
+						>
+		
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{msg['commons.ricercheUtente.column.label']}"  id="outLabelRicerca"/>
+							</f:facet>
+							<a4j:htmlCommandLink id="edit-iconLink" styleClass="icon-details" action="modificaRicercaUtente">
+								<f:setPropertyActionListener value="#{item}" target="#{ricercheUtenteBean.selectedElement}" />
+								<h:outputText value="#{item.label}"  id="outLabelRicerca2"/>
+							</a4j:htmlCommandLink>
+							<rich:toolTip for="outLabelRicerca2">
+								<h:outputText  value="#{item.descrizioneTooltip}"/>
+							</rich:toolTip>
+						</rich:column>
+						
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{msg['commons.ricercheUtente.column.dataCreazione']}"  id="outDataCreazione"/>
+							</f:facet>
+							<h:outputText id="outDataCreazione2" value="#{item.dataCreazione}">
+								<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{msg['commons.ricercheUtente.column.modulo']}"  id="outModulo"/>
+							</f:facet>
+							<h:outputText value="#{item.moduloLabel}" />
+						</rich:column>
+		
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{msg['commons.ricercheUtente.column.modalitaRicerca']}"  id="outModalitaRicerca"/>
+							</f:facet>
+							<h:outputText value="#{item.modalitaRicercaLabel}" />
+						</rich:column>
+						
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{msg['commons.ricercheUtente.column.visibilita']}"  id="outVisibilita"/>
+							</f:facet>
+							<h:outputText value="#{item.visibilitaLabel}" />
+						</rich:column>
+						
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{msg['commons.ricercheUtente.column.protocollo']}"  id="outProtocolloRicerca"/>
+							</f:facet>
+							<h:outputText value="#{item.protocolloLabel}" />
+						</rich:column>
+						
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{msg['commons.ricercheUtente.column.soggetto']}"  id="outSoggettoRicerca"/>
+							</f:facet>
+							<h:outputText value="#{item.soggettoLabel}" />
+						</rich:column>
+						
+						<ui:define name="buttons">
+							<a4j:htmlCommandLink id="esportaButton-iconLink" styleClass="icon-csv positive" target="_blank" 
+								title="#{msg['commons.ricercheUtente.esportaRicerche.button.title']}"
+							 	value="#{msg['commons.ricercheUtente.esportaRicerche.button.label']}" action="#{ricercheUtenteBean.exportSelected}"  ajaxSingle="true"
+							 onclick="if(!checkSelection('tableRicercheUtente','tableRicercheUtente_checkSelection')) { return false;}" >
+									<f:setPropertyActionListener value="#{ricercheUtenteBean.elencoID}" target="#{ricercheUtenteBean.elencoID}" />
+							</a4j:htmlCommandLink>
+							<a4j:commandButton id="carica-iconLink" styleClass="icon-csv"
+								reRender="panelFormCaricaRicercheContainer" value="#{msg['commons.ricercheUtente.importaRicerche.button.label']}"
+								title="#{msg['commons.ricercheUtente.importaRicerche.button.title']}"
+								actionListener="#{ricercheUtenteBean.initFormRicercaListener}"
+								oncomplete="#{rich:component('caricaRicercheModalPnl')}.show()">
+							</a4j:commandButton>
+						</ui:define>
+					</link:dataTable>
+				</h:form>
+				
+				<a4j:outputPanel id="timeoutCtr" layout="block" styleClass="" rendered="#{ricercheUtenteDM.timeoutEvent}">
+					<script type="text/javascript" nonce="#{_csp_random_nonce}">
+						//<![CDATA[
+						   jQuery(document).ready(controllaEventoTimeout);
+				
+						   function controllaEventoTimeout(){  
+							   if(#{ricercheUtenteDM.timeoutEvent}){
+									Richfaces.showModalPanel('tableRicercheUtente_timeoutModal');
+								}
+						   }
+						 //]]>	
+					</script>
+				</a4j:outputPanel>
+				
+			</a4j:outputPanel>
+			
+			<rich:modalPanel id="caricaRicercheModalPnl" showWhenRendered="false" width="800" styleClass="overflow-auto" autosized="true">
+				<f:facet name="header">
+					<h:outputText id="caricaRicercheModalPnlHeaderText" value="#{msg['commons.ricercheUtente.importaRicerche.label']}" />
+				</f:facet>
+				<f:facet name="controls">	
+					<h:panelGroup id="panelChiudicaricaRicerche">
+		                <h:graphicImage value="/images/tema_link/clear_white.png" id="hidelinkplugin"/>
+		                <rich:componentControl id="componentPlugin" for="caricaRicercheModalPnl" attachTo="hidelinkplugin" operation="hide" event="onclick"/>
+		            </h:panelGroup>
+				</f:facet>
+				<a4j:outputPanel id="fileCaricaRicercheCtr" ajaxRendered="true">
+					<h:panelGroup  styleClass="errors" layout="block" rendered="#{not empty ricercheUtenteBean.caricaRicercheErrorMessage}" id="caricaRichercheErrorsPlaceHolder">
+						<h:panelGroup rendered="#{not empty ricercheUtenteBean.caricaRicercheErrorMessage}">
+							<p>
+								<em>
+									<h:outputText value="Si sono verificati degli errori:"/>
+								</em>
+							</p>
+							<div class="errorsSpacer"/>
+						</h:panelGroup>
+						<div class="errorsSpacer"/>
+						<h:outputText id="caricaRicercheErrors" value="#{ricercheUtenteBean.caricaRicercheErrorMessage}" rendered="#{not ricercheUtenteBean.caricaRicercheErrorMessage}" />
+					</h:panelGroup>
+				</a4j:outputPanel>
+				<p class="legend">
+					<strong>Note:</strong> (<em>*</em>) Campi obbligatori
+				</p>
+				<div class="form-container noborder">
+					<h:form id="formControlloUpload" prependId="false">							
+						<input type="hidden" id="_csrfFormControlloUpload" name="_csrf" value="#{loginBean.csrf}"/>
+						<a4j:jsFunction name="startUploads" oncomplete="caricaFile(data);" actionListener="#{ricercheUtenteBean.ricercheFile.startUploadsListener}" 
+							 reRender="idFilesValidi" >
+						</a4j:jsFunction>
+						<a4j:jsFunction name="propagaStopUploads" reRender="panelFormCaricaRicercheContainer,fileCaricaRicercheCtr" 
+								actionListener="#{ricercheUtenteBean.ricercheFile.stopUploadsListener}" limitToList="true">
+								<a4j:actionparam name="param1" assignTo="#{ricercheUtenteBean.idFiles}"  />
+						</a4j:jsFunction>
+						<a4j:jsFunction name="endUploadFail" reRender="panelFormCaricaRicercheContainer,fileCaricaRicercheCtr" 
+								actionListener="#{ricercheUtenteBean.ricercheFile.uploadErrorListener}" limitToList="true">
+						</a4j:jsFunction>
+						<a4j:jsFunction name="propagaEndDeleteOk" reRender="panelFormCaricaRicercheContainer,fileCaricaRicercheCtr" 
+								actionListener="#{ricercheUtenteBean.ricercheFile.deleteCompleteOkListener}" limitToList="true">
+								<a4j:actionparam name="param1" assignTo="#{ricercheUtenteBean.idFiles}"  />
+						</a4j:jsFunction>
+						<a4j:jsFunction name="propagaEndDeleteFail" reRender="panelFormCaricaRicercheContainer,fileCaricaRicercheCtr" 
+								actionListener="#{ricercheUtenteBean.ricercheFile.deleteCompleteFailListener}" limitToList="true">
+						</a4j:jsFunction>
+					</h:form>
+						
+					<a4j:outputPanel layout="block" id="panelFormCaricaRicercheContainer" ajaxRendered="false">
+						<h:form id="dSFormUploadPnl" prependId="false">
+							<input type="hidden" id="_csrfFormExportReport" name="_csrf" value="#{loginBean.csrf}"/>
+						 
+							<link:fieldset legend="Ricerche" collapsible="false">
+		 	                   <link:prop label="#{msg['commons.ricercheUtente.importaRicerche.label']}" required="true">
+	                      		   <input id="form-file" size="50" type="file" name="theFile" class="inputLinkLong" multiple="multiple"/>
+	                      		   <script type="text/javascript" nonce="#{_csp_random_nonce}">
+	                      				jQuery(document).ready(function(){
+	                        				jQuery('#form-file').change(function() {
+	                          					startUploads();
+	                          				});
+	                        			});
+	                      		   </script>
+	                      		   <h:inputHidden value="#{ricercheUtenteBean.idFiles}" id="idFilesValidi" /> 
+                    		   </link:prop>
+                      
+                    			<a4j:outputPanel layout="block" rendered="#{ricercheUtenteBean.visualizzaComandiEliminaFile}" id="infoFileCaricatoPanel">
+                    				<c:forEach items="#{ricercheUtenteBean.ricercheFile.mapChiaviElementi}" var="entry">
+	                      				<a4j:outputPanel layout="block" styleClass="prop">
+	                        				<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />	
+	                        				<a4j:outputPanel layout="block" styleClass="divNoEdit">
+	                          					<span class="spanNoEdit"><i id="form-file-identificativo-file-caricato">#{entry.value}</i></span>
+	                          					<a id="form-file-delete-cmd_#{entry.key}" class="text-action-link " title="Rimuovi #{entry.value}" target="_self" href="#" type="button">
+		                            				<span class="icon-box">
+		                              					<i class="material-icons md-16">delete</i>
+		                            				</span>
+		                            				<script type="text/javascript" nonce="#{_csp_random_nonce}">
+		                              					jQuery(document).ready(function(){
+															var fileId = '#{entry.key}';
+															var jQueryFileId = '#form-file-delete-cmd_'+fileId;
+		                                  					jQuery(jQueryFileId).click(function() {
+		                                    					cancellaFileSelezionato(fileId);
+		                                  					});
+		                                				});
+		                            				</script>
+	                          					</a>
+	                            			</a4j:outputPanel>
+	                   					</a4j:outputPanel>
+                   					</c:forEach>
+                    			</a4j:outputPanel>
+
+                    			<script type="text/javascript" nonce="#{_csp_random_nonce}">
+									//<![CDATA[
+									var baseUploadUrl = '#{facesContext.externalContext.request.contextPath}/ricercheUpload';
+ 		
+									function caricaFile(startUploadsResp) {
+										// svuoto elenco ids
+										jQuery("[id$='idFilesValidi']").val('');
+										
+									    var formData = new FormData();
+									    var fileInput = jQuery('#form-file')[0].files; // Ottieni tutti i file selezionati
+									    
+									 	// Aggiungi tutti i file all'oggetto FormData
+									    for (var i = 0; i < fileInput.length; i++) {
+									        formData.append('theFiles[]', fileInput[i]); // Usa 'theFiles[]' per inviare un array di file
+									    }
+									    
+									    //formData.append('theFile', fileInput); // Append the file to the FormData object
+										    
+									    jQuery.ajax({
+									        url: baseUploadUrl, 
+									        type: 'POST',
+									        data: formData,
+									        processData: false, 
+									        contentType: false, 
+									        success: function(data, textStatus, jqXHR) {
+												var files = JSON.parse(data).files; // Ottieni l'array dei file
+												
+												// Itera su ciascun file dell'array
+												files.forEach(function(file) {
+												    if (!file.error) {
+												        var ids = jQuery("[id$='idFilesValidi']").val();
+												        
+												        // Controlla se ci sono già ID e aggiungi una virgola se necessario
+												        if (ids.length > 0) {
+												            ids += ',';
+												        }
+												        
+												        ids += file.id; // Aggiungi l'ID del file
+												        
+												        jQuery("[id$='idFilesValidi']").val(ids); // Aggiorna il campo con i nuovi ID
+												    } else {
+												        // Gestisci l'errore
+												        endUploadFail();
+												    }
+												});
+												
+												// Invia al server tutti gli ID caricati
+												stopUploads(jQuery("[id$='idFilesValidi']").val());
+									        },
+									        error: function(xhr, status, error) {
+									            console.log('File upload failed: ' + error);
+									            // Handle the error
+									            endUploadFail();
+									        }
+									    });
+									}
+ 										
+									function cancellaFileSelezionato(fileId) {
+										//var fileId = jQuery("[id$='idFilesValidi']").val();
+										var deleteUrl = baseUploadUrl + '?id=' + fileId;
+ 											
+										jQuery.ajax({
+									        url: deleteUrl, 
+									        type: 'DELETE',
+									        success: function(data, textStatus, jqXHR) {
+// 										            console.log('File deleted successfully');
+										            
+									            var file = JSON.parse(data).files[0];
+	 										            
+									            if(!file.error && file.stato == true){
+									            	console.log('cancellaFileSelezionato successfully');
+									            	
+									            	var ids = jQuery("[id$='idFilesValidi']").val().split(',');
+													
+													var f;
+													for(var t= 0 ; t < ids.length; t++){
+														if(ids[t] == fileId) {
+															f = t;
+															break;
+														}
+													}
+													
+													var newIds = '';
+													for(var t= 0 ; t < ids.length; t++){
+														if(t != f) {
+															if(newIds.length > 0)
+																newIds += ',';
+															
+															newIds += ids[t];
+														}
+													}
+													
+													jQuery("[id$='idFilesValidi']").val(newIds);
+													endDeleteOk(jQuery("[id$='idFilesValidi']").val());
+												} else {
+													endDeleteFail();
+												}
+								        	},
+									        error: function(xhr, status, error) {
+ 										            console.log('File deletion failed: ' + error);
+ 										            // Handle the error
+ 										            endDeleteFail();
+ 										        }
+ 										    });
+ 										}
+ 										
+ 										function stopUploads(idFiles){
+ 											console.log('stopUploads ' + idFiles);
+ 											propagaStopUploads(idFiles);
+ 											console.log('stopUploads successfully');
+ 										}
+ 										
+ 										function endDeleteOk(idFiles){
+ 											console.log('endDeleteOk ' + idFiles);
+ 											propagaEndDeleteOk(idFiles);
+ 											console.log('endDeleteOk successfully');
+ 										}
+ 										
+ 										function endDeleteFail(){
+ 											propagaEndDeleteFail();
+ 										}
+									 //]]>
+								</script>
+								</link:fieldset>
+								<div class="buttonrowmodal">
+									<a4j:commandButton styleClass="icon-save positive" id="importaRicercheButton"
+										title="#{msg['commons.ricercheUtente.importaRicerche.button.title']}"
+									 	value="#{msg['commons.ricercheUtente.importaRicerche.button.label']}"
+										action="#{ricercheUtenteBean.salvaRicerche}" 
+										reRender="fileCaricaRicercheCtr"
+										oncomplete="if (#{ricercheUtenteBean.salvataggioOk == 'true'}) { #{rich:component('caricaRicercheModalPnl')}.hide(); ricaricaListaRicerche(); }" >
+									</a4j:commandButton>
+								</div>
+							</h:form>
+						</a4j:outputPanel>
+					</div>
+				</rich:modalPanel>
+				
+				<h:form id="formRicaricaListaRicerche">
+	            	<a4j:outputPanel layout="block" ajaxRendered="false">
+						<a4j:jsFunction name="ricaricaListaRicerche" reRender="ricercheUtenteTbl" limitToList="true" status="mainStatus">
+	            		</a4j:jsFunction>
+	           		</a4j:outputPanel>
+	       		</h:form>
+		</a4j:outputPanel>
+	
+	</ui:define>
+</ui:composition>

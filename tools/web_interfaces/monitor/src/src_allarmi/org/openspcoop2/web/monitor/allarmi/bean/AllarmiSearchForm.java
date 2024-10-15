@@ -21,6 +21,7 @@
 package org.openspcoop2.web.monitor.allarmi.bean;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
@@ -31,9 +32,11 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.web.monitor.allarmi.constants.AllarmiCostanti;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.ricerche.ModuloRicerca;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.slf4j.Logger;
 
@@ -63,6 +66,15 @@ public class AllarmiSearchForm extends BaseSearchForm
 	private String statoDefault; 
 	
 	private String tipologiaAllarme;
+	
+	private static List<String> elencoFieldsRicercaDaIgnorare = new ArrayList<>();
+	
+	static {
+		// aggiungo tutti i fields delle super classi
+		elencoFieldsRicercaDaIgnorare.addAll(Arrays.asList(Costanti.SEARCH_FORM_FIELDS_DA_NON_SALVARE));
+		// aggiungo i field di questa classe
+		elencoFieldsRicercaDaIgnorare.addAll(Arrays.asList(AllarmiCostanti.SEARCH_FORM_FIELDS_DA_NON_SALVARE));
+	}
 	
 	public AllarmiSearchForm() {
 		super();
@@ -146,7 +158,7 @@ public class AllarmiSearchForm extends BaseSearchForm
 	}
 	
 	@Override
-	public List<SelectItem> getTipologieRicerca() throws Exception {
+	public List<SelectItem> getTipologieRicerca() {
 		List<SelectItem> listaTipologie = new ArrayList<>();
 		
 		if(Utility.isAmministratore())
@@ -159,5 +171,49 @@ public class AllarmiSearchForm extends BaseSearchForm
 	
 	public void tipologiaAllarmeListener(ActionEvent ae){
 		// lasciato per retrocompatibilita'
+	}
+	
+	@Override
+	public ModuloRicerca getModulo() {
+		return ModuloRicerca.ALLARMI;
+	}
+	
+	@Override
+	public String getModalitaRicerca() {
+		return null;
+	}
+	
+	@Override
+	public boolean isVisualizzaComandoSalvaRicerca() {
+		return true;
+	}
+	
+	@Override
+	public List<String> getElencoFieldRicercaDaIgnorare() {
+		return elencoFieldsRicercaDaIgnorare;
+	}
+	
+	@Override
+	public String getProtocolloRicerca() {
+		String tipologiaAllarme2 = this.getTipologiaAllarme();
+		
+		// allarme non globale 
+		if(tipologiaAllarme2 != null && !tipologiaAllarme2.equals(TIPOLOGIA_CONFIGURAZIONE)) {
+			return this.getProtocollo();	
+		}
+		
+		return TIPOLOGIA_CONFIGURAZIONE;
+	}
+	
+	@Override
+	public String getSoggettoRicerca() {
+		String tipologiaAllarme2 = this.getTipologiaAllarme();
+		
+		// allarme non globale 
+		if(tipologiaAllarme2 != null && !tipologiaAllarme2.equals(TIPOLOGIA_CONFIGURAZIONE)) {
+			return this.getTipoNomeSoggettoLocale();	
+		}
+		
+		return null;
 	}
 }

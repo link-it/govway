@@ -32,12 +32,19 @@ public class AllarmiCostanti {
 	private AllarmiCostanti() {
 		throw new IllegalStateException("Costanti class");
 	}
-	
+
 	public static final String SEARCH_TIPOLOGIA_CONFIGURAZIONE_LABEL_KEY = "allarmi.search.tipologia.configurazione.label";
 	public static final String SEARCH_TIPOLOGIA_EROGAZIONE_LABEL_KEY = "allarmi.search.tipologia.erogazione.label";
 	public static final String SEARCH_TIPOLOGIA_FRUIZIONE_LABEL_KEY = "allarmi.search.tipologia.fruizione.label";
-	
+
 	public static final String CRITERI_ACKNOWLEDGE_LABEL_KEY = "allarmi.criteriAcknowledge.label";
-	
-	
+
+	public static final String[] SEARCH_FORM_FIELDS_DA_NON_SALVARE= {
+			"statoDefault",
+			"STATO_DEFAULT_PAGINA_STATO_ALLARMI",
+			"TIPOLOGIA_APPLICATIVA",
+			"TIPOLOGIA_CONFIGURAZIONE",
+			"TIPOLOGIA_DELEGATA",
+			"STATO_DEFAULT_PAGINA_CONF_ALLARMI",
+	};
 }

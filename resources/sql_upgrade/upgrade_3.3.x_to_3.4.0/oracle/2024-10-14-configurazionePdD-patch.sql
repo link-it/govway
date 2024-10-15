@@ -1,0 +1,1 @@
+../../../../tools/web_interfaces/lib/users/deploy/sql/patch/oracle/2024-10-14-patch.sql

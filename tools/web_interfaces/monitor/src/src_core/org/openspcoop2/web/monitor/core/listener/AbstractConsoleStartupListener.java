@@ -59,12 +59,12 @@ import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.security.ProviderUtils;
 import org.openspcoop2.web.monitor.core.config.ApplicationProperties;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceCache;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceCacheJmxDatiConfigurazione;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceCacheJmxRicercheConfigurazione;
 import org.openspcoop2.web.monitor.core.dao.RegistroPluginsService;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
-import org.openspcoop2.web.monitor.core.utils.Costanti;
 import org.slf4j.Logger;
 
 /**
@@ -506,7 +506,7 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 			AbstractConsoleStartupListener.logError(msgErrore,e);
 			throw new UtilsRuntimeException(msgErrore,e);
 		}
-		if((cacheEnabledDatiConfigurazione || cacheEnabledRicercheConfigurazione) && isInitializeCache == false){
+		if((cacheEnabledDatiConfigurazione || cacheEnabledRicercheConfigurazione) && !isInitializeCache){
 			String msgErrore = "Errore durante l'inizializzazione della cache "
 					+ getCacheProperties()+": cache non inizializzata";
 			AbstractConsoleStartupListener.logError(msgErrore);

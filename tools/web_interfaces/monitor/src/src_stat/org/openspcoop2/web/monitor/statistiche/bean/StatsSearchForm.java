@@ -20,6 +20,7 @@
 package org.openspcoop2.web.monitor.statistiche.bean;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,6 +53,7 @@ import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.filters.BrowserFilter;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.ricerche.ModuloRicerca;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
@@ -122,6 +124,17 @@ public class StatsSearchForm extends BaseSearchForm{
 	private boolean distribuzionePerImplementazioneApi = true;
 	
 	private boolean statisticheLatenzaPortaEnabled = false;
+	
+	private String tipoDistribuzione = CostantiGrafici.TIPO_DISTRIBUZIONE_TEMPORALE;
+	
+	private static List<String> elencoFieldsRicercaDaIgnorare = new ArrayList<>();	
+	
+	static {
+		// aggiungo tutti i fields delle super classi
+		elencoFieldsRicercaDaIgnorare.addAll(Arrays.asList(Costanti.SEARCH_FORM_FIELDS_DA_NON_SALVARE));
+		// aggiungo i field di questa classe
+		elencoFieldsRicercaDaIgnorare.addAll(Arrays.asList(StatisticheCostanti.SEARCH_FORM_FIELDS_DA_NON_SALVARE));
+	}
 	
 	public boolean isStatisticheLatenzaPortaEnabled() {
 		return this.statisticheLatenzaPortaEnabled;
@@ -1358,5 +1371,33 @@ public class StatsSearchForm extends BaseSearchForm{
 					(numeroDimensioniToCheck.equals(NumeroDimensioni.DIMENSIONI_3) || numeroDimensioniToCheck.equals(NumeroDimensioni.DIMENSIONI_3_CUSTOM)
 				)) 
 				;
+	}
+	
+	public void setTipoDistribuzione(String tipoDistribuzione) {
+		this.tipoDistribuzione = tipoDistribuzione;
+	}
+	
+	public String getTipoDistribuzione() {
+		return this.tipoDistribuzione;
+	}
+	
+	@Override
+	public ModuloRicerca getModulo() {
+		return ModuloRicerca.STATISTICHE;
+	}
+	
+	@Override
+	public String getModalitaRicerca() {
+		return this.getTipoDistribuzione();
+	}
+	
+	@Override
+	public boolean isVisualizzaComandoSalvaRicerca() {
+		return true;
+	}
+	
+	@Override
+	public List<String> getElencoFieldRicercaDaIgnorare() {
+		return elencoFieldsRicercaDaIgnorare;
 	}
 }

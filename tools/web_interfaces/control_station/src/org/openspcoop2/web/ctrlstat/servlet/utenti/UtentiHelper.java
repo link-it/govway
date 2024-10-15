@@ -1189,6 +1189,16 @@ public class UtentiHelper extends ConsoleHelper {
 
 
 	}
+	
+	public void addUtentiDelConfirmToDati(List<DataElement> dati, String objToRemove){
+
+		DataElement de = new DataElement();
+		de.setLabel(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
+		de.setValue(objToRemove);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
+		dati.add(de);
+	}
 
 	public void addUtenteChangeToDati(List<DataElement> dati,InterfaceType interfaceType,
 			String changepw, String nomeUtente, String profiloSelezionatoUtente, String soggettoSelezionatoUtente) throws Exception{
@@ -2762,5 +2772,9 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 		}
 		return  valoreStato;
+	}
+	
+	public boolean hasRicerchePubbliche(User user) throws DriverUsersDBException {
+		return this.utentiCore.countUserRicerchePubbliche(user.getLogin()) != 0;
 	}
 }

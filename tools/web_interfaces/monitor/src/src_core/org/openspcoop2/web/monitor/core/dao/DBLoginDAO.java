@@ -28,6 +28,8 @@ import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.dao.ISoggettoServiceSearch;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
@@ -69,9 +71,9 @@ public class DBLoginDAO implements ILoginDAO {
 
 	private transient org.openspcoop2.web.lib.users.DriverUsersDB utenteDAO;
 
-	private ISoggettoServiceSearch soggettoDAO;
+	private transient ISoggettoServiceSearch soggettoDAO;
 
-	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsServiceManager;
+	private transient org.openspcoop2.core.commons.search.dao.IServiceManager utilsServiceManager;
 	
 	private transient DriverConfigurazioneDB driverConfigDB = null;
 
@@ -109,10 +111,7 @@ public class DBLoginDAO implements ILoginDAO {
 				this.passwordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(log);
 			}
 			
-		} catch (ServiceException e) {
-
-			DBLoginDAO.log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
+		} catch (ServiceException | NotImplementedException e) {
 			DBLoginDAO.log.error(e.getMessage(), e);
 		} catch (Exception e) {
 			DBLoginDAO.log.error(e.getMessage(), e);
@@ -193,17 +192,7 @@ public class DBLoginDAO implements ILoginDAO {
 					.equals(Soggetto.model().NOME_SOGGETTO, idSog.getNome())
 					.and()
 					.equals(Soggetto.model().TIPO_SOGGETTO, idSog.getTipo()));
-		} catch (ServiceException e) {
-			DBLoginDAO.log.error(e.getMessage(), e);
-		} catch (NotFoundException e) {
-			DBLoginDAO.log.error(e.getMessage(), e);
-		} catch (MultipleResultException e) {
-			DBLoginDAO.log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			DBLoginDAO.log.error(e.getMessage(), e);
-		} catch (ExpressionNotImplementedException e) {
-			DBLoginDAO.log.error(e.getMessage(), e);
-		} catch (ExpressionException e) {
+		} catch (ServiceException | NotFoundException | MultipleResultException | NotImplementedException | ExpressionNotImplementedException | ExpressionException e) {
 			DBLoginDAO.log.error(e.getMessage(), e);
 		}
 
@@ -264,7 +253,7 @@ public class DBLoginDAO implements ILoginDAO {
 	public UserDetailsBean loadUserByUsername(String username, boolean check)
 			throws NotFoundException, ServiceException, UserInvalidException {
 
-		log.debug("cerco utente " + username);
+		log.debug("cerco utente {}", username);
 
 		try {
 			boolean existsUser = this.utenteDAO.existsUser(username);
@@ -286,10 +275,7 @@ public class DBLoginDAO implements ILoginDAO {
 
 			return details;
 
-		} catch (NotFoundException e) {
-			log.error(e.getMessage(), e);
-			throw e ; //new UsernameNotFoundException("Utente non trovato.");
-		} catch (UserInvalidException e) {
+		} catch (NotFoundException | UserInvalidException e) {
 			log.error(e.getMessage(), e);
 			throw  e; 
 		} catch (DriverUsersDBException e) {
@@ -302,7 +288,7 @@ public class DBLoginDAO implements ILoginDAO {
 	public Configurazione readConfigurazioneGenerale() throws ServiceException {
 		try {
 			return this.driverConfigDB.getConfigurazioneGenerale();
-		} catch (Exception e) {
+		} catch (DriverConfigurazioneException | DriverConfigurazioneNotFound e) {
 			log.error(e.getMessage(), e);
 			throw new ServiceException(e); 
 		}
