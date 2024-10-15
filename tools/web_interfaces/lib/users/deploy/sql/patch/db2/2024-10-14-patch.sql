@@ -13,7 +13,7 @@ CREATE TABLE users_ricerche
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- unique constraints
-	CONSTRAINT unique_users_ricerche_1 UNIQUE (id_utente,label),
+	CONSTRAINT unique_users_ricerche_1 UNIQUE (id_utente,label,modulo,modalita_ricerca),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_users_ricerche_1 FOREIGN KEY (id_utente) REFERENCES users(id),
 	CONSTRAINT pk_users_ricerche PRIMARY KEY (id)

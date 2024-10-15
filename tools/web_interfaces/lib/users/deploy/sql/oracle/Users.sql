@@ -169,7 +169,7 @@ CREATE TABLE users_ricerche
 	descrizione VARCHAR2(4000) NOT NULL,
 	data_creazione TIMESTAMP NOT NULL,
 	modulo VARCHAR2(255) NOT NULL,
-	modalita_ricerca VARCHAR2(255),
+	modalita_ricerca VARCHAR2(255) NOT NULL,
 	visibilita VARCHAR2(255) NOT NULL,
 	ricerca CLOB NOT NULL,
 	protocollo VARCHAR2(255),
@@ -177,7 +177,7 @@ CREATE TABLE users_ricerche
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
-	CONSTRAINT unique_users_ricerche_1 UNIQUE (id_utente,label),
+	CONSTRAINT unique_users_ricerche_1 UNIQUE (id_utente,label,modulo,modalita_ricerca),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_users_ricerche_1 FOREIGN KEY (id_utente) REFERENCES users(id),
 	CONSTRAINT pk_users_ricerche PRIMARY KEY (id)

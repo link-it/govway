@@ -444,6 +444,8 @@
                         <linkit:sql-table-unique create-index="true">
                             <linkit:sql-table-unique-column name="id_utente" />
                             <linkit:sql-table-unique-column name="label" />
+                            <linkit:sql-table-unique-column name="modulo" />
+                            <linkit:sql-table-unique-column name="modalita_ricerca" />
                         </linkit:sql-table-unique>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
@@ -506,7 +508,7 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="modalita_ricerca" type="xsd:string" minOccurs="0">
+                <xsd:element name="modalita_ricerca" type="xsd:string">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
