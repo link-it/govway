@@ -225,13 +225,13 @@ public class ValidatoreMessaggiApplicativi {
 			}
 		}
 		
-		this.bufferMessage_readOnly = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativi_bufferContentRead();
+		this.bufferMessage_readOnly = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativiBufferContentRead();
 		if(proprieta!=null && !proprieta.isEmpty()) {
 			boolean defaultBehaviour = this.bufferMessage_readOnly;
 			this.bufferMessage_readOnly = ValidatoreMessaggiApplicativiRest.readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_BUFFER_ENABLED, defaultBehaviour);
 		}
 		
-		this.rpcAcceptRootElementUnqualified = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified();
+		this.rpcAcceptRootElementUnqualified = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativiRpcAcceptRootElementUnqualified();
 		if(proprieta!=null && !proprieta.isEmpty()) {
 			boolean default_rpcAcceptRootElementUnqualified = this.rpcAcceptRootElementUnqualified;
 			this.rpcAcceptRootElementUnqualified = ValidatoreMessaggiApplicativiRest.readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_RPC_ACCEPT_ROOT_ELEMENT_UNQUALIFIED_ENABLED, default_rpcAcceptRootElementUnqualified);
@@ -254,7 +254,7 @@ public class ValidatoreMessaggiApplicativi {
 			throw ex;
 		}
 		
-		this.validateSoapAction = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativi_checkSoapAction();
+		this.validateSoapAction = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativiCheckSoapAction();
 		if(proprieta!=null && !proprieta.isEmpty()) {
 			boolean defaultSoapAction = this.validateSoapAction;
 			this.validateSoapAction = ValidatoreMessaggiApplicativiRest.readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SOAPACTION_ENABLED, defaultSoapAction);

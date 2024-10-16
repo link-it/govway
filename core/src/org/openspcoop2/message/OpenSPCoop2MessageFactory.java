@@ -181,11 +181,11 @@ public abstract class OpenSPCoop2MessageFactory {
 	}
 	public static String getAsString(OpenSPCoop2MessageFactory messageFactory, Node ele, boolean consume){
 		// E' indipendente dal tipo SOAP11, il tipo viene utilizzato come uno qualsiasi
-		return getInstanceForUtilities(messageFactory).getAsString(ele,true);
+		return getInstanceForUtilities(messageFactory).getAsString(ele,consume);
 	}
 	public static byte[] getAsByte(OpenSPCoop2MessageFactory messageFactory, Node ele, boolean consume){
 		// E' indipendente dal tipo SOAP11, il tipo viene utilizzato come uno qualsiasi
-		return getInstanceForUtilities(messageFactory).getAsByte(ele,true);
+		return getInstanceForUtilities(messageFactory).getAsByte(ele,consume);
 	}
 	
 	
