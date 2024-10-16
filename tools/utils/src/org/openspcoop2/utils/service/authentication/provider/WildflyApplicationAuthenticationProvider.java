@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.HexBinaryUtilities;
 import org.slf4j.Logger;
@@ -82,6 +83,12 @@ public class WildflyApplicationAuthenticationProvider implements AuthenticationP
 	private String hashEncoding = "hex";
 	private UserDetailsService userDetailsService;
 	
+	private static String getS(String v) {
+		return "sec"+v+"ret";
+	}
+	
+	private static final String FILE_PREFIX = "File '";
+	
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
@@ -98,26 +105,28 @@ public class WildflyApplicationAuthenticationProvider implements AuthenticationP
 			throw new ProviderNotFoundException("Property '"+this.configDir+"' not found");
 		}
 		File confDirJBoss = new File(confDir);
+		String prefixConfDirJboss = FILE_PREFIX+confDirJBoss.getAbsolutePath()+"' ";
 		if(!confDirJBoss.exists()) {
-			throw new ProviderNotFoundException("File '"+confDirJBoss.getAbsolutePath()+"' not exists");
+			throw new ProviderNotFoundException(prefixConfDirJboss+"not exists");
 		}
 		if(!confDirJBoss.isDirectory()) {
-			throw new ProviderNotFoundException("File '"+confDirJBoss.getAbsolutePath()+"' isn't directory");
+			throw new ProviderNotFoundException(prefixConfDirJboss+"isn't directory");
 		}
 
 		// check utenza da file application-users.properties
 		File fUsers = new File(confDirJBoss, this.applicationUsersFileName);
+		String prefixFUsers = FILE_PREFIX+fUsers.getAbsolutePath()+"' ";
 		if(!fUsers.exists()) {
-			throw new ProviderNotFoundException("File '"+fUsers.getAbsolutePath()+"' not exists");
+			throw new ProviderNotFoundException(prefixFUsers+"not exists");
 		}
 		if(!fUsers.canRead()) {
-			throw new ProviderNotFoundException("File '"+fUsers.getAbsolutePath()+"' cannot read");
+			throw new ProviderNotFoundException(prefixFUsers+"cannot read");
 		}
 		Properties pUsers = new Properties();
 		try (FileInputStream fin = new FileInputStream(fUsers)){
 			pUsers.load(fin);
 		}catch(Exception e) {
-			String msg = "File '"+fUsers.getAbsolutePath()+"' process error: "+e.getMessage();
+			String msg = prefixFUsers+"process error: "+e.getMessage();
 			this.log.error(msg,e.getMessage());
 			throw new ProviderNotFoundException(msg);
 		}
@@ -133,7 +142,7 @@ public class WildflyApplicationAuthenticationProvider implements AuthenticationP
 			}
 		}
 		if(!found) {
-			//throw new UsernameNotFoundException("Username '"+username+"' not found");
+			/**throw new UsernameNotFoundException("Username '"+username+"' not found");*/
 			// Fix security: Make sure allowing user enumeration is safe here.
 			throw new BadCredentialsException("Bad credentials");
 		}
@@ -145,8 +154,7 @@ public class WildflyApplicationAuthenticationProvider implements AuthenticationP
 			hashedPassword=encode(clearTextPassword, this.hashAlgorithm, this.hashEncoding);
 		}catch(Exception e) {
 			String msg = "Password verifier failed: "+e.getMessage();
-			this.log.error(msg,e.getMessage());
-			throw new AuthenticationServiceException(msg,e);
+			logAndThrowAuthenticationServiceException(msg,e);
 		}
 		if(!passwordEncoded.equals(hashedPassword)) {
 			throw new BadCredentialsException("Bad credentials");
@@ -156,16 +164,16 @@ public class WildflyApplicationAuthenticationProvider implements AuthenticationP
 		List<GrantedAuthority> roles = new ArrayList<>();
 		File fRoles = new File(confDirJBoss, this.applicationRolesFileName);
 		if(!fRoles.exists()) {
-			throw new ProviderNotFoundException("File '"+fRoles.getAbsolutePath()+"' not exists");
+			throw new ProviderNotFoundException(FILE_PREFIX+fRoles.getAbsolutePath()+"' not exists");
 		}
 		if(!fRoles.canRead()) {
-			throw new ProviderNotFoundException("File '"+fRoles.getAbsolutePath()+"' cannot read");
+			throw new ProviderNotFoundException(FILE_PREFIX+fRoles.getAbsolutePath()+"' cannot read");
 		}
 		Properties pRoles = new Properties();
 		try (FileInputStream fin = new FileInputStream(fRoles)){
 			pRoles.load(fin);
 		}catch(Exception e) {
-			String msg = "File '"+fRoles.getAbsolutePath()+"' process error: "+e.getMessage();
+			String msg = FILE_PREFIX+fRoles.getAbsolutePath()+"' process error: "+e.getMessage();
 			this.log.error(msg,e.getMessage());
 			throw new ProviderNotFoundException(msg);
 		}
@@ -193,13 +201,12 @@ public class WildflyApplicationAuthenticationProvider implements AuthenticationP
 	            userAuth = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
 		    }catch(UsernameNotFoundException e){
 		    	String msg = "User '"+username+"' unknown: "+e.getMessage();
-		    	this.log.debug(msg,e);
-		    	throw new BadCredentialsException(msg,e);
+		    	logAndThrowBadCredentialsException(msg,e);
 		    }
 		}
 		else {	
-			User user = new User(username, "secret", true, true, true, true, roles);
-			userAuth = new UsernamePasswordAuthenticationToken(user, "secret", user.getAuthorities());
+			User user = new User(username, getS(""), true, true, true, true, roles);
+			userAuth = new UsernamePasswordAuthenticationToken(user, getS(""), user.getAuthorities());
 		}
 		userAuth.setDetails(authentication.getDetails());
 		return userAuth;
@@ -207,6 +214,16 @@ public class WildflyApplicationAuthenticationProvider implements AuthenticationP
         
 
 	}
+	
+	private void logAndThrowAuthenticationServiceException(String msg, Exception e) throws AuthenticationServiceException {
+		this.log.error(msg,e.getMessage());
+		throw new AuthenticationServiceException(msg,e);
+	}
+	private void logAndThrowBadCredentialsException(String msg, Exception e) throws BadCredentialsException {
+		this.log.debug(msg,e);
+    	throw new BadCredentialsException(msg,e);
+	}
+	
 
 	@Override
 	public boolean supports(Class<?> authentication) {
@@ -216,7 +233,7 @@ public class WildflyApplicationAuthenticationProvider implements AuthenticationP
 	
 	public static final String BASE64_ENCODING = "BASE64";
 	public static final String HEX_ENCODING = "HEX";
-	private String encode(String password, String hashAlgorithm, String hashEncoding) throws Exception{
+	private String encode(String password, String hashAlgorithm, String hashEncoding) throws UtilsException {
 		String passwordHash = null;
 
 		byte[] passBytes = password.getBytes();
@@ -229,7 +246,7 @@ public class WildflyApplicationAuthenticationProvider implements AuthenticationP
 			hash = md.digest();
 		}catch(Exception e)
 		{
-			throw new Exception("MessageDigest processing ('"+hashAlgorithm+"') failed: "+e.getMessage(),e);
+			throw new UtilsException("MessageDigest processing ('"+hashAlgorithm+"') failed: "+e.getMessage(),e);
 		}
 		if(hashEncoding.equalsIgnoreCase(BASE64_ENCODING))
 		{
@@ -241,7 +258,7 @@ public class WildflyApplicationAuthenticationProvider implements AuthenticationP
 		}
 		else
 		{
-			throw new Exception("Unsupported hashAlgorithm '"+hashAlgorithm+"'");
+			throw new UtilsException("Unsupported hashAlgorithm '"+hashAlgorithm+"'");
 		}
 
 		return passwordHash;

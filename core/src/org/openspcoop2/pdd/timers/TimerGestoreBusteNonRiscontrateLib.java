@@ -159,8 +159,8 @@ public class TimerGestoreBusteNonRiscontrateLib {
 		if(this.propertiesReader.isTimerLockByDatabase()) {
 			this.semaphore_statistics = new InfoStatistics();
 
-			SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(this.propertiesReader.getTimerGestoreRiscontriRicevute_lockMaxLife(), 
-					this.propertiesReader.getTimerGestoreRiscontriRicevute_lockIdleTime());
+			SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(this.propertiesReader.getTimerGestoreRiscontriRicevuteLockMaxLife(), 
+					this.propertiesReader.getTimerGestoreRiscontriRicevuteLockIdleTime());
 
 			TipiDatabase databaseType = TipiDatabase.toEnumConstant(this.propertiesReader.getDatabaseType());
 			try {
@@ -250,8 +250,8 @@ public class TimerGestoreBusteNonRiscontrateLib {
 					GestoreMessaggi.acquireLock(
 							this.semaphore, connectionDB, this.timerLock,
 							this.msgDiag, causaBusteOneWayToSend, 
-							this.propertiesReader.getTimerGestoreRiscontriRicevute_getLockAttesaAttiva(), 
-							this.propertiesReader.getTimerGestoreRiscontriRicevute_getLockCheckInterval());
+							this.propertiesReader.getTimerGestoreRiscontriRicevuteGetLockAttesaAttiva(), 
+							this.propertiesReader.getTimerGestoreRiscontriRicevuteGetLockCheckInterval());
 					
 					busteOneWayToSend = rBuste.getBustePerUlterioreInoltro(this.timeout,this.limit,offsetRiscontri,this.logQuery);
 					if(this.logQuery &&
@@ -540,8 +540,8 @@ public class TimerGestoreBusteNonRiscontrateLib {
 					GestoreMessaggi.acquireLock(
 							this.semaphore, connectionDB, this.timerLock,
 							this.msgDiag, causaBusteAsincroneToSend, 
-							this.propertiesReader.getTimerGestoreRiscontriRicevute_getLockAttesaAttiva(), 
-							this.propertiesReader.getTimerGestoreRiscontriRicevute_getLockCheckInterval());
+							this.propertiesReader.getTimerGestoreRiscontriRicevuteGetLockAttesaAttiva(), 
+							this.propertiesReader.getTimerGestoreRiscontriRicevuteGetLockCheckInterval());
 					
 					List<BustaNonRiscontrata> busteAsincroneToSend = null;
 					busteAsincroneToSend = pBuste.asincrono_getBusteAsincronePerUlterioreInoltro(this.timeout,this.limit,offsetBusteAsincrone,this.logQuery);

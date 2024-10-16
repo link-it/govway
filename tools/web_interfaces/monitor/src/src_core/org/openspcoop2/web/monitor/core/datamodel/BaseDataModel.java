@@ -133,7 +133,7 @@ public abstract class BaseDataModel<K, T , D> extends SerializableDataModel {
 					this.rowCount=(int)((IServiceSearchWithId)this.dataProvider).count(filter).longValue();
 				}
 			}
-			return this.rowCount;
+			return this.rowCount!=null ? this.rowCount.intValue() : 0;
 		} catch (Exception e) {
 			BaseDataModel.log.error(e.getMessage(), e);
 		}

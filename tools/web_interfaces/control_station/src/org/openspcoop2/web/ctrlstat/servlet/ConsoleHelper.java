@@ -13156,15 +13156,17 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public String addFilterTipoAutenticazioneTrasporto(ISearch ricerca, int idLista, boolean postBack, boolean modiErogazione, Boolean confPers) throws DriverControlStationException{
+	public String addFilterTipoAutenticazioneTrasporto(ISearch ricerca, int idLista, boolean postBack, boolean modiErogazione, Boolean confPersParam) throws DriverControlStationException{
 		String tipoAutenticazioneValue = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_AUTENTICAZIONE_TRASPORTO_QUALSIASI;
 		try {
 			
 			List<String> autenticazioneValues = TipoAutenticazione.getValues();
 			List<String> autenticazioneLabels = TipoAutenticazione.getLabels();
 			
+			boolean confPers = confPersParam!=null && confPersParam.booleanValue();
+			
 			int length = autenticazioneValues.size() + 1;
-			if (confPers!=null && confPers ){
+			if (confPers){
 				length++;
 			}
 			
@@ -13177,7 +13179,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				labels[i+1] = autenticazioneLabels.get(i);
 				values[i+1] = autenticazioneValues.get(i);
 			}
-			if (confPers!=null && confPers ){
+			if (confPers){
 				values[i+1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
 				labels[i+1] = CostantiControlStation.DEFAULT_LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
 			}
@@ -23661,7 +23663,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 			}
 			
-			dati.get(idxSubtitle).setStatoAperturaSezioni((visualizzaSottosezioneAperta!=null && visualizzaSottosezioneAperta) ? STATO_APERTURA_SEZIONI.APERTO : STATO_APERTURA_SEZIONI.CHIUSO);
+			boolean v = visualizzaSottosezioneAperta!=null && visualizzaSottosezioneAperta.booleanValue();
+			dati.get(idxSubtitle).setStatoAperturaSezioni(v ? STATO_APERTURA_SEZIONI.APERTO : STATO_APERTURA_SEZIONI.CHIUSO);
 		}
 	}
 	

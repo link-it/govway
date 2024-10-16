@@ -111,15 +111,17 @@ public final class AccordiServizioParteComuneResourcesParametersList extends Act
 			Long idResponse = null;
 			ResourceRequest resourceRequest = null;
 			ResourceResponse resourceResponse = null;
-			if(isRequest) {
-				resourceRequest = res.getRequest();
-			} else {
-				if(res.getResponseList() != null) {
-					for (int i = 0; i < res.getResponseList().size(); i++) {
-						resourceResponse = res.getResponse(i);
-						if (resourceResponse.getStatus() == statusResponse) {
-							idResponse = resourceResponse.getId();
-							break;
+			if(res!=null) {
+				if(isRequest) {
+					resourceRequest = res.getRequest();
+				} else {
+					if(res.getResponseList() != null) {
+						for (int i = 0; i < res.getResponseList().size(); i++) {
+							resourceResponse = res.getResponse(i);
+							if (statusResponse!=null && resourceResponse.getStatus() == statusResponse.intValue()) {
+								idResponse = resourceResponse.getId();
+								break;
+							}
 						}
 					}
 				}
