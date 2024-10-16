@@ -249,7 +249,7 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 					this.rowCount=(int)((IServiceSearchWithId)this.dataProvider).count(filter).longValue();
 				}
 			}
-			return this.rowCount;
+			return this.rowCount!=null ? this.rowCount.intValue() : 0;
 		} catch (Exception e) {
 			BaseDataModelWithSearchForm.log.error(e.getMessage(), e);
 		}

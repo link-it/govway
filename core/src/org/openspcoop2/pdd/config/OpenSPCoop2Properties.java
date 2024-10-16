@@ -983,11 +983,11 @@ public class OpenSPCoop2Properties {
 			this.isTimerGestoreRiscontriRicevuteAbilitatoLog();
 			this.getTimerGestoreRiscontriRicevuteLimit();
 			if(this.isTimerLockByDatabase()) {
-				this.getTimerGestoreRiscontriRicevute_lockMaxLife();
-				this.getTimerGestoreRiscontriRicevute_lockIdleTime();
+				this.getTimerGestoreRiscontriRicevuteLockMaxLife();
+				this.getTimerGestoreRiscontriRicevuteLockIdleTime();
 			}
-			this.getTimerGestoreRiscontriRicevute_getLockAttesaAttiva();
-			this.getTimerGestoreRiscontriRicevute_getLockCheckInterval();
+			this.getTimerGestoreRiscontriRicevuteGetLockAttesaAttiva();
+			this.getTimerGestoreRiscontriRicevuteGetLockCheckInterval();
 			
 			this.isTimerGestoreMessaggiAbilitato();
 			this.isTimerGestoreMessaggiPuliziaMessaggiEliminatiAbilitata();
@@ -999,8 +999,8 @@ public class OpenSPCoop2Properties {
 			this.getTimerGestoreMessaggiLimit();
 			this.isTimerGestoreMessaggiVerificaConnessioniAttive();
 			if(this.isTimerLockByDatabase()) {
-				this.getTimerGestoreMessaggi_lockMaxLife();
-				this.getTimerGestoreMessaggi_lockIdleTime();
+				this.getTimerGestoreMessaggiLockMaxLife();
+				this.getTimerGestoreMessaggiLockIdleTime();
 			}
 			this.getTimerGestoreMessaggi_getLockAttesaAttiva();
 			this.getTimerGestoreMessaggi_getLockCheckInterval();
@@ -1010,8 +1010,8 @@ public class OpenSPCoop2Properties {
 			this.isTimerGestorePuliziaMessaggiAnomaliAbilitatoLog();
 			this.getTimerGestorePuliziaMessaggiAnomaliLimit();
 			if(this.isTimerLockByDatabase()) {
-				this.getTimerGestorePuliziaMessaggiAnomali_lockMaxLife();
-				this.getTimerGestorePuliziaMessaggiAnomali_lockIdleTime();
+				this.getTimerGestorePuliziaMessaggiAnomaliLockMaxLife();
+				this.getTimerGestorePuliziaMessaggiAnomaliLockIdleTime();
 			}
 			this.getTimerGestorePuliziaMessaggiAnomali_getLockAttesaAttiva();
 			this.getTimerGestorePuliziaMessaggiAnomali_getLockCheckInterval();
@@ -1022,8 +1022,8 @@ public class OpenSPCoop2Properties {
 			this.isTimerGestoreRepositoryBusteAbilitatoLog();
 			this.getTimerGestoreRepositoryBusteLimit();
 			if(this.isTimerLockByDatabase()) {
-				this.getTimerGestoreRepositoryBuste_lockMaxLife();
-				this.getTimerGestoreRepositoryBuste_lockIdleTime();
+				this.getTimerGestoreRepositoryBusteLockMaxLife();
+				this.getTimerGestoreRepositoryBusteLockIdleTime();
 			}
 			this.getTimerGestoreRepositoryBuste_getLockAttesaAttiva();
 			this.getTimerGestoreRepositoryBuste_getLockCheckInterval();
@@ -1068,10 +1068,10 @@ public class OpenSPCoop2Properties {
 			}
 			this.isLoadBalancerDebug();
 			if(this.isTimerLockByDatabase()) {
-				this.getTimerConsegnaContenutiApplicativi_lockMaxLife();
-				this.getTimerConsegnaContenutiApplicativi_lockIdleTime();
+				this.getTimerConsegnaContenutiApplicativiLockMaxLife();
+				this.getTimerConsegnaContenutiApplicativiLockIdleTime();
 			}
-			this.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife();
+			this.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife();
 			this.getTimerConsegnaContenutiApplicativi_getLockAttesaAttiva();
 			this.getTimerConsegnaContenutiApplicativi_getLockCheckInterval();
 			if(!isTimerConsegnaContenutiApplicativi_smistatore_runtime_useRuntimeManager()){
@@ -2095,8 +2095,8 @@ public class OpenSPCoop2Properties {
 			// govway startup
 			this.getStartup_richiesteIngressoTimeout_secondi();
 			this.getStartup_richiesteIngressoCheck_ms();
-			this.getStartup_lockMaxLife();
-			this.getStartup_lockIdleTime();
+			this.getStartupLockMaxLife();
+			this.getStartupLockIdleTime();
 			
 			// ExtendedInfo (Configurazione)
 			String extendedInfoConfigurazioneTest = null;
@@ -5209,63 +5209,69 @@ public class OpenSPCoop2Properties {
 		return this.getTimerGestoreRiscontriRicevuteLimit;
 	}
 	
-	private Integer getTimerGestoreRiscontriRicevute_lockMaxLife = null;
-	public int getTimerGestoreRiscontriRicevute_lockMaxLife() {	
-		if(this.getTimerGestoreRiscontriRicevute_lockMaxLife==null){
+	private Integer getTimerGestoreRiscontriRicevuteLockMaxLife = null;
+	public int getTimerGestoreRiscontriRicevuteLockMaxLife() {	
+		if(this.getTimerGestoreRiscontriRicevuteLockMaxLife==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.maxLife");
 
 				if(name!=null){
 					name = name.trim();
-					this.getTimerGestoreRiscontriRicevute_lockMaxLife = java.lang.Integer.parseInt(name);
+					this.getTimerGestoreRiscontriRicevuteLockMaxLife = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
-					this.getTimerGestoreRiscontriRicevute_lockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
+					this.getTimerGestoreRiscontriRicevuteLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
-				this.getTimerGestoreRiscontriRicevute_lockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
+				this.getTimerGestoreRiscontriRicevuteLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 			}  
-			if(this.getTimerGestoreRiscontriRicevute_lockMaxLife!=null && this.getTimerGestoreRiscontriRicevute_lockMaxLife>0) {
+			if(this.getTimerGestoreRiscontriRicevuteLockMaxLife!=null && this.getTimerGestoreRiscontriRicevuteLockMaxLife>0) {
 				// trasformo in millisecondi l'informazione fornita in secondi
-				this.getTimerGestoreRiscontriRicevute_lockMaxLife = this.getTimerGestoreRiscontriRicevute_lockMaxLife *1000;
+				this.getTimerGestoreRiscontriRicevuteLockMaxLife = this.getTimerGestoreRiscontriRicevuteLockMaxLife *1000;
 			}
 		}
 
-		return this.getTimerGestoreRiscontriRicevute_lockMaxLife;
+		if(this.getTimerGestoreRiscontriRicevuteLockMaxLife!=null) {
+			return this.getTimerGestoreRiscontriRicevuteLockMaxLife.intValue();
+		}
+		return -1;
 	}
 	
-	private Integer getTimerGestoreRiscontriRicevute_lockIdleTime = null;
-	public int getTimerGestoreRiscontriRicevute_lockIdleTime() {	
-		if(this.getTimerGestoreRiscontriRicevute_lockIdleTime==null){
+	private Integer getTimerGestoreRiscontriRicevuteLockIdleTime = null;
+	public int getTimerGestoreRiscontriRicevuteLockIdleTime() {	
+		if(this.getTimerGestoreRiscontriRicevuteLockIdleTime==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.idleTime");
 
 				if(name!=null){
 					name = name.trim();
-					this.getTimerGestoreRiscontriRicevute_lockIdleTime = java.lang.Integer.parseInt(name);
+					this.getTimerGestoreRiscontriRicevuteLockIdleTime = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
-					this.getTimerGestoreRiscontriRicevute_lockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
+					this.getTimerGestoreRiscontriRicevuteLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
-				this.getTimerGestoreRiscontriRicevute_lockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
+				this.getTimerGestoreRiscontriRicevuteLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 			} 
-			if(this.getTimerGestoreRiscontriRicevute_lockIdleTime!=null && this.getTimerGestoreRiscontriRicevute_lockIdleTime>0) {
+			if(this.getTimerGestoreRiscontriRicevuteLockIdleTime!=null && this.getTimerGestoreRiscontriRicevuteLockIdleTime>0) {
 				// trasformo in millisecondi l'informazione fornita in secondi
-				this.getTimerGestoreRiscontriRicevute_lockIdleTime = this.getTimerGestoreRiscontriRicevute_lockIdleTime *1000;
+				this.getTimerGestoreRiscontriRicevuteLockIdleTime = this.getTimerGestoreRiscontriRicevuteLockIdleTime *1000;
 			}
 		}
 
-		return this.getTimerGestoreRiscontriRicevute_lockIdleTime;
+		if(this.getTimerGestoreRiscontriRicevuteLockIdleTime!=null) {
+			return this.getTimerGestoreRiscontriRicevuteLockIdleTime.intValue();
+		}
+		return -1;
 	}
 	
-	private Long getTimerGestoreRiscontriRicevute_getLockAttesaAttiva = null;
-	public long getTimerGestoreRiscontriRicevute_getLockAttesaAttiva() {	
-		if(this.getTimerGestoreRiscontriRicevute_getLockAttesaAttiva==null){
+	private Long getTimerGestoreRiscontriRicevuteGetLockAttesaAttiva = null;
+	public long getTimerGestoreRiscontriRicevuteGetLockAttesaAttiva() {	
+		if(this.getTimerGestoreRiscontriRicevuteGetLockAttesaAttiva==null){
 			String pName = "org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.attesaAttiva";
 			try{ 
 				String name = null;
@@ -5274,24 +5280,24 @@ public class OpenSPCoop2Properties {
 				if(name!=null){
 					name = name.trim();
 					long time = java.lang.Long.parseLong(name);
-					this.getTimerGestoreRiscontriRicevute_getLockAttesaAttiva = time*1000;
+					this.getTimerGestoreRiscontriRicevuteGetLockAttesaAttiva = time*1000;
 				}else{
 					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
-					this.getTimerGestoreRiscontriRicevute_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
+					this.getTimerGestoreRiscontriRicevuteGetLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
-				this.getTimerGestoreRiscontriRicevute_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
+				this.getTimerGestoreRiscontriRicevuteGetLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 			}    
 		}
 
-		return this.getTimerGestoreRiscontriRicevute_getLockAttesaAttiva;
+		return this.getTimerGestoreRiscontriRicevuteGetLockAttesaAttiva;
 	}
 
-	private Integer getTimerGestoreRiscontriRicevute_getLockCheckInterval = null;
-	public int getTimerGestoreRiscontriRicevute_getLockCheckInterval() {	
-		if(this.getTimerGestoreRiscontriRicevute_getLockCheckInterval==null){
+	private Integer getTimerGestoreRiscontriRicevuteGetLockCheckInterval = null;
+	public int getTimerGestoreRiscontriRicevuteGetLockCheckInterval() {	
+		if(this.getTimerGestoreRiscontriRicevuteGetLockCheckInterval==null){
 			String pName = "org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.check";
 			try{ 
 				String name = null;
@@ -5300,18 +5306,18 @@ public class OpenSPCoop2Properties {
 				if(name!=null){
 					name = name.trim();
 					int time = java.lang.Integer.parseInt(name);
-					this.getTimerGestoreRiscontriRicevute_getLockCheckInterval = time;
+					this.getTimerGestoreRiscontriRicevuteGetLockCheckInterval = time;
 				}else{
 					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
-					this.getTimerGestoreRiscontriRicevute_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
+					this.getTimerGestoreRiscontriRicevuteGetLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
-				this.getTimerGestoreRiscontriRicevute_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
+				this.getTimerGestoreRiscontriRicevuteGetLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 			}  
 		}
 
-		return this.getTimerGestoreRiscontriRicevute_getLockCheckInterval;
+		return this.getTimerGestoreRiscontriRicevuteGetLockCheckInterval;
 	}
 	
 	
@@ -5556,58 +5562,64 @@ public class OpenSPCoop2Properties {
 		return this.isTimerGestoreMessaggiVerificaConnessioniAttive;
 	}
 		
-	private Integer getTimerGestoreMessaggi_lockMaxLife = null;
-	public int getTimerGestoreMessaggi_lockMaxLife() {	
-		if(this.getTimerGestoreMessaggi_lockMaxLife==null){
+	private Integer getTimerGestoreMessaggiLockMaxLife = null;
+	public int getTimerGestoreMessaggiLockMaxLife() {	
+		if(this.getTimerGestoreMessaggiLockMaxLife==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.lock.maxLife");
 
 				if(name!=null){
 					name = name.trim();
-					this.getTimerGestoreMessaggi_lockMaxLife = java.lang.Integer.parseInt(name);
+					this.getTimerGestoreMessaggiLockMaxLife = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
-					this.getTimerGestoreMessaggi_lockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
+					this.getTimerGestoreMessaggiLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
-				this.getTimerGestoreMessaggi_lockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
+				this.getTimerGestoreMessaggiLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 			}
-			if(this.getTimerGestoreMessaggi_lockMaxLife!=null && this.getTimerGestoreMessaggi_lockMaxLife>0) {
+			if(this.getTimerGestoreMessaggiLockMaxLife!=null && this.getTimerGestoreMessaggiLockMaxLife>0) {
 				// trasformo in millisecondi l'informazione fornita in secondi
-				this.getTimerGestoreMessaggi_lockMaxLife = this.getTimerGestoreMessaggi_lockMaxLife *1000;
+				this.getTimerGestoreMessaggiLockMaxLife = this.getTimerGestoreMessaggiLockMaxLife *1000;
 			}
 		}
 
-		return this.getTimerGestoreMessaggi_lockMaxLife;
+		if(this.getTimerGestoreMessaggiLockMaxLife!=null) {
+			return this.getTimerGestoreMessaggiLockMaxLife.intValue();
+		}
+		return -1;
 	}
 	
-	private Integer getTimerGestoreMessaggi_lockIdleTime = null;
-	public int getTimerGestoreMessaggi_lockIdleTime() {	
-		if(this.getTimerGestoreMessaggi_lockIdleTime==null){
+	private Integer getTimerGestoreMessaggiLockIdleTime = null;
+	public int getTimerGestoreMessaggiLockIdleTime() {	
+		if(this.getTimerGestoreMessaggiLockIdleTime==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.lock.idleTime");
 
 				if(name!=null){
 					name = name.trim();
-					this.getTimerGestoreMessaggi_lockIdleTime = java.lang.Integer.parseInt(name);
+					this.getTimerGestoreMessaggiLockIdleTime = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
-					this.getTimerGestoreMessaggi_lockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
+					this.getTimerGestoreMessaggiLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
-				this.getTimerGestoreMessaggi_lockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
+				this.getTimerGestoreMessaggiLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 			}
-			if(this.getTimerGestoreMessaggi_lockIdleTime!=null && this.getTimerGestoreMessaggi_lockIdleTime>0) {
+			if(this.getTimerGestoreMessaggiLockIdleTime!=null && this.getTimerGestoreMessaggiLockIdleTime>0) {
 				// trasformo in millisecondi l'informazione fornita in secondi
-				this.getTimerGestoreMessaggi_lockIdleTime = this.getTimerGestoreMessaggi_lockIdleTime *1000;
+				this.getTimerGestoreMessaggiLockIdleTime = this.getTimerGestoreMessaggiLockIdleTime *1000;
 			}
 		}
 
-		return this.getTimerGestoreMessaggi_lockIdleTime;
+		if(this.getTimerGestoreMessaggiLockIdleTime!=null) {
+			return this.getTimerGestoreMessaggiLockIdleTime.intValue();
+		}
+		return -1;
 	}
 	
 	private Long getTimerGestoreMessaggi_getLockAttesaAttiva = null;
@@ -5779,58 +5791,64 @@ public class OpenSPCoop2Properties {
 		return this.getTimerGestorePuliziaMessaggiAnomaliLimit;
 	}
 	
-	private Integer getTimerGestorePuliziaMessaggiAnomali_lockMaxLife = null;
-	public int getTimerGestorePuliziaMessaggiAnomali_lockMaxLife() {	
-		if(this.getTimerGestorePuliziaMessaggiAnomali_lockMaxLife==null){
+	private Integer getTimerGestorePuliziaMessaggiAnomaliLockMaxLife = null;
+	public int getTimerGestorePuliziaMessaggiAnomaliLockMaxLife() {	
+		if(this.getTimerGestorePuliziaMessaggiAnomaliLockMaxLife==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.maxLife");
 
 				if(name!=null){
 					name = name.trim();
-					this.getTimerGestorePuliziaMessaggiAnomali_lockMaxLife = java.lang.Integer.parseInt(name);
+					this.getTimerGestorePuliziaMessaggiAnomaliLockMaxLife = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
-					this.getTimerGestorePuliziaMessaggiAnomali_lockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
+					this.getTimerGestorePuliziaMessaggiAnomaliLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
-				this.getTimerGestorePuliziaMessaggiAnomali_lockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
+				this.getTimerGestorePuliziaMessaggiAnomaliLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 			}  
-			if(this.getTimerGestorePuliziaMessaggiAnomali_lockMaxLife!=null && this.getTimerGestorePuliziaMessaggiAnomali_lockMaxLife>0) {
+			if(this.getTimerGestorePuliziaMessaggiAnomaliLockMaxLife!=null && this.getTimerGestorePuliziaMessaggiAnomaliLockMaxLife>0) {
 				// trasformo in millisecondi l'informazione fornita in secondi
-				this.getTimerGestorePuliziaMessaggiAnomali_lockMaxLife = this.getTimerGestorePuliziaMessaggiAnomali_lockMaxLife *1000;
+				this.getTimerGestorePuliziaMessaggiAnomaliLockMaxLife = this.getTimerGestorePuliziaMessaggiAnomaliLockMaxLife *1000;
 			}
 		}
 
-		return this.getTimerGestorePuliziaMessaggiAnomali_lockMaxLife;
+		if(this.getTimerGestorePuliziaMessaggiAnomaliLockMaxLife!=null) {
+			return this.getTimerGestorePuliziaMessaggiAnomaliLockMaxLife.intValue();
+		}
+		return -1;
 	}
 	
-	private Integer getTimerGestorePuliziaMessaggiAnomali_lockIdleTime = null;
-	public int getTimerGestorePuliziaMessaggiAnomali_lockIdleTime() {	
-		if(this.getTimerGestorePuliziaMessaggiAnomali_lockIdleTime==null){
+	private Integer getTimerGestorePuliziaMessaggiAnomaliLockIdleTime = null;
+	public int getTimerGestorePuliziaMessaggiAnomaliLockIdleTime() {	
+		if(this.getTimerGestorePuliziaMessaggiAnomaliLockIdleTime==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.idleTime");
 
 				if(name!=null){
 					name = name.trim();
-					this.getTimerGestorePuliziaMessaggiAnomali_lockIdleTime = java.lang.Integer.parseInt(name);
+					this.getTimerGestorePuliziaMessaggiAnomaliLockIdleTime = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
-					this.getTimerGestorePuliziaMessaggiAnomali_lockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
+					this.getTimerGestorePuliziaMessaggiAnomaliLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
-				this.getTimerGestorePuliziaMessaggiAnomali_lockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
+				this.getTimerGestorePuliziaMessaggiAnomaliLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 			} 
-			if(this.getTimerGestorePuliziaMessaggiAnomali_lockIdleTime!=null && this.getTimerGestorePuliziaMessaggiAnomali_lockIdleTime>0) {
+			if(this.getTimerGestorePuliziaMessaggiAnomaliLockIdleTime!=null && this.getTimerGestorePuliziaMessaggiAnomaliLockIdleTime>0) {
 				// trasformo in millisecondi l'informazione fornita in secondi
-				this.getTimerGestorePuliziaMessaggiAnomali_lockIdleTime = this.getTimerGestorePuliziaMessaggiAnomali_lockIdleTime *1000;
+				this.getTimerGestorePuliziaMessaggiAnomaliLockIdleTime = this.getTimerGestorePuliziaMessaggiAnomaliLockIdleTime *1000;
 			}
 		}
 
-		return this.getTimerGestorePuliziaMessaggiAnomali_lockIdleTime;
+		if(this.getTimerGestorePuliziaMessaggiAnomaliLockIdleTime!=null) {
+			return this.getTimerGestorePuliziaMessaggiAnomaliLockIdleTime.intValue();
+		}
+		return -1;
 	}
 	
 	private Long getTimerGestorePuliziaMessaggiAnomali_getLockAttesaAttiva = null;
@@ -6026,58 +6044,64 @@ public class OpenSPCoop2Properties {
 		return this.getTimerGestoreRepositoryBusteLimit;
 	}
 	
-	private Integer getTimerGestoreRepositoryBuste_lockMaxLife = null;
-	public int getTimerGestoreRepositoryBuste_lockMaxLife() {	
-		if(this.getTimerGestoreRepositoryBuste_lockMaxLife==null){
+	private Integer getTimerGestoreRepositoryBusteLockMaxLife = null;
+	public int getTimerGestoreRepositoryBusteLockMaxLife() {	
+		if(this.getTimerGestoreRepositoryBusteLockMaxLife==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.maxLife");
 
 				if(name!=null){
 					name = name.trim();
-					this.getTimerGestoreRepositoryBuste_lockMaxLife = java.lang.Integer.parseInt(name);
+					this.getTimerGestoreRepositoryBusteLockMaxLife = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
-					this.getTimerGestoreRepositoryBuste_lockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
+					this.getTimerGestoreRepositoryBusteLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
-				this.getTimerGestoreRepositoryBuste_lockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
+				this.getTimerGestoreRepositoryBusteLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 			}
-			if(this.getTimerGestoreRepositoryBuste_lockMaxLife!=null && this.getTimerGestoreRepositoryBuste_lockMaxLife>0) {
+			if(this.getTimerGestoreRepositoryBusteLockMaxLife!=null && this.getTimerGestoreRepositoryBusteLockMaxLife>0) {
 				// trasformo in millisecondi l'informazione fornita in secondi
-				this.getTimerGestoreRepositoryBuste_lockMaxLife = this.getTimerGestoreRepositoryBuste_lockMaxLife *1000;
+				this.getTimerGestoreRepositoryBusteLockMaxLife = this.getTimerGestoreRepositoryBusteLockMaxLife *1000;
 			}
 		}
 
-		return this.getTimerGestoreRepositoryBuste_lockMaxLife;
+		if(this.getTimerGestoreRepositoryBusteLockMaxLife!=null) {
+			return this.getTimerGestoreRepositoryBusteLockMaxLife.intValue();
+		}
+		return -1;
 	}
 	
-	private Integer getTimerGestoreRepositoryBuste_lockIdleTime = null;
-	public int getTimerGestoreRepositoryBuste_lockIdleTime() {	
-		if(this.getTimerGestoreRepositoryBuste_lockIdleTime==null){
+	private Integer getTimerGestoreRepositoryBusteLockIdleTime = null;
+	public int getTimerGestoreRepositoryBusteLockIdleTime() {	
+		if(this.getTimerGestoreRepositoryBusteLockIdleTime==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.idleTime");
 
 				if(name!=null){
 					name = name.trim();
-					this.getTimerGestoreRepositoryBuste_lockIdleTime = java.lang.Integer.parseInt(name);
+					this.getTimerGestoreRepositoryBusteLockIdleTime = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
-					this.getTimerGestoreRepositoryBuste_lockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
+					this.getTimerGestoreRepositoryBusteLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
-				this.getTimerGestoreRepositoryBuste_lockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
+				this.getTimerGestoreRepositoryBusteLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 			}
-			if(this.getTimerGestoreRepositoryBuste_lockIdleTime!=null && this.getTimerGestoreRepositoryBuste_lockIdleTime>0) {
+			if(this.getTimerGestoreRepositoryBusteLockIdleTime!=null && this.getTimerGestoreRepositoryBusteLockIdleTime>0) {
 				// trasformo in millisecondi l'informazione fornita in secondi
-				this.getTimerGestoreRepositoryBuste_lockIdleTime = this.getTimerGestoreRepositoryBuste_lockIdleTime *1000;
+				this.getTimerGestoreRepositoryBusteLockIdleTime = this.getTimerGestoreRepositoryBusteLockIdleTime *1000;
 			}
 		}
 
-		return this.getTimerGestoreRepositoryBuste_lockIdleTime;
+		if(this.getTimerGestoreRepositoryBusteLockIdleTime!=null) {
+			return this.getTimerGestoreRepositoryBusteLockIdleTime.intValue();
+		}
+		return -1;
 	}
 
 	private Long getTimerGestoreRepositoryBuste_getLockAttesaAttiva = null;
@@ -6375,85 +6399,94 @@ public class OpenSPCoop2Properties {
 		return this.isLoadBalancerDebug;
 	}
 	
-	private Integer getTimerConsegnaContenutiApplicativi_lockMaxLife = null;
-	public int getTimerConsegnaContenutiApplicativi_lockMaxLife() {	
-		if(this.getTimerConsegnaContenutiApplicativi_lockMaxLife==null){
+	private Integer getTimerConsegnaContenutiApplicativiLockMaxLife = null;
+	public int getTimerConsegnaContenutiApplicativiLockMaxLife() {	
+		if(this.getTimerConsegnaContenutiApplicativiLockMaxLife==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.maxLife");
 
 				if(name!=null){
 					name = name.trim();
-					this.getTimerConsegnaContenutiApplicativi_lockMaxLife = java.lang.Integer.parseInt(name);
+					this.getTimerConsegnaContenutiApplicativiLockMaxLife = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
-					this.getTimerConsegnaContenutiApplicativi_lockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
+					this.getTimerConsegnaContenutiApplicativiLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
-				this.getTimerConsegnaContenutiApplicativi_lockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
+				this.getTimerConsegnaContenutiApplicativiLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 			}  
-			if(this.getTimerConsegnaContenutiApplicativi_lockMaxLife!=null && this.getTimerConsegnaContenutiApplicativi_lockMaxLife>0) {
+			if(this.getTimerConsegnaContenutiApplicativiLockMaxLife!=null && this.getTimerConsegnaContenutiApplicativiLockMaxLife>0) {
 				// trasformo in millisecondi l'informazione fornita in secondi
-				this.getTimerConsegnaContenutiApplicativi_lockMaxLife = this.getTimerConsegnaContenutiApplicativi_lockMaxLife *1000;
+				this.getTimerConsegnaContenutiApplicativiLockMaxLife = this.getTimerConsegnaContenutiApplicativiLockMaxLife *1000;
 			}
 		}
 
-		return this.getTimerConsegnaContenutiApplicativi_lockMaxLife;
+		if(this.getTimerConsegnaContenutiApplicativiLockMaxLife!=null) {
+			return this.getTimerConsegnaContenutiApplicativiLockMaxLife.intValue();
+		}
+		return -1;
 	}
 	
-	private Integer getTimerConsegnaContenutiApplicativi_lockIdleTime = null;
-	public int getTimerConsegnaContenutiApplicativi_lockIdleTime() {	
-		if(this.getTimerConsegnaContenutiApplicativi_lockIdleTime==null){
+	private Integer getTimerConsegnaContenutiApplicativiLockIdleTime = null;
+	public int getTimerConsegnaContenutiApplicativiLockIdleTime() {	
+		if(this.getTimerConsegnaContenutiApplicativiLockIdleTime==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.idleTime");
 
 				if(name!=null){
 					name = name.trim();
-					this.getTimerConsegnaContenutiApplicativi_lockIdleTime = java.lang.Integer.parseInt(name);
+					this.getTimerConsegnaContenutiApplicativiLockIdleTime = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
-					this.getTimerConsegnaContenutiApplicativi_lockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
+					this.getTimerConsegnaContenutiApplicativiLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
-				this.getTimerConsegnaContenutiApplicativi_lockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
+				this.getTimerConsegnaContenutiApplicativiLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 			} 
-			if(this.getTimerConsegnaContenutiApplicativi_lockIdleTime!=null && this.getTimerConsegnaContenutiApplicativi_lockIdleTime>0) {
+			if(this.getTimerConsegnaContenutiApplicativiLockIdleTime!=null && this.getTimerConsegnaContenutiApplicativiLockIdleTime>0) {
 				// trasformo in millisecondi l'informazione fornita in secondi
-				this.getTimerConsegnaContenutiApplicativi_lockIdleTime = this.getTimerConsegnaContenutiApplicativi_lockIdleTime *1000;
+				this.getTimerConsegnaContenutiApplicativiLockIdleTime = this.getTimerConsegnaContenutiApplicativiLockIdleTime *1000;
 			}
 		}
 
-		return this.getTimerConsegnaContenutiApplicativi_lockIdleTime;
+		if(this.getTimerConsegnaContenutiApplicativiLockIdleTime!=null) {
+			return this.getTimerConsegnaContenutiApplicativiLockIdleTime.intValue();
+		}
+		return -1;
 	}
 	
-	private Integer getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife = null;
-	public int getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife() {	
-		if(this.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife==null){
+	private Integer getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife = null;
+	public int getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife() {	
+		if(this.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.presaInConsegna.maxLife");
 
 				if(name!=null){
 					name = name.trim();
-					this.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife = java.lang.Integer.parseInt(name);
+					this.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.presaInConsegna.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE);
-					this.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE;
+					this.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.presaInConsegna.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE+", errore:"+e.getMessage(),e);
-				this.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE;
+				this.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE;
 			}  
-			if(this.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife!=null && this.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife>0) {
+			if(this.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife!=null && this.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife>0) {
 				// trasformo in millisecondi l'informazione fornita in secondi
-				this.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife = this.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife *1000;
+				this.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife = this.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife *1000;
 			}
 		}
 
-		return this.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife;
+		if(this.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife!=null) {
+			return this.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife.intValue();
+		}
+		return -1;
 	}
 	
 	private Long getTimerConsegnaContenutiApplicativi_getLockAttesaAttiva = null;
@@ -22074,58 +22107,64 @@ public class OpenSPCoop2Properties {
 		return this.getStartup_richiesteIngressoCheck;
 	}
 	
-	private Integer getStartup_lockMaxLife = null;
-	public int getStartup_lockMaxLife() {	
-		if(this.getStartup_lockMaxLife==null){
+	private Integer getStartupLockMaxLife = null;
+	public int getStartupLockMaxLife() {	
+		if(this.getStartupLockMaxLife==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.startup.lock.maxLife");
 
 				if(name!=null){
 					name = name.trim();
-					this.getStartup_lockMaxLife = java.lang.Integer.parseInt(name);
+					this.getStartupLockMaxLife = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
-					this.getStartup_lockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
+					this.getStartupLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
-				this.getStartup_lockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
+				this.getStartupLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 			}
-			if(this.getStartup_lockMaxLife!=null && this.getStartup_lockMaxLife>0) {
+			if(this.getStartupLockMaxLife!=null && this.getStartupLockMaxLife>0) {
 				// trasformo in millisecondi l'informazione fornita in secondi
-				this.getStartup_lockMaxLife = this.getStartup_lockMaxLife *1000;
+				this.getStartupLockMaxLife = this.getStartupLockMaxLife *1000;
 			}
 		}
 
-		return this.getStartup_lockMaxLife;
+		if(this.getStartupLockMaxLife!=null) {
+			return this.getStartupLockMaxLife.intValue();
+		}
+		return -1;
 	}
 	
-	private Integer getStartup_lockIdleTime = null;
-	public int getStartup_lockIdleTime() {	
-		if(this.getStartup_lockIdleTime==null){
+	private Integer getStartupLockIdleTime = null;
+	public int getStartupLockIdleTime() {	
+		if(this.getStartupLockIdleTime==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.startup.lock.idleTime");
 
 				if(name!=null){
 					name = name.trim();
-					this.getStartup_lockIdleTime = java.lang.Integer.parseInt(name);
+					this.getStartupLockIdleTime = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
-					this.getStartup_lockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
+					this.getStartupLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
-				this.getStartup_lockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
+				this.getStartupLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 			}
-			if(this.getStartup_lockIdleTime!=null && this.getStartup_lockIdleTime>0) {
+			if(this.getStartupLockIdleTime!=null && this.getStartupLockIdleTime>0) {
 				// trasformo in millisecondi l'informazione fornita in secondi
-				this.getStartup_lockIdleTime = this.getStartup_lockIdleTime *1000;
+				this.getStartupLockIdleTime = this.getStartupLockIdleTime *1000;
 			}
 		}
 
-		return this.getStartup_lockIdleTime;
+		if(this.getStartupLockIdleTime!=null) {
+			return this.getStartupLockIdleTime.intValue();
+		}
+		return -1;
 	}
 	
 	private Long getStartup_getLockAttesaAttiva = null;
@@ -31777,7 +31816,10 @@ public class OpenSPCoop2Properties {
 			}
 		}
 
-		return this.getStatisticheGenerazioneTimerLockMaxLife;
+		if(this.getStatisticheGenerazioneTimerLockMaxLife!=null) {
+			return this.getStatisticheGenerazioneTimerLockMaxLife.intValue();
+		}
+		return -1;
 	}
 	
 	private Integer getStatisticheGenerazioneTimerLockIdleTime = null;
@@ -31804,7 +31846,10 @@ public class OpenSPCoop2Properties {
 			}
 		}
 
-		return this.getStatisticheGenerazioneTimerLockIdleTime;
+		if(this.getStatisticheGenerazioneTimerLockIdleTime!=null) {
+			return this.getStatisticheGenerazioneTimerLockIdleTime.intValue();
+		}
+		return -1;
 	}
 	
 	private Long getStatisticheGenerazioneTimerLockAttesaAttiva = null;
@@ -32466,7 +32511,10 @@ public class OpenSPCoop2Properties {
 			}
 		}
 
-		return this.getGestoreChiaviPDNDTimerLockMaxLife;
+		if(this.getGestoreChiaviPDNDTimerLockMaxLife!=null) {
+			return this.getGestoreChiaviPDNDTimerLockMaxLife.intValue();
+		}
+		return -1;
 	}
 	
 	private Integer getGestoreChiaviPDNDTimerLockIdleTime = null;
@@ -32494,7 +32542,10 @@ public class OpenSPCoop2Properties {
 			}
 		}
 
-		return this.getGestoreChiaviPDNDTimerLockIdleTime;
+		if(this.getGestoreChiaviPDNDTimerLockIdleTime!=null) {
+			return this.getGestoreChiaviPDNDTimerLockIdleTime.intValue();
+		}
+		return -1;
 	}
 	
 	private Long getGestoreChiaviPDNDTimerLockAttesaAttiva = null;

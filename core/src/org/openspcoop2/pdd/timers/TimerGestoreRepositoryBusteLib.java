@@ -97,8 +97,8 @@ public class TimerGestoreRepositoryBusteLib {
 		if(this.propertiesReader.isTimerLockByDatabase()) {
 			this.semaphore_statistics = new InfoStatistics();
 
-			SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(this.propertiesReader.getTimerGestoreRepositoryBuste_lockMaxLife(), 
-					this.propertiesReader.getTimerGestoreRepositoryBuste_lockIdleTime());
+			SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(this.propertiesReader.getTimerGestoreRepositoryBusteLockMaxLife(), 
+					this.propertiesReader.getTimerGestoreRepositoryBusteLockIdleTime());
 
 			TipiDatabase databaseType = TipiDatabase.toEnumConstant(this.propertiesReader.getDatabaseType());
 			try {

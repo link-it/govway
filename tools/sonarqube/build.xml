@@ -94,6 +94,7 @@
 				<var name="govway.binary" value="${govway.binary},**/org/openspcoop2/utils/**/*.properties"/>
 				<var name="govway.binary" value="${govway.binary},**/org/openspcoop2/utils/**/*.jceks"/>
 				<var name="govway.binary" value="${govway.binary},**/org/openspcoop2/utils/**/*.der"/>
+				<var name="govway.binary" value="${govway.binary},**/org/openspcoop2/utils/**/*.pem"/>
 
 				<!-- Classi di test -->
 				<var name="govway.tests" value="${govway.tests},**/org/openspcoop2/utils/**/test/*.java"/>

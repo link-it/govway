@@ -222,11 +222,13 @@ public class ConsoleProperties {
 	}
 	
 	public long getGestioneSerializableDBattesaAttiva() throws UtilsException {	
-		return this.readLongProperty(false, "jdbc.serializable.attesaAttiva");
+		Long l = this.readLongProperty(false, "jdbc.serializable.attesaAttiva");
+		return l!=null ? l.longValue() : -1;
 	}
 	
 	public int getGestioneSerializableDBcheckInterval() throws UtilsException {	
-		return this.readIntegerProperty(false, "jdbc.serializable.check");
+		Integer i = this.readIntegerProperty(false, "jdbc.serializable.check");
+		return i!=null ? i.intValue() : -1;
 	}
 	
 	public Boolean isSinglePdD() throws UtilsException{

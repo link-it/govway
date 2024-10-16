@@ -229,16 +229,17 @@ public class Validatore  {
 	 * @return true se la struttura del messaggio e' corretta
 	 */
 	
-	public boolean validazioneSintattica(Busta busta, Boolean isRichiesta) {
+	public boolean validazioneSintattica(Busta busta, Boolean isRichiestaParam) {
 
+		boolean request = (isRichiestaParam==null) || (isRichiestaParam.booleanValue());
 		try{
 			/** (Controllo presenza Busta) */
-			this.validatoreSintattico = new ValidazioneSintattica(this.context, this.state,this.msg, busta, isRichiesta, this.log,this.readQualifiedAttribute, this.protocolFactory);
+			this.validatoreSintattico = new ValidazioneSintattica(this.context, this.state,this.msg, busta, isRichiestaParam, this.log,this.readQualifiedAttribute, this.protocolFactory);
 			if (this.validatoreSintattico.valida() == false){
 				this.errore = this.validatoreSintattico.getErrore();
 				this.errore_integrationFunctionError = this.validatoreSintattico.getErrore_integrationFunctionError();
 				if(this.errore_integrationFunctionError==null) {
-					if(isRichiesta==null || isRichiesta){
+					if(request){
 						this.errore_integrationFunctionError = IntegrationFunctionError.INVALID_INTEROPERABILITY_PROFILE_REQUEST;
 					}
 					else {
@@ -314,7 +315,7 @@ public class Validatore  {
 			this.log.error("validazioneSintattica",e);
 			this.eccezioneProcessamentoValidazioneSintattica = e;
 			this.errore = ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreProcessamento("Errore di processamento: " +e.getMessage());
-			if(isRichiesta==null || isRichiesta){
+			if(request){
 				this.errore_integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 			}
 			else {

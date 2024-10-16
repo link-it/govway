@@ -2463,8 +2463,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						if(propertiesReader.isTimerLockByDatabase()) {
 							semaphore_statistics = new InfoStatistics();
 
-							SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(propertiesReader.getStartup_lockMaxLife(), 
-									propertiesReader.getStartup_lockIdleTime());
+							SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(propertiesReader.getStartupLockMaxLife(), 
+									propertiesReader.getStartupLockIdleTime());
 
 							TipiDatabase databaseType = TipiDatabase.toEnumConstant(propertiesReader.getDatabaseType());
 							try {
