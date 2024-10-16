@@ -2093,8 +2093,8 @@ public class OpenSPCoop2Properties {
 			this.isConfigurazioneSistema_javaProperties_showPassword();
 			
 			// govway startup
-			this.getStartup_richiesteIngressoTimeout_secondi();
-			this.getStartup_richiesteIngressoCheck_ms();
+			this.getStartupRichiesteIngressoTimeoutSecondi();
+			this.getStartupRichiesteIngressoCheckMs();
 			this.getStartupLockMaxLife();
 			this.getStartupLockIdleTime();
 			
@@ -2150,30 +2150,30 @@ public class OpenSPCoop2Properties {
 			}
 			
 			// ValidazioneContenutiApplicativi
-			this.isValidazioneContenutiApplicativi_debug();
-			this.isValidazioneContenutiApplicativi_bufferContentRead();
-			this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione();
-			this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione();
-			this.isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified();
-			this.isValidazioneContenutiApplicativi_checkSoapAction();
-			this.getValidazioneContenutiApplicativi_json_policyAdditionalProperties();
-			this.getValidazioneContenutiApplicativi_openApi_jsonValidator();
-			this.getValidazioneContenutiApplicativi_openApi_library();
-			this.isValidazioneContenutiApplicativi_openApi_validateAPISpec();
-			this.isValidazioneContenutiApplicativi_openApi_validateRequestPath();
-			this.isValidazioneContenutiApplicativi_openApi_validateRequestQuery();
-			this.isValidazioneContenutiApplicativi_openApi_validateRequestUnexpectedQueryParam();
-			this.isValidazioneContenutiApplicativi_openApi_validateRequestHeaders();
-			this.isValidazioneContenutiApplicativi_openApi_validateRequestCookie();
-			this.isValidazioneContenutiApplicativi_openApi_validateRequestBody();
-			this.isValidazioneContenutiApplicativi_openApi_validateResponseHeaders();
-			this.isValidazioneContenutiApplicativi_openApi_validateResponseBody();
-			this.isValidazioneContenutiApplicativi_openApi_validateWildcardSubtypeAsJson();
-			this.isValidazioneContenutiApplicativi_openApi_validateMultipartOptimization();
-			this.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_injectingAdditionalPropertiesFalse();
-			this.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_resolveFullyApiSpec();
-			this.isValidazioneContenutiApplicativi_openApi_openapi4j_validateBase64Values();
-			this.isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl();
+			this.isValidazioneContenutiApplicativiDebug();
+			this.isValidazioneContenutiApplicativiBufferContentRead();
+			this.isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione();
+			this.isValidazioneContenutiApplicativiRpcLiteralXsiTypeRipulituraDopoValidazione();
+			this.isValidazioneContenutiApplicativiRpcAcceptRootElementUnqualified();
+			this.isValidazioneContenutiApplicativiCheckSoapAction();
+			this.getValidazioneContenutiApplicativiJsonPolicyAdditionalProperties();
+			this.getValidazioneContenutiApplicativiOpenApiJsonValidator();
+			this.getValidazioneContenutiApplicativiOpenApiLibrary();
+			this.isValidazioneContenutiApplicativiOpenApiValidateAPISpec();
+			this.isValidazioneContenutiApplicativiOpenApiValidateRequestPath();
+			this.isValidazioneContenutiApplicativiOpenApiValidateRequestQuery();
+			this.isValidazioneContenutiApplicativiOpenApiValidateRequestUnexpectedQueryParam();
+			this.isValidazioneContenutiApplicativiOpenApiValidateRequestHeaders();
+			this.isValidazioneContenutiApplicativiOpenApiValidateRequestCookie();
+			this.isValidazioneContenutiApplicativiOpenApiValidateRequestBody();
+			this.isValidazioneContenutiApplicativiOpenApiValidateResponseHeaders();
+			this.isValidazioneContenutiApplicativiOpenApiValidateResponseBody();
+			this.isValidazioneContenutiApplicativiOpenApiValidateWildcardSubtypeAsJson();
+			this.isValidazioneContenutiApplicativiOpenApiValidateMultipartOptimization();
+			this.isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorInjectingAdditionalPropertiesFalse();
+			this.isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorResolveFullyApiSpec();
+			this.isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateBase64Values();
+			this.isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateUriReferenceAsUrl();
 			
 			// XML
 			this.isXmlFactoryDTDsEnabled();
@@ -22060,9 +22060,9 @@ public class OpenSPCoop2Properties {
 	
 	/* ------------- govway startup ---------------------*/
 	
-	private Integer getStartup_richiesteIngressoTimeout = null;
-	public int getStartup_richiesteIngressoTimeout_secondi() {	
-		if(this.getStartup_richiesteIngressoTimeout==null){
+	private Integer getStartupRichiesteIngressoTimeout = null;
+	public int getStartupRichiesteIngressoTimeoutSecondi() {	
+		if(this.getStartupRichiesteIngressoTimeout==null){
 			String pName = "org.openspcoop2.pdd.startup.richiesteIngresso.timeout";
 			try{ 
 				String name = null;
@@ -22070,22 +22070,22 @@ public class OpenSPCoop2Properties {
 
 				if(name!=null){
 					name = name.trim();
-					this.getStartup_richiesteIngressoTimeout = java.lang.Integer.parseInt(name);
+					this.getStartupRichiesteIngressoTimeout = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName,CostantiPdD.WAIT_STARTUP_TIMEOUT_SECONDS));
-					this.getStartup_richiesteIngressoTimeout = CostantiPdD.WAIT_STARTUP_TIMEOUT_SECONDS;
+					this.getStartupRichiesteIngressoTimeout = CostantiPdD.WAIT_STARTUP_TIMEOUT_SECONDS;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName,e,CostantiPdD.WAIT_STARTUP_TIMEOUT_SECONDS),e);
-				this.getStartup_richiesteIngressoTimeout = CostantiPdD.WAIT_STARTUP_TIMEOUT_SECONDS;
+				this.getStartupRichiesteIngressoTimeout = CostantiPdD.WAIT_STARTUP_TIMEOUT_SECONDS;
 			}
 		}
 
-		return this.getStartup_richiesteIngressoTimeout;
+		return this.getStartupRichiesteIngressoTimeout;
 	}
-	private Integer getStartup_richiesteIngressoCheck = null;
-	public int getStartup_richiesteIngressoCheck_ms() {	
-		if(this.getStartup_richiesteIngressoCheck==null){
+	private Integer getStartupRichiesteIngressoCheck = null;
+	public int getStartupRichiesteIngressoCheckMs() {	
+		if(this.getStartupRichiesteIngressoCheck==null){
 			String pName = "org.openspcoop2.pdd.startup.richiesteIngresso.check";
 			try{ 
 				String name = null;
@@ -22093,18 +22093,18 @@ public class OpenSPCoop2Properties {
 
 				if(name!=null){
 					name = name.trim();
-					this.getStartup_richiesteIngressoCheck = java.lang.Integer.parseInt(name);
+					this.getStartupRichiesteIngressoCheck = java.lang.Integer.parseInt(name);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName,CostantiPdD.WAIT_STARTUP_CHECK_INTERVAL_MS));
-					this.getStartup_richiesteIngressoCheck = CostantiPdD.WAIT_STARTUP_CHECK_INTERVAL_MS;
+					this.getStartupRichiesteIngressoCheck = CostantiPdD.WAIT_STARTUP_CHECK_INTERVAL_MS;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName,e,CostantiPdD.WAIT_STARTUP_CHECK_INTERVAL_MS),e);
-				this.getStartup_richiesteIngressoCheck = CostantiPdD.WAIT_STARTUP_CHECK_INTERVAL_MS;
+				this.getStartupRichiesteIngressoCheck = CostantiPdD.WAIT_STARTUP_CHECK_INTERVAL_MS;
 			}
 		}
 
-		return this.getStartup_richiesteIngressoCheck;
+		return this.getStartupRichiesteIngressoCheck;
 	}
 	
 	private Integer getStartupLockMaxLife = null;
@@ -22167,9 +22167,9 @@ public class OpenSPCoop2Properties {
 		return -1;
 	}
 	
-	private Long getStartup_getLockAttesaAttiva = null;
-	public long getStartup_getLockAttesaAttiva() {	
-		if(this.getStartup_getLockAttesaAttiva==null){
+	private Long getStartupGetLockAttesaAttiva = null;
+	public long getStartupGetLockAttesaAttiva() {	
+		if(this.getStartupGetLockAttesaAttiva==null){
 			String pName = "org.openspcoop2.pdd.startup.lock.attesaAttiva";
 			try{ 
 				String name = null;
@@ -22178,24 +22178,24 @@ public class OpenSPCoop2Properties {
 				if(name!=null){
 					name = name.trim();
 					long time = java.lang.Long.parseLong(name);
-					this.getStartup_getLockAttesaAttiva = time*1000;
+					this.getStartupGetLockAttesaAttiva = time*1000;
 				}else{
 					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
-					this.getStartup_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
+					this.getStartupGetLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
-				this.getStartup_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
+				this.getStartupGetLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 			}    
 		}
 
-		return this.getStartup_getLockAttesaAttiva;
+		return this.getStartupGetLockAttesaAttiva;
 	}
 
-	private Integer getStartup_getLockCheckInterval = null;
-	public int getStartup_getLockCheckInterval() {	
-		if(this.getStartup_getLockCheckInterval==null){
+	private Integer getStartupGetLockCheckInterval = null;
+	public int getStartupGetLockCheckInterval() {	
+		if(this.getStartupGetLockCheckInterval==null){
 			String pName = "org.openspcoop2.pdd.startup.lock.check";
 			try{ 
 				String name = null;
@@ -22204,18 +22204,18 @@ public class OpenSPCoop2Properties {
 				if(name!=null){
 					name = name.trim();
 					int time = java.lang.Integer.parseInt(name);
-					this.getStartup_getLockCheckInterval = time;
+					this.getStartupGetLockCheckInterval = time;
 				}else{
 					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
-					this.getStartup_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
+					this.getStartupGetLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
-				this.getStartup_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
+				this.getStartupGetLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 			}  
 		}
 
-		return this.getStartup_getLockCheckInterval;
+		return this.getStartupGetLockCheckInterval;
 	}
 	
 	
@@ -22286,642 +22286,717 @@ public class OpenSPCoop2Properties {
 	
 	/* ------------- Validazione Contenuti Applicativi ---------------------*/
 	
-	private Boolean isValidazioneContenutiApplicativi_debug = null;
-	public boolean isValidazioneContenutiApplicativi_debug(){
+	private Boolean isValidazioneContenutiApplicativiDebug = null;
+	public boolean isValidazioneContenutiApplicativiDebug(){
 
-		if(this.isValidazioneContenutiApplicativi_debug==null){
+		if(this.isValidazioneContenutiApplicativiDebug==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.debug"); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_debug = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiDebug = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.debug' non impostata, viene utilizzato il default=false");
-					this.isValidazioneContenutiApplicativi_debug = false;
+					this.isValidazioneContenutiApplicativiDebug = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.debug' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
-				this.isValidazioneContenutiApplicativi_debug = false;
+				this.isValidazioneContenutiApplicativiDebug = false;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_debug;
+		return this.isValidazioneContenutiApplicativiDebug;
 	}
 	
-	private Boolean isValidazioneContenutiApplicativi_bufferContentRead = null;
-	public boolean isValidazioneContenutiApplicativi_bufferContentRead(){
+	private Boolean isValidazioneContenutiApplicativiBufferContentRead = null;
+	public boolean isValidazioneContenutiApplicativiBufferContentRead(){
 
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.buffer";
-		if(this.isValidazioneContenutiApplicativi_bufferContentRead==null){
+		if(this.isValidazioneContenutiApplicativiBufferContentRead==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_bufferContentRead = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiBufferContentRead = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isValidazioneContenutiApplicativi_bufferContentRead = true;
+					this.isValidazioneContenutiApplicativiBufferContentRead = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isValidazioneContenutiApplicativi_bufferContentRead = true;
+				this.isValidazioneContenutiApplicativiBufferContentRead = true;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_bufferContentRead;
+		return this.isValidazioneContenutiApplicativiBufferContentRead;
 	}
 	
-	private Boolean isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione = null;
-	public boolean isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione(){
+	private Boolean isValidazioneContenutiApplicativiXsdBuildSchemaSuccessSerializeXSDCollection = null;
+	public boolean isValidazioneContenutiApplicativiXsdBuildSchemaSuccessSerializeXSDCollection(){
 
-		if(this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione==null){
+		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.xsd.buildSchemaSuccess.serializeXSDCollection";
+		if(this.isValidazioneContenutiApplicativiXsdBuildSchemaSuccessSerializeXSDCollection==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isValidazioneContenutiApplicativiXsdBuildSchemaSuccessSerializeXSDCollection = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isValidazioneContenutiApplicativiXsdBuildSchemaSuccessSerializeXSDCollection = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isValidazioneContenutiApplicativiXsdBuildSchemaSuccessSerializeXSDCollection = false;
+			}
+		}
+
+		return this.isValidazioneContenutiApplicativiXsdBuildSchemaSuccessSerializeXSDCollection;
+	}
+	
+	private Boolean isValidazioneContenutiApplicativiXsdBuildSchemaErrorSerializeXSDCollection = null;
+	public boolean isValidazioneContenutiApplicativiXsdBuildSchemaErrorSerializeXSDCollection(){
+
+		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.xsd.buildSchemaError.serializeXSDCollection";
+		if(this.isValidazioneContenutiApplicativiXsdBuildSchemaErrorSerializeXSDCollection==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isValidazioneContenutiApplicativiXsdBuildSchemaErrorSerializeXSDCollection = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.isValidazioneContenutiApplicativiXsdBuildSchemaErrorSerializeXSDCollection = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
+				this.isValidazioneContenutiApplicativiXsdBuildSchemaErrorSerializeXSDCollection = true;
+			}
+		}
+
+		return this.isValidazioneContenutiApplicativiXsdBuildSchemaErrorSerializeXSDCollection;
+	}
+	
+	private Boolean isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione = null;
+	public boolean isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione(){
+
+		if(this.isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.gestione"); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.gestione' non impostata, viene utilizzato il default=true");
-					this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione = true;
+					this.isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.gestione' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
-				this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione = true;
+				this.isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione = true;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione;
+		return this.isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione;
 	}
 	
-	private Boolean isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione = null;
-	public boolean isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione(){
+	private Boolean isValidazioneContenutiApplicativiRpcLiteralXsiTypeRipulituraDopoValidazione = null;
+	public boolean isValidazioneContenutiApplicativiRpcLiteralXsiTypeRipulituraDopoValidazione(){
 
-		if(this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione==null){
+		if(this.isValidazioneContenutiApplicativiRpcLiteralXsiTypeRipulituraDopoValidazione==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.ripulituraDopoValidazione"); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiRpcLiteralXsiTypeRipulituraDopoValidazione = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.ripulituraDopoValidazione' non impostata, viene utilizzato il default=true");
-					this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione = true;
+					this.isValidazioneContenutiApplicativiRpcLiteralXsiTypeRipulituraDopoValidazione = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.ripulituraDopoValidazione' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
-				this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione = true;
+				this.isValidazioneContenutiApplicativiRpcLiteralXsiTypeRipulituraDopoValidazione = true;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione;
+		return this.isValidazioneContenutiApplicativiRpcLiteralXsiTypeRipulituraDopoValidazione;
 	}
 	
-	private Boolean isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified = null;
-	public boolean isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified(){
+	private Boolean isValidazioneContenutiApplicativiRpcAddNamespaceXSITypeIfNotExists = null;
+	public boolean isValidazioneContenutiApplicativiRpcAddNamespaceXSITypeIfNotExists(){
 
-		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.rpc.rootElement.unqualified.accept";
-		if(this.isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified==null){
+		if(this.isValidazioneContenutiApplicativiRpcAddNamespaceXSITypeIfNotExists==null){
+			String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.rpc.addNamespaceXSITypeIfNotExists";
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiRpcAddNamespaceXSITypeIfNotExists = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					this.isValidazioneContenutiApplicativiRpcAddNamespaceXSITypeIfNotExists = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.isValidazioneContenutiApplicativiRpcAddNamespaceXSITypeIfNotExists = true;
+			}
+		}
+
+		return this.isValidazioneContenutiApplicativiRpcAddNamespaceXSITypeIfNotExists;
+	}
+	
+	private Boolean isValidazioneContenutiApplicativiRpcAcceptRootElementUnqualified = null;
+	public boolean isValidazioneContenutiApplicativiRpcAcceptRootElementUnqualified(){
+
+		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.rpc.rootElement.unqualified.accept";
+		if(this.isValidazioneContenutiApplicativiRpcAcceptRootElementUnqualified==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isValidazioneContenutiApplicativiRpcAcceptRootElementUnqualified = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified = true;
+					this.isValidazioneContenutiApplicativiRpcAcceptRootElementUnqualified = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified = true;
+				this.isValidazioneContenutiApplicativiRpcAcceptRootElementUnqualified = true;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified;
+		return this.isValidazioneContenutiApplicativiRpcAcceptRootElementUnqualified;
 	}
 	
-	private Boolean isValidazioneContenutiApplicativi_checkSoapAction = null;
-	public boolean isValidazioneContenutiApplicativi_checkSoapAction(){
+	private Boolean isValidazioneContenutiApplicativiCheckSoapAction = null;
+	public boolean isValidazioneContenutiApplicativiCheckSoapAction(){
 
-		if(this.isValidazioneContenutiApplicativi_checkSoapAction==null){
+		if(this.isValidazioneContenutiApplicativiCheckSoapAction==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.soapAction.check"); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_checkSoapAction = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiCheckSoapAction = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.soapAction.check' non impostata, viene utilizzato il default=true");
-					this.isValidazioneContenutiApplicativi_checkSoapAction = true;
+					this.isValidazioneContenutiApplicativiCheckSoapAction = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.soapAction.check' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
-				this.isValidazioneContenutiApplicativi_checkSoapAction = true;
+				this.isValidazioneContenutiApplicativiCheckSoapAction = true;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_checkSoapAction;
+		return this.isValidazioneContenutiApplicativiCheckSoapAction;
 	}
 	
-	private ADDITIONAL getValidazioneContenutiApplicativi_json_policyAdditionalProperties = null;
-	public ADDITIONAL getValidazioneContenutiApplicativi_json_policyAdditionalProperties(){
+	private ADDITIONAL getValidazioneContenutiApplicativiJsonPolicyAdditionalProperties = null;
+	public ADDITIONAL getValidazioneContenutiApplicativiJsonPolicyAdditionalProperties(){
 
-		if(this.getValidazioneContenutiApplicativi_json_policyAdditionalProperties==null){
+		if(this.getValidazioneContenutiApplicativiJsonPolicyAdditionalProperties==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.json.additionalProperties"); 
 
 				if (value != null){
 					value = value.trim();
-					this.getValidazioneContenutiApplicativi_json_policyAdditionalProperties = ADDITIONAL.valueOf(value);
+					this.getValidazioneContenutiApplicativiJsonPolicyAdditionalProperties = ADDITIONAL.valueOf(value);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.json.additionalProperties' non impostata, viene utilizzato il default");
-					this.getValidazioneContenutiApplicativi_json_policyAdditionalProperties = ADDITIONAL.DEFAULT;
+					this.getValidazioneContenutiApplicativiJsonPolicyAdditionalProperties = ADDITIONAL.DEFAULT;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.json.additionalProperties' con un valore non ammesso (valori consentiti: "+ADDITIONAL.DEFAULT.name()+","+ADDITIONAL.IF_NULL_DISABLE+","+ADDITIONAL.FORCE_DISABLE+"), viene utilizzato il default, errore:"+e.getMessage(),e);
-				this.getValidazioneContenutiApplicativi_json_policyAdditionalProperties = ADDITIONAL.DEFAULT;
+				this.getValidazioneContenutiApplicativiJsonPolicyAdditionalProperties = ADDITIONAL.DEFAULT;
 			}
 		}
 
-		return this.getValidazioneContenutiApplicativi_json_policyAdditionalProperties;
+		return this.getValidazioneContenutiApplicativiJsonPolicyAdditionalProperties;
 	}
 	
 	
-	private ApiName getValidazioneContenutiApplicativi_openApi_jsonValidator = null;
-	public ApiName getValidazioneContenutiApplicativi_openApi_jsonValidator(){
+	private ApiName getValidazioneContenutiApplicativiOpenApiJsonValidator = null;
+	public ApiName getValidazioneContenutiApplicativiOpenApiJsonValidator(){
 
-		if(this.getValidazioneContenutiApplicativi_openApi_jsonValidator==null){
+		if(this.getValidazioneContenutiApplicativiOpenApiJsonValidator==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.json.validator"); 
 
 				if (value != null){
 					value = value.trim();
-					this.getValidazioneContenutiApplicativi_openApi_jsonValidator = ApiName.valueOf(value);
+					this.getValidazioneContenutiApplicativiOpenApiJsonValidator = ApiName.valueOf(value);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.json.validator' non impostata, viene utilizzato il default "+ApiName.NETWORK_NT);
-					this.getValidazioneContenutiApplicativi_openApi_jsonValidator = ApiName.NETWORK_NT;
+					this.getValidazioneContenutiApplicativiOpenApiJsonValidator = ApiName.NETWORK_NT;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.json.validator' con un valore non ammesso (valori consentiti: "+ApiName.NETWORK_NT.name()+","+ApiName.FGE+","+ApiName.EVERIT+"), viene utilizzato il default, errore:"+e.getMessage(),e);
-				this.getValidazioneContenutiApplicativi_openApi_jsonValidator = ApiName.NETWORK_NT;
+				this.getValidazioneContenutiApplicativiOpenApiJsonValidator = ApiName.NETWORK_NT;
 			}
 		}
 
-		return this.getValidazioneContenutiApplicativi_openApi_jsonValidator;
+		return this.getValidazioneContenutiApplicativiOpenApiJsonValidator;
 	}
 	
-	private OpenAPILibrary getValidazioneContenutiApplicativi_openApi_library = null;
-	public OpenAPILibrary getValidazioneContenutiApplicativi_openApi_library(){
+	private OpenAPILibrary getValidazioneContenutiApplicativiOpenApiLibrary = null;
+	public OpenAPILibrary getValidazioneContenutiApplicativiOpenApiLibrary(){
 
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.library";
 		OpenAPILibrary defaultValue = OpenAPILibrary.openapi4j;
 		
-		if(this.getValidazioneContenutiApplicativi_openApi_library==null){
+		if(this.getValidazioneContenutiApplicativiOpenApiLibrary==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.getValidazioneContenutiApplicativi_openApi_library = OpenAPILibrary.valueOf(value);
+					this.getValidazioneContenutiApplicativiOpenApiLibrary = OpenAPILibrary.valueOf(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName,defaultValue.toString()));
-					this.getValidazioneContenutiApplicativi_openApi_library = defaultValue;
+					this.getValidazioneContenutiApplicativiOpenApiLibrary = defaultValue;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, defaultValue.toString()),e);
-				this.getValidazioneContenutiApplicativi_openApi_library = defaultValue;
+				this.getValidazioneContenutiApplicativiOpenApiLibrary = defaultValue;
 			}
 		}
 
-		return this.getValidazioneContenutiApplicativi_openApi_library;
+		return this.getValidazioneContenutiApplicativiOpenApiLibrary;
 	}
 
-	private Boolean isValidazioneContenutiApplicativi_openApi_mergeAPISpec = null;
-	public boolean isValidazioneContenutiApplicativi_openApi_mergeAPISpec(){
+	private Boolean isValidazioneContenutiApplicativiOpenApiMergeAPISpec = null;
+	public boolean isValidazioneContenutiApplicativiOpenApiMergeAPISpec(){
 
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.mergeAPISpec";
 		
-		if(this.isValidazioneContenutiApplicativi_openApi_mergeAPISpec==null){
+		if(this.isValidazioneContenutiApplicativiOpenApiMergeAPISpec==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_openApi_mergeAPISpec = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiOpenApiMergeAPISpec = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isValidazioneContenutiApplicativi_openApi_mergeAPISpec = false;
+					this.isValidazioneContenutiApplicativiOpenApiMergeAPISpec = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isValidazioneContenutiApplicativi_openApi_mergeAPISpec = false;
+				this.isValidazioneContenutiApplicativiOpenApiMergeAPISpec = false;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_openApi_mergeAPISpec;
+		return this.isValidazioneContenutiApplicativiOpenApiMergeAPISpec;
 	}
 	
-	private Boolean isValidazioneContenutiApplicativi_openApi_validateAPISpec = null;
-	public boolean isValidazioneContenutiApplicativi_openApi_validateAPISpec(){
+	private Boolean isValidazioneContenutiApplicativiOpenApiValidateAPISpec = null;
+	public boolean isValidazioneContenutiApplicativiOpenApiValidateAPISpec(){
 
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.validateAPISpec";
 		
-		if(this.isValidazioneContenutiApplicativi_openApi_validateAPISpec==null){
+		if(this.isValidazioneContenutiApplicativiOpenApiValidateAPISpec==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_openApi_validateAPISpec = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiOpenApiValidateAPISpec = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isValidazioneContenutiApplicativi_openApi_validateAPISpec = true;
+					this.isValidazioneContenutiApplicativiOpenApiValidateAPISpec = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isValidazioneContenutiApplicativi_openApi_validateAPISpec = true;
+				this.isValidazioneContenutiApplicativiOpenApiValidateAPISpec = true;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_openApi_validateAPISpec;
+		return this.isValidazioneContenutiApplicativiOpenApiValidateAPISpec;
 	}
 	
-	private Boolean isValidazioneContenutiApplicativi_openApi_validateRequestPath = null;
-	public boolean isValidazioneContenutiApplicativi_openApi_validateRequestPath(){
+	private Boolean isValidazioneContenutiApplicativiOpenApiValidateRequestPath = null;
+	public boolean isValidazioneContenutiApplicativiOpenApiValidateRequestPath(){
 
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.validateRequestPath";
 		
-		if(this.isValidazioneContenutiApplicativi_openApi_validateRequestPath==null){
+		if(this.isValidazioneContenutiApplicativiOpenApiValidateRequestPath==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_openApi_validateRequestPath = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiOpenApiValidateRequestPath = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isValidazioneContenutiApplicativi_openApi_validateRequestPath = true;
+					this.isValidazioneContenutiApplicativiOpenApiValidateRequestPath = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isValidazioneContenutiApplicativi_openApi_validateRequestPath = true;
+				this.isValidazioneContenutiApplicativiOpenApiValidateRequestPath = true;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_openApi_validateRequestPath;
+		return this.isValidazioneContenutiApplicativiOpenApiValidateRequestPath;
 	}
 	
-	private Boolean isValidazioneContenutiApplicativi_openApi_validateRequestQuery = null;
-	public boolean isValidazioneContenutiApplicativi_openApi_validateRequestQuery(){
+	private Boolean isValidazioneContenutiApplicativiOpenApiValidateRequestQuery = null;
+	public boolean isValidazioneContenutiApplicativiOpenApiValidateRequestQuery(){
 
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.validateRequestQuery";
 		
-		if(this.isValidazioneContenutiApplicativi_openApi_validateRequestQuery==null){
+		if(this.isValidazioneContenutiApplicativiOpenApiValidateRequestQuery==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_openApi_validateRequestQuery = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiOpenApiValidateRequestQuery = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isValidazioneContenutiApplicativi_openApi_validateRequestQuery = true;
+					this.isValidazioneContenutiApplicativiOpenApiValidateRequestQuery = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isValidazioneContenutiApplicativi_openApi_validateRequestQuery = true;
+				this.isValidazioneContenutiApplicativiOpenApiValidateRequestQuery = true;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_openApi_validateRequestQuery;
+		return this.isValidazioneContenutiApplicativiOpenApiValidateRequestQuery;
 	}
 	
-	private Boolean isValidazioneContenutiApplicativi_openApi_validateRequestUnexpectedQueryParam = null;
-	public boolean isValidazioneContenutiApplicativi_openApi_validateRequestUnexpectedQueryParam(){
+	private Boolean isValidazioneContenutiApplicativiOpenApiValidateRequestUnexpectedQueryParam = null;
+	public boolean isValidazioneContenutiApplicativiOpenApiValidateRequestUnexpectedQueryParam(){
 
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.validateRequestUnexpectedQueryParam";
 		
-		if(this.isValidazioneContenutiApplicativi_openApi_validateRequestUnexpectedQueryParam==null){
+		if(this.isValidazioneContenutiApplicativiOpenApiValidateRequestUnexpectedQueryParam==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_openApi_validateRequestUnexpectedQueryParam = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiOpenApiValidateRequestUnexpectedQueryParam = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isValidazioneContenutiApplicativi_openApi_validateRequestUnexpectedQueryParam = false;
+					this.isValidazioneContenutiApplicativiOpenApiValidateRequestUnexpectedQueryParam = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isValidazioneContenutiApplicativi_openApi_validateRequestUnexpectedQueryParam = false;
+				this.isValidazioneContenutiApplicativiOpenApiValidateRequestUnexpectedQueryParam = false;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_openApi_validateRequestUnexpectedQueryParam;
+		return this.isValidazioneContenutiApplicativiOpenApiValidateRequestUnexpectedQueryParam;
 	}
 	
-	private Boolean isValidazioneContenutiApplicativi_openApi_validateRequestHeaders = null;
-	public boolean isValidazioneContenutiApplicativi_openApi_validateRequestHeaders(){
+	private Boolean isValidazioneContenutiApplicativiOpenApiValidateRequestHeaders = null;
+	public boolean isValidazioneContenutiApplicativiOpenApiValidateRequestHeaders(){
 
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.validateRequestHeaders";
 		
-		if(this.isValidazioneContenutiApplicativi_openApi_validateRequestHeaders==null){
+		if(this.isValidazioneContenutiApplicativiOpenApiValidateRequestHeaders==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_openApi_validateRequestHeaders = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiOpenApiValidateRequestHeaders = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isValidazioneContenutiApplicativi_openApi_validateRequestHeaders = true;
+					this.isValidazioneContenutiApplicativiOpenApiValidateRequestHeaders = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isValidazioneContenutiApplicativi_openApi_validateRequestHeaders = true;
+				this.isValidazioneContenutiApplicativiOpenApiValidateRequestHeaders = true;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_openApi_validateRequestHeaders;
+		return this.isValidazioneContenutiApplicativiOpenApiValidateRequestHeaders;
 	}
 	
-	private Boolean isValidazioneContenutiApplicativi_openApi_validateRequestCookie = null;
-	public boolean isValidazioneContenutiApplicativi_openApi_validateRequestCookie(){
+	private Boolean isValidazioneContenutiApplicativiOpenApiValidateRequestCookie = null;
+	public boolean isValidazioneContenutiApplicativiOpenApiValidateRequestCookie(){
 
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.validateRequestCookie";
 		
-		if(this.isValidazioneContenutiApplicativi_openApi_validateRequestCookie==null){
+		if(this.isValidazioneContenutiApplicativiOpenApiValidateRequestCookie==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_openApi_validateRequestCookie = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiOpenApiValidateRequestCookie = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isValidazioneContenutiApplicativi_openApi_validateRequestCookie = true;
+					this.isValidazioneContenutiApplicativiOpenApiValidateRequestCookie = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isValidazioneContenutiApplicativi_openApi_validateRequestCookie = true;
+				this.isValidazioneContenutiApplicativiOpenApiValidateRequestCookie = true;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_openApi_validateRequestCookie;
+		return this.isValidazioneContenutiApplicativiOpenApiValidateRequestCookie;
 	}
 	
-	private Boolean isValidazioneContenutiApplicativi_openApi_validateRequestBody = null;
-	public boolean isValidazioneContenutiApplicativi_openApi_validateRequestBody(){
+	private Boolean isValidazioneContenutiApplicativiOpenApiValidateRequestBody = null;
+	public boolean isValidazioneContenutiApplicativiOpenApiValidateRequestBody(){
 
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.validateRequestBody";
 		
-		if(this.isValidazioneContenutiApplicativi_openApi_validateRequestBody==null){
+		if(this.isValidazioneContenutiApplicativiOpenApiValidateRequestBody==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_openApi_validateRequestBody = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiOpenApiValidateRequestBody = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isValidazioneContenutiApplicativi_openApi_validateRequestBody = true;
+					this.isValidazioneContenutiApplicativiOpenApiValidateRequestBody = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isValidazioneContenutiApplicativi_openApi_validateRequestBody = true;
+				this.isValidazioneContenutiApplicativiOpenApiValidateRequestBody = true;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_openApi_validateRequestBody;
+		return this.isValidazioneContenutiApplicativiOpenApiValidateRequestBody;
 	}
 	
-	private Boolean isValidazioneContenutiApplicativi_openApi_validateResponseHeaders = null;
-	public boolean isValidazioneContenutiApplicativi_openApi_validateResponseHeaders(){
+	private Boolean isValidazioneContenutiApplicativiOpenApiValidateResponseHeaders = null;
+	public boolean isValidazioneContenutiApplicativiOpenApiValidateResponseHeaders(){
 
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.validateResponseHeaders";
 		
-		if(this.isValidazioneContenutiApplicativi_openApi_validateResponseHeaders==null){
+		if(this.isValidazioneContenutiApplicativiOpenApiValidateResponseHeaders==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_openApi_validateResponseHeaders = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiOpenApiValidateResponseHeaders = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isValidazioneContenutiApplicativi_openApi_validateResponseHeaders = true;
+					this.isValidazioneContenutiApplicativiOpenApiValidateResponseHeaders = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isValidazioneContenutiApplicativi_openApi_validateResponseHeaders = true;
+				this.isValidazioneContenutiApplicativiOpenApiValidateResponseHeaders = true;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_openApi_validateResponseHeaders;
+		return this.isValidazioneContenutiApplicativiOpenApiValidateResponseHeaders;
 	}
 	
-	private Boolean isValidazioneContenutiApplicativi_openApi_validateResponseBody = null;
-	public boolean isValidazioneContenutiApplicativi_openApi_validateResponseBody(){
+	private Boolean isValidazioneContenutiApplicativiOpenApiValidateResponseBody = null;
+	public boolean isValidazioneContenutiApplicativiOpenApiValidateResponseBody(){
 
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.validateResponseBody";
 		
-		if(this.isValidazioneContenutiApplicativi_openApi_validateResponseBody==null){
+		if(this.isValidazioneContenutiApplicativiOpenApiValidateResponseBody==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_openApi_validateResponseBody = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiOpenApiValidateResponseBody = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isValidazioneContenutiApplicativi_openApi_validateResponseBody = true;
+					this.isValidazioneContenutiApplicativiOpenApiValidateResponseBody = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isValidazioneContenutiApplicativi_openApi_validateResponseBody = true;
+				this.isValidazioneContenutiApplicativiOpenApiValidateResponseBody = true;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_openApi_validateResponseBody;
+		return this.isValidazioneContenutiApplicativiOpenApiValidateResponseBody;
 	}
 	
-	private Boolean isValidazioneContenutiApplicativi_openApi_validateWildcardSubtypeAsJson = null;
-	public boolean isValidazioneContenutiApplicativi_openApi_validateWildcardSubtypeAsJson(){
+	private Boolean isValidazioneContenutiApplicativiOpenApiValidateWildcardSubtypeAsJson = null;
+	public boolean isValidazioneContenutiApplicativiOpenApiValidateWildcardSubtypeAsJson(){
 
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.validateWildcardSubtypeAsJson";
 		
-		if(this.isValidazioneContenutiApplicativi_openApi_validateWildcardSubtypeAsJson==null){
+		if(this.isValidazioneContenutiApplicativiOpenApiValidateWildcardSubtypeAsJson==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_openApi_validateWildcardSubtypeAsJson = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiOpenApiValidateWildcardSubtypeAsJson = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isValidazioneContenutiApplicativi_openApi_validateWildcardSubtypeAsJson = true;
+					this.isValidazioneContenutiApplicativiOpenApiValidateWildcardSubtypeAsJson = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isValidazioneContenutiApplicativi_openApi_validateWildcardSubtypeAsJson = true;
+				this.isValidazioneContenutiApplicativiOpenApiValidateWildcardSubtypeAsJson = true;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_openApi_validateWildcardSubtypeAsJson;
+		return this.isValidazioneContenutiApplicativiOpenApiValidateWildcardSubtypeAsJson;
 	}
 	
-	private Boolean isValidazioneContenutiApplicativi_openApi_validateMultipartOptimization = null;
-	public boolean isValidazioneContenutiApplicativi_openApi_validateMultipartOptimization(){
+	private Boolean isValidazioneContenutiApplicativiOpenApiValidateMultipartOptimization = null;
+	public boolean isValidazioneContenutiApplicativiOpenApiValidateMultipartOptimization(){
 
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.validateMultipartOptimization";
 		
-		if(this.isValidazioneContenutiApplicativi_openApi_validateMultipartOptimization==null){
+		if(this.isValidazioneContenutiApplicativiOpenApiValidateMultipartOptimization==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_openApi_validateMultipartOptimization = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiOpenApiValidateMultipartOptimization = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isValidazioneContenutiApplicativi_openApi_validateMultipartOptimization = false;
+					this.isValidazioneContenutiApplicativiOpenApiValidateMultipartOptimization = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isValidazioneContenutiApplicativi_openApi_validateMultipartOptimization = false;
+				this.isValidazioneContenutiApplicativiOpenApiValidateMultipartOptimization = false;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_openApi_validateMultipartOptimization;
+		return this.isValidazioneContenutiApplicativiOpenApiValidateMultipartOptimization;
 	}
 	
-	private Boolean isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_injectingAdditionalPropertiesFalse = null;
-	public boolean isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_injectingAdditionalPropertiesFalse(){
+	private Boolean isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorInjectingAdditionalPropertiesFalse = null;
+	public boolean isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorInjectingAdditionalPropertiesFalse(){
 
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.swaggerRequestValidator.injectingAdditionalPropertiesFalse";
 		
-		if(this.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_injectingAdditionalPropertiesFalse==null){
+		if(this.isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorInjectingAdditionalPropertiesFalse==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_injectingAdditionalPropertiesFalse = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorInjectingAdditionalPropertiesFalse = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_injectingAdditionalPropertiesFalse = false;
+					this.isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorInjectingAdditionalPropertiesFalse = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_injectingAdditionalPropertiesFalse = false;
+				this.isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorInjectingAdditionalPropertiesFalse = false;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_injectingAdditionalPropertiesFalse;
+		return this.isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorInjectingAdditionalPropertiesFalse;
 	}
 	
-	private Boolean isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_resolveFullyApiSpec = null;
-	public boolean isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_resolveFullyApiSpec(){
+	private Boolean isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorResolveFullyApiSpec = null;
+	public boolean isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorResolveFullyApiSpec(){
 
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.swaggerRequestValidator.resolveFullyApiSpec";
 		
-		if(this.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_resolveFullyApiSpec==null){
+		if(this.isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorResolveFullyApiSpec==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_resolveFullyApiSpec = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorResolveFullyApiSpec = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_resolveFullyApiSpec = false;
+					this.isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorResolveFullyApiSpec = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_resolveFullyApiSpec = false;
+				this.isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorResolveFullyApiSpec = false;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_resolveFullyApiSpec;
+		return this.isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorResolveFullyApiSpec;
 	}
 	
-	private Boolean isValidazioneContenutiApplicativi_openApi_openapi4j_validateBase64Values = null;
-	public boolean isValidazioneContenutiApplicativi_openApi_openapi4j_validateBase64Values(){
+	private Boolean isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateBase64Values = null;
+	public boolean isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateBase64Values(){
 
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.openapi4j.validateBase64Values";
 		
-		if(this.isValidazioneContenutiApplicativi_openApi_openapi4j_validateBase64Values==null){
+		if(this.isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateBase64Values==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_openApi_openapi4j_validateBase64Values = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateBase64Values = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isValidazioneContenutiApplicativi_openApi_openapi4j_validateBase64Values = false;
+					this.isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateBase64Values = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isValidazioneContenutiApplicativi_openApi_openapi4j_validateBase64Values = false;
+				this.isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateBase64Values = false;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_openApi_openapi4j_validateBase64Values;
+		return this.isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateBase64Values;
 	}
 	
-	private Boolean isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl = null;
-	public boolean isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl(){
+	private Boolean isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateUriReferenceAsUrl = null;
+	public boolean isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateUriReferenceAsUrl(){
 
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.openapi4j.validateUriReferenceAsUrl";
 		
-		if(this.isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl==null){
+		if(this.isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateUriReferenceAsUrl==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl = Boolean.parseBoolean(value);
+					this.isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateUriReferenceAsUrl = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl = false;
+					this.isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateUriReferenceAsUrl = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl = false;
+				this.isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateUriReferenceAsUrl = false;
 			}
 		}
 
-		return this.isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl;
+		return this.isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateUriReferenceAsUrl;
 	}
 	
 	

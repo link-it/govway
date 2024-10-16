@@ -4905,7 +4905,7 @@ public class InoltroBuste extends GenericLib{
 										ValidatoreMessaggiApplicativi validatoreMessaggiApplicativi = 
 											new ValidatoreMessaggiApplicativi(registroServiziManager,richiestaDelegata.getIdServizio(),
 													responseMessage,readInterface,
-													this.propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione(),
+													this.propertiesReader.isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione(),
 													proprietaValidazioneContenutoApplicativoApplicativo,
 													pddContext);
 	
@@ -4925,8 +4925,8 @@ public class InoltroBuste extends GenericLib{
 										// Validazione WSDL (Restore Original Document)
 										if (CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.equals(validazioneContenutoApplicativoApplicativo.getTipo())
 											|| CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutoApplicativoApplicativo.getTipo())) {
-											if(this.propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione() &&
-													this.propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione()){
+											if(this.propertiesReader.isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione() &&
+													this.propertiesReader.isValidazioneContenutiApplicativiRpcLiteralXsiTypeRipulituraDopoValidazione()){
 												msgDiag.mediumDebug("Ripristino elementi modificati per supportare validazione wsdl della risposta ...");
 												validatoreMessaggiApplicativi.restoreOriginalDocument(false);
 											}

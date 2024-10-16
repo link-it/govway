@@ -81,6 +81,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
+import org.openspcoop2.message.AbstractBaseOpenSPCoop2Message;
 import org.openspcoop2.message.AbstractBaseOpenSPCoop2MessageDynamicContent;
 import org.openspcoop2.message.AttachmentsProcessingMode;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -248,6 +249,7 @@ import org.openspcoop2.utils.semaphore.Semaphore;
 import org.openspcoop2.utils.semaphore.SemaphoreConfiguration;
 import org.openspcoop2.utils.semaphore.SemaphoreMapping;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
+import org.openspcoop2.utils.xml.XSDSchemaCollection;
 import org.slf4j.Logger;
 
 import com.sun.xml.messaging.saaj.soap.MessageImpl;
@@ -2485,8 +2487,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 								GestoreMessaggi.acquireLock(
 										semaphore, connectionDB, timerLock,
 										msgDiag, causa, 
-										propertiesReader.getStartup_getLockAttesaAttiva(), 
-										propertiesReader.getStartup_getLockCheckInterval());
+										propertiesReader.getStartupGetLockAttesaAttiva(), 
+										propertiesReader.getStartupGetLockCheckInterval());
 								
 								preLoading.loadConfig(propertiesReader.getConfigPreLoadingLocale());
 								
@@ -2604,10 +2606,35 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 
+			// Libreria di validazione xsd
+			try {
+				XSDSchemaCollection.setSerializeXSDSchemiBuildSchemaSuccessDefault(propertiesReader.isValidazioneContenutiApplicativiXsdBuildSchemaSuccessSerializeXSDCollection());
+				XSDSchemaCollection.setSerializeXSDSchemiBuildSchemaErrorDefault(propertiesReader.isValidazioneContenutiApplicativiXsdBuildSchemaErrorSerializeXSDCollection());
+				XSDSchemaCollection s = new XSDSchemaCollection();
+				OpenSPCoop2Startup.logStartupInfo("XSDSchemaCollection buildSchemaSuccess:"+s.isSerializeXSDSchemiBuildSchemaSuccess());
+				OpenSPCoop2Startup.logStartupInfo("XSDSchemaCollection buildSchemaError:"+s.isSerializeXSDSchemiBuildSchemaError());
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Configurazione libreria di validazione xsd");
+				return;
+			}
+			
+			// Libreria di validazione wsdl
+			try {
+				AbstractBaseOpenSPCoop2Message.setNormalizeNamespaceXSITypeDefault(propertiesReader.isValidazioneContenutiApplicativiRpcAddNamespaceXSITypeIfNotExists());
+				OpenSPCoop2Message msg = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createEmptyMessage(MessageType.SOAP_11, MessageRole.REQUEST);
+				if(msg instanceof AbstractBaseOpenSPCoop2Message) {
+					AbstractBaseOpenSPCoop2Message a = (AbstractBaseOpenSPCoop2Message) msg;
+					OpenSPCoop2Startup.logStartupInfo("WSDLValidator addNamespaceXSITypeIfNotExists:"+a.isNormalizeNamespaceXSIType());
+				}
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Configurazione libreria di validazione wsdl");
+				return;
+			}
+			
 			// Libreria di validazione openapi4j
 			try {
-				org.openapi4j.schema.validator.v3.ValidationOptions.VALIDATE_BASE64_VALUES=propertiesReader.isValidazioneContenutiApplicativi_openApi_openapi4j_validateBase64Values();
-				org.openapi4j.parser.validation.v3.OpenApi3Validator.VALIDATE_URI_REFERENCE_AS_URL = propertiesReader.isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl();
+				org.openapi4j.schema.validator.v3.ValidationOptions.VALIDATE_BASE64_VALUES=propertiesReader.isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateBase64Values();
+				org.openapi4j.parser.validation.v3.OpenApi3Validator.VALIDATE_URI_REFERENCE_AS_URL = propertiesReader.isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateUriReferenceAsUrl();
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Configurazione libreria di validazione openapi4j");
 				return;
