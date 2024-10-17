@@ -180,23 +180,23 @@ public class ValidatoreMessaggiApplicativiRest {
 			
 			boolean processIncludeForOpenApi = true;
 			this.configOpenApiValidator = new OpenapiLibraryValidatorConfig();
-			this.configOpenApiValidator.setOpenApiLibrary(this.op2Properties.getValidazioneContenutiApplicativi_openApi_library());
+			this.configOpenApiValidator.setOpenApiLibrary(this.op2Properties.getValidazioneContenutiApplicativiOpenApiLibrary());
 			if(OpenAPILibrary.openapi4j.equals(this.configOpenApiValidator.getOpenApiLibrary()) ||
 					OpenAPILibrary.swagger_request_validator.equals(this.configOpenApiValidator.getOpenApiLibrary())) {
-				this.configOpenApiValidator.setMergeAPISpec(this.op2Properties.isValidazioneContenutiApplicativi_openApi_mergeAPISpec());
-				this.configOpenApiValidator.setValidateAPISpec(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateAPISpec());
-				this.configOpenApiValidator.setValidateRequestPath(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateRequestPath());
-				this.configOpenApiValidator.setValidateRequestQuery(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateRequestQuery());
-				this.configOpenApiValidator.setValidateRequestUnexpectedQueryParam(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateRequestUnexpectedQueryParam());
-				this.configOpenApiValidator.setValidateRequestHeaders(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateRequestHeaders());
-				this.configOpenApiValidator.setValidateRequestCookie(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateRequestCookie());
-				this.configOpenApiValidator.setValidateRequestBody(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateRequestBody());
-				this.configOpenApiValidator.setValidateResponseHeaders(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateResponseHeaders());
-				this.configOpenApiValidator.setValidateResponseBody(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateResponseBody());
-				this.configOpenApiValidator.setValidateWildcardSubtypeAsJson(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateWildcardSubtypeAsJson());
-				this.configOpenApiValidator.setValidateMultipartOptimization(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateMultipartOptimization());
-				this.configOpenApiValidator.setSwaggerRequestValidator_InjectingAdditionalPropertiesFalse(this.op2Properties.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_injectingAdditionalPropertiesFalse());
-				this.configOpenApiValidator.setSwaggerRequestValidator_ResolveFullyApiSpec(this.op2Properties.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_resolveFullyApiSpec());
+				this.configOpenApiValidator.setMergeAPISpec(this.op2Properties.isValidazioneContenutiApplicativiOpenApiMergeAPISpec());
+				this.configOpenApiValidator.setValidateAPISpec(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateAPISpec());
+				this.configOpenApiValidator.setValidateRequestPath(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateRequestPath());
+				this.configOpenApiValidator.setValidateRequestQuery(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateRequestQuery());
+				this.configOpenApiValidator.setValidateRequestUnexpectedQueryParam(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateRequestUnexpectedQueryParam());
+				this.configOpenApiValidator.setValidateRequestHeaders(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateRequestHeaders());
+				this.configOpenApiValidator.setValidateRequestCookie(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateRequestCookie());
+				this.configOpenApiValidator.setValidateRequestBody(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateRequestBody());
+				this.configOpenApiValidator.setValidateResponseHeaders(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateResponseHeaders());
+				this.configOpenApiValidator.setValidateResponseBody(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateResponseBody());
+				this.configOpenApiValidator.setValidateWildcardSubtypeAsJson(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateWildcardSubtypeAsJson());
+				this.configOpenApiValidator.setValidateMultipartOptimization(this.op2Properties.isValidazioneContenutiApplicativiOpenApiValidateMultipartOptimization());
+				this.configOpenApiValidator.setSwaggerRequestValidator_InjectingAdditionalPropertiesFalse(this.op2Properties.isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorInjectingAdditionalPropertiesFalse());
+				this.configOpenApiValidator.setSwaggerRequestValidator_ResolveFullyApiSpec(this.op2Properties.isValidazioneContenutiApplicativiOpenApiSwaggerRequestValidatorResolveFullyApiSpec());
 			}
 			
 			updateOpenapiValidatorConfig(proprieta, this.configOpenApiValidator); // aggiorno anche se utilizzarlo o meno
@@ -206,7 +206,7 @@ public class ValidatoreMessaggiApplicativiRest {
 				processIncludeForOpenApi = false;
 			}
 			
-			this.bufferMessage_readOnly = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativi_bufferContentRead();
+			this.bufferMessage_readOnly = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativiBufferContentRead();
 			if(proprieta!=null && !proprieta.isEmpty()) {
 				boolean defaultBehaviour = this.bufferMessage_readOnly;
 				this.bufferMessage_readOnly = ValidatoreMessaggiApplicativiRest.readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_BUFFER_ENABLED, defaultBehaviour);
@@ -375,7 +375,7 @@ public class ValidatoreMessaggiApplicativiRest {
 			interfaceType = "Interfaccia Swagger 2";
 			format=ApiFormats.SWAGGER_2;
 			validatorConfig = new OpenapiApiValidatorConfig();
-			((OpenapiApiValidatorConfig)validatorConfig).setJsonValidatorAPI(this.op2Properties.getValidazioneContenutiApplicativi_openApi_jsonValidator());
+			((OpenapiApiValidatorConfig)validatorConfig).setJsonValidatorAPI(this.op2Properties.getValidazioneContenutiApplicativiOpenApiJsonValidator());
 			if(this.useInterface && this.configOpenApiValidator!=null) {
 				openApiLibrary = this.configOpenApiValidator.getOpenApiLibrary();
 				if(OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
@@ -397,7 +397,7 @@ public class ValidatoreMessaggiApplicativiRest {
 			interfaceType = "Interfaccia OpenAPI 3";
 			format=ApiFormats.OPEN_API_3;
 			validatorConfig = new OpenapiApiValidatorConfig();
-			((OpenapiApiValidatorConfig)validatorConfig).setJsonValidatorAPI(this.op2Properties.getValidazioneContenutiApplicativi_openApi_jsonValidator());
+			((OpenapiApiValidatorConfig)validatorConfig).setJsonValidatorAPI(this.op2Properties.getValidazioneContenutiApplicativiOpenApiJsonValidator());
 			if(this.useInterface && this.configOpenApiValidator!=null) {
 				openApiLibrary = this.configOpenApiValidator.getOpenApiLibrary();
 				if(OpenAPILibrary.openapi4j.equals(openApiLibrary) || OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
@@ -420,8 +420,8 @@ public class ValidatoreMessaggiApplicativiRest {
 		try {
 			apiValidator = ApiFactory.newApiValidator(format);
 			validatorConfig.setXmlUtils(MessageXMLUtils.getInstance(this.message.getFactory()));
-			validatorConfig.setVerbose(this.op2Properties.isValidazioneContenutiApplicativi_debug());
-			validatorConfig.setPolicyAdditionalProperties(this.op2Properties.getValidazioneContenutiApplicativi_json_policyAdditionalProperties());
+			validatorConfig.setVerbose(this.op2Properties.isValidazioneContenutiApplicativiDebug());
+			validatorConfig.setPolicyAdditionalProperties(this.op2Properties.getValidazioneContenutiApplicativiJsonPolicyAdditionalProperties());
 			apiValidator.init(this.logger, api, validatorConfig);
 		}catch(Exception e){
 			this.logger.error("validateWithInterface failed: "+e.getMessage(),e);

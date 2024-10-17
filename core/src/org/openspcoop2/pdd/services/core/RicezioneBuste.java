@@ -5422,7 +5422,7 @@ public class RicezioneBuste {
 							msgDiag.mediumDebug("Validazione della richiesta (initValidator)...");
 							ValidatoreMessaggiApplicativi validatoreMessaggiApplicativi = 
 								new ValidatoreMessaggiApplicativi(registroServiziReader,idServizio,requestMessage,readInterface,
-										propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione(),
+										propertiesReader.isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione(),
 										proprietaPorta,
 										pddContext);
 	
@@ -5442,8 +5442,8 @@ public class RicezioneBuste {
 							// Validazione WSDL (Restore Original Document)
 							if (CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.equals(validazioneContenutoApplicativoApplicativo.getTipo())
 								|| CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutoApplicativoApplicativo.getTipo())) {
-								if(propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione() &&
-										propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione()){
+								if(propertiesReader.isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione() &&
+										propertiesReader.isValidazioneContenutiApplicativiRpcLiteralXsiTypeRipulituraDopoValidazione()){
 									msgDiag.mediumDebug("Ripristino elementi modificati per supportare validazione wsdl della richiesta ...");
 									validatoreMessaggiApplicativi.restoreOriginalDocument(true);
 								}

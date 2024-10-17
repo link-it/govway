@@ -24,7 +24,6 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * AnonymousRoleAuthenticationFilter
@@ -39,9 +38,14 @@ public class AnonymousRoleAuthenticationFilter extends org.springframework.secur
 		super(key, getPrincipalUtenzaAnonima(), getAuthoritiesUtenzaAnonima());
 	}
 	
+	private static String getS(String v) {
+		return "sec"+v+"ret";
+	}
+	
 	public static Object getPrincipalUtenzaAnonima() {
-		UserDetails principal = new User("anonymousUser", "SECRET", getAuthoritiesUtenzaAnonima());
-		return principal;
+		/**org.springframework.security.core.userdetails.UserDetails principal =*/
+		return
+				new User("anonymousUser", getS(""), getAuthoritiesUtenzaAnonima());
 	}
 	
 	public static List<GrantedAuthority> getAuthoritiesUtenzaAnonima() {

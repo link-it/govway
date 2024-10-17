@@ -5176,7 +5176,7 @@ public class GestoreMessaggi  {
 
 			List<MessaggioServizioApplicativo> idMsg = new ArrayList<MessaggioServizioApplicativo>();
 
-			Date dataRilascioLock = new Date( DateManager.getTimeMillis() - this.propertiesReader.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife() );
+			Date dataRilascioLock = new Date( DateManager.getTimeMillis() - this.propertiesReader.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife() );
 			
 			String tipo = Costanti.INBOX;
 						
@@ -8413,8 +8413,8 @@ public class GestoreMessaggi  {
 			try{
 				InfoStatistics semaphore_statistics = new InfoStatistics();
 						
-				SemaphoreConfiguration config = newSemaphoreConfiguration(this.propertiesReader.getTimerGestoreMessaggi_lockMaxLife(), 
-						this.propertiesReader.getTimerGestoreMessaggi_lockIdleTime());
+				SemaphoreConfiguration config = newSemaphoreConfiguration(this.propertiesReader.getTimerGestoreMessaggiLockMaxLife(), 
+						this.propertiesReader.getTimerGestoreMessaggiLockIdleTime());
 				
 				TipiDatabase databaseType = TipiDatabase.toEnumConstant(this.propertiesReader.getDatabaseType());
 				Semaphore semaphoreDB = new Semaphore(semaphore_statistics, SemaphoreMapping.newInstance(idLock), 

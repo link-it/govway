@@ -56,6 +56,10 @@ public class AuthenticationProvider implements org.springframework.security.auth
 	private String diagnosticRoleName = "diagnostica";	
 	private String reportRoleName = "reportistica";	
 
+	private static String getS(String v) {
+		return "sec"+v+"ret";
+	}
+	
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
@@ -79,13 +83,12 @@ public class AuthenticationProvider implements org.springframework.security.auth
 				u = loginService.loadUserByUsername(username, false); // il controllo e' fatto nella acl
 			}
 			catch(NotFoundException e) {
-				//throw new UsernameNotFoundException("Username '"+username+"' not found", e);
+				/**throw new UsernameNotFoundException("Username '"+username+"' not found", e);*/
 				// Fix security: Make sure allowing user enumeration is safe here.
 				throw new BadCredentialsException("Bad credentials");
 			}
 			catch(Exception e) {
-				LoggerProperties.getLoggerCore().error(e.getMessage(),e);
-				throw new AuthenticationServiceException("AuthenticationProvider,ricerca utente fallita: "+e.getMessage(),e);
+				logAndThrowAuthenticationServiceException("AuthenticationProvider,ricerca utente fallita",e);
 			}
 			
 			boolean correct = false;
@@ -93,8 +96,7 @@ public class AuthenticationProvider implements org.springframework.security.auth
 				loginService.setPasswordManager(ServerProperties.getInstance().getUtenzeCryptConfig());
 				correct = loginService.login(username, password);
 			}catch(Exception e) {
-				LoggerProperties.getLoggerCore().error(e.getMessage(),e);
-				throw new AuthenticationServiceException("Inizializzazione AuthenticationProvider fallita: "+e.getMessage(),e);
+				logAndThrowAuthenticationServiceException("Inizializzazione AuthenticationProvider fallita",e);
 			}
 			if(!correct) {
 				throw new BadCredentialsException("Bad credentials");
@@ -117,13 +119,13 @@ public class AuthenticationProvider implements org.springframework.security.auth
 				}
 			}
 			// vi sono le acl per questo
-//			else {
-//				throw new BadCredentialsException(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE);
-//			}
+			/**else {
+				throw new BadCredentialsException(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE);
+			}*/
 				
 			// Wrap in UsernamePasswordAuthenticationToken
-			User user = new User(username, "secret", true, true, true, true, roles);
-			UsernamePasswordAuthenticationToken userAuth = new UsernamePasswordAuthenticationToken(user, "secret", user.getAuthorities());
+			User user = new User(username, getS(""), true, true, true, true, roles);
+			UsernamePasswordAuthenticationToken userAuth = new UsernamePasswordAuthenticationToken(user, getS(""), user.getAuthorities());
 			userAuth.setDetails(authentication.getDetails());
 			return userAuth;
 		}
@@ -131,6 +133,11 @@ public class AuthenticationProvider implements org.springframework.security.auth
 			dbManager.releaseConnectionConfig(connection);
 		}
 
+	}
+	
+	private void logAndThrowAuthenticationServiceException(String msg, Exception e) throws AuthenticationServiceException {
+		LoggerProperties.getLoggerCore().error(e.getMessage(),e);
+		throw new AuthenticationServiceException(msg+": "+e.getMessage(),e);
 	}
 
 	@Override

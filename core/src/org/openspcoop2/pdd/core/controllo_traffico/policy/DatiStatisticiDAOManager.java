@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -275,7 +276,13 @@ public class DatiStatisticiDAOManager  {
 				if(result!=null && this.isKnownType(result) ){
 					//System.out.println("RITORNO OGGETTO LETTO DA DB CON CHIAVE ["+key+"]: ["+result+"] ["+result.getClass().getName()+"]");
 					this.log.debug("NumeroRichiesteFound ["+result.getClass().getName()+"]: "+result);
-					risultato.setRisultato(this.translateType(result));
+					Long l = this.translateType(result);
+					if(l!=null) {
+						risultato.setRisultato(l.longValue());
+					}
+					else {
+						throw new CoreException("Translate type (result) '"+result+"' non riuscito");
+					}
 				}
 				else{
 					if(result!=null){
@@ -451,7 +458,13 @@ public class DatiStatisticiDAOManager  {
 				if(result!=null && this.isKnownType(result) ){
 					//System.out.println("RITORNO OGGETTO LETTO DA DB CON CHIAVE ["+key+"]: ["+result+"] ["+result.getClass().getName()+"]");
 					this.log.debug("BandaFound ["+result.getClass().getName()+"]: "+result);
-					risultato.setRisultato(this.translateType(result));
+					Long l = this.translateType(result);
+					if(l!=null) {
+						risultato.setRisultato(l.longValue());
+					}
+					else {
+						throw new CoreException("Translate type (result) '"+result+"' non riuscito");
+					}
 				}
 				else{
 					if(result!=null){
@@ -655,10 +668,22 @@ public class DatiStatisticiDAOManager  {
 							long latenza = 0;
 							long numeroTransazioni = 0;
 							if(result!=null && this.isKnownType(result) ){
-								latenza = this.translateType(result);
+								Long l = this.translateType(result);
+								if(l!=null) {
+									latenza = l.longValue();
+								}
+								else {
+									throw new CoreException("Translate type (result) '"+result+"' non riuscito");
+								}
 							}
 							if(resultPesata!=null && this.isKnownType(resultPesata) ){
-								numeroTransazioni = this.translateType(resultPesata);
+								Long l = this.translateType(resultPesata);
+								if(l!=null) {
+									numeroTransazioni = l.longValue();
+								}
+								else {
+									throw new CoreException("Translate type (resultPesata) '"+resultPesata+"' non riuscito");
+								}
 							}
 							sommaNumeroTransazioni+=numeroTransazioni;
 							long mediaPesata = latenza*numeroTransazioni;
@@ -677,7 +702,13 @@ public class DatiStatisticiDAOManager  {
 					if(result!=null && this.isKnownType(result) ){
 						//System.out.println("RITORNO OGGETTO LETTO DA DB CON CHIAVE ["+key+"]: ["+result+"] ["+result.getClass().getName()+"]");
 						this.log.debug("LatenzaFound ["+result.getClass().getName()+"]: "+result);
-						risultato.setRisultato(this.translateType(result));
+						Long l = this.translateType(result);
+						if(l!=null) {
+							risultato.setRisultato(l.longValue());
+						}
+						else {
+							throw new CoreException("Translate type (result) '"+result+"' non riuscito");
+						}
 					}
 					else{
 						if(result!=null){

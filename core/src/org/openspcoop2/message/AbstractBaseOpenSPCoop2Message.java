@@ -121,12 +121,26 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	/* Stream */
 	public NotifierInputStream notifierInputStream;
 	
-	/* Indicazione se la normalizzazione dei namespace per gli attributi xsi:type deve essere effettuata */
-	public boolean normalizeNamespaceXSIType = false;
-	
+	private static boolean normalizeNamespaceXSITypeDefault = false;
+	public static boolean isNormalizeNamespaceXSITypeDefault() {
+		return normalizeNamespaceXSITypeDefault;
+	}
+	public static void setNormalizeNamespaceXSITypeDefault(boolean normalizeNamespaceXSITypeDefault) {
+		AbstractBaseOpenSPCoop2Message.normalizeNamespaceXSITypeDefault = normalizeNamespaceXSITypeDefault;
+	}
 
-	public AbstractBaseOpenSPCoop2Message(OpenSPCoop2MessageFactory messageFactory) {
+	/* Indicazione se la normalizzazione dei namespace per gli attributi xsi:type deve essere effettuata */
+	private boolean normalizeNamespaceXSIType = false;
+	public boolean isNormalizeNamespaceXSIType() {
+		return this.normalizeNamespaceXSIType;
+	}
+	public void setNormalizeNamespaceXSIType(boolean normalizeNamespaceXSIType) {
+		this.normalizeNamespaceXSIType = normalizeNamespaceXSIType;
+	}
+	
+	protected AbstractBaseOpenSPCoop2Message(OpenSPCoop2MessageFactory messageFactory) {
 		this.messageFactory = messageFactory;
+		this.normalizeNamespaceXSIType = isNormalizeNamespaceXSITypeDefault();
 	}
 	
 	

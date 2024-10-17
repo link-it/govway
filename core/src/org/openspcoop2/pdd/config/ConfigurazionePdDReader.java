@@ -2029,7 +2029,7 @@ public class ConfigurazionePdDReader {
 
 			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
 			
-			boolean rpcAcceptRootElementUnqualified = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified();
+			boolean rpcAcceptRootElementUnqualified = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativiRpcAcceptRootElementUnqualified();
 			if(pd!=null && pd.getProprietaList()!=null && !pd.getProprietaList().isEmpty()) {
 				boolean default_rpcAcceptRootElementUnqualified = rpcAcceptRootElementUnqualified;
 				rpcAcceptRootElementUnqualified = ValidatoreMessaggiApplicativiRest.readBooleanValueWithDefault(pd.getProprietaList(), CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_RPC_ACCEPT_ROOT_ELEMENT_UNQUALIFIED_ENABLED, default_rpcAcceptRootElementUnqualified);
@@ -3067,7 +3067,7 @@ public class ConfigurazionePdDReader {
 
 			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
 			
-			boolean rpcAcceptRootElementUnqualified = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified();
+			boolean rpcAcceptRootElementUnqualified = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativiRpcAcceptRootElementUnqualified();
 			if(pa!=null && pa.getProprietaList()!=null && !pa.getProprietaList().isEmpty()) {
 				boolean default_rpcAcceptRootElementUnqualified = rpcAcceptRootElementUnqualified;
 				rpcAcceptRootElementUnqualified = ValidatoreMessaggiApplicativiRest.readBooleanValueWithDefault(pa.getProprietaList(), CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_RPC_ACCEPT_ROOT_ELEMENT_UNQUALIFIED_ENABLED, default_rpcAcceptRootElementUnqualified);

@@ -158,8 +158,8 @@ public class TimerGestoreMessaggiLib  {
 		if(this.propertiesReader.isTimerLockByDatabase()) {
 			this.semaphore_statistics = new InfoStatistics();
 
-			SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(this.propertiesReader.getTimerGestoreMessaggi_lockMaxLife(), 
-					this.propertiesReader.getTimerGestoreMessaggi_lockIdleTime());
+			SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(this.propertiesReader.getTimerGestoreMessaggiLockMaxLife(), 
+					this.propertiesReader.getTimerGestoreMessaggiLockIdleTime());
 
 			TipiDatabase databaseType = TipiDatabase.toEnumConstant(this.propertiesReader.getDatabaseType());
 			try {

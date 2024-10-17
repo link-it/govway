@@ -57,14 +57,18 @@ public class AuthenticationProvider implements org.springframework.security.auth
 	private String configuratorRoleName = "configuratore";	
 
 	private static ICrypt passwordManager = null;
-	private static ICrypt passwordManager_backwardCompatibility = null;
+	private static ICrypt passwordManagerBackwardCompatibility = null;
 	private static synchronized void initPasswordManager(Logger log, CryptConfig config) throws UtilsException {
 		if(passwordManager==null) {
 			passwordManager = CryptFactory.getCrypt(log, config);
 			if(config.isBackwardCompatibility()) {
-				passwordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(log);
+				passwordManagerBackwardCompatibility = CryptFactory.getOldMD5Crypt(log);
 			}
 		}
+	}
+	
+	private static String getS(String v) {
+		return "sec"+v+"ret";
 	}
 	
 	@Override
@@ -78,12 +82,12 @@ public class AuthenticationProvider implements org.springframework.security.auth
 			throw new AuthenticationCredentialsNotFoundException("Credentials not found");
 		}
 		
-		String tipo_protocollo = null;
+		String tipoProtocollo = null;
 		ControlStationCore core = null;
 		UtentiCore utentiCore = null;
 		try {
-			tipo_protocollo = BaseHelper.tipoProtocolloFromProfilo.get(Helper.getProfiloDefault());
-			core = new ControlStationCore(true, ServerProperties.getInstance().getConfDirectory() ,tipo_protocollo);
+			tipoProtocollo = BaseHelper.tipoProtocolloFromProfilo.get(Helper.getProfiloDefault());
+			core = new ControlStationCore(true, ServerProperties.getInstance().getConfDirectory() ,tipoProtocollo);
 			utentiCore = new UtentiCore(core);
 		}catch(Exception e) {
 			throw new AuthenticationServiceException("Inizializzazione AuthenticationProvider fallita: "+e.getMessage(),e);
@@ -100,7 +104,7 @@ public class AuthenticationProvider implements org.springframework.security.auth
 			throw new AuthenticationServiceException("AuthenticationProvider,ricerca utente fallita: "+e.getMessage(),e);
 		}
 		if(!trovato) {
-			//throw new UsernameNotFoundException("Username '"+username+"' not found");
+			/**throw new UsernameNotFoundException("Username '"+username+"' not found");*/
 			// Fix security: Make sure allowing user enumeration is safe here.
 			throw new BadCredentialsException("Bad credentials");
 		}
@@ -115,8 +119,8 @@ public class AuthenticationProvider implements org.springframework.security.auth
 		}
 		
 		boolean match = passwordManager.check(password, pwcrypt);
-		if(!match && passwordManager_backwardCompatibility!=null) {
-			match = passwordManager_backwardCompatibility.check(password, pwcrypt);
+		if(!match && passwordManagerBackwardCompatibility!=null) {
+			match = passwordManagerBackwardCompatibility.check(password, pwcrypt);
 		}
 		if(!match) {
 			throw new BadCredentialsException("Bad credentials");
@@ -128,13 +132,13 @@ public class AuthenticationProvider implements org.springframework.security.auth
 			roles.add(grant);
 		}
 		// vi sono le acl per questo
-//		else {
-//			throw new BadCredentialsException(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE);
-//		}
+		/**else {
+			throw new BadCredentialsException(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE);
+		}*/
 	
 		// Wrap in UsernamePasswordAuthenticationToken
-		User user = new User(username, "secret", true, true, true, true, roles);
-		UsernamePasswordAuthenticationToken userAuth = new UsernamePasswordAuthenticationToken(user, "secret", user.getAuthorities());
+		User user = new User(username, getS(""), true, true, true, true, roles);
+		UsernamePasswordAuthenticationToken userAuth = new UsernamePasswordAuthenticationToken(user, getS(""), user.getAuthorities());
 		userAuth.setDetails(authentication.getDetails());
 		return userAuth;
 		

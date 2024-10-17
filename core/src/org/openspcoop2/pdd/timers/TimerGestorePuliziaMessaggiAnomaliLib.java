@@ -92,8 +92,8 @@ public class TimerGestorePuliziaMessaggiAnomaliLib{
 		if(this.propertiesReader.isTimerLockByDatabase()) {
 			this.semaphore_statistics = new InfoStatistics();
 
-			SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(this.propertiesReader.getTimerGestorePuliziaMessaggiAnomali_lockMaxLife(), 
-					this.propertiesReader.getTimerGestorePuliziaMessaggiAnomali_lockIdleTime());
+			SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(this.propertiesReader.getTimerGestorePuliziaMessaggiAnomaliLockMaxLife(), 
+					this.propertiesReader.getTimerGestorePuliziaMessaggiAnomaliLockIdleTime());
 
 			TipiDatabase databaseType = TipiDatabase.toEnumConstant(this.propertiesReader.getDatabaseType());
 			try {

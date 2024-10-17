@@ -552,7 +552,7 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 			this.log.error("Errore durante l'identificazione dello stato della cache");
 		}
 		
-		this.maxLifePresaInConsegna = this.openspcoopProperties.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife();
+		this.maxLifePresaInConsegna = this.openspcoopProperties.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife();
 
 	}
 	

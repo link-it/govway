@@ -128,8 +128,8 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 		if(this.propertiesReader.isTimerLockByDatabase()) {
 			this.semaphore_statistics = new InfoStatistics();
 
-			SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(this.propertiesReader.getTimerConsegnaContenutiApplicativi_lockMaxLife(), 
-					this.propertiesReader.getTimerConsegnaContenutiApplicativi_lockIdleTime());
+			SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(this.propertiesReader.getTimerConsegnaContenutiApplicativiLockMaxLife(), 
+					this.propertiesReader.getTimerConsegnaContenutiApplicativiLockIdleTime());
 
 			TipiDatabase databaseType = TipiDatabase.toEnumConstant(this.propertiesReader.getDatabaseType());
 			try {
@@ -302,7 +302,7 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 							gestoreMsgSearch.readMessaggiDaRiconsegnareIntoBoxByServiziApplicativPrioritari(limit,
 									verificaPresenzaMessaggiDaRispedire, calcolaDataMinimaMessaggiRispedire,secondiAnzianitaPerIniziareSpedireNuovoMessaggio,
 									now,
-									this.propertiesReader.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife(),
+									this.propertiesReader.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife(),
 									this.debug,this.logSql,
 									this.configurazioneCoda.getName(),
 									serviziApplicativiPrioritari.toArray(new String[1]));
@@ -363,7 +363,7 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 								gestoreMsgSearch.readMessaggiDaRiconsegnareIntoBoxByPriorita(limitPriorita,
 										verificaPresenzaMessaggiDaRispedire, calcolaDataMinimaMessaggiRispedire, secondiAnzianitaPerIniziareSpedireNuovoMessaggio,
 										now,
-										this.propertiesReader.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife(),
+										this.propertiesReader.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife(),
 										this.debug,this.logSql,
 										this.configurazioneCoda.getName(),
 										configurazionePriorita.isNessunaPriorita() ? null : configurazionePriorita.getName());

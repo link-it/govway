@@ -564,7 +564,7 @@ public class MsgDiagnosticiProperties {
 		if(MsgDiagnosticiProperties.initMsgDiagnosticiPersonalizzati == null){
 			return initializeMsgDiagnosticiPersonalizzatiEngine(this.reader, this.log);
 		}
-		return MsgDiagnosticiProperties.initMsgDiagnosticiPersonalizzati!=null ? MsgDiagnosticiProperties.initMsgDiagnosticiPersonalizzati : null;
+		return MsgDiagnosticiProperties.initMsgDiagnosticiPersonalizzati!=null && MsgDiagnosticiProperties.initMsgDiagnosticiPersonalizzati.booleanValue();
 	}
 	private static synchronized boolean initializeMsgDiagnosticiPersonalizzatiEngine(MsgDiagnosticiInstanceProperties reader, Logger log){
 		try{

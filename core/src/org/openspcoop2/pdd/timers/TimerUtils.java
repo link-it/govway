@@ -307,8 +307,8 @@ public class TimerUtils {
 		boolean ok = true; 
 		try{
 			InfoStatistics semaphore_statistics = new InfoStatistics();
-			SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(propertiesReader.getTimerConsegnaContenutiApplicativi_lockMaxLife(), 
-					propertiesReader.getTimerConsegnaContenutiApplicativi_lockIdleTime());
+			SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(propertiesReader.getTimerConsegnaContenutiApplicativiLockMaxLife(), 
+					propertiesReader.getTimerConsegnaContenutiApplicativiLockIdleTime());
 			//config.setSerializableLevel(true); // in modo da non avere il lock esclusivo sulla tabella e far funzionare anche se l'entry non esiste proprio
 			TipiDatabase databaseType = TipiDatabase.toEnumConstant(propertiesReader.getDatabaseType());
 			Semaphore semaphore = new Semaphore(semaphore_statistics, SemaphoreMapping.newInstance(idLock), 

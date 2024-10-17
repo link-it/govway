@@ -254,8 +254,8 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 					}
 				}
 				if(OpenSPCoop2Properties.getInstance()!=null) {
-					max = OpenSPCoop2Properties.getInstance().getStartup_richiesteIngressoTimeout_secondi();
-					sleepCheck = OpenSPCoop2Properties.getInstance().getStartup_richiesteIngressoCheck_ms();
+					max = OpenSPCoop2Properties.getInstance().getStartupRichiesteIngressoTimeoutSecondi();
+					sleepCheck = OpenSPCoop2Properties.getInstance().getStartupRichiesteIngressoCheckMs();
 				}
 				
 				int maxMs = (max * 1000);
