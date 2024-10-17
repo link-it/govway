@@ -248,13 +248,23 @@ public class HeadersFilter implements Filter {
 		// L'id degli script abilitati e' indicato all'interno del campo script-src
 		HttpSession session = request.getSession();
 		String nonceValue = leggiNonceValue(session);
+		
+		log.debug("AAAAA Trovato nonce in sessione: {}",nonceValue);
 
 		if(nonceValue == null) {
-			nonceValue = UUID.randomUUID().toString().replace("-", "");
+			String crsfCheck = request.getParameter("_crsfCheck");
+			if(crsfCheck == null) {
+				nonceValue = UUID.randomUUID().toString().replace("-", "");
+				log.debug("AAAAA Generato nonce: {}",nonceValue);
+			} else {
+				nonceValue = crsfCheck;
+				log.debug("AAAAA recuperato nonce: {}",nonceValue);
+			}
 			salvaNonceValueInSessione(session, nonceValue);
 		}
 
 		request.setAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE, nonceValue);
+		log.debug("AAAAA Salvato nonce nella request: {}",nonceValue);
 
 		if(StringUtils.isNoneBlank(this.cspHeaderValue)) {
 			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY, MessageFormat.format(this.cspHeaderValue, nonceValue, nonceValue));

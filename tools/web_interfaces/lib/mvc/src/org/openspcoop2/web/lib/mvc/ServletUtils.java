@@ -1210,6 +1210,29 @@ public class ServletUtils {
 				|| Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END.equals(parameterValueFiltrato);
 	}
 	
+	/**
+	 * Validazione del parametro HttpMethod
+	 * 
+	 * @param parameterToCheck
+	 * @return
+	 */
+	public static boolean validaParametroResourcePath(HttpServletRequest request, String parameterToCheck) {
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
+		
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		try {
+			Validatore.getInstance().validate("Il valore del parametro [" + parameterToCheck + "]:["+parameterValueOriginale+"]", parameterValueOriginale, null, true, false, org.openspcoop2.web.lib.mvc.security.Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA);
+		}catch(ValidationException e) {
+			return false;
+		}
+		
+		return true;
+	}
+	
 	public static boolean usaValidazioneTextArea(HttpServletRequest request, String parameterToCheck) {
 		String parametroIdentificativi = Validatore.getInstance().getParametroOriginale(request, Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA);
 		
@@ -1227,6 +1250,13 @@ public class ServletUtils {
 			if(ids != null && ids.length > 0) {
 				List<String> asList = Arrays.asList(ids);
 				return asList.contains(parameterToCheck);
+			}
+		} else {
+			// casi speciali per il monitor
+			
+			// select list azione, vengono inviati due parametri azCombo e azCombocomboboxField generato dal framework
+			if(parameterToCheck.startsWith(Costanti.PARAMETRO_MONITOR_RICERCA_AZIONE)) {
+				return true;
 			}
 		}
 		

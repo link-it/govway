@@ -22,11 +22,15 @@ package org.openspcoop2.web.monitor.core.bean;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.beans.BlackListElement;
 import org.openspcoop2.web.lib.users.dao.RicercaUtente;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.constants.CostantiGrafici;
 import org.openspcoop2.web.monitor.core.constants.ModalitaRicercaTransazioni;
+import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.ricerche.ModuloRicerca;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
@@ -174,10 +178,15 @@ public class RicercaUtenteBean extends RicercaUtente {
 		String protocollo = super.getProtocollo();
 		
 		if(protocollo == null || protocollo.equals("")) {
-			return Costanti.NON_SELEZIONATO;
+			return Costanti.LABEL_PARAMETRO_MODALITA_ALL;
 		}
 		
-		return protocollo;
+		// traduzione della label
+		try {
+			return NamingUtils.getLabelProtocollo(protocollo);
+		} catch (ProtocolException e) {
+			return protocollo;
+		}
 	}
 	
 	@JsonIgnore
@@ -185,9 +194,16 @@ public class RicercaUtenteBean extends RicercaUtente {
 		String soggetto = super.getSoggetto();
 		
 		if(soggetto == null || soggetto.equals("")) {
-			return Costanti.NON_SELEZIONATO;
+			return Costanti.LABEL_PARAMETRO_MODALITA_ALL;
 		}
 		
-		return soggetto;
+		String tipoSoggettoOperativoSelezionato = Utility.parseTipoSoggetto(soggetto);
+		String nomeSoggettoOperativoSelezionato = Utility.parseNomeSoggetto(soggetto);
+		IDSoggetto idSoggetto = new IDSoggetto(tipoSoggettoOperativoSelezionato, nomeSoggettoOperativoSelezionato);
+		try {
+			return NamingUtils.getLabelSoggetto(idSoggetto);
+		} catch (ProtocolException e) {
+			return soggetto;
+		}
 	}
 }

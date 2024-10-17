@@ -95,7 +95,7 @@ public class SalvaRicercaForm {
 	public void initFormListener(ActionEvent ae) {
 		this.label = "";
 		this.descrizione = "";
-		this.visibilita = "";
+		this.visibilita = Costanti.VALUE_VISIBILITA_RICERCA_UTENTE_PRIVATA;
 		this.search = null;
 		this.salvaRicercaErrorMessage = null;
 	}

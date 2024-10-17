@@ -149,6 +149,7 @@ public class RicercheUtenteService implements IRicercheUtenteService{
 		User loggedUtente = this.searchForm.getUser();
 		String login = loggedUtente.getLogin();
 		
+		String label = null;
 		String modulo = null;
 		String modalitaRicerca = null;
 		String visibilita = null;
@@ -168,7 +169,7 @@ public class RicercheUtenteService implements IRicercheUtenteService{
 		}
 		
 		try {
-			return this.utenteDAO.countRicerche(login, modulo, modalitaRicerca, visibilita, protocollo, soggetto);
+			return this.utenteDAO.countRicerche(login, label, modulo, modalitaRicerca, visibilita, protocollo, soggetto);
 		} catch (DriverUsersDBException e) {
 			log.error(e.getMessage(), e);
 		}
@@ -180,7 +181,7 @@ public class RicercheUtenteService implements IRicercheUtenteService{
 	public int totaleRicercheUtente(String login) {
 		RicercheUtenteService.log.debug("Metodo totaleRicercheUtente [{}]", login);
 		try {
-			return this.utenteDAO.countRicerche(login, null, null, null, null, null);
+			return this.utenteDAO.countRicerche(login, null, null, null, null, null, null);
 		} catch (DriverUsersDBException e) {
 			log.error(e.getMessage(), e);
 		}
@@ -255,7 +256,7 @@ public class RicercheUtenteService implements IRicercheUtenteService{
 	}
 	
 	@Override
-	public RicercaUtenteBean leggiRicercaPersonalizzata(long idUtente, long idRicerca) {
+	public RicercaUtenteBean leggiRicercaUtente(long idUtente, long idRicerca) {
 		RicercaUtenteBean bean = null;
 		try {
 			return new RicercaUtenteBean(this.utenteDAO.leggiRicerca(idUtente, idRicerca));
@@ -400,5 +401,15 @@ public class RicercheUtenteService implements IRicercheUtenteService{
 	@Override
 	public boolean isTimeoutEvent() {
 		return this.timeoutEvent;
+	}
+	
+	@Override
+	public RicercaUtenteBean leggiRicercaUtente(String login, String label, String modulo, String modalitaRicerca) {
+		try {
+			return new RicercaUtenteBean(this.utenteDAO.leggiRicerca(login, label, modulo, modalitaRicerca));
+		} catch (DriverUsersDBException e) {
+			log.error(e.getMessage(), e);
+		}
+		return null;
 	}
 }

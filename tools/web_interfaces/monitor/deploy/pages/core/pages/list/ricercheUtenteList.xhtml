@@ -244,16 +244,12 @@ xmlns="http://www.w3.org/1999/xhtml"
 		            </h:panelGroup>
 				</f:facet>
 				<a4j:outputPanel id="fileCaricaRicercheCtr" ajaxRendered="true">
-					<h:panelGroup  styleClass="errors" layout="block" rendered="#{not empty ricercheUtenteBean.caricaRicercheErrorMessage}" id="caricaRichercheErrorsPlaceHolder">
-						<h:panelGroup rendered="#{not empty ricercheUtenteBean.caricaRicercheErrorMessage}">
-							<p>
-								<em>
-									<h:outputText value="Si sono verificati degli errori:"/>
-								</em>
-							</p>
-							<div class="errorsSpacer"/>
-						</h:panelGroup>
-						<div class="errorsSpacer"/>
+					<h:panelGroup  styleClass="errors" layout="block" rendered="#{not empty ricercheUtenteBean.caricaRicercheErrorMessage}" id="caricaRicercheErrorsPlaceHolder">
+						<a4j:outputPanel layout="block" styleClass="messages-title">
+		  					<h:outputText value="&#160;&#160;" id="infoTitleIconSalvaRicercaSpacer" styleClass="messages-errors-title-icon"/>
+		  					<h:outputText id="infoTitleMessageSalvaRicerca2" value="Messaggio di Errore" styleClass="messages-title-text"/>
+		  				</a4j:outputPanel>
+		  				<div class="errorsSpacer"/>
 						<h:outputText id="caricaRicercheErrors" value="#{ricercheUtenteBean.caricaRicercheErrorMessage}" rendered="#{not ricercheUtenteBean.caricaRicercheErrorMessage}" />
 					</h:panelGroup>
 				</a4j:outputPanel>

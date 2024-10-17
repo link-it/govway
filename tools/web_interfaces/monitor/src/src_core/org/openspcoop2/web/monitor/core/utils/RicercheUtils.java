@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.slf4j.Logger;
 
@@ -68,11 +69,16 @@ public class RicercheUtils {
 					Object value = field.get(bean); // Ottieni il valore del campo
 					
 					log.debug("Field [{}], Valore [{}]", fieldName, value);
-
+					
 					// Aggiungi alla mappa solo se il campo non è null
 					if (value != null) {
 						// Se è una stringa, controlla che non sia vuota
 						if (value instanceof String && !((String) value).isEmpty()) {
+			                if (Costanti.PERIODO_PARAMETER.equals(fieldName) && Costanti.PERIODO_PERSONALIZZATO.equals(value)) {
+			                    log.debug("Field [{}] con valore '{}' viene ignorato.", fieldName, value);
+			                    continue;
+			                }
+							
 							fieldMap.put(fieldName, value);
 						}
 						// Se è una collezione, controlla che non sia vuota
@@ -163,7 +169,6 @@ public class RicercheUtils {
 
 	                    field.set(bean, stringArray);
 	                } else {
-	                	
 	                	log.debug("Field [{}], Valore [{}]", fieldName, fieldValue);
 	                    // Imposta il valore del campo
 	                    field.set(bean, fieldValue);

@@ -80,7 +80,8 @@ div.errorsSpacer {
 	width: 50%;
 }
 
-#caricaRichercheErrorsPlaceHolder{
+#salvaRicercaErrorsPlaceHolder,
+#caricaRicercheErrorsPlaceHolder{
 	margin: 0px 0px 20px 0px;
 }
 

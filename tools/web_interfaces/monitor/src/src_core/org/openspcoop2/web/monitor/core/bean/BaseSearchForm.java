@@ -2740,11 +2740,11 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	
 	@Override
 	public String getProtocolloRicerca() {
-		return this.getProtocollo();
+		return Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(this.getProtocollo()) ? null : this.getProtocollo();
 	}
 	
 	@Override
 	public String getSoggettoRicerca() {
-		return this.getTipoNomeSoggettoLocale();
+		return Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(this.getTipoNomeSoggettoLocale()) ? null : this.getTipoNomeSoggettoLocale();
 	}
 }

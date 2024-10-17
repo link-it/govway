@@ -45,6 +45,7 @@ import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.IVersionInfo;
 import org.openspcoop2.utils.Semaphore;
@@ -69,6 +70,7 @@ import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.ricerche.ModuloRicerca;
 import org.openspcoop2.web.monitor.core.ricerche.SalvaRicercaForm;
 import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
+import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -300,7 +302,7 @@ public class LoginBean extends AbstractLoginBean {
 
 		if(StringUtils.isEmpty(this.logoutDestinazione)){
 			if(this.isApplicationLogin())
-				return "login";
+				return "logout";
 			else 
 				return "logoutAS";
 		}else {
@@ -1307,11 +1309,53 @@ public class LoginBean extends AbstractLoginBean {
 			soggetto = null;
 		}
 		
-		return this.ricercheUtenteService.listaRicercheDisponibiliPerUtente(this.getUtente().getLogin(), moduloS, modalitaRicerca, protocollo, soggetto);
+		List<String> protocolliUtente = new ArrayList<String>();
+		try {
+			protocolliUtente = Utility.getProtocolli(this.getUtente());
+		} catch (ProtocolException e) {
+			protocolliUtente = new ArrayList<String>();
+		}
+		
+		List<RicercaUtenteBean> listaRicercheDisponibiliPerUtente = this.ricercheUtenteService.listaRicercheDisponibiliPerUtente(this.getUtente().getLogin(), moduloS, modalitaRicerca, protocollo, soggetto);
+		
+		List<RicercaUtenteBean> listaRicercheDisponibiliPerUtenteFiltrate = new ArrayList<>();
+		
+		// filtrare per protocolli e soggetti disponibili
+		for (RicercaUtenteBean ricercaUtenteBean : listaRicercheDisponibiliPerUtente) {
+			boolean protocolloOk = true;
+			boolean soggettoOk = true;
+			// protocollo selezionato
+			if(ricercaUtenteBean.getProtocollo() != null) {
+				// protocollo ok se disponibile all'utente
+				protocolloOk = protocolliUtente.contains(ricercaUtenteBean.getProtocollo());
+
+				// soggetto selezionato
+				if(ricercaUtenteBean.getSoggetto() != null) {
+					String tipoSoggettoOperativoSelezionato = Utility.parseTipoSoggetto(ricercaUtenteBean.getSoggetto());
+					String nomeSoggettoOperativoSelezionato = Utility.parseNomeSoggetto(ricercaUtenteBean.getSoggetto());
+					
+					List<Soggetto> soggettiOperativiAssociatiAlProfilo = Utility.getSoggettiOperativiAssociatiAlProfilo(Utility.getLoggedUser(), ricercaUtenteBean.getProtocollo());
+					
+					soggettoOk = false;
+					for (Soggetto soggettoObj : soggettiOperativiAssociatiAlProfilo) {
+						if(soggettoObj.getTipoSoggetto().equals(tipoSoggettoOperativoSelezionato) && soggettoObj.getNomeSoggetto().equals(nomeSoggettoOperativoSelezionato)) {
+							soggettoOk = true;
+							break;
+						}
+					}
+				}
+			}
+			
+			if(protocolloOk && soggettoOk) {
+				listaRicercheDisponibiliPerUtenteFiltrate.add(ricercaUtenteBean);
+			}
+		}
+		
+		return listaRicercheDisponibiliPerUtenteFiltrate;
 	}
 	
 	public RicercaUtenteBean getRicercaPersonalizzata(long idUtente, long idRicerca) {
-		return this.ricercheUtenteService.leggiRicercaPersonalizzata(idUtente, idRicerca); 
+		return this.ricercheUtenteService.leggiRicercaUtente(idUtente, idRicerca); 
 	}
 	
 	public String salvaRicercaCorrente() {
@@ -1321,20 +1365,29 @@ public class LoginBean extends AbstractLoginBean {
 			RicercaUtente nuovaRicerca = null;
 			try {
 				nuovaRicerca = this.salvaRicercaForm.getRicerca();
+				
+				// controllo duplicati
+				if(this.ricercheUtenteService.leggiRicercaUtente(this.getUtente().getLogin(), nuovaRicerca.getLabel(), nuovaRicerca.getModulo(), nuovaRicerca.getModalitaRicerca()) != null) {
+					this.salvaRicercaForm.setSalvaRicercaErrorMessage("ricerca duplicata");
+					MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_SALVA_RICERCA_MESSAGGIO_ERRORE_RICERCA_DUPLICATA_LABEL_KEY));
+					return null;
+				}
+				
 				this.ricercheUtenteService.insertRicerca(this.getUtente().getLogin(), nuovaRicerca);
 				
 				// imposto la ricerca form di ricerca
 				this.salvaRicercaForm.impostaIdRicercaSalvata(this.getUtente().getId(),nuovaRicerca.getId());
 				
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Ricerca " + this.salvaRicercaForm.getLabel()+ " salvata correttamente")); 
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(MessageManager.getInstance().getMessageWithParamsFromResourceBundle(Costanti.RICERCHE_UTENTE_SALVA_RICERCA_OK_LABEL_KEY, this.salvaRicercaForm.getLabel()))); 
 			} catch (UtilsException e) {
 				this.log.error("Errore durante il salvataggio della ricerca corrente: "+e.getMessage(),e);
-				MessageUtils.addErrorMsg("Salvataggio della ricerca corrente non riuscito.");
+				MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_SALVA_RICERCA_MESSAGGIO_ERRORE_LABEL_KEY));
 			} catch (DriverUsersDBException e) {
 				this.log.error("Si e' verificato un errore in fase di salvataggio: " + e.getMessage(), e);
-				MessageUtils.addErrorMsg("Impossibile completare l'operazione. Si prega di riprovare pi\u00F9 tardi.");
+				MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_MESSAGGIO_ERRORE_OPERAZIONE_NON_ESEGUITA));
 			}
 		}
-	return null;
+		
+		return null;
 	}
 }

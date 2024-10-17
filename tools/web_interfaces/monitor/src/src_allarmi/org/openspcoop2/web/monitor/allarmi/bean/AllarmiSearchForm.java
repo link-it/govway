@@ -199,7 +199,7 @@ public class AllarmiSearchForm extends BaseSearchForm
 		
 		// allarme non globale 
 		if(tipologiaAllarme2 != null && !tipologiaAllarme2.equals(TIPOLOGIA_CONFIGURAZIONE)) {
-			return this.getProtocollo();	
+			return Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(this.getProtocollo()) ? null : this.getProtocollo();	
 		}
 		
 		return TIPOLOGIA_CONFIGURAZIONE;
@@ -211,7 +211,7 @@ public class AllarmiSearchForm extends BaseSearchForm
 		
 		// allarme non globale 
 		if(tipologiaAllarme2 != null && !tipologiaAllarme2.equals(TIPOLOGIA_CONFIGURAZIONE)) {
-			return this.getTipoNomeSoggettoLocale();	
+			return Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(this.getTipoNomeSoggettoLocale()) ? null : this.getTipoNomeSoggettoLocale();	
 		}
 		
 		return null;

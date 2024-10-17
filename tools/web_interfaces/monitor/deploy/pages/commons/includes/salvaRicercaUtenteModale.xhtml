@@ -37,18 +37,15 @@
 	            </h:panelGroup>
 			</f:facet>
 			<a4j:outputPanel id="salvaRicercaCtr" ajaxRendered="true">
-				<h:panelGroup  styleClass="errors" layout="block" rendered="#{not empty loginBean.salvaRicercaForm.salvaRicercaErrorMessage}">
-						<h:panelGroup rendered="#{not empty loginBean.salvaRicercaForm.salvaRicercaErrorMessage}">
-								<p>
-									<em>
-										<h:outputText value="Si sono verificati degli errori:"/>
-									</em>
-								</p>
-							<div class="errorsSpacer"/>
-							</h:panelGroup>
-						<h:outputText id="salvaRicercaErrors"  
-							value="#{loginBean.salvaRicercaForm.salvaRicercaErrorMessage}"
-							rendered="#{not empty loginBean.salvaRicercaForm.salvaRicercaErrorMessage}" />
+				<h:panelGroup  styleClass="errors" layout="block" rendered="#{not empty loginBean.salvaRicercaForm.salvaRicercaErrorMessage}" id="salvaRicercaErrorsPlaceHolder">
+					<a4j:outputPanel layout="block" styleClass="messages-title">
+	  					<h:outputText value="&#160;&#160;" id="infoTitleIconSalvaRicercaSpacer" styleClass="messages-errors-title-icon"/>
+	  					<h:outputText id="infoTitleMessageSalvaRicerca2" value="Messaggio di Errore" styleClass="messages-title-text"/>
+	  				</a4j:outputPanel>
+	  				<div class="errorsSpacer"/>
+					<h:outputText id="salvaRicercaErrors"  
+						value="#{loginBean.salvaRicercaForm.salvaRicercaErrorMessage}"
+						rendered="#{not empty loginBean.salvaRicercaForm.salvaRicercaErrorMessage}" />
 				</h:panelGroup>
 				<script type="text/javascript" nonce="#{_csp_random_nonce}">
 					//<![CDATA[
@@ -74,8 +71,8 @@
 							</link:prop>
 							<link:prop label="#{msg['commons.salvaRicerca.modal.visibilita']}" required="true">
 								<h:selectOneRadio id="privacyRicerca" value="#{loginBean.salvaRicercaForm.visibilita}" styleClass="controlset">
-									<f:selectItem itemValue="pubblica" itemLabel="#{msg['commons.salvaRicerca.modal.pubblica']}"/>
 									<f:selectItem itemValue="privata" itemLabel="#{msg['commons.salvaRicerca.modal.privata']}"/>
+									<f:selectItem itemValue="pubblica" itemLabel="#{msg['commons.salvaRicerca.modal.pubblica']}"/>
 								</h:selectOneRadio>
 							</link:prop>
 						</link:fieldset>

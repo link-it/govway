@@ -625,13 +625,6 @@ xmlns="http://www.w3.org/1999/xhtml"
 						 //]]>	
 					</script>
 				</a4j:outputPanel>
-				
-				<ui:include src="/commons/includes/salvaRicercaUtenteModale.xhtml">
-	               	<ui:param name="mBean" value="#{transazioniBean}" />
-	               	<ui:param name="sf_bean" value="#{searchFormTransazioni}"  />
-	               	<ui:param name="loginBean" value="#{loginBean}"  />
-	           	</ui:include>
-				
 			</a4j:outputPanel>
 			
 			<a4j:outputPanel id="listaTransazioniLiveCtr" ajaxRendered="false" layout="block" styleClass="panelLista" rendered="#{searchFormTransazioni.periodo eq 'Live'}">
@@ -784,6 +777,12 @@ xmlns="http://www.w3.org/1999/xhtml"
 					</a4j:outputPanel>
 				</a4j:region>
 			</a4j:outputPanel>
+			
+			<ui:include src="/commons/includes/salvaRicercaUtenteModale.xhtml">
+               	<ui:param name="mBean" value="#{transazioniBean}" />
+               	<ui:param name="sf_bean" value="#{searchFormTransazioni}"  />
+               	<ui:param name="loginBean" value="#{loginBean}"  />
+           	</ui:include>
 		</a4j:outputPanel>
 	</ui:define>
 </ui:composition>

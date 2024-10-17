@@ -394,7 +394,7 @@ public class UtentiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverUsersDB().countRicerche(login, null, null,"pubblica", null, null);
+			return driver.getDriverUsersDB().countRicerche(login, null, null, null,"pubblica", null, null);
 
 		} catch (Exception e) {
 			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);

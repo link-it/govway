@@ -1555,6 +1555,11 @@ Context, Cloneable {
 	
 	@Override
 	public String getModalitaRicerca() {
+		// per il live restituisci la costante Live, cosi escludo le ricerche del live da quelle dello storico 
+		if(Costanti.PERIODO_LIVE.equals(this.getPeriodo())) {
+			return Costanti.PERIODO_LIVE;
+		}
+		
 		return this.getModalitaRicercaStorico();
 	}
 	
@@ -1566,17 +1571,18 @@ Context, Cloneable {
 		return ricerchePresenti && !ModalitaRicercaTransazioni.ID_TRANSAZIONE.getValue().equals(this.getModalitaRicercaStorico()) 
 				&& !ModalitaRicercaTransazioni.ID_MESSAGGIO.getValue().equals(this.getModalitaRicercaStorico()) 
 				&& !ModalitaRicercaTransazioni.ID_APPLICATIVO_BASE.getValue().equals(this.getModalitaRicercaStorico())
-				 && !Costanti.PERIODO_LIVE.equals(this.getPeriodo())
+//				 && !Costanti.PERIODO_LIVE.equals(this.getPeriodo())
 				;
 	}
 	
 	@Override
 	public boolean isVisualizzaComandoSalvaRicerca() {
-		// il tasto salva non deve apparire nel live e nei casi in cui non si visualizza il filtro
+		// il tasto salva non deve apparire nei casi in cui non si visualizza il filtro
 		return !ModalitaRicercaTransazioni.ID_TRANSAZIONE.getValue().equals(this.getModalitaRicercaStorico()) 
 				&& !ModalitaRicercaTransazioni.ID_MESSAGGIO.getValue().equals(this.getModalitaRicercaStorico()) 
 				&& !ModalitaRicercaTransazioni.ID_APPLICATIVO_BASE.getValue().equals(this.getModalitaRicercaStorico())
-				 && !Costanti.PERIODO_LIVE.equals(this.getPeriodo());
+//				 && !Costanti.PERIODO_LIVE.equals(this.getPeriodo())
+				 ;
 	}
 	
 	@Override

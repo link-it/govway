@@ -875,7 +875,7 @@ public class Utility {
 
 		return ProtocolUtils.orderProtocolli(listaNomiProtocolli);
 	}
-	public static List<Soggetto> getSoggettiOperativiAssociatiAlProfilo(UserDetailsBean u, String profiloSelezionato) throws Exception {
+	public static List<Soggetto> getSoggettiOperativiAssociatiAlProfilo(UserDetailsBean u, String profiloSelezionato) {
 		List<Soggetto> soggetti = new ArrayList<Soggetto>();
 		
 		if(u.getUtenteSoggettoProtocolliMap().containsKey(profiloSelezionato)) {
@@ -942,23 +942,23 @@ public class Utility {
 		}
 	}
 	
-	public static List<String> getProtocolli(User utente) throws Exception {
+	public static List<String> getProtocolli(User utente) throws ProtocolException {
 		return getProtocolli(utente, false);
 	}
 
-	public static List<String> getProtocolli(User utente, boolean ignoreProtocolloSelezionato) throws Exception {
+	public static List<String> getProtocolli(User utente, boolean ignoreProtocolloSelezionato) throws ProtocolException {
 		ProtocolFactoryManager pfManager = ProtocolFactoryManager.getInstance();
 		MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
 		return getProtocolli(utente, pfManager, protocolFactories, ignoreProtocolloSelezionato);
 	}
-	public static List<String> getProtocolli(User utente, ProtocolFactoryManager pfManager, MapReader<String, IProtocolFactory<?>> protocolFactories) throws Exception {
+	public static List<String> getProtocolli(User utente, ProtocolFactoryManager pfManager, MapReader<String, IProtocolFactory<?>> protocolFactories) throws ProtocolException {
 		return getProtocolli(utente, pfManager, protocolFactories, false);
 	}
-	public static List<String> getProtocolli(User utente, ProtocolFactoryManager pfManager, MapReader<String, IProtocolFactory<?>> protocolFactories, boolean ignoreProtocolloSelezionato) throws  Exception {
+	public static List<String> getProtocolli(User utente, ProtocolFactoryManager pfManager, MapReader<String, IProtocolFactory<?>> protocolFactories, boolean ignoreProtocolloSelezionato) throws ProtocolException {
 		return getProtocolli(utente, pfManager, protocolFactories, ignoreProtocolloSelezionato, false);
 	}
 	public static List<String> getProtocolli(User utente, ProtocolFactoryManager pfManager, MapReader<String, IProtocolFactory<?>> protocolFactories, boolean ignoreProtocolloSelezionato, 
-			boolean consideraProtocolliCompatibiliSoggettoSelezionato) throws Exception {
+			boolean consideraProtocolliCompatibiliSoggettoSelezionato) throws ProtocolException {
 		List<String> protocolliList = new ArrayList<>();
 
 		if(!ignoreProtocolloSelezionato) {
