@@ -2643,10 +2643,10 @@ public class DriverUsersDB {
 				sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".modalita_ricerca = ?");
 			}
 			if(protocollo != null) {
-				sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".protocollo = ?");
+				sqlQueryObject.addWhereCondition(false, false, CostantiDB.USERS_RICERCHE +".protocollo = ?", CostantiDB.USERS_RICERCHE +".protocollo is null");
 			}
 			if(soggetto != null) {
-				sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".soggetto = ?");
+				sqlQueryObject.addWhereCondition(false, false, CostantiDB.USERS_RICERCHE +".soggetto = ?", CostantiDB.USERS_RICERCHE +".soggetto is null");
 			}
 			// or sul proprietario
 			sqlQueryObject.addWhereCondition(false, false, 
@@ -3031,6 +3031,101 @@ public class DriverUsersDB {
 	}
 	
 	/**
+	 * Restituisce la ricerca personalizzata per l'utenza <var>login</var>
+	 * 
+	 * @param login Identificatore di un utente
+	 * @param id identificativo della ricerca
+	 *               
+	 * @return Ricerca individuata
+	 */
+	public RicercaUtente leggiRicerca(String login, String label, String modulo, String modalitaRicerca) throws DriverUsersDBException {
+		if (login == null || label == null || modulo == null || modalitaRicerca == null)
+			throw new DriverUsersDBException("[leggiRicerca] Parametri Non Validi");
+
+		Connection connectionDB = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		RicercaUtente ricercaPersonalizzata = null;
+		try {
+			// Get Connection
+			connectionDB = getConnection();
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addFromTable(CostantiDB.USERS);
+			sqlQueryObject.addFromTable(CostantiDB.USERS_RICERCHE);
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".id");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".id_utente");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".label");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".modulo");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".modalita_ricerca");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".visibilita");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".ricerca");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".descrizione");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".data_creazione");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".protocollo");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_RICERCHE+".soggetto");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE+".id_utente = "+CostantiDB.USERS+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".label = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".modulo = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".modalita_ricerca = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			int index = 1;
+			stm.setString(index++, login);
+			stm.setString(index++, label);
+			stm.setString(index++, modulo);
+			stm.setString(index++, modalitaRicerca);
+			
+			rs = stm.executeQuery();
+			if (rs.next()) {
+				ricercaPersonalizzata = new RicercaUtente();
+				ricercaPersonalizzata.setId(rs.getLong("id"));
+				ricercaPersonalizzata.setIdUtente(rs.getLong("id_utente"));
+				ricercaPersonalizzata.setLabel(rs.getString("label"));
+				ricercaPersonalizzata.setModulo(rs.getString("modulo"));
+				ricercaPersonalizzata.setModalitaRicerca(rs.getString("modalita_ricerca"));
+				ricercaPersonalizzata.setVisibilita(rs.getString("visibilita"));
+				ricercaPersonalizzata.setRicerca(rs.getString("ricerca"));
+				ricercaPersonalizzata.setDescrizione(rs.getString("descrizione"));
+				ricercaPersonalizzata.setDataCreazione(rs.getTimestamp("data_creazione"));
+				ricercaPersonalizzata.setProtocollo(rs.getString("protocollo"));
+				ricercaPersonalizzata.setSoggetto(rs.getString("soggetto"));
+			}
+			rs.close();
+			stm.close();
+			
+			if (ricercaPersonalizzata == null)
+				throw new DriverUsersDBException("[DriverUsersDB::leggiRicerca] Ricerca [label:" + label + ", modulo: "+modulo+", modalita' ricerca: "+modalitaRicerca+"] dell'utente ["+ login +"] non esistente.");
+
+			return ricercaPersonalizzata;
+		} catch (SQLException se) {
+			throw new DriverUsersDBException("[DriverUsersDB::leggiRicerca] SqlException: " + se.getMessage(),se);
+		} catch (Exception ex) {
+			throw new DriverUsersDBException("[DriverUsersDB::leggiRicerca] Exception: " + ex.getMessage(),ex);
+		} finally {
+			try {
+				if(rs!=null) {
+					rs.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if(stm!=null) {
+					stm.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+			releaseConnection(connectionDB);
+
+		}
+	}
+	
+	/**
 	 * Cancella tutte le ricerche personalizzate per l'utenza <var>login</var>
 	 * 
 	 * @param login Identificatore di un utente
@@ -3150,7 +3245,7 @@ public class DriverUsersDB {
 	 *               
 	 * @return Elenco delle ricerche individuate
 	 */
-	public int countRicerche(String login, String modulo, String modalitaRicerca, String visibilita, 
+	public int countRicerche(String login, String label, String modulo, String modalitaRicerca, String visibilita, 
 			String protocollo, String soggetto) throws DriverUsersDBException {
 		if (login == null)
 			throw new DriverUsersDBException("[countStati] Parametri Non Validi");
@@ -3169,6 +3264,9 @@ public class DriverUsersDB {
 			sqlQueryObject.addSelectCountField("*", "cont");
 			sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE+".id_utente = "+CostantiDB.USERS+".id");
 			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
+			if(label != null) {
+				sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".label = ?");	
+			}
 			if(modulo != null) {
 				sqlQueryObject.addWhereCondition(CostantiDB.USERS_RICERCHE +".modulo = ?");	
 			}
@@ -3191,6 +3289,9 @@ public class DriverUsersDB {
 			int index = 1;
 			stm.setString(index++, login);
 			
+			if(label != null) {
+				stm.setString(index++, label);	
+			}
 			if(modulo != null) {
 				stm.setString(index++, modulo);	
 			}

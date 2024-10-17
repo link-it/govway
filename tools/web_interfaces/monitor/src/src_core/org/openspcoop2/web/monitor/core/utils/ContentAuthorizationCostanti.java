@@ -44,6 +44,7 @@ public class ContentAuthorizationCostanti {
 		"/public/login.jsf",
 		"/FusionCharts/",
 		"/index.jsp",
+		"/login.jsp",
 		"/timeout.jsp",
 		"/report/statistica",
 		"/report/configurazione",

@@ -24254,34 +24254,11 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public String getParametroResourcePath(String parameterName, boolean validate) throws ValidationException, DriverControlStationException{
-		if(validate && !this.validaParametroResourcePath(parameterName)) {
+		if(validate && !ServletUtils.validaParametroResourcePath(this.request, parameterName)) {
 			throw new ValidationException("Il parametro [" +parameterName + "] contiene un valore non valido.");
 		}
 		// in questo caso restituisco il valore originale che e' una lista di HTTPMethods
 		return Validatore.getInstance().getParametroOriginale(this.request, parameterName);
-	}
-	
-	/**
-	 * Validazione del parametro HttpMethod
-	 * 
-	 * @param parameterToCheck
-	 * @return
-	 */
-	private boolean validaParametroResourcePath(String parameterToCheck) {
-		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(this.request, parameterToCheck);
-		
-		// parametro originale e' vuoto o null allora e' valido
-		if(StringUtils.isEmpty(parameterValueOriginale)) {
-			return true;
-		}
-		
-		try {
-			Validatore.getInstance().validate("Il valore del parametro [" + parameterToCheck + "]:["+parameterValueOriginale+"]", parameterValueOriginale, null, true, false, org.openspcoop2.web.lib.mvc.security.Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA);
-		}catch(ValidationException e) {
-			return false;
-		}
-		
-		return true;
 	}
 	
 	public void addProprietaOggetto(List<DataElement> dati, org.openspcoop2.core.registry.ProprietaOggetto pOggetto) {

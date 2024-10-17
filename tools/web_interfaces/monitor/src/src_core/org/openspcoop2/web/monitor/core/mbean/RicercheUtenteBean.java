@@ -30,6 +30,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
@@ -159,7 +161,7 @@ public class RicercheUtenteBean extends PdDBaseBean<RicercaUtenteBean, Long, ISe
 				this.service.deleteAll();
 			} catch (Exception e) {
 				log.error(e.getMessage(), e);
-				MessageUtils.addErrorMsg("Si e' verificato un errore durante la cancellazione delle ricerche selezionate.");
+				MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_CANCELLA_RICERCHE_MESSAGGIO_ERRORE_LABEL_KEY));
 			}
 		}
 
@@ -215,7 +217,7 @@ public class RicercheUtenteBean extends PdDBaseBean<RicercaUtenteBean, Long, ISe
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().responseComplete();
 			log.error(e.getMessage(), e);
-			MessageUtils.addErrorMsg("Si e' verificato un errore durante l'esportazione delle ricerche selezionate.");
+			MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_ESPORTA_RICERCHE_MESSAGGIO_ERRORE_LABEL_KEY));
 		}
 		return null;
 	}
@@ -231,14 +233,14 @@ public class RicercheUtenteBean extends PdDBaseBean<RicercaUtenteBean, Long, ISe
 			if(checkIdentificativiMsg != null) {
 				// c'e' un errore di correlazione tra gli id caricati e quelli ricevuti al momento del salvataggio
 				log.error("Identificativi ricevuti non coincidono con quelli in sessione il salvataggio non verra' effettuato.");
-				this.setCaricaRicercheErrorMessage("Si \u00E8 verificato un errore durante il salvataggio del file ricerche, selezionare un nuovo file e riprovare.");
+				this.setCaricaRicercheErrorMessage(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_LABEL_KEY));
 				return null;
 			}
 
 			if(this.ricercheFile.getMapElementiRicevuti().isEmpty()) {
 				// lista file vuota
 				log.error("Identificativi ricevuti non coincidono con quelli in sessione il salvataggio non verra' effettuato.");
-				this.setCaricaRicercheErrorMessage("Si \u00E8 verificato un errore durante il salvataggio del file ricerche, selezionare un nuovo file e riprovare.");
+				this.setCaricaRicercheErrorMessage(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_LABEL_KEY));
 				return null;
 			}
 
@@ -252,7 +254,7 @@ public class RicercheUtenteBean extends PdDBaseBean<RicercaUtenteBean, Long, ISe
 					boolean checkAcceptedType =  this.ricercheFile.checkAcceptedType(fileCaricato.getContentType());
 					if(!checkAcceptedType) {
 						log.error("Il ContentType "+fileCaricato.getContentType()+" del file ricerche "+fileName+" non e' valido.");
-						this.setCaricaRicercheErrorMessage("Il file "+fileName+" non \u00E8 valido.");
+						this.setCaricaRicercheErrorMessage(MessageManager.getInstance().getMessageWithParamsFromResourceBundle(Costanti.RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_FILE_NON_VALIDO_LABEL_KEY, fileName));
 						return null;
 					}
 
@@ -265,21 +267,22 @@ public class RicercheUtenteBean extends PdDBaseBean<RicercaUtenteBean, Long, ISe
 								|| ricerchePersonalizzate.getRicerche().isEmpty()) {
 							//
 							log.error("Il file ricerche "+fileName+" e' vuoto.");
-							this.setCaricaRicercheErrorMessage("Il file "+fileName+" \u00E8 vuoto.");
+							this.setCaricaRicercheErrorMessage(MessageManager.getInstance().getMessageWithParamsFromResourceBundle(Costanti.RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_FILE_VUOTO_LABEL_KEY, fileName));
 							return null;
 						}
 					} catch (UtilsException e) {
 						log.error("Il contenuto del file ricerche "+fileName+" non e' valido.");
-						this.setCaricaRicercheErrorMessage("Il contenuto del file "+fileName+" non \u00E8 valido.");
+						this.setCaricaRicercheErrorMessage(MessageManager.getInstance().getMessageWithParamsFromResourceBundle(Costanti.RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_FILE_CONTENUTO_NON_VALIDO_LABEL_KEY, fileName));
 						return null;
 					}
 				} else {
 					log.error("Il ContentType "+fileCaricato.getContentType()+" del file ricerche "+fileName+" non e' valido.");
-					this.setCaricaRicercheErrorMessage("Il file "+fileName+" non \u00E8 valido.");
+					this.setCaricaRicercheErrorMessage(MessageManager.getInstance().getMessageWithParamsFromResourceBundle(Costanti.RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_FILE_NON_VALIDO_LABEL_KEY, fileName));
 					return null;
 				}
 			}
 
+			List<String> msgRicercheScartate = new ArrayList<String>();
 			// 3. salvataggio, quando arrivo qui i file sono gia' validati 
 			for (Entry<String, UploadItem> fileCaricatoEntry : this.ricercheFile.getMapElementiRicevuti().entrySet()) {
 				UploadItem fileCaricato = fileCaricatoEntry.getValue();
@@ -291,25 +294,85 @@ public class RicercheUtenteBean extends PdDBaseBean<RicercaUtenteBean, Long, ISe
 					User loggedUtente = Utility.getLoggedUtente();
 					String login = loggedUtente.getLogin();
 					for (RicercaUtente ricercaPersonalizzata : ricerchePersonalizzate.getRicerche()) {
+						RicercaUtenteBean ricercaUtenteBean = new RicercaUtenteBean(ricercaPersonalizzata);
+						// verifica duplicati
+						RicercaUtenteBean oldRicercaUtente = ((IRicercheUtenteService)this.service).leggiRicercaUtente(login, ricercaUtenteBean.getLabel(), ricercaUtenteBean.getModulo(), ricercaUtenteBean.getModalitaRicerca());
+						if(oldRicercaUtente != null) {
+							msgRicercheScartate.add(MessageManager.getInstance().getMessageWithParamsFromResourceBundle(
+									Costanti.RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_RICERCA_DUPLICATA_LABEL_KEY, ricercaUtenteBean.getLabel(),
+									ricercaUtenteBean.getModuloLabel(), ricercaUtenteBean.getModalitaRicercaLabel()));
+							continue;
+						}
+						
+						// verifica compatibilita' protocolli
+						String protocolloRicercaImport = ricercaUtenteBean.getProtocollo();
+						String soggettoRicercaImport = ricercaUtenteBean.getSoggetto();
+						
+						// protocollo selezionato
+						if(protocolloRicercaImport != null && !protocolloRicercaImport.equals(Costanti.NON_SELEZIONATO)) {
+							
+							List<String> protocolliUtente = Utility.getProtocolli(loggedUtente);
+							
+							// protocollo della ricerca non tra quelli dell'utente
+							if(!protocolliUtente.contains(protocolloRicercaImport)) {
+								msgRicercheScartate.add(MessageManager.getInstance().getMessageWithParamsFromResourceBundle(
+										Costanti.RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_PROTOCOLLO_NON_DISPONIBILE_LABEL_KEY, ricercaUtenteBean.getLabel(),
+										ricercaUtenteBean.getProtocolloLabel()));
+								continue;
+							}
+							
+							// soggetto selezionato
+							if(soggettoRicercaImport != null && !soggettoRicercaImport.equals(Costanti.NON_SELEZIONATO)) {
+								String tipoSoggettoOperativoSelezionato = Utility.parseTipoSoggetto(soggettoRicercaImport);
+								String nomeSoggettoOperativoSelezionato = Utility.parseNomeSoggetto(soggettoRicercaImport);
+								
+								List<Soggetto> soggettiOperativiAssociatiAlProfilo = Utility.getSoggettiOperativiAssociatiAlProfilo(Utility.getLoggedUser(), protocolloRicercaImport);
+								
+								boolean found = false;
+								for (Soggetto soggetto : soggettiOperativiAssociatiAlProfilo) {
+									if(soggetto.getTipoSoggetto().equals(tipoSoggettoOperativoSelezionato) && soggetto.getNomeSoggetto().equals(nomeSoggettoOperativoSelezionato)) {
+										found = true;
+										break;
+									}
+								}
+								
+								if(!found) {
+									msgRicercheScartate.add(MessageManager.getInstance().getMessageWithParamsFromResourceBundle(
+											Costanti.RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_SOGGETTO_NON_DISPONIBILE_LABEL_KEY, ricercaUtenteBean.getLabel(), ricercaUtenteBean.getSoggettoLabel()));
+									continue;
+								}
+							}
+						}
+						
 						((IRicercheUtenteService)this.service).insertRicerca(login, ricercaPersonalizzata);	
 					}
 				} catch (UtilsException e) {
 					log.error("Il contenuto del file ricerche "+fileName+" non e' valido.");
-					this.setCaricaRicercheErrorMessage("Il contenuto del file "+fileName+" non \u00E8 valido.");
+					this.setCaricaRicercheErrorMessage(MessageManager.getInstance().getMessageWithParamsFromResourceBundle(Costanti.RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_FILE_CONTENUTO_NON_VALIDO_LABEL_KEY, fileName));
 					return null;
-				} catch (DriverUsersDBException e) { // errore in fase di salvataggio
+				} catch (DriverUsersDBException | ProtocolException e) { // errore in fase di salvataggio
 					log.error("Si e' verificato un errore in fase di salvataggio: " + e.getMessage(), e);
-					this.setCaricaRicercheErrorMessage("Impossibile completare l'operazione. Si prega di riprovare pi\u00F9 tardi.");
+					this.setCaricaRicercheErrorMessage(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_MESSAGGIO_ERRORE_OPERAZIONE_NON_ESEGUITA));
 					return null;
 				}
 			}
 
 			this.salvataggioOk = true;
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Ricerche caricate correttamente."));
+			if(!msgRicercheScartate.isEmpty()) {
+				// visualizza warning ricerche scartate 
+				MessageUtils.addWarnMsg(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_CARICAMENTO_COMPLETATO_CON_ERRORI_LABEL_KEY));
+				for (String msgRicercaScartata : msgRicercheScartate) {
+					MessageUtils.addWarnMsg(msgRicercaScartata);
+				}
+			} else {
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_IMPORTA_RICERCHE_OK_LABEL_KEY)));
+			}
 			return null;
 		} else {
 			log.error("Nessun file selezionato.");
-			this.setCaricaRicercheErrorMessage("Il campo "+MessageManager.getInstance().getMessageFromResourceBundle(Costanti.RICERCHE_UTENTE_FORM_FIELD_FILE_LABEL_KEY) +" \u00E8 obbligatorio.");
+			this.setCaricaRicercheErrorMessage(
+					MessageManager.getInstance().getMessageWithParamsFromResourceBundle(Costanti.RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_FILE_NON_INDICATO_LABEL_KEY,
+							MessageManager.getInstance().getMessageFromResourceBundle(Costanti.RICERCHE_UTENTE_FORM_FIELD_FILE_LABEL_KEY)));
 			return null;
 		}
 	}
@@ -317,6 +380,9 @@ public class RicercheUtenteBean extends PdDBaseBean<RicercaUtenteBean, Long, ISe
 	public String aggiornaRicerca() {
 
 		try {
+			User loggedUtente = Utility.getLoggedUtente();
+			String login = loggedUtente.getLogin();
+			
 			// 1. Validazione input
 			String aggiornaRicercaErrorMessage = this.eseguiValidazioneForm();
 
@@ -329,25 +395,36 @@ public class RicercheUtenteBean extends PdDBaseBean<RicercaUtenteBean, Long, ISe
 
 			// 2. leggo la ricerca aggiornata dal db
 			RicercaUtenteBean oldRicercaUtente = this.service.findById(this.getSelectedElement().getId()); 
+			
+			// 3. verifica duplicati
+			
+			// controllo duplicati se ho cambiato la label
+			if(!oldRicercaUtente.getLabel().equals(this.getSelectedElement().getLabel())) {
+				if(((IRicercheUtenteService)this.service).leggiRicercaUtente(login, this.getSelectedElement().getLabel(), 
+						this.getSelectedElement().getModulo(), this.getSelectedElement().getModalitaRicerca()) != null) {
+					MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_AGGIORNA_RICERCA_MESSAGGIO_ERRORE_RICERCA_DUPLICATA_LABEL_KEY));
+					return null;
+				}
+			}
+			
 
-			// 3. aggiorno dati
+			// 4. aggiorno dati
 			oldRicercaUtente.setLabel(this.getSelectedElement().getLabel());
 			oldRicercaUtente.setDescrizione(this.selectedElement.getDescrizione());
 			oldRicercaUtente.setVisibilita(this.selectedElement.getVisibilita());
 
-			// 4.salvataggio
-			User loggedUtente = Utility.getLoggedUtente();
-			String login = loggedUtente.getLogin();
+			// 5.salvataggio
+			
 			((IRicercheUtenteService)this.service).updateRicerca(login, oldRicercaUtente);
 
-			// 5. Messaggio di info per l'utente
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Ricerca aggiornata correttamente."));
+			// 6. Messaggio di info per l'utente
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_AGGIORNA_RICERCA_OK_LABEL_KEY)));
 
 			// salvataggio ok torno alla lista
 			return "ricercheUtente";
 		} catch (DriverUsersDBException e) {
 			log.error("Si e' verificato un errore in fase di salvataggio: " + e.getMessage(), e);
-			MessageUtils.addErrorMsg("Impossibile completare l'operazione. Si prega di riprovare pi\u00F9 tardi.");
+			MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_MESSAGGIO_ERRORE_OPERAZIONE_NON_ESEGUITA));
 		}
 
 		return null;

@@ -76,7 +76,7 @@ public class Costanti {
 	public static final String LABEL_FRUIZIONE = "Fruizione";
 	public static final String LABEL_EROGAZIONE = "Erogazione";
 	
-	
+	public static final String PERIODO_PARAMETER = "periodo";
 	public static final String PERIODO_ULTIMA_SETTIMANA = "Ultima settimana";
 	public static final String PERIODO_PERSONALIZZATO = "Personalizzato";
 	public static final String PERIODO_ULTIMO_ANNO = "Ultimo anno";
@@ -207,6 +207,24 @@ public class Costanti {
 	public static final String RICERCHE_UTENTE_VISIBILITA_PRIVATA_LABEL_KEY = "commons.salvaRicerca.modal.privata";
 	public static final String RICERCHE_UTENTE_VISIBILITA_PUBBLICA_LABEL_KEY = "commons.salvaRicerca.modal.pubblica";
 	public static final String RICERCHE_UTENTE_FORM_FIELD_FILE_LABEL_KEY = "commons.ricercheUtente.importaRicerche.label";
+	public static final String RICERCHE_UTENTE_CANCELLA_RICERCHE_MESSAGGIO_ERRORE_LABEL_KEY = "commons.ricercheUtente.cancellaRicerche.messaggioErrore";
+	public static final String RICERCHE_UTENTE_ESPORTA_RICERCHE_MESSAGGIO_ERRORE_LABEL_KEY = "commons.ricercheUtente.esportaRicerche.messaggioErrore";
+	public static final String RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_LABEL_KEY = "commons.ricercheUtente.importaRicerche.messaggioErrore";
+	public static final String RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_FILE_NON_VALIDO_LABEL_KEY = "commons.ricercheUtente.importaRicerche.messaggioErrore.fileNonValido";
+	public static final String RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_FILE_VUOTO_LABEL_KEY = "commons.ricercheUtente.importaRicerche.messaggioErrore.fileVuoto";
+	public static final String RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_FILE_CONTENUTO_NON_VALIDO_LABEL_KEY = "commons.ricercheUtente.importaRicerche.messaggioErrore.fileContenutoNonValido";
+	public static final String RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_FILE_NON_INDICATO_LABEL_KEY = "commons.ricercheUtente.importaRicerche.messaggioErrore.fileNonIndicato";
+	public static final String RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_CARICAMENTO_COMPLETATO_CON_ERRORI_LABEL_KEY = "commons.ricercheUtente.importaRicerche.messaggioErrore.caricamentoCompletatoConErrori";
+	public static final String RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_RICERCA_DUPLICATA_LABEL_KEY = "commons.ricercheUtente.importaRicerche.messaggioErrore.ricercaDuplicata";
+	public static final String RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_PROTOCOLLO_NON_DISPONIBILE_LABEL_KEY = "commons.ricercheUtente.importaRicerche.messaggioErrore.protocolloNonDisponibile";
+	public static final String RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_SOGGETTO_NON_DISPONIBILE_LABEL_KEY = "commons.ricercheUtente.importaRicerche.messaggioErrore.soggettoNonDisponibile";
+	public static final String RICERCHE_UTENTE_MESSAGGIO_ERRORE_OPERAZIONE_NON_ESEGUITA = "commons.ricercheUtente.messaggioErrore.operazioneNonEseguita";
+	public static final String RICERCHE_UTENTE_IMPORTA_RICERCHE_OK_LABEL_KEY = "commons.ricercheUtente.importaRicerche.ok";
+	public static final String RICERCHE_UTENTE_AGGIORNA_RICERCA_OK_LABEL_KEY = "commons.ricercheUtente.aggiornaRicerca.ok";
+	public static final String RICERCHE_UTENTE_AGGIORNA_RICERCA_MESSAGGIO_ERRORE_RICERCA_DUPLICATA_LABEL_KEY = "commons.ricercheUtente.aggiornaRicerca.messaggioErrore.ricercaDuplicata";
+	public static final String RICERCHE_UTENTE_SALVA_RICERCA_OK_LABEL_KEY = "commons.ricercheUtente.salvaRicerca.ok";
+	public static final String RICERCHE_UTENTE_SALVA_RICERCA_MESSAGGIO_ERRORE_LABEL_KEY = "commons.ricercheUtente.salvaRicerca.messaggioErrore";
+	public static final String RICERCHE_UTENTE_SALVA_RICERCA_MESSAGGIO_ERRORE_RICERCA_DUPLICATA_LABEL_KEY = "commons.ricercheUtente.salvaRicerca.messaggioErrore.ricercaDuplicata";
 	
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_LABEL_KEY = "transazioni.search.tipoRicerca.temporale.label";
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_MITTENTE_LABEL_KEY = "transazioni.search.tipoRicerca.mittente.label";
@@ -328,7 +346,7 @@ public class Costanti {
 			"wrappedKeys",
 			// AbstractDateSearchForm
 			"lastPeriodo",
-			"periodo",
+			// "periodo",
 			"periodoDefault",
 			"dataInizio",
 			"dataFine",
