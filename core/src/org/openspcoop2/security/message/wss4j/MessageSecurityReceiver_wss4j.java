@@ -536,7 +536,7 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 		String signatureCrls = null;
 		for (Map.Entry<String,Object> entry : wssIncomingProperties.entrySet()) {
 	    	if(SecurityConstants.SIGNATURE_CRL.equals(entry.getKey())) {
-	    		signatureCrls = (String) wssIncomingProperties.get(entry.getValue());
+	    		signatureCrls = (String) entry.getValue();
 	    		break;
 	    	}
 		}
