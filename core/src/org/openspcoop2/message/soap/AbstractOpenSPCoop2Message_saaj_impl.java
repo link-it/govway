@@ -416,11 +416,23 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 	}
 	protected static Element _getFirstChildElement(SOAPElement element) throws MessageException,MessageNotSupportedException {
 		Element firstElement = null;
-		Iterator<?> it = element.getChildElements();
+		NodeList nl = element.getChildNodes();
+		if(nl!=null) {
+			for (int i = 0; i < nl.getLength(); i++) {
+				Node tmp = nl.item(i);
+				if(tmp instanceof Element) {
+					firstElement = (Element) tmp;
+					break;
+				}
+			}
+		}
+		/**
+		 * Usato anzi 'element.getChildNodes()'; il metodo getChildElements, in un soap body faceva perdere tutti gli altri elementi
+		 * Iterator<?> it = element.getChildElements();
 		while (it.hasNext() && firstElement==null){
 			Node tmp = (Node) it.next();
 			if(tmp instanceof Element) firstElement = (Element) tmp;
-		}
+		}*/
 		return firstElement;
 	}
 	

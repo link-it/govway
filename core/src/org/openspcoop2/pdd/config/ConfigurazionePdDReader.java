@@ -152,6 +152,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.core.registry.wsdl.WSDLValidatorConfig;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.mtom.MtomXomPackageInfo;
@@ -2027,20 +2028,25 @@ public class ConfigurazionePdDReader {
 				forceRegistryBased = StatoFunzionalita.ABILITATO.equals(pd.getAzione().getForceInterfaceBased());
 			}
 
-			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+			OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+			
+			boolean bufferMessageReadOnly = op2Properties.isReadByPathBufferEnabled();
 			
 			boolean rpcAcceptRootElementUnqualified = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativiRpcAcceptRootElementUnqualified();
 			if(pd!=null && pd.getProprietaList()!=null && !pd.getProprietaList().isEmpty()) {
-				boolean default_rpcAcceptRootElementUnqualified = rpcAcceptRootElementUnqualified;
-				rpcAcceptRootElementUnqualified = ValidatoreMessaggiApplicativiRest.readBooleanValueWithDefault(pd.getProprietaList(), CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_RPC_ACCEPT_ROOT_ELEMENT_UNQUALIFIED_ENABLED, default_rpcAcceptRootElementUnqualified);
+				boolean defaultRpcAcceptRootElementUnqualified = rpcAcceptRootElementUnqualified;
+				rpcAcceptRootElementUnqualified = ValidatoreMessaggiApplicativiRest.readBooleanValueWithDefault(pd.getProprietaList(), CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_RPC_ACCEPT_ROOT_ELEMENT_UNQUALIFIED_ENABLED, defaultRpcAcceptRootElementUnqualified);
 			}
+			
+			WSDLValidatorConfig config = new WSDLValidatorConfig();
+			config.setRpcAcceptRootElementUnqualified(rpcAcceptRootElementUnqualified);
 			
 			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, requestInfo, message, soapStreamReader, soggettoErogatore, idServizio, 
 					readFirstHeaderIntegrazione, azioneHeaderIntegrazione, protocolFactory, modalitaIdentificazione, 
 					pattern, forceRegistryBased, forcePluginBased, this.logger, false,
-					bufferMessage_readOnly, 
+					bufferMessageReadOnly, 
 					headerIntegrazione!=null ? headerIntegrazione.getIdTransazione() : null,
-					rpcAcceptRootElementUnqualified);
+					config);
 
 			// Se non ho riconosciuto una azione a questo punto, 
 			// durante il processo standard di riconoscimento viene sollevata una eccezione IdentificazioneDinamicaException
@@ -3065,20 +3071,25 @@ public class ConfigurazionePdDReader {
 				forceRegistryBased = StatoFunzionalita.ABILITATO.equals(pa.getAzione().getForceInterfaceBased());
 			}
 
-			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+			OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+			
+			boolean bufferMessageReadOnly =  op2Properties.isReadByPathBufferEnabled();
 			
 			boolean rpcAcceptRootElementUnqualified = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativiRpcAcceptRootElementUnqualified();
 			if(pa!=null && pa.getProprietaList()!=null && !pa.getProprietaList().isEmpty()) {
-				boolean default_rpcAcceptRootElementUnqualified = rpcAcceptRootElementUnqualified;
-				rpcAcceptRootElementUnqualified = ValidatoreMessaggiApplicativiRest.readBooleanValueWithDefault(pa.getProprietaList(), CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_RPC_ACCEPT_ROOT_ELEMENT_UNQUALIFIED_ENABLED, default_rpcAcceptRootElementUnqualified);
+				boolean defaultRpcAcceptRootElementUnqualified = rpcAcceptRootElementUnqualified;
+				rpcAcceptRootElementUnqualified = ValidatoreMessaggiApplicativiRest.readBooleanValueWithDefault(pa.getProprietaList(), CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_RPC_ACCEPT_ROOT_ELEMENT_UNQUALIFIED_ENABLED, defaultRpcAcceptRootElementUnqualified);
 			}
+			
+			WSDLValidatorConfig config = new WSDLValidatorConfig();
+			config.setRpcAcceptRootElementUnqualified(rpcAcceptRootElementUnqualified);
 			
 			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, requestInfo, message, soapStreamReader, soggettoErogatore, idServizio, 
 					readFirstHeaderIntegrazione, azioneHeaderIntegrazione, protocolFactory, modalitaIdentificazione, 
 					pattern, forceRegistryBased, forcePluginBased, this.logger, true,
-					bufferMessage_readOnly, 
+					bufferMessageReadOnly, 
 					headerIntegrazione!=null ? headerIntegrazione.getIdTransazione() : null,
-					rpcAcceptRootElementUnqualified);
+					config);
 
 			// Se non ho riconosciuto una azione a questo punto, 
 			// durante il processo standard di riconoscimento viene sollevata una eccezione IdentificazioneDinamicaException

@@ -705,7 +705,7 @@ public class AccordoServizioWrapperUtilities {
 	/** Search action  */
 	
 	public String searchOperationName(boolean isRichiesta, String portType, OpenSPCoop2Message messageParam, OpenSPCoop2MessageSoapStreamReader soapStreamReaderParam,
-			boolean rpcAcceptRootElementUnqualified) throws DriverRegistroServiziException{
+			WSDLValidatorConfig config) throws DriverRegistroServiziException{
 		
 		try{
 			if(this.accordoServizioWrapper==null){
@@ -836,7 +836,7 @@ public class AccordoServizioWrapperUtilities {
 								else {
 									if(argumentsOperation!=null && (!argumentsOperation.getSoapNamespace().equals(rootElementNamespace))) {
 										if(rootElementNamespace==null || StringUtils.isEmpty(rootElementNamespace)) {
-											if(!rpcAcceptRootElementUnqualified) {
+											if(config!=null && !config.isRpcAcceptRootElementUnqualified()) {
 												match=false;
 											}
 										}
@@ -862,7 +862,7 @@ public class AccordoServizioWrapperUtilities {
 			if(messageParam!=null) {
 				boolean addPrefixError = true;
 				WSDLValidator wsdlValidator = new WSDLValidator(messageParam, this.xmlUtils, this.accordoServizioWrapper, this.logger, 
-						false, rpcAcceptRootElementUnqualified, addPrefixError,
+						config, addPrefixError,
 						false, null);
 				for (int i = 0; i < this.accordoServizioWrapper.sizePortTypeList(); i++) {
 					PortType pt = this.accordoServizioWrapper.getPortType(i);

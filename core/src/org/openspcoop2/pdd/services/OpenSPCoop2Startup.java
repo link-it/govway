@@ -2620,7 +2620,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			// Libreria di validazione wsdl
 			try {
-				AbstractBaseOpenSPCoop2Message.setNormalizeNamespaceXSITypeDefault(propertiesReader.isValidazioneContenutiApplicativiRpcAddNamespaceXSITypeIfNotExists());
+				boolean normalizeNamespaceXSITypeDefault = propertiesReader.isValidazioneContenutiApplicativiRpcAddNamespaceXSITypeIfNotExists()
+						||
+						propertiesReader.isValidazioneContenutiApplicativiDocumentAddNamespaceXSITypeIfNotExists()
+						||
+						propertiesReader.isValidazioneContenutiApplicativiXsdAddNamespaceXSITypeIfNotExists();
+				AbstractBaseOpenSPCoop2Message.setNormalizeNamespaceXSITypeDefault(normalizeNamespaceXSITypeDefault);
 				OpenSPCoop2Message msg = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createEmptyMessage(MessageType.SOAP_11, MessageRole.REQUEST);
 				if(msg instanceof AbstractBaseOpenSPCoop2Message) {
 					AbstractBaseOpenSPCoop2Message a = (AbstractBaseOpenSPCoop2Message) msg;
