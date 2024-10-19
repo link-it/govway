@@ -35,6 +35,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
 import org.openspcoop2.core.registry.wsdl.WSDLValidator;
+import org.openspcoop2.core.registry.wsdl.WSDLValidatorConfig;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -225,13 +226,15 @@ public class ValidatoreMessaggiApplicativi {
 			}
 		}
 		
-		this.bufferMessage_readOnly = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativiBufferContentRead();
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		
+		this.bufferMessage_readOnly = op2Properties.isValidazioneContenutiApplicativiBufferContentRead();
 		if(proprieta!=null && !proprieta.isEmpty()) {
 			boolean defaultBehaviour = this.bufferMessage_readOnly;
 			this.bufferMessage_readOnly = ValidatoreMessaggiApplicativiRest.readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_BUFFER_ENABLED, defaultBehaviour);
 		}
 		
-		this.rpcAcceptRootElementUnqualified = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativiRpcAcceptRootElementUnqualified();
+		this.rpcAcceptRootElementUnqualified = op2Properties.isValidazioneContenutiApplicativiRpcAcceptRootElementUnqualified();
 		if(proprieta!=null && !proprieta.isEmpty()) {
 			boolean default_rpcAcceptRootElementUnqualified = this.rpcAcceptRootElementUnqualified;
 			this.rpcAcceptRootElementUnqualified = ValidatoreMessaggiApplicativiRest.readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_RPC_ACCEPT_ROOT_ELEMENT_UNQUALIFIED_ENABLED, default_rpcAcceptRootElementUnqualified);
@@ -243,8 +246,15 @@ public class ValidatoreMessaggiApplicativi {
 				idTransazione = (String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 			}
 			boolean addPrefixError = false; // utilizzo il prefisso indicato in error.properties
+			WSDLValidatorConfig config = new WSDLValidatorConfig();
+			config.setGestioneXsiTypeRpcLiteral(gestioneXsiType_rpcLiteral);
+			config.setRpcAcceptRootElementUnqualified(this.rpcAcceptRootElementUnqualified);
+			config.setValidationXsdAddNamespaceXSITypeIfNotExists(op2Properties.isValidazioneContenutiApplicativiXsdAddNamespaceXSITypeIfNotExists());
+			config.setValidationRpcAddNamespaceXSITypeIfNotExists(op2Properties.isValidazioneContenutiApplicativiRpcAddNamespaceXSITypeIfNotExists());
+			config.setValidationDocumentAddNamespaceXSITypeIfNotExists(op2Properties.isValidazioneContenutiApplicativiDocumentAddNamespaceXSITypeIfNotExists());		
+			
 			this.wsdlValidator = new WSDLValidator(this.message, this.xmlUtils, this.accordoServizioWrapper, this.logger, 
-					gestioneXsiType_rpcLiteral, this.rpcAcceptRootElementUnqualified, addPrefixError,
+					config, addPrefixError,
 					this.bufferMessage_readOnly, idTransazione);
 		}catch(Exception e){
 			this.logger.error("WSDLValidator initialized failed: "+e.getMessage(),e);
@@ -254,7 +264,7 @@ public class ValidatoreMessaggiApplicativi {
 			throw ex;
 		}
 		
-		this.validateSoapAction = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativiCheckSoapAction();
+		this.validateSoapAction = op2Properties.isValidazioneContenutiApplicativiCheckSoapAction();
 		if(proprieta!=null && !proprieta.isEmpty()) {
 			boolean defaultSoapAction = this.validateSoapAction;
 			this.validateSoapAction = ValidatoreMessaggiApplicativiRest.readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SOAPACTION_ENABLED, defaultSoapAction);

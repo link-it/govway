@@ -2214,6 +2214,9 @@ public class OpenSPCoop2Properties {
 			this.isValidazioneContenutiApplicativiBufferContentRead();
 			this.isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione();
 			this.isValidazioneContenutiApplicativiRpcLiteralXsiTypeRipulituraDopoValidazione();
+			this.isValidazioneContenutiApplicativiRpcAddNamespaceXSITypeIfNotExists();
+			this.isValidazioneContenutiApplicativiDocumentAddNamespaceXSITypeIfNotExists();
+			this.isValidazioneContenutiApplicativiXsdAddNamespaceXSITypeIfNotExists();
 			this.isValidazioneContenutiApplicativiRpcAcceptRootElementUnqualified();
 			this.isValidazioneContenutiApplicativiCheckSoapAction();
 			this.getValidazioneContenutiApplicativiJsonPolicyAdditionalProperties();
@@ -23059,17 +23062,67 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isValidazioneContenutiApplicativiRpcAddNamespaceXSITypeIfNotExists = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					this.logWarn(this.getMessaggioProprietaNonImpostata(pName, true));
 					this.isValidazioneContenutiApplicativiRpcAddNamespaceXSITypeIfNotExists = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn(this.getMessaggioProprietaNonImpostata(pName, e, true),e);
 				this.isValidazioneContenutiApplicativiRpcAddNamespaceXSITypeIfNotExists = true;
 			}
 		}
 
 		return this.isValidazioneContenutiApplicativiRpcAddNamespaceXSITypeIfNotExists;
+	}
+	
+	private Boolean isValidazioneContenutiApplicativiDocumentAddNamespaceXSITypeIfNotExists = null;
+	public boolean isValidazioneContenutiApplicativiDocumentAddNamespaceXSITypeIfNotExists(){
+
+		if(this.isValidazioneContenutiApplicativiDocumentAddNamespaceXSITypeIfNotExists==null){
+			String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.document.addNamespaceXSITypeIfNotExists";
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isValidazioneContenutiApplicativiDocumentAddNamespaceXSITypeIfNotExists = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(this.getMessaggioProprietaNonImpostata(pName, false));
+					this.isValidazioneContenutiApplicativiDocumentAddNamespaceXSITypeIfNotExists = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(this.getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isValidazioneContenutiApplicativiDocumentAddNamespaceXSITypeIfNotExists = true;
+			}
+		}
+
+		return this.isValidazioneContenutiApplicativiDocumentAddNamespaceXSITypeIfNotExists;
+	}
+	
+	private Boolean isValidazioneContenutiApplicativiXsdAddNamespaceXSITypeIfNotExists = null;
+	public boolean isValidazioneContenutiApplicativiXsdAddNamespaceXSITypeIfNotExists(){
+
+		if(this.isValidazioneContenutiApplicativiXsdAddNamespaceXSITypeIfNotExists==null){
+			String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.xsd.addNamespaceXSITypeIfNotExists";
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isValidazioneContenutiApplicativiXsdAddNamespaceXSITypeIfNotExists = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(this.getMessaggioProprietaNonImpostata(pName, false));
+					this.isValidazioneContenutiApplicativiXsdAddNamespaceXSITypeIfNotExists = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(this.getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isValidazioneContenutiApplicativiXsdAddNamespaceXSITypeIfNotExists = true;
+			}
+		}
+
+		return this.isValidazioneContenutiApplicativiXsdAddNamespaceXSITypeIfNotExists;
 	}
 	
 	private Boolean isValidazioneContenutiApplicativiRpcAcceptRootElementUnqualified = null;

@@ -91,13 +91,18 @@ public class WSDLValidator {
 	private AbstractXMLUtils xmlUtils = null;
 	
 	/** Nodo xsiType Aggiunto */
-	private boolean gestioneXsiType_rpcLiteral;
+	private boolean gestioneXsiTypeRpcLiteral;
 	private SOAPElement rpcChildElement;
 	private QName rpcChildElementNamespaceAggiunto;
 	private QName rpcChildElementXSITypeAggiunto;
 	
 	/** Nodo rpc root element */
 	private boolean rpcAcceptRootElementUnqualified;
+	
+	/** XSI Type */
+	private boolean validationXsdAddNamespaceXSITypeIfNotExists;
+	private boolean validationRpcAddNamespaceXSITypeIfNotExists;
+	private boolean validationDocumentAddNamespaceXSITypeIfNotExists;
 
 	/** Prefix error */
 	private boolean addPrefixError = true;
@@ -109,25 +114,25 @@ public class WSDLValidator {
 	}
 	
 	/* ------ Costruttore -------------- */
-	private static Element getEngineEnvelopeCatchException(OpenSPCoop2Message msg, boolean bufferMessage_readOnly, String idTransazione) throws WSDLException {
+	private static Element getEngineEnvelopeCatchException(OpenSPCoop2Message msg, boolean bufferMessageReadOnly, String idTransazione) throws WSDLException {
 		try {
 			boolean checkSoapBodyEmpty = true;
-			return MessageUtils.getContentElement(msg, checkSoapBodyEmpty, bufferMessage_readOnly, idTransazione);
+			return MessageUtils.getContentElement(msg, checkSoapBodyEmpty, bufferMessageReadOnly, idTransazione);
 		}catch(Exception e){
 			throw new WSDLException(e.getMessage(),e);
 		}
 	}
 	public WSDLValidator(OpenSPCoop2Message msg,AbstractXMLUtils xmlUtils,AccordoServizioWrapper accordoServizioWrapper,Logger log,
-			boolean gestioneXsiType_rpcLiteral, boolean rpcAcceptRootElementUnqualified, boolean addPrefixError,
-			boolean bufferMessage_readOnly, String idTransazione)throws WSDLException{
-		this(msg.getMessageType(), getEngineEnvelopeCatchException(msg,bufferMessage_readOnly,idTransazione), xmlUtils, accordoServizioWrapper, log, 
-				gestioneXsiType_rpcLiteral, rpcAcceptRootElementUnqualified, addPrefixError);
+			WSDLValidatorConfig config, boolean addPrefixError,
+			boolean bufferMessageReadOnly, String idTransazione)throws WSDLException{
+		this(msg.getMessageType(), getEngineEnvelopeCatchException(msg,bufferMessageReadOnly,idTransazione), xmlUtils, accordoServizioWrapper, log, 
+				config, addPrefixError);
 		this.openspcoop2Message = msg;
 	}
 	// Il costruttore sottostante non puo' sfruttare la funzionalita' addNamespaceXSITypeIfNotExists
 	// per questo e' stato reso privato, poiche' tale funzionalita' richiede openspcoop2Message
 	private WSDLValidator(MessageType messageType, Element element,AbstractXMLUtils xmlUtils,AccordoServizioWrapper accordoServizioWrapper,Logger log,
-			boolean gestioneXsiType_rpcLiteral, boolean rpcAcceptRootElementUnqualified, boolean addPrefixError)throws WSDLException{
+			WSDLValidatorConfig config, boolean addPrefixError)throws WSDLException{
 		
 		this.messageType = messageType;
 		
@@ -156,9 +161,13 @@ public class WSDLValidator {
 		this.xmlUtils = xmlUtils;
 		this.accordoServizioWrapper = accordoServizioWrapper;
 		
-		this.gestioneXsiType_rpcLiteral = gestioneXsiType_rpcLiteral;
+		this.gestioneXsiTypeRpcLiteral = config.isGestioneXsiTypeRpcLiteral();
 		
-		this.rpcAcceptRootElementUnqualified = rpcAcceptRootElementUnqualified;
+		this.rpcAcceptRootElementUnqualified = config.isRpcAcceptRootElementUnqualified();
+		
+		this.validationXsdAddNamespaceXSITypeIfNotExists = config.isValidationXsdAddNamespaceXSITypeIfNotExists();
+		this.validationRpcAddNamespaceXSITypeIfNotExists = config.isValidationRpcAddNamespaceXSITypeIfNotExists();
+		this.validationDocumentAddNamespaceXSITypeIfNotExists = config.isValidationDocumentAddNamespaceXSITypeIfNotExists();
 		
 		this.addPrefixError = addPrefixError;
 	}
@@ -171,7 +180,7 @@ public class WSDLValidator {
 	
 	/* -------------- FINALIZE --------------------- */
 	public void wsdlConformanceCheck_restoreOriginalDocument(){
-		if(this.gestioneXsiType_rpcLiteral && this.rpcChildElement!=null){
+		if(this.gestioneXsiTypeRpcLiteral && this.rpcChildElement!=null){
 			try{
 				if(this.rpcChildElementXSITypeAggiunto!=null){
 					this.rpcChildElement.removeAttribute(this.rpcChildElementXSITypeAggiunto);
@@ -295,7 +304,7 @@ public class WSDLValidator {
 					namespaceElemento = n.getNamespaceURI();
 					
 					// Bug Fix: OPPT-784: Validazione fallisce in presenza di xsi:type e normalizzazione da axiom
-					if(this.openspcoop2Message!=null) {
+					if(this.openspcoop2Message!=null && this.validationXsdAddNamespaceXSITypeIfNotExists) {
 						this.openspcoop2Message.addNamespaceXSITypeIfNotExists(n, this.element);
 					}
 					
@@ -454,7 +463,7 @@ public class WSDLValidator {
 									nChild = nlChilds.item(j);
 									
 									// Bug Fix: OPPT-784: Validazione fallisce in presenza di xsi:type e normalizzazione da axiom
-									if(this.openspcoop2Message!=null) {
+									if(this.openspcoop2Message!=null && this.validationRpcAddNamespaceXSITypeIfNotExists) {
 										this.openspcoop2Message.addNamespaceXSITypeIfNotExists(nChild, this.element);
 									}
 									
@@ -464,7 +473,7 @@ public class WSDLValidator {
 								this.logger.debug("Validazione XSD con style["+style+"] e use["+use+"] Document Validation...");
 								
 								// Bug Fix: OPPT-784: Validazione fallisce in presenza di xsi:type e normalizzazione da axiom
-								if(this.openspcoop2Message!=null) {
+								if(this.openspcoop2Message!=null && this.validationDocumentAddNamespaceXSITypeIfNotExists) {
 									this.openspcoop2Message.addNamespaceXSITypeIfNotExists(nodo, this.element);
 								}
 								
@@ -981,7 +990,7 @@ public class WSDLValidator {
 									SOAPElement rpcOperation = SoapUtils.getNotEmptyFirstChildSOAPElement(body);
 									if(rpcOperation!=null){
 										SOAPElement childRpc = SoapUtils.getNotEmptyFirstChildSOAPElement(rpcOperation);
-										if(this.gestioneXsiType_rpcLiteral && 
+										if(this.gestioneXsiTypeRpcLiteral && 
 												childRpc!=null && nomeElementAtteso!=null && nomeElementAtteso.equals(childRpc.getLocalName())){
 											try{
 //												System.out.println("PRIMA: "+org.openspcoop2.message.OpenSPCoop2MessageFactory.getMessageFactory().createEmptySOAPMessage(SOAPVersion.SOAP11).
