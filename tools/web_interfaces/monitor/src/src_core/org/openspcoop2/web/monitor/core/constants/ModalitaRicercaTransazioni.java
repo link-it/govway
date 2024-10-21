@@ -42,7 +42,8 @@ public enum ModalitaRicercaTransazioni {
 	ID_APPLICATIVO_AVANZATA ("idApplicativo"), 
 	ID_APPLICATIVO_BASE ("idApplicativoBase"), 
 	ID_MESSAGGIO ("idMessaggio"),
-	ID_TRANSAZIONE ("idTransazione");
+	ID_TRANSAZIONE ("idTransazione"),
+	LIVE ("Live");
 	
 	private String value;
 	ModalitaRicercaTransazioni(String ruolo) {
@@ -74,19 +75,22 @@ public enum ModalitaRicercaTransazioni {
 		ModalitaRicercaTransazioni modalitaEnum = getFromString(modalita); 
 		if(modalitaEnum!=null) {
 			switch (modalitaEnum) {
-				case ANDAMENTO_TEMPORALE:
-				case ID_MESSAGGIO:
-				case ID_TRANSAZIONE:
-				case MITTENTE_APPLICATIVO:
-				case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
-				case MITTENTE_INDIRIZZO_IP:
-				case MITTENTE_SOGGETTO:
-				case MITTENTE_TOKEN_INFO:
-				case RICERCA_LIBERA:
+				case ANDAMENTO_TEMPORALE,
+					ID_MESSAGGIO,
+					ID_TRANSAZIONE,
+					MITTENTE_APPLICATIVO,
+					MITTENTE_IDENTIFICATIVO_AUTENTICATO,
+					MITTENTE_INDIRIZZO_IP,
+					MITTENTE_SOGGETTO,
+					MITTENTE_TOKEN_INFO,
+					RICERCA_LIBERA,
+					LIVE:
 					return 1;
-				case ID_APPLICATIVO_AVANZATA:
-				case ID_APPLICATIVO_BASE:
+				case ID_APPLICATIVO_AVANZATA,
+					ID_APPLICATIVO_BASE:
 					return 2;
+				default:
+					return 1;
 			}
 		}
 		

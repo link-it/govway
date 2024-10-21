@@ -196,6 +196,8 @@ public class TransazioniService implements ITransazioniService {
 	
 	private boolean isAttivoSqlFilterTransazioniIntegrationManager = true;
 	
+	private List<Index> forceIndexLiveFindAll;
+	private List<Index> forceIndexLiveCount;
 	private List<Index> forceIndexAndamentoTemporaleFindAll;
 	private List<Index> forceIndexAndamentoTemporaleCount;
 	private List<Index> forceIndexIdApplicativoBaseRichiestaFindAll;
@@ -217,6 +219,8 @@ public class TransazioniService implements ITransazioniService {
 	private List<Index> forceIndexGetByIdTransazione;
 	private void initForceIndex(PddMonitorProperties govwayMonitorProperties) throws Exception{
 		Properties repositoryExternal = govwayMonitorProperties.getExternalForceIndexRepository();
+		this.forceIndexLiveFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexLiveFindAll(repositoryExternal));
+		this.forceIndexLiveCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexLiveCount(repositoryExternal));
 		this.forceIndexAndamentoTemporaleFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexAndamentoTemporaleFindAll(repositoryExternal));
 		this.forceIndexAndamentoTemporaleCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexAndamentoTemporaleCount(repositoryExternal));
 		this.forceIndexIdApplicativoBaseRichiestaFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdApplicativoBaseRichiestaFindAll(repositoryExternal));
@@ -248,16 +252,19 @@ public class TransazioniService implements ITransazioniService {
 		return null;
 	}
 	private List<Index> getIndexFindAll(){
+		List<Index> lnull = null;
 		ModalitaRicercaTransazioni ricerca = ModalitaRicercaTransazioni.getFromString(this.searchForm.getModalitaRicercaStorico());
 		switch (ricerca) {
-		case ANDAMENTO_TEMPORALE:
-		case RICERCA_LIBERA:
-		case MITTENTE_TOKEN_INFO:
-		case MITTENTE_SOGGETTO:
-		case MITTENTE_APPLICATIVO:
-		case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
-		case MITTENTE_INDIRIZZO_IP:
+		case ANDAMENTO_TEMPORALE,
+			RICERCA_LIBERA,
+			MITTENTE_TOKEN_INFO,
+			MITTENTE_SOGGETTO,
+			MITTENTE_APPLICATIVO,
+			MITTENTE_IDENTIFICATIVO_AUTENTICATO,
+			MITTENTE_INDIRIZZO_IP:
 			return this.forceIndexAndamentoTemporaleFindAll;
+		case LIVE:
+			return this.forceIndexLiveFindAll;
 		case ID_APPLICATIVO_BASE:
 			org.openspcoop2.web.monitor.core.constants.TipoMessaggio tipoRicerca = 
 					org.openspcoop2.web.monitor.core.constants.TipoMessaggio.valueOf(this.searchForm.getTipoIdMessaggio());
@@ -289,19 +296,22 @@ public class TransazioniService implements ITransazioniService {
 		case ID_TRANSAZIONE:
 			return this.forceIndexIdTransazioneFindAll;
 		}
-		return null;
+		return lnull;
 	}
 	private List<Index> getIndexCount(){
+		List<Index> lnull = null;
 		ModalitaRicercaTransazioni ricerca = ModalitaRicercaTransazioni.getFromString(this.searchForm.getModalitaRicercaStorico());
 		switch (ricerca) {
-		case ANDAMENTO_TEMPORALE:
-		case RICERCA_LIBERA:
-		case MITTENTE_TOKEN_INFO:
-		case MITTENTE_SOGGETTO:
-		case MITTENTE_APPLICATIVO:
-		case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
-		case MITTENTE_INDIRIZZO_IP:
+		case ANDAMENTO_TEMPORALE,
+			RICERCA_LIBERA,
+			MITTENTE_TOKEN_INFO,
+			MITTENTE_SOGGETTO,
+			MITTENTE_APPLICATIVO,
+			MITTENTE_IDENTIFICATIVO_AUTENTICATO,
+			MITTENTE_INDIRIZZO_IP:
 			return this.forceIndexAndamentoTemporaleCount;
+		case LIVE:
+			return this.forceIndexLiveCount;
 		case ID_APPLICATIVO_BASE:
 			org.openspcoop2.web.monitor.core.constants.TipoMessaggio tipoRicerca = 
 					org.openspcoop2.web.monitor.core.constants.TipoMessaggio.valueOf(this.searchForm.getTipoIdMessaggio());
@@ -333,7 +343,7 @@ public class TransazioniService implements ITransazioniService {
 		case ID_TRANSAZIONE:
 			return this.forceIndexIdTransazioneCount;
 		}
-		return null;
+		return lnull;
 	}
 
 	public TransazioniService() {

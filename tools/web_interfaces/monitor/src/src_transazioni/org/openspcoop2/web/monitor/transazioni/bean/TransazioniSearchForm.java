@@ -544,21 +544,22 @@ Context, Cloneable {
 			if(this.getModalitaRicercaStorico() != null) {
 				ModalitaRicercaTransazioni t = ModalitaRicercaTransazioni.getFromString(this.getModalitaRicercaStorico());
 				switch (t) { 
-				case ANDAMENTO_TEMPORALE:
-				case RICERCA_LIBERA:
-				case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
-				case MITTENTE_INDIRIZZO_IP:
-				case ID_APPLICATIVO_AVANZATA:
+				case ANDAMENTO_TEMPORALE,
+					RICERCA_LIBERA,
+					MITTENTE_IDENTIFICATIVO_AUTENTICATO,
+					MITTENTE_INDIRIZZO_IP,
+					ID_APPLICATIVO_AVANZATA,
+					LIVE:
 					return true; // non c'e' motivo per non farli vedere
 				
-				case MITTENTE_TOKEN_INFO: // nelle erogazioni vi è anche il soggetto mittente
-				case MITTENTE_SOGGETTO: // solo per erogazioni
-				case MITTENTE_APPLICATIVO:
+				case MITTENTE_TOKEN_INFO, // nelle erogazioni vi è anche il soggetto mittente
+					MITTENTE_SOGGETTO, // solo per erogazioni
+					MITTENTE_APPLICATIVO:
 					return super.isTipologiaRicercaEntrambiEnabled();
 
-				case ID_APPLICATIVO_BASE:
-				case ID_MESSAGGIO:
-				case ID_TRANSAZIONE:
+				case ID_APPLICATIVO_BASE,
+					ID_MESSAGGIO,
+					ID_TRANSAZIONE:
 					return super.isTipologiaRicercaEntrambiEnabled(); // non viene visualizzata l'informazione
 				}
 			}

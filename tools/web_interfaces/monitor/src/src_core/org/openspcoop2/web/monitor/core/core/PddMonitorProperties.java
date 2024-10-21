@@ -356,6 +356,9 @@ public class PddMonitorProperties {
 	public List<String> getTransazioniForceIndexLiveFindAll(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.live.findAll", externalRepository);
 	}
+	public List<String> getTransazioniForceIndexLiveCount(Properties externalRepository) throws UtilsException{
+		return this.getIndexList("transazioni.forceIndex.live.count", externalRepository);
+	}
 	
 	public List<String> getTransazioniForceIndexEsitiCount(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.esiti.count", externalRepository);

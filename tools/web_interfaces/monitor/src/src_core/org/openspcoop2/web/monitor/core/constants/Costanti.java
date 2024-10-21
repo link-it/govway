@@ -240,7 +240,8 @@ public class Costanti {
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_BASE_LABEL_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoApplicativo.lvl2.ricercaBase.label"; 
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_AVANZATA_LABEL_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoApplicativo.lvl2.ricercaLibera.label"; 
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_MESSAGGIO_LABEL_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoMessaggio.label"; 
-	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_LABEL_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoTransazione.label"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_LABEL_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoTransazione.label";
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_LIVE_LABEL_KEY = "transazioni.search.tipoRicerca.live.label"; 
 
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_DISTRIBUZIONE_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.distribuzione.label";
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_PERSONALIZZATA_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.personalizzata.label";

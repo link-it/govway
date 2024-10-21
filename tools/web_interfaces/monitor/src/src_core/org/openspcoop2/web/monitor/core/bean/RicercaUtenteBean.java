@@ -139,6 +139,8 @@ public class RicercaUtenteBean extends RicercaUtente {
 				return MessageManager.getInstance().getMessage(Costanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_INDIRIZZO_IP_LABEL_KEY);
 			case ModalitaRicercaTransazioni.ID_APPLICATIVO_AVANZATA:
 				return MessageManager.getInstance().getMessage(Costanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_AVANZATA_LABEL_KEY);
+			case ModalitaRicercaTransazioni.LIVE:
+				return MessageManager.getInstance().getMessage(Costanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_LIVE_LABEL_KEY);
 			default:
 				return Costanti.NON_SELEZIONATO;
 			}

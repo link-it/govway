@@ -2947,7 +2947,7 @@ public class DriverUsersDB {
 	/**
 	 * Restituisce la ricerca personalizzata per l'utenza <var>login</var>
 	 * 
-	 * @param login Identificatore di un utente
+	 * @param idUtente Identificatore di un utente
 	 * @param id identificativo della ricerca
 	 *               
 	 * @return Ricerca individuata
@@ -3034,7 +3034,9 @@ public class DriverUsersDB {
 	 * Restituisce la ricerca personalizzata per l'utenza <var>login</var>
 	 * 
 	 * @param login Identificatore di un utente
-	 * @param id identificativo della ricerca
+	 * @param label Label della ricerca
+	 * @param modulo Modulo
+	 * @param modalitaRicerca Tipo di ricerca all'interno del modulo
 	 *               
 	 * @return Ricerca individuata
 	 */
@@ -3130,7 +3132,6 @@ public class DriverUsersDB {
 	 * 
 	 * @param login Identificatore di un utente
 	 *               
-	 * @return Ricerca individuata
 	 */
 	public void cancellaRicerche(String login) throws DriverUsersDBException {
 		this.cancellaRicercaEngine(login, null);
@@ -3142,7 +3143,6 @@ public class DriverUsersDB {
 	 * @param login Identificatore di un utente
 	 * @param id identificativo della ricerca
 	 *               
-	 * @return Ricerca individuata
 	 */
 	public void cancellaRicerca(String login, long id) throws DriverUsersDBException {
 		this.cancellaRicercaEngine(login, id);
