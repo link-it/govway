@@ -76,19 +76,17 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 	private Boolean useBouncyCastleProviderDirective = null;
 	
 	public static String readPrefix(Properties properties) {
-		String prefix = PREFIX;
 		for (Object key : properties.keySet()) {
 			if (key instanceof String) {
 				String propKey = (String)key;
 				if (propKey.startsWith(PREFIX)) {
-					break;
+					return PREFIX;
 				} else if (propKey.startsWith(OLD_PREFIX)) {
-					prefix = OLD_PREFIX;
-					break;
+					return OLD_PREFIX;
 				}
 			}
 		}
-		return prefix;
+		return PREFIX;
 	}
 	
 	private static final String TRUST_STORE_REF = "truststore";
@@ -104,6 +102,11 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 	
     public static final String SUFFIX_BYOK = ".byok";
 	
+    public static final String X509_CRL_FILE_VALIDATE_ONLY_END_ENTITY = X509_CRL_FILE + ".validateOnlyEndEntity";
+    
+    private static final String TRUE = "true";
+    private static final String FALSE = "false";
+    
 	@Override
 	public void loadProperties(Properties properties, ClassLoader loader, PasswordEncryptor passwordEncryptor)
 			throws WSSecurityException, IOException {
@@ -285,7 +288,7 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 			// Devo evitare che venga eseguito il loadCerts quando invoco super.loadProperties
 			
 			properties.remove(prefix + LOAD_CA_CERTS);
-			properties.setProperty(prefix + LOAD_CA_CERTS, "false");
+			properties.setProperty(prefix + LOAD_CA_CERTS, FALSE);
 			
 		}
 		
@@ -300,8 +303,9 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 			// rimuovo la proprietà per non farla trovare quando chiamo il super.loadProperties
 			this.properties.remove(prefix + X509_CRL_FILE);
 			
+			CRLCertstore crlCertstore = null;
 			try {
-				CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(requestInfo, crlLocations);
+				crlCertstore = GestoreKeystoreCache.getCRLCertstore(requestInfo, crlLocations);
 				if(crlCertstore==null) {
 					throw new IOException("Accesso alle crl '"+crlLocations+"' non riuscito");
 				}
@@ -312,13 +316,28 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 
 			String useBouncyCastleProviderProperty = properties.getProperty(prefix + "useBouncyCastleProvider");
 			if (useBouncyCastleProviderProperty != null) {
-				if("true".equalsIgnoreCase(useBouncyCastleProviderProperty.trim())) {
+				if(TRUE.equalsIgnoreCase(useBouncyCastleProviderProperty.trim())) {
 					this.useBouncyCastleProviderDirective = true;
 				}
-				else if("false".equalsIgnoreCase(useBouncyCastleProviderProperty.trim())) {
+				else if(FALSE.equalsIgnoreCase(useBouncyCastleProviderProperty.trim())) {
 					this.useBouncyCastleProviderDirective = false;
 				}
 			}
+			
+			String validateOnlyEndEntity = properties.getProperty(prefix + X509_CRL_FILE_VALIDATE_ONLY_END_ENTITY);
+			if (validateOnlyEndEntity != null) {
+				if(TRUE.equalsIgnoreCase(validateOnlyEndEntity.trim())) {
+					this.setValidateOnlyEndEntity(true);
+				}
+				else if(FALSE.equalsIgnoreCase(validateOnlyEndEntity.trim())) {
+					this.setValidateOnlyEndEntity(false);
+				}
+			}
+			else if(crlCertstore!=null && crlCertstore.getWrappedCRLCertStore()!=null && crlCertstore.getWrappedCRLCertStore().countCrls()==1) {
+				// per default si assume che venga fornito solo il file CRL del certificato finale
+				this.setValidateOnlyEndEntity(true);
+			}
+			
 		}
 
 

@@ -540,6 +540,15 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 	    		break;
 	    	}
 		}
+		String signatureCrlsValidateOnlyEndEntity = null;
+		if(signatureCrls!=null) {
+			for (Map.Entry<String,Object> entry : wssIncomingProperties.entrySet()) {
+				if(SecurityConstants.SIGNATURE_CRL_VALIDATE_ONLY_END_ENTITY.equals(entry.getKey())) {
+					signatureCrlsValidateOnlyEndEntity = (String) entry.getValue();
+		    		break;
+		    	}
+			}
+		}
 		
 		String forceDecryptionUser = null;
 		
@@ -558,6 +567,9 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 	    			pTrustStoreSignatureVerification.put(KeystoreConstants.PROPERTY_PROVIDER, KeystoreConstants.PROVIDER_GOVWAY);
 	    			if(signatureCrls!=null) {
 	    				pTrustStoreSignatureVerification.put(KeystoreConstants.PROPERTY_CRL, signatureCrls);
+	    				if(signatureCrlsValidateOnlyEndEntity!=null) {
+	    					pTrustStoreSignatureVerification.put(KeystoreConstants.PROPERTY_CRL_VALIDATE_ONLY_END_ENTITY, signatureCrlsValidateOnlyEndEntity);
+	    				}
 	    			}
 	    		}
 			}
