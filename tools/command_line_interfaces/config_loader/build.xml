@@ -163,7 +163,7 @@
 			<fileset dir="${openspcoop2.lib}/shared" includes="snakeyaml-2.2-gov4j-1.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="freemarker-2.3.33.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="velocity-*.jar"/>
-			<fileset dir="${openspcoop2.lib}/wss4j" includes="wss4j-ws-security-common-3.0.3-gov4j-1.jar"/>
+			<fileset dir="${openspcoop2.lib}/wss4j" includes="wss4j-ws-security-common-3.0.3-gov4j-2.jar"/>
 			<fileset dir="${openspcoop2.lib}/applicationServer/tomcat10" includes="*.jar"/> <!-- Serve per il datasource env -->
 		</copy>
 		

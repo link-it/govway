@@ -236,4 +236,8 @@ public class CRLCertstore implements Serializable {
 		return this.certStore;
 	}
 	
+	public int countCrls() {
+		return this.crlBytes!=null ? this.crlBytes.size() : 0;
+	}
+	
 }
