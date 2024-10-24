@@ -189,6 +189,8 @@
 	<azione nome="WSSWSS4JextFirmataCifrata"/>
 	<azione nome="WSSWSS4JextCifrata"/>
 	<azione nome="WSSWSS4JextFirmata"/>
+        <azione nome="WSSWSS4JextFirmata_CERTIFICATO_REVOCATO"/>
+        <azione nome="WSSWSS4JextFirmata_CERTIFICATO_SCADUTO"/>
 	<azione nome="WSSWSS4JextCifrataFirmataAttachments"/>
 	<azione nome="WSSWSS4JextFirmataCifrataAttachments"/>
 	<azione nome="WSSWSS4JextCifrataAttachments"/>

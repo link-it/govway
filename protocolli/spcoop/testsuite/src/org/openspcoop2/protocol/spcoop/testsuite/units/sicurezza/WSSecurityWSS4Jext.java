@@ -21,11 +21,13 @@
 package org.openspcoop2.protocol.spcoop.testsuite.units.sicurezza;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
 import javax.xml.soap.SOAPException;
 
+import org.apache.axis.AxisFault;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
@@ -40,11 +42,13 @@ import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
+import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.mime.MimeTypeConstants;
 import org.testng.Assert;
+import org.testng.Reporter;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.DataProvider;
@@ -287,8 +291,91 @@ public class WSSecurityWSS4Jext {
 	}
 	
 	
+	/***
+	 * Test per la gestione della scadenza dei certificati
+	 */
+	Repository repositorySincronoWSSWSS4JextCertificatoScaduto=new Repository();
+	@Test(groups = {CostantiSicurezza.ID_GRUPPO_SICUREZZA, WSSecurityWSS4Jext.ID_GRUPPO, WSSecurityWSS4Jext.ID_GRUPPO + ".WSS4JEXT_CERTIFICATO_SCADUTO"},
+			description = "Test per controllare se i certificati vengono controllati correttamente")
+	public void sincronoWSSWSS4JextCertificatoScaduto() throws Exception {
+		ErroreAttesoOpenSPCoopLogCore erroreAtteso = new ErroreAttesoOpenSPCoopLogCore();
+		final String errorMsg = "A security error was encountered when verifying the message ; certificate expired on 20190709103000GMT+00:00";
+		
+		erroreAtteso.setIntervalloInferiore(Date.from(Instant.now()));
+		
+		
+		Reporter.log("Invio messaggio alla porta con certificato scaduto... ");
+		// Creazione client Sincrono
+		ClientSincrono client = new ClientSincrono(this.repositorySincronoWSSWSS4JextCertificatoScaduto);
+		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+		client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_WSS4JEXT_CERTIFICATO_SCADUTO);
+		client.connectToSoapEngine();
+		client.setMessageFromFile(Utilities.testSuiteProperties.getSoapTestWSSecurityWSS4Jext(), false, addIDUnivoco);
+		
+		try {
+			client.run();
+			Assert.fail("Il client non ha riconosciuto la scadenza del certificato");
+		} catch(AxisFault e) {
+			Reporter.log("attendo errore di tipo: 'Invalid response received from the API Implementation'...");
+			Assert.assertTrue(e.getFaultString().equals("Invalid response received from the API Implementation"));
+			Reporter.log("errore atteso ricevuto");
+		}
+
+		erroreAtteso.setMsgErrore(errorMsg);
+		erroreAtteso.setIntervalloSuperiore(Date.from(Instant.now()));
+		this.erroriAttesiOpenSPCoopCore.add(erroreAtteso);
+		
+		String id = this.repositorySincronoWSSWSS4JextCertificatoScaduto.getNext();
+		Reporter.log("controllo messaggi diagnostici id messaggio: " + id + ", errore atteso: " + errorMsg);
+		
+		DatabaseMsgDiagnosticiComponent data = DatabaseProperties.getDatabaseComponentDiagnosticaErogatore();
+		Assert.assertTrue(data.isTracedMessaggioWithLike(id, errorMsg));
+		
+		Reporter.log("errore trovato test superato con successo");
+		
+	}
 	
-	
+	/***
+	 * Test per la gestione della revoca dei certificati
+	 */
+	Repository repositorySincronoWSSWSS4JextCertificatoRevocato=new Repository();
+	@Test(groups = {CostantiSicurezza.ID_GRUPPO_SICUREZZA, WSSecurityWSS4Jext.ID_GRUPPO, WSSecurityWSS4Jext.ID_GRUPPO + ".WSS4JEXT_CERTIFICATO_REVOCATO"},
+			description = "Test per controllare se i certificati vengono controllati correttamente")
+	public void sincronoWSSWSS4JextCertificatoRevocato() throws Exception {
+		ErroreAttesoOpenSPCoopLogCore erroreAtteso = new ErroreAttesoOpenSPCoopLogCore();
+		final String errorMsg = "A security error was encountered when verifying the message ; Certificate revocation after 2019-07-09 10:32:00 +0000, reason: keyCompromise";
+		
+		erroreAtteso.setIntervalloInferiore(Date.from(Instant.now()));
+		
+		Reporter.log("Invio messaggio alla porta con certificato revocato... ");
+		// Creazione client Sincrono
+		ClientSincrono client = new ClientSincrono(this.repositorySincronoWSSWSS4JextCertificatoRevocato);
+		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+		client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_WSS4JEXT_CERTIFICATO_REVOCATO);
+		client.connectToSoapEngine();
+		client.setMessageFromFile(Utilities.testSuiteProperties.getSoapTestWSSecurityWSS4Jext(), false, addIDUnivoco);
+		
+		try {
+			client.run();
+			Assert.fail("Il client non ha riconosciuto la revoca del certificato");
+		} catch(AxisFault e) {
+			Reporter.log("attendo errore di tipo: 'Invalid response received from the API Implementation'...");
+			Assert.assertTrue(e.getFaultString().equals("Invalid response received from the API Implementation"));
+			Reporter.log("errore atteso ricevuto");
+		}
+		
+		erroreAtteso.setMsgErrore(errorMsg);
+		erroreAtteso.setIntervalloSuperiore(Date.from(Instant.now()));
+		this.erroriAttesiOpenSPCoopCore.add(erroreAtteso);
+		
+		String id = this.repositorySincronoWSSWSS4JextCertificatoRevocato.getNext();
+		Reporter.log("controllo messaggi diagnostici id messaggio: " + id + ", errore atteso: " + errorMsg);
+		
+		DatabaseMsgDiagnosticiComponent data = DatabaseProperties.getDatabaseComponentDiagnosticaErogatore();
+		Assert.assertTrue(data.isTracedMessaggioWithLike(id, errorMsg));
+		
+		Reporter.log("errore trovato test superato con successo");
+	}
 	
 	
 	

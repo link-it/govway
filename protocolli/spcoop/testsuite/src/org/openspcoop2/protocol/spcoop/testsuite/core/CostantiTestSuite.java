@@ -387,6 +387,10 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_WSS_WSS4JEXT_ENCRYPT="WSS4Jext_Cifrata";
 	/** Porte Delegate per WS-Security: WSS4Jext_Firmata */
 	public static final String PORTA_DELEGATA_WSS_WSS4JEXT_SIGNATURE="WSS4Jext_Firmata";
+	/** Porte Delegate per WS-Security: WSS4Jext_Firmata */
+	public static final String PORTA_DELEGATA_WSS_WSS4JEXT_CERTIFICATO_SCADUTO="WSS4Jext_Firmata_CERTIFICATO_SCADUTO";
+	/** Porte Delegate per WS-Security: WSS4Jext_Firmata */
+	public static final String PORTA_DELEGATA_WSS_WSS4JEXT_CERTIFICATO_REVOCATO="WSS4Jext_Firmata_CERTIFICATO_REVOCATO";
 	
 	/** Porte Delegate per WS-Security: WSS4Jext_CifrataFirmataAttachments */
 	public static final String PORTA_DELEGATA_WSS_WSS4JEXT_ENCRYPT_SIGNATURE_ATTACHMENTS="WSS4Jext_CifrataFirmataAttachments";
@@ -1488,6 +1492,10 @@ public class CostantiTestSuite {
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_WSS4JEXT_ENCRYPT="WSSWSS4JextCifrata";
     /** ENTITA SPCOOP: Nome Azione WSSWSS4JextFirmata del Servizio RichiestaStatoAvanzamento */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_WSS4JEXT_SIGNATURE="WSSWSS4JextFirmata";    
+    /** ENTITA SPCOOP: Nome Azione WSSWSS4JextFirmata_CERTIFICATO_SCADUTO del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_WSS4JEXT_CERTIFICATO_SCADUTO="WSSWSS4JextFirmata_CERTIFICATO_SCADUTO";  
+    /** ENTITA SPCOOP: Nome Azione WSSWSS4JextFirmata_CERTIFICATO_REVOCATO del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_WSS4JEXT_CERTIFICATO_REVOCATO="WSSWSS4JextFirmata_CERTIFICATO_REVOCATO";  
     /** ENTITA SPCOOP: Nome Azione WSSWSS4JextCifrataFirmataAttachments del Servizio RichiestaStatoAvanzamento */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_WSS4JEXT_ENCRYPT_SIGNATURE_ATTACHMENTS="WSSWSS4JextCifrataFirmataAttachments";
     /** ENTITA SPCOOP: Nome Azione WSSWSS4JextFirmataCifrataAttachments del Servizio RichiestaStatoAvanzamento */
