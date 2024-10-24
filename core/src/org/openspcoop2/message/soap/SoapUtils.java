@@ -173,6 +173,24 @@ public class SoapUtils {
 	
 	
 	
+	// SOAP getElement
+	
+	public static SOAPElement getFirstSOAPElement(SOAPElement element) {
+		if(element!=null) {
+			Iterator<?> it = element.getChildElements();
+			while (it.hasNext()){
+				Node tmp = (Node) it.next();
+				if(tmp instanceof SOAPElement) { 
+					return (SOAPElement) tmp;
+				}
+			}
+		}
+		return null;
+	}
+	
+	
+	
+	
 	// SOAP Content Type
 	
 	public static String getContentType(SOAPMessage msg) {

@@ -143,7 +143,14 @@ public class SPCoopSbustamento {
 			MessageXMLUtils xmlUtils = MessageXMLUtils.getInstance(msg.getFactory());
 			
 			SOAPBody body = msg.getSOAPBody();
-			SOAPElement descrizione = (SOAPElement) msg.getFirstChildElement(body);
+			
+			// dopo la modifica del commit '185e2d7ba1db561d769128aadbee493103963ac9' per la validazione dei contenuti si ottiene l'errore: class org.apache.xerces.dom.ElementNSImpl cannot be cast to class javax.xml.soap.SOAPElement
+			// uso metodo getFirstSOAPElement in cui è stato ripristinato il vecchio codice
+			/**Element e = msg.getFirstChildElement(body);*/
+			/**System.out.println("CLASSE ["+e.getClass().getName()+"] ["+msg.getAsString(e, false)+"]");*/
+			Element e = SoapUtils.getFirstSOAPElement(body); 
+			
+			SOAPElement descrizione = (SOAPElement) e;
 			java.util.Iterator<?> it = descrizione.getChildElements();
 			String idMsg = null;
 			while(it.hasNext()){
@@ -152,7 +159,11 @@ public class SPCoopSbustamento {
 					continue;
 				}
 				SOAPElement descrizioneMessaggio = (SOAPElement) element;
-				SOAPElement riferimento = (SOAPElement)msg.getFirstChildElement(descrizioneMessaggio);
+				
+				// uguale a sopra il motivo
+				/**SOAPElement riferimento = (SOAPElement)msg.getFirstChildElement(descrizioneMessaggio);*/
+				SOAPElement riferimento = SoapUtils.getFirstSOAPElement(descrizioneMessaggio); 
+				
 				if(riferimento.getAttribute("role").equalsIgnoreCase(this.spcoopProperties.getRoleRichiestaManifest())){
 					idMsg = riferimento.getAttribute("href");
 					break;
