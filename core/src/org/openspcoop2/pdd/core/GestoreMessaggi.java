@@ -98,6 +98,8 @@ import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.date.DaylightSavingUtils;
+import org.openspcoop2.utils.date.TimeTransitionType;
 import org.openspcoop2.utils.id.serial.InfoStatistics;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
@@ -5180,6 +5182,17 @@ public class GestoreMessaggi  {
 			
 			String tipo = Costanti.INBOX;
 						
+			Date dataAttualeVerificaNow = DateManager.getDate();
+			boolean checkOraLegale = OpenSPCoop2Properties.getInstance().isTimerConsegnaContenutiApplicativiSchedulingCheckPassaggioOraLegaleVersoOraSolare();
+			boolean isMinutiMancantiPassaggioOraLegaleVersoOraSolare = false;
+			if(checkOraLegale) {
+				isMinutiMancantiPassaggioOraLegaleVersoOraSolare = isMinutiMancantiPassaggioOraLegaleVersoOraSolare(debug, loggerSql, dataAttualeVerificaNow, 60); // devo verificare di non essere nella potenziale ora tornata indietro
+			}
+			
+			if(debug) {
+				loggerSql.debug("[QUERY] Parametri ricerca (coda:"+coda+" priorita:"+priorita+"): verificaPresenzaMessaggiDaRispedire:"+verificaPresenzaMessaggiDaRispedire+" calcolaDataMinimaMessaggiRispedire:"+calcolaDataMinimaMessaggiRispedire+" isMinutiMancantiPassaggioOraLegaleVersoOraSolare:"+isMinutiMancantiPassaggioOraLegaleVersoOraSolare+"");
+			}
+			
 			Timestamp dataMinima = null;
 			if(verificaPresenzaMessaggiDaRispedire && calcolaDataMinimaMessaggiRispedire) {
 				PreparedStatement pstmt = null;
@@ -5200,7 +5213,28 @@ public class GestoreMessaggi  {
 						
 						if(secondiAnzianitaPerIniziareSpedireNuovoMessaggio!=null && secondiAnzianitaPerIniziareSpedireNuovoMessaggio>0) {
 							// Per non prendere immediatamente i messaggi in carico ed evitare problemi di serializzazione con le tracce, se ancora non è stata scritta
-							query.append(GestoreMessaggi.MESSAGGI).append(".ORA_REGISTRAZIONE<=? ").append(" AND ");
+							if(isMinutiMancantiPassaggioOraLegaleVersoOraSolare) {
+								query.append("(");
+								
+								// controllo che non sia nell'intervallo tra now e i precedenti x secondi
+								query.append(GestoreMessaggi.MESSAGGI).append(".ORA_REGISTRAZIONE<=? "); 
+								
+								query.append(" OR ");
+								
+								// se è una data futura rispetto al now la prendo in considerazione essendo il problema dell'ora, comunque sempre nella solita partizione giornaliera
+								query.append("(");
+								query.append(GestoreMessaggi.MESSAGGI).append(".ORA_REGISTRAZIONE>? "); 
+								query.append(" AND ");
+								query.append(GestoreMessaggi.MESSAGGI).append(".ORA_REGISTRAZIONE<? "); 
+								query.append(")");
+								
+								query.append(")");
+								
+								query.append(" AND ");
+							}
+							else {
+								query.append(GestoreMessaggi.MESSAGGI).append(".ORA_REGISTRAZIONE<=? ").append(" AND ");
+							}
 						}
 						
 						// join
@@ -5244,8 +5278,26 @@ public class GestoreMessaggi  {
 							query.append(" AND ")
 								.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".ERRORE_PROCESSAMENTO_COMPACT <> ? ");
 						}
-												
-						query.append(" AND ").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".RISPEDIZIONE<=? ");
+						
+						if(isMinutiMancantiPassaggioOraLegaleVersoOraSolare) {
+							query.append(" AND (");
+							
+							// data di rispedizione precedente ad adesso
+							query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".RISPEDIZIONE<=? ");
+							
+							// data futura che combacia con l'ora di registrazione, la prendo in considerazione essendo il problema dell'ora, comunque sempre nella solita partizione giornaliera
+							query.append(" OR (");
+							query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".RISPEDIZIONE=").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".ORA_REGISTRAZIONE");
+							query.append(" AND ");
+							query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".RISPEDIZIONE<=? ");
+							query.append(") ");
+							
+							query.append(") ");
+						}
+						else {
+							query.append(" AND ").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".RISPEDIZIONE<=? ");
+						}
+						
 						query.append(" AND (").
 							append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".LOCK_CONSEGNA is null ").
 							append(" OR ").
@@ -5263,7 +5315,15 @@ public class GestoreMessaggi  {
 						
 						if(secondiAnzianitaPerIniziareSpedireNuovoMessaggio!=null && secondiAnzianitaPerIniziareSpedireNuovoMessaggio>0) {
 							// Per non prendere immediatamente i messaggi in carico ed evitare problemi di serializzazione con le tracce, se ancora non è stata scritta
-							sqlQueryObject.addWhereCondition("m.ORA_REGISTRAZIONE<=?");
+							if(isMinutiMancantiPassaggioOraLegaleVersoOraSolare) {
+								sqlQueryObject.addWhereCondition(false, 
+										"m.ORA_REGISTRAZIONE<=?", // controllo che non sia nell'intervallo tra now e i precedenti x secondi
+										"(m.ORA_REGISTRAZIONE>? AND m.ORA_REGISTRAZIONE<?)" // se è una data futura rispetto al now la prendo in considerazione essendo il problema dell'ora, comunque sempre nella solita partizione giornaliera
+										);
+							}
+							else {
+								sqlQueryObject.addWhereCondition("m.ORA_REGISTRAZIONE<=?");
+							}
 						}
 						
 						// join
@@ -5293,7 +5353,18 @@ public class GestoreMessaggi  {
 							sqlQueryObject.addWhereCondition("sa.ERRORE_PROCESSAMENTO_COMPACT <> ?");
 						}
 						
-						sqlQueryObject.addWhereCondition("sa.RISPEDIZIONE<=?");
+						if(isMinutiMancantiPassaggioOraLegaleVersoOraSolare) {
+							sqlQueryObject.addWhereCondition(false,
+									// data di rispedizione precedente ad adesso
+									"sa.RISPEDIZIONE<=?",
+									// data futura che combacia con l'ora di registrazione, la prendo in considerazione essendo il problema dell'ora, comunque sempre nella solita partizione giornaliera
+									"(sa.RISPEDIZIONE=sa.ORA_REGISTRAZIONE  AND sa.RISPEDIZIONE<=?)"
+							);
+						}
+						else {
+							sqlQueryObject.addWhereCondition("sa.RISPEDIZIONE<=?");
+						}
+						
 						sqlQueryObject.addWhereCondition(false, "sa.LOCK_CONSEGNA is null", "sa.LOCK_CONSEGNA < ?");
 						
 						sqlQueryObject.setANDLogicOperator(true);
@@ -5306,9 +5377,35 @@ public class GestoreMessaggi  {
 					List<Object> params = new ArrayList<>();
 					
 					if(secondiAnzianitaPerIniziareSpedireNuovoMessaggio!=null && secondiAnzianitaPerIniziareSpedireNuovoMessaggio>0) {
-						Timestamp anzianita = new Timestamp(DateManager.getTimeMillis()-(1000*secondiAnzianitaPerIniziareSpedireNuovoMessaggio.intValue()));
-						pstmt.setTimestamp(index++, anzianita);
-						params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(anzianita));
+						if(isMinutiMancantiPassaggioOraLegaleVersoOraSolare) {
+							
+							// se è una data futura rispetto al now la prendo in considerazione essendo il problema dell'ora
+							long nowMillis = dataAttualeVerificaNow.getTime(); // uso il now calcolato per la variabile isMinutiMancantiPassaggioOraLegaleVersoOraSolare
+							
+							// controllo che non sia nell'intervallo tra now e i precedenti x secondi (ORA_REGISTRAZIONE<=?)
+							Timestamp anzianita = new Timestamp(nowMillis-(1000*secondiAnzianitaPerIniziareSpedireNuovoMessaggio.intValue()));
+							pstmt.setTimestamp(index++, anzianita);
+							params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(anzianita));
+							
+							// se è una data futura rispetto al now la prendo in considerazione essendo il problema dell'ora, comunque sempre nella solita partizione giornaliera (ORA_REGISTRAZIONE>? AND ORA_REGISTRAZIONE<?)
+							Timestamp futuro = new Timestamp(nowMillis);
+							pstmt.setTimestamp(index++, futuro);
+							params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(futuro));
+							
+							Timestamp futuroPlusHour = new Timestamp(nowMillis+
+									(1000*60*60)+ // un'ora
+									(1000*60+5)); // aggiungo altri 5 minuti
+							pstmt.setTimestamp(index++, futuroPlusHour);
+							params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(futuroPlusHour));
+
+						}
+						else {
+							long nowMillis = DateManager.getTimeMillis();
+							// controllo che non sia nell'intervallo tra now e i precedenti x secondi
+							Timestamp anzianita = new Timestamp(nowMillis-(1000*secondiAnzianitaPerIniziareSpedireNuovoMessaggio.intValue()));
+							pstmt.setTimestamp(index++, anzianita);
+							params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(anzianita));
+						}
 					}
 					
 					pstmt.setString(index++,tipo); params.add(tipo);
@@ -5334,8 +5431,16 @@ public class GestoreMessaggi  {
 						params.add(TimerConsegnaContenutiApplicativiThread.ID_MODULO);
 					}
 					
+					// riconsegna
 					pstmt.setTimestamp(index++,new Timestamp(riconsegna.getTime()));
 					params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(riconsegna));
+					if(isMinutiMancantiPassaggioOraLegaleVersoOraSolare) {
+						Timestamp futuroPlusHour = new Timestamp(riconsegna.getTime()+
+								(1000*60*60)+ // un'ora
+								(1000*60+5)); // aggiungo altri 5 minuti
+						pstmt.setTimestamp(index++,new Timestamp(futuroPlusHour.getTime()));
+						params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(futuroPlusHour));
+					}
 					
 					pstmt.setTimestamp(index++, new Timestamp(dataRilascioLock.getTime()));
 					params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(dataRilascioLock));
@@ -5361,7 +5466,12 @@ public class GestoreMessaggi  {
 					
 					if(dataMinima==null) {
 						// non esistono messaggi; e' inutile fare la query successiva
+						loggerSql.debug("[QUERY] (Messaggi.daRispedire.computeMinDate) ["+comandoSql+"] dataMinima non trovata");
 						return idMsg;
+					}
+					
+					if(debug) {
+						loggerSql.debug("[QUERY] (Messaggi.daRispedire.computeMinDate) ["+comandoSql+"] dataMinimaTrovata: "+DateUtils.getSimpleDateFormatMs().format(dataMinima));
 					}
 					
 				} catch(Throwable e) {
@@ -5423,7 +5533,28 @@ public class GestoreMessaggi  {
 					
 					if(secondiAnzianitaPerIniziareSpedireNuovoMessaggio!=null && secondiAnzianitaPerIniziareSpedireNuovoMessaggio>0) {
 						// Per non prendere immediatamente i messaggi in carico ed evitare problemi di serializzazione con le tracce, se ancora non è stata scritta
-						query.append(GestoreMessaggi.MESSAGGI).append(".ORA_REGISTRAZIONE<=? ").append(" AND ");
+						if(isMinutiMancantiPassaggioOraLegaleVersoOraSolare) {
+							query.append("(");
+							
+							// controllo che non sia nell'intervallo tra now e i precedenti x secondi
+							query.append(GestoreMessaggi.MESSAGGI).append(".ORA_REGISTRAZIONE<=? "); 
+							
+							query.append(" OR ");
+							
+							// se è una data futura rispetto al now la prendo in considerazione essendo il problema dell'ora, comunque sempre nella solita partizione giornaliera
+							query.append("(");
+							query.append(GestoreMessaggi.MESSAGGI).append(".ORA_REGISTRAZIONE>? "); 
+							query.append(" AND ");
+							query.append(GestoreMessaggi.MESSAGGI).append(".ORA_REGISTRAZIONE<? "); 
+							query.append(")");
+							
+							query.append(")");
+							
+							query.append(" AND ");
+						}
+						else {
+							query.append(GestoreMessaggi.MESSAGGI).append(".ORA_REGISTRAZIONE<=? ").append(" AND ");
+						}
 					}
 					
 					// join
@@ -5471,7 +5602,26 @@ public class GestoreMessaggi  {
 					else {
 						query.append(" AND ").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".ERRORE_PROCESSAMENTO_COMPACT = ? "); // prima consegna
 					}
-					query.append(" AND ").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".RISPEDIZIONE<=? ");
+					
+					if(isMinutiMancantiPassaggioOraLegaleVersoOraSolare) {
+						query.append(" AND (");
+						
+						// data di rispedizione precedente ad adesso
+						query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".RISPEDIZIONE<=? ");
+						
+						// data futura che combacia con l'ora di registrazione, la prendo in considerazione essendo il problema dell'ora, comunque sempre nella solita partizione giornaliera
+						query.append(" OR (");
+						query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".RISPEDIZIONE=").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".ORA_REGISTRAZIONE");
+						query.append(" AND ");
+						query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".RISPEDIZIONE<=? ");
+						query.append(") ");
+						
+						query.append(") ");
+					}
+					else {
+						query.append(" AND ").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".RISPEDIZIONE<=? ");
+					}
+					
 					query.append(" AND (").
 						append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".LOCK_CONSEGNA is null ").
 						append(" OR ").
@@ -5519,7 +5669,15 @@ public class GestoreMessaggi  {
 					
 					if(secondiAnzianitaPerIniziareSpedireNuovoMessaggio!=null && secondiAnzianitaPerIniziareSpedireNuovoMessaggio>0) {
 						// Per non prendere immediatamente i messaggi in carico ed evitare problemi di serializzazione con le tracce, se ancora non è stata scritta
-						sqlQueryObject.addWhereCondition("m.ORA_REGISTRAZIONE<=?");
+						if(isMinutiMancantiPassaggioOraLegaleVersoOraSolare) {
+							sqlQueryObject.addWhereCondition(false, 
+									"m.ORA_REGISTRAZIONE<=?", // controllo che non sia nell'intervallo tra now e i precedenti x secondi
+									"(m.ORA_REGISTRAZIONE>? AND m.ORA_REGISTRAZIONE<?)" // se è una data futura rispetto al now la prendo in considerazione essendo il problema dell'ora, comunque sempre nella solita partizione giornaliera
+									);
+						}
+						else {
+							sqlQueryObject.addWhereCondition("m.ORA_REGISTRAZIONE<=?");
+						}
 					}
 					
 					// join
@@ -5552,7 +5710,19 @@ public class GestoreMessaggi  {
 					else {
 						sqlQueryObject.addWhereCondition("sa.ERRORE_PROCESSAMENTO_COMPACT = ?"); // "prima" consegna
 					}
-					sqlQueryObject.addWhereCondition("sa.RISPEDIZIONE<=?");
+					
+					if(isMinutiMancantiPassaggioOraLegaleVersoOraSolare) {
+						sqlQueryObject.addWhereCondition(false,
+								// data di rispedizione precedente ad adesso
+								"sa.RISPEDIZIONE<=?",
+								// data futura che combacia con l'ora di registrazione, la prendo in considerazione essendo il problema dell'ora, comunque sempre nella solita partizione giornaliera
+								"(sa.RISPEDIZIONE=sa.ORA_REGISTRAZIONE  AND sa.RISPEDIZIONE<=?)"
+						);
+					}
+					else {
+						sqlQueryObject.addWhereCondition("sa.RISPEDIZIONE<=?");
+					}
+					
 					sqlQueryObject.addWhereCondition(false, "sa.LOCK_CONSEGNA is null", "sa.LOCK_CONSEGNA < ?");
 					
 					sqlQueryObject.setANDLogicOperator(true);
@@ -5587,9 +5757,33 @@ public class GestoreMessaggi  {
 				}
 				
 				if(secondiAnzianitaPerIniziareSpedireNuovoMessaggio!=null && secondiAnzianitaPerIniziareSpedireNuovoMessaggio>0) {
-					Timestamp anzianita = new Timestamp(DateManager.getTimeMillis()-(1000*secondiAnzianitaPerIniziareSpedireNuovoMessaggio.intValue()));
-					pstmtMsgDaSpedire.setTimestamp(index++, anzianita);
-					params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(anzianita));
+					if(isMinutiMancantiPassaggioOraLegaleVersoOraSolare) {
+						
+						// se è una data futura rispetto al now la prendo in considerazione essendo il problema dell'ora
+						long nowMillis = dataAttualeVerificaNow.getTime(); // uso il now calcolato per la variabile isMinutiMancantiPassaggioOraLegaleVersoOraSolare
+						
+						// controllo che non sia nell'intervallo tra now e i precedenti x secondi (ORA_REGISTRAZIONE<=?)
+						Timestamp anzianita = new Timestamp(nowMillis-(1000*secondiAnzianitaPerIniziareSpedireNuovoMessaggio.intValue()));
+						pstmtMsgDaSpedire.setTimestamp(index++, anzianita);
+						params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(anzianita));
+						
+						// se è una data futura rispetto al now la prendo in considerazione essendo il problema dell'ora, comunque sempre nella solita partizione giornaliera (ORA_REGISTRAZIONE>? AND ORA_REGISTRAZIONE<?)
+						Timestamp futuro = new Timestamp(nowMillis);
+						pstmtMsgDaSpedire.setTimestamp(index++, futuro);
+						params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(futuro));
+						
+						Timestamp futuroPlusHour = new Timestamp(nowMillis+
+								(1000*60*60)+ // un'ora
+								(1000*60+5)); // aggiungo altri 5 minuti
+						pstmtMsgDaSpedire.setTimestamp(index++, futuroPlusHour);
+						params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(futuroPlusHour));
+
+					}
+					else {
+						Timestamp anzianita = new Timestamp(DateManager.getTimeMillis()-(1000*secondiAnzianitaPerIniziareSpedireNuovoMessaggio.intValue()));
+						pstmtMsgDaSpedire.setTimestamp(index++, anzianita);
+						params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(anzianita));
+					}
 				}
 				
 				pstmtMsgDaSpedire.setString(index++,tipo); params.add(tipo);
@@ -5623,6 +5817,13 @@ public class GestoreMessaggi  {
 				
 				pstmtMsgDaSpedire.setTimestamp(index++,new Timestamp(riconsegna.getTime()));
 				params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(riconsegna));
+				if(isMinutiMancantiPassaggioOraLegaleVersoOraSolare) {
+					Timestamp futuroPlusHour = new Timestamp(riconsegna.getTime()+
+							(1000*60*60)+ // un'ora
+							(1000*60+5)); // aggiungo altri 5 minuti
+					pstmtMsgDaSpedire.setTimestamp(index++,new Timestamp(futuroPlusHour.getTime()));
+					params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(futuroPlusHour));
+				}
 				
 				pstmtMsgDaSpedire.setTimestamp(index++, new Timestamp(dataRilascioLock.getTime()));
 				params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(dataRilascioLock));
@@ -5674,6 +5875,10 @@ public class GestoreMessaggi  {
 				rs.close(); rs = null;
 				pstmtMsgDaSpedire.close(); pstmtMsgDaSpedire=null;
 
+				if(debug) {
+					loggerSql.debug("[QUERY] (Messaggi.daRispedire) ["+comandoSql+"] trovati risultati: "+idMsg.size());
+				}
+								
 				return idMsg;
 
 			} catch(Exception e) {
@@ -5699,6 +5904,25 @@ public class GestoreMessaggi  {
 			throw new GestoreMessaggiException("Metodo invocato con OpenSPCoopState non valido");
 		}
 
+	}
+	public static boolean isMinutiMancantiPassaggioOraLegaleVersoOraSolare(boolean debug, RunnableLogger loggerSql, Date data, int minutes) {
+		try {
+			String format = DaylightSavingUtils.getOffsetFormat();
+			String dataString = DateUtils.getSimpleDateFormat(format).format(data);
+			TimeTransitionType type = DaylightSavingUtils.getTimeChangePendingTodayWithoutOffset(dataString, format);
+			if(type!=null && TimeTransitionType.FROM_DAYLIGHT_SAVING_TO_STANDARD_TIME.equals(type)) {
+				long m = DaylightSavingUtils.minutesUntilNextTransitionWithoutOffset(dataString, format);
+				boolean result = m>-1 && m<=minutes; // va bene anche 0 perchè rappresenta l'ultimo minuto 
+				if(debug) {
+					loggerSql.debug("(Messaggi.daRispedire) verifico data ["+dataString+"] minutes: "+m+"   Risultato: "+result);
+				}
+				return result;
+			}
+			return false;
+		}catch(Throwable t) {
+			loggerSql.error("Calcolo 'isMinutiMancantiPassaggioOraLegaleVersoOraSolare' fallito: "+t.getMessage(),t);
+		}
+		return false;
 	}
 	
 	public MessaggioServizioApplicativo readInfoDestinatario(String applicativo, boolean debug, Logger log)throws GestoreMessaggiException{
