@@ -1,3 +1,9 @@
+2024-10-25  Andrea Poli <apoli@link.it>
+
+	* [Utils, GovWayCore]
+	Aggiunta funzionalità #1538
+	Introdotte utility per la gestione dell'ora legale e solare, utilizzate nella funzionalità di riconsegna con presenza in carico dei messaggi.
+
 2024-10-23  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

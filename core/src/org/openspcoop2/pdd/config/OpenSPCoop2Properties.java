@@ -1031,6 +1031,7 @@ public class OpenSPCoop2Properties {
 			this.isTimerConsegnaContenutiApplicativiAbilitato();
 			this.isTimerConsegnaContenutiApplicativiSchedulingDebug();
 			this.isTimerConsegnaContenutiApplicativiSchedulingCheckEliminazioneLogica();
+			this.isTimerConsegnaContenutiApplicativiSchedulingCheckPassaggioOraLegaleVersoOraSolare();
 			List<String> code = getTimerConsegnaContenutiApplicativiCode();
 			if(code==null) {
 				return false;
@@ -6174,7 +6175,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerConsegnaContenutiApplicativiAbilitato(){
 		
 		if(this.isTimerConsegnaContenutiApplicativiAbilitato==null){
-			if(this.isServerJ2EE()){
+			if(this.isServerJ2EE()!=null && this.isServerJ2EE().booleanValue()){
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.enable' disabilitata poiche' il prodotto e' configurato in modalita' server j2ee");
 				this.isTimerConsegnaContenutiApplicativiAbilitato = false;
 			}
@@ -6205,7 +6206,7 @@ public class OpenSPCoop2Properties {
 		
 		String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.scheduling.debug";
 		if(this.isTimerConsegnaContenutiApplicativiSchedulingDebug==null){
-			if(this.isServerJ2EE()){
+			if(this.isServerJ2EE()!=null && this.isServerJ2EE().booleanValue()){
 				this.logWarn("Proprieta' di openspcoop '"+pName+"' disabilitata poiche' il prodotto e' configurato in modalita' server j2ee");
 				this.isTimerConsegnaContenutiApplicativiSchedulingDebug = false;
 			}
@@ -6236,7 +6237,7 @@ public class OpenSPCoop2Properties {
 		
 		String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.scheduling.checkEliminazioneLogica";
 		if(this.isTimerConsegnaContenutiApplicativiSchedulingCheckEliminazioneLogica==null){
-			if(this.isServerJ2EE()){
+			if(this.isServerJ2EE()!=null && this.isServerJ2EE().booleanValue()){
 				this.logWarn("Proprieta' di openspcoop '"+pName+"' disabilitata poiche' il prodotto e' configurato in modalita' server j2ee");
 				this.isTimerConsegnaContenutiApplicativiSchedulingCheckEliminazioneLogica = false;
 			}
@@ -6260,6 +6261,30 @@ public class OpenSPCoop2Properties {
 		}
 		
 		return this.isTimerConsegnaContenutiApplicativiSchedulingCheckEliminazioneLogica;
+	}
+	
+	private Boolean isTimerConsegnaContenutiApplicativiSchedulingCheckPassaggioOraLegaleVersoOraSolare = null;
+	public boolean isTimerConsegnaContenutiApplicativiSchedulingCheckPassaggioOraLegaleVersoOraSolare(){
+		
+		String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.scheduling.checkPassaggioOraLegaleVersoOraSolare";
+		if(this.isTimerConsegnaContenutiApplicativiSchedulingCheckPassaggioOraLegaleVersoOraSolare==null){		
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					this.isTimerConsegnaContenutiApplicativiSchedulingCheckPassaggioOraLegaleVersoOraSolare = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.isTimerConsegnaContenutiApplicativiSchedulingCheckPassaggioOraLegaleVersoOraSolare = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.isTimerConsegnaContenutiApplicativiSchedulingCheckPassaggioOraLegaleVersoOraSolare = true;
+			}
+		}
+		
+		return this.isTimerConsegnaContenutiApplicativiSchedulingCheckPassaggioOraLegaleVersoOraSolare;
 	}
 	
 	private List<String> getTimerConsegnaContenutiApplicativiCode = null;
