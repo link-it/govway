@@ -132,7 +132,7 @@ public class ConfigurazioniGeneraliSearchForm extends BaseSearchForm implements 
 	
 	@Override
 	public String getModalitaRicerca() {
-		return null;
+		return Costanti.NON_SELEZIONATO;
 	}
 	
 	@Override

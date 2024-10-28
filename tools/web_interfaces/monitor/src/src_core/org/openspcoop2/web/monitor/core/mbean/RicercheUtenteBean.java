@@ -37,6 +37,7 @@ import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.RicercaUtente;
 import org.openspcoop2.web.lib.users.dao.User;
+import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.FileUploadBean;
 import org.openspcoop2.web.monitor.core.bean.RicercaUtenteBean;
 import org.openspcoop2.web.monitor.core.bean.RicercheUtenteSearchForm;
@@ -95,12 +96,16 @@ public class RicercheUtenteBean extends PdDBaseBean<RicercaUtenteBean, Long, ISe
 		List<SelectItem> moduli = new ArrayList<>();
 
 		moduli.add(new SelectItem(Costanti.NON_SELEZIONATO, Costanti.NON_SELEZIONATO));
-		moduli.add(new SelectItem(ModuloRicerca.ALLARMI.toString(), MessageManager.getInstance().getMessageFromResourceBundle(Costanti.RICERCHE_UTENTE_MODULO_ALLARMI_LABEL_KEY)));
-		moduli.add(new SelectItem(ModuloRicerca.CONFIGURAZIONI.toString(), MessageManager.getInstance().getMessageFromResourceBundle(Costanti.RICERCHE_UTENTE_MODULO_CONFIGURAZIONI_LABEL_KEY)));
-		moduli.add(new SelectItem(ModuloRicerca.EVENTI.toString(), MessageManager.getInstance().getMessageFromResourceBundle(Costanti.RICERCHE_UTENTE_MODULO_EVENTI_LABEL_KEY)));
-		moduli.add(new SelectItem(ModuloRicerca.STATISTICHE.toString(), MessageManager.getInstance().getMessageFromResourceBundle(Costanti.RICERCHE_UTENTE_MODULO_STATISTICHE_LABEL_KEY)));
-		moduli.add(new SelectItem(ModuloRicerca.STATISTICHE_PERSONALIZZATE.toString(), MessageManager.getInstance().getMessageFromResourceBundle(Costanti.RICERCHE_UTENTE_MODULO_STATISTICHE_PERSONALIZZATE_LABEL_KEY)));
 		moduli.add(new SelectItem(ModuloRicerca.TRANSAZIONI.toString(), MessageManager.getInstance().getMessageFromResourceBundle(Costanti.RICERCHE_UTENTE_MODULO_TRANSAZIONI_LABEL_KEY)));
+		moduli.add(new SelectItem(ModuloRicerca.EVENTI.toString(), MessageManager.getInstance().getMessageFromResourceBundle(Costanti.RICERCHE_UTENTE_MODULO_EVENTI_LABEL_KEY)));
+		if(ApplicationBean.getInstance().getShowAllarmi()) {
+			moduli.add(new SelectItem(ModuloRicerca.ALLARMI.toString(), MessageManager.getInstance().getMessageFromResourceBundle(Costanti.RICERCHE_UTENTE_MODULO_ALLARMI_LABEL_KEY)));
+		}
+		moduli.add(new SelectItem(ModuloRicerca.STATISTICHE.toString(), MessageManager.getInstance().getMessageFromResourceBundle(Costanti.RICERCHE_UTENTE_MODULO_STATISTICHE_LABEL_KEY)));
+		if(ApplicationBean.getInstance().getShowStatistichePersonalizzate()) {
+			moduli.add(new SelectItem(ModuloRicerca.STATISTICHE_PERSONALIZZATE.toString(), MessageManager.getInstance().getMessageFromResourceBundle(Costanti.RICERCHE_UTENTE_MODULO_STATISTICHE_PERSONALIZZATE_LABEL_KEY)));
+		}
+		moduli.add(new SelectItem(ModuloRicerca.CONFIGURAZIONI.toString(), MessageManager.getInstance().getMessageFromResourceBundle(Costanti.RICERCHE_UTENTE_MODULO_CONFIGURAZIONI_LABEL_KEY)));
 
 		return moduli;
 	}
@@ -132,6 +137,7 @@ public class RicercheUtenteBean extends PdDBaseBean<RicercaUtenteBean, Long, ISe
 			modalitaRicercaList.add(new SelectItem(ModalitaRicercaTransazioni.MITTENTE_IDENTIFICATIVO_AUTENTICATO.toString(), MessageManager.getInstance().getMessage(Costanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_IDENTIFICATIVO_AUTENTICATO_LABEL_KEY)));
 			modalitaRicercaList.add(new SelectItem(ModalitaRicercaTransazioni.MITTENTE_INDIRIZZO_IP.toString(), MessageManager.getInstance().getMessage(Costanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_INDIRIZZO_IP_LABEL_KEY)));
 			modalitaRicercaList.add(new SelectItem(ModalitaRicercaTransazioni.ID_APPLICATIVO_AVANZATA.toString(), MessageManager.getInstance().getMessage(Costanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_AVANZATA_LABEL_KEY)));
+			modalitaRicercaList.add(new SelectItem(ModalitaRicercaTransazioni.LIVE.toString(), MessageManager.getInstance().getMessage(Costanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_LIVE_LABEL_KEY)));
 		}
 
 		return modalitaRicercaList;
@@ -295,14 +301,26 @@ public class RicercheUtenteBean extends PdDBaseBean<RicercaUtenteBean, Long, ISe
 					String login = loggedUtente.getLogin();
 					for (RicercaUtente ricercaPersonalizzata : ricerchePersonalizzate.getRicerche()) {
 						RicercaUtenteBean ricercaUtenteBean = new RicercaUtenteBean(ricercaPersonalizzata);
-						// verifica duplicati
-						RicercaUtenteBean oldRicercaUtente = ((IRicercheUtenteService)this.service).leggiRicercaUtente(login, ricercaUtenteBean.getLabel(), ricercaUtenteBean.getModulo(), ricercaUtenteBean.getModalitaRicerca());
-						if(oldRicercaUtente != null) {
+						
+						// importo la ricerca, cerco disponibilita' per il nome che ricevo dal file
+						String nuovaLabelRicerca = ((IRicercheUtenteService)this.service).calcolaLabelRicerca(login, ricercaUtenteBean.getLabel(), ricercaUtenteBean.getModulo(), ricercaUtenteBean.getModalitaRicerca(), ricercaUtenteBean.getVisibilita());
+
+						// se ho null non c'e' un nome a disposizione e non importo
+						if(nuovaLabelRicerca == null) {
 							msgRicercheScartate.add(MessageManager.getInstance().getMessageWithParamsFromResourceBundle(
 									Costanti.RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_RICERCA_DUPLICATA_LABEL_KEY, ricercaUtenteBean.getLabel(),
 									ricercaUtenteBean.getModuloLabel(), ricercaUtenteBean.getModalitaRicercaLabel()));
 							continue;
 						}
+						
+//						// verifica duplicati
+//						RicercaUtenteBean oldRicercaUtente = ((IRicercheUtenteService)this.service).leggiRicercaUtente(login, ricercaUtenteBean.getLabel(), ricercaUtenteBean.getModulo(), ricercaUtenteBean.getModalitaRicerca());
+//						if(oldRicercaUtente != null) {
+//							msgRicercheScartate.add(MessageManager.getInstance().getMessageWithParamsFromResourceBundle(
+//									Costanti.RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_RICERCA_DUPLICATA_LABEL_KEY, ricercaUtenteBean.getLabel(),
+//									ricercaUtenteBean.getModuloLabel(), ricercaUtenteBean.getModalitaRicercaLabel()));
+//							continue;
+//						}
 						
 						// verifica compatibilita' protocolli
 						String protocolloRicercaImport = ricercaUtenteBean.getProtocollo();
@@ -344,6 +362,8 @@ public class RicercheUtenteBean extends PdDBaseBean<RicercaUtenteBean, Long, ISe
 							}
 						}
 						
+						// imposto la label alla ricerca
+						ricercaPersonalizzata.setLabel(nuovaLabelRicerca);
 						((IRicercheUtenteService)this.service).insertRicerca(login, ricercaPersonalizzata);	
 					}
 				} catch (UtilsException e) {
@@ -399,18 +419,30 @@ public class RicercheUtenteBean extends PdDBaseBean<RicercaUtenteBean, Long, ISe
 			// 3. verifica duplicati
 			
 			// controllo duplicati se ho cambiato la label
-			if(!oldRicercaUtente.getLabel().equals(this.getSelectedElement().getLabel())) {
-				if(((IRicercheUtenteService)this.service).leggiRicercaUtente(login, this.getSelectedElement().getLabel(), 
-						this.getSelectedElement().getModulo(), this.getSelectedElement().getModalitaRicerca()) != null) {
-					MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_AGGIORNA_RICERCA_MESSAGGIO_ERRORE_RICERCA_DUPLICATA_LABEL_KEY));
-					return null;
+			String labelToSave = this.getSelectedElement().getLabel().trim();
+			
+			if(!oldRicercaUtente.getLabel().equals(labelToSave)) {
+				// 1. se la nuova ricerca e' privata l'utente non deve averne un'altra con lo stesso nome
+				if(this.getSelectedElement().getVisibilita().equals(Costanti.VALUE_VISIBILITA_RICERCA_UTENTE_PRIVATA)) {
+					if(((IRicercheUtenteService)this.service).esisteRicercaPrivata(login, labelToSave, 
+							this.getSelectedElement().getModulo(), this.getSelectedElement().getModalitaRicerca())) {
+						MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_AGGIORNA_RICERCA_MESSAGGIO_ERRORE_RICERCA_DUPLICATA_LABEL_KEY));
+						return null;
+					}
+				} else {
+					//2. se la nuova ricerca e' pubblica non deve esisterne un'altra con lo stesso nome di proprieta' di un altro utente
+					if(((IRicercheUtenteService)this.service).esisteRicercaPubblica(login, labelToSave, 
+							this.getSelectedElement().getModulo(), this.getSelectedElement().getModalitaRicerca())) {
+						MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_AGGIORNA_RICERCA_MESSAGGIO_ERRORE_RICERCA_PUBBLICA_DUPLICATA_LABEL_KEY));
+						return null;
+					}
 				}
 			}
 			
 
 			// 4. aggiorno dati
-			oldRicercaUtente.setLabel(this.getSelectedElement().getLabel());
-			oldRicercaUtente.setDescrizione(this.selectedElement.getDescrizione());
+			oldRicercaUtente.setLabel(labelToSave);
+			oldRicercaUtente.setDescrizione(this.selectedElement.getDescrizione().trim());
 			oldRicercaUtente.setVisibilita(this.selectedElement.getVisibilita());
 
 			// 5.salvataggio

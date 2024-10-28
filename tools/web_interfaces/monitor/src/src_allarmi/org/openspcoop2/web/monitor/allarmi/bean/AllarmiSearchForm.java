@@ -180,7 +180,7 @@ public class AllarmiSearchForm extends BaseSearchForm
 	
 	@Override
 	public String getModalitaRicerca() {
-		return null;
+		return Costanti.NON_SELEZIONATO;
 	}
 	
 	@Override
@@ -215,5 +215,23 @@ public class AllarmiSearchForm extends BaseSearchForm
 		}
 		
 		return null;
+	}
+	
+	@Override
+	public void ripulisciRicercaUtente() {
+		String currentTipologiaAllarme = this.getTipologiaAllarme();
+		
+		// allarme non globale 
+		if(currentTipologiaAllarme != null && !currentTipologiaAllarme.equals(TIPOLOGIA_CONFIGURAZIONE)) {
+			String currentProtocollo = this.getProtocollo();
+			String currentTipoNomeSoggettoLocale = this.getTipoNomeSoggettoLocale();
+			
+			this.ripulisci();
+			
+			this.setProtocollo(currentProtocollo);
+			this.setTipoNomeSoggettoLocale(currentTipoNomeSoggettoLocale);
+		} else {
+			this.ripulisci();
+		}
 	}
 }

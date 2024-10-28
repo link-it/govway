@@ -1255,7 +1255,10 @@ public class ServletUtils {
 			// casi speciali per il monitor
 			
 			// select list azione, vengono inviati due parametri azCombo e azCombocomboboxField generato dal framework
-			if(parameterToCheck.startsWith(Costanti.PARAMETRO_MONITOR_RICERCA_AZIONE)) {
+			// textarea descrizione ricerca utente
+			if(parameterToCheck.startsWith(Costanti.PARAMETRO_MONITOR_RICERCA_AZIONE)
+					|| parameterToCheck.startsWith(Costanti.PARAMETRO_MONITOR_RICERCA_UTENTE_DESCRIZIONE)
+					) {
 				return true;
 			}
 		}
@@ -1329,14 +1332,14 @@ public class ServletUtils {
 	}
 	
 	/**
-	 * Elimina il carattere ':' dall'identificativo passato come parametro, gli id contenenti i ':' non sono validi in jquery
+	 * Elimina i caratteri non validi dall'identificativo passato come parametro, gli id contenenti i caratteri ':', '/' e '@' non sono validi in jquery
 	 * @return
 	 */
 	public static String normalizeId(String input) {
-		if(input == null) {
-			return null;
-		}
-		
-		return input.replaceAll("[:/]", "_");
+	    if (input == null) {
+	        return null;
+	    }
+	    
+	    return input.replaceAll("[:/@]", "_");
 	}
 }

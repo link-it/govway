@@ -121,6 +121,11 @@ public class RicercheUtenteSearchForm extends AbstractDateSearchForm implements 
 	public String getSoggettoRicerca() {
 		throw new UnsupportedOperationException(Costanti.OPERAZIONE_NON_CONSENTITA);
 	}
+	
+	@Override
+	public void ripulisciRicercaUtente() {
+		throw new UnsupportedOperationException(Costanti.OPERAZIONE_NON_CONSENTITA);
+	}
 
 	public String getFiltroModulo() {
 		return this.filtroModulo;

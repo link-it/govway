@@ -2747,4 +2747,15 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	public String getSoggettoRicerca() {
 		return Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(this.getTipoNomeSoggettoLocale()) ? null : this.getTipoNomeSoggettoLocale();
 	}
+	
+	@Override
+	public void ripulisciRicercaUtente() {
+		String currentProtocollo = this.getProtocollo();
+		String currentTipoNomeSoggettoLocale = this.getTipoNomeSoggettoLocale();
+		
+		this.ripulisci();
+		
+		this.setProtocollo(currentProtocollo);
+		this.setTipoNomeSoggettoLocale(currentTipoNomeSoggettoLocale);
+	}
 }

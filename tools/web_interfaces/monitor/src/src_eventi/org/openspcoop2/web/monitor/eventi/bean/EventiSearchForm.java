@@ -267,7 +267,7 @@ public class EventiSearchForm extends AbstractDateSearchForm {
 	
 	@Override
 	public String getModalitaRicerca() {
-		return null;
+		return Costanti.NON_SELEZIONATO;
 	}
 	
 	@Override
@@ -288,5 +288,10 @@ public class EventiSearchForm extends AbstractDateSearchForm {
 	@Override
 	public String getSoggettoRicerca() {
 		return null;
+	}
+	
+	@Override
+	public void ripulisciRicercaUtente() {
+		this.ripulisci();
 	}
 }

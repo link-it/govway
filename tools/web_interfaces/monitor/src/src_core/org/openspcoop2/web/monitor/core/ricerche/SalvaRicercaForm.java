@@ -101,23 +101,24 @@ public class SalvaRicercaForm {
 	}
 	
 	public boolean eseguiValidazioneForm() {
-		
-		// validazione label
-		this.salvaRicercaErrorMessage = SalvaRicercaForm.validaLabel(this.getLabel());
-		
-		if(this.salvaRicercaErrorMessage != null) {
-			return false;
+		if(this.salvaRicercaErrorMessage == null) {
+			// validazione label
+			this.salvaRicercaErrorMessage = SalvaRicercaForm.validaLabel(this.getLabel());
+			
+			if(this.salvaRicercaErrorMessage != null) {
+				return false;
+			}
+			
+			// validazione descrizione
+			this.salvaRicercaErrorMessage = SalvaRicercaForm.validaDescrizione(this.getDescrizione());
+			
+			if(this.salvaRicercaErrorMessage != null) {
+				return false;
+			}
+			
+			// validazione visibilita
+			this.salvaRicercaErrorMessage = SalvaRicercaForm.validaVisibilita(this.getVisibilita());
 		}
-		
-		// validazione descrizione
-		this.salvaRicercaErrorMessage = SalvaRicercaForm.validaDescrizione(this.getDescrizione());
-		
-		if(this.salvaRicercaErrorMessage != null) {
-			return false;
-		}
-		
-		// validazione visibilita
-		this.salvaRicercaErrorMessage = SalvaRicercaForm.validaVisibilita(this.getVisibilita());
 		
 		return this.salvaRicercaErrorMessage == null;
 	}
@@ -131,6 +132,11 @@ public class SalvaRicercaForm {
 			return MessageManager.getInstance().getMessage(Costanti.SALVA_RICERCA_INVALID_PARAMETER_LABEL_DIMENSIONE_NON_VALIDA_LABEL_KEY);
 		}
 		
+		// controllo che non ci siano spazi all'inizio e/o alla fine
+		if (label.length() != label.trim().length()) {
+			return MessageManager.getInstance().getMessage(Costanti.SALVA_RICERCA_INVALID_PARAMETER_LABEL_CARATTERI_VUOTI_AGLI_ESTREMI_LABEL_KEY);
+		}
+		
 		return null;
 	}
 	
@@ -141,6 +147,11 @@ public class SalvaRicercaForm {
 		
 		if (descrizione.length() > 4000) {
 			return MessageManager.getInstance().getMessage(Costanti.SALVA_RICERCA_INVALID_PARAMETER_DESCRIZIONE_DIMENSIONE_NON_VALIDA_LABEL_KEY);
+		}
+		
+		// controllo che non ci siano spazi all'inizio e/o alla fine
+		if (descrizione.length() != descrizione.trim().length()) {
+			return MessageManager.getInstance().getMessage(Costanti.SALVA_RICERCA_INVALID_PARAMETER_DESCRIZIONE_CARATTERI_VUOTI_AGLI_ESTREMI_LABEL_KEY);
 		}
 		
 		return null;
@@ -162,8 +173,8 @@ public class SalvaRicercaForm {
 	public RicercaUtente getRicerca() throws UtilsException {
 		RicercaUtente ricercaPersonalizzata = new RicercaUtente();
 		
-		ricercaPersonalizzata.setLabel(this.label);
-		ricercaPersonalizzata.setDescrizione(this.descrizione);
+		ricercaPersonalizzata.setLabel(this.label.trim());
+		ricercaPersonalizzata.setDescrizione(this.descrizione.trim());
 		ricercaPersonalizzata.setDataCreazione(new Date());
 		ricercaPersonalizzata.setVisibilita(this.visibilita);
 		ricercaPersonalizzata.setModulo(this.modulo.toString());
@@ -188,4 +199,7 @@ public class SalvaRicercaForm {
 		
 	}
 	
+	public boolean getSalvaRicercaErrorMessageCheck() {
+		return this.salvaRicercaErrorMessage == null;
+	}
 }

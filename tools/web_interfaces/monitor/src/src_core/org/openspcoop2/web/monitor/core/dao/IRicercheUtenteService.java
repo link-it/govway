@@ -48,5 +48,9 @@ public interface IRicercheUtenteService extends ISearchFormService<RicercaUtente
 	
 	public RicercaUtenteBean leggiRicercaUtente(long idUtente, long idRicerca);
 	
-	public RicercaUtenteBean leggiRicercaUtente(String login, String label, String modulo, String modalitaRicerca);
+	public boolean esisteRicercaPubblica(String login, String label, String modulo, String modalitaRicerca);
+	
+	public boolean esisteRicercaPrivata(String login, String label, String modulo, String modalitaRicerca);
+	
+	public String calcolaLabelRicerca(String login, String label, String modulo, String modalitaRicerca, String visibilita);
 }

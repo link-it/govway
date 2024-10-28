@@ -31,6 +31,7 @@ import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
+import org.openspcoop2.web.lib.users.RicercaUtenteNotFoundException;
 import org.openspcoop2.web.lib.users.dao.RicercaUtente;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.RicercaUtenteBean;
@@ -51,6 +52,8 @@ import org.slf4j.Logger;
  *
  */
 public class RicercheUtenteService implements IRicercheUtenteService{
+	
+	public static final int MAX_ITERATIONS = 50;
 
 	private static Logger log =  LoggerManager.getPddMonitorSqlLogger();
 	
@@ -247,10 +250,13 @@ public class RicercheUtenteService implements IRicercheUtenteService{
 		RicercaUtenteBean bean = null;
 		User loggedUtente = this.searchForm.getUser();
 		String login = loggedUtente.getLogin();
+		Long idUtente = loggedUtente.getId();
 		try {
-			return new RicercaUtenteBean(this.utenteDAO.leggiRicerca(login, key));
+			return new RicercaUtenteBean(this.utenteDAO.leggiRicerca(idUtente, key));
 		}catch (DriverUsersDBException e) {
 			log.error("Errore durante la lettura della ricerca personalizzata dell'utente "+login+" con id "+key+": " +e.getMessage(),e);
+		} catch (RicercaUtenteNotFoundException e) {
+			log.error("Ricerca personalizzata dell'utente "+idUtente+" con id "+key+" non trovata: " +e.getMessage(),e);
 		}
 		return bean;
 	}
@@ -260,8 +266,10 @@ public class RicercheUtenteService implements IRicercheUtenteService{
 		RicercaUtenteBean bean = null;
 		try {
 			return new RicercaUtenteBean(this.utenteDAO.leggiRicerca(idUtente, idRicerca));
-		}catch (DriverUsersDBException e) {
+		} catch (DriverUsersDBException e) {
 			log.error("Errore durante la lettura della ricerca personalizzata dell'utente "+idUtente+" con id "+idRicerca+": " +e.getMessage(),e);
+		} catch (RicercaUtenteNotFoundException e) {
+			log.error("Ricerca personalizzata dell'utente "+idUtente+" con id "+idRicerca+" non trovata: " +e.getMessage(),e);
 		}
 		return bean;
 	}
@@ -404,12 +412,65 @@ public class RicercheUtenteService implements IRicercheUtenteService{
 	}
 	
 	@Override
-	public RicercaUtenteBean leggiRicercaUtente(String login, String label, String modulo, String modalitaRicerca) {
+	public boolean esisteRicercaPubblica(String login, String label, String modulo, String modalitaRicerca) {
 		try {
-			return new RicercaUtenteBean(this.utenteDAO.leggiRicerca(login, label, modulo, modalitaRicerca));
+			return this.utenteDAO.esisteRicercaPubblica(login, label, modulo, modalitaRicerca);
 		} catch (DriverUsersDBException e) {
 			log.error(e.getMessage(), e);
 		}
-		return null;
+		return false;
+	}
+	
+	@Override
+	public boolean esisteRicercaPrivata(String login, String label, String modulo, String modalitaRicerca) {
+		try {
+			return this.utenteDAO.esisteRicercaPrivata(login, label, modulo, modalitaRicerca);
+		} catch (DriverUsersDBException e) {
+			log.error(e.getMessage(), e);
+		}
+		return false;
+	}
+	
+	@Override
+	public String calcolaLabelRicerca(String login, String label, String modulo, String modalitaRicerca, String visibilita) {
+		// si cerca l'esistenza di una ricerca con la label passata come parametro
+		// se e' gia' presente aggiungo il suffisso ' (n)' e itero il check fino a che non trovo una label disponibile
+		String newLabel = null;
+		try {
+			RicercaUtente r = null;
+			int run = 0;
+			do {
+	            // Genero una nuova label con il suffisso
+	            newLabel = label + getSuffissoRicerca(run);
+	            
+	            // Controllo se esiste una ricerca per la label indicata
+	            if(visibilita.equals(Costanti.VALUE_VISIBILITA_RICERCA_UTENTE_PRIVATA)) {
+	            	r = this.utenteDAO.leggiRicercaPrivata(login, newLabel, modulo, modalitaRicerca);
+	            } else {
+	            	r = this.utenteDAO.leggiRicercaPubblica(newLabel, modulo, modalitaRicerca);
+	            }
+	            run++;
+	        } while (r != null && run <= MAX_ITERATIONS); // Continua fino a che non trovi una label disponibile oppure per 50 iterazini
+		
+			// Se run supera MAX_ITERATIONS, restituisco null
+	        if (run > MAX_ITERATIONS) {
+	            return null;
+	        }
+		} catch (DriverUsersDBException e) {
+			log.error(e.getMessage(), e);
+			return null;
+		} catch (RicercaUtenteNotFoundException e ) {
+			return newLabel;
+		}
+
+		return newLabel;
+	}
+	
+	private static String getSuffissoRicerca(int run) {
+		if(run == 0) {
+			return "";
+		}
+		
+		return " ("+run+")";
 	}
 }

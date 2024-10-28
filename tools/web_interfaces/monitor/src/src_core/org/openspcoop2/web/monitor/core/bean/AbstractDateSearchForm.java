@@ -467,9 +467,11 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 			}
 		} else {
 			// reset filtro ricerca
-			this.ripulisci();
+			this.ripulisciRicercaUtente();
 		}
 	}
+	
+	public abstract void ripulisciRicercaUtente();
 	
 	public abstract ModuloRicerca getModulo();
 	

@@ -194,7 +194,9 @@ public class Costanti {
 	public static final String SALVA_RICERCA_MISSING_PARAMETER_VISIBILITA_LABEL_KEY = "commons.salvaRicerca.missing_parameter.visibilita";
 	
 	public static final String SALVA_RICERCA_INVALID_PARAMETER_LABEL_DIMENSIONE_NON_VALIDA_LABEL_KEY = "commons.salvaRicerca.invalid_parameter.label.dimensioneNonValida";
+	public static final String SALVA_RICERCA_INVALID_PARAMETER_LABEL_CARATTERI_VUOTI_AGLI_ESTREMI_LABEL_KEY = "commons.salvaRicerca.invalid_parameter.label.caratteriVuotiAgliEstremi";
 	public static final String SALVA_RICERCA_INVALID_PARAMETER_DESCRIZIONE_DIMENSIONE_NON_VALIDA_LABEL_KEY = "commons.salvaRicerca.invalid_parameter.descrizione.dimensioneNonValida";
+	public static final String SALVA_RICERCA_INVALID_PARAMETER_DESCRIZIONE_CARATTERI_VUOTI_AGLI_ESTREMI_LABEL_KEY = "commons.salvaRicerca.invalid_parameter.descrizione.caratteriVuotiAgliEstremi";
 	
 	public static final String RICERCHE_UTENTE_LINK_CON_COUNT_LABEL_KEY = "commons.ricercheUtente.linkConCount";
 	
@@ -216,15 +218,18 @@ public class Costanti {
 	public static final String RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_FILE_NON_INDICATO_LABEL_KEY = "commons.ricercheUtente.importaRicerche.messaggioErrore.fileNonIndicato";
 	public static final String RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_CARICAMENTO_COMPLETATO_CON_ERRORI_LABEL_KEY = "commons.ricercheUtente.importaRicerche.messaggioErrore.caricamentoCompletatoConErrori";
 	public static final String RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_RICERCA_DUPLICATA_LABEL_KEY = "commons.ricercheUtente.importaRicerche.messaggioErrore.ricercaDuplicata";
+	public static final String RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_LABEL_RICERCA_NON_DISPONIBILE_LABEL_KEY = "commons.ricercheUtente.importaRicerche.messaggioErrore.labelRicercaNonDisponibile";
 	public static final String RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_PROTOCOLLO_NON_DISPONIBILE_LABEL_KEY = "commons.ricercheUtente.importaRicerche.messaggioErrore.protocolloNonDisponibile";
 	public static final String RICERCHE_UTENTE_IMPORTA_RICERCHE_MESSAGGIO_ERRORE_SOGGETTO_NON_DISPONIBILE_LABEL_KEY = "commons.ricercheUtente.importaRicerche.messaggioErrore.soggettoNonDisponibile";
 	public static final String RICERCHE_UTENTE_MESSAGGIO_ERRORE_OPERAZIONE_NON_ESEGUITA = "commons.ricercheUtente.messaggioErrore.operazioneNonEseguita";
 	public static final String RICERCHE_UTENTE_IMPORTA_RICERCHE_OK_LABEL_KEY = "commons.ricercheUtente.importaRicerche.ok";
 	public static final String RICERCHE_UTENTE_AGGIORNA_RICERCA_OK_LABEL_KEY = "commons.ricercheUtente.aggiornaRicerca.ok";
 	public static final String RICERCHE_UTENTE_AGGIORNA_RICERCA_MESSAGGIO_ERRORE_RICERCA_DUPLICATA_LABEL_KEY = "commons.ricercheUtente.aggiornaRicerca.messaggioErrore.ricercaDuplicata";
+	public static final String RICERCHE_UTENTE_AGGIORNA_RICERCA_MESSAGGIO_ERRORE_RICERCA_PUBBLICA_DUPLICATA_LABEL_KEY = "commons.ricercheUtente.aggiornaRicerca.messaggioErrore.ricercaPubblicaDuplicata";
 	public static final String RICERCHE_UTENTE_SALVA_RICERCA_OK_LABEL_KEY = "commons.ricercheUtente.salvaRicerca.ok";
 	public static final String RICERCHE_UTENTE_SALVA_RICERCA_MESSAGGIO_ERRORE_LABEL_KEY = "commons.ricercheUtente.salvaRicerca.messaggioErrore";
 	public static final String RICERCHE_UTENTE_SALVA_RICERCA_MESSAGGIO_ERRORE_RICERCA_DUPLICATA_LABEL_KEY = "commons.ricercheUtente.salvaRicerca.messaggioErrore.ricercaDuplicata";
+	public static final String RICERCHE_UTENTE_SALVA_RICERCA_MESSAGGIO_ERRORE_RICERCA_PUBBLICA_DUPLICATA_LABEL_KEY = "commons.ricercheUtente.salvaRicerca.messaggioErrore.ricercaPubblicaDuplicata";
 	
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_LABEL_KEY = "transazioni.search.tipoRicerca.temporale.label";
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_MITTENTE_LABEL_KEY = "transazioni.search.tipoRicerca.mittente.label";
@@ -317,8 +322,8 @@ public class Costanti {
 	
 	/* RICERCHE */
 
-	public static final String VALUE_VISIBILITA_RICERCA_UTENTE_PRIVATA = "privata";
-	public static final String VALUE_VISIBILITA_RICERCA_UTENTE_PUBBLICA = "pubblica";
+	public static final String VALUE_VISIBILITA_RICERCA_UTENTE_PRIVATA = org.openspcoop2.web.lib.users.Costanti.VALUE_RICERCA_UTENTE_VISIBILITA_PRIVATA;
+	public static final String VALUE_VISIBILITA_RICERCA_UTENTE_PUBBLICA = org.openspcoop2.web.lib.users.Costanti.VALUE_RICERCA_UTENTE_VISIBILITA_PUBBLICA;
 	
 	public static final String PARAMETER_IDS = "ids";
 	public static final String PARAMETER_IS_ALL = "isAll";

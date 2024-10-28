@@ -1359,6 +1359,8 @@ public class LoginBean extends AbstractLoginBean {
 	}
 	
 	public String salvaRicercaCorrente() {
+		// reset errori rilevati 
+		this.salvaRicercaForm.setSalvaRicercaErrorMessage(null);
 		
 		if(this.salvaRicercaForm.eseguiValidazioneForm()) {
 		
@@ -1367,10 +1369,18 @@ public class LoginBean extends AbstractLoginBean {
 				nuovaRicerca = this.salvaRicercaForm.getRicerca();
 				
 				// controllo duplicati
-				if(this.ricercheUtenteService.leggiRicercaUtente(this.getUtente().getLogin(), nuovaRicerca.getLabel(), nuovaRicerca.getModulo(), nuovaRicerca.getModalitaRicerca()) != null) {
-					this.salvaRicercaForm.setSalvaRicercaErrorMessage("ricerca duplicata");
-					MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_SALVA_RICERCA_MESSAGGIO_ERRORE_RICERCA_DUPLICATA_LABEL_KEY));
-					return null;
+				// 1. se la nuova ricerca e' privata l'utente non deve averne un'altra con lo stesso nome
+				if(nuovaRicerca.getVisibilita().equals(Costanti.VALUE_VISIBILITA_RICERCA_UTENTE_PRIVATA)) {
+					if(this.ricercheUtenteService.esisteRicercaPrivata(this.getUtente().getLogin(), nuovaRicerca.getLabel(), nuovaRicerca.getModulo(), nuovaRicerca.getModalitaRicerca())) {
+						this.salvaRicercaForm.setSalvaRicercaErrorMessage(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_SALVA_RICERCA_MESSAGGIO_ERRORE_RICERCA_DUPLICATA_LABEL_KEY));
+						return null;
+					}
+				} else {
+					//2. se la nuova ricerca e' pubblica non deve esisterne un'altra con lo stesso nome di proprieta' di un altro utente
+					if(this.ricercheUtenteService.esisteRicercaPubblica(this.getUtente().getLogin(), nuovaRicerca.getLabel(), nuovaRicerca.getModulo(), nuovaRicerca.getModalitaRicerca())) {
+						this.salvaRicercaForm.setSalvaRicercaErrorMessage(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_SALVA_RICERCA_MESSAGGIO_ERRORE_RICERCA_PUBBLICA_DUPLICATA_LABEL_KEY));
+						return null;
+					}
 				}
 				
 				this.ricercheUtenteService.insertRicerca(this.getUtente().getLogin(), nuovaRicerca);
@@ -1381,10 +1391,10 @@ public class LoginBean extends AbstractLoginBean {
 				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(MessageManager.getInstance().getMessageWithParamsFromResourceBundle(Costanti.RICERCHE_UTENTE_SALVA_RICERCA_OK_LABEL_KEY, this.salvaRicercaForm.getLabel()))); 
 			} catch (UtilsException e) {
 				this.log.error("Errore durante il salvataggio della ricerca corrente: "+e.getMessage(),e);
-				MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_SALVA_RICERCA_MESSAGGIO_ERRORE_LABEL_KEY));
+				this.salvaRicercaForm.setSalvaRicercaErrorMessage(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_SALVA_RICERCA_MESSAGGIO_ERRORE_LABEL_KEY));
 			} catch (DriverUsersDBException e) {
 				this.log.error("Si e' verificato un errore in fase di salvataggio: " + e.getMessage(), e);
-				MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_MESSAGGIO_ERRORE_OPERAZIONE_NON_ESEGUITA));
+				this.salvaRicercaForm.setSalvaRicercaErrorMessage(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_MESSAGGIO_ERRORE_OPERAZIONE_NON_ESEGUITA));
 			}
 		}
 		
