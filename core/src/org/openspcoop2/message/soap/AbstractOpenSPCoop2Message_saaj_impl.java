@@ -427,7 +427,7 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 			}
 		}
 		/**
-		 * Usato anzi 'element.getChildNodes()'; il metodo getChildElements, in un soap body faceva perdere tutti gli altri elementi
+		 * Usato anzi 'element.getChildNodes()'; il metodo getChildElements, in un soap body faceva perdere tutti gli altri elementi nella validazione dei contenuti usando il dynamic namespace context
 		 * Iterator<?> it = element.getChildElements();
 		while (it.hasNext() && firstElement==null){
 			Node tmp = (Node) it.next();

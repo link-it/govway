@@ -52,6 +52,7 @@ public class KeystoreConstants {
 	// ${PREFIX}.merlin.x509crl.file - The location of an (X509) CRL file to use.
 
 	public static final String PROPERTY_CRL = Merlin.OLD_PREFIX+Merlin.X509_CRL_FILE;
+	public static final String PROPERTY_CRL_VALIDATE_ONLY_END_ENTITY = Merlin.OLD_PREFIX+MerlinProvider.X509_CRL_FILE_VALIDATE_ONLY_END_ENTITY;
 
 	
 	// Proprietà che permette di fornire la request info di govway

@@ -1,3 +1,23 @@
+2024-10-25  Andrea Poli <apoli@link.it>
+
+	* [Utils, GovWayCore]
+	Aggiunta funzionalità #1538
+	Introdotte utility per la gestione dell'ora legale e solare, utilizzate nella funzionalità di riconsegna con presenza in carico dei messaggi.
+
+2024-10-23  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1536
+	Quando si valida il certificato di firma utilizzato in un header WSSecurity, se questo certificato è stato emesso da una CA intermedia, 
+	la validazione, inclusa l'esamina delle CRL, viene effettuata su tutti i certificati, compresi quelli intermedi, 
+	anche se viene fornito un solo file CRL relativo al certificato finale. 
+	Di conseguenza, durante la validazione di un certificato intermedio, potrebbe comparire l'errore:
+		'No CRLs found for issuer "cn=RootCA,ou=TEST,o=Example,c=IT"'
+	Questo errore si verifica perché non è stata trovata una CRL emessa per il certificato intermedio dalla CA issuer (nell'esempio, quella di root). 
+	Per risolvere il problema, è necessario fornire un file CRL per ogni certificato, inclusi quelli intermedi.
+	Per evitare questa complessa configurazione e prevenire il fallimento della validazione, se viene fornito un solo file CRL, 
+	la configurazione di default adesso assume che esso sia relativo al certificato finale e non viene utilizzato per validare i certificati intermedi.
+
 2024-10-16  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

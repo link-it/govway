@@ -9647,6 +9647,109 @@
                 </response-flow>
             </message-security>
         </porta-delegata>
+
+        <!-- WSSecurity (WSS4Jext) Firmata Certificato Scaduto -->
+        <porta-delegata
+            nome="WSS4Jext_Firmata_CERTIFICATO_SCADUTO"
+            autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap"
+            stateless="abilitato">
+            <soggetto-erogatore tipo="spc" nome="SoggettoEsempioWSS4JextErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextFirmata_CERTIFICATO_SCADUTO" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_CERTIFICATO_SCADUTO_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pd_CERTIFICATI_INVALIDI_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
+                    <parameter nome="signatureDigestAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                    <parameter nome="signatureC14nAlgorithm"
+                        valore="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                    <parameter nome="signatureAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_CERTIFICATO_SCADUTO_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pd_CERTIFICATI_INVALIDI_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                    <parameter nome="signatureCRL" valore="/etc/govway/keys/xca/ExampleCA.crl"/>
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+
+        <!-- WSSecurity (WSS4Jext) Firmata Certificato Revocato -->
+        <porta-delegata
+            nome="WSS4Jext_Firmata_CERTIFICATO_REVOCATO"
+            autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap"
+            stateless="abilitato">
+            <soggetto-erogatore tipo="spc" nome="SoggettoEsempioWSS4JextErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextFirmata_CERTIFICATO_REVOCATO" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_CERTIFICATO_REVOCATO_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pd_CERTIFICATI_INVALIDI_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
+                    <parameter nome="signatureDigestAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                    <parameter nome="signatureC14nAlgorithm"
+                        valore="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                    <parameter nome="signatureAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_CERTIFICATO_REVOCATO_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pd_CERTIFICATI_INVALIDI_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                    <parameter nome="signatureCRL" valore="/etc/govway/keys/xca/ExampleCA.crl"/>
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+
         
         
         <!-- WSSecurity (WSS4Jext) Cifrata e Firmata con Attachments -->
@@ -10194,7 +10297,110 @@
             </message-security>
         </porta-applicativa>
         
-        
+        <!-- WSSecurity (WSS4Jext) Firmata CERTIFICATO REVOCATO-->
+        <porta-applicativa nome="WSS4Jext_Firmata_CERTIFICATO_REVOCATO" autenticazione="none" stateless="abilitato">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextFirmata_CERTIFICATO_REVOCATO"/>
+            <servizio-applicativo nome="govwayTestSuite" />
+            <soggetti>
+                <soggetto tipo="spc" nome="SoggettoEsempioWSS4JextFruitore"/>
+            </soggetti>
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pa_CERTIFICATI_INVALIDI_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                    <parameter nome="signatureCRL" valore="/etc/govway/keys/xca/ExampleCA.crl"/>
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pa_CERTIFICATI_INVALIDI_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pa"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
+                    <parameter nome="signatureDigestAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                    <parameter nome="signatureC14nAlgorithm"
+                        valore="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                    <parameter nome="signatureAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <!-- WSSecurity (WSS4Jext) Firmata CERTIFICATO SCADUTO -->
+        <porta-applicativa nome="WSS4Jext_Firmata_CERTIFICATO_SCADUTO" autenticazione="none" stateless="abilitato">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSWSS4JextFirmata_CERTIFICATO_SCADUTO"/>
+            <servizio-applicativo nome="govwayTestSuite" />
+            <soggetti>
+                <soggetto tipo="spc" nome="SoggettoEsempioWSS4JextFruitore"/>
+            </soggetti>
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pd_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pa_CERTIFICATI_INVALIDI_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pd"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                    <parameter nome="signatureCRL" valore="/etc/govway/keys/xca/ExampleCA.crl"/>
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature"/>
+                    <parameter nome="actor"
+                        valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="true"/>
+                    <parameter nome="securityEngine" valore="wss4j"/>
+                    <parameter nome="isBSPCompliant" valore="true"/>
+                    <!-- signature -->
+                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/WSS4Jext_pa_signature_keystore.properties"/>
+                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/WSS4Jext_pa_CERTIFICATI_INVALIDI_signature_truststore.properties"/>
+                    <parameter nome="signatureUser" valore="pa"/>
+                    <parameter nome="signatureParts"
+                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
+                    <parameter nome="signatureDigestAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                    <parameter nome="signatureC14nAlgorithm"
+                        valore="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                    <parameter nome="signatureAlgorithm"
+                        valore="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                    <!-- optional params for retrocompatibility -->
+                    <parameter nome="omitCanonicalizationInclusiveNamespace" valore="true"/>
+                    <parameter nome="explicitAttachmentInclusiveNamespace" valore="true"/>
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
         <!-- WSSecurity (WSS4Jext) Cifrata e Firmata con Attachments -->
         <porta-applicativa nome="WSS4Jext_CifrataFirmataAttachments" autenticazione="none" stateless="abilitato" gestione-manifest="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />

@@ -271,6 +271,8 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 			}
 			else {
 				Date expired = new Date(DateManager.getTimeMillis()-(1000*this.configurazioneCoda.getNextMessages_consegnaFallita_intervalloControllo()));
+				this.logDebug("("+this.configurazioneCoda.getName()+") Verifica check messaggi da spedire previsto quando ultimo chek '"+
+						org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(this.lastCheckMessaggiDaRispedire)+"' < '"+org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(expired)+"' ...");
 				if(this.lastCheckMessaggiDaRispedire.before(expired)) {
 					verificaPresenzaMessaggiDaRispedire = true;
 					this.lastCheckMessaggiDaRispedire=DateManager.getDate();
@@ -279,6 +281,7 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 			if(verificaPresenzaMessaggiDaRispedire) {
 				calcolaDataMinimaMessaggiRispedire = this.configurazioneCoda.isNextMessages_consegnaFallita_calcolaDataMinimaRiconsegna();
 			}
+			this.logDebug("("+this.configurazioneCoda.getName()+") verificaPresenzaMessaggiDaRispedire:"+verificaPresenzaMessaggiDaRispedire+" calcolaDataMinimaMessaggiRispedire:"+calcolaDataMinimaMessaggiRispedire);
 
 			
 			// GestoreMessaggi da Ricercare
