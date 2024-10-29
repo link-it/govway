@@ -1,3 +1,11 @@
+2024-10-29  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1539
+	Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2024-38821: aggiornate librerie 'org.springframework.security:*' alla versione 5.8.15
+	- CVE-2024-38820: aggiornate librerie 'org.springframework:*' alla versione 5.3.39-gov4j-1
+
 2024-10-25  Andrea Poli <apoli@link.it>
 
 	* [Utils, GovWayCore]

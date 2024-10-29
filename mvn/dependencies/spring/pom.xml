@@ -18,6 +18,7 @@
 		<jar.group.name>spring</jar.group.name>
 		
 		<spring.version>${module.spring.version}</spring.version>
+		<spring.gov4j.version>${module.spring.gov4j.version}</spring.gov4j.version>
 
 	</properties>
 
@@ -48,7 +49,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
-			<version>${spring.version}</version>
+			<version>${spring.gov4j.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -59,7 +60,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
+			<version>${spring.gov4j.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -70,7 +71,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
-			<version>${spring.version}</version>
+			<version>${spring.gov4j.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -81,7 +82,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
+			<version>${spring.gov4j.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -92,7 +93,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-expression</artifactId>
-			<version>${spring.version}</version>
+			<version>${spring.gov4j.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -125,7 +126,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>${spring.version}</version>
+			<version>${spring.gov4j.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

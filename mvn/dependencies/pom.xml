@@ -22,6 +22,7 @@
 
 		<!-- Versioni condivise dai moduli -->
 		<module.spring.version>5.3.39</module.spring.version>
+		<module.spring.gov4j.version>5.3.39-gov4j-1</module.spring.gov4j.version>
 	</properties>
 
 	<modules>
@@ -112,6 +113,7 @@
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2023-4759.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2023-4586.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2024-9329.xml</suppressionFile>
+								<suppressionFile>${owasp.falsePositives.dir}/CVE-2024-38820.xml</suppressionFile>
 							</suppressionFiles>
 							<nvdApiDelay>120000</nvdApiDelay><!-- 2 minuti -->
 							<nvdMaxRetryCount>3</nvdMaxRetryCount> <!-- 3 max tentativi visto il timeout alto -->

@@ -1,7 +1,7 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
    <suppress>
       <notes><![CDATA[
-      file name: spring-web-5.3.39.jar
+      file name: spring-web-5.3.39-gov4j-1.jar
       La vulnerabilità indicata viene descritta come:
        "Pivotal Spring Framework through 5.3.16 suffers from a potential remote code execution (RCE) issue if used for Java deserialization of untrusted data. Depending on how the library is implemented within a product, this issue may or not occur, and authentication may be required. NOTE: the vendor's position is that untrusted data is not an intended use case. The product's behavior will not be changed because some users rely on deserialization of trusted data."
       La versione utilizzata è superiore alla '5.3.16' quindi sembrerebbe un falso positivo.
