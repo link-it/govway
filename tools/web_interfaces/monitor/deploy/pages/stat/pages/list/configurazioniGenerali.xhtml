@@ -41,14 +41,6 @@
 							</div>
 						
 							<input type="hidden" id="_csrfFormRicercaConfigurazioni" name="_csrf" value="#{loginBean.csrf}"/>
-							<link:prop label="Tipologia">
-								<rich:comboBox id="tipologiaTransazioniCombo" value="#{configurazioniGeneraliSearchForm._value_tipologiaTransazioni}" 
-										defaultLabel="Seleziona Tipologia Transazioni" converter="selectItemConverter"
-										width="416" enableManualInput="false">
-									<f:selectItems value="#{configurazioniGeneraliSearchForm.tipologieRicerca}"/>
-									<a4j:support status="mainStatus" event="onselect" reRender="searchPnl,servizioComboCtr" actionListener="#{configurazioniGeneraliSearchForm.tipologiaTransazioniListener}" />
-								</rich:comboBox>
-							</link:prop>
 						
 							<a4j:outputPanel id="panelProtocollo" layout="block" rendered="#{configurazioniGeneraliSearchForm.showListaProtocolli}"
 								ajaxRendered="true">
@@ -74,6 +66,15 @@
 								<ui:param name="sf_bean" value="#{configurazioniGeneraliSearchForm}"  />
 								<ui:param name="idsToRefresh" value="searchPnl,altriCriteri" />
 							</ui:include>
+
+							<link:prop label="Tipologia">
+								<rich:comboBox id="tipologiaTransazioniCombo" value="#{configurazioniGeneraliSearchForm._value_tipologiaTransazioni}" 
+										defaultLabel="Seleziona Tipologia Transazioni" converter="selectItemConverter"
+										width="416" enableManualInput="false">
+									<f:selectItems value="#{configurazioniGeneraliSearchForm.tipologieRicerca}"/>
+									<a4j:support status="mainStatus" event="onselect" reRender="searchPnl,servizioComboCtr" actionListener="#{configurazioniGeneraliSearchForm.tipologiaTransazioniListener}" />
+								</rich:comboBox>
+							</link:prop>
 	
 							<a4j:outputPanel layout="block" id="gruppiComboCtr">
 								<ui:include src="/stat/includes/searchFormConfigurazioniGeneraliFiltroGruppi.xhtml">

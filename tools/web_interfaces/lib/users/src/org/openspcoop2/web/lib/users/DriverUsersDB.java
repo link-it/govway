@@ -3440,11 +3440,16 @@ public class DriverUsersDB {
 		}
 	}
 	
-	public boolean esisteRicercaPrivata(String login, String label, String modulo, String modalitaRicerca) throws DriverUsersDBException {
+	public boolean esisteRicerca(String login, boolean escludiUtenteCorrente, // fornire login null per non filtrare per utente
+			String label, String modulo, String modalitaRicerca, String visibilita) throws DriverUsersDBException {
+		return esisteRicercaEngine(login, label, modulo, modalitaRicerca, visibilita, null, null, escludiUtenteCorrente, true);
+	}
+	
+	public boolean esisteRicercaPrivataUtenteCorrente(String login, String label, String modulo, String modalitaRicerca) throws DriverUsersDBException {
 		return esisteRicercaEngine(login, label, modulo, modalitaRicerca, Costanti.VALUE_RICERCA_UTENTE_VISIBILITA_PRIVATA, null, null, false, true);
 	}
 	
-	public boolean esisteRicercaPubblica(String login, String label, String modulo, String modalitaRicerca) throws DriverUsersDBException {
+	public boolean esisteRicercaPubblicaAltroUtente(String login, String label, String modulo, String modalitaRicerca) throws DriverUsersDBException {
 		return esisteRicercaEngine(login, label, modulo, modalitaRicerca, Costanti.VALUE_RICERCA_UTENTE_VISIBILITA_PUBBLICA, null, null, true, true);
 	}
 	

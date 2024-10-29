@@ -412,9 +412,11 @@ public class RicercheUtenteService implements IRicercheUtenteService{
 	}
 	
 	@Override
-	public boolean esisteRicercaPubblica(String login, String label, String modulo, String modalitaRicerca) {
+	public boolean esisteRicerca(String login, boolean escludiUtenteCorrente, // fornire login null per non filtrare per utente
+			String label, String modulo, String modalitaRicerca, String visibilita) {
 		try {
-			return this.utenteDAO.esisteRicercaPubblica(login, label, modulo, modalitaRicerca);
+			return this.utenteDAO.esisteRicerca(login, escludiUtenteCorrente,
+					label, modulo, modalitaRicerca, visibilita);
 		} catch (DriverUsersDBException e) {
 			log.error(e.getMessage(), e);
 		}
@@ -422,9 +424,19 @@ public class RicercheUtenteService implements IRicercheUtenteService{
 	}
 	
 	@Override
-	public boolean esisteRicercaPrivata(String login, String label, String modulo, String modalitaRicerca) {
+	public boolean esisteRicercaPubblicaAltroUtente(String login, String label, String modulo, String modalitaRicerca) {
 		try {
-			return this.utenteDAO.esisteRicercaPrivata(login, label, modulo, modalitaRicerca);
+			return this.utenteDAO.esisteRicercaPubblicaAltroUtente(login, label, modulo, modalitaRicerca);
+		} catch (DriverUsersDBException e) {
+			log.error(e.getMessage(), e);
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean esisteRicercaPrivataUtenteCorrente(String login, String label, String modulo, String modalitaRicerca) {
+		try {
+			return this.utenteDAO.esisteRicercaPrivataUtenteCorrente(login, label, modulo, modalitaRicerca);
 		} catch (DriverUsersDBException e) {
 			log.error(e.getMessage(), e);
 		}

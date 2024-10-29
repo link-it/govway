@@ -419,24 +419,25 @@ public class RicercheUtenteBean extends PdDBaseBean<RicercaUtenteBean, Long, ISe
 			// 3. verifica duplicati
 			
 			// controllo duplicati se ho cambiato la label
-			String labelToSave = this.getSelectedElement().getLabel().trim();
+			String labelToSave = this.getSelectedElement().getLabel().replaceAll("\\s+", " ").trim();
 			
 			if(!oldRicercaUtente.getLabel().equals(labelToSave)) {
-				// 1. se la nuova ricerca e' privata l'utente non deve averne un'altra con lo stesso nome
-				if(this.getSelectedElement().getVisibilita().equals(Costanti.VALUE_VISIBILITA_RICERCA_UTENTE_PRIVATA)) {
-					if(((IRicercheUtenteService)this.service).esisteRicercaPrivata(login, labelToSave, 
-							this.getSelectedElement().getModulo(), this.getSelectedElement().getModalitaRicerca())) {
-						MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_AGGIORNA_RICERCA_MESSAGGIO_ERRORE_RICERCA_DUPLICATA_LABEL_KEY));
-						return null;
-					}
-				} else {
-					//2. se la nuova ricerca e' pubblica non deve esisterne un'altra con lo stesso nome di proprieta' di un altro utente
-					if(((IRicercheUtenteService)this.service).esisteRicercaPubblica(login, labelToSave, 
-							this.getSelectedElement().getModulo(), this.getSelectedElement().getModalitaRicerca())) {
-						MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_AGGIORNA_RICERCA_MESSAGGIO_ERRORE_RICERCA_PUBBLICA_DUPLICATA_LABEL_KEY));
-						return null;
-					}
+				
+				// 1. l'utente non deve averne un'altra con lo stesso nome di qualsiasi visibilità sia
+				if(((IRicercheUtenteService)this.service).esisteRicerca(login, false,
+						labelToSave, this.getSelectedElement().getModulo(), this.getSelectedElement().getModalitaRicerca(),
+						null // qualsiasi visibilita
+						)) {
+					MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_AGGIORNA_RICERCA_MESSAGGIO_ERRORE_RICERCA_DUPLICATA_LABEL_KEY));
+					return null;
 				}
+				
+				//2. non deve esisterne un'altra ricerca con lo stesso nome associato ad una ricerca pubblica di un altro utente
+				if(((IRicercheUtenteService)this.service).esisteRicercaPubblicaAltroUtente(login, labelToSave, this.getSelectedElement().getModulo(), this.getSelectedElement().getModalitaRicerca())) {
+					MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_AGGIORNA_RICERCA_MESSAGGIO_ERRORE_RICERCA_PUBBLICA_DUPLICATA_LABEL_KEY));
+					return null;
+				}
+				
 			}
 			
 

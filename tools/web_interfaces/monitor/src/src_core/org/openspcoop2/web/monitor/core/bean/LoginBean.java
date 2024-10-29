@@ -1369,18 +1369,20 @@ public class LoginBean extends AbstractLoginBean {
 				nuovaRicerca = this.salvaRicercaForm.getRicerca();
 				
 				// controllo duplicati
-				// 1. se la nuova ricerca e' privata l'utente non deve averne un'altra con lo stesso nome
-				if(nuovaRicerca.getVisibilita().equals(Costanti.VALUE_VISIBILITA_RICERCA_UTENTE_PRIVATA)) {
-					if(this.ricercheUtenteService.esisteRicercaPrivata(this.getUtente().getLogin(), nuovaRicerca.getLabel(), nuovaRicerca.getModulo(), nuovaRicerca.getModalitaRicerca())) {
-						this.salvaRicercaForm.setSalvaRicercaErrorMessage(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_SALVA_RICERCA_MESSAGGIO_ERRORE_RICERCA_DUPLICATA_LABEL_KEY));
-						return null;
-					}
-				} else {
-					//2. se la nuova ricerca e' pubblica non deve esisterne un'altra con lo stesso nome di proprieta' di un altro utente
-					if(this.ricercheUtenteService.esisteRicercaPubblica(this.getUtente().getLogin(), nuovaRicerca.getLabel(), nuovaRicerca.getModulo(), nuovaRicerca.getModalitaRicerca())) {
-						this.salvaRicercaForm.setSalvaRicercaErrorMessage(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_SALVA_RICERCA_MESSAGGIO_ERRORE_RICERCA_PUBBLICA_DUPLICATA_LABEL_KEY));
-						return null;
-					}
+				
+				// 1. l'utente non deve averne un'altra con lo stesso nome di qualsiasi visibilità sia
+				if(this.ricercheUtenteService.esisteRicerca(this.getUtente().getLogin(), false,
+						nuovaRicerca.getLabel(), nuovaRicerca.getModulo(), nuovaRicerca.getModalitaRicerca(),
+						null // qualsiasi visibilita
+						)) {
+					this.salvaRicercaForm.setSalvaRicercaErrorMessage(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_SALVA_RICERCA_MESSAGGIO_ERRORE_RICERCA_DUPLICATA_LABEL_KEY));
+					return null;
+				}
+				
+				//2. non deve esisterne un'altra ricerca con lo stesso nome associato ad una ricerca pubblica di un altro utente
+				if(this.ricercheUtenteService.esisteRicercaPubblicaAltroUtente(this.getUtente().getLogin(), nuovaRicerca.getLabel(), nuovaRicerca.getModulo(), nuovaRicerca.getModalitaRicerca())) {
+					this.salvaRicercaForm.setSalvaRicercaErrorMessage(MessageManager.getInstance().getMessage(Costanti.RICERCHE_UTENTE_SALVA_RICERCA_MESSAGGIO_ERRORE_RICERCA_PUBBLICA_DUPLICATA_LABEL_KEY));
+					return null;
 				}
 				
 				this.ricercheUtenteService.insertRicerca(this.getUtente().getLogin(), nuovaRicerca);

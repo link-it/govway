@@ -173,7 +173,7 @@ public class SalvaRicercaForm {
 	public RicercaUtente getRicerca() throws UtilsException {
 		RicercaUtente ricercaPersonalizzata = new RicercaUtente();
 		
-		ricercaPersonalizzata.setLabel(this.label.trim());
+		ricercaPersonalizzata.setLabel(this.label.replaceAll("\\s+", " ").trim());
 		ricercaPersonalizzata.setDescrizione(this.descrizione.trim());
 		ricercaPersonalizzata.setDataCreazione(new Date());
 		ricercaPersonalizzata.setVisibilita(this.visibilita);
