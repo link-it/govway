@@ -81,5 +81,32 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.3.9_lib_jboss6"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.3.9_lib_faces"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.3.9_lib_karate"/>
+	<classpathentry kind="lib" path="/home/burlon/.m2/repository/org/springframework/ldap/spring-ldap-test/2.4.1/spring-ldap-test-2.4.1.jar" sourcepath="/home/burlon/.m2/repository/org/springframework/ldap/spring-ldap-test/2.4.1/spring-ldap-test-2.4.1-sources.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="maven.groupId" value="org.springframework.ldap"/>
+			<attribute name="maven.artifactId" value="spring-ldap-test"/>
+			<attribute name="maven.version" value="2.4.1"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/burlon/.m2/repository/org/springframework/ldap/spring-ldap-ldif-core/2.4.1/spring-ldap-ldif-core-2.4.1.jar" sourcepath="/home/burlon/.m2/repository/org/springframework/ldap/spring-ldap-ldif-core/2.4.1/spring-ldap-ldif-core-2.4.1-sources.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="maven.groupId" value="org.springframework.ldap"/>
+			<attribute name="maven.artifactId" value="spring-ldap-ldif-core"/>
+			<attribute name="maven.version" value="2.4.1"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/burlon/.m2/repository/org/apache/directory/server/apacheds-all/2.0.0.AM27/apacheds-all-2.0.0.AM27.jar" sourcepath="/home/burlon/.m2/repository/org/apache/directory/server/apacheds-all/2.0.0.AM27/apacheds-all-2.0.0.AM27-sources.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="maven.groupId" value="org.apache.directory.server"/>
+			<attribute name="maven.artifactId" value="apacheds-all"/>
+			<attribute name="maven.version" value="2.0.0.AM27"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

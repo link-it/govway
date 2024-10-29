@@ -1,0 +1,72 @@
+#Create the root DN:
+dn: dc=example,dc=com
+objectClass: top
+objectClass: dcObject
+objectClass: organization
+o: example com
+dc: example
+
+dn: cn=Robert Browning,dc=example,dc=com
+objectClass: organizationalPerson
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: top
+cn: Robert Browning
+sn: Browning
+givenname: Robert
+uid: 005210
+mail: rbrowning@sample.com
+telephoneNumber: +44 20 7946 0710
+facsimileTelephoneNumber: +44 20 7946 0700
+mobile: +44 77 0090 0231
+departmentNumber: Human Resources
+l: London
+userCertificate::MIICkzB9AgEBMA0GCSqGSIb3DQEBBQUAMDsxCzAJBgNVBAYTAklUMQswCQYDVQQIDAJQSTENMAsGA1UEBwwEUGlzYTEQMA4GA1UECgwHTGluay5pdBcNMjQxMDIyMDc1MzQzWhcNMjYxMDIyMDc1MzQzWqAOMAwwCgYDVR0UBAMCAQEwDQYJKoZIhvcNAQEFBQADggIBAJkZFQJOv5lMi8VDYAUFAIp45KxF8y/LjNxYMo8UEqR7VOCHDwHTZrcTkS9c1cjNxpuKunWzpF2vDxIrmhP+bbjhi0aJtSst5eImF2mscEI/JHy9ecCQPg03snixrNmgGEws3xhsWIuL0G2NjtjOOYR7pG4I/GEjN6n4o1M3Sbz4fy23MDbCXOwJISNwlWkjaq5WMixqyiYZ5rDtKFuStfQltZ8L+cwRH4LoldsaU3c7mx8NsSi0NeTmSvILDdMNAVs0BFbfK/0xWgjLAwIjnftPFDn26CDntiFCVOtGY6lg/uCKsBt73/iEEP4p4DGtxcffm3sgfaWBa9d4Iimj41hgwuFAx9Gz92Jdbl9fZOcAXwak3Kyl3REDFkabIpGfXQF//ZZPSnimD4r6rHy0UlLzYuvQqssy8VAT92F3xecPxn3shMVlxIqhcvg3pmwH5jmDFkGQJjQ2den8ls+O3Fp+eJOABDEl8/jdxowJ/aSDQ26WCnWeYnEwnL+Q9VhYjfj8JXTIygIQLE23O227Al2ebrTShQs+tL0UTdC5BffVLEqkCWZj4ONI4iNj9seiGkqKJzh5Z9jVvga5suWyha730kPwDFW+Rxkkm76o1V5EnPmi2TNE54LhHlv06EkP1XpZIq8h2Zngh+hGn7cVb9O2N47GgUgYy4lkonBZ951u
+
+dn: cn=John Keats,dc=example,dc=com
+objectClass: organizationalPerson
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: top
+cn: John Keats
+sn: Keats
+givenname: John
+uid: 001377
+mail: jkeats@sample.com
+telephoneNumber: +1 646 555 0173
+facsimileTelephoneNumber: +1 646 555 0100
+mobile: +1 646 226 8533
+departmentNumber: Sales
+l: New York
+
+dn: cn=Hugo Williams,dc=example,dc=com
+objectClass: organizationalPerson
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: top
+cn: Hugo Williams
+sn: Williams
+givenname: Hugo
+uid: 000896
+mail: hwilliams@sample.com
+telephoneNumber: +44 20 7946 0788
+facsimileTelephoneNumber: +44 20 7946 0700
+mobile: +44 77 0090 0600
+departmentNumber: Research and Development
+l: London
+
+dn: cn=John Milton,dc=example,dc=com
+objectClass: organizationalPerson
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: top
+cn: John Milton
+sn: Milton
+givenname: John
+uid: 003614
+mail: jmilton@sample.com
+telephoneNumber: +44 20 7946 0738
+facsimileTelephoneNumber: +44 20 7946 0700
+mobile: +44 77 0090 0600
+departmentNumber: Research and Development
+l: London
