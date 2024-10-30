@@ -48,7 +48,7 @@ public class LdapUtility {
 		for (String param : params)
 			if (!param.isEmpty() && param.charAt(0) == '(')
 				return LdapFilter.parse(param);
-		return LdapFilter.absoluteTrue();
+		return LdapFilter.isPresent("cn");
 	}
 	
 	public static LdapQuery getQueryFromURI(URI uri) throws InvalidNameException, ParseException {

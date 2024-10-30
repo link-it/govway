@@ -129,7 +129,7 @@ public class LdapTest {
 		
 	}
 	
-	public static void testQuery(
+	public static List<Attributes> testQuery(
 			LdapEngineType type,
 			LdapQuery query) throws Exception {
 		
@@ -144,13 +144,13 @@ public class LdapTest {
 		
 		System.out.println("elementi trovati: " + res.size() + ", elementi attesi: " + baseCase.size());
 		
-		if (!compareAttributes(res, baseCase)) {
-			printAttributes(System.out, res);
+		if (!compareAttributes(res, baseCase)) 
 			throw new Exception("Il risultato della query non risulta equivalente a quello atteso");
-		}
+		
+		return res;
 	}
 	
-	public static void testCRL(LdapEngineType type) throws Exception {
+	public static List<Attributes> testCRL(LdapEngineType type) throws Exception {
 		
 		LdapClientInterface client = LdapClientFactory.getClient(type);
 		client.uri(new URI(server.getURL()))
@@ -178,10 +178,12 @@ public class LdapTest {
 		
 		if (!principal.getName().equals("O=Link.it,L=Pisa,ST=PI,C=IT"))
 			throw new Exception("certificato ottenuto non valido");
+		
+		return res;
 	}
 	
-	public static void testParsing(LdapEngineType type, LdapQuery query) throws Exception {
-		URI uri = LdapUtility.getURIFromQuery(new URI(server.getURL()), query);
+	public static List<Attributes> testParsing(LdapEngineType type, LdapQuery query, String url) throws Exception {
+		URI uri = new URI(url);
 		LdapQuery parsedQuery = LdapUtility.getQueryFromURI(uri);
 		
 		LdapClientInterface client1 = LdapClientFactory.getClient(type);
@@ -201,6 +203,7 @@ public class LdapTest {
 		if (!compareAttributes(list1, list2))
 			throw new Exception("Il risultato della query non risulta equivalente a quello atteso");
 		
+		return list2;
 	}
 	
 	public static void startServer() throws Exception {
@@ -230,28 +233,36 @@ public class LdapTest {
 			startServer();
 			
 			printAttributes(System.out, LdapTest.attributes);
+			String baseUrl = getUrl();
+			String BASE = "dc=example,dc=com";
 			
+			// query per fare il parsing di url in formato non encoded
 			LdapQuery query = new LdapQuery()
-					.base(new LdapName("dc=example,dc=com"))
-					.attributes("cn", "mobile")
-					.filter(
-							LdapFilter.or(
-									LdapFilter.and(
-											LdapFilter.isEqual("l", "*ondon"), 
-											LdapFilter.isLessEqual("uid", "002000")),
-									LdapFilter.isEqual("uid", "001377")
-							));
+					.base(new LdapName(BASE))
+					.attributes("userCertificate");
+			String url = baseUrl + "/dc=example,dc=com?userCertificate";
+			
 			System.out.println("query: "+query.getFilter().toString());
 			
-			testQuery(
-					LdapEngineType.SPRING_FRAMEWORK, 
-					query);
+			System.out.println("**************** QUERY ****************");
+			printAttributes(
+					System.out,
+					testQuery(
+							LdapEngineType.SPRING_FRAMEWORK, 
+							query));
 			
-			testCRL(LdapEngineType.SPRING_FRAMEWORK);
+			System.out.println("**************** CRL ****************");
+			printAttributes(
+					System.out,
+					testCRL(LdapEngineType.SPRING_FRAMEWORK));
 			
-			testParsing(
+			System.out.println("**************** ATTRIBUTES ****************");
+			printAttributes(
+					System.out,
+					testParsing(
 					LdapEngineType.SPRING_FRAMEWORK, 
-					query);
+					query,
+					url));
 			
 			stopServer();
 			

@@ -1,6 +1,5 @@
 package org.openspcoop2.utils.test.transport;
 
-import java.net.URI;
 
 import javax.naming.InvalidNameException;
 import javax.naming.ldap.LdapName;
@@ -10,9 +9,7 @@ import org.openspcoop2.utils.test.TestLogger;
 import org.openspcoop2.utils.transport.ldap.LdapEngineType;
 import org.openspcoop2.utils.transport.ldap.LdapFilter;
 import org.openspcoop2.utils.transport.ldap.LdapQuery;
-import org.openspcoop2.utils.transport.ldap.LdapUtility;
 import org.openspcoop2.utils.transport.ldap.test.LdapTest;
-import org.testng.Assert;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.DataProvider;
@@ -75,11 +72,19 @@ public class TestLdap {
 						));
 		String urlGreater = url + "/dc%3Dexample%2Cdc%3Dcom?cn,mobile?%28%7C%28%26%28l%3D*ondon%29%28uid%3E%3D002000%29%29%28uid%3D001377%29%29";
 		
+		// query per fare il parsing di url in formato non encoded
+		LdapQuery queryRaw = new LdapQuery()
+				.base(new LdapName(BASE))
+				.attributes("userCertificate");
+		String urlRaw = url + "/dc=example,dc=com?userCertificate";
+		
+		
 		Object[][] queries = new Object[][] {
 				{queryAll, urlAll},
 				{queryBase, urlBase},
 				{queryLess, urlLess},
-				{queryGreater, urlGreater}
+				{queryGreater, urlGreater},
+				{queryRaw, urlRaw},
 		};
 		
 		Object[][] rv = new Object[queries.length * LdapEngineType.class.getEnumConstants().length][3];
@@ -145,6 +150,7 @@ public class TestLdap {
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".query"},dataProvider="queryProvider")
 	public void testQuery(LdapEngineType type, LdapQuery query, String url) throws Exception {
 		TestLogger.info("Run test '"+ID_TEST+".query' ...");
+		TestLogger.info("engine: " + type.toString() + ", url: " + url);
 		
 		LdapTest.testQuery(type, query);
 	}
@@ -155,6 +161,7 @@ public class TestLdap {
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".crl"},dataProvider="engineProvider")
 	public void testCRL(LdapEngineType type) throws Exception {
 		TestLogger.info("Run test '"+ID_TEST+".crl' ...");
+		TestLogger.info("engine: " + type.toString());
 		
 		LdapTest.testCRL(type);
 	}
@@ -165,11 +172,8 @@ public class TestLdap {
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".parsing"},dataProvider="queryProvider")
 	public void testParsing(LdapEngineType type, LdapQuery query, String url) throws Exception {
 		TestLogger.info("Run test '"+ID_TEST+".parsing' ...");
+		TestLogger.info("engine: " + type.toString() + ", url: " + url);
 		
-		
-		TestLogger.info("url generato:" + LdapUtility.getURIFromQuery(new URI(LdapTest.getUrl()), query).toString() + ", url atteso:" + url);
-		Assert.assertTrue(LdapUtility.getURIFromQuery(new URI(LdapTest.getUrl()), query).equals(new URI(url)));
-		
-		LdapTest.testParsing(type, query);
+		LdapTest.testParsing(type, query, url);
 	}
 }

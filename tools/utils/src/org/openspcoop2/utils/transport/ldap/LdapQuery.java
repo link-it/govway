@@ -22,7 +22,7 @@ public class LdapQuery {
 	public LdapQuery() {
 		this.attributes = new ArrayList<>();
 		this.limit = null;
-		this.filter = LdapFilter.absoluteTrue();
+		this.filter = LdapFilter.isPresent("cn");
 		this.base = null;
 	}
 	
