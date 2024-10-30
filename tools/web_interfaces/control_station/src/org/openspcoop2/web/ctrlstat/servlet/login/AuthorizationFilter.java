@@ -179,7 +179,7 @@ public final class AuthorizationFilter implements Filter {
 					if (userLogin == null) {
 						
 						if((contextPath+"/").equals(urlRichiesta)){
-							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP,null, this.filterConfig, null);
+							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP,null, this.filterConfig, HttpStatus.OK);
 						}
 						else{
 							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA,MessageType.ERROR_SINTETICO, this.filterConfig, HttpStatus.UNAUTHORIZED);
@@ -268,7 +268,7 @@ public final class AuthorizationFilter implements Filter {
 							} catch (Exception e) {
 								ControlStationCore.logError("Errore durante il processo di autorizzazione della servlet ["+urlRichiesta
 										+"] per l'utente ["+userLogin+"] : " + e.getMessage(),e);
-								setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig, HttpStatus.INTERNAL_SERVER_ERROR);
+								setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig, HttpStatus.SERVICE_UNAVAILABLE);
 								// return so that we do not chain to other filters
 								return;
 							}
@@ -509,7 +509,7 @@ public final class AuthorizationFilter implements Filter {
 							} catch (Exception e) {
 								ControlStationCore.logError("Errore durante il processo di autorizzazione della servlet ["+urlRichiesta
 										+"] per l'utente ["+userLogin+"] : " + e.getMessage(),e);
-								setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig, HttpStatus.INTERNAL_SERVER_ERROR);
+								setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig, HttpStatus.SERVICE_UNAVAILABLE);
 								// return so that we do not chain to other filters
 								return;
 							}
@@ -584,7 +584,7 @@ public final class AuthorizationFilter implements Filter {
 						ControlStationCore.logError("Errore rilevato durante l'authorizationFilter (reInit General Helper)",e);
 					}
 				}
-				AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig, HttpStatus.INTERNAL_SERVER_ERROR);
+				AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig, HttpStatus.SERVICE_UNAVAILABLE);
 				// return so that we do not chain to other filters
 				return;
 			}catch(Exception eClose){
@@ -709,7 +709,7 @@ public final class AuthorizationFilter implements Filter {
 		
 		// imposto errore di default
 		if(httpStatus == null)
-			httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+			httpStatus = HttpStatus.SERVICE_UNAVAILABLE;
 		
 		ServletUtils.setErrorStatusCodeInRequestAttribute(request, httpStatus);
 		ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);

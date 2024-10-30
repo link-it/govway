@@ -30,4 +30,6 @@ Inoltre sono state aggiunte utility:
 
 Per la console di gestione sono stati risolti i seguenti bug:
 
+- la pagina iniziale che consente di effettuare il login nella console (es. http://127.0.0.1:8080/govwayConsole/) restituiva un codice di risposta HTTP 500 invece di 200;
+
 - nella configurazione di un'API ModI con pattern INTEGRITY_REST, la scelta dell'header HTTP "Custom-JWT-Signature" comporta che la gestione dell'integrità non venga eseguita in modo integrato, ma sia demandata all'applicazione. A causa di questo comportamento, la maschera di configurazione non era del tutto intuitiva e poteva far pensare che si stesse solo modificando il nome dell'header HTTP, mentre in realtà cambiava anche la modalità di gestione dell'integrità. È stata quindi aggiunta una nota esplicativa per chiarire meglio il funzionamento.
