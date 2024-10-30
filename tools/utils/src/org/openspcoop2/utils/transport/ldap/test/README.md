@@ -7,7 +7,7 @@ In questo package sono implementati i test per il client ldap
 Il package client implementa un client ldap di sola lettura.
 Il package comprende un interafaccia di un client, un implementazione di tale interfaccia usando il framework di spring.
 Una classe query che definisce la tipologia di query da effettuare.
-Una flasse filtro che serve a definire un filtro di ricerca.
+Una classe filtro che serve a definire un filtro di ricerca.
 Una classe che implementa una factory per generare un implementazione concreta del client.
  
 ## Test

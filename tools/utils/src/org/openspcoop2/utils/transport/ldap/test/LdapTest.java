@@ -1,6 +1,7 @@
 package org.openspcoop2.utils.transport.ldap.test;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -20,6 +21,7 @@ import javax.naming.directory.BasicAttributes;
 import javax.naming.ldap.LdapName;
 import javax.security.auth.x500.X500Principal;
 
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.ldap.LdapClientFactory;
 import org.openspcoop2.utils.transport.ldap.LdapClientInterface;
 import org.openspcoop2.utils.transport.ldap.LdapEngineType;
@@ -202,12 +204,15 @@ public class LdapTest {
 	}
 	
 	public static void startServer() throws Exception {
-        server.start(LdapTest.class.getResource("server").getPath());
+		File dirTmp = File.createTempFile("ldapServer", "dat");
+		FileSystemUtilities.deleteFile(dirTmp);
+		FileSystemUtilities.mkdir(dirTmp);
+		server.start(dirTmp.getPath());
 	}
 	
 	public static void stopServer() {
 		try {
-			server.shutdown();
+			server.shutdown(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -236,7 +241,7 @@ public class LdapTest {
 											LdapFilter.isLessEqual("uid", "002000")),
 									LdapFilter.isEqual("uid", "001377")
 							));
-			System.out.println(query.getFilter().toString());
+			System.out.println("query: "+query.getFilter().toString());
 			
 			testQuery(
 					LdapEngineType.SPRING_FRAMEWORK, 

@@ -21,6 +21,7 @@ import org.apache.directory.server.core.partition.ldif.LdifPartition;
 import org.apache.directory.server.ldap.LdapServer;
 import org.apache.directory.server.protocol.shared.store.LdifFileLoader;
 import org.apache.directory.server.protocol.shared.transport.TcpTransport;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.springframework.core.io.Resource;
 
 public class LdapServerTest {
@@ -28,6 +29,7 @@ public class LdapServerTest {
 	private String host = "127.0.0.1";
 	private int port = 9321;
 	private Resource ldif;
+	private File workingDirector;
 	
 	public LdapServerTest(Resource ldif) {
 		this.ldif = ldif;
@@ -36,13 +38,14 @@ public class LdapServerTest {
 	public void start(String path) throws Exception {
 		DefaultDirectoryService directoryService = new DefaultDirectoryService();
 		
-        File workingDirector = new File(path);
-        InstanceLayout instanceLayout = new InstanceLayout(workingDirector);
+        this.workingDirector = new File(path);
+        FileSystemUtilities.mkdir(this.workingDirector);
+        InstanceLayout instanceLayout = new InstanceLayout(this.workingDirector);
         directoryService.setInstanceLayout(instanceLayout);
  
-        File schemaRepository = new File(workingDirector, "schema");
+        File schemaRepository = new File(this.workingDirector, "schema");
         
-        DefaultSchemaLdifExtractor extractor = new DefaultSchemaLdifExtractor(workingDirector);
+        DefaultSchemaLdifExtractor extractor = new DefaultSchemaLdifExtractor(this.workingDirector);
         try {
             extractor.extractOrCopy();
         } catch (IOException ioe) {
@@ -63,7 +66,7 @@ public class LdapServerTest {
  
         // Init the schema partation
         LdifPartition ldifPartition = new LdifPartition(schemaManager, directoryService.getDnFactory());
-        ldifPartition.setPartitionPath(new File(workingDirector, "schema").toURI());
+        ldifPartition.setPartitionPath(new File(this.workingDirector, "schema").toURI());
         SchemaPartition schemaPartition = new SchemaPartition(schemaManager);
         schemaPartition.setWrappedPartition(ldifPartition);
         directoryService.setSchemaPartition(schemaPartition);
@@ -71,7 +74,7 @@ public class LdapServerTest {
         
         // Init the user  partation
         LdifPartition userPartition = new LdifPartition(schemaManager, directoryService.getDnFactory());
-        userPartition.setPartitionPath(new File(workingDirector, "user").toURI());
+        userPartition.setPartitionPath(new File(this.workingDirector, "user").toURI());
         userPartition.setSuffixDn(new Dn("dc=example,dc=com"));
         directoryService.addPartition(userPartition); 
         
@@ -97,8 +100,12 @@ public class LdapServerTest {
         this.server.start();
 	}
 	
-	public void shutdown() {
+	public void shutdown(boolean dropWorkingDirectory) {
 		this.server.stop();
+		if(dropWorkingDirectory) {
+			FileSystemUtilities.deleteDirNotEmpty(this.workingDirector, 10);
+			FileSystemUtilities.deleteDir(this.workingDirector);
+		}
 	}
 	
 	public String getURL() {
