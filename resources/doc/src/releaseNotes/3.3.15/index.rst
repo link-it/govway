@@ -9,8 +9,9 @@ si può invece far riferimento al file ChangeLog di questa versione.
 
 .. note::
 
-   Per la versione 3.3.15 utilizzare l'ultima patch version che risolve bug importanti descritti nella sezione:
+   Per la versione 3.3.15 utilizzare l'ultima patch version che risolve bug importanti descritti nelle sezioni:
 
+   - :ref:`3.3.15.2_bug`
    - :ref:`3.3.15.1_bug`
 
 .. toctree::
@@ -19,6 +20,7 @@ si può invece far riferimento al file ChangeLog di questa versione.
 	byok
 	tracciamento
 	modipa
+	spcoop
 	connettori
 	token
 	sicurezzaMessaggio
@@ -26,4 +28,5 @@ si può invece far riferimento al file ChangeLog di questa versione.
         installer
         bug
 	bug_p1
+	bug_p2
 

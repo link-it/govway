@@ -1,3 +1,13 @@
+2024-10-31  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.3.15.p2
+
+2024-10-30  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug #1542
+	La pagina iniziale che consente di effettuare il login nella console (es. http://127.0.0.1:8080/govwayConsole/) restituiva un codice di risposta HTTP 500 invece di 200.
+
 2024-10-29  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
