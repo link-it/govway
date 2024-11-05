@@ -22,6 +22,8 @@ package org.openspcoop2.utils.transport.ldap.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
+import java.util.Properties;
 
 import org.apache.directory.api.ldap.model.constants.SchemaConstants;
 import org.apache.directory.api.ldap.model.name.Dn;
@@ -41,6 +43,9 @@ import org.apache.directory.server.core.partition.ldif.LdifPartition;
 import org.apache.directory.server.ldap.LdapServer;
 import org.apache.directory.server.protocol.shared.store.LdifFileLoader;
 import org.apache.directory.server.protocol.shared.transport.TcpTransport;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.springframework.core.io.Resource;
 
@@ -57,12 +62,28 @@ public class LdapServerTest {
 	private int port = 9321;
 	private Resource ldif;
 	private File workingDirector;
+	private String rootPartition = "dc=example,dc=com";
 	
 	public LdapServerTest(Resource ldif) {
 		this.ldif = ldif;
 	}
+	public LdapServerTest(Resource ldif, org.apache.logging.log4j.Level level) throws IOException, UtilsException {
+		this.ldif = ldif;
+		
+		String propertiesLog = "log4j.logger.org.apache.directory.server="+level.name();
+		Properties p = new Properties();
+		p.load(new StringReader(propertiesLog));
+		LoggerWrapperFactory.setLogConfiguration(p);
+	}
+
+	public void setRootPartition(String rootPartition) {
+		this.rootPartition = rootPartition;
+	}
 	
 	public void start(String path) throws Exception {
+		start(path, false);
+	}
+	public void start(String path, boolean allowAnonymousAccess) throws Exception {
 		DefaultDirectoryService directoryService = new DefaultDirectoryService();
 		
         this.workingDirector = new File(path);
@@ -102,7 +123,7 @@ public class LdapServerTest {
         // Init the user  partation
         LdifPartition userPartition = new LdifPartition(schemaManager, directoryService.getDnFactory());
         userPartition.setPartitionPath(new File(this.workingDirector, "user").toURI());
-        userPartition.setSuffixDn(new Dn("dc=example,dc=com"));
+        userPartition.setSuffixDn(new Dn(this.rootPartition));
         directoryService.addPartition(userPartition); 
         
         // Inject the System Partition
@@ -119,6 +140,10 @@ public class LdapServerTest {
         TcpTransport tcp = new TcpTransport(this.host, this.port, 1, 5);
         this.server.addTransports(tcp);
  
+        if(allowAnonymousAccess) {
+        	directoryService.setAllowAnonymousAccess(true);
+        }
+        
         directoryService.startup();
         
         LdifFileLoader ldifLoader = new LdifFileLoader(directoryService.getAdminSession(), this.ldif.getFile().getPath());
@@ -128,7 +153,16 @@ public class LdapServerTest {
 	}
 	
 	public void shutdown(boolean dropWorkingDirectory) {
-		this.server.stop();
+		if(this.server.isStarted()) {
+			this.server.stop();
+		}
+		
+		int index = 0;
+		while (this.server.isStarted() && index < 1000) {
+			Utilities.sleep(100);
+			index++;
+		}
+		
 		if(dropWorkingDirectory) {
 			FileSystemUtilities.deleteDirNotEmpty(this.workingDirector, 10);
 			FileSystemUtilities.deleteDir(this.workingDirector);

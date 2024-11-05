@@ -62,6 +62,24 @@ public class TestOCSP {
 		TestLogger.info("Run test '"+ID_TEST+".checkAlternativeCrlCheck' ok");
 		
 	}
+	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".checkAlternativeCrlLdapCheckNoAuth"})
+	public void testAlternativeCrlCheckLdapCheckNoAuth() throws Exception{
+		
+		TestLogger.info("Run test '"+ID_TEST+".checkAlternativeCrlCheckLdapCheckNoAuth' ...");
+		org.openspcoop2.utils.certificate.ocsp.test.OCSPTest.checkAlternativeCrlLdapCheck(false);
+		TestLogger.info("Run test '"+ID_TEST+".checkAlternativeCrlCheckLdapCheckNoAuth' ok");
+		
+	}
+	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".checkAlternativeCrlLdapCheckAuthBasic"})
+	public void testAlternativeCrlCheckLdapCheckAuthBasic() throws Exception{
+		
+		TestLogger.info("Run test '"+ID_TEST+".checkAlternativeCrlCheckLdapCheckAuthBasic' ...");
+		org.openspcoop2.utils.certificate.ocsp.test.OCSPTest.checkAlternativeCrlLdapCheck(true);
+		TestLogger.info("Run test '"+ID_TEST+".checkAlternativeCrlCheckLdapCheckAuthBasic' ok");
+		
+	}
 		
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".checkOCSPResponse_signedByResponderCertificate_case2"})
 	@Parameters({"opensslCmd","waitStartupServerMs"})

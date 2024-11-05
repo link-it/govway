@@ -90,6 +90,9 @@ public class OCSPResourceReader implements IOCSPResourceReader {
 				externalConfig.setKeyPassword(this.config.getExternalResources_keyPassword());
 			}
 			
+			externalConfig.setBasicUsername(this.config.getExternalResourcesUsername());
+			externalConfig.setBasicPassword(this.config.getExternalResourcesPassword());
+			
 			if(this.config.getForwardProxy_url()!=null) {
 				externalConfig.setForwardProxyUrl(this.config.getForwardProxy_url());
 				externalConfig.setForwardProxyHeader(this.config.getForwardProxy_header());

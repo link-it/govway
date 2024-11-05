@@ -38,6 +38,7 @@ import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.certificate.KeystoreType;
+import org.openspcoop2.utils.transport.TransportUtils;
 
 /**
  * OCSPRequestParams
@@ -50,8 +51,7 @@ public class CRLParams {
 
 	private KeyStore crlTrustStore;
 	private CertStore crlCertstore;
-	
-	
+		
 	public KeyStore getCrlTrustStore() {
 		return this.crlTrustStore;
 	}
@@ -90,13 +90,23 @@ public class CRLParams {
 			for (CertificateSource s : config.getCrlSource()) {
 				if(CertificateSource.CONFIG.equals(s)) {
 					if(crlInputConfig!=null) {
-						List<String> l = CRLCertstore.readCrlPaths(crlInputConfig);
-						if(l!=null && !l.isEmpty()) {
-							for (String crlPath : l) {
-								String p = crlPath.trim();
-								if(!crlPaths.contains(p)) {
-									crlPaths.add(p);
-									log.debug("OCSP-CRL: add config path '"+p+"'");
+						// è possibile fornire un'unica indicazione di una risorsa remota o in alternativa N file crl
+						if(TransportUtils.isRemoteResource(crlInputConfig)){
+							readCrlPath(crlInputConfig.trim(),
+									crlPaths, localResources,
+									listExceptions,
+									reader,
+									log);
+						}
+						else {
+							List<String> l = CRLCertstore.readCrlPaths(crlInputConfig);
+							if(l!=null && !l.isEmpty()) {
+								for (String crlPath : l) {
+									String p = crlPath.trim();
+									if(!crlPaths.contains(p)) {
+										crlPaths.add(p);
+										log.debug("OCSP-CRL: add config path '"+p+"'");
+									}
 								}
 							}
 						}
@@ -133,26 +143,11 @@ public class CRLParams {
 									List<String> l = crlDP.getDistributionPointNames();
 									if(l!=null) {
 										for (String crlPath : l) {
-											if(!crlPaths.contains(crlPath)) {
-												try {
-													Map<String, byte[]> map = new HashMap<>();
-													reader.readExternalResource(crlPath, map);
-													byte [] crl = null;
-													if(!map.isEmpty()) {
-														crl = map.get(crlPath);
-													}
-													if(crl==null || crl.length<=0) {
-														throw new Exception("empty resource");
-													}
-													localResources.put(crlPath, crl);
-													crlPaths.add(crlPath);
-													log.debug("OCSP-CRL: add external resource '"+crlPath+"'");
-												}catch(Throwable t) {
-													String msgError = "[crl: "+crlPath+"] retrieve failed: "+t.getMessage();
-													log.debug("OCSP-CRL "+msgError,t);
-													listExceptions.add(new Exception(msgError,t));
-												}
-											}
+											readCrlPath(crlPath,
+													crlPaths, localResources,
+													listExceptions,
+													reader,
+													log);
 										}
 									}
 								}
@@ -362,4 +357,30 @@ public class CRLParams {
 		
 	}
 	
+	private static void readCrlPath(String crlPath,
+			List<String> crlPaths,Map<String, byte[]> localResources,
+			List<Throwable> listExceptions,
+			IOCSPResourceReader reader,
+			LoggerBuffer log) {
+		if(!crlPaths.contains(crlPath)) {
+			try {
+				Map<String, byte[]> map = new HashMap<>();
+				reader.readExternalResource(crlPath, map);
+				byte [] crl = null;
+				if(!map.isEmpty()) {
+					crl = map.get(crlPath);
+				}
+				if(crl==null || crl.length<=0) {
+					throw new Exception("empty resource");
+				}
+				localResources.put(crlPath, crl);
+				crlPaths.add(crlPath);
+				log.debug("OCSP-CRL: add external resource '"+crlPath+"'");
+			}catch(Throwable t) {
+				String msgError = "[crl: "+crlPath+"] retrieve failed: "+t.getMessage();
+				log.debug("OCSP-CRL "+msgError,t);
+				listExceptions.add(new Exception(msgError,t));
+			}
+		}
+	}
 }

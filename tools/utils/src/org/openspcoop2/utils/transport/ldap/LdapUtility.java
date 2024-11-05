@@ -57,6 +57,9 @@ public class LdapUtility {
 		return new String[0];
 	}
 	
+	public static URI getBaseUrlFromURI(String uri) throws URISyntaxException {
+		return getBaseUrlFromURI(new URI(uri));
+	}
 	public static URI getBaseUrlFromURI(URI uri) throws URISyntaxException {
 		String scheme = Objects.requireNonNullElse(uri.getScheme(), "ldap");
 		int port = Objects.requireNonNullElse(uri.getPort(), scheme.equals("ldaps") ? 636 : 389);
@@ -71,6 +74,9 @@ public class LdapUtility {
 		return LdapFilter.isPresent("cn");
 	}
 	
+	public static LdapQuery getQueryFromURI(String uri) throws InvalidNameException, ParseException, URISyntaxException {
+		return getQueryFromURI(new URI(uri));
+	}
 	public static LdapQuery getQueryFromURI(URI uri) throws InvalidNameException, ParseException {
 		return new LdapQuery()
 				.attributes(LdapUtility.getAttributesFromURI(uri))

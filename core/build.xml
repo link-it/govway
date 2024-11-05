@@ -79,6 +79,7 @@
 			<include name="shared/*"/>
 			<include name="soapbox/*"/>
 			<include name="spring/*"/>
+			<include name="spring-ldap/*"/>
 			<include name="spring-security/*"/>
 			<include name="stub/*"/>
 			<include name="swagger/*"/>

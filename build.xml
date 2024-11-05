@@ -322,6 +322,7 @@
 			<include name="redis/*"/>
 			<include name="soapbox/*"/>
 			<include name="spring/*"/>
+                        <include name="spring-ldap/*"/>
 			<include name="spring-security/*"/>
 			<include name="stub/cxf/*"/>
 			<include name="swagger/*"/>

@@ -90,6 +90,9 @@ public class OCSPConfig {
 	private String externalResources_keyAlias;
 	private String externalResources_keyPassword;
 	
+	private String externalResourcesUsername;
+	private String externalResourcesPassword;
+	
 	private String forwardProxy_url;
 	private String forwardProxy_header;
 	private String forwardProxy_queryParameter;
@@ -233,6 +236,13 @@ public class OCSPConfig {
 	}
 	public String getExternalResources_keyPassword() {
 		return this.externalResources_keyPassword;
+	}
+	
+	public String getExternalResourcesUsername() {
+		return this.externalResourcesUsername;
+	}
+	public String getExternalResourcesPassword() {
+		return this.externalResourcesPassword;
 	}
 
 	public String getForwardProxy_url() {
@@ -395,6 +405,11 @@ public class OCSPConfig {
 			
 			this.externalResources_keyPassword = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_KEY_PASSWORD, true);	
 			this.externalResources_keyAlias = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_KEY_ALIAS, false);	
+		}
+		
+		this.externalResourcesUsername = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_USERNAME, false);	
+		if(this.externalResourcesUsername!=null && StringUtils.isNotEmpty(this.externalResourcesUsername)) {
+			this.externalResourcesPassword = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_PASSWORD, false);	
 		}
 		
 		this.forwardProxy_url = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_FORWARD_PROXY_URL, false);	

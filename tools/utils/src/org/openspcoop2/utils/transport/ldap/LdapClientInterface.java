@@ -23,6 +23,7 @@ package org.openspcoop2.utils.transport.ldap;
 import java.net.URI;
 import java.util.List;
 
+import javax.naming.InvalidNameException;
 import javax.naming.directory.Attributes;
 import javax.naming.ldap.LdapName;
 
@@ -38,6 +39,11 @@ public interface LdapClientInterface {
 	public List<Attributes> search(LdapQuery filter);
 	public LdapClientInterface base(LdapName base);
 	public LdapClientInterface uri(URI url);
+	
+	// autenticazione
+	public default LdapClientInterface username(String name) throws InvalidNameException {
+		return this.username(new LdapName(name));
+	}
 	public LdapClientInterface username(LdapName name);
 	public LdapClientInterface password(String password);
 	
