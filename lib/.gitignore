@@ -30,6 +30,7 @@ security
 shared
 soapbox
 spring
+spring-ldap
 spring-security
 staticAnalysis
 swagger
