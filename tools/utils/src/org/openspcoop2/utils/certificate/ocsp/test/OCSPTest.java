@@ -42,10 +42,14 @@ import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.certificate.ocsp.OCSPRequestParams;
 import org.openspcoop2.utils.certificate.ocsp.OCSPResourceReader;
 import org.openspcoop2.utils.certificate.ocsp.OCSPValidator;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
+import org.openspcoop2.utils.transport.ldap.test.LdapServerTest;
 import org.slf4j.Logger;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 
 /**
  * OCSPTest
@@ -66,6 +70,10 @@ public class OCSPTest {
 		checkGoogle();
 		
 		checkAlternativeCrlCheck();
+		
+		checkAlternativeCrlLdapCheck(false); 
+		
+		checkAlternativeCrlLdapCheck(true);
 		
 		String com = null;
 		if(args!=null && args.length>0) {
@@ -220,6 +228,86 @@ public class OCSPTest {
 			finally {
 				if(fCrl!=null) {
 					fCrl.delete();
+				}
+			}
+	
+			System.out.println("\n\nTest 'checkAlternativeCrlCheck' terminato");
+			
+		}finally {
+			Security.removeProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
+		}
+	}
+	
+	public static void checkAlternativeCrlLdapCheck(boolean withCredentials) throws Exception {
+		
+		Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 2); // lasciare alla posizione 1 il provider 'SUN'
+		try {
+			
+			initialize();
+			
+			String configType = "alternativeCrlCheck";
+			if(withCredentials) {
+				configType = "alternativeCrlCheckLdapCredentials";
+			}
+			
+			KeyStore trustStoreCA = null;
+			try(InputStream is = OCSPTest.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/crl/trustStore_ca.jks")){
+				byte[] content = Utilities.getAsByteArray(is);
+				trustStoreCA = new KeyStore(content, KeystoreType.JKS.getNome(), "123456");
+			}
+			
+			File fLdiff = null;
+			File fLdapServer = null;
+			LdapServerTest server = null;
+			try(InputStream is = OCSPTest.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/crl/ExampleCA.crl");
+					InputStream isLdiff = OCSPTest.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/crl/server.ldif")){
+				byte[] content = Utilities.getAsByteArray(is);
+				
+				String contentLdif = Utilities.getAsString(isLdiff, Charset.UTF_8.getValue());
+				contentLdif = contentLdif.replace("CRL-BASE-64", Base64Utilities.encodeAsString(content));
+				
+				fLdapServer = File.createTempFile("testServer", ".dat");
+				FileSystemUtilities.deleteFile(fLdapServer);
+				FileSystemUtilities.mkdir(fLdapServer);
+				
+				fLdiff = File.createTempFile("testServer", ".ldiff");
+				FileSystemUtilities.writeFile(fLdiff, contentLdif.getBytes());
+								
+				Resource ldif = new FileSystemResource(fLdiff);
+				server = new LdapServerTest(ldif, org.apache.logging.log4j.Level.INFO);
+				server.setRootPartition("o=example,c=it");
+				boolean allowAnonymousAccess = !withCredentials;
+				server.start(fLdapServer.getPath(),allowAnonymousAccess);
+								
+				String crl = "ldap://127.0.0.1:9321/cn=CRL%20Holder,o=example,c=it?certificateRevocationList";
+				
+				// certificato valido
+				try(InputStream isCert = OCSPTest.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/crl/ExampleClient1.crt")){
+					String certificate = Utilities.getAsString(isCert, Charset.UTF_8.getValue());
+					_check(certificate, "AlternativeCrlCheck-ExampleClient1", trustStoreCA, crl, configType, CertificateStatusCode.GOOD );
+				}
+				
+				// certificato scaduto
+				try(InputStream isCert = OCSPTest.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/crl/ExampleClientScaduto.crt")){
+					String certificate = Utilities.getAsString(isCert, Charset.UTF_8.getValue());
+					_check(certificate, "AlternativeCrlCheck-ExampleClientScaduto", trustStoreCA, crl, configType, CertificateStatusCode.EXPIRED );
+				}
+				
+				// certificato revocato
+				try(InputStream isCert = OCSPTest.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/crl/ExampleClientRevocato.crt")){
+					String certificate = Utilities.getAsString(isCert, Charset.UTF_8.getValue());
+					_check(certificate, "AlternativeCrlCheck-ExampleClientRevocato", trustStoreCA, crl, configType, CertificateStatusCode.REVOKED );
+				}
+			}
+			finally {
+				if(server!=null) {
+					server.shutdown(true);
+				}
+				if(fLdiff!=null) {
+					FileSystemUtilities.deleteFile(fLdiff);
+				}
+				if(fLdapServer!=null) {
+					FileSystemUtilities.deleteDir(fLdapServer);
 				}
 			}
 	

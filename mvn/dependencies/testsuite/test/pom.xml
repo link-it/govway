@@ -16,7 +16,9 @@
 		<module>karate09</module>
 		<module>logback</module>
 		<module>httpcore4</module>
-		<module>spring5</module>
+                <module>spring5</module>
+                <module>spring-ldap2</module>
+                <module>apacheds</module>
 	</modules>
 
 	<parent>

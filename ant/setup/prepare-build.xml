@@ -87,6 +87,7 @@
 			<include name="shared/*"/>
 			<include name="redis/*"/>
 			<include name="spring/*"/>
+			<include name="spring-ldap/*"/>
 			<include name="spring-security/*"/>
 			<include name="stub/cxf/openspcoop2_registrySearchStub_cxf.jar"/>
 			<include name="stub/cxf/openspcoop2_registryStub_cxf.jar"/>
@@ -97,6 +98,7 @@
 			<include name="openapi4j/*"/>
 			<include name="reports/*"/>
 			<include name="httpcore/*"/>
+			<include name="testsuite/apacheds/*"/>
 		</fileset>
 	</path>		
 	<path id="classpath_dist" >

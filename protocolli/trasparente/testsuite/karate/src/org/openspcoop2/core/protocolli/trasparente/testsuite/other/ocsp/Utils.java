@@ -23,6 +23,7 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.other.ocsp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
@@ -44,6 +45,7 @@ import org.openspcoop2.utils.certificate.ocsp.test.OpenSSLThread;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.Charset;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWSOptions;
 import org.openspcoop2.utils.security.JsonSignature;
@@ -53,7 +55,10 @@ import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.utils.transport.ldap.test.LdapServerTest;
 import org.slf4j.Logger;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.web.util.UriUtils;
 
 /**
@@ -168,6 +173,61 @@ public class Utils {
 		
 	}
 	
+	public static HttpResponse getLdapTest(Logger logCore, String api, String soggetto, String operazione, String ... msgErrore) throws Exception {
+		return ldapTest(HttpRequestMethod.GET, null, null,
+				logCore, api, soggetto, operazione, msgErrore);
+	}
+	public static HttpResponse getLdapTest(Logger logCore, TipoServizio tipoServizio, String api, String soggetto, String operazione, String ... msgErrore) throws Exception {
+		return ldapTest(tipoServizio, HttpRequestMethod.GET, null, null,
+				logCore, api, soggetto, operazione, msgErrore);
+	}
+	public static HttpResponse ldapTest(HttpRequestMethod method, String contentType, byte[] content,
+			Logger logCore, String api, String soggetto, String operazione, String ... msgErroreParam) throws Exception {
+		return ldapTest(TipoServizio.EROGAZIONE, method, contentType, content,
+				logCore, api, soggetto, operazione, msgErroreParam);
+	}
+	public static HttpResponse ldapTest(TipoServizio tipoServizio, HttpRequestMethod method, String contentType, byte[] content,
+			Logger logCore, String api, String soggetto, String operazione, String ... msgErroreParam) throws Exception {
+		
+		File fLdapServer = null;
+		File fLdiff = null;
+		LdapServerTest server = null;
+		try(InputStream is = new FileInputStream("/etc/govway/keys/xca/ExampleCA.crl");
+				InputStream isLdiff = OCSPTest.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/crl/server.ldif")){
+			byte[] contentCRL = Utilities.getAsByteArray(is);
+			
+			String contentLdif = Utilities.getAsString(isLdiff, Charset.UTF_8.getValue());
+			contentLdif = contentLdif.replace("CRL-BASE-64", Base64Utilities.encodeAsString(contentCRL));
+			
+			fLdapServer = File.createTempFile("testServer", ".dat");
+			FileSystemUtilities.deleteFile(fLdapServer);
+			FileSystemUtilities.mkdir(fLdapServer);
+			
+			fLdiff = File.createTempFile("testServer", ".ldiff");
+			FileSystemUtilities.writeFile(fLdiff, contentLdif.getBytes());
+							
+			Resource ldif = new FileSystemResource(fLdiff);
+			server = new LdapServerTest(ldif, org.apache.logging.log4j.Level.INFO);
+			server.setRootPartition("o=example,c=it");
+			boolean allowAnonymousAccess = true;
+			server.start(fLdapServer.getPath(),allowAnonymousAccess);
+			
+			return test(tipoServizio, method, contentType, content,
+					logCore, api, soggetto, operazione, msgErroreParam);
+		}
+		finally {
+			if(server!=null) {
+				server.shutdown(true);
+			}
+			if(fLdiff!=null) {
+				FileSystemUtilities.deleteFile(fLdiff);
+			}
+			if(fLdapServer!=null) {
+				FileSystemUtilities.deleteDir(fLdapServer);
+			}
+		}
+	}
+	
 	public static HttpResponse get(Logger logCore, String api, String soggetto, String operazione, String ... msgErrore) throws Exception {
 		return test(HttpRequestMethod.GET, null, null,
 				logCore, api, soggetto, operazione, msgErrore);
@@ -200,7 +260,7 @@ public class Utils {
 		}
 		boolean attesoErrore = !msgErroreList.isEmpty();
 		
-		if(GestoreCredenzialiTest.api.equals(api) || AutenticazioneHttpsTest.api.equals(api)) {
+		if(GestoreCredenzialiTest.api.equals(api) || AutenticazioneHttpsTest.api.equals(api) || AutenticazioneHttpsTest.apiLDAP.equals(api)) {
 			
 			String nomeHeaderCertificato = (tipoServizio == TipoServizio.EROGAZIONE) ? "X-Erogazione-SSL-Cert" : "X-Fruizione-SSL-Cert";
 			
@@ -215,11 +275,14 @@ public class Utils {
 			}
 			//System.out.println("CHECK MSG: "+addCheckMsgDiagnosticoCredenziali);
 			
-			if(GestoreCredenzialiTest.soggetto_caseCRL.equals(soggetto) || AutenticazioneHttpsTest.soggetto_xca.equals(soggetto)) {
+			if(GestoreCredenzialiTest.soggetto_caseCRL.equals(soggetto) || GestoreCredenzialiTest.soggetto_caseCRLldap.equals(soggetto) || AutenticazioneHttpsTest.soggetto_xca.equals(soggetto)) {
 				
 				if(addCheckMsgDiagnosticoCredenziali) {
 					if(GestoreCredenzialiTest.soggetto_caseCRL.equals(soggetto)) {
 						msgErroreList.add(PROXY_CREDENTIALS_MSG.replace(PROXY_CREDENTIALS_ID, "WebServerErogazioniSoggettoOCSPCaseCRL"));
+					}
+					else if(GestoreCredenzialiTest.soggetto_caseCRLldap.equals(soggetto)) {
+						msgErroreList.add(PROXY_CREDENTIALS_MSG.replace(PROXY_CREDENTIALS_ID, "WebServerErogazioniSoggettoOCSPCaseCRLldap"));
 					}
 					else {
 						msgErroreList.add(PROXY_CREDENTIALS_MSG.replace(PROXY_CREDENTIALS_ID,
@@ -322,14 +385,14 @@ public class Utils {
 			checkErrorTypeGovWay = false;
 			boolean errorHttpNull = false;
 			
-			if(GestoreCredenzialiTest.api.equals(api) || AutenticazioneHttpsTest.api.equals(api)) {
+			if(GestoreCredenzialiTest.api.equals(api) || AutenticazioneHttpsTest.api.equals(api) || AutenticazioneHttpsTest.apiLDAP.equals(api)) {
 				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTENTICAZIONE);
 				code = 401;
 				if(GestoreCredenzialiTest.api.equals(api)) {
 					error = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities.FORWARD_PROXY_AUTHENTICATION_REQUIRED;
 					msg = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities.FORWARD_PROXY_AUTHENTICATION_REQUIRED_MESSAGE;
 				}
-				else if(AutenticazioneHttpsTest.api.equals(api)){
+				else if(AutenticazioneHttpsTest.api.equals(api) || AutenticazioneHttpsTest.apiLDAP.equals(api)){
 					error = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities.AUTHENTICATION_FAILED;
 					msg = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.Utilities.AUTHENTICATION_FAILED_MESSAGE;
 				}
@@ -545,7 +608,7 @@ public class Utils {
 		// Deve continuare a funzionare per via della cache di secondo livello 'DatiRichieste'
 		// Fa eccezione l'autenticazione https il cui risultato non viene salvato nella cache di secondo livello
 		date = DateManager.getDate();
-		if( !AutenticazioneHttpsTest.api.equals(api) &&
+		if( (!AutenticazioneHttpsTest.api.equals(api) && !AutenticazioneHttpsTest.apiLDAP.equals(api)) &&
 				(msgErrore==null || errorCached)) {
 			if(get) {
 				Utils.get(logCore, tipoServizio, api, soggetto, action, 

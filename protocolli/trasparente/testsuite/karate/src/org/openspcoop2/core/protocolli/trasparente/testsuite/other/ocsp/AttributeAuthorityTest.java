@@ -133,6 +133,34 @@ public class AttributeAuthorityTest extends ConfigLoader {
 				logCore, api, soggetto, "ocsp-crl-expired", 
 				Utils.CERTIFICATE_CRL_EXPIRED_TOKEN_X5T);
 	}
+	
+	
+	
+	
+	
+	
+	
+	@Test
+	public void ocsp_crl_ldap_certificateValid() throws Exception {
+		Utils.ldapTest(TipoServizio.EROGAZIONE, HttpRequestMethod.PUT, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(), 
+				logCore, api, soggetto, "ocsp-crl-ldap-valid");
+	}
+
+	
+	@Test
+	public void ocsp_crl_ldap_certificateRevoked() throws Exception {
+		Utils.ldapTest(TipoServizio.EROGAZIONE, HttpRequestMethod.PUT, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(), 
+				logCore, api, soggetto, "ocsp-crl-ldap-revoked", 
+				Utils.CERTIFICATE_CRL_REVOKED_UNSPECIFIED_MSG_KEY_COMPROMISE);
+	}
+
+	
+	@Test
+	public void ocsp_crl_ldap_certificateExpired() throws Exception {
+		Utils.ldapTest(TipoServizio.EROGAZIONE, HttpRequestMethod.PUT, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(), 
+				logCore, api, soggetto, "ocsp-crl-ldap-expired", 
+				Utils.CERTIFICATE_CRL_EXPIRED_TOKEN_X5T);
+	}
 
 	
 

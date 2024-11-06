@@ -30,7 +30,7 @@ import org.openspcoop2.utils.transport.http.OCSPResponseException;
  */
 public class OCSPResponseStatusException extends OCSPResponseException {
 
-	private CertificateStatus certificateStatus;
+	private final CertificateStatus certificateStatus;
 	
 	public CertificateStatus getCertificateStatus() {
 		return this.certificateStatus;

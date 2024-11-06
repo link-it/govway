@@ -25,7 +25,6 @@ import java.util.Date;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateUtils;
-import org.openspcoop2.utils.transport.http.OCSPResponseException;
 
 /**
  * CertificateStatus
@@ -109,9 +108,9 @@ public class CertificateStatus implements Serializable {
 		return CertificateStatusCode.EXPIRED.equals(this.code);
 	}
 	public boolean isValid() {
-		return this.code!=null ? this.code.isValid() : false;
+		return this.code!=null && this.code.isValid();
 	}
-	public void checkValid() throws UtilsException, OCSPResponseException {
+	public void checkValid() throws UtilsException {
 		if(this.code==null) {
 			throw new UtilsException("CertificateStatusCode unspecified");
 		}

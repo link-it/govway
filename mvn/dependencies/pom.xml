@@ -20,8 +20,6 @@
 		<owasp.falsePositives.dir>mvn/dependencies/owasp/falsePositives</owasp.falsePositives.dir>
 		<owasp.output.dir>../../dependency-check-result</owasp.output.dir>
 
-		<!-- Versioni condivise dai moduli -->
-		<module.spring.version>6.1.14</module.spring.version>
 	</properties>
 
 	<modules>
@@ -51,6 +49,7 @@
 		<module>security</module>
 		<module>shared</module>
 		<module>spring</module>
+		<module>spring-ldap</module>
 		<module>spring-security</module>
 		<module>swagger</module>
 		<module>swagger-codegen</module>

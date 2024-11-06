@@ -109,7 +109,7 @@ Aspetti relativi all'invocazione del servizio OCSP:
 
 - ocsp.<idPolicy>.url.breakStatus: [opzionale] nel caso di più endpoint OCSP disponibili, i servizi vengono invocati nell'ordine recuperato dalle modalità indicate nella proprietà 'ocsp.<idPolicy>.url.source'. Una invocazione di un servizio OCSP può fallire per svariati motivi, definiti nell'enumeration 'org.openspcoop2.utils.certificate.ocsp.OCSPResponseCode'. Per default qualsiasi sia il motivo del fallimento, la validazione termina con errore. La proprietà seguente consente di indicare gli stati di errore, separati da virgola, per cui il processo di validazione si interrompe e non prova ad invocare il successivo endpoint disponibile. Ad esempio, ocsp.<idPolicy>.url.breakStatus=OCSP_BUILD_REQUEST_FAILED
 
-Le seguenti opzione vengono utilizzate sia durante l'invocazione del servizio OCSP che per il retrieve di certificati indicati in extension 'AuthorityInformationAccess':
+Le seguenti opzione vengono utilizzate sia durante l'invocazione del servizio OCSP che per il retrieve di certificati indicati in extension 'AuthorityInformationAccess' o crl riferite in 'CRLDistributionPoints':
 
 - ocsp.<idPolicy>.connectTimeout: [opzionale, default:10000ms] indicazione in millisecondi sul tempo di instaurazione della connessione.
 
@@ -138,6 +138,8 @@ Le seguenti opzione vengono utilizzate sia durante l'invocazione del servizio OC
   Se nel keystore esistono più chiavi private deve essere indicata la chiave da utilizzare tramite la proprietà:
 
 	- ocsp.<idPolicy>.https.key.alias [opzionale].
+
+- ocsp.<idPolicy>.username e ocsp.<idPolicy>.password: [opzionali] consentono di specificare una credenziale basic.
 
 - ocsp.<idPolicy>.forwardProxy.url: [opzionale] consente di indicare la url di un proxy applicativo a cui verranno inoltrate tutte le richieste; l'indirizzo remoto del servizio ocsp o della risorsa da recuperare (es. CAIssuer in AuthorityInformationAccess) viene indicata al proxy applicativo tramite un header HTTP o un parametro della url definito tramite le seguenti proprietà:
 

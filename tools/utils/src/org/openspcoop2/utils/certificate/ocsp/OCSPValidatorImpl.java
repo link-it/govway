@@ -24,9 +24,8 @@ import java.security.cert.X509Certificate;
 import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeyStore;
-import org.openspcoop2.utils.transport.http.OCSPTrustManager;
 import org.openspcoop2.utils.transport.http.IOCSPValidator;
-import org.openspcoop2.utils.transport.http.OCSPResponseException;
+import org.openspcoop2.utils.transport.http.OCSPTrustManager;
 
 /**
  * OCSPValidatorImpl
@@ -67,7 +66,7 @@ public class OCSPValidatorImpl implements IOCSPValidator {
 	}
 	
 	@Override
-	public void valid(X509Certificate cert) throws OCSPResponseException, UtilsException {
+	public void valid(X509Certificate cert) throws UtilsException {
 		
 		OCSPRequestParams params = OCSPRequestParams.build(this.log, cert, this.trustStore, this.ocspConfig, this.ocspResourceReader);
 		CertificateStatus certificatePrincipalStatus = OCSPValidator.check(this.log, params, this.crlInput);

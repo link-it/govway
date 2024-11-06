@@ -1,3 +1,10 @@
+2024-11-06  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [Utils, GovWayCore]
+	Introdotte utility per la lettura dei dati da server LDAP e 
+	ampliata la funzionalità di recupero delle liste di revoca dei certificati (CRL) per la validazione dei certificati presenti nell'estensione 'CRLDistributionPoints', 
+	ora supportando anche il protocollo LDAP.
+
 2024-10-31  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.15.p2

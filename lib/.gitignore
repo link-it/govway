@@ -30,6 +30,7 @@ saaj
 security
 shared
 spring
+spring-ldap
 spring-security
 staticAnalysis
 swagger

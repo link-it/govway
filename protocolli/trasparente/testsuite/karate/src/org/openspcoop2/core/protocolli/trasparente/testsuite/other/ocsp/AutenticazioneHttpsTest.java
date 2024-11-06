@@ -36,6 +36,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoS
 public class AutenticazioneHttpsTest extends ConfigLoader {
 
 	public static final String api = "TestOCSPAutenticazioneHTTPS";
+	public static final String apiLDAP = "TestOCSPAutenticazioneHTTPSviaLDAP";
 	public static final String soggetto_ocsp = "SoggettoInternoTestAutenticazioneHttpsOcsp"; 
 	public static final String soggetto_xca = "SoggettoInternoTestAutenticazioneHttpsXca"; 
 	
@@ -147,5 +148,42 @@ public class AutenticazioneHttpsTest extends ConfigLoader {
 		Utils.get(logCore,TipoServizio.FRUIZIONE, api, soggetto_xca, "case3-revoked", 
 				Utils.CERTIFICATE_CRL_EXPIRED);
 	}
+	
+	
+	
+	
+	
+	
+	@Test
+	public void erogazione_crl_ldap_certificateValid() throws Exception {
+		Utils.getLdapTest(logCore, TipoServizio.EROGAZIONE, apiLDAP, soggetto_xca, "case2");
+	}
+	@Test
+	public void fruizione_crl_ldap_certificateValid() throws Exception {
+		Utils.getLdapTest(logCore, TipoServizio.FRUIZIONE, apiLDAP, soggetto_xca, "case2");
+	}
+	
+	@Test
+	public void erogazione_crl_ldap_certificateRevoked() throws Exception {
+		Utils.getLdapTest(logCore, TipoServizio.EROGAZIONE, apiLDAP, soggetto_xca, "case2-revoked", 
+				Utils.CERTIFICATE_CRL_REVOKED_UNSPECIFIED_MSG_KEY_COMPROMISE);
+	}
+	@Test
+	public void fruizione_crl_ldap_certificateRevoked() throws Exception {
+		Utils.getLdapTest(logCore, TipoServizio.FRUIZIONE, apiLDAP, soggetto_xca, "case2-revoked", 
+				Utils.CERTIFICATE_CRL_REVOKED_UNSPECIFIED_MSG_KEY_COMPROMISE);
+	}
+	
+	@Test
+	public void erogazione_crl_ldap_certificateExpired() throws Exception {
+		Utils.getLdapTest(logCore,TipoServizio.EROGAZIONE, apiLDAP, soggetto_xca, "case3-revoked", 
+				Utils.CERTIFICATE_CRL_EXPIRED);
+	}
+	@Test
+	public void fruizione_crl_ldap_certificateExpired() throws Exception {
+		Utils.getLdapTest(logCore,TipoServizio.FRUIZIONE, apiLDAP, soggetto_xca, "case3-revoked", 
+				Utils.CERTIFICATE_CRL_EXPIRED);
+	}
+	
 	
 }

@@ -161,7 +161,49 @@ public class JoseSignatureTest extends ConfigLoader {
 				logCore, api_json, soggetto, "ocsp-crl-expired", 
 				Utils.CERTIFICATE_CRL_EXPIRED_JOSE_X5U);
 	}
+	
+	
 
+	
+	
+	@Test
+	public void compact_ocsp_crl_ldap_certificateValid() throws Exception {
+		Utils.ldapTest(TipoServizio.FRUIZIONE, HttpRequestMethod.PUT, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(), 
+				logCore, api_compact, soggetto, "ocsp-crl-ldap-valid");
+	}
+	@Test
+	public void json_ocsp_crl_ldap_certificateValid() throws Exception {
+		Utils.ldapTest(TipoServizio.FRUIZIONE, HttpRequestMethod.PUT, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(), 
+				logCore, api_json, soggetto, "ocsp-crl-ldap-valid");
+	}
+
+	
+	@Test
+	public void compact_ocsp_crl_ldap_certificateRevoked() throws Exception {
+		Utils.ldapTest(TipoServizio.FRUIZIONE, HttpRequestMethod.PUT, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(), 
+				logCore, api_compact, soggetto, "ocsp-crl-ldap-revoked", 
+				Utils.CERTIFICATE_CRL_REVOKED_UNSPECIFIED_MSG_KEY_COMPROMISE);
+	}
+	@Test
+	public void json_ocsp_crl_ldap_certificateRevoked() throws Exception {
+		Utils.ldapTest(TipoServizio.FRUIZIONE, HttpRequestMethod.PUT, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(), 
+				logCore, api_json, soggetto, "ocsp-crl-ldap-revoked", 
+				Utils.CERTIFICATE_CRL_REVOKED_UNSPECIFIED_MSG_KEY_COMPROMISE);
+	}
+
+	
+	@Test
+	public void compact_ocsp_crl_ldap_certificateExpired() throws Exception {
+		Utils.ldapTest(TipoServizio.FRUIZIONE, HttpRequestMethod.PUT, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(), 
+				logCore, api_compact, soggetto, "ocsp-crl-ldap-expired", 
+				Utils.CERTIFICATE_CRL_EXPIRED_JOSE_X5C);
+	}
+	@Test
+	public void json_ocsp_crl_ldap_certificateExpired() throws Exception {
+		Utils.ldapTest(TipoServizio.FRUIZIONE, HttpRequestMethod.PUT, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(), 
+				logCore, api_json, soggetto, "ocsp-crl-ldap-expired", 
+				Utils.CERTIFICATE_CRL_EXPIRED_JOSE_X5U);
+	}
 	
 
 	

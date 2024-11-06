@@ -87,6 +87,8 @@ import org.slf4j.Logger;
  */
 public class OCSPValidator {
 
+	private OCSPValidator() {}
+	
 	public static CertificateStatus check(Logger log, OCSPRequestParams params) throws UtilsException {
 		LoggerBuffer lb = new LoggerBuffer();
 		lb.setLogDebug(log);
@@ -123,7 +125,7 @@ public class OCSPValidator {
 		CertificateStatus principalStatus = null;
 		while(index<indexLimit) {
 
-			CertificateStatus status = _check(log, req, crlInput);
+			CertificateStatus status = checkEngine(log, req, crlInput);
 			if(principalStatus==null) {
 				principalStatus = status;
 			}
@@ -151,7 +153,7 @@ public class OCSPValidator {
 		throw new UtilsException("Certificate chain too big");
 	}
 
-	private static CertificateStatus _check(LoggerBuffer log, OCSPRequestParams params, String crlInput) throws UtilsException {
+	private static CertificateStatus checkEngine(LoggerBuffer log, OCSPRequestParams params, String crlInput) throws UtilsException {
 
 		if(params==null) {
 			throw new UtilsException("Params is null");
@@ -170,12 +172,12 @@ public class OCSPValidator {
 		log.debug(prefixCert+"issuer: "+params.getCertificate().getIssuerX500Principal());
 		try {
 			log.debug(prefixCert+"CAissuer: "+(certificateInfo.getAuthorityInformationAccess()!=null ? certificateInfo.getAuthorityInformationAccess().getCAIssuers() : null));
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			log.debug(prefixCert+"CAissuer: read error: "+t.getMessage(),t);
 		}
 		try {
 			log.debug(prefixCert+"OCSP: "+(certificateInfo.getAuthorityInformationAccess()!=null ? certificateInfo.getAuthorityInformationAccess().getOCSPs() : null));
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			log.debug(prefixCert+"OCSP: read error: "+t.getMessage(),t);
 		}
 		try {
@@ -192,7 +194,7 @@ public class OCSPValidator {
 			else {
 				log.debug(prefixCert+"CRL: null");
 			}
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			log.debug(prefixCert+"CRL: read error: "+t.getMessage(),t);
 		}
 		
@@ -201,7 +203,7 @@ public class OCSPValidator {
 		boolean isCA = false;
 		try {
 			isCA = certificateInfo.isCA();
-		}catch(Throwable e) {
+		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
 		
@@ -223,7 +225,7 @@ public class OCSPValidator {
 			return CertificateStatus.EXPIRED(prefixCert+t.getMessage(), certificateInfo.getNotAfter());
 		}catch(CertificateNotYetValidException t) {
 			return CertificateStatus.EXPIRED(prefixCert+t.getMessage(), certificateInfo.getNotBefore());
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			return CertificateStatus.EXPIRED(prefixCert+t.getMessage(), certificateInfo.getNotAfter());
 		}
 		
@@ -243,7 +245,7 @@ public class OCSPValidator {
 		
 		if(params.getConfig().isCrl()) {
 			// viene richiesta una validazione CRL alternativa al OCSP
-			return _checkCRL(log, params, crlInput, date, prefixCert);
+			return checkCRLEngine(log, params, crlInput, date, prefixCert);
 		}
 
 		if (params.getResponderURIs() == null || params.getResponderURIs().isEmpty()) {
@@ -259,7 +261,7 @@ public class OCSPValidator {
 			}
 			else {
 				if(isCA && params.getConfig().isCrlCaCheck()) {
-					return _checkCRL(log, params, crlInput, date, prefixCert);
+					return checkCRLEngine(log, params, crlInput, date, prefixCert);
 				}
 				else {
 					return CertificateStatus.OCSP_RESPONDER_NOT_FOUND();
@@ -280,11 +282,11 @@ public class OCSPValidator {
 			try {
 				log.debug(prefix+"Build request ...");
 				ocspRequest = buildOCSPReq(log, prefix, params);
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				responseCode = OCSPResponseCode.OCSP_BUILD_REQUEST_FAILED;
 				error = new UtilsException(prefixCert+"(url: "+responderURI+"): "+t.getMessage(),t);
 				log.error(prefix+"costruzione richiesta fallita: "+t.getMessage(),t);
-				// gestito sotto con gli stati throw error;
+				/** gestito sotto con gli stati throw error; */
 			}
 				
 			BasicOCSPResp ocspResp = null;
@@ -298,20 +300,20 @@ public class OCSPValidator {
 	
 					if(OCSPResponseCode.SUCCESSFUL.equals(responseCode)) {
 						if(ocspResponse.getResponseObject()==null) {
-							throw new Exception("OCSP response object not found");
+							throw new UtilsException("OCSP response object not found");
 						}
 						else if (ocspResponse.getResponseObject() instanceof BasicOCSPResp) {
 							ocspResp = (BasicOCSPResp) ocspResponse.getResponseObject();
 						} else {
-							throw new Exception("Invalid or unknown OCSP response");
+							throw new UtilsException("Invalid or unknown OCSP response");
 						}
 					}
 					
-				}catch(Throwable t) {
+				}catch(Exception t) {
 					responseCode = OCSPResponseCode.OCSP_INVOKE_FAILED;
 					error = new UtilsException(prefixCert+"(url: "+responderURI+"): "+t.getMessage(),t);
 					log.error(prefix+"invocazione servizio ocsp fallita: "+t.getMessage(),t);
-					// gestito sotto con gli stati throw error;
+					/** gestito sotto con gli stati throw error; */
 				}
 			}
 				
@@ -330,7 +332,7 @@ public class OCSPValidator {
 					if(params.getConfig().getResponderBreakStatus()==null || 
 							params.getConfig().getResponderBreakStatus().isEmpty() ||
 							params.getConfig().getResponderBreakStatus().contains(responseCode)) {
-						throw new Exception(exceptionMessage);
+						throw new UtilsException(exceptionMessage);
 					}
 					else {
 						// continue verso il prossimo responder url
@@ -343,7 +345,7 @@ public class OCSPValidator {
 					}
 				}
 
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				log.error(prefix+"analisi fallita: "+t.getMessage(),t);
 				throw new UtilsException(prefixCert+"OCSP analysis failed (url: "+responderURI+"): "+t.getMessage(),t);
 			}
@@ -393,7 +395,7 @@ public class OCSPValidator {
 
 			return ocspRequestSigned;
 
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new UtilsException("Build OCSP Request failed: "+t.getMessage(),t);
 		}
 
@@ -403,12 +405,12 @@ public class OCSPValidator {
 
 		try {
 			
-			//java.io.File f = new java.io.File("/tmp/ocsp.request");
-			//org.openspcoop2.utils.resources.FileSystemUtilities.writeFile(f, ocspRequest.request.getEncoded());
+			/**java.io.File f = new java.io.File("/tmp/ocsp.request");
+			org.openspcoop2.utils.resources.FileSystemUtilities.writeFile(f, ocspRequest.request.getEncoded());*/
 			// Per verificare serializzare response su file e usare il comando: openssl ocsp -reqin /tmp/ocsp.request -noverify -text
 			
 			if(!responderURI.trim().startsWith("http") && !responderURI.trim().startsWith("file")) {
-				throw new Exception("Unsupported protocol");
+				throw new UtilsException("Unsupported protocol");
 			}
 			
 			HttpRequest req = new HttpRequest();
@@ -417,19 +419,19 @@ public class OCSPValidator {
 			req.setContent(ocspRequest.request.getEncoded());
 			
 			responderURI = responderURI.trim();
-			if(params.getConfig().getForwardProxy_url()!=null && StringUtils.isNotEmpty(params.getConfig().getForwardProxy_url())) {
-				String forwardProxyUrl = params.getConfig().getForwardProxy_url();
-				String remoteLocation = params.getConfig().isForwardProxy_base64() ? Base64Utilities.encodeAsString(responderURI.getBytes()) : responderURI;
-				if(params.getConfig().getForwardProxy_header()!=null && StringUtils.isNotEmpty(params.getConfig().getForwardProxy_header())) {
-					req.addHeader(params.getConfig().getForwardProxy_header(), remoteLocation);
+			if(params.getConfig().getForwardProxyUrl()!=null && StringUtils.isNotEmpty(params.getConfig().getForwardProxyUrl())) {
+				String forwardProxyUrl = params.getConfig().getForwardProxyUrl();
+				String remoteLocation = params.getConfig().isForwardProxyBase64() ? Base64Utilities.encodeAsString(responderURI.getBytes()) : responderURI;
+				if(params.getConfig().getForwardProxyHeader()!=null && StringUtils.isNotEmpty(params.getConfig().getForwardProxyHeader())) {
+					req.addHeader(params.getConfig().getForwardProxyHeader(), remoteLocation);
 				}
-				else if(params.getConfig().getForwardProxy_queryParameter()!=null && StringUtils.isNotEmpty(params.getConfig().getForwardProxy_queryParameter())) {
+				else if(params.getConfig().getForwardProxyQueryParameter()!=null && StringUtils.isNotEmpty(params.getConfig().getForwardProxyQueryParameter())) {
 					Map<String, List<String>> queryParameters = new HashMap<>();
-					TransportUtils.addParameter(queryParameters,params.getConfig().getForwardProxy_queryParameter(), remoteLocation);
+					TransportUtils.addParameter(queryParameters,params.getConfig().getForwardProxyQueryParameter(), remoteLocation);
 					forwardProxyUrl = TransportUtils.buildUrlWithParameters(queryParameters, forwardProxyUrl, false, log.getLogDebug());
 				}
 				else {
-					throw new Exception("Forward Proxy configuration error: header and query parameter not found");
+					throw new UtilsException("Forward Proxy configuration error: header and query parameter not found");
 				}
 				req.setUrl(forwardProxyUrl);
 			}
@@ -438,15 +440,15 @@ public class OCSPValidator {
 			}
 			
 			if(req.getUrl().startsWith("https")) {
-				req.setHostnameVerifier(params.getConfig().isExternalResources_hostnameVerifier());
-				req.setTrustAllCerts(params.getConfig().isExternalResources_trustAllCerts());
+				req.setHostnameVerifier(params.getConfig().isExternalResourcesHostnameVerifier());
+				req.setTrustAllCerts(params.getConfig().isExternalResourcesTrustAllCerts());
 				if(params.getHttpsTrustStore()!=null) {
 					req.setTrustStore(params.getHttpsTrustStore().getKeystore());
 				}
 				if(params.getHttpsKeyStore()!=null) {
 					req.setKeyStore(params.getHttpsKeyStore().getKeystore());
-					req.setKeyAlias(params.getConfig().getExternalResources_keyAlias());
-					req.setKeyPassword(params.getConfig().getExternalResources_keyPassword());
+					req.setKeyAlias(params.getConfig().getExternalResourcesKeyAlias());
+					req.setKeyPassword(params.getConfig().getExternalResourcesKeyPassword());
 				}
 			}
 			req.setConnectTimeout(params.getConfig().getConnectTimeout());
@@ -471,8 +473,8 @@ public class OCSPValidator {
 
 			byte[] response = res.getContent();
 			
-			//java.io.File f = new java.io.File("/tmp/ocsp.response");
-			//org.openspcoop2.utils.resources.FileSystemUtilities.writeFile(f, response);
+			/**java.io.File f = new java.io.File("/tmp/ocsp.response");
+			org.openspcoop2.utils.resources.FileSystemUtilities.writeFile(f, response);*/
 			// Per verificare serializzare response su file e usare il comando:  openssl ocsp -respin /tmp/ocsp.response -noverify -text
 
 			if(isValid) {
@@ -480,7 +482,7 @@ public class OCSPValidator {
 					return new OCSPResp(res.getContent());
 				}
 				else {
-					throw new Exception("OCSP empty response (http code: "+res.getResultHTTPOperation()+")");
+					throw new UtilsException("OCSP empty response (http code: "+res.getResultHTTPOperation()+")");
 				}
 			}
 			else {
@@ -497,10 +499,10 @@ public class OCSPValidator {
 				else {
 					error = ": "+error;
 				}
-				throw new Exception("OCSP response error (http code: "+res.getResultHTTPOperation()+")"+error);
+				throw new UtilsException("OCSP response error (http code: "+res.getResultHTTPOperation()+")"+error);
 			}
 
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new UtilsException("Invoke OCSP '"+responderURI+"' failed: "+t.getMessage(),t);
 		}
 
@@ -526,9 +528,9 @@ public class OCSPValidator {
 		org.bouncycastle.cert.ocsp.CertificateStatus certStatus = expectedResponseForCertificate.getCertStatus();
 		
 		// NO! lo stato null è proprio il GOOD. GOOD è un alias a null
-//		if(certStatus==null) {
-//			throw new UtilsException("OSPC Response does not contain status info for certificate supplied in the OCSP request");
-//		}
+		/**if(certStatus==null) {
+			throw new UtilsException("OSPC Response does not contain status info for certificate supplied in the OCSP request");
+		}*/
 		if (certStatus == org.bouncycastle.cert.ocsp.CertificateStatus.GOOD) {
 			 return CertificateStatus.GOOD();
 		}
@@ -578,7 +580,7 @@ public class OCSPValidator {
 			if (params.getSignerCertificate() != null) {
 				certs.add(new JcaX509CertificateHolder(params.getSignerCertificate()));
 			}
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			throw new UtilsException("OCSP Response signature unverifiable; read certs failed: "+e.getMessage(),e);
 		}
 		
@@ -599,9 +601,9 @@ public class OCSPValidator {
 			ContentVerifierProvider contentVerifier = builder.build(signingCert.getPublicKey());
 	        boolean valid = basicOcspResponse.isSignatureValid(contentVerifier);
 	        if(!valid) {
-	        	throw new Exception("invalid signature");
+	        	throw new UtilsException("invalid signature");
 	        }
-		} catch(Throwable t) {
+		} catch(Exception t) {
 			throw new UtilsException("Verifying OCSP Response's signature failed: "+t.getMessage(),t);
 		}
 
@@ -636,7 +638,7 @@ public class OCSPValidator {
 						if (responderName.equals(nameCheck)) {
 							return certCheck;
 						}
-					} catch (Throwable t) {
+					} catch (Exception t) {
 						log.debug("check (responderName) failed: "+t.getMessage(),t);
 						listThrowable.add(t);
 					}
@@ -663,7 +665,7 @@ public class OCSPValidator {
 						if (responderSubjectKey.equals(subjectKeyIdentifierCheck)) {
 							return certCheck;
 						}
-					} catch (Throwable t) {
+					} catch (Exception t) {
 						log.debug("check (responderKey) failed: "+t.getMessage(),t);
 						listThrowable.add(t);
 					}
@@ -705,14 +707,14 @@ public class OCSPValidator {
 
 		if (signingCert.equals(params.getIssuerCertificate())) {
 
-			// System.out.println("*** [Case 1] OCSP response is signed by the certificate's Issuing CA ***");
+			/** System.out.println("*** [Case 1] OCSP response is signed by the certificate's Issuing CA ***"); */
 			// Non sono richiesti altri controlli
 			
 			log.debug(prefix+"[Case 1] OCSP response is signed by the certificate's Issuing CA");
 			
 		} else if (params.getSignerCertificate() != null && signingCert.equals(params.getSignerCertificate())) {
 			
-			// System.out.println("*** [Case 3] OCSP response is signed by an authorized responder certificate manually configured***");
+			/** System.out.println("*** [Case 3] OCSP response is signed by an authorized responder certificate manually configured***"); */
 			// Essendo un certificato fornito manualmente non servono altri controlli
 			// NOTA: essendo fornito puntualmente, è compito di chi lo configura assicurarsi che abbia l'extension key usage corretto o ne accetta il fatto che non le abbia
 
@@ -720,7 +722,7 @@ public class OCSPValidator {
 			
 		} else {
 
-			// System.out.println("*** [Case 2 e 3] OCSP response is signed by an responder certificate readed in ocsp response ***");
+			/** System.out.println("*** [Case 2 e 3] OCSP response is signed by an responder certificate readed in ocsp response ***"); */
 
 			// Estratto da https://www.rfc-editor.org/rfc/rfc6960#section-4.2.2.2
 			// - OCSP signing delegation SHALL be designated by the inclusion of  id-kp-OCSPSigning in an extended key usage certificate extension included in the OCSP response signer's certificate.  
@@ -765,7 +767,7 @@ public class OCSPValidator {
 					try {
 						log.debug(prefix+"Check ExtendedKeyUsage '"+extendedKeyUsage+"' ...");
 						hasExtendedKeyUsage = certificateInfo.hasExtendedKeyUsage(extendedKeyUsage);
-					}catch(Throwable t) {
+					}catch(Exception t) {
 						throw new UtilsException("Signing certificate not valid for signing OCSP responses: extended key usage '"+extendedKeyUsage+"' not found; "+t.getMessage(),t);
 					}
 					if(!hasExtendedKeyUsage) {
@@ -791,7 +793,7 @@ public class OCSPValidator {
 			//       CAs issuing such a certificate should realize that a compromise of the responder's key is as serious as the compromise of a CA key used to sign CRLs, 
 			//       at least for the validity period of this certificate.  
 			//       CAs may choose to issue this type of certificate with a very short lifetime and renew it frequently.
-			//       Identificativo: id-pkix-ocsp-nocheck OBJECT IDENTIFIER ::= { id-pkix-ocsp 5 }
+			/**       Identificativo: id-pkix-ocsp-nocheck OBJECT IDENTIFIER ::= { id-pkix-ocsp 5 } */
 			//
 			//    2) A CA may specify how the responder's certificate is to be checked for revocation.  
 			//        This can be done by using CRL Distribution Points if the check should be done using CRLs, 
@@ -804,26 +806,25 @@ public class OCSPValidator {
 			org.openspcoop2.utils.certificate.Extensions exts = null;
 			try {
 				exts = certificateInfo.getExtensions();
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				log.debug("Extension read failed: "+t.getMessage(),t);
 			}
-			boolean ocsp_nocheck = exts!=null && exts.hasExtension(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck);
+			boolean ocspNoCheck = exts!=null && exts.hasExtension(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck);
 			
-			log.debug(prefix+"ocsp_nocheck:"+ocsp_nocheck);
+			log.debug(prefix+"ocsp_nocheck:"+ocspNoCheck);
 			
 			// Caso 1 e 3 vengono gestiti in ugual maniera
 			// Il caso 2 viene gestito con CRL, mentre non si gestisce un eventuale loop verso un altro servizio OCSP
 			
 			CRLParams crlParams = null;
-			if(!ocsp_nocheck) {
-				if(params.getConfig().isCrlSigningCertCheck()) {
-					log.debug(prefix+"(SigningCert:"+signingCert.getSubjectX500Principal()+") Build CRL params...");
-					KeyStore trustStore_config = differentIssuerResponderCertificateTrustStore!=null ? differentIssuerResponderCertificateTrustStore : params.getIssuerTrustStore();
-					try {
-						crlParams = CRLParams.build(log, signingCert, null, trustStore_config, params.getConfig(), params.getReader());
-					}catch(Throwable t) {
-						throw new UtilsException(t.getMessage(),t);
-					}
+			if(!ocspNoCheck &&
+				params.getConfig().isCrlSigningCertCheck()) {
+				log.debug(prefix+"(SigningCert:"+signingCert.getSubjectX500Principal()+") Build CRL params...");
+				KeyStore trustStoreConfig = differentIssuerResponderCertificateTrustStore!=null ? differentIssuerResponderCertificateTrustStore : params.getIssuerTrustStore();
+				try {
+					crlParams = CRLParams.build(log, signingCert, null, trustStoreConfig, params.getConfig(), params.getReader());
+				}catch(Exception t) {
+					throw new UtilsException(t.getMessage(),t);
 				}
 			}
 			
@@ -836,39 +837,39 @@ public class OCSPValidator {
 					throw new UtilsException("Signing certificate not yet valid: "+t.getMessage(),t);
 				}catch(CertificateExpiredException t) {
 					throw new UtilsException("Signing certificate expired: "+t.getMessage(),t);
-				}catch(Throwable t) {
+				}catch(Exception t) {
 					throw new UtilsException("Signing certificate not valid: "+t.getMessage(),t);
 				}
 			}
 			
-			String CA = "n.d.";
+			String ca = "n.d.";
 			try {
 				if(responderCertificateManuallyAuthorized) {
 					// non devo verificarlo, è stato inserito nel truststore dedicato il certificato del responder puntualmente
 				}
 				else if(differentIssuerResponderCertificateCA!=null) {
 					if(differentIssuerResponderCertificateCA.getSubjectX500Principal()!=null) {
-						CA = differentIssuerResponderCertificateCA.getSubjectX500Principal().toString();
+						ca = differentIssuerResponderCertificateCA.getSubjectX500Principal().toString();
 					}
-					log.debug(prefix+"(SigningCert:"+signingCert.getSubjectX500Principal()+") verify against ca '"+CA+"'...");
+					log.debug(prefix+"(SigningCert:"+signingCert.getSubjectX500Principal()+") verify against ca '"+ca+"'...");
 					certificateInfo.verify(differentIssuerResponderCertificateCA);
 				}
 				else {
 					if(params.getIssuerCertificate().getSubjectX500Principal()!=null) {
-						CA = params.getIssuerCertificate().getSubjectX500Principal().toString();
+						ca = params.getIssuerCertificate().getSubjectX500Principal().toString();
 					}
-					log.debug(prefix+"(SigningCert:"+signingCert.getSubjectX500Principal()+") verify against ca '"+CA+"'...");
+					log.debug(prefix+"(SigningCert:"+signingCert.getSubjectX500Principal()+") verify against ca '"+ca+"'...");
 					certificateInfo.verify(params.getIssuerCertificate());
 				}
-			} catch (Throwable t) {
-				throw new UtilsException("Signing certificate not valid (CA: "+CA+"): "+t.getMessage(),t);
+			} catch (Exception t) {
+				throw new UtilsException("Signing certificate not valid (CA: "+ca+"): "+t.getMessage(),t);
 			}
 			
 			if(crlParams!=null && crlParams.getCrlCertstore()!=null) {
 				try {
 					log.debug(prefix+"(SigningCert:"+signingCert.getSubjectX500Principal()+") CRL check...");
 					certificateInfo.checkValid(crlParams.getCrlCertstore(), crlParams.getCrlTrustStore(), date);
-				}catch(Throwable t) {
+				}catch(Exception t) {
 					throw new UtilsException("Signing certificate not valid (CRL): "+t.getMessage(),t);
 				}
 			}
@@ -916,8 +917,8 @@ public class OCSPValidator {
 			
 			long current = date.getTime();
 			int toleranceMilliseconds = params.getConfig().getResponseCheckDateToleranceMilliseconds();
-			Date rightInterval = new Date(current + (long) toleranceMilliseconds);
-			Date leftInterval = new Date(current - (long) toleranceMilliseconds);
+			Date rightInterval = new Date(current + toleranceMilliseconds);
+			Date leftInterval = new Date(current - toleranceMilliseconds);
 
 			SingleResp[] resp = basicOcspResponse.getResponses();
 			if(resp!=null && resp.length>0) {
@@ -942,14 +943,14 @@ public class OCSPValidator {
 		
 	}
 	
-	private static CertificateStatus _checkCRL(LoggerBuffer log, OCSPRequestParams params, String crlInput, Date date, String prefix) throws UtilsException {
+	private static CertificateStatus checkCRLEngine(LoggerBuffer log, OCSPRequestParams params, String crlInput, Date date, String prefix) throws UtilsException {
 		
 		log.debug(prefix+"Build CRL request ...");
 		
 		CRLParams crlParams = null;
 		try {
 			crlParams = CRLParams.build(log, params.getCertificate(), crlInput, params.getIssuerTrustStore(), params.getConfig(), params.getReader());
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new UtilsException(t.getMessage(),t);
 		}
 				
@@ -958,16 +959,16 @@ public class OCSPValidator {
 		if(!certificateInfo.isSelfSigned()) {
 			log.debug(prefix+"Verify against CA ...");
 			
-			String CA = "n.d.";
+			String ca = "n.d.";
 			try {
 				if(params.getIssuerCertificate().getSubjectX500Principal()!=null) {
-					CA = params.getIssuerCertificate().getSubjectX500Principal().toString();
+					ca = params.getIssuerCertificate().getSubjectX500Principal().toString();
 				}
 				certificateInfo.verify(params.getIssuerCertificate());
-			} catch (Throwable t) {
+			} catch (Exception t) {
 				CertificateStatus cs = CertificateStatus.REVOKED(CRLReason.UNSPECIFIED, null);
 				String eMessage = t.getMessage();
-				String msgError = "Certificate not valid (CA: "+CA+"): "+eMessage;
+				String msgError = "Certificate not valid (CA: "+ca+"): "+eMessage;
 				log.error(msgError, t);
 				cs.setDetails(msgError);
 				return cs;
@@ -991,7 +992,7 @@ public class OCSPValidator {
 				
 				status = CertificateStatus.CRL_NOT_FOUND();
 			}
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			CertificateStatus cs = CertificateStatus.REVOKED(CRLReason.UNSPECIFIED, null);
 			String eMessage = t.getMessage();
 			if(Utilities.existsInnerException(t, java.security.cert.CertificateExpiredException.class)) {
@@ -1002,7 +1003,7 @@ public class OCSPValidator {
 			}
 			else if (Utilities.existsInnerException(t, java.security.cert.CertificateRevokedException.class)) {
 				Throwable inner = Utilities.getInnerException(t, java.security.cert.CertificateRevokedException.class);
-				if(inner!=null && inner instanceof java.security.cert.CertificateRevokedException) {
+				if(inner instanceof java.security.cert.CertificateRevokedException) {
 					java.security.cert.CertificateRevokedException cre = (java.security.cert.CertificateRevokedException) inner;
 					if(cre.getRevocationReason()!=null) {
 						cs = CertificateStatus.REVOKED(cre.getRevocationReason(), cre.getRevocationDate());

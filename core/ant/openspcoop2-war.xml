@@ -341,6 +341,10 @@
 			<lib dir="${required_lib}/spring">
 				<include name="*.jar" />
 			</lib>
+			<lib dir="${required_lib}/spring-ldap">
+				<include name="*.jar" />
+				<exclude name="spring-ldap-test-*.jar"/>
+			</lib>
 			<lib dir="${required_lib}/spring-security">
 				<include name="*.jar" />
 			</lib>

@@ -38,6 +38,7 @@ import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.certificate.KeystoreType;
+import org.openspcoop2.utils.transport.TransportUtils;
 
 /**
  * OCSPRequestParams
@@ -50,8 +51,7 @@ public class CRLParams {
 
 	private KeyStore crlTrustStore;
 	private CertStore crlCertstore;
-	
-	
+		
 	public KeyStore getCrlTrustStore() {
 		return this.crlTrustStore;
 	}
@@ -65,11 +65,11 @@ public class CRLParams {
 		this.crlCertstore = crlCertstore;
 	}
 	
-	public static CRLParams build(LoggerBuffer log, X509Certificate certificate, String crlInputConfig, KeyStore trustStore, OCSPConfig config, IOCSPResourceReader reader) throws UtilsException, UtilsMultiException {
+	public static CRLParams build(LoggerBuffer log, X509Certificate certificate, String crlInputConfig, KeyStore trustStore, OCSPConfig config, IOCSPResourceReader reader) throws UtilsException {
 		CertificateInfo cer = new CertificateInfo(certificate, "ocspVerifica");
 		return build(log, cer, crlInputConfig, trustStore, config, reader);
 	}
-	public static CRLParams build(LoggerBuffer log, CertificateInfo certificate, String crlInputConfig, KeyStore trustStore, OCSPConfig config, IOCSPResourceReader reader) throws UtilsException, UtilsMultiException {
+	public static CRLParams build(LoggerBuffer log, CertificateInfo certificate, String crlInputConfig, KeyStore trustStore, OCSPConfig config, IOCSPResourceReader reader) throws UtilsException {
 	
 		if(config==null) {
 			throw new UtilsException("Param config is null");
@@ -90,13 +90,23 @@ public class CRLParams {
 			for (CertificateSource s : config.getCrlSource()) {
 				if(CertificateSource.CONFIG.equals(s)) {
 					if(crlInputConfig!=null) {
-						List<String> l = CRLCertstore.readCrlPaths(crlInputConfig);
-						if(l!=null && !l.isEmpty()) {
-							for (String crlPath : l) {
-								String p = crlPath.trim();
-								if(!crlPaths.contains(p)) {
-									crlPaths.add(p);
-									log.debug("OCSP-CRL: add config path '"+p+"'");
+						// è possibile fornire un'unica indicazione di una risorsa remota o in alternativa N file crl
+						if(TransportUtils.isRemoteResource(crlInputConfig)){
+							readCrlPath(crlInputConfig.trim(),
+									crlPaths, localResources,
+									listExceptions,
+									reader,
+									log);
+						}
+						else {
+							List<String> l = CRLCertstore.readCrlPaths(crlInputConfig);
+							if(l!=null && !l.isEmpty()) {
+								for (String crlPath : l) {
+									String p = crlPath.trim();
+									if(!crlPaths.contains(p)) {
+										crlPaths.add(p);
+										log.debug("OCSP-CRL: add config path '"+p+"'");
+									}
 								}
 							}
 						}
@@ -133,32 +143,17 @@ public class CRLParams {
 									List<String> l = crlDP.getDistributionPointNames();
 									if(l!=null) {
 										for (String crlPath : l) {
-											if(!crlPaths.contains(crlPath)) {
-												try {
-													Map<String, byte[]> map = new HashMap<>();
-													reader.readExternalResource(crlPath, map);
-													byte [] crl = null;
-													if(!map.isEmpty()) {
-														crl = map.get(crlPath);
-													}
-													if(crl==null || crl.length<=0) {
-														throw new Exception("empty resource");
-													}
-													localResources.put(crlPath, crl);
-													crlPaths.add(crlPath);
-													log.debug("OCSP-CRL: add external resource '"+crlPath+"'");
-												}catch(Throwable t) {
-													String msgError = "[crl: "+crlPath+"] retrieve failed: "+t.getMessage();
-													log.debug("OCSP-CRL "+msgError,t);
-													listExceptions.add(new Exception(msgError,t));
-												}
-											}
+											readCrlPath(crlPath,
+													crlPaths, localResources,
+													listExceptions,
+													reader,
+													log);
 										}
 									}
 								}
 							}
 						}						
-					}catch(Throwable t) {
+					}catch(Exception t) {
 						throw new UtilsException(t.getMessage(),t);
 					}
 					if(!crlPaths.isEmpty()) {
@@ -172,7 +167,7 @@ public class CRLParams {
 				boolean isCA = false;
 				try {
 					isCA = certificate.isCA();
-				}catch(Throwable t) {
+				}catch(Exception t) {
 					throw new UtilsException(t.getMessage(),t);
 				}
 				if(isCA) {
@@ -201,128 +196,126 @@ public class CRLParams {
 		}
 		
 		KeyStore crlTrustStore = null;
-		if(!crlPaths.isEmpty()) {
-			
+		if(!crlPaths.isEmpty() &&
 			// comprendo issuer del certificato da validare
-			if(config.getCrlTrustStoreSource()!=null && !config.getCrlTrustStoreSource().isEmpty()) {
-				for (CertificateSource s : config.getCrlTrustStoreSource()) {
-					if(CertificateSource.CONFIG.equals(s)) {
-						if(trustStore!=null) {
-							try {
-								if(crlTrustStore==null) {
-									java.security.KeyStore ks = java.security.KeyStore.getInstance(KeystoreType.JKS.getNome());
-									ks.load(null, null);
-									crlTrustStore = new KeyStore(ks);
-								}
-							}catch(Throwable t) {
-								String msgError = "OCSP-CRL [crlssuer: CONFIG] retrieve failed: "+t.getMessage();
-								log.debug(msgError,t);
-							}
-							if(crlTrustStore!=null) {
-								crlTrustStore.putAllCertificate(trustStore, false);
-							}
-							log.debug("OCSP-CRL: add certificate in truststore config");
-						}
-					}
-					else if(CertificateSource.ALTERNATIVE_CONFIG.equals(s)) {
-						KeyStore alternativeTrustStore = null;
-						if(config.getAlternativeTrustStoreCRL_path()!=null) {
-							alternativeTrustStore = reader.getCrlAlternativeTrustStore();
-						}
-						if(alternativeTrustStore!=null) {
-							try {
-								if(crlTrustStore==null) {
-									java.security.KeyStore ks = java.security.KeyStore.getInstance(KeystoreType.JKS.getNome());
-									ks.load(null, null);
-									crlTrustStore = new KeyStore(ks);
-								}
-							}catch(Throwable t) {
-								String msgError = "OCSP-CRL [crlssuer: ALTERNATIVE_CONFIG] retrieve failed: "+t.getMessage();
-								log.debug(msgError,t);
-							}
-							if(crlTrustStore!=null) {
-								crlTrustStore.putAllCertificate(alternativeTrustStore, false);
-							}
-							log.debug("OCSP-CRL: add certificate in alternative truststore config");
-						}
-					}
-					else if(CertificateSource.AUTHORITY_INFORMATION_ACCESS.equals(s)) {
+			config.getCrlTrustStoreSource()!=null && !config.getCrlTrustStoreSource().isEmpty()) {
+			for (CertificateSource s : config.getCrlTrustStoreSource()) {
+				if(CertificateSource.CONFIG.equals(s)) {
+					if(trustStore!=null) {
 						try {
-							CRLDistributionPoints crls = certificate.getCRLDistributionPoints();
-							if(crls!=null) {
-								List<CRLDistributionPoint> crlsList = crls.getCRLDistributionPoints();
-								int indexCrl = 0;
-								if(crlsList!=null && !crlsList.isEmpty()) {
-									for (CRLDistributionPoint crlDP : crlsList) {
-										List<String> l = crlDP.getCRLIssuers();
-										if(l!=null) {
-											for (String crlPath : l) {
-												if(!crlPaths.contains(crlPath)) {
-													try {
-														Map<String, byte[]> map = new HashMap<>();
-														reader.readExternalResource(crlPath, map);
-														byte [] issuer = null;
-														if(!map.isEmpty()) {
-															issuer = map.get(crlPath);
-														}
-														if(issuer==null || issuer.length<=0) {
-															throw new Exception("empty resource");
-														}
-														Certificate cer = ArchiveLoader.load(issuer);
-														if(cer!=null && cer.getCertificate()!=null) {
-															if(crlTrustStore==null) {
-																java.security.KeyStore ks = java.security.KeyStore.getInstance(KeystoreType.JKS.getNome());
-																ks.load(null, null);
-																crlTrustStore = new KeyStore(ks);
-															}
-															crlTrustStore.putCertificate("crlIssuerCert-"+indexCrl, cer.getCertificate().getCertificate(), false);
-															indexCrl++;
-															log.debug("OCSP-CRL: add certificate retrieved from '"+crlPath+"'");
-														}
-													}catch(Throwable t) {
-														String msgError = "OCSP-CRL [crlssuer: "+crlPath+"] retrieve failed: "+t.getMessage();
-														log.debug(msgError,t);
-													}
-												}
-											}
-										}
-									}
-								}
-							}						
-						}catch(Throwable t) {
-							throw new UtilsException(t.getMessage(),t);
+							if(crlTrustStore==null) {
+								java.security.KeyStore ks = java.security.KeyStore.getInstance(KeystoreType.JKS.getNome());
+								ks.load(null, null);
+								crlTrustStore = new KeyStore(ks);
+							}
+						}catch(Exception t) {
+							String msgError = "OCSP-CRL [crlssuer: CONFIG] retrieve failed: "+t.getMessage();
+							log.debug(msgError,t);
 						}
+						if(crlTrustStore!=null) {
+							crlTrustStore.putAllCertificate(trustStore, false);
+						}
+						log.debug("OCSP-CRL: add certificate in truststore config");
+					}
+				}
+				else if(CertificateSource.ALTERNATIVE_CONFIG.equals(s)) {
+					KeyStore alternativeTrustStore = null;
+					if(config.getAlternativeTrustStoreCRLPath()!=null) {
+						alternativeTrustStore = reader.getCrlAlternativeTrustStore();
+					}
+					if(alternativeTrustStore!=null) {
 						try {
-							AuthorityInformationAccess aia = certificate.getAuthorityInformationAccess();
-							if(aia!=null) {
-								List<String> issuer = aia.getCAIssuers();
-								int indexAia = 0;
-								if(issuer!=null && !issuer.isEmpty()) {
-									for (String urlIssuer : issuer) {
-										Map<String, byte[]> map = new HashMap<>();
-										reader.readExternalResource(urlIssuer, map);
-										if(!map.isEmpty()) {
-											byte [] issCert = map.get(urlIssuer);
-											if(issCert!=null) {
-												Certificate cer = ArchiveLoader.load(issCert);
-												if(cer!=null && cer.getCertificate()!=null) {
-													if(crlTrustStore==null) {
-														java.security.KeyStore ks = java.security.KeyStore.getInstance(KeystoreType.JKS.getNome());
-														ks.load(null, null);
-														crlTrustStore = new KeyStore(ks);
+							if(crlTrustStore==null) {
+								java.security.KeyStore ks = java.security.KeyStore.getInstance(KeystoreType.JKS.getNome());
+								ks.load(null, null);
+								crlTrustStore = new KeyStore(ks);
+							}
+						}catch(Exception t) {
+							String msgError = "OCSP-CRL [crlssuer: ALTERNATIVE_CONFIG] retrieve failed: "+t.getMessage();
+							log.debug(msgError,t);
+						}
+						if(crlTrustStore!=null) {
+							crlTrustStore.putAllCertificate(alternativeTrustStore, false);
+						}
+						log.debug("OCSP-CRL: add certificate in alternative truststore config");
+					}
+				}
+				else if(CertificateSource.AUTHORITY_INFORMATION_ACCESS.equals(s)) {
+					try {
+						CRLDistributionPoints crls = certificate.getCRLDistributionPoints();
+						if(crls!=null) {
+							List<CRLDistributionPoint> crlsList = crls.getCRLDistributionPoints();
+							int indexCrl = 0;
+							if(crlsList!=null && !crlsList.isEmpty()) {
+								for (CRLDistributionPoint crlDP : crlsList) {
+									List<String> l = crlDP.getCRLIssuers();
+									if(l!=null) {
+										for (String crlPath : l) {
+											if(!crlPaths.contains(crlPath)) {
+												try {
+													Map<String, byte[]> map = new HashMap<>();
+													reader.readExternalResource(crlPath, map);
+													byte [] issuer = null;
+													if(!map.isEmpty()) {
+														issuer = map.get(crlPath);
 													}
-													crlTrustStore.putCertificate("aiaIssuerCert-"+indexAia, cer.getCertificate().getCertificate(), false);
-													indexAia++;
-													log.debug("OCSP-CRL-AIA: add certificate retrieved from '"+urlIssuer+"'");
+													if(issuer==null || issuer.length<=0) {
+														throw new UtilsException("empty resource");
+													}
+													Certificate cer = ArchiveLoader.load(issuer);
+													if(cer!=null && cer.getCertificate()!=null) {
+														if(crlTrustStore==null) {
+															java.security.KeyStore ks = java.security.KeyStore.getInstance(KeystoreType.JKS.getNome());
+															ks.load(null, null);
+															crlTrustStore = new KeyStore(ks);
+														}
+														crlTrustStore.putCertificate("crlIssuerCert-"+indexCrl, cer.getCertificate().getCertificate(), false);
+														indexCrl++;
+														log.debug("OCSP-CRL: add certificate retrieved from '"+crlPath+"'");
+													}
+												}catch(Exception t) {
+													String msgError = "OCSP-CRL [crlssuer: "+crlPath+"] retrieve failed: "+t.getMessage();
+													log.debug(msgError,t);
 												}
 											}
 										}
 									}
 								}
 							}
-						}catch(Throwable t) {
-							throw new UtilsException(t.getMessage(),t);
+						}						
+					}catch(Exception t) {
+						throw new UtilsException(t.getMessage(),t);
+					}
+					try {
+						AuthorityInformationAccess aia = certificate.getAuthorityInformationAccess();
+						if(aia!=null) {
+							List<String> issuer = aia.getCAIssuers();
+							int indexAia = 0;
+							if(issuer!=null && !issuer.isEmpty()) {
+								for (String urlIssuer : issuer) {
+									Map<String, byte[]> map = new HashMap<>();
+									reader.readExternalResource(urlIssuer, map);
+									if(!map.isEmpty()) {
+										byte [] issCert = map.get(urlIssuer);
+										if(issCert!=null) {
+											Certificate cer = ArchiveLoader.load(issCert);
+											if(cer!=null && cer.getCertificate()!=null) {
+												if(crlTrustStore==null) {
+													java.security.KeyStore ks = java.security.KeyStore.getInstance(KeystoreType.JKS.getNome());
+													ks.load(null, null);
+													crlTrustStore = new KeyStore(ks);
+												}
+												crlTrustStore.putCertificate("aiaIssuerCert-"+indexAia, cer.getCertificate().getCertificate(), false);
+												indexAia++;
+												log.debug("OCSP-CRL-AIA: add certificate retrieved from '"+urlIssuer+"'");
+											}
+										}
+									}
+								}
+							}
 						}
+					}catch(Exception t) {
+						throw new UtilsException(t.getMessage(),t);
 					}
 				}
 			}
@@ -362,4 +355,30 @@ public class CRLParams {
 		
 	}
 	
+	private static void readCrlPath(String crlPath,
+			List<String> crlPaths,Map<String, byte[]> localResources,
+			List<Throwable> listExceptions,
+			IOCSPResourceReader reader,
+			LoggerBuffer log) {
+		if(!crlPaths.contains(crlPath)) {
+			try {
+				Map<String, byte[]> map = new HashMap<>();
+				reader.readExternalResource(crlPath, map);
+				byte [] crl = null;
+				if(!map.isEmpty()) {
+					crl = map.get(crlPath);
+				}
+				if(crl==null || crl.length<=0) {
+					throw new UtilsException("empty resource");
+				}
+				localResources.put(crlPath, crl);
+				crlPaths.add(crlPath);
+				log.debug("OCSP-CRL: add external resource '"+crlPath+"'");
+			}catch(Exception t) {
+				String msgError = "[crl: "+crlPath+"] retrieve failed: "+t.getMessage();
+				log.debug("OCSP-CRL "+msgError,t);
+				listExceptions.add(new Exception(msgError,t));
+			}
+		}
+	}
 }
