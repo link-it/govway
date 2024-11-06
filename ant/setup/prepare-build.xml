@@ -104,6 +104,7 @@
 			<include name="httpcore/*"/>
 			<include name="wadl/*"/>
 			<include name="testsuite/spring-jdbc-5.3.39.jar"/> <!-- richiesto dal loader cli -->
+			<include name="testsuite/apacheds-all-2.0.0.AM27-gov4j-1.jar"/> <!-- richiesto dalle utility -->
 		</fileset>
 	</path>		
 	<path id="classpath_dist" >

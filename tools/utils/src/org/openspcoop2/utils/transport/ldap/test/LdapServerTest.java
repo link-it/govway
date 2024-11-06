@@ -76,6 +76,12 @@ public class LdapServerTest {
 		LoggerWrapperFactory.setLogConfiguration(p);
 	}
 
+	public void setHost(String host) {
+		this.host = host;
+	}
+	public void setPort(int port) {
+		this.port = port;
+	}
 	public void setRootPartition(String rootPartition) {
 		this.rootPartition = rootPartition;
 	}

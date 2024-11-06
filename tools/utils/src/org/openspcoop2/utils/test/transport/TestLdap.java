@@ -120,8 +120,27 @@ public class TestLdap {
 	 * Avvia l'embedded server (ApacheDS) LDAP per i successivi test
 	 * @throws Exception
 	 */
-	@BeforeGroups(Costanti.GRUPPO_UTILS+"."+ID_TEST)
+	@BeforeGroups(Costanti.GRUPPO_UTILS)
 	public void startServer() throws Exception {
+		startServerEngine();
+	}
+	@BeforeGroups(Costanti.GRUPPO_UTILS+"."+ID_TEST)
+	public void startServerIdTest() throws Exception {
+		startServerEngine();
+	}
+	@BeforeGroups(Costanti.GRUPPO_UTILS+"."+ID_TEST+".query")
+	public void startServerIdTestQuery() throws Exception {
+		startServerEngine();
+	}
+	@BeforeGroups(Costanti.GRUPPO_UTILS+"."+ID_TEST+".crl")
+	public void startServerIdTestCrl() throws Exception {
+		startServerEngine();
+	}
+	@BeforeGroups(Costanti.GRUPPO_UTILS+"."+ID_TEST+".parsing")
+	public void startServerIdTestParsing() throws Exception {
+		startServerEngine();
+	}
+	private void startServerEngine() throws Exception {
 		TestLogger.info("Starting ldap server...");
 		
 		try {
@@ -138,8 +157,27 @@ public class TestLdap {
 	/**
 	 * Spegne l'embedded server usato per i test
 	 */
-	@AfterGroups(Costanti.GRUPPO_UTILS+"."+ID_TEST)
+	@AfterGroups(Costanti.GRUPPO_UTILS)
 	public void stopServer() {
+		stopServerEngine();
+	}
+	@AfterGroups(Costanti.GRUPPO_UTILS+"."+ID_TEST)
+	public void stopServerIdTest() {
+		stopServerEngine();
+	}
+	@AfterGroups(Costanti.GRUPPO_UTILS+"."+ID_TEST+".query")
+	public void stopServerIdTestQuery() {
+		stopServerEngine();
+	}
+	@AfterGroups(Costanti.GRUPPO_UTILS+"."+ID_TEST+".crl")
+	public void stopServerIdTestCrl() {
+		stopServerEngine();
+	}
+	@AfterGroups(Costanti.GRUPPO_UTILS+"."+ID_TEST+".parsing")
+	public void stopServerIdTestParsing() {
+		stopServerEngine();
+	}
+	private void stopServerEngine() {
 		TestLogger.info("...stopping ldap server");
 		LdapTest.stopServer();
 	}
