@@ -38,6 +38,7 @@ public class GestoreCredenzialiTest extends ConfigLoader {
 	public static final String soggetto_case2 = "SoggettoInternoTestOCSPCase2";
 	public static final String soggetto_case3 = "SoggettoInternoTestOCSPCase3";
 	public static final String soggetto_caseCRL = "SoggettoInternoTestOCSPCaseCRL";
+	public static final String soggetto_caseCRLldap = "SoggettoInternoTestOCSPCaseCRLldap";
 	
 	public static final String opensslCommand = System.getProperty(Utils.PROPERTY_OCSP_OPENSSL_COMMAND);
 	
@@ -100,6 +101,27 @@ public class GestoreCredenzialiTest extends ConfigLoader {
 	@Test
 	public void crl_certificateExpired() throws Exception {
 		Utils.get(logCore, api, soggetto_caseCRL, "case3-revoked", 
+				Utils.CERTIFICATE_CRL_EXPIRED);
+	}
+	
+	
+	
+	
+	
+	@Test
+	public void crl_ldap_certificateValid() throws Exception {
+		Utils.getLdapTest(logCore, api, soggetto_caseCRLldap, "case2");
+	}
+	
+	@Test
+	public void crl_ldap_certificateRevoked() throws Exception {
+		Utils.getLdapTest(logCore, api, soggetto_caseCRLldap, "case2-revoked", 
+				Utils.CERTIFICATE_CRL_REVOKED_UNSPECIFIED_MSG_KEY_COMPROMISE);
+	}
+	
+	@Test
+	public void crl_ldap_certificateExpired() throws Exception {
+		Utils.getLdapTest(logCore, api, soggetto_caseCRLldap, "case3-revoked", 
 				Utils.CERTIFICATE_CRL_EXPIRED);
 	}
 	

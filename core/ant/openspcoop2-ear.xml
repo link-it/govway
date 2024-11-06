@@ -888,6 +888,9 @@
 			<zipfileset prefix="lib" dir="${required_lib}/spring">
 				<include name="*.jar"/>
 			</zipfileset>
+			<zipfileset prefix="lib" dir="${required_lib}/spring-ldap">
+				<include name="*.jar"/>
+			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/spring-security">
 				<include name="*.jar"/>
 			</zipfileset>

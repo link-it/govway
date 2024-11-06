@@ -59,12 +59,12 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 		if(this.config==null) {
 			throw new UtilsException(OCSP_CONFIG_NULL);
 		}
-		if(this.config.getAlternativeTrustStoreCA_path()!=null) {
+		if(this.config.getAlternativeTrustStoreCAPath()!=null) {
 			try {
 				return GestoreKeystoreCache.getMerlinTruststore(this.requestInfo, 
-						this.config.getAlternativeTrustStoreCA_path(), 
-						this.config.getAlternativeTrustStoreCA_type(),
-						this.config.getAlternativeTrustStoreCA_password()).getTrustStore();
+						this.config.getAlternativeTrustStoreCAPath(), 
+						this.config.getAlternativeTrustStoreCAType(),
+						this.config.getAlternativeTrustStoreCAPassword()).getTrustStore();
 			}catch(Exception t) {
 				throw new UtilsException(t.getMessage(),t);
 			}
@@ -80,37 +80,37 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 		try {
 			ExternalResourceConfig externalConfig = new ExternalResourceConfig();
 			
-			externalConfig.setHostnameVerifier(this.config.isExternalResources_hostnameVerifier());
-			externalConfig.setTrustAllCerts(this.config.isExternalResources_trustAllCerts());
-			if(this.config.getExternalResources_trustStorePath()!=null) {
+			externalConfig.setHostnameVerifier(this.config.isExternalResourcesHostnameVerifier());
+			externalConfig.setTrustAllCerts(this.config.isExternalResourcesTrustAllCerts());
+			if(this.config.getExternalResourcesTrustStorePath()!=null) {
 				try {
 					externalConfig.setTrustStore(GestoreKeystoreCache.getMerlinTruststore(this.requestInfo, 
-							this.config.getExternalResources_trustStorePath(), 
-							this.config.getExternalResources_trustStoreType(),
-							this.config.getExternalResources_trustStorePassword()).getTrustStore().getKeystore());
+							this.config.getExternalResourcesTrustStorePath(), 
+							this.config.getExternalResourcesTrustStoreType(),
+							this.config.getExternalResourcesTrustStorePassword()).getTrustStore().getKeystore());
 				}catch(Exception t) {
 					throw new UtilsException(t.getMessage(),t);
 				}
 			}
 			
-			if(this.config.getExternalResources_keyStorePath()!=null) {
+			if(this.config.getExternalResourcesKeyStorePath()!=null) {
 				try {
 					externalConfig.setKeyStore(GestoreKeystoreCache.getMerlinKeystore(this.requestInfo, 
-							this.config.getExternalResources_keyStorePath(), 
-							this.config.getExternalResources_keyStoreType(),
-							this.config.getExternalResources_keyStorePassword()).getKeyStore().getKeystore());
+							this.config.getExternalResourcesKeyStorePath(), 
+							this.config.getExternalResourcesKeyStoreType(),
+							this.config.getExternalResourcesKeyStorePassword()).getKeyStore().getKeystore());
 				}catch(Exception t) {
 					throw new UtilsException(t.getMessage(),t);
 				}
-				externalConfig.setKeyAlias(this.config.getExternalResources_keyAlias());
-				externalConfig.setKeyPassword(this.config.getExternalResources_keyPassword());
+				externalConfig.setKeyAlias(this.config.getExternalResourcesKeyAlias());
+				externalConfig.setKeyPassword(this.config.getExternalResourcesKeyPassword());
 			}
 			
-			if(this.config.getForwardProxy_url()!=null) {
-				externalConfig.setForwardProxyUrl(this.config.getForwardProxy_url());
-				externalConfig.setForwardProxyHeader(this.config.getForwardProxy_header());
-				externalConfig.setForwardProxyQueryParameter(this.config.getForwardProxy_queryParameter());
-				externalConfig.setForwardProxyBase64(this.config.isForwardProxy_base64());
+			if(this.config.getForwardProxyUrl()!=null) {
+				externalConfig.setForwardProxyUrl(this.config.getForwardProxyUrl());
+				externalConfig.setForwardProxyHeader(this.config.getForwardProxyHeader());
+				externalConfig.setForwardProxyQueryParameter(this.config.getForwardProxyQueryParameter());
+				externalConfig.setForwardProxyBase64(this.config.isForwardProxyBase64());
 			}
 			
 			externalConfig.setConnectTimeout(this.config.getConnectTimeout());
@@ -142,12 +142,12 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 		if(this.config==null) {
 			throw new UtilsException(OCSP_CONFIG_NULL);
 		}
-		if(this.config.getTrustStoreSigner_path()!=null) {
+		if(this.config.getTrustStoreSignerPath()!=null) {
 			try {
 				return GestoreKeystoreCache.getMerlinTruststore(this.requestInfo, 
-						this.config.getTrustStoreSigner_path(), 
-						this.config.getTrustStoreSigner_type(),
-						this.config.getTrustStoreSigner_password()).getTrustStore();
+						this.config.getTrustStoreSignerPath(), 
+						this.config.getTrustStoreSignerType(),
+						this.config.getTrustStoreSignerPassword()).getTrustStore();
 			}catch(Exception t) {
 				throw new UtilsException(t.getMessage(),t);
 			}
@@ -160,12 +160,12 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 		if(this.config==null) {
 			throw new UtilsException(OCSP_CONFIG_NULL);
 		}
-		if(this.config.getExternalResources_trustStorePath()!=null) {
+		if(this.config.getExternalResourcesTrustStorePath()!=null) {
 			try {
 				return GestoreKeystoreCache.getMerlinTruststore(this.requestInfo, 
-						this.config.getExternalResources_trustStorePath(), 
-						this.config.getExternalResources_trustStoreType(),
-						this.config.getExternalResources_trustStorePassword()).getTrustStore();
+						this.config.getExternalResourcesTrustStorePath(), 
+						this.config.getExternalResourcesTrustStoreType(),
+						this.config.getExternalResourcesTrustStorePassword()).getTrustStore();
 			}catch(Exception t) {
 				throw new UtilsException(t.getMessage(),t);
 			}
@@ -178,12 +178,12 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 		if(this.config==null) {
 			throw new UtilsException(OCSP_CONFIG_NULL);
 		}
-		if(this.config.getExternalResources_keyStorePath()!=null) {
+		if(this.config.getExternalResourcesKeyStorePath()!=null) {
 			try {
 				return GestoreKeystoreCache.getMerlinKeystore(this.requestInfo, 
-						this.config.getExternalResources_keyStorePath(), 
-						this.config.getExternalResources_keyStoreType(),
-						this.config.getExternalResources_keyStorePassword()).getKeyStore();
+						this.config.getExternalResourcesKeyStorePath(), 
+						this.config.getExternalResourcesKeyStoreType(),
+						this.config.getExternalResourcesKeyStorePassword()).getKeyStore();
 			}catch(Exception t) {
 				throw new UtilsException(t.getMessage(),t);
 			}
@@ -196,12 +196,12 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 		if(this.config==null) {
 			throw new UtilsException(OCSP_CONFIG_NULL);
 		}
-		if(this.config.getAlternativeTrustStoreCRL_path()!=null) {
+		if(this.config.getAlternativeTrustStoreCRLPath()!=null) {
 			try {
 				return GestoreKeystoreCache.getMerlinTruststore(this.requestInfo, 
-						this.config.getAlternativeTrustStoreCRL_path(), 
-						this.config.getAlternativeTrustStoreCRL_type(),
-						this.config.getAlternativeTrustStoreCRL_password()).getTrustStore();
+						this.config.getAlternativeTrustStoreCRLPath(), 
+						this.config.getAlternativeTrustStoreCRLType(),
+						this.config.getAlternativeTrustStoreCRLPassword()).getTrustStore();
 			}catch(Exception t) {
 				throw new UtilsException(t.getMessage(),t);
 			}

@@ -50,6 +50,37 @@ public class TransportUtils {
 	
 	private TransportUtils() {}
 
+	public static final String LDAP_PREFIX = "ldap://";
+	public static final String HTTP_PREFIX = "http://";
+	public static final String HTTPS_PREFIX = "https://";
+	public static final String FILE_PREFIX = "file://";
+	public static boolean isRemoteResource(String r) {
+		return r!=null && 
+				(r.trim().startsWith(LDAP_PREFIX) 
+						||
+						r.trim().startsWith(HTTP_PREFIX) 
+						||
+						r.trim().startsWith(HTTPS_PREFIX) 
+						||
+						r.trim().startsWith(FILE_PREFIX) );
+	}
+	public static boolean isLdapResource(String r) {
+		return r!=null && 
+				(r.trim().startsWith(LDAP_PREFIX) );
+	}
+	public static boolean isHttpResource(String r) {
+		return r!=null && 
+				(r.trim().startsWith(HTTP_PREFIX) );
+	}
+	public static boolean isHttpsResource(String r) {
+		return r!=null && 
+				(r.trim().startsWith(HTTPS_PREFIX) );
+	}
+	public static boolean isFileResource(String r) {
+		return r!=null && 
+				(r.trim().startsWith(FILE_PREFIX) );
+	}
+	
 	/* Gestione CaseInsensitive per Properties */
 
 	public static boolean containsKey(Map<String, List<String>> p, String name) {

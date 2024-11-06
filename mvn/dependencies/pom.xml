@@ -23,6 +23,7 @@
 		<!-- Versioni condivise dai moduli -->
 		<module.spring.version>5.3.39</module.spring.version>
 		<module.spring.gov4j.version>5.3.39-gov4j-1</module.spring.gov4j.version>
+		<module.spring-ldap.version>2.4.2</module.spring-ldap.version>
 	</properties>
 
 	<modules>
@@ -53,6 +54,7 @@
 		<module>shared</module>
 		<module>soapbox</module>
 		<module>spring</module>
+		<module>spring-ldap</module>
 		<module>spring-security</module>
 		<module>swagger</module>
 		<module>swagger-codegen</module>

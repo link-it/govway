@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.security.cert.CertStore;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +50,14 @@ public class CRLCertstore implements Serializable {
 		this(crlPaths, null);
 	}
 	public CRLCertstore(String crlPaths, Map<String, byte[]> localResources) throws SecurityException {
-		List<String> crlPathsList = org.openspcoop2.utils.certificate.CRLCertstore.readCrlPaths(crlPaths);
+		List<String> crlPathsList = null;
+		if(localResources!=null && localResources.containsKey(crlPaths)){ // caso ldap in cui la virgola fa parte del path
+			crlPathsList = new ArrayList<>();
+			crlPathsList.add(crlPaths);
+		}
+		else {
+			crlPathsList = org.openspcoop2.utils.certificate.CRLCertstore.readCrlPaths(crlPaths);
+		}
 		try {
 			this.initEngine(crlPathsList, localResources);
 		}catch(Exception t) {

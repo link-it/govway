@@ -1,0 +1,12 @@
+#Create the root DN:
+dn: o=example,c=it
+objectClass: top
+objectClass: organization
+o: example it
+
+dn: cn=CRL Holder,o=example,c=it
+objectClass: top
+objectClass: organizationalRole
+objectClass: pkiCA
+cn: CRL Holder
+certificateRevocationList::CRL-BASE-64

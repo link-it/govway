@@ -44,7 +44,10 @@ public class OCSPResourceReader implements IOCSPResourceReader {
 	private OCSPConfig config;
 	
 	public OCSPResourceReader() {
+		// public
 	}
+	
+	private static final String OCSP_CONFIG_NULL = "OCSPConfig is null";
 	
 	@Override
 	public void initConfig(OCSPConfig config) throws UtilsException {
@@ -54,12 +57,12 @@ public class OCSPResourceReader implements IOCSPResourceReader {
 	@Override
 	public KeyStore getIssuerAlternativeTrustStore() throws UtilsException {
 		if(this.config==null) {
-			throw new UtilsException("OCSPConfig is null");
+			throw new UtilsException(OCSP_CONFIG_NULL);
 		}
-		if(this.config.getAlternativeTrustStoreCA_path()!=null) {
-			return newKeyStore(this.config.getAlternativeTrustStoreCA_path(),
-					this.config.getAlternativeTrustStoreCA_type(),
-					this.config.getAlternativeTrustStoreCA_password());
+		if(this.config.getAlternativeTrustStoreCAPath()!=null) {
+			return newKeyStore(this.config.getAlternativeTrustStoreCAPath(),
+					this.config.getAlternativeTrustStoreCAType(),
+					this.config.getAlternativeTrustStoreCAPassword());
 		}
 		return null;
 	}
@@ -67,34 +70,37 @@ public class OCSPResourceReader implements IOCSPResourceReader {
 	@Override
 	public void readExternalResource(String resource, Map<String, byte[]> holderResource) throws UtilsException {
 		if(this.config==null) {
-			throw new UtilsException("OCSPConfig is null");
+			throw new UtilsException(OCSP_CONFIG_NULL);
 		}
 		try {
 			ExternalResourceConfig externalConfig = new ExternalResourceConfig();
 			
-			externalConfig.setHostnameVerifier(this.config.isExternalResources_hostnameVerifier());
-			externalConfig.setTrustAllCerts(this.config.isExternalResources_trustAllCerts());
-			if(this.config.getExternalResources_trustStorePath()!=null) {
-				KeyStore ks = newKeyStore(this.config.getExternalResources_trustStorePath(),
-						this.config.getExternalResources_trustStoreType(),
-						this.config.getExternalResources_trustStorePassword());
+			externalConfig.setHostnameVerifier(this.config.isExternalResourcesHostnameVerifier());
+			externalConfig.setTrustAllCerts(this.config.isExternalResourcesTrustAllCerts());
+			if(this.config.getExternalResourcesTrustStorePath()!=null) {
+				KeyStore ks = newKeyStore(this.config.getExternalResourcesTrustStorePath(),
+						this.config.getExternalResourcesTrustStoreType(),
+						this.config.getExternalResourcesTrustStorePassword());
 				externalConfig.setTrustStore(ks.getKeystore());
 			}
 			
-			if(this.config.getExternalResources_keyStorePath()!=null) {
-				KeyStore ks = newKeyStore(this.config.getExternalResources_keyStorePath(),
-						this.config.getExternalResources_keyStoreType(),
-						this.config.getExternalResources_keyStorePassword());
+			if(this.config.getExternalResourcesKeyStorePath()!=null) {
+				KeyStore ks = newKeyStore(this.config.getExternalResourcesKeyStorePath(),
+						this.config.getExternalResourcesKeyStoreType(),
+						this.config.getExternalResourcesKeyStorePassword());
 				externalConfig.setKeyStore(ks.getKeystore());
-				externalConfig.setKeyAlias(this.config.getExternalResources_keyAlias());
-				externalConfig.setKeyPassword(this.config.getExternalResources_keyPassword());
+				externalConfig.setKeyAlias(this.config.getExternalResourcesKeyAlias());
+				externalConfig.setKeyPassword(this.config.getExternalResourcesKeyPassword());
 			}
 			
-			if(this.config.getForwardProxy_url()!=null) {
-				externalConfig.setForwardProxyUrl(this.config.getForwardProxy_url());
-				externalConfig.setForwardProxyHeader(this.config.getForwardProxy_header());
-				externalConfig.setForwardProxyQueryParameter(this.config.getForwardProxy_queryParameter());
-				externalConfig.setForwardProxyBase64(this.config.isForwardProxy_base64());
+			externalConfig.setBasicUsername(this.config.getExternalResourcesUsername());
+			externalConfig.setBasicPassword(this.config.getExternalResourcesPassword());
+			
+			if(this.config.getForwardProxyUrl()!=null) {
+				externalConfig.setForwardProxyUrl(this.config.getForwardProxyUrl());
+				externalConfig.setForwardProxyHeader(this.config.getForwardProxyHeader());
+				externalConfig.setForwardProxyQueryParameter(this.config.getForwardProxyQueryParameter());
+				externalConfig.setForwardProxyBase64(this.config.isForwardProxyBase64());
 			}
 			
 			externalConfig.setConnectTimeout(this.config.getConnectTimeout());
@@ -104,7 +110,7 @@ public class OCSPResourceReader implements IOCSPResourceReader {
 			if(r!=null) {
 				holderResource.put(resource, r);
 			}
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new UtilsException(t.getMessage(),t);
 		}
 	}
@@ -112,11 +118,11 @@ public class OCSPResourceReader implements IOCSPResourceReader {
 	@Override
 	public CRLCertstore readCRL(List<String> crl, Map<String, byte[]> localResources) throws UtilsException {
 		if(this.config==null) {
-			throw new UtilsException("OCSPConfig is null");
+			throw new UtilsException(OCSP_CONFIG_NULL);
 		}
 		try {
 			return new CRLCertstore(crl, localResources);
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new UtilsException(t.getMessage(),t);
 		}
 	}
@@ -124,12 +130,12 @@ public class OCSPResourceReader implements IOCSPResourceReader {
 	@Override
 	public KeyStore getSignerTrustStore() throws UtilsException {
 		if(this.config==null) {
-			throw new UtilsException("OCSPConfig is null");
+			throw new UtilsException(OCSP_CONFIG_NULL);
 		}
-		if(this.config.getTrustStoreSigner_path()!=null) {
-			return newKeyStore(this.config.getTrustStoreSigner_path(),
-					this.config.getTrustStoreSigner_type(),
-					this.config.getTrustStoreSigner_password());
+		if(this.config.getTrustStoreSignerPath()!=null) {
+			return newKeyStore(this.config.getTrustStoreSignerPath(),
+					this.config.getTrustStoreSignerType(),
+					this.config.getTrustStoreSignerPassword());
 		}
 		return null;
 	}
@@ -137,12 +143,12 @@ public class OCSPResourceReader implements IOCSPResourceReader {
 	@Override
 	public KeyStore getHttpsTrustStore() throws UtilsException {
 		if(this.config==null) {
-			throw new UtilsException("OCSPConfig is null");
+			throw new UtilsException(OCSP_CONFIG_NULL);
 		}
-		if(this.config.getExternalResources_trustStorePath()!=null) {
-			return newKeyStore(this.config.getExternalResources_trustStorePath(),
-					this.config.getExternalResources_trustStoreType(),
-					this.config.getExternalResources_trustStorePassword());
+		if(this.config.getExternalResourcesTrustStorePath()!=null) {
+			return newKeyStore(this.config.getExternalResourcesTrustStorePath(),
+					this.config.getExternalResourcesTrustStoreType(),
+					this.config.getExternalResourcesTrustStorePassword());
 		}
 		return null;
 	}
@@ -150,12 +156,12 @@ public class OCSPResourceReader implements IOCSPResourceReader {
 	@Override
 	public KeyStore getHttpsKeyStore() throws UtilsException {
 		if(this.config==null) {
-			throw new UtilsException("OCSPConfig is null");
+			throw new UtilsException(OCSP_CONFIG_NULL);
 		}
-		if(this.config.getExternalResources_keyStorePath()!=null) {
-			return newKeyStore(this.config.getExternalResources_keyStorePath(),
-					this.config.getExternalResources_keyStoreType(),
-					this.config.getExternalResources_keyStorePassword());
+		if(this.config.getExternalResourcesKeyStorePath()!=null) {
+			return newKeyStore(this.config.getExternalResourcesKeyStorePath(),
+					this.config.getExternalResourcesKeyStoreType(),
+					this.config.getExternalResourcesKeyStorePassword());
 		}
 		return null;
 	}
@@ -163,12 +169,12 @@ public class OCSPResourceReader implements IOCSPResourceReader {
 	@Override
 	public KeyStore getCrlAlternativeTrustStore() throws UtilsException{
 		if(this.config==null) {
-			throw new UtilsException("OCSPConfig is null");
+			throw new UtilsException(OCSP_CONFIG_NULL);
 		}
-		if(this.config.getAlternativeTrustStoreCRL_path()!=null) {
-			return newKeyStore(this.config.getAlternativeTrustStoreCRL_path(),
-					this.config.getAlternativeTrustStoreCRL_type(),
-					this.config.getAlternativeTrustStoreCRL_password());
+		if(this.config.getAlternativeTrustStoreCRLPath()!=null) {
+			return newKeyStore(this.config.getAlternativeTrustStoreCRLPath(),
+					this.config.getAlternativeTrustStoreCRLType(),
+					this.config.getAlternativeTrustStoreCRLPassword());
 		}
 		return null;
 	}
@@ -176,24 +182,14 @@ public class OCSPResourceReader implements IOCSPResourceReader {
 	private static KeyStore newKeyStore(String path, String type, String password) throws UtilsException {
 		File f = new File(path);
 		if(!f.exists()) {
-			//File fClass = null;
 			try(InputStream is = OCSPResourceReader.class.getResourceAsStream(path)){
 				if(is!=null) {
 					byte[] content = Utilities.getAsByteArray(is);
-					//fClass = File.createTempFile("test", ".crl");
-					//org.openspcoop2.utils.resources.FileSystemUtilities.writeFile(fClass, content);
 					return new KeyStore(content, type,	password);
 				}
 			}
-			catch(Throwable t) {
+			catch(Exception t) {
 				throw new UtilsException(t.getMessage(),t);
-			}
-			finally {
-//				if(fClass!=null) {
-//					if(!fClass.delete()) {
-//						// ignore
-//					}
-//				}
 			}
 		}
 		return new KeyStore(path, type,	password);

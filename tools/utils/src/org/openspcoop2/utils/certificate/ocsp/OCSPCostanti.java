@@ -21,7 +21,7 @@
 package org.openspcoop2.utils.certificate.ocsp;
 
 /**
- * HSMManager
+ * OCSPCostanti
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
@@ -29,6 +29,8 @@ package org.openspcoop2.utils.certificate.ocsp;
  */
 public class OCSPCostanti {
 
+	private OCSPCostanti() {}
+	
 	public static final String PROPERTY_PREFIX = "ocsp.";
 	
 	public static final String PROPERTY_SUFFIX_TYPE = "type";
@@ -77,6 +79,9 @@ public class OCSPCostanti {
 	public static final String PROPERTY_SUFFIX_HTTPS_KEY_STORE_TYPE = "https.keyStore.type";
 	public static final String PROPERTY_SUFFIX_HTTPS_KEY_ALIAS = "https.key.alias";
 	public static final String PROPERTY_SUFFIX_HTTPS_KEY_PASSWORD = "https.key.password";
+	
+	public static final String PROPERTY_SUFFIX_USERNAME = "username";
+	public static final String PROPERTY_SUFFIX_PASSWORD = "password";
 
 	public static final String PROPERTY_SUFFIX_FORWARD_PROXY_URL = "forwardProxy.url";
 	public static final String PROPERTY_SUFFIX_FORWARD_PROXY_HEADER = "forwardProxy.header";

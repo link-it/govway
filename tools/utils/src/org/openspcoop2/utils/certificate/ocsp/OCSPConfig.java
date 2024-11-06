@@ -52,14 +52,14 @@ public class OCSPConfig {
 	private boolean checkCAValidity = true;
 	
 	private List<CertificateSource> caSource = new ArrayList<>();
-	private String alternativeTrustStoreCA_path;
-	private String alternativeTrustStoreCA_password;
-	private String alternativeTrustStoreCA_type;
+	private String alternativeTrustStoreCAPath;
+	private String alternativeTrustStoreCAPassword;
+	private String alternativeTrustStoreCAType;
 	private boolean rejectsCertificateWithoutCA = true;
 	
-	private String trustStoreSigner_path;
-	private String trustStoreSigner_password;
-	private String trustStoreSigner_type;
+	private String trustStoreSignerPath;
+	private String trustStoreSignerPassword;
+	private String trustStoreSignerType;
 	private String aliasCertificateSigner;
 	
 	private boolean nonce;
@@ -78,29 +78,32 @@ public class OCSPConfig {
 	private int readTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
 	private int connectTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
 		
-	private boolean externalResources_hostnameVerifier = true;
-	private boolean externalResources_trustAllCerts = false;
-	private String externalResources_trustStorePath;
-	private String externalResources_trustStorePassword;
-	private String externalResources_trustStoreType;
+	private boolean externalResourcesHostnameVerifier = true;
+	private boolean externalResourcesTrustAllCerts = false;
+	private String externalResourcesTrustStorePath;
+	private String externalResourcesTrustStorePassword;
+	private String externalResourcesTrustStoreType;
 	
-	private String externalResources_keyStorePath;
-	private String externalResources_keyStorePassword;
-	private String externalResources_keyStoreType;
-	private String externalResources_keyAlias;
-	private String externalResources_keyPassword;
+	private String externalResourcesKeyStorePath;
+	private String externalResourcesKeyStorePassword;
+	private String externalResourcesKeyStoreType;
+	private String externalResourcesKeyAlias;
+	private String externalResourcesKeyPassword;
 	
-	private String forwardProxy_url;
-	private String forwardProxy_header;
-	private String forwardProxy_queryParameter;
-	private boolean forwardProxy_base64;
+	private String externalResourcesUsername;
+	private String externalResourcesPassword;
+	
+	private String forwardProxyUrl;
+	private String forwardProxyHeader;
+	private String forwardProxyQueryParameter;
+	private boolean forwardProxyBase64;
 	
 	private SecureRandomAlgorithm secureRandomAlgorithm;
 	
 	private int responseCheckDateToleranceMilliseconds;
 
-	private boolean crl_signingCertCheck=false;
-	private boolean crl_caCheck=false;
+	private boolean crlSigningCertCheck=false;
+	private boolean crlCaCheck=false;
 	private boolean crl = false;
 	
 	private List<CertificateSource> crlSource = new ArrayList<>();
@@ -109,9 +112,9 @@ public class OCSPConfig {
 	private boolean rejectsCAWithoutCRL = false;
 	
 	private List<CertificateSource> crlTrustStoreSource = new ArrayList<>();
-	private String alternativeTrustStoreCRL_path;
-	private String alternativeTrustStoreCRL_password;
-	private String alternativeTrustStoreCRL_type;
+	private String alternativeTrustStoreCRLPath;
+	private String alternativeTrustStoreCRLPassword;
+	private String alternativeTrustStoreCRLType;
 				
 
 	public String getId() {
@@ -140,27 +143,27 @@ public class OCSPConfig {
 	public List<CertificateSource> getCaSource() {
 		return this.caSource;
 	}
-	public String getAlternativeTrustStoreCA_path() {
-		return this.alternativeTrustStoreCA_path;
+	public String getAlternativeTrustStoreCAPath() {
+		return this.alternativeTrustStoreCAPath;
 	}
-	public String getAlternativeTrustStoreCA_password() {
-		return this.alternativeTrustStoreCA_password;
+	public String getAlternativeTrustStoreCAPassword() {
+		return this.alternativeTrustStoreCAPassword;
 	}
-	public String getAlternativeTrustStoreCA_type() {
-		return this.alternativeTrustStoreCA_type;
+	public String getAlternativeTrustStoreCAType() {
+		return this.alternativeTrustStoreCAType;
 	}
 	public boolean isRejectsCertificateWithoutCA() {
 		return this.rejectsCertificateWithoutCA;
 	}
 	
-	public String getTrustStoreSigner_path() {
-		return this.trustStoreSigner_path;
+	public String getTrustStoreSignerPath() {
+		return this.trustStoreSignerPath;
 	}
-	public String getTrustStoreSigner_password() {
-		return this.trustStoreSigner_password;
+	public String getTrustStoreSignerPassword() {
+		return this.trustStoreSignerPassword;
 	}
-	public String getTrustStoreSigner_type() {
-		return this.trustStoreSigner_type;
+	public String getTrustStoreSignerType() {
+		return this.trustStoreSignerType;
 	}
 	public String getAliasCertificateSigner() {
 		return this.aliasCertificateSigner;
@@ -203,49 +206,56 @@ public class OCSPConfig {
 		return this.connectTimeout;
 	}
 
-	public boolean isExternalResources_hostnameVerifier() {
-		return this.externalResources_hostnameVerifier;
+	public boolean isExternalResourcesHostnameVerifier() {
+		return this.externalResourcesHostnameVerifier;
 	}
-	public boolean isExternalResources_trustAllCerts() {
-		return this.externalResources_trustAllCerts;
+	public boolean isExternalResourcesTrustAllCerts() {
+		return this.externalResourcesTrustAllCerts;
 	}
-	public String getExternalResources_trustStorePath() {
-		return this.externalResources_trustStorePath;
+	public String getExternalResourcesTrustStorePath() {
+		return this.externalResourcesTrustStorePath;
 	}
-	public String getExternalResources_trustStorePassword() {
-		return this.externalResources_trustStorePassword;
+	public String getExternalResourcesTrustStorePassword() {
+		return this.externalResourcesTrustStorePassword;
 	}
-	public String getExternalResources_trustStoreType() {
-		return this.externalResources_trustStoreType;
+	public String getExternalResourcesTrustStoreType() {
+		return this.externalResourcesTrustStoreType;
 	}
 	
-	public String getExternalResources_keyStorePath() {
-		return this.externalResources_keyStorePath;
+	public String getExternalResourcesKeyStorePath() {
+		return this.externalResourcesKeyStorePath;
 	}
-	public String getExternalResources_keyStorePassword() {
-		return this.externalResources_keyStorePassword;
+	public String getExternalResourcesKeyStorePassword() {
+		return this.externalResourcesKeyStorePassword;
 	}
-	public String getExternalResources_keyStoreType() {
-		return this.externalResources_keyStoreType;
+	public String getExternalResourcesKeyStoreType() {
+		return this.externalResourcesKeyStoreType;
 	}
-	public String getExternalResources_keyAlias() {
-		return this.externalResources_keyAlias;
+	public String getExternalResourcesKeyAlias() {
+		return this.externalResourcesKeyAlias;
 	}
-	public String getExternalResources_keyPassword() {
-		return this.externalResources_keyPassword;
+	public String getExternalResourcesKeyPassword() {
+		return this.externalResourcesKeyPassword;
+	}
+	
+	public String getExternalResourcesUsername() {
+		return this.externalResourcesUsername;
+	}
+	public String getExternalResourcesPassword() {
+		return this.externalResourcesPassword;
 	}
 
-	public String getForwardProxy_url() {
-		return this.forwardProxy_url;
+	public String getForwardProxyUrl() {
+		return this.forwardProxyUrl;
 	}
-	public String getForwardProxy_header() {
-		return this.forwardProxy_header;
+	public String getForwardProxyHeader() {
+		return this.forwardProxyHeader;
 	}
-	public String getForwardProxy_queryParameter() {
-		return this.forwardProxy_queryParameter;
+	public String getForwardProxyQueryParameter() {
+		return this.forwardProxyQueryParameter;
 	}
-	public boolean isForwardProxy_base64() {
-		return this.forwardProxy_base64;
+	public boolean isForwardProxyBase64() {
+		return this.forwardProxyBase64;
 	}
 	
 	public SecureRandomAlgorithm getSecureRandomAlgorithm() {
@@ -257,11 +267,11 @@ public class OCSPConfig {
 	}
 	
 	public boolean isCrlSigningCertCheck() {
-		return this.crl_signingCertCheck;
+		return this.crlSigningCertCheck;
 	}
 	
 	public boolean isCrlCaCheck() {
-		return this.crl_caCheck;
+		return this.crlCaCheck;
 	}
 	
 	public boolean isCrl() {
@@ -287,21 +297,25 @@ public class OCSPConfig {
 		return this.crlTrustStoreSource;
 	}
 
-	public String getAlternativeTrustStoreCRL_path() {
-		return this.alternativeTrustStoreCRL_path;
+	public String getAlternativeTrustStoreCRLPath() {
+		return this.alternativeTrustStoreCRLPath;
 	}
 
-	public String getAlternativeTrustStoreCRL_password() {
-		return this.alternativeTrustStoreCRL_password;
+	public String getAlternativeTrustStoreCRLPassword() {
+		return this.alternativeTrustStoreCRLPassword;
 	}
 
-	public String getAlternativeTrustStoreCRL_type() {
-		return this.alternativeTrustStoreCRL_type;
+	public String getAlternativeTrustStoreCRLType() {
+		return this.alternativeTrustStoreCRLType;
 	}
 
 	
 	protected OCSPConfig(String id, Properties p, Logger log) throws UtilsException {
 		this.id = id;
+		
+		if(log!=null) {
+			// nop
+		}
 		
 		if(p==null || p.isEmpty()) {
 			throw new UtilsException("Properties '"+OCSPCostanti.PROPERTY_PREFIX+id+".*' undefined");
@@ -317,32 +331,36 @@ public class OCSPConfig {
 		
 		this.caSource = getCertificateSourceProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CA_SOURCE, true, null);
 		
-		this.alternativeTrustStoreCA_path = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CA_ALTERNATIVE_TRUST_STORE, false);	
-		if(this.alternativeTrustStoreCA_path!=null && StringUtils.isNotEmpty(this.alternativeTrustStoreCA_path)) {
-			this.alternativeTrustStoreCA_password = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CA_ALTERNATIVE_TRUST_STORE_PASSWORD, true);	
-			this.alternativeTrustStoreCA_type = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CA_ALTERNATIVE_TRUST_STORE_TYPE, false);
-			if(this.alternativeTrustStoreCA_type==null || StringUtils.isEmpty(this.alternativeTrustStoreCA_type)) {
-				this.alternativeTrustStoreCA_type = KeystoreType.JKS.getNome();
+		this.alternativeTrustStoreCAPath = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CA_ALTERNATIVE_TRUST_STORE, false);	
+		if(this.alternativeTrustStoreCAPath!=null && StringUtils.isNotEmpty(this.alternativeTrustStoreCAPath)) {
+			this.alternativeTrustStoreCAPassword = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CA_ALTERNATIVE_TRUST_STORE_PASSWORD, true);	
+			this.alternativeTrustStoreCAType = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CA_ALTERNATIVE_TRUST_STORE_TYPE, false);
+			if(this.alternativeTrustStoreCAType==null || StringUtils.isEmpty(this.alternativeTrustStoreCAType)) {
+				this.alternativeTrustStoreCAType = KeystoreType.JKS.getNome();
 			}
 		}
 		
 		this.rejectsCertificateWithoutCA = getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CA_NOT_FOUD_REJECTS_CERTIFICATE, false, true);	
 		
-		this.trustStoreSigner_path = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_SIGNER_TRUST_STORE, false);	
-		if(this.trustStoreSigner_path!=null && StringUtils.isNotEmpty(this.trustStoreSigner_path)) {
-			this.trustStoreSigner_password = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_SIGNER_TRUST_STORE_PASSWORD, true);	
-			this.trustStoreSigner_type = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_SIGNER_TRUST_STORE_TYPE, false);
-			if(this.trustStoreSigner_type==null || StringUtils.isEmpty(this.trustStoreSigner_type)) {
-				this.trustStoreSigner_type = KeystoreType.JKS.getNome();
+		this.trustStoreSignerPath = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_SIGNER_TRUST_STORE, false);	
+		if(this.trustStoreSignerPath!=null && StringUtils.isNotEmpty(this.trustStoreSignerPath)) {
+			this.trustStoreSignerPassword = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_SIGNER_TRUST_STORE_PASSWORD, true);	
+			this.trustStoreSignerType = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_SIGNER_TRUST_STORE_TYPE, false);
+			if(this.trustStoreSignerType==null || StringUtils.isEmpty(this.trustStoreSignerType)) {
+				this.trustStoreSignerType = KeystoreType.JKS.getNome();
 			}
 		}
 		
+		String prefix = "Property '"+OCSPCostanti.PROPERTY_PREFIX+id+".";
+		
 		this.aliasCertificateSigner = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_SIGNER_ALIAS, false);	
-		if(this.aliasCertificateSigner!=null && StringUtils.isNotEmpty(this.aliasCertificateSigner)) {
-			if(this.trustStoreSigner_path==null || StringUtils.isEmpty(this.trustStoreSigner_path)) {
-				throw new UtilsException("Property '"+OCSPCostanti.PROPERTY_PREFIX+id+"."+OCSPCostanti.PROPERTY_SUFFIX_SIGNER_ALIAS+"' require property '"+
-						OCSPCostanti.PROPERTY_PREFIX+id+"."+OCSPCostanti.PROPERTY_SUFFIX_SIGNER_TRUST_STORE+"'");
-			}
+		if(
+				(this.aliasCertificateSigner!=null && StringUtils.isNotEmpty(this.aliasCertificateSigner))
+				&&
+				(this.trustStoreSignerPath==null || StringUtils.isEmpty(this.trustStoreSignerPath))
+			){
+			throw new UtilsException(prefix+OCSPCostanti.PROPERTY_SUFFIX_SIGNER_ALIAS+"' require property '"+
+					OCSPCostanti.PROPERTY_PREFIX+id+"."+OCSPCostanti.PROPERTY_SUFFIX_SIGNER_TRUST_STORE+"'");
 		}
 		
 		this.nonce = getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_NONCE_ENABLED, false, true);
@@ -356,7 +374,7 @@ public class OCSPConfig {
 			this.responderUrlSource = getCertificateSourceProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_URL_SOURCE, true, null);
 		}
 		if(this.responderUrlSource!=null && this.responderUrlSource.contains(CertificateSource.CONFIG)) {
-			throw new UtilsException("Property '"+OCSPCostanti.PROPERTY_PREFIX+id+"."+OCSPCostanti.PROPERTY_SUFFIX_URL_SOURCE+"' declare unsupported '"+CertificateSource.CONFIG+"' mode");
+			throw new UtilsException(prefix+OCSPCostanti.PROPERTY_SUFFIX_URL_SOURCE+"' declare unsupported '"+CertificateSource.CONFIG+"' mode");
 		}
 		
 		this.alternativeResponderUrl = getListProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_URL_ALTERNATIVE, false, null);
@@ -371,49 +389,54 @@ public class OCSPConfig {
 		extendedKeyUsageRequiredDefault.add(ExtendedKeyUsage.OCSP_SIGNING);
 		this.extendedKeyUsageRequired = getExtendedKeyUsageProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_EXTENDED_KEY_USAGE, extendedKeyUsageRequiredDefault);
 		
-		this.readTimeout = getIntProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_READ_TIMEOUT, false, 15000); // HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT);
+		this.readTimeout = getIntProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_READ_TIMEOUT, false, 15000); /** HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT); */
 		this.connectTimeout = getIntProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CONNECT_TIMEOUT, false, HttpUtilities.HTTP_CONNECTION_TIMEOUT);
 		
-		this.externalResources_hostnameVerifier = getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_HOSTNAME_VERIFIER, false, true);	
-		this.externalResources_trustAllCerts = getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_TRUST_ALL_CERTS, false, false);	
-		this.externalResources_trustStorePath = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_TRUST_STORE, false);	
-		if(this.externalResources_trustStorePath!=null && StringUtils.isNotEmpty(this.externalResources_trustStorePath)) {
-			this.externalResources_trustStorePassword = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_TRUST_STORE_PASSWORD, true);	
-			this.externalResources_trustStoreType = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_TRUST_STORE_TYPE, false);
-			if(this.externalResources_trustStoreType==null || StringUtils.isEmpty(this.externalResources_trustStoreType)) {
-				this.externalResources_trustStoreType = KeystoreType.JKS.getNome();
+		this.externalResourcesHostnameVerifier = getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_HOSTNAME_VERIFIER, false, true);	
+		this.externalResourcesTrustAllCerts = getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_TRUST_ALL_CERTS, false, false);	
+		this.externalResourcesTrustStorePath = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_TRUST_STORE, false);	
+		if(this.externalResourcesTrustStorePath!=null && StringUtils.isNotEmpty(this.externalResourcesTrustStorePath)) {
+			this.externalResourcesTrustStorePassword = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_TRUST_STORE_PASSWORD, true);	
+			this.externalResourcesTrustStoreType = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_TRUST_STORE_TYPE, false);
+			if(this.externalResourcesTrustStoreType==null || StringUtils.isEmpty(this.externalResourcesTrustStoreType)) {
+				this.externalResourcesTrustStoreType = KeystoreType.JKS.getNome();
 			}
 		}
 		
-		this.externalResources_keyStorePath = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_KEY_STORE, false);	
-		if(this.externalResources_keyStorePath!=null && StringUtils.isNotEmpty(this.externalResources_keyStorePath)) {
-			this.externalResources_keyStorePassword = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_KEY_STORE_PASSWORD, true);	
-			this.externalResources_keyStoreType = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_KEY_STORE_TYPE, false);
-			if(this.externalResources_keyStoreType==null || StringUtils.isEmpty(this.externalResources_keyStoreType)) {
-				this.externalResources_keyStoreType = KeystoreType.JKS.getNome();
+		this.externalResourcesKeyStorePath = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_KEY_STORE, false);	
+		if(this.externalResourcesKeyStorePath!=null && StringUtils.isNotEmpty(this.externalResourcesKeyStorePath)) {
+			this.externalResourcesKeyStorePassword = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_KEY_STORE_PASSWORD, true);	
+			this.externalResourcesKeyStoreType = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_KEY_STORE_TYPE, false);
+			if(this.externalResourcesKeyStoreType==null || StringUtils.isEmpty(this.externalResourcesKeyStoreType)) {
+				this.externalResourcesKeyStoreType = KeystoreType.JKS.getNome();
 			}
 			
-			this.externalResources_keyPassword = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_KEY_PASSWORD, true);	
-			this.externalResources_keyAlias = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_KEY_ALIAS, false);	
+			this.externalResourcesKeyPassword = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_KEY_PASSWORD, true);	
+			this.externalResourcesKeyAlias = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTPS_KEY_ALIAS, false);	
 		}
 		
-		this.forwardProxy_url = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_FORWARD_PROXY_URL, false);	
-		if(this.forwardProxy_url!=null && StringUtils.isNotEmpty(this.forwardProxy_url)) {
-			this.forwardProxy_header = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_FORWARD_PROXY_HEADER, false);	
-			this.forwardProxy_queryParameter = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_FORWARD_PROXY_QUERY_PARAMETER, false);
-			if(this.forwardProxy_header==null && this.forwardProxy_queryParameter==null) {
+		this.externalResourcesUsername = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_USERNAME, false);	
+		if(this.externalResourcesUsername!=null && StringUtils.isNotEmpty(this.externalResourcesUsername)) {
+			this.externalResourcesPassword = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_PASSWORD, false);	
+		}
+		
+		this.forwardProxyUrl = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_FORWARD_PROXY_URL, false);	
+		if(this.forwardProxyUrl!=null && StringUtils.isNotEmpty(this.forwardProxyUrl)) {
+			this.forwardProxyHeader = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_FORWARD_PROXY_HEADER, false);	
+			this.forwardProxyQueryParameter = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_FORWARD_PROXY_QUERY_PARAMETER, false);
+			if(this.forwardProxyHeader==null && this.forwardProxyQueryParameter==null) {
 				throw new UtilsException("ForwardProxy property '"+OCSPCostanti.PROPERTY_PREFIX+id+"."+OCSPCostanti.PROPERTY_SUFFIX_FORWARD_PROXY_URL+"' require '"+
 						OCSPCostanti.PROPERTY_PREFIX+id+"."+OCSPCostanti.PROPERTY_SUFFIX_FORWARD_PROXY_HEADER+"' o '"+
 						OCSPCostanti.PROPERTY_PREFIX+id+"."+OCSPCostanti.PROPERTY_SUFFIX_FORWARD_PROXY_QUERY_PARAMETER+"'");
 			}
-			this.forwardProxy_base64 = getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_FORWARD_PROXY_BASE64, false, true);
+			this.forwardProxyBase64 = getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_FORWARD_PROXY_BASE64, false, true);
 		}
 
 		String tmp = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_SECURE_RANDOM_ALGORITHM, false);
 		if(tmp!=null && StringUtils.isNotEmpty(tmp)) {
 			try {
 				this.secureRandomAlgorithm = SecureRandomAlgorithm.valueOf(tmp);
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				throw new UtilsException("SecureRandomAlgorithm property '"+OCSPCostanti.PROPERTY_PREFIX+id+"."+OCSPCostanti.PROPERTY_SUFFIX_SECURE_RANDOM_ALGORITHM+"' invalid (found value:["+tmp+"]): "+t.getMessage(),t);
 			}
 		}
@@ -424,27 +447,27 @@ public class OCSPConfig {
 		int defaultTolerance = 1000 * 60 * 10; // 10 minuti
 		this.responseCheckDateToleranceMilliseconds = getIntProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_RESPONSE_DATE_TOLERANCE_MS, false, defaultTolerance);
 
-		this.crl_signingCertCheck=getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CRL_SIGNING_CERT_CHECK, false, false);
+		this.crlSigningCertCheck=getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CRL_SIGNING_CERT_CHECK, false, false);
 		
-		this.crl_caCheck=getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CRL_CA_CHECK, false, true);
+		this.crlCaCheck=getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CRL_CA_CHECK, false, true);
 		
 		//this.crl=getBooleanProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CRL_ENABLED, false, false); spostato sopra
 		
-		if(this.crl || this.crl_signingCertCheck || this.crl_caCheck) {
+		if(this.crl || this.crlSigningCertCheck || this.crlCaCheck) {
 			
 			List<CertificateSource> defaultValue = new ArrayList<>();
 			defaultValue.add(CertificateSource.AUTHORITY_INFORMATION_ACCESS);
 			
 			this.crlSource = getCertificateSourceProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CRL_SOURCE, false, defaultValue);
 			if(this.crlSource == null || this.crlSource.isEmpty()) {
-				throw new UtilsException("Property '"+OCSPCostanti.PROPERTY_PREFIX+id+"."+OCSPCostanti.PROPERTY_SUFFIX_CRL_SOURCE+"' is empty");
+				throw new UtilsException(prefix+OCSPCostanti.PROPERTY_SUFFIX_CRL_SOURCE+"' is empty");
 			}
-			if(this.crl_signingCertCheck && !this.crlSource.contains(CertificateSource.AUTHORITY_INFORMATION_ACCESS)) {
-				throw new UtilsException("Property '"+OCSPCostanti.PROPERTY_PREFIX+id+"."+OCSPCostanti.PROPERTY_SUFFIX_CRL_SIGNING_CERT_CHECK+"' require mode '"+
+			if(this.crlSigningCertCheck && !this.crlSource.contains(CertificateSource.AUTHORITY_INFORMATION_ACCESS)) {
+				throw new UtilsException(prefix+OCSPCostanti.PROPERTY_SUFFIX_CRL_SIGNING_CERT_CHECK+"' require mode '"+
 						CertificateSource.AUTHORITY_INFORMATION_ACCESS+"' defined in property '"+OCSPCostanti.PROPERTY_PREFIX+id+"."+OCSPCostanti.PROPERTY_SUFFIX_CRL_SOURCE+"'");
 			}
-			if(this.crl_caCheck && !this.crlSource.contains(CertificateSource.AUTHORITY_INFORMATION_ACCESS)) {
-				throw new UtilsException("Property '"+OCSPCostanti.PROPERTY_PREFIX+id+"."+OCSPCostanti.PROPERTY_SUFFIX_CRL_CA_CHECK+"' require mode '"+
+			if(this.crlCaCheck && !this.crlSource.contains(CertificateSource.AUTHORITY_INFORMATION_ACCESS)) {
+				throw new UtilsException(prefix+OCSPCostanti.PROPERTY_SUFFIX_CRL_CA_CHECK+"' require mode '"+
 						CertificateSource.AUTHORITY_INFORMATION_ACCESS+"' defined in property '"+OCSPCostanti.PROPERTY_PREFIX+id+"."+OCSPCostanti.PROPERTY_SUFFIX_CRL_SOURCE+"'");
 			}
 			
@@ -455,15 +478,15 @@ public class OCSPConfig {
 						
 			this.crlTrustStoreSource = getCertificateSourceProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CRL_TRUSTSTORE_SOURCE, false, defaultValue);
 			if(this.crlTrustStoreSource == null || this.crlTrustStoreSource.isEmpty()) {
-				throw new UtilsException("Property '"+OCSPCostanti.PROPERTY_PREFIX+id+"."+OCSPCostanti.PROPERTY_SUFFIX_CRL_TRUSTSTORE_SOURCE+"' is empty");
+				throw new UtilsException(prefix+OCSPCostanti.PROPERTY_SUFFIX_CRL_TRUSTSTORE_SOURCE+"' is empty");
 			}
 			
-			this.alternativeTrustStoreCRL_path = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CRL_ALTERNATIVE_TRUST_STORE, false);	
-			if(this.alternativeTrustStoreCRL_path!=null && StringUtils.isNotEmpty(this.alternativeTrustStoreCRL_path)) {
-				this.alternativeTrustStoreCRL_password = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CRL_ALTERNATIVE_TRUST_STORE_PASSWORD, true);	
-				this.alternativeTrustStoreCRL_type = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CRL_ALTERNATIVE_TRUST_STORE_TYPE, false);
-				if(this.alternativeTrustStoreCRL_type==null || StringUtils.isEmpty(this.alternativeTrustStoreCRL_type)) {
-					this.alternativeTrustStoreCRL_type = KeystoreType.JKS.getNome();
+			this.alternativeTrustStoreCRLPath = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CRL_ALTERNATIVE_TRUST_STORE, false);	
+			if(this.alternativeTrustStoreCRLPath!=null && StringUtils.isNotEmpty(this.alternativeTrustStoreCRLPath)) {
+				this.alternativeTrustStoreCRLPassword = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CRL_ALTERNATIVE_TRUST_STORE_PASSWORD, true);	
+				this.alternativeTrustStoreCRLType = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_CRL_ALTERNATIVE_TRUST_STORE_TYPE, false);
+				if(this.alternativeTrustStoreCRLType==null || StringUtils.isEmpty(this.alternativeTrustStoreCRLType)) {
+					this.alternativeTrustStoreCRLType = KeystoreType.JKS.getNome();
 				}
 			}
 		}
@@ -487,7 +510,7 @@ public class OCSPConfig {
 		if(tmp!=null && StringUtils.isNotEmpty(tmp)) {
 			try {
 				return Boolean.valueOf(tmp);
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				throw new UtilsException("Boolean property '"+OCSPCostanti.PROPERTY_PREFIX+id+"."+name+"' invalid (found value:["+tmp+"]): "+t.getMessage(),t);
 			}
 		}
@@ -498,7 +521,7 @@ public class OCSPConfig {
 		if(tmp!=null && StringUtils.isNotEmpty(tmp)) {
 			try {
 				return Integer.valueOf(tmp);
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				throw new UtilsException("Boolean property '"+OCSPCostanti.PROPERTY_PREFIX+id+"."+name+"' invalid (found value:["+tmp+"]): "+t.getMessage(),t);
 			}
 		}
@@ -511,7 +534,7 @@ public class OCSPConfig {
 				List<String> l = new ArrayList<>();
 				String [] tmpArray = tmp.split(",");
 				if(tmpArray==null || tmpArray.length<=0) {
-					throw new Exception("Undefined value");
+					throw new UtilsException("Undefined value");
 				}
 				for (String s : tmpArray) {
 					if(s!=null && StringUtils.isNotEmpty(s.trim())) {
@@ -519,7 +542,7 @@ public class OCSPConfig {
 					}
 				}
 				return l;
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				throw new UtilsException("CertificateSource property '"+OCSPCostanti.PROPERTY_PREFIX+id+"."+name+"' invalid (found value:["+tmp+"]): "+t.getMessage(),t);
 			}
 		}
@@ -533,9 +556,9 @@ public class OCSPConfig {
 		List<Integer> lCS = new ArrayList<>();
 		for (String certificateSource : l) {
 			try {
-				int c = Integer.valueOf(certificateSource);
+				int c = Integer.parseInt(certificateSource);
 				lCS.add(c);
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				throw new UtilsException("CertificateSource property '"+OCSPCostanti.PROPERTY_PREFIX+id+"."+name+"' invalid (found value:["+certificateSource+"]): "+t.getMessage(),t);
 			}
 		}
@@ -551,11 +574,11 @@ public class OCSPConfig {
 			try {
 				CertificateSource c = CertificateSource.valueOf(certificateSource.toUpperCase());
 				lCS.add(c);
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				throw new UtilsException("CertificateSource property '"+OCSPCostanti.PROPERTY_PREFIX+id+"."+name+"' invalid (found value:["+certificateSource+"]): "+t.getMessage(),t);
 			}
 		}
-		if(lCS==null || lCS.isEmpty()) {
+		if(lCS.isEmpty()) {
 			return defaultValue;
 		}
 		return lCS;
@@ -570,11 +593,11 @@ public class OCSPConfig {
 			try {
 				OCSPResponseCode c = OCSPResponseCode.valueOf(certificateSource.toUpperCase());
 				lCS.add(c);
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				throw new UtilsException("OCSPResponseCode property '"+OCSPCostanti.PROPERTY_PREFIX+id+"."+name+"' invalid (found value:["+certificateSource+"]): "+t.getMessage(),t);
 			}
 		}
-		if(lCS==null || lCS.isEmpty()) {
+		if(lCS.isEmpty()) {
 			return defaultValue;
 		}
 		return lCS;
@@ -596,11 +619,11 @@ public class OCSPConfig {
 			try {
 				ExtendedKeyUsage c = ExtendedKeyUsage.valueOf(e.toUpperCase());
 				lCS.add(c);
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				throw new UtilsException("ExtendedKeyUsage property '"+OCSPCostanti.PROPERTY_PREFIX+id+"."+name+"' invalid (found value:["+e+"]): "+t.getMessage(),t);
 			}
 		}
-		if(lCS==null || lCS.isEmpty()) {
+		if(lCS.isEmpty()) {
 			return defaultValue;
 		}
 		return lCS;

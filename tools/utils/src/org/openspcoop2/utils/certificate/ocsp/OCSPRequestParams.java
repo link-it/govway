@@ -157,7 +157,7 @@ public class OCSPRequestParams {
 		params.certificate = certificate.getCertificate();
 		try {
 			params.isCA = certificate.isCA();
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new UtilsException(t.getMessage(),t);
 		}
 		params.isSelfSigned = certificate.isSelfSigned();
@@ -184,7 +184,7 @@ public class OCSPRequestParams {
 					}
 					else if(CertificateSource.ALTERNATIVE_CONFIG.equals(s)) {
 						KeyStore alternativeTrustStore = null;
-						if(config.getAlternativeTrustStoreCA_path()!=null) {
+						if(config.getAlternativeTrustStoreCAPath()!=null) {
 							alternativeTrustStore = reader.getIssuerAlternativeTrustStore();
 						}
 						if(alternativeTrustStore!=null) {
@@ -223,7 +223,7 @@ public class OCSPRequestParams {
 													}
 												}
 											}
-										}catch(Throwable t) {
+										}catch(Exception t) {
 											String msgError = "[AuthorityInformationAccess-CAIssuer: "+urlIssuer+"] retrieve failed: "+t.getMessage();
 											if(sbError.length()>0) {
 												sbError.append("\n");
@@ -241,7 +241,7 @@ public class OCSPRequestParams {
 									}
 								}
 							}
-						}catch(Throwable t) {
+						}catch(Exception t) {
 							throw new UtilsException(t.getMessage(),t);
 						}
 					}
@@ -254,10 +254,10 @@ public class OCSPRequestParams {
 				try {
 					params.signerCertificate = (X509Certificate) signerTrustStore.getCertificate(config.getAliasCertificateSigner());
 					if(params.signerCertificate==null) {
-						throw new Exception("Not found");
+						throw new UtilsException("Not found");
 					}
 					log.debug("OCSP SignerCertificate: retrieved from truststore config (alias:"+config.getAliasCertificateSigner()+")");
-				}catch(Throwable t) {
+				}catch(Exception t) {
 					throw new UtilsException("Get signer certificate failed: "+t.getMessage(),t);
 				}
 			}
@@ -299,7 +299,7 @@ public class OCSPRequestParams {
 									}
 								}
 							}
-						}catch(Throwable t) {
+						}catch(Exception t) {
 							throw new UtilsException(t.getMessage(),t);
 						}
 					}

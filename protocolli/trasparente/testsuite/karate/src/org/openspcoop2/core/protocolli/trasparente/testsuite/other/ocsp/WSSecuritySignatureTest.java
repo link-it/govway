@@ -111,6 +111,29 @@ public class WSSecuritySignatureTest extends ConfigLoader {
 	
 	
 	@Test
+	public void ocsp_crl_ldap_certificateValid() throws Exception {
+		Utils.ldapTest(TipoServizio.FRUIZIONE, HttpRequestMethod.POST, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(), 
+				logCore, api, soggetto, "ocsp-crl-ldap-valid");
+	}
+	
+	@Test
+	public void ocsp_crl_ldap_certificateRevoked() throws Exception {
+		Utils.ldapTest(TipoServizio.FRUIZIONE, HttpRequestMethod.POST, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(), 
+				logCore, api, soggetto, "ocsp-crl-ldap-revoked", 
+				Utils.CERTIFICATE_CRL_REVOKED_UNSPECIFIED_MSG_KEY_COMPROMISE);
+	}
+	
+	@Test
+	public void ocsp_crl_ldap_certificateExpired() throws Exception {
+		Utils.ldapTest(TipoServizio.FRUIZIONE, HttpRequestMethod.POST, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(), 
+				logCore, api, soggetto, "ocsp-crl-ldap-expired", 
+				Utils.CERTIFICATE_CRL_EXPIRED_WSS);
+	}
+	
+
+	
+	
+	@Test
 	public void crl_certificateValid() throws Exception {
 		Utils.test(TipoServizio.FRUIZIONE, HttpRequestMethod.POST, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(), 
 				logCore, api, soggetto, "crl-valid");

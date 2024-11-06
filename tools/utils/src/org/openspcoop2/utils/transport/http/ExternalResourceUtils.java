@@ -25,12 +25,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.ldap.LdapClientFactory;
+import org.openspcoop2.utils.transport.ldap.LdapClientInterface;
+import org.openspcoop2.utils.transport.ldap.LdapEngineType;
+import org.openspcoop2.utils.transport.ldap.LdapQuery;
+import org.openspcoop2.utils.transport.ldap.LdapUtility;
 
 /**
  * ExternalResourceUtils
@@ -50,7 +58,7 @@ public class ExternalResourceUtils {
 		
 		HttpResponse res = null;
 		try {
-			if(!resource.trim().startsWith("http") && !resource.trim().startsWith("file")) {
+			if(!TransportUtils.isRemoteResource(resource.trim())) {
 				try {
 					File f = new File(resource);
 					if(f.exists()) {
@@ -64,6 +72,10 @@ public class ExternalResourceUtils {
 					// ignore
 				}
 				throw new UtilsException("Unsupported protocol");
+			}
+			
+			if(TransportUtils.isLdapResource(resource)) {
+				return readLdapResource(resource, externalConfig);
 			}
 			
 			HttpRequest req = new HttpRequest();
@@ -130,6 +142,68 @@ public class ExternalResourceUtils {
 		validateResponse(res, resource, externalConfig);
 		
 		return res;
+	}
+	
+	private static HttpResponse readLdapResource(String resource, ExternalResourceConfig externalConfig) throws UtilsException {
+		
+		try {
+		
+			LdapClientInterface clientLdap = LdapClientFactory.getClient(LdapEngineType.SPRING_FRAMEWORK);
+			clientLdap.uri(LdapUtility.getBaseUrlFromURI(resource));
+			if(externalConfig.getBasicUsername()!=null && externalConfig.getBasicPassword()!=null) {
+				clientLdap.username(externalConfig.getBasicUsername());
+				clientLdap.password(externalConfig.getBasicPassword());
+			}
+			LdapQuery parsedQuery = LdapUtility.getQueryFromURI(resource);
+			if(parsedQuery==null) {
+				throw new UtilsException("parse failed");
+			}
+			String parsedAttribute = null;
+			if(parsedQuery.getAttributes()!=null && !parsedQuery.getAttributes().isEmpty()) {
+				parsedAttribute = parsedQuery.getAttributes().get(0);
+			}
+			if(parsedAttribute==null) {
+				throw new UtilsException("parse attribute failed");
+			}
+			List<Attributes> list = clientLdap.search(parsedQuery);
+			if(list == null || list.isEmpty()) {
+				throw new UtilsException("results not found");
+			}
+			if(list.size()>1) {
+				throw new UtilsException("more than one result found ("+list.size()+")");
+			}
+			Attributes attrs = list.get(0);
+			if(attrs==null || attrs.size()<=0) {
+				throw new UtilsException("attributes empty");
+			}
+			Attribute a = attrs.get(parsedAttribute);
+			if(a==null) {
+				throw new UtilsException("attribute '"+parsedAttribute+"' not found");
+			}
+			Object o = a.get();
+			if(o==null) {
+				throw new UtilsException("attribute '"+parsedAttribute+"' null");
+			}
+			byte [] content = null;
+			if(o instanceof byte[]) {
+				content = (byte[]) o; 
+			}
+			else if(o instanceof String) {
+				content = ((String) o).getBytes(); 
+			}
+			else {
+				throw new UtilsException("attribute '"+parsedAttribute+"' with unknown type: "+o.getClass().getName());
+			}
+			
+			HttpResponse response = new HttpResponse();
+			response.setResultHTTPOperation(200);
+			response.setContent(content);
+			return response;
+		
+		}catch(Exception t) {
+			throw new UtilsException("Retrieve external resource '"+resource+"' failed: "+t.getMessage(),t);
+		}
+			
 	}
 	
 	private static void validateResponse(HttpResponse res, String resource, ExternalResourceConfig externalConfig) throws UtilsException {

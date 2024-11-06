@@ -75,13 +75,13 @@ public class OCSPManager {
 								Properties p = new Properties();
 								try {
 									p.load(isDefault);
-								}catch(Throwable t) {
+								}catch(Exception t) {
 									throw new UtilsException("File '"+f.getAbsolutePath()+"'; initialize error: "+t.getMessage(),t);
 								}
 								init(p, log);
 							}
 						}
-					}catch(Throwable t) {
+					}catch(Exception t) {
 						throw new UtilsException("Default configuration; initialize error: "+t.getMessage(),t);
 					}
 				}
@@ -96,15 +96,15 @@ public class OCSPManager {
 				try(FileInputStream fin = new FileInputStream(f)){
 					p.load(fin);
 				}
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				throw new UtilsException("File '"+f.getAbsolutePath()+"'; initialize error: "+t.getMessage(),t);
 			}
 			init(p, log);
 		}
 	}
-	private OCSPManager(Properties p, Logger log) throws UtilsException {
+	/**private OCSPManager(Properties p, Logger log) throws UtilsException {
 		init(p, log);
-	}
+	}*/
 	private void init(Properties p, Logger log) throws UtilsException {
 		
 		List<String> idKeystore = new ArrayList<>();
@@ -113,7 +113,7 @@ public class OCSPManager {
 			
 			Enumeration<?> enKeys = p.keys();
 			while (enKeys.hasMoreElements()) {
-				Object object = (Object) enKeys.nextElement();
+				Object object = enKeys.nextElement();
 				if(object instanceof String) {
 					String key = (String) object;
 					
@@ -171,8 +171,9 @@ public class OCSPManager {
 				
 				// id di ocsp.properties to config
 				this.hsmOCSPConfigMapIDtoConfig.put(idK, ocspConfig);
-								
-				log.info("OCSP config "+idK+" registrato (OCSP Type:"+ocspConfig.getType()+")");
+							
+				String msg = "OCSP config "+idK+" registrato (OCSP Type:"+ocspConfig.getType()+")";
+				log.info(msg);
 				
 				types.add(ocspConfig.getType());
 				labels.add(ocspConfig.getLabel());
@@ -203,8 +204,7 @@ public class OCSPManager {
 		if(!this.hsmOCSPConfigMapIDtoConfig.containsKey(idK)) {
 			throw new UtilsException("OCSP config type '"+ocspConfigType+"' unknown ? (id:"+idK+")");
 		}
-		OCSPConfig config = this.hsmOCSPConfigMapIDtoConfig.get(idK);
-		return config;
+		return this.hsmOCSPConfigMapIDtoConfig.get(idK);
 	}
 	
 
