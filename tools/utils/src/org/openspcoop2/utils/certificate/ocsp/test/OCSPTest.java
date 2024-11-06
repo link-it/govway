@@ -276,10 +276,11 @@ public class OCSPTest {
 				Resource ldif = new FileSystemResource(fLdiff);
 				server = new LdapServerTest(ldif, org.apache.logging.log4j.Level.INFO);
 				server.setRootPartition("o=example,c=it");
+				server.setPort(9322);
 				boolean allowAnonymousAccess = !withCredentials;
 				server.start(fLdapServer.getPath(),allowAnonymousAccess);
 								
-				String crl = "ldap://127.0.0.1:9321/cn=CRL%20Holder,o=example,c=it?certificateRevocationList";
+				String crl = "ldap://127.0.0.1:9322/cn=CRL%20Holder,o=example,c=it?certificateRevocationList";
 				
 				// certificato valido
 				try(InputStream isCert = OCSPTest.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/crl/ExampleClient1.crt")){

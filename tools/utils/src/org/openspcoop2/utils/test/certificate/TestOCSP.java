@@ -63,7 +63,7 @@ public class TestOCSP {
 		
 	}
 	
-	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".checkAlternativeCrlLdapCheckNoAuth"})
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".checkAlternativeCrlLdapCheckNoAuth"},dependsOnMethods = {"testAlternativeCrlCheck"})
 	public void testAlternativeCrlCheckLdapCheckNoAuth() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+".checkAlternativeCrlCheckLdapCheckNoAuth' ...");
@@ -72,7 +72,7 @@ public class TestOCSP {
 		
 	}
 	
-	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".checkAlternativeCrlLdapCheckAuthBasic"})
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".checkAlternativeCrlLdapCheckAuthBasic"},dependsOnMethods = {"testAlternativeCrlCheckLdapCheckNoAuth"})
 	public void testAlternativeCrlCheckLdapCheckAuthBasic() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+".checkAlternativeCrlCheckLdapCheckAuthBasic' ...");

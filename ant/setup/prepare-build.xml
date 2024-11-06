@@ -98,7 +98,7 @@
 			<include name="openapi4j/*"/>
 			<include name="reports/*"/>
 			<include name="httpcore/*"/>
-			<include name="testsuite/apacheds/*"/>
+			<include name="testsuite/apacheds/*"/> <!-- richiesto dalle utility -->
 		</fileset>
 	</path>		
 	<path id="classpath_dist" >
