@@ -19011,6 +19011,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dataElement.setType(DataElementType.TITLE);
 		dati.add(dataElement);
 		
+		boolean visualizzaAllarmi = this.confCore.isVisualizzaConfigurazioneAllarmiEnabled();  // configurazione allarmi (solo se sono stati caricati dei plugin di tipo allarme) tramite la funzionalità 'Importa'
+		
 		// tipoPlugin
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO_PLUGIN);
@@ -19018,12 +19020,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(tipoOp.equals(TipoOperazione.ADD)) {
 			labels.add(CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_LABEL_UNDEFINED);
 		}
-		labels.addAll(ConfigurazionePluginsTipoPluginUtils.getLabelsTipoPlugin(this.confCore.isConfigurazioneAllarmiEnabled()));
+		labels.addAll(ConfigurazionePluginsTipoPluginUtils.getLabelsTipoPlugin(visualizzaAllarmi));
 		List<String> values = new ArrayList<>();
 		if(tipoOp.equals(TipoOperazione.ADD)) {
 			values.add(CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED);
 		}
-		values.addAll(ConfigurazionePluginsTipoPluginUtils.getValuesTipoPlugin(this.confCore.isConfigurazioneAllarmiEnabled()));
+		values.addAll(ConfigurazionePluginsTipoPluginUtils.getValuesTipoPlugin(visualizzaAllarmi));
 		de.setLabels(labels);
 		de.setValues(values);
 		de.setType(DataElementType.SELECT);
@@ -19266,8 +19268,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public void addFilterTipoPlugin(String tipoPlugin, boolean postBack) throws Exception{
 		try {
 			
-			List<String> valuesTipoPlugin = ConfigurazionePluginsTipoPluginUtils.getValuesTipoPlugin(this.confCore.isConfigurazioneAllarmiEnabled());
-			List<String> labelsTipoPlugin = ConfigurazionePluginsTipoPluginUtils.getLabelsTipoPlugin(this.confCore.isConfigurazioneAllarmiEnabled());
+			boolean visualizzaAllarmi = this.confCore.isVisualizzaConfigurazioneAllarmiEnabled();  // configurazione allarmi (solo se sono stati caricati dei plugin di tipo allarme) tramite la funzionalità 'Importa'
+			List<String> valuesTipoPlugin = ConfigurazionePluginsTipoPluginUtils.getValuesTipoPlugin(visualizzaAllarmi);
+			List<String> labelsTipoPlugin = ConfigurazionePluginsTipoPluginUtils.getLabelsTipoPlugin(visualizzaAllarmi);
 			
 			int length = 1;
 			if(valuesTipoPlugin!=null && valuesTipoPlugin.size()>0) {

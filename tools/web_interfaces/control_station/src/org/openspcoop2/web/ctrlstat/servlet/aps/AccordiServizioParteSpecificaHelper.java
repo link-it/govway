@@ -3476,7 +3476,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam );
 			
-			boolean visualizzaAllarmi = this.confCore.isConfigurazioneAllarmiEnabled();
+			boolean visualizzaAllarmi = this.confCore.isVisualizzaConfigurazioneAllarmiEnabled();  // configurazione allarmi (solo se sono stati caricati dei plugin di tipo allarme)
 
 			boolean visualizzaMTOM = true;
 			boolean visualizzaSicurezza = true;
@@ -5239,7 +5239,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				this.addFilterAzione(azioni, filtroAzione, serviceBindingMessage);
 			}
 			
-			boolean visualizzaAllarmi = this.confCore.isConfigurazioneAllarmiEnabled();
+			boolean visualizzaAllarmi = this.confCore.isVisualizzaConfigurazioneAllarmiEnabled();  // configurazione allarmi (solo se sono stati caricati dei plugin di tipo allarme)
 			
 			boolean visualizzaMTOM = true;
 			boolean visualizzaSicurezza = true;

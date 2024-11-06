@@ -1155,6 +1155,7 @@ public class ControlStationCore {
 	
 	/** Configurazione Allarmi */
 	private boolean configurazioneAllarmiEnabled = false;
+	private Integer countPluginsAllarmi = null;
 	public boolean isConfigurazioneAllarmiEnabled() {
 		return this.configurazioneAllarmiEnabled;
 	}
@@ -2672,6 +2673,7 @@ public class ControlStationCore {
 		
 		/** Configurazione Allarmi */
 		this.configurazioneAllarmiEnabled = core.configurazioneAllarmiEnabled;
+		this.countPluginsAllarmi = core.countPluginsAllarmi;
 		this.allarmiConfig = core.allarmiConfig;
 		this.showAllarmiIdentificativoRuntime = core.showAllarmiIdentificativoRuntime;
 		this.showAllarmiFormNomeSuggeritoCreazione = core.showAllarmiFormNomeSuggeritoCreazione;
@@ -8716,8 +8718,15 @@ public class ControlStationCore {
 		if(!this.configurazioneAllarmiEnabled) {
 			return false;
 		}
-		int numeroPluginRegistrati = countPluginsAllarmi();
-		return numeroPluginRegistrati>0;
+		if(this.countPluginsAllarmi==null) {
+			this.initCountPluginsAllarmi();
+		}
+		return this.countPluginsAllarmi!=null && this.countPluginsAllarmi.intValue()>0;
+	}
+	private synchronized void initCountPluginsAllarmi() {
+		if(this.countPluginsAllarmi==null) {
+			this.countPluginsAllarmi = countPluginsAllarmi();
+		}
 	}
 	private int countPluginsAllarmi() {
 		Connection con = null;
