@@ -19,20 +19,20 @@
     <a4j:outputPanel rendered="#{not empty rendered ? rendered : true}" layout="block" id="#{id}_prop_pnl">
     	<div class="prop">
     		<c:if test="#{not empty labelId}">
-				<label id="#{labelId}" class="#{not empty styleClass ? styleClass : ''}">
+				<h:outputLabel id="#{labelId}" styleClass="#{not empty styleClass ? styleClass : ''}">
 					<h:outputText value="#{label}" />
 					<c:if test="#{required}">
 						<em>*</em>
 					</c:if>
-				</label>
+				</h:outputLabel>
 			</c:if>
 			<c:if test="#{empty labelId}">
-				<label class="#{not empty styleClass ? styleClass : ''}">
+				<h:outputLabel styleClass="#{not empty styleClass ? styleClass : ''}">
 					<h:outputText value="#{label}" />
 					<c:if test="#{required}">
 						<em>*</em>
 					</c:if>
-				</label>
+				</h:outputLabel>
 			</c:if>	
 			<div class="boxInfoDiv">
 				<ui:insert/>

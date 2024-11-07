@@ -695,6 +695,7 @@ function inizializzaSelectFiltro(){
 													  	String deNote = de.getNote();
 													  	String classInput= de.getStyleClass();
 													  	String labelStyleClass= de.getLabelStyleClass();
+													  	String deHiddenId = "__i_hidden_lbl_de_"+z+"_"+i;
 													  	
 													  	String stile=null;
 													  	//per ogni entry:
@@ -743,10 +744,11 @@ function inizializzaSelectFiltro(){
 										            				%>
 										                			<tr class="">
 																		<td class="tdTextRiepilogo labelRiepilogo">
-																			<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																			<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
 																		</td>
 																		<td class="tdTextRiepilogo <%= stile %>">
 																			<div class="<%=classDivNoEdit %>"> 
+																			<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>	
 																				<%
 																			   		String idToRemoveTab = de.getIdToRemove() != null ? de.getIdToRemove() : "";
 																			   		if(firstText && StringUtils.isNotEmpty(idToRemoveTab)){
@@ -813,10 +815,11 @@ function inizializzaSelectFiltro(){
 																			%>
 											                					<tr class="">
 																					<td class="tdTextRiepilogo labelRiepilogo">
-																						<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																						<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
 																					</td>
 																					<td class="tdTextRiepilogo <%= stile %>">
 																					<div class="<%=classDivNoEdit %>"> 
+																					<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>	
 																						<%  
 																							String imageCheckBox = "status_red.png";
 																						 	if("yes".equals(statusType)){
@@ -901,10 +904,11 @@ function inizializzaSelectFiltro(){
 											                					%>
 											                					<tr class="">
 																					<td class="tdTextRiepilogo labelRiepilogo">
-																						<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																						<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
 																					</td>
 																					<td class="tdTextRiepilogo <%= stile %>">
 																						<div class="<%=classDivNoEdit %>"> 
+																						<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>	
 																							<%
 																						   		String idToRemoveTab = de.getIdToRemove() != null ? de.getIdToRemove() : "";
 																						   		if(firstText && StringUtils.isNotEmpty(idToRemoveTab)){
@@ -1005,10 +1009,11 @@ function inizializzaSelectFiltro(){
 																					%>
 												                					<tr class="">
 																						<td class="tdTextRiepilogo labelRiepilogo">
-																							<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																							<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
 																						</td>
 																						<td class="tdTextRiepilogo <%= stile %>">
-																							<div class="<%=classDivNoEdit %>"> 																	
+																							<div class="<%=classDivNoEdit %>"> 		
+																							<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>																
 																								<%
 																									String [] values = de.getValues();
 										                                        					if (values != null) {
@@ -1076,10 +1081,11 @@ function inizializzaSelectFiltro(){
 													                					%>
 													                					<tr class="">
 																							<td class="tdTextRiepilogo labelRiepilogo">
-																								<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																								<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
 																							</td>
 																							<td class="tdTextRiepilogo <%= stile %>">
-																								<div class="<%=classDivNoEdit %>"> 																	
+																								<div class="<%=classDivNoEdit %>"> 	
+																								<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>																	
 																									<%
 											                          									String [] values = de.getStatusValues();
 											                                        					if (values != null) {
