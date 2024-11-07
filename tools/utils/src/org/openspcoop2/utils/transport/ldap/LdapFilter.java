@@ -184,18 +184,27 @@ public class LdapFilter {
 	}
 	
 	// parse del filtro da una stringa
-	private static final Pattern conditionsPattern = Pattern.compile("^\\((.*)(=|>|<|<=|>=|\\&)(.*)\\)$");
+	private static final Pattern operatorsPatern = Pattern.compile("(=|<=|>=|\\&|\\|)");
 	private static LdapFilter parseCondition(String raw, int start, int end) throws ParseException {
-		Matcher matcher = conditionsPattern.matcher(raw.substring(start, end));
-		if(!matcher.find())
-			throw new ParseException("condizione non correttamente formattata " + raw.substring(start, end), start + 1);
 		
-		String key = matcher.group(1);
-		FilterType op = FilterType.fromString(matcher.group(2));
-		String value = matcher.group(3);
+		if (raw.charAt(start) != '(')
+			throw new ParseException("la condizione non inizia con una parentesi", start);
+		if (raw.charAt(end - 1) != ')')
+			throw new ParseException("la condizione non finisce con una parentesi", end - 1);
 		
+		Matcher matcher = operatorsPatern.matcher(raw).region(start, end);
+		if (!matcher.find())
+			throw new ParseException("operatore non presente o non riconusciuto operatori possibili: =,<=,>=,&,|", start + 1);
+		if (matcher.groupCount() != 1)
+			throw new ParseException("inseriti piu operatori in una signola condizione", matcher.end());
+		
+		String key = raw.substring(start + 1, matcher.start(0));
+		FilterType op = FilterType.fromString(raw.substring(matcher.start(0), matcher.end(0)));
+		String value = raw.substring(matcher.end(0), end - 1);
+				
 		if (op == null)
-			throw new ParseException("operatore condizionale non riconosciuto, possibili operatori: =,>,<,<=,>=,&,|,=*", start + 1);
+			throw new ParseException("operatore non riconusciuto operatori possibili: =,<=,>=,&,|,=*", start + 1);
+		
 		if (op.equals(FilterType.OR) || op.equals(FilterType.AND)) {
 			if (key.isEmpty() && value.isEmpty())
 				return op.equals(FilterType.OR) ? LdapFilter.absoluteFalse() : LdapFilter.absoluteTrue();
