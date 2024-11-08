@@ -151,6 +151,9 @@ public final class AuthorizationFilter implements Filter {
 		GeneralHelper generalHelper = null;
 		LoginHelper loginHelper = null;
 		try {
+			request.setAttribute(Costanti.REQUEST_ATTRIBUTE_JQUERY_VERSION, this.jQueryVersion);
+			request.setAttribute(Costanti.REQUEST_ATTRIBUTE_JQUERY_UI_VERSION, this.jQueryUiVersion);
+			
 //			System.out.println("SERVLET PATH ["+request.getServletPath()+"]");
 //			System.out.println("SERVLET URI ["+request.getRequestURI()+"]");
 //			System.out.println("SERVLET CONTEXT PATH ["+request.getContextPath()+"]");

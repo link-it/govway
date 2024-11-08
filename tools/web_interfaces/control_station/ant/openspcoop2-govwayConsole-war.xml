@@ -351,7 +351,7 @@
 			</lib>
 			<lib dir="${required_lib_govwayConsole}/console">
 				<include name="jquery-3.6.4.jar"/>
-				<include name="jquery-ui-1.13.2.jar"/>
+				<include name="jquery-ui-1.14.0.jar"/>
 				<include name="govway-console-ui-*.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayConsole}/jakarta">

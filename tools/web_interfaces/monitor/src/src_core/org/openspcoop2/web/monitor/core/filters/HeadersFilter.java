@@ -74,7 +74,8 @@ public class HeadersFilter implements Filter {
 	private String xContentTypeOptionsHeaderValue = null;
 	private String xXssProtectionHeaderValue = null;
 	private String xFrameOptionsHeaderValue = null;
-	private String jQueryVersion = null; 
+	private String jQueryVersion = null;
+	private String jQueryUiVersion = null;
 
 	// messaggio da visualizzare per l'utente
 	private static final String MSG_AUTH_ERRORE = "Autorizzazione negata.";
@@ -93,6 +94,8 @@ public class HeadersFilter implements Filter {
 
 		this.filterConfig = filterConfig;
 		this.jQueryVersion = this.filterConfig.getInitParameter(Costanti.FILTER_INIT_PARAMETER_JQUERY_VERSION);
+		this.jQueryUiVersion = this.filterConfig.getInitParameter(Costanti.FILTER_INIT_PARAMETER_JQUERY_UI_VERSION);
+		
 		try {
 			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(log);
 			this.cspHeaderValue = pddMonitorProperties.getCspHeaderValue();
@@ -113,6 +116,9 @@ public class HeadersFilter implements Filter {
 
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
+		
+		request.setAttribute(Costanti.REQUEST_ATTRIBUTE_JQUERY_VERSION, this.jQueryVersion);
+		request.setAttribute(Costanti.REQUEST_ATTRIBUTE_JQUERY_UI_VERSION, this.jQueryUiVersion);
 
 		SecurityWrappedHttpServletRequest seqReq = new SecurityWrappedHttpServletRequest(request, log);
 		HttpSession session = seqReq.getSession();

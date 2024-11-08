@@ -21,7 +21,7 @@
 		<govway-monitor-ui.version>20230823-SNAPSHOT</govway-monitor-ui.version>
 
 		<jquery.version>3.6.4</jquery.version>
-		<jquery-ui.version>1.13.2</jquery-ui.version>
+		<jquery-ui.version>1.14.0</jquery-ui.version>
 
 	</properties>
 

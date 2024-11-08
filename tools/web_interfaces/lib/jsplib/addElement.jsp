@@ -18,6 +18,7 @@
 --%>
 
 <!DOCTYPE html>
+<%@page import="java.text.MessageFormat"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page session="true" import="org.openspcoop2.web.lib.mvc.*" %>
 
@@ -43,6 +44,9 @@ String customListViewName = pd.getCustomListViewName();
 boolean includiMenuLateraleSx = pd.isIncludiMenuLateraleSx();
 String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
+
+String jQueryVersion = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_JQUERY_VERSION);
+String jQueryUiVersion = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_JQUERY_UI_VERSION);
 %>
 
 <head>
@@ -62,8 +66,8 @@ String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CS
 <link rel="stylesheet" href="css/ui.datepicker.css" type="text/css">
 <link rel="stylesheet" href="css/bootstrap-tagsinput.css" type="text/css">
 <!-- JQuery lib-->
-<script type="text/javascript" src="webjars/jquery/3.6.4/jquery.min.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="webjars/jquery-ui/1.13.2/jquery-ui.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_PATH, jQueryVersion) %>" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_UI_PATH, jQueryUiVersion) %>" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/HtmlSanitizer.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/ui.datepicker-it.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
@@ -101,6 +105,10 @@ function CheckDati() {
 		var tipo = theForm.elements[k].type;
 		if (tipo == "text" || tipo == "textarea" || tipo == "number"){
 			var valore = theForm.elements[k].value;
+			
+			var logMsg = 'Elemento ['+theForm.elements[k].name+'], Tipo ['+tipo+'], ValoreOriginale ['+valore+'], ValoreCorretto ['+HtmlSanitizer.SanitizeHtml(valore)+']';
+			console.log(logMsg);
+			
 			theForm.elements[k].value = HtmlSanitizer.SanitizeHtml(valore);
 		}
   }

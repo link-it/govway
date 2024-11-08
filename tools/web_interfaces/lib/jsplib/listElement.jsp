@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 <!DOCTYPE html>
+<%@page import="java.text.MessageFormat"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page session="true" import="java.util.*, org.openspcoop2.web.lib.mvc.*" %>
 <html lang="it">
@@ -58,6 +59,9 @@ if (search == null)
 
 String customListViewName = pd.getCustomListViewName();
 String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
+
+String jQueryVersion = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_JQUERY_VERSION);
+String jQueryUiVersion = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_JQUERY_UI_VERSION);
 %>
 
 <head>
@@ -73,8 +77,8 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 <link rel="stylesheet" href="css/ui.resizable.css" type="text/css">
 <link rel="stylesheet" href="css/bootstrap-tagsinput.css" type="text/css">
 <!-- JQuery lib-->
-<script type="text/javascript" src="webjars/jquery/3.6.4/jquery.min.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="webjars/jquery-ui/1.13.2/jquery-ui.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_PATH, jQueryVersion) %>" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_UI_PATH, jQueryUiVersion) %>" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/HtmlSanitizer.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 <script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>

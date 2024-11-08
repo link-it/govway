@@ -483,6 +483,7 @@ public class Costanti {
 	/** LIB JQUERY */
 	
 	public static final String REQUEST_ATTRIBUTE_JQUERY_VERSION = "__jquery_version__";
+	public static final String REQUEST_ATTRIBUTE_JQUERY_UI_VERSION = "__jquery_ui_version__";
 	public static final String FILTER_INIT_PARAMETER_JQUERY_VERSION = "jquery_version";
 	public static final String FILTER_INIT_PARAMETER_JQUERY_UI_VERSION = "jquery-ui_version";
 	public static final String LIB_JQUERY_PATH = "webjars/jquery/{0}/jquery.min.js";
