@@ -130,6 +130,7 @@
 							  	String deNote = de.getNote();
 							  	String classInput= de.getStyleClass();
 							  	String labelStyleClass= de.getLabelStyleClass();
+							  	String deHiddenId = "__i_hidden_lbl_de_"+i;
 							  	
 							  	String stile=null;
 							  	//per ogni entry:
@@ -178,10 +179,11 @@
 				            				%>
 				                			<tr class="">
 												<td class="tdTextRiepilogo labelRiepilogo">
-													<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+													<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
 												</td>
 												<td class="tdTextRiepilogo <%= stile %>">
 													<div class="<%=classDivNoEdit %>"> 
+														<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>
 						                				<span class="<%=classSpanNoEdit %>" <%= tooltipTextValNoEdit %> ><%= textValNoEdit %></span>
 						                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>
 					                				
@@ -240,10 +242,11 @@
 													%>
 					                					<tr class="">
 															<td class="tdTextRiepilogo labelRiepilogo">
-																<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
 															</td>
 															<td class="tdTextRiepilogo <%= stile %>">
 															<div class="<%=classDivNoEdit %>"> 
+															<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>
 																<%  
 																	String imageCheckBox = "status_red.png";
 																 	if("yes".equals(statusType)){
@@ -321,10 +324,11 @@
 					                					%>
 					                					<tr class="">
 															<td class="tdTextRiepilogo labelRiepilogo">
-																<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
 															</td>
 															<td class="tdTextRiepilogo <%= stile %>">
-																<div class="<%=classDivNoEdit %>"> 																	
+																<div class="<%=classDivNoEdit %>"> 	
+																<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>																
 																	<%
 			                          									String [] values = de.getStatusValues();
 			                                        					if (values != null) {
@@ -425,10 +429,11 @@
 															%>
 						                					<tr class="">
 																<td class="tdTextRiepilogo labelRiepilogo">
-																	<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																	<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
 																</td>
 																<td class="tdTextRiepilogo <%= stile %>">
 																	<div class="<%=classDivNoEdit %>"> 	
+																		<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>																																																		
 																		<span class="<%=classSpanNoEdit %>" <%= tooltipTextValNoEdit %> ><%= textValNoEdit %>&nbsp;&nbsp;&nbsp;&nbsp;</span>
 						                								<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>																
 																		<%
@@ -499,10 +504,11 @@
 							                					%>
 							                					<tr class="">
 																	<td class="tdTextRiepilogo labelRiepilogo">
-																		<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																		<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
 																	</td>
 																	<td class="tdTextRiepilogo <%= stile %>">
-																		<div class="<%=classDivNoEdit %>"> 																	
+																		<div class="<%=classDivNoEdit %>"> 	
+																		<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>																
 																			<%
 					                          									String [] values = de.getStatusValues();
 					                                        					if (values != null) {
@@ -700,6 +706,7 @@
 										  	String classInput= de.getStyleClass();
 										  	String labelStyleClass= de.getLabelStyleClass();
 										  	String deTip =  de.getToolTip() != null && !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+										  	String deHiddenId = "__i_hidden_lbl_de_"+z+"_"+i;
 										  	
 										  	if (type.equals("hidden")) {
 										  		if(deName.equals(ErogazioniCostanti.ASPS_EROGAZIONI_PARAMETRO_NUMERO_CONFIGURAZIONI_ATTIVE))
@@ -758,8 +765,9 @@
 								            				String textValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
 								            				%>
 								                			<div class="propBox">
-								                				<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+								                				<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
 								                				<div class="<%=classDivNoEdit %>"> 
+								                					<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>	
 									                				<span class="<%=classSpanNoEdit %>" <%= deTip %> ><%= textValNoEdit %></span>
 									                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>
 									                			</div>
@@ -827,11 +835,12 @@
 									  					<div id="aggiungiConfigurazioneModal_<%= z %>" title="Aggiungi Configurazione">
 													  		<div id="aggiungiConfigurazioneModalBody_<%= z %>" class="contenutoModal">
 			                                        			<div class="prop">
-			                                        				<label class="<%= deNuovaConfigurazioneLabelStyleClass %>"><%=deNuovaConfigurazioneLabel %></label>
 			                                        				<%
 																	String selTitle = (deNuovaConfigurazione.getToolTip()!=null && !deNuovaConfigurazione.getToolTip().equals("")) ? ("title='"+deNuovaConfigurazione.getToolTip()+"'") : " ";
 																	String selId = "select_" + z;
-		                          									%><select id="<%= selId  %>" name="<%= deNuovaConfigurazioneName  %>" <%= selTitle %> class="<%= deNuovaConfigurazioneClassInput %>"><%
+		                          									%>
+		                          									<label class="<%= deNuovaConfigurazioneLabelStyleClass %>" for="<%= selId  %>"><%=deNuovaConfigurazioneLabel %></label>
+		                          									<select id="<%= selId  %>" name="<%= deNuovaConfigurazioneName  %>" <%= selTitle %> class="<%= deNuovaConfigurazioneClassInput %>"><%
 		                          									String [] values = deNuovaConfigurazione.getValues();
 		                                        					if (values != null) {
 		                            									String [] labels = deNuovaConfigurazione.getLabels();

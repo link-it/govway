@@ -9,12 +9,12 @@
 	</c:if>
     <a4j:outputPanel rendered="#{not empty rendered ? rendered : true}" layout="block">
     	<div class="prop">
-			<label class="#{not empty styleClassEsterna ? styleClassEsterna : ''}">
+			<h:outputLabel styleClass="#{not empty styleClassEsterna ? styleClassEsterna : ''}">
 				<h:outputText value="#{labelEsterna}" />
 				<c:if test="#{required}">
 					<em>*</em>
 				</c:if>
-			</label>
+			</h:outputLabel>
 			<h:panelGrid columns="2" cellpadding="0" cellspacing="0">
 				<ui:insert name="prop1"/>
 				<ui:insert name="prop2"/>

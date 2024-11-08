@@ -210,12 +210,12 @@ $(document).ready(function(){
 										    					</legend>
 										    					<div id="de_name_0__id">
 									                    			<div class="prop">
-									                    				<label class="" id="de_label_1">Username</label>
-									                    				<input type="text" name="j_username" value="" class="inputLink">
+									                    				<label class="" id="de_label_1" for="j_username">Username</label>
+									                    				<input type="text" name="j_username" value="" class="inputLink" id="j_username">
 									                    			</div>
 								                        			<div class="prop">
-								                        				<label class="" id="de_label_2">Password</label>
-								                        				<input class="inputLink" type="password" name="j_password" value="">
+								                        				<label class="" id="de_label_2" for="j_password">Password</label>
+								                        				<input class="inputLink" type="password" name="j_password" value="" id="j_password">
 								                        			</div>
 																</div>
 															</fieldset>

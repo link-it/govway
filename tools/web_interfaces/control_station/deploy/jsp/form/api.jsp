@@ -128,6 +128,7 @@
 							  	String deNote = de.getNote();
 							  	String classInput= de.getStyleClass();
 							  	String labelStyleClass= de.getLabelStyleClass();
+							  	String deHiddenId = "__i_hidden_lbl_de_"+i;
 							  	
 							  	String stile=null;
 							  	//per ogni entry:
@@ -173,15 +174,17 @@
 												textValNoEdit = textValNoEdit.substring(0,(Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA -3)) + "...";
 											}		
 											
+											
 				            				%>
 				                			<tr class="">
 												<td class="tdTextRiepilogo labelRiepilogo">
-													<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+													<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
 												</td>
 												<td class="tdTextRiepilogo <%= stile %>">
 													<div class="<%=classDivNoEdit %>"> 
+														<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>
 						                				<span class="<%=classSpanNoEdit %>" <%= tooltipTextValNoEdit %> ><%= textValNoEdit %></span>
-						                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>
+						                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>" />
 					                				
 													<% 
 														if(!de.getImage().isEmpty()){
@@ -238,10 +241,11 @@
 													%>
 					                					<tr class="">
 															<td class="tdTextRiepilogo labelRiepilogo">
-																<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
 															</td>
 															<td class="tdTextRiepilogo <%= stile %>">
 															<div class="<%=classDivNoEdit %>"> 
+															<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>
 																<%  
 																	String imageCheckBox = "status_red.png";
 																 	if("yes".equals(statusType)){
@@ -319,10 +323,11 @@
 					                					%>
 					                					<tr class="">
 															<td class="tdTextRiepilogo labelRiepilogo">
-																<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
 															</td>
 															<td class="tdTextRiepilogo <%= stile %>">
-																<div class="<%=classDivNoEdit %>"> 																	
+																<div class="<%=classDivNoEdit %>"> 	
+																<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>																
 																	<%
 			                          									String [] values = de.getStatusValues();
 			                                        					if (values != null) {
@@ -414,10 +419,11 @@
 															%>
 						                					<tr class="">
 																<td class="tdTextRiepilogo labelRiepilogo">
-																	<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																	<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
 																</td>
 																<td class="tdTextRiepilogo <%= stile %>">
-																	<div class="<%=classDivNoEdit %>"> 																	
+																	<div class="<%=classDivNoEdit %>"> 		
+																	<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>															
 																		<%
 																			String [] values = de.getValues();
 				                                        					if (values != null) {
@@ -485,10 +491,11 @@
 							                					%>
 							                					<tr class="">
 																	<td class="tdTextRiepilogo labelRiepilogo">
-																		<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																		<label class="<%= labelStyleClass %>" for="<%= deHiddenId%>"><%=deLabel %></label>
 																	</td>
 																	<td class="tdTextRiepilogo <%= stile %>">
-																		<div class="<%=classDivNoEdit %>"> 																	
+																		<div class="<%=classDivNoEdit %>"> 	
+																		<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>																
 																			<%
 					                          									String [] values = de.getStatusValues();
 					                                        					if (values != null) {

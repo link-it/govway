@@ -274,7 +274,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 			                				%>
 			                    			<div class="prop">
 			                    				<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
-			                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
+			                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%= filterId  %>"><%=deLabel %></label>
 			                    				<input id="<%= filterId  %>" type="text" name="<%= filterName %>" value="<%= filtro.getValue() %>" class="<%= classInput %>">
 			                    				<% if(!deNote.equals("")){ %>
 										      		<p class="note-ricerca <%= labelStyleClass %>"><%=deNote %></p>
@@ -286,7 +286,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 				                				%>
 				                    			<div class="prop">
 				                    				<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
-				                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
+				                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%= filterId  %>"><%=deLabel %></label>
 				                    				<%
 				                    				String minvalue = filtro.getMinValue() != null ? " min=\"" + filtro.getMinValue() + "\"" : "";
 										    		String maxValue = filtro.getMaxValue() != null ? " max=\"" + filtro.getMaxValue() + "\"" : "";
@@ -300,7 +300,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 			                        				%>
 			                            			<div class="prop">
 			                            				<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
-			                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
+			                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%= filterId  %>"><%=deLabel %></label>
 							     						<div class="txtA_div">
 							     							<textarea id="<%=filterId %>" rows='<%= filtro.getRows() %>' cols='<%= filtro.getCols() %>' name="<%= filterName  %>" class="<%= classInput %>"><%= filtro.getValue() %></textarea>
 						     							</div>
@@ -317,7 +317,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 			    										
 														<div class="prop">
 															<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
-															<label><%= filtro.getLabel() %></label>
+															<label for="<%= filterId  %>"><%= filtro.getLabel() %></label>
 														  	<select id="<%= filterId  %>" name="<%= filterName %>" <%= selEvtOnChange %> class="<%= classInput %>">
 															  	<%
 															  	for (int i = 0; i < values.length; i++) {
@@ -351,7 +351,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 	                                        				%>
 	                                            			<div class="prop">
 	                                            				<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
-	                                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
+	                                            				
 	                                            				<%
 	                                            				String visualizzaAjaxStatus = filtro.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 						    									String chkVal = filtro.getSelected().equals("yes") ? " checked='true' " : " ";
@@ -364,7 +364,9 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 						    										}
 						    									}
 						    									String id = "checkbox_filtri_" + iPD;
-						    									%>	<table class="<%=controlSetClass %>">
+						    									%>
+						    									<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=id %>"><%=deLabel %></label>
+					    										<table class="<%=controlSetClass %>">
 				    													<tr> 
 				    														<td>
 						   														<input id="<%=id %>" type="checkbox" name="<%= filterName  %>" value="yes" <%=chkVal %> <%=disVal %> >
@@ -401,7 +403,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 	                                            				%>
 	                                            					<div class="prop">
 	                                            						<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
-									                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
+									                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%= filterId  %>"><%=deLabel %></label>
 									                    				<%
 																    		String minvalue = filtro.getMinValue() != null ? " min=\"" + filtro.getMinValue() + "\"" : "";
 																    		String maxValue = filtro.getMaxValue() != null ? " max=\"" + filtro.getMaxValue() + "\"" : "";
@@ -415,7 +417,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 																      				String valueI = filtro.getValues()[z] == null ? "" : filtro.getValues()[z];
 																      		%>
 																      			<div class="intervalInnerDiv">
-																      				<input type="number"  name="<%= nameI %>" value="<%= valueI %>" class="<%= classInput %> intervalInnerInput" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> >
+																      				<input id="<%=filterId %>" type="number"  name="<%= nameI %>" value="<%= valueI %>" class="<%= classInput %> intervalInnerInput" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> >
 																      			</div>
 																      		<%
 																	      		} // end for
@@ -466,8 +468,8 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 								<tr>
 									<td>
 										<div class="prop">
-		                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
-		                    				<input type="text" name="<%= filterName %>" value="<%= filtro.getValue() %>" class="<%= classInput %>">
+		                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%= filterId %>"><%=deLabel %></label>
+		                    				<input id="<%=filterId %>" type="text" name="<%= filterName %>" value="<%= filtro.getValue() %>" class="<%= classInput %>">
 		                    				<% if(!deNote.equals("")){ %>
 									      		<p class="note-ricerca <%= labelStyleClass %>"><%=deNote %></p>
 									      	<% } %>
