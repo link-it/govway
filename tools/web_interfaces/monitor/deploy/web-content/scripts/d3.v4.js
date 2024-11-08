@@ -5043,10 +5043,12 @@ function ribbon() {
 
 var prefix = "$";
 
-function Map() {}
+function CustomMap() { 
+	// donothing 
+}
 
-Map.prototype = map$1.prototype = {
-  constructor: Map,
+CustomMap.prototype = map$1.prototype = {
+  constructor: CustomMap,
   has: function(key) {
     return (prefix + key) in this;
   },
@@ -5094,10 +5096,10 @@ Map.prototype = map$1.prototype = {
 };
 
 function map$1(object, f) {
-  var map = new Map;
+  var map = new CustomMap;
 
   // Copy constructor.
-  if (object instanceof Map) object.each(function(value, key) { map.set(key, value); });
+  if (object instanceof CustomMap) object.each(function(value, key) { map.set(key, value); });
 
   // Index array by numeric index or specified key function.
   else if (Array.isArray(object)) {
@@ -5187,12 +5189,14 @@ function setMap(map, key, value) {
   map.set(key, value);
 }
 
-function Set() {}
+function CustomSet() {
+	// donothing 
+}
 
 var proto = map$1.prototype;
 
-Set.prototype = set$2.prototype = {
-  constructor: Set,
+CustomSet.prototype = set$2.prototype = {
+  constructor: CustomSet,
   has: proto.has,
   add: function(value) {
     value += "";
@@ -5208,10 +5212,10 @@ Set.prototype = set$2.prototype = {
 };
 
 function set$2(object, f) {
-  var set = new Set;
+  var set = new CustomSet;
 
   // Copy constructor.
-  if (object instanceof Set) object.each(function(value) { set.add(value); });
+  if (object instanceof CustomSet) object.each(function(value) { set.add(value); });
 
   // Otherwise, assume it’s an array.
   else if (object) {
@@ -10259,7 +10263,7 @@ function packEnclose(circles) {
   c.next = b.previous = a;
 
   // Attempt to place each remaining circle…
-  pack: for (i = 3; i < n; ++i) {
+  pack: for (i = 3; i < n;) {
     place(a._, b._, c = circles[i]), c = new Node$1(c);
 
     // Find the closest intersecting circle on the front-chain, if any.
@@ -10293,6 +10297,8 @@ function packEnclose(circles) {
       }
     }
     b = a.next;
+	
+	++i;
   }
 
   // Compute the enclosing circle of the front chain.

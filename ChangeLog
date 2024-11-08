@@ -1,3 +1,10 @@
+2024-11-08  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole, GovWayMonitor]
+	Risolto Bug #1533
+	Corrette segnalazioni vulnerabilità rilevate da SonarQube 10.7 su alcune pagine xhtml e jsp.
+	Corretta anomalia presente nella console di monitoraggio che causava la registrazione di comandi SQL nel file di log govway_monitor_core.log invece che nel file corretto govway_monitor_sql.log.
+
 2024-11-06  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [Utils, GovWayCore]

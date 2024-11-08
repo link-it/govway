@@ -239,14 +239,16 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 					String classInput= de.getStyleClass();
 					String iconaCtrlC = Costanti.ICON_COPY;
 					String iconaCtrlCTitle = (de.getTooltipCopyAction()!=null && !de.getTooltipCopyAction().equals("")) ? ("title='"+de.getTooltipCopyAction()+"'") : " ";
+					String deHiddenId = "__i_hidden_lbl_de_"+i;
 					
 					boolean visualizzaIconCopia = de.isVisualizzaCopyAction();
 					if (type.equals("text")){
            				String textValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
            				%>
                			<div class="propDialog">
-               				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" ><%=deLabel %></label>
+               				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%= deHiddenId %>" ><%=deLabel %></label>
                				<div class="<%=classDivNoEdit %>"> 
+               					<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>
                 				<span class="<%=classSpanNoEdit %>"><%= textValNoEdit %></span>
                 				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>
                 			</div>
@@ -266,12 +268,13 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
                			<%
                		} else { // else text
                			if (type.equals("textedit")){
+               				String inputId =  "txtEd" + i;
                				%>
                    			<div class="propDialog">
-                   				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
+                   				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=inputId %>"><%=deLabel %></label>
                    				<%
                    					String textNoEdit = " disabled ";
-						      		%><input type="text" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%=textNoEdit %> >
+						      		%><input id="<%=inputId %>" type="text" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%=textNoEdit %> >
 						      	<% 
 						      		if(visualizzaIconCopia){
 						      			String idDivIconInfo = "divIconInfo_"+i;
@@ -294,7 +297,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
        	     					}
                    				%>
                        			<div class="propDialog">
-                       				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
+                       				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=inputId %>"><%=deLabel %></label>
                        				<%
 		     						String taNoEdit = " readonly ";
 		     						%><div class="txtA_div_propDialog">
