@@ -407,17 +407,18 @@ public class ApplicationBean implements Serializable {
 	
 	private boolean existsPluginAllarmi() {
 		try {
-			String tipoDatabase = DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
-			String datasourceJNDIName = DAOFactoryProperties.getInstance(log).getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
-			Properties datasourceJNDIContext = DAOFactoryProperties.getInstance(log).getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			Logger sqlLogger = LoggerManager.getPddMonitorSqlLogger();
+			String tipoDatabase = DAOFactoryProperties.getInstance(sqlLogger).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			String datasourceJNDIName = DAOFactoryProperties.getInstance(sqlLogger).getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			Properties datasourceJNDIContext = DAOFactoryProperties.getInstance(sqlLogger).getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 	
-			DriverConfigurazioneDB driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
+			DriverConfigurazioneDB driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, sqlLogger, tipoDatabase);
 			Connection con = null;
 			try {
 				con = driverConfigDB.getConnection("existsPluginAllarmi");
 				ISearch ricercaPlugin = new Search(true);
 				ricercaPlugin.addFilter( Liste.CONFIGURAZIONE_PLUGINS_CLASSI, Filtri.FILTRO_TIPO_PLUGIN_CLASSI, TipoPlugin.ALLARME.toString());
-				List<Plugin> p = PluginsDriverUtils.pluginsClassiList(ricercaPlugin, con, log, tipoDatabase);
+				List<Plugin> p = PluginsDriverUtils.pluginsClassiList(ricercaPlugin, con, sqlLogger, tipoDatabase);
 				return p!=null && !p.isEmpty();
 			}finally {
 				driverConfigDB.releaseConnection("existsPluginAllarmi", con);
