@@ -44,7 +44,11 @@ import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
  */
 public class MessageManager {
 	
-	private MessageManager() {}
+	public MessageManager() {
+		// inizializzazione, lasciare public il costruttore poichè usato in tools/web_interfaces/monitor/src/src_core/META-INF/faces-config.xml
+		// altrimenti si ottiene errore: Caused by: com.sun.faces.mgbean.ManagedBeanCreationException: Unable to create managed bean applicationBean.  The following problems were found:
+		// - Managed bean class org.openspcoop2.web.monitor.core.utils.MessageManager for managed bean applicationBean doesnt declare a public no-argument constructor.
+	}
 	
 	private static MessageManager instance = null;
 

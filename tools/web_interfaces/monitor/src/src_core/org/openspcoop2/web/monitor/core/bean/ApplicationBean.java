@@ -190,8 +190,10 @@ public class ApplicationBean implements Serializable {
 		ApplicationBean.funzionalitaStaticInstance.put(nomeFunzionalita,false);
 	}
 	
-	private ApplicationBean() {
-		// inizializzazione
+	public ApplicationBean() {
+		// inizializzazione, lasciare public il costruttore poichè usato in tools/web_interfaces/monitor/src/src_core/META-INF/faces-config.xml
+		// altrimenti si ottiene errore: Caused by: com.sun.faces.mgbean.ManagedBeanCreationException: Unable to create managed bean applicationBean.  The following problems were found:
+	    // - Managed bean class org.openspcoop2.web.monitor.core.bean.ApplicationBean for managed bean applicationBean doesnt declare a public no-argument constructor.
 		try {
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(ApplicationBean.log);
 			initializeFunzionalita(govwayMonitorProperties);

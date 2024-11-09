@@ -110,6 +110,10 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 	private boolean transazioniLatenzaPortaEnabled = false;
 
 	public TransazioniBean(){
+		// inizializzazione, lasciare public il costruttore poichè usato in tools/web_interfaces/monitor/src/src_transazioni/META-INF/faces-config.xml
+		// altrimenti si ottiene errore: Caused by: com.sun.faces.mgbean.ManagedBeanCreationException: Unable to create managed bean applicationBean.  The following problems were found:
+		// - Managed bean class org.openspcoop2.web.monitor.transazioni.mbean.TransazioniBean for managed bean applicationBean doesnt declare a public no-argument constructor.
+				
 		super();
 
 		try{
