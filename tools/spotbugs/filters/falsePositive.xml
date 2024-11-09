@@ -349,6 +349,15 @@
   </Match>
 
   <Match>
+    <Class name="org.openspcoop2.web.monitor.core.bean.ApplicationBean" />
+    <Method name="&lt;init&gt;" isConstructor="true"/>
+    <Bug pattern="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR" />
+  </Match>   
+  <Match>
+    <Class name="org.openspcoop2.web.monitor.core.bean.ApplicationBean" />
+    <Bug pattern="SING_SINGLETON_IMPLEMENTS_SERIALIZABLE" />
+  </Match> 
+  <Match>
     <Class name="org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils" />
     <Method name="&lt;init&gt;" isConstructor="true"/>
     <Bug pattern="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR" />
@@ -358,8 +367,9 @@
     <Bug pattern="SING_SINGLETON_IMPLEMENTS_SERIALIZABLE" />
   </Match> 
   <Match>
-    <Class name="org.openspcoop2.web.monitor.core.bean.ApplicationBean" />
-    <Bug pattern="SING_SINGLETON_IMPLEMENTS_SERIALIZABLE" />
-  </Match> 
+    <Class name="org.openspcoop2.web.monitor.core.utils.MessageManager" />
+    <Method name="&lt;init&gt;" isConstructor="true"/>
+    <Bug pattern="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR" />
+  </Match>   
 
 </FindBugsFilter>

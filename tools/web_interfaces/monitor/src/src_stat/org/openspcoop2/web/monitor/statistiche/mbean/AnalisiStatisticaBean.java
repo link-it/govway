@@ -66,6 +66,9 @@ public class AnalisiStatisticaBean implements Serializable {
 	private transient ApplicationBean applicationBean = null;
 
 	public AnalisiStatisticaBean (){
+		// inizializzazione, lasciare public il costruttore poichè usato in tools/web_interfaces/monitor/src/src_stat/META-INF/faces-config.xml
+		// altrimenti si ottiene errore: Caused by: com.sun.faces.mgbean.ManagedBeanCreationException: Unable to create managed bean applicationBean.  The following problems were found:
+		// - Managed bean class org.openspcoop2.web.monitor.statistiche.mbean.AnalisiStatisticaBean for managed bean applicationBean doesnt declare a public no-argument constructor.
 		try{
 			this.applicationBean = ApplicationBean.getInstance();
 			this.applicationBean.setLoginBean(Utility.getLoginBean()); 
