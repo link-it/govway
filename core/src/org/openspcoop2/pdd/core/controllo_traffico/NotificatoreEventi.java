@@ -37,6 +37,7 @@ import java.util.zip.ZipOutputStream;
 import jakarta.activation.FileDataSource;
 
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
 import org.openspcoop2.core.eventi.Evento;
 import org.openspcoop2.core.eventi.constants.CodiceEventoControlloTraffico;
@@ -65,21 +66,24 @@ import org.slf4j.Logger;
 public class NotificatoreEventi {
 
 	private static NotificatoreEventi staticInstance = null;
-	private static synchronized void initialize() throws Exception{
+	private static synchronized void initialize() throws DriverConfigurazioneException {
 		if(staticInstance==null){
 			staticInstance = new NotificatoreEventi();
 		}
 	}
-	public static NotificatoreEventi getInstance() throws Exception{
+	public static NotificatoreEventi getInstance() throws DriverConfigurazioneException {
 		if(staticInstance==null){
-			initialize();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (NotificatoreEventi.class) {
+				initialize();
+			}
 		}
 		return staticInstance;
 	}
 
 	private GestoreEventi gestoreEventi;
 		
-	public NotificatoreEventi() throws Exception{
+	private NotificatoreEventi() throws DriverConfigurazioneException {
 		this.gestoreEventi = GestoreEventi.getInstance();
 	}
 	

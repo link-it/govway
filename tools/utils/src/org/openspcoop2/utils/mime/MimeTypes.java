@@ -41,7 +41,7 @@ public class MimeTypes {
 	private Map<String, Object> mapMimeToExt = new HashMap<>();
 	private Map<String, String> mapExtToMime = new HashMap<>();
 	
-	MimeTypes() throws UtilsException{
+	private MimeTypes() throws UtilsException{
 		
 		String file = "/org/openspcoop2/utils/mime/mime.types";
 		try (InputStream is = MimeTypes.class.getResourceAsStream(file);){
@@ -148,7 +148,10 @@ public class MimeTypes {
 	} 
 	public static MimeTypes getInstance() throws UtilsException{
 		if(mimeTypes==null){
-			init();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED'
+			synchronized (MimeTypes.class) {
+				init();
+			}
 		}
 		return mimeTypes;
 	}

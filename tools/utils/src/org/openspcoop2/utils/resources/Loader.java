@@ -39,7 +39,10 @@ public class Loader {
 	private static Loader loader = null;
 	public static Loader getInstance(){
 		if(Loader.loader==null){
-			Loader.initialize();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED'
+			synchronized (Loader.class) {
+				initialize();
+			}
 		}
 		return Loader.loader;
 	}

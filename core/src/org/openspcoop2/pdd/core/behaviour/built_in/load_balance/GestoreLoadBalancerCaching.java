@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
@@ -384,14 +385,17 @@ public class GestoreLoadBalancerCaching {
 	
 	
 	private static GestoreLoadBalancerCaching staticInstance = null;
-	public static synchronized void initialize() throws Exception{
+	public static synchronized void initialize() {
 		if(staticInstance==null){
 			staticInstance = new GestoreLoadBalancerCaching();
 		}
 	}
-	public static GestoreLoadBalancerCaching getInstance() throws Exception{
+	public static GestoreLoadBalancerCaching getInstance() throws CoreException{
 		if(staticInstance==null){
-			throw new Exception("GestoreKeystore non inizializzato");
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (GestoreLoadBalancerCaching.class) {
+				throw new CoreException("GestoreKeystore non inizializzato");
+			}
 		}
 		return staticInstance;
 	}
@@ -399,7 +403,7 @@ public class GestoreLoadBalancerCaching {
 	@SuppressWarnings("unused")
 	private Logger log;
 	
-	public GestoreLoadBalancerCaching() throws Exception{
+	private GestoreLoadBalancerCaching() {
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 	}
 	

@@ -69,8 +69,12 @@ public class AS4Properties {
 	 *
 	 * 
 	 */
-	public AS4Properties(String confDir,Logger log) throws ProtocolException{
+	private AS4Properties(String confDir,Logger log) throws ProtocolException{
 
+		if(confDir!=null) {
+			// nop
+		}
+		
 		if(log != null)
 			this.log = log;
 		else
@@ -83,11 +87,12 @@ public class AS4Properties {
 		try{  
 			properties = AS4Properties.class.getResourceAsStream("/as4.properties");
 			if(properties==null){
-				throw new Exception("File '/as4.properties' not found");
+				throw new ProtocolException("File '/as4.properties' not found");
 			}
 			propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'as4.properties': "+e.getMessage());
+			String msg = "Riscontrato errore durante la lettura del file 'as4.properties': "+e.getMessage();
+			this.log.error(msg,e);
 			throw new ProtocolException("AS4Properties initialize error: "+e.getMessage(),e);
 		}finally{
 			try{
@@ -126,8 +131,12 @@ public class AS4Properties {
 	 */
 	public static AS4Properties getInstance() throws ProtocolException{
 
-		if(AS4Properties.as4Properties==null)
-			throw new ProtocolException("AS4Properties not initialized (use init method in factory)");
+		if(AS4Properties.as4Properties==null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (AS4Properties.class) {
+				throw new ProtocolException("AS4Properties not initialized (use init method in factory)");
+			}
+		}
 
 		return AS4Properties.as4Properties;
 	}

@@ -33,6 +33,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
 /**
@@ -45,6 +46,8 @@ import org.slf4j.Logger;
 
 public class ConnettoreJMSProperties {
 
+	public static final String JMS_PREFIX_PROPERTY = "org.openspcoop.pubblicazione.";
+	
 	/** Logger utilizzato per errori eventuali. */
 	private static Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 
@@ -65,26 +68,20 @@ public class ConnettoreJMSProperties {
 	 *
 	 * 
 	 */
-	public ConnettoreJMSProperties() throws Exception {
+	private ConnettoreJMSProperties() throws UtilsException {
 
 		/* ---- Lettura del cammino del file di configurazione ---- */
 		this.reader = new Properties();
-		java.io.InputStream properties = null;
-		try{  
-		    properties = ConnettoreJMSProperties.class.getResourceAsStream("/govway.jmsPublisher.properties");
-		    this.reader.load(properties);
-		    properties.close();
-		}catch(java.io.IOException e) {
-		    ConnettoreJMSProperties.log.error("Riscontrato errore durante la lettura del file 'govway.jmsPublisher.properties': \n\n"+e.getMessage());
-		    try{
-			if(properties!=null)
-			    properties.close();
-		    }catch(Exception er){
-				// close
-			}
-		    throw new Exception("ConnettoreJMSProperties initialize error: "+e.getMessage());
+		try(java.io.InputStream properties = ConnettoreJMSProperties.class.getResourceAsStream("/govway.jmsPublisher.properties");){  
+			this.reader.load(properties);
+		}catch(Exception e) {
+			doError(e);
 		}
 
+	}
+	private void doError(Exception e) throws UtilsException {
+		ConnettoreJMSProperties.log.error("Riscontrato errore durante la lettura del file 'govway.jmsPublisher.properties': "+e.getMessage(),e);
+	    throw new UtilsException("ConnettoreJMSProperties initialize error: "+e.getMessage(),e);
 	}
 
 
@@ -111,8 +108,14 @@ public class ConnettoreJMSProperties {
 	 * 
 	 */
 	public static ConnettoreJMSProperties getInstance(){
-	    if(ConnettoreJMSProperties.connettoreJMSProperties==null)
-	    	ConnettoreJMSProperties.initialize();
+	    if(ConnettoreJMSProperties.connettoreJMSProperties==null) {
+	    	// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+	    	synchronized (ConnettoreJMSProperties.class) {
+	    		if(ConnettoreJMSProperties.connettoreJMSProperties==null) {
+	    			ConnettoreJMSProperties.initialize();
+	    		}
+	    	}
+	    }
 	    return ConnettoreJMSProperties.connettoreJMSProperties;
 	}
     
@@ -133,46 +136,47 @@ public class ConnettoreJMSProperties {
 	 * @return lista di identificatori dei servizi di pubblicazione definiti
 	 * 
 	 */
-	public Map<String,IDServizio> getIDServizi_Pubblicazione() {	
-		Map<String,IDServizio> servizi= new HashMap<String,IDServizio>();
+	public Map<String,IDServizio> getIDServiziPubblicazione() {	
+		Map<String,IDServizio> servizi= new HashMap<>();
 	    try{ 
 			// Raccolta servizi
 			java.util.List<String> idServizi = new java.util.ArrayList<>();	
 			java.util.Enumeration<?> en = this.reader.propertyNames();
 			for (; en.hasMoreElements() ;) {
 			    String property = (String) en.nextElement();
-			    if(property.startsWith("org.openspcoop.pubblicazione.")){
-				String key = (property.substring("org.openspcoop.pubblicazione.".length()));
+			    if(property.startsWith(JMS_PREFIX_PROPERTY)){
+				String key = (property.substring(JMS_PREFIX_PROPERTY.length()));
 				int indexOf = key.indexOf(".");
 				key = key.substring(0,indexOf);
 				if(key != null)
 				    key = key.trim();
-				if(idServizi.contains(key)==false)
+				if(!idServizi.contains(key))
 				    idServizi.add(key);
 			    }
 			}
 			
 			for(int i=0; i<idServizi.size(); i++){
-			    //log.info("Raccolta variabili per servizio ["+idServizi.get(i)+"]");
+			    /**log.info("Raccolta variabili per servizio ["+idServizi.get(i)+"]");*/
 				
 			    IDSoggetto idSoggetto = new IDSoggetto();
-			    idSoggetto.setTipo((String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".tipoSoggettoErogatore"));
-			    idSoggetto.setNome((String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".soggettoErogatore"));
+			    idSoggetto.setTipo((String)this.reader.get(JMS_PREFIX_PROPERTY+idServizi.get(i)+".tipoSoggettoErogatore"));
+			    idSoggetto.setNome((String)this.reader.get(JMS_PREFIX_PROPERTY+idServizi.get(i)+".soggettoErogatore"));
 				
-			    String tipoServizio = (String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".tipoServizio");
-			    String nomeServizio = (String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".servizio");
-			    Integer versioneServizio = Integer.parseInt(((String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".versioneServizio")));
+			    String tipoServizio = (String)this.reader.get(JMS_PREFIX_PROPERTY+idServizi.get(i)+".tipoServizio");
+			    String nomeServizio = (String)this.reader.get(JMS_PREFIX_PROPERTY+idServizi.get(i)+".servizio");
+			    Integer versioneServizio = Integer.parseInt(((String)this.reader.get(JMS_PREFIX_PROPERTY+idServizi.get(i)+".versioneServizio")));
 			    IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizio, nomeServizio, idSoggetto, versioneServizio);
 			    
-			    //log.info("Servizio ["+IDServizioFactory.getInstance().getUriFromIDServizio(idServizio)+"]");
+			    /**log.info("Servizio ["+IDServizioFactory.getInstance().getUriFromIDServizio(idServizio)+"]");*/
 			    servizi.put(idServizi.get(i),idServizio);
 			}
 			
 			return servizi;
 		
 	    }catch(Throwable e) {
-	    	ConnettoreJMSProperties.log.error("Riscontrato errore durante la lettura dei servizi pubblicatori : 'org.openspcoop.pubblicazione.*'");
-	    	return null;
+	    	ConnettoreJMSProperties.log.error("Riscontrato errore durante la lettura dei servizi pubblicatori : 'org.openspcoop.pubblicazione.*'",e);
+	    	servizi = null;
+	    	return servizi;
 	    }  
 	}
 	
@@ -182,10 +186,10 @@ public class ConnettoreJMSProperties {
 	 * @return proprieta' da utilizzare con il contesto JNDI di lookup.
 	 * 
 	 */
-	public java.util.Properties getJNDIContext_Configurazione(String id) {	
+	public java.util.Properties getJNDIContextConfigurazione(String id) {	
 		java.util.Properties prop = new java.util.Properties();
 		try{ 
-			String ricerca = "org.openspcoop.pubblicazione." + id +".jndi.contextProperty.";
+			String ricerca = JMS_PREFIX_PROPERTY + id +".jndi.contextProperty.";
 			java.util.Enumeration<?> en = this.reader.propertyNames();
 			for (; en.hasMoreElements() ;) {
 				String property = (String) en.nextElement();
@@ -198,15 +202,17 @@ public class ConnettoreJMSProperties {
 						value = value.trim();
 					if(key!=null && value!=null){
 						prop.setProperty(key,value);
-						//System.out.println("context ["+key+"] ["+value+"]");
+						/**System.out.println("context ["+key+"] ["+value+"]");*/
 					}
 				}
 			}
 			return prop;
 
 		}catch(java.lang.Exception e) {
-			ConnettoreJMSProperties.log.error("Riscontrato errore durante la lettura delle propriete' JNDI per la configurazione: "+e.getMessage());
-			return null;
+			String msg = "Riscontrato errore durante la lettura delle propriete' JNDI per la configurazione: "+e.getMessage();
+			ConnettoreJMSProperties.log.error(msg,e);
+			prop = null;
+			return prop;
 		}    
 	}
 	
@@ -216,10 +222,10 @@ public class ConnettoreJMSProperties {
 	 * @return proprieta' da utilizzare con il contesto JNDI di lookup.
 	 * 
 	 */
-	public java.util.Properties getJNDIPool_Configurazione(String id) {	
+	public java.util.Properties getJNDIPoolConfigurazione(String id) {	
 		java.util.Properties prop = new java.util.Properties();
 		try{ 
-			String ricerca = "org.openspcoop.pubblicazione." + id +".jndi.poolProperty.";
+			String ricerca = JMS_PREFIX_PROPERTY + id +".jndi.poolProperty.";
 			java.util.Enumeration<?> en = this.reader.propertyNames();
 			for (; en.hasMoreElements() ;) {
 				String property = (String) en.nextElement();
@@ -232,20 +238,23 @@ public class ConnettoreJMSProperties {
 						value = value.trim();
 					if(key!=null && value!=null){
 						prop.setProperty(key,value);
-						//System.out.println("pool ["+key+"] ["+value+"]");
+						/**System.out.println("pool ["+key+"] ["+value+"]");*/
 					}
 				}
 			}
 			return prop;
 
 		}catch(java.lang.Exception e) {
-			ConnettoreJMSProperties.log.error("Riscontrato errore durante la lettura delle propriete' JNDI per la configurazione: "+e.getMessage());
-			return null;
+			String msg = "Riscontrato errore durante la lettura delle propriete' JNDI per la configurazione: "+e.getMessage();
+			ConnettoreJMSProperties.log.error(msg,e);
+			prop = null;
+			return prop;
 		}    
 	}
 	
 	
 	public String[] getClassNameSetPropertiesJMS(){
+		String [] sNull = null;
 		try{ 
 			String value = this.reader.getProperty("org.openspcoop.pubblicazione.setProprietaJMS.class");
 			if(value!=null){
@@ -258,10 +267,11 @@ public class ConnettoreJMSProperties {
 				}
 				return classi;
 			}else
-				return null;
+				return sNull;
 		}catch(java.lang.Exception e) {
-			ConnettoreJMSProperties.log.error("Riscontrato errore durante la lettura delle classi da utilizzare per il setting delle proprieta' JMS: "+e.getMessage());
-			return null;
+			String msg = "Riscontrato errore durante la lettura delle classi da utilizzare per il setting delle proprieta' JMS: "+e.getMessage();
+			ConnettoreJMSProperties.log.error(msg,e);
+			return sNull;
 		}   
 	}
 	

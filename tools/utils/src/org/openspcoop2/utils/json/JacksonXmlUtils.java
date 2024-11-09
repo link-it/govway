@@ -72,13 +72,19 @@ public class JacksonXmlUtils extends AbstractUtils {
 	public static JacksonXmlUtils getInstance(boolean prettyPrint){
 		if(prettyPrint) {
 			if(JacksonXmlUtils.jsonUtilsPretty==null){
-				JacksonXmlUtils.init(true);
+				// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED'
+				synchronized (JacksonXmlUtils.class) {
+					JacksonXmlUtils.init(true);
+				}
 			}
 			return JacksonXmlUtils.jsonUtilsPretty;
 		}
 		else {
 			if(JacksonXmlUtils.jsonUtils==null){
-				JacksonXmlUtils.init(false);
+				// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED'
+				synchronized (JacksonXmlUtils.class) {
+					JacksonXmlUtils.init(false);
+				}
 			}
 			return JacksonXmlUtils.jsonUtils;
 		}
@@ -133,7 +139,7 @@ public class JacksonXmlUtils extends AbstractUtils {
 	
 	
 	
-	protected JacksonXmlUtils(boolean prettyPrint) {
+	private JacksonXmlUtils(boolean prettyPrint) {
 		super(prettyPrint);
 	}
 	

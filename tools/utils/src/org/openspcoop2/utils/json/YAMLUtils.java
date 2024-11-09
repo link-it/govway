@@ -70,13 +70,19 @@ public class YAMLUtils extends AbstractUtils {
 	public static YAMLUtils getInstance(boolean prettyPrint){
 		if(prettyPrint) {
 			if(YAMLUtils.yamlUtilsPretty==null){
-				YAMLUtils.init(true);
+				// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED'
+				synchronized (YAMLUtils.class) {
+					YAMLUtils.init(true);
+				}
 			}
 			return YAMLUtils.yamlUtilsPretty;
 		}
 		else {
 			if(YAMLUtils.yamlUtils==null){
-				YAMLUtils.init(false);
+				// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED'
+				synchronized (YAMLUtils.class) {
+					YAMLUtils.init(false);
+				}
 			}
 			return YAMLUtils.yamlUtils;
 		}
@@ -180,7 +186,7 @@ public class YAMLUtils extends AbstractUtils {
 	
 	
 	
-	protected YAMLUtils(boolean prettyPrint) {
+	private YAMLUtils(boolean prettyPrint) {
 		super(prettyPrint);
 	}
 	

@@ -40,7 +40,6 @@ L'esempio seguente attiva l'analisi dei sorgenti solamente per il profilo di int
 
     mvn verify -Dsonarqube=verify 
                -Dtestsuite=none -Dpackage=none -Dowasp=none 
-               -Dspotbugs.home=/tmp/spotbugs-4.7.3 
                -Dsonar.token=TOKEN -Dsonar.host.url=http://localhost:9000
                -Dsonar.govway.project=protocol-modipa
 

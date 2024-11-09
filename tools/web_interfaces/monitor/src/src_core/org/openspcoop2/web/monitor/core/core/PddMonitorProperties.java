@@ -61,17 +61,21 @@ public class PddMonitorProperties {
 	/** Copia Statica */
 	private static PddMonitorProperties govwayMonitorProperties = null;
 
-	private static synchronized void initialize(org.slf4j.Logger log) throws Exception{
+	private static synchronized void initialize(org.slf4j.Logger log) throws UtilsException{
 
 		if(PddMonitorProperties.govwayMonitorProperties==null)
 			PddMonitorProperties.govwayMonitorProperties = new PddMonitorProperties(log);	
 
 	}
 
-	public static PddMonitorProperties getInstance(org.slf4j.Logger log) throws Exception{
+	public static PddMonitorProperties getInstance(org.slf4j.Logger log) throws UtilsException{
 
-		if(PddMonitorProperties.govwayMonitorProperties==null)
-			PddMonitorProperties.initialize(log);
+		if(PddMonitorProperties.govwayMonitorProperties==null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (PddMonitorProperties.class) {
+				PddMonitorProperties.initialize(log);
+			}
+		}
 
 		return PddMonitorProperties.govwayMonitorProperties;
 	}
@@ -79,8 +83,8 @@ public class PddMonitorProperties {
 
 
 	private ApplicationProperties appProperties = null;
-	private transient Logger log = null;
-	public PddMonitorProperties(Logger log) throws Exception{
+	private Logger log = null;
+	private PddMonitorProperties(Logger log) throws UtilsException {
 		this.appProperties = ApplicationProperties.getInstance(log);
 		this.log = log;
 	}

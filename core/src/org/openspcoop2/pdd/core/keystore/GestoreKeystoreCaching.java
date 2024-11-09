@@ -369,7 +369,10 @@ public class GestoreKeystoreCaching {
 	}
 	public static GestoreKeystoreCaching getInstance() throws KeystoreException{
 		if(staticInstance==null){
-			throw new KeystoreException("GestoreKeystore non inizializzato");
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (GestoreKeystoreCaching.class) {
+				throw new KeystoreException("GestoreKeystore non inizializzato");
+			}
 		}
 		return staticInstance;
 	}
@@ -377,7 +380,7 @@ public class GestoreKeystoreCaching {
 	@SuppressWarnings("unused")
 	private Logger log;
 	
-	public GestoreKeystoreCaching() throws KeystoreException{
+	private GestoreKeystoreCaching() throws KeystoreException{
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 	}
 	

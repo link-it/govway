@@ -53,7 +53,7 @@ public class ServerProperties  {
 	private static ServerProperties serverProperties = null;
 	
 	
-	public ServerProperties(String confDir,Logger log) throws UtilsException {
+	private ServerProperties(String confDir,Logger log) throws UtilsException {
 
 		if(log!=null)
 			this.log = log;
@@ -105,7 +105,10 @@ public class ServerProperties  {
 	 */
 	public static ServerProperties getInstance() throws UtilsException{
 		if(ServerProperties.serverProperties==null){
-	    	throw new UtilsException("ServerProperties non inizializzato");
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (ServerProperties.class) {
+				throw new UtilsException("ServerProperties non inizializzato");
+			}
 	    }
 	    return ServerProperties.serverProperties;
 	}

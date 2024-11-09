@@ -64,13 +64,19 @@ public class JSONUtils extends AbstractUtils {
 	public static JSONUtils getInstance(boolean prettyPrint){
 		if(prettyPrint) {
 			if(JSONUtils.jsonUtilsPretty==null){
-				JSONUtils.init(true);
+				// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED'
+				synchronized (JSONUtils.class) {
+					JSONUtils.init(true);
+				}
 			}
 			return JSONUtils.jsonUtilsPretty;
 		}
 		else {
 			if(JSONUtils.jsonUtils==null){
-				JSONUtils.init(false);
+				// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED'
+				synchronized (JSONUtils.class) {
+					JSONUtils.init(false);
+				}
 			}
 			return JSONUtils.jsonUtils;
 		}
@@ -179,7 +185,7 @@ public class JSONUtils extends AbstractUtils {
 	
 	
 	
-	protected JSONUtils(boolean prettyPrint) {
+	private JSONUtils(boolean prettyPrint) {
 		super(prettyPrint);
 	}
 	

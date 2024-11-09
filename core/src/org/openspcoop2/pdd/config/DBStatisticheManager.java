@@ -63,6 +63,14 @@ public class DBStatisticheManager implements IMonitoraggioRisorsa {
 		}
 	}
 	public static DBStatisticheManager getInstance() {
+		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+		if (staticInstanceDBStatisticheManager == null) {
+	        synchronized (DBStatisticheManager.class) {
+	            if (staticInstanceDBStatisticheManager == null) {
+	                return null;
+	            }
+	        }
+	    }
 		return staticInstanceDBStatisticheManager;
 	}
 	
@@ -92,17 +100,17 @@ public class DBStatisticheManager implements IMonitoraggioRisorsa {
 	}
 	private DataSource datasourceStatistiche;
 	
-	public DBStatisticheManager(DBManager dbManagerRuntimePdD,Logger alog,String tipoDatabase) throws Exception {
+	private DBStatisticheManager(DBManager dbManagerRuntimePdD,Logger alog,String tipoDatabase) throws Exception {
 		this.dbManagerRuntimePdD = dbManagerRuntimePdD;
 		this.log = alog;
 		this.tipoDatabase = tipoDatabase;
 	}
-	public DBStatisticheManager(DBTransazioniManager dbManagerTransazioni,Logger alog,String tipoDatabase) throws Exception {
+	private DBStatisticheManager(DBTransazioniManager dbManagerTransazioni,Logger alog,String tipoDatabase) throws Exception {
 		this.dbManagerTransazioni = dbManagerTransazioni;
 		this.log = alog;
 		this.tipoDatabase = tipoDatabase;
 	}
-	public DBStatisticheManager(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDatabase, 
+	private DBStatisticheManager(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDatabase, 
 			boolean useOp2UtilsDatasource, boolean bindJMX) throws Exception {
 		try {
 			this.log = alog;

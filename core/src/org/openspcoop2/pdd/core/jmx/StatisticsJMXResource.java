@@ -605,90 +605,90 @@ public class StatisticsJMXResource extends NotificationBroadcasterSupport implem
 		this.numero_transazioni = stat.getStatNumeroTransazioni().numeroTransazioni + "/" +
 			stat.getStatNumeroTransazioni().numeroTransazioni_esitoOK + "/" +
 			stat.getStatNumeroTransazioni().numeroTransazioni_esitoErrore;
-		this.numero_transazioni_pd = stat.getStatNumeroTransazioni_PD().numeroTransazioni + "/" +
-			stat.getStatNumeroTransazioni_PD().numeroTransazioni_esitoOK + "/" +
-			stat.getStatNumeroTransazioni_PD().numeroTransazioni_esitoErrore;
-		this.numero_transazioni_pa = stat.getStatNumeroTransazioni_PA().numeroTransazioni + "/" +
-			stat.getStatNumeroTransazioni_PA().numeroTransazioni_esitoOK + "/" +
-			stat.getStatNumeroTransazioni_PA().numeroTransazioni_esitoErrore;
+		this.numero_transazioni_pd = stat.getStatNumeroTransazioniPD().numeroTransazioni + "/" +
+			stat.getStatNumeroTransazioniPD().numeroTransazioni_esitoOK + "/" +
+			stat.getStatNumeroTransazioniPD().numeroTransazioni_esitoErrore;
+		this.numero_transazioni_pa = stat.getStatNumeroTransazioniPA().numeroTransazioni + "/" +
+			stat.getStatNumeroTransazioniPA().numeroTransazioni_esitoOK + "/" +
+			stat.getStatNumeroTransazioniPA().numeroTransazioni_esitoErrore;
 		
 		this.latenza_attraversamento = convertTime(stat.getStatLatenzaAttraversamento().latenzaMinimaAttraversamento) + "/" +
 			convertTime(stat.getStatLatenzaAttraversamento().latenzaMediaAttraversamento) + "/" +
 			convertTime(stat.getStatLatenzaAttraversamento().latenzaMassimaAttraversamento);
-		this.latenza_attraversamento_request = convertTime(stat.getStatLatenzaAttraversamento_request().latenzaMinimaAttraversamento) + "/" +
-			convertTime(stat.getStatLatenzaAttraversamento_request().latenzaMediaAttraversamento) + "/" +
-			convertTime(stat.getStatLatenzaAttraversamento_request().latenzaMassimaAttraversamento);
-		this.latenza_attraversamento_response = convertTime(stat.getStatLatenzaAttraversamento_response().latenzaMinimaAttraversamento) + "/" +
-			convertTime(stat.getStatLatenzaAttraversamento_response().latenzaMediaAttraversamento) + "/" +
-			convertTime(stat.getStatLatenzaAttraversamento_response().latenzaMassimaAttraversamento);
+		this.latenza_attraversamento_request = convertTime(stat.getStatLatenzaAttraversamentoRequest().latenzaMinimaAttraversamento) + "/" +
+			convertTime(stat.getStatLatenzaAttraversamentoRequest().latenzaMediaAttraversamento) + "/" +
+			convertTime(stat.getStatLatenzaAttraversamentoRequest().latenzaMassimaAttraversamento);
+		this.latenza_attraversamento_response = convertTime(stat.getStatLatenzaAttraversamentoResponse().latenzaMinimaAttraversamento) + "/" +
+			convertTime(stat.getStatLatenzaAttraversamentoResponse().latenzaMediaAttraversamento) + "/" +
+			convertTime(stat.getStatLatenzaAttraversamentoResponse().latenzaMassimaAttraversamento);
 		
-		this.latenza_attraversamento_pd = convertTime(stat.getStatLatenzaAttraversamento_PD().latenzaMinimaAttraversamento) + "/" +
-			convertTime(stat.getStatLatenzaAttraversamento_PD().latenzaMediaAttraversamento) + "/" +
-			convertTime(stat.getStatLatenzaAttraversamento_PD().latenzaMassimaAttraversamento);
-		this.latenza_attraversamento_pd_request = convertTime(stat.getStatLatenzaAttraversamento_PD_request().latenzaMinimaAttraversamento) + "/" +
-			convertTime(stat.getStatLatenzaAttraversamento_PD_request().latenzaMediaAttraversamento) + "/" +
-			convertTime(stat.getStatLatenzaAttraversamento_PD_request().latenzaMassimaAttraversamento);
-		this.latenza_attraversamento_pd_response = convertTime(stat.getStatLatenzaAttraversamento_PD_response().latenzaMinimaAttraversamento) + "/" +
-			convertTime(stat.getStatLatenzaAttraversamento_PD_response().latenzaMediaAttraversamento) + "/" +
-			convertTime(stat.getStatLatenzaAttraversamento_PD_response().latenzaMassimaAttraversamento);
+		this.latenza_attraversamento_pd = convertTime(stat.getStatLatenzaAttraversamentoPD().latenzaMinimaAttraversamento) + "/" +
+			convertTime(stat.getStatLatenzaAttraversamentoPD().latenzaMediaAttraversamento) + "/" +
+			convertTime(stat.getStatLatenzaAttraversamentoPD().latenzaMassimaAttraversamento);
+		this.latenza_attraversamento_pd_request = convertTime(stat.getStatLatenzaAttraversamentoPDRequest().latenzaMinimaAttraversamento) + "/" +
+			convertTime(stat.getStatLatenzaAttraversamentoPDRequest().latenzaMediaAttraversamento) + "/" +
+			convertTime(stat.getStatLatenzaAttraversamentoPDRequest().latenzaMassimaAttraversamento);
+		this.latenza_attraversamento_pd_response = convertTime(stat.getStatLatenzaAttraversamentoPDResponse().latenzaMinimaAttraversamento) + "/" +
+			convertTime(stat.getStatLatenzaAttraversamentoPDResponse().latenzaMediaAttraversamento) + "/" +
+			convertTime(stat.getStatLatenzaAttraversamentoPDResponse().latenzaMassimaAttraversamento);
 		
-		this.latenza_attraversamento_pa = convertTime(stat.getStatLatenzaAttraversamento_PA().latenzaMinimaAttraversamento) + "/" +
-			convertTime(stat.getStatLatenzaAttraversamento_PA().latenzaMediaAttraversamento) + "/" +
-			convertTime(stat.getStatLatenzaAttraversamento_PA().latenzaMassimaAttraversamento);
-		this.latenza_attraversamento_pa_request = convertTime(stat.getStatLatenzaAttraversamento_PA_request().latenzaMinimaAttraversamento) + "/" +
-			convertTime(stat.getStatLatenzaAttraversamento_PA_request().latenzaMediaAttraversamento) + "/" +
-			convertTime(stat.getStatLatenzaAttraversamento_PA_request().latenzaMassimaAttraversamento);
-		this.latenza_attraversamento_pa_response = convertTime(stat.getStatLatenzaAttraversamento_PA_response().latenzaMinimaAttraversamento) + "/" +
-			convertTime(stat.getStatLatenzaAttraversamento_PA_response().latenzaMediaAttraversamento) + "/" +
-			convertTime(stat.getStatLatenzaAttraversamento_PA_response().latenzaMassimaAttraversamento);
+		this.latenza_attraversamento_pa = convertTime(stat.getStatLatenzaAttraversamentoPA().latenzaMinimaAttraversamento) + "/" +
+			convertTime(stat.getStatLatenzaAttraversamentoPA().latenzaMediaAttraversamento) + "/" +
+			convertTime(stat.getStatLatenzaAttraversamentoPA().latenzaMassimaAttraversamento);
+		this.latenza_attraversamento_pa_request = convertTime(stat.getStatLatenzaAttraversamentoPARequest().latenzaMinimaAttraversamento) + "/" +
+			convertTime(stat.getStatLatenzaAttraversamentoPARequest().latenzaMediaAttraversamento) + "/" +
+			convertTime(stat.getStatLatenzaAttraversamentoPARequest().latenzaMassimaAttraversamento);
+		this.latenza_attraversamento_pa_response = convertTime(stat.getStatLatenzaAttraversamentoPAResponse().latenzaMinimaAttraversamento) + "/" +
+			convertTime(stat.getStatLatenzaAttraversamentoPAResponse().latenzaMediaAttraversamento) + "/" +
+			convertTime(stat.getStatLatenzaAttraversamentoPAResponse().latenzaMassimaAttraversamento);
 		
 		this.dimensione_messaggi = convertSize(stat.getStatDimensioneMessaggio().dimensioneMinimaMessaggio) + "/" +
 			convertSize(stat.getStatDimensioneMessaggio().dimensioneMediaMessaggio) + "/" +
 			convertSize(stat.getStatDimensioneMessaggio().dimensioneMassimaMessaggio);
-		this.dimensione_messaggi_in_request = convertSize(stat.getStatDimensioneMessaggio_in_request().dimensioneMinimaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_in_request().dimensioneMediaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_in_request().dimensioneMassimaMessaggio);
-		this.dimensione_messaggi_out_request = convertSize(stat.getStatDimensioneMessaggio_out_request().dimensioneMinimaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_out_request().dimensioneMediaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_out_request().dimensioneMassimaMessaggio);
-		this.dimensione_messaggi_in_response = convertSize(stat.getStatDimensioneMessaggio_in_response().dimensioneMinimaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_in_response().dimensioneMediaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_in_response().dimensioneMassimaMessaggio);
-		this.dimensione_messaggi_out_response = convertSize(stat.getStatDimensioneMessaggio_out_response().dimensioneMinimaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_out_response().dimensioneMediaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_out_response().dimensioneMassimaMessaggio);
+		this.dimensione_messaggi_in_request = convertSize(stat.getStatDimensioneMessaggioInRequest().dimensioneMinimaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioInRequest().dimensioneMediaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioInRequest().dimensioneMassimaMessaggio);
+		this.dimensione_messaggi_out_request = convertSize(stat.getStatDimensioneMessaggioOutRequest().dimensioneMinimaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioOutRequest().dimensioneMediaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioOutRequest().dimensioneMassimaMessaggio);
+		this.dimensione_messaggi_in_response = convertSize(stat.getStatDimensioneMessaggioInResponse().dimensioneMinimaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioInResponse().dimensioneMediaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioInResponse().dimensioneMassimaMessaggio);
+		this.dimensione_messaggi_out_response = convertSize(stat.getStatDimensioneMessaggioOutResponse().dimensioneMinimaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioOutResponse().dimensioneMediaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioOutResponse().dimensioneMassimaMessaggio);
 		
-		this.dimensione_messaggi_pd = convertSize(stat.getStatDimensioneMessaggio_PD().dimensioneMinimaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_PD().dimensioneMediaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_PD().dimensioneMassimaMessaggio);
-		this.dimensione_messaggi_pd_in_request = convertSize(stat.getStatDimensioneMessaggio_PD_in_request().dimensioneMinimaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_PD_in_request().dimensioneMediaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_PD_in_request().dimensioneMassimaMessaggio);
-		this.dimensione_messaggi_pd_out_request = convertSize(stat.getStatDimensioneMessaggio_PD_out_request().dimensioneMinimaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_PD_out_request().dimensioneMediaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_PD_out_request().dimensioneMassimaMessaggio);
-		this.dimensione_messaggi_pd_in_response = convertSize(stat.getStatDimensioneMessaggio_PD_in_response().dimensioneMinimaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_PD_in_response().dimensioneMediaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_PD_in_response().dimensioneMassimaMessaggio);
-		this.dimensione_messaggi_pd_out_response = convertSize(stat.getStatDimensioneMessaggio_PD_out_response().dimensioneMinimaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_PD_out_response().dimensioneMediaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_PD_out_response().dimensioneMassimaMessaggio);
+		this.dimensione_messaggi_pd = convertSize(stat.getStatDimensioneMessaggioPD().dimensioneMinimaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioPD().dimensioneMediaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioPD().dimensioneMassimaMessaggio);
+		this.dimensione_messaggi_pd_in_request = convertSize(stat.getStatDimensioneMessaggioPDInRequest().dimensioneMinimaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioPDInRequest().dimensioneMediaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioPDInRequest().dimensioneMassimaMessaggio);
+		this.dimensione_messaggi_pd_out_request = convertSize(stat.getStatDimensioneMessaggioPDOutRequest().dimensioneMinimaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioPDOutRequest().dimensioneMediaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioPDOutRequest().dimensioneMassimaMessaggio);
+		this.dimensione_messaggi_pd_in_response = convertSize(stat.getStatDimensioneMessaggioPDInResponse().dimensioneMinimaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioPDInResponse().dimensioneMediaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioPDInResponse().dimensioneMassimaMessaggio);
+		this.dimensione_messaggi_pd_out_response = convertSize(stat.getStatDimensioneMessaggioPDOutResponse().dimensioneMinimaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioPDOutResponse().dimensioneMediaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioPDOutResponse().dimensioneMassimaMessaggio);
 		
-		this.dimensione_messaggi_pa = convertSize(stat.getStatDimensioneMessaggio_PA().dimensioneMinimaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_PA().dimensioneMediaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_PA().dimensioneMassimaMessaggio);
-		this.dimensione_messaggi_pa_in_request = convertSize(stat.getStatDimensioneMessaggio_PA_in_request().dimensioneMinimaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_PA_in_request().dimensioneMediaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_PA_in_request().dimensioneMassimaMessaggio);
-		this.dimensione_messaggi_pa_out_request = convertSize(stat.getStatDimensioneMessaggio_PA_out_request().dimensioneMinimaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_PA_out_request().dimensioneMediaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_PA_out_request().dimensioneMassimaMessaggio);
-		this.dimensione_messaggi_pa_in_response = convertSize(stat.getStatDimensioneMessaggio_PA_in_response().dimensioneMinimaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_PA_in_response().dimensioneMediaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_PA_in_response().dimensioneMassimaMessaggio);
-		this.dimensione_messaggi_pa_out_response = convertSize(stat.getStatDimensioneMessaggio_PA_out_response().dimensioneMinimaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_PA_out_response().dimensioneMediaMessaggio) + "/" +
-			convertSize(stat.getStatDimensioneMessaggio_PA_out_response().dimensioneMassimaMessaggio);
+		this.dimensione_messaggi_pa = convertSize(stat.getStatDimensioneMessaggioPA().dimensioneMinimaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioPA().dimensioneMediaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioPA().dimensioneMassimaMessaggio);
+		this.dimensione_messaggi_pa_in_request = convertSize(stat.getStatDimensioneMessaggioPAInRequest().dimensioneMinimaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioPAInRequest().dimensioneMediaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioPAInRequest().dimensioneMassimaMessaggio);
+		this.dimensione_messaggi_pa_out_request = convertSize(stat.getStatDimensioneMessaggioPAOutRequest().dimensioneMinimaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioPAOutRequest().dimensioneMediaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioPAOutRequest().dimensioneMassimaMessaggio);
+		this.dimensione_messaggi_pa_in_response = convertSize(stat.getStatDimensioneMessaggioPAInResponse().dimensioneMinimaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioPAInResponse().dimensioneMediaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioPAInResponse().dimensioneMassimaMessaggio);
+		this.dimensione_messaggi_pa_out_response = convertSize(stat.getStatDimensioneMessaggioPAOutResponse().dimensioneMinimaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioPAOutResponse().dimensioneMediaMessaggio) + "/" +
+			convertSize(stat.getStatDimensioneMessaggioPAOutResponse().dimensioneMassimaMessaggio);
 		
 		return "Refresh dati statistici effettuato";
 	}

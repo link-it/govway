@@ -33,21 +33,24 @@ import org.slf4j.Logger;
 public class DynamicFactory {
 
 	private static DynamicFactory basicLoaderFactory;
-	private static synchronized void initialize() throws SearchException{
+	private static synchronized void initialize() {
 		if(basicLoaderFactory==null){
 			basicLoaderFactory = new DynamicFactory();
 		}
 	}
-	public static DynamicFactory getInstance() throws SearchException{
+	public static DynamicFactory getInstance() {
 		if(basicLoaderFactory==null){
-			initialize();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (DynamicFactory.class) {
+				initialize();
+			}
 		}
 		return basicLoaderFactory;
 	}
 	
 	
 	private PluginLoader pluginLoader = null;
-	private DynamicFactory() throws SearchException{
+	private DynamicFactory() {
 		this.pluginLoader = PluginLoader.getInstance();
 	}
 	
@@ -64,17 +67,23 @@ public class DynamicFactory {
 		
 	}
 	
-	public IDynamicFilter newDynamicFilter(TipoPlugin tipoPlugin, String tipo, String className,Logger log) throws SearchException{
+	public IDynamicFilter newDynamicFilter(TipoPlugin tipoPlugin, String tipo, String className,Logger log) {
 		return newDynamicFilter(tipoPlugin.getValue(), tipo, className, log);
 	}
-	public IDynamicFilter newDynamicFilter(String tipoPlugin, String tipo, String className,Logger log) throws SearchException{
+	public IDynamicFilter newDynamicFilter(String tipoPlugin, String tipo, String className,Logger log) {
+		if(log!=null) {
+			// unused
+		}
 		return new BasicFilter(tipoPlugin, tipo, className);
 	}
 	
-	public IDynamicValidator newDynamicValidator(TipoPlugin tipoPlugin, String tipo, String className,Logger log) throws SearchException{
+	public IDynamicValidator newDynamicValidator(TipoPlugin tipoPlugin, String tipo, String className,Logger log) {
 		return newDynamicValidator(tipoPlugin.getValue(), tipo, className, log);
 	}
-	public IDynamicValidator newDynamicValidator(String tipoPlugin, String tipo, String className,Logger log) throws SearchException{
+	public IDynamicValidator newDynamicValidator(String tipoPlugin, String tipo, String className,Logger log) {
+		if(log!=null) {
+			// unused
+		}
 		return new BasicValidator(tipoPlugin, tipo, className);
 	}
 }

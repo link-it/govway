@@ -51,7 +51,10 @@ public class SICAtoOpenSPCoopContext {
 	}
 	public static SICAtoOpenSPCoopContext getInstance() throws SICAToOpenSPCoopUtilitiesException{
 		if(staticContext==null){
-			initSICAtoOpenSPCoopContext(DEFAULT_SICA_PROPERTIES_NAME);
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (SICAtoOpenSPCoopContext.class) {
+				initSICAtoOpenSPCoopContext(DEFAULT_SICA_PROPERTIES_NAME);
+			}
 		}
 		return staticContext;
 	}
@@ -62,7 +65,7 @@ public class SICAtoOpenSPCoopContext {
 	public SICAtoOpenSPCoopContext() throws SICAToOpenSPCoopUtilitiesException{
 		this(DEFAULT_SICA_PROPERTIES_NAME);
 	}
-	public SICAtoOpenSPCoopContext(String configurationFile) throws SICAToOpenSPCoopUtilitiesException{
+	private SICAtoOpenSPCoopContext(String configurationFile) throws SICAToOpenSPCoopUtilitiesException{
 		try{
 			this.configurationFile = configurationFile;
 			

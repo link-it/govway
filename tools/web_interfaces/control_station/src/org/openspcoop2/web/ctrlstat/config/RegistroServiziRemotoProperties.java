@@ -64,7 +64,7 @@ public class RegistroServiziRemotoProperties {
 	 *
 	 * 
 	 */
-	public RegistroServiziRemotoProperties(String confDir, String confPropertyName, String confLocalPathPrefix,Logger log) throws Exception {
+	private RegistroServiziRemotoProperties(String confDir, String confPropertyName, String confLocalPathPrefix,Logger log) throws Exception {
 
 		if(log!=null)
 			this.log = log;
@@ -121,7 +121,10 @@ public class RegistroServiziRemotoProperties {
 	 */
 	public static RegistroServiziRemotoProperties getInstance() throws OpenSPCoop2ConfigurationException{
 		if(RegistroServiziRemotoProperties.registroServiziRemotoProperties==null){
-	    	throw new OpenSPCoop2ConfigurationException("DatasourceProperties non inizializzato");
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (RegistroServiziRemotoProperties.class) {
+				throw new OpenSPCoop2ConfigurationException("DatasourceProperties non inizializzato");
+			}
 	    }
 	    return RegistroServiziRemotoProperties.registroServiziRemotoProperties;
 	}

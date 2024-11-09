@@ -45,7 +45,10 @@ public class GeneratorProperties {
 	}
 	public static GeneratorProperties getInstance() throws UtilsException{
 		if(GeneratorProperties.staticInstance == null){
-			GeneratorProperties.init();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (GeneratorProperties.class) {
+				GeneratorProperties.init();
+			}
 		}
 		return GeneratorProperties.staticInstance;
 	}
@@ -69,7 +72,7 @@ public class GeneratorProperties {
 	
 	private PropertiesReader props;
 
-	public GeneratorProperties() throws UtilsException {
+	private GeneratorProperties() throws UtilsException {
 
 		Properties p = new Properties();
 		try {

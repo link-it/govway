@@ -112,6 +112,7 @@ import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsAlreadyExistsException;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
@@ -248,14 +249,17 @@ IDriverWS ,IMonitoraggioRisorsa, IDriverBYOKConfig{
 	public DriverRegistroServiziDB(String nomeDataSource, Properties prop,Logger alog,String tipoDB, 
 			boolean useOp2UtilsDatasource, boolean bindJMX){
 
-		try {
-			if(alog==null)
-				this.log = LoggerWrapperFactory.getLogger(CostantiRegistroServizi.REGISTRO_DRIVER_DB_LOGGER);
-			else{
-				this.log = alog;
-				DriverRegistroServiziDB_LIB.initStaticLogger(this.log);
-			}
 
+		if(alog==null)
+			this.log = LoggerWrapperFactory.getLogger(CostantiRegistroServizi.REGISTRO_DRIVER_DB_LOGGER);
+		else{
+			this.log = alog;
+			DriverRegistroServiziDB_LIB.initStaticLogger(this.log);
+		}
+		if(this.log==null) {
+			throw new UtilsRuntimeException("Logger unavailable");
+		}
+		try {
 			this.log.info("Inizializzo DriverRegistroServiziDB..");
 			if(useOp2UtilsDatasource){
 				DataSourceParams dsParams = Costanti.getDataSourceParamsPdD(bindJMX, tipoDB);
@@ -264,7 +268,7 @@ IDriverWS ,IMonitoraggioRisorsa, IDriverBYOKConfig{
 				}catch(UtilsAlreadyExistsException exists){
 					this.datasource = DataSourceFactory.getInstance(nomeDataSource); 
 					if(this.datasource==null){
-						throw new Exception("Lookup datasource non riuscita ("+exists.getMessage()+")",exists);
+						throw new CoreException("Lookup datasource non riuscita ("+exists.getMessage()+")",exists);
 					}
 				}
 			}

@@ -63,7 +63,10 @@ public class DynamicClusterManager {
 	}
 	public static DynamicClusterManager getInstance() throws CoreException {
 		if(staticInstance==null) {
-			initStaticInstance();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (DynamicClusterManager.class) {
+				initStaticInstance();
+			}
 		}
 		return staticInstance;
 	}
@@ -74,7 +77,7 @@ public class DynamicClusterManager {
 	private DriverConfigurazioneDB driverConfigurazioneDB = null;
 	private OpenSPCoop2Properties op2Properties = null;
 	
-	protected DynamicClusterManager() throws CoreException {
+	private DynamicClusterManager() throws CoreException {
 		Object oConfig = ConfigurazionePdDReader.getDriverConfigurazionePdD();
 		if(oConfig instanceof DriverConfigurazioneDB) {
 			this.driverConfigurazioneDB = (DriverConfigurazioneDB) oConfig;

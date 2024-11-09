@@ -88,25 +88,37 @@ public class UtilitiesIntegrazione {
 	private static UtilitiesIntegrazione utilitiesIntegrazionePAResponse = null;
 	public static UtilitiesIntegrazione getInstancePDRequest(Logger log){
 		if(UtilitiesIntegrazione.utilitiesIntegrazionePDRequest==null){
-			UtilitiesIntegrazione.initialize(log,PORTA_DELEGATA,REQUEST);
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (UtilitiesIntegrazione.class) {
+				UtilitiesIntegrazione.initialize(log,PORTA_DELEGATA,REQUEST);
+			}
 		}
 		return UtilitiesIntegrazione.utilitiesIntegrazionePDRequest;
 	}
 	public static UtilitiesIntegrazione getInstancePDResponse(Logger log){
 		if(UtilitiesIntegrazione.utilitiesIntegrazionePDResponse==null){
-			UtilitiesIntegrazione.initialize(log,PORTA_DELEGATA,RESPONSE);
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (UtilitiesIntegrazione.class) {
+				UtilitiesIntegrazione.initialize(log,PORTA_DELEGATA,RESPONSE);
+			}
 		}
 		return UtilitiesIntegrazione.utilitiesIntegrazionePDResponse;
 	}
 	public static UtilitiesIntegrazione getInstancePARequest(Logger log){
 		if(UtilitiesIntegrazione.utilitiesIntegrazionePARequest==null){
-			UtilitiesIntegrazione.initialize(log,PORTA_APPLICATIVA,REQUEST);
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (UtilitiesIntegrazione.class) {
+				UtilitiesIntegrazione.initialize(log,PORTA_APPLICATIVA,REQUEST);
+			}
 		}
 		return UtilitiesIntegrazione.utilitiesIntegrazionePARequest;
 	}
 	public static UtilitiesIntegrazione getInstancePAResponse(Logger log){
 		if(UtilitiesIntegrazione.utilitiesIntegrazionePAResponse==null){
-			UtilitiesIntegrazione.initialize(log,PORTA_APPLICATIVA,RESPONSE);
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (UtilitiesIntegrazione.class) {
+				UtilitiesIntegrazione.initialize(log,PORTA_APPLICATIVA,RESPONSE);
+			}
 		}
 		return UtilitiesIntegrazione.utilitiesIntegrazionePAResponse;
 	}

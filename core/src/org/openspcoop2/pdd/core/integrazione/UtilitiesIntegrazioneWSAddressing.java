@@ -368,7 +368,10 @@ public class UtilitiesIntegrazioneWSAddressing {
 	private static UtilitiesIntegrazioneWSAddressing utilitiesIntegrazione = null;
 	public static UtilitiesIntegrazioneWSAddressing getInstance(Logger log){
 		if(UtilitiesIntegrazioneWSAddressing.utilitiesIntegrazione==null){
-			UtilitiesIntegrazioneWSAddressing.initialize(log);
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (UtilitiesIntegrazioneWSAddressing.class) {
+				UtilitiesIntegrazioneWSAddressing.initialize(log);
+			}
 		}
 		return UtilitiesIntegrazioneWSAddressing.utilitiesIntegrazione;
 	}
@@ -387,6 +390,9 @@ public class UtilitiesIntegrazioneWSAddressing {
 	// ***** INSTANCE *****
 	
 	private UtilitiesIntegrazioneWSAddressing(Logger log){
+		if(log!=null) {
+			// unused
+		}
 	}
 	
 	public void readHeader(OpenSPCoop2SoapMessage message,HeaderIntegrazione integrazione,

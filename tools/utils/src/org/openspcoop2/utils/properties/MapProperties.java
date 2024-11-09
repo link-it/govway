@@ -53,7 +53,7 @@ import org.slf4j.Logger;
 
 public class MapProperties {	
 
-	private static final String FILE_NAME = "govway.map.properties";
+	public static final String FILE_NAME = "govway.map.properties";
 	
 	public static final String ENV_PREFIX = "env.";
 	public static final String JAVA_PREFIX = "java.";
@@ -108,10 +108,13 @@ public class MapProperties {
 	 *
 	 * 
 	 */
-	public MapProperties(Logger log, boolean throwNotFound) throws UtilsException {
-		this(log, FILE_NAME, throwNotFound);
+	/**private MapProperties(Logger log, boolean throwNotFound) throws UtilsException {
+		init(log, FILE_NAME, throwNotFound);
+	}*/
+	protected MapProperties(Logger log, String fileName, boolean throwNotFound) throws UtilsException {
+		init(log, fileName, throwNotFound);
 	}
-	public MapProperties(Logger log, String fileName, boolean throwNotFound) throws UtilsException {
+	protected void init(Logger log, String fileName, boolean throwNotFound) throws UtilsException {
 
 		if(log==null) {
 			this.log = LoggerWrapperFactory.getLogger(MapProperties.class);
@@ -194,7 +197,15 @@ public class MapProperties {
 	 * 
 	 */
 	public static MapProperties getInstance(){
-	   return MapProperties.mapProperties;
+		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+		if (MapProperties.mapProperties == null) {
+			synchronized (MapProperties.class) {
+				if (MapProperties.mapProperties == null) {
+					return null;
+				}
+			}
+		}
+		return MapProperties.mapProperties;
 	}
     
 	

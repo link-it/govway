@@ -46,13 +46,17 @@ public class DAOConsoleFactory extends DAOFactory {
 
 	public static DAOConsoleFactory getInstance(Logger log) throws DAOFactoryException{
 
-		if(DAOConsoleFactory.daoConsoleFactory==null)
-			DAOConsoleFactory.initialize(log);
+		if(DAOConsoleFactory.daoConsoleFactory==null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (DAOConsoleFactory.class) {
+				DAOConsoleFactory.initialize(log);
+			}
+		}
 
 		return DAOConsoleFactory.daoConsoleFactory;
 	}
 	
-	public DAOConsoleFactory(Logger log) throws DAOFactoryException {
+	private DAOConsoleFactory(Logger log) throws DAOFactoryException {
 		super(log, getProperties(log));
 	}
 

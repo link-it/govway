@@ -24,8 +24,10 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.monitor.engine.constants.Costanti;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.id.IDUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -40,14 +42,17 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 public class FileSystemSerializer {
 
 	private static FileSystemSerializer staticInstance = null;
-	private static synchronized void initialize() throws Exception{
+	private static synchronized void initialize() throws CoreException{
 		if(staticInstance==null){
 			staticInstance = new FileSystemSerializer();
 		}
 	}
-	public static FileSystemSerializer getInstance() throws Exception{
+	public static FileSystemSerializer getInstance() throws CoreException{
 		if(staticInstance==null){
-			initialize();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (FileSystemSerializer.class) {
+				initialize();
+			}
 		}
 		return staticInstance;
 	}
@@ -55,82 +60,82 @@ public class FileSystemSerializer {
 	
 	private File directory = null; 
 	
-	public FileSystemSerializer() throws Exception{
+	private FileSystemSerializer() throws CoreException{
 		
 		this.directory = OpenSPCoop2Properties.getInstance().getFileSystemRecoveryRepository();
-		if(this.directory.exists()==false){
-			if(this.directory.mkdir()==false){
-				throw new Exception("Directory ["+this.directory.getAbsolutePath()+"] non esistente e creazione non riuscita");
-			}
+		String prefix = "Directory ["+this.directory.getAbsolutePath()+"] ";
+		if(!this.directory.exists() &&
+			!this.directory.mkdir()){
+			throw new CoreException(prefix+"non esistente e creazione non riuscita");
 		}
-		if(this.directory.canRead()==false){
-			throw new Exception("Directory ["+this.directory.getAbsolutePath()+"] non accessibile in lettura");
+		if(!this.directory.canRead()){
+			throw new CoreException(prefix+"non accessibile in lettura");
 		}
-		if(this.directory.canWrite()==false){
-			throw new Exception("Directory ["+this.directory.getAbsolutePath()+"] non accessibile in scrittura");
+		if(!this.directory.canWrite()){
+			throw new CoreException(prefix+"non accessibile in scrittura");
 		}
 	}
 	
-	private static final String formatNew = "yyyyMMdd_HHmmssSSS"; // compatibile con windows S.O.
+	private static final String FORMAT_NEW = "yyyyMMdd_HHmmssSSS"; // compatibile con windows S.O.
 	@SuppressWarnings("unused")
-	private static final String formatOld = "yyyy-MM-dd_HH:mm:ss.SSS";
+	private static final String FORMAT_OLD = "yyyy-MM-dd_HH:mm:ss.SSS";
 	
-	public void registraEvento(byte[] oggettSerializzato, Date date) throws Exception{
+	public void registraEvento(byte[] oggettSerializzato, Date date) throws CoreException, UtilsException{
 		this.registra(oggettSerializzato, Costanti.PREFIX_FILE_SYSTEM_REPOSITORY_EVENTI, date, getDirEventi());
 	}
 	public File getDirEventi(){
 		return new File(this.directory,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_EVENTI);
 	}
 		
-	public void registraTransazione(byte[] oggettSerializzato, Date date) throws Exception{
+	public void registraTransazione(byte[] oggettSerializzato, Date date) throws CoreException, UtilsException{
 		this.registra(oggettSerializzato, Costanti.PREFIX_FILE_SYSTEM_REPOSITORY_TRANSAZIONE, date, getDirTransazioni());
 	}
 	public File getDirTransazioni(){
 		return new File(this.directory,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_TRANSAZIONE);
 	}
 	
-	public void registraDiagnostico(byte[] oggettSerializzato, Date date) throws Exception{
+	public void registraDiagnostico(byte[] oggettSerializzato, Date date) throws CoreException, UtilsException{
 		this.registra(oggettSerializzato, Costanti.PREFIX_FILE_SYSTEM_REPOSITORY_DIAGNOSTICO, date,getDirDiagnostici());
 	}
 	public File getDirDiagnostici(){
 		return new File(this.directory,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_DIAGNOSTICO);
 	}
 	
-	public void registraTraccia(byte[] oggettSerializzato, Date date) throws Exception{
+	public void registraTraccia(byte[] oggettSerializzato, Date date) throws CoreException, UtilsException{
 		this.registra(oggettSerializzato, Costanti.PREFIX_FILE_SYSTEM_REPOSITORY_TRACCIA, date,getDirTracce());
 	}
 	public File getDirTracce(){
 		return new File(this.directory,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_TRACCIA);
 	}
 	
-	public void registraDump(byte[] oggettSerializzato, Date date) throws Exception{
+	public void registraDump(byte[] oggettSerializzato, Date date) throws CoreException, UtilsException{
 		this.registra(oggettSerializzato, Costanti.PREFIX_FILE_SYSTEM_REPOSITORY_DUMP, date,getDirDump());
 	}
 	public File getDirDump(){
 		return new File(this.directory,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_DUMP);
 	}
 	
-	public void registraTransazioneApplicativoServer(byte[] oggettSerializzato, Date date) throws Exception{
+	public void registraTransazioneApplicativoServer(byte[] oggettSerializzato, Date date) throws CoreException, UtilsException{
 		this.registra(oggettSerializzato, Costanti.PREFIX_FILE_SYSTEM_REPOSITORY_TRANSAZIONE_APPLICATIVO_SERVER, date,getDirTransazioneApplicativoServer());
 	}
 	public File getDirTransazioneApplicativoServer(){
 		return new File(this.directory,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_TRANSAZIONE_APPLICATIVO_SERVER);
 	}
 	
-	public void registraTransazioneApplicativoServerConsegnaTerminata(byte[] oggettSerializzato, Date date) throws Exception{
+	public void registraTransazioneApplicativoServerConsegnaTerminata(byte[] oggettSerializzato, Date date) throws CoreException, UtilsException {
 		this.registra(oggettSerializzato, Costanti.PREFIX_FILE_SYSTEM_REPOSITORY_TRANSAZIONE_APPLICATIVO_SERVER_CONSEGNA_TERMINATA, date,getDirTransazioneApplicativoServerConsegnaTerminata());
 	}
 	public File getDirTransazioneApplicativoServerConsegnaTerminata(){
 		return new File(this.directory,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_TRANSAZIONE_APPLICATIVO_SERVER_CONSEGNA_TERMINATA);
 	}
 	
-	private void registra(byte[] oggettSerializzato, String prefix, Date date, File dir) throws Exception{
+	private void registra(byte[] oggettSerializzato, String prefix, Date date, File dir) throws CoreException, UtilsException{
 		
-		if(dir.exists()==false){
+		if(!dir.exists()){
 			this.mkdir(dir);
 		}
 		
-		SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter(formatNew);
+		SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter(FORMAT_NEW);
 		
 		String nomeFile = prefix+"_"+dateformat.format(date)+"_"+IDUtilities.getUniqueSerialNumber("FileSystemSerializer")+".xml";
 		File f = new File(dir, nomeFile);
@@ -138,16 +143,15 @@ public class FileSystemSerializer {
 		
 	}
 	
-	private void mkdir(File dir) throws Exception{
-		if(dir.exists()==false){
-			_mkdir(dir);
+	private void mkdir(File dir) throws CoreException{
+		if(!dir.exists()){
+			mkdirEngine(dir);
 		}
 	}
-	private synchronized void _mkdir(File dir) throws Exception{
-		if(dir.exists()==false){
-			if(dir.mkdir()==false){
-				throw new Exception("Directory ["+this.directory.getAbsolutePath()+"] non esistente e creazione non riuscita");
-			}
+	private synchronized void mkdirEngine(File dir) throws CoreException{
+		if(!dir.exists() &&
+			!dir.mkdir()){
+			throw new CoreException("Directory ["+this.directory.getAbsolutePath()+"] non esistente e creazione non riuscita");
 		}
 	}
 }

@@ -67,7 +67,7 @@ public class AnalisiStatisticaBean implements Serializable {
 
 	public AnalisiStatisticaBean (){
 		try{
-			this.applicationBean = new ApplicationBean();
+			this.applicationBean = ApplicationBean.getInstance();
 			this.applicationBean.setLoginBean(Utility.getLoginBean()); 
 		}catch(Exception e){
 			log.error("Errore durante la init di AnalisiStatisticaBean: "+ e.getMessage() ,e);

@@ -44,13 +44,18 @@ import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
  */
 public class MessageManager {
 	
+	private MessageManager() {}
+	
 	private static MessageManager instance = null;
 
 	public static MessageManager getInstance(){
 
-		if(MessageManager.instance == null)
-			init();
-
+		if(MessageManager.instance == null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (MessageManager.class) {
+				init();
+			}
+		}
 
 		return MessageManager.instance;
 	}
@@ -63,7 +68,7 @@ public class MessageManager {
 	public String getMessage(String key) {
 
 		// use standard JSF Resource Bundle mechanism
-		//return getMessageFromJSFBundle(key);
+		/**return getMessageFromJSFBundle(key);*/
 
 		// use the default Java ResourceBund;e mechanism
 		return getMessageFromResourceBundle(key);

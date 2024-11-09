@@ -43,7 +43,10 @@ public class VaultProperties {
 	}
 	public static VaultProperties getInstance() throws CoreException{
 		if(VaultProperties.staticInstance == null){
-			VaultProperties.init();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (VaultProperties.class) {
+				VaultProperties.init();
+			}
 		}
 		return VaultProperties.staticInstance;
 	}
@@ -72,7 +75,7 @@ public class VaultProperties {
 	private String byokEnvSecretsConfig = null;
 	private boolean byokEnvSecretsConfigRequired = false;
 	
-	public VaultProperties() throws CoreException {
+	private VaultProperties() throws CoreException {
 
 		Properties props = new Properties();
 		try {

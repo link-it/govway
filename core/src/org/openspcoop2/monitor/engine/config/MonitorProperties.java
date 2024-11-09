@@ -40,17 +40,21 @@ public class MonitorProperties {
 	/** Copia Statica */
 	private static MonitorProperties monitorPropertiesStaticInstance = null;
 
-	private static synchronized void initialize(org.slf4j.Logger log) throws Exception{
+	private static synchronized void initialize(org.slf4j.Logger log) throws EngineException {
 
 		if(MonitorProperties.monitorPropertiesStaticInstance==null)
 			MonitorProperties.monitorPropertiesStaticInstance = new MonitorProperties(log);	
 
 	}
 
-	public static MonitorProperties getInstance(org.slf4j.Logger log) throws Exception{
+	public static MonitorProperties getInstance(org.slf4j.Logger log) throws EngineException{
 
-		if(MonitorProperties.monitorPropertiesStaticInstance==null)
-			MonitorProperties.initialize(log);
+		if(MonitorProperties.monitorPropertiesStaticInstance==null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (MonitorProperties.class) {
+				MonitorProperties.initialize(log);
+			}
+		}
 
 		return MonitorProperties.monitorPropertiesStaticInstance;
 	}
@@ -75,7 +79,7 @@ public class MonitorProperties {
 	 *
 	 * 
 	 */
-	public MonitorProperties(org.slf4j.Logger log) throws EngineException{
+	private MonitorProperties(org.slf4j.Logger log) throws EngineException{
 
 		/* ---- Lettura del cammino del file di configurazione ---- */
 
@@ -84,19 +88,12 @@ public class MonitorProperties {
 		try{  
 			properties = MonitorProperties.class.getResourceAsStream("/"+CostantiConfigurazione.CONFIG_FILENAME);
 			if(properties==null){
-				throw new Exception("Properties "+CostantiConfigurazione.CONFIG_FILENAME+" not found");
+				throw new EngineException("Properties "+CostantiConfigurazione.CONFIG_FILENAME+" not found");
 			}
 			propertiesReader.load(properties);
 			properties.close();
 		}catch(Exception e) {
-			log.error("Riscontrato errore durante la lettura del file '"+CostantiConfigurazione.CONFIG_FILENAME+"': "+e.getMessage(),e);
-			try{
-				if(properties!=null)
-					properties.close();
-			}catch(Exception er){
-				// close
-			}
-			throw new EngineException(e.getMessage(),e);
+			doError(log, properties, e);
 		}	
 	
 		try{
@@ -106,7 +103,16 @@ public class MonitorProperties {
 		}
 		
 	}
-
+	private void doError(org.slf4j.Logger log, java.io.InputStream properties, Exception e) throws EngineException {
+		log.error("Riscontrato errore durante la lettura del file '"+CostantiConfigurazione.CONFIG_FILENAME+"': "+e.getMessage(),e);
+		try{
+			if(properties!=null)
+				properties.close();
+		}catch(Exception er){
+			// close
+		}
+		throw new EngineException(e.getMessage(),e);
+	}
 	
 	
 	
@@ -134,10 +140,9 @@ public class MonitorProperties {
 		}else{
 			tmp = this.reader.getValue(name);
 		}
-		if(tmp==null){
-			if(required){
-				throw new UtilsException("Property ["+name+"] not found");
-			}
+		if(tmp==null &&
+				required){
+			throw new UtilsException("Property ["+name+"] not found");
 		}
 		if(tmp!=null){
 			return tmp.trim();

@@ -767,7 +767,7 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 					if(!useDefaultManager) {
 						if(!prop.isTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource_useDBUtils()) {
 							// le aggiungo altrimenti non c'è altro modo per vederle
-							risorseConsegnePreseInCaricoSmistatore = DBConsegnePreseInCaricoManager.getStatoRisorse_smistatore();
+							risorseConsegnePreseInCaricoSmistatore = DBConsegnePreseInCaricoManager.getStatoRisorseSmistatore();
 						}
 					}
 					
@@ -775,7 +775,7 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 					if(!useDefaultManager) {
 						if(!prop.isTimerConsegnaContenutiApplicativi_runtime_dataSource_useDBUtils()) {
 							// le aggiungo altrimenti non c'è altro modo per vederle
-							risorseConsegnePreseInCaricoRuntime = DBConsegnePreseInCaricoManager.getStatoRisorse_runtime();
+							risorseConsegnePreseInCaricoRuntime = DBConsegnePreseInCaricoManager.getStatoRisorseRuntime();
 						}
 					}
 					
@@ -783,7 +783,7 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 					if(!useDefaultManager) {
 						if(!prop.isTimerConsegnaContenutiApplicativi_transazioni_dataSource_useDBUtils()) {
 							// le aggiungo altrimenti non c'è altro modo per vederle
-							risorseConsegnePreseInCaricoTransazioni = DBConsegnePreseInCaricoManager.getStatoRisorse_transazioni();
+							risorseConsegnePreseInCaricoTransazioni = DBConsegnePreseInCaricoManager.getStatoRisorseTransazioni();
 						}
 					}
 				}

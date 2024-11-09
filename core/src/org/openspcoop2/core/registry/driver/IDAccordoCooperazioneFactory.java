@@ -35,6 +35,7 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
  */
 public class IDAccordoCooperazioneFactory {
 
+	private static final String ACCORDO_NON_FORNITO = "Accordo non fornito";
 	
 	private static IDAccordoCooperazioneFactory factory = null;
 	private static synchronized void init(){
@@ -44,7 +45,10 @@ public class IDAccordoCooperazioneFactory {
 	}
 	public static IDAccordoCooperazioneFactory getInstance(){
 		if(IDAccordoCooperazioneFactory.factory==null){
-			IDAccordoCooperazioneFactory.init();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED'
+			synchronized (IDAccordoCooperazioneFactory.class) {
+				IDAccordoCooperazioneFactory.init();
+			}
 		}
 		return IDAccordoCooperazioneFactory.factory;
 	}
@@ -95,7 +99,7 @@ public class IDAccordoCooperazioneFactory {
 	
 	public String getUriFromAccordo(AccordoCooperazione accordo)  throws DriverRegistroServiziException{
 		if(accordo==null){
-			throw new DriverRegistroServiziException("Accordo non fornito");
+			throw new DriverRegistroServiziException(ACCORDO_NON_FORNITO);
 		}
 		IDAccordo idAccordo = this.build(accordo.getNome(),BeanUtilities.getSoggettoReferenteID(accordo.getSoggettoReferente()),accordo.getVersione());
 		return this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
@@ -103,7 +107,7 @@ public class IDAccordoCooperazioneFactory {
 	
 	public String getUriFromValues(String nomeAS,String tipoSoggettoReferente,String nomeSoggettoReferente,int ver)  throws DriverRegistroServiziException{
 		if(nomeAS==null){
-			throw new DriverRegistroServiziException("Accordo non fornito");
+			throw new DriverRegistroServiziException(ACCORDO_NON_FORNITO);
 		}
 		IDSoggetto soggettoReferente = null;
 		if(tipoSoggettoReferente!=null && nomeSoggettoReferente!=null)
@@ -114,7 +118,7 @@ public class IDAccordoCooperazioneFactory {
 	
 	public String getUriFromValues(String nomeAS,IDSoggetto soggettoReferente,int ver)  throws DriverRegistroServiziException{
 		if(nomeAS==null){
-			throw new DriverRegistroServiziException("Accordo non fornito");
+			throw new DriverRegistroServiziException(ACCORDO_NON_FORNITO);
 		}
 		if(soggettoReferente==null){
 			return this.getUriFromValues(nomeAS,null,null,ver);
@@ -129,7 +133,7 @@ public class IDAccordoCooperazioneFactory {
 	
 	public IDAccordoCooperazione getIDAccordoFromAccordo(AccordoCooperazione accordo) throws DriverRegistroServiziException{
 		if(accordo==null){
-			throw new DriverRegistroServiziException("Accordo non fornito");
+			throw new DriverRegistroServiziException(ACCORDO_NON_FORNITO);
 		}
 		IDAccordo idAccordo = this.build(accordo.getNome(),BeanUtilities.getSoggettoReferenteID(accordo.getSoggettoReferente()),accordo.getVersione());
 		return this.build(idAccordo);
@@ -137,7 +141,7 @@ public class IDAccordoCooperazioneFactory {
 	
 	public IDAccordoCooperazione getIDAccordoFromValues(String nomeAS,String tipoSoggettoReferente,String nomeSoggettoReferente,int ver) throws DriverRegistroServiziException{
 		if(nomeAS==null){
-			throw new DriverRegistroServiziException("Accordo non fornito");
+			throw new DriverRegistroServiziException(ACCORDO_NON_FORNITO);
 		}
 		IDSoggetto soggettoReferente = null;
 		if(tipoSoggettoReferente!=null && nomeSoggettoReferente!=null)
@@ -145,7 +149,7 @@ public class IDAccordoCooperazioneFactory {
 		IDAccordo idAccordo = this.build(nomeAS,soggettoReferente,ver);
 		return this.build(idAccordo);
 	}
-	public IDAccordoCooperazione getIDAccordoFromValuesWithoutCheck(String nomeAS,String tipoSoggettoReferente,String nomeSoggettoReferente,int ver) throws DriverRegistroServiziException{
+	public IDAccordoCooperazione getIDAccordoFromValuesWithoutCheck(String nomeAS,String tipoSoggettoReferente,String nomeSoggettoReferente,int ver) {
 		IDSoggetto soggettoReferente = new IDSoggetto(tipoSoggettoReferente,nomeSoggettoReferente);
 		IDAccordo idAccordo = this.build(nomeAS,soggettoReferente,ver);
 		return this.build(idAccordo);

@@ -58,6 +58,14 @@ public class DBTransazioniManager implements IMonitoraggioRisorsa {
 		}
 	}
 	public static DBTransazioniManager getInstance() {
+		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+		if (staticInstanceDBTransazioniManager == null) {
+	        synchronized (DBTransazioniManager.class) {
+	            if (staticInstanceDBTransazioniManager == null) {
+	                return null;
+	            }
+	        }
+	    }
 		return staticInstanceDBTransazioniManager;
 	}
 	
@@ -83,12 +91,12 @@ public class DBTransazioniManager implements IMonitoraggioRisorsa {
 	}
 	private DataSource datasourceTransazioni;
 	
-	public DBTransazioniManager(DBManager dbManagerRuntimePdD,Logger alog,String tipoDatabase) throws Exception {
+	private DBTransazioniManager(DBManager dbManagerRuntimePdD,Logger alog,String tipoDatabase) throws Exception {
 		this.dbManagerRuntimePdD = dbManagerRuntimePdD;
 		this.log = alog;
 		this.tipoDatabase = tipoDatabase;
 	}
-	public DBTransazioniManager(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDatabase, 
+	private DBTransazioniManager(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDatabase, 
 			boolean useOp2UtilsDatasource, boolean bindJMX) throws Exception {
 		try {
 			this.log = alog;

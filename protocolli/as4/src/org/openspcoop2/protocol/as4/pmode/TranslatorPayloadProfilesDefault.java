@@ -52,7 +52,10 @@ public class TranslatorPayloadProfilesDefault {
 	}
 	public static TranslatorPayloadProfilesDefault getTranslator() throws ProtocolException {
 		if(translatorInstance==null) {
-			initTranslator();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (TranslatorPayloadProfilesDefault.class) {
+				initTranslator();
+			}
 		}
 		return translatorInstance;
 	}
@@ -89,11 +92,11 @@ public class TranslatorPayloadProfilesDefault {
 	public String getPayloadDefault() throws ProtocolException {
 		try {
 			if(this.payloadDefault==null) {
-				//System.out.println("================ getPayloadDefault ==================");
+				/**System.out.println("================ getPayloadDefault ==================");*/
 				Map<String, Object> map = new HashMap<>();
 				StringWriter writer = new StringWriter();
 				this.templatePayloadDefault.process(map, writer);
-				//System.out.println("LETTO: "+writer.toString());
+				/**System.out.println("LETTO: "+writer.toString());*/
 				return writer.toString();
 			}
 			else {
@@ -107,7 +110,7 @@ public class TranslatorPayloadProfilesDefault {
 		try {
 			
 			BufferedReader br = new BufferedReader(new StringReader(this.getPayloadDefault()));
-			List<Payload> list = new ArrayList<Payload>();
+			List<Payload> list = new ArrayList<>();
 			String line;
 			StringBuilder bf = new StringBuilder();
 			while ((line = br.readLine()) != null) {
@@ -123,11 +126,11 @@ public class TranslatorPayloadProfilesDefault {
 						sWithNamespace = sWithNamespace.replace("<payload ", 
 								"<ns:payload xmlns:ns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\" ");
 						sWithNamespace = sWithNamespace.replace("</payload","</ns:payload"); 
-						//System.out.println("Deserializzo ["+sWithNamespace+"]");
+						/**System.out.println("Deserializzo ["+sWithNamespace+"]");*/
 						
 						eu.domibus.configuration.utils.serializer.JaxbDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JaxbDeserializer();
 						Payload p = deserializer.readPayload(sWithNamespace.getBytes());
-						//System.out.println("Test ["+p.getName()+"]");
+						/**System.out.println("Test ["+p.getName()+"]");*/
 						list.add(p);
 					}
 					bf = new StringBuilder();
@@ -145,11 +148,11 @@ public class TranslatorPayloadProfilesDefault {
 	public String getPayloadProfileDefault() throws ProtocolException {
 		try {
 			if(this.payloadProfileDefault==null) {
-				//System.out.println("================ getPayloadProfileDefault ==================");
+				/**System.out.println("================ getPayloadProfileDefault ==================");*/
 				Map<String, Object> map = new HashMap<>();
 				StringWriter writer = new StringWriter();
 				this.templatePayloadProfileDefault.process(map, writer);
-				//System.out.println("LETTO: "+writer.toString());
+				/**System.out.println("LETTO: "+writer.toString());*/
 				return writer.toString();
 			}
 			else {
@@ -164,7 +167,7 @@ public class TranslatorPayloadProfilesDefault {
 		try {
 			
 			BufferedReader br = new BufferedReader(new StringReader(this.getPayloadProfileDefault()));
-			List<PayloadProfile> list = new ArrayList<PayloadProfile>();
+			List<PayloadProfile> list = new ArrayList<>();
 			String line;
 			StringBuilder bf = new StringBuilder();
 			while ((line = br.readLine()) != null) {
@@ -180,11 +183,11 @@ public class TranslatorPayloadProfilesDefault {
 						sWithNamespace = sWithNamespace.replace("<payloadProfile ", 
 								"<ns:payloadProfile xmlns:ns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\" ");
 						sWithNamespace = sWithNamespace.replace("</payloadProfile","</ns:payloadProfile"); 
-						//System.out.println("Deserializzo ["+sWithNamespace+"]");
+						/**System.out.println("Deserializzo ["+sWithNamespace+"]");*/
 						
 						eu.domibus.configuration.utils.serializer.JaxbDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JaxbDeserializer();
 						PayloadProfile p = deserializer.readPayloadProfile(sWithNamespace.getBytes());
-						//System.out.println("DESERIALIZZATO ["+p.getName()+"] ["+p.getAttachmentList().size()+"]");
+						/**System.out.println("DESERIALIZZATO ["+p.getName()+"] ["+p.getAttachmentList().size()+"]");*/
 						list.add(p);
 					}
 					bf = new StringBuilder();

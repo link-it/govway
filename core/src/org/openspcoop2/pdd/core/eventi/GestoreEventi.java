@@ -22,10 +22,13 @@ package org.openspcoop2.pdd.core.eventi;
 import java.sql.Connection;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.dao.DAOFactoryException;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.eventi.Evento;
 import org.openspcoop2.core.eventi.dao.jdbc.JDBCServiceManager;
+import org.openspcoop2.generic_project.exception.NotImplementedException;
+import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -44,14 +47,17 @@ import org.slf4j.Logger;
 public class GestoreEventi {
 
 	private static GestoreEventi staticInstance = null;
-	private static synchronized void initialize() throws Exception{
+	private static synchronized void initialize() throws DriverConfigurazioneException{
 		if(staticInstance==null){
 			staticInstance = new GestoreEventi();
 		}
 	}
-	public static GestoreEventi getInstance() throws Exception{
+	public static GestoreEventi getInstance() throws DriverConfigurazioneException{
 		if(staticInstance==null){
-			initialize();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (GestoreEventi.class) {
+				initialize();
+			}
 		}
 		return staticInstance;
 	}
@@ -67,7 +73,7 @@ public class GestoreEventi {
 	
     private static final String ID_MODULO = "GestoreEventi";
     
-    public GestoreEventi() throws Exception{
+    private GestoreEventi() throws DriverConfigurazioneException{
     	
     	// ** config **
 		
@@ -113,11 +119,11 @@ public class GestoreEventi {
 			dbManager = DBTransazioniManager.getInstance();
 			r = dbManager.getResource(this.properties.getIdentitaPortaDefaultWithoutProtocol(), modulo, evento.getIdTransazione(), logError);
 			if(r==null){
-				throw new Exception("Risorsa al database non disponibile");
+				throw new DriverConfigurazioneException("Risorsa al database non disponibile");
 			}
 			Connection con = (Connection) r.getResource();
 			if(con == null)
-				throw new Exception("Connessione non disponibile");	
+				throw new DriverConfigurazioneException("Connessione non disponibile");	
 			this.log(evento, con);
 			
 		}finally{
@@ -129,23 +135,25 @@ public class GestoreEventi {
 			}
 		}
     }
-    public void log(Evento evento, Connection connection) throws Exception{
+    public void log(Evento evento, Connection connection) throws DriverConfigurazioneException, DAOFactoryException, ServiceException, NotImplementedException{
     	
     	if(evento.getOraRegistrazione()==null){
     		evento.setOraRegistrazione(DateManager.getDate());
     	}
     	
-    	if(connection == null)
-			throw new Exception("Connessione non fornita");	
+    	if(connection == null) {
+			throw new DriverConfigurazioneException("Connessione non fornita");
+    	}
     	
     	JDBCServiceManager jdbcServiceManager = 
     			(JDBCServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.eventi.utils.ProjectInfo.getInstance(), connection, 
     					this.daoFactoryServiceManagerProperties, this.daoFactoryLogger);
     	jdbcServiceManager.getEventoService().create(evento);  	
     	
-    	this.daoFactoryLogger.info("CREATO EVENTO: "+EventiUtilities.toString(evento));
+    	String msg = "CREATO EVENTO: "+EventiUtilities.toString(evento);
+    	this.daoFactoryLogger.info(msg);
 
-    	//System.out.println("CREATO EVENTO: "+EventiUtilities.toString(evento));
+    	/**System.out.println("CREATO EVENTO: "+EventiUtilities.toString(evento));*/
     }
 
 }

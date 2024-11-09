@@ -51,8 +51,12 @@ public class DAOFactoryProperties {
 
 	public static DAOFactoryProperties getInstance(Logger log) throws Exception{
 
-		if(DAOFactoryProperties.daoFactoryProperties==null)
-			DAOFactoryProperties.initialize(log);
+		if(DAOFactoryProperties.daoFactoryProperties==null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED'
+			synchronized (DAOFactoryProperties.class) {
+				DAOFactoryProperties.initialize(log);
+			}
+		}
 
 		return DAOFactoryProperties.daoFactoryProperties;
 	}
@@ -77,7 +81,7 @@ public class DAOFactoryProperties {
 	 *
 	 * 
 	 */
-	public DAOFactoryProperties(Logger log) throws Exception{
+	protected DAOFactoryProperties(Logger log) throws Exception{
 
 		/* ---- Lettura del cammino del file di configurazione ---- */
 

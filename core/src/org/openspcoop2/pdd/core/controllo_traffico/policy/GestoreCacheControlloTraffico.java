@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
@@ -298,14 +299,17 @@ public class GestoreCacheControlloTraffico {
 	
 	
 	private static GestoreCacheControlloTraffico staticInstance = null;
-	public static synchronized void initialize(ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico) throws Exception{
+	public static synchronized void initialize(ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico) throws CoreException{
 		if(staticInstance==null){
 			staticInstance = new GestoreCacheControlloTraffico(configurazioneControlloTraffico);
 		}
 	}
-	public static GestoreCacheControlloTraffico getInstance() throws Exception{
+	public static GestoreCacheControlloTraffico getInstance() throws CoreException{
 		if(staticInstance==null){
-			throw new Exception("GestoreCacheControlloTraffico non inizializzato");
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (GestoreCacheControlloTraffico.class) {
+				throw new CoreException("GestoreCacheControlloTraffico non inizializzato");
+			}
 		}
 		return staticInstance;
 	}
@@ -316,7 +320,7 @@ public class GestoreCacheControlloTraffico {
 	private boolean debug;
 	private ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico;
 	
-	public GestoreCacheControlloTraffico(ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico) throws Exception{
+	private GestoreCacheControlloTraffico(ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico) throws CoreException {
 		this.datiStatisticiReader = DatiStatisticiDAOManager.getInstance();
 		if(configurazioneControlloTraffico.isNotifierEnabled()){
 			this.datiNotifierReader = configurazioneControlloTraffico.getNotifier();

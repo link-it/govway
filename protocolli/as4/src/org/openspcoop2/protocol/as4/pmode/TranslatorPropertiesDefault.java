@@ -52,7 +52,10 @@ public class TranslatorPropertiesDefault {
 	}
 	public static TranslatorPropertiesDefault getTranslator() throws ProtocolException {
 		if(translatorInstance==null) {
-			initTranslator();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (TranslatorPropertiesDefault.class) {
+				initTranslator();
+			}
 		}
 		return translatorInstance;
 	}
@@ -91,7 +94,7 @@ public class TranslatorPropertiesDefault {
 			if(deleteValue) {
 				List<Property> list  = this.getListPropertyDefault();
 				StringBuilder bf = new StringBuilder();
-				if(list!=null && list.size()>0) {
+				if(list!=null && !list.isEmpty()) {
 					for (Property property : list) {
 						bf.append("\t\t\t<property name=\"");
 						bf.append(property.getName());
@@ -113,11 +116,11 @@ public class TranslatorPropertiesDefault {
 			}
 			else {
 				if(this.propertyDefault==null) {
-					//System.out.println("================ getPropertyDefault ==================");
+					/**System.out.println("================ getPropertyDefault ==================");*/
 					Map<String, Object> map = new HashMap<>();
 					StringWriter writer = new StringWriter();
 					this.templatePropertyDefault.process(map, writer);
-					//System.out.println("LETTO: "+writer.toString());
+					/**System.out.println("LETTO: "+writer.toString());*/
 					return writer.toString();
 				}
 				else {
@@ -132,7 +135,7 @@ public class TranslatorPropertiesDefault {
 		try {
 			
 			BufferedReader br = new BufferedReader(new StringReader(this.getPropertyDefault(false)));
-			List<Property> list = new ArrayList<Property>();
+			List<Property> list = new ArrayList<>();
 			String line;
 			StringBuilder bf = new StringBuilder();
 			while ((line = br.readLine()) != null) {
@@ -148,11 +151,11 @@ public class TranslatorPropertiesDefault {
 						sWithNamespace = sWithNamespace.replace("<property ", 
 								"<ns:property xmlns:ns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\" ");
 						sWithNamespace = sWithNamespace.replace("</property","</ns:property"); 
-						//System.out.println("Deserializzo ["+sWithNamespace+"]");
+						/**System.out.println("Deserializzo ["+sWithNamespace+"]");*/
 						
 						eu.domibus.configuration.utils.serializer.JaxbDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JaxbDeserializer();
 						Property p = deserializer.readProperty(sWithNamespace.getBytes());
-						//System.out.println("Test ["+p.getName()+"] ValueNotNull["+p.getValue()!=null+"]");
+						/**System.out.println("Test ["+p.getName()+"] ValueNotNull["+p.getValue()!=null+"]");*/
 						list.add(p);
 					}
 					bf = new StringBuilder();
@@ -170,11 +173,11 @@ public class TranslatorPropertiesDefault {
 	public String getPropertySetDefault() throws ProtocolException {
 		try {
 			if(this.payloadPropertySetDefault==null) {
-				//System.out.println("================ getPropertySetDefault ==================");
+				/**System.out.println("================ getPropertySetDefault ==================");*/
 				Map<String, Object> map = new HashMap<>();
 				StringWriter writer = new StringWriter();
 				this.templatePropertySetDefault.process(map, writer);
-				//System.out.println("LETTO: "+writer.toString());
+				/**System.out.println("LETTO: "+writer.toString());*/
 				return writer.toString();
 			}
 			else {
@@ -189,7 +192,7 @@ public class TranslatorPropertiesDefault {
 		try {
 			
 			BufferedReader br = new BufferedReader(new StringReader(this.getPropertySetDefault()));
-			List<PropertySet> list = new ArrayList<PropertySet>();
+			List<PropertySet> list = new ArrayList<>();
 			String line;
 			StringBuilder bf = new StringBuilder();
 			while ((line = br.readLine()) != null) {
@@ -205,11 +208,11 @@ public class TranslatorPropertiesDefault {
 						sWithNamespace = sWithNamespace.replace("<propertySet ", 
 								"<ns:propertySet xmlns:ns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\" ");
 						sWithNamespace = sWithNamespace.replace("</propertySet","</ns:propertySet"); 
-						//System.out.println("Deserializzo ["+sWithNamespace+"]");
+						/**System.out.println("Deserializzo ["+sWithNamespace+"]");*/
 						
 						eu.domibus.configuration.utils.serializer.JaxbDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JaxbDeserializer();
 						PropertySet p = deserializer.readPropertySet(sWithNamespace.getBytes());
-						//System.out.println("Test ["+p.getName()+"] size["+p.getPropertyRefList().size()+"]");
+						/**System.out.println("Test ["+p.getName()+"] size["+p.getPropertyRefList().size()+"]");*/
 						list.add(p);
 					}
 					bf = new StringBuilder();

@@ -137,7 +137,10 @@ public class GestoreConsegnaMultipla {
 	}
 	public static GestoreConsegnaMultipla getInstance() throws TransactionMultiDeliverException {
 		if(gestoreConsegnaMultipla==null){
-			init();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (GestoreConsegnaMultipla.class) {
+				init();
+			}
 		}
 		return gestoreConsegnaMultipla;
 	}
@@ -171,7 +174,7 @@ public class GestoreConsegnaMultipla {
 	private IDumpProducer dumpOpenSPCoopAppender = null;
 	private boolean transazioniRegistrazioneDumpHeadersCompactEnabled = false;
 
-	public GestoreConsegnaMultipla(Logger log,Logger logSql,
+	private GestoreConsegnaMultipla(Logger log,Logger logSql,
 			String tipoDatabase,boolean debug) throws TransactionMultiDeliverException{
 
 		this.log = log;

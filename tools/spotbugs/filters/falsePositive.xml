@@ -54,6 +54,16 @@
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
   </Match>
   <Match>
+    <Class name="org.openspcoop2.core.commons.dao.DAOFactory" />
+    <Method name="&lt;init&gt;" isConstructor="true"/>
+    <Bug pattern="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR" />
+  </Match> 
+  <Match>
+    <Class name="org.openspcoop2.core.commons.dao.DAOFactoryProperties" />
+    <Method name="&lt;init&gt;" isConstructor="true"/>
+    <Bug pattern="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR" />
+  </Match>
+  <Match>
     <Class name="org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_LIB" />
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
   </Match>
@@ -244,6 +254,16 @@
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
   </Match>
   <Match>
+    <Class name="org.openspcoop2.utils.properties.MapProperties" />
+    <Method name="&lt;init&gt;" isConstructor="true"/>
+    <Bug pattern="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR" />
+  </Match>
+  <Match>
+    <Class name="org.openspcoop2.utils.resources.Loader" />
+    <Method name="&lt;init&gt;" isConstructor="true"/>
+    <Bug pattern="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR" />
+  </Match>  
+  <Match>
     <Class name="org.openspcoop2.utils.semaphore.SemaphoreEngine" />
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
   </Match>
@@ -267,6 +287,11 @@
     <Class name="org.openspcoop2.utils.sonde.SondaFactory" />
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
   </Match>
+  <Match>
+    <Class name="org.openspcoop2.utils.xml.XMLUtils" />
+    <Method name="&lt;init&gt;" isConstructor="true"/>
+    <Bug pattern="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR" />
+  </Match>  
 
   <Match>
     <Class name="org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities" />
@@ -287,6 +312,12 @@
     <Method name="main" />
     <Bug pattern="DMI_CONSTANT_DB_PASSWORD" />
   </Match>
+
+  <Match>
+    <Class name="org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopContext" />
+    <Method name="&lt;init&gt;" isConstructor="true"/>
+    <Bug pattern="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR" />
+  </Match> 
 
   <Match>
     <Class name="org.openspcoop2.web.lib.audit.DriverAudit" />
@@ -316,5 +347,19 @@
     <Class name="org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB" />
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
   </Match>
+
+  <Match>
+    <Class name="org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils" />
+    <Method name="&lt;init&gt;" isConstructor="true"/>
+    <Bug pattern="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR" />
+  </Match> 
+  <Match>
+    <Class name="org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils" />
+    <Bug pattern="SING_SINGLETON_IMPLEMENTS_SERIALIZABLE" />
+  </Match> 
+  <Match>
+    <Class name="org.openspcoop2.web.monitor.core.bean.ApplicationBean" />
+    <Bug pattern="SING_SINGLETON_IMPLEMENTS_SERIALIZABLE" />
+  </Match> 
 
 </FindBugsFilter>

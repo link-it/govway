@@ -27,6 +27,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
 
@@ -39,6 +40,8 @@ import org.slf4j.Logger;
  */
 public class StatisticsCollection {
 
+	private StatisticsCollection() {}
+	
 	private static final StatisticsCollection statisticsCollection =  new StatisticsCollection();
 	public static StatisticsCollection getStatisticsCollection(){
 		return StatisticsCollection.statisticsCollection;
@@ -64,7 +67,7 @@ public class StatisticsCollection {
 			return false;
 		}catch(Exception e){
 			// non sono previsti errori
-			throw new RuntimeException(e.getMessage(),e);
+			throw new UtilsRuntimeException(e.getMessage(),e);
 		}
 	}
 	
@@ -75,12 +78,12 @@ public class StatisticsCollection {
 	public static void update(Statistic stat){
 		semaphore.acquireThrowRuntime("update");
 		try {
-			_update(stat);
+			updateEngine(stat);
 		}finally {
 			semaphore.release("update");
 		}
 	}
-	private static void _update(Statistic stat){
+	private static void updateEngine(Statistic stat){
 
 		if(!TipoPdD.APPLICATIVA.equals(stat.getTipoPdD()) &&
 				!TipoPdD.DELEGATA.equals(stat.getTipoPdD()) ){
@@ -102,16 +105,16 @@ public class StatisticsCollection {
 		}
 		
 		// Cechk soglia sulla dimensione
-		/*if(needResetForOverSizeLong()){
+		/**if(needResetForOverSizeLong()){
 			reset();
 		}*/
 		
 		// Contatori
 		StatisticsCollection.incrementCount(stat.getEsito(), stat.getProtocollo(), StatisticsCollection.statisticsCollection.statNumeroTransazioni);
 		if(TipoPdD.APPLICATIVA.equals(stat.getTipoPdD())){
-			StatisticsCollection.incrementCount(stat.getEsito(), stat.getProtocollo(), StatisticsCollection.statisticsCollection.statNumeroTransazioni_PA);
+			StatisticsCollection.incrementCount(stat.getEsito(), stat.getProtocollo(), StatisticsCollection.statisticsCollection.statNumeroTransazioniPA);
 		}else if(TipoPdD.DELEGATA.equals(stat.getTipoPdD())){
-			StatisticsCollection.incrementCount(stat.getEsito(), stat.getProtocollo(), StatisticsCollection.statisticsCollection.statNumeroTransazioni_PD);
+			StatisticsCollection.incrementCount(stat.getEsito(), stat.getProtocollo(), StatisticsCollection.statisticsCollection.statNumeroTransazioniPD);
 		}
 		
 		// Latenze
@@ -123,9 +126,9 @@ public class StatisticsCollection {
 			if(latenzaTotale>0){
 				StatisticsCollection.computeLatenza(latenzaTotale, StatisticsCollection.statisticsCollection.statLatenzaAttraversamento);
 				if(TipoPdD.APPLICATIVA.equals(stat.getTipoPdD())){
-					StatisticsCollection.computeLatenza(latenzaTotale, StatisticsCollection.statisticsCollection.statLatenzaAttraversamento_PA);
+					StatisticsCollection.computeLatenza(latenzaTotale, StatisticsCollection.statisticsCollection.statLatenzaAttraversamentoPA);
 				}else if(TipoPdD.DELEGATA.equals(stat.getTipoPdD())){
-					StatisticsCollection.computeLatenza(latenzaTotale, StatisticsCollection.statisticsCollection.statLatenzaAttraversamento_PD);
+					StatisticsCollection.computeLatenza(latenzaTotale, StatisticsCollection.statisticsCollection.statLatenzaAttraversamentoPD);
 				}	
 			}
 			
@@ -133,11 +136,11 @@ public class StatisticsCollection {
 			if(stat.getTimeMillisUscitaRichiesta()>0 && stat.getTimeMillisIngressoRichiesta()>0)
 				latenzaRichiesta = stat.getTimeMillisUscitaRichiesta() - stat.getTimeMillisIngressoRichiesta();
 			if(latenzaRichiesta>0){
-				StatisticsCollection.computeLatenza(latenzaRichiesta, StatisticsCollection.statisticsCollection.statLatenzaAttraversamento_request);
+				StatisticsCollection.computeLatenza(latenzaRichiesta, StatisticsCollection.statisticsCollection.statLatenzaAttraversamentoRequest);
 				if(TipoPdD.APPLICATIVA.equals(stat.getTipoPdD())){
-					StatisticsCollection.computeLatenza(latenzaRichiesta, StatisticsCollection.statisticsCollection.statLatenzaAttraversamento_PA_request);
+					StatisticsCollection.computeLatenza(latenzaRichiesta, StatisticsCollection.statisticsCollection.statLatenzaAttraversamentoPARequest);
 				}else if(TipoPdD.DELEGATA.equals(stat.getTipoPdD())){
-					StatisticsCollection.computeLatenza(latenzaRichiesta, StatisticsCollection.statisticsCollection.statLatenzaAttraversamento_PD_request);
+					StatisticsCollection.computeLatenza(latenzaRichiesta, StatisticsCollection.statisticsCollection.statLatenzaAttraversamentoPDRequest);
 				}	
 			}
 			
@@ -145,11 +148,11 @@ public class StatisticsCollection {
 			if(stat.getTimeMillisUscitaRisposta()>0 && stat.getTimeMillisIngressoRisposta()>0)
 				latenzaRisposta = stat.getTimeMillisUscitaRisposta() - stat.getTimeMillisIngressoRisposta();
 			if(latenzaRisposta>0){
-				StatisticsCollection.computeLatenza(latenzaRisposta, StatisticsCollection.statisticsCollection.statLatenzaAttraversamento_response);
+				StatisticsCollection.computeLatenza(latenzaRisposta, StatisticsCollection.statisticsCollection.statLatenzaAttraversamentoResponse);
 				if(TipoPdD.APPLICATIVA.equals(stat.getTipoPdD())){
-					StatisticsCollection.computeLatenza(latenzaRisposta, StatisticsCollection.statisticsCollection.statLatenzaAttraversamento_PA_response);
+					StatisticsCollection.computeLatenza(latenzaRisposta, StatisticsCollection.statisticsCollection.statLatenzaAttraversamentoPAResponse);
 				}else if(TipoPdD.DELEGATA.equals(stat.getTipoPdD())){
-					StatisticsCollection.computeLatenza(latenzaRisposta, StatisticsCollection.statisticsCollection.statLatenzaAttraversamento_PD_response);
+					StatisticsCollection.computeLatenza(latenzaRisposta, StatisticsCollection.statisticsCollection.statLatenzaAttraversamentoPDResponse);
 				}	
 			}
 				
@@ -161,52 +164,52 @@ public class StatisticsCollection {
 		long inRequestSize = stat.getDimensioneIngressoRichiesta();
 		if(inRequestSize>0){
 			StatisticsCollection.computeDimensione(inRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio);
-			StatisticsCollection.computeDimensione(inRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio_in_request);
+			StatisticsCollection.computeDimensione(inRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggioInRequest);
 			if(TipoPdD.APPLICATIVA.equals(stat.getTipoPdD())){
-				StatisticsCollection.computeDimensione(inRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio_PA);
-				StatisticsCollection.computeDimensione(inRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio_PA_in_request);
+				StatisticsCollection.computeDimensione(inRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggioPA);
+				StatisticsCollection.computeDimensione(inRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggioPAInRequest);
 			}else if(TipoPdD.DELEGATA.equals(stat.getTipoPdD())){
-				StatisticsCollection.computeDimensione(inRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio_PD);
-				StatisticsCollection.computeDimensione(inRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio_PD_in_request);
+				StatisticsCollection.computeDimensione(inRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggioPD);
+				StatisticsCollection.computeDimensione(inRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggioPDInRequest);
 			}
 		}
 		
 		long outRequestSize = stat.getDimensioneUscitaRichiesta();
 		if(outRequestSize>0){
 			StatisticsCollection.computeDimensione(outRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio);
-			StatisticsCollection.computeDimensione(outRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio_out_request);
+			StatisticsCollection.computeDimensione(outRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggioOutRequest);
 			if(TipoPdD.APPLICATIVA.equals(stat.getTipoPdD())){
-				StatisticsCollection.computeDimensione(outRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio_PA);
-				StatisticsCollection.computeDimensione(outRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio_PA_out_request);
+				StatisticsCollection.computeDimensione(outRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggioPA);
+				StatisticsCollection.computeDimensione(outRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggioPAOutRequest);
 			}else if(TipoPdD.DELEGATA.equals(stat.getTipoPdD())){
-				StatisticsCollection.computeDimensione(outRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio_PD);
-				StatisticsCollection.computeDimensione(outRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio_PD_out_request);
+				StatisticsCollection.computeDimensione(outRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggioPD);
+				StatisticsCollection.computeDimensione(outRequestSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggioPDOutRequest);
 			}
 		}
 		
 		long inResponseSize = stat.getDimensioneIngressoRisposta();
 		if(inResponseSize>0){
 			StatisticsCollection.computeDimensione(inResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio);
-			StatisticsCollection.computeDimensione(inResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio_in_response);
+			StatisticsCollection.computeDimensione(inResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggioInResponse);
 			if(TipoPdD.APPLICATIVA.equals(stat.getTipoPdD())){
-				StatisticsCollection.computeDimensione(inResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio_PA);
-				StatisticsCollection.computeDimensione(inResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio_PA_in_response);
+				StatisticsCollection.computeDimensione(inResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggioPA);
+				StatisticsCollection.computeDimensione(inResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggioPAInResponse);
 			}else if(TipoPdD.DELEGATA.equals(stat.getTipoPdD())){
-				StatisticsCollection.computeDimensione(inResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio_PD);
-				StatisticsCollection.computeDimensione(inResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio_PD_in_response);
+				StatisticsCollection.computeDimensione(inResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggioPD);
+				StatisticsCollection.computeDimensione(inResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggioPDInResponse);
 			}
 		}
 		
 		long outResponseSize = stat.getDimensioneUscitaRisposta();
 		if(outResponseSize>0){
 			StatisticsCollection.computeDimensione(outResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio);
-			StatisticsCollection.computeDimensione(outResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio_out_response);
+			StatisticsCollection.computeDimensione(outResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggioOutResponse);
 			if(TipoPdD.APPLICATIVA.equals(stat.getTipoPdD())){
-				StatisticsCollection.computeDimensione(outResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio_PA);
-				StatisticsCollection.computeDimensione(outResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio_PA_out_response);
+				StatisticsCollection.computeDimensione(outResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggioPA);
+				StatisticsCollection.computeDimensione(outResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggioPAOutResponse);
 			}else if(TipoPdD.DELEGATA.equals(stat.getTipoPdD())){
-				StatisticsCollection.computeDimensione(outResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio_PD);
-				StatisticsCollection.computeDimensione(outResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggio_PD_out_response);
+				StatisticsCollection.computeDimensione(outResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggioPD);
+				StatisticsCollection.computeDimensione(outResponseSize, StatisticsCollection.statisticsCollection.statDimensioneMessaggioPDOutResponse);
 			}
 		}
 	}
@@ -218,78 +221,78 @@ public class StatisticsCollection {
 		if(StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamento.tmp_latenzaMediaAttraversamento_sumLatenze>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
-		if(StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamento_request.tmp_latenzaMediaAttraversamento_sumLatenze>StatisticsCollection.SOGLIA_DIMENSIONE){
+		if(StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamentoRequest.tmp_latenzaMediaAttraversamento_sumLatenze>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
-		if(StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamento_response.tmp_latenzaMediaAttraversamento_sumLatenze>StatisticsCollection.SOGLIA_DIMENSIONE){
-			return true;
-		}
-		
-		if(StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamento_PD.tmp_latenzaMediaAttraversamento_sumLatenze>StatisticsCollection.SOGLIA_DIMENSIONE){
-			return true;
-		}
-		if(StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamento_PD_request.tmp_latenzaMediaAttraversamento_sumLatenze>StatisticsCollection.SOGLIA_DIMENSIONE){
-			return true;
-		}
-		if(StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamento_PD_response.tmp_latenzaMediaAttraversamento_sumLatenze>StatisticsCollection.SOGLIA_DIMENSIONE){
+		if(StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamentoResponse.tmp_latenzaMediaAttraversamento_sumLatenze>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
 		
-		if(StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamento_PA.tmp_latenzaMediaAttraversamento_sumLatenze>StatisticsCollection.SOGLIA_DIMENSIONE){
+		if(StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamentoPD.tmp_latenzaMediaAttraversamento_sumLatenze>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
-		if(StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamento_PA_request.tmp_latenzaMediaAttraversamento_sumLatenze>StatisticsCollection.SOGLIA_DIMENSIONE){
+		if(StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamentoPDRequest.tmp_latenzaMediaAttraversamento_sumLatenze>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
-		if(StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamento_PA_response.tmp_latenzaMediaAttraversamento_sumLatenze>StatisticsCollection.SOGLIA_DIMENSIONE){
+		if(StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamentoPDResponse.tmp_latenzaMediaAttraversamento_sumLatenze>StatisticsCollection.SOGLIA_DIMENSIONE){
+			return true;
+		}
+		
+		if(StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamentoPA.tmp_latenzaMediaAttraversamento_sumLatenze>StatisticsCollection.SOGLIA_DIMENSIONE){
+			return true;
+		}
+		if(StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamentoPARequest.tmp_latenzaMediaAttraversamento_sumLatenze>StatisticsCollection.SOGLIA_DIMENSIONE){
+			return true;
+		}
+		if(StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamentoPAResponse.tmp_latenzaMediaAttraversamento_sumLatenze>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
 
 		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
-		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_in_request.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
+		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioInRequest.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
-		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_out_request.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
+		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioOutRequest.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
-		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_in_response.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
+		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioInResponse.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
-		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_out_response.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
+		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioOutResponse.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
 		
-		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PD.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
+		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioPD.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
-		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PD_in_request.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
+		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioPDInRequest.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
-		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PD_out_request.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
+		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioPDOutRequest.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
-		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PD_in_response.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
+		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioPDInResponse.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
-		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PD_out_response.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
+		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioPDOutResponse.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
 
-		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PA.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
+		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioPA.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
-		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PA_in_request.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
+		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioPAInRequest.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
-		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PA_out_request.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
+		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioPAOutRequest.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
-		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PA_in_response.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
+		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioPAInResponse.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
-		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PA_out_response.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
+		if(StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioPAOutResponse.tmp_dimensioneMediaMessaggio_sumDimensioni>StatisticsCollection.SOGLIA_DIMENSIONE){
 			return true;
 		}
 		
@@ -303,35 +306,35 @@ public class StatisticsCollection {
 		StatisticsCollection.getStatisticsCollection().dataUltimoRefresh = -1;
 		
 		StatisticsCollection.getStatisticsCollection().statNumeroTransazioni = new StatisticCount();
-		StatisticsCollection.getStatisticsCollection().statNumeroTransazioni_PD = new StatisticCount();
-		StatisticsCollection.getStatisticsCollection().statNumeroTransazioni_PA = new StatisticCount();
+		StatisticsCollection.getStatisticsCollection().statNumeroTransazioniPD = new StatisticCount();
+		StatisticsCollection.getStatisticsCollection().statNumeroTransazioniPA = new StatisticCount();
 		
 		StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamento = new StatisticTime();
-		StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamento_request = new StatisticTime();
-		StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamento_response = new StatisticTime();
-		StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamento_PD = new StatisticTime();
-		StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamento_PD_request = new StatisticTime();
-		StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamento_PD_response = new StatisticTime();
-		StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamento_PA = new StatisticTime();
-		StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamento_PA_request = new StatisticTime();
-		StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamento_PA_response = new StatisticTime();
+		StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamentoRequest = new StatisticTime();
+		StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamentoResponse = new StatisticTime();
+		StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamentoPD = new StatisticTime();
+		StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamentoPDRequest = new StatisticTime();
+		StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamentoPDResponse = new StatisticTime();
+		StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamentoPA = new StatisticTime();
+		StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamentoPARequest = new StatisticTime();
+		StatisticsCollection.getStatisticsCollection().statLatenzaAttraversamentoPAResponse = new StatisticTime();
 		
 		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio = new StatisticSize();
-		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_in_request = new StatisticSize();
-		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_out_request = new StatisticSize();
-		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_in_response = new StatisticSize();
-		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_out_response = new StatisticSize();
-		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_response = new StatisticSize();
-		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PD = new StatisticSize();
-		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PD_in_request = new StatisticSize();
-		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PD_out_request = new StatisticSize();
-		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PD_in_response = new StatisticSize();
-		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PD_out_response = new StatisticSize();
-		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PA = new StatisticSize();
-		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PA_in_request = new StatisticSize();
-		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PA_out_request = new StatisticSize();
-		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PA_in_response = new StatisticSize();
-		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PA_out_response = new StatisticSize();
+		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioInRequest = new StatisticSize();
+		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioOutRequest = new StatisticSize();
+		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioInResponse = new StatisticSize();
+		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioOutResponse = new StatisticSize();
+		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioResponse = new StatisticSize();
+		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioPD = new StatisticSize();
+		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioPDInRequest = new StatisticSize();
+		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioPDOutRequest = new StatisticSize();
+		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioPDInResponse = new StatisticSize();
+		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioPDOutResponse = new StatisticSize();
+		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioPA = new StatisticSize();
+		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioPAInRequest = new StatisticSize();
+		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioPAOutRequest = new StatisticSize();
+		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioPAInResponse = new StatisticSize();
+		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggioPAOutResponse = new StatisticSize();
 	}
 		
 	private static void incrementCount(EsitoTransazione esito,IProtocolFactory<?> protocollo, StatisticCount statCount){
@@ -346,9 +349,7 @@ public class StatisticsCollection {
 	private static void computeLatenza(long latenza,StatisticTime statTime){
 		
 		// Minima
-		if(statTime.latenzaMinimaAttraversamento<=0)
-			statTime.latenzaMinimaAttraversamento = latenza;
-		else if(latenza<statTime.latenzaMinimaAttraversamento)
+		if(statTime.latenzaMinimaAttraversamento<=0 || latenza<statTime.latenzaMinimaAttraversamento)
 			statTime.latenzaMinimaAttraversamento = latenza;
 		
 		// Massima
@@ -360,11 +361,11 @@ public class StatisticsCollection {
 		statTime.tmp_latenzaMediaAttraversamento_countTransazioni++;
 		statTime.latenzaMediaAttraversamento = statTime.tmp_latenzaMediaAttraversamento_sumLatenze/statTime.tmp_latenzaMediaAttraversamento_countTransazioni;
 		// Effettuo refresh nel controllo iniziale, almeno tutti i dati sono consistenti rispetto all'intervallo temporale
-//		if(statTime.tmp_latenzaMediaAttraversamento_sumLatenze>SOGLIA_DIMENSIONE){
+/**		if(statTime.tmp_latenzaMediaAttraversamento_sumLatenze>SOGLIA_DIMENSIONE){
 //			// azzero temporanei
 //			statTime.tmp_latenzaMediaAttraversamento_sumLatenze=statTime.tmp_latenzaMediaAttraversamento_sumLatenze;
 //			statTime.tmp_latenzaMediaAttraversamento_countTransazioni=1;
-//		}
+//		}*/
 	}
 	
 	
@@ -372,9 +373,7 @@ public class StatisticsCollection {
 	private static void computeDimensione(long dimensione,StatisticSize statSize){
 		
 		// Minima
-		if(statSize.dimensioneMinimaMessaggio<=0)
-			statSize.dimensioneMinimaMessaggio = dimensione;
-		else if(dimensione<statSize.dimensioneMinimaMessaggio)
+		if(statSize.dimensioneMinimaMessaggio<=0 || dimensione<statSize.dimensioneMinimaMessaggio)
 			statSize.dimensioneMinimaMessaggio = dimensione;
 		
 		// Massima
@@ -386,11 +385,11 @@ public class StatisticsCollection {
 		statSize.tmp_dimensioneMediaMessaggio_countTransazioni++;
 		statSize.dimensioneMediaMessaggio = statSize.tmp_dimensioneMediaMessaggio_sumDimensioni/statSize.tmp_dimensioneMediaMessaggio_countTransazioni;
 		// Effettuo refresh nel controllo iniziale, almeno tutti i dati sono consistenti rispetto all'intervallo temporale
-//		if(statSize.tmp_dimensioneMediaMessaggio_sumDimensioni>SOGLIA_DIMENSIONE){
+/**		if(statSize.tmp_dimensioneMediaMessaggio_sumDimensioni>SOGLIA_DIMENSIONE){
 //			// azzero temporanei
 //			statSize.tmp_dimensioneMediaMessaggio_sumDimensioni=statSize.dimensioneMediaMessaggio;
 //			statSize.tmp_dimensioneMediaMessaggio_countTransazioni=1;
-//		}
+//		}*/
 	}
 	
 	
@@ -400,147 +399,147 @@ public class StatisticsCollection {
 	long dataUltimoRefresh = -1;
 	
 	StatisticCount statNumeroTransazioni = new StatisticCount();
-	StatisticCount statNumeroTransazioni_PD = new StatisticCount();
-	StatisticCount statNumeroTransazioni_PA = new StatisticCount();
+	StatisticCount statNumeroTransazioniPD = new StatisticCount();
+	StatisticCount statNumeroTransazioniPA = new StatisticCount();
 	
 	StatisticTime statLatenzaAttraversamento = new StatisticTime();
-	StatisticTime statLatenzaAttraversamento_request = new StatisticTime();
-	StatisticTime statLatenzaAttraversamento_response = new StatisticTime();
-	StatisticTime statLatenzaAttraversamento_PD = new StatisticTime();
-	StatisticTime statLatenzaAttraversamento_PD_request = new StatisticTime();
-	StatisticTime statLatenzaAttraversamento_PD_response = new StatisticTime();
-	StatisticTime statLatenzaAttraversamento_PA = new StatisticTime();
-	StatisticTime statLatenzaAttraversamento_PA_request = new StatisticTime();
-	StatisticTime statLatenzaAttraversamento_PA_response = new StatisticTime();
+	StatisticTime statLatenzaAttraversamentoRequest = new StatisticTime();
+	StatisticTime statLatenzaAttraversamentoResponse = new StatisticTime();
+	StatisticTime statLatenzaAttraversamentoPD = new StatisticTime();
+	StatisticTime statLatenzaAttraversamentoPDRequest = new StatisticTime();
+	StatisticTime statLatenzaAttraversamentoPDResponse = new StatisticTime();
+	StatisticTime statLatenzaAttraversamentoPA = new StatisticTime();
+	StatisticTime statLatenzaAttraversamentoPARequest = new StatisticTime();
+	StatisticTime statLatenzaAttraversamentoPAResponse = new StatisticTime();
 	
 	StatisticSize statDimensioneMessaggio = new StatisticSize();
-	StatisticSize statDimensioneMessaggio_in_request = new StatisticSize();
-	StatisticSize statDimensioneMessaggio_out_request = new StatisticSize();
-	StatisticSize statDimensioneMessaggio_in_response = new StatisticSize();
-	StatisticSize statDimensioneMessaggio_out_response = new StatisticSize();
-	StatisticSize statDimensioneMessaggio_response = new StatisticSize();
-	StatisticSize statDimensioneMessaggio_PD = new StatisticSize();
-	StatisticSize statDimensioneMessaggio_PD_in_request = new StatisticSize();
-	StatisticSize statDimensioneMessaggio_PD_out_request = new StatisticSize();
-	StatisticSize statDimensioneMessaggio_PD_in_response = new StatisticSize();
-	StatisticSize statDimensioneMessaggio_PD_out_response = new StatisticSize();
-	StatisticSize statDimensioneMessaggio_PA = new StatisticSize();
-	StatisticSize statDimensioneMessaggio_PA_in_request = new StatisticSize();
-	StatisticSize statDimensioneMessaggio_PA_out_request = new StatisticSize();
-	StatisticSize statDimensioneMessaggio_PA_in_response = new StatisticSize();
-	StatisticSize statDimensioneMessaggio_PA_out_response = new StatisticSize();
+	StatisticSize statDimensioneMessaggioInRequest = new StatisticSize();
+	StatisticSize statDimensioneMessaggioOutRequest = new StatisticSize();
+	StatisticSize statDimensioneMessaggioInResponse = new StatisticSize();
+	StatisticSize statDimensioneMessaggioOutResponse = new StatisticSize();
+	StatisticSize statDimensioneMessaggioResponse = new StatisticSize();
+	StatisticSize statDimensioneMessaggioPD = new StatisticSize();
+	StatisticSize statDimensioneMessaggioPDInRequest = new StatisticSize();
+	StatisticSize statDimensioneMessaggioPDOutRequest = new StatisticSize();
+	StatisticSize statDimensioneMessaggioPDInResponse = new StatisticSize();
+	StatisticSize statDimensioneMessaggioPDOutResponse = new StatisticSize();
+	StatisticSize statDimensioneMessaggioPA = new StatisticSize();
+	StatisticSize statDimensioneMessaggioPAInRequest = new StatisticSize();
+	StatisticSize statDimensioneMessaggioPAOutRequest = new StatisticSize();
+	StatisticSize statDimensioneMessaggioPAInResponse = new StatisticSize();
+	StatisticSize statDimensioneMessaggioPAOutResponse = new StatisticSize();
 	
 	
 	public StatisticSize getStatDimensioneMessaggio() {
 		return this.statDimensioneMessaggio;
 	}
 
-	public StatisticSize getStatDimensioneMessaggio_in_request() {
-		return this.statDimensioneMessaggio_in_request;
+	public StatisticSize getStatDimensioneMessaggioInRequest() {
+		return this.statDimensioneMessaggioInRequest;
 	}
 
-	public StatisticSize getStatDimensioneMessaggio_out_request() {
-		return this.statDimensioneMessaggio_out_request;
+	public StatisticSize getStatDimensioneMessaggioOutRequest() {
+		return this.statDimensioneMessaggioOutRequest;
 	}
 
-	public StatisticSize getStatDimensioneMessaggio_in_response() {
-		return this.statDimensioneMessaggio_in_response;
+	public StatisticSize getStatDimensioneMessaggioInResponse() {
+		return this.statDimensioneMessaggioInResponse;
 	}
 
-	public StatisticSize getStatDimensioneMessaggio_out_response() {
-		return this.statDimensioneMessaggio_out_response;
+	public StatisticSize getStatDimensioneMessaggioOutResponse() {
+		return this.statDimensioneMessaggioOutResponse;
 	}
 
-	public StatisticSize getStatDimensioneMessaggio_response() {
-		return this.statDimensioneMessaggio_response;
+	public StatisticSize getStatDimensioneMessaggioResponse() {
+		return this.statDimensioneMessaggioResponse;
 	}
 
-	public StatisticSize getStatDimensioneMessaggio_PD() {
-		return this.statDimensioneMessaggio_PD;
+	public StatisticSize getStatDimensioneMessaggioPD() {
+		return this.statDimensioneMessaggioPD;
 	}
 
-	public StatisticSize getStatDimensioneMessaggio_PD_in_request() {
-		return this.statDimensioneMessaggio_PD_in_request;
+	public StatisticSize getStatDimensioneMessaggioPDInRequest() {
+		return this.statDimensioneMessaggioPDInRequest;
 	}
 
-	public StatisticSize getStatDimensioneMessaggio_PD_out_request() {
-		return this.statDimensioneMessaggio_PD_out_request;
+	public StatisticSize getStatDimensioneMessaggioPDOutRequest() {
+		return this.statDimensioneMessaggioPDOutRequest;
 	}
 
-	public StatisticSize getStatDimensioneMessaggio_PD_in_response() {
-		return this.statDimensioneMessaggio_PD_in_response;
+	public StatisticSize getStatDimensioneMessaggioPDInResponse() {
+		return this.statDimensioneMessaggioPDInResponse;
 	}
 
-	public StatisticSize getStatDimensioneMessaggio_PD_out_response() {
-		return this.statDimensioneMessaggio_PD_out_response;
+	public StatisticSize getStatDimensioneMessaggioPDOutResponse() {
+		return this.statDimensioneMessaggioPDOutResponse;
 	}
 
-	public StatisticSize getStatDimensioneMessaggio_PA() {
-		return this.statDimensioneMessaggio_PA;
+	public StatisticSize getStatDimensioneMessaggioPA() {
+		return this.statDimensioneMessaggioPA;
 	}
 
-	public StatisticSize getStatDimensioneMessaggio_PA_in_request() {
-		return this.statDimensioneMessaggio_PA_in_request;
+	public StatisticSize getStatDimensioneMessaggioPAInRequest() {
+		return this.statDimensioneMessaggioPAInRequest;
 	}
 
-	public StatisticSize getStatDimensioneMessaggio_PA_out_request() {
-		return this.statDimensioneMessaggio_PA_out_request;
+	public StatisticSize getStatDimensioneMessaggioPAOutRequest() {
+		return this.statDimensioneMessaggioPAOutRequest;
 	}
 
-	public StatisticSize getStatDimensioneMessaggio_PA_in_response() {
-		return this.statDimensioneMessaggio_PA_in_response;
+	public StatisticSize getStatDimensioneMessaggioPAInResponse() {
+		return this.statDimensioneMessaggioPAInResponse;
 	}
 
-	public StatisticSize getStatDimensioneMessaggio_PA_out_response() {
-		return this.statDimensioneMessaggio_PA_out_response;
+	public StatisticSize getStatDimensioneMessaggioPAOutResponse() {
+		return this.statDimensioneMessaggioPAOutResponse;
 	}
 
 	public StatisticCount getStatNumeroTransazioni() {
 		return this.statNumeroTransazioni;
 	}
 
-	public StatisticCount getStatNumeroTransazioni_PD() {
-		return this.statNumeroTransazioni_PD;
+	public StatisticCount getStatNumeroTransazioniPD() {
+		return this.statNumeroTransazioniPD;
 	}
 
-	public StatisticCount getStatNumeroTransazioni_PA() {
-		return this.statNumeroTransazioni_PA;
+	public StatisticCount getStatNumeroTransazioniPA() {
+		return this.statNumeroTransazioniPA;
 	}
 
 	public StatisticTime getStatLatenzaAttraversamento() {
 		return this.statLatenzaAttraversamento;
 	}
 
-	public StatisticTime getStatLatenzaAttraversamento_request() {
-		return this.statLatenzaAttraversamento_request;
+	public StatisticTime getStatLatenzaAttraversamentoRequest() {
+		return this.statLatenzaAttraversamentoRequest;
 	}
 
-	public StatisticTime getStatLatenzaAttraversamento_response() {
-		return this.statLatenzaAttraversamento_response;
+	public StatisticTime getStatLatenzaAttraversamentoResponse() {
+		return this.statLatenzaAttraversamentoResponse;
 	}
 
-	public StatisticTime getStatLatenzaAttraversamento_PD() {
-		return this.statLatenzaAttraversamento_PD;
+	public StatisticTime getStatLatenzaAttraversamentoPD() {
+		return this.statLatenzaAttraversamentoPD;
 	}
 
-	public StatisticTime getStatLatenzaAttraversamento_PD_request() {
-		return this.statLatenzaAttraversamento_PD_request;
+	public StatisticTime getStatLatenzaAttraversamentoPDRequest() {
+		return this.statLatenzaAttraversamentoPDRequest;
 	}
 
-	public StatisticTime getStatLatenzaAttraversamento_PD_response() {
-		return this.statLatenzaAttraversamento_PD_response;
+	public StatisticTime getStatLatenzaAttraversamentoPDResponse() {
+		return this.statLatenzaAttraversamentoPDResponse;
 	}
 
-	public StatisticTime getStatLatenzaAttraversamento_PA() {
-		return this.statLatenzaAttraversamento_PA;
+	public StatisticTime getStatLatenzaAttraversamentoPA() {
+		return this.statLatenzaAttraversamentoPA;
 	}
 
-	public StatisticTime getStatLatenzaAttraversamento_PA_request() {
-		return this.statLatenzaAttraversamento_PA_request;
+	public StatisticTime getStatLatenzaAttraversamentoPARequest() {
+		return this.statLatenzaAttraversamentoPARequest;
 	}
 
-	public StatisticTime getStatLatenzaAttraversamento_PA_response() {
-		return this.statLatenzaAttraversamento_PA_response;
+	public StatisticTime getStatLatenzaAttraversamentoPAResponse() {
+		return this.statLatenzaAttraversamentoPAResponse;
 	}
 
 	public long getDataUltimoRefresh() {

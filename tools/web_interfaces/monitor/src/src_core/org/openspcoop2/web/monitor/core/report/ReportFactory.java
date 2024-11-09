@@ -43,7 +43,10 @@ public class ReportFactory {
 
 	public static ReportFactory getInstance(){
 		if (ReportFactory.staticInstance == null) {
-			init();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (ReportFactory.class) {
+				init();
+			}
 		}
 
 		return ReportFactory.staticInstance;
@@ -55,7 +58,7 @@ public class ReportFactory {
 		}
 	}
 
-	public ReportFactory (){
+	private ReportFactory (){
 		try{
 			log.debug("Init ReportFactory in corso...");
 			//		...			

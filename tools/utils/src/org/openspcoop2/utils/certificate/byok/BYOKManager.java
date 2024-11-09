@@ -53,6 +53,14 @@ public class BYOKManager {
 		}
 	}
 	public static BYOKManager getInstance() {
+		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+		if (staticInstance == null) {
+	        synchronized (BYOKManager.class) {
+	            if (staticInstance == null) {
+	                return null;
+	            }
+	        }
+	    }
 		return staticInstance;
 	}
 	public static String getSecurityEngineGovWayPolicy() {

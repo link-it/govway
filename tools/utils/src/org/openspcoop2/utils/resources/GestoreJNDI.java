@@ -64,8 +64,8 @@ public class GestoreJNDI {
 
 	
 	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("GestoreJNDI");
-	private static Map<String, Object> localTreeJNDI = new ConcurrentHashMap<String, Object>();
-	public static String LOCAL_TREE_JNDI_PREFIX = "local:/openspcoop2/";
+	private static Map<String, Object> localTreeJNDI = new ConcurrentHashMap<>();
+	public static final String LOCAL_TREE_JNDI_PREFIX = "local:/openspcoop2/";
 
 
 	/**
@@ -73,14 +73,13 @@ public class GestoreJNDI {
 	 *
 	 * @param fullPath Nome dell'oggetto da ricercare nell'albero JNDI
 	 */
-	public Object lookup(String fullPath) throws Exception {
+	public Object lookup(String fullPath) throws UtilsException {
 		
 		if(fullPath!=null && fullPath.startsWith(LOCAL_TREE_JNDI_PREFIX)){
 		
-			//System.out.println("-------------------------------- LOCAL LOOKUP ["+fullPath+"]");
+			/**System.out.println("-------------------------------- LOCAL LOOKUP ["+fullPath+"]");*/
 			
 			Object o = null;
-			//synchronized (localTreeJNDI) {
 			semaphore.acquireThrowRuntime("lookup");
 			try {
 				o = localTreeJNDI.get(fullPath);
@@ -103,11 +102,9 @@ public class GestoreJNDI {
 				ctx = new InitialContext();
 			}
 			// Lookup Object
-			Object obj = ctx.lookup(fullPath);
-			// Return
-			return obj;
+			return ctx.lookup(fullPath);
 		}catch(Exception e){
-			throw e;
+			throw new UtilsException(e.getMessage(),e);
 		}
 		finally{
 			try{
@@ -138,20 +135,20 @@ public class GestoreJNDI {
 		
 		if(fullPath!=null && fullPath.startsWith(LOCAL_TREE_JNDI_PREFIX)){
 			
-			//System.out.println("-------------------------------- LOCAL UNBIND ["+fullPath+"]");
+			/**System.out.println("-------------------------------- LOCAL UNBIND ["+fullPath+"]");*/
 			
 			Object o = null;
-			//synchronized (localTreeJNDI) {
 			semaphore.acquireThrowRuntime("unbind");
 			try {
 				o = localTreeJNDI.remove(fullPath);
 			}finally {
 				semaphore.release("unbind");
 			}
+			String msg = "LocalResource ["+fullPath+"] not found";
 			if(log!=null)
-				log.warn("LocalResource ["+fullPath+"] not found");
+				log.warn(msg);
 			if(logConsole!=null)
-				logConsole.warn("LocalResource ["+fullPath+"] not found");
+				logConsole.warn(msg);
 			return o!=null;
 			
 		}
@@ -160,11 +157,13 @@ public class GestoreJNDI {
 		try{
 			currentContext = new InitialContext() ;
 			final String name = currentContext.composeName(fullPath,currentContext.getNameInNamespace() ) ;
-			if(log!=null)
-				log.debug( "Unbind  fullname " + name) ;
+			if(log!=null) {
+				String msg = "Unbind  fullname " + name;
+				log.debug(msg) ;
+			}
 			try{
 				currentContext.unbind( name ) ;
-				//System.out.println( "eraser" ) ;
+				/**System.out.println( "eraser" ) ;*/
 			}catch( final NameNotFoundException ignored ){
 				if(log!=null)
 					log.error( "Errore durante l'unbind (Ignored) ["+ignored+"]",ignored);
@@ -176,7 +175,7 @@ public class GestoreJNDI {
 			//			L'unbind fatto in questa maniera ricerca il componente sulla "root" dell albero
 			//			non sul corretto sottoalbero come dovrebbe
 			//			
-			//			final String[] components = name.split( "/" ) ;
+			/**			final String[] components = name.split( "/" ) ;
 			//			for( int ix = components.length-1 ; ix >=0 ; ix-- ){
 			//				final String nextPath = components[ix] ;
 			//				log.debug( "Unbind  component \"" + nextPath + "\" in context " + currentContext ) ;
@@ -189,7 +188,7 @@ public class GestoreJNDI {
 			//					return false;		
 			//					
 			//				}
-			//			}
+			//			}*/
 			return true;
 
 		}catch(Exception e){
@@ -225,17 +224,17 @@ public class GestoreJNDI {
 		
 		if(fullPath!=null && fullPath.startsWith(LOCAL_TREE_JNDI_PREFIX)){
 			
-			//System.out.println("-------------------------------- LOCAL BIND ["+fullPath+"]");
+			/**System.out.println("-------------------------------- LOCAL BIND ["+fullPath+"]");*/
 			
-			//synchronized (localTreeJNDI) {
 			semaphore.acquireThrowRuntime("bind");
 			try {
 				
 				if(localTreeJNDI.containsKey(fullPath)){
+					String msg = "LocalResource ["+fullPath+"] already exists";
 					if(log!=null)
-						log.warn("LocalResource ["+fullPath+"] already exists");
+						log.warn(msg);
 					if(logConsole!=null)
-						logConsole.warn("LocalResource ["+fullPath+"] already exists");
+						logConsole.warn(msg);
 					return false;
 				}
 				
@@ -251,7 +250,7 @@ public class GestoreJNDI {
 		Context currentContext = null;
 		try{
 
-			//System.out.println("Attempting to bind object " + toBind + " to context path \"" + fullPath + "\"" ) ;
+			/**System.out.println("Attempting to bind object " + toBind + " to context path \"" + fullPath + "\"" ) ;*/
 
 			currentContext = new InitialContext() ;
 			final String name = currentContext.composeName(fullPath,currentContext.getNameInNamespace() ) ;
@@ -263,24 +262,25 @@ public class GestoreJNDI {
 			final int stop = components.length - 1 ; 		
 			for( int ix = 0 ; ix < stop ; ++ix ){
 				final String nextPath = components[ix] ;
-				//System.out.println( "Looking up subcontext named \"" + nextPath + "\" in context " + currentContext ) ;
+				/**System.out.println( "Looking up subcontext named \"" + nextPath + "\" in context " + currentContext ) ;*/
 				try{
 					currentContext = (Context) currentContext.lookup( nextPath ) ;
-					//System.out.println( "found" ) ;
+					/**System.out.println( "found" ) ;*/
 				}catch( final NameNotFoundException ignored ){
-					//System.out.println( "not found; creating subcontext" ) ;
+					/**System.out.println( "not found; creating subcontext" ) ;*/
 					currentContext = currentContext.createSubcontext( nextPath ) ;
-					//System.out.println( "done" ) ;				
+					/**System.out.println( "done" ) ;*/				
 				}	
 			}
 
 			// by this point, we've built up the entire context path leading up
 			// to the desired bind point... so we can bind the object itself
 			currentContext.bind( components[stop] , toBind ) ;
+			String msg = "binding ["+fullPath+"] to " + currentContext;
 			if(log!=null)
-				log.info("binding ["+fullPath+"] to " + currentContext ) ;
+				log.info(msg) ;
 			if(logConsole!=null)
-				logConsole.info("binding ["+fullPath+"] to " + currentContext ) ;
+				logConsole.info(msg) ;
 
 			return true;
 

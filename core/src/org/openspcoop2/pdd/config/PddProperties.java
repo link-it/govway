@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsException;
 
 
 /**
@@ -69,7 +70,7 @@ public class PddProperties {
 	 *
 	 * 
 	 */
-	public PddProperties(String location,String confDir) throws Exception {
+	private PddProperties(String location,String confDir) throws UtilsException {
 
 		if(OpenSPCoop2Startup.initialize)
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
@@ -86,12 +87,11 @@ public class PddProperties {
 				properties = PddProperties.class.getResourceAsStream("/govway.pdd.properties");
 			}
 			if(properties==null){
-				throw new Exception("File '/govway.pdd.properties' not found");
+				throw new UtilsException("File '/govway.pdd.properties' not found");
 			}
 			propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'govway.pdd.properties': \n\n"+e.getMessage());
-		    throw new Exception("PddProperties initialize error: "+e.getMessage());
+			doError(e);
 		}finally{
 		    try{
 				if(properties!=null)
@@ -102,6 +102,10 @@ public class PddProperties {
 		}
 
 		this.reader = new PddInstanceProperties(propertiesReader, this.log, confDir);
+	}
+	private void doError(Exception e) throws UtilsException {
+		this.log.error("Riscontrato errore durante la lettura del file 'govway.pdd.properties': "+e.getMessage(),e);
+	    throw new UtilsException("PddProperties initialize error: "+e.getMessage(),e);
 	}
 
 
@@ -128,8 +132,12 @@ public class PddProperties {
 	 * 
 	 */
 	public static PddProperties getInstance() throws OpenSPCoop2ConfigurationException{
-	    if(PddProperties.pddProperties==null)
-	    	throw new OpenSPCoop2ConfigurationException("PddProperties non inizializzato");
+	    if(PddProperties.pddProperties==null) {
+	    	// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+	    	synchronized (PddProperties.class) {
+	    		throw new OpenSPCoop2ConfigurationException("PddProperties non inizializzato");
+	    	}
+	    }
 	    return PddProperties.pddProperties;
 	}
     

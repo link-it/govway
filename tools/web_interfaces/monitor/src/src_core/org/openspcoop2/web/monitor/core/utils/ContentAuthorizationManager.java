@@ -48,23 +48,27 @@ public class ContentAuthorizationManager implements IContentAuthorizationManager
 
 	private static Logger log = LoggerManager.getPddMonitorCoreLogger();
 
-	private static ContentAuthorizationManager _instance = null;
+	private static ContentAuthorizationManager instance = null;
 
 	private IContentAuthorizationManager extendedContentAuthorizationManager = null;
 
 	public static ContentAuthorizationManager getInstance() throws Exception{ 
-		if(ContentAuthorizationManager._instance == null)
-			init();
+		if(ContentAuthorizationManager.instance == null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (ContentAuthorizationManager.class) {
+				init();
+			}
+		}
 
-		return ContentAuthorizationManager._instance;
+		return ContentAuthorizationManager.instance;
 	}
 
 	private static synchronized void init() throws Exception{ 
-		if(ContentAuthorizationManager._instance == null)
-			ContentAuthorizationManager._instance = new ContentAuthorizationManager();
+		if(ContentAuthorizationManager.instance == null)
+			ContentAuthorizationManager.instance = new ContentAuthorizationManager();
 	}
 
-	public ContentAuthorizationManager () throws Exception{
+	private ContentAuthorizationManager () throws Exception{
 		log.debug("Inizializzazione Content Authorization Manager in corso...");
 		this.mappaRuoliPagine = new HashMap<>();
 		this.mappaPagineModuli = new HashMap<>();

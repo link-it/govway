@@ -59,6 +59,14 @@ public class DBConsegnePreseInCaricoManager implements IMonitoraggioRisorsa {
 		}
 	}
 	public static DBConsegnePreseInCaricoManager getInstanceSmistatore() {
+		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+		if (staticInstanceDBSmistatoreManager == null) {
+	        synchronized (DBConsegnePreseInCaricoManager.class) {
+	            if (staticInstanceDBSmistatoreManager == null) {
+	                return null;
+	            }
+	        }
+	    }
 		return staticInstanceDBSmistatoreManager;
 	}
 	
@@ -77,6 +85,14 @@ public class DBConsegnePreseInCaricoManager implements IMonitoraggioRisorsa {
 		}
 	}
 	public static DBConsegnePreseInCaricoManager getInstanceRuntime() {
+		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+		if (staticInstanceDBRuntimeManager == null) {
+	        synchronized (DBConsegnePreseInCaricoManager.class) {
+	            if (staticInstanceDBRuntimeManager == null) {
+	                return null;
+	            }
+	        }
+	    }
 		return staticInstanceDBRuntimeManager;
 	}
 	
@@ -95,23 +111,31 @@ public class DBConsegnePreseInCaricoManager implements IMonitoraggioRisorsa {
 		}
 	}
 	public static DBConsegnePreseInCaricoManager getInstanceTransazioni() {
+		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+		if (staticInstanceDBTransazioniManager == null) {
+	        synchronized (DBConsegnePreseInCaricoManager.class) {
+	            if (staticInstanceDBTransazioniManager == null) {
+	                return null;
+	            }
+	        }
+	    }
 		return staticInstanceDBTransazioniManager;
 	}
 	
 	
 	/** Informazione sui proprietari che hanno richiesto una connessione */
-	private static java.util.concurrent.ConcurrentHashMap<String,Resource> risorseInGestione_smistatore = new java.util.concurrent.ConcurrentHashMap<String,Resource>();
-	private static java.util.concurrent.ConcurrentHashMap<String,Resource> risorseInGestione_runtime = new java.util.concurrent.ConcurrentHashMap<String,Resource>();
-	private static java.util.concurrent.ConcurrentHashMap<String,Resource> risorseInGestione_transazioni = new java.util.concurrent.ConcurrentHashMap<String,Resource>();
+	private static java.util.concurrent.ConcurrentHashMap<String,Resource> risorseInGestioneSmistatore = new java.util.concurrent.ConcurrentHashMap<>();
+	private static java.util.concurrent.ConcurrentHashMap<String,Resource> risorseInGestioneRuntime = new java.util.concurrent.ConcurrentHashMap<>();
+	private static java.util.concurrent.ConcurrentHashMap<String,Resource> risorseInGestioneTransazioni = new java.util.concurrent.ConcurrentHashMap<>();
 	
-	public static String[] getStatoRisorse_smistatore() throws Exception{	
-		return DBManager.getStatoRisorse(DBConsegnePreseInCaricoManager.risorseInGestione_smistatore);
+	public static String[] getStatoRisorseSmistatore() throws Exception{	
+		return DBManager.getStatoRisorse(DBConsegnePreseInCaricoManager.risorseInGestioneSmistatore);
 	}
-	public static String[] getStatoRisorse_runtime() throws Exception{	
-		return DBManager.getStatoRisorse(DBConsegnePreseInCaricoManager.risorseInGestione_runtime);
+	public static String[] getStatoRisorseRuntime() throws Exception{	
+		return DBManager.getStatoRisorse(DBConsegnePreseInCaricoManager.risorseInGestioneRuntime);
 	}
-	public static String[] getStatoRisorse_transazioni() throws Exception{	
-		return DBManager.getStatoRisorse(DBConsegnePreseInCaricoManager.risorseInGestione_transazioni);
+	public static String[] getStatoRisorseTransazioni() throws Exception{	
+		return DBManager.getStatoRisorse(DBConsegnePreseInCaricoManager.risorseInGestioneTransazioni);
 	}
 	
 	private String tipoDatabase;
@@ -204,15 +228,15 @@ public class DBConsegnePreseInCaricoManager implements IMonitoraggioRisorsa {
 	}
 	public Resource getResource(IDSoggetto idPDD,String modulo,String idTransazione, boolean logError) throws Exception {
 		if(this.dbManagerRuntimePdD!=null) {
-			//System.out.println("id ["+idTransazione+"] prendo da dbManager");
+			/**System.out.println("id ["+idTransazione+"] prendo da dbManager");*/
 			return this.dbManagerRuntimePdD.getResource(idPDD, modulo, idTransazione, logError);
 		}
 		else if(this.dbManagerTransazioni!=null) {
-			//System.out.println("id ["+idTransazione+"] prendo da dbManagerTransazioni");
+			/**System.out.println("id ["+idTransazione+"] prendo da dbManagerTransazioni");*/
 			return this.dbManagerTransazioni.getResource(idPDD, modulo, idTransazione, logError);
 		}
 		else {
-			//System.out.println("id ["+idTransazione+"] negozio");
+			/**System.out.println("id ["+idTransazione+"] negozio");*/
 			try {
 				StringBuilder bf = new StringBuilder();
 				if(idPDD!=null) {
@@ -231,13 +255,13 @@ public class DBConsegnePreseInCaricoManager implements IMonitoraggioRisorsa {
 						idPDD, modulo, idTransazione);	
 				
 				if(this.isIamSmistatoreManager()) {
-					DBConsegnePreseInCaricoManager.risorseInGestione_smistatore.put(risorsa.getId(), risorsa);
+					DBConsegnePreseInCaricoManager.risorseInGestioneSmistatore.put(risorsa.getId(), risorsa);
 				}
 				else if(this.isIamRuntimeManager()) {
-					DBConsegnePreseInCaricoManager.risorseInGestione_runtime.put(risorsa.getId(), risorsa);
+					DBConsegnePreseInCaricoManager.risorseInGestioneRuntime.put(risorsa.getId(), risorsa);
 				}
 				else if(this.isIamTransazioniManager()) {
-					DBConsegnePreseInCaricoManager.risorseInGestione_transazioni.put(risorsa.getId(), risorsa);
+					DBConsegnePreseInCaricoManager.risorseInGestioneTransazioni.put(risorsa.getId(), risorsa);
 				}
 				
 				return risorsa;
@@ -280,18 +304,18 @@ public class DBConsegnePreseInCaricoManager implements IMonitoraggioRisorsa {
 					}	
 					
 					if(this.isIamSmistatoreManager()) {
-						if(DBConsegnePreseInCaricoManager.risorseInGestione_smistatore.containsKey(resource.getId())) {
-							DBConsegnePreseInCaricoManager.risorseInGestione_smistatore.remove(resource.getId());
+						if(DBConsegnePreseInCaricoManager.risorseInGestioneSmistatore.containsKey(resource.getId())) {
+							DBConsegnePreseInCaricoManager.risorseInGestioneSmistatore.remove(resource.getId());
 						}
 					}
 					else if(this.isIamRuntimeManager()) {
-						if(DBConsegnePreseInCaricoManager.risorseInGestione_runtime.containsKey(resource.getId())) {
-							DBConsegnePreseInCaricoManager.risorseInGestione_runtime.remove(resource.getId());
+						if(DBConsegnePreseInCaricoManager.risorseInGestioneRuntime.containsKey(resource.getId())) {
+							DBConsegnePreseInCaricoManager.risorseInGestioneRuntime.remove(resource.getId());
 						}
 					}
 					else if(this.isIamTransazioniManager()) {
-						if(DBConsegnePreseInCaricoManager.risorseInGestione_transazioni.containsKey(resource.getId())) {
-							DBConsegnePreseInCaricoManager.risorseInGestione_transazioni.remove(resource.getId());
+						if(DBConsegnePreseInCaricoManager.risorseInGestioneTransazioni.containsKey(resource.getId())) {
+							DBConsegnePreseInCaricoManager.risorseInGestioneTransazioni.remove(resource.getId());
 						}
 					}
 

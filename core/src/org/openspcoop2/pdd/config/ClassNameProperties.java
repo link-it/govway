@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.config;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
@@ -65,6 +66,7 @@ import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.MessageSecurityDigestReader;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.IDate;
 import org.openspcoop2.utils.id.IUniqueIdentifierGenerator;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
@@ -105,7 +107,7 @@ public class ClassNameProperties {
 	 *
 	 * 
 	 */
-	public ClassNameProperties(boolean logError) throws Exception {
+	private ClassNameProperties(boolean logError) throws UtilsException {
 
 		if(OpenSPCoop2Startup.initialize)
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
@@ -118,14 +120,15 @@ public class ClassNameProperties {
 		try{  
 		    properties = ClassNameProperties.class.getResourceAsStream("/govway.classRegistry.properties");
 			if(properties==null){
-				throw new Exception("File '/govway.classRegistry.properties' not found");
+				throw new UtilsException("File '/govway.classRegistry.properties' not found");
 			}
 		    propertiesReader.load(properties);
 		}catch(Exception e) {
 			if(logError) {
-				this.log.error("Riscontrato errore durante la lettura del file 'govway.classRegistry.properties': \n\n"+e.getMessage());
+				String msg = "Riscontrato errore durante la lettura del file 'govway.classRegistry.properties': "+e.getMessage();
+				this.log.error(msg,e);
 			}
-		    throw new Exception("ClassName initialize error: "+e.getMessage());
+		    throw new UtilsException("ClassName initialize error: "+e.getMessage());
 		}finally{
 		    try{
 		    	if(properties!=null)
@@ -172,12 +175,18 @@ public class ClassNameProperties {
 	 * 
 	 */
 	public static ClassNameProperties getInstance(){
-	    if(ClassNameProperties.classNameProperties==null)
-	    	ClassNameProperties.initialize(false);
+	    if(ClassNameProperties.classNameProperties==null) {
+	    	// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+	    	synchronized (ClassNameProperties.class) {
+	    		if(ClassNameProperties.classNameProperties==null) {
+	    			ClassNameProperties.initialize(false);
+	    		}
+	    	}
+	    }
 	    return ClassNameProperties.classNameProperties;
 	}
     
-	/*
+	/**
 	public static void updateLocalImplementation(Properties prop){
 		ClassNameProperties.classNameProperties.reader.setLocalImplementation(prop);
 	}*/
@@ -211,7 +220,7 @@ public class ClassNameProperties {
 						continue; // sulle installazioni standalone non ci sono i jar jms
 					}
 					String className = this.getConnettore(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IConnettore.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IConnettore.class) ) return false;
 				}
 			}
 			
@@ -219,73 +228,73 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getRealmContainerCustom(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IAutorizzazioneSecurityContainer.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IAutorizzazioneSecurityContainer.class) ) return false;
 				}
 			}
 			
 			tmp = getAutenticazionePortaDelegata();
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
-					if(CostantiConfigurazione.AUTENTICAZIONE_NONE.toString().equals(tipo)) {
+					if(CostantiConfigurazione.AUTENTICAZIONE_NONE.equals(tipo)) {
 						continue;
 					}
 					String className = this.getAutenticazionePortaDelegata(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IAutenticazionePortaDelegata.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IAutenticazionePortaDelegata.class) ) return false;
 				}
 			}
 			
 			tmp = getAutenticazionePortaApplicativa();
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
-					if(CostantiConfigurazione.AUTENTICAZIONE_NONE.toString().equals(tipo)) {
+					if(CostantiConfigurazione.AUTENTICAZIONE_NONE.equals(tipo)) {
 						continue;
 					}
 					String className = this.getAutenticazionePortaApplicativa(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IAutenticazionePortaApplicativa.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IAutenticazionePortaApplicativa.class) ) return false;
 				}
 			}
 			
 			tmp = getAutorizzazionePortaDelegata();
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
-					if(CostantiConfigurazione.AUTENTICAZIONE_NONE.toString().equals(tipo)) {
+					if(CostantiConfigurazione.AUTENTICAZIONE_NONE.equals(tipo)) {
 						continue;
 					}
 					String className = this.getAutorizzazionePortaDelegata(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IAutorizzazionePortaDelegata.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IAutorizzazionePortaDelegata.class) ) return false;
 				}
 			}
 			
 			tmp = getAutorizzazionePortaApplicativa();
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
-					if(CostantiConfigurazione.AUTENTICAZIONE_NONE.toString().equals(tipo)) {
+					if(CostantiConfigurazione.AUTENTICAZIONE_NONE.equals(tipo)) {
 						continue;
 					}
 					String className = this.getAutorizzazionePortaApplicativa(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IAutorizzazionePortaApplicativa.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IAutorizzazionePortaApplicativa.class) ) return false;
 				}
 			}
 			
 			tmp = getAutorizzazioneContenutoPortaDelegata();
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
-					if(CostantiConfigurazione.AUTENTICAZIONE_NONE.toString().equals(tipo)) {
+					if(CostantiConfigurazione.AUTENTICAZIONE_NONE.equals(tipo)) {
 						continue;
 					}
 					String className = this.getAutorizzazioneContenutoPortaDelegata(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IAutorizzazioneContenutoPortaDelegata.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IAutorizzazioneContenutoPortaDelegata.class) ) return false;
 				}
 			}
 			
 			tmp = getAutorizzazioneContenutoPortaApplicativa();
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
-					if(CostantiConfigurazione.AUTENTICAZIONE_NONE.toString().equals(tipo)) {
+					if(CostantiConfigurazione.AUTENTICAZIONE_NONE.equals(tipo)) {
 						continue;
 					}
 					String className = this.getAutorizzazioneContenutoPortaApplicativa(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IAutorizzazioneContenutoPortaApplicativa.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IAutorizzazioneContenutoPortaApplicativa.class) ) return false;
 				}
 			}
 			
@@ -293,7 +302,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getIntegrazionePortaDelegata(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IGestoreIntegrazionePD.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IGestoreIntegrazionePD.class) ) return false;
 				}
 			}
 			
@@ -301,7 +310,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getIntegrazionePortaApplicativa(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IGestoreIntegrazionePA.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IGestoreIntegrazionePA.class) ) return false;
 				}
 			}
 			
@@ -309,7 +318,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getJDBCAdapter(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IJDBCAdapter.class, tipiDatabase) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IJDBCAdapter.class, tipiDatabase) ) return false;
 				}
 			}
 			
@@ -317,7 +326,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getThreshold(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IThreshold.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IThreshold.class) ) return false;
 				}
 			}
 			
@@ -325,7 +334,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getMsgDiagnosticoOpenSPCoopAppender(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IDiagnosticProducer.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IDiagnosticProducer.class) ) return false;
 				}
 			}
 			
@@ -333,7 +342,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getTracciamentoOpenSPCoopAppender(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, ITracciaProducer.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, ITracciaProducer.class) ) return false;
 				}
 			}
 			
@@ -341,7 +350,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getDumpOpenSPCoopAppender(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IDumpProducer.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IDumpProducer.class) ) return false;
 				}
 			}
 			
@@ -352,7 +361,7 @@ public class ClassNameProperties {
 						continue; // sulle installazioni standalone non ci sono i jar jms
 					}
 					String className = this.getNodeReceiver(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, INodeReceiver.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, INodeReceiver.class) ) return false;
 				}
 			}
 			
@@ -363,7 +372,7 @@ public class ClassNameProperties {
 						continue; // sulle installazioni standalone non ci sono i jar jms
 					}
 					String className = this.getNodeSender(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, INodeSender.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, INodeSender.class) ) return false;
 				}
 			}
 			
@@ -371,7 +380,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getRepositoryBuste(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IGestoreRepository.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IGestoreRepository.class) ) return false;
 				}
 			}
 			
@@ -379,7 +388,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getSQLQueryObject(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, ISQLQueryObject.class, tipiDatabase) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, ISQLQueryObject.class, tipiDatabase) ) return false;
 				}
 			}
 			
@@ -387,7 +396,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getDateManager(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IDate.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IDate.class) ) return false;
 				}
 			}
 			
@@ -395,7 +404,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getUniqueIdentifier(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IUniqueIdentifierGenerator.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IUniqueIdentifierGenerator.class) ) return false;
 				}
 			}
 			
@@ -403,7 +412,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getFiltroDuplicati(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IFiltroDuplicati.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IFiltroDuplicati.class) ) return false;
 				}
 			}
 			
@@ -413,7 +422,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getOpenSPCoop2MessageFactory(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, OpenSPCoop2MessageFactory.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, OpenSPCoop2MessageFactory.class) ) return false;
 				}
 			}
 			
@@ -421,7 +430,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getMessageSecurityContext(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, MessageSecurityContext.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, MessageSecurityContext.class) ) return false;
 				}
 			}
 			
@@ -429,7 +438,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getMessageSecurityDigestReader(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, MessageSecurityDigestReader.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, MessageSecurityDigestReader.class) ) return false;
 				}
 			}
 			
@@ -437,7 +446,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getGestoreCredenziali(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IGestoreCredenziali.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IGestoreCredenziali.class) ) return false;
 				}
 			}
 			
@@ -445,7 +454,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getGestoreCredenzialiIM(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IGestoreCredenzialiIM.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IGestoreCredenzialiIM.class) ) return false;
 				}
 			}
 			
@@ -453,7 +462,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getNotifierCallback(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, INotifierCallback.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, INotifierCallback.class) ) return false;
 				}
 			}
 			
@@ -461,7 +470,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getBehaviour(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IBehaviour.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IBehaviour.class) ) return false;
 				}
 			}
 			
@@ -469,7 +478,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getSalvataggioTracceManager(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, ISalvataggioTracceManager.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, ISalvataggioTracceManager.class) ) return false;
 				}
 			}
 			
@@ -477,7 +486,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getSalvataggioDiagnosticiManager(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, ISalvataggioDiagnosticiManager.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, ISalvataggioDiagnosticiManager.class) ) return false;
 				}
 			}
 			
@@ -485,7 +494,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getRateLimiting(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IRateLimiting.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IRateLimiting.class) ) return false;
 				}
 			}
 			
@@ -493,7 +502,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getTokenValidazione(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, ITokenParser.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, ITokenParser.class) ) return false;
 				}
 			}
 			
@@ -501,7 +510,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getTokenNegoziazione(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, INegoziazioneTokenParser.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, INegoziazioneTokenParser.class) ) return false;
 				}
 			}
 			
@@ -509,7 +518,7 @@ public class ClassNameProperties {
 			if(tmp!=null && tmp.length>0) {
 				for (String tipo : tmp) {
 					String className = this.getAttributeAuthority(tipo);
-					if ( this.validate(loaderOpenSPCoop, className, tipo, IRetrieveAttributeAuthorityResponseParser.class) == false ) return false;
+					if ( !this.validate(loaderOpenSPCoop, className, tipo, IRetrieveAttributeAuthorityResponseParser.class) ) return false;
 				}
 			}
 			
@@ -535,8 +544,8 @@ public class ClassNameProperties {
 			}
 			o.toString();
 			
-			if(classAttesa.isInstance(o)==false) {
-				throw new Exception("Classe '"+className+"' non implementa l'interfaccia '"+classAttesa.getName()+"'");
+			if(!classAttesa.isInstance(o)) {
+				throw new UtilsException("Classe '"+className+"' non implementa l'interfaccia '"+classAttesa.getName()+"'");
 			}
 			
 			return true;
@@ -561,7 +570,7 @@ public class ClassNameProperties {
 	public String getConnettore(String nome){
 		return this.getValue("org.openspcoop2.connettore.", nome);
 	}
-	public String[] getConnettore() throws Exception{
+	public String[] getConnettore() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.connettore.",CostantiConfigurazione.DISABILITATO.toString());
 	}
 		
@@ -573,7 +582,7 @@ public class ClassNameProperties {
 	public String getRealmContainerCustom(String nome){
 		return this.getValue("org.openspcoop2.realmContainer.custom.", nome);
 	}
-	public String[] getRealmContainerCustom() throws Exception{
+	public String[] getRealmContainerCustom() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.realmContainer.custom.");
 	}
 	
@@ -585,8 +594,8 @@ public class ClassNameProperties {
 	public String getAutenticazionePortaDelegata(String nome){
 		return this.getValue("org.openspcoop2.autenticazione.pd.", nome);
 	}
-	public String[] getAutenticazionePortaDelegata() throws Exception{
-		return this.getTipiGestiti("org.openspcoop2.autenticazione.pd.",CostantiConfigurazione.AUTENTICAZIONE_NONE.toString());
+	public String[] getAutenticazionePortaDelegata() throws UtilsException{
+		return this.getTipiGestiti("org.openspcoop2.autenticazione.pd.",CostantiConfigurazione.AUTENTICAZIONE_NONE);
 	}
 
 	/**
@@ -597,8 +606,8 @@ public class ClassNameProperties {
 	public String getAutenticazionePortaApplicativa(String nome){
 		return this.getValue("org.openspcoop2.autenticazione.pa.", nome);
 	}
-	public String[] getAutenticazionePortaApplicativa() throws Exception{
-		return this.getTipiGestiti("org.openspcoop2.autenticazione.pa.",CostantiConfigurazione.AUTENTICAZIONE_NONE.toString());
+	public String[] getAutenticazionePortaApplicativa() throws UtilsException{
+		return this.getTipiGestiti("org.openspcoop2.autenticazione.pa.",CostantiConfigurazione.AUTENTICAZIONE_NONE);
 	}
 	
 	/**
@@ -609,7 +618,7 @@ public class ClassNameProperties {
 	public String getAutorizzazionePortaDelegata(String nome){
 		return this.getValue("org.openspcoop2.autorizzazione.pd.", nome);
 	}
-	public String[] getAutorizzazionePortaDelegata() throws Exception{
+	public String[] getAutorizzazionePortaDelegata() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.autorizzazione.pd.",CostantiConfigurazione.AUTORIZZAZIONE_NONE);
 	}
 	
@@ -621,7 +630,7 @@ public class ClassNameProperties {
 	public String getAutorizzazionePortaApplicativa(String nome){
 		return this.getValue("org.openspcoop2.autorizzazione.pa.", nome);
 	}
-	public String[] getAutorizzazionePortaApplicativa() throws Exception{
+	public String[] getAutorizzazionePortaApplicativa() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.autorizzazione.pa.",CostantiConfigurazione.AUTORIZZAZIONE_NONE);
 	}
 	
@@ -633,7 +642,7 @@ public class ClassNameProperties {
 	public String getAutorizzazioneContenutoPortaDelegata(String nome){
 		return this.getValue("org.openspcoop2.autorizzazioneContenuto.pd.", nome);
 	}
-	public String[] getAutorizzazioneContenutoPortaDelegata() throws Exception{
+	public String[] getAutorizzazioneContenutoPortaDelegata() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.autorizzazioneContenuto.pd.",CostantiConfigurazione.AUTORIZZAZIONE_NONE);
 	}
 	
@@ -645,7 +654,7 @@ public class ClassNameProperties {
 	public String getAutorizzazioneContenutoPortaApplicativa(String nome){
 		return this.getValue("org.openspcoop2.autorizzazioneContenuto.pa.", nome);
 	}
-	public String[] getAutorizzazioneContenutoPortaApplicativa() throws Exception{
+	public String[] getAutorizzazioneContenutoPortaApplicativa() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.autorizzazioneContenuto.pa.",CostantiConfigurazione.AUTORIZZAZIONE_NONE);
 	}
 	
@@ -657,7 +666,7 @@ public class ClassNameProperties {
 	public String getIntegrazionePortaDelegata(String nome){
 		return this.getValue("org.openspcoop2.integrazione.pd.", nome);
 	}
-	public String[] getIntegrazionePortaDelegata() throws Exception{
+	public String[] getIntegrazionePortaDelegata() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.integrazione.pd.");
 	}
 	
@@ -669,7 +678,7 @@ public class ClassNameProperties {
 	public String getIntegrazionePortaApplicativa(String nome){
 		return this.getValue("org.openspcoop2.integrazione.pa.", nome);
 	}
-	public String[] getIntegrazionePortaApplicativa() throws Exception{
+	public String[] getIntegrazionePortaApplicativa() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.integrazione.pa.");
 	}
 	
@@ -681,7 +690,7 @@ public class ClassNameProperties {
 	public String getJDBCAdapter(String nome){
 		return this.getValue("org.openspcoop2.jdbcAdapter.", nome);
 	}
-	public String[] getJDBCAdapter() throws Exception{
+	public String[] getJDBCAdapter() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.jdbcAdapter.");
 	}
 	
@@ -693,7 +702,7 @@ public class ClassNameProperties {
 	public String getThreshold(String nome){
 		return this.getValue("org.openspcoop2.threshold.", nome);
 	}
-	public String[] getThreshold() throws Exception{
+	public String[] getThreshold() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.threshold.");
 	}
 
@@ -705,7 +714,7 @@ public class ClassNameProperties {
 	public String getMsgDiagnosticoOpenSPCoopAppender(String nome){
 		return this.getValue("org.openspcoop2.msgdiagnosticoAppender.", nome);
 	}
-	public String[] getMsgDiagnosticoOpenSPCoopAppender() throws Exception{
+	public String[] getMsgDiagnosticoOpenSPCoopAppender() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.msgdiagnosticoAppender.");
 	}
 	
@@ -717,7 +726,7 @@ public class ClassNameProperties {
 	public String getTracciamentoOpenSPCoopAppender(String nome){
 		return this.getValue("org.openspcoop2.tracciamentoAppender.", nome);
 	}
-	public String[] getTracciamentoOpenSPCoopAppender() throws Exception{
+	public String[] getTracciamentoOpenSPCoopAppender() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.tracciamentoAppender.");
 	}
 	
@@ -729,7 +738,7 @@ public class ClassNameProperties {
 	public String getDumpOpenSPCoopAppender(String nome){
 		return this.getValue("org.openspcoop2.dumpAppender.", nome);
 	}
-	public String[] getDumpOpenSPCoopAppender() throws Exception{
+	public String[] getDumpOpenSPCoopAppender() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.dumpAppender.");
 	}
 		
@@ -741,7 +750,7 @@ public class ClassNameProperties {
 	public String getNodeReceiver(String nome){
 		return this.getValue("org.openspcoop2.nodeReceiver.", nome);
 	}
-	public String[] getNodeReceiver() throws Exception{
+	public String[] getNodeReceiver() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.nodeReceiver.");
 	}
 	
@@ -753,7 +762,7 @@ public class ClassNameProperties {
 	public String getNodeSender(String nome){
 		return this.getValue("org.openspcoop2.nodeSender.", nome);
 	}
-	public String[] getNodeSender() throws Exception{
+	public String[] getNodeSender() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.nodeSender.");
 	}
 	
@@ -765,7 +774,7 @@ public class ClassNameProperties {
 	public String getRepositoryBuste(String nome){
 		return this.getValue("org.openspcoop2.repositoryBuste.", nome);
 	}
-	public String[] getRepositoryBuste() throws Exception{
+	public String[] getRepositoryBuste() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.repositoryBuste.");
 	}
 	
@@ -777,7 +786,7 @@ public class ClassNameProperties {
 	public String getSQLQueryObject(String nome){
 		return this.getValue("org.openspcoop2.sqlQueryObject.", nome);
 	}
-	public String[] getSQLQueryObject() throws Exception{
+	public String[] getSQLQueryObject() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.sqlQueryObject.");
 	}
 	
@@ -789,7 +798,7 @@ public class ClassNameProperties {
 	public String getDateManager(String nome){
 		return this.getValue("org.openspcoop2.date.", nome);
 	}
-	public String[] getDateManager() throws Exception{
+	public String[] getDateManager() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.date.");
 	}
 	
@@ -803,7 +812,7 @@ public class ClassNameProperties {
 	public String getUniqueIdentifier(String nome){
 		return this.getValue("org.openspcoop2.id.", nome);
 	}
-	public String[] getUniqueIdentifier() throws Exception{
+	public String[] getUniqueIdentifier() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.id.");
 	}
 	
@@ -817,7 +826,7 @@ public class ClassNameProperties {
 	public String getFiltroDuplicati(String nome){
 		return this.getValue("org.openspcoop2.protocol.filtroDuplicati.", nome);
 	}
-	public String[] getFiltroDuplicati() throws Exception{
+	public String[] getFiltroDuplicati() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.protocol.filtroDuplicati.");
 	}
 	
@@ -836,7 +845,7 @@ public class ClassNameProperties {
 	public String getInitHandlerBuiltIn(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.built-in.init.", nome);
 	}
-	public String[] getInitHandlerBuiltIn() throws Exception{
+	public String[] getInitHandlerBuiltIn() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.init.");
 	}
 	
@@ -850,7 +859,7 @@ public class ClassNameProperties {
 	public String getExitHandlerBuiltIn(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.built-in.exit.", nome);
 	}
-	public String[] getExitHandlerBuiltIn() throws Exception{
+	public String[] getExitHandlerBuiltIn() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.exit.");
 	}
 	
@@ -864,7 +873,7 @@ public class ClassNameProperties {
 	public String getPreInRequestHandlerBuiltIn(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.built-in.pre-in-request.", nome);
 	}
-	public String[] getPreInRequestHandlerBuiltIn() throws Exception{
+	public String[] getPreInRequestHandlerBuiltIn() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.pre-in-request.");
 	}
 	
@@ -876,7 +885,7 @@ public class ClassNameProperties {
 	public String getInRequestHandlerBuiltIn(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.built-in.in-request.", nome);
 	}
-	public String[] getInRequestHandlerBuiltIn() throws Exception{
+	public String[] getInRequestHandlerBuiltIn() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.in-request.");
 	}
 	
@@ -888,7 +897,7 @@ public class ClassNameProperties {
 	public String getInRequestProtocolHandlerBuiltIn(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.built-in.in-protocol-request.", nome);
 	}
-	public String[] getInRequestProtocolHandlerBuiltIn() throws Exception{
+	public String[] getInRequestProtocolHandlerBuiltIn() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.in-protocol-request.");
 	}
 	
@@ -900,7 +909,7 @@ public class ClassNameProperties {
 	public String getOutRequestHandlerBuiltIn(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.built-in.out-request.", nome);
 	}
-	public String[] getOutRequestHandlerBuiltIn() throws Exception{
+	public String[] getOutRequestHandlerBuiltIn() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.out-request.");
 	}
 	
@@ -912,7 +921,7 @@ public class ClassNameProperties {
 	public String getPostOutRequestHandlerBuiltIn(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.built-in.post-out-request.", nome);
 	}
-	public String[] getPostOutRequestHandlerBuiltIn() throws Exception{
+	public String[] getPostOutRequestHandlerBuiltIn() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.post-out-request.");
 	}
 	
@@ -924,7 +933,7 @@ public class ClassNameProperties {
 	public String getPreInResponseHandlerBuiltIn(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.built-in.pre-in-response.", nome);
 	}
-	public String[] getPreInResponseHandlerBuiltIn() throws Exception{
+	public String[] getPreInResponseHandlerBuiltIn() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.pre-in-response.");
 	}
 	
@@ -936,7 +945,7 @@ public class ClassNameProperties {
 	public String getInResponseHandlerBuiltIn(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.built-in.in-response.", nome);
 	}
-	public String[] getInResponseHandlerBuiltIn() throws Exception{
+	public String[] getInResponseHandlerBuiltIn() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.in-response.");
 	}
 	
@@ -948,7 +957,7 @@ public class ClassNameProperties {
 	public String getOutResponseHandlerBuiltIn(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.built-in.out-response.", nome);
 	}
-	public String[] getOutResponseHandlerBuiltIn() throws Exception{
+	public String[] getOutResponseHandlerBuiltIn() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.out-response.");
 	}
 	
@@ -960,7 +969,7 @@ public class ClassNameProperties {
 	public String getPostOutResponseHandlerBuiltIn(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.built-in.post-out-response.", nome);
 	}
-	public String[] getPostOutResponseHandlerBuiltIn() throws Exception{
+	public String[] getPostOutResponseHandlerBuiltIn() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.post-out-response.");
 	}
 	
@@ -972,7 +981,7 @@ public class ClassNameProperties {
 	public String getIntegrationManagerRequestHandlerBuiltIn(String nome){
 		return this.getValue("org.openspcoop2.pdd.integrationManager.handler.built-in.request.", nome);
 	}
-	public String[] getIntegrationManagerRequestHandlerBuiltIn() throws Exception{
+	public String[] getIntegrationManagerRequestHandlerBuiltIn() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.integrationManager.handler.built-in.request.");
 	}
 	
@@ -984,7 +993,7 @@ public class ClassNameProperties {
 	public String getIntegrationManagerResponseHandlerBuiltIn(String nome){
 		return this.getValue("org.openspcoop2.pdd.integrationManager.handler.built-in.response.", nome);
 	}
-	public String[] getIntegrationManagerResponseHandlerBuiltIn() throws Exception{
+	public String[] getIntegrationManagerResponseHandlerBuiltIn() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.integrationManager.handler.built-in.response.");
 	}
 	
@@ -1001,7 +1010,7 @@ public class ClassNameProperties {
 	public String getInitHandler(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.init.", nome);
 	}
-	public String[] getInitHandler() throws Exception{
+	public String[] getInitHandler() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.init.");
 	}
 	
@@ -1015,7 +1024,7 @@ public class ClassNameProperties {
 	public String getExitHandler(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.exit.", nome);
 	}
-	public String[] getExitHandler() throws Exception{
+	public String[] getExitHandler() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.exit.");
 	}
 	
@@ -1029,7 +1038,7 @@ public class ClassNameProperties {
 	public String getPreInRequestHandler(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.pre-in-request.", nome);
 	}
-	public String[] getPreInRequestHandler() throws Exception{
+	public String[] getPreInRequestHandler() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.pre-in-request.");
 	}
 	
@@ -1041,7 +1050,7 @@ public class ClassNameProperties {
 	public String getInRequestHandler(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.in-request.", nome);
 	}
-	public String[] getInRequestHandler() throws Exception{
+	public String[] getInRequestHandler() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.in-request.");
 	}
 	
@@ -1053,7 +1062,7 @@ public class ClassNameProperties {
 	public String getInRequestProtocolHandler(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.in-protocol-request.", nome);
 	}
-	public String[] getInRequestProtocolHandler() throws Exception{
+	public String[] getInRequestProtocolHandler() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.in-protocol-request.");
 	}
 	
@@ -1065,7 +1074,7 @@ public class ClassNameProperties {
 	public String getOutRequestHandler(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.out-request.", nome);
 	}
-	public String[] getOutRequestHandler() throws Exception{
+	public String[] getOutRequestHandler() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.out-request.");
 	}
 	
@@ -1077,7 +1086,7 @@ public class ClassNameProperties {
 	public String getPostOutRequestHandler(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.post-out-request.", nome);
 	}
-	public String[] getPostOutRequestHandler() throws Exception{
+	public String[] getPostOutRequestHandler() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.post-out-request.");
 	}
 	
@@ -1089,7 +1098,7 @@ public class ClassNameProperties {
 	public String getPreInResponseHandler(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.pre-in-response.", nome);
 	}
-	public String[] getPreInResponseHandler() throws Exception{
+	public String[] getPreInResponseHandler() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.pre-in-response.");
 	}
 	
@@ -1101,7 +1110,7 @@ public class ClassNameProperties {
 	public String getInResponseHandler(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.in-response.", nome);
 	}
-	public String[] getInResponseHandler() throws Exception{
+	public String[] getInResponseHandler() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.in-response.");
 	}
 	
@@ -1113,7 +1122,7 @@ public class ClassNameProperties {
 	public String getOutResponseHandler(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.out-response.", nome);
 	}
-	public String[] getOutResponseHandler() throws Exception{
+	public String[] getOutResponseHandler() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.out-response.");
 	}
 	
@@ -1125,7 +1134,7 @@ public class ClassNameProperties {
 	public String getPostOutResponseHandler(String nome){
 		return this.getValue("org.openspcoop2.pdd.handler.post-out-response.", nome);
 	}
-	public String[] getPostOutResponseHandler() throws Exception{
+	public String[] getPostOutResponseHandler() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.handler.post-out-response.");
 	}
 	
@@ -1137,7 +1146,7 @@ public class ClassNameProperties {
 	public String getIntegrationManagerRequestHandler(String nome){
 		return this.getValue("org.openspcoop2.pdd.integrationManager.handler.request.", nome);
 	}
-	public String[] getIntegrationManagerRequestHandler() throws Exception{
+	public String[] getIntegrationManagerRequestHandler() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.integrationManager.handler.request.");
 	}
 	
@@ -1149,7 +1158,7 @@ public class ClassNameProperties {
 	public String getIntegrationManagerResponseHandler(String nome){
 		return this.getValue("org.openspcoop2.pdd.integrationManager.handler.response.", nome);
 	}
-	public String[] getIntegrationManagerResponseHandler() throws Exception{
+	public String[] getIntegrationManagerResponseHandler() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.integrationManager.handler.response.");
 	}
 	
@@ -1163,7 +1172,7 @@ public class ClassNameProperties {
 		if(nome == null) return null;
 		return this.getValue("org.openspcoop2.pdd.messagefactory.", nome);
 	}
-	public String[] getOpenSPCoop2MessageFactory() throws Exception{
+	public String[] getOpenSPCoop2MessageFactory() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.messagefactory.");
 	}
 	
@@ -1177,7 +1186,7 @@ public class ClassNameProperties {
 		if(nome == null) return null;
 		return this.getValue("org.openspcoop2.pdd.messageSecurity.context.", nome);
 	}
-	public String[] getMessageSecurityContext() throws Exception{
+	public String[] getMessageSecurityContext() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.messageSecurity.context.");
 	}
 	
@@ -1191,7 +1200,7 @@ public class ClassNameProperties {
 		if(nome == null) return null;
 		return this.getValue("org.openspcoop2.pdd.messageSecurity.digestReader.", nome);
 	}
-	public String[] getMessageSecurityDigestReader() throws Exception{
+	public String[] getMessageSecurityDigestReader() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.messageSecurity.digestReader.");
 	}
 	
@@ -1204,7 +1213,7 @@ public class ClassNameProperties {
 	public String getGestoreCredenziali(String nome){
 		return this.getValue("org.openspcoop2.pdd.gestoreCredenziali.", nome);
 	}
-	public String[] getGestoreCredenziali() throws Exception{
+	public String[] getGestoreCredenziali() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.gestoreCredenziali.");
 	}
 	
@@ -1216,7 +1225,7 @@ public class ClassNameProperties {
 	public String getGestoreCredenzialiIM(String nome){
 		return this.getValue("org.openspcoop2.integrationManager.gestoreCredenziali.", nome);
 	}
-	public String[] getGestoreCredenzialiIM() throws Exception{
+	public String[] getGestoreCredenzialiIM() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.integrationManager.gestoreCredenziali.");
 	}
 	
@@ -1230,7 +1239,7 @@ public class ClassNameProperties {
 	public String getNotifierCallback(String nome){
 		return this.getValue("org.openspcoop2.notifierCallback.", nome);
 	}
-	public String[] getNotifierCallback() throws Exception{
+	public String[] getNotifierCallback() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.notifierCallback.");
 	}
 	
@@ -1245,7 +1254,7 @@ public class ClassNameProperties {
 	public String getBehaviour(String nome){
 		return this.getValue("org.openspcoop2.behaviour.", nome);
 	}
-	public String[] getBehaviour() throws Exception{
+	public String[] getBehaviour() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.behaviour.");
 	}
 	
@@ -1259,7 +1268,7 @@ public class ClassNameProperties {
 	public String getSalvataggioTracceManager(String nome){
 		return this.getValue("org.openspcoop2.pdd.transazioni.tracce.salvataggio.", nome);
 	}
-	public String[] getSalvataggioTracceManager() throws Exception{
+	public String[] getSalvataggioTracceManager() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.transazioni.tracce.salvataggio.");
 	}
 	
@@ -1273,7 +1282,7 @@ public class ClassNameProperties {
 	public String getSalvataggioDiagnosticiManager(String nome){
 		return this.getValue("org.openspcoop2.pdd.transazioni.diagnostici.salvataggio.", nome);
 	}
-	public String[] getSalvataggioDiagnosticiManager() throws Exception{
+	public String[] getSalvataggioDiagnosticiManager() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.transazioni.diagnostici.salvataggio.");
 	}
 	
@@ -1287,7 +1296,7 @@ public class ClassNameProperties {
 	public String getRateLimiting(String nome){
 		return this.getValue("org.openspcoop2.pdd.controlloTraffico.rateLimiting.", nome);
 	}
-	public String[] getRateLimiting() throws Exception{
+	public String[] getRateLimiting() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.controlloTraffico.rateLimiting.");
 	}
 
@@ -1301,7 +1310,7 @@ public class ClassNameProperties {
 	public String getTokenDynamicDiscovery(String nome){
 		return this.getValue("org.openspcoop2.pdd.token.dynamicDiscovery.", nome);
 	}
-	public String[] getTokenDynamicDiscovery() throws Exception{
+	public String[] getTokenDynamicDiscovery() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.token.dynamicDiscovery.");
 	}
 	
@@ -1316,7 +1325,7 @@ public class ClassNameProperties {
 	public String getTokenValidazione(String nome){
 		return this.getValue("org.openspcoop2.pdd.token.validazione.", nome);
 	}
-	public String[] getTokenValidazione() throws Exception{
+	public String[] getTokenValidazione() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.token.validazione.");
 	}
 	
@@ -1330,7 +1339,7 @@ public class ClassNameProperties {
 	public String getTokenNegoziazione(String nome){
 		return this.getValue("org.openspcoop2.pdd.token.negoziazione.", nome);
 	}
-	public String[] getTokenNegoziazione() throws Exception{
+	public String[] getTokenNegoziazione() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.token.negoziazione.");
 	}
 	
@@ -1344,7 +1353,7 @@ public class ClassNameProperties {
 	public String getAttributeAuthority(String nome){
 		return this.getValue("org.openspcoop2.pdd.attributeAuthority.", nome);
 	}
-	public String[] getAttributeAuthority() throws Exception{
+	public String[] getAttributeAuthority() throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.attributeAuthority.");
 	}
 	
@@ -1358,7 +1367,7 @@ public class ClassNameProperties {
 	public String getExtended(String tipologia, String nome){
 		return this.getValue("org.openspcoop2.pdd.extended.", tipologia+"."+nome);
 	}
-	public String[] getExtended(String tipologia) throws Exception{
+	public String[] getExtended(String tipologia) throws UtilsException{
 		return this.getTipiGestiti("org.openspcoop2.pdd.extended."+tipologia+".");
 	}
 	
@@ -1392,14 +1401,12 @@ public class ClassNameProperties {
 			return null;
 		}
 	}
-	private String[] getTipiGestiti(String prefix,String ... defaults) throws Exception{
+	private String[] getTipiGestiti(String prefix,String ... defaults) throws UtilsException {
 		Properties prop = this.reader.readProperties(prefix);
 		Enumeration<?> en = prop.keys();
 		List<String> tipi = new ArrayList<>();
 		if(defaults!=null && defaults.length>0){
-			for(int i=0; i<defaults.length; i++){
-				tipi.add(defaults[i]);
-			}
+			tipi.addAll(Arrays.asList(defaults));
 		}
 		while(en.hasMoreElements()){
 			Object o = en.nextElement();
@@ -1408,10 +1415,11 @@ public class ClassNameProperties {
 				tipi.add(v.trim());
 			}
 		}
-		if(tipi.size()>0){
+		String[] sNull = null;
+		if(!tipi.isEmpty()){
 			return tipi.toArray(new String[1]);
 		}else{
-			return null;
+			return sNull;
 		}
 	}
 }

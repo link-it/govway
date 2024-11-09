@@ -51,8 +51,12 @@ public class DAOFactory implements IDAOFactory {
 
 	public static DAOFactory getInstance(Logger log) throws DAOFactoryException{
 
-		if(DAOFactory.daoFactory==null)
-			DAOFactory.initialize(log);
+		if(DAOFactory.daoFactory==null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED'
+			synchronized (DAOFactory.class) {
+				DAOFactory.initialize(log);
+			}
+		}
 
 		return DAOFactory.daoFactory;
 	}
@@ -65,7 +69,7 @@ public class DAOFactory implements IDAOFactory {
 
 	private DAOFactoryProperties daoFactoryProperties = null;
 
-	public DAOFactory(Logger log) throws DAOFactoryException{
+	private DAOFactory(Logger log) throws DAOFactoryException{
 		try{
 			this.log = log;
 			this.daoFactoryProperties = DAOFactoryProperties.getInstance(log); 
@@ -73,7 +77,7 @@ public class DAOFactory implements IDAOFactory {
 			throw new DAOFactoryException(e.getMessage(),e);
 		}
 	}
-	public DAOFactory(Logger log, DAOFactoryProperties daoFactoryProperties) throws DAOFactoryException{
+	protected DAOFactory(Logger log, DAOFactoryProperties daoFactoryProperties) throws DAOFactoryException{
 		try{
 			this.log = log;
 			this.daoFactoryProperties = daoFactoryProperties; 

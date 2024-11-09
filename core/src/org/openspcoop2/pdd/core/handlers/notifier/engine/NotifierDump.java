@@ -58,7 +58,7 @@ public class NotifierDump {
 	// STATIC
 
 	private static NotifierDump staticInstance = null;
-	private static synchronized void initialize() throws Exception{
+	private static synchronized void initialize() throws TracciamentoException{
 		if(staticInstance==null){
 			try{
 
@@ -66,7 +66,7 @@ public class NotifierDump {
 				
 				String tipoDatabase = op2Properties.getDatabaseType();
 				if(tipoDatabase==null){
-					throw new Exception("Tipo Database non definito");
+					throw new TracciamentoException("Tipo Database non definito");
 				}
 
 				boolean debug = op2Properties.isTransazioniDebug();
@@ -91,13 +91,16 @@ public class NotifierDump {
 						tipoDatabase, daoFactory, daoFactoryServiceManagerPropertiesTransazioni, daoFactoryLogger);
 
 			}catch(Exception e){
-				throw new Exception("Errore durante l'inizializzazione del NotifierDump: "+e.getMessage(),e);
+				throw new TracciamentoException("Errore durante l'inizializzazione del NotifierDump: "+e.getMessage(),e);
 			}
 		}
 	}
-	public static NotifierDump getInstance() throws Exception{
+	public static NotifierDump getInstance() throws TracciamentoException {
 		if(staticInstance==null){
-			initialize();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (NotifierDump.class) {
+				initialize();
+			}
 		}
 		return staticInstance;
 	}
@@ -114,7 +117,7 @@ public class NotifierDump {
     
     boolean debug = false;
 	
-	public NotifierDump( boolean debug, 
+	private NotifierDump( boolean debug, 
 			String tipoDatabase,
 			DAOFactory daoFactory, ServiceManagerProperties daoFactoryServiceManagerPropertiesTransazioni, Logger daoFactoryLogger){
 		
@@ -236,7 +239,7 @@ public class NotifierDump {
 		if(headerTrasporto!=null && headerTrasporto.size()>0){
 			Iterator<String> keys = headerTrasporto.keySet().iterator();
 			while (keys.hasNext()) {
-				String key = (String) keys.next();
+				String key = keys.next();
 				List<String> values = headerTrasporto.get(key);
 				if(values!=null && !values.isEmpty()) {
 					for (String value : values) {

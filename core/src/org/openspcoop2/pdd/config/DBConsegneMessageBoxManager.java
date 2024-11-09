@@ -65,6 +65,14 @@ public class DBConsegneMessageBoxManager implements IMonitoraggioRisorsa {
 		}
 	}
 	public static DBConsegneMessageBoxManager getInstanceRuntime() {
+		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+		if (staticInstanceDBRuntimeManager == null) {
+	        synchronized (DBConsegneMessageBoxManager.class) {
+	            if (staticInstanceDBRuntimeManager == null) {
+	                return null;
+	            }
+	        }
+	    }
 		return staticInstanceDBRuntimeManager;
 	}
 	
@@ -88,6 +96,14 @@ public class DBConsegneMessageBoxManager implements IMonitoraggioRisorsa {
 		}
 	}
 	public static DBConsegneMessageBoxManager getInstanceTransazioni() {
+		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+		if (staticInstanceDBTransazioniManager == null) {
+	        synchronized (DBConsegneMessageBoxManager.class) {
+	            if (staticInstanceDBTransazioniManager == null) {
+	                return null;
+	            }
+	        }
+	    }
 		return staticInstanceDBTransazioniManager;
 	}
 	
