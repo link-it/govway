@@ -62,7 +62,7 @@ public class DatasourceProperties {
 	 *
 	 * 
 	 */
-	public DatasourceProperties(String confDir,Logger log) throws Exception {
+	private DatasourceProperties(String confDir,Logger log) throws Exception {
 
 		if(log!=null)
 			this.log = log;
@@ -119,7 +119,10 @@ public class DatasourceProperties {
 	 */
 	public static DatasourceProperties getInstance() throws UtilsException{
 		if(DatasourceProperties.datasourceProperties==null){
-	    	throw new UtilsException("DatasourceProperties non inizializzato");
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (DatasourceProperties.class) {
+				throw new UtilsException("DatasourceProperties non inizializzato");
+			}
 	    }
 	    return DatasourceProperties.datasourceProperties;
 	}

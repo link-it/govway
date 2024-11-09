@@ -297,7 +297,7 @@ public class ConnettoreJMS extends ConnettoreBase {
 				this.logger.debug("Creazione jndi context ed eventuale pool-local-context, Overwrite da file properties...");
 			ConnettoreJMSProperties overwriteProperties = ConnettoreJMSProperties.getInstance();
 			if (overwriteProperties!=null){
-				Map<String,IDServizio> idServizi = overwriteProperties.getIDServizi_Pubblicazione();
+				Map<String,IDServizio> idServizi = overwriteProperties.getIDServiziPubblicazione();
 				String indiceServizio = null;
 				if(this.busta !=null){
 					for (String keyElement : idServizi.keySet()) {
@@ -319,7 +319,7 @@ public class ConnettoreJMS extends ConnettoreBase {
 				}
 				if(indiceServizio!=null){
 					// overwrite
-					java.util.Properties propertiesContextOver = overwriteProperties.getJNDIContext_Configurazione(indiceServizio);
+					java.util.Properties propertiesContextOver = overwriteProperties.getJNDIContextConfigurazione(indiceServizio);
 					if(propertiesContextOver!=null){
 						java.util.Enumeration<?> el = propertiesContextOver.keys();
 						while(el.hasMoreElements()){
@@ -328,7 +328,7 @@ public class ConnettoreJMS extends ConnettoreBase {
 
 						}
 					}
-					java.util.Properties propertiesPoolOver = overwriteProperties.getJNDIPool_Configurazione(indiceServizio);
+					java.util.Properties propertiesPoolOver = overwriteProperties.getJNDIPoolConfigurazione(indiceServizio);
 					if(propertiesPoolOver!=null){
 						java.util.Enumeration<?> el = propertiesPoolOver.keys();
 						while(el.hasMoreElements()){

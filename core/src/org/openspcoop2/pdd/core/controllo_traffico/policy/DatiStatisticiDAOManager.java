@@ -97,14 +97,17 @@ import org.slf4j.Logger;
 public class DatiStatisticiDAOManager  {
 
 	private static DatiStatisticiDAOManager staticInstance = null;
-	public static synchronized void initialize(ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico) throws Exception{
+	public static synchronized void initialize(ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico) throws CoreException{
 		if(staticInstance==null){
 			staticInstance = new DatiStatisticiDAOManager(configurazioneControlloTraffico);
 		}
 	}
-	public static DatiStatisticiDAOManager getInstance() throws Exception{
+	public static DatiStatisticiDAOManager getInstance() throws CoreException{
 		if(staticInstance==null){
-			throw new Exception("DatiStatisticiDAOManager non inizializzato");
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (DatiStatisticiDAOManager.class) {
+				throw new CoreException("DatiStatisticiDAOManager non inizializzato");
+			}
 		}
 		return staticInstance;
 	}
@@ -115,8 +118,8 @@ public class DatiStatisticiDAOManager  {
 	private boolean debug = false;	
 		
 	/** Database */
-//	private DataSource ds = null;
-//	private String datasource = null;
+	/**private DataSource ds = null;
+	private String datasource = null;*/
 	private String tipoDatabase = null; //tipoDatabase
 	private DAOFactory daoFactory = null;
     private Logger daoFactoryLogger = null;
@@ -127,7 +130,7 @@ public class DatiStatisticiDAOManager  {
 	
 	private Logger log;
 	
-	private DatiStatisticiDAOManager(ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico) throws Exception{
+	private DatiStatisticiDAOManager(ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico) throws CoreException{
 		try{
 			
     		this.configurazioneControlloTraffico = configurazioneControlloTraffico;
@@ -137,7 +140,7 @@ public class DatiStatisticiDAOManager  {
 			this.tipoDatabase = this.configurazioneControlloTraffico.getTipoDatabaseConfig();
 			
 			if(this.tipoDatabase==null){
-				throw new Exception("Tipo Database non definito");
+				throw new CoreException("Tipo Database non definito");
 			}
 
 			// DAOFactory
@@ -154,16 +157,15 @@ public class DatiStatisticiDAOManager  {
 			if(this.dbStatisticheManager.useRuntimePdD()) {
 				this.checkState = true;
     		}
-			else if(this.dbStatisticheManager.useTransazioni()) {
-				if(DBTransazioniManager.getInstance().useRuntimePdD()) {
-					this.checkState = true;
-				}
-    		}
+			else if(this.dbStatisticheManager.useTransazioni() &&
+				DBTransazioniManager.getInstance().useRuntimePdD()) {
+				this.checkState = true;
+			}
 			
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(this.debug);
 			
 		}catch(Exception e){
-			throw new Exception("Errore durante l'inizializzazione del datasource: "+e.getMessage(),e);
+			throw new CoreException("Errore durante l'inizializzazione del datasource: "+e.getMessage(),e);
 		}
     	
     }

@@ -27,6 +27,8 @@ import javax.jms.Queue;
 import javax.jms.QueueConnectionFactory;
 import javax.naming.NamingException;
 
+import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.web.lib.queue.config.QueueProperties;
 
@@ -57,18 +59,27 @@ public class QueueManager {
 			this.jndi = new GestoreJNDI(QueueManager.cfProp);
 
 		} catch (Exception e) {
+			// ignore
 		}
 	}
 
-	public static QueueManager getInstance() {
+	private static synchronized void init() {
 		if (QueueManager.manager == null) {
 			QueueManager.manager = new QueueManager();
+		}
+	}
+	public static QueueManager getInstance() {
+		if (QueueManager.manager == null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (QueueManager.class) {
+				init();
+			}
 		}
 
 		return QueueManager.manager;
 	}
 
-	public Queue getQueue(String queueName) throws Exception {
+	public Queue getQueue(String queueName) throws UtilsException {
 		return (Queue) this.jndi.lookup(queueName);
 	}
 
@@ -86,7 +97,7 @@ public class QueueManager {
 		return this.qcf;
 	}
 
-	private static void readQueueProperties() throws Exception {
+	private static void readQueueProperties() throws UtilsException, OpenSPCoop2ConfigurationException {
 
 		QueueProperties queueProperties = QueueProperties.getInstance();
 		

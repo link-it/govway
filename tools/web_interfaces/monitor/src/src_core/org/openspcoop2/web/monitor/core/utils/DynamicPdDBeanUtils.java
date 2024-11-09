@@ -114,8 +114,12 @@ public class DynamicPdDBeanUtils implements Serializable {
 	private transient Font defaultFont = null;
 
 	public static DynamicPdDBeanUtils getInstance(Logger log) throws Exception{
-		if(DynamicPdDBeanUtils.instance == null)
-			init(log);
+		if(DynamicPdDBeanUtils.instance == null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (DynamicPdDBeanUtils.class) {
+				init(log);
+			}
+		}
 
 		return DynamicPdDBeanUtils.instance;
 	}

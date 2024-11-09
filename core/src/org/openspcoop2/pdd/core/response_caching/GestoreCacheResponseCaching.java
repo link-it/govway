@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.core.response_caching;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.UtilsException;
@@ -292,21 +293,24 @@ public class GestoreCacheResponseCaching {
 	
 	
 	private static GestoreCacheResponseCaching staticInstance = null;
-	public static synchronized void initialize() throws Exception{
+	public static synchronized void initialize() {
 		if(staticInstance==null){
 			staticInstance = new GestoreCacheResponseCaching();
 		}
 	}
-	public static GestoreCacheResponseCaching getInstance() throws Exception{
+	public static GestoreCacheResponseCaching getInstance() throws CoreException{
 		if(staticInstance==null){
-			throw new Exception("GestoreCacheResponseCaching non inizializzato");
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (GestoreCacheResponseCaching.class) {
+				throw new CoreException("GestoreCacheResponseCaching non inizializzato");
+			}
 		}
 		return staticInstance;
 	}
 	
 	private Logger log;
 	
-	public GestoreCacheResponseCaching() throws Exception{
+	private GestoreCacheResponseCaching() {
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 	}
 	

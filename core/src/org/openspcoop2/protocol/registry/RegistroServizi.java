@@ -100,6 +100,7 @@ import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.utils.cache.CacheResponse;
@@ -332,14 +333,17 @@ public class RegistroServizi  {
 			boolean prefillCache, CryptConfig cryptConfigSoggetti,
 			CacheType cacheType, IDriverBYOK driverBYOK)throws DriverRegistroServiziException{
 
+		if(alog!=null)
+			this.log = alog;
+		else
+			this.log = LoggerWrapperFactory.getLogger(RegistroServizi.class);
+		if(this.log==null) {
+			throw new UtilsRuntimeException("Logger unavailable");
+		}
+		
 		try{ 
 			this.driverRegistroServizi = new java.util.HashMap<>();
 			this.registriXML = new ArrayList<>();
-
-			if(alog!=null)
-				this.log = alog;
-			else
-				this.log = LoggerWrapperFactory.getLogger(RegistroServizi.class);
 
 			this.raggiungibilitaTotale = raggiungibilitaTotale;
 
@@ -500,14 +504,17 @@ public class RegistroServizi  {
 	// Costruttore per implementare classe org.openspcoop2.protocol.basic.registry.RegistryReader
 	public RegistroServizi(IDriverRegistroServiziGet driverRegistroServiziGET, Logger alog, boolean readObjectStatoBozza, String tipoRegistro)throws DriverRegistroServiziException{
 
+		if(alog!=null)
+			this.log = alog;
+		else
+			this.log = LoggerWrapperFactory.getLogger(RegistroServizi.class);
+		if(this.log==null) {
+			throw new UtilsRuntimeException("Logger unavailable");
+		}
+		
 		try{ 
-			this.driverRegistroServizi = new java.util.HashMap<String,IDriverRegistroServiziGet>();
-			this.registriXML = new ArrayList<DriverRegistroServiziXML>();
-
-			if(alog!=null)
-				this.log = alog;
-			else
-				this.log = LoggerWrapperFactory.getLogger(RegistroServizi.class);
+			this.driverRegistroServizi = new java.util.HashMap<>();
+			this.registriXML = new ArrayList<>();
 
 			this.raggiungibilitaTotale = true;
 

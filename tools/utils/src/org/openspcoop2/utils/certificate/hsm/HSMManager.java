@@ -50,6 +50,14 @@ public class HSMManager {
 		}
 	}
 	public static HSMManager getInstance() {
+		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+		if (staticInstance == null) {
+	        synchronized (HSMManager.class) {
+	            if (staticInstance == null) {
+	                return null;
+	            }
+	        }
+	    }
 		return staticInstance;
 	}
 	

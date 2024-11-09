@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.core.controllo_traffico;
 
 import java.util.Date;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.controllo_traffico.constants.TipoErrore;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -47,15 +48,18 @@ public class GestoreControlloTraffico {
 			staticInstance = new GestoreControlloTraffico(erroreGenerico);
 		}
 	}
-	public static GestoreControlloTraffico getInstance() throws Exception{
+	public static GestoreControlloTraffico getInstance() throws CoreException{
 		if(staticInstance==null){
-			throw new Exception("GestorePolicyAttive non inizializzato");
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (GestoreControlloTraffico.class) {
+				throw new CoreException("GestorePolicyAttive non inizializzato");
+			}
 		}
 		return staticInstance;
 	}
 	
 	
-	public GestoreControlloTraffico(boolean erroreGenerico){
+	private GestoreControlloTraffico(boolean erroreGenerico){
 		this.erroreGenerico = erroreGenerico;
 	}
 	

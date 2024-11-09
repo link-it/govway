@@ -116,12 +116,17 @@ public class DBManager {
 	 *            Contesto JNDI da utilizzare
 	 */
 	public static boolean initialize(String jndiName, java.util.Properties context) throws Exception {
+		if (DBManager.manager == null) {
+			initializeEngine(jndiName, context);
+		}
+		return DBManager.initialized;
+	}
+	private static synchronized void initializeEngine(String jndiName, java.util.Properties context) throws Exception {
 		try {
 			if (DBManager.manager == null) {
 				DBManager.manager = new DBManager(jndiName, context);
+				DBManager.setInitialized(true);
 			}
-			DBManager.setInitialized(true);
-			return true;
 		} catch (Exception e) {
 			DBManager.setInitialized(false);
 			DBManager.log.debug("Errore di inizializzazione del Database", e);
@@ -135,6 +140,12 @@ public class DBManager {
 	 * @return Istanza di DBManager
 	 */
 	public static DBManager getInstance() {
+		if(DBManager.manager==null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (DBManager.class) {
+				return DBManager.manager;
+			}
+		}
 		return DBManager.manager;
 	}
 

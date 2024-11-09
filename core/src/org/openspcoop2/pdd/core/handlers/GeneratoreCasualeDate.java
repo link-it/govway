@@ -39,8 +39,8 @@ import org.slf4j.Logger;
 public class GeneratoreCasualeDate {
 
 	private static GeneratoreCasualeDate generatore = null;
-	private static long SOGLIA_MS_MIN = 1; 
-	private static long SOGLIA_MS_MAX = 20;
+	private static long sogliaMsMin = 1; 
+	private static long sogliaMsMax = 20;
 
 	public static synchronized void init(Date intervalloInizio,Date intervalloFine,Logger log){
 		if(GeneratoreCasualeDate.generatore==null){
@@ -49,26 +49,33 @@ public class GeneratoreCasualeDate {
 	}
 
 	public static GeneratoreCasualeDate getGeneratoreCasualeDate(){
+		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+		if (GeneratoreCasualeDate.generatore == null) {
+	        synchronized (GeneratoreCasualeDate.class) {
+	            if (GeneratoreCasualeDate.generatore == null) {
+	                return null;
+	            }
+	        }
+	    }
 		return GeneratoreCasualeDate.generatore;
 	}
 	
-	private static java.util.Random _rnd = null;
+	private static java.util.Random randomEngine = null;
 	private static synchronized void initRandom() {
-		if(_rnd==null) {
-			_rnd = new SecureRandom();
+		if(randomEngine==null) {
+			randomEngine = new SecureRandom();
 		}
 	}
 	public static java.util.Random getRandom() {
-		if(_rnd==null) {
+		if(randomEngine==null) {
 			initRandom();
 		}
-		return _rnd;
+		return randomEngine;
 	}
 	
 	private static long getRandom(long inizio, long fine){
-		long value = inizio + 
+		return inizio + 
 			Math.round( getRandom().nextDouble() * (fine - inizio) );
-		return value;
 	}
 	
 
@@ -76,19 +83,20 @@ public class GeneratoreCasualeDate {
 	
 	private Date intervalloInizio = null;
 	private Date intervalloFine = null;
-	public GeneratoreCasualeDate(Date intervalloInizio,Date intervalloFine,Logger log){
+	private GeneratoreCasualeDate(Date intervalloInizio,Date intervalloFine,Logger log){
 		this.intervalloInizio = intervalloInizio;
 		this.intervalloFine = intervalloFine;
-		log.info("Generatore di date causauli dei log attivato con intervallo ["+this.intervalloInizio+"] - ["+this.intervalloFine+"]");
+		String msg = "Generatore di date causauli dei log attivato con intervallo ["+this.intervalloInizio+"] - ["+this.intervalloFine+"]";
+		log.info(msg);
 	}
 	
-	private Map<String, Date>  dateGenerate = new HashMap<String, Date>();
+	private Map<String, Date>  dateGenerate = new HashMap<>();
 	
 	private Date getNextDate(String idCluster){
 		Date nextDate = null;
 		if(this.dateGenerate.containsKey(idCluster)){
 			Date data = this.dateGenerate.remove(idCluster);
-			nextDate = new Date(data.getTime()+GeneratoreCasualeDate.getRandom(GeneratoreCasualeDate.SOGLIA_MS_MIN, GeneratoreCasualeDate.SOGLIA_MS_MAX));
+			nextDate = new Date(data.getTime()+GeneratoreCasualeDate.getRandom(GeneratoreCasualeDate.sogliaMsMin, GeneratoreCasualeDate.sogliaMsMax));
 		}
 		else{
 			nextDate = new Date(GeneratoreCasualeDate.getRandom(this.intervalloInizio.getTime(),this.intervalloFine.getTime()));	

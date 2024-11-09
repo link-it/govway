@@ -63,7 +63,7 @@ public class DatasourceProperties {
 	 *
 	 * 
 	 */
-	public DatasourceProperties(String confDir,Logger log) throws Exception {
+	private DatasourceProperties(String confDir,Logger log) throws UtilsException {
 
 		if(log!=null)
 			this.log = log;
@@ -76,12 +76,11 @@ public class DatasourceProperties {
 		try{  
 			properties = DatasourceProperties.class.getResourceAsStream("/loader.datasource.properties");
 			if(properties==null){
-				throw new Exception("File '/loader.datasource.properties' not found");
+				throw new UtilsException("File '/loader.datasource.properties' not found");
 			}
 			propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'loader.datasource.properties': \n\n"+e.getMessage());
-		    throw new Exception("ConsoleProperties initialize error: "+e.getMessage());
+			doError(e);
 		}finally{
 		    try{
 				if(properties!=null)
@@ -92,6 +91,11 @@ public class DatasourceProperties {
 		}
 
 		this.reader = new DatasourceInstanceProperties(propertiesReader, this.log, confDir);
+	}
+	private void doError(Exception e) throws UtilsException {
+		String msg = "Riscontrato errore durante la lettura del file 'loader.datasource.properties': "+e.getMessage();
+		this.log.error(msg,e);
+	    throw new UtilsException("ConsoleProperties initialize error: "+e.getMessage(),e);
 	}
 
 
@@ -119,7 +123,10 @@ public class DatasourceProperties {
 	 */
 	public static DatasourceProperties getInstance() throws OpenSPCoop2ConfigurationException{
 		if(DatasourceProperties.datasourceProperties==null){
-	    	throw new OpenSPCoop2ConfigurationException("DatasourceProperties non inizializzato");
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (DatasourceProperties.class) {
+				throw new OpenSPCoop2ConfigurationException("DatasourceProperties non inizializzato");
+			}
 	    }
 	    return DatasourceProperties.datasourceProperties;
 	}
@@ -156,15 +163,15 @@ public class DatasourceProperties {
 	
 	/* ----- Database del Registro dei Servizi -------- */
 	
-	public String getRegistroServizi_DataSource() throws UtilsException{
+	public String getRegistroServiziDataSource() throws UtilsException{
 		return this.readProperty(true, "registroServizi.dataSource");
 	}
 	
-	public Properties getRegistroServizi_DataSourceContext() throws UtilsException{
+	public Properties getRegistroServiziDataSourceContext() throws UtilsException{
 		return this.reader.readPropertiesConvertEnvProperties("registroServizi.dataSource.property.");
 	}
 	
-	public String getRegistroServizi_TipoDatabase() throws UtilsException{
+	public String getRegistroServiziTipoDatabase() throws UtilsException{
 		return this.readProperty(true, "registroServizi.tipoDatabase");
 	}
 	
@@ -173,15 +180,15 @@ public class DatasourceProperties {
 
 	/* ----- Database di configurazione -------- */
 	
-	public String getConfigurazione_DataSource() throws UtilsException{
+	public String getConfigurazioneDataSource() throws UtilsException{
 		return this.readProperty(true, "configPdD.dataSource");
 	}
 	
-	public Properties getConfigurazione_DataSourceContext() throws UtilsException{
+	public Properties getConfigurazioneDataSourceContext() throws UtilsException{
 		return this.reader.readPropertiesConvertEnvProperties("configPdD.dataSource.property.");
 	}
 	
-	public String getConfigurazione_TipoDatabase() throws UtilsException{
+	public String getConfigurazioneTipoDatabase() throws UtilsException{
 		return this.readProperty(true, "configPdD.tipoDatabase");
 	}
 	

@@ -22,7 +22,7 @@
 
 	<taskdef resource="edu/umd/cs/findbugs/anttask/tasks.properties">
 		<classpath>
-			<pathelement location="${openspcoop2.lib}/staticAnalysis/spotbugs-ant-4.7.3.jar"/>
+			<pathelement location="${openspcoop2.lib}/staticAnalysis/spotbugs-ant-4.8.6.jar"/>
 		</classpath>
 	</taskdef>
 

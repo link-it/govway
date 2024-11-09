@@ -37,11 +37,12 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.id.UniqueIdentifierException;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.slf4j.Logger;
-//import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
 
 
 /**
@@ -58,10 +59,15 @@ import org.slf4j.Logger;
 
 public class DBManager implements IMonitoraggioRisorsa {
 
+	private static final String ID_MODULO = "DBManager";
+	
 	/** DBManager */
 	private static DBManager manager = null;
 	/** TransactionIsolation level */
 	private static int transactionIsolationLevel = -1;
+	public static void setTransactionIsolationLevel(int transactionIsolationLevel) {
+		DBManager.transactionIsolationLevel = transactionIsolationLevel;
+	}
 
 	/** NomeJNDIC DataSource dove attingere connessioni */
 	private String dataSourceJndiName = null;
@@ -71,26 +77,27 @@ public class DBManager implements IMonitoraggioRisorsa {
 	private MsgDiagnostico msgDiag = null;
 
 	/** Informazione sui proprietari che hanno richiesto una connessione */
-	private static java.util.concurrent.ConcurrentHashMap<String,Resource> risorseInGestione = new java.util.concurrent.ConcurrentHashMap<String,Resource>();
+	private static java.util.concurrent.ConcurrentHashMap<String,Resource> risorseInGestione = new java.util.concurrent.ConcurrentHashMap<>();
 	
 	/** Informazioni sui check */
-	private static boolean getConnection_checkAutoCommitDisabled;
-	private static boolean getConnection_checkTransactionIsolation;
-	private static int getConnection_checkTransactionIsolationExpected;
+	private static boolean getConnectionCheckAutoCommitDisabled;
+	private static boolean getConnectionCheckTransactionIsolation;
+	private static int getConnectionCheckTransactionIsolationExpected;
 	
 	/** Stato di inizializzazione del manager */
 	private static boolean initialized = false;
 
-	public static String[] getStatoRisorse() throws Exception{	
+	public static String[] getStatoRisorse() {	
 		return getStatoRisorse(DBManager.risorseInGestione);
 	}
-	public static String[] getStatoRisorse(java.util.concurrent.ConcurrentHashMap<String,Resource> risorseInGestione) throws Exception{	
+	public static String[] getStatoRisorse(java.util.concurrent.ConcurrentMap<String,Resource> risorseInGestione) {	
+		String[] sNull = null;
 		Object[] o = risorseInGestione.values().toArray(new Resource[0]);
-		if(o==null)
-			return null;
+		if(! (o instanceof Resource[]))
+			return sNull;
 		Resource[] resources = (Resource[]) o;
-		if(resources==null || resources.length<=0)
-			return null;
+		if(resources.length<=0)
+			return sNull;
 	
 		String [] r = new String[resources.length];
 		for(int i=0; i<resources.length; i++){
@@ -109,17 +116,18 @@ public class DBManager implements IMonitoraggioRisorsa {
 
 	/**
 	 * Viene chiamato in causa per istanziare il datasource
+	 * @throws SQLException 
 	 *
 	 * 
 	 */
-	public DBManager(String jndiName,java.util.Properties context) throws Exception {
+	private DBManager(String jndiName,java.util.Properties context) throws UtilsException, SQLException {
 
-		this.msgDiag = MsgDiagnostico.newInstance("DBManager");
+		this.msgDiag = MsgDiagnostico.newInstance(ID_MODULO);
 
 		GestoreJNDI jndi = new GestoreJNDI(context);
 		Object oSearch = jndi.lookup(jndiName);
 		if(oSearch==null){
-			throw new Exception("Lookup jndiResource ["+jndiName+"] not found");
+			throw new UtilsException("Lookup jndiResource ["+jndiName+"] not found");
 		}
 		try{
 			this.dataSourceJndiName = jndiName;
@@ -135,7 +143,7 @@ public class DBManager implements IMonitoraggioRisorsa {
 				Enumeration<RefAddr> enR = r.getAll();
 				if(enR!=null){
 					while (enR.hasMoreElements()) {
-						RefAddr refAddr = (RefAddr) enR.nextElement();
+						RefAddr refAddr = enR.nextElement();
 						bf.append(" [").
 							append("type=").
 							append(refAddr.getType()).
@@ -146,14 +154,14 @@ public class DBManager implements IMonitoraggioRisorsa {
 				}
 				bf.append(")");
 			}
-			throw new Exception("lookup failed (object class: "+oSearch.getClass().getName()+")"+bf.toString()+": "+t.getMessage(),t);
+			throw new UtilsException("lookup failed (object class: "+oSearch.getClass().getName()+")"+bf.toString()+": "+t.getMessage(),t);
 		}
-		//this.jndiName = jndiName;
+		/**this.jndiName = jndiName;*/
 		
 		// Prelevo livello di transaction isolation
-		java.sql.Connection connectionTest = this.dataSource.getConnection();
-		DBManager.transactionIsolationLevel = connectionTest.getTransactionIsolation();
-		connectionTest.close();	    
+		try(java.sql.Connection connectionTest = this.dataSource.getConnection();){
+			DBManager.setTransactionIsolationLevel(connectionTest.getTransactionIsolation());
+		}	    
 
 	}
 	
@@ -173,18 +181,20 @@ public class DBManager implements IMonitoraggioRisorsa {
 	 *
 	 * @param jndiName Nome JNDI del Datasource
 	 * @param context Contesto JNDI da utilizzare
+	 * @throws SQLException 
+	 * @throws UtilsException 
 	 * 
 	 */
-	public static void initialize(String jndiName,java.util.Properties context) throws Exception{
+	public static void initialize(String jndiName,java.util.Properties context) throws UtilsException, SQLException {
 		DBManager.manager = new DBManager(jndiName,context);	
 		DBManager.setInitialized(true);
 		
 		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
 		if(properties!=null) {
-			DBManager.getConnection_checkAutoCommitDisabled = properties.isDataSourceGetConnectionCheckAutoCommitDisabled();
-			DBManager.getConnection_checkTransactionIsolation = properties.isDataSourceGetConnectionCheckTransactionIsolationLevel();
-			if(DBManager.getConnection_checkTransactionIsolation) {
-				DBManager.getConnection_checkTransactionIsolationExpected = properties.getDataSourceGetConnectionCheckTransactionIsolationLevelExpected();
+			DBManager.getConnectionCheckAutoCommitDisabled = properties.isDataSourceGetConnectionCheckAutoCommitDisabled();
+			DBManager.getConnectionCheckTransactionIsolation = properties.isDataSourceGetConnectionCheckTransactionIsolationLevel();
+			if(DBManager.getConnectionCheckTransactionIsolation) {
+				DBManager.getConnectionCheckTransactionIsolationExpected = properties.getDataSourceGetConnectionCheckTransactionIsolationLevelExpected();
 			}
 		}
 	}
@@ -196,6 +206,12 @@ public class DBManager implements IMonitoraggioRisorsa {
 	 * 
 	 */
 	public static DBManager getInstance(){
+		if(DBManager.manager==null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (DBManager.class) {
+				return DBManager.manager;
+			}
+		}
 		return DBManager.manager;
 	}
 
@@ -223,13 +239,13 @@ public class DBManager implements IMonitoraggioRisorsa {
 	 * @return java.sql.Connection aperta sul database.
 	 * 
 	 */
-	public Resource getResource(IDSoggetto idPDD,String modulo,String idTransazione) throws Exception {
+	public Resource getResource(IDSoggetto idPDD,String modulo,String idTransazione) throws UtilsException {
 		return this.getResource(idPDD, modulo, idTransazione, true);
 	}
-	public Resource getResource(IDSoggetto idPDD,String modulo,String idTransazione, boolean logError) throws Exception {
+	public Resource getResource(IDSoggetto idPDD,String modulo,String idTransazione, boolean logError) throws UtilsException {
 
 		if(this.dataSource == null)
-			throw new Exception("Datasource non istanziato");
+			throw new UtilsException("Datasource non istanziato");
 
 		Resource risorsa = null;
 		try {
@@ -237,8 +253,8 @@ public class DBManager implements IMonitoraggioRisorsa {
 				
 			DBManager.risorseInGestione.put(risorsa.getId(), risorsa);
 			
-			//if(this.dataSource instanceof SharedPoolDataSource)
-			//	System.out.println("IDLE["+((SharedPoolDataSource)this.dataSource).getNumIdle()+"] ACTIVE["+((SharedPoolDataSource)this.dataSource).getNumActive()+"]");
+			/**if(this.dataSource instanceof SharedPoolDataSource)
+				System.out.println("IDLE["+((SharedPoolDataSource)this.dataSource).getNumIdle()+"] ACTIVE["+((SharedPoolDataSource)this.dataSource).getNumActive()+"]");*/
 						
 		}
 		catch(Exception e) {
@@ -248,44 +264,47 @@ public class DBManager implements IMonitoraggioRisorsa {
 				this.msgDiag.setFunzione("DBManager."+modulo);
 				this.msgDiag.logFatalError(e, "Richiesta connessione al datasource");
 			}
-			throw e;
+			throw new UtilsException(e.getMessage(),e);
 		}
 		
 		return risorsa;
 	}
 
-	public static Resource buildResource(String dataSourceJndiName, DataSource dataSource, IDSoggetto idPDD,String modulo,String idTransazione) throws Exception {
-		//System.out.println("### buildResource ["+dataSourceJndiName+"] modulo:"+modulo+" idTransazione:"+idTransazione+" ...");
+	public static Resource buildResource(String dataSourceJndiName, DataSource dataSource, IDSoggetto idPDD,String modulo,String idTransazione) throws UtilsException, SQLException, UniqueIdentifierException {
+		if(dataSourceJndiName!=null) {
+			// log
+		}
+		/**System.out.println("### buildResource ["+dataSourceJndiName+"] modulo:"+modulo+" idTransazione:"+idTransazione+" ...");*/
 		Connection connectionDB = dataSource.getConnection();
 		checkConnection(connectionDB);
-		//System.out.println("### buildResource ["+dataSourceJndiName+"] modulo:"+modulo+" idTransazione:"+idTransazione+" OK");
+		/**System.out.println("### buildResource ["+dataSourceJndiName+"] modulo:"+modulo+" idTransazione:"+idTransazione+" OK");*/
 		return buildResource("DBRuntimeManager", connectionDB, idPDD, modulo, idTransazione);
 	}
-	private static void checkConnection(Connection connectionDB) throws Exception {
+	private static void checkConnection(Connection connectionDB) throws UtilsException {
 		if(connectionDB==null)
-			throw new Exception("is null");
+			throw new UtilsException("is null");
 	}
-	public static Resource buildResource(String managerId, Connection connectionDB, IDSoggetto idPDD,String modulo,String idTransazione) throws Exception {
+	public static Resource buildResource(String managerId, Connection connectionDB, IDSoggetto idPDD,String modulo,String idTransazione) throws SQLException, UniqueIdentifierException {
 		
-		/*if(modulo==null || !modulo.contains("Timer") || modulo.contains("TimerConsegnaContenutiApplicativi")) {
+		/**if(modulo==null || !modulo.contains("Timer") || modulo.contains("TimerConsegnaContenutiApplicativi")) {
 			System.out.println("### buildResource managerId["+managerId+"] modulo:"+modulo+" idTransazione:"+idTransazione+" ...");
 		}*/
 		
 		if(connectionDB!=null) {
-			if(DBManager.getConnection_checkAutoCommitDisabled) {
-				if(!connectionDB.getAutoCommit()) {
-					Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopResources(); 
-					if(log!=null) {
-						log.error(getPrefixLog(managerId, idPDD,modulo,idTransazione)+" Connessione ottenuta possiede autoCommit enabled ?");
-					}
+			if(DBManager.getConnectionCheckAutoCommitDisabled &&
+				!connectionDB.getAutoCommit()) {
+				Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopResources(); 
+				if(log!=null) {
+					String msg = getPrefixLog(managerId, idPDD,modulo,idTransazione)+" Connessione ottenuta possiede autoCommit enabled ?";
+					log.error(msg);
 				}
 			}
-			if(DBManager.getConnection_checkTransactionIsolation) {
-				if(DBManager.getConnection_checkTransactionIsolationExpected != connectionDB.getTransactionIsolation()) {
-					Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopResources(); 
-					if(log!=null) {
-						log.error(getPrefixLog(managerId, idPDD,modulo,idTransazione)+" Connessione ottenuta possiede un transaction isolation level '"+connectionDB.getTransactionIsolation()+"' differente da quello atteso '"+DBManager.getConnection_checkTransactionIsolationExpected+"'");
-					}
+			if(DBManager.getConnectionCheckTransactionIsolation &&
+				DBManager.getConnectionCheckTransactionIsolationExpected != connectionDB.getTransactionIsolation()) {
+				Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopResources(); 
+				if(log!=null) {
+					String msg = getPrefixLog(managerId, idPDD,modulo,idTransazione)+" Connessione ottenuta possiede un transaction isolation level '"+connectionDB.getTransactionIsolation()+"' differente da quello atteso '"+DBManager.getConnectionCheckTransactionIsolationExpected+"'";
+					log.error(msg);
 				}
 			}
 		}
@@ -352,16 +371,16 @@ public class DBManager implements IMonitoraggioRisorsa {
 				
 				if(resource.getResource()!=null){
 					Connection connectionDB = (Connection) resource.getResource();
-					if(connectionDB != null && (connectionDB.isClosed()==false)){
+					if(connectionDB != null && (!connectionDB.isClosed())){
 						connectionDB.close();
 					}
 				}
 				if(DBManager.risorseInGestione.containsKey(resource.getId()))
 					DBManager.risorseInGestione.remove(resource.getId());
 				
-				//System.out.println("### releaseResource ["+this.dataSourceJndiName+"] modulo:"+modulo+" idTransazione:"+resource.getId()+" OK");
-				//if(this.dataSource instanceof SharedPoolDataSource)
-				//	System.out.println("CLOSE IDLE["+((SharedPoolDataSource)this.dataSource).getNumIdle()+"] ACTIVE["+((SharedPoolDataSource)this.dataSource).getNumActive()+"]");
+				/**System.out.println("### releaseResource ["+this.dataSourceJndiName+"] modulo:"+modulo+" idTransazione:"+resource.getId()+" OK");
+				if(this.dataSource instanceof SharedPoolDataSource)
+					System.out.println("CLOSE IDLE["+((SharedPoolDataSource)this.dataSource).getNumIdle()+"] ACTIVE["+((SharedPoolDataSource)this.dataSource).getNumActive()+"]");*/
 									
 			}
 
@@ -390,20 +409,15 @@ public class DBManager implements IMonitoraggioRisorsa {
 		Resource resource = null;
 		Statement stmtTest = null;
 		IDSoggetto idSoggettAlive = new IDSoggetto();
-		idSoggettAlive.setCodicePorta("DBManager");
-		idSoggettAlive.setTipo("DBManager");
-		idSoggettAlive.setNome("DBManager");
+		idSoggettAlive.setCodicePorta(ID_MODULO);
+		idSoggettAlive.setTipo(ID_MODULO);
+		idSoggettAlive.setNome(ID_MODULO);
 		try {
-			try{
-				resource = this.getResource(idSoggettAlive, "CheckIsAlive", null,
-						false); // verra' loggato nel servizio di check, altrimenti ad ogni test viene registrato l'errore
-			}catch(Exception e){
-				throw e;
-			}
+			resource = getResource(idSoggettAlive);
 			if(resource == null)
-				throw new Exception("Resource is null");
+				throw new CoreException("Resource is null");
 			if(resource.getResource() == null)
-				throw new Exception("Connessione is null");
+				throw new CoreException("Connessione is null");
 			Connection con = (Connection) resource.getResource();
 			// test:
 			stmtTest = con.createStatement();
@@ -424,6 +438,14 @@ public class DBManager implements IMonitoraggioRisorsa {
 			}catch(Exception e){
 				// close
 			}
+		}
+	}
+	private Resource getResource(IDSoggetto idSoggettAlive) throws CoreException {
+		try{
+			return this.getResource(idSoggettAlive, "CheckIsAlive", null,
+					false); // verra' loggato nel servizio di check, altrimenti ad ogni test viene registrato l'errore
+		}catch(Exception e){
+			throw new CoreException(e.getMessage(),e);
 		}
 	}
 

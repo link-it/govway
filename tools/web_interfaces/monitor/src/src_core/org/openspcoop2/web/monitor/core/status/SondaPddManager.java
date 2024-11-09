@@ -68,13 +68,17 @@ public class SondaPddManager {
 	}
 
 	public static SondaPddManager getInstance(Logger log) throws Exception{
-		if(SondaPddManager.instance == null)
-			SondaPddManager.init(log);
+		if(SondaPddManager.instance == null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (SondaPddManager.class) {
+				SondaPddManager.init(log);
+			}
+		}
 
 		return SondaPddManager.instance;
 	}
 
-	public SondaPddManager(Logger log) throws Exception{
+	private SondaPddManager(Logger log) throws Exception{
 		this.log = log;
 		Map<String, ISondaPdd> tmpModules = new HashMap<>();
 		try{

@@ -61,7 +61,7 @@ public class TrasparenteProperties {
 	 *
 	 * 
 	 */
-	public TrasparenteProperties(String confDir,Logger log) throws ProtocolException{
+	private TrasparenteProperties(String confDir,Logger log) throws ProtocolException{
 
 		if(log != null)
 			this.log = log;
@@ -118,8 +118,12 @@ public class TrasparenteProperties {
 	 */
 	public static TrasparenteProperties getInstance() throws ProtocolException{
 
-		if(TrasparenteProperties.trasparenteProperties==null)
-			throw new ProtocolException("TrasparenteProperties not initialized (use init method in factory)");
+		if(TrasparenteProperties.trasparenteProperties==null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (TrasparenteProperties.class) {
+				throw new ProtocolException("TrasparenteProperties not initialized (use init method in factory)");
+			}
+		}
 
 		return TrasparenteProperties.trasparenteProperties;
 	}

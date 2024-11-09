@@ -111,7 +111,7 @@ public class MsgDiagnosticiProperties {
 	 *
 	 * 
 	 */
-	public MsgDiagnosticiProperties(String location,String confDir) throws CoreException {
+	private MsgDiagnosticiProperties(String location,String confDir) throws CoreException {
 
 		if(OpenSPCoop2Startup.initialize)
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
@@ -181,7 +181,15 @@ public class MsgDiagnosticiProperties {
 	 * 
 	 */
 	public static MsgDiagnosticiProperties getInstance() {
-	   return MsgDiagnosticiProperties.msgDiagnosticiProperties;
+		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+		if (MsgDiagnosticiProperties.msgDiagnosticiProperties == null) {
+	        synchronized (MsgDiagnosticiProperties.class) {
+	            if (MsgDiagnosticiProperties.msgDiagnosticiProperties == null) {
+	                return null;
+	            }
+	        }
+	    }
+		return MsgDiagnosticiProperties.msgDiagnosticiProperties;
 	}
     
 	public static void updateLocalImplementation(Properties prop){

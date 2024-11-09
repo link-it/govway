@@ -181,8 +181,12 @@ public class ErroriProperties {
 	 */
 	public static ErroriProperties getInstance(Logger log) throws ProtocolException{
 
-		if(ErroriProperties.erroriProperties==null)
-			throw new ProtocolException("ErroriProperties not initialized (use init method in factory)");
+		if(ErroriProperties.erroriProperties==null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (ErroriProperties.class) {
+				throw new ProtocolException("ErroriProperties not initialized (use init method in factory)");
+			}
+		}
 
 		return ErroriProperties.erroriProperties;
 	}

@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
 import javax.jms.Queue;
 import javax.jms.Session;
 
@@ -43,6 +44,7 @@ import org.openspcoop2.pdd.mdb.Sbustamento;
 import org.openspcoop2.pdd.mdb.SbustamentoRisposte;
 import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 
@@ -59,47 +61,45 @@ import org.openspcoop2.utils.resources.GestoreJNDI;
  * @version $Rev$, $Date$
  */
 
-public class QueueManager implements java.io.Serializable,IMonitoraggioRisorsa{
+public class QueueManager implements IMonitoraggioRisorsa{
 
+	private static final String ID_MODULO = "QueueManager";
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2542909452367582138L;
 	/** Coda su cui il webService 'RicezioneContenutiApplicativi_XXX' sta' attendendo una risposta */
-	public static Queue QUEUE_RICEZIONE_CONTENUTI_APPLICATIVI;
+	private static Queue queueRicezioneContenutiApplicativi;
 	/** Coda su cui il webService 'RicezioneBuste_XXX' sta' attendendo una risposta */
-	public static Queue QUEUE_RICEZIONE_BUSTE;
+	private static Queue queueRicezioneBuste;
 	/** Coda su cui l'MDB 'Imbustamento' sta' attendendo un messaggio */
-	public static Queue QUEUE_IMBUSTAMENTO;
+	private static Queue queueImbustamento;
 	/** Coda su cui l'MDB 'ImbustamentoRisposte' sta' attendendo un messaggio */
-	public static Queue QUEUE_IMBUSTAMENTO_RISPOSTE;
+	private static Queue queueImbustamentoRisposte;
 	/** Coda su cui l'MDB 'Sbustamento' sta' attendendo un messaggio */
-	public static Queue QUEUE_SBUSTAMENTO;
+	private static Queue queueSbustamento;
 	/** Coda su cui l'MDB 'SbustamentoRisposte' sta' attendendo un messaggio */
-	public static Queue QUEUE_SBUSTAMENTO_RISPOSTE;
+	private static Queue queueSbustamentoRisposte;
 	/** Coda su cui l'MDB 'InoltroBuste' sta' attendendo un messaggio */
-	public static Queue QUEUE_INOLTRO_BUSTE;
+	private static Queue queueInoltroBuste;
 	/** Coda su cui l'MDB 'InoltroRisposte' sta' attendendo un messaggio */
-	public static Queue QUEUE_INOLTRO_RISPOSTE;
-	/** Coda su cui l'MDB 'ConsegnaMessaggiSoap' sta' attendendo un messaggio */
-	public static Queue QUEUE_CONSEGNA_CONTENUTI_APPLICATIVI;
+	private static Queue queueInoltroRisposte;
+	/** Coda su cui l'MDB 'ConsegnaMessaggi' sta' attendendo un messaggio */
+	private static Queue queueConsegnaContenutiApplicativi;
 
 	
 	/** OpenSPCoopProperties */
 	private static OpenSPCoop2Properties openspcoopProperties = OpenSPCoop2Properties.getInstance();
 	
 	/** Informazione sui proprietari che hanno richiesto una connessione */
-	protected static Map<String,Resource> risorseInGestione = new ConcurrentHashMap<String,Resource>();
+	protected static Map<String,Resource> risorseInGestione = new ConcurrentHashMap<>();
 	
-	public static String[] getStatoRisorse() throws Exception{
+	public static String[] getStatoRisorse() {
 		
+		String[] sNull = null;
 		Object[] o = QueueManager.risorseInGestione.values().toArray(new Resource[0]);
-		if(o==null)
-			return null;
+		if(! (o instanceof Resource[]))
+			return sNull;
 		Resource[] resources = (Resource[]) o;
-		if(resources==null || resources.length<=0)
-			return null;
+		if(resources.length<=0)
+			return sNull;
 	
 		String [] r = new String[resources.length];
 		for(int i=0; i<resources.length; i++){
@@ -122,10 +122,11 @@ public class QueueManager implements java.io.Serializable,IMonitoraggioRisorsa{
 	 *
 	 * @param jndiName Nome JNDI del QueueConnectionFactory
 	 * @param contextFactory Contesto JNDI da utilizzare per la connection factory/openSPCoopQueueManager
+	 * @throws OpenSPCoop2ConfigurationException 
 	 * 
 	 */
 	public static void initialize(String jndiName,
-			java.util.Properties contextFactory) throws Exception{
+			java.util.Properties contextFactory) throws OpenSPCoop2ConfigurationException {
 
 		// Provo ad ottenere un QueueManager
 		QueueManager.manager = new QueueManager(jndiName,contextFactory);
@@ -136,9 +137,10 @@ public class QueueManager implements java.io.Serializable,IMonitoraggioRisorsa{
 	 * Il Metodo si occupa di inizializzare le code di ricezione 
 	 *
 	 * @param contextQueue Contesto JNDI da utilizzare per le code interne
+	 * @throws UtilsException 
 	 * 
 	 */
-	public static void initializeQueueNodeReceiver(java.util.Properties contextQueue) throws Exception{
+	public static void initializeQueueNodeReceiver(java.util.Properties contextQueue) throws UtilsException {
 
 		// Tabella per i nomi jndi delle code
 		java.util.Map<String,String> nomiJndi = 
@@ -146,9 +148,9 @@ public class QueueManager implements java.io.Serializable,IMonitoraggioRisorsa{
 			
 		// Inizializzazione Code
 		GestoreJNDI jndiQueue = new GestoreJNDI(contextQueue);
-		QueueManager.QUEUE_RICEZIONE_CONTENUTI_APPLICATIVI = 
+		QueueManager.queueRicezioneContenutiApplicativi = 
 			(Queue) jndiQueue.lookup(nomiJndi.get(RicezioneContenutiApplicativi.ID_MODULO));
-		QueueManager.QUEUE_RICEZIONE_BUSTE= 
+		QueueManager.queueRicezioneBuste= 
 			(Queue) jndiQueue.lookup(nomiJndi.get(RicezioneBuste.ID_MODULO));
 
 	}
@@ -158,28 +160,29 @@ public class QueueManager implements java.io.Serializable,IMonitoraggioRisorsa{
 	 * Il Metodo si occupa di inizializzare le code di spedizione 
 	 *
 	 * @param contextQueue Contesto JNDI da utilizzare per le code interne
+	 * @throws UtilsException 
 	 * 
 	 */
-	public static void initializeQueueNodeSender(java.util.Properties contextQueue) throws Exception{
+	public static void initializeQueueNodeSender(java.util.Properties contextQueue) throws UtilsException {
 
 		// Tabella per i nomi jndi delle code
 		java.util.Map<String,String> nomiJndi = OpenSPCoop2Properties.getInstance().getJNDIQueueName(false,true);
 		
 		// Inizializzazione Code
 		GestoreJNDI jndiQueue = new GestoreJNDI(contextQueue);
-		QueueManager.QUEUE_IMBUSTAMENTO= 
+		QueueManager.queueImbustamento= 
 			(Queue) jndiQueue.lookup(nomiJndi.get(Imbustamento.ID_MODULO));
-		QueueManager.QUEUE_IMBUSTAMENTO_RISPOSTE= 
+		QueueManager.queueImbustamentoRisposte= 
 			(Queue) jndiQueue.lookup(nomiJndi.get(ImbustamentoRisposte.ID_MODULO));
-		QueueManager.QUEUE_SBUSTAMENTO= 
+		QueueManager.queueSbustamento= 
 			(Queue) jndiQueue.lookup(nomiJndi.get(Sbustamento.ID_MODULO));
-		QueueManager.QUEUE_SBUSTAMENTO_RISPOSTE= 
+		QueueManager.queueSbustamentoRisposte= 
 			(Queue) jndiQueue.lookup(nomiJndi.get(SbustamentoRisposte.ID_MODULO));
-		QueueManager.QUEUE_INOLTRO_BUSTE= 
+		QueueManager.queueInoltroBuste= 
 			(Queue) jndiQueue.lookup(nomiJndi.get(InoltroBuste.ID_MODULO));
-		QueueManager.QUEUE_INOLTRO_RISPOSTE= 
+		QueueManager.queueInoltroRisposte= 
 			(Queue) jndiQueue.lookup(nomiJndi.get(InoltroRisposte.ID_MODULO));
-		QueueManager.QUEUE_CONSEGNA_CONTENUTI_APPLICATIVI= 
+		QueueManager.queueConsegnaContenutiApplicativi= 
 			(Queue) jndiQueue.lookup(nomiJndi.get(ConsegnaContenutiApplicativi.ID_MODULO));
 	}
 	
@@ -193,6 +196,12 @@ public class QueueManager implements java.io.Serializable,IMonitoraggioRisorsa{
 	 * 
 	 */
 	public static QueueManager getInstance(){
+		if(QueueManager.manager==null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (QueueManager.class) {
+				return QueueManager.manager;
+			}
+		}
 		return QueueManager.manager;
 	}
 
@@ -203,25 +212,25 @@ public class QueueManager implements java.io.Serializable,IMonitoraggioRisorsa{
 	 * @param idNodo Identificatore del nodo.
 	 * 
 	 */
-	public Queue getQueue(String idNodo) throws Exception{
+	public Queue getQueue(String idNodo) {
 		if(idNodo.startsWith(RicezioneContenutiApplicativi.ID_MODULO))
-			return QueueManager.QUEUE_RICEZIONE_CONTENUTI_APPLICATIVI;
+			return QueueManager.queueRicezioneContenutiApplicativi;
 		else if(idNodo.startsWith(RicezioneBuste.ID_MODULO))
-			return QueueManager.QUEUE_RICEZIONE_BUSTE;
+			return QueueManager.queueRicezioneBuste;
 		else if(Imbustamento.ID_MODULO.equals(idNodo))
-			return QueueManager.QUEUE_IMBUSTAMENTO;
+			return QueueManager.queueImbustamento;
 		else if(ImbustamentoRisposte.ID_MODULO.equals(idNodo))
-			return QueueManager.QUEUE_IMBUSTAMENTO_RISPOSTE;
+			return QueueManager.queueImbustamentoRisposte;
 		else if(Sbustamento.ID_MODULO.equals(idNodo))
-			return QueueManager.QUEUE_SBUSTAMENTO;
+			return QueueManager.queueSbustamento;
 		else if(SbustamentoRisposte.ID_MODULO.equals(idNodo))
-			return QueueManager.QUEUE_SBUSTAMENTO_RISPOSTE;
+			return QueueManager.queueSbustamentoRisposte;
 		else if(InoltroBuste.ID_MODULO.equals(idNodo))
-			return QueueManager.QUEUE_INOLTRO_BUSTE;
+			return QueueManager.queueInoltroBuste;
 		else if(InoltroRisposte.ID_MODULO.equals(idNodo))
-			return QueueManager.QUEUE_INOLTRO_RISPOSTE;
+			return QueueManager.queueInoltroRisposte;
 		else if(ConsegnaContenutiApplicativi.ID_MODULO.equals(idNodo))
-			return QueueManager.QUEUE_CONSEGNA_CONTENUTI_APPLICATIVI;
+			return QueueManager.queueConsegnaContenutiApplicativi;
 		else 
 			return null;
 	}
@@ -233,7 +242,7 @@ public class QueueManager implements java.io.Serializable,IMonitoraggioRisorsa{
 	/** ConnectionFactory dove attingere connessioni */
 	private ConnectionFactory qcf = null;
 	/** MsgDiagnostico */
-	private transient MsgDiagnostico msgDiag = null;
+	private MsgDiagnostico msgDiag = null;
 	
 	/**
 	 * Costruttore
@@ -242,7 +251,7 @@ public class QueueManager implements java.io.Serializable,IMonitoraggioRisorsa{
 	 * @param context Contesto JNDI da utilizzare
 	 * 
 	 */
-	public QueueManager(String jndiName,java.util.Properties context) throws OpenSPCoop2ConfigurationException{
+	private QueueManager(String jndiName,java.util.Properties context) throws OpenSPCoop2ConfigurationException{
 
 		this.msgDiag = MsgDiagnostico.newInstance("WrapperQueueManager");
 		try {
@@ -340,13 +349,8 @@ public class QueueManager implements java.io.Serializable,IMonitoraggioRisorsa{
 					}
 
 					// rilascio
-					try{
-						jms.getSession().close();
-					}catch(Exception e){
-						jms.getConnection().close();
-						throw e;
-					}
-					jms.getConnection().close();
+					close(jms);
+					
 				}
 				if(QueueManager.risorseInGestione.containsKey(resource.getId()))
 					QueueManager.risorseInGestione.remove(resource.getId());
@@ -359,6 +363,15 @@ public class QueueManager implements java.io.Serializable,IMonitoraggioRisorsa{
 			this.msgDiag.logFatalError(e, "Rilasciata connessione al QueueManager");
 			throw new OpenSPCoop2ConfigurationException("releaseJMSObject: "+e.getMessage());
 		}
+	}
+	private void close(JMSObject jms) throws JMSException {
+		try{
+			jms.getSession().close();
+		}catch(Exception e){
+			jms.getConnection().close();
+			throw e;
+		}
+		jms.getConnection().close();
 	}
 	
 	
@@ -376,20 +389,20 @@ public class QueueManager implements java.io.Serializable,IMonitoraggioRisorsa{
 	public void isAlive() throws CoreException{
 		Resource resource = null;
 		IDSoggetto idSoggettAlive = new IDSoggetto();
-		idSoggettAlive.setCodicePorta("QueueManager");
-		idSoggettAlive.setTipo("QueueManager");
-		idSoggettAlive.setNome("QueueManager");
+		idSoggettAlive.setCodicePorta(ID_MODULO);
+		idSoggettAlive.setTipo(ID_MODULO);
+		idSoggettAlive.setNome(ID_MODULO);
 		try{
 			resource = this.getResource(idSoggettAlive, "CheckIsAlive", null);
 			if(resource == null)
-				throw new Exception("Resource is null");
+				throw new CoreException("Resource is null");
 			if(resource.getResource() == null)
-				throw new Exception("JMSObject is null");
+				throw new CoreException("JMSObject is null");
 			JMSObject jmsObject = (JMSObject) resource.getResource();
 			if(jmsObject.getConnection()==null)
-				throw new Exception("Connessione is null");
+				throw new CoreException("Connessione is null");
 			if(jmsObject.getSession()==null)
-				throw new Exception("Sessione is null");
+				throw new CoreException("Sessione is null");
 			Connection connectionJMS = jmsObject.getConnection();
 			// test
 			connectionJMS.getClientID();

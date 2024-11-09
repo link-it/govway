@@ -63,7 +63,7 @@ public class SDIProperties {
 	 *
 	 * 
 	 */
-	public SDIProperties(String confDir,Logger log) throws ProtocolException{
+	private SDIProperties(String confDir,Logger log) throws ProtocolException{
 
 		if(log != null)
 			this.log = log;
@@ -120,8 +120,12 @@ public class SDIProperties {
 	 */
 	public static SDIProperties getInstance(Logger log) throws ProtocolException{
 
-		if(SDIProperties.sdiProperties==null)
-			throw new ProtocolException("SDIProperties not initialized (use init method in factory)");
+		if(SDIProperties.sdiProperties==null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (SDIProperties.class) {
+				throw new ProtocolException("SDIProperties not initialized (use init method in factory)");
+			}
+		}
 
 		return SDIProperties.sdiProperties;
 	}

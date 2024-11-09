@@ -64,7 +64,7 @@ public class LoaderProperties {
 	 *
 	 * 
 	 */
-	public LoaderProperties(String confDir,Logger log) throws Exception {
+	private LoaderProperties(String confDir,Logger log) throws UtilsException {
 
 		if(log!=null)
 			this.log = log;
@@ -77,12 +77,11 @@ public class LoaderProperties {
 		try{  
 			properties = LoaderProperties.class.getResourceAsStream("/loader.properties");
 			if(properties==null){
-				throw new Exception("File '/loader.properties' not found");
+				throw new UtilsException("File '/loader.properties' not found");
 			}
 			propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'loader.properties': \n\n"+e.getMessage());
-		    throw new Exception("ConsoleProperties initialize error: "+e.getMessage());
+			doError(e);
 		}finally{
 		    try{
 				if(properties!=null)
@@ -93,6 +92,11 @@ public class LoaderProperties {
 		}
 
 		this.reader = new LoaderInstanceProperties(propertiesReader, this.log, confDir);
+	}
+	private void doError(Exception e) throws UtilsException {
+		String msg = "Riscontrato errore durante la lettura del file 'loader.properties': "+e.getMessage();
+		this.log.error(msg,e);
+	    throw new UtilsException("ConsoleProperties initialize error: "+e.getMessage(),e);
 	}
 
 
@@ -120,7 +124,10 @@ public class LoaderProperties {
 	 */
 	public static LoaderProperties getInstance() throws OpenSPCoop2ConfigurationException{
 		if(LoaderProperties.loaderProperties==null){
-	    	throw new OpenSPCoop2ConfigurationException("LoaderProperties non inizializzato");
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (LoaderProperties.class) {
+				throw new OpenSPCoop2ConfigurationException("LoaderProperties non inizializzato");
+			}
 	    }
 	    return LoaderProperties.loaderProperties;
 	}
@@ -153,7 +160,7 @@ public class LoaderProperties {
 	}
 	private Boolean readBooleanProperty(boolean required,String property) throws UtilsException{
 		String tmp = this.readProperty(required, property);
-		if("true".equalsIgnoreCase(tmp)==false && "false".equalsIgnoreCase(tmp)==false){
+		if(!"true".equalsIgnoreCase(tmp) && !"false".equalsIgnoreCase(tmp)){
 			throw new UtilsException("Property ["+property+"] with uncorrect value ["+tmp+"] (true/value expected)");
 		}
 		return Boolean.parseBoolean(tmp);
@@ -167,7 +174,7 @@ public class LoaderProperties {
 		return this.readProperty(false, "protocolloDefault");
 	}
 	
-	public Boolean isAutenticazioneUtenti_UtilizzaDabaseRegistro() throws UtilsException{
+	public Boolean isAutenticazioneUtentiUtilizzaDabaseRegistro() throws UtilsException{
 		return this.readBooleanProperty(false, "user.searchDatabaseRegistro");
 	}
 	
@@ -225,15 +232,15 @@ public class LoaderProperties {
 		return Integer.parseInt(lunghezzaS); 
 	}
 	
-	public String getLogoHeaderImage() throws Exception{
+	public String getLogoHeaderImage() throws UtilsException {
 		return this.readProperty(false,"console.header.logo.image");
 	}
 
-	public String getLogoHeaderTitolo() throws Exception{
+	public String getLogoHeaderTitolo() throws UtilsException{
 		return this.readProperty(false,"console.header.logo.titolo");
 	}
 
-	public String getLogoHeaderLink() throws Exception{
+	public String getLogoHeaderLink() throws UtilsException{
 		return this.readProperty(false,"console.header.logo.link");
 	}
 	

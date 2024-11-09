@@ -65,7 +65,7 @@ public class DatasourceProperties {
 	 *
 	 * 
 	 */
-	public DatasourceProperties(String confDir, String confPropertyName, String confLocalPathPrefix,Logger log) throws Exception {
+	private DatasourceProperties(String confDir, String confPropertyName, String confLocalPathPrefix,Logger log) throws Exception {
 
 		if(log!=null)
 			this.log = log;
@@ -95,7 +95,7 @@ public class DatasourceProperties {
 
 		this.reader = new DatasourceInstanceProperties(propertiesReader, this.log, confDir, confPropertyName, confLocalPathPrefix);
 	}
-	public DatasourceProperties(Properties properties) throws Exception {
+	private DatasourceProperties(Properties properties) throws Exception {
 		this.reader = new DatasourceInstanceProperties(properties, this.log, "undefined", "undefined", "undefined");
 	}
 
@@ -105,10 +105,12 @@ public class DatasourceProperties {
 	 *
 	 * 
 	 */
-	public static boolean initialize(String confDir, String confPropertyName, String confLocalPathPrefix,Logger log){
+	public static synchronized boolean initialize(String confDir, String confPropertyName, String confLocalPathPrefix,Logger log){
 
 		try {
-		    DatasourceProperties.datasourceProperties = new DatasourceProperties(confDir,confPropertyName,confLocalPathPrefix,log);	
+			if(DatasourceProperties.datasourceProperties==null){
+				DatasourceProperties.datasourceProperties = new DatasourceProperties(confDir,confPropertyName,confLocalPathPrefix,log);
+			}
 		    return true;
 		}
 		catch(Exception e) {
@@ -116,9 +118,11 @@ public class DatasourceProperties {
 		    return false;
 		}
 	}
-	public static boolean initialize(Properties properties,Logger log){
+	public static synchronized boolean initialize(Properties properties,Logger log){
 		try {
-		    DatasourceProperties.datasourceProperties = new DatasourceProperties(properties);	
+			if(DatasourceProperties.datasourceProperties==null){
+				DatasourceProperties.datasourceProperties = new DatasourceProperties(properties);
+			}
 		    return true;
 		}
 		catch(Exception e) {
@@ -135,7 +139,10 @@ public class DatasourceProperties {
 	 */
 	public static DatasourceProperties getInstance() throws OpenSPCoop2ConfigurationException{
 		if(DatasourceProperties.datasourceProperties==null){
-	    	throw new OpenSPCoop2ConfigurationException("DatasourceProperties non inizializzato");
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (DatasourceProperties.class) {
+				throw new OpenSPCoop2ConfigurationException("DatasourceProperties non inizializzato");
+			}
 	    }
 	    return DatasourceProperties.datasourceProperties;
 	}

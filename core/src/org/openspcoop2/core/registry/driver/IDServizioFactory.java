@@ -35,6 +35,12 @@ import org.openspcoop2.core.registry.constants.TipologiaServizio;
  */
 public class IDServizioFactory {
 
+	private static final String TIPO_NON_FORNITO = "Tipo non fornito";
+	private static final String NOME_NON_FORNITO = "Nome non fornito";
+	private static final String SOGGETTO_EROGATORE_NON_FORNITO = "Soggetto erogatore non fornito";
+	private static final String TIPO_SOGGETTO_EROGATORE_NON_FORNITO = "Tipo soggetto erogatore non fornito";
+	private static final String NOME_SOGGETTO_EROGATORE_NON_FORNITO = "Nome soggetto erogatore non fornito";
+	private static final String SINTASSI_NON_CORRETTA = "sintassi non corretta, atteso tipoSoggetto/nomeSoggetto:tipoServizio/nomeServizio:versione";
 	
 	private static IDServizioFactory factory = null;
 	private static synchronized void init(){
@@ -44,11 +50,15 @@ public class IDServizioFactory {
 	}
 	public static IDServizioFactory getInstance(){
 		if(IDServizioFactory.factory==null){
-			IDServizioFactory.init();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED'
+			synchronized (IDServizioFactory.class) {
+				IDServizioFactory.init();
+			}
 		}
 		return IDServizioFactory.factory;
 	}
 	
+	private IDServizioFactory() {}
 
 	@SuppressWarnings("deprecation")
 	private IDServizio build(String tipo,String nome,IDSoggetto soggettoErogatore,int versione){
@@ -72,20 +82,20 @@ public class IDServizioFactory {
 			throw new DriverRegistroServiziException("IDServizio non fornito");
 		}
 		if(idServizio.getTipo()==null){
-			throw new DriverRegistroServiziException("Tipo non fornito");
+			throw new DriverRegistroServiziException(TIPO_NON_FORNITO);
 		}
 		if(idServizio.getNome()==null){
-			throw new DriverRegistroServiziException("Nome non fornito");
+			throw new DriverRegistroServiziException(NOME_NON_FORNITO);
 		}
 		IDSoggetto soggettoErogatore = idServizio.getSoggettoErogatore();
 		if(soggettoErogatore==null){
-			throw new DriverRegistroServiziException("Soggetto erogatore non fornito");
+			throw new DriverRegistroServiziException(SOGGETTO_EROGATORE_NON_FORNITO);
 		}
 		if(soggettoErogatore.getTipo()==null){
-			throw new DriverRegistroServiziException("Tipo soggetto erogatore non fornito");
+			throw new DriverRegistroServiziException(TIPO_SOGGETTO_EROGATORE_NON_FORNITO);
 		}
 		if(soggettoErogatore.getNome()==null){
-			throw new DriverRegistroServiziException("Nome soggetto erogatore non fornito");
+			throw new DriverRegistroServiziException(NOME_SOGGETTO_EROGATORE_NON_FORNITO);
 		}
 		return soggettoErogatore.toString() + ":" + idServizio.getTipo()+"/"+idServizio.getNome() + ":" + idServizio.getVersione();
 	}
@@ -101,16 +111,16 @@ public class IDServizioFactory {
 	
 	public String getUriFromValues(String tipo, String nome,String tipoSoggettoErogatore,String nomeSoggettoErogatore,int ver)  throws DriverRegistroServiziException{
 		if(tipo==null){
-			throw new DriverRegistroServiziException("Tipo non fornito");
+			throw new DriverRegistroServiziException(TIPO_NON_FORNITO);
 		}
 		if(nome==null){
-			throw new DriverRegistroServiziException("Nome non fornito");
+			throw new DriverRegistroServiziException(NOME_NON_FORNITO);
 		}
 		if(tipoSoggettoErogatore==null){
-			throw new DriverRegistroServiziException("Tipo soggetto erogatore non fornito");
+			throw new DriverRegistroServiziException(TIPO_SOGGETTO_EROGATORE_NON_FORNITO);
 		}
 		if(nomeSoggettoErogatore==null){
-			throw new DriverRegistroServiziException("Nome soggetto erogatore non fornito");
+			throw new DriverRegistroServiziException(NOME_SOGGETTO_EROGATORE_NON_FORNITO);
 		}
 		IDSoggetto soggettoErogatore = new IDSoggetto(tipoSoggettoErogatore,nomeSoggettoErogatore);
 		IDServizio idServizio = this.build(tipo,nome,soggettoErogatore,ver);
@@ -119,7 +129,7 @@ public class IDServizioFactory {
 	
 	public String getUriFromValues(String tipo, String nome,IDSoggetto soggettoErogatore,int ver)  throws DriverRegistroServiziException{
 		if(soggettoErogatore==null){
-			throw new DriverRegistroServiziException("Soggetto erogatore non fornito");
+			throw new DriverRegistroServiziException(SOGGETTO_EROGATORE_NON_FORNITO);
 		}
 		return getUriFromValues(tipo, nome, soggettoErogatore.getTipo(), soggettoErogatore.getNome(), ver);
 	}
@@ -131,7 +141,7 @@ public class IDServizioFactory {
 			// tipoSoggetto/nomeSoggetto:tipoServizio/nomeServizio:versione
 			
 			if(uriAccordo==null){
-				throw new Exception("Uri accordo non fornita");
+				throw new DriverRegistroServiziException("Uri accordo non fornita");
 			}
 			int primoMarcatore = uriAccordo.indexOf(":");
 			int secondoMarcatore = -1;
@@ -142,15 +152,15 @@ public class IDServizioFactory {
 			if(secondoMarcatore>0){
 				terzoMarcatore = uriAccordo.indexOf(":",secondoMarcatore+1);
 				if(terzoMarcatore>0){
-					throw new Exception("sintassi non corretta, atteso tipoSoggetto/nomeSoggetto:tipoServizio/nomeServizio:versione");
+					throw new DriverRegistroServiziException(SINTASSI_NON_CORRETTA);
 				}
 			}
 			
 			if(primoMarcatore<0){
-				throw new Exception("sintassi non corretta, atteso tipoSoggetto/nomeSoggetto:tipoServizio/nomeServizio:versione");
+				throw new DriverRegistroServiziException(SINTASSI_NON_CORRETTA);
 			}
 			if(secondoMarcatore<=0){
-				throw new Exception("sintassi non corretta, atteso tipoSoggetto/nomeSoggetto:tipoServizio/nomeServizio:versione");
+				throw new DriverRegistroServiziException(SINTASSI_NON_CORRETTA);
 			}
 			
 			String tmp1 = null; 
@@ -162,7 +172,7 @@ public class IDServizioFactory {
 			
 			int divisorioSoggettoErogatore = tmp1.indexOf("/");
 			if(divisorioSoggettoErogatore<=0){
-				throw new Exception("sintassi del soggetto erogatore non corretta, l'uri deve essere definita con la seguente forma: tipoSoggetto/nomeSoggetto:tipoServizio/nomeServizio:versione");
+				throw new DriverRegistroServiziException("sintassi del soggetto erogatore non corretta, l'uri deve essere definita con la seguente forma: tipoSoggetto/nomeSoggetto:tipoServizio/nomeServizio:versione");
 			}
 			String tipoSoggettoErogatore = tmp1.substring(0,divisorioSoggettoErogatore);
 			String nomeSoggettoErogatore = tmp1.substring((divisorioSoggettoErogatore+1),tmp1.length());
@@ -170,7 +180,7 @@ public class IDServizioFactory {
 			
 			int divisorioServizio = tmp2.indexOf("/");
 			if(divisorioServizio<=0){
-				throw new Exception("sintassi del servizio non corretta, l'uri deve essere definita con la seguente forma: tipoSoggetto/nomeSoggetto:tipoServizio/nomeServizio:versione");
+				throw new DriverRegistroServiziException("sintassi del servizio non corretta, l'uri deve essere definita con la seguente forma: tipoSoggetto/nomeSoggetto:tipoServizio/nomeServizio:versione");
 			}
 			String tipoServizio = tmp2.substring(0,divisorioServizio);
 			String nomeServizio = tmp2.substring((divisorioServizio+1),tmp2.length());
@@ -179,11 +189,10 @@ public class IDServizioFactory {
 			try{
 				versione = Integer.parseInt(tmp3);
 			}catch(Exception e){
-				throw new Exception("sintassi della versione non corretta: "+e.getMessage(),e);
+				throw new DriverRegistroServiziException("sintassi della versione non corretta: "+e.getMessage(),e);
 			}
 			
-			IDServizio idServizio = this.build(tipoServizio,nomeServizio,soggettoErogatore,versione);
-			return idServizio;
+			return this.build(tipoServizio,nomeServizio,soggettoErogatore,versione);
 	
 		}catch(Exception e){
 			throw new DriverRegistroServiziException("Parsing uriAccordo["+uriAccordo+"] non riusciuto: "+e.getMessage());
@@ -210,16 +219,16 @@ public class IDServizioFactory {
 	
 	public IDServizio getIDServizioFromValues(String tipo,String nome,String tipoSoggettoErogatore,String nomeSoggettoErogatore,int ver) throws DriverRegistroServiziException{
 		if(tipo==null){
-			throw new DriverRegistroServiziException("Tipo non fornito");
+			throw new DriverRegistroServiziException(TIPO_NON_FORNITO);
 		}
 		if(nome==null){
-			throw new DriverRegistroServiziException("Nome non fornito");
+			throw new DriverRegistroServiziException(NOME_NON_FORNITO);
 		}
 		if(tipoSoggettoErogatore==null){
-			throw new DriverRegistroServiziException("Tipo soggetto erogatore non fornito");
+			throw new DriverRegistroServiziException(TIPO_SOGGETTO_EROGATORE_NON_FORNITO);
 		}
 		if(nomeSoggettoErogatore==null){
-			throw new DriverRegistroServiziException("Nome soggetto erogatore non fornito");
+			throw new DriverRegistroServiziException(NOME_SOGGETTO_EROGATORE_NON_FORNITO);
 		}
 		IDSoggetto soggettoErogatore = new IDSoggetto(tipoSoggettoErogatore,nomeSoggettoErogatore);
 		return this.build(tipo,nome,soggettoErogatore,ver);
@@ -230,7 +239,7 @@ public class IDServizioFactory {
 	}
 	public IDServizio getIDServizioFromValues(String tipo,String nome,IDSoggetto soggettoErogatore,int ver) throws DriverRegistroServiziException{
 		if(soggettoErogatore==null){
-			throw new DriverRegistroServiziException("Soggetto erogatore non fornito");
+			throw new DriverRegistroServiziException(SOGGETTO_EROGATORE_NON_FORNITO);
 		}
 		IDServizio idServ = this.getIDServizioFromValues(tipo, nome, soggettoErogatore.getTipo(), soggettoErogatore.getNome(), ver);
 		idServ.getSoggettoErogatore().setCodicePorta(soggettoErogatore.getCodicePorta());

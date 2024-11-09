@@ -43,6 +43,14 @@ public class UniversallyUniqueIdentifierProducer extends AbstractBaseThread {
 	}
 	public static UniversallyUniqueIdentifierProducer getInstance() {
 		// volutamente non inizializzo se null, viene fatto allo startup
+		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+		if (staticInstance == null) {
+	        synchronized (UniversallyUniqueIdentifierProducer.class) {
+	            if (staticInstance == null) {
+	                return null;
+	            }
+	        }
+	    }
 		return staticInstance;
 	}
 	
@@ -50,11 +58,12 @@ public class UniversallyUniqueIdentifierProducer extends AbstractBaseThread {
 	private ArrayBlockingQueue<IUniqueIdentifier> idsQueue;
 	private Logger log;
 	
-	public UniversallyUniqueIdentifierProducer(int buffer, Logger log) {
+	private UniversallyUniqueIdentifierProducer(int buffer, Logger log) {
 		this.setTimeout(-1); // equivale ad un while true
-		this.idsQueue = new ArrayBlockingQueue<IUniqueIdentifier>(buffer);
+		this.idsQueue = new ArrayBlockingQueue<>(buffer);
 		this.log = log;
-		this.log.info( "Started UUID producer with buffer size: " + buffer );
+		String msg = "Started UUID producer with buffer size: " + buffer;
+		this.log.info(msg);
 	}
 	
 	public IUniqueIdentifier newUniqueIdentifier() throws UniqueIdentifierException {
@@ -63,9 +72,9 @@ public class UniversallyUniqueIdentifierProducer extends AbstractBaseThread {
 		} catch ( InterruptedException e ) {
 			Thread.currentThread().interrupt();
 			throw new UniqueIdentifierException( e );
-		} catch ( Throwable e ) {
+		} catch ( Exception e ) {
 			throw new UniqueIdentifierException( e );
-		} /*finally {
+		} /**finally {
 			System.out.println("PRESO DALLA CODA");
 		}*/
 	}
@@ -73,27 +82,27 @@ public class UniversallyUniqueIdentifierProducer extends AbstractBaseThread {
 	@Override
 	protected void process() {
 		try {
-			//System.out.println("RUN");
+			/**System.out.println("RUN");*/
 			IUniqueIdentifier newUUID = UniqueIdentifierManager.newUniqueIdentifier(false);
 			//this.idsQueue.put( newUUID ); causa un blocco nello shutdown
-			while(this.isStop() == false){
+			while(!this.isStop()){
 				try {
 					boolean insert = this.idsQueue.offer(newUUID, 1000, TimeUnit.MILLISECONDS);
 					if(insert) {
 						break;
 					}
-					//else {
-					//	System.out.println("ATTENDO");
-					//}
+					/**else {
+						System.out.println("ATTENDO");
+					}*/
 				}catch(InterruptedException ie) {
 					Thread.currentThread().interrupt();
-					//System.out.println("IE!");
+					/**System.out.println("IE!");*/
 				}
 			}
-			//System.out.println("AGGIUNTO IN CODA");
+			/**System.out.println("AGGIUNTO IN CODA");*/
 		} 
-		catch( Throwable t ) {
-			if(t!=null && t instanceof InterruptedException) {
+		catch( Exception t ) {
+			if(t instanceof InterruptedException) {
 				Thread.currentThread().interrupt();
 			}
 			this.log.error("UniversallyUniqueIdentifierProducer - generation failed: "+t.getMessage(),t);

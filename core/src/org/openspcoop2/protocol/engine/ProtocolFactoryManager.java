@@ -103,7 +103,10 @@ public class ProtocolFactoryManager {
 	}
 	public static ProtocolFactoryManager getInstance() throws ProtocolException {
 		if(ProtocolFactoryManager.protocolFactoryManager==null){
-			throw new ProtocolException("ProtocolFactoryManager not initialized");
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (ProtocolFactoryManager.class) {
+				throw new ProtocolException("ProtocolFactoryManager not initialized");
+			}
 		}
 		return ProtocolFactoryManager.protocolFactoryManager;
 	}
@@ -202,7 +205,7 @@ public class ProtocolFactoryManager {
 	private MapReader<String, List<String>> versioniValide = null;
 	private MapReader<String, String> versioniDefault = null;
 	private Logger log = null;
-	ProtocolFactoryManager(Logger log,ConfigurazionePdD configPdD,String protocolDefault, boolean searchSingleManifest) throws ProtocolException {
+	private ProtocolFactoryManager(Logger log,ConfigurazionePdD configPdD,String protocolDefault, boolean searchSingleManifest) throws ProtocolException {
 		try {
 
 			Map<String, Openspcoop2> tmp_manifests = new HashMap<>();

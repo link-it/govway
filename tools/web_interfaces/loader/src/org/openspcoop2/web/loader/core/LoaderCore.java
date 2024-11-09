@@ -200,14 +200,14 @@ public class LoaderCore{
 			datasourceProperties = DatasourceProperties.getInstance();
 
 			// RegistroServizi
-			this.dataSourceRegistroServizi = datasourceProperties.getRegistroServizi_DataSource();
-			this.tipoDatabaseRegistroServizi = datasourceProperties.getRegistroServizi_TipoDatabase();
-			this.ctxDatasourceRegistroServizi = datasourceProperties.getRegistroServizi_DataSourceContext();
+			this.dataSourceRegistroServizi = datasourceProperties.getRegistroServiziDataSource();
+			this.tipoDatabaseRegistroServizi = datasourceProperties.getRegistroServiziTipoDatabase();
+			this.ctxDatasourceRegistroServizi = datasourceProperties.getRegistroServiziDataSourceContext();
 
 			// ConfigurazionePdD
-			this.dataSourceConfigurazionePdD = datasourceProperties.getConfigurazione_DataSource();
-			this.tipoDatabaseConfigurazionePdD = datasourceProperties.getConfigurazione_TipoDatabase();
-			this.ctxDatasourceConfigurazionePdD = datasourceProperties.getConfigurazione_DataSourceContext();		
+			this.dataSourceConfigurazionePdD = datasourceProperties.getConfigurazioneDataSource();
+			this.tipoDatabaseConfigurazionePdD = datasourceProperties.getConfigurazioneTipoDatabase();
+			this.ctxDatasourceConfigurazionePdD = datasourceProperties.getConfigurazioneDataSourceContext();		
 
 		} catch (java.lang.Exception e) {
 			LoaderCore.log.error("[OpenSPCoopLoader::initCore] Impossibile leggere i dati dal file loader.datasource.properties:" + e.toString());
@@ -228,7 +228,7 @@ public class LoaderCore{
 			}
 			this.gestioneSoggetti = loaderProperties.isGestioneSoggetti();
 			this.mantieniFruitoriServizi = loaderProperties.isMantieniFruitoriServiziEsistenti();
-			this.searchUserIntoRegistro = loaderProperties.isAutenticazioneUtenti_UtilizzaDabaseRegistro();
+			this.searchUserIntoRegistro = loaderProperties.isAutenticazioneUtentiUtilizzaDabaseRegistro();
 			this.statoAccordo = loaderProperties.getStatoAccordi();
 			this.tipoPdD = loaderProperties.getTipoPortaDiDominio();
 			if(this.tipoPdD==null){

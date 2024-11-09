@@ -36,6 +36,8 @@ import javax.xml.xpath.XPathFactory;
  */
 public class XMLUtils extends AbstractXMLUtils {
 
+	protected XMLUtils() {}
+	
 	private static XMLUtils xmlUtils = null;
 	private static synchronized void init(){
 		if(XMLUtils.xmlUtils==null){
@@ -44,7 +46,10 @@ public class XMLUtils extends AbstractXMLUtils {
 	}
 	public static XMLUtils getInstance(){
 		if(XMLUtils.xmlUtils==null){
-			XMLUtils.init();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED'
+			synchronized (XMLUtils.class) {
+				XMLUtils.init();
+			}
 		}
 		return XMLUtils.xmlUtils;
 	}
@@ -54,8 +59,8 @@ public class XMLUtils extends AbstractXMLUtils {
 	protected DocumentBuilderFactory newDocumentBuilderFactory() throws XMLException{
 		try{
 			// force xerces impl
-//			System.setProperty("javax.xml.parsers.DocumentBuilderFactory", org.apache.xerces.jaxp.DocumentBuilderFactoryImpl.class.getName());
-//			return DocumentBuilderFactory.newInstance();
+			/**System.setProperty("javax.xml.parsers.DocumentBuilderFactory", org.apache.xerces.jaxp.DocumentBuilderFactoryImpl.class.getName());
+			return DocumentBuilderFactory.newInstance();*/
 			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance(org.apache.xerces.jaxp.DocumentBuilderFactoryImpl.class.getName(),this.getClass().getClassLoader());
 			if(DISABLE_DTDs) {
 				documentBuilderFactory.setFeature(getFeatures_disallow_doctype_decl(), true);
@@ -69,8 +74,8 @@ public class XMLUtils extends AbstractXMLUtils {
 	protected DatatypeFactory newDatatypeFactory() throws XMLException{
 		try{
 			// force xerces impl
-//			System.setProperty("javax.xml.datatype.DatatypeFactory", org.apache.xerces.jaxp.datatype.DatatypeFactoryImpl.class.getName());
-//			return DatatypeFactory.newInstance();
+			/**System.setProperty("javax.xml.datatype.DatatypeFactory", org.apache.xerces.jaxp.datatype.DatatypeFactoryImpl.class.getName());
+			return DatatypeFactory.newInstance();*/
 			return DatatypeFactory.newInstance(org.apache.xerces.jaxp.datatype.DatatypeFactoryImpl.class.getName(), this.getClass().getClassLoader());
 		}catch(Exception e){
 			throw new XMLException(e.getMessage(),e);
@@ -80,8 +85,8 @@ public class XMLUtils extends AbstractXMLUtils {
 	protected javax.xml.parsers.SAXParserFactory newSAXParserFactory() throws XMLException{
 		try{
 			// force xerces impl
-//			System.setProperty("javax.xml.parsers.SAXParserFactory", org.apache.xerces.jaxp.SAXParserFactoryImpl.class.getName());
-//			return javax.xml.parsers.SAXParserFactory.newInstance();
+			/**System.setProperty("javax.xml.parsers.SAXParserFactory", org.apache.xerces.jaxp.SAXParserFactoryImpl.class.getName());
+			return javax.xml.parsers.SAXParserFactory.newInstance();*/
 			javax.xml.parsers.SAXParserFactory saxParserFactory = javax.xml.parsers.SAXParserFactory.newInstance(org.apache.xerces.jaxp.SAXParserFactoryImpl.class.getName(), this.getClass().getClassLoader());
 			if(DISABLE_DTDs) {
 				saxParserFactory.setFeature(getFeatures_disallow_doctype_decl(), true);
@@ -91,7 +96,7 @@ public class XMLUtils extends AbstractXMLUtils {
 			throw new XMLException(e.getMessage(),e);
 		}
 	}
-	/*
+	/**
 	@Override
 	protected javax.xml.stream.XMLEventFactory newXMLEventFactory() throws XMLException{
 		try{			
@@ -124,10 +129,10 @@ public class XMLUtils extends AbstractXMLUtils {
 	protected TransformerFactory newTransformerFactory() throws XMLException{
 		try{
 			// force xalan impl
-//			System.setProperty("javax.xml.transform.TransformerFactory", org.apache.xalan.processor.TransformerFactoryImpl.class.getName());
-//			return TransformerFactory.newInstance();
+			/**System.setProperty("javax.xml.transform.TransformerFactory", org.apache.xalan.processor.TransformerFactoryImpl.class.getName());
+			return TransformerFactory.newInstance();*/
 			TransformerFactory transformerFactory = TransformerFactory.newInstance(org.apache.xalan.processor.TransformerFactoryImpl.class.getName(), this.getClass().getClassLoader());
-			/*if(DISABLE_DTDs) {
+			/**if(DISABLE_DTDs) {
 				transformerFactory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, "");
 				transformerFactory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
 			}*/
@@ -139,7 +144,7 @@ public class XMLUtils extends AbstractXMLUtils {
 	@Override
 	protected XPathFactory newXPathFactory() throws XMLException{
 		try{
-			//return XPathFactory.newInstance();
+			/**return XPathFactory.newInstance();*/
 			// force xalan impl
 			return XPathFactory.newInstance(XPathFactory.DEFAULT_OBJECT_MODEL_URI,
 					org.apache.xpath.jaxp.XPathFactoryImpl.class.getName(), this.getClass().getClassLoader());

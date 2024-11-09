@@ -31,7 +31,7 @@ import java.util.Map;
 import org.openspcoop2.utils.UtilsException;
 
 /**
- * Identity
+ * HttpHeaderTypes
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
@@ -39,13 +39,13 @@ import org.openspcoop2.utils.UtilsException;
  */
 public class HttpHeaderTypes {
 
-	private Map<String, String> request_standard = new HashMap<>();
-	private Map<String, String> request_nonStandard = new HashMap<>();
+	private Map<String, String> requestStandard = new HashMap<>();
+	private Map<String, String> requestNonStandard = new HashMap<>();
 	
-	private Map<String, String> response_standard = new HashMap<>();
-	private Map<String, String> response_nonStandard = new HashMap<>();
+	private Map<String, String> responseStandard = new HashMap<>();
+	private Map<String, String> responseNonStandard = new HashMap<>();
 	
-	HttpHeaderTypes() throws UtilsException{
+	private HttpHeaderTypes() throws UtilsException{
 		
 		InputStream is =null;
 		BufferedReader br = null;
@@ -54,7 +54,7 @@ public class HttpHeaderTypes {
 			String file = "/org/openspcoop2/utils/transport/http/httpheader.types";
 			is = HttpHeaderTypes.class.getResourceAsStream(file);
 			if(is==null){
-				throw new Exception("File ["+file+"] in classpath not found");
+				throw new UtilsException("File ["+file+"] in classpath not found");
 			}
 			
 			ir = new InputStreamReader(is);
@@ -65,7 +65,7 @@ public class HttpHeaderTypes {
 				if(!line.startsWith("#") && !"".equals(line)){
 					String [] tmp = line.split(" "); 
 					if(tmp.length<4){
-						throw new Exception("Line ["+line+"] format wrong");
+						throw new UtilsException("Line ["+line+"] format wrong");
 					}
 					
 					String property = tmp[0];
@@ -79,28 +79,28 @@ public class HttpHeaderTypes {
 					
 					if("[request]".equalsIgnoreCase(richiestaRisposta)){
 						if("[standard]".equalsIgnoreCase(standardNonStandard)){
-							this.request_standard.put(property, descrizione);
+							this.requestStandard.put(property, descrizione);
 						}
 						else if("[non-standard]".equalsIgnoreCase(standardNonStandard)){
-							this.request_nonStandard.put(property, descrizione);
+							this.requestNonStandard.put(property, descrizione);
 						}
 						else{
-							throw new Exception("Line ["+line+"] with wrong value ["+standardNonStandard+"] in third parameter (expected: [standard] o [non-standard] )");
+							throw new UtilsException("Line ["+line+"] with wrong value ["+standardNonStandard+"] in third parameter (expected: [standard] o [non-standard] )");
 						}
 					}
 					else if("[response]".equalsIgnoreCase(richiestaRisposta)){
 						if("[standard]".equalsIgnoreCase(standardNonStandard)){
-							this.response_standard.put(property, descrizione);
+							this.responseStandard.put(property, descrizione);
 						}
 						else if("[non-standard]".equalsIgnoreCase(standardNonStandard)){
-							this.response_nonStandard.put(property, descrizione);
+							this.responseNonStandard.put(property, descrizione);
 						}
 						else{
-							throw new Exception("Line ["+line+"] with wrong value ["+standardNonStandard+"] in third parameter (expected: [standard] o [non-standard] )");
+							throw new UtilsException("Line ["+line+"] with wrong value ["+standardNonStandard+"] in third parameter (expected: [standard] o [non-standard] )");
 						}
 					}
 					else{
-						throw new Exception("Line ["+line+"] with wrong value ["+richiestaRisposta+"] in second parameter (expected: [request] o [response] )");
+						throw new UtilsException("Line ["+line+"] with wrong value ["+richiestaRisposta+"] in second parameter (expected: [request] o [response] )");
 					}
 				}
 			}
@@ -112,12 +112,16 @@ public class HttpHeaderTypes {
 				if(br!=null){
 					br.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// ignore
+			}
 			try{
 				if(ir!=null){
 					ir.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// ignore
+			}
 			try{
 				if(is!=null){
 					is.close();
@@ -144,12 +148,12 @@ public class HttpHeaderTypes {
 	}
 	public List<String> getRequestStandardHeaders(){
 		List<String> list = new ArrayList<>();
-		list.addAll(this.request_standard.keySet());
+		list.addAll(this.requestStandard.keySet());
 		return list;
 	}
 	public List<String> getRequestNonStandardHeaders(){
 		List<String> list = new ArrayList<>();
-		list.addAll(this.request_nonStandard.keySet());
+		list.addAll(this.requestNonStandard.keySet());
 		return list;
 	}
 	
@@ -161,12 +165,12 @@ public class HttpHeaderTypes {
 	}
 	public List<String> getResponseStandardHeaders(){
 		List<String> list = new ArrayList<>();
-		list.addAll(this.response_standard.keySet());
+		list.addAll(this.responseStandard.keySet());
 		return list;
 	}
 	public List<String> getResponseNonStandardHeaders(){
 		List<String> list = new ArrayList<>();
-		list.addAll(this.response_nonStandard.keySet());
+		list.addAll(this.responseNonStandard.keySet());
 		return list;
 	}
 	
@@ -183,7 +187,10 @@ public class HttpHeaderTypes {
 	} 
 	public static HttpHeaderTypes getInstance() throws UtilsException{
 		if(httpHeaderTypes==null){
-			init();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED'
+			synchronized (HttpHeaderTypes.class) {
+				init();
+			}
 		}
 		return httpHeaderTypes;
 	}

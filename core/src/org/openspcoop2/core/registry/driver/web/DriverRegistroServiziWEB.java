@@ -95,6 +95,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
@@ -162,12 +163,15 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 	 * 
 	 */
 	public DriverRegistroServiziWEB(String urlPrefix,String pathPrefix,Logger alog){	
-		try{
-			if(alog==null)
-				this.log = LoggerWrapperFactory.getLogger(DriverRegistroServiziWEB.class);
-			else
-				this.log = alog;
 
+		if(alog==null)
+			this.log = LoggerWrapperFactory.getLogger(DriverRegistroServiziWEB.class);
+		else
+			this.log = alog;
+		if(this.log==null) {
+			throw new UtilsRuntimeException("Logger unavailable");
+		}
+		try{
 			if (!urlPrefix.endsWith(CostantiRegistroServizi.URL_SEPARATOR))
 				this.urlPrefix= urlPrefix + CostantiRegistroServizi.URL_SEPARATOR;
 			else

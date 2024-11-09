@@ -38,7 +38,6 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
 import org.openspcoop2.pdd.core.controllo_traffico.SogliaReadTimeout;
-import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
@@ -80,8 +79,8 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	private IProtocolFactory<?> protocolFactory;
 	private String function;
 	private String url;
-	private Credenziali credenziali;
-	private String functionParameters;
+	/**private org.openspcoop2.pdd.core.credenziali.Credenziali credenziali;
+	private String functionParameters;*/
 	private PdDContext pddContext;
 	private Date dataIngressoRichiesta;
 	
@@ -105,7 +104,7 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	@SuppressWarnings("unused")
 	private MsgDiagnostico msgDiagnostico;
 	
-	public AS4ConnectorInMessage(UserMessage userMessage,HashMap<String, byte[]> content) throws ConnectorException{
+	public AS4ConnectorInMessage(UserMessage userMessage,Map<String, byte[]> content) throws ConnectorException{
 		try{
 			this.message = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createEmptyMessage(MessageType.SOAP_12, MessageRole.REQUEST);
 			this.message.addContextProperty(AS4Costanti.AS4_CONTEXT_USER_MESSAGE, userMessage);
@@ -125,9 +124,9 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 			this.function = URLProtocolContext.PA_FUNCTION;
 			this.url = "/as4/"+this.function;
 			
-			this.credenziali = null;
+			/**this.credenziali = null;*/
 			
-			this.functionParameters = null;
+			/**this.functionParameters = null;*/
 			
 			this.pddContext = new PdDContext();
 			
@@ -151,15 +150,13 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 			
 			urlProtocolContext.setWebContext("/openspcoop2");
 			
-			urlProtocolContext.setFunctionParameters(this.functionParameters);
+			/**urlProtocolContext.setFunctionParameters(this.functionParameters);*/
 			
 			urlProtocolContext.setSource("domibus/jmsQueue/"+AS4Properties.getInstance().getDomibusGatewayJMS_queueReceiver());
 			
 			this.requestInfo = ConnectorUtils.getRequestInfo(this.protocolFactory, urlProtocolContext);
 			
-			//if(this.pddContext!=null){
 			this.setAttribute(Costanti.REQUEST_INFO.getValue(),this.requestInfo);
-			//}
 			
 			if(this.openspcoopProperties!=null) {
 				this.useDiagnosticInputStream = this.openspcoopProperties.isConnettoriUseDiagnosticInputStream_ricezioneBuste();
@@ -237,7 +234,7 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	}
 	
 	private Map<String, Object> attributes = new HashMap<>();
-	public void setAttribute(String key, Object object) throws ConnectorException {
+	public void setAttribute(String key, Object object) {
 		this.attributes.put(key, object);
 	}
 	@Override
@@ -247,7 +244,7 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	
 	
 	private Map<String, List<String>> headers = new HashMap<>();
-	public void addHeader(String key, String value) throws ConnectorException {
+	public void addHeader(String key, String value) {
 		TransportUtils.addHeader(this.headers, key, value);
 	}
 	@Override
@@ -257,7 +254,7 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	
 	
 	private Map<String, List<String>> parameters = new HashMap<>();
-	public void addParameter(String key, String value) throws ConnectorException {
+	public void addParameter(String key, String value) {
 		TransportUtils.addParameter(this.parameters,key, value);
 	}
 	@Override
@@ -343,7 +340,8 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	
 	@Override
 	public Credential getCredential() throws ConnectorException{
-		return this.credenziali;
+		/**return this.credenziali;*/
+		return null;
 	}
 	
 	@Override

@@ -81,7 +81,7 @@ public class ModIProperties {
 	 *
 	 * 
 	 */
-	public ModIProperties(String confDir,Logger log) throws ProtocolException{
+	private ModIProperties(String confDir,Logger log) throws ProtocolException{
 
 		if(log != null)
 			this.log = log;
@@ -133,8 +133,12 @@ public class ModIProperties {
 	 */
 	public static ModIProperties getInstance() throws ProtocolException{
 
-		if(ModIProperties.modipaProperties==null)
-			throw new ProtocolException("ModIProperties not initialized (use init method in factory)");
+		if(ModIProperties.modipaProperties==null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (ModIProperties.class) {
+				throw new ProtocolException("ModIProperties not initialized (use init method in factory)");
+			}
+		}
 
 		return ModIProperties.modipaProperties;
 	}

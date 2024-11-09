@@ -43,7 +43,10 @@ public class LoaderProperties {
 	}
 	public static LoaderProperties getInstance() throws CoreException{
 		if(LoaderProperties.staticInstance == null){
-			LoaderProperties.init();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (LoaderProperties.class) {
+				LoaderProperties.init();
+			}
 		}
 		return LoaderProperties.staticInstance;
 	}
@@ -100,7 +103,7 @@ public class LoaderProperties {
 	private String byokEnvSecretsConfig = null;
 	private boolean byokEnvSecretsConfigRequired = false;
 	
-	public LoaderProperties() throws CoreException {
+	private LoaderProperties() throws CoreException {
 
 		Properties props = new Properties();
 		try {

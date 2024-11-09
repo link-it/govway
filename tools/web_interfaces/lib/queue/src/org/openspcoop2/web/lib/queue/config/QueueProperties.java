@@ -63,7 +63,7 @@ public class QueueProperties {
 	 *
 	 * 
 	 */
-	public QueueProperties(String confDir,Logger log) throws Exception {
+	private QueueProperties(String confDir,Logger log) throws UtilsException {
 
 		if(log!=null)
 			this.log = log;
@@ -76,12 +76,11 @@ public class QueueProperties {
 		try{  
 			properties = QueueProperties.class.getResourceAsStream("/queue.properties");
 			if(properties==null){
-				throw new Exception("File '/queue.properties' not found");
+				throw new UtilsException("File '/queue.properties' not found");
 			}
 			propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'queue.properties': \n\n"+e.getMessage());
-		    throw new Exception("ConsoleProperties initialize error: "+e.getMessage());
+			doError(e);
 		}finally{
 		    try{
 				if(properties!=null)
@@ -94,6 +93,11 @@ public class QueueProperties {
 		this.reader = new QueueInstanceProperties(propertiesReader, this.log, confDir);
 	}
 
+	private void doError(Exception e) throws UtilsException {
+		String msg = "Riscontrato errore durante la lettura del file 'queue.properties': "+e.getMessage();
+		this.log.error(msg,e);
+	    throw new UtilsException("ConsoleProperties initialize error: "+e.getMessage());
+	}
 
 	/**
 	 * Il Metodo si occupa di inizializzare il propertiesReader 
@@ -120,7 +124,10 @@ public class QueueProperties {
 	 */
 	public static QueueProperties getInstance() throws OpenSPCoop2ConfigurationException{
 		if(QueueProperties.queueProperties==null){
-	    	throw new OpenSPCoop2ConfigurationException("QueueProperties non inizializzato");
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (QueueProperties.class) {
+				throw new OpenSPCoop2ConfigurationException("QueueProperties non inizializzato");
+			}
 	    }
 	    return QueueProperties.queueProperties;
 	}

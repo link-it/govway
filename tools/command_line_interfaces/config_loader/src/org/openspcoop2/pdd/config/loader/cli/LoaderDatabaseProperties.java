@@ -43,7 +43,10 @@ public class LoaderDatabaseProperties {
 	}
 	public static LoaderDatabaseProperties getInstance() throws CoreException{
 		if(LoaderDatabaseProperties.staticInstance == null){
-			LoaderDatabaseProperties.init();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (LoaderDatabaseProperties.class) {
+				LoaderDatabaseProperties.init();
+			}
 		}
 		return LoaderDatabaseProperties.staticInstance;
 	}
@@ -60,7 +63,7 @@ public class LoaderDatabaseProperties {
 	private String password = null;
 	
 	
-	public LoaderDatabaseProperties() throws CoreException {
+	private LoaderDatabaseProperties() throws CoreException {
 
 		Properties props = new Properties();
 		try {

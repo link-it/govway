@@ -52,10 +52,18 @@ public class ApplicationProperties {
 
 	}
 
-	public static ApplicationProperties getInstance(Logger log) throws Exception{
+	public static ApplicationProperties getInstance(Logger log) throws UtilsException{
 
-		if(ApplicationProperties.applicationProperties==null)
-			throw new Exception("Properties not initialized");
+		if(log!=null) {
+			// nop
+		}
+		
+		if(ApplicationProperties.applicationProperties==null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (ApplicationProperties.class) {
+				throw new UtilsException("Properties not initialized");
+			}
+		}
 
 		return ApplicationProperties.applicationProperties;
 	}
@@ -80,7 +88,7 @@ public class ApplicationProperties {
 	 *
 	 * 
 	 */
-	public ApplicationProperties(Logger log,String propertiesPath,String localPropertyName,String localPropertiesPath) throws Exception{
+	private ApplicationProperties(Logger log,String propertiesPath,String localPropertyName,String localPropertiesPath) throws Exception{
 
 		/* ---- Lettura del cammino del file di configurazione ---- */
 

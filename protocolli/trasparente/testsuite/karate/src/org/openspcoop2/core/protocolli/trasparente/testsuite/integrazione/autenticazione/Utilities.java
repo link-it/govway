@@ -244,7 +244,7 @@ public class Utilities extends ConfigLoader {
 		String forSearch = new String(response.getContent());
 		
 		try {
-			XMLUtils xmlUtils = new XMLUtils();
+			XMLUtils xmlUtils = XMLUtils.getInstance();
 			Element el = xmlUtils.newElement(response.getContent());
 			DynamicNamespaceContext dnc = new DynamicNamespaceContext();
 			dnc.findPrefixNamespace(el);

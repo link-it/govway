@@ -40,26 +40,29 @@ public class ReportFactory {
 
 	private static Logger log = LoggerManager.getPddMonitorCoreLogger();
 
-	private static ReportFactory _instance = null;
+	private static ReportFactory instance = null;
 
-	private transient ILiveReport transazioniReportManager = null;
-	private transient ILiveReport statisticaReportManager = null;
+	private ILiveReport transazioniReportManager = null;
+	private ILiveReport statisticaReportManager = null;
 
 	public static ReportFactory getInstance(){
-		if (ReportFactory._instance == null) {
-			init();
+		if (ReportFactory.instance == null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (ReportFactory.class) {
+				init();
+			}
 		}
 
-		return ReportFactory._instance;
+		return ReportFactory.instance;
 	}
 
 	private static synchronized void init(){
-		if (ReportFactory._instance == null) {
-			ReportFactory._instance = new ReportFactory();
+		if (ReportFactory.instance == null) {
+			ReportFactory.instance = new ReportFactory();
 		}
 	}
 
-	public ReportFactory (){
+	private ReportFactory (){
 		try{
 			log.debug("Init ReportFactory in corso...");
 			//		...			
@@ -71,12 +74,12 @@ public class ReportFactory {
 
 	public ILiveReport getTransazioniReportManager(){
 		if(this.transazioniReportManager == null)
-			_initTransazioniReportManager();
+			initTransazioniReportManager();
 
 		return this.transazioniReportManager;
 	}
 
-	private synchronized void _initTransazioniReportManager() {
+	private synchronized void initTransazioniReportManager() {
 		try{
 			log.debug("Init Report Manager Transazioni in corso...");
 			if(this.transazioniReportManager == null){
@@ -94,12 +97,12 @@ public class ReportFactory {
 
 	public ILiveReport getStatisticaReportManager(){
 		if(this.statisticaReportManager == null){
-			_initStatisticaReportManager();
+			initStatisticaReportManager();
 		}
 		return this.statisticaReportManager;
 	}
 	
-	private synchronized void _initStatisticaReportManager() {
+	private synchronized void initStatisticaReportManager() {
 		try{
 			log.debug("Init Report Manager Statistiche in corso...");
 			if(this.statisticaReportManager == null){

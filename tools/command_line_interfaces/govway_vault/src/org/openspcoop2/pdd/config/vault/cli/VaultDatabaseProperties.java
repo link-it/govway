@@ -43,7 +43,10 @@ public class VaultDatabaseProperties {
 	}
 	public static VaultDatabaseProperties getInstance() throws CoreException{
 		if(VaultDatabaseProperties.staticInstance == null){
-			VaultDatabaseProperties.init();
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (VaultDatabaseProperties.class) {
+				VaultDatabaseProperties.init();
+			}
 		}
 		return VaultDatabaseProperties.staticInstance;
 	}
@@ -60,7 +63,7 @@ public class VaultDatabaseProperties {
 	private String password = null;
 	
 	
-	public VaultDatabaseProperties() throws CoreException {
+	private VaultDatabaseProperties() throws CoreException {
 
 		Properties props = new Properties();
 		try {

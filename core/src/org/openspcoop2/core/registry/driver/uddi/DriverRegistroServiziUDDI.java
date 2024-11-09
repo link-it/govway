@@ -95,6 +95,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
@@ -180,11 +181,15 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 	 * 
 	 */
 	public DriverRegistroServiziUDDI(String inquiry,String publish, String user,String password,String urlPrefix, String pathPrefix,Logger alog){
+
+		if(alog==null)
+			this.log = LoggerWrapperFactory.getLogger(DriverRegistroServiziUDDI.class);
+		else
+			this.log = alog;
+		if(this.log==null) {
+			throw new UtilsRuntimeException("Logger unavailable");
+		}
 		try{
-			if(alog==null)
-				this.log = LoggerWrapperFactory.getLogger(DriverRegistroServiziUDDI.class);
-			else
-				this.log = alog;
 			
 			if(publish!=null){
 				this.uddiLib=new UDDILib(inquiry,publish,user,password);

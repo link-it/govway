@@ -122,13 +122,19 @@ public class UtilitiesIntegrazioneBC {
 		if(openspcoop2) {
 			if(x_prefix) {
 				if(UtilitiesIntegrazioneBC.utilitiesIntegrazionePDRequest_op2_xPrefix==null){
-					UtilitiesIntegrazioneBC.initialize(log,PORTA_DELEGATA,REQUEST, openspcoop2, x_prefix);
+					// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+					synchronized (UtilitiesIntegrazioneBC.class) {
+						UtilitiesIntegrazioneBC.initialize(log,PORTA_DELEGATA,REQUEST, openspcoop2, x_prefix);
+					}
 				}
 				return UtilitiesIntegrazioneBC.utilitiesIntegrazionePDRequest_op2_xPrefix;
 			}
 			else {
 				if(UtilitiesIntegrazioneBC.utilitiesIntegrazionePDRequest_op2==null){
-					UtilitiesIntegrazioneBC.initialize(log,PORTA_DELEGATA,REQUEST, openspcoop2, x_prefix);
+					// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+					synchronized (UtilitiesIntegrazioneBC.class) {
+						UtilitiesIntegrazioneBC.initialize(log,PORTA_DELEGATA,REQUEST, openspcoop2, x_prefix);
+					}
 				}
 				return UtilitiesIntegrazioneBC.utilitiesIntegrazionePDRequest_op2;
 			}
@@ -136,13 +142,19 @@ public class UtilitiesIntegrazioneBC {
 		else {
 			if(x_prefix) {
 				if(UtilitiesIntegrazioneBC.utilitiesIntegrazionePDRequest_op1_xPrefix==null){
-					UtilitiesIntegrazioneBC.initialize(log,PORTA_DELEGATA,REQUEST, openspcoop2, x_prefix);
+					// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+					synchronized (UtilitiesIntegrazioneBC.class) {
+						UtilitiesIntegrazioneBC.initialize(log,PORTA_DELEGATA,REQUEST, openspcoop2, x_prefix);
+					}
 				}
 				return UtilitiesIntegrazioneBC.utilitiesIntegrazionePDRequest_op1_xPrefix;
 			}
 			else {
 				if(UtilitiesIntegrazioneBC.utilitiesIntegrazionePDRequest_op1==null){
-					UtilitiesIntegrazioneBC.initialize(log,PORTA_DELEGATA,REQUEST, openspcoop2, x_prefix);
+					// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+					synchronized (UtilitiesIntegrazioneBC.class) {
+						UtilitiesIntegrazioneBC.initialize(log,PORTA_DELEGATA,REQUEST, openspcoop2, x_prefix);
+					}
 				}
 				return UtilitiesIntegrazioneBC.utilitiesIntegrazionePDRequest_op1;
 			}
@@ -157,13 +169,19 @@ public class UtilitiesIntegrazioneBC {
 		if(openspcoop2) {
 			if(x_prefix) {
 				if(UtilitiesIntegrazioneBC.utilitiesIntegrazionePDResponse_op2_xPrefix==null){
-					UtilitiesIntegrazioneBC.initialize(log,PORTA_DELEGATA,RESPONSE, openspcoop2, x_prefix);
+					// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+					synchronized (UtilitiesIntegrazioneBC.class) {
+						UtilitiesIntegrazioneBC.initialize(log,PORTA_DELEGATA,RESPONSE, openspcoop2, x_prefix);
+					}
 				}
 				return UtilitiesIntegrazioneBC.utilitiesIntegrazionePDResponse_op2_xPrefix;
 			}
 			else {
 				if(UtilitiesIntegrazioneBC.utilitiesIntegrazionePDResponse_op2==null){
-					UtilitiesIntegrazioneBC.initialize(log,PORTA_DELEGATA,RESPONSE, openspcoop2, x_prefix);
+					// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+					synchronized (UtilitiesIntegrazioneBC.class) {
+						UtilitiesIntegrazioneBC.initialize(log,PORTA_DELEGATA,RESPONSE, openspcoop2, x_prefix);
+					}
 				}
 				return UtilitiesIntegrazioneBC.utilitiesIntegrazionePDResponse_op2;
 			}
@@ -171,13 +189,19 @@ public class UtilitiesIntegrazioneBC {
 		else {
 			if(x_prefix) {
 				if(UtilitiesIntegrazioneBC.utilitiesIntegrazionePDResponse_op1_xPrefix==null){
-					UtilitiesIntegrazioneBC.initialize(log,PORTA_DELEGATA,RESPONSE, openspcoop2, x_prefix);
+					// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+					synchronized (UtilitiesIntegrazioneBC.class) {
+						UtilitiesIntegrazioneBC.initialize(log,PORTA_DELEGATA,RESPONSE, openspcoop2, x_prefix);
+					}
 				}
 				return UtilitiesIntegrazioneBC.utilitiesIntegrazionePDResponse_op1_xPrefix;
 			}
 			else {
 				if(UtilitiesIntegrazioneBC.utilitiesIntegrazionePDResponse_op1==null){
-					UtilitiesIntegrazioneBC.initialize(log,PORTA_DELEGATA,RESPONSE, openspcoop2, x_prefix);
+					// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+					synchronized (UtilitiesIntegrazioneBC.class) {
+						UtilitiesIntegrazioneBC.initialize(log,PORTA_DELEGATA,RESPONSE, openspcoop2, x_prefix);
+					}
 				}
 				return UtilitiesIntegrazioneBC.utilitiesIntegrazionePDResponse_op1;
 			}
@@ -192,13 +216,19 @@ public class UtilitiesIntegrazioneBC {
 		if(openspcoop2) {
 			if(x_prefix) {
 				if(UtilitiesIntegrazioneBC.utilitiesIntegrazionePARequest_op2_xPrefix==null){
-					UtilitiesIntegrazioneBC.initialize(log,PORTA_APPLICATIVA,REQUEST, openspcoop2, x_prefix);
+					// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+					synchronized (UtilitiesIntegrazioneBC.class) {
+						UtilitiesIntegrazioneBC.initialize(log,PORTA_APPLICATIVA,REQUEST, openspcoop2, x_prefix);
+					}
 				}
 				return UtilitiesIntegrazioneBC.utilitiesIntegrazionePARequest_op2_xPrefix;
 			}
 			else {
 				if(UtilitiesIntegrazioneBC.utilitiesIntegrazionePARequest_op2==null){
-					UtilitiesIntegrazioneBC.initialize(log,PORTA_APPLICATIVA,REQUEST, openspcoop2, x_prefix);
+					// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+					synchronized (UtilitiesIntegrazioneBC.class) {
+						UtilitiesIntegrazioneBC.initialize(log,PORTA_APPLICATIVA,REQUEST, openspcoop2, x_prefix);
+					}
 				}
 				return UtilitiesIntegrazioneBC.utilitiesIntegrazionePARequest_op2;
 			}
@@ -206,13 +236,19 @@ public class UtilitiesIntegrazioneBC {
 		else {
 			if(x_prefix) {
 				if(UtilitiesIntegrazioneBC.utilitiesIntegrazionePARequest_op1_xPrefix==null){
-					UtilitiesIntegrazioneBC.initialize(log,PORTA_APPLICATIVA,REQUEST, openspcoop2, x_prefix);
+					// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+					synchronized (UtilitiesIntegrazioneBC.class) {
+						UtilitiesIntegrazioneBC.initialize(log,PORTA_APPLICATIVA,REQUEST, openspcoop2, x_prefix);
+					}
 				}
 				return UtilitiesIntegrazioneBC.utilitiesIntegrazionePARequest_op1_xPrefix;
 			}
 			else {
 				if(UtilitiesIntegrazioneBC.utilitiesIntegrazionePARequest_op1==null){
-					UtilitiesIntegrazioneBC.initialize(log,PORTA_APPLICATIVA,REQUEST, openspcoop2, x_prefix);
+					// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+					synchronized (UtilitiesIntegrazioneBC.class) {
+						UtilitiesIntegrazioneBC.initialize(log,PORTA_APPLICATIVA,REQUEST, openspcoop2, x_prefix);
+					}
 				}
 				return UtilitiesIntegrazioneBC.utilitiesIntegrazionePARequest_op1;
 			}
@@ -227,13 +263,19 @@ public class UtilitiesIntegrazioneBC {
 		if(openspcoop2) {
 			if(x_prefix) {
 				if(UtilitiesIntegrazioneBC.utilitiesIntegrazionePAResponse_op2_xPrefix==null){
-					UtilitiesIntegrazioneBC.initialize(log,PORTA_APPLICATIVA,RESPONSE, openspcoop2, x_prefix);
+					// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+					synchronized (UtilitiesIntegrazioneBC.class) {
+						UtilitiesIntegrazioneBC.initialize(log,PORTA_APPLICATIVA,RESPONSE, openspcoop2, x_prefix);
+					}
 				}
 				return UtilitiesIntegrazioneBC.utilitiesIntegrazionePAResponse_op2_xPrefix;
 			}
 			else {
 				if(UtilitiesIntegrazioneBC.utilitiesIntegrazionePAResponse_op2==null){
-					UtilitiesIntegrazioneBC.initialize(log,PORTA_APPLICATIVA,RESPONSE, openspcoop2, x_prefix);
+					// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+					synchronized (UtilitiesIntegrazioneBC.class) {
+						UtilitiesIntegrazioneBC.initialize(log,PORTA_APPLICATIVA,RESPONSE, openspcoop2, x_prefix);
+					}
 				}
 				return UtilitiesIntegrazioneBC.utilitiesIntegrazionePAResponse_op2;
 			}
@@ -241,13 +283,19 @@ public class UtilitiesIntegrazioneBC {
 		else {
 			if(x_prefix) {
 				if(UtilitiesIntegrazioneBC.utilitiesIntegrazionePAResponse_op1_xPrefix==null){
-					UtilitiesIntegrazioneBC.initialize(log,PORTA_APPLICATIVA,RESPONSE, openspcoop2, x_prefix);
+					// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+					synchronized (UtilitiesIntegrazioneBC.class) {
+						UtilitiesIntegrazioneBC.initialize(log,PORTA_APPLICATIVA,RESPONSE, openspcoop2, x_prefix);
+					}
 				}
 				return UtilitiesIntegrazioneBC.utilitiesIntegrazionePAResponse_op1_xPrefix;
 			}
 			else {
 				if(UtilitiesIntegrazioneBC.utilitiesIntegrazionePAResponse_op1==null){
-					UtilitiesIntegrazioneBC.initialize(log,PORTA_APPLICATIVA,RESPONSE, openspcoop2, x_prefix);
+					// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+					synchronized (UtilitiesIntegrazioneBC.class) {
+						UtilitiesIntegrazioneBC.initialize(log,PORTA_APPLICATIVA,RESPONSE, openspcoop2, x_prefix);
+					}
 				}
 				return UtilitiesIntegrazioneBC.utilitiesIntegrazionePAResponse_op1;
 			}

@@ -51,14 +51,18 @@ public class ColonnaExportManager {
 	}
 	
 	public static ColonnaExportManager getInstance(){
-		if(ColonnaExportManager.instance == null)
-			ColonnaExportManager.init();
+		if(ColonnaExportManager.instance == null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (ColonnaExportManager.class) {
+				ColonnaExportManager.init();
+			}
+		}
 		
 		return ColonnaExportManager.instance;
 	}
 	
-	public ColonnaExportManager(){
-		this.mapColonne = new HashMap<String, ColonnaExport>();
+	private ColonnaExportManager(){
+		this.mapColonne = new HashMap<>();
 		this.colonneNonSelezionabiliDallUtente = new ArrayList<>();
 		this.ordineInserimentoColonne = new ArrayList<>();
 		this.ordineInserimentoColonneCustomView = new ArrayList<>();

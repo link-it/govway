@@ -83,7 +83,7 @@ public class ConsoleProperties {
 	 *
 	 * 
 	 */
-	public ConsoleProperties(String confDir, String confPropertyName, String confLocalPathPrefix,Logger log) throws UtilsException {
+	private ConsoleProperties(String confDir, String confPropertyName, String confLocalPathPrefix,Logger log) throws UtilsException {
 
 		if(log!=null)
 			this.log = log;
@@ -135,7 +135,10 @@ public class ConsoleProperties {
 	 */
 	public static ConsoleProperties getInstance() throws OpenSPCoop2ConfigurationException{
 		if(ConsoleProperties.consoleProperties==null){
-	    	throw new OpenSPCoop2ConfigurationException("ConsoleProperties non inizializzato");
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (ConsoleProperties.class) {
+				throw new OpenSPCoop2ConfigurationException("ConsoleProperties non inizializzato");
+			}
 	    }
 	    return ConsoleProperties.consoleProperties;
 	}

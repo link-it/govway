@@ -64,7 +64,7 @@ public class SPCoopProperties {
 	 *
 	 * 
 	 */
-	public SPCoopProperties(String confDir,Logger log) throws ProtocolException{
+	private SPCoopProperties(String confDir,Logger log) throws ProtocolException{
 
 		if(log != null)
 			this.log = log;
@@ -121,8 +121,12 @@ public class SPCoopProperties {
 	 */
 	public static SPCoopProperties getInstance(Logger log) throws ProtocolException{
 
-		if(SPCoopProperties.spcoopProperties==null)
-			throw new ProtocolException("SPCoopProperties not initialized (use init method in factory)");
+		if(SPCoopProperties.spcoopProperties==null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (SPCoopProperties.class) {
+				throw new ProtocolException("SPCoopProperties not initialized (use init method in factory)");
+			}
+		}
 
 		return SPCoopProperties.spcoopProperties;
 	}

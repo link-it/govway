@@ -71,18 +71,22 @@ public class ApplicationBean implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static ApplicationBean _instance = null;
+	private static ApplicationBean instance = null;
 
 	public static ApplicationBean getInstance(){
-		if(ApplicationBean._instance == null)
-			ApplicationBean.init();
+		if(ApplicationBean.instance == null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+			synchronized (ApplicationBean.class) {
+				ApplicationBean.init();
+			}
+		}
 
-		return ApplicationBean._instance;
+		return ApplicationBean.instance;
 	}
 
 	private static synchronized void init(){
-		if(ApplicationBean._instance == null){
-			ApplicationBean._instance = new ApplicationBean();
+		if(ApplicationBean.instance == null){
+			ApplicationBean.instance = new ApplicationBean();
 		}
 	}
 
@@ -186,7 +190,7 @@ public class ApplicationBean implements Serializable {
 		ApplicationBean.funzionalitaStaticInstance.put(nomeFunzionalita,false);
 	}
 	
-	public ApplicationBean() {
+	private ApplicationBean() {
 		// inizializzazione
 		try {
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(ApplicationBean.log);

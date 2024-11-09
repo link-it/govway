@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 
 public class BYOKMapProperties extends MapProperties {
 
-	private static final String FILE_NAME = "govway.secrets.properties";
+	public static final String FILE_NAME = "govway.secrets.properties";
 	
 	private static final String PROP_KSM_PREFIX = "ksm.";
 	private static final String ENV_KSM_PREFIX = MapProperties.ENV_PREFIX+PROP_KSM_PREFIX;
@@ -108,18 +108,22 @@ public class BYOKMapProperties extends MapProperties {
 	/** Copia Statica */
 	private static BYOKMapProperties secretsProperties = null;
 	
-	public BYOKMapProperties(Logger log, boolean throwNotFound,
+	/**private BYOKMapProperties(Logger log, boolean throwNotFound,
 			boolean useSecurityEngine,
 			Map<String, Object> dynamicMapParam, boolean checkJmxPrefixOperazioneNonRiuscita) throws UtilsException {
-		this(log, FILE_NAME, throwNotFound, 
-				useSecurityEngine,
+		super(log, FILE_NAME, throwNotFound);
+		init(useSecurityEngine,
 				dynamicMapParam, checkJmxPrefixOperazioneNonRiuscita);
-	}
-	public BYOKMapProperties(Logger log, String fileName, boolean throwNotFound, 
+	}*/
+	private BYOKMapProperties(Logger log, String fileName, boolean throwNotFound, 
 			boolean useSecurityEngine,
 			Map<String, Object> dynamicMapParam, boolean checkJmxPrefixOperazioneNonRiuscita) throws UtilsException {
 		super(log, fileName, throwNotFound);
-		
+		init(useSecurityEngine,
+				dynamicMapParam, checkJmxPrefixOperazioneNonRiuscita);
+	}
+	private void init(boolean useSecurityEngine,
+			Map<String, Object> dynamicMapParam, boolean checkJmxPrefixOperazioneNonRiuscita) {
 		String securityPolicyB = BYOKManager.getSecurityEngineGovWayPolicy();
 		String securityRemotePolicyB = BYOKManager.getSecurityRemoteEngineGovWayPolicy();
 		if(securityPolicyB!=null && StringUtils.isNotEmpty(securityPolicyB)) {
@@ -160,7 +164,15 @@ public class BYOKMapProperties extends MapProperties {
 	 * 
 	 */
 	public static BYOKMapProperties getInstance(){
-	   return BYOKMapProperties.secretsProperties;
+		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+		if (BYOKMapProperties.secretsProperties == null) {
+			synchronized (BYOKMapProperties.class) {
+				if (BYOKMapProperties.secretsProperties == null) {
+					return null;
+				}
+			}
+		}
+		return BYOKMapProperties.secretsProperties;
 	}
 
 	@Override

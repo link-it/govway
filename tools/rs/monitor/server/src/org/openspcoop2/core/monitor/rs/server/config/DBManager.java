@@ -226,7 +226,7 @@ public class DBManager {
 	 * Il Metodo si occupa di inizializzare il propertiesReader del QueueManager
 	 * 
 	 */
-	public static boolean initialize(String jndiNameConfig, java.util.Properties contextConfig, String tipoDBConfig, 
+	public static synchronized boolean initialize(String jndiNameConfig, java.util.Properties contextConfig, String tipoDBConfig, 
 			String jndiNameTracce, java.util.Properties contextTracce, String tipoDBTracce, 
 			String jndiNameStatistiche, java.util.Properties contextStatistiche, String tipoDBStatistiche, 
 			boolean debug) throws Exception {
@@ -236,8 +236,8 @@ public class DBManager {
 						jndiNameTracce, contextTracce, tipoDBTracce,
 						jndiNameStatistiche, contextStatistiche, tipoDBStatistiche,
 						debug);
+				DBManager.setInitialized(true);
 			}
-			DBManager.setInitialized(true);
 			return true;
 		} catch (Exception e) {
 			DBManager.setInitialized(false);
@@ -252,6 +252,12 @@ public class DBManager {
 	 * @return Istanza di DBManager
 	 */
 	public static DBManager getInstance() {
+		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+		if(DBManager.manager==null) {
+			synchronized (DBManager.class) {
+				return DBManager.manager;
+			}
+		}
 		return DBManager.manager;
 	}
 

@@ -118,7 +118,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 			this.setVisualizzaIdCluster(govwayMonitorare!=null && govwayMonitorare.size()>1);
 			this.visualizzaDataAccettazione = govwayMonitorProperties.isAttivoTransazioniDataAccettazione();
 			
-			this.applicationBean = new ApplicationBean();
+			this.applicationBean = ApplicationBean.getInstance();
 			this.applicationBean.setLoginBean(Utility.getLoginBean()); 
 			
 			this.visualizzazioneStoricoTabellare = !govwayMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomTransazioni();

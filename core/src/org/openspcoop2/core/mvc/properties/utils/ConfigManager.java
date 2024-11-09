@@ -29,10 +29,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.mvc.properties.Compatibility;
 import org.openspcoop2.core.mvc.properties.Config;
 import org.openspcoop2.core.mvc.properties.Tags;
 import org.openspcoop2.core.mvc.properties.utils.serializer.JaxbDeserializer;
+import org.openspcoop2.generic_project.exception.DeserializerException;
 import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
 import org.slf4j.Logger;
 
@@ -52,34 +54,41 @@ public class ConfigManager {
 	private Map<String, Map<String,Config>> mapConfig = null;
 	private AbstractValidatoreXSD validator = null; 
 	
-	public static ConfigManager getinstance(Logger log) throws Exception {
-		if(instance == null)
-			init(log);
-		
+	public static ConfigManager getinstance(Logger log) throws CoreException {
+		if(instance == null) {
+			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED'
+			synchronized (ConfigManager.class) {
+				init(log);
+			}
+		}
 		return instance;
 	}
 	
-	private static synchronized void init(Logger log) throws Exception{
+	private static synchronized void init(Logger log) throws CoreException{
 		instance = new ConfigManager(log);
 	}
 	
 	
-	public ConfigManager(Logger log) throws Exception {
+	private ConfigManager(Logger log) throws CoreException  {
 		this.log = log;
-		this.mapConfigBuildIn = new HashMap<String, Map<String,Config>>();
-		this.mapConfigFileSystem = new HashMap<String, Map<String,Config>>();
-		this.mapConfig = new HashMap<String, Map<String,Config>>();
+		this.mapConfigBuildIn = new HashMap<>();
+		this.mapConfigFileSystem = new HashMap<>();
+		this.mapConfig = new HashMap<>();
 		
 		try {
 			this.validator = XSDValidator.getXSDValidator(log);
 		}catch(Exception e) {
-			this.log.error("Errore durante la init del ManagerConfigurazioni: " + e.getMessage(),e);
-			throw e;
+			doError("Errore durante la init del ManagerConfigurazioni",e);
 		}
+	}
+	private void doError(String msg,Exception e) throws CoreException {
+		String msgError = msg +": "+ e.getMessage();
+		this.log.error(msgError,e);
+		throw new CoreException(e.getMessage(),e);
 	}
 	
 	
-	public void leggiConfigurazioni(PropertiesSourceConfiguration propertiesSourceConfiguration, boolean validazioneXSD) throws Exception{
+	public void leggiConfigurazioni(PropertiesSourceConfiguration propertiesSourceConfiguration, boolean validazioneXSD) throws CoreException, DeserializerException{
 		// Configurazioni builtIn
 		if(!this.mapConfigBuildIn.containsKey(propertiesSourceConfiguration.getId()) || propertiesSourceConfiguration.isUpdateBuiltIn()) {
 			if(this.mapConfigBuildIn.containsKey(propertiesSourceConfiguration.getId())) {
@@ -90,8 +99,8 @@ public class ConfigManager {
 			
 			List<byte[]> builtIn = propertiesSourceConfiguration.getBuiltIn();
 			
-			if(builtIn != null && builtIn.size() > 0) {
-				mapConfigFromDir = new HashMap<String,Config>();
+			if(builtIn != null && !builtIn.isEmpty()) {
+				mapConfigFromDir = new HashMap<>();
 				JaxbDeserializer xmlReader = new JaxbDeserializer();
 				for (int i = 0 ; i < builtIn.size(); i++ ) {
 					byte[] f = builtIn.get(i);
@@ -100,15 +109,14 @@ public class ConfigManager {
 						try {
 							this.validator.valida(new ByteArrayInputStream(f));
 						}catch(Exception e) {
-							this.log.error("La configurazione builtIn numero ["+(i+1)+"] non e' valida: " + e.getMessage());
-							throw e;
+							doError("La configurazione builtIn numero ["+(i+1)+"] non e' valida",e);
 						}
 					}
 					
 					Config configDaFile = xmlReader.readConfig(f);
 					String id = configDaFile.getId();
 					if(mapConfigFromDir.containsKey(id))
-						throw new Exception("La configurazione builtIn con id '"+id+"' risulta duplicata all'interno di quelle precaricate nel sistema.");
+						throw new CoreException("La configurazione builtIn con id '"+id+"' risulta duplicata all'interno di quelle precaricate nel sistema.");
 						
 					mapConfigFromDir.put(id,configDaFile);
 				}
@@ -127,15 +135,15 @@ public class ConfigManager {
 			File dir = new File(propertiesSourceConfiguration.getDirectory());
 			
 			if(!dir.exists())
-				throw new Exception("Il path indicato ["+propertiesSourceConfiguration.getDirectory()+"] non esiste, impossibile leggere le configurazioni");
+				throw new CoreException("Il path indicato ["+propertiesSourceConfiguration.getDirectory()+"] non esiste, impossibile leggere le configurazioni");
 			
 			if(!dir.isDirectory())
-				throw new Exception("Il path indicato ["+propertiesSourceConfiguration.getDirectory()+"] non e' una directory");
+				throw new CoreException("Il path indicato ["+propertiesSourceConfiguration.getDirectory()+"] non e' una directory");
 			
 			String[] fileList = dir.list();
 			
 			if(fileList != null && fileList.length > 0) {
-				mapConfigFromDir = new HashMap<String,Config>();
+				mapConfigFromDir = new HashMap<>();
 				JaxbDeserializer xmlReader = new JaxbDeserializer();
 				for (String f : fileList) {
 					File fileConfig = new File(dir.getPath() + File.separator + f); 
@@ -145,15 +153,14 @@ public class ConfigManager {
 							try {
 								this.validator.valida(fileConfig);
 							}catch(Exception e) {
-								this.log.error("La configurazione ["+fileConfig.getName()+"] non e' valida: " + e.getMessage());
-								throw e;
+								doError("La configurazione ["+fileConfig.getName()+"] non e' valida",e);
 							}
 						}
 						
 						Config configDaFile = xmlReader.readConfig(fileConfig);
 						String id = configDaFile.getId();
 						if(mapConfigFromDir.containsKey(id))
-							throw new Exception("La configurazione con id '"+id+"' risulta duplicata all'interno del path indicato ["+propertiesSourceConfiguration.getDirectory()+"].");
+							throw new CoreException("La configurazione con id '"+id+"' risulta duplicata all'interno del path indicato ["+propertiesSourceConfiguration.getDirectory()+"].");
 							
 						mapConfigFromDir.put(id,configDaFile);
 					}
@@ -175,11 +182,11 @@ public class ConfigManager {
 				// controllo duplicati 
 				for (String keyBuiltIn : mapBuiltIn.keySet()) {
 					if(mapFileSystem.keySet().contains(keyBuiltIn))
-						throw new Exception("La configurazione con id '"+keyBuiltIn+"' risulta duplicata, e' presente sia come configurazione builtIn che come configurazione esterna, eliminare una delle due.");
+						throw new CoreException("La configurazione con id '"+keyBuiltIn+"' risulta duplicata, e' presente sia come configurazione builtIn che come configurazione esterna, eliminare una delle due.");
 				}
 			}
 			
-			Map<String, Config> map = new HashMap<String,Config>();
+			Map<String, Config> map = new HashMap<>();
 			if(mapBuiltIn != null && mapBuiltIn.size() > 0)
 				map.putAll(mapBuiltIn);
 			if(mapFileSystem != null && mapFileSystem.size() > 0)
@@ -197,7 +204,7 @@ public class ConfigManager {
 
 		Iterator<String> iterator = map.keySet().iterator();
 		while (iterator.hasNext()) {
-			String id = (String) iterator.next();
+			String id = iterator.next();
 			
 			Config config = map.get(id);
 			if(tags!=null && tags.length>0) {
@@ -241,9 +248,9 @@ public class ConfigManager {
 		for (String id : idList) {
 			Config config = map.get(id);
 			String labelId = config.getLabel();
-//			if(config.getSortLabel()!=null) {
-//				labelId = config.getSortLabel();
-//			}
+			/**if(config.getSortLabel()!=null) {
+				labelId = config.getSortLabel();
+			}*/
 			listLabels.add(labelId);
 		}
 		return listLabels;
@@ -263,7 +270,7 @@ public class ConfigManager {
 		// Valore di partenza dell'esito totale e'
 		// TRUE se devo controllare l'and dei tag
 		// FALSE se devo controllare l'or dei tag
-		boolean esito = isAnd ? true : false;
+		boolean esito = isAnd;
 
 		for (Tags tag : compatibility.getTagsList()) {
 			boolean resCondition = checkTags(tag,tags);
@@ -283,7 +290,7 @@ public class ConfigManager {
 		// Valore di partenza dell'esito totale e'
 		// TRUE se devo controllare l'and dei tag
 		// FALSE se devo controllare l'or dei tag
-		boolean esito = isAnd ? true : false;
+		boolean esito = isAnd;
 		
 		for (String stringTag : tag.getTagList()) {
 			boolean resCondition = tags.contains(stringTag);

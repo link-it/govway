@@ -110,6 +110,7 @@ import org.openspcoop2.core.registry.ws.client.scope.search.SearchFilterScope;
 import org.openspcoop2.core.registry.ws.client.soggetto.search.SearchFilterSoggetto;
 import org.openspcoop2.core.registry.ws.client.soggetto.search.SoggettoSoap11Service;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.crypt.CryptFactory;
@@ -184,12 +185,15 @@ public class DriverRegistroServiziWS extends BeanUtilities
 	 * 
 	 */
 	public DriverRegistroServiziWS(String prefixLocation,String username,String password,Logger alog){	
-		try{
-			if(alog==null)
-				this.log = LoggerWrapperFactory.getLogger(DriverRegistroServiziWS.class);
-			else
-				this.log = alog;
-			
+		
+		if(alog==null)
+			this.log = LoggerWrapperFactory.getLogger(DriverRegistroServiziWS.class);
+		else
+			this.log = alog;
+		if(this.log==null) {
+			throw new UtilsRuntimeException("Logger unavailable");
+		}
+		try{	
 			// es. http://127.0.0.1:8080/openspcoop2Registry/
 			if(prefixLocation==null)
 				throw new Exception("Location is null");
