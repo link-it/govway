@@ -76,7 +76,7 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
     L'esempio seguente attiva l'analisi dei sorgenti solamente per le utilità di base e i componenti di runtime di GovWay:
         mvn verify -Dspotbugs=verify 
                    -Dcompile=none -Dtestsuite=none -Dpackage=none -Dowasp=none 
-                   -Dspotbugs.home=/tmp/spotbugs-4.7.3 
+                   -Dspotbugs.home=/tmp/spotbugs-4.8.6
                    -Dspotbugs.skipPackages=protocol-as4,protocol-modipa,protocol-sdi,protocol-spcoop,protocol-trasparente,web-lib-audit,web-lib-mvc,web-lib-queue,web-lib-users,web-loader,web-govwayConsole,web-govwayMonitor,rs-config,rs-monitor,batch-statistiche,batch-runtime-repository,cli-config-loader,cli-govway-vault
 
 2.6 Analisi statica dei sorgenti tramite SonarQube
