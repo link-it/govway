@@ -76,8 +76,6 @@
 	<var name="jsf_api_jar" value="" />
 	<var name="el_impl_jar" value="" />
 	<var name="stax2-api_jar" value="" />
-	<var name="jsf_module_jar" value="" />
-	<var name="wildfly_module_jar" value="" />
 	<var name="jboss_classloading" value="" />
 	<var name="jboss_scanning" value="" />
 	<var name="jboss_deployment_structure" value="" />
@@ -124,29 +122,6 @@
 			<var name="stax2-api_jar" value="stax2-api-4.2.2.jar" />
 		</then>
 	</if>
-	
-	<!-- JSF Module -->
-	<if>
-		<and>
-			<matches string="${as}" pattern="wildfly.*"/>
-			<equals arg1="${buildJsfAsModule}" arg2="false"/>
-		</and>
-		<then>
-			<var name="jsf_module_jar" value="*.jar" />
-		</then>
-	</if>
-	<if>
-		<and>
-			<or>
-				<matches string="${as}" pattern="wildfly8"/>
-				<matches string="${as}" pattern="wildfly9"/>
-			</or>
-			<equals arg1="${buildJsfAsModule}" arg2="false"/>
-		</and>
-		<then>
-			<var name="wildfly_module_jar" value="*.jar" />
-		</then>
-	</if>	
 
 	<!-- jboss_classloading -->
 	<if>
@@ -341,26 +316,7 @@
 
 
 	<!-- Creazione del modulo .WAR -->
-	<target name="build_govwayMonitor" depends="plugins_govwayMonitor,compile_dipendenze,compile_govwayMonitor,-prepare,war_openspcoop2_govwayMonitor" description="Crea la struttura del modulo WAR" >
-		<!-- Per wildfly devo fornire  il modulo jsf 1.2 da installare. -->
-		<if> 
-			<or>
-				<matches string="${as}" pattern="wildfly.*"/>
-			</or>
-			<then>
-				<if>
-					<and>
-					    	<equals arg1="${buildJsfAsModule}" arg2="true"/>
-					</and>
-					<then>
-						<copy todir="${dist_govwayMonitor}/modulo-jsf12">
-    							<fileset dir="${deploy_govwayMonitor}/modulo-jsf12"/>
-    						</copy>
-					</then>
-				</if>
-			</then>
-		</if>
-	</target>
+	<target name="build_govwayMonitor" depends="plugins_govwayMonitor,compile_dipendenze,compile_govwayMonitor,-prepare,war_openspcoop2_govwayMonitor" description="Crea la struttura del modulo WAR" />
 	
 	<!-- alias -->
 	<target name="build" depends="build_govwayMonitor"/>

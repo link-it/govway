@@ -4,9 +4,7 @@
                 <exclude-subsystems>
                         <subsystem name="webservices" />
                         <subsystem name="jaxrs" />
-			<!-- Start SenzaModulo JSF -->
 			<subsystem name="jsf" />
-			<!-- End SenzaModulo JSF -->
 			<!-- se si elimina, spuntano i warning <subsystem name="weld" /> -->
 			<subsystem name="logging"/>
 			<!-- 
@@ -19,10 +17,6 @@
 			<module name="org.eclipse.angus.activation"/>
                 </exclusions>
                 <dependencies>
-			<!-- Start Modulo JSF
-			<module name="com.sun.jsf-impl" slot="mojarra-1.2_15" />
-			<module name="javax.faces.api" slot="mojarra-1.2_15" />
-			End Modulo JSF -->
 			<!-- 
 				In wildfly deve essere utilizzato il jar xerces a bordo dell'a.s.
 				altrimenti non funziona il re-deploy dell'applicazione.

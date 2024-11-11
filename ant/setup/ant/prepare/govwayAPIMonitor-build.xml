@@ -41,7 +41,6 @@
 			<param name="build_govwayMonitor" value="build"/>
 			<param name="plugins_govwayMonitor" value="${govwayMonitor}/deploy/plugins"/>
 			<param name="deploy_govwayMonitor" value="${govwayMonitor}/deploy"/>
-			<param name="buildJsfAsModule" value="false"/>
 	 		<param name="data_content_handler_dir" value="${core}/deploy/data_content_handler" />
 			<param name="src_govwayMonitor" value="${src_govwayMonitor}"/>
 			<param name="dist_govwayMonitor" value="${deploy_sw}/${TIPO_AS}/dist"/>

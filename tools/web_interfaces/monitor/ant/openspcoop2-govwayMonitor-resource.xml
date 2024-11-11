@@ -222,26 +222,6 @@
 				<concat destfile="${build_govwayMonitor_war}/WEB-INF/jboss-deployment-structure.xml" append="yes">
 					<filelist dir="${src_webinf_govwayMonitor}" files="jboss-deployment-structure.xml.wildfly"/>
 				</concat>
-				<if>
-					<and>
-				    		<equals arg1="${buildJsfAsModule}" arg2="true"/>
-				    	</and>
-	    				<then>
-						<replace file="${build_govwayMonitor_war}/WEB-INF/jboss-deployment-structure.xml" 
-					    		token="Start SenzaModulo JSF -->" 
-					    		value="Start SenzaModulo JSF"/>
-						<replace file="${build_govwayMonitor_war}/WEB-INF/jboss-deployment-structure.xml" 
-					    		token="&lt;!-- End SenzaModulo JSF" 
-					    		value="SenzaModulo"/>
-	    					
-						<replace file="${build_govwayMonitor_war}/WEB-INF/jboss-deployment-structure.xml" 
-					    		token="Start Modulo JSF" 
-					    		value="Start Modulo JSF -->"/>
-						<replace file="${build_govwayMonitor_war}/WEB-INF/jboss-deployment-structure.xml" 
-					    		token="End Modulo JSF" 
-					    		value="&lt;!-- End Modulo JSF"/>
-	    				</then>
-    				</if>
 			</then>
 		</if>
 		

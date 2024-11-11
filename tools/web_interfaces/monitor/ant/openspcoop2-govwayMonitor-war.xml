@@ -253,15 +253,6 @@
 				<include name="fontbox-2.0.32.jar"/>	
 				<include name="boxable-1.7.0.jar"/>
 			</lib>
-			<lib dir="${deploy_govwayMonitor}/modulo-jsf12/com/sun/jsf-impl/mojarra-1.2_15">
-				<include name="${jsf_module_jar}"/>
-			</lib>
-			<lib dir="${deploy_govwayMonitor}/modulo-jsf12/javax/faces/api/mojarra-1.2_15">
-				<include name="${jsf_module_jar}"/>
-			</lib>
-			<lib dir="${deploy_govwayMonitor}/modulo-jsf12/org/jboss/as/jsf-injection/mojarra-1.2_15">
-				<include name="${wildfly_module_jar}"/>
-			</lib>
 			<lib dir="${dist_govwayMonitor}">
 				<include name="openspcoop2*.jar" />
 				<exclude name="${monitoraggio_allarme_jar}" />
