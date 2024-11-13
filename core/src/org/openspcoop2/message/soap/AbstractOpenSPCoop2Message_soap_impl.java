@@ -56,6 +56,7 @@ import org.openspcoop2.message.soap.mtom.MtomXomPackageInfo;
 import org.openspcoop2.message.soap.mtom.MtomXomReference;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.soap.reference.Reference;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -311,6 +312,34 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 	/* ContentType */
 	
 	@Override
+	public void addContentTypeParameter(String name,String value) throws MessageException{
+		if(this.isContentBuilded()) {
+			this.content.contentTypeParamaters.put(name, value);
+			if(!this.contentUpdatable) {
+				// aggiorno anche struttura leggera
+				super.addContentTypeParameter(name, value);
+			}
+		}
+		else {
+			super.addContentTypeParameter(name, value);
+		}
+	}
+	
+	@Override
+	public void removeContentTypeParameter(String name) throws MessageException{
+		if(this.isContentBuilded()) {
+			this.content.removeContentTypeParameter(name);
+			if(!this.contentUpdatable) {
+				// aggiorno anche struttura leggera
+				super.removeContentTypeParameter(name);
+			}
+		}
+		else {
+			super.removeContentTypeParameter(name);
+		}
+	}
+	
+	@Override
 	public void updateContentType() throws MessageException {
 		if(this.isContentBuilded()) {
 			this.content.updateContentType();
@@ -330,7 +359,7 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 			try{
 				this.content.setContentType(type);
 			}catch(Exception eInternal){
-				throw new RuntimeException(eInternal.getMessage(),eInternal);
+				throw new UtilsRuntimeException(eInternal.getMessage(),eInternal);
 			}
 			if(!this.contentUpdatable) {
 				// aggiorno anche struttura leggera
@@ -351,7 +380,7 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 			try{
 				return this.content.getContentType();
 			}catch(Exception eInternal){
-				throw new RuntimeException(eInternal.getMessage(),eInternal);
+				throw new UtilsRuntimeException(eInternal.getMessage(),eInternal);
 			}
 		}
 		else {
