@@ -1205,7 +1205,7 @@
 		<property name="sonar.exclusions" value="${govway.exclusion}" />
 		<!-- <property name="sonar.coverage.exclusions" value="${sonar.sources.analyze}" /> --> <!-- i test vengono realizzati su jenkins tramite test funzionali -->
 		<property name="sonar.java.binaries" value="${sonar.build}" />
-		<property name="sonar.login" value="${sonar.token}" />
+		<property name="sonar.token" value="${sonar.token}" />
 
 		<!-- Coverage test with jacoco -->
  		<if>
@@ -1235,7 +1235,7 @@
                                 <echo message="serialize sonar properties in '${sonar.serializeProperties}'"/>
 				<echo message="sonar.projectName=${sonar.projectName}${line.separator}" file="${sonar.serializeProperties}" append="false"/>
 				<echo message="sonar.projectKey=${sonar.projectKey}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
-				<echo message="sonar.login=${sonar.login}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
+				<echo message="sonar.token=${sonar.token}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
 				<echo message="sonar.projectBaseDir=${sonar.projectBaseDir}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
 				<echo message="sonar.sources=${sonar.sources}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
 				<echo message="sonar.tests=${sonar.tests}${line.separator}" file="${sonar.serializeProperties}" append="true"/>
