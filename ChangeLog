@@ -1,5 +1,12 @@
 2024-11-13  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto Bug #1549
+	Utilizzando il database 'SQLServer', si verificava un errore inatteso accedendo alla sezione 'Handler' nelle opzioni avanzate di un'erogazione/fruizione e 
+	cliccando su una qualsiasi delle liste relative alla richiesta o alla risposta.
+
+2024-11-13  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Risolto Bug #1548
 	Risolta la seguente vulnerabilità relative ai jar di terza parte:
