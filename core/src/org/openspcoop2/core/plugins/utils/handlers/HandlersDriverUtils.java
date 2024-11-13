@@ -187,13 +187,14 @@ public class HandlersDriverUtils {
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(tabella);
 			sqlQueryObject.addFromTable(tabellaPlugin);
-			sqlQueryObject.addSelectAliasField(tabella + ".id","IdHandler");
-			sqlQueryObject.addSelectField(tabella + ".tipologia"); 
-			sqlQueryObject.addSelectField(tabella + ".tipo");         
-			sqlQueryObject.addSelectField(tabella + ".posizione");       
-			sqlQueryObject.addSelectField(tabella + ".stato");
+			sqlQueryObject.addSelectAliasField(tabella, "id","IdHandler");
+			sqlQueryObject.addSelectField(tabella,"tipologia"); 
+			String aliasTIPO = "tipoTabConf";
+			sqlQueryObject.addSelectAliasField(tabella,"tipo",aliasTIPO);         
+			sqlQueryObject.addSelectField(tabella,"posizione");       
+			sqlQueryObject.addSelectField(tabella,"stato");
 			if(idPorta !=null) {
-				sqlQueryObject.addSelectField(tabella + ".id_porta");
+				sqlQueryObject.addSelectField(tabella,"id_porta");
 			}
 			
 			sqlQueryObject.addWhereCondition(tabellaPlugin +".tipo=" + tabella + ".tipo");
@@ -208,7 +209,8 @@ public class HandlersDriverUtils {
 			sqlQueryObject.addWhereCondition(tabellaPlugin + ".tipo_plugin=?");
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addOrderBy(tabella + ".posizione");
-			sqlQueryObject.addOrderBy(tabella + ".tipo");
+			/**sqlQueryObject.addOrderBy(tabella + ".tipo");*/
+			sqlQueryObject.addOrderBy(aliasTIPO);
 			sqlQueryObject.setSortType(true);
 			sqlQueryObject.setLimit(limit);
 			sqlQueryObject.setOffset(offset);
@@ -228,7 +230,8 @@ public class HandlersDriverUtils {
 				handler.setId(risultato.getLong("IdHandler"));
 				handler.setPosizione(risultato.getInt("posizione"));
 				handler.setStato(getEnumStatoFunzionalita(risultato.getString("stato")));
-				handler.setTipo(risultato.getString("tipo"));
+				/**handler.setTipo(risultato.getString("tipo"));*/
+				handler.setTipo(risultato.getString(aliasTIPO));
 				
 				Plugin plugin = PluginsDriverUtils.getPlugin(tipoPlugin.getValue(), handler.getTipo(), true, con, log, tipoDB);
 				
