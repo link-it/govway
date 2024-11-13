@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
+import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -41,10 +42,7 @@ public class DirectVMConnectorOutMessage implements ConnectorOutMessage {
 	private DirectVMProtocolInfo directVMProtocolInfo;
 	
 	public DirectVMConnectorOutMessage() throws ConnectorException{
-		try{
-		}catch(Exception e){
-			throw new ConnectorException(e.getMessage(),e);
-		}
+		// empty
 	}
 
 	public DirectVMProtocolInfo getDirectVMProtocolInfo() {
@@ -82,11 +80,11 @@ public class DirectVMConnectorOutMessage implements ConnectorOutMessage {
 	}
 	
 	private Map<String, List<String>> headers = new HashMap<>();
-	public List<String> getHeaderValues(String key) throws ConnectorException{
+	public List<String> getHeaderValues(String key) {
 		return TransportUtils.getRawObject(this.headers,key);
 	}
 	public Map<String,  List<String>> getHeaders(){
-		Map<String,  List<String>> pH = new HashMap<String,  List<String>>();
+		Map<String,  List<String>> pH = new HashMap<>();
 		pH.putAll(this.headers);
 		return pH;
 	}
@@ -141,7 +139,7 @@ public class DirectVMConnectorOutMessage implements ConnectorOutMessage {
 	}
 	
 	@Override
-	public void close(boolean throwException) throws ConnectorException{
+	public void close(AsyncResponseCallbackClientEvent clientEvent, boolean throwException) throws ConnectorException{
 		// nop
 	}
 }

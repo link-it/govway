@@ -343,16 +343,16 @@ public class ConnectorUtils {
 			if(parameters==null){
 				risposta.append("<i>Servizio IntegrationManager</i><br/><br/>\n");
 			}
-			else if( (function+"/"+parameters).equals(URLProtocolContext.IntegrationManager_FUNCTION_PD) ){
+			else if( (function+"/"+parameters).equals(URLProtocolContext.INTEGRATION_MANAGER_FUNCTION_PD) ){
 				risposta.append("<i>Servizio utilizzabile per l'invocazione delle fruizioni esposte dall'API Gateway GovWay</i><br/><br/>\n");
 			}
-			else if( (function+"/"+parameters).startsWith(URLProtocolContext.IntegrationManager_FUNCTION_PD+"/") ){
+			else if( (function+"/"+parameters).startsWith(URLProtocolContext.INTEGRATION_MANAGER_FUNCTION_PD+"/") ){
 				risposta.append("<i>Servizio utilizzabile per l'invocazione delle fruizioni esposte dall'API Gateway GovWay</i><br/><br/>\n");
 			}
-			else if( (function+"/"+parameters).equals(URLProtocolContext.IntegrationManager_FUNCTION_MessageBox) ){
+			else if( (function+"/"+parameters).equals(URLProtocolContext.INTEGRATION_MANAGER_FUNCTION_MESSAGE_BOX) ){
 				risposta.append("<i>Servizio utilizzabile per accedere alla MessageBox esposta dall'API Gateway GovWay</i><br/><br/>\n");
 			}
-			else if( (function+"/"+parameters).startsWith(URLProtocolContext.IntegrationManager_FUNCTION_MessageBox+"/") ){
+			else if( (function+"/"+parameters).startsWith(URLProtocolContext.INTEGRATION_MANAGER_FUNCTION_MESSAGE_BOX+"/") ){
 				risposta.append("<i>Servizio utilizzabile per accedere alla MessageBox esposta dall'API Gateway GovWay</i><br/><br/>\n");
 			}
 			else{

@@ -61,7 +61,7 @@ public class ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM extends A
 	}
 	@Override
 	public String getFunction(){
-		return URLProtocolContext.PDtoSOAP_FUNCTION;
+		return URLProtocolContext.PD_TO_SOAP_FUNCTION;
 	}
 	@Override
 	public void process(DirectVMConnectorInMessage inMessage,DirectVMConnectorOutMessage outMessage) throws ConnectorException{

@@ -110,6 +110,10 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 			DirectVMProtocolInfo directVMProtocolInfo,
 			PdDContext pddContext) throws ConnectorException{
 		try{
+			if(serviceBindingConfiguration!=null) {
+				// nop
+			}
+			
 			this.message = msg;
 			
 			this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
@@ -124,7 +128,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 			if(trasporto!=null && !trasporto.isEmpty()) {
 				Iterator<String> keys = trasporto.keySet().iterator();
 				while (keys.hasNext()) {
-					String key = (String) keys.next();
+					String key = keys.next();
 					this.headers.put(key, trasporto.get(key));
 				}
 			}
@@ -132,7 +136,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 			if(formUrl!=null && !formUrl.isEmpty()) {
 				Iterator<String> keys = formUrl.keySet().iterator();
 				while (keys.hasNext()) {
-					String key = (String) keys.next();
+					String key = keys.next();
 					this.parameters.put(key, formUrl.get(key));
 				}
 			}
@@ -264,7 +268,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	}
 	
 	private Map<String, Object> attributes = new HashMap<>();
-	public void setAttribute(String key, Object object) throws ConnectorException {
+	public void setAttribute(String key, Object object)  {
 		this.attributes.put(key, object);
 	}
 	@Override
@@ -274,7 +278,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	
 	
 	private Map<String, List<String>> headers = new HashMap<>();
-	public void addHeader(String key, String value) throws ConnectorException {
+	public void addHeader(String key, String value) {
 		TransportUtils.addHeader(this.headers, key, value);
 	}
 	@Override
@@ -284,7 +288,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	
 	
 	private Map<String, List<String>> parameters = new HashMap<>();
-	public void setParameter(String key, String value) throws ConnectorException {
+	public void setParameter(String key, String value) {
 		TransportUtils.addParameter(this.parameters, key, value);
 	}
 	@Override

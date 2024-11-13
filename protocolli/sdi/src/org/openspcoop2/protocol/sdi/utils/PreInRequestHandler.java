@@ -65,8 +65,8 @@ public class PreInRequestHandler implements org.openspcoop2.pdd.core.handlers.Pr
 				return;
 			}
 			
-			if(!URLProtocolContext.PDtoSOAP_FUNCTION.equals(inMessage.getURLProtocolContext().getFunction()) &&
-					!URLProtocolContext.PDtoSOAP_FUNCTION_GOVWAY.equals(inMessage.getURLProtocolContext().getFunction())){
+			if(!URLProtocolContext.PD_TO_SOAP_FUNCTION.equals(inMessage.getURLProtocolContext().getFunction()) &&
+					!URLProtocolContext.PD_TO_SOAP_FUNCTION_GOVWAY.equals(inMessage.getURLProtocolContext().getFunction())){
 				return;
 			}
 			if(!SDICostanti.SDI_PROTOCOL_NAME.equals(inMessage.getURLProtocolContext().getProtocolName())){
