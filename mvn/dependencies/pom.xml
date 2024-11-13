@@ -113,7 +113,6 @@
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2022-42920.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2023-35116.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2023-4759.xml</suppressionFile>
-								<suppressionFile>${owasp.falsePositives.dir}/CVE-2023-4586.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2024-9329.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2024-38820.xml</suppressionFile>
 							</suppressionFiles>
