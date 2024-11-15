@@ -1,0 +1,28 @@
+diff --git ant/setup/deploy/resources/core/govway_local.properties ant/setup/deploy/resources/core/govway_local.properties
+index 17b3eeffde..ce66fcfaa5 100644
+--- ant/setup/deploy/resources/core/govway_local.properties
++++ ant/setup/deploy/resources/core/govway_local.properties
+@@ -151,8 +151,10 @@ org.openspcoop2.pdd.services.pd.gestoreCredenziali.modalita=atLeastOne
+ #org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.truststore.crls=PATH1.crl,PATH2.crl...
+ # Policy OCSP utilizzata per verificare i certificati ricevuti
+ #org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.truststore.ocspPolicy=INDICARE_TIPO_POLICY
+-# Se la proprietà seguente viene valorizzata, il valore indicato specifica una keyword utilizzata dal web server di frontend per indicare che non è presente alcun certificato client
++# La seguente proprietà permette di definire la keyword utilizzata dal web server frontend per indicare che il fruitore non ha presentato alcun certificato:
+ #org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.none=
++# Se la seguente proprietà è abilitata, un header valorizzato con una stringa vuota sarà interpretato come un'indicazione che il fruitore non ha presentato alcun certificato client.
++org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.ignoreEmpty=true
+ #
+ # L'identità del chiamante può essere fornita dal WebServer anche come informazione 'principal' tramite il seguente header:
+ #org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.principal=X-Principal
+@@ -204,8 +206,10 @@ org.openspcoop2.pdd.services.pa.gestoreCredenziali.modalita=atLeastOne
+ #org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.truststore.crls=PATH1.crl,PATH2.crl...
+ # Policy OCSP utilizzata per verificare i certificati ricevuti
+ #org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.truststore.ocspPolicy=INDICARE_TIPO_POLICY
+-# Se la proprietà seguente viene valorizzata, il valore indicato specifica una keyword utilizzata dal web server di frontend per indicare che non è presente alcun certificato client
++# La seguente proprietà permette di definire la keyword utilizzata dal web server frontend per indicare che il fruitore non ha presentato alcun certificato:
+ #org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.none=
++# Se la seguente proprietà è abilitata, un header valorizzato con una stringa vuota sarà interpretato come un'indicazione che il fruitore non ha presentato alcun certificato client.
++org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.ignoreEmpty=true
+ #
+ # L'identità del chiamante può essere fornita dal WebServer anche come informazione 'principal' tramite il seguente header:
+ #org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.principal=X-Principal

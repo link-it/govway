@@ -341,6 +341,7 @@ public class GestoreCredenzialiEngine {
 		String sslCertificateReplaceSource = null;
 		String sslCertificateReplaceDest = null;
 		String sslCertificateNoneOption = null;
+		boolean sslCertificateIgnoreEmpty = false;
 		if(headerNameSSLCertificate!=null) {
 			sslCertificateUrlDecode = configurazione.isHeaderSslCertificateUrlDecode();
 			sslCertificateBase64Decode = configurazione.isHeaderSslCertificateBase64Decode();
@@ -354,6 +355,7 @@ public class GestoreCredenzialiEngine {
 				sslCertificateReplaceDest = configurazione.getHeaderSslCertificateReplaceCharactersDest();
 			}
 			sslCertificateNoneOption = configurazione.getHeaderSslCertificateNoneOption();
+			sslCertificateIgnoreEmpty = configurazione.isHeaderSslCertificateIgnoreEmpty();
 		}
 		boolean verificaIdentitaSSL = headerNameSSLSubject!=null || headerNameSSLCertificate!=null;
 		
@@ -549,7 +551,13 @@ public class GestoreCredenzialiEngine {
 				
 				String certificate = getProperty(headerTrasporto, 	headerNameSSLCertificate );
 				
-				if(certificate!=null && sslCertificateNoneOption!=null && sslCertificateNoneOption.equals(certificate)) {
+				if(certificate!=null &&
+						(
+								(sslCertificateNoneOption!=null && sslCertificateNoneOption.equals(certificate))
+								||
+								(StringUtils.isEmpty(certificate) && sslCertificateIgnoreEmpty)
+						)
+					){
 					c.setCertificate(null);
 					c.setSubject(null);
 					c.setIssuer(null);

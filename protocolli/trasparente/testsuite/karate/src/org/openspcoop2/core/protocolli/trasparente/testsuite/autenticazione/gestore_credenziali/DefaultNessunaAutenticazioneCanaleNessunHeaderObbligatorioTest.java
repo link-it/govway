@@ -279,7 +279,35 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				);
 	}
 	
-
+	@Test
+	public void erogazione_public_certificatoTlsEmpty() throws Exception {
+		Map<String, String> headers = new HashMap<>();
+		headers.put("X-Erogazione-SSL-Cert", "");
+		Utilities._test(TipoServizio.EROGAZIONE,
+				"SoggettoInternoTest",
+				"public",
+				headers,
+				null,
+				null,
+				null,
+				null,
+				null);
+	}
+	
+	@Test
+	public void erogazione_public_certificatoTlsVuotoIndicatoTramiteKeyword() throws Exception {
+		Map<String, String> headers = new HashMap<>();
+		headers.put("X-Erogazione-SSL-Cert", "NessunCertificato");
+		Utilities._test(TipoServizio.EROGAZIONE,
+				"SoggettoInternoTest",
+				"public",
+				headers,
+				null,
+				null,
+				null,
+				null,
+				null);
+	}
 	
 	
 	// public [FRUIZIONE]
