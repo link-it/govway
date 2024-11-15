@@ -328,13 +328,25 @@ public class ContentExtractor extends ContentReader {
 		CostantiPdD.addSWAStartParameterIfNotPresent(this.message);
 	}
 	public void addSWAStartParameterIfNotPresent() throws DynamicException {
-		SoapUtils.addSWAStartParameterIfNotPresent(this.message);
+		try {
+			SoapUtils.addSWAStartParameterIfNotPresent(this.message);
+		}catch(Exception t) {
+			throw new DynamicException(t.getMessage(),t);
+		}
 	}
 	public void addSWAStartParameterIfNotPresent(boolean addOnlyIfExistsContentIdRootPart) throws DynamicException {
-		SoapUtils.addSWAStartParameterIfNotPresent(this.message, addOnlyIfExistsContentIdRootPart);
+		try {
+			SoapUtils.addSWAStartParameterIfNotPresent(this.message, addOnlyIfExistsContentIdRootPart);
+		}catch(Exception t) {
+			throw new DynamicException(t.getMessage(),t);
+		}
 	}
 	public void addSWAStartParameterIfNotPresent(boolean addOnlyIfExistsContentIdRootPart, boolean forceAddStartParameter) throws DynamicException {
-		SoapUtils.addSWAStartParameterIfNotPresent(this.message, addOnlyIfExistsContentIdRootPart, forceAddStartParameter);
+		try {
+			SoapUtils.addSWAStartParameterIfNotPresent(this.message, addOnlyIfExistsContentIdRootPart, forceAddStartParameter);
+		}catch(Exception t) {
+			throw new DynamicException(t.getMessage(),t);
+		}
 	}
 	
 	
