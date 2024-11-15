@@ -121,7 +121,7 @@ public class GestoreCredenzialiConfigurazione {
 	private String headerSslCertificateCrlX509;
 	private String headerSslCertificateOcspPolicy;
 	private String headerSslCertificateNoneOption;
-
+	private boolean headerSslCertificateIgnoreEmpty = true;
 
 	private String headerPrincipal;
 	
@@ -384,6 +384,15 @@ public class GestoreCredenzialiConfigurazione {
 				pValue = pValue.trim();
 				this.headerSslCertificateNoneOption = pValue;
 			}
+			
+			String v = getProperty(p, "header.ssl.certificate.ignoreEmpty", protocollo, idSoggetto);
+			if(v!=null && StringUtils.isNotEmpty(v)) {
+				try {
+					this.headerSslCertificateIgnoreEmpty = Boolean.valueOf(v);
+				}catch(Exception e) {
+					throw new GestoreCredenzialiException("Errore durante la lettura della proprietà 'header.ssl.certificate.ignoreEmpty' (valore: "+v+"): "+e.getMessage(),e);
+				}
+			}
 		}
 		
 		this.headerPrincipal = getProperty(p, "header.principal", protocollo, idSoggetto);
@@ -626,6 +635,9 @@ public class GestoreCredenzialiConfigurazione {
 	}
 	public String getHeaderSslCertificateNoneOption() {
 		return this.headerSslCertificateNoneOption;
+	}
+	public boolean isHeaderSslCertificateIgnoreEmpty() {
+		return this.headerSslCertificateIgnoreEmpty;
 	}
 	
 	public String getHeaderPrincipal() {

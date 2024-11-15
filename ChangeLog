@@ -1,3 +1,11 @@
+2024-11-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1550
+	Nel caso in cui il frontend web includa in un header HTTP il certificato X.509 del client autenticato (ad esempio, SSL_CLIENT_CERT), 
+	è stata introdotta la possibilità di interpretare un header valorizzato con una stringa vuota come indicazione che il fruitore non ha presentato alcun certificato client.
+	Questa funzionalità è attiva di default, ma può essere disabilitata modificando la configurazione nel file govway_local.properties.
+
 2024-11-13  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
