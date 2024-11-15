@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.mail.internet.ContentType;
+import javax.mail.internet.ParseException;
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
 import javax.xml.soap.MessageFactory;
@@ -61,7 +62,6 @@ import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.message.xml.MessageXMLUtils;
-import org.openspcoop2.pdd.core.dynamic.DynamicException;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.TransportRequestContext;
@@ -384,13 +384,13 @@ public class SoapUtils {
 	
 	// SOAP With Attachments
 	
-	public static void addSWAStartParameterIfNotPresent(OpenSPCoop2Message message) throws DynamicException {
+	public static void addSWAStartParameterIfNotPresent(OpenSPCoop2Message message) throws MessageException {
 		addSWAStartParameterIfNotPresent(message, false, false);
 	}
-	public static void addSWAStartParameterIfNotPresent(OpenSPCoop2Message message, boolean addOnlyIfExistsContentIdRootPart) throws DynamicException {
+	public static void addSWAStartParameterIfNotPresent(OpenSPCoop2Message message, boolean addOnlyIfExistsContentIdRootPart) throws MessageException {
 		addSWAStartParameterIfNotPresent(message, addOnlyIfExistsContentIdRootPart, false);
 	}
-	public static void addSWAStartParameterIfNotPresent(OpenSPCoop2Message message, boolean addOnlyIfExistsContentIdRootPart, boolean forceAddStartParameter) throws DynamicException {
+	public static void addSWAStartParameterIfNotPresent(OpenSPCoop2Message message, boolean addOnlyIfExistsContentIdRootPart, boolean forceAddStartParameter) throws MessageException {
 		if(message!=null && ServiceBinding.SOAP.equals(message.getServiceBinding())) {
 			
 			try {
@@ -401,7 +401,7 @@ public class SoapUtils {
 				}
 				SOAPPart part = soapMsg.getSOAPPart();
 				if(part==null) {
-					throw new DynamicException("SOAPPart is null?");
+					throw new MessageException("SOAPPart is null?");
 				}
 				
 				String [] idOld = part.getMimeHeader(HttpConstants.CONTENT_ID);
@@ -409,29 +409,36 @@ public class SoapUtils {
 				if(idOld!=null && idOld.length>0) {
 					id = idOld[0];
 				}
-				/**System.out.println("=== SOAP id PART: "+id);*/
-				if(id==null) {
-					if(addOnlyIfExistsContentIdRootPart) {
-						/**System.out.println("ContentId non esistente e creazione non richiesta");*/
-						return;
-					}
-					id = soapMsg.createContentID("http://govway.org");
-					part.addMimeHeader("Content-Id", id);
-					/**System.out.println("=== ADD id PART ");*/
-				}
-				String cType = soapMsg.getContentType();
-				ContentType contentType = new ContentType(cType);
-				String startParam = contentType.getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_START);
-				/**System.out.println("startParam PART: "+startParam);*/
-				if(startParam==null || forceAddStartParameter) {
-					/**System.out.println("ADD START PARAM");*/
-					soapMsg.addContentTypeParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_START, id);
-				}
+				addSWAStartParameterIfNotPresentEngine(soapMsg, part,
+						addOnlyIfExistsContentIdRootPart, forceAddStartParameter,
+						id);
 				
 			}catch(Exception t) {
-				throw new DynamicException(t.getMessage(),t);
+				throw new MessageException(t.getMessage(),t);
 			}
 			
+		}
+	}
+	private static void addSWAStartParameterIfNotPresentEngine(OpenSPCoop2SoapMessage soapMsg, SOAPPart part,
+			boolean addOnlyIfExistsContentIdRootPart, boolean forceAddStartParameter,
+			String id) throws MessageException, MessageNotSupportedException, ParseException {
+		/**System.out.println("=== SOAP id PART: "+id);*/
+		if(id==null) {
+			if(addOnlyIfExistsContentIdRootPart) {
+				/**System.out.println("ContentId non esistente e creazione non richiesta");*/
+				return;
+			}
+			id = soapMsg.createContentID("http://govway.org");
+			part.addMimeHeader("Content-Id", id);
+			/**System.out.println("=== ADD id PART ");*/
+		}
+		String cType = soapMsg.getContentType();
+		ContentType contentType = new ContentType(cType);
+		String startParam = contentType.getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_START);
+		/**System.out.println("startParam PART: "+startParam);*/
+		if(startParam==null || forceAddStartParameter) {
+			/**System.out.println("ADD START PARAM");*/
+			soapMsg.addContentTypeParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_START, id);
 		}
 	}
 	
