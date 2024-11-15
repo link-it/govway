@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.core;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.controllo_traffico.beans.JMXConstants;
+import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.utils.Costanti;
@@ -929,6 +930,22 @@ public class CostantiPdD {
     public static final String PREFIX_LIMITED_REQUEST = org.openspcoop2.core.constants.Costanti.PREFIX_LIMITED_REQUEST;
     public static final String PREFIX_LIMITED_RESPONSE = org.openspcoop2.core.constants.Costanti.PREFIX_LIMITED_RESPONSE;
     
+    
+    public static final MapKey<String> FORCE_SWA_START_PARAMETER_IF_NOT_PRESENT = Map.newMapKey("FORCE_SWA_START_PARAMETER");
+    public static void addSWAStartParameterIfNotPresent(OpenSPCoop2Message msg) {
+    	if(msg!=null) {
+    		msg.addContextProperty(FORCE_SWA_START_PARAMETER_IF_NOT_PRESENT, "true");
+    	}
+    }
+    public static boolean isEnabledAddSWAStartParameterIfNotPresent(OpenSPCoop2Message msg) {
+    	if(msg!=null) {
+    		Object o = msg.getContextProperty(CostantiPdD.FORCE_SWA_START_PARAMETER_IF_NOT_PRESENT);
+    		if(o instanceof String) {
+    			return "true".equals(o);
+    		}
+    	}
+    	return false;
+    }
     
     public static final MapKey<String> CONNETTORE_MULTIPLO_SELEZIONATO = Map.newMapKey("CONNETTORE_MULTIPLO_SELEZIONATO");
     

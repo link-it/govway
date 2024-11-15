@@ -2286,6 +2286,17 @@ public class InoltroBuste extends GenericLib{
 			
 			
 			
+			/* ------------------- add start parameter -----------------------*/
+			if(CostantiPdD.isEnabledAddSWAStartParameterIfNotPresent(requestMessageTrasformato)) {
+				SoapUtils.addSWAStartParameterIfNotPresent(requestMessageTrasformato);
+			}
+			
+			
+			
+			
+			
+			
+			
 			
 			
 			

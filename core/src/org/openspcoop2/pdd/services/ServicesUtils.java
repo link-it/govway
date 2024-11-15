@@ -482,6 +482,10 @@ public class ServicesUtils {
 	
 	public static void setContentType(OpenSPCoop2Message message, ConnectorOutMessage connectorOutMessage) throws ConnectorException{
 		try{
+			if(CostantiPdD.isEnabledAddSWAStartParameterIfNotPresent(message)) {
+				SoapUtils.addSWAStartParameterIfNotPresent(message);
+			}
+			
 			String contentTypeRisposta = message.getContentType();
 			if (contentTypeRisposta != null) {
 				connectorOutMessage.setContentType(contentTypeRisposta);

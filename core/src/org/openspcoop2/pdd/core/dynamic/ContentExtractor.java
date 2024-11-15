@@ -33,7 +33,9 @@ import org.openspcoop2.core.commons.CoreRuntimeException;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.openspcoop2.utils.xml.XPathReturnType;
@@ -322,6 +324,18 @@ public class ContentExtractor extends ContentReader {
 		}
 	}
 	
+	public void addSWAStartParameterIfNotPresentBeforeSend() {
+		CostantiPdD.addSWAStartParameterIfNotPresent(this.message);
+	}
+	public void addSWAStartParameterIfNotPresent() throws DynamicException {
+		SoapUtils.addSWAStartParameterIfNotPresent(this.message);
+	}
+	public void addSWAStartParameterIfNotPresent(boolean addOnlyIfExistsContentIdRootPart) throws DynamicException {
+		SoapUtils.addSWAStartParameterIfNotPresent(this.message, addOnlyIfExistsContentIdRootPart);
+	}
+	public void addSWAStartParameterIfNotPresent(boolean addOnlyIfExistsContentIdRootPart, boolean forceAddStartParameter) throws DynamicException {
+		SoapUtils.addSWAStartParameterIfNotPresent(this.message, addOnlyIfExistsContentIdRootPart, forceAddStartParameter);
+	}
 	
 	
 	
