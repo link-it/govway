@@ -2369,6 +2369,15 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			
 			
 			
+			/* ------------------- add start parameter -----------------------*/
+			if(CostantiPdD.isEnabledAddSWAStartParameterIfNotPresent(consegnaMessageTrasformato)) {
+				SoapUtils.addSWAStartParameterIfNotPresent(consegnaMessageTrasformato);
+			}
+			
+			
+			
+			
+			
 			
 			
 			

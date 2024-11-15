@@ -54,12 +54,14 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.message.xml.MessageXMLUtils;
+import org.openspcoop2.pdd.core.dynamic.DynamicException;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.TransportRequestContext;
@@ -377,6 +379,61 @@ public class SoapUtils {
 		return bfError.length()<=0;
 	}
 	
+	
+	
+	
+	// SOAP With Attachments
+	
+	public static void addSWAStartParameterIfNotPresent(OpenSPCoop2Message message) throws DynamicException {
+		addSWAStartParameterIfNotPresent(message, false, false);
+	}
+	public static void addSWAStartParameterIfNotPresent(OpenSPCoop2Message message, boolean addOnlyIfExistsContentIdRootPart) throws DynamicException {
+		addSWAStartParameterIfNotPresent(message, addOnlyIfExistsContentIdRootPart, false);
+	}
+	public static void addSWAStartParameterIfNotPresent(OpenSPCoop2Message message, boolean addOnlyIfExistsContentIdRootPart, boolean forceAddStartParameter) throws DynamicException {
+		if(message!=null && ServiceBinding.SOAP.equals(message.getServiceBinding())) {
+			
+			try {
+			
+				OpenSPCoop2SoapMessage soapMsg = message.castAsSoap();
+				if(!soapMsg.hasAttachments()) {
+					return;
+				}
+				SOAPPart part = soapMsg.getSOAPPart();
+				if(part==null) {
+					throw new DynamicException("SOAPPart is null?");
+				}
+				
+				String [] idOld = part.getMimeHeader(HttpConstants.CONTENT_ID);
+				String id = null;
+				if(idOld!=null && idOld.length>0) {
+					id = idOld[0];
+				}
+				/**System.out.println("=== SOAP id PART: "+id);*/
+				if(id==null) {
+					if(addOnlyIfExistsContentIdRootPart) {
+						/**System.out.println("ContentId non esistente e creazione non richiesta");*/
+						return;
+					}
+					id = soapMsg.createContentID("http://govway.org");
+					part.addMimeHeader("Content-Id", id);
+					/**System.out.println("=== ADD id PART ");*/
+				}
+				String cType = soapMsg.getContentType();
+				ContentType contentType = new ContentType(cType);
+				String startParam = contentType.getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_START);
+				/**System.out.println("startParam PART: "+startParam);*/
+				if(startParam==null || forceAddStartParameter) {
+					/**System.out.println("ADD START PARAM");*/
+					soapMsg.addContentTypeParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_START, id);
+				}
+				
+			}catch(Exception t) {
+				throw new DynamicException(t.getMessage(),t);
+			}
+			
+		}
+	}
 	
 	
 	
